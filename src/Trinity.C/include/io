@@ -1,0 +1,14 @@
+// Graph Engine
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+//
+#pragma once
+#include <Trinity/IO/BinaryReader.h>
+#include <Trinity/IO/BinaryWriter.h>
+#include <Trinity/IO/Console.h>
+#include <Trinity/IO/Directory.h>
+#include <Trinity/IO/File.h>
+#include <Trinity/IO/Path.h>
+#include <Trinity/IO/StreamWriter.h>
+
+using namespace Trinity::IO;

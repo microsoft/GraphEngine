@@ -1,0 +1,42 @@
+// Graph Engine
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+//
+Cell Struct SSSPCell
+{
+	int distance;
+	long parent;
+	List<long> neighbors;
+}
+
+struct StartSSSPMessage
+{
+	long root;
+}
+
+struct DistanceUpdatingMessage
+{
+	long senderId;
+	int distance;
+	List<long> recipients;
+}
+
+protocol StartSSSP
+{
+	Type: Asyn;
+	Request: StartSSSPMessage;
+	Response: void;
+}
+
+protocol DistanceUpdating
+{
+	Type: Asyn;
+	Request: DistanceUpdatingMessage;
+	Response: void;
+}
+
+server SSSPServer
+{
+	protocol StartSSSP;
+	protocol DistanceUpdating;
+}

@@ -1,0 +1,26 @@
+// Graph Engine
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+//
+//////////////////////////////////////////////////////////////////////
+//  http endpoints
+protocol ExternalQuery
+{
+    Type:HTTP;
+	Request:StringStruct;
+	Response:ExternalQueryResponse;
+}
+
+protocol JsonQuery
+{
+    Type:HTTP;
+    Request:stream;
+    Response:stream;	
+}
+
+protocol GetNodesInfo
+{
+    Type:HTTP;
+    Request:GetNodesInfoRequest;
+    Response:stream;	
+}

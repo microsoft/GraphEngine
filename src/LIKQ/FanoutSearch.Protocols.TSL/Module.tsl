@@ -1,0 +1,21 @@
+// Graph Engine
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+//
+module FanoutSearch
+{
+	// Fanout search protocols
+	protocol ExternalQuery;	
+    protocol FanoutSearchQuery;	
+	protocol FanoutSearch_impl;
+    protocol QueryInitialization;
+    protocol QueryUninitialization;
+    protocol GetTransactionId;
+	protocol AggregateResult;
+    protocol IntermediateResult;
+    protocol GetNodesInfo;
+    protocol _GetNodesInfo_impl;
+    protocol GetEdgeType;
+    // Json interface protocols
+    protocol JsonQuery;
+}
