@@ -6,14 +6,12 @@ in-memory key-value store and a general distributed computation
 engine.
 
 This repository contains the source code of Graph Engine and its graph
-query language -- [Language Integrated Knowledge
-Query](https://www.graphengine.io/video/likq.video.html)
-(LIKQ). LIKQ is powering [Academic Graph Search Knowledge
+query language -- <a
+href="https://www.graphengine.io/video/likq.video.html"
+target="_blank">Language Integrated Knowledge Query</a> (LIKQ). LIKQ
+is powering [Academic Graph Search Knowledge
 API](https://www.microsoft.com/cognitive-services/en-us/Academic-Knowledge-API/documentation/GraphSearchMethod),
 which is part of Microsoft Cognitive Services.
-
-<img alt="" src="https://www.graphengine.io/video/likq.video.pub.gif" data-canonical-src="https://www.graphengine.io/video/likq.video.pub.gif" style="max-width:100%;">
-
 
 ## Downloads
 
