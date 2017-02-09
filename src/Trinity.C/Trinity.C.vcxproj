@@ -1,0 +1,420 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Test-Debug|x64">
+      <Configuration>Test-Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Test-Release|x64">
+      <Configuration>Test-Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{53440B2C-3D01-40DA-BBAE-36B654541EE7}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>TrinityC</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test-Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test-Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Test-Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Test-Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\..\bin\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test-Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\..\bin\CTest\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\..\bin\</OutDir>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test-Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\..\bin\CTest\</OutDir>
+    <CustomBuildBeforeTargets />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;TRINITYC_EXPORTS;TRINITY_C_TEST;_WINSOCK_DEPRECATED_NO_WARNINGS;
+_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <AdditionalOptions>/volatile:iso %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BrowseInformation>true</BrowseInformation>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <UseUnicodeForAssemblerListing>false</UseUnicodeForAssemblerListing>
+      <AssemblerListingLocation>
+      </AssemblerListingLocation>
+      <CallingConvention>StdCall</CallingConvention>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Psapi.lib;ws2_32.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test-Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WCHAR_OUTPUT;WIN32;_DEBUG;_WINDOWS;_USRDLL;TRINITYC_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <AdditionalOptions>/volatile:iso %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BrowseInformation>true</BrowseInformation>
+      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
+      <UseUnicodeForAssemblerListing>false</UseUnicodeForAssemblerListing>
+      <AssemblerListingLocation>$(ProjectDir)AssemblerOutput\</AssemblerListingLocation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Psapi.lib;ws2_32.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;TRINITYC_EXPORTS;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;
+_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <InterproceduralOptimization>SingleFile</InterproceduralOptimization>
+      <OptimizeForWindowsApplication>true</OptimizeForWindowsApplication>
+      <Parallelization>true</Parallelization>
+      <UseIntelOptimizedHeaders>true</UseIntelOptimizedHeaders>
+      <AdditionalIncludeDirectories>src;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <AdditionalOptions>/volatile:iso %(AdditionalOptions)</AdditionalOptions>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>$(ProjectDir)AssemblerOutput\</AssemblerListingLocation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>Psapi.lib;ws2_32.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
+    </Link>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+      <Outputs>
+      </Outputs>
+    </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test-Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WCHAR_OUTPUT;WIN32;NDEBUG;_WINDOWS;_USRDLL;TRINITYC_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <InterproceduralOptimization>SingleFile</InterproceduralOptimization>
+      <OptimizeForWindowsApplication>true</OptimizeForWindowsApplication>
+      <Parallelization>true</Parallelization>
+      <UseIntelOptimizedHeaders>true</UseIntelOptimizedHeaders>
+      <AdditionalIncludeDirectories>src;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <AdditionalOptions>/volatile:iso %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>Psapi.lib;ws2_32.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
+    </Link>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+      <Outputs>
+      </Outputs>
+    </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="include\os\platforms\darwin.h" />
+    <ClInclude Include="include\os\platforms\posix.h" />
+    <ClInclude Include="include\Trinity\Array.h" />
+    <ClInclude Include="include\Trinity\Collections\HashSet.h" />
+    <ClInclude Include="include\Trinity\Collections\List.h" />
+    <ClInclude Include="include\Trinity\Collections\Tuple.h" />
+    <ClInclude Include="include\Trinity\DateTime.h" />
+    <ClInclude Include="include\Trinity\Diagnostics\Stopwatch.h" />
+    <ClInclude Include="include\Trinity\Diagnostics\TrinityDbg.h" />
+    <ClInclude Include="include\Trinity\Environment.h" />
+    <ClInclude Include="include\Trinity\Hash\MD5.h" />
+    <ClInclude Include="include\Trinity\Hash\NonCryptographicHash.h" />
+    <ClInclude Include="include\Trinity\IO\BinaryReader.h" />
+    <ClInclude Include="include\Trinity\IO\BinaryWriter.h" />
+    <ClInclude Include="include\Trinity\IO\Console.h" />
+    <ClInclude Include="include\Trinity\IO\Directory.h" />
+    <ClInclude Include="include\Trinity\IO\File.h" />
+    <ClInclude Include="include\Trinity\IO\Path.h" />
+    <ClInclude Include="include\Trinity\IO\StreamWriter.h" />
+    <ClInclude Include="include\Trinity\NonCopyable.h" />
+    <ClInclude Include="include\Trinity\NonReferencable.h" />
+    <ClInclude Include="include\Trinity\Random.h" />
+    <ClInclude Include="include\Trinity\ref.h" />
+    <ClInclude Include="include\Trinity\String.h" />
+    <ClInclude Include="include\Trinity\Threading\Mutex.h" />
+    <ClInclude Include="include\Trinity\Threading\Parallel.h" />
+    <ClInclude Include="include\Trinity\Threading\Thread.h" />
+    <ClInclude Include="include\Trinity\Utilities\CommandLineTools.h" />
+    <ClInclude Include="include\Trinity\Utilities\OptionDescriptor.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="include\arch\cpu.h" />
+    <ClInclude Include="src\Network\Client\linux\ClientSocket.h" />
+    <ClInclude Include="src\Network\Client\TrinityClient.h" />
+    <ClInclude Include="src\Network\Client\windows\ClientSocket.h" />
+    <ClInclude Include="src\Network\ProtocolConstants.h" />
+    <ClInclude Include="src\Network\Server\iocp\Common.h" />
+    <ClInclude Include="src\Network\Server\iocp\TrinitySocketServer.h" />
+    <ClInclude Include="include\os\platforms\linux.h" />
+    <ClInclude Include="include\os\os.h" />
+    <ClInclude Include="include\os\platforms\windows.h" />
+    <ClInclude Include="src\BackgroundThread\BackgroundThread.h" />
+    <ClInclude Include="src\Network\Server\TrinityServer.h" />
+    <ClInclude Include="src\Network\SocketOptionsHelper.h" />
+    <ClInclude Include="src\Runtime\Debug.h" />
+    <ClInclude Include="src\Debugger\Debugger.h" />
+    <ClInclude Include="src\Runtime\InternalCalls.h" />
+    <ClInclude Include="src\Trinity\Diagnostics\LogAutoFlushTask.h" />
+    <ClInclude Include="src\Runtime\Transition.h" />
+    <ClInclude Include="src\Mathematics\TrinityMath.h" />
+    <ClInclude Include="src\Memory\Memory.h" />
+    <ClInclude Include="src\Storage\LocalStorage\GCTask.h" />
+    <ClInclude Include="src\Storage\LocalStorage\LocalMemoryStorage.h" />
+    <ClInclude Include="src\Storage\MemoryTrunk\MemoryTrunk.h" />
+    <ClInclude Include="src\Storage\MTHash\CellEntry.h" />
+    <ClInclude Include="src\Storage\MTHash\MTHash.h" />
+    <ClInclude Include="src\Storage\MTHash\MT_ENUMERATOR.h" />
+    <ClInclude Include="include\TrinityCommon.h" />
+    <ClInclude Include="src\Threading\TrinitySpinlock.h" />
+    <ClInclude Include="src\Trinity\Configuration\TrinityConfig.h" />
+    <ClInclude Include="src\Trinity\Diagnostics\Log.h" />
+    <ClInclude Include="src\Utility\FileIO.h" />
+    <ClInclude Include="src\Utility\HashHelper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="include\os\platforms\posix.cpp" />
+    <ClCompile Include="src\Network\Client\TrinityClientSocketTest.cpp" />
+    <ClCompile Include="src\Network\Client\windows\ClientSocket.cpp" />
+    <ClCompile Include="src\Network\network_exported_methods.cpp" />
+    <ClCompile Include="src\Network\ProtocolConstants.cpp" />
+    <ClCompile Include="src\Network\Server\Common.cpp" />
+    <ClCompile Include="src\Network\Server\iocp\TrinitySocketServer.ContextObject.cpp" />
+    <ClCompile Include="src\Network\Server\iocp\TrinitySocketServer.cpp" />
+    <ClCompile Include="src\Network\Server\iocp\TrinitySocketServer.Recv.cpp" />
+    <ClCompile Include="src\Network\Server\iocp\TrinitySocketServer.Send.cpp" />
+    <ClCompile Include="src\Network\Server\iocp\TrinitySocketServer.Threading.cpp" />
+    <ClCompile Include="src\BackgroundThread\BackgroundThread.cpp" />
+    <ClCompile Include="src\Debugger\Debugger.Commands.cpp" />
+    <ClCompile Include="src\Debugger\Debugger.Exception.cpp" />
+    <ClCompile Include="src\Debugger\Debugger.Main.cpp" />
+    <ClCompile Include="src\Debugger\Debugger.Storage.cpp" />
+    <ClCompile Include="src\Debugger\Debugger.Threads.cpp" />
+    <ClCompile Include="src\Network\Server\TrinitySocketServerTest.cpp" />
+    <ClCompile Include="src\Runtime\init.cpp" />
+    <ClCompile Include="src\Runtime\Transition.cpp" />
+    <ClCompile Include="src\Storage\LocalStorage\GCTask.cpp" />
+    <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.cpp" />
+    <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.Enumeration.cpp" />
+    <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.WriteAheadLog.cpp" />
+    <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.AddressTable.cpp" />
+    <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.Cell.Memory.cpp" />
+    <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.Defragmentation.cpp" />
+    <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.DefragOneRegion.cpp" />
+    <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.DefragTwoRegion.cpp" />
+    <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.DiskIO.cpp" />
+    <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.LO.cpp" />
+    <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.Memory.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MTHash.CellInfo.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MTHash.lock.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MTHash.Resize.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MT_ENUMERATOR.cpp" />
+    <ClCompile Include="src\Runtime\InternalCalls.cpp" />
+    <ClCompile Include="src\Runtime\dllmain.cpp">
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Test-Debug|x64'">false</CompileAsManaged>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Test-Debug|x64'">
+      </PrecompiledHeader>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</CompileAsManaged>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Test-Release|x64'">false</CompileAsManaged>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Test-Release|x64'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\Mathematics\TrinityMath.cpp" />
+    <ClCompile Include="src\Memory\Memory.cpp" />
+    <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MTHash.Cell.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MTHash.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MTHash.DiskIO.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MTHash.ThreadSafe.cpp" />
+    <ClCompile Include="src\Trinity\Configuration\TrinityConfig.cpp" />
+    <ClCompile Include="src\Trinity\Diagnostics\Log.cpp" />
+    <ClCompile Include="src\Utility\FileIO.cpp" />
+    <ClCompile Include="src\Utility\HashHelper.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Trinity.C.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="include\collections" />
+    <None Include="include\corelib" />
+    <None Include="include\diagnostics" />
+    <None Include="include\io" />
+    <None Include="include\threading" />
+    <None Include="include\utilities" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
+  </ImportGroup>
+</Project>

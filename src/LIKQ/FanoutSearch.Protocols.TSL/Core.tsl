@@ -1,0 +1,98 @@
+// Graph Engine
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+//
+//////////////////////////////////////////////////////////////////////
+//  For core query execution
+struct FanoutQueryMessage
+{
+    byte               maxHop;
+    List<CellId>       origin;
+    string             originQuery;
+    List<string>       predicates;
+	List<List<string>> edge_types;
+    List<List<string>> return_selection;
+    int                skip_count;
+    int                take_count;
+}
+
+struct FanoutAggregationMessage
+{
+	List<FanoutPathDescriptor> results;
+	int transaction_id;
+    int packaged_message_cnt;//set to >1 when we pack multiple result messages
+}
+
+struct QueryInitializationMessage
+{
+    FanoutQueryMessage message;
+	int transaction_id;
+    int aggregate_server_id;
+}
+
+struct FanoutPathDescriptor
+{
+    long hop_0;
+	optional long hop_1;
+	optional long hop_2;
+	optional long hop_3;
+	optional List<long> hop_n;
+}
+
+struct TransactionIdMessage
+{
+    int transaction_id;	
+}
+
+struct FanoutSearchMessagePackage
+{
+	int hop;
+	int transaction_id;
+	List<FanoutPathDescriptor> paths;
+}
+
+protocol FanoutSearchQuery
+{
+	Type:Syn;//This message blocks till the server has responsed the quest.
+	Request:FanoutQueryMessage;
+	Response:FanoutResultMessage;
+}
+
+protocol QueryInitialization
+{
+    Type:Syn;
+    Request:QueryInitializationMessage;
+	Response:void;
+}
+
+protocol AggregateResult
+{
+	Type:Asyn;
+	Request:FanoutAggregationMessage;
+}
+
+protocol IntermediateResult
+{
+	Type:Syn;
+	Request:FanoutAggregationMessage;
+    Response:void;
+}
+
+protocol FanoutSearch_impl
+{
+	Type:Asyn;
+	Request:FanoutSearchMessagePackage;
+}
+
+protocol GetTransactionId
+{
+    Type:Syn;
+    Request:void;
+    Response:TransactionIdMessage;	
+}
+
+protocol QueryUninitialization
+{
+    Type:Asyn;
+    Request:TransactionIdMessage;
+}

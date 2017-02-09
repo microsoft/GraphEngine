@@ -1,0 +1,56 @@
+// Graph Engine
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+//
+TrinitySettings
+{
+	RootNamespace: Trinity.Extension.DistributedHashtable;
+}
+
+struct KVPair
+{
+    string Key;
+    string Value;
+}
+
+cell struct BucketCell
+{
+	List<KVPair> KVList;
+}
+
+struct SetMessage
+{
+    string Key;
+	string Value;
+}
+
+struct GetMessage
+{
+    string Key;
+}
+
+struct GetResponse
+{
+    bool IsFound;
+    string Value;
+}
+
+protocol Set
+{
+    Type:Syn;
+	Request:SetMessage;
+	Response:void;
+}
+
+protocol Get
+{
+    Type:Syn;
+    Request:GetMessage;
+    Response:GetResponse;
+}
+
+server DistributedHashtableServer
+{
+    protocol Set;
+    protocol Get;
+}

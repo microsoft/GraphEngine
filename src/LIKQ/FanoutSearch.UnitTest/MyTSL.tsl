@@ -1,0 +1,16 @@
+// Graph Engine
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+//
+TrinitySettings {
+    RootNamespace: FanoutSearch.Test.TSL;	
+}
+
+cell struct MyCell
+{
+    [GraphEdge]
+	List<long> edges;
+
+	optional float f1;
+	optional List<float> f2;
+}

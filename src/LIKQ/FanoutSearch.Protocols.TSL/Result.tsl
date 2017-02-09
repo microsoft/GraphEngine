@@ -1,0 +1,73 @@
+// Graph Engine
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+//
+//////////////////////////////////////////////////////////////////////
+//  For query results
+struct NodeDescriptor
+{
+    long id;
+    optional List<string> field_selections;
+}
+
+struct ResultPathDescriptor
+{
+	List<NodeDescriptor> nodes;
+}
+
+struct FanoutResultMessage
+{
+    List<ResultPathDescriptor> paths;
+    List<string> metadata_keys;
+	List<string> metadata_values;
+    int transaction_id;
+}
+
+struct EdgeStruct
+{
+    long from;
+	long to;
+}
+
+struct StringStruct
+{
+    string queryString;	
+}
+
+struct GetNodesInfoRequest
+{
+    List<long> ids;	
+    List<string> fields;
+    optional List<long> secondary_ids;
+}
+
+struct NodeInfo
+{
+    long id;
+    List<string> values;
+}
+
+struct GetNodesInfoResponse
+{
+    List<NodeInfo> infoList;
+}
+
+struct ExternalQueryResponse
+{
+    string result;
+}
+
+protocol GetEdgeType
+{
+    Type:Syn;
+    Request:EdgeStruct;
+    Response:StringStruct;	
+}
+
+protocol _GetNodesInfo_impl
+{
+    Type:Syn;
+    Request:GetNodesInfoRequest;
+    Response:GetNodesInfoResponse;
+}
+
