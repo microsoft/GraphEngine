@@ -9,6 +9,7 @@
 #include <Mstcpip.h>
 #include "Network/SocketOptionsHelper.h"
 #include "Trinity/Hash/NonCryptographicHash.h"
+#include "Trinity/Configuration/TrinityConfig.h"
 #include "Network/ProtocolConstants.h"
 
 
@@ -208,6 +209,7 @@ namespace Trinity
 
                 // post the first async receive
                 ReceiveAsync(pContext, true);
+
             }
         }
     }

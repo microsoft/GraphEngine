@@ -115,9 +115,22 @@ namespace Storage
 
     void MemoryTrunk::EmptyCommittedMemory(bool takeMTHashLock)
     {
+        TrinityErrorCode err = TrinityErrorCode::E_SUCCESS;
         Trinity::Diagnostics::WriteLine(LogLevel::Verbose, "MemoryTrunk: EmptyCommittedMemory on memory trunk #{0}.", TrunkId);
+
         if (takeMTHashLock)
-            hashtable->Lock();
+            err = hashtable->Lock();
+
+        /*! The assertion is true because:
+         *  1. When this function is called by GC thread,
+         *     it cannot hold any cell locks.
+         *  2. When this function is called by a normal thread,
+         *     if it holds a lock, it means that there's at least
+         *     one cell remaining in the memory trunk, but this
+         *     function is only called when there's nothing left
+         *     in the trunk. Contradict.
+         */
+        assert(err == TrinityErrorCode::E_SUCCESS);
 
         HeadGroup HeadGroupShadow;
         uint32_t CommittedTailShadow;

@@ -13,6 +13,8 @@ namespace Trinity.Network.Messaging
 {
     /// <summary>
     /// Represents a binary network response.
+    /// Each TrinityResponse consists of an error code (4 bytes)
+    /// and a payload.
     /// </summary>
     public unsafe sealed class TrinityResponse : IDisposable
     {
@@ -37,7 +39,7 @@ namespace Trinity.Network.Messaging
         {
             Buffer = (byte*)CMemory.malloc((ulong)size);
             Size = size;
-            Offset = TrinityProtocol.SocketMsgHeader;
+            Offset = TrinityProtocol.TrinityMsgHeader;
         }
 
         internal TrinityErrorCode ErrorCode
@@ -53,11 +55,12 @@ namespace Trinity.Network.Messaging
         {
             Buffer = buf;
             Size = size;
-            Offset = TrinityProtocol.SocketMsgHeader;
+            Offset = TrinityProtocol.TrinityMsgHeader;
         }
 
         internal TrinityResponse(TrinityMessage msg)
         {
+            // !Note, in this case ErrorCode does not work.
             Buffer = msg.Buffer;
             Offset = TrinityMessage.Offset;
             Size = msg.Size;

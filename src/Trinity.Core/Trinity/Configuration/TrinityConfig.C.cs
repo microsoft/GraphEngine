@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
@@ -57,6 +58,23 @@ namespace Trinity
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal static extern void CSetGCDefragInterval(int value);
-        
+
+        [DllImport("Trinity.C.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+        internal static extern unsafe void CLogInitializeLogger(string logDir);
+
+        [DllImport("Trinity.C.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+        internal static extern void CLogSetLogLevel(LogLevel level);
+
+        [DllImport("Trinity.C.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+        internal static extern void CLogSetEchoOnConsole(bool is_set);
+
+        [DllImport("Trinity.C.dll")]
+        internal static extern bool CHandshake();
+        [DllImport("Trinity.C.dll")]
+        internal static extern void CSetHandshake(bool handshake);
+        [DllImport("Trinity.C.dll")]
+        internal static extern bool CClientDisableSendBuffer();
+        [DllImport("Trinity.C.dll")]
+        internal static extern void CSetClientDisableSendBuffer(bool disable_sndbuffer);
     }
 }

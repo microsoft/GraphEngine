@@ -40,6 +40,14 @@ namespace Trinity.Network.Messaging
             this.ExceptionObject = exception;
         }
 
+        internal unsafe MessagingUnhandledExceptionEventArgs(AsynReqRspArgs reqArgs, Exception exception)
+        {
+            this.Buffer = reqArgs.Buffer;
+            this.Offset = reqArgs.Offset;
+            this.Size   = reqArgs.Size;
+            this.ExceptionObject = exception;
+        }
+
         internal unsafe MessagingUnhandledExceptionEventArgs(SynReqRspArgs reqArgs, Exception exception)
         {
             this.Buffer = reqArgs.Buffer;

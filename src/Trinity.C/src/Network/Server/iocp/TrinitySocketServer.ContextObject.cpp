@@ -7,6 +7,7 @@
 
 #include "TrinitySocketServer.h"
 #include <Trinity/Environment.h>
+#include "Trinity/Configuration/TrinityConfig.h"
 #include <Mstcpip.h>
 
 namespace Trinity
@@ -32,7 +33,7 @@ namespace Trinity
         void FreePerSocketContextObject(PerSocketContextObject* p)
         {
             FreeOverlappedOpStruct(p->pOverlapped);
-            free(p->Message); 
+            free(p->Message);
             if (p->Message != p->RecvBuffer)
             {
                 free(p->RecvBuffer);
@@ -41,6 +42,7 @@ namespace Trinity
             free(p);
         }
 
+        /// Allocates a Per-socket context object(PSCO).
         /// The handshake protocol:
         /// Client sends handshake signature:
         /// [4B Len|SIGNATURE_BODY]
@@ -100,10 +102,10 @@ namespace Trinity
             pContext->wsaPrefixBuf.len = UInt32_Contants::MessagePrefixLength;
             pContext->wsaBodyBuf.buf = pContext->RecvBuffer;
             pContext->wsaBodyBuf.len = pContext->RecvBufferLen;
-            
+
             pContext->ReceivedPrefixBytes = 0;
             pContext->BytesAlreadySent = 0;
-            
+
             pContext->BodyLength = 0;
         }
 

@@ -80,7 +80,7 @@ namespace Trinity.Storage
 
                             for (int i = 0; i < TrinityConfig.Proxies.Count; i++)
                             {
-                                foreach (var instance in TrinityConfig.Proxies[i].ServerInstances)
+                                foreach (var instance in TrinityConfig.Proxies[i].Instances)
                                 {
                                     new_proxy_list.Add(new RemoteStorage(instance.EndPoint, TrinityConfig.ClientMaxConn));
                                 }
@@ -175,6 +175,27 @@ namespace Trinity.Storage
         public void SendMessageToProxy(int proxyId, byte* buffer, int size, out TrinityResponse response)
         {
             GetProxy(proxyId).SendMessage(buffer, size, out response);
+        }
+
+
+        public void SendMessageToServer(int serverId, byte** buffers, int* sizes, int count)
+        {
+            StorageTable[serverId].SendMessage(buffers, sizes, count);
+        }
+
+        public void SendMessageToServer(int serverId, byte** buffers, int* sizes, int count, out TrinityResponse response)
+        {
+            StorageTable[serverId].SendMessage(buffers, sizes, count, out response);
+        }
+
+        public void SendMessageToProxy(int proxyId, byte** buffers, int* sizes, int count)
+        {
+            GetProxy(proxyId).SendMessage(buffers, sizes, count);
+        }
+
+        public void SendMessageToProxy(int proxyId, byte** buffers, int* sizes, int count, out TrinityResponse response)
+        {
+            GetProxy(proxyId).SendMessage(buffers, sizes, count, out response);
         }
         #endregion
     }

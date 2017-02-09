@@ -11,172 +11,148 @@ using namespace Storage::LocalMemoryStorage::Logging;
 
 namespace Storage
 {
-
-    void MTHash::MarkTrunkDirty()
+    CELL_ATOMIC TrinityErrorCode MTHash::RemoveCell(IN cellid_t cellId)
     {
-        _mm_stream_si32(&LocalMemoryStorage::dirty_flags[memory_trunk->TrunkId], 1);
+        return _Lookup_LockEntry_Or_NotFound(cellId,
+        [this](const int32_t entry_index, const uint32_t bucket_index, const int32_t previous_entry_index)
+        {
+            ReleaseBucketLock(bucket_index);
+            int32_t offset = CellEntries[entry_index].offset;
+            std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
+            (CellEntryAtomicPtr + entry_index)->store(-1, std::memory_order_relaxed);
+
+            if (previous_entry_index < 0)
+            {
+                Buckets[bucket_index] = MTEntries[entry_index].NextEntry;
+            }
+            else
+            {
+                MTEntries[previous_entry_index].NextEntry = MTEntries[entry_index].NextEntry;
+            }
+
+            FreeEntry(entry_index);
+            ReleaseEntryLock(entry_index);
+
+            if (offset < 0)
+            {
+                memory_trunk->lo_lock.lock();
+                memory_trunk->DisposeLargeObject(-offset);
+                memory_trunk->lo_lock.unlock();
+            }
+            else
+            {
+                MarkTrunkDirty();
+            }
+
+            return TrinityErrorCode::E_SUCCESS;
+        },
+        [this](const uint32_t bucket_index) 
+        {
+            ReleaseBucketLock(bucket_index);
+            return TrinityErrorCode::E_CELL_NOT_FOUND; 
+        });
     }
 
-    CELL_ATOMIC TrinityErrorCode MTHash::RemoveCell(cellid_t cellId)
+    CELL_ATOMIC TrinityErrorCode MTHash::RemoveCell(IN cellid_t cellId, IN CellAccessOptions options)
     {
-        uint32_t bucket_index = GetBucketIndex(cellId);
-        int32_t previous_entry_index = -1;
-        int32_t offset = INT32_MAX;
-
-        GetBucketLock(bucket_index);
-        TrinityErrorCode eResult = TrinityErrorCode::E_CELL_NOT_FOUND;
-        for (int32_t entry_index = Buckets[bucket_index]; entry_index >= 0; entry_index = MTEntries[entry_index].NextEntry)
+        return _Lookup_LockEntry_Or_NotFound(cellId,
+        [this, 
+        //OUT params
+        &cellId, &options](const int32_t entry_index, const uint32_t bucket_index, const int32_t previous_entry_index)
         {
-            if (MTEntries[entry_index].Key == cellId)
+            ReleaseBucketLock(bucket_index);
+            int32_t  offset = CellEntries[entry_index].offset;
+            std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
+            (CellEntryAtomicPtr + entry_index)->store(-1, std::memory_order_relaxed);
+
+            if (previous_entry_index < 0)
             {
-                GetEntryLock(entry_index);
-                offset = CellEntries[entry_index].offset;
-                std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
-                (CellEntryAtomicPtr + entry_index)->store(-1, std::memory_order_relaxed);
-
-                if (previous_entry_index < 0)
-                {
-                    Buckets[bucket_index] = MTEntries[entry_index].NextEntry;
-                }
-                else
-                {
-                    MTEntries[previous_entry_index].NextEntry = MTEntries[entry_index].NextEntry;
-                }
-
-                FreeEntry(entry_index);
-                ReleaseEntryLock(entry_index);
-                eResult = TrinityErrorCode::E_SUCCESS;
-
-                if (offset < 0)
-                {
-                    memory_trunk->lo_lock.lock();
-                    memory_trunk->DisposeLargeObject(-offset);
-                    memory_trunk->lo_lock.unlock();
-                }
-                else
-                {
-                    MarkTrunkDirty();
-                }
-
-                break;
+                Buckets[bucket_index] = MTEntries[entry_index].NextEntry;
             }
-            previous_entry_index = entry_index;
-        }
-        ReleaseBucketLock(bucket_index);
+            else
+            {
+                MTEntries[previous_entry_index].NextEntry = MTEntries[entry_index].NextEntry;
+            }
 
-        return eResult;
+            FreeEntry(entry_index);
+            WriteAheadLog(cellId, nullptr, -1, -1, options);
+            ReleaseEntryLock(entry_index);
+
+            if (offset < 0)
+            {
+                memory_trunk->lo_lock.lock();
+                memory_trunk->DisposeLargeObject(-offset);
+                memory_trunk->lo_lock.unlock();
+            }
+            else
+            {
+                MarkTrunkDirty();
+            }
+
+            return TrinityErrorCode::E_SUCCESS;
+        },
+        [this](const uint32_t bucket_index) 
+        {
+            ReleaseBucketLock(bucket_index);
+            return TrinityErrorCode::E_CELL_NOT_FOUND; 
+        });
     }
 
-    CELL_ATOMIC TrinityErrorCode MTHash::RemoveCell(cellid_t cellId, CellAccessOptions options)
+    TrinityErrorCode MTHash::ContainsKey(IN cellid_t key)
     {
-        uint32_t bucket_index = GetBucketIndex(cellId);
-        int32_t previous_entry_index = -1;
-        int32_t offset = INT32_MAX;
-
-        GetBucketLock(bucket_index);
-        TrinityErrorCode eResult = TrinityErrorCode::E_CELL_NOT_FOUND;
-        for (int32_t entry_index = Buckets[bucket_index]; entry_index >= 0; entry_index = MTEntries[entry_index].NextEntry)
-        {
-            if (MTEntries[entry_index].Key == cellId)
-            {
-                GetEntryLock(entry_index);
-                offset = CellEntries[entry_index].offset;
-                std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
-                (CellEntryAtomicPtr + entry_index)->store(-1, std::memory_order_relaxed);
-
-                if (previous_entry_index < 0)
-                {
-                    Buckets[bucket_index] = MTEntries[entry_index].NextEntry;
-                }
-                else
-                {
-                    MTEntries[previous_entry_index].NextEntry = MTEntries[entry_index].NextEntry;
-                }
-
-                FreeEntry(entry_index);
-
-                WriteAheadLog(cellId, nullptr, -1, -1, options);
-
-                ReleaseEntryLock(entry_index);
-                eResult = TrinityErrorCode::E_SUCCESS;
-
-                if (offset < 0)
-                {
-                    memory_trunk->lo_lock.lock();
-                    memory_trunk->DisposeLargeObject(-offset);
-                    memory_trunk->lo_lock.unlock();
-                }
-                else
-                {
-                    MarkTrunkDirty();
-                }
-
-                break;
-            }
-            previous_entry_index = entry_index;
-        }
-        ReleaseBucketLock(bucket_index);
-
-        return eResult;
-    }
-
-    bool MTHash::ContainsKey(cellid_t key)
-    {
-        uint32_t bucket_index = GetBucketIndex(key);
-        GetBucketLock(bucket_index);
-        for (int32_t entry_index = Buckets[bucket_index]; entry_index >= 0; entry_index = MTEntries[entry_index].NextEntry)
-        {
-            if (MTEntries[entry_index].Key == key)
-            {
-                ReleaseBucketLock(bucket_index);
-                return true;
-            }
-        }
-        ReleaseBucketLock(bucket_index);
-        return false;
+        return _Lookup_NoLockEntry_Or_NotFound(key,
+        [this](const int32_t entry_index, const uint32_t bucket_index, const int32_t _){
+            ReleaseBucketLock(bucket_index);
+            return TrinityErrorCode::E_CELL_FOUND;
+        },
+        [this](const uint32_t bucket_index){
+            ReleaseBucketLock(bucket_index);
+            return TrinityErrorCode::E_CELL_NOT_FOUND;
+        } );
     }
 
     CELL_ATOMIC TrinityErrorCode MTHash::GetCellType(IN cellid_t cellId, OUT uint16_t &cellType)
     {
-        uint32_t bucket_index = GetBucketIndex(cellId);
-        GetBucketLock(bucket_index);
-        for (int32_t entry_index = Buckets[bucket_index]; entry_index >= 0; entry_index = MTEntries[entry_index].NextEntry)
+        return _Lookup_LockEntry_Or_NotFound(cellId,
+        [this, 
+        //OUT params
+        &cellType](const int32_t entry_index, const uint32_t bucket_index, const int32_t _)
         {
-            if (MTEntries[entry_index].Key == cellId)
-            {
-                GetEntryLock(entry_index);
-                ReleaseBucketLock(bucket_index);
-
-                // output
-                if (CellTypeEnabled)
-                    cellType = MTEntries[entry_index].CellType;
-                /////////////////////////////////////
-
-                ReleaseEntryLock(entry_index);
-                return TrinityErrorCode::E_SUCCESS;
-            }
-        }
-        ReleaseBucketLock(bucket_index);
-        return TrinityErrorCode::E_CELL_NOT_FOUND;
+            ReleaseBucketLock(bucket_index);
+            // output
+            if (CellTypeEnabled)
+                cellType = MTEntries[entry_index].CellType;
+            /////////////////////////////////////
+            ReleaseEntryLock(entry_index);
+            return TrinityErrorCode::E_SUCCESS;
+        },
+        [this](const uint32_t bucket_index) 
+        {
+            ReleaseBucketLock(bucket_index);
+            return TrinityErrorCode::E_CELL_NOT_FOUND; 
+        });
     }
 
-    int32_t MTHash::GetCellSize(cellid_t key)
+    TrinityErrorCode MTHash::GetCellSize(cellid_t key, OUT int32_t &size)
     {
-        uint32_t bucket_index = GetBucketIndex(key);
-        GetBucketLock(bucket_index);
-        for (int32_t entry_index = Buckets[bucket_index]; entry_index >= 0; entry_index = MTEntries[entry_index].NextEntry)
+        return _Lookup_LockEntry_Or_NotFound(key,
+        [this, 
+        //OUT params
+        &size](const int32_t entry_index, const uint32_t bucket_index, const int32_t _)
         {
-            if (MTEntries[entry_index].Key == key)
-            {
-                GetEntryLock(entry_index);
-                ReleaseBucketLock(bucket_index);
-                int32_t size = CellSize(entry_index);
-                ReleaseEntryLock(entry_index);
-                return size;
-            }
-        }
-        ReleaseBucketLock(bucket_index);
-        return -1;
+            ReleaseBucketLock(bucket_index);
+            size = CellSize(entry_index);
+            ReleaseEntryLock(entry_index);
+            return TrinityErrorCode::E_CELL_FOUND;
+        },
+        [this,
+        //OUT params
+        &size](const uint32_t bucket_index) 
+        {
+            ReleaseBucketLock(bucket_index);
+            size = -1;
+            return TrinityErrorCode::E_CELL_NOT_FOUND;
+        });
     }
 
     // List

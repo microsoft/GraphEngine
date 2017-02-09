@@ -81,14 +81,22 @@ namespace Trinity.Utilities
         /// <returns>The completed directory path.</returns>
         public static string CompletePath(string path, bool create_nonexistent = true)
         {
-            string _path = path;
-            if (path[path.Length - 1] != Path.DirectorySeparatorChar)
-                _path = path + Path.DirectorySeparatorChar;
-            if (create_nonexistent && (!Directory.Exists(_path)))
+          try
             {
-                Directory.CreateDirectory(_path);
+                string _path = path;
+                if (path[path.Length - 1] != Path.DirectorySeparatorChar)
+                    _path = path + Path.DirectorySeparatorChar;
+                if (create_nonexistent && (!Directory.Exists(_path)))
+                {
+                    Directory.CreateDirectory(_path);
+                }
+                return _path;
             }
-            return _path;
+            catch(Exception e)
+            {
+                return e.Message;
+            }
+
         }
 
         internal static List<string> GetAllFilesRecursively(string folder)

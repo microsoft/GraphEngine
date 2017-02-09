@@ -9,6 +9,7 @@
 #include "Network/SocketOptionsHelper.h"
 #include <thread>
 #include "Trinity/Hash/NonCryptographicHash.h"
+#include "Trinity/Configuration/TrinityConfig.h"
 #include "Network/ProtocolConstants.h"
 
 namespace Trinity
@@ -29,7 +30,7 @@ namespace Trinity
             }
 
             // The client side already have heartbeat packages. Don't enable keepalive messages.
-            return SetSocketOptions(clientsocket, /*enable_keepalive:*/ false, /*disable_sendbuf:*/false);
+            return SetSocketOptions(clientsocket, /*enable_keepalive:*/ false, /*disable_sendbuf:*/TrinityConfig::ClientDisableSendBuffer());
         }
 
         bool ClientSocketHandshake(uint64_t clientsocket)
@@ -73,8 +74,15 @@ namespace Trinity
                 closesocket((SOCKET)clientsocket);
                 return false;
             }
-
-            return ClientSocketHandshake(clientsocket);
+            
+            if (TrinityConfig::Handshake())
+            {
+                return ClientSocketHandshake(clientsocket);
+            }
+            else
+            {
+                return true;
+            }
         }
 
         bool ClientSend(uint64_t socket, char* buf, int32_t len)
@@ -98,6 +106,50 @@ namespace Trinity
                 buf += bytesSent;
                 len -= bytesSent;
             } while (len > 0);
+            return true;
+        }
+
+        bool ClientSendMulti(uint64_t socket, char** bufs, int32_t* lens, int32_t cnt)
+        {
+            WSABUF* lpBuffers = (WSABUF*)_alloca(sizeof(WSABUF) * cnt);
+            int32_t total_len = 0;
+            DWORD   bytesSent;
+            for (int i=0; i < cnt; ++i)
+            {
+                lpBuffers[i].buf = bufs[i];
+                lpBuffers[i].len = lens[i];
+                total_len += lens[i];
+            }
+            do
+            {
+                int eResult = WSASend((SOCKET)socket, lpBuffers, cnt, &bytesSent,
+                    /*flags, completion object, completion routine*/0, NULL, NULL);
+
+                if (SOCKET_ERROR == eResult)
+                {
+                    int error_code = WSAGetLastError();
+                    Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Errors occur during network send: {0} bytes to send. Error code = {1}, Thread Id = {2}", total_len, error_code, std::this_thread::get_id() );
+
+                    if (INVALID_SOCKET == socket)
+                    {
+                        Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Provided socket for send is invalid.");
+                    }
+
+                    closesocket((SOCKET)socket);
+                    return false;
+                }
+                total_len -= bytesSent;
+                // skip sent lpBuffers
+                while (bytesSent >= lpBuffers->len)
+                {
+                    bytesSent -= lpBuffers->len;
+                    ++lpBuffers;
+                    --cnt;
+                }
+                // adjust current lpBuffer
+                lpBuffers->buf += bytesSent;
+                lpBuffers->len -= bytesSent;
+            } while (total_len > 0);
             return true;
         }
 

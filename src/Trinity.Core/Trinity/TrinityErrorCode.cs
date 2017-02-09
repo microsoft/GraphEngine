@@ -17,8 +17,20 @@ namespace Trinity
     {
         /// <summary>
         /// Indicates that the network subsystem has shut down.
+        E_NETWORK_SHUTDOWN      = -17,        
         /// </summary>
-        E_NETWORK_SHUTDOWN      = -14,
+        /// <summary>
+        /// Indicates too many recursive cell locks, leading to overflow.
+        /// </summary>
+        E_CELL_LOCK_OVERFLOW    = -16,
+        /// <summary>
+        /// Indicates a timeout.
+        /// </summary>
+        E_TIMEOUT               = -15,
+        /// <summary>
+        /// Indicates deadlocks. 
+        /// </summary>
+        E_DEADLOCK              = -14,
         /// <summary>
         /// Indicates a remote message handler exception.
         /// </summary>

@@ -19,6 +19,7 @@ namespace Trinity
         bool ClientSocketConnect(uint64_t clientsocket, uint32_t ip, uint16_t port);
         //uint64_t CreateClientSocketAndConnect(uint32_t ip, uint16_t port);
         bool ClientSend(uint64_t socket, char* buf, int32_t len);
+        bool ClientSendMulti(uint64_t socket, char** bufs, int32_t* lens, int32_t cnt);
         TrinityErrorCode ClientReceive(uint64_t socket, char* & buf, int32_t & len);
         TrinityErrorCode WaitForAckPackage(uint64_t socket);
         void CloseClientSocket(uint64_t socket);

@@ -4,8 +4,12 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Net;
+using System.Xml.Linq;
+using System.Linq;
+using Trinity.Configuration;
 using Trinity.Network;
 
 namespace Trinity
@@ -17,27 +21,26 @@ namespace Trinity
 
     public static partial class TrinityConfig
     {
-        static ClusterConfig current_cluster_config;
+        private static ClusterConfig                      s_current_cluster_config = new ClusterConfig();
+        private static Dictionary<string, ClusterConfig>  s_clusterConfigurations  = new Dictionary<string, ClusterConfig>();
 
-        internal static ClusterConfig CurrentClusterConfig
+        /// <summary>
+        /// Represents the configuration settings for Global.CloudStorage.
+        /// </summary>
+        public static ClusterConfig CurrentClusterConfig
         {
             get
             {
-                if (current_cluster_config == null)
-                {
-                    lock (config_load_lock)
-                    {
-                        if (current_cluster_config == null)
-                        {
-                            if (!File.Exists(DefaultConfigFile))
-                                current_cluster_config = new ClusterConfig(DefaultConfigFile);
-                            else
-                                current_cluster_config = new ClusterConfig();
-                        }
-                    }
-                }
-                return current_cluster_config;
+                return s_current_cluster_config;
             }
+        }
+
+        /// <summary>
+        /// Represents the configuration settings for clusters defined in a configuration file.
+        /// </summary>
+        public static IReadOnlyDictionary<string, ClusterConfig> ClusterConfigurations
+        {
+            get { return s_clusterConfigurations; }
         }
 
         /// <summary>
@@ -74,7 +77,7 @@ namespace Trinity
         }
 
         /// <summary>
-        /// GEts all the proxy instances.
+        /// Gets all the proxy instances.
         /// </summary>
         public static List<ServerInfo> AllProxyInstances
         {
@@ -112,7 +115,6 @@ namespace Trinity
         internal static int BackgroundSendingInterval = 10; //ms
         internal static int HeartbeatInterval = 1000; //ms
         internal static int MaxSocketReconnectNum = 8;
-        internal static int client_max_conn = 2;
 
         /// <summary>
         /// Indicates the number of network connections a Trinity client can connect to a Trinity server at most.
@@ -121,20 +123,18 @@ namespace Trinity
         {
             get
             {
-                return client_max_conn;
+                return NetworkConfig.Instance.ClientMaxConn;
             }
             set
             {
-                client_max_conn = value;
+                NetworkConfig.Instance.ClientMaxConn = value;
             }
         }
 
         //Protocol Settings
-        internal const int InvalidPort = -1;
+        internal const  int InvalidPort = -1;
         internal static int DefaultServerPort = 5304;
         internal static int DefaultProxyPort = 7304;
-        internal static int s_HttpPort = 80;
-
         internal static int ListeningPort
         {
             get
@@ -144,7 +144,7 @@ namespace Trinity
         }
 
         /// <summary>
-        /// Adds a Trinity server.
+        /// Adds a Trinity server to the current cluster configuration.
         /// </summary>
         /// <param name="serverInfo">A <see cref="T:Trinity.Network.ServerInfo"/> instance.</param>
         public static void AddServer(ServerInfo serverInfo)
@@ -154,7 +154,7 @@ namespace Trinity
             {
                 if (Servers[i].Id == serverInfo.Id)
                 {
-                    Servers[i].ServerInstances.Add(serverInfo);
+                    Servers[i].Instances.Add(serverInfo);
                     found = true;
                     break;
                 }
@@ -167,7 +167,7 @@ namespace Trinity
         }
 
         /// <summary>
-        /// Adds a Trinity proxy.
+        /// Adds a Trinity proxy to the current cluster configuration.
         /// </summary>
         /// <param name="proxy">A <see cref="Trinity.Network.ServerInfo"/> instance that represent a proxy.</param>
         public static void AddProxy(ServerInfo proxy)
@@ -177,7 +177,7 @@ namespace Trinity
             {
                 if (Proxies[i].Id == proxy.Id)
                 {
-                    Proxies[i].ServerInstances.Add(proxy);
+                    Proxies[i].Instances.Add(proxy);
                     found = true;
                     break;
                 }
@@ -192,6 +192,7 @@ namespace Trinity
         /// <summary>
         /// The network port of the current Trinity server.
         /// </summary>
+        [Obsolete]
         public static int ServerPort
         {
             get
@@ -210,20 +211,20 @@ namespace Trinity
         /// </summary>
         public static int HttpPort
         {
-            //TODO not accessible in config file
             get
             {
-                return s_HttpPort;
+                return NetworkConfig.Instance.HttpPort;
             }
             set
             {
-                s_HttpPort = value;
+                NetworkConfig.Instance.HttpPort = value;
             }
         }
 
         /// <summary>
         /// The network port of the current Trinity proxy.
         /// </summary>
+        [Obsolete]
         public static int ProxyPort
         {
             get

@@ -321,6 +321,8 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClInclude Include="src\Runtime\Debug.h" />
     <ClInclude Include="src\Debugger\Debugger.h" />
     <ClInclude Include="src\Runtime\InternalCalls.h" />
+    <ClInclude Include="src\Storage\LocalStorage\ThreadContext.h" />
+    <ClInclude Include="src\Storage\MTHash\MT_SHADOW_ENUMERATOR.h" />
     <ClInclude Include="src\Trinity\Diagnostics\LogAutoFlushTask.h" />
     <ClInclude Include="src\Runtime\Transition.h" />
     <ClInclude Include="src\Mathematics\TrinityMath.h" />
@@ -363,6 +365,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.cpp" />
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.Enumeration.cpp" />
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.WriteAheadLog.cpp" />
+    <ClCompile Include="src\Storage\LocalStorage\ThreadContext.cpp" />
     <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.AddressTable.cpp" />
     <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.Cell.Memory.cpp" />
     <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.Defragmentation.cpp" />
@@ -375,6 +378,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClCompile Include="src\Storage\MTHash\MTHash.lock.cpp" />
     <ClCompile Include="src\Storage\MTHash\MTHash.Resize.cpp" />
     <ClCompile Include="src\Storage\MTHash\MT_ENUMERATOR.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MT_SHADOW_ENUMERATOR.cpp" />
     <ClCompile Include="src\Runtime\InternalCalls.cpp" />
     <ClCompile Include="src\Runtime\dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>

@@ -21,11 +21,11 @@ namespace FanoutSearch
 
         private IEnumerable<string> _GetEdgeType(ICellAccessor cell, long to)
         {
-            foreach (var field in cell.SelectFields<List<long>>("GraphEdge"))
+                foreach(var fd in cell.GetFieldDescriptors())
             {
-                if (field.Value.Contains(to))
+                    if (fd.Attributes.ContainsKey("GraphEdge") && cell.EnumerateField<long>(fd.Name).Contains(to))
                 {
-                    yield return field.Key;
+                        yield return fd.Name;
                 }
             }
         }

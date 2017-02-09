@@ -78,7 +78,7 @@ namespace Trinity.Network.Messaging
         }
 
         /// <summary>
-        /// Allocate a TrinityMessage whose buffer length is the specified size
+        /// Allocate a TrinityMessage whose buffer length is the specified size, including SocketMsgHeader
         /// </summary>
         /// <param name="size">Message buffer length</param>
         internal unsafe TrinityMessage(int size)

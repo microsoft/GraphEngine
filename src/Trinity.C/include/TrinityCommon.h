@@ -22,7 +22,10 @@ typedef int64_t cellid_t;
 
 enum TrinityErrorCode : int32_t
 {
-    E_NETWORK_SHUTDOWN      = -14,
+    E_NETWORK_SHUTDOWN      = -17,
+    E_CELL_LOCK_OVERFLOW    = -16,
+    E_TIMEOUT               = -15,
+    E_DEADLOCK              = -14, //For example, if the thread calling SaveStorage() still holds a lock.
     E_RPC_EXCEPTION         = -13,
     E_NOMEM                 = -12,
     E_NETWORK_RECV_FAILURE  = -11,

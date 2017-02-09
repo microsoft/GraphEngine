@@ -39,64 +39,57 @@ namespace Trinity.Storage
             }
         }
 
-        internal override void SendMessage(TrinityMessage msg)
+        /// <summary>
+        /// Get a SynClient and apply the function. Intended for SendMessage calls.
+        /// Will retry if the function returns neither E_SUCCESS nor E_RPC_EXCEPTION.
+        /// </summary>
+        private void _use_synclient(Func<SynClient, TrinityErrorCode> func)
         {
             TrinityErrorCode err = TrinityErrorCode.E_SUCCESS;
-            for (int i = 0; i < retry; i++)
+            for (int i = 0; i < m_send_retry; i++)
             {
                 SynClient sc = GetClient();
-                err = sc.SendMessage(msg.Buffer, msg.Size);
+                err = func(sc);
                 PutBackClient(sc);
                 if (err == TrinityErrorCode.E_SUCCESS || err == TrinityErrorCode.E_RPC_EXCEPTION)
                     break;
             }
             _error_check(err);
+        }
+
+        internal override void SendMessage(TrinityMessage msg)
+        {
+            SendMessage(msg.Buffer, msg.Size);
         }
 
 
         internal override void SendMessage(TrinityMessage msg, out TrinityResponse response)
         {
-            response = null;
-            TrinityErrorCode err = TrinityErrorCode.E_SUCCESS;
-            for (int i = 0; i < retry; i++)
-            {
-                SynClient sc = GetClient();
-                err = sc.SendMessage(msg.Buffer, msg.Size, out response);
-                PutBackClient(sc);
-                if (err == TrinityErrorCode.E_SUCCESS || err == TrinityErrorCode.E_RPC_EXCEPTION)
-                    break;
-            }
-
-            _error_check(err);
+            SendMessage(msg.Buffer, msg.Size, out response);
         }
 
         internal override void SendMessage(byte* message, int size)
         {
-            TrinityErrorCode err = TrinityErrorCode.E_SUCCESS;
-            for (int i = 0; i < retry; i++)
-            {
-                SynClient sc = GetClient();
-                err = sc.SendMessage(message, size);
-                PutBackClient(sc);
-                if (err == TrinityErrorCode.E_SUCCESS || err == TrinityErrorCode.E_RPC_EXCEPTION)
-                    break;
-            }
-            _error_check(err);
+            _use_synclient(sc => sc.SendMessage(message, size));
         }
 
         internal override void SendMessage(byte* message, int size, out TrinityResponse response)
         {
-            response = null;
-            TrinityErrorCode err = TrinityErrorCode.E_SUCCESS;
-            for (int i = 0; i < retry; i++)
-            {
-                SynClient sc = GetClient();
-                err = sc.SendMessage(message, size, out response);
-                PutBackClient(sc);
-                if (err == TrinityErrorCode.E_SUCCESS || err == TrinityErrorCode.E_RPC_EXCEPTION)
-                    break;
-            }
-            _error_check(err);
+            TrinityResponse _rsp = null;
+            _use_synclient(sc => sc.SendMessage(message, size, out _rsp));
+            response = _rsp;
+        }
+
+        internal override void SendMessage(byte** message, int* sizes, int count)
+        {
+            _use_synclient(sc => sc.SendMessage(message, sizes, count));
+        }
+
+        internal override void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
+        {
+            TrinityResponse _rsp = null;
+            _use_synclient(sc => sc.SendMessage(message, sizes, count, out _rsp));
+            response = _rsp;
         }
 
         internal void GetCommunicationSchema(out string name, out string signature)
@@ -113,7 +106,7 @@ namespace Trinity.Storage
             {
                 TrinityResponse response;
                 this.SendMessage(tm, out response);
-                SmartPointer sp     = SmartPointer.New(response.Buffer + response.Offset);
+                PointerHelper sp     = PointerHelper.New(response.Buffer + response.Offset);
                 int name_string_len = *sp.ip++;
                 name                = BitHelper.GetString(sp.bp, name_string_len * 2);
                 sp.cp              += name_string_len;
@@ -124,12 +117,12 @@ namespace Trinity.Storage
             }
         }
 
-        internal bool GetCommunicationModuleOffset(string moduleName, out ushort synReqOffset, out ushort synReqRspOffset, out ushort asynReqOffset)
+        internal bool GetCommunicationModuleOffset(string moduleName, out ushort synReqOffset, out ushort synReqRspOffset, out ushort asynReqOffset, out ushort asynReqRspOffset)
         {
             /******************
              * Comm. protocol:
              *  - REQUEST : [char_cnt, char[] moduleName]
-             *  - RESPONSE: [int synReqOffset, int synReqRspOffset, int asynReqOffset]
+             *  - RESPONSE: [int synReqOffset, int synReqRspOffset, int asynReqOffset, int asynReqRspOffset]
              * An response error code other than E_SUCCESS indicates failure of remote module lookup.
              ******************/
 
@@ -138,8 +131,8 @@ namespace Trinity.Storage
                 (ushort)RequestType.GetCommunicationModuleOffsets,
                 size: sizeof(int) + sizeof(char) * moduleName.Length))
             {
-                SmartPointer sp = SmartPointer.New(tm.Buffer + TrinityMessage.Offset);
-                *sp.ip++        = moduleName.Length;
+                PointerHelper sp = PointerHelper.New(tm.Buffer + TrinityMessage.Offset);
+                *sp.ip++         = moduleName.Length;
 
                 BitHelper.WriteString(moduleName, sp.bp);
                 TrinityResponse response;
@@ -149,10 +142,12 @@ namespace Trinity.Storage
                 int synReq_msg    = *sp.ip++;
                 int synReqRsp_msg = *sp.ip++;
                 int asynReq_msg   = *sp.ip++;
+                int asynReqRsp_msg= *sp.ip++;
 
                 synReqOffset      = (ushort)synReq_msg;
                 synReqRspOffset   = (ushort)synReqRsp_msg;
                 asynReqOffset     = (ushort)asynReq_msg;
+                asynReqRspOffset  = (ushort)asynReqRsp_msg;
 
                 return (response.ErrorCode == TrinityErrorCode.E_SUCCESS);
             }

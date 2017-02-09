@@ -21,3 +21,5 @@
 #define TRINITY_COMPILER_WARNING(msg) __pragma(message("Warning: "#msg))
 #define ALIGNED(x) __declspec(align(x))
 #define DLL_EXPORT extern "C" __declspec(dllexport)
+// note: The C++11 keyword threa_local is not available on VS2013.
+#define THREAD_LOCAL __declspec(thread)

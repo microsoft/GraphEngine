@@ -122,7 +122,10 @@ namespace Trinity.Storage
 
         bool System.Collections.IEnumerator.MoveNext()
         {
-            return (TrinityErrorCode.E_SUCCESS == CLocalMemoryStorage.CLocalMemoryStorageEnumeratorMoveNext(m_enumerator));
+            var eResult = CLocalMemoryStorage.CLocalMemoryStorageEnumeratorMoveNext(m_enumerator);
+
+            if (eResult == TrinityErrorCode.E_DEADLOCK) throw new DeadlockException();
+            else return (eResult == TrinityErrorCode.E_SUCCESS);
         }
 
         void System.Collections.IEnumerator.Reset()

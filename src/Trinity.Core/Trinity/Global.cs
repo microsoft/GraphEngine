@@ -54,7 +54,7 @@ namespace Trinity
             var schema_interface_type = typeof(ICommunicationSchema);
             var default_schema_type = typeof(DefaultCommunicationSchema);
             var comm_instance_base_type = schemaRunningMode == RunningMode.Server ? typeof(TrinityServer) : typeof(TrinityProxy);
-            var comm_instance_schema_attrs = from type in AppDomain.CurrentDomain.GetAssemblies().SelectMany(_ => _.GetTypes())
+            var comm_instance_schema_attrs = from type in AppDomain.CurrentDomain.GetAssemblies().SelectMany(_ => _GetTypes(_))
                                              where comm_instance_base_type.IsAssignableFrom(type)
                                              select type.GetCustomAttributes(typeof(CommunicationSchemaAttribute), inherit: true).FirstOrDefault() as CommunicationSchemaAttribute;
             var schema_instances = from schema_attr in comm_instance_schema_attrs
@@ -84,13 +84,13 @@ namespace Trinity
             IStorageSchema         _storage_schema             = null;
 
 
-            var provider_type = (from type in extension_assembly.GetTypes()
+            var provider_type = (from type in _GetTypes(extension_assembly)
                                  where type.IsClass && provider_interface_type.IsAssignableFrom(type) && type != default_provider_type
                                  select type).FirstOrDefault();
 
             if (provider_type == null) goto _return;
 
-            var schema_type = (from type in extension_assembly.GetTypes()
+            var schema_type = (from type in _GetTypes(extension_assembly)
                                where type.IsClass && schema_interface_type.IsAssignableFrom(type) && type != default_storage_schema_type
                                select type).FirstOrDefault();
 
@@ -150,6 +150,16 @@ namespace Trinity
             // AppDomain.CurrentDomain.GetAssemblies will contain the extension assembly.
             var all_loaded_assemblies = AppDomain.CurrentDomain.GetAssemblies();
             var assembly_attributes = all_loaded_assemblies.SelectMany(_ => _.GetCustomAttributes()).ToList();
+        }
+
+        private static IEnumerable<Type> _GetTypes(Assembly assembly)
+        {
+            try { return assembly.GetTypes(); }
+            catch (Exception ex)
+            {
+                Log.WriteLine(LogLevel.Debug, String.Format("AssemblyScan: failed to get types from assembly {0}: {1}", assembly.FullName, ex.ToString()));
+                return Enumerable.Empty<Type>();
+            }
         }
     }
 }

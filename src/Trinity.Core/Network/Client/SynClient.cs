@@ -21,6 +21,7 @@ using Trinity.Daemon;
 using Trinity.FaultTolerance;
 using System.Diagnostics;
 using System.Threading;
+using Trinity.Configuration;
 
 namespace Trinity.Network.Client
 {
@@ -30,6 +31,7 @@ namespace Trinity.Network.Client
         internal IPEndPoint ipe;
         internal bool sock_connected = false;
         internal int ServerId;
+        private int m_connect_retry = NetworkConfig.Instance.ClientReconnectRetry;
 
         bool disposed = false;
         static byte* HeartbeatBuffer;
@@ -47,7 +49,7 @@ namespace Trinity.Network.Client
         {
             this.ipe = dest_ipe;
 
-            DoConnect(TrinityConfig.MaxSocketReconnectNum);
+            DoConnect(TrinityConfig.MaxSocketReconnectNum);//TODO not configurable
             ServerId = -1;
         }
 

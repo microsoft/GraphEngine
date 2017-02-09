@@ -23,6 +23,7 @@ namespace Trinity.Storage
         private Func<string, string, ICell>      		                         m_NewGenericCell_string_string;
         private Func<LocalMemoryStorage, long, ICellAccessor>              		 m_UseGenericCell_long;
         private Func<LocalMemoryStorage, long, CellAccessOptions, ICellAccessor> m_UseGenericCell_long_CellAccessOptions;
+        private Func<LocalMemoryStorage, long, CellAccessOptions, string, ICellAccessor> m_UseGenericCell_long_CellAccessOptions_string;
         private Func<LocalMemoryStorage, IEnumerable<ICell>>                     m_EnumerateGenericCells;
         private Func<LocalMemoryStorage, IEnumerable<ICellAccessor>>             m_EnumerateGenericCellAccessors;
 
@@ -143,6 +144,21 @@ namespace Trinity.Storage
         }
 
         /// <summary>
+        /// Allocate a generic cell accessor on the specified cell.
+        /// If <c><see cref="Trinity.TrinityConfig.ReadOnly"/> == false</c>,
+        /// on calling this method, it attempts to acquire the lock of the cell,
+        /// and blocks until it gets the lock.
+        /// </summary>
+        /// <param name="cellId">The id of the specified cell.</param>
+        /// <param name="options">Cell access options.</param>
+        /// <param name="cellType">Specifies the type of cell to be created.</param>
+        /// <returns>A <see cref="Trinity.Storage.ICellAccessor"/> instance.</returns>
+        public ICellAccessor UseGenericCell(long cellId, CellAccessOptions options, string cellType)
+        {
+            return m_UseGenericCell_long_CellAccessOptions_string(this, cellId, options, cellType);
+        }
+
+        /// <summary>
         /// Enumerates all the typed cells within the local memory storage.
         /// The cells without a type (where CellType == 0) are skipped.
         /// </summary>
@@ -175,6 +191,7 @@ namespace Trinity.Storage
             m_NewGenericCell_string_string                 = operations.NewGenericCell;
             m_UseGenericCell_long                          = operations.UseGenericCell;
             m_UseGenericCell_long_CellAccessOptions        = operations.UseGenericCell;
+            m_UseGenericCell_long_CellAccessOptions_string = operations.UseGenericCell;
             m_EnumerateGenericCells                        = operations.EnumerateGenericCells;
             m_EnumerateGenericCellAccessors                = operations.EnumerateGenericCellAccessors;
         }

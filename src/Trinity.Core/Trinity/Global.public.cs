@@ -49,7 +49,7 @@ namespace Trinity
                     }
 
                     generic_cell_ops = null;
-                    storage_schema   = null;
+                    storage_schema = null;
                     if (isLocalStorageInited)
                     {
                         local_storage.Dispose();
@@ -91,7 +91,7 @@ namespace Trinity
         /// <returns>The newly created cloud storage instance.</returns>
         public static MemoryCloud CreateCloudStorage(string configFile)
         {
-            return CreateCloudStorage(new ClusterConfig(configFile));
+            return CreateCloudStorage(ClusterConfig._LegacyLoadClusterConfig(configFile));
         }
 
         /// <summary>
@@ -106,11 +106,11 @@ namespace Trinity
         {
             lock (s_storage_init_lock)
             {
-                var old_storage_schema  = storage_schema;
+                var old_storage_schema = storage_schema;
                 var old_genops_provider = generic_cell_ops;
 
-                var loaded_tuple        = _LoadTSLStorageExtension(Assembly.LoadFrom(assemblyFilePath));
-                var new_storage_schema  = loaded_tuple.Item2;
+                var loaded_tuple = _LoadTSLStorageExtension(Assembly.LoadFrom(assemblyFilePath));
+                var new_storage_schema = loaded_tuple.Item2;
                 var new_genops_provider = loaded_tuple.Item1;
 
                 if (new_storage_schema == null || new_genops_provider == null) { throw new InvalidOperationException("The specified assembly is not a TSL extension."); }
@@ -121,8 +121,8 @@ namespace Trinity
 
                     var old_schema_signatures = old_storage_schema.CellTypeSignatures;
                     var new_schema_signatures = new_storage_schema.CellTypeSignatures;
-                    var incremental           = true;
-                    var sigs_len              = old_schema_signatures.Count();
+                    var incremental = true;
+                    var sigs_len = old_schema_signatures.Count();
 
                     if (new_schema_signatures.Count() < sigs_len) { incremental = false; }
                     else { incremental = Enumerable.SequenceEqual(old_schema_signatures, new_schema_signatures.Take(sigs_len)); }

@@ -125,7 +125,7 @@ namespace Trinity
                 closesocket(socket);
 
                 //  Post shutdown messages to IOCP
-                for (uint64_t i=0, thread_pool_cnt = g_threadpool_size; i < thread_pool_cnt; ++i)
+                for (int i=0, thread_pool_cnt = g_threadpool_size; i < thread_pool_cnt; ++i)
                 {
                     LPOVERLAPPED pOverlapped = (LPOVERLAPPED)AllocateOverlappedOpStruct(SocketAsyncOperation::Shutdown);
                     PostQueuedCompletionStatus(hIocp, 0, NULL, pOverlapped);

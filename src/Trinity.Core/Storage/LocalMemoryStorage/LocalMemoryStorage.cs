@@ -69,8 +69,8 @@ namespace Trinity.Storage
 
         #region KVStore extension facility
         public event Action StorageLoaded  = delegate { };
-        public event Action StorageSaved    = delegate{ };
-        public event Action StorageReset   = delegate{ };
+        public event Action StorageSaved    = delegate { };
+        public event Action StorageReset   = delegate { };
         #endregion
 
         internal static volatile bool initialized = false;
@@ -152,7 +152,7 @@ namespace Trinity.Storage
         {
             CloseWriteAheadLogFile();
             CLocalMemoryStorage.CDispose();
-            if(disposing)
+            if (disposing)
             {
                 GC.SuppressFinalize(this);
             }
@@ -169,5 +169,30 @@ namespace Trinity.Storage
             }
         }
 
+        #region Thread Context facilities
+        ////TODO we may need to cache the previous ThreadContext object to prevent it from being collected by GC..
+        //private static AsyncLocal<ThreadContext> s_thread_ctx = new AsyncLocal<ThreadContext>(e =>
+        //{
+        //    var current_ctx = e.CurrentValue;
+        //    if (current_ctx != null) { CLocalMemoryStorage.CThreadContextSet(e.CurrentValue.m_lock_ctx); }
+        //    else { CLocalMemoryStorage.CThreadContextSet(null); }
+        //});
+
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //internal static void _EnsureThreadContext()
+        //{
+        //    if (s_thread_ctx.Value == null)
+        //        s_thread_ctx.Value = new ThreadContext();
+        //}
+
+        //[ThreadStatic]
+        //private static ThreadContext s_thread_ctx = null;
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //internal static void _EnsureThreadContext()
+        //{
+        //    if (s_thread_ctx == null)
+        //        s_thread_ctx = new ThreadContext();
+        //}
+        #endregion
     }
 }

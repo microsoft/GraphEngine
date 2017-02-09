@@ -70,7 +70,7 @@ namespace Trinity
                         return false;
                     }
 
-                    if ((uint32_t) (pContext->BodyLength) > pContext->RecvBufferLen)
+                    if (pContext->BodyLength > pContext->RecvBufferLen)
                     {
                         char* new_buf = (char*)malloc(pContext->BodyLength);
                         if (NULL == new_buf)
@@ -96,7 +96,7 @@ namespace Trinity
             }
 
             pContext->ReceivedMessageBodyBytes += bytesRecvd;
-            if (pContext->ReceivedMessageBodyBytes < (uint32_t) (pContext->BodyLength))
+            if (pContext->ReceivedMessageBodyBytes < pContext->BodyLength)
             {
                 // the whole message body is not yet completely received
                 pContext->wsaBodyBuf.buf = pContext->RecvBuffer + pContext->ReceivedMessageBodyBytes;

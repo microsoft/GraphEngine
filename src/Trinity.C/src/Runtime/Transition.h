@@ -101,12 +101,25 @@ namespace Runtime
         clr_HelperMethodFrame_Pop(frame.FrameStart);
     }
 
-    void TransitionSleep(int32_t duration);
+    inline void Spinwait(int32_t duration)
+    {
+        for (int delay = 0; delay < duration; ++delay) 
+        {
+#if defined (TRINITY_PLATFORM_WINDOWS)
+            __noop();
+#else
+            asm("");
+#endif
+        }
+
+
+        //YieldProcessor();
+    }
 
 #if defined (TRINITY_PLATFORM_WINDOWS)
-//#define TRINITY_FORCE_PREEMTIVE
+#define TRINITY_FORCE_PREEMTIVE
 //#define TRINITY_DISABLE_PREEMPTIVE
-#define TRINITY_OPTIONAL_PREEMPTIVE
+//#define TRINITY_OPTIONAL_PREEMPTIVE
 #else
 #define TRINITY_DISABLE_PREEMPTIVE
 #endif

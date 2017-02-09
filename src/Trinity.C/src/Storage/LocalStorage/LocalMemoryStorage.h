@@ -7,6 +7,8 @@
 #include "Threading/TrinitySpinlock.h"
 #include "Storage/MTHash/MTHash.h"
 #include "Storage/MemoryTrunk/MemoryTrunk.h"
+#include "Storage/LocalStorage/ThreadContext.h"
+#include "Storage/MTHash/MT_SHADOW_ENUMERATOR.h"
 
 #include <mutex>
 
@@ -49,9 +51,9 @@ namespace Storage
         extern int32_t trunk_id_mask;
 
         TrinityErrorCode Initialize();
-        void Defragment(int32_t trunkIndex);
-        uint64_t CellCount();
         void Dispose();
+        /**! Should only be called from GC thread. */
+        void Defragment(int32_t trunkIndex);
 
         inline int32_t GetTrunkId(cellid_t cellId)
         {
@@ -60,34 +62,29 @@ namespace Storage
 
         // Inter-operative cell interfaces
         CELL_ACQUIRE_LOCK   TrinityErrorCode CGetLockedCellInfo4CellAccessor(IN cellid_t cellId, OUT int32_t &size, OUT uint16_t &type, OUT char* &cellPtr, OUT int32_t &entryIndex);
-        CELL_ACQUIRE_LOCK   TrinityErrorCode CGetLockedCellInfo4SaveCell(IN cellid_t cellId, IN int32_t size, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex);
-        CELL_ACQUIRE_LOCK   TrinityErrorCode CGetLockedCellInfo4AddCell(IN cellid_t cellId, IN int32_t size, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex);
-        CELL_ACQUIRE_LOCK   TrinityErrorCode CGetLockedCellInfo4UpdateCell(IN cellid_t cellId, IN int32_t size, OUT char* &cellPtr, OUT int32_t &entryIndex);
         CELL_ACQUIRE_LOCK   TrinityErrorCode CGetLockedCellInfo4LoadCell(IN cellid_t cellId, OUT int32_t &size, OUT char* &cellPtr, OUT int32_t &entryIndex);
         CELL_ACQUIRE_LOCK   TrinityErrorCode CGetLockedCellInfo4AddOrUseCell(IN cellid_t cellId, IN OUT int32_t &size, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_LOCK_PROTECTED char*            ResizeCell(IN cellid_t cellId, IN int32_t cellEntryIndex, IN int32_t offset, IN int32_t delta);
+        CELL_LOCK_PROTECTED void             ReleaseCellLock(IN cellid_t cellId, IN int32_t entryIndex);
         CELL_LOCK_PROTECTED TrinityErrorCode CLockedGetCellSize(IN cellid_t cellId, IN int32_t entryIndex, OUT int32_t &size);
+
         ///////////////////////////////////
 
-        // cell manipulation interfaces
-        char* ResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta);
-
         //   non-logging interfaces
-        CELL_ATOMIC TrinityErrorCode LoadCell(cellid_t cellId, Array<char>& cellBuff);
-        CELL_ATOMIC TrinityErrorCode SaveCell(cellid_t cellId, char* buff, int32_t size, uint16_t cellType);
-        CELL_ATOMIC TrinityErrorCode AddCell(cellid_t cellId, char* buff, int32_t size, uint16_t cellType);
-        CELL_ATOMIC TrinityErrorCode UpdateCell(cellid_t cellId, char* buff, int32_t size);
-        CELL_ATOMIC TrinityErrorCode RemoveCell(cellid_t cellId);
+        CELL_ATOMIC         TrinityErrorCode LoadCell(cellid_t cellId, Array<char>& cellBuff);
+        CELL_ATOMIC         TrinityErrorCode SaveCell(cellid_t cellId, char* buff, int32_t size, uint16_t cellType);
+        CELL_ATOMIC         TrinityErrorCode AddCell(cellid_t cellId, char* buff, int32_t size, uint16_t cellType);
+        CELL_ATOMIC         TrinityErrorCode UpdateCell(cellid_t cellId, char* buff, int32_t size);
+        CELL_ATOMIC         TrinityErrorCode RemoveCell(cellid_t cellId);
+        CELL_ATOMIC         TrinityErrorCode GetCellType(cellid_t cellId, uint16_t& cellType);
+                            TrinityErrorCode Contains(cellid_t cellId);
 
         //   logging interfaces
-        CELL_ATOMIC TrinityErrorCode SaveCell(cellid_t cellId, char* buff, int32_t size, uint16_t cellType, CellAccessOptions options);
-        CELL_ATOMIC TrinityErrorCode AddCell(cellid_t cellId, char* buff, int32_t size, uint16_t cellType, CellAccessOptions options);
-        CELL_ATOMIC TrinityErrorCode UpdateCell(cellid_t cellId, char* buff, int32_t size, CellAccessOptions options);
-        CELL_ATOMIC TrinityErrorCode RemoveCell(cellid_t cellId, CellAccessOptions options);
+        CELL_ATOMIC         TrinityErrorCode SaveCell(cellid_t cellId, char* buff, int32_t size, uint16_t cellType, CellAccessOptions options);
+        CELL_ATOMIC         TrinityErrorCode AddCell(cellid_t cellId, char* buff, int32_t size, uint16_t cellType, CellAccessOptions options);
+        CELL_ATOMIC         TrinityErrorCode UpdateCell(cellid_t cellId, char* buff, int32_t size, CellAccessOptions options);
+        CELL_ATOMIC         TrinityErrorCode RemoveCell(cellid_t cellId, CellAccessOptions options);
 
-        CELL_ATOMIC TrinityErrorCode GetCellType(cellid_t cellId, uint16_t& cellType);
-        CELL_LOCK_PROTECTED void ReleaseCellLock(cellid_t cellId, int32_t entryIndex);
-
-        bool Contains(cellid_t cellId);
         /////////////////////////////////////
 
         // DiskIO
@@ -102,9 +99,9 @@ namespace Storage
         String GetPrimaryStorageSlot();
         String GetSecondaryStorageSlot();
 
-        bool LoadStorage();
-        bool SaveStorage();
-        bool ResetStorage();
+        TrinityErrorCode LoadStorage();
+        TrinityErrorCode SaveStorage();
+        TrinityErrorCode ResetStorage();
 
         // Write-ahead logging
 
@@ -126,11 +123,12 @@ namespace Storage
             void SetWriteAheadLogFile(FILE* fp);
         }
 
-        // Performance counter
+        // Performance counters
         uint64_t TrunkCommittedMemorySize();
         uint64_t MTHashCommittedMemorySize();
         uint64_t TotalCommittedMemorySize();
         uint64_t TotalCellSize();
+        uint64_t CellCount();
 
         namespace Enumeration
         {
@@ -144,16 +142,16 @@ namespace Storage
                 /**         CellSize should be obtained from mt_enumerator if necessary */
                 //////////////////////////////////
                 /** Internal members */
-                uint16_t        mt_enumerator_active;
-                MT_ENUMERATOR   mt_enumerator;
-                MTHash*         mt_hash;
+                uint16_t             mt_enumerator_active; // TRUE if mt_enumerator is initialized; FALSE if mt_enumerator called Invalidate()
+                MTHash*              mt_hash;
+                MT_SHADOW_ENUMERATOR mt_enumerator;
                 //////////////////////////////////
             }LOCAL_MEMORY_STORAGE_ENUMERATOR, *PLOCAL_MEMORY_STORAGE_ENUMERATOR;
 
             TrinityErrorCode Allocate(OUT LOCAL_MEMORY_STORAGE_ENUMERATOR* &pp_enum);
             TrinityErrorCode Deallocate(IN  LOCAL_MEMORY_STORAGE_ENUMERATOR* p_enum);
-            TrinityErrorCode MoveNext(IN  LOCAL_MEMORY_STORAGE_ENUMERATOR* p_enum);
             TrinityErrorCode Reset(IN  LOCAL_MEMORY_STORAGE_ENUMERATOR* p_enum);
+            TrinityErrorCode MoveNext(IN  LOCAL_MEMORY_STORAGE_ENUMERATOR* p_enum);
         }
 
         void DebugDump();

@@ -173,6 +173,7 @@
     <Compile Include="Network\Instance\CommunicationProtocolGroup.cs" />
     <Compile Include="Network\Instance\CommunicationInstance.cs" />
     <Compile Include="Network\Interfaces\IProtocolDescriptor.cs" />
+    <Compile Include="Network\Messaging\MessageArgs\AsynReqRspArgs.cs" />
     <Compile Include="Network\Messaging\MessageArgs\UnhandledException.cs" />
     <Compile Include="Network\Messaging\PreservedMessages.cs" />
     <Compile Include="Network\Messaging\TrinityMessageType.cs" />
@@ -180,11 +181,13 @@
     <Compile Include="Network\Instance\CommunicationModule.cs" />
     <Compile Include="Network\NativeNetwork.C.cs" />
     <Compile Include="Network\NativeNetwork.cs" />
+    <Compile Include="Network\ServerInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Storage\IAccessor.cs" />
     <Compile Include="Storage\ICell.cs" />
     <Compile Include="Storage\IStorageSchema.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.Enumeration.cs" />
@@ -201,11 +204,22 @@
     <Compile Include="Network\AvailabilityGroup.cs" />
     <Compile Include="Storage\MemoryCloud\MemoryCloud.Event.cs" />
     <Compile Include="Storage\StorageCapacityProfile.cs" />
-    <Compile Include="Trinity\Configuration\ClusterConfig\ClusterConfig.Cluster.cs" />
-    <Compile Include="Trinity\Configuration\ClusterConfig\ClusterConfig.cs" />
+    <Compile Include="Storage\ThreadContext.cs" />
+    <Compile Include="Trinity\Configuration\ConfigurationConstants.cs" />
+    <Compile Include="Trinity\Configuration\ConfigurationEntries\LoggingConfig.cs" />
+    <Compile Include="Trinity\Configuration\ConfigurationEntries\NetworkConfig.cs" />
+    <Compile Include="Trinity\Configuration\ConfigurationEntries\StorageConfig.cs" />
+    <Compile Include="Trinity\Configuration\ConfigurationEntry.cs" />
+    <Compile Include="Trinity\Configuration\ClusterConfig.cs" />
+    <Compile Include="Trinity\Configuration\ConfigurationInstance.cs" />
+    <Compile Include="Trinity\Configuration\ConfigurationSection.cs" />
+    <Compile Include="Trinity\Configuration\ConfigurationSetting.cs" />
     <Compile Include="Trinity\Configuration\TrinityConfig.C.cs" />
     <Compile Include="Trinity\Configuration\TrinityConfig.Storage.cs" />
     <Compile Include="Trinity\Configuration\TrinityConfig.Cluster.cs" />
+    <Compile Include="Trinity\Configuration\TrinityConfigAttribute.cs" />
+    <Compile Include="Trinity\Configuration\TrinityConfigException.cs" />
+    <Compile Include="Trinity\Configuration\XmlConfiguration.cs" />
     <Compile Include="Trinity\Global.public.cs" />
     <Compile Include="Trinity\Lib\AssemblyHelper.cs" />
     <Compile Include="Trinity\Lib\NamespaceDoc.cs" />
@@ -227,7 +241,7 @@
     <Compile Include="Network\ServerInfo.cs" />
     <Compile Include="Trinity\Configuration\TrinityConfig.cs" />
     <Compile Include="Trinity\Configuration\TrinityConfig.IO.cs" />
-    <Compile Include="Trinity\Configuration\XMLConfig.cs" />
+    <Compile Include="Trinity\Configuration\Legacy\XMLConfig.cs" />
     <Compile Include="Network\Instance\TrinityProxy.cs" />
     <Compile Include="Network\Client\SynClient.Message.cs" />
     <Compile Include="Network\Messaging\MessageArgs\AsynReqArgs.cs" />
@@ -267,7 +281,7 @@
     <Compile Include="Trinity\Lib\Memory.C.cs" />
     <Compile Include="Trinity\Lib\Memory.cs" />
     <Compile Include="Trinity\Lib\RWULock.cs" />
-    <Compile Include="Trinity\Lib\SmartPointer.cs" />
+    <Compile Include="Trinity\Lib\PointerHelper.cs" />
     <Compile Include="Trinity\Lib\SpinLockInt32.cs" />
     <Compile Include="Trinity\Lib\ThrowHelper.cs" />
     <Compile Include="Trinity\Lib\XArray.cs" />

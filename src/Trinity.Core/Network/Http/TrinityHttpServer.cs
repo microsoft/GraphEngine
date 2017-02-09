@@ -12,6 +12,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Trinity.Configuration;
 using Trinity.Diagnostics;
 using Trinity.TSL.Lib;
 
@@ -166,7 +167,7 @@ namespace Trinity.Network.Http
 
         private static void _RelayRequest(HttpListenerContext context, AvailabilityGroup ag, int idx)
         {
-            ServerInfo        s          = ag.ServerInstances[idx];
+            ServerInfo        s          = ag.Instances[idx];
             int               port       = context.Request.LocalEndPoint.Port;
             string            requestUrl = context.Request.RawUrl;
 
@@ -206,7 +207,7 @@ namespace Trinity.Network.Http
             }
 
             AvailabilityGroup ag  = m_RelayInstanceList[instance_id];
-            int               idx = m_RelayRoundRobinTable[instance_id] = (m_RelayRoundRobinTable[instance_id] + 1) % ag.ServerInstances.Count;
+            int               idx = m_RelayRoundRobinTable[instance_id] = (m_RelayRoundRobinTable[instance_id] + 1) % ag.Instances.Count;
             _RelayRequest(context, ag, idx);
         }
 
