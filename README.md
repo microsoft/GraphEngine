@@ -12,8 +12,6 @@ Query](https://github.com/Microsoft/GraphEngine/tree/master/src/LIKQ)
 API](https://www.microsoft.com/cognitive-services/en-us/Academic-Knowledge-API/documentation/GraphSearchMethod),
 which is part of Microsoft Cognitive Services.
 
-<img style="max-width: 100%;" alt="" src="https://www.graphengine.io/video/likq.video.pub.gif">
-
 ## Downloads
 
 Graph Engine is regularly released with bug fixes and feature enhancements.
