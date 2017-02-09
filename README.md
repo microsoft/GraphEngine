@@ -7,7 +7,7 @@ engine.
 
 This repository contains the source code of Graph Engine and its graph
 query language -- [Language Integrated Knowledge
-Query](https://github.com/Microsoft/GraphEngine/tree/master/src/LIKQ)
+Query](https://www.graphengine.io/video/likq.video.html)
 (LIKQ). LIKQ is powering [Academic Graph Search Knowledge
 API](https://www.microsoft.com/cognitive-services/en-us/Academic-Knowledge-API/documentation/GraphSearchMethod),
 which is part of Microsoft Cognitive Services.
