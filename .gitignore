@@ -66,7 +66,6 @@ GraphEngine.Lib
 *.vsps
 build/*
 *.tapp
-*.core
 CMakeFiles
 cmake_install.cmake
 CMakeCache.txt

@@ -1,0 +1,164 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+          "http://www.w3.org/TR/REC-html40/strict.dtd">
+<html>
+<head>
+    <title>Graph Engine</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!--
+         NOTICE:  Third party scripts and code linked to or referenced here are not licensed to you by
+         the third parties that own such code, not by Microsoft, see ASP.NET Ajax CDN Terms of Use –
+         http://www.asp.net/ajaxlibrary/CDN.ashx
+    -->
+    <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.4.js"></script>
+    <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+    <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.11.4/jquery-ui.js"></script>
+    <link rel="stylesheet" href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.11.4/themes/blitzer/jquery-ui.css" />
+    <style type="text/css">
+        html * {
+            font-family: Segoe UI light,"Segoe UI",Tahoma,Helvetica,Arial,Verdana,sans-serif !important;
+        }
+
+        input * {
+            font-family: monospace !important;
+        }
+
+        .endpointView {
+            width: auto;
+            margin: 20px;
+            padding: 5px;
+        }
+
+        .endpointAddress {
+            color: #000000;
+            vertical-align: top;
+        }
+
+        .left {
+            height: auto;
+            float: left;
+            position: relative;
+            vertical-align: top;
+            width: 48%;
+            margin: 5px;
+        }
+
+        .right {
+            height: auto;
+            float: right;
+            position: relative;
+            vertical-align: top;
+            width: 48%;
+        }
+
+        .paramTable {
+            vertical-align: top;
+            table-layout: auto;
+        }
+
+        .responseField {
+            height: auto;
+        }
+    </style>
+    <script type="text/x-jquery-tmpl" id="EndpointTemplate">
+        <div class="endpointView">
+            <h3>${address}</h3>
+            <div>
+                <div class="left">
+                    <form id="${epname}_Form">
+                        <table class="paramTable">
+                            <tr>
+                                <td>Request Type:</td>
+                                <td>${requestType}</td>
+                            </tr>
+                            {{if requestType === "json"}}
+                            <!--<tr>Request Parameters:</tr>-->
+                            {{each requestParameters}}
+                            <tr>
+                                <td>${$value}:</td>
+                                <td><input type="text" name="${$value}" /></td>
+                            </tr>
+                            {{/each}}
+                            {{/if}}
+                            <tr>
+                                <td>
+                                    <button type="button" onclick="DoQuery('${address}', $('#${epname}_Form'), $('#${epname}_ResponseTable'))">Query</button>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </form>
+                </div>
+                <div class="right">
+                    <table class="paramTable" id="${epname}_ResponseTable">
+                        <tr>
+                            <td>Response Type:</td>
+                            <td>${responseType}</td>
+                        </tr>
+                        {{if responseType === "json"}}
+                        <!--<tr>Response Parameters:</tr>-->
+                        {{each responseParameters}}
+                        <tr>
+                            <td>${$value}:</td>
+                            <td><textarea name="${$value}" class="responseField"></textarea></td>
+                        </tr>
+                        {{/each}}
+                        {{/if}}
+                    </table>
+                </div>
+                <div style="clear:both"></div>
+            </div>
+        </div>
+    </script>
+    <script type="text/javascript">
+        //%AVAILABLE_ENDPOINTS%
+    </script>
+    <script type="text/javascript">
+        function DoQuery(address, input, output) {
+
+            output.find(".responseField").text("");
+
+            /* Parse each input field into an object/string */
+
+            var request_data = input.serializeArray().reduce(function (a, b) {
+                var field_val;
+                try { field_val = JSON.parse(b.value); }
+                catch (e) { field_val = b.value; }
+
+                a[b.name] = field_val;
+
+                return a;
+            }, {});
+
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify(request_data),
+                url: address,
+                jsonp: false,
+                success: function (data) {
+                    $(".responseField", output).each(function () {
+                        $(this).text(JSON.stringify(data[this.name], null, 4));
+                    });
+                    console.log(data)
+                },
+                error: function (jqXHR, stat, err) {
+                    alert("Query failed. Please check the connection and your input.");
+                }
+            });
+        }
+        function InitializeComponents() {
+            for (var i = 0; i < available_endpoints.endpoints.length; ++i) {
+                available_endpoints.endpoints[i].epname = "ep_" + i;
+            }
+            var endpointViews = $("#EndpointTemplate").tmpl(available_endpoints.endpoints);
+            endpointViews.appendTo("#EndpointsContainer");
+            endpointViews.accordion({ collapsible: true });
+        }
+    </script>
+</head>
+<body onload="InitializeComponents()">
+    <h2>Available RESTful API endpoints:</h2>
+    <div id="EndpointsContainer"></div>
+</body>
+</html>
