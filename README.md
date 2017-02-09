@@ -15,7 +15,6 @@ combines the capability of fast graph exploration and the flexibility
 of lambda expression: server-side computations can be expressed in
 lambda expressions, embedded in LIKQ, and executed on the server side
 during graph traversal.  LIKQ is powering [Academic Graph Search
-Knowledge
 API](https://www.microsoft.com/cognitive-services/en-us/Academic-Knowledge-API/documentation/GraphSearchMethod),
 which is part of Microsoft Cognitive Services.
 
