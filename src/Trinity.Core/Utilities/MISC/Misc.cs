@@ -13,21 +13,8 @@ namespace Trinity.Utilities
     {
         public static string ToString(ICollection<T> collection, int indent = 0, string separator = " ")
         {
-            string indent_space = "";
-            for (int i = 0; i < indent; i++)
-            {
-                indent_space += " ";
-            }
-            string ret = "";
-            foreach (T t in collection)
-            {
-                ret += indent_space + t.ToString() + separator;
-            }
-            if (ret.LastIndexOf(separator, StringComparison.Ordinal) != -1) //make sure the input is not an empty collection
-            {
-                ret = ret.Substring(0, ret.LastIndexOf(separator, StringComparison.Ordinal)); //remove the last separator
-            }
-            return ret;
+            string indent_space = new string(' ', indent);
+            return string.Join(separator, collection.Select(c => indent_space + c));
         }
     }
 
@@ -35,15 +22,19 @@ namespace Trinity.Utilities
     {
         public static void DisplayByteArray(byte[] bytes)
         {
-            for (int i = 0; i < bytes.Length; )
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < bytes.Length; i++)
             {
-                for (int j = 0; j < 8; j++)
+                sb.Append(bytes[i++]);
+                sb.Append('\t');
+
+                // 8 bytes per line
+                if (((i % 8) == 0) || (i == (bytes.Length - 1)))
                 {
-                    if (i < bytes.Length)
-                        Console.Write("{0}\t", bytes[i++]);
+                    sb.AppendLine();
                 }
-                Console.WriteLine();
             }
+            Console.Write(sb.ToString());
         }
     }
 }
