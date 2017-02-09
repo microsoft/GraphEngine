@@ -1,1 +1,1 @@
-<img src="https://www.graphengine.io/img/likq.png" width="460">
+<img src="https://github.com/Microsoft/GraphEngine/raw/resource/images/likq.png" width="460">
