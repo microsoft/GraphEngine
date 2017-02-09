@@ -238,7 +238,6 @@
     <Compile Include="Network\Messaging\TrinityMessage.cs" />
     <Compile Include="Network\NamespaceDoc.cs" />
     <Compile Include="Storage\NamespaceDoc.cs" />
-    <Compile Include="Network\ServerInfo.cs" />
     <Compile Include="Trinity\Configuration\TrinityConfig.cs" />
     <Compile Include="Trinity\Configuration\TrinityConfig.IO.cs" />
     <Compile Include="Trinity\Configuration\Legacy\XMLConfig.cs" />
@@ -298,6 +297,7 @@
     <Compile Include="Utilities\CodeTempl\Disposal.cs" />
     <Compile Include="Utilities\IO\CodeWriter.cs" />
     <Compile Include="Utilities\IO\DataTable.cs" />
+    <Compile Include="Utilities\MISC\AssemblyPath.cs" />
     <Compile Include="Utilities\MISC\DataType.cs" />
     <Compile Include="Utilities\MISC\ASMFactory.cs" />
     <Compile Include="Utilities\NamespaceDoc.cs" />
