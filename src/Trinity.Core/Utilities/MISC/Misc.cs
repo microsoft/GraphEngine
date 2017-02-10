@@ -25,11 +25,11 @@ namespace Trinity.Utilities
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < bytes.Length; i++)
             {
-                sb.Append(bytes[i++]);
+                sb.Append(bytes[i]);
                 sb.Append('\t');
 
                 // 8 bytes per line
-                if (((i % 8) == 0) || (i == (bytes.Length - 1)))
+                if ((i + 1) % 8 == 0 || i == bytes.Length - 1)
                 {
                     sb.AppendLine();
                 }
