@@ -213,10 +213,7 @@ namespace Trinity
                 if (is_config_loaded && !forceLoad)
                     return;
                 if (!File.Exists(trinity_config_file))
-                {
-                    Console.WriteLine("file: " + trinity_config_file + " does not exist");
                     return;
-                }
 
                 var config = XmlConfiguration.Load(trinity_config_file);
 
