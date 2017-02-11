@@ -42,7 +42,7 @@ namespace Trinity
         {
             if (_ref_count && (1 == _ref_count->fetch_sub(1, std::memory_order_seq_cst)))
             {
-                //TODO lazy deletion
+                delete _ref_count;
                 delete _ptr;
             }
         }
