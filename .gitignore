@@ -72,3 +72,4 @@ CMakeCache.txt
 *.VC.db
 pingme.txt
 CleanVSProject.exe
+*.so

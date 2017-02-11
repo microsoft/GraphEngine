@@ -31,7 +31,7 @@ namespace Trinity
         const size_t MAX_LOG_ENTRY_COUNT = 1 << 20;
         typedef struct
         {
-            wchar_t* logMessage;
+            u16char* logMessage;
             int64_t  logTimestamp;
             LogLevel logLevel;
         } LOG_ENTRY, *PLOG_ENTRY;
@@ -114,7 +114,7 @@ namespace Trinity
             }
 
             auto wchar_arr = msg.ToWcharArray();
-            wchar_t *buf   = (wchar_t*)malloc(sizeof(wchar_t) * wchar_arr.Length());
+            u16char *buf   = (u16char*)malloc(sizeof(u16char) * wchar_arr.Length());
             std::copy(wchar_arr.begin(), wchar_arr.end(), buf);
             
             s_LogEntries.emplace_back(LOG_ENTRY

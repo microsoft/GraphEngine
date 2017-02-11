@@ -5,6 +5,7 @@
 #include <os/os.h>
 #if !defined(TRINITY_PLATFORM_WINDOWS)
 #include "ClientSocket.h"
+#include "Trinity/Diagnostics/Log.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -93,7 +94,7 @@ namespace Trinity
             if (NULL == buf)
             {
                 Trinity::Diagnostics::FatalError("Cannot allocate memory in network Receive.");
-                return TrinityErrorCode::E_NOMEM
+                return TrinityErrorCode::E_NOMEM;
             }
 
             if (!_do_recv(socket, buf, len))

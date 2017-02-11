@@ -20,11 +20,10 @@
 
 #if defined(TRINITY_PLATFORM_WINDOWS)
 typedef wchar_t u16char;
-typedef int     u32char;
 #else
-#include <ThirdParty/ConvertUTF.h>
-typedef UTF16 u16char;
-typedef wchar_t u32char;
+#include <codecvt>
+#include <locale>
+typedef char16_t u16char;
 #endif
 
 using namespace Trinity::Collections;
@@ -79,10 +78,6 @@ namespace Trinity
         String(const char* s, size_t n) : _string(s, n) {}
         String(const u16char* s) { _string = std::move(String::FromWcharArray(s, -1)); }
         String(const u16char* s, size_t n) { _string = std::move(String::FromWcharArray(s, n)); }
-#ifndef TRINITY_PLATFORM_WINDOWS
-        String(const u32char* s) { _string = std::move(String::FromWcharArray(s, -1)); }
-        String(const u32char* s, size_t n) { _string = std::move(String::FromWcharArray(s, n)); }
-#endif
         String(size_t n, char c) : _string(n, c) {}
         template<class InputIterator>
         String(InputIterator first, InputIterator last) : _string(first, last) {}
@@ -157,8 +152,8 @@ namespace Trinity
 #else
         TRINITY_COMPILER_WARNING("String::Insert(iterator p, std::initializer_list<char> il)!")
 
-            // XXX GCC5.2.1 + libstdc++-5 does not include basic_string::insert(const_iterator, initializer_list<>)
-            String& Insert(iterator p, std::initializer_list<char> il){ _string.insert(p, il); return *this; }
+        // XXX GCC5.2.1 + libstdc++-5 does not include basic_string::insert(const_iterator, initializer_list<>)
+        String& Insert(iterator p, std::initializer_list<char> il){ _string.insert(p, il); return *this; }
 #endif
         //  remove, renamed from erase
         String& Remove(size_t pos = 0, size_t len = npos) { _string.erase(pos, len); return *this; }
@@ -609,9 +604,6 @@ namespace Trinity
         static String ToString(const std::string* value) { return *value; }
         static String ToString(const char* value) { return String(value); }
         static String ToString(const u16char* value) { return String::FromWcharArray(value, -1); }
-#ifndef TRINITY_PLATFORM_WINDOWS
-        static String ToString(const u32char* value) { return String::FromWcharArray(value, -1); }
-#endif
         static String ToString(char value) { return String(1, value); }
 #ifndef __cplusplus_cli
         static String ToString(const std::thread::id &thread_id) { std::stringstream stream; stream << thread_id; return stream.str(); }
@@ -678,6 +670,7 @@ namespace Trinity
         //converts a utf-8 string to a UTF-16LE (Windows Unicode) array, <NUL> terminated.
         Array<u16char> ToWcharArray() const
         {
+#if defined(TRINITY_PLATFORM_WINDOWS)
             size_t byte_count = Length();
             int wchar_count;
 
@@ -690,7 +683,6 @@ namespace Trinity
 
             if (byte_count > INT_MAX)
                 return Array<u16char>(0);
-#if defined(TRINITY_PLATFORM_WINDOWS)
 
             wchar_count = MultiByteToWideChar(CP_UTF8, 0, c_str(), static_cast<int>(byte_count), NULL, 0);
             if (wchar_count == 0)
@@ -704,80 +696,41 @@ namespace Trinity
             wchar_arr[wchar_count] = 0;
             return wchar_arr;
 #else
-            u16char* utf16_buf        = new u16char[byte_count]; // the utf16 equivalent has at most byte_count elements.
-            u16char* utf16_buf_param  = utf16_buf;
-            char* utf8_buf            = (char*)c_str();
-            char* utf8_buf_param      = utf8_buf;
-            if(ConversionResult::conversionOK != ConvertUTF8toUTF16((const UTF8**)&utf8_buf_param, (const UTF8*)(utf8_buf + byte_count), (UTF16**)&utf16_buf_param, (UTF16*)(utf16_buf + byte_count), ConversionFlags::strictConversion))
-            {
-                delete[] utf16_buf;
-                return Array<u16char>(0);
-            }
-            wchar_count = utf16_buf_param - utf16_buf;
+            std::wstring_convert<std::codecvt_utf8_utf16<u16char>, u16char> converter;
+            auto wstr = converter.from_bytes(c_str());
+            int wchar_count = wstr.length();
             Array<u16char> wchar_arr(wchar_count + 1);
-            memcpy(wchar_arr, utf16_buf, wchar_count * sizeof(u16char));
+            memcpy(wchar_arr, wstr.c_str(), wchar_count * sizeof(u16char));
             wchar_arr[wchar_count] = 0;
-            delete[] utf16_buf;
+
             return wchar_arr;
 #endif
         }
 
-        template<typename wchar_type>
-        static String FromWcharArray(const Array<wchar_type> &arr)
+        static String FromWcharArray(const Array<u16char> &arr)
         {
             return FromWcharArray(arr, arr.Length());
         }
 
-#if defined(TRINITY_PLATFORM_WINDOWS)
-        static String FromWcharArray(const u16char* ptr, size_t length)
-        {
-            return FromWcharArray_impl(ptr, length);
-        }
-#else
-        static String FromWcharArray(const u16char* ptr, size_t length)
-        {
-            return FromWcharArray_impl(ptr, length);
-        }
-
-        static String FromWcharArray(const u32char* ptr, size_t length)
-        {
-            return FromWcharArray_impl(ptr, length);
-        }
-
-        static ConversionResult ConvertUTFtoUTF8(u16char* &utf16_buf, char* &utf8_buf, int length)
-        {
-            return ConvertUTF16toUTF8((const UTF16**)&utf16_buf, (const UTF16*)(utf16_buf + length), (UTF8**)&utf8_buf, (UTF8*)(utf8_buf + length * sizeof(u16char)), ConversionFlags::strictConversion);
-        }
-
-        static ConversionResult ConvertUTFtoUTF8(u32char* &utf32_buf, char* &utf8_buf, int length)
-        {
-            return ConvertUTF32toUTF8((const UTF32**)&utf32_buf, (const UTF32*)(utf32_buf + length), (UTF8**)&utf8_buf, (UTF8*)(utf8_buf + length * sizeof(u32char)), ConversionFlags::strictConversion);
-        }
-#endif
+        //converts a UTF-16LE (Windows Unicode) array to a utf-8 string.
         //length is the count of wchars in the string.
         //length can be with or without the (if exists) <NUL> termination symbol
         //set length to -1 to search for termination symbol
-        template<typename wchar_type>
-        static String FromWcharArray_impl(const wchar_type* ptr, size_t length)
+        static String FromWcharArray(const u16char* ptr, size_t length)
         {
-            static_assert(std::is_same<wchar_type, u16char>::value ||
-                          std::is_same<wchar_type, u32char>::value
-                          , "FromWcharArray only accepts wide char array.");
-
+#if defined(TRINITY_PLATFORM_WINDOWS)
             if (length > INT_MAX && length != SIZE_MAX)//TODO exception
                 return "";
 
             if (length == 0)
                 return "";
 
-#if defined(TRINITY_PLATFORM_WINDOWS)
-            static_assert(std::is_same<wchar_type, u16char>::value, "FromWcharArray only accepts UTF-16 LE array on Windows.");
-
             int byte_count = WideCharToMultiByte(CP_UTF8, 0, ptr, static_cast<int>(length), NULL, 0, NULL, NULL);
             if (byte_count == 0)//TODO exception
                 return "";
 
             String ret(byte_count, 0);
+            // XXX writing to c_str()
             byte_count = WideCharToMultiByte(CP_UTF8, 0, ptr, static_cast<int>(length), (char*)ret.c_str(), byte_count, NULL, NULL);
             if (byte_count == 0)
                 return "";
@@ -787,26 +740,18 @@ namespace Trinity
 
             return ret;
 #else
-            if(length == npos) // search in the string for termination symbol
+            std::wstring_convert<std::codecvt_utf8_utf16<u16char>, u16char> converter;
+            if(length == npos)
             {
-                length = 0;
-                for(wchar_type* p = (wchar_type*)ptr; *p; ++p){ ++length; }
+                return converter.to_bytes(ptr);
             }
-
-            char* utf8_buf = new char[length * sizeof(wchar_type)];
-            char* utf8_buf_param  = utf8_buf;
-            wchar_type* wchar_buf_param = (wchar_type*)ptr;
-
-            if(ConversionResult::conversionOK != ConvertUTFtoUTF8(wchar_buf_param, utf8_buf_param, length))
+            else
             {
-                return "";
+                return converter.to_bytes(ptr, ptr + length);
             }
-            *utf8_buf_param = 0;
-            String ret(utf8_buf);
-            delete[] utf8_buf;
-            return ret;
 #endif
         }
+
 #pragma endregion
 
     private:
@@ -908,8 +853,6 @@ namespace Trinity
 
     inline std::istream& operator>>(std::istream& is, String& str) { is >> str._string; return is; }
     inline std::ostream& operator<<(std::ostream& os, const String& str) { os << str._string; return os; }
-    inline std::wistream& operator>>(std::wistream& is, String& str) { std::wstring ws; is >> ws; str = String::FromWcharArray(ws.c_str(), -1); return is; }
-    inline std::wostream& operator<<(std::wostream& os, const String& str) { os << (u16char*)str.ToWcharArray(); return os; }
 
     inline void swap(String& x, String& y) { swap(x._string, y._string); }
 #pragma endregion
