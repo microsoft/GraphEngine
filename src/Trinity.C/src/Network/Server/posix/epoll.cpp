@@ -2,8 +2,8 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
-#if defined(__linux__)
 #include "TrinitySocketServer.h"
+#if defined(__linux__)
 #include <sys/epoll.h>
 
 
@@ -22,14 +22,14 @@ namespace Trinity
             {
                 if (1 == epoll_wait(epoll_fd, &ep_event, 1, -1))
                 {
+                    PerSocketContextObjectSlim* pContext = GetPerSocketContextObject(ep_event.data.fd);
                     if ((ep_event.events & EPOLLERR) || (ep_event.events & EPOLLHUP))
                     {
-                        CloseClientConnection(ep_event.data.fd, false);
+                        CloseClientConnection(pContext, false);
                         continue;
                     }
                     else if (ep_event.events & EPOLLIN)
                     {
-                        PerSocketContextObjectSlim* pContext = GetPerSocketContextObject(ep_event.data.fd);
                         if(pContext->WaitingHandshakeMessage)
                         {
                             CheckHandshakeResult(pContext);
@@ -81,24 +81,6 @@ namespace Trinity
             ep_event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
             return epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &ep_event) == 0;
         }
-
-        //bool ProcessAccept(int epoll_fd, int sock_fd)
-        //{
-        //    printf("process accept ...");
-        //    sockaddr addr;
-        //    socklen_t addrlen = sizeof(sockaddr);
-        //    int connected_sock_fd = accept4(sock_fd, &addr, &addrlen, SOCK_NONBLOCK);
-        //    if (-1 == connected_sock_fd)
-        //    {
-        //        return false;
-        //    }
-        //
-        //    epoll_event ep_event;
-        //    ep_event.data.fd = connected_sock_fd;
-        //    ep_event.events = EPOLLET | EPOLLIN | EPOLLONESHOT;
-        //    if (-1 == epoll_ctl(epoll_fd, EPOLL_CTL_ADD, connected_sock_fd, &ep_event))
-        //        return false;
-        //}
 
         int InitializeEventMonitor(int sockfd)
         {
