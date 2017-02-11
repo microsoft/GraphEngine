@@ -2,17 +2,16 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
+#ifndef TRINITY_PLATFORM_WINDOWS
+#include <thread>
+#include <map>
 #include <os/os.h>
 #include <os/platforms/posix.h>
-#include <thread>
-#include <string.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <Network/Server/TrinityServer.h>
-#include <sys/socket.h>
-#include <netdb.h>
 #include <Threading/TrinitySpinlock.h>
-#include <map>
+#include "Trinity/Hash/NonCryptographicHash.h"
+#include "Network/Server/posix/TrinitySocketServer.h"
+#include "Network/SocketOptionsHelper.h"
+#include "Network/ProtocolConstants.h"
 
 namespace Trinity
 {
@@ -105,6 +104,7 @@ namespace Trinity
             return accept4(sock_fd, &addr, &addrlen, SOCK_NONBLOCK);
         }
 
+
         void WorkerThreadProc(int tid)
         {
             fprintf(stderr, "%d\n", tid);
@@ -148,7 +148,7 @@ namespace Trinity
                 if (bytes_read == 0 || (bytes_read == -1 && EAGAIN != errno))
                 {
                     // errors occurred
-                    close(fd);
+                    CloseClientConnection(pContext, false);
                     return false;
                 }
                 p += bytes_read;
@@ -169,3 +169,4 @@ namespace Trinity
         }
     }
 }
+#endif

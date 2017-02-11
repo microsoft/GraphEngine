@@ -4,6 +4,8 @@
 //
 #if defined(__linux__)
 #include "TrinitySocketServer.h"
+#include <sys/epoll.h>
+
 
 namespace Trinity
 {
@@ -22,14 +24,18 @@ namespace Trinity
                 {
                     if ((ep_event.events & EPOLLERR) || (ep_event.events & EPOLLHUP))
                     {
-                        close(ep_event.data.fd);
+                        CloseClientConnection(ep_event.data.fd, false);
                         continue;
                     }
                     else if (ep_event.events & EPOLLIN)
                     {
                         PerSocketContextObjectSlim* pContext = GetPerSocketContextObject(ep_event.data.fd);
+                        if(pContext->WaitingHandshakeMessage)
+                        {
+                            CheckHandshakeResult(pContext);
+                            continue;
+                        }
                         _pContext = pContext;
-                        //TODO handshake
                         ProcessRecv(pContext);
                         break;
                     }
@@ -48,7 +54,6 @@ namespace Trinity
                 AddPerSocketContextObject(pContext);
                 epoll_event ep_event;
                 ep_event.data.fd = connected_sock_fd;
-                //TODO handshake
                 ep_event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
                 if (-1 == epoll_ctl(epoll_fd, EPOLL_CTL_ADD, connected_sock_fd, &ep_event))
                 {

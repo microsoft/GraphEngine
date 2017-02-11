@@ -4,7 +4,9 @@
 //
 #include <os/os.h>
 #if ((!defined(__linux__)) && (defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))))
+#include "Network/ProtocolConstants.h"
 #include "TrinitySocketServer.h"
+#include <sys/event.h>
 
 namespace Trinity
 {
@@ -21,6 +23,7 @@ namespace Trinity
             {
                 if (1 == kevent(kqueue_fd, NULL, 0, &kevt_out, 1, NULL))
                 {
+                    PerSocketContextObjectSlim* pContext = GetPerSocketContextObject(kevt_out.ident);
                     if ((kevt_out.flags & EV_EOF) || (kevt_out.flags & EV_ERROR))
                     {
                         struct kevent kevt;
@@ -29,13 +32,16 @@ namespace Trinity
                         {
                             fprintf(stderr, "cannot delete fd from kqueue");
                         }
-                        close(kevt_out.ident);
+                        ClientCloseConnection(kevt_out.ident, false);
                     }
                     else if (kevt_out.flags & EVFILT_READ)
                     {
-                        PerSocketContextObjectSlim* pContext = GetPerSocketContextObject(kevt_out.ident);
+                        if(pContext->WaitingHandshakeMessage)
+                        {
+                            CheckHandshakeResult(pContext);
+                            continue;
+                        }
                         _pContext = pContext;
-                        //TODO handshake
                         ProcessRecv(pContext);
                         break;
                     }
@@ -55,13 +61,10 @@ namespace Trinity
                 AddPerSocketContextObject(pContext);
                 struct kevent kevt;
                 EV_SET(&kevt, connected_sock_fd, EVFILT_READ, EV_ADD | EV_ENABLE | EV_DISPATCH, 0, 0, NULL);
-                //TODO handshake
                 if (-1 == kevent(kqueue_fd, &kevt, 1, NULL, 0, NULL))
                 {
                     fprintf(stderr, "cannot register fd to kqueue\n");
-                    RemovePerSocketContextObject(connected_sock_fd);
-                    FreePerSocketContextObjectSlim(pContext);
-                    close(connected_sock_fd);
+                    CloseClientConnection(pContext, false);
                 }
             }
         }
@@ -80,23 +83,6 @@ namespace Trinity
             EV_SET(&kevt, fd, EVFILT_READ, EV_ENABLE, 0, 0, NULL);
             return -1 != kevent(kqueue_fd, &kevt, 1, NULL, 0, NULL);
         }
-
-        //bool ProcessAccept()
-        //{
-        //    fprintf(stderr, "process accept ...\n");
-        //    sockaddr addr;
-        //    socklen_t addrlen = sizeof(sockaddr);
-        //    int connected_sock_fd = accept4(sock_fd, &addr, &addrlen, SOCK_NONBLOCK);
-        //    if (-1 == connected_sock_fd)
-        //    {
-        //        return false;
-        //    }
-        //    struct kevent kevt;
-        //    EV_SET(&kevt, connected_sock_fd, EVFILT_READ, EV_ADD | EV_ENABLE | EV_DISPATCH, 0, 0, NULL);
-        //    if (-1 == kevent(kqueue_fd, &kevt, 1, NULL, 0, NULL))
-        //        return false;
-        //    return true;
-        //}
 
         int InitializeEventMonitor(int sockfd)
         {
