@@ -2,16 +2,27 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
+#include <os/os.h>
 #ifndef TRINITY_PLATFORM_WINDOWS
 #include <thread>
 #include <map>
-#include <os/os.h>
 #include <os/platforms/posix.h>
 #include <Threading/TrinitySpinlock.h>
 #include "Trinity/Hash/NonCryptographicHash.h"
 #include "Network/Server/posix/TrinitySocketServer.h"
 #include "Network/SocketOptionsHelper.h"
 #include "Network/ProtocolConstants.h"
+
+static bool make_nonblocking(int fd)
+{
+    int status_flags = fcntl(fd, F_GETFL, 0);
+    if (-1 == status_flags)
+        return false;
+    status_flags |= O_NONBLOCK;
+    if (-1 == fcntl(fd, F_SETFL, status_flags))
+        return false;
+    return true;
+}
 
 namespace Trinity
 {

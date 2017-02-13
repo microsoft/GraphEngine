@@ -8,18 +8,13 @@
 #include "Trinity/Diagnostics/Log.h"
 #include "Network/Network.h"
 #include "Network/Server/TrinityServer.h"
-#include <algorithm>
-#include <atomic>
 #include <errno.h>
 #include <fcntl.h>
 #include <netdb.h>
-#include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <thread>
 #include <unistd.h>
 
 namespace Trinity
@@ -59,17 +54,6 @@ namespace Trinity
             };
             bool WaitingHandshakeMessage;
         }PerSocketContextObjectSlim;
-
-        inline bool make_nonblocking(int fd)
-        {
-            int status_flags = fcntl(fd, F_GETFL, 0);
-            if (-1 == status_flags)
-                return false;
-            status_flags |= O_NONBLOCK;
-            if (-1 == fcntl(fd, F_SETFL, status_flags))
-                return false;
-            return true;
-        }
 
         inline PerSocketContextObjectSlim* AllocatePerSocketContextObjectSlim(int fd)
         {

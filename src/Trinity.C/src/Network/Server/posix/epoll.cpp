@@ -2,8 +2,9 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
-#include "TrinitySocketServer.h"
+#include <os/os.h>
 #if defined(__linux__)
+#include "TrinitySocketServer.h"
 #include <sys/epoll.h>
 
 
