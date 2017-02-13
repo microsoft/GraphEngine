@@ -19,7 +19,7 @@ namespace Trinity
             BinaryReader(const String &output_file)
             {
                 file_buf = new char[FILE_BUF_SIZE];
-                if (!_wfopen_s(&fp, output_file.ToWcharArray(), u"rb"))
+                if (!_wfopen_s(&fp, output_file.ToWcharArray(), _u("rb")))
                 {
                     setvbuf(fp, file_buf, _IOFBF, FILE_BUF_SIZE);
                 }

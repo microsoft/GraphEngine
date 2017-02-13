@@ -20,7 +20,7 @@ namespace Trinity
 
             BinaryWriter(const String& output_file)
             {
-                _wfopen_s(&fp, output_file.ToWcharArray(), u"wb");
+                _wfopen_s(&fp, output_file.ToWcharArray(), _u("wb"));
                 file_buf = new char[FILE_BUF_SIZE];
                 setvbuf(fp, file_buf, _IOFBF, FILE_BUF_SIZE);
             }
