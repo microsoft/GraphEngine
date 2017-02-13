@@ -20,10 +20,12 @@
 
 #if defined(TRINITY_PLATFORM_WINDOWS)
 typedef wchar_t u16char;
+#define _u(x) (L##x)
 #else
 #include <codecvt>
 #include <locale>
 typedef char16_t u16char;
+#define _u(x) (u##x)
 #endif
 
 using namespace Trinity::Collections;
