@@ -214,7 +214,7 @@ namespace Storage
 
             FILE* fp;
 
-            if (0 != _wfopen_s(&fp, file_path.ToWcharArray(), L"wb"))
+            if (0 != _wfopen_s(&fp, file_path.ToWcharArray(), _u("wb")))
             {
                 Trinity::Diagnostics::WriteLine(LogLevel::Error, "Cannot open signature file '{0}' for write", file_path);
                 return TrinityErrorCode::E_FAILURE;
@@ -241,7 +241,7 @@ namespace Storage
 
             FILE* fp;
 
-            if (0 != _wfopen_s(&fp, file_path.ToWcharArray(), L"rb"))
+            if (0 != _wfopen_s(&fp, file_path.ToWcharArray(), _u("rb")))
             {
                 // This message will be triggered when the signature does not exist yet,
                 // so we lower its level to Debug to suppress it under the default Info logging level

@@ -16,7 +16,7 @@ inline int fopen_s(FILE ** _File, const char * _Filename, const char * _Mode)
     else return 0;
 }
 
-inline int _wfopen_s(FILE ** _File, const u16char * _Filename, const u32char * _Mode)
+inline int _wfopen_s(FILE ** _File, const u16char * _Filename, const u16char * _Mode)
 {
     String fname_str = String::FromWcharArray(_Filename, -1);
     String fmode_str = String::FromWcharArray(_Mode, -1);
