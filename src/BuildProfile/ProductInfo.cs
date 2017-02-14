@@ -9,8 +9,8 @@ namespace VSExtension
 #endif
     class ProductInfo
     {
-        public const string VERSION_PLACEHOLDER = "1.0.8574.0";
-        public const string FILEVERSION_PLACEHOLDER = "1.0.8574.0";
+        public const string VERSION_PLACEHOLDER = "1.0.8782.0";
+        public const string FILEVERSION_PLACEHOLDER = "1.0.8782.0";
         public const string PRODUCTNAME_PLACEHOLDER = "Graph Engine";
         public const string COMPANY_PLACEHOLDER = "Microsoft Corporation";
         public const string COPYRIGHT_PLACEHOLDER = "© Microsoft Corporation.  All rights reserved.";
