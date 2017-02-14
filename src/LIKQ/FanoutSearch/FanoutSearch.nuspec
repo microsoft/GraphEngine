@@ -2,17 +2,16 @@
 <package >
     <metadata>
         <id>GraphEngine.LIKQ</id>
-        <version>1.0.0</version>
+        <version>1.0.8782</version>
         <title>LIKQ</title>
-        <authors>Microsoft Corporation</authors>
+        <authors>Microsoft Graph Engine Team</authors>
         <owners>Microsoft Corporation</owners>
-		<licenseUrl>https://github.com/microsoft/GraphEngine/tree/master/LICENSE.md</licenseUrl>
+		<licenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</licenseUrl>
 		<projectUrl>https://www.graphengine.io</projectUrl>
         <iconUrl>https://www.graphengine.io/img/logo-64x64.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Language Integrated Knowledge Query</description>
         <copyright>Copyright 2017</copyright>
         <tags>Graph Engine Trinity LIKQ</tags>
-
     </metadata>
 </package>
