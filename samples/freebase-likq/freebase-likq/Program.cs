@@ -13,6 +13,9 @@ using System.IO;
 using Trinity.Diagnostics;
 using System.Data.SQLite;
 using Trinity.TSL.Lib;
+using System.Net;
+using System.Diagnostics;
+using System.IO.Compression;
 
 namespace freebase_likq
 {
@@ -44,21 +47,25 @@ namespace freebase_likq
             string storage_path = Path.Combine(Global.MyAssemblyPath, "storage");
             if (!Directory.Exists(storage_path))
             {
-                Log.WriteLine("The storage folder is not found. Please download the data and place it next to the executable.");
-                Environment.Exit(-1);
+                DownloadDataFile();
             }
 
             Global.LocalStorage.LoadStorage();
             string sqlite_db_path = Path.Combine(storage_path, "freebase.sqlite");
-            if (File.Exists(sqlite_db_path))
+            if (!File.Exists(sqlite_db_path))
             {
-                s_dbconn = new SQLiteConnection(String.Format("Data Source={0};Version=3;", sqlite_db_path));
-                s_dbconn.Open();
-                return;
+                BuildIndex(sqlite_db_path);
             }
 
+            s_dbconn = new SQLiteConnection($"Data Source={sqlite_db_path};Version=3;");
+            s_dbconn.Open();
+            return;
+        }
+
+        private static void BuildIndex(string sqlite_db_path)
+        {
             SQLiteConnection.CreateFile(sqlite_db_path);
-            s_dbconn = new SQLiteConnection(String.Format("Data Source={0};Version=3;", sqlite_db_path));
+            s_dbconn = new SQLiteConnection($"Data Source={sqlite_db_path};Version=3;");
             s_dbconn.Open();
             Log.WriteLine("Building SQLite db to index type.object.name property...");
             long processed_count = 0;
@@ -72,7 +79,7 @@ namespace freebase_likq
             {
                 if (!type_object.Contains_type_object_name) continue;
                 string name = type_object.type_object_name.ToString().Replace("'", "''");
-                batch.Add(Tuple.Create( name , type_object.CellID.Value));
+                batch.Add(Tuple.Create(name, type_object.CellID.Value));
                 if (++processed_count % 100000 == 0)
                 {
                     Log.WriteLine("{0} cells processed", processed_count);
@@ -82,27 +89,46 @@ namespace freebase_likq
                     BatchInsert(batch);
                 }
             }
-            if(batch.Count > 0)
+            if (batch.Count > 0)
             {
                 BatchInsert(batch);
             }
 
             Log.WriteLine("Successfully built the index.");
+            s_dbconn.Dispose();
+        }
+
+        private static void DownloadDataFile()
+        {
+            Log.WriteLine("The storage folder is not found. Downloading the data from https://graphengine.blob.core.windows.net/public-data/freebase-film-dataset.zip now...");
+            WebClient download_client = new WebClient();
+            Stopwatch download_timer  = Stopwatch.StartNew();
+            download_client.DownloadProgressChanged += (sender, e) =>
+            {
+                lock (download_client)
+                {
+                    Console.CursorLeft = 0;
+                    Console.Write($"[{e.ProgressPercentage}%] {e.BytesReceived} / {e.TotalBytesToReceive} bytes downloaded. {e.BytesReceived / (download_timer.ElapsedMilliseconds + 1)} KiB/s".PadRight(Console.BufferWidth - 1));
+                }
+            };
+            download_client.DownloadFileTaskAsync("https://graphengine.blob.core.windows.net/public-data/freebase-film-dataset.zip", "freebase-film-dataset.zip").Wait();
+            Console.WriteLine();
+            Log.WriteLine("Download complete. Unarchiving storage folder...");
+            ZipFile.ExtractToDirectory("freebase-film-dataset.zip", Global.MyAssemblyPath);
+            Log.WriteLine("Successfully unarchived the data files.");
         }
 
         private static void BatchInsert(List<Tuple<string, long>> batch)
         {
             try
             {
+                string content = string.Join(",", batch.Select(_ => $"('{_.Item1}', {_.Item2})"));
+
                 SQLiteCommand cmd;
-                cmd = new SQLiteCommand(String.Format("INSERT INTO nameindex (name, id) VALUES {0};",
-                    string.Join(",", batch.Select(_ => String.Format("('{0}', {1})", _.Item1, _.Item2)))
-                    ), s_dbconn);
+                cmd = new SQLiteCommand($"INSERT INTO nameindex (name, id) VALUES {content}", s_dbconn);
                 cmd.ExecuteNonQuery();
 
-                cmd = new SQLiteCommand(String.Format("INSERT INTO fuzzynameindex (name, id) VALUES {0};",
-                    string.Join(",", batch.Select(_ => String.Format("('{0}', {1})", _.Item1, _.Item2)))
-                    ), s_dbconn);
+                cmd = new SQLiteCommand($"INSERT INTO fuzzynameindex (name, id) VALUES {content}", s_dbconn);
                 cmd.ExecuteNonQuery();
                 batch.Clear();
             }
@@ -126,6 +152,18 @@ namespace freebase_likq
         /// When query constraints are specified in a query, the LIKQ module calls
         /// a registered index service to retrieve vertices satisfying the constraints.
         /// The constraints are specified in the match object, which is a json object.
+        /// LIKQ itself does not specify the DSL syntax for the match object so here
+        /// we eatablish a simple one, which accepts three types of queries:
+        /// 
+        ///   1. Query by Freebase MID.
+        ///   2. Query by type_object_name.
+        ///   3. Query by type_object_name, and perform full-text-search (fuzzy match).
+        ///   
+        /// To query by MID we simply hash the MID string to a cell id. To query by 
+        /// entity name, we route the query into our SQLite database. In this way one
+        /// can develop his/her own index query logic and dispatch the query to various
+        /// query backends (A full RDBMS, ElasticSearch etc.).
+        /// 
         /// </summary>
         /// <param name="matchObject">The match object passed from the query client.</param>
         /// <param name="typeString">The type of the entity. For brevity we ignore this parameter now.</param>
@@ -162,7 +200,7 @@ namespace freebase_likq
             string op = fuzzy ? "MATCH" : "=";
             string table = fuzzy ? "fuzzynameindex" : "nameindex";
 
-            SQLiteCommand cmd = new SQLiteCommand(String.Format("SELECT id FROM {2} WHERE name {0} '{1}'", op, name, table), s_dbconn);
+            SQLiteCommand cmd = new SQLiteCommand($"SELECT id FROM {table} WHERE name {op} '{name}'", s_dbconn);
             SQLiteDataReader results = cmd.ExecuteReader();
             while (results.Read())
             {
