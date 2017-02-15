@@ -1,4 +1,4 @@
-# freebase-likq: hosting LIKQ queries on the freebase data set
+# freebase-likq: LIKQ for Freebase
 
 In this sample project, we demonstrate how to serve LIKQ queries for
 the [Freebase](https://en.wikipedia.org/wiki/Freebase) data set.  It
