@@ -13,9 +13,6 @@ using Trinity;
 using Trinity.Diagnostics;
 using Trinity.Network;
 
-using Serialize.Linq.Extensions;
-using Serialize.Linq.Serializers;
-using Serialize.Linq.Nodes;
 using System.Linq.Expressions;
 using Trinity.Storage;
 
@@ -141,6 +138,11 @@ namespace FanoutSearch
         public static void RegisterIndexService(IndexServiceMatchDelegate func)
         {
             s_indexServiceFunc = func;
+        }
+
+        public static void RegisterExpressionSerializerFactory(Func<IExpressionSerializer> func)
+        {
+            ExpressionSerializer.SetSerializerFactory(func);
         }
 
         public static void EnableExternalQuery(bool enabled)
