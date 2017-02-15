@@ -21,7 +21,9 @@ namespace freebase_likq
 {
     class Program
     {
-        static SQLiteConnection s_dbconn;
+        private static SQLiteConnection s_dbconn;
+        private static string s_freebase_data_blobcontainer = "https://graphengine.blob.core.windows.net/public-data";
+        private static string s_freebase_dataset = "freebase-full-dataset.zip";
 
         static void Main(string[] args)
         {
@@ -113,7 +115,7 @@ namespace freebase_likq
 
         private static void DownloadDataFile()
         {
-            Log.WriteLine("The storage folder is not found. Downloading the data from https://graphengine.blob.core.windows.net/public-data/freebase-film-dataset.zip now...");
+            Log.WriteLine($"The storage folder is not found. Downloading the data from {s_freebase_data_blobcontainer}/{s_freebase_dataset} now...");
             WebClient download_client = new WebClient();
             Stopwatch download_timer  = Stopwatch.StartNew();
             download_client.DownloadProgressChanged += (sender, e) =>
@@ -124,10 +126,10 @@ namespace freebase_likq
                     Console.Write($"[{e.ProgressPercentage}%] {e.BytesReceived} / {e.TotalBytesToReceive} bytes downloaded. {e.BytesReceived / (download_timer.ElapsedMilliseconds + 1)} KiB/s".PadRight(Console.BufferWidth - 1));
                 }
             };
-            download_client.DownloadFileTaskAsync("https://graphengine.blob.core.windows.net/public-data/freebase-film-dataset.zip", "freebase-film-dataset.zip").Wait();
+            download_client.DownloadFileTaskAsync($"{s_freebase_data_blobcontainer}/{s_freebase_dataset}", s_freebase_dataset).Wait();
             Console.WriteLine();
             Log.WriteLine("Download complete. Unarchiving storage folder...");
-            ZipFile.ExtractToDirectory("freebase-film-dataset.zip", Global.MyAssemblyPath);
+            ZipFile.ExtractToDirectory("freebase-full-dataset.zip", Global.MyAssemblyPath);
             Log.WriteLine("Successfully unarchived the data files.");
         }
 
