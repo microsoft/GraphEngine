@@ -32,11 +32,39 @@ HTTP endpoint, either run the program as administrator, or grant the
 current user the permission to listen to port 80: `netsh http add
 urlacl url=http://+:80/ user=Domain\username`.
 
+Note that the full Freebase image is ~`32GB` so make sure that you run the demo on a beefy server!
+We also have prepared a smaller dataset `freebase-film-dataset.zip`. Please modify `Program.cs` to
+direct the program to download the small dataset if you want to.
+
 Now you can query Freebase via LIKQ. Here is a quick example:
 
 ```
+//Find wives of Tom Cruise through a 2-hop graph traversal.
 Freebase
-	.StartFrom("{ 'name' : 'Batman'}", select: new[]{"*"})
-	.FollowEdge("film_film_actor")
+	.StartFrom(530972568887245, select: new[]{"type_object_name"})
+	.FollowEdge("people_person_spouse_s")
+	.VisitNode(Action.Continue)
+	.FollowEdge("people_marriage_spouse")
 	.VisitNode(Action.Return, select: new[]{"type_object_name"});
+```
+
+To issue this query via RESTful API, POST the query payload to `http://server/FanoutSearch/ExternalQuery/`:
+
+```
+{
+	"queryString": "Freebase
+	.StartFrom(530972568887245, select: new[]{\"type_object_name\"})
+	.FollowEdge(\"people_person_spouse_s\")
+	.VisitNode(Action.Continue)
+	.FollowEdge(\"people_marriage_spouse\")
+	.VisitNode(Action.Return, select: new[]{\"type_object_name\"});"
+}
+```
+
+And the result shall look like this:
+
+```
+{
+  "result": "[[{\"CellID\":530972568887245,\"type_object_name\":\"Tom Cruise\"},[],{\"CellID\":438165252269041},[],{\"CellID\":524140155134870,\"type_object_name\":\"Katie Holmes\"}],[{\"CellID\":530972568887245,\"type_object_name\":\"Tom Cruise\"},[],{\"CellID\":290269080985430},[],{\"CellID\":435682361078655,\"type_object_name\":\"Mimi Rogers\"}],[{\"CellID\":530972568887245,\"type_object_name\":\"Tom Cruise\"},[],{\"CellID\":332530798387447},[],{\"CellID\":547400553082314,\"type_object_name\":\"Nicole Kidman\"}],[{\"CellID\":530972568887245,\"type_object_name\":\"Tom Cruise\"},[],{\"CellID\":292606011314464},[],{\"CellID\":360255961521166,\"type_object_name\":\"Penélope Cruz\"}]]"
+}
 ```

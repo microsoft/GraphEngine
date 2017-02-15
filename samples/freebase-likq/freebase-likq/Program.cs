@@ -47,6 +47,8 @@ namespace freebase_likq
             FanoutSearchModule.RegisterUseICellOperationMethod(CellGroupAccessor.New);
             //  Plug-in Serialize.Linq expression serializer
             FanoutSearchModule.RegisterExpressionSerializerFactory(ExpressionSerializerFactory);
+            //  Configure LIKQ timeout
+            FanoutSearchModule.SetQueryTimeout(1000000);
 
             string storage_path = Path.Combine(Global.MyAssemblyPath, "storage");
             if (Directory.Exists(storage_path) && Directory.GetFileSystemEntries(storage_path).Count() == 0)
