@@ -36,7 +36,6 @@ Now you can query Freebase via LIKQ. Here is a quick example:
 ```
 Freebase
 	.StartFrom("{ 'name' : 'Batman'}", select: new[]{"*"})
-	.FollowEdge("film_film_actor")
 	.VisitNode(Action.Return, select: new[]{"type_object_name"});
 ```
 
