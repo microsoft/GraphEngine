@@ -188,6 +188,8 @@
     <Compile Include="Core\FanoutSearchQueryTimeoutException.cs" />
     <Compile Include="Core\QueryPredicateCompiler.cs" />
     <Compile Include="Core\QueryResultCache.cs" />
+    <Compile Include="QueryLanguage\ExpressionSerializer.cs" />
+    <Compile Include="QueryLanguage\IExpressionSerializer.cs" />
     <Compile Include="QueryLanguage\LambdaDSL.cs" />
     <Compile Include="Core\FanoutSearchModule.cs" />
     <Compile Include="Core\FanoutSearchModule.Web.cs" />
@@ -196,7 +198,6 @@
     <Compile Include="Descriptors\EdgeTypeDescriptor.cs" />
     <Compile Include="Descriptors\FanoutSearchDescriptor.cs" />
     <Compile Include="QueryLanguage\ExpressionBuilder.cs" />
-    <Compile Include="QueryLanguage\ExpressionSerializer.cs" />
     <Compile Include="QueryLanguage\JsonDSL.cs" />
     <Compile Include="QueryLanguage\LIKQ.cs" />
     <Compile Include="Descriptors\NodeDescriptor.cs" />
