@@ -94,6 +94,5 @@ And the result shall be different every time (because we apply sampling of proba
 ## Known issues
 
 - On the full dataset, the SQLite index may be slow.
-- The first few queries will trigger JIT compilation of the TSL assembly (which is huge!), so they may appear to be slow. After a few queries the assembly should be mostly JIT'ed (due to high connectedness in the graph)
-- Currently, the data importer could still use some improvements. Some edges lack the [GraphEdge] tag, and thus could only be traversed through if explicitly specified. This can be improved when we relax the condition in the data importer for type inference.
-  - Once the data importer is improved, this demo shall receive some benefits automatically (smaller data images, faster queries, more interesting results etc.).
+- The first few queries will trigger JIT compilation of the TSL assembly (which is huge!), so they may appear to be slow. After a few queries the assembly should be mostly JIT'ed (due to high connectedness in the graph).
+- The data importer could be further improved. Some edges lack the [GraphEdge] tag, and thus could only be traversed through if explicitly specified. This can be improved when we relax the condition in the data importer for type inference. Once the data importer is improved, this demo shall receive some benefits automatically (smaller data images, faster queries, more interesting results etc.).
