@@ -65,7 +65,8 @@ And the result shall look like this:
 
 ```
 {
-  "result": "[[{\"CellID\":530972568887245,\"type_object_name\":\"Tom Cruise\"},[],{\"CellID\":438165252269041},[],{\"CellID\":524140155134870,\"type_object_name\":\"Katie Holmes\"}],[{\"CellID\":530972568887245,\"type_object_name\":\"Tom Cruise\"},[],{\"CellID\":290269080985430},[],{\"CellID\":435682361078655,\"type_object_name\":\"Mimi Rogers\"}],[{\"CellID\":530972568887245,\"type_object_name\":\"Tom Cruise\"},[],{\"CellID\":332530798387447},[],{\"CellID\":547400553082314,\"type_object_name\":\"Nicole Kidman\"}],[{\"CellID\":530972568887245,\"type_object_name\":\"Tom Cruise\"},[],{\"CellID\":292606011314464},[],{\"CellID\":360255961521166,\"type_object_name\":\"Penélope Cruz\"}]]"
+    "Results":
+[[{"CellID":530972568887245,"type_object_name":"Tom Cruise"},{"CellID":332530798387447},{"CellID":547400553082314,"type_object_name":"Nicole Kidman"}],[{"CellID":530972568887245,"type_object_name":"Tom Cruise"},{"CellID":290269080985430},{"CellID":435682361078655,"type_object_name":"Mimi Rogers"}],[{"CellID":530972568887245,"type_object_name":"Tom Cruise"},{"CellID":438165252269041},{"CellID":524140155134870,"type_object_name":"Katie Holmes"}],[{"CellID":530972568887245,"type_object_name":"Tom Cruise"},{"CellID":292606011314464},{"CellID":360255961521166,"type_object_name":"Penélope Cruz"}]]
 }
 ```
 
@@ -76,8 +77,8 @@ Another example:
 {
 	"lambda": "Freebase
 	.StartFrom(297095894548906, select: new[]{\"type_object_name\"})
-	.VisitNode(_ => _.continue_if(_.dice(0.1)) & _.return_if(_.dice(0.1)), select: new[]{\"type_object_name\"})
-	.VisitNode(_ => _.continue_if(_.dice(0.1)) & _.return_if(_.dice(0.1)), select: new[]{\"type_object_name\"})
+	.VisitNode(_ => _.continue_if(_.dice(0.02)) & _.return_if(_.dice(0.1)), select: new[]{\"type_object_name\"})
+	.VisitNode(_ => _.continue_if(_.dice(0.02)) & _.return_if(_.dice(0.1)), select: new[]{\"type_object_name\"})
 	.VisitNode(Action.Return);"
 }
 ```
@@ -86,8 +87,8 @@ And the result shall be different every time (because we apply sampling of proba
 
 ```
 {
-  "result": "[[{\"CellID\":297095894548906,\"type_object_name\":\"Beijing\"},[\"travel_travel_destination_visitor_information_site\"],{\"CellID\":376867967714800,\"type_object_name\":\"\"}],[{\"CellID\":297095894548906,\"type_object_name\":\"Beijing\"},[\"exhibitions_exhibition_subject_exhibitions_created_about_this_subject\"],{\"CellID\":403669116436649,\"type_object_name\":\"Beijing 2008: A Photographic Journey\"}],[{\"CellID\":297095894548906,\"type_object_name\":\"Beijing\"},[\"travel_travel_destination_how_to_get_here\"],{\"CellID\":557577082681005,\"type_object_name\":\"\"}],[{\"CellID\":297095894548906,\"type_object_name\":\"Beijing\"},[\"olympics_olympic_bidding_city_olympics_bid_on\"],{\"CellID\":338004909571910,\"type_object_name\":\"\"}],[{\"CellID\":297095894548906,\"type_object_name\":\"Beijing\"},[\"travel_travel_destination_climate\"],{\"CellID\":488841436302626,\"type_object_name\":\"\"}],[{\"CellID\":297095894548906,\"type_object_name\":\"Beijing\"},[\"travel_travel_destination_local_transportation\"],{\"CellID\":480922419493447,\"type_object_name\":\"Beijing Suburban Railway\"},[\"common_topic_notable_types\"],{\"CellID\":406957361111637,\"type_object_name\":\"Mass Transportation System\"}],[{\"CellID\":297095894548906,\"type_object_name\":\"Beijing\"},[\"location_administrative_division_country\"],{\"CellID\":375811423668722,\"type_object_name\":\"China\"},[\"olympics_olympic_participating_country_medals_won\"],{\"CellID\":534964889638662,\"type_object_name\":\"\"}],[{\"CellID\":297095894548906,\"type_object_name\":\"Beijing\"},[\"location_administrative_division_country\"],{\"CellID\":375811423668722,\"type_object_name\":\"China\"
-  ...
+    "Results":
+[[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["travel_travel_destination_visitor_information_site"]},{"CellID":376867967714800,"type_object_name":""}],[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["travel_travel_destination_climate"]},{"CellID":365581129565857,"type_object_name":""}],[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["travel_travel_destination_climate"]},{"CellID":451288213711482,"type_object_name":""}],[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["common_topic_webpage"]},{"CellID":382284952397975,"type_object_name":""}],[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["common_topic_webpage"]},{"CellID":459237260174344,"type_object_name":""}],[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["travel_travel_destination_climate"]},{"CellID":433800880109811,"type_object_name":""}],[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["olympics_olympic_host_city_olympics_hosted"]},{"CellID":294136728044394,"type_object_name":"2008 Summer Olympics"}]]
 }
 ```
 
