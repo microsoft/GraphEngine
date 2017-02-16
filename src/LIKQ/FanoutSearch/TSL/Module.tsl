@@ -11,7 +11,6 @@ TrinitySettings
 module FanoutSearch
 {
 	// Fanout search protocols
-	protocol ExternalQuery;	
     protocol FanoutSearchQuery;	
 	protocol FanoutSearch_impl;
     protocol QueryInitialization;
@@ -22,6 +21,7 @@ module FanoutSearch
     protocol GetNodesInfo;
     protocol _GetNodesInfo_impl;
     protocol GetEdgeType;
-    // Json interface protocols
+    // HTTP interface
     protocol JsonQuery;
+	protocol LambdaQuery;
 }

@@ -48,11 +48,11 @@ Freebase
 	.VisitNode(Action.Return, select: new[]{"type_object_name"});
 ```
 
-To issue this query via RESTful API, POST the query payload to `http://server/FanoutSearch/ExternalQuery/`:
+To issue this query via RESTful API, POST the query payload to `http://server/LIKQ/LambdaQuery/`:
 
 ```
 {
-	"queryString": "Freebase
+	"lambda": "Freebase
 	.StartFrom(530972568887245, select: new[]{\"type_object_name\"})
 	.FollowEdge(\"people_person_spouse_s\")
 	.VisitNode(Action.Continue)
@@ -74,7 +74,7 @@ Another example:
 ```
 //Random facts about Beijing
 {
-	"queryString": "Freebase
+	"lambda": "Freebase
 	.StartFrom(297095894548906, select: new[]{\"type_object_name\"})
 	.VisitNode(_ => _.continue_if(_.dice(0.1)) & _.return_if(_.dice(0.1)), select: new[]{\"type_object_name\"})
 	.VisitNode(_ => _.continue_if(_.dice(0.1)) & _.return_if(_.dice(0.1)), select: new[]{\"type_object_name\"})

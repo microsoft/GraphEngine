@@ -2,6 +2,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -73,11 +74,35 @@ namespace FanoutSearch
                 s_builder.Append(',');
                 s_builder.Append(JsonStringProcessor.escape(keys[i]));
                 s_builder.Append(':');
-                s_builder.Append(JsonStringProcessor.escape(values[i]));
+                s_builder.Append(EncodeValue(values[i]));
             }
             s_builder.Append('}');
 
             return s_builder.ToString();
+        }
+
+        private string EncodeValue(string v)
+        {
+            if (v == string.Empty) return "\"\"";
+            var fchar = v[0];
+
+            if (char.IsLetter(fchar)) // probably a string. don't parse
+            {
+                goto return_string;
+            }
+
+            try
+            {
+                JToken token = JToken.Parse(v);
+                return v;
+            }
+            catch
+            {
+                goto return_string;
+            }
+
+            return_string:
+            return JsonStringProcessor.escape(v);
         }
     }
 

@@ -75,7 +75,7 @@ namespace FanoutSearch
 
         public override string GetModuleName()
         {
-            return "FanoutSearch";
+            return "LIKQ";
         }
 
         private static void AddNode(ref FanoutPathDescriptor desc, int hop, long id)
