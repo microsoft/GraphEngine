@@ -68,7 +68,7 @@ namespace Trinity
             return 0;
         }
 
-        void EnterEventMonitor(PerSocketContextObject* pContext)
+        int EnterEventMonitor(PerSocketContextObject* pContext)
         {
             epoll_event ep_event;
             ep_event.data.fd = pContext->fd;
