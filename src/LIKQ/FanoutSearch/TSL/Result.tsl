@@ -34,6 +34,11 @@ struct StringStruct
     string queryString;	
 }
 
+struct LambdaQueryInput
+{
+    string lambda;	
+}
+
 struct GetNodesInfoRequest
 {
     List<long> ids;	
@@ -50,11 +55,6 @@ struct NodeInfo
 struct GetNodesInfoResponse
 {
     List<NodeInfo> infoList;
-}
-
-struct ExternalQueryResponse
-{
-    string result;
 }
 
 protocol GetEdgeType

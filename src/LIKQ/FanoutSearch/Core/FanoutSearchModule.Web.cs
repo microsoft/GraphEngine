@@ -33,6 +33,30 @@ namespace FanoutSearch
         /// <exception cref="FanoutSearchQueryTimeoutException">Throws if the query timed out, and the server is set to not respond with partial result.</exception>"
         public string JsonQuery(string queryString, string queryPath = "")
         {
+            FanoutSearchDescriptor fanoutSearch_desc = _JsonQuery_impl(queryString, queryPath);
+            StringWriter sw = new StringWriter();
+            _SerializePaths(fanoutSearch_desc, sw);
+            return sw.GetStringBuilder().ToString();
+        }
+
+        /// <summary>
+        /// Perform a Lambda-syntax query
+        /// </summary>
+        /// <param name="lambda">The query string, in LIKQ syntax.</param>
+        /// <param name="getEdgeType">Get edge types, and interleave nodes and edge type arrays in the query result.</param>
+        /// <returns>A json string representing query results.</returns>
+        /// <exception cref="FanoutSearchQueryException">Throws if the query string is invalid.</exception>
+        /// <exception cref="FanoutSearchQueryTimeoutException">Throws if the query timed out, and the server is set to not respond with partial result.</exception>"
+        public string LambdaQuery(string lambda)
+        {
+            FanoutSearchDescriptor fanoutSearch_desc = _LambdaQuery_impl(lambda);
+            StringWriter sw = new StringWriter();
+            _SerializePaths(fanoutSearch_desc, sw);
+            return sw.GetStringBuilder().ToString();
+        }
+
+        private static FanoutSearchDescriptor _JsonQuery_impl(string queryString, string queryPath)
+        {
             JObject queryObject = null;
 
             try { queryObject = JsonConvert.DeserializeObject<JObject>(queryString); } catch { }
@@ -49,48 +73,15 @@ namespace FanoutSearch
 
             FanoutSearchDescriptor fanoutSearch_desc;
             fanoutSearch_desc = new FanoutSearchDescriptor(queryPath, queryObject);
-            return PathsToJsonArray(fanoutSearch_desc, getEdgeType: false);
+            return fanoutSearch_desc;
         }
 
-        /// <summary>
-        /// Perform a Lambda-syntax query
-        /// </summary>
-        /// <param name="queryString">The query string, in LIKQ syntax.</param>
-        /// <param name="getEdgeType">Get edge types, and interleave nodes and edge type arrays in the query result.</param>
-        /// <returns>A json string representing query results.</returns>
-        /// <exception cref="FanoutSearchQueryException">Throws if the query string is invalid.</exception>
-        /// <exception cref="FanoutSearchQueryTimeoutException">Throws if the query timed out, and the server is set to not respond with partial result.</exception>"
-        public string LambdaQuery(string queryString, bool getEdgeType = false)
+        private static FanoutSearchDescriptor _LambdaQuery_impl(string lambda)
         {
-            FanoutSearchDescriptor query_object;
-
-            query_object = LambdaDSL.Evaluate(queryString);
-
-            return PathsToJsonArray(query_object, getEdgeType);
+            return LambdaDSL.Evaluate(lambda);
         }
 
         #region Handlers
-        public override void JsonQueryHandler(HttpListenerRequest request, HttpListenerResponse response)
-        {
-            const string queryPath_prefix = "/JsonQuery";
-            string       queryPath;
-            string       queryResultPaths;
-
-            queryPath = request.RawUrl;
-            queryPath = queryPath.Substring(queryPath.IndexOf(queryPath_prefix, StringComparison.Ordinal) + queryPath_prefix.Length);
-
-            using (var sr = new StreamReader(request.InputStream, request.ContentEncoding))
-            {
-                string input_stream_content = sr.ReadToEnd();
-                queryResultPaths = JsonQuery(input_stream_content, queryPath);
-            }
-
-            using (var sw = new StreamWriter(response.OutputStream))
-            {
-                sw.Write(queryResultPaths);
-            }
-        }
-
         public override void GetNodesInfoHandler(GetNodesInfoRequest request, System.Net.HttpListenerResponse response)
         {
             var writers = Enumerable.Range(0, Global.CloudStorage.ServerCount).Select(i => new GetNodesInfoRequestWriter(fields: new List<string> {  "type_object_name" })).ToArray();
@@ -116,71 +107,96 @@ namespace FanoutSearch
             }
         }
 
-        public override void ExternalQueryHandler(StringStruct request, out ExternalQueryResponse response)
+        public override void JsonQueryHandler(HttpListenerRequest request, HttpListenerResponse response)
         {
-            Log.WriteLine(LogLevel.Info, "Processing external query.");
+            const string queryPath_prefix = "/JsonQuery";
+            string       queryPath;
+            FanoutSearchDescriptor queryResultPaths;
+
+            queryPath = request.RawUrl;
+            queryPath = queryPath.Substring(queryPath.IndexOf(queryPath_prefix, StringComparison.Ordinal) + queryPath_prefix.Length);
+            try
+            {
+                using (var sr = new StreamReader(request.InputStream, request.ContentEncoding))
+                {
+                    string input_stream_content = sr.ReadToEnd();
+                    queryResultPaths = _JsonQuery_impl(input_stream_content, queryPath);
+                }
+
+                _WriteResults(response, queryResultPaths);
+            }
+            catch (FanoutSearch.FanoutSearchQueryTimeoutException timeout)
+            {
+                //  TODO TimeoutException in GraphEngine.Core
+                throw new BadRequestException("Timeout", timeout.Message);
+            }
+            catch (FanoutSearch.FanoutSearchQueryException badRequest)
+            {
+                throw new BadRequestException("BadArgument", badRequest.Message);
+            }
+        }
+
+        public override void LambdaQueryHandler(LambdaQueryInput request, HttpListenerResponse response)
+        {
+            Log.WriteLine(LogLevel.Info, "Processing lambda query.");
 
             if (!s_enable_external_query)
             {
-                throw new Exception("External queray not enabled.");
+                throw new Exception("Lambda queray not enabled.");
             }
 
-            response.result = LambdaQuery(request.queryString, true);
+            try
+            {
+                var queryResultPaths = _LambdaQuery_impl(request.lambda);
+                _WriteResults(response, queryResultPaths);
+            }
+            catch (FanoutSearch.FanoutSearchQueryTimeoutException timeout)
+            {
+                throw new BadRequestException("Timeout", timeout.Message);
+            }
+            catch (FanoutSearch.FanoutSearchQueryException badRequest)
+            {
+                throw new BadRequestException("BadArgument", badRequest.Message);
+            }
         }
         #endregion // Handlers
 
         #region helpers
-        private string PathsToJsonArray(FanoutSearchDescriptor search, bool getEdgeType)
+        // queryResultPaths represents a serialized json array, so we just concatenate it with
+        // a wrapper
+        private static void _WriteResults(HttpListenerResponse response, FanoutSearchDescriptor queryResultPaths)
         {
-            StringBuilder sb = new StringBuilder();
-            bool first = true;
-            sb.Append('[');
-            foreach (var path in search)
+            using (var sw = new StreamWriter(response.OutputStream))
             {
-                if (first)
-                    first = false;
-                else
-                    sb.Append(',');
-                OutputPath(path, sb, getEdgeType);
+                sw.WriteLine(@"{
+    ""Results"":");
+                _SerializePaths(queryResultPaths, sw);
+                sw.WriteLine(@"
+}");
             }
-            sb.Append(']');
-            return sb.ToString();
         }
 
-        private void OutputPath(PathDescriptor path, StringBuilder sb, bool getEdgeType)
+        private static void _SerializePaths(FanoutSearchDescriptor search, TextWriter writer)
         {
-            if (!getEdgeType)
+            var paths = search.ToList().AsParallel().Select(p =>
             {
-                path.Serialize(sb);
-                return;
-            }
-
+                StringBuilder builder = new StringBuilder();
+                p.Serialize(builder);
+                return builder.ToString();
+            });
             bool first = true;
-            sb.Append('[');
-            long last_id = 0;
-            using (var edgeWriter = new EdgeStructWriter(0, 0))
-            {
-                foreach (var node in path)
-                {
-                    if (first)
-                        first = false;
-                    else
-                    {
-                        sb.Append(',');
-                        edgeWriter.from = last_id;
-                        edgeWriter.to = node.id;
-                        using (var type_reader = GetEdgeType(Global.CloudStorage.GetServerIdByCellId(last_id), edgeWriter))
-                        {
-                            sb.Append(type_reader.queryString);
-                        }
-                        sb.Append(',');
-                    }
+            writer.Write('[');
 
-                    sb.Append(node);
-                    last_id = node.id;
-                }
+            foreach (var path in paths)
+            {
+                if (first) { first = false; }
+                else { writer.Write(','); }
+
+                writer.Write(path);
             }
-            sb.Append(']');
+
+            writer.Write(']');
+
         }
 
         private static bool QueryPathInvalid(string queryPath)
