@@ -62,14 +62,15 @@ namespace Trinity
         void                    RemovePerSocketContextObject(int fd);
         PerSocketContextObject* GetPerSocketContextObject(int fd);
         void                    CloseClientConnection(PerSocketContextObject* pContext, bool lingering);
-        void                    CheckHandshakeResult(PerSocketContextObject* pContext);
-
-
-#pragma region Platform-specific routines
-        int                     InitializeEventMonitor(int sfd);
         int                     AcceptConnection(int sock_fd);
         bool                    ProcessRecv(PerSocketContextObject* pContext);
-        bool                    RearmFD(int fd);
+        void                    CheckHandshakeResult(PerSocketContextObject* pContext);
+
+#pragma region Platform-specific routines
+        int                     InitializeEventMonitor();   // Initialize the event monitor, and start the accept thread
+        int                     UninitializeEventMonitor(); // Tear down the event monitor, and stop the accept thread; After call returns, there should be no more connections;
+        int                     EnterEventMonitor(PerSocketContextObject* pContext); // Puts a new connection into the event monitor
+        bool                    RearmFD(int fd); 
 #pragma endregion
     }
 }

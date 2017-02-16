@@ -31,6 +31,7 @@ namespace Trinity
         TrinitySpinlock psco_spinlock; // psco = per socket context object
         std::map<int, PerSocketContextObject*> psco_map;
         std::atomic<size_t> g_threadpool_size;
+        std::thread socket_accept_thread;
 
 #pragma region PerSocketContextObject management
         void AddPerSocketContextObject(PerSocketContextObject * pContext)
@@ -93,14 +94,6 @@ namespace Trinity
         }
 #pragma endregion
 
-        void CloseClientConnection(PerSocketContextObject* pContext, bool lingering)
-        {
-            RemovePerSocketContextObject(pContext);
-            //TODO lingering
-            close(pContext->fd);
-            FreePerSocketContextObject(pContext);
-        }
-
         void CheckHandshakeResult(PerSocketContextObject* pContext)
         {
             if (pContext->ReceivedMessageBodyBytes != HANDSHAKE_MESSAGE_LENGTH)
@@ -128,13 +121,30 @@ namespace Trinity
             return;
         }
 
+        void SocketAcceptThreadProc()
+        {
+            while (true)
+            {
+                int connected_sock_fd = AcceptConnection(sock_fd);
+                if (-1 == connected_sock_fd)
+                {
+                    /* Break the loop if listening socket is shut down. */
+                    if (EINVAL == errno) { break; }
+                    else { continue; }
+                }
+                PerSocketContextObject * pContext = AllocatePerSocketContextObject(connected_sock_fd);
+                AddPerSocketContextObject(pContext);
+                EnterEventMonitor(pContext);
+            }
+        }
+
         int StartSocketServer(uint16_t port)
         {
             g_threadpool_size = 0;
             int sock_fd = -1;
             struct addrinfo hints, *addrinfos, *addrinfop;
             memset(&hints, 0, sizeof(struct addrinfo));
-            hints.ai_family = AF_INET; 
+            hints.ai_family = AF_INET;
             hints.ai_socktype = SOCK_STREAM;
             hints.ai_flags = AI_PASSIVE; // wildcard addresses
             char port_buf[6];
@@ -148,7 +158,7 @@ namespace Trinity
             for (addrinfop = addrinfos; addrinfop != NULL; addrinfop = addrinfop->ai_next)
             {
                 sock_fd = socket(addrinfop->ai_family, addrinfop->ai_socktype,
-                    addrinfop->ai_protocol);
+                                 addrinfop->ai_protocol);
                 if (-1 == sock_fd)
                     continue;
                 if (0 == bind(sock_fd, addrinfop->ai_addr, addrinfop->ai_addrlen))
@@ -177,11 +187,20 @@ namespace Trinity
                 return -1;
             }
 
+            socket_accept_thread = std::thread(SocketAcceptThreadProc);
+
             return sock_fd;
         }
 
-        //TODO stop server
-        //TODO close connections on stop
+        int ShutdownSocketServer()
+        {
+            shutdown(sock_fd, SHUT_RD);
+            socket_accept_thread.join();
+            close(sock_fd);
+            UninitializeEventMonitor(sock_fd);
+            // TODO close existing connections
+            return 0;
+        }
 
         int AcceptConnection(int sock_fd)
         {
@@ -189,20 +208,6 @@ namespace Trinity
             sockaddr addr;
             socklen_t addrlen = sizeof(sockaddr);
             return accept4(sock_fd, &addr, &addrlen, SOCK_NONBLOCK);
-        }
-
-
-        void WorkerThreadProc(int tid)
-        {
-            fprintf(stderr, "%d\n", tid);
-            while (true)
-            {
-                void* _pContext;
-                AwaitRequest(_pContext);
-                PerSocketContextObject* pContext = (PerSocketContextObject*)_pContext;
-                MessageHandler((MessageBuff*)pContext);
-                SendResponse(pContext);
-            }
         }
 
         bool ProcessRecv(PerSocketContextObject* pContext)
@@ -253,6 +258,27 @@ namespace Trinity
             fprintf(stderr, "send response, length: %d\n", pContext->RemainingBytesToSend);
             write(pContext->fd, pContext->Message, pContext->RemainingBytesToSend);
             ResetContextObjects(pContext);
+        }
+
+        void CloseClientConnection(PerSocketContextObject* pContext, bool lingering)
+        {
+            RemovePerSocketContextObject(pContext);
+            //TODO lingering
+            close(pContext->fd);
+            FreePerSocketContextObject(pContext);
+        }
+
+        void WorkerThreadProc(int tid)
+        {
+            fprintf(stderr, "%d\n", tid);
+            while (true)
+            {
+                void* _pContext;
+                AwaitRequest(_pContext);
+                PerSocketContextObject* pContext = (PerSocketContextObject*)_pContext;
+                MessageHandler((MessageBuff*)pContext);
+                SendResponse(pContext);
+            }
         }
     }
 }

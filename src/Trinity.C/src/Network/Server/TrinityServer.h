@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <atomic>
 #include "TrinityCommon.h"
+#include "Network/Network.h"
 #include "Network/ProtocolConstants.h"
 
 namespace Trinity
@@ -33,8 +34,6 @@ namespace Trinity
 
         void SendResponse(void* _pContext);
 
-        void MessageHandler(MessageBuff * msg);
-
         inline void EnterSocketServerThreadPool()
         {
             ++g_threadpool_size;
@@ -45,10 +44,14 @@ namespace Trinity
             --g_threadpool_size;
         }
 
+#pragma region Test purpose only
         void WorkerThreadProc(int tid);
 
-        bool StartWorkerThreadPool();
+        void MessageHandler(MessageBuff * msg);
+
+        bool StartWorkerThreadPool(); //
 
         int TrinityServerTestEntry();
+#pragma endregion
     }
 }

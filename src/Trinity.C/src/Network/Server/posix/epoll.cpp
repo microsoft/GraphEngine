@@ -12,9 +12,7 @@ namespace Trinity
 {
     namespace Network
     {
-        int sock_fd;
         int epoll_fd;
-        std::thread socket_accept_thread;
 
         void AwaitRequest(void* &_pContext)
         {
@@ -31,7 +29,7 @@ namespace Trinity
                     }
                     else if (ep_event.events & EPOLLIN)
                     {
-                        if(pContext->WaitingHandshakeMessage)
+                        if (pContext->WaitingHandshakeMessage)
                         {
                             CheckHandshakeResult(pContext);
                             continue;
@@ -44,37 +42,6 @@ namespace Trinity
             }
         }
 
-        void SocketAcceptThreadProc()
-        {
-            while (true)
-            {
-                int connected_sock_fd = AcceptConnection(sock_fd);
-                if (-1 == connected_sock_fd)
-                    continue;
-                PerSocketContextObject * pContext = AllocatePerSocketContextObject(connected_sock_fd);
-                AddPerSocketContextObject(pContext);
-                epoll_event ep_event;
-                ep_event.data.fd = connected_sock_fd;
-                ep_event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
-                if (-1 == epoll_ctl(epoll_fd, EPOLL_CTL_ADD, connected_sock_fd, &ep_event))
-                {
-                    fprintf(stderr, "cannot register connected sock fd to epoll instance");
-                    RemovePerSocketContextObject(connected_sock_fd);
-                    FreePerSocketContextObject(pContext);
-                    close(connected_sock_fd);
-                }
-            }
-        }
-
-        int ShutdownSocketServer()
-        {
-            // join after close fd?
-            socket_accept_thread.join();
-            close(sock_fd);
-            close(epoll_fd);
-            return 0;
-        }
-
         bool RearmFD(int fd)
         {
             epoll_event ep_event;
@@ -83,17 +50,37 @@ namespace Trinity
             return epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &ep_event) == 0;
         }
 
-        int InitializeEventMonitor(int sockfd)
+        int InitializeEventMonitor()
         {
-            sock_fd = sockfd;
             epoll_fd = epoll_create1(0);
             if (-1 == epoll_fd)
             {
                 return -1;
             }
             printf("epoll_fd: %d\n", epoll_fd);
-            socket_accept_thread = std::thread(SocketAcceptThreadProc);
-            return true;
+            return 0;
+        }
+
+        int UninitializeEventMonitor()
+        {
+            //TODO
+            close(epoll_fd);
+            return 0;
+        }
+
+        void EnterEventMonitor(PerSocketContextObject* pContext)
+        {
+            epoll_event ep_event;
+            ep_event.data.fd = pContext->fd;
+            ep_event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
+            if (-1 == epoll_ctl(epoll_fd, EPOLL_CTL_ADD, pContext->fd, &ep_event))
+            {
+                fprintf(stderr, "cannot register connected sock fd to epoll instance");
+                CloseClientConnection(pContext, false);
+                return -1;
+            }
+
+            return 0;
         }
     }
 }

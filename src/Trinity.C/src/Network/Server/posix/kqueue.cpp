@@ -12,9 +12,7 @@ namespace Trinity
 {
     namespace Network
     {
-        int sock_fd;
         int kqueue_fd;
-        std::thread socket_accept_thread;
 
         void AwaitRequest(void* &_pContext)
         {
@@ -36,7 +34,7 @@ namespace Trinity
                     }
                     else if (kevt_out.flags & EVFILT_READ)
                     {
-                        if(pContext->WaitingHandshakeMessage)
+                        if (pContext->WaitingHandshakeMessage)
                         {
                             CheckHandshakeResult(pContext);
                             continue;
@@ -49,34 +47,6 @@ namespace Trinity
             }
         }
 
-        void SocketAcceptThreadProc()
-        {
-            fprintf(stderr, "socket accept thread ...\n");
-            while (true)
-            {
-                int connected_sock_fd = AcceptConnection(sock_fd);
-                if (-1 == connected_sock_fd)
-                    continue;
-                PerSocketContextObject * pContext = AllocatePerSocketContextObject(connected_sock_fd);
-                AddPerSocketContextObject(pContext);
-                struct kevent kevt;
-                EV_SET(&kevt, connected_sock_fd, EVFILT_READ, EV_ADD | EV_ENABLE | EV_DISPATCH, 0, 0, NULL);
-                if (-1 == kevent(kqueue_fd, &kevt, 1, NULL, 0, NULL))
-                {
-                    fprintf(stderr, "cannot register fd to kqueue\n");
-                    CloseClientConnection(pContext, false);
-                }
-            }
-        }
-
-        int ShutdownSocketServer()
-        {
-            socket_accept_thread.join();
-            close(sock_fd);
-            close(kqueue_fd);
-            return 0;
-        }
-
         bool RearmFD(int fd)
         {
             struct kevent kevt;
@@ -84,17 +54,35 @@ namespace Trinity
             return -1 != kevent(kqueue_fd, &kevt, 1, NULL, 0, NULL);
         }
 
-        int InitializeEventMonitor(int sockfd)
+        int InitializeEventMonitor()
         {
-            sock_fd = sockfd;
             kqueue_fd = kqueue();
             if (-1 == kqueue_fd)
             {
-                return false;
+                return -1;
             }
             fprintf(stderr, "kqueue: %d\n", kqueue_fd);
-            socket_accept_thread = std::thread(SocketAcceptThreadProc);
-            return true;
+            return 0;
+        }
+
+        int UninitializeEventMonitor()
+        {
+            //TODO
+            close(kqueue_fd);
+            return 0;
+        }
+
+        int EnterEventMonitor(PerSocketContextObject* pContext)
+        {
+            struct kevent kevt;
+            EV_SET(&kevt, pContext->fd, EVFILT_READ, EV_ADD | EV_ENABLE | EV_DISPATCH, 0, 0, NULL);
+            if (-1 == kevent(kqueue_fd, &kevt, 1, NULL, 0, NULL))
+            {
+                fprintf(stderr, "cannot register fd to kqueue\n");
+                CloseClientConnection(pContext, false);
+                return -1;
+            }
+            return 0;
         }
     }
 }
