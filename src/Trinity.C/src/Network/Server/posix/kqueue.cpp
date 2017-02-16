@@ -23,7 +23,7 @@ namespace Trinity
             {
                 if (1 == kevent(kqueue_fd, NULL, 0, &kevt_out, 1, NULL))
                 {
-                    PerSocketContextObjectSlim* pContext = GetPerSocketContextObject(kevt_out.ident);
+                    PerSocketContextObject* pContext = GetPerSocketContextObject(kevt_out.ident);
                     if ((kevt_out.flags & EV_EOF) || (kevt_out.flags & EV_ERROR))
                     {
                         struct kevent kevt;
@@ -57,7 +57,7 @@ namespace Trinity
                 int connected_sock_fd = AcceptConnection(sock_fd);
                 if (-1 == connected_sock_fd)
                     continue;
-                PerSocketContextObjectSlim * pContext = AllocatePerSocketContextObjectSlim(connected_sock_fd);
+                PerSocketContextObject * pContext = AllocatePerSocketContextObject(connected_sock_fd);
                 AddPerSocketContextObject(pContext);
                 struct kevent kevt;
                 EV_SET(&kevt, connected_sock_fd, EVFILT_READ, EV_ADD | EV_ENABLE | EV_DISPATCH, 0, 0, NULL);

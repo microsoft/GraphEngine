@@ -29,12 +29,12 @@ namespace Trinity
     namespace Network
     {
         TrinitySpinlock psco_spinlock; // psco = per socket context object
-        std::map<int, PerSocketContextObjectSlim*> psco_map;
+        std::map<int, PerSocketContextObject*> psco_map;
 
-        void AddPerSocketContextObject(PerSocketContextObjectSlim * pContext)
+        void AddPerSocketContextObject(PerSocketContextObject * pContext)
         {
             psco_spinlock.lock();
-            psco_map.insert(std::pair<int, PerSocketContextObjectSlim*>(pContext->fd, pContext));
+            psco_map.insert(std::pair<int, PerSocketContextObject*>(pContext->fd, pContext));
             psco_spinlock.unlock();
 
         }
@@ -45,10 +45,10 @@ namespace Trinity
             psco_spinlock.unlock();
         }
 
-        PerSocketContextObjectSlim* GetPerSocketContextObject(int fd)
+        PerSocketContextObject* GetPerSocketContextObject(int fd)
         {
             psco_spinlock.lock();
-            PerSocketContextObjectSlim* pContext = psco_map[fd];
+            PerSocketContextObject* pContext = psco_map[fd];
             psco_spinlock.unlock();
             return pContext;
         }
@@ -123,13 +123,13 @@ namespace Trinity
             {
                 void* _pContext;
                 AwaitRequest(_pContext);
-                PerSocketContextObjectSlim* pContext = (PerSocketContextObjectSlim*)_pContext;
+                PerSocketContextObject* pContext = (PerSocketContextObject*)_pContext;
                 MessageHandler((MessageBuff*)pContext);
                 SendResponse(pContext);
             }
         }
 
-        bool ProcessRecv(PerSocketContextObjectSlim* pContext)
+        bool ProcessRecv(PerSocketContextObject* pContext)
         {
             fprintf(stderr, "process recv on socket fd %d ...\n", pContext->fd);
             int fd = pContext->fd;
@@ -172,7 +172,7 @@ namespace Trinity
 
         void SendResponse(void* _pContext)
         {
-            PerSocketContextObjectSlim * pContext = (PerSocketContextObjectSlim*)_pContext;
+            PerSocketContextObject * pContext = (PerSocketContextObject*)_pContext;
             RearmFD(pContext->fd);
             fprintf(stderr, "send response, length: %d\n", pContext->RemainingBytesToSend);
             write(pContext->fd, pContext->Message, pContext->RemainingBytesToSend);

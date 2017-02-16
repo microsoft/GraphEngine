@@ -53,11 +53,11 @@ namespace Trinity
                 ContextObjectKey Key;
             };
             bool WaitingHandshakeMessage;
-        }PerSocketContextObjectSlim;
+        }PerSocketContextObject;
 
-        inline PerSocketContextObjectSlim* AllocatePerSocketContextObjectSlim(int fd)
+        inline PerSocketContextObject* AllocatePerSocketContextObject(int fd)
         {
-            PerSocketContextObjectSlim* p = (PerSocketContextObjectSlim*)malloc(sizeof(PerSocketContextObjectSlim));
+            PerSocketContextObject* p = (PerSocketContextObject*)malloc(sizeof(PerSocketContextObject));
 
             p->RecvBuffer = (char*)malloc(UInt32_Contants::RecvBufferSize);
             p->RecvBufferLen = UInt32_Contants::RecvBufferSize;
@@ -69,13 +69,13 @@ namespace Trinity
             return p;
         }
 
-        inline void FreePerSocketContextObjectSlim(PerSocketContextObjectSlim* p)
+        inline void FreePerSocketContextObject(PerSocketContextObject* p)
         {
             free(p->RecvBuffer);
             free(p);
         }
 
-        inline void ResetContextObjects(PerSocketContextObjectSlim * pContext)
+        inline void ResetContextObjects(PerSocketContextObject * pContext)
         {
             free(pContext->Message);
 
@@ -92,19 +92,19 @@ namespace Trinity
             }
         }
 
-        void AddPerSocketContextObject(PerSocketContextObjectSlim * pContext);
+        void AddPerSocketContextObject(PerSocketContextObject * pContext);
         void RemovePerSocketContextObject(int fd);
-        PerSocketContextObjectSlim* GetPerSocketContextObject(int fd);
+        PerSocketContextObject* GetPerSocketContextObject(int fd);
 
-        inline void CloseClientConnection(PerSocketContextObjectSlim* pContext, bool lingering)
+        inline void CloseClientConnection(PerSocketContextObject* pContext, bool lingering)
         {
             RemovePerSocketContextObject(pContext);
             //TODO lingering
             close(pContext->fd);
-            FreePerSocketContextObjectSlim(pContext);
+            FreePerSocketContextObject(pContext);
         }
 
-        inline void CheckHandshakeResult(PerSocketContextObjectSlim* pContext)
+        inline void CheckHandshakeResult(PerSocketContextObject* pContext)
         {
             if (pContext->ReceivedMessageBodyBytes != HANDSHAKE_MESSAGE_LENGTH)
             {
@@ -136,7 +136,7 @@ namespace Trinity
 
         int AcceptConnection(int sock_fd);
 
-        bool ProcessRecv(PerSocketContextObjectSlim* pContext);
+        bool ProcessRecv(PerSocketContextObject* pContext);
 
         bool RearmFD(int fd);
 

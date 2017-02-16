@@ -23,7 +23,7 @@ namespace Trinity
             {
                 if (1 == epoll_wait(epoll_fd, &ep_event, 1, -1))
                 {
-                    PerSocketContextObjectSlim* pContext = GetPerSocketContextObject(ep_event.data.fd);
+                    PerSocketContextObject* pContext = GetPerSocketContextObject(ep_event.data.fd);
                     if ((ep_event.events & EPOLLERR) || (ep_event.events & EPOLLHUP))
                     {
                         CloseClientConnection(pContext, false);
@@ -51,7 +51,7 @@ namespace Trinity
                 int connected_sock_fd = AcceptConnection(sock_fd);
                 if (-1 == connected_sock_fd)
                     continue;
-                PerSocketContextObjectSlim * pContext = AllocatePerSocketContextObjectSlim(connected_sock_fd);
+                PerSocketContextObject * pContext = AllocatePerSocketContextObject(connected_sock_fd);
                 AddPerSocketContextObject(pContext);
                 epoll_event ep_event;
                 ep_event.data.fd = connected_sock_fd;
@@ -60,7 +60,7 @@ namespace Trinity
                 {
                     fprintf(stderr, "cannot register connected sock fd to epoll instance");
                     RemovePerSocketContextObject(connected_sock_fd);
-                    FreePerSocketContextObjectSlim(pContext);
+                    FreePerSocketContextObject(pContext);
                     close(connected_sock_fd);
                 }
             }
