@@ -45,7 +45,7 @@
       <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FanoutSearch, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FanoutSearch, Version=1.0.8784.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\GraphEngine.LIKQ.1.0.8784\lib\net46\FanoutSearch.dll</HintPath>
       <Private>True</Private>
     </Reference>
