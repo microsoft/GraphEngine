@@ -56,8 +56,8 @@ namespace Trinity
         }PerSocketContextObject;
 
         PerSocketContextObject* AllocatePerSocketContextObject(int fd);
-        void                    FreePerSocketContextObject(PerSocketContextObject* p)
-        void                    ResetContextObjects(PerSocketContextObject * pContext)
+        void                    FreePerSocketContextObject(PerSocketContextObject* p);
+        void                    ResetContextObjects(PerSocketContextObject * pContext);
         void                    AddPerSocketContextObject(PerSocketContextObject * pContext);
         void                    RemovePerSocketContextObject(int fd);
         PerSocketContextObject* GetPerSocketContextObject(int fd);
