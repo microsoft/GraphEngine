@@ -59,7 +59,7 @@ namespace FanoutSearch
                             {
                                 switch (f)
                                 {
-                                    case JsonDSL.graph_outlink_type:
+                                    case JsonDSL.graph_outlinks:
                                         return ToJsonArray(_GetEdgeType(cell, secondary_ids[idx]));
                                     case "*":
                                         return cell.ToString();

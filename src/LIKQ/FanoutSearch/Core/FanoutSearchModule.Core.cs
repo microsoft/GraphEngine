@@ -310,7 +310,7 @@ namespace FanoutSearch
                 rpaths = new List<ResultPathDescriptor>(capacity: result_set_capacity);
                 r_desc = new Protocols.TSL.NodeDescriptor(field_selections: null);
                 has_return_selections = request.return_selection.Select(_ => _.Count != 0).ToArray();
-                has_outlink_selections = request.return_selection.Select(_ => _.Contains(JsonDSL.graph_outlink_type)).ToArray();
+                has_outlink_selections = request.return_selection.Select(_ => _.Contains(JsonDSL.graph_outlinks)).ToArray();
 
 
                 foreach (var fpath in result_set)
