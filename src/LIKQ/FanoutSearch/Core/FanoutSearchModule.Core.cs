@@ -134,8 +134,8 @@ namespace FanoutSearch
             bool query_registered = false;
             do
             {
-                fanout_timer.Start();
                 List<FanoutPathDescriptor> origin_path_descriptors = _GetOriginPathDescriptors(request);
+                fanout_timer.Start();
 
                 if (origin_path_descriptors == null)
                 {
@@ -209,7 +209,10 @@ namespace FanoutSearch
                     object match_object = query_object[JsonDSL.Match];
                     string type_string = (string)query_object[JsonDSL.Type];
 
+                    var idx_timer = Stopwatch.StartNew();
                     origins.AddRange(s_indexServiceFunc(match_object, type_string).Select(_ => new FanoutPathDescriptor(_)));
+                    idx_timer.Stop();
+                    Log.WriteLine(LogLevel.Info, "FanoutSearchQueryHandler: starting node index query complete. Time = {0}ms.", idx_timer.ElapsedMilliseconds);
                 }
                 catch (IndexingServiceNotRegisteredException)
                 {
