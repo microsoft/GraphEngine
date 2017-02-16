@@ -125,7 +125,7 @@ namespace Trinity
         {
             while (true)
             {
-                int connected_sock_fd = AcceptConnection(sock_fd);
+                int connected_sock_fd = AcceptConnection(sockfd);
                 if (-1 == connected_sock_fd)
                 {
                     /* Break the loop if listening socket is shut down. */
@@ -181,7 +181,7 @@ namespace Trinity
 
             fprintf(stderr, "listen succeed\n");
 
-            if (-1 == InitializeEventMonitor(sock_fd))
+            if (-1 == InitializeEventMonitor())
             {
                 close(sock_fd);
                 return -1;
