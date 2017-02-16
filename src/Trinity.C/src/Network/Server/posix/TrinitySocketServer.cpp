@@ -32,6 +32,7 @@ namespace Trinity
         std::map<int, PerSocketContextObject*> psco_map;
         std::atomic<size_t> g_threadpool_size;
         std::thread socket_accept_thread;
+        int accept_sock; // accept socket
 
 #pragma region PerSocketContextObject management
         void AddPerSocketContextObject(PerSocketContextObject * pContext)
@@ -125,7 +126,7 @@ namespace Trinity
         {
             while (true)
             {
-                int connected_sock_fd = AcceptConnection(sockfd);
+                int connected_sock_fd = AcceptConnection(accept_sock);
                 if (-1 == connected_sock_fd)
                 {
                     /* Break the loop if listening socket is shut down. */
@@ -141,7 +142,7 @@ namespace Trinity
         int StartSocketServer(uint16_t port)
         {
             g_threadpool_size = 0;
-            int sock_fd = -1;
+            accept_sock = -1;
             struct addrinfo hints, *addrinfos, *addrinfop;
             memset(&hints, 0, sizeof(struct addrinfo));
             hints.ai_family = AF_INET;
@@ -157,23 +158,23 @@ namespace Trinity
 
             for (addrinfop = addrinfos; addrinfop != NULL; addrinfop = addrinfop->ai_next)
             {
-                sock_fd = socket(addrinfop->ai_family, addrinfop->ai_socktype,
+                accept_sock = socket(addrinfop->ai_family, addrinfop->ai_socktype,
                                  addrinfop->ai_protocol);
-                if (-1 == sock_fd)
+                if (-1 == accept_sock)
                     continue;
-                if (0 == bind(sock_fd, addrinfop->ai_addr, addrinfop->ai_addrlen))
+                if (0 == bind(accept_sock, addrinfop->ai_addr, addrinfop->ai_addrlen))
                     break;
-                close(sock_fd);
+                close(accept_sock);
             }
             if (addrinfop == NULL)
             {
                 return -1;
             }
-            printf("sock_fd: %d\n", sock_fd);
-            //make_nonblocking(sock_fd);
+            printf("accept_sock: %d\n", accept_sock);
+            //make_nonblocking(accept_sock);
             freeaddrinfo(addrinfos);
 
-            if (-1 == listen(sock_fd, SOMAXCONN))
+            if (-1 == listen(accept_sock, SOMAXCONN))
             {
                 printf("listen failed\n");
                 return -1;
@@ -183,21 +184,21 @@ namespace Trinity
 
             if (-1 == InitializeEventMonitor())
             {
-                close(sock_fd);
+                close(accept_sock);
                 return -1;
             }
 
             socket_accept_thread = std::thread(SocketAcceptThreadProc);
 
-            return sock_fd;
+            return accept_sock;
         }
 
         int ShutdownSocketServer()
         {
-            shutdown(sock_fd, SHUT_RD);
+            shutdown(accept_sock, SHUT_RD);
             socket_accept_thread.join();
-            close(sock_fd);
-            UninitializeEventMonitor(sock_fd);
+            close(accept_sock);
+            UninitializeEventMonitor();
             // TODO close existing connections
             return 0;
         }
