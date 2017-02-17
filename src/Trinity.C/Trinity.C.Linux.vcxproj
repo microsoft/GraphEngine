@@ -73,7 +73,8 @@
     <RemoteBuildOutputs>$(RemoteRootDir)/$(ProjectName)/libTrinity.C.so</RemoteBuildOutputs>
     <AdditionalSourcesToCopyMapping>CMakeLists.txt;$(AdditionalSourcesToCopyMapping)</AdditionalSourcesToCopyMapping>
     <NMakeIncludeSearchPath>src;include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakePreprocessorDefinitions>-U_WIN64 -U_WIN32</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>
+    </NMakePreprocessorDefinitions>
   </PropertyGroup>
   <ItemGroup>
     <ClInclude Include="include\arch\cpu.h" />
@@ -130,10 +131,12 @@
     <ClInclude Include="src\Runtime\Transition.h" />
     <ClInclude Include="src\Storage\LocalStorage\GCTask.h" />
     <ClInclude Include="src\Storage\LocalStorage\LocalMemoryStorage.h" />
+    <ClInclude Include="src\Storage\LocalStorage\ThreadContext.h" />
     <ClInclude Include="src\Storage\MemoryTrunk\MemoryTrunk.h" />
     <ClInclude Include="src\Storage\MTHash\CellEntry.h" />
     <ClInclude Include="src\Storage\MTHash\MTHash.h" />
     <ClInclude Include="src\Storage\MTHash\MT_ENUMERATOR.h" />
+    <ClInclude Include="src\Storage\MTHash\MT_SHADOW_ENUMERATOR.h" />
     <ClInclude Include="src\Threading\TrinitySpinlock.h" />
     <ClInclude Include="src\Trinity\Configuration\TrinityConfig.h" />
     <ClInclude Include="src\Trinity\Diagnostics\Log.h" />
@@ -174,6 +177,7 @@
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.cpp" />
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.Enumeration.cpp" />
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.WriteAheadLog.cpp" />
+    <ClCompile Include="src\Storage\LocalStorage\ThreadContext.cpp" />
     <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.AddressTable.cpp" />
     <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.Cell.Memory.cpp" />
     <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.cpp" />
@@ -191,6 +195,7 @@
     <ClCompile Include="src\Storage\MTHash\MTHash.Resize.cpp" />
     <ClCompile Include="src\Storage\MTHash\MTHash.ThreadSafe.cpp" />
     <ClCompile Include="src\Storage\MTHash\MT_ENUMERATOR.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MT_SHADOW_ENUMERATOR.cpp" />
     <ClCompile Include="src\Trinity\Configuration\TrinityConfig.cpp" />
     <ClCompile Include="src\Trinity\Diagnostics\Log.cpp" />
     <ClCompile Include="src\Utility\FileIO.cpp" />
