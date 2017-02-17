@@ -6,8 +6,8 @@
 #ifndef TRINITY_PLATFORM_WINDOWS
 #include <thread>
 #include <map>
-#include <os/platforms/posix.h>
-#include <Threading/TrinitySpinlock.h>
+#include "os/platforms/posix.h"
+#include "Threading/TrinitySpinlock.h"
 #include "Trinity/Hash/NonCryptographicHash.h"
 #include "Network/Server/posix/TrinitySocketServer.h"
 #include "Network/SocketOptionsHelper.h"
@@ -263,7 +263,7 @@ namespace Trinity
 
         void CloseClientConnection(PerSocketContextObject* pContext, bool lingering)
         {
-            RemovePerSocketContextObject(pContext);
+            RemovePerSocketContextObject(pContext->fd);
             //TODO lingering
             close(pContext->fd);
             FreePerSocketContextObject(pContext);
