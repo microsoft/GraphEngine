@@ -358,16 +358,23 @@ namespace Storage
     //  --> Result: a=DEADLOCK, b=DEADLOCK
     //  ====================================
 
+    // Calculating checksum for a thread context during arbitration:
+    // 
     // Arbitration retry count scales up when the same thread requests arbitration
     // repeatidly without changing the thread context. This is likely to happen
     // when a deadlock is formed but the arbitrator fails to detect it due to
     // the retry count being too low. If so, different threads will request for
     // arbitration at different time, thus will never be aware of each other.
-    // TODO preliminary profiling has shown that retry_max reaches 28800 before
+    // preliminary profiling has shown that retry_max reaches 28800 before
     // two dead-locked threads (LOCKCELL vs. LOCKHASH) are finally aware of each other.
     // currently we have a linear increasing scheme for the retry max count. It scales
     // up from 128, which means that 225 arbitrations are requested...
-    // Maybe increase the scale up speed?
+    // The solution: We detect whether a thread has repeatidly requested arbitration
+    // without changing its state (that nothing new happened between arbitrations, to
+    // this thread). To do so we calculate the checksum of a thread context and record
+    // it. We also log down how many times it 'polled' arbitration in 
+    // pctx->SameChecksumTimes. Then, we use the counter as a multiplier to increase
+    // the time that such a thread stays in the arbitration room.
     TrinityErrorCode Arbitrate()
     {
         PTHREAD_CONTEXT        pctx             = GetCurrentThreadContext();
