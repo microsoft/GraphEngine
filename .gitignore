@@ -32,6 +32,7 @@ x64
 tmp
 ipch
 *.opensdf
+*.opendb
 *.psess
 *.vsp
 *.ctl

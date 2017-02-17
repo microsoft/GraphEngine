@@ -5,18 +5,13 @@
 #include <os/os.h>
 #if !defined(TRINITY_PLATFORM_WINDOWS)
 #include "ClientSocket.h"
-#include "Trinity/Diagnostics/Log.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <netinet/in.h>
+#include "Network/SocketOptionsHelper.h"
 
 namespace Trinity
 {
@@ -24,7 +19,14 @@ namespace Trinity
     {
         uint64_t CreateClientSocket()
         {
-            return socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+            int clientsocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+            if (INVALID_SOCKET == clientsocket)
+            {
+                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Cannot create a client socket.");
+                return INVALID_SOCKET;
+            }
+
+            return SetSocketOptions(clientsocket, /*enable_keepalive:*/ false, /*disable_sendbuf:*/false);
         }
 
         bool ClientSocketConnect(uint64_t clientsocket, uint32_t ip, uint16_t port)
@@ -40,10 +42,17 @@ namespace Trinity
             ipaddr.sin_port = htons(port);
             ipaddr.sin_addr.s_addr = ip;
 
-            //TODO handshake
-            if (0 == connect((int)clientsocket, (struct sockaddr*)&ipaddr, sizeof(sockaddr_in)))
+            if (0 != connect((int)clientsocket, (struct sockaddr*)&ipaddr, sizeof(sockaddr_in)))
+                return false;
+
+            if (TrinityConfig::Handshake())
+            {
+                return ClientSocketHandshake(clientsocket);
+            }
+            else
+            {
                 return true;
-            return false;
+            }
         }
 
         bool ClientSend(uint64_t socket, char* buf, int32_t len)

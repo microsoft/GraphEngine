@@ -21,7 +21,9 @@ namespace freebase_likq
 {
     class Program
     {
-        static SQLiteConnection s_dbconn;
+        private static SQLiteConnection s_dbconn;
+        private static string s_freebase_data_blobcontainer = "https://graphengine.blob.core.windows.net/public-data";
+        private static string s_freebase_dataset = "freebase-full-dataset.zip";
 
         static void Main(string[] args)
         {
@@ -43,8 +45,17 @@ namespace freebase_likq
             LambdaDSL.SetDialect("Freebase", "StartFrom", "VisitNode", "FollowEdge", "Action");
             //  Plug-in Freebase ICell adapter
             FanoutSearchModule.RegisterUseICellOperationMethod(CellGroupAccessor.New);
+            //  Plug-in Serialize.Linq expression serializer
+            FanoutSearchModule.RegisterExpressionSerializerFactory(ExpressionSerializerFactory);
+            //  Configure LIKQ timeout
+            FanoutSearchModule.SetQueryTimeout(1000000);
 
             string storage_path = Path.Combine(Global.MyAssemblyPath, "storage");
+            if (Directory.Exists(storage_path) && Directory.GetFileSystemEntries(storage_path).Count() == 0)
+            {
+                Directory.Delete(storage_path);
+            }
+
             if (!Directory.Exists(storage_path))
             {
                 DownloadDataFile();
@@ -59,7 +70,13 @@ namespace freebase_likq
 
             s_dbconn = new SQLiteConnection($"Data Source={sqlite_db_path};Version=3;");
             s_dbconn.Open();
+
             return;
+        }
+
+        private static IExpressionSerializer ExpressionSerializerFactory()
+        {
+            return new ExpressionSerializer();
         }
 
         private static void BuildIndex(string sqlite_db_path)
@@ -100,7 +117,7 @@ namespace freebase_likq
 
         private static void DownloadDataFile()
         {
-            Log.WriteLine("The storage folder is not found. Downloading the data from https://graphengine.blob.core.windows.net/public-data/freebase-film-dataset.zip now...");
+            Log.WriteLine($"The storage folder is not found. Downloading the data from {s_freebase_data_blobcontainer}/{s_freebase_dataset} now...");
             WebClient download_client = new WebClient();
             Stopwatch download_timer  = Stopwatch.StartNew();
             download_client.DownloadProgressChanged += (sender, e) =>
@@ -111,10 +128,10 @@ namespace freebase_likq
                     Console.Write($"[{e.ProgressPercentage}%] {e.BytesReceived} / {e.TotalBytesToReceive} bytes downloaded. {e.BytesReceived / (download_timer.ElapsedMilliseconds + 1)} KiB/s".PadRight(Console.BufferWidth - 1));
                 }
             };
-            download_client.DownloadFileTaskAsync("https://graphengine.blob.core.windows.net/public-data/freebase-film-dataset.zip", "freebase-film-dataset.zip").Wait();
+            download_client.DownloadFileTaskAsync($"{s_freebase_data_blobcontainer}/{s_freebase_dataset}", s_freebase_dataset).Wait();
             Console.WriteLine();
             Log.WriteLine("Download complete. Unarchiving storage folder...");
-            ZipFile.ExtractToDirectory("freebase-film-dataset.zip", Global.MyAssemblyPath);
+            ZipFile.ExtractToDirectory("freebase-full-dataset.zip", Global.MyAssemblyPath);
             Log.WriteLine("Successfully unarchived the data files.");
         }
 

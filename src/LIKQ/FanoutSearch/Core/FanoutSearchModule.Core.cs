@@ -4,7 +4,6 @@
 //
 using FanoutSearch.Protocols.TSL;
 using Newtonsoft.Json.Linq;
-using Serialize.Linq.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -135,8 +134,8 @@ namespace FanoutSearch
             bool query_registered = false;
             do
             {
-                fanout_timer.Start();
                 List<FanoutPathDescriptor> origin_path_descriptors = _GetOriginPathDescriptors(request);
+                fanout_timer.Start();
 
                 if (origin_path_descriptors == null)
                 {
@@ -210,7 +209,10 @@ namespace FanoutSearch
                     object match_object = query_object[JsonDSL.Match];
                     string type_string = (string)query_object[JsonDSL.Type];
 
+                    var idx_timer = Stopwatch.StartNew();
                     origins.AddRange(s_indexServiceFunc(match_object, type_string).Select(_ => new FanoutPathDescriptor(_)));
+                    idx_timer.Stop();
+                    Log.WriteLine(LogLevel.Info, "FanoutSearchQueryHandler: starting node index query complete. Time = {0}ms.", idx_timer.ElapsedMilliseconds);
                 }
                 catch (IndexingServiceNotRegisteredException)
                 {
@@ -311,7 +313,7 @@ namespace FanoutSearch
                 rpaths = new List<ResultPathDescriptor>(capacity: result_set_capacity);
                 r_desc = new Protocols.TSL.NodeDescriptor(field_selections: null);
                 has_return_selections = request.return_selection.Select(_ => _.Count != 0).ToArray();
-                has_outlink_selections = request.return_selection.Select(_ => _.Contains(JsonDSL.graph_outlink_type)).ToArray();
+                has_outlink_selections = request.return_selection.Select(_ => _.Contains(JsonDSL.graph_outlinks)).ToArray();
 
 
                 foreach (var fpath in result_set)

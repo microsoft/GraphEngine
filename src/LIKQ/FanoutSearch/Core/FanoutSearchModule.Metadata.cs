@@ -42,40 +42,39 @@ namespace FanoutSearch
         {
             List<string> fields            = request.fields;
             int          field_cnt         = fields.Count;
-            List<long>   ids               = request.ids;
             List<long>   secondary_ids     = request.Contains_secondary_ids ? request.secondary_ids : null;
+            NodeInfo[]   infos             = new NodeInfo[request.ids.Count];
 
-            for (int idx = 0, len = ids.Count; idx != len; ++idx)
+            Parallel.ForEach(request.ids, (id, state, idx) =>
             {
-                long id = ids[idx];
                 try
                 {
                     using (var cell = s_useICellFunc(id))
                     {
-                        response.infoList.Add(new NodeInfo
+                        infos[idx] = new NodeInfo
                         {
                             id    = id,
                             values = fields.Select(f =>
                             {
                                 switch (f)
                                 {
-                                    case JsonDSL.graph_outlink_type:
-                                        return ToJsonArray(_GetEdgeType(cell, secondary_ids[idx]));
+                                    case JsonDSL.graph_outlinks:
+                                        return ToJsonArray(_GetEdgeType(cell, secondary_ids[(int)idx]));
                                     case "*":
                                         return cell.ToString();
                                     default:
                                         return cell.get(f);
                                 }
                             }).ToList(),
-                        });
+                        };
                     }
                 }
                 catch // use cell failed. populate the list with an empty NodeInfo.
                 {
-                    response.infoList.Add(_CreateEmptyNodeInfo(id, field_cnt));
+                    infos[idx] = _CreateEmptyNodeInfo(id, field_cnt);
                 }
-
-            }
+            });
+            response.infoList = infos.ToList();
         }
 
         private NodeInfo _CreateEmptyNodeInfo(long id, int fieldCount)

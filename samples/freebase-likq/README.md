@@ -32,6 +32,68 @@ HTTP endpoint, either run the program as administrator, or grant the
 current user the permission to listen to port 80: `netsh http add
 urlacl url=http://+:80/ user=Domain\username`.
 
+Note that the full Freebase image is ~`32GB` so make sure that you run the demo on a beefy server!
+We also have prepared a smaller dataset `freebase-film-dataset.zip`. Please modify `Program.cs` to
+direct the program to download the small dataset if you want to.
+
 Now you can query Freebase via LIKQ. Here is a quick example:
 
+```
+//Find wives of Tom Cruise through a 2-hop graph traversal.
+Freebase
+	.StartFrom(530972568887245, select: new[]{"type_object_name"})
+	.FollowEdge("people_person_spouse_s")
+	.VisitNode(Action.Continue)
+	.FollowEdge("people_marriage_spouse")
+	.VisitNode(Action.Return, select: new[]{"type_object_name"});
+```
 
+To issue this query via RESTful API, POST the query payload to `http://server/LIKQ/LambdaQuery/`:
+
+```
+{
+	"lambda": "Freebase
+	.StartFrom(530972568887245, select: new[]{\"type_object_name\"})
+	.FollowEdge(\"people_person_spouse_s\")
+	.VisitNode(Action.Continue)
+	.FollowEdge(\"people_marriage_spouse\")
+	.VisitNode(Action.Return, select: new[]{\"type_object_name\"});"
+}
+```
+
+And the result shall look like this:
+
+```
+{
+    "Results":
+[[{"CellID":530972568887245,"type_object_name":"Tom Cruise"},{"CellID":332530798387447},{"CellID":547400553082314,"type_object_name":"Nicole Kidman"}],[{"CellID":530972568887245,"type_object_name":"Tom Cruise"},{"CellID":290269080985430},{"CellID":435682361078655,"type_object_name":"Mimi Rogers"}],[{"CellID":530972568887245,"type_object_name":"Tom Cruise"},{"CellID":438165252269041},{"CellID":524140155134870,"type_object_name":"Katie Holmes"}],[{"CellID":530972568887245,"type_object_name":"Tom Cruise"},{"CellID":292606011314464},{"CellID":360255961521166,"type_object_name":"Penélope Cruz"}]]
+}
+```
+
+Another example:
+
+```
+//Random facts about Beijing
+{
+	"lambda": "Freebase
+	.StartFrom(297095894548906, select: new[]{\"type_object_name\"})
+	.VisitNode(_ => _.continue_if(_.dice(0.02)) & _.return_if(_.dice(0.1)), select: new[]{\"type_object_name\"})
+	.VisitNode(_ => _.continue_if(_.dice(0.02)) & _.return_if(_.dice(0.1)), select: new[]{\"type_object_name\"})
+	.VisitNode(Action.Return);"
+}
+```
+
+And the result shall be different every time (because we apply sampling of probability 10%):
+
+```
+{
+    "Results":
+[[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["travel_travel_destination_visitor_information_site"]},{"CellID":376867967714800,"type_object_name":""}],[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["travel_travel_destination_climate"]},{"CellID":365581129565857,"type_object_name":""}],[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["travel_travel_destination_climate"]},{"CellID":451288213711482,"type_object_name":""}],[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["common_topic_webpage"]},{"CellID":382284952397975,"type_object_name":""}],[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["common_topic_webpage"]},{"CellID":459237260174344,"type_object_name":""}],[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["travel_travel_destination_climate"]},{"CellID":433800880109811,"type_object_name":""}],[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["olympics_olympic_host_city_olympics_hosted"]},{"CellID":294136728044394,"type_object_name":"2008 Summer Olympics"}]]
+}
+```
+
+## Known issues
+
+- On the full dataset, the SQLite index may be slow.
+- The first few queries will trigger JIT compilation of the TSL assembly (which is huge!), so they may appear to be slow. After a few queries the assembly should be mostly JIT'ed (due to high connectedness in the graph).
+- The data importer could be further improved. Some edges lack the [GraphEdge] tag, and thus could only be traversed through if explicitly specified. This can be improved when we relax the condition in the data importer for type inference. Once the data importer is improved, this demo shall receive some benefits automatically (smaller data images, faster queries, more interesting results etc.).

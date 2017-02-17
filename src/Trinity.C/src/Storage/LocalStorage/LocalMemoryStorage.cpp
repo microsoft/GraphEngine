@@ -61,7 +61,7 @@ namespace Storage
                 hashtables[i].Initialize((uint32_t)(TrinityConfig::MemoryPoolSize >> 15), memory_trunks + i); // Default capacity = 256M >> 15 = 8192
             }
 
-            memset(dirty_flags, sizeof(int32_t) * trunk_count, 0);
+            memset(dirty_flags, 0, sizeof(int32_t) * trunk_count);
 
             disposed.store(false);
             initialized.store(true);

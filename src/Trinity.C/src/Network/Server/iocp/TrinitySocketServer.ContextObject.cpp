@@ -55,7 +55,7 @@ namespace Trinity
             p->Message = NULL;
             p->RemainingBytesToSend = 0;
             p->BytesAlreadySent = 0;
-            p->WaitingHandshakeMessage = true;
+            p->WaitingHandshakeMessage = TrinityConfig::Handshake();
             Diagnostics::WriteLine(Diagnostics::LogLevel::Verbose, "ServerSocket: Client {0} allocated.", p);
 
             p->socket = socket;

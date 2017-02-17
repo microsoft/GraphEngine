@@ -69,10 +69,6 @@
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Serialize.Linq, Version=1.2.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serialize.Linq.1.2.4\lib\net45\Serialize.Linq.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.AppContext, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.AppContext.4.1.0\lib\net46\System.AppContext.dll</HintPath>
@@ -188,6 +184,8 @@
     <Compile Include="Core\FanoutSearchQueryTimeoutException.cs" />
     <Compile Include="Core\QueryPredicateCompiler.cs" />
     <Compile Include="Core\QueryResultCache.cs" />
+    <Compile Include="QueryLanguage\ExpressionSerializer.cs" />
+    <Compile Include="QueryLanguage\IExpressionSerializer.cs" />
     <Compile Include="QueryLanguage\LambdaDSL.cs" />
     <Compile Include="Core\FanoutSearchModule.cs" />
     <Compile Include="Core\FanoutSearchModule.Web.cs" />
@@ -196,7 +194,6 @@
     <Compile Include="Descriptors\EdgeTypeDescriptor.cs" />
     <Compile Include="Descriptors\FanoutSearchDescriptor.cs" />
     <Compile Include="QueryLanguage\ExpressionBuilder.cs" />
-    <Compile Include="QueryLanguage\ExpressionSerializer.cs" />
     <Compile Include="QueryLanguage\JsonDSL.cs" />
     <Compile Include="QueryLanguage\LIKQ.cs" />
     <Compile Include="Descriptors\NodeDescriptor.cs" />
@@ -215,16 +212,14 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <TslCodegen Include="TSL\Core.tsl" />
+    <TslCodegen Include="TSL\Module.tsl" />
+    <TslCodegen Include="TSL\Result.tsl" />
+    <TslCodegen Include="TSL\Web.tsl" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FanoutSearch.Protocols.TSL\FanoutSearch.Protocols.TSL.csproj">
-      <Project>{c586e5dc-1cca-43dc-b88d-e8948c9b47ff}</Project>
-      <Name>FanoutSearch.Protocols.TSL</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

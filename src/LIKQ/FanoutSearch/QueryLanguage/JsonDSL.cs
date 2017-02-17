@@ -47,7 +47,7 @@ namespace FanoutSearch
         internal const string not       = "not";
 
         //  Special select operators
-        internal const string graph_outlink_type = "graph_outlink_type";
+        internal const string graph_outlinks = "graph_outlinks";
 
         private static readonly char[]  s_url_path_separator            = "/".ToCharArray();
 

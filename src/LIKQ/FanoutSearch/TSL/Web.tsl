@@ -4,11 +4,11 @@
 //
 //////////////////////////////////////////////////////////////////////
 //  http endpoints
-protocol ExternalQuery
+protocol LambdaQuery
 {
     Type:HTTP;
-	Request:StringStruct;
-	Response:ExternalQueryResponse;
+	Request:LambdaQueryInput;
+	Response:stream;
 }
 
 protocol JsonQuery

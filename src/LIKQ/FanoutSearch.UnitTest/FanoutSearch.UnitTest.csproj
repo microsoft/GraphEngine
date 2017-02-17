@@ -167,10 +167,6 @@
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FanoutSearch.Protocols.TSL\FanoutSearch.Protocols.TSL.csproj">
-      <Project>{c586e5dc-1cca-43dc-b88d-e8948c9b47ff}</Project>
-      <Name>FanoutSearch.Protocols.TSL</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FanoutSearch\FanoutSearch.csproj">
       <Project>{88b8694d-8d5c-47b9-81d1-19f6ecb3e16f}</Project>
       <Name>FanoutSearch</Name>
