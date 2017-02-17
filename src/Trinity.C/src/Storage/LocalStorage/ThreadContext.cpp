@@ -133,7 +133,7 @@ namespace Storage
     //  Any time when user code is executing, the state must be LOCKCELL. The state
     //  only transist to others when the code have entered Trinity, and will resume to
     //  LOCKCELL when it returns to userspace.
-    static enum _THREAD_CONTEXT_STATUS
+    enum _THREAD_CONTEXT_STATUS
     {
         // Have not locked hash tables.
         // Attempting to lock a cell.

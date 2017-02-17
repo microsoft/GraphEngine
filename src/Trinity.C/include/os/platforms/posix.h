@@ -18,6 +18,7 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <pthread.h>
+#include <assert.h>
 
 #include "arch/cpu.h"
 

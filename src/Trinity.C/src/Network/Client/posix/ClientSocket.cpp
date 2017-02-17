@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <string.h>
 
+#include "Trinity/Configuration/TrinityConfig.h"
 #include "Network/SocketOptionsHelper.h"
 
 namespace Trinity
