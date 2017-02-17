@@ -25,6 +25,8 @@ namespace Trinity
 
         // Should be defined in an implementation.
         extern std::atomic<size_t> g_threadpool_size;
+        // Should be defined in an implementation.
+        struct PerSocketContextObject;
 
         int StartSocketServer(uint16_t port);
 
@@ -44,13 +46,15 @@ namespace Trinity
             --g_threadpool_size;
         }
 
-#pragma region Test purpose only
         void WorkerThreadProc(int tid);
 
         void MessageHandler(MessageBuff * msg);
 
+        void CheckHandshakeResult(PerSocketContextObject* pContext);
+
         bool StartWorkerThreadPool(); //
 
+#pragma region Test purpose only
         int TrinityServerTestEntry();
 #pragma endregion
     }

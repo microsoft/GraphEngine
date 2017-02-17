@@ -21,13 +21,13 @@ namespace Trinity
 {
     namespace Network
     {
-        typedef union
+        union ContextObjectKey
         {
             uintptr_t ident;
             int fd;            
-        }ContextObjectKey;
+        };
 
-        typedef struct // represents a context object associated with each socket
+        struct PerSocketContextObject// represents a context object associated with each socket
         {
             union
             {
@@ -53,7 +53,7 @@ namespace Trinity
                 ContextObjectKey Key;
             };
             bool WaitingHandshakeMessage;
-        }PerSocketContextObject;
+        };
 
         PerSocketContextObject* AllocatePerSocketContextObject(int fd);
         void                    FreePerSocketContextObject(PerSocketContextObject* p);
