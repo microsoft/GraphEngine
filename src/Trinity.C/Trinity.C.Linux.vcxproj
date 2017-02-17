@@ -72,7 +72,7 @@
     <RemoteCleanCommandLine>cd $(RemoteRootDir)/$(ProjectName); cmake CMakeLists.txt; make clean</RemoteCleanCommandLine>
     <RemoteBuildOutputs>$(RemoteRootDir)/$(ProjectName)/libTrinity.C.so</RemoteBuildOutputs>
     <AdditionalSourcesToCopyMapping>CMakeLists.txt;$(AdditionalSourcesToCopyMapping)</AdditionalSourcesToCopyMapping>
-    <NMakeIncludeSearchPath>src;include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>D:\linux_headers\include\x86_64-linux-gnu;D:\linux_headers\include;src;include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakePreprocessorDefinitions>
     </NMakePreprocessorDefinitions>
   </PropertyGroup>
