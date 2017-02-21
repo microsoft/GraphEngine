@@ -28,9 +28,11 @@ You can install Graph Engine Visual Studio Extension by searching
 href="https://visualstudiogallery.msdn.microsoft.com/12835dd2-2d0e-4b8e-9e7e-9f505bb909b8" target="_blank">Visual
 Studio Gallery</a>.
 
-A NuGet package <a
+NuGet packages <a
 href="https://www.nuget.org/packages/GraphEngine.Core/"
-target="_blank">Graph Engine Core</a> is available in NuGet Gallery.
+target="_blank">Graph Engine Core</a> and <a
+href="https://www.nuget.org/packages/GraphEngine.LIKQ/"
+target="_blank">LIKQ</a> are available in the NuGet Gallery.
 
 ## How to Contribute
 
