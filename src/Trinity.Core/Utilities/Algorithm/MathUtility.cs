@@ -9,18 +9,27 @@ using System.Text;
 using System.Runtime.CompilerServices;
 using Trinity.Core.Lib;
 using System.Security;
+using System.Runtime.InteropServices;
 
 namespace Trinity.Mathematics
 {
     internal unsafe class CMathUtility
     {
+#if !CORECLR
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
-        internal static extern double multiply_double_vector(double* dv1, double* dv2, int count) ;
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern double multiply_double_vector(double* dv1, double* dv2, int count);
 
+#if !CORECLR
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
-        internal static extern double multiply_sparse_double_vector(double* dv1, double* dv2, int* idx, int count) ;
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern double multiply_sparse_double_vector(double* dv1, double* dv2, int* idx, int count);
     }
 
     unsafe class MathUtility

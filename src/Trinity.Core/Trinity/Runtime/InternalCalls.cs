@@ -352,13 +352,13 @@ namespace Trinity
             //Nothing, just trigger the static constructor
         }
 
-        [DllImport("Trinity.C.dll")]
+        [DllImport(TrinityC.AssemblyName)]
         private static extern unsafe void __INIT_TRINITY_C__();
 
-        [DllImport("Trinity.C.dll")]
+        [DllImport(TrinityC.AssemblyName)]
         static private unsafe extern bool RegisterInternalCall(void* MethodTablePtr, string name);
 
-        [DllImport("Trinity.C.dll")]
+        [DllImport(TrinityC.AssemblyName)]
         static private unsafe extern void HotSwapCSharpMethod(void* TargetMethodDesc, void* SourceMethodDesc);
     }
 }

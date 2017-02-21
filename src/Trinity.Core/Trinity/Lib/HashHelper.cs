@@ -6,7 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+#if !CORECLR
 using System.Runtime.ConstrainedExecution;
+#endif
 using System.Security;
 using System.Security.Cryptography;
 
@@ -41,7 +43,9 @@ namespace Trinity.Core.Lib
             return 3;
         }
 
+#if !CORECLR
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         internal static int GetPrime(int min)
         {
             if (min < 0)

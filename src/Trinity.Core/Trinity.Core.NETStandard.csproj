@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD1_6;CORECLR</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <DefineConstants>TRACE;RELEASE;NETSTANDARD1_6;CORECLR;</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="BuildNuGetPkg\**" />
+    <EmbeddedResource Remove="BuildNuGetPkg\**" />
+    <None Remove="BuildNuGetPkg\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="GraphEngine.Core.nuspec" />
+  </ItemGroup>
+
+  <!--<ItemGroup>
+    <PackageReference Update="NETStandard.Library" Version="1.6.0" />
+  </ItemGroup>-->
+
+</Project>

@@ -72,4 +72,6 @@ CMakeCache.txt
 *.VC.db
 pingme.txt
 CleanVSProject.exe
+*.so
+slnx.sqlite
 .vs/

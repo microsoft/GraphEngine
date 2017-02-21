@@ -17,6 +17,7 @@ namespace Trinity.Diagnostics
 {
     internal class PerformanceMonitor
     {
+#if !CORECLR
         static PerformanceCounter TotalCPUCounter = new PerformanceCounter( "Processor", "% Processor Time", "_Total" );
         static PerformanceCounter TotalRAMCounter = new PerformanceCounter( "Memory", "Committed Bytes" );
 
@@ -114,5 +115,6 @@ namespace Trinity.Diagnostics
                 mf();
             }
         }
+#endif
     }
 }

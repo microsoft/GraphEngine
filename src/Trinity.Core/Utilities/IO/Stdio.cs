@@ -52,28 +52,52 @@ namespace Trinity
 
     internal unsafe class CStdio
     {
+#if !CORECLR
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
         internal static extern errno_t C_wfopen_s(out void* fp, char* path, char* mode);
 
+#if !CORECLR
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
         internal static extern ulong fread(void* buffer, ulong elementSize, ulong count, void* fp);
 
+#if !CORECLR
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
         internal static extern ulong fwrite(void* buffer, ulong elementSize, ulong count, void* fp);
 
+#if !CORECLR
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
         internal static extern int fflush(void* fp);
 
+#if !CORECLR
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
         internal static extern int fclose(void* fp);
 
+#if !CORECLR
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
         internal static extern int feof(void* fp);
     }
 }
