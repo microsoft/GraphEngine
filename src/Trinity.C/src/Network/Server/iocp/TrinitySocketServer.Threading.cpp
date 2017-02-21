@@ -19,18 +19,6 @@ namespace Trinity
         extern SOCKET socket;
         extern HANDLE hIocp;
 
-        void WorkerThreadProc(int tid)
-        {
-            while (true)
-            {
-                void* _pContext;
-                AwaitRequest(_pContext);
-                PerSocketContextObject* pContext = (PerSocketContextObject*)_pContext;
-                MessageHandler((MessageBuff*)pContext);
-                SendResponse(pContext);
-            }
-        }
-
         void CheckResponse(PerSocketContextObject* pContext)
         {
             int32_t messageBody = *(int32_t*)pContext->Message;
@@ -94,33 +82,6 @@ namespace Trinity
             }
 
             return TrinityErrorCode::E_SUCCESS;
-        }
-
-        void CheckHandshakeResult(PerSocketContextObject* pContext)
-        {
-            if (pContext->ReceivedMessageBodyBytes != HANDSHAKE_MESSAGE_LENGTH)
-            {
-                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ServerSocket: Client {0} responds with invalid handshake message header.", pContext);
-                goto handshake_check_fail;
-            }
-
-            if (memcmp(pContext->Message, HANDSHAKE_MESSAGE_CONTENT, HANDSHAKE_MESSAGE_LENGTH) != 0)
-            {
-                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ServerSocket: Client {0} responds with invalid handshake message.", pContext);
-                goto handshake_check_fail;
-            }
-
-            // handshake_check_success: acknowledge the handshake and then switch into recv mode
-            pContext->WaitingHandshakeMessage = false;
-            pContext->Message = (char*)malloc(sizeof(int32_t));
-            pContext->RemainingBytesToSend = sizeof(int32_t);
-            *(int32_t*)pContext->Message = (int32_t)TrinityErrorCode::E_SUCCESS;
-            SendResponse(pContext);
-            return;
-
-        handshake_check_fail:
-            CloseClientConnection(pContext, false);
-            return;
         }
 
         // Return true if a message is received, and should be reported to the messaging system.

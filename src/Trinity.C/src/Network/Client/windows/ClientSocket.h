@@ -4,7 +4,5 @@
 //
 #include "Network/Server/iocp/Common.h"
 #include "Network/Client/TrinityClient.h"
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <Trinity/Diagnostics/Log.h>
+#include "Network/Network.h"
 

@@ -7,8 +7,8 @@
 #include "Trinity/Configuration/TrinityConfig.h"
 #include "Memory/Memory.h"
 #include "Storage/MTHash/MTHash.h"
+#include "Storage/MTHash/MT_ENUMERATOR.h"
 #include "Storage/MTHash/CellEntry.h"
-#include "Storage/MThash/MT_ENUMERATOR.h"
 #include <Trinity/Diagnostics/Log.h>
 #include <corelib>
 

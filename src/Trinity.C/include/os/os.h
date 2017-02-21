@@ -4,11 +4,6 @@
 //
 #pragma once
 
-#if (defined(_WIN64) || defined(_WIN32))
-/* Win64 */
-#include "platforms/windows.h"
-#endif
-
 #if OVERRIDE_LINUX_DEF
 #if !defined(__linux__)
 #define __linux__
@@ -18,14 +13,26 @@
 #endif
 #endif
 
+
 #if defined(__linux__)
 /* Linux */
 #include "platforms/linux.h"
+//
+#undef _WIN64
+#undef _WIN32
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__)
 /* Mac OS */
 
 #include "platforms/darwin.h"
+#undef _WIN64
+#undef _WIN32
+#endif
+
+
+#if (defined(_WIN64) || defined(_WIN32))
+/* Win64 */
+#include "platforms/windows.h"
 #endif
 

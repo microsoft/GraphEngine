@@ -201,6 +201,9 @@
     <ClInclude Include="include\Trinity\Hash\NonCryptographicHash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Network\Network.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Mathematics\TrinityMath.cpp">
@@ -335,9 +338,6 @@
     <ClCompile Include="include\os\platforms\posix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Network\Server\Common.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Network\Server\TrinitySocketServerTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -348,6 +348,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Network\ProtocolConstants.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Network\Server\TrinityServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

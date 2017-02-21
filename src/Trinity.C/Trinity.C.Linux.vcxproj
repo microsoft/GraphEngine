@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM">
+      <Configuration>Release</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x86">
+      <Configuration>Debug</Configuration>
+      <Platform>x86</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x86">
+      <Configuration>Release</Configuration>
+      <Platform>x86</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{f16ce799-727d-4adf-903c-49682ad0d932}</ProjectGuid>
+    <Keyword>Linux</Keyword>
+    <RootNamespace>Trinity_C_Linux</RootNamespace>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <ApplicationType>Linux</ApplicationType>
+    <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
+    <TargetLinuxPlatform>Generic</TargetLinuxPlatform>
+    <LinuxProjectType>{FC1A4D80-50E9-41DA-9192-61C0DBAA00D2}</LinuxProjectType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <RemoteBuildCommandLine>cd $(RemoteRootDir)/$(ProjectName); cmake CMakeLists.txt; make</RemoteBuildCommandLine>
+    <RemoteReBuildCommandLine>cd $(RemoteRootDir)/$(ProjectName); cmake CMakeLists.txt; make clean; make</RemoteReBuildCommandLine>
+    <RemoteCleanCommandLine>cd $(RemoteRootDir)/$(ProjectName); cmake CMakeLists.txt; make clean</RemoteCleanCommandLine>
+    <RemoteBuildOutputs>$(RemoteRootDir)/$(ProjectName)/libTrinity.C.so</RemoteBuildOutputs>
+    <AdditionalSourcesToCopyMapping>CMakeLists.txt;$(AdditionalSourcesToCopyMapping)</AdditionalSourcesToCopyMapping>
+    <NMakeIncludeSearchPath>D:\linux_headers\include\x86_64-linux-gnu;D:\linux_headers\include;src;include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakePreprocessorDefinitions>
+    </NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <ItemGroup>
+    <ClInclude Include="include\arch\cpu.h" />
+    <ClInclude Include="include\os\os.h" />
+    <ClInclude Include="include\os\platforms\darwin.h" />
+    <ClInclude Include="include\os\platforms\linux.h" />
+    <ClInclude Include="include\os\platforms\posix.h" />
+    <ClInclude Include="include\os\platforms\windows.h" />
+    <ClInclude Include="include\TrinityCommon.h" />
+    <ClInclude Include="include\Trinity\Array.h" />
+    <ClInclude Include="include\Trinity\Collections\HashSet.h" />
+    <ClInclude Include="include\Trinity\Collections\List.h" />
+    <ClInclude Include="include\Trinity\Collections\Tuple.h" />
+    <ClInclude Include="include\Trinity\DateTime.h" />
+    <ClInclude Include="include\Trinity\Diagnostics\Stopwatch.h" />
+    <ClInclude Include="include\Trinity\Diagnostics\TrinityDbg.h" />
+    <ClInclude Include="include\Trinity\Environment.h" />
+    <ClInclude Include="include\Trinity\Hash\MD5.h" />
+    <ClInclude Include="include\Trinity\Hash\NonCryptographicHash.h" />
+    <ClInclude Include="include\Trinity\IO\BinaryReader.h" />
+    <ClInclude Include="include\Trinity\IO\BinaryWriter.h" />
+    <ClInclude Include="include\Trinity\IO\Console.h" />
+    <ClInclude Include="include\Trinity\IO\Directory.h" />
+    <ClInclude Include="include\Trinity\IO\File.h" />
+    <ClInclude Include="include\Trinity\IO\Path.h" />
+    <ClInclude Include="include\Trinity\IO\StreamWriter.h" />
+    <ClInclude Include="include\Trinity\NonCopyable.h" />
+    <ClInclude Include="include\Trinity\NonReferencable.h" />
+    <ClInclude Include="include\Trinity\Random.h" />
+    <ClInclude Include="include\Trinity\ref.h" />
+    <ClInclude Include="include\Trinity\String.h" />
+    <ClInclude Include="include\Trinity\Threading\Mutex.h" />
+    <ClInclude Include="include\Trinity\Threading\Parallel.h" />
+    <ClInclude Include="include\Trinity\Threading\Thread.h" />
+    <ClInclude Include="include\Trinity\Utilities\CommandLineTools.h" />
+    <ClInclude Include="include\Trinity\Utilities\OptionDescriptor.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="src\BackgroundThread\BackgroundThread.h" />
+    <ClInclude Include="src\Debugger\Debugger.h" />
+    <ClInclude Include="src\Mathematics\TrinityMath.h" />
+    <ClInclude Include="src\Memory\Memory.h" />
+    <ClInclude Include="src\Network\Client\posix\ClientSocket.h" />
+    <ClInclude Include="src\Network\Client\TrinityClient.h" />
+    <ClInclude Include="src\Network\Client\windows\ClientSocket.h" />
+    <ClInclude Include="src\Network\Network.h" />
+    <ClInclude Include="src\Network\ProtocolConstants.h" />
+    <ClInclude Include="src\Network\Server\iocp\Common.h" />
+    <ClInclude Include="src\Network\Server\iocp\TrinitySocketServer.h" />
+    <ClInclude Include="src\Network\Server\posix\TrinitySocketServer.h" />
+    <ClInclude Include="src\Network\Server\TrinityServer.h" />
+    <ClInclude Include="src\Network\SocketOptionsHelper.h" />
+    <ClInclude Include="src\Runtime\Debug.h" />
+    <ClInclude Include="src\Runtime\InternalCalls.h" />
+    <ClInclude Include="src\Runtime\Transition.h" />
+    <ClInclude Include="src\Storage\LocalStorage\GCTask.h" />
+    <ClInclude Include="src\Storage\LocalStorage\LocalMemoryStorage.h" />
+    <ClInclude Include="src\Storage\MemoryTrunk\MemoryTrunk.h" />
+    <ClInclude Include="src\Storage\MTHash\CellEntry.h" />
+    <ClInclude Include="src\Storage\MTHash\MTHash.h" />
+    <ClInclude Include="src\Storage\MTHash\MT_ENUMERATOR.h" />
+    <ClInclude Include="src\Threading\TrinitySpinlock.h" />
+    <ClInclude Include="src\Trinity\Configuration\TrinityConfig.h" />
+    <ClInclude Include="src\Trinity\Diagnostics\Log.h" />
+    <ClInclude Include="src\Trinity\Diagnostics\LogAutoFlushTask.h" />
+    <ClInclude Include="src\Utility\FileIO.h" />
+    <ClInclude Include="src\Utility\HashHelper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="include\os\platforms\posix.cpp" />
+    <ClCompile Include="src\BackgroundThread\BackgroundThread.cpp" />
+    <ClCompile Include="src\Debugger\Debugger.Commands.cpp" />
+    <ClCompile Include="src\Debugger\Debugger.Exception.cpp" />
+    <ClCompile Include="src\Debugger\Debugger.Main.cpp" />
+    <ClCompile Include="src\Debugger\Debugger.Storage.cpp" />
+    <ClCompile Include="src\Debugger\Debugger.Threads.cpp" />
+    <ClCompile Include="src\Mathematics\TrinityMath.cpp" />
+    <ClCompile Include="src\Memory\Memory.cpp" />
+    <ClCompile Include="src\Network\Client\posix\ClientSocket.cpp" />
+    <ClCompile Include="src\Network\Client\TrinityClientSocketTest.cpp" />
+    <ClCompile Include="src\Network\Client\windows\ClientSocket.cpp" />
+    <ClCompile Include="src\Network\network_exported_methods.cpp" />
+    <ClCompile Include="src\Network\ProtocolConstants.cpp" />
+    <ClCompile Include="src\Network\Server\iocp\TrinitySocketServer.ContextObject.cpp" />
+    <ClCompile Include="src\Network\Server\iocp\TrinitySocketServer.cpp" />
+    <ClCompile Include="src\Network\Server\iocp\TrinitySocketServer.Recv.cpp" />
+    <ClCompile Include="src\Network\Server\iocp\TrinitySocketServer.Send.cpp" />
+    <ClCompile Include="src\Network\Server\iocp\TrinitySocketServer.Threading.cpp" />
+    <ClCompile Include="src\Network\Server\posix\epoll.cpp" />
+    <ClCompile Include="src\Network\Server\posix\kqueue.cpp" />
+    <ClCompile Include="src\Network\Server\posix\TrinitySocketServer.cpp" />
+    <ClCompile Include="src\Network\Server\TrinityServer.cpp" />
+    <ClCompile Include="src\Network\Server\TrinitySocketServerTest.cpp" />
+    <ClCompile Include="src\Runtime\dllmain.cpp" />
+    <ClCompile Include="src\Runtime\init.cpp" />
+    <ClCompile Include="src\Runtime\InternalCalls.cpp" />
+    <ClCompile Include="src\Runtime\Transition.cpp" />
+    <ClCompile Include="src\Storage\LocalStorage\GCTask.cpp" />
+    <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.cpp" />
+    <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.Enumeration.cpp" />
+    <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.WriteAheadLog.cpp" />
+    <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.AddressTable.cpp" />
+    <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.Cell.Memory.cpp" />
+    <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.cpp" />
+    <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.Defragmentation.cpp" />
+    <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.DefragOneRegion.cpp" />
+    <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.DefragTwoRegion.cpp" />
+    <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.DiskIO.cpp" />
+    <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.LO.cpp" />
+    <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.Memory.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MTHash.Cell.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MTHash.CellInfo.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MTHash.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MTHash.DiskIO.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MTHash.lock.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MTHash.Resize.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MTHash.ThreadSafe.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MT_ENUMERATOR.cpp" />
+    <ClCompile Include="src\Trinity\Configuration\TrinityConfig.cpp" />
+    <ClCompile Include="src\Trinity\Diagnostics\Log.cpp" />
+    <ClCompile Include="src\Utility\FileIO.cpp" />
+    <ClCompile Include="src\Utility\HashHelper.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="include\collections">
+      <FileType>CppHeader</FileType>
+    </None>
+    <None Include="include\corelib">
+      <FileType>CppHeader</FileType>
+    </None>
+    <None Include="include\diagnostics">
+      <FileType>CppHeader</FileType>
+    </None>
+    <None Include="include\io">
+      <FileType>CppHeader</FileType>
+    </None>
+    <None Include="include\threading">
+      <FileType>CppHeader</FileType>
+    </None>
+    <None Include="include\utilities">
+      <FileType>CppHeader</FileType>
+    </None>
+  </ItemGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>

@@ -309,6 +309,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClInclude Include="src\Network\Client\linux\ClientSocket.h" />
     <ClInclude Include="src\Network\Client\TrinityClient.h" />
     <ClInclude Include="src\Network\Client\windows\ClientSocket.h" />
+    <ClInclude Include="src\Network\Network.h" />
     <ClInclude Include="src\Network\ProtocolConstants.h" />
     <ClInclude Include="src\Network\Server\iocp\Common.h" />
     <ClInclude Include="src\Network\Server\iocp\TrinitySocketServer.h" />
@@ -344,7 +345,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClCompile Include="src\Network\Client\windows\ClientSocket.cpp" />
     <ClCompile Include="src\Network\network_exported_methods.cpp" />
     <ClCompile Include="src\Network\ProtocolConstants.cpp" />
-    <ClCompile Include="src\Network\Server\Common.cpp" />
+    <ClCompile Include="src\Network\Server\TrinityServer.cpp" />
     <ClCompile Include="src\Network\Server\iocp\TrinitySocketServer.ContextObject.cpp" />
     <ClCompile Include="src\Network\Server\iocp\TrinitySocketServer.cpp" />
     <ClCompile Include="src\Network\Server\iocp\TrinitySocketServer.Recv.cpp" />
