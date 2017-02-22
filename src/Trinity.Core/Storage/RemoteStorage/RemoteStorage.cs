@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using System.Runtime.ExceptionServices;
 using System.Collections.Concurrent;
 using Trinity.Network.Client;
+using Trinity.Configuration;
 
 namespace Trinity.Storage
 {
@@ -32,7 +33,7 @@ namespace Trinity.Storage
 
         private volatile bool disposed = false;
         internal bool connected = false;
-        private int retry = 0;
+        private int m_send_retry = NetworkConfig.Instance.ClientSendRetry;
         private int m_client_count = 0;
         private MemoryCloud memory_cloud;
         public int MyServerId;
@@ -43,22 +44,20 @@ namespace Trinity.Storage
             {
                 ConnectIPEndPoint(ip_endpoint);
             }
-            retry = connPerServer * 3;
         }
 
         internal RemoteStorage(AvailabilityGroup trinityServer, int connPerServer, MemoryCloud mc, int serverId, bool nonblocking)
         {
             this.memory_cloud = mc;
             this.MyServerId = serverId;
-            retry = 3;
 
             var connect_async_task = Task.Factory.StartNew(() =>
             {
                 for (int k = 0; k < connPerServer; k++) // make different server connections interleaved 
                 {
-                    for (int i = 0; i < trinityServer.ServerInstances.Count; i++)
+                    for (int i = 0; i < trinityServer.Instances.Count; i++)
                     {
-                        ConnectIPEndPoint(trinityServer.ServerInstances[i].EndPoint);
+                        ConnectIPEndPoint(trinityServer.Instances[i].EndPoint);
                     }
                 }
                 BackgroundThread.AddBackgroundTask(new BackgroundTask(Heartbeat, TrinityConfig.HeartbeatInterval));

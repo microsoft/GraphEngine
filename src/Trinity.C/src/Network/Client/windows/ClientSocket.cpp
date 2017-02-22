@@ -7,6 +7,7 @@
 #include  "ClientSocket.h"
 #include "Network/Server/iocp/TrinitySocketServer.h"
 #include "Network/SocketOptionsHelper.h"
+#include "Trinity/Configuration/TrinityConfig.h"
 #include <thread>
 
 namespace Trinity
@@ -27,7 +28,7 @@ namespace Trinity
             }
 
             // The client side already have heartbeat packages. Don't enable keepalive messages.
-            return SetSocketOptions(clientsocket, /*enable_keepalive:*/ false, /*disable_sendbuf:*/false);
+            return SetSocketOptions(clientsocket, /*enable_keepalive:*/ false, /*disable_sendbuf:*/TrinityConfig::ClientDisableSendBuffer());
         }
 
         bool ClientSocketConnect(uint64_t clientsocket, uint32_t ip, uint16_t port)
@@ -43,8 +44,15 @@ namespace Trinity
                 closesocket((SOCKET)clientsocket);
                 return false;
             }
-
-            return ClientSocketHandshake(clientsocket);
+            
+            if (TrinityConfig::Handshake())
+            {
+                return ClientSocketHandshake(clientsocket);
+            }
+            else
+            {
+                return true;
+            }
         }
 
         bool ClientSend(uint64_t socket, char* buf, int32_t len)

@@ -12,6 +12,7 @@ using Trinity.Network;
 using Trinity.Network.Messaging;
 using Trinity.Core.Lib;
 using System.IO;
+using Trinity.Configuration;
 
 namespace Trinity.Storage
 {
@@ -61,14 +62,14 @@ namespace Trinity.Storage
         {
             fixed (byte* p = cellBytes)
             {
-                return SaveCell(cellId, p, cellBytes.Length, TrinityConfig.UndefinedCellType);
+                return SaveCell(cellId, p, cellBytes.Length, StorageConfig.c_UndefinedCellType);
             }
         }
         public override TrinityErrorCode SaveCell(long cellId, byte[] cellBytes, int startIndex, int cellSize)
         {
             fixed (byte* p = cellBytes)
             {
-                return SaveCell(cellId, p + startIndex, cellSize, TrinityConfig.UndefinedCellType);
+                return SaveCell(cellId, p + startIndex, cellSize, StorageConfig.c_UndefinedCellType);
             }
         }
 
@@ -116,7 +117,7 @@ namespace Trinity.Storage
 
         public override TrinityErrorCode SaveCell(long cellId, byte* cellPtr, int length)
         {
-            return SaveCell(cellId, cellPtr, length, TrinityConfig.UndefinedCellType);
+            return SaveCell(cellId, cellPtr, length, StorageConfig.c_UndefinedCellType);
         }
 
         public override TrinityErrorCode RemoveCell(long cell_id)
@@ -184,7 +185,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = cellBytes)
             {
-                return AddCell(cellId, p, cellBytes.Length, TrinityConfig.UndefinedCellType);
+                return AddCell(cellId, p, cellBytes.Length, StorageConfig.c_UndefinedCellType);
             }
         }
 
@@ -192,7 +193,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = &cellBytes[startIndex])
             {
-                return AddCell(cellId, p, length, TrinityConfig.UndefinedCellType);
+                return AddCell(cellId, p, length, StorageConfig.c_UndefinedCellType);
             }
         }
 
@@ -206,7 +207,7 @@ namespace Trinity.Storage
 
         public override TrinityErrorCode AddCell(long cellId, byte* cellBytes, int cellSize)
         {
-            return AddCell(cellId, cellBytes, cellSize, TrinityConfig.UndefinedCellType);
+            return AddCell(cellId, cellBytes, cellSize, StorageConfig.c_UndefinedCellType);
         }
 
         public override TrinityErrorCode AddCell(long cellId, byte* cellBytes, int cellSize, ushort cellType)

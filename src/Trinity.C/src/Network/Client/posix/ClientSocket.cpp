@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <string.h>
 
+#include "Trinity/Configuration/TrinityConfig.h"
 #include "Network/SocketOptionsHelper.h"
 
 namespace Trinity
@@ -45,7 +46,14 @@ namespace Trinity
             if (0 != connect((int)clientsocket, (struct sockaddr*)&ipaddr, sizeof(sockaddr_in)))
                 return false;
 
-            return ClientSocketHandshake(clientsocket);
+            if (TrinityConfig::Handshake())
+            {
+                return ClientSocketHandshake(clientsocket);
+            }
+            else
+            {
+                return true;
+            }
         }
 
         bool ClientSend(uint64_t socket, char* buf, int32_t len)

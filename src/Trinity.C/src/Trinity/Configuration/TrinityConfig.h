@@ -81,6 +81,8 @@ namespace TrinityConfig
     /// </summary>
     PROPERTY(int32_t, TrunkCount);
     PROPERTY(bool, ReadOnly);
+    PROPERTY(bool, Handshake);
+    PROPERTY(bool, ClientDisableSendBuffer);
     PROPERTY(int32_t, LargeObjectThreshold);
 
     String StorageRoot();

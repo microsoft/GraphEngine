@@ -27,8 +27,6 @@ namespace Trinity
 
         private static long my_aggregation_ipe_value = -1;
 
-        private static string my_assembly_path = "";
-
         static string tmp_dir = null;
         static string app_dir = null;
 
@@ -82,11 +80,7 @@ namespace Trinity
         {
             get
             {
-                if (my_assembly_path.Length == 0)
-                {
-                    my_assembly_path = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar;
-                }
-                return my_assembly_path;
+                return AssemblyPath.MyAssemblyPath;
             }
         }
 

@@ -10,11 +10,8 @@
 #include "Network/Server/TrinityServer.h"
 #include <errno.h>
 #include <fcntl.h>
-#include <netdb.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/socket.h>
-#include <sys/types.h>
 #include <unistd.h>
 
 namespace Trinity
