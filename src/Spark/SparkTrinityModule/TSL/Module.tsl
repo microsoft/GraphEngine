@@ -1,0 +1,53 @@
+// Graph Engine
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+//
+TrinitySettings 
+{
+	RootNamespace: SparkTrinity.Protocols.TSL;
+}
+
+struct SchemaRequestStruct
+{
+	string cellType;
+}
+
+struct PartitionsRequestStruct
+{
+	string cellType;
+	int batchSize;
+}
+
+struct GetPartitionRequestStruct
+{
+	string cellType;
+	List<long> partition;
+}
+
+protocol Schema
+{
+	Type: HTTP;
+	Request: SchemaRequestStruct;
+	Response: stream;
+}
+
+protocol Partitions
+{
+	Type: HTTP;
+	Request: PartitionsRequestStruct;
+	Response: stream;
+}
+
+protocol GetPartition
+{
+	Type: HTTP;
+	Request: GetPartitionRequestStruct;
+	Response: stream;
+}
+
+module SparkTrinity
+{
+	protocol Schema;
+	protocol Partitions;
+	protocol GetPartition;
+}
