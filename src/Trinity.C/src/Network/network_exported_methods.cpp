@@ -12,6 +12,7 @@ using namespace Trinity;
 DLL_EXPORT uint64_t CreateClientSocket() { return Network::CreateClientSocket(); }
 DLL_EXPORT BOOL ClientSocketConnect(uint64_t socket, uint32_t ip, uint16_t port) { return Network::ClientSocketConnect(socket, ip, port) ? TRUE : FALSE; }
 DLL_EXPORT BOOL ClientSend(uint64_t socket, char* buf, int32_t len) { return Network::ClientSend(socket, buf, len) ? TRUE : FALSE; }
+DLL_EXPORT BOOL ClientSendMulti(uint64_t socket, char** bufs, int32_t* lens, int32_t cnt) { return Network::ClientSendMulti(socket, bufs, lens, cnt) ? TRUE : FALSE; }
 DLL_EXPORT TrinityErrorCode ClientReceive(uint64_t socket, char* &buf, int32_t &len) { return Network::ClientReceive(socket, buf, len); }
 DLL_EXPORT TrinityErrorCode WaitForAckPackage(uint64_t socket) { return Network::WaitForAckPackage(socket); }
 DLL_EXPORT void CloseClientSocket(uint64_t socket) { Network::CloseClientSocket(socket); }

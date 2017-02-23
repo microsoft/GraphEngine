@@ -192,6 +192,9 @@ namespace Trinity.Storage
         /*------------------------------------------------------------------------------*/
         internal abstract void SendMessage(byte* message, int size);
         internal abstract void SendMessage(byte* message, int size, out TrinityResponse response);
+        /*------------------------------------------------------------------------------*/
+        internal abstract void SendMessage(byte** message, int* sizes, int count);
+        internal abstract void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response);
         #endregion
 
         /// <summary>

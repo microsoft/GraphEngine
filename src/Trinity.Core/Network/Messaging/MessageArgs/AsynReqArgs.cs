@@ -45,6 +45,15 @@ namespace Trinity.Network.Messaging
             RequestHandler = handler;
         }
 
+        // Used by local storage multi-body message. Do not allocate but takes the buffer directly.
+        internal AsynReqArgs(AsyncReqHandler handler, byte* buf, int offset, int len)
+        {
+            RequestHandler = handler;
+            Offset         = offset;
+            Size           = len;
+            Buffer         = buf;
+        }
+
         internal TrinityErrorCode AsyncProcessMessage()
         {
             //  TODO based on the perf. stats of the handler, we give hints to the scheduler.

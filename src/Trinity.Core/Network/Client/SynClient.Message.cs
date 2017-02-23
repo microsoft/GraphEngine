@@ -42,6 +42,26 @@ namespace Trinity.Network.Client
             }
         }
 
+        /// <summary>
+        /// Send multiple buffers sequentially
+        /// </summary>
+        private bool DoSend(byte** bufs, int* lens, int cnt)
+        {
+            if (!sock_connected && !DoConnect(m_connect_retry)) // cannot connect
+                return false;
+
+            if (CNativeNetwork.ClientSendMulti(socket, bufs, lens, cnt))
+            {
+                return true;
+            }
+            else
+            {
+                // ClientSend failed.
+                sock_connected = false;
+                return false;
+            }
+        }
+
         /// <returns>
         /// E_SUCCESS:              Heartbeat success.
         /// E_FAILURE:              Could not connect to the remote IPE.
@@ -68,6 +88,68 @@ namespace Trinity.Network.Client
             }
         }
 
+        /// <summary>
+        /// Send multiple buffers sequentially, as a single message.
+        /// </summary>
+        /// <returns>
+        /// E_SUCCESS:              SendMessage success.
+        /// E_NETWORK_RECV_FAILURE: AckPackage cannot be received.
+        /// E_NETWORK_SEND_FAILURE: Failed to send message.
+        /// E_RPC_EXCEPTION:        The remote handler throw an exception.
+        /// </returns>
+        public TrinityErrorCode SendMessage(byte** message, int* sizes, int count)
+        {
+            if (DoSend(message, sizes, count))
+            {
+                return WaitForAckPackage();
+            }
+            else
+            {
+                sock_connected = false;
+                return TrinityErrorCode.E_NETWORK_SEND_FAILURE;
+            }
+        }
+
+        /// <summary>
+        /// Send multiple buffers sequentially, as a single message.
+        /// </summary>
+        /// <returns>
+        /// E_SUCCESS:              SendMessage success.
+        /// E_NETWORK_RECV_FAILURE: Response cannot be received.
+        /// E_NETWORK_SEND_FAILURE: Failed to send message.
+        /// E_NOMEM:                Failed to allocate memory for response message.
+        /// E_RPC_EXCEPTION:        The remote handler throw an exception.
+        /// </returns>
+        public TrinityErrorCode SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
+        {
+            response = null;
+            if (DoSend(message, sizes, count))
+            {
+                byte* buf;
+                int len;
+                TrinityErrorCode recv_err = CNativeNetwork.ClientReceive(socket, out buf, out len);
+                if (recv_err == TrinityErrorCode.E_SUCCESS)
+                {
+                    // will be freed by a message reader
+                    response = new TrinityResponse(buf, len); 
+                }
+                else if (recv_err == TrinityErrorCode.E_NETWORK_RECV_FAILURE)
+                {
+                    // recv fail
+                    sock_connected = false;
+                }
+
+                return recv_err;
+            }
+            else
+            {
+                // send fail
+                sock_connected = false;
+                return TrinityErrorCode.E_NETWORK_SEND_FAILURE;
+            }
+        }
+
+
         /// <returns>
         /// E_SUCCESS:              SendMessage success.
         /// E_NETWORK_RECV_FAILURE: AckPackage cannot be received.
@@ -89,7 +171,7 @@ namespace Trinity.Network.Client
 
         /// <returns>
         /// E_SUCCESS:              SendMessage success.
-        /// E_NETWORK_RECV_FAILURE: AckPackage cannot be received.
+        /// E_NETWORK_RECV_FAILURE: Response cannot be received.
         /// E_NETWORK_SEND_FAILURE: Failed to send message.
         /// E_NOMEM:                Failed to allocate memory for response message.
         /// E_RPC_EXCEPTION:        The remote handler throw an exception.

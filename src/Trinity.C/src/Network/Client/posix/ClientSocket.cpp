@@ -55,6 +55,8 @@ namespace Trinity
                 return true;
             }
         }
+        
+        //TODO client send multi
 
         bool ClientSend(uint64_t socket, char* buf, int32_t len)
         {

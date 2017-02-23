@@ -49,6 +49,10 @@ namespace Trinity.Network
         /// </summary>
         IEnumerable<IProtocolDescriptor> AsynReqProtocolDescriptors { get; }
         /// <summary>
+        /// Returns the descriptors of asynchronous-request-with-response protocols.
+        /// </summary>
+        IEnumerable<IProtocolDescriptor> AsynReqRspProtocolDescriptors { get; }
+        /// <summary>
         /// Returns the name of the communication schema.
         /// </summary>
         string Name { get; }
@@ -71,6 +75,11 @@ namespace Trinity.Network
         }
 
         public IEnumerable<IProtocolDescriptor> AsynReqProtocolDescriptors
+        {
+            get { yield break; }
+        }
+
+        public IEnumerable<IProtocolDescriptor> AsynReqRspProtocolDescriptors
         {
             get { yield break; }
         }
@@ -100,6 +109,7 @@ namespace Trinity.Network
             sb.Append("[" + String.Join(",", schema.SynReqProtocolDescriptors.Select(_ => SerializeProtocol(_))) + "]");
             sb.Append("[" + String.Join(",", schema.SynReqRspProtocolDescriptors.Select(_ => SerializeProtocol(_))) + "]");
             sb.Append("[" + String.Join(",", schema.AsynReqProtocolDescriptors.Select(_ => SerializeProtocol(_))) + "]");
+            sb.Append("[" + String.Join(",", schema.AsynReqRspProtocolDescriptors.Select(_ => SerializeProtocol(_))) + "]");
             sb.Append("}");
             return sb.ToString();
         }
