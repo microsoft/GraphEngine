@@ -17,7 +17,7 @@ namespace Trinity
         void * OpenFile4Write(u16char* FileName)
         {
             FILE* fp_p = nullptr;
-            if (!_wfopen_s(&fp_p, FileName, L"wb"))
+            if (!_wfopen_s(&fp_p, FileName, _u("wb")))
                 return (void*)(fp_p);
             return nullptr;
         }
@@ -25,19 +25,20 @@ namespace Trinity
         void * OpenFile4Read(u16char* FileName)
         {
             FILE* fp_p = nullptr;
-            if (!_wfopen_s(&fp_p, FileName, L"rb"))
+            if (!_wfopen_s(&fp_p, FileName, _u("rb")))
                 return (void*)(fp_p);
             return nullptr;
         }
 
         int64_t GetFileSize(void* fp)
         {
-            int fd = _fileno((FILE*)fp);
 #if defined(TRINITY_PLATFORM_WINDOWS)
+            int fd = _fileno((FILE*)fp);
             struct __stat64 buf;
             if (_fstat64(fd, &buf)) { return -1; }
             else return buf.st_size;
 #else
+            int fd = fileno((FILE*)fp);
             struct stat64 buf;
             if (fstat64(fd, &buf)) { return -1; }
             else return buf.st_size;
@@ -76,7 +77,7 @@ namespace Trinity
         bool  WriteBufferToFile(u16char* FileName, char* buf, size_t length)
         {
             FILE* fp      = nullptr;
-            bool  success = !_wfopen_s(&fp, FileName, L"wb");
+            bool  success = !_wfopen_s(&fp, FileName, _u("wb"));
 
             if (success)
             {
@@ -91,7 +92,7 @@ namespace Trinity
         bool  AppendBufferToFile(u16char* FileName, char* buf, size_t length)
         {
             FILE* fp      = nullptr;
-            bool  success = !_wfopen_s(&fp, FileName, L"ab");
+            bool  success = !_wfopen_s(&fp, FileName, _u("ab"));
 
             if (success)
             {
@@ -106,7 +107,7 @@ namespace Trinity
         bool  ReadBufferFromFile(u16char* FileName, char* buf, size_t length)
         {
             FILE* fp      = nullptr;
-            bool  success = !_wfopen_s(&fp, FileName, L"ab");
+            bool  success = !_wfopen_s(&fp, FileName, _u("ab"));
 
             if (success)
             {
