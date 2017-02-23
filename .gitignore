@@ -74,8 +74,8 @@ CMakeCache.txt
 pingme.txt
 CleanVSProject.exe
 .vs/
-/src/Spark/spark-trinity/project/target
-/src/Spark/spark-trinity/project/project/target/config-classes
-/src/Spark/spark-trinity/target
-/src/Spark/spark-trinity/build/sbt-launch-0.13.13.jar
+/src/Modules/Spark/spark-trinity/build/sbt-launch-0.13.13.jar
+/src/Modules/Spark/spark-trinity/project/project/target/config-classes
+/src/Modules/Spark/spark-trinity/project/target
+/src/Modules/Spark/spark-trinity/target
 *.so
