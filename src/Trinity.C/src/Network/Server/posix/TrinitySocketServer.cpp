@@ -8,6 +8,7 @@
 #include <map>
 #include "os/platforms/posix.h"
 #include "Threading/TrinitySpinlock.h"
+#include "Trinity/Configuration/TrinityConfig.h"
 #include "Trinity/Hash/NonCryptographicHash.h"
 #include "Network/Server/posix/TrinitySocketServer.h"
 #include "Network/SocketOptionsHelper.h"
@@ -66,7 +67,7 @@ namespace Trinity
             p->avg_RecvBufferLen = UInt32_Contants::RecvBufferSize;
 
             p->fd = fd;
-            p->WaitingHandshakeMessage = true;
+            p->WaitingHandshakeMessage = TrinityConfig::Handshake();
 
             return p;
         }

@@ -14,31 +14,12 @@ using Trinity.Diagnostics;
 using Trinity.Storage;
 using Trinity.Core.Lib;
 using System.Runtime.CompilerServices;
+using Trinity.Configuration;
 
 namespace Trinity
 {
     public unsafe static partial class TrinityConfig
     {
-        private static void ThrowCreatingStorageRootException(string root_root)
-        {
-            throw new IOException("WARNNING: Error occurs when creating StorageRoot: " + storage_root);
-        }
-
-        private static void ThrowCreatingLogDirectoryException(string log_dir)
-        {
-            throw new IOException("WARNNING: Error occurs when creating LogDirectory: " + log_dir);
-        }
-
-        private static void ThrowLargeObjectThresholdException()
-        {
-            throw new InvalidOperationException("LargeObjectThreshold cannot be larger than 16MB.");
-        }
-
-        private static void ThrowDisableReadOnlyException()
-        {
-            throw new InvalidOperationException("ReadOnly flag cannot be disabled once enabled.");
-        }
-
         /// <summary>
         /// Set the number of memory trunks in the Trinity memory storage.
         /// Note:
@@ -50,15 +31,8 @@ namespace Trinity
         /// </summary>
         public static int TrunkCount
         {
-            get
-            {
-                return CTrinityConfig.CTrunkCount();
-            }
-
-            set
-            {
-                CTrinityConfig.CSetTrunkCount(value);
-            }
+            get { return StorageConfig.Instance.TrunkCount; }
+            set { StorageConfig.Instance.TrunkCount = value; }
         }
 
         /// <summary>
@@ -70,15 +44,8 @@ namespace Trinity
         /// </summary>
         public static bool ReadOnly
         {
-            get
-            {
-                return CTrinityConfig.CReadOnly();
-            }
-
-            set
-            {
-                CTrinityConfig.CSetReadOnly(value);
-            }
+            get { return StorageConfig.Instance.ReadOnly; }
+            set { StorageConfig.Instance.ReadOnly = value; }
         }
 
         /// <summary>
@@ -86,24 +53,8 @@ namespace Trinity
         /// </summary>
         public static StorageCapacityProfile StorageCapacity
         {
-            get
-            {
-                return (StorageCapacityProfile)CTrinityConfig.GetStorageCapacityProfile();
-            }
-            set
-            {
-                CTrinityConfig.SetStorageCapacityProfile((int)value);
-            }
-        }
-
-        internal const ushort UndefinedCellType = 0;
-        internal static string storage_root = "";
-        private static string DefaultStorageRoot
-        {
-            get
-            {
-                return MyAssemblyPath + "storage" + Path.DirectorySeparatorChar;
-            }
+            get { return StorageConfig.Instance.StorageCapacity; }
+            set { StorageConfig.Instance.StorageCapacity = value; }
         }
 
         /// <summary>
@@ -111,146 +62,28 @@ namespace Trinity
         /// </summary>
         public static string StorageRoot
         {
-            get
-            {
-                if (storage_root == null || storage_root.Length == 0)
-                {
-                    if (CurrentClusterConfig != null && CurrentClusterConfig.RunningMode == RunningMode.Server)
-                    {
-                        storage_root = CurrentClusterConfig.GetMyServerInfo().StorageRoot;
-                        if (storage_root == null || storage_root.Length == 0)               // when the server config entry
-                        {                                                                   // does not have the StorageRoot
-                            storage_root = DefaultStorageRoot;                              // attribute, it will be null again
-                        }                                                                   // and we have to fall back to DefaultStorageRoot.
-                    }
-                    else
-                    {
-                        storage_root = DefaultStorageRoot;
-                    }
-                }
+            get { return StorageConfig.Instance.StorageRoot; }
 
-                if (!Directory.Exists(storage_root))
-                {
-                    try
-                    {
-                        Directory.CreateDirectory(storage_root);
-                    }
-                    catch (Exception)
-                    {
-                        ThrowCreatingStorageRootException(storage_root);
-                    }
-                }
-
-                if (storage_root[storage_root.Length - 1] != Path.DirectorySeparatorChar)
-                {
-                    storage_root = storage_root + Path.DirectorySeparatorChar;
-                }
-
-                try
-                {
-                    byte[] buff = BitHelper.GetBytes(storage_root);
-                    fixed (byte* p = buff)
-                    {
-                        CTrinityConfig.SetStorageRoot(p, buff.Length);
-                    }
-                }
-                catch (Exception) { }
-
-                return storage_root;
-            }
-
-            set
-            {
-                storage_root = value;
-                if (storage_root == null || storage_root.Length == 0)
-                {
-                    storage_root = DefaultStorageRoot;
-                }
-
-                if (storage_root[storage_root.Length - 1] != Path.DirectorySeparatorChar)
-                {
-                    storage_root += Path.DirectorySeparatorChar;
-                }
-
-                try
-                {
-                    byte[] buff = BitHelper.GetBytes(storage_root);
-                    fixed (byte* p = buff)
-                    {
-                        CTrinityConfig.SetStorageRoot(p, buff.Length);
-                    }
-                }
-                catch (Exception) { }
-
-                if (!Directory.Exists(storage_root))
-                {
-                    try
-                    {
-                        Directory.CreateDirectory(storage_root);
-                    }
-                    catch (Exception)
-                    {
-                        ThrowCreatingStorageRootException(storage_root);
-                    }
-                }
-            }
+            set { StorageConfig.Instance.StorageRoot = value; }
         }
-
-        /// <summary>
-        /// Default Value = 256
-        /// </summary>
-        internal const int c_MaxTrunkCount = 256;
-
-        /// <summary>
-        /// Default Value = 16
-        /// </summary>
-        internal static int GCParallelism = 16;
-
 
         /// <summary>
         /// Default = 10 M
         /// </summary>
         internal static int LargeObjectThreshold
         {
-            get
-            {
-                return CTrinityConfig.CLargeObjectThreshold();
-            }
-            set
-            {
-                if (value >= 0xFFFFFF)
-                {
-                    ThrowLargeObjectThresholdException();
-                }
-                else
-                {
-                    CTrinityConfig.CSetLargeObjectThreshold(value);
-                }
-            }
+            get { return StorageConfig.Instance.LargeObjectThreshold; }
+            set { StorageConfig.Instance.LargeObjectThreshold = value; }
         }
 
-        internal static int s_DefragInterval = 600;
         /// <summary>
         /// Defragmentation frequency, Default Value = 600
         /// </summary>
         public static int DefragInterval
         {
-            get { return s_DefragInterval; }
-            set { s_DefragInterval = value; CTrinityConfig.CSetGCDefragInterval(s_DefragInterval); }
+            get { return StorageConfig.Instance.DefragInterval; }
+            set { StorageConfig.Instance.DefragInterval = value; }
         }
     }
 }
 
-/*
- Rough storage profiling
-+-------------------------+--------------------
-  StorageCapacityProfile  |   CommittedMemory
-  256M                    |   2127652K
-  512M                    |   2144752K
-  1G                      |   2177592K
-  2G                      |   2243280K
-  4G                      |   2374544K
-  8G                      |   2636648K
-  16G                     |   3162496K
-  32G                     |   4213124K
-*/

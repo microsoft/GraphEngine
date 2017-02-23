@@ -27,7 +27,7 @@ namespace Trinity.Network.Client
     {
         private bool DoSend(byte* buf, int len)
         {
-            if (!sock_connected && !DoConnect(1)) // cannot connect
+            if (!sock_connected && !DoConnect(m_connect_retry)) // cannot connect
                 return false;
 
             if (CNativeNetwork.ClientSend(socket, buf, len))
@@ -51,6 +51,7 @@ namespace Trinity.Network.Client
         /// </returns>
         internal TrinityErrorCode Heartbeat()
         {
+            // Heartbeat() connects only once regardless of reconnect setting.
             if (!sock_connected && !DoConnect(1))  // cannot connect
                 return TrinityErrorCode.E_FAILURE; // TODO error code for connection error
 

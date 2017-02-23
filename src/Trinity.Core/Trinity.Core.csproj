@@ -180,6 +180,7 @@
     <Compile Include="Network\Instance\CommunicationModule.cs" />
     <Compile Include="Network\NativeNetwork.C.cs" />
     <Compile Include="Network\NativeNetwork.cs" />
+    <Compile Include="Network\ServerInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -201,11 +202,21 @@
     <Compile Include="Network\AvailabilityGroup.cs" />
     <Compile Include="Storage\MemoryCloud\MemoryCloud.Event.cs" />
     <Compile Include="Storage\StorageCapacityProfile.cs" />
-    <Compile Include="Trinity\Configuration\ClusterConfig\ClusterConfig.Cluster.cs" />
-    <Compile Include="Trinity\Configuration\ClusterConfig\ClusterConfig.cs" />
+    <Compile Include="Trinity\Configuration\ConfigurationConstants.cs" />
+    <Compile Include="Trinity\Configuration\ConfigurationEntries\LoggingConfig.cs" />
+    <Compile Include="Trinity\Configuration\ConfigurationEntries\NetworkConfig.cs" />
+    <Compile Include="Trinity\Configuration\ConfigurationEntries\StorageConfig.cs" />
+    <Compile Include="Trinity\Configuration\ConfigurationEntry.cs" />
+    <Compile Include="Trinity\Configuration\ClusterConfig.cs" />
+    <Compile Include="Trinity\Configuration\ConfigurationInstance.cs" />
+    <Compile Include="Trinity\Configuration\ConfigurationSection.cs" />
+    <Compile Include="Trinity\Configuration\ConfigurationSetting.cs" />
     <Compile Include="Trinity\Configuration\TrinityConfig.C.cs" />
     <Compile Include="Trinity\Configuration\TrinityConfig.Storage.cs" />
     <Compile Include="Trinity\Configuration\TrinityConfig.Cluster.cs" />
+    <Compile Include="Trinity\Configuration\TrinityConfigAttribute.cs" />
+    <Compile Include="Trinity\Configuration\TrinityConfigException.cs" />
+    <Compile Include="Trinity\Configuration\XmlConfiguration.cs" />
     <Compile Include="Trinity\Global.public.cs" />
     <Compile Include="Trinity\Lib\AssemblyHelper.cs" />
     <Compile Include="Trinity\Lib\NamespaceDoc.cs" />
@@ -224,10 +235,9 @@
     <Compile Include="Network\Messaging\TrinityMessage.cs" />
     <Compile Include="Network\NamespaceDoc.cs" />
     <Compile Include="Storage\NamespaceDoc.cs" />
-    <Compile Include="Network\ServerInfo.cs" />
     <Compile Include="Trinity\Configuration\TrinityConfig.cs" />
     <Compile Include="Trinity\Configuration\TrinityConfig.IO.cs" />
-    <Compile Include="Trinity\Configuration\XMLConfig.cs" />
+    <Compile Include="Trinity\Configuration\Legacy\XMLConfig.cs" />
     <Compile Include="Network\Instance\TrinityProxy.cs" />
     <Compile Include="Network\Client\SynClient.Message.cs" />
     <Compile Include="Network\Messaging\MessageArgs\AsynReqArgs.cs" />
@@ -284,6 +294,7 @@
     <Compile Include="Utilities\CodeTempl\Disposal.cs" />
     <Compile Include="Utilities\IO\CodeWriter.cs" />
     <Compile Include="Utilities\IO\DataTable.cs" />
+    <Compile Include="Utilities\MISC\AssemblyPath.cs" />
     <Compile Include="Utilities\MISC\DataType.cs" />
     <Compile Include="Utilities\MISC\ASMFactory.cs" />
     <Compile Include="Utilities\NamespaceDoc.cs" />
