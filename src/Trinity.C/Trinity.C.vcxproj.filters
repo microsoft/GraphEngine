@@ -72,6 +72,9 @@
     <ClInclude Include="include\Trinity\Collections\Tuple.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Trinity\Diagnostics\Stopwatch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\Trinity\Diagnostics\TrinityDbg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -195,7 +198,10 @@
     <ClInclude Include="src\Network\SocketOptionsHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Trinity\Diagnostics\Stopwatch.h">
+    <ClInclude Include="src\Storage\LocalStorage\ThreadContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Storage\MTHash\MT_SHADOW_ENUMERATOR.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Trinity\Hash\NonCryptographicHash.h">
@@ -345,6 +351,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Network\network_exported_methods.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Storage\LocalStorage\ThreadContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Storage\MTHash\MT_SHADOW_ENUMERATOR.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Network\ProtocolConstants.cpp">

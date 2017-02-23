@@ -25,12 +25,14 @@ namespace Trinity.Storage
         /// <summary>
         /// Loads Trinity key-value store from disk to main memory.
         /// </summary>
-        /// <returns>true if loading succeeds; otherwise, false.</returns>
+        /// <returns>
+        /// TrinityErrorCode.E_SUCCESS if loading succeeds; 
+        /// Other error codes indicate a failure.
+        /// </returns>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public bool LoadStorage()
+        public TrinityErrorCode LoadStorage()
         {
-            bool ret = CLocalMemoryStorage.CLoadStorage();
-
+            TrinityErrorCode ret = CLocalMemoryStorage.CLoadStorage();
             //TODO WAL and cell type signatures should migrate to KVStore extensions.
             InitializeWriteAheadLogFile();
 
@@ -51,13 +53,15 @@ namespace Trinity.Storage
         /// <summary>
         /// Dumps the in-memory key-value store to disk files.
         /// </summary>
-        /// <returns>true if saving succeeds; otherwise, false.</returns>
+        /// <returns>
+        /// TrinityErrorCode.E_SUCCESS if saving succeeds;
+        /// Other error codes indicate a failure.
+        /// </returns>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public bool SaveStorage()
+        public TrinityErrorCode SaveStorage()
         {
-            bool ret = CLocalMemoryStorage.CSaveStorage();
-
-            if (ret)
+            TrinityErrorCode ret = CLocalMemoryStorage.CSaveStorage();
+            if (TrinityErrorCode.E_SUCCESS == ret)
             {
                 CreateWriteAheadLogFile();
 
@@ -79,13 +83,15 @@ namespace Trinity.Storage
         /// <summary>
         /// Resets local memory storage to the initial state. The content in the memory storage will be cleared. And the memory storage will be shrunk to the initial size.
         /// </summary>
-        /// <returns>true if resetting succeeds; otherwise, false.</returns>
+        /// <returns>
+        /// TrinityErrorCode.E_SUCCESS if resetting succeeds; 
+        /// Other error codes indicate a failure.
+        /// </returns>
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public bool ResetStorage()
+        public TrinityErrorCode ResetStorage()
         {
-            string path   = WriteAheadLogFilePath;
-            bool   ret    = CLocalMemoryStorage.CResetStorage();
-
+            string path          = WriteAheadLogFilePath;
+            TrinityErrorCode ret = CLocalMemoryStorage.CResetStorage();
             ResetWriteAheadLog(path);
 
             try

@@ -6,6 +6,7 @@
 #include "Storage/MemoryTrunk/MemoryTrunk.h"
 #include "Utility/HashHelper.h"
 #include <Trinity/Hash/MD5.h>
+#include "MT_ENUMERATOR.h"
 
 namespace Storage
 {
@@ -118,6 +119,11 @@ namespace Storage
             NonEmptyEntryCount = 0;
             FreeEntryCount     = 0;
         }
+    }
+
+    void MTHash::MarkTrunkDirty()
+    {
+        _mm_stream_si32(&LocalMemoryStorage::dirty_flags[memory_trunk->TrunkId], 1);
     }
 
     MTHash::~MTHash()

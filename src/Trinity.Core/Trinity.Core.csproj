@@ -202,6 +202,7 @@
     <Compile Include="Network\AvailabilityGroup.cs" />
     <Compile Include="Storage\MemoryCloud\MemoryCloud.Event.cs" />
     <Compile Include="Storage\StorageCapacityProfile.cs" />
+    <Compile Include="Storage\ThreadContext.cs" />
     <Compile Include="Trinity\Configuration\ConfigurationConstants.cs" />
     <Compile Include="Trinity\Configuration\ConfigurationEntries\LoggingConfig.cs" />
     <Compile Include="Trinity\Configuration\ConfigurationEntries\NetworkConfig.cs" />

@@ -4,6 +4,8 @@
 //
 #include "TrinityCommon.h"
 #include "Storage/MemoryTrunk/MemoryTrunk.h"
+#include "Storage/LocalStorage/ThreadContext.h"
+#include "Storage/MTHash/MTHash.h"
 #include <io>
 #include <diagnostics>
 
@@ -22,10 +24,17 @@ namespace Storage
 
     char* MemoryTrunk::CellAlloc(uint32_t cellSize, int32_t entryIndex)
     {
-        char* cell_p = nullptr;
-        hashtable->MTEntries[entryIndex].EntryLock += 2; //! Put myself to arena (the exclusion list of GetAllEntryLocksExceptArena in Reload)
+        //  !CellAlloc is the only path towards GetAllEntryLocksExceptArena --> ReadMemoryAllocationArena 
+        char* cell_p         = nullptr;
+        PTHREAD_CONTEXT pctx = GetCurrentThreadContext();
+        bool entered_arena   = false;
 
-        alloc_lock.lock();
+        if (!alloc_lock.trylock(100000))
+        {
+            EnterMemoryAllocationArena(pctx);
+            alloc_lock.lock();
+            entered_arena = true;
+        }
 
         do
         {
@@ -33,9 +42,23 @@ namespace Storage
             {
                 cell_p = trunkPtr + head.append_head;
                 head.append_head += cellSize;
-                hashtable->MTEntries[entryIndex].EntryLock -= 2; //! Release the exclusion flag
+                // This is the only path to ExitMemoryAllocationArena.
+                // We hold alloc_lock, check if we entered arena
+                // due to long blocking lock.
+                if (entered_arena)
+                {
+                    ExitMemoryAllocationArena(pctx);
+                }
                 alloc_lock.unlock();
                 return cell_p;
+            }
+
+            // Not enough space. We have to do memory expansion.
+            // Ensure that we are in the arena now.
+            if (!entered_arena)
+            {
+                EnterMemoryAllocationArena(pctx);
+                entered_arena = true;
             }
 
             if (CommittedMemoryExpand(cellSize))

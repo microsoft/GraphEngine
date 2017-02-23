@@ -22,24 +22,6 @@ using System.Security;
 
 namespace Trinity.Storage
 {
-    public unsafe partial class LocalMemoryStorage
-    {
-        /// <summary>
-        /// Logs a cell action to the persistent storage.
-        /// </summary>
-        /// <param name="cellId">The 64-bit cell id.</param>
-        /// <param name="cellPtr">A pointer pointing to the underlying cell buffer.</param>
-        /// <param name="cellSize">The size of the cell in bytes.</param>
-        /// <param name="cellType">A 16-bit unsigned integer indicating the cell type.</param>
-        /// <param name="options">An flag indicating a cell access option.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe static void CWriteAheadLog(long cellId, byte* cellPtr, int cellSize, ushort cellType, CellAccessOptions options)
-        {
-            CLocalMemoryStorage.CWriteAheadLog(cellId, cellPtr, cellSize, cellType, options);
-        }
-
-    }
-
     /// <summary>
     /// InternalCall bindings for LocalMemoryStorage.
     /// </summary>
@@ -53,33 +35,30 @@ namespace Trinity.Storage
 
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
-        internal static extern ulong CCellCount();
-        
-
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        internal static extern bool CResetStorage();
-        
-
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
         internal static extern void CDispose();
         
 
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
-        internal static extern byte* CResizeCell(long cell_id, int cellEntryIndex, int offset, int delta);
-        
+        internal static extern TrinityErrorCode CResetStorage();
+
+
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
-        internal static extern bool CSaveStorage();
+        internal static extern TrinityErrorCode CSaveStorage();
         
+
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
-        internal static extern bool CLoadStorage();
+        internal static extern TrinityErrorCode CLoadStorage();
         
 
         #region Cell operations
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal static extern byte* CResizeCell(long cell_id, int cellEntryIndex, int offset, int delta);
+        
+
         // Non-logging cell operations
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
@@ -121,18 +100,6 @@ namespace Trinity.Storage
         #region GetLockedCellInfo
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
-        internal static extern TrinityErrorCode CGetLockedCellInfo4SaveCell(long cellId, int size, ushort type, out byte* cellPtr, out int entryIndex);
-
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        internal static extern TrinityErrorCode CGetLockedCellInfo4AddCell(long cellId, int size, ushort type, out byte* cellPtr, out int entryIndex);
-
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        internal static extern TrinityErrorCode CGetLockedCellInfo4UpdateCell(long cellId, int size, out byte* cellPtr, out int entryIndex);
-        
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
         internal static extern TrinityErrorCode CGetLockedCellInfo4LoadCell(long cellId, out int size, out byte* cellPtr, out int entryIndex);
         
         [SecurityCritical]
@@ -154,27 +121,38 @@ namespace Trinity.Storage
         
         #endregion
 
+
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
-        internal static extern bool CContains(long cellId);
+        internal static extern TrinityErrorCode CContains(long cellId);
         
+
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal static extern ulong CCellCount();
+        
+
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal static extern ulong CTrunkCommittedMemorySize();
         
+
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal static extern ulong CMTHashCommittedMemorySize();
         
+
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal static extern ulong CTotalCommittedMemorySize();
         
+
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal static extern ulong CTotalCellSize();
-        
 
+
+        #region Enumerator
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal static extern TrinityErrorCode CLocalMemoryStorageEnumeratorAllocate(out LOCAL_MEMORY_STORAGE_ENUMERATOR* p_enum);
@@ -193,7 +171,22 @@ namespace Trinity.Storage
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal static extern TrinityErrorCode CLocalMemoryStorageEnumeratorReset(LOCAL_MEMORY_STORAGE_ENUMERATOR* p_enum);
-        
+        #endregion
+
+        #region ThreadContext
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal static extern void* CThreadContextAllocate();
+
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal static extern void CThreadContextSet(void* ctx);
+
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        internal static extern void CThreadContextDeallocate(void* ctx);
+        #endregion
+
 
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
