@@ -8,8 +8,8 @@
     <ProjectGuid>{9AC1B020-F072-4FA4-AD57-4F4D4D294F11}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SparkTrinity</RootNamespace>
-    <AssemblyName>SparkTrinity</AssemblyName>
+    <RootNamespace>Trinity.Modules.Spark</RootNamespace>
+    <AssemblyName>Trinity.Spark</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -51,6 +51,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SparkTrinityModule.cs" />
   </ItemGroup>

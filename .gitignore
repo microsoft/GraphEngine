@@ -79,3 +79,4 @@ CleanVSProject.exe
 /src/Modules/Spark/spark-trinity/project/target
 /src/Modules/Spark/spark-trinity/target
 *.so
+/src/Modules/Spark/spark-trinity/.idea
