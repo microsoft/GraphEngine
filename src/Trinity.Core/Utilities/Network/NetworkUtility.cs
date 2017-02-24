@@ -232,65 +232,61 @@ namespace Trinity.Utilities
             }
             else
             {
-                try
+                IPAddress[] ips = Dns.GetHostAddresses(host);
+                IPAddress selectedIP = null;
+                foreach (IPAddress ip in ips)
                 {
-                    IPAddress[] ips = Dns.GetHostAddresses(host);
-                    IPAddress selectedIP = null;
-                    foreach (IPAddress ip in ips)
+                    if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                     {
-                        if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                        if (PreferedNetworkMask == "")
                         {
-                            if (PreferedNetworkMask == "")
+                            return ip;
+                        }
+                        else
+                        {
+                            if (selectedIP == null)
                             {
-                                return ip;
+                                selectedIP = ip;
                             }
                             else
                             {
-                                if (selectedIP == null)
+                                byte[] ipBytes = ip.GetAddressBytes();
+                                bool match = true;
+                                for (int i = 0; i < 4; ++i)
                                 {
-                                    selectedIP = ip;
-                                }
-                                else
-                                {
-                                    byte[] ipBytes = ip.GetAddressBytes();
-                                    bool match = true;
-                                    for (int i = 0; i < 4; ++i)
+                                    if (maskBytes[i] != 0 && ipBytes[i] != maskBytes[i])
                                     {
-                                        if (maskBytes[i] != 0 && ipBytes[i] != maskBytes[i])
-                                        {
-                                            match = false;
-                                            break;
-                                        }
+                                        match = false;
+                                        break;
                                     }
-                                    if (match)
-                                        selectedIP = ip;
                                 }
+                                if (match)
+                                    selectedIP = ip;
                             }
                         }
                     }
-                    return selectedIP;
                 }
-                catch (Exception)
-                {
-                    return null;
-                }
+                return selectedIP;
             }
         }
 
-        public static IPEndPoint Hostname2IPEndPoint(string ip_endpoint)
+        public static IPEndPoint Hostname2IPEndPoint(string ep_value)
         {
-            if (ip_endpoint.Length == 0)
-                return null;
-            try
-            {
-                string[] fields = ip_endpoint.Split(new char[] { ':' });
-                IPAddress ip_v4 = Hostname2IPv4Address(fields[0]);
-                return new IPEndPoint(ip_v4, Int32.Parse(fields[1], CultureInfo.InvariantCulture));
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            if (ep_value == null)
+                throw new ArgumentNullException("ep_value");
+
+            if (ep_value.Length == 0)
+                throw new ArgumentException("Endpoint string is empty.", "ep_value");
+
+            string[] ep_tuple = ep_value.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+            if (ep_tuple.Length != 2)
+                throw new ArgumentException(String.Format("Invalid endpoint '{0}', should be 'address:port'", ep_value));
+
+            int port = -1;
+            if (!int.TryParse(ep_tuple[1].Trim(), System.Globalization.NumberStyles.None, CultureInfo.InvariantCulture, out port))
+                throw new ArgumentException(String.Format("Invalid endpoint port '{0}'", ep_tuple[1]));
+
+            return new IPEndPoint(Hostname2IPv4Address(ep_tuple[0]), port);
         }
 
         /// <summary>
