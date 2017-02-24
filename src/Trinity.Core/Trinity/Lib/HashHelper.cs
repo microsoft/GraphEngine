@@ -105,7 +105,11 @@ namespace Trinity.Core.Lib
             if (s != null && s.Length != 0)
             {
                 byte[] bytes = BitHelper.GetBytes(s);
+#if CORECLR
+                SHA256 hash = SHA256.Create();
+#else
                 SHA256 hash = new SHA256CryptoServiceProvider();
+#endif
                 byte[] hashBytes = hash.ComputeHash(bytes);
                 return BitHelper.ToInt64(hashBytes, 0) ^ BitHelper.ToInt64(hashBytes, 8) ^ BitHelper.ToInt64(hashBytes, 24);
             }

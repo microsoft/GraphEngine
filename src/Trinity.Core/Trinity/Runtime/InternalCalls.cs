@@ -25,6 +25,7 @@ using System.Globalization;
 
 namespace Trinity
 {
+#if !CORECLR
     partial class InternalCalls
     {
         /*************************************************************
@@ -44,7 +45,7 @@ namespace Trinity
          *************************************************************/
         static private List<InternalCallEntry> iCallEntries = new List<InternalCallEntry>
         {
-            #region TrinityConfig
+    #region TrinityConfig
             new InternalCallEntry("SetStorageRoot"                          , typeof(CTrinityConfig)),
             new InternalCallEntry("CReadOnly"                               , typeof(CTrinityConfig)),
             new InternalCallEntry("CSetReadOnly"                            , typeof(CTrinityConfig)),
@@ -55,18 +56,18 @@ namespace Trinity
             new InternalCallEntry("CLargeObjectThreshold"                   , typeof(CTrinityConfig)),
             new InternalCallEntry("CSetLargeObjectThreshold"                , typeof(CTrinityConfig)),
             new InternalCallEntry("CSetGCDefragInterval"                    , typeof(CTrinityConfig)),
-            #endregion
+    #endregion
 
-            #region File I/O
+    #region File I/O
             new InternalCallEntry("C_wfopen_s"                              , typeof(CStdio)),
             new InternalCallEntry("fread"                                   , typeof(CStdio)),
             new InternalCallEntry("fwrite"                                  , typeof(CStdio)),
             new InternalCallEntry("fflush"                                  , typeof(CStdio)),
             new InternalCallEntry("fclose"                                  , typeof(CStdio)),
             new InternalCallEntry("feof"                                    , typeof(CStdio)),
-            #endregion
+    #endregion
 
-            #region Memory
+    #region Memory
             new InternalCallEntry("Copy"                                    , typeof(CMemory), new List<Type>(){ typeof(void*), typeof(void*),typeof(int) }),
             new InternalCallEntry("malloc"                                  , typeof(CMemory)),
             new InternalCallEntry("free"                                    , typeof(CMemory)),
@@ -80,18 +81,18 @@ namespace Trinity
             new InternalCallEntry("AlignedAlloc"                            , typeof(CMemory)),
             new InternalCallEntry("SetWorkingSetProfile"                    , typeof(CMemory)),
             new InternalCallEntry("SetMaxWorkingSet"                        , typeof(CMemory)),
-            #endregion
+    #endregion
 
-            #region Mathematics
+    #region Mathematics
             new InternalCallEntry("multiply_double_vector"                  , typeof(CMathUtility)),
             new InternalCallEntry("multiply_sparse_double_vector"           , typeof(CMathUtility)),
-            #endregion
+    #endregion
 
-            #region GetLastError
+    #region GetLastError
             new InternalCallEntry("GetLastError"                            , typeof(CTrinityC)),
-            #endregion
+    #endregion
 
-            #region Storage
+    #region Storage
             new InternalCallEntry("CInitialize"                             , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CCellCount"                              , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CResetStorage"                           , typeof(CLocalMemoryStorage)),
@@ -145,9 +146,9 @@ namespace Trinity
             new InternalCallEntry("CLockedGetCellSize"                      , typeof(CLocalMemoryStorage)),
 
             new InternalCallEntry("CStartDebugger"                          , typeof(CLocalMemoryStorage)),
-            #endregion
+    #endregion
 
-            #region Network
+    #region Network
             //TODO remove network InternalCall entries
             new InternalCallEntry("StartSocketServer"                       , typeof(CNativeNetwork)),
             new InternalCallEntry("ShutdownSocketServer"                    , typeof(CNativeNetwork)),
@@ -161,7 +162,7 @@ namespace Trinity
             new InternalCallEntry("WaitForAckPackage"                       , typeof(CNativeNetwork)),
             new InternalCallEntry("WaitForStatusPackage"                    , typeof(CNativeNetwork)),
             new InternalCallEntry("CloseClientSocket"                       , typeof(CNativeNetwork)),
-            #endregion
+    #endregion
         };
     }
     struct InternalCallEntry
@@ -361,4 +362,17 @@ namespace Trinity
         [DllImport(TrinityC.AssemblyName)]
         static private unsafe extern void HotSwapCSharpMethod(void* TargetMethodDesc, void* SourceMethodDesc);
     }
+#else
+    class InternalCalls
+    {
+        internal static void __init()
+        {
+            // TODO we have to figure out whether to auto-release Trinity.C for multiple platforms,
+            // or to rely on a nuget package to deliver the correct binary for a specific platform.
+
+            // TODO maybe on *nix we have to modify LD_LIBRARY_PATH to properly load Trinity.C
+        }
+    }
+
+#endif
 }
