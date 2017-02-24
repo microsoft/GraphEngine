@@ -5,138 +5,108 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text;
-using Trinity.Diagnostics;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using System.Net;
+using Trinity.Configuration;
+using Trinity;
 using Trinity.Utilities;
-
+using Trinity.Diagnostics;
 namespace Trinity.Network
 {
-    /// <summary>
-    /// Contains the information for a server or proxy.
-    /// </summary>
-    public class ServerInfo
+    public class ServerInfo : ConfigurationSection
     {
-        /// <summary>
-        /// The host name of the server or proxy.
-        /// </summary>
-        public string HostName;
-        /// <summary>
-        /// The network port for the server or proxy.
-        /// </summary>
-        public int Port;
-        /// <summary>
-        /// The assembly path of the server or proxy.
-        /// </summary>
-        public string AssemblyPath;
+        internal ServerInfo(XElement configSection)
+            : base(configSection)
+        {
+            string endpoint = configSection.Attribute(ConfigurationConstants.Attrs.ENDPOINT).Value.Trim();
+            string[] parts = endpoint.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
 
+            HostName = parts[0].Trim();
+            EndPoint = NetworkUtility.Hostname2IPEndPoint(endpoint);
+            AssemblyPath = configSection.Attribute(ConfigurationConstants.Attrs.ASSEMBLY_PATH) == null ? null : configSection.Attribute(ConfigurationConstants.Attrs.ASSEMBLY_PATH).Value;
+            Id = configSection.Attribute(ConfigurationConstants.Attrs.AVAILABILITY_GROUP) == null ? null : configSection.Attribute(ConfigurationConstants.Attrs.AVAILABILITY_GROUP).Value;
+        }
+
+        //  For legacy code compatibility
+        private ServerInfo(string hostName, string assemblyPath, string availabilityGroup, IPEndPoint endpoint, string storageRoot, string loggingLevel)
+        {
+            HostName = hostName;
+            AssemblyPath = assemblyPath;
+            Id = availabilityGroup;
+            EndPoint = endpoint;
+
+            this.Add(ConfigurationConstants.Tags.STORAGE,
+                new ConfigurationEntry(ConfigurationConstants.Tags.STORAGE,
+                new Dictionary<string, string> { { ConfigurationConstants.Attrs.STORAGE_ROOT, storageRoot } }));
+
+            this.Add(ConfigurationConstants.Tags.LOGGING,
+                new ConfigurationEntry(ConfigurationConstants.Tags.LOGGING,
+                new Dictionary<string, string> { { ConfigurationConstants.Attrs.LOGGING_LEVEL, loggingLevel } }));
+        }
+
+        private ServerInfo(string hostName, int port, string assemblyPath, string storageRoot, string loggingLevel, string availabilityGroup)
+            : this(hostName,  assemblyPath, availabilityGroup, NetworkUtility.Hostname2IPEndPoint(hostName + ":" + port), storageRoot, loggingLevel) { }
+
+        internal static ServerInfo _LegacyCreateServerInfo(string hostName, int port, string assemblyPath, string storageRoot, string loggingLevel, string availabilityGroup)
+        {
+            return new ServerInfo(hostName, port, assemblyPath, storageRoot, loggingLevel, availabilityGroup);
+        }
+
+        internal static ServerInfo _LegacyCreateServerInfo(string hostName, string assemblyPath, string availabilityGroup, IPEndPoint endpoint, string storageRoot, string loggingLevel)
+        {
+            return new ServerInfo(hostName,  assemblyPath, availabilityGroup, endpoint, storageRoot, loggingLevel);
+        }
         /// <summary>
-        /// The storage root directory of the server or proxy.
+        /// for legacy
         /// </summary>
-        public string StorageRoot;
+        /// <param name="hostName"></param>
+        /// <param name="port"></param>
+        /// <param name="assemblyPath"></param>
+        /// <param name="logLevel"></param>
+        public ServerInfo(string hostName, int port, string assemblyPath, LogLevel logLevel)
+        {
+            HostName = hostName;
+            AssemblyPath = assemblyPath;
 
+            this.Add(ConfigurationConstants.Tags.LOGGING,
+                new ConfigurationEntry(ConfigurationConstants.Tags.LOGGING,
+                new Dictionary<string, string> { { ConfigurationConstants.Attrs.LOGGING_LEVEL, logLevel.ToString() } }));
+        }
         /// <summary>
-        /// The logging level for the server or proxy.
+        /// for legacy
         /// </summary>
-        public LogLevel LoggingLevel;
-
+        /// <param name="hostName"></param>
+        /// <param name="port"></param>
+        /// <param name="assemblyPath"></param>
+        /// <param name="logLevel"></param>
+        public ServerInfo(string hostName, int port, LogLevel logLevel, string Id, string assemblyPath)
+            : this(hostName, assemblyPath, Id, NetworkUtility.Hostname2IPEndPoint(hostName + ":" + port), "", logLevel.ToString()) { }
         /// <summary>
-        /// The id of the server group that the server belongs to.
+        /// for legacy
         /// </summary>
-        public string Id;
-
-        private IPEndPoint ipe = null;
-
-        ///// <summary>
-        ///// Indicates whether an IP (e.g., 192.168.1.1) is specified for the host name.
-        ///// </summary>
-        //public bool IPSpecified = false;
-
-        /// <summary>
-        /// Initializes an empty ServerInfo instance.
-        /// </summary>
+        /// <param name="hostName"></param>
+        /// <param name="port"></param>
+        /// <param name="assemblyPath"></param>
+        /// <param name="logLevel"></param>
         public ServerInfo()
-        {
-
-        }
-
+        { }
         /// <summary>
-        /// Returns the IPEndPoint of the current Trinity server.
+        /// The host name of the server.
         /// </summary>
-        public IPEndPoint EndPoint
-        {
-            get
-            {
-                return ipe;
-            }
-        }
-
+        public string HostName { get; private set; }
         /// <summary>
-        /// Initializes an ServerInfo instance with the specified hostname, port, assembly path, and logging level.
+        /// The assembly path of the server.
         /// </summary>
-        /// <param name="hostname">The host name of the server or proxy.</param>
-        /// <param name="port">The network port for the server or proxy.</param>
-        /// <param name="assemblyPath">The assembly path of the server or proxy.</param>
-        /// <param name="logLevel">The logging level for the server or proxy.</param>
-        public ServerInfo(string hostname, int port, string assemblyPath, LogLevel logLevel)
-        {
-            this.HostName     = hostname;
-            this.Port         = port;
-            this.AssemblyPath = assemblyPath;
-            this.StorageRoot  = FileUtility.CompletePath(assemblyPath, false) + "storage\\";
-            this.LoggingLevel = logLevel;
-            this.ipe          = new IPEndPoint(NetworkUtility.Hostname2IPv4Address(HostName), Port);
-        }
-
+        public string AssemblyPath { get; private set; }
         /// <summary>
-        /// Initializes an ServerInfo instance with the specified hostname, port, assembly path, and logging level.
+        /// The availability group id of the server.
         /// </summary>
-        /// <param name="hostname">The host name of the server or proxy.</param>
-        /// <param name="port">The network port for the server or proxy.</param>
-        /// <param name="assemblyPath">The assembly path of the server or proxy.</param>
-        /// <param name="storageRoot">The storage root directory of the server or proxy.</param>
-        /// <param name="logLevel">The logging level for the server or proxy.</param>
-        /// <param name="id">The id of the current server.</param>
-        public ServerInfo(string hostname, int port, string assemblyPath, string storageRoot, LogLevel logLevel, string id)
-        {
-            this.HostName     = hostname;
-            this.Port         = port;
-            this.AssemblyPath = assemblyPath;
-            this.StorageRoot  = storageRoot;
-            this.LoggingLevel = logLevel;
-            this.Id           = id;
-            this.ipe          = new IPEndPoint(NetworkUtility.Hostname2IPv4Address(HostName), Port);
-        }
-
-        internal ServerInfo(ServerInfo si)
-        {
-            this.HostName     = si.HostName;
-            this.Port         = si.Port;
-            this.AssemblyPath = si.AssemblyPath;
-            this.StorageRoot  = si.StorageRoot;
-            this.LoggingLevel = si.LoggingLevel;
-            this.Id           = si.Id;
-            this.ipe          = new IPEndPoint(NetworkUtility.Hostname2IPv4Address(HostName), Port);
-        }
-
-
-        internal void CalculateIPEndpoint()
-        {
-            IPAddress ip = null;
-            if (IPAddress.TryParse(HostName, out ip))
-            {
-                //IPSpecified = true;
-                this.ipe = new IPEndPoint(ip, Port);
-            }
-            else
-            {
-                //IPSpecified = false;
-                this.ipe = new IPEndPoint(NetworkUtility.Hostname2IPv4Address(HostName), Port);
-            }
-        }
-        internal ServerInfo Clone()
-        {
-            return new ServerInfo(this);
-        }
+        public string Id { get; private set; }
+        /// <summary>
+        /// The endpoint of the server.
+        /// </summary>
+        public IPEndPoint EndPoint { get; private set; }
     }
 }

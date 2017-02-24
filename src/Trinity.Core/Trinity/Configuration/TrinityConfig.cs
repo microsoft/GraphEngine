@@ -8,6 +8,8 @@ using Trinity.Diagnostics;
 using Trinity.Core.Lib;
 using System.IO;
 using System.Runtime.InteropServices;
+using Trinity.Configuration;
+using Trinity.Utilities;
 
 namespace Trinity
 {
@@ -47,19 +49,14 @@ namespace Trinity
     /// </summary>
     public unsafe static partial class TrinityConfig
     {
-        internal static RunningMode current_running_mode = RunningMode.Undefined;
         internal static bool is_config_loaded = false;
         private static object config_load_lock = new object();
         internal const bool RWTimeout = false;
-        private static string log_directory = "";
 
         static TrinityConfig()
         {
             TrinityC.Ping();
             InternalCalls.__init();
-
-            LoggingLevel = c_DefaultLogLevel;
-            StorageRoot  = DefaultStorageRoot;
 
             LoadTrinityConfig(false);
         }
@@ -69,33 +66,16 @@ namespace Trinity
         /// This property is obsolete and is kept for backward compatibility.
         /// Assigning a running mode to this property does not affect the system behavior.
         /// </summary>
-        public static RunningMode CurrentRunningMode
-        {
-            get
-            {
-                return current_running_mode;
-            }
-            set
-            {
-                current_running_mode = value;
-            }
-        }
-
-        private static string DefaultLogDirectory
-        {
-            get
-            {
-                return MyAssemblyPath + "trinity-log" + Path.DirectorySeparatorChar;
-            }
-        }
+        [Obsolete("TrinityConfig.CurrentRunningMode is deprecated.")]
+        public static RunningMode CurrentRunningMode { get { return s_current_cluster_config.RunningMode; } set { s_current_cluster_config.RunningMode = value; } }
 
         /// <summary>
         /// Current system logging logLevel, default is LogLevel.Info.
         /// </summary>
         public static LogLevel LoggingLevel
         {
-            get { return s_loglevel; }
-            set { s_loglevel = value; CLogSetLogLevel(s_loglevel); }
+            get { return LoggingConfig.Instance.LoggingLevel; }
+            set { LoggingConfig.Instance.LoggingLevel = value; }
         }
 
         /// <summary>
@@ -103,74 +83,21 @@ namespace Trinity
         /// </summary>
         internal static string LogDirectory
         {
-            get
-            {
-                if (log_directory == null || log_directory.Length == 0)
-                    log_directory = DefaultLogDirectory;
-
-
-                if (!Directory.Exists(log_directory))
-                {
-                    try
-                    {
-                        Directory.CreateDirectory(log_directory);
-                    }
-                    catch (Exception)
-                    {
-                        ThrowCreatingLogDirectoryException(log_directory);
-                    }
-                }
-
-                if (log_directory[log_directory.Length - 1] != Path.DirectorySeparatorChar)
-                {
-                    log_directory = log_directory + Path.DirectorySeparatorChar;
-                }
-
-                try
-                {
-                    CLogInitializeLogger(log_directory);
-                }
-                catch (Exception) { }
-
-                return log_directory;
-            }
-            set
-            {
-                log_directory = value;
-
-                if (log_directory == null || log_directory.Length == 0)
-                {
-                    log_directory = DefaultLogDirectory;
-                }
-
-                if (log_directory[log_directory.Length - 1] != Path.DirectorySeparatorChar)
-                {
-                    log_directory += Path.DirectorySeparatorChar;
-                }
-
-                if (!Directory.Exists(log_directory))
-                {
-                    try
-                    {
-                        Directory.CreateDirectory(log_directory);
-                    }
-                    catch (Exception)
-                    {
-                        ThrowCreatingLogDirectoryException(log_directory);
-                    }
-                }
-
-                try
-                {
-                    CLogInitializeLogger(log_directory);
-                }
-                catch (Exception) { }
-            }
+            get { return LoggingConfig.Instance.LogDirectory; }
+            set { LoggingConfig.Instance.LogDirectory = value; }
         }
 
-        internal const  LogLevel c_DefaultLogLevel = LogLevel.Info;
-        private  static LogLevel s_loglevel        = c_DefaultLogLevel;
+        public static bool LogEchoOnConsole
+        {
+            get { return LoggingConfig.Instance.LogEchoOnConsole; }
+            set { LoggingConfig.Instance.LogEchoOnConsole = value; }
+        }
 
+        public static bool LogToFile
+        {
+            get { return LoggingConfig.Instance.LogToFile; }
+            set { LoggingConfig.Instance.LogToFile = value; }
+        }
         /// <summary>
         /// Provides a local testing configuration with one server (localhost).
         /// </summary>
@@ -183,11 +110,11 @@ namespace Trinity
                     Servers.Clear();
                     Proxies.Clear();
 
-                    ServerInfo server = new ServerInfo("127.0.0.1",
-                        5304,
-                        MyAssemblyPath,
-                        MyAssemblyPath + "storage\\",
-                        LogLevel.Debug,
+                    ServerInfo server = ServerInfo._LegacyCreateServerInfo("127.0.0.1",
+                        TrinityConfig.CurrentClusterConfig.ServerPort,
+                        AssemblyPath.MyAssemblyPath,
+                        AssemblyPath.MyAssemblyPath + "storage\\",
+                        LogLevel.Debug.ToString(),
                         "0");
 
                     switch (CurrentClusterConfig.RunningMode)

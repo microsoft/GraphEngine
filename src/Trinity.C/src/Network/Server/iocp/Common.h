@@ -3,6 +3,9 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 #pragma once
+#include "os/os.h"
+#ifdef TRINITY_PLATFORM_WINDOWS
+
 #include "TrinityCommon.h"
 #include "Network/ProtocolConstants.h"
 #include "Network/Server/TrinityServer.h"
@@ -25,13 +28,13 @@ namespace Trinity
 
         /// Represents a context object associated with each asyn op,
         /// use a separate structure for each request.
-        typedef struct
+        struct OverlappedOpStruct
         {
             WSAOVERLAPPED Overlapped;
             SocketAsyncOperation OpType; // record the op type when issuing an async op, e.g., WSARecv, WSASend
-        }OverlappedOpStruct;
+        };
 
-        typedef struct // represents a context object associated with each socket
+        struct PerSocketContextObject// represents a context object associated with each socket
         {
             union
             {
@@ -65,10 +68,11 @@ namespace Trinity
                 char MessagePrefix[MessagePrefixLength];
             };
             bool WaitingHandshakeMessage;
-        }PerSocketContextObject;
+        };
 
         typedef void(*PTrinityMessageHandler)(void* pParameter);
 
         bool InitializeNetwork();
     }
 }
+#endif

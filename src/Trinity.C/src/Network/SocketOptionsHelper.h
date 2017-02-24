@@ -3,8 +3,8 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 #include <os/os.h>
-#if defined(TRINITY_PLATFORM_WINDOWS)
-#include <winsock2.h>
+#include "Network.h"
+#include "Trinity/Diagnostics/Log.h"
 
 namespace Trinity
 {
@@ -30,6 +30,7 @@ namespace Trinity
                 int32_t KeepAlive = 1;
                 setsockopt(socket, SOL_SOCKET, SO_KEEPALIVE, (char*)&KeepAlive, sizeof(int32_t));
 
+#ifdef TRINITY_PLATFORM_WINDOWS
                 tcp_keepalive tcpKeepAlive{
                     1,     // onoff
 
@@ -47,6 +48,12 @@ namespace Trinity
                     closesocket(socket);
                     return INVALID_SOCKET;
                 }
+#else
+                int32_t keepidle  = 60000;
+                int32_t keepintvl = 3000;
+                setsockopt(socket, IPPROTO_TCP, TCP_KEEPIDLE, &keepidle, sizeof(int32_t));
+                setsockopt(socket, IPPROTO_TCP, TCP_KEEPINTVL, &keepintvl, sizeof(int32_t));
+#endif
             }
 
             if (disable_sendbuf)
@@ -66,6 +73,7 @@ namespace Trinity
 
         inline uint64_t GetSocketOptions(uint64_t socket)
         {
+#ifdef TRINITY_PLATFORM_WINDOWS
             int iOptVal = 0;
             int iOptLen = sizeof(int);
 
@@ -87,8 +95,11 @@ namespace Trinity
                 Diagnostics::WriteLine(Diagnostics::LogLevel::Info, "SO_SNDBUF Value : {0}", szOptVal);
 
             return socket;
+#else
+            //TODO GetSocketOptions
+            return socket;
+#endif
         }
     }
 }
 
-#endif

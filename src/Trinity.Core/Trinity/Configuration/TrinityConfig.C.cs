@@ -99,5 +99,22 @@ namespace Trinity
 #endif
         internal static extern void CSetGCDefragInterval(int value);
 
+        [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+        internal static extern unsafe void CLogInitializeLogger(string logDir);
+
+        [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+        internal static extern void CLogSetLogLevel(LogLevel level);
+
+        [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+        internal static extern void CLogSetEchoOnConsole(bool is_set);
+
+        [DllImport(TrinityC.AssemblyName)]
+        internal static extern bool CHandshake();
+        [DllImport(TrinityC.AssemblyName)]
+        internal static extern void CSetHandshake(bool handshake);
+        [DllImport(TrinityC.AssemblyName)]
+        internal static extern bool CClientDisableSendBuffer();
+        [DllImport(TrinityC.AssemblyName)]
+        internal static extern void CSetClientDisableSendBuffer(bool disable_sndbuffer);
     }
 }

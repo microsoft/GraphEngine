@@ -39,64 +39,45 @@ namespace Trinity.Storage
             }
         }
 
-        internal override void SendMessage(TrinityMessage msg)
+        /// <summary>
+        /// Get a SynClient and apply the function. Intended for SendMessage calls.
+        /// Will retry if the function returns neither E_SUCCESS nor E_RPC_EXCEPTION.
+        /// </summary>
+        private void _use_synclient(Func<SynClient, TrinityErrorCode> func)
         {
             TrinityErrorCode err = TrinityErrorCode.E_SUCCESS;
-            for (int i = 0; i < retry; i++)
+            for (int i = 0; i < m_send_retry; i++)
             {
                 SynClient sc = GetClient();
-                err = sc.SendMessage(msg.Buffer, msg.Size);
+                err = func(sc);
                 PutBackClient(sc);
                 if (err == TrinityErrorCode.E_SUCCESS || err == TrinityErrorCode.E_RPC_EXCEPTION)
                     break;
             }
             _error_check(err);
+        }
+
+        internal override void SendMessage(TrinityMessage msg)
+        {
+            SendMessage(msg.Buffer, msg.Size);
         }
 
 
         internal override void SendMessage(TrinityMessage msg, out TrinityResponse response)
         {
-            response = null;
-            TrinityErrorCode err = TrinityErrorCode.E_SUCCESS;
-            for (int i = 0; i < retry; i++)
-            {
-                SynClient sc = GetClient();
-                err = sc.SendMessage(msg.Buffer, msg.Size, out response);
-                PutBackClient(sc);
-                if (err == TrinityErrorCode.E_SUCCESS || err == TrinityErrorCode.E_RPC_EXCEPTION)
-                    break;
-            }
-
-            _error_check(err);
+            SendMessage(msg.Buffer, msg.Size, out response);
         }
 
         internal override void SendMessage(byte* message, int size)
         {
-            TrinityErrorCode err = TrinityErrorCode.E_SUCCESS;
-            for (int i = 0; i < retry; i++)
-            {
-                SynClient sc = GetClient();
-                err = sc.SendMessage(message, size);
-                PutBackClient(sc);
-                if (err == TrinityErrorCode.E_SUCCESS || err == TrinityErrorCode.E_RPC_EXCEPTION)
-                    break;
-            }
-            _error_check(err);
+            _use_synclient(sc => sc.SendMessage(message, size));
         }
 
         internal override void SendMessage(byte* message, int size, out TrinityResponse response)
         {
-            response = null;
-            TrinityErrorCode err = TrinityErrorCode.E_SUCCESS;
-            for (int i = 0; i < retry; i++)
-            {
-                SynClient sc = GetClient();
-                err = sc.SendMessage(message, size, out response);
-                PutBackClient(sc);
-                if (err == TrinityErrorCode.E_SUCCESS || err == TrinityErrorCode.E_RPC_EXCEPTION)
-                    break;
-            }
-            _error_check(err);
+            TrinityResponse _rsp = null;
+            _use_synclient(sc => sc.SendMessage(message, size, out _rsp));
+            response = _rsp;
         }
 
         internal void GetCommunicationSchema(out string name, out string signature)

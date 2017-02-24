@@ -15,6 +15,7 @@ using Trinity;
 using Trinity.Utilities;
 using Trinity.Core.Lib;
 using Trinity.Daemon;
+using Trinity.Configuration;
 
 namespace Trinity.Diagnostics
 {
@@ -86,7 +87,6 @@ namespace Trinity.Diagnostics
     {
         #region Fields
         private static IFormatProvider s_InternalFormatProvider;
-        private static bool            s_EchoOnConsole = true;
         private const  int             c_LogEntryCollectorIdleInterval = 3000;
         private const  int             c_LogEntryCollectorBusyInterval = 50;
         #endregion
@@ -103,7 +103,7 @@ namespace Trinity.Diagnostics
             if (isInUnitTest)
             {
                 WriteLine(LogLevel.Info, "UnitTestFramework detected. Enabling echo callback.");
-                var LogFilename = Path.Combine(TrinityConfig.LogDirectory, "trinity-log", "trinity-[" + DateTime.Now.ToStringForFilename() + "].log");
+                var LogFilename = Path.Combine(TrinityConfig.LogDirectory, "trinity-[" + DateTime.Now.ToStringForFilename() + "].log");
                 new Thread(_unitTestLogEchoThread).Start(LogFilename);
             }
 
@@ -162,11 +162,20 @@ namespace Trinity.Diagnostics
                 {
                     try
                     {
-                        var line = (reader.ReadLine()).Trim();
-                        if (line != "")
-                            Console.WriteLine(line);
+                        var line = reader.ReadLine();
+                        if(line != null) 
+                        {
+                            line = line.Trim();
+                            if (line != "")
+                                Console.WriteLine(line);
+                            else
+                                Thread.Sleep(10);
+                        }
                         else
-                            Thread.Sleep(10);
+                        {
+                            Thread.Sleep(100);
+                        }
+                        
                     }
                     catch { Thread.Sleep(500); }
                 }
@@ -194,10 +203,11 @@ namespace Trinity.Diagnostics
         /// <summary>
         /// Gets of sets a value indicating whether the logged messages are echoed to the Console.
         /// </summary>
+        [Obsolete]
         public static bool EchoOnConsole
         {
-            get { return s_EchoOnConsole; }
-            set { s_EchoOnConsole = value; TrinityConfig.CLogSetEchoOnConsole(value); }
+            get { return LoggingConfig.Instance.LogEchoOnConsole; }
+            set { LoggingConfig.Instance.LogEchoOnConsole = value; }
         }
 
         /// <summary>

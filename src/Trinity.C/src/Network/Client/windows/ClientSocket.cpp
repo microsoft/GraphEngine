@@ -7,9 +7,8 @@
 #include  "ClientSocket.h"
 #include "Network/Server/iocp/TrinitySocketServer.h"
 #include "Network/SocketOptionsHelper.h"
+#include "Trinity/Configuration/TrinityConfig.h"
 #include <thread>
-#include "Trinity/Hash/NonCryptographicHash.h"
-#include "Network/ProtocolConstants.h"
 
 namespace Trinity
 {
@@ -29,35 +28,7 @@ namespace Trinity
             }
 
             // The client side already have heartbeat packages. Don't enable keepalive messages.
-            return SetSocketOptions(clientsocket, /*enable_keepalive:*/ false, /*disable_sendbuf:*/false);
-        }
-
-        bool ClientSocketHandshake(uint64_t clientsocket)
-        {
-            char* send_buff      = (char*)malloc(HANDSHAKE_MESSAGE_LENGTH + sizeof(int32_t));
-            *(int32_t*)send_buff = HANDSHAKE_MESSAGE_LENGTH;
-            memcpy(send_buff + sizeof(int32_t), HANDSHAKE_MESSAGE_CONTENT, HANDSHAKE_MESSAGE_LENGTH);
-
-            if (!ClientSend(clientsocket, send_buff, sizeof(int32_t) + HANDSHAKE_MESSAGE_LENGTH))
-            {
-                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Server rejected handshake request message. Thread Id = {0}, Socket = {1}", std::this_thread::get_id(), clientsocket);
-                goto handshake_check_fail;
-            }
-
-            if (WaitForAckPackage(clientsocket) != TrinityErrorCode::E_SUCCESS)
-            {
-                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Incorrect server handshake ACK message. Thread Id = {0}, Socket = {1}", std::this_thread::get_id(), clientsocket);
-                goto handshake_check_fail;
-            }
-
-            //handshake_check_success: cleanup and return now.
-            free(send_buff);
-            return true;
-
-        handshake_check_fail:
-            free(send_buff);
-            closesocket((SOCKET)clientsocket);
-            return false;
+            return SetSocketOptions(clientsocket, /*enable_keepalive:*/ false, /*disable_sendbuf:*/TrinityConfig::ClientDisableSendBuffer());
         }
 
         bool ClientSocketConnect(uint64_t clientsocket, uint32_t ip, uint16_t port)
@@ -73,8 +44,15 @@ namespace Trinity
                 closesocket((SOCKET)clientsocket);
                 return false;
             }
-
-            return ClientSocketHandshake(clientsocket);
+            
+            if (TrinityConfig::Handshake())
+            {
+                return ClientSocketHandshake(clientsocket);
+            }
+            else
+            {
+                return true;
+            }
         }
 
         bool ClientSend(uint64_t socket, char* buf, int32_t len)

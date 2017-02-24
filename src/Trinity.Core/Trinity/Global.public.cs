@@ -91,7 +91,7 @@ namespace Trinity
         /// <returns>The newly created cloud storage instance.</returns>
         public static MemoryCloud CreateCloudStorage(string configFile)
         {
-            return CreateCloudStorage(new ClusterConfig(configFile));
+            return CreateCloudStorage(ClusterConfig._LegacyLoadClusterConfig(configFile));
         }
 
         /// <summary>

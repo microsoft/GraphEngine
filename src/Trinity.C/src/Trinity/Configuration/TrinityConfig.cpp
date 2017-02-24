@@ -9,10 +9,12 @@
 
 namespace TrinityConfig
 {
-    String storage_root = "";
-    String log_directory = "";
-    bool read_only = false;
-    int32_t trunk_count = 256;
+    String storage_root           = "";
+    String log_directory          = "";
+    bool read_only                = false;
+    bool handshake                = true;
+    bool client_disable_sndbuffer = false;
+    int32_t trunk_count           = 256;
 
     /// <summary>
     /// Default Value = 16
@@ -84,6 +86,26 @@ namespace TrinityConfig
         }
 
         read_only = value;
+    }
+
+    bool Handshake()
+    {
+        return handshake;
+    }
+
+    void SetHandshake(bool value)
+    {
+        handshake = value;
+    }
+
+    bool ClientDisableSendBuffer()
+    {
+        return client_disable_sndbuffer;
+    }
+
+    void SetClientDisableSendBuffer(bool value)
+    {
+        client_disable_sndbuffer = value;
     }
 
     int32_t TrunkCount()
@@ -218,3 +240,9 @@ namespace TrinityConfig
         CapacityProfile = (StorageCapacityProfile)capacityProfile;
     }
 }
+
+// exported getter/setter
+DLL_EXPORT BOOL __stdcall CHandshake() { return TrinityConfig::Handshake() ? TRUE : FALSE; }
+DLL_EXPORT VOID __stdcall CSetHandshake(bool value) { TrinityConfig::SetHandshake(value); }
+DLL_EXPORT BOOL __stdcall CClientDisableSendBuffer() { return TrinityConfig::ClientDisableSendBuffer() ? TRUE : FALSE; }
+DLL_EXPORT VOID __stdcall CSetClientDisableSendBuffer(bool value) { TrinityConfig::SetClientDisableSendBuffer(value); }
