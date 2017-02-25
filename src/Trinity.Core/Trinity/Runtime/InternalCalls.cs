@@ -371,7 +371,13 @@ namespace Trinity
             // or to rely on a nuget package to deliver the correct binary for a specific platform.
 
             // TODO maybe on *nix we have to modify LD_LIBRARY_PATH to properly load Trinity.C
+            TrinityC.Ping();
             __INIT_TRINITY_C__();
+
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                Win32.NativeAPI.timeBeginPeriod(1);
+            }
         }
 
         internal static void __init()
