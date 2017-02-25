@@ -6,14 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using SparkTrinity.Protocols.TSL;
-using Trinity;
 using Newtonsoft.Json;
 using System.IO;
 using Trinity.Diagnostics;
 using System.Diagnostics;
+using Trinity.Modules.Spark.Protocols.TSL;
+using Trinity.Storage;
 
-namespace SparkTrinity
+namespace Trinity.Modules.Spark
 {
     public class SparkTrinityModule : SparkTrinityBase
     {
@@ -52,36 +52,10 @@ namespace SparkTrinity
             }
         }
 
-        public List<object> GetSchema(string cellType)
+        public StructType GetSchema(string cellType)
         {
             var cellDesc = Global.StorageSchema.CellDescriptors.FirstOrDefault(_ => _.TypeName == cellType);
-            if (cellDesc == null)
-                return null;
-
-            var schema = new List<object>();
-            schema.Add(new
-            {
-                name = "CellID",
-                dataType = typeof(long).Name,
-                nullable = false,
-                isList = false
-            });
-
-            var fields = cellDesc.GetFieldDescriptors();
-            foreach (var fd in fields)
-            {
-                schema.Add(new
-                {
-                    name = fd.Name,
-                    dataType = fd.IsList() ? fd.Type.GenericTypeArguments[0].Name : fd.Type.Name,
-                    nullable = fd.Optional,
-                    isList = fd.IsList()
-                });
-            }
-
-            Log.WriteLine(LogLevel.Info, $"GetSchema[{cellType}] succeeded");
-
-            return schema;
+            return StructType.ConvertFromCellDescriptor(cellDesc);
         }
 
         public object GetPartitions(string cellType, int batchSize)

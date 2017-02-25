@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SparkTrinityModule", "SparkTrinityModule\SparkTrinityModule.csproj", "{9AC1B020-F072-4FA4-AD57-4F4D4D294F11}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SparkTrinityModule.Tests", "SparkTrinityModule.Tests\SparkTrinityModule.Tests.csproj", "{193B322D-7A32-4D95-A4C2-F0415C6CE90E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{9AC1B020-F072-4FA4-AD57-4F4D4D294F11}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AC1B020-F072-4FA4-AD57-4F4D4D294F11}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9AC1B020-F072-4FA4-AD57-4F4D4D294F11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{193B322D-7A32-4D95-A4C2-F0415C6CE90E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{193B322D-7A32-4D95-A4C2-F0415C6CE90E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{193B322D-7A32-4D95-A4C2-F0415C6CE90E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{193B322D-7A32-4D95-A4C2-F0415C6CE90E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
