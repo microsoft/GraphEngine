@@ -47,7 +47,7 @@ namespace Trinity.Core.Lib
         /// <param name="src">The source buffer.</param>
         /// <param name="count">The number of bytes to copy.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void* memmove(void* dst, void* src, ulong count) { return CMemory.memmove(dst, src, count); }
+        public static unsafe void* memmove(void* dst, void* src, ulong count) { return CMemory.C_memmove(dst, src, count); }
 
         /// <summary>
         /// C-style memcpy. Copies a specified number of bytes from a source buffer to a destination buffer.
@@ -56,7 +56,7 @@ namespace Trinity.Core.Lib
         /// <param name="src">The source buffer.</param>
         /// <param name="count">The number of bytes to copy.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void* memcpy(void* dst, void* src, ulong count) { return CMemory.memcpy(dst, src, count); }
+        public static unsafe void* memcpy(void* dst, void* src, ulong count) { return CMemory.C_memcpy(dst, src, count); }
 
         /// <summary>
         /// C-style memcmp. Compares the specified number of bytes in two buffers and returns a value indicating their relationship.
@@ -66,7 +66,7 @@ namespace Trinity.Core.Lib
         /// <param name="count">The number of bytes to compare.</param>
         /// <returns>Zero indicates the bytes of two buffers are identical. A value less than zero indicates the first buffer less than the second. Otherwise, a value great than zero is returned.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe int memcmp(void* ptr1, void* ptr2, ulong count) { return CMemory.memcmp(ptr1, ptr2, count); }
+        public static unsafe int memcmp(void* ptr1, void* ptr2, ulong count) { return CMemory.C_memcmp(ptr1, ptr2, count); }
 
         /// <summary>
         /// C-style memset. Sets the specified number of bytes in a buffer to the specified value.
@@ -76,7 +76,7 @@ namespace Trinity.Core.Lib
         /// <param name="count">The number of bytes to set.</param>
         /// <returns>The pointer of memory buffer is returned.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void* memset(void* buff, int value, ulong count) { return CMemory.memset(buff, value, count); }
+        public static unsafe void* memset(void* buff, int value, ulong count) { return CMemory.C_memset(buff, value, count); }
 
         /// <summary>
         /// C-style realloc. Reallocate a previously allocated memory buffer. The content of the memory buffer is preserved up to the shorter of the old and new buffer. The expanded portion of the new buffer is indeterminate. If size is zero, the previously allocated buffer is freed, NULL is returned. If buff is NULL, it behaves the same way as malloc.
@@ -85,7 +85,7 @@ namespace Trinity.Core.Lib
         /// <param name="size">Number of bytes of the reallocated memory buffer.</param>
         /// <returns>A pointer to the reallocated memory buffer.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void* realloc(void* buff, ulong size) { return CMemory.realloc(buff, size); }
+        public static unsafe void* realloc(void* buff, ulong size) { return CMemory.C_realloc(buff, size); }
 
         /// <summary>
         /// C-style malloc. Allocates specified number of bytes of memory.
@@ -93,7 +93,7 @@ namespace Trinity.Core.Lib
         /// <param name="size">Number of bytes to allocate.</param>
         /// <returns>Pointer to the allocated memory buffer. A NULL pointer is returned if there is insufficient memory available. </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void* malloc(ulong size) { return CMemory.malloc(size); }
+        public static unsafe void* malloc(ulong size) { return CMemory.C_malloc(size); }
 
         /// <summary>
         /// C-style free. Deallocate a previously allocated memory buffer. 
@@ -101,7 +101,7 @@ namespace Trinity.Core.Lib
         /// </summary>
         /// <param name="buff">Pointer to a previously allocated memory buffer.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void free(void* buff) { CMemory.free(buff); }
+        public static unsafe void free(void* buff) { CMemory.C_free(buff); }
 
         /// <summary>
         /// C-style _aligned_malloc. Allocates memory on a specified alignment boundary.
@@ -110,7 +110,7 @@ namespace Trinity.Core.Lib
         /// <param name="alignment">The alignment value, which must be an integer power of 2.</param>
         /// <returns>A pointer to the memory block that was allocated or NULL if the operation failed. The pointer is a multiple of alignment.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void* _aligned_malloc(ulong size, ulong alignment) { return CMemory._aligned_malloc(size, alignment); }
+        public static unsafe void* _aligned_malloc(ulong size, ulong alignment) { return CMemory.C_aligned_malloc(size, alignment); }
 
         /// <summary>
         /// C-style _aligned_malloc. Allocates memory on a specified alignment boundary.
@@ -119,14 +119,14 @@ namespace Trinity.Core.Lib
         /// <param name="alignment">The alignment value, which must be an integer power of 2.</param>
         /// <returns>A pointer to the memory block that was allocated or NULL if the operation failed. The pointer is a multiple of alignment.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void* _aligned_malloc(long size, long alignment) { return CMemory._aligned_malloc(size, alignment); }
+        public static unsafe void* _aligned_malloc(long size, long alignment) { return CMemory.C_aligned_malloc(size, alignment); }
 
         /// <summary>
         /// C-style _aligned_free. Frees a block of memory that was allocated with _aligned_malloc or _aligned_offset_malloc.
         /// </summary>
         /// <param name="mem">A pointer to the memory block that was returned to the _aligned_malloc or _aligned_offset_malloc function.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void _aligned_free(void* mem) { CMemory._aligned_free(mem); }
+        public static void _aligned_free(void* mem) { CMemory.C_aligned_free(mem); }
 
         /// <summary>
         /// Aligned memory allocation. Compared with _aligned_malloc, this method zeros out the allocated memory. The size must be 8x bytes.
@@ -176,7 +176,7 @@ namespace Trinity.Core.Lib
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        public static extern unsafe void* memmove(void* dst, void* src, ulong count);
+        public static extern unsafe void* C_memmove(void* dst, void* src, ulong count);
 
         /// <summary>
         /// C-style memcpy. Copies a specified number of bytes from a source buffer to a destination buffer.
@@ -190,7 +190,7 @@ namespace Trinity.Core.Lib
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        public static extern unsafe void* memcpy(void* dst, void* src, ulong count);
+        public static extern unsafe void* C_memcpy(void* dst, void* src, ulong count);
 
         /// <summary>
         /// C-style memcmp. Compares the specified number of bytes in two buffers and returns a value indicating their relationship.
@@ -205,7 +205,7 @@ namespace Trinity.Core.Lib
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        public static extern unsafe int memcmp(void* ptr1, void* ptr2, ulong count);
+        public static extern unsafe int C_memcmp(void* ptr1, void* ptr2, ulong count);
 
         /// <summary>
         /// C-style memset. Sets the specified number of bytes in a buffer to the specified value.
@@ -220,7 +220,7 @@ namespace Trinity.Core.Lib
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        public static extern unsafe void* memset(void* buff, int value, ulong count);
+        public static extern unsafe void* C_memset(void* buff, int value, ulong count);
 
         /// <summary>
         /// C-style realloc. Reallocate a previously allocated memory buffer. The content of the memory buffer is preserved up to the shorter of the old and new buffer. The expanded portion of the new buffer is indeterminate. If size is zero, the previously allocated buffer is freed, NULL is returned. If buff is NULL, it behaves the same way as malloc.
@@ -234,7 +234,7 @@ namespace Trinity.Core.Lib
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        public static extern unsafe void* realloc(void* buff, ulong size);
+        public static extern unsafe void* C_realloc(void* buff, ulong size);
 
         /// <summary>
         /// C-style malloc. Allocates specified number of bytes of memory.
@@ -247,7 +247,7 @@ namespace Trinity.Core.Lib
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        public static extern unsafe void* malloc(ulong size);
+        public static extern unsafe void* C_malloc(ulong size);
 
         /// <summary>
         /// C-style free. Deallocate a previously allocated memory buffer. 
@@ -260,7 +260,7 @@ namespace Trinity.Core.Lib
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        public static extern unsafe void free(void* buff);
+        public static extern unsafe void C_free(void* buff);
 
         /// <summary>
         /// C-style _aligned_malloc. Allocates memory on a specified alignment boundary.
@@ -274,7 +274,7 @@ namespace Trinity.Core.Lib
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        public static extern unsafe void* _aligned_malloc(ulong size, ulong alignment);
+        public static extern unsafe void* C_aligned_malloc(ulong size, ulong alignment);
 
         /// <summary>
         /// C-style _aligned_malloc. Allocates memory on a specified alignment boundary.
@@ -288,7 +288,7 @@ namespace Trinity.Core.Lib
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        public static extern unsafe void* _aligned_malloc(long size, long alignment);
+        public static extern unsafe void* C_aligned_malloc(long size, long alignment);
 
         /// <summary>
         /// C-style _aligned_free. Frees a block of memory that was allocated with _aligned_malloc or _aligned_offset_malloc.
@@ -300,7 +300,7 @@ namespace Trinity.Core.Lib
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        public static extern void _aligned_free(void* mem);
+        public static extern void C_aligned_free(void* mem);
 
         /// <summary>
         /// Aligned memory allocation. Compared with _aligned_malloc, this method zeros out the allocated memory. The size must be 8x bytes.

@@ -1,18 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <RuntimeFrameworkVersion>2.0.0-beta-001509-00</RuntimeFrameworkVersion>
+    <AssemblyName>Trinity.Core</AssemblyName>
+    <RootNamespace>Trinity.Core</RootNamespace>
+    <OutputTypeEx>library</OutputTypeEx>
+    <Version>1.0.4</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD1_6;CORECLR</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CORECLR;NETCOREAPP2_0</DefineConstants>
+    <OutputPath>..\..\bin\coreclr</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <DefineConstants>TRACE;RELEASE;NETSTANDARD1_6;CORECLR;</DefineConstants>
+    <DefineConstants>RELEASE;CORECLR;NETCOREAPP2_0</DefineConstants>
+    <OutputPath>..\..\bin\coreclr</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,9 +34,5 @@
   <ItemGroup>
     <None Remove="GraphEngine.Core.nuspec" />
   </ItemGroup>
-
-  <!--<ItemGroup>
-    <PackageReference Update="NETStandard.Library" Version="1.6.0" />
-  </ItemGroup>-->
 
 </Project>

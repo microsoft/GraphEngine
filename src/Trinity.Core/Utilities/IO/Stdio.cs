@@ -35,19 +35,19 @@ namespace Trinity
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static ulong fread(void* buffer, ulong elementSize, ulong count, void* fp) { return CStdio.fread(buffer, elementSize, count, fp); }
+        internal static ulong fread(void* buffer, ulong elementSize, ulong count, void* fp) { return CStdio.C_fread(buffer, elementSize, count, fp); }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static ulong fwrite(void* buffer, ulong elementSize, ulong count, void* fp) { return CStdio.fwrite(buffer, elementSize, count, fp); }
+        internal static ulong fwrite(void* buffer, ulong elementSize, ulong count, void* fp) { return CStdio.C_fwrite(buffer, elementSize, count, fp); }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static int fflush(void* fp) { return CStdio.fflush(fp); }
+        internal static int fflush(void* fp) { return CStdio.C_fflush(fp); }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static int fclose(void* fp) { return CStdio.fclose(fp); }
+        internal static int fclose(void* fp) { return CStdio.C_fclose(fp); }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static int feof(void* fp) { return CStdio.feof(fp); }
+        internal static int feof(void* fp) { return CStdio.C_feof(fp); }
     }
 
     internal unsafe class CStdio
@@ -66,7 +66,7 @@ namespace Trinity
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        internal static extern ulong fread(void* buffer, ulong elementSize, ulong count, void* fp);
+        internal static extern ulong C_fread(void* buffer, ulong elementSize, ulong count, void* fp);
 
 #if !CORECLR
         [SecurityCritical]
@@ -74,7 +74,7 @@ namespace Trinity
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        internal static extern ulong fwrite(void* buffer, ulong elementSize, ulong count, void* fp);
+        internal static extern ulong C_fwrite(void* buffer, ulong elementSize, ulong count, void* fp);
 
 #if !CORECLR
         [SecurityCritical]
@@ -82,7 +82,7 @@ namespace Trinity
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        internal static extern int fflush(void* fp);
+        internal static extern int C_fflush(void* fp);
 
 #if !CORECLR
         [SecurityCritical]
@@ -90,7 +90,7 @@ namespace Trinity
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        internal static extern int fclose(void* fp);
+        internal static extern int C_fclose(void* fp);
 
 #if !CORECLR
         [SecurityCritical]
@@ -98,6 +98,6 @@ namespace Trinity
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        internal static extern int feof(void* fp);
+        internal static extern int C_feof(void* fp);
     }
 }

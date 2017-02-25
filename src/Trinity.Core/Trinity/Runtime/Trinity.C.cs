@@ -29,6 +29,6 @@ namespace Trinity.Core.Lib
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        internal static extern int GetLastError();
+        internal static extern int C_GetLastError();
     }
 }

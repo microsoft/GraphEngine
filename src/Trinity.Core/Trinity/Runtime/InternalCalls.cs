@@ -60,36 +60,36 @@ namespace Trinity
 
     #region File I/O
             new InternalCallEntry("C_wfopen_s"                              , typeof(CStdio)),
-            new InternalCallEntry("fread"                                   , typeof(CStdio)),
-            new InternalCallEntry("fwrite"                                  , typeof(CStdio)),
-            new InternalCallEntry("fflush"                                  , typeof(CStdio)),
-            new InternalCallEntry("fclose"                                  , typeof(CStdio)),
-            new InternalCallEntry("feof"                                    , typeof(CStdio)),
+            new InternalCallEntry("C_fread"                                 , typeof(CStdio)),
+            new InternalCallEntry("C_fwrite"                                , typeof(CStdio)),
+            new InternalCallEntry("C_fflush"                                , typeof(CStdio)),
+            new InternalCallEntry("C_fclose"                                , typeof(CStdio)),
+            new InternalCallEntry("C_feof"                                  , typeof(CStdio)),
     #endregion
 
     #region Memory
             new InternalCallEntry("Copy"                                    , typeof(CMemory), new List<Type>(){ typeof(void*), typeof(void*),typeof(int) }),
-            new InternalCallEntry("malloc"                                  , typeof(CMemory)),
-            new InternalCallEntry("free"                                    , typeof(CMemory)),
-            new InternalCallEntry("realloc"                                 , typeof(CMemory)),
-            new InternalCallEntry("memcpy"                                  , typeof(CMemory)),
-            new InternalCallEntry("memmove"                                 , typeof(CMemory)),
-            new InternalCallEntry("memset"                                  , typeof(CMemory)),
-            new InternalCallEntry("memcmp"                                  , typeof(CMemory)),
-            new InternalCallEntry("_aligned_malloc"                         , typeof(CMemory)),
-            new InternalCallEntry("_aligned_free"                           , typeof(CMemory)),
+            new InternalCallEntry("C_malloc"                                , typeof(CMemory)),
+            new InternalCallEntry("C_free"                                  , typeof(CMemory)),
+            new InternalCallEntry("C_realloc"                               , typeof(CMemory)),
+            new InternalCallEntry("C_memcpy"                                , typeof(CMemory)),
+            new InternalCallEntry("C_memmove"                               , typeof(CMemory)),
+            new InternalCallEntry("C_memset"                                , typeof(CMemory)),
+            new InternalCallEntry("C_memcmp"                                , typeof(CMemory)),
+            new InternalCallEntry("C_aligned_malloc"                        , typeof(CMemory)),
+            new InternalCallEntry("C_aligned_free"                          , typeof(CMemory)),
             new InternalCallEntry("AlignedAlloc"                            , typeof(CMemory)),
             new InternalCallEntry("SetWorkingSetProfile"                    , typeof(CMemory)),
             new InternalCallEntry("SetMaxWorkingSet"                        , typeof(CMemory)),
     #endregion
 
     #region Mathematics
-            new InternalCallEntry("multiply_double_vector"                  , typeof(CMathUtility)),
-            new InternalCallEntry("multiply_sparse_double_vector"           , typeof(CMathUtility)),
+            new InternalCallEntry("C_multiply_double_vector"                  , typeof(CMathUtility)),
+            new InternalCallEntry("C_multiply_sparse_double_vector"           , typeof(CMathUtility)),
     #endregion
 
     #region GetLastError
-            new InternalCallEntry("GetLastError"                            , typeof(CTrinityC)),
+            new InternalCallEntry("C_GetLastError"                            , typeof(CTrinityC)),
     #endregion
 
     #region Storage
@@ -108,10 +108,10 @@ namespace Trinity
             new InternalCallEntry("CRemoveCell"                             , typeof(CLocalMemoryStorage), new List<Type>{typeof(long)}),
 
             /* Logging interfaces */
-            new InternalCallEntry("CSaveCell"                               , typeof(CLocalMemoryStorage), new List<Type>{typeof(long), typeof(byte*), typeof(int), typeof(ushort), typeof(CellAccessOptions)}),
-            new InternalCallEntry("CAddCell"                                , typeof(CLocalMemoryStorage), new List<Type>{typeof(long), typeof(byte*), typeof(int), typeof(ushort), typeof(CellAccessOptions)}),
-            new InternalCallEntry("CUpdateCell"                             , typeof(CLocalMemoryStorage), new List<Type>{typeof(long), typeof(byte*), typeof(int), typeof(CellAccessOptions)}),
-            new InternalCallEntry("CRemoveCell"                             , typeof(CLocalMemoryStorage), new List<Type>{typeof(long), typeof(CellAccessOptions)}),
+            new InternalCallEntry("CLoggedSaveCell"                         , typeof(CLocalMemoryStorage), new List<Type>{typeof(long), typeof(byte*), typeof(int), typeof(ushort), typeof(CellAccessOptions)}),
+            new InternalCallEntry("CLoggedAddCell"                          , typeof(CLocalMemoryStorage), new List<Type>{typeof(long), typeof(byte*), typeof(int), typeof(ushort), typeof(CellAccessOptions)}),
+            new InternalCallEntry("CLoggedUpdateCell"                       , typeof(CLocalMemoryStorage), new List<Type>{typeof(long), typeof(byte*), typeof(int), typeof(CellAccessOptions)}),
+            new InternalCallEntry("CLoggedRemoveCell"                       , typeof(CLocalMemoryStorage), new List<Type>{typeof(long), typeof(CellAccessOptions)}),
             new InternalCallEntry("CWriteAheadLog"                          , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CSetWriteAheadLogFile"                   , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CWriteAheadLogComputeChecksum"           , typeof(LOG_RECORD_HEADER)),
@@ -365,13 +365,22 @@ namespace Trinity
 #else
     class InternalCalls
     {
-        internal static void __init()
+        static InternalCalls()
         {
             // TODO we have to figure out whether to auto-release Trinity.C for multiple platforms,
             // or to rely on a nuget package to deliver the correct binary for a specific platform.
 
             // TODO maybe on *nix we have to modify LD_LIBRARY_PATH to properly load Trinity.C
+            __INIT_TRINITY_C__();
         }
+
+        internal static void __init()
+        {
+            //Nothing, just trigger the static constructor
+        }
+
+        [DllImport(TrinityC.AssemblyName)]
+        private static extern unsafe void __INIT_TRINITY_C__();
     }
 
 #endif

@@ -131,7 +131,7 @@ namespace Trinity.Storage
             lock (m_lock)
             {
                 if (m_logfile == null) return;
-                if (0 != CStdio.fclose(m_logfile))
+                if (0 != CStdio.C_fclose(m_logfile))
                 {
                     Log.WriteLine(LogLevel.Error, "Failed to close the log file");
                 }
@@ -191,7 +191,7 @@ namespace Trinity.Storage
 
                 Log.WriteLine(LogLevel.Info, "Dropping write-ahead-log file {0}", m_logfile_path);
 
-                if (0 != CStdio.fclose(m_logfile))
+                if (0 != CStdio.C_fclose(m_logfile))
                 {
                     Log.WriteLine(LogLevel.Error, "Failed to close the log file");
                 }
@@ -242,8 +242,8 @@ namespace Trinity.Storage
 
                 GetTrinityImageSignature(&header.LOG_ASSOCIATED_IMAGE_SIGNATURE);
 
-                CStdio.fwrite(&header, (ulong)sizeof(LOG_FILE_HEADER), 1, new_fp);
-                CStdio.fflush(new_fp);
+                CStdio.C_fwrite(&header, (ulong)sizeof(LOG_FILE_HEADER), 1, new_fp);
+                CStdio.C_fflush(new_fp);
 
                 _update_write_ahead_log_file(path, new_fp);
             }
@@ -338,7 +338,7 @@ namespace Trinity.Storage
 
                 /* Read log header */
 
-                if (1 != CStdio.fread(&header, (ulong)sizeof(LOG_FILE_HEADER), 1, new_fp))
+                if (1 != CStdio.C_fread(&header, (ulong)sizeof(LOG_FILE_HEADER), 1, new_fp))
                 {
                     Log.WriteLine(LogLevel.Fatal, "Cannot read write-ahead-log header. Exiting.");
                     goto load_fail;
@@ -350,10 +350,10 @@ namespace Trinity.Storage
                 if (!ver_compatible || !img_compatible)
                 {
                     /* The log is not ours. Ignore if it's empty. */
-                    if (0 == CStdio.feof(new_fp))
+                    if (0 == CStdio.C_feof(new_fp))
                     {
                         Log.WriteLine(LogLevel.Warning, "Found incompatible empty write-ahead-log file, ignoring.");
-                        CStdio.fclose(new_fp);
+                        CStdio.C_fclose(new_fp);
                         return;
                     }
                     else if (this.CellCount != 0)
@@ -365,7 +365,7 @@ namespace Trinity.Storage
 
                 Log.WriteLine(LogLevel.Info, "Reading log file.");
 
-                while (1 == CStdio.fread(&record_header, (ulong)sizeof(LOG_RECORD_HEADER), 1, new_fp))
+                while (1 == CStdio.C_fread(&record_header, (ulong)sizeof(LOG_RECORD_HEADER), 1, new_fp))
                 {
                     if (record_header.CONTENT_LEN >= 0)
                     {
@@ -384,7 +384,7 @@ namespace Trinity.Storage
 
                         fixed (byte* p_buff = cell_buff)
                         {
-                            if (1 != CStdio.fread(p_buff, (ulong)record_header.CONTENT_LEN, 1, new_fp) && record_header.CONTENT_LEN != 0)
+                            if (1 != CStdio.C_fread(p_buff, (ulong)record_header.CONTENT_LEN, 1, new_fp) && record_header.CONTENT_LEN != 0)
                             {
                                 Log.WriteLine(LogLevel.Error, "Incomplete write-ahead-log record at the end of file");
                                 break;
@@ -434,7 +434,7 @@ namespace Trinity.Storage
 
                 Log.WriteLine(LogLevel.Info, "Write-ahead-log successfully loaded. Recovered {0} records.", record_cnt);
 
-                if (0 != CStdio.fclose(new_fp))
+                if (0 != CStdio.C_fclose(new_fp))
                 {
                     Log.WriteLine(LogLevel.Error, "Cannot close the write-ahead-log file. Logging disabled.");
                     return;
@@ -466,7 +466,7 @@ namespace Trinity.Storage
                 load_fail:
 
                 if (new_fp != null)
-                    CStdio.fclose(new_fp);
+                    CStdio.C_fclose(new_fp);
                 Environment.Exit(-1);
             }
         }
@@ -479,7 +479,7 @@ namespace Trinity.Storage
             lock (m_lock)
             {
                 if (m_logfile != null)
-                    CStdio.fclose(m_logfile);
+                    CStdio.C_fclose(m_logfile);
 
                 _update_write_ahead_log_file(null, null);
             }
@@ -500,7 +500,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CSaveCell(cellId, p, buff.Length, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
+                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, p, buff.Length, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
                 return eResult;
             }
         }
@@ -518,7 +518,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CSaveCell(cellId, p, buff.Length, cellType, writeAheadLogOptions);
+                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, p, buff.Length, cellType, writeAheadLogOptions);
                 return eResult;
             }
         }
@@ -537,7 +537,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CSaveCell(cellId, p + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
+                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, p + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
                 return eResult;
             }
         }
@@ -557,7 +557,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CSaveCell(cellId, p + offset, cellSize, cellType, writeAheadLogOptions);
+                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, p + offset, cellSize, cellType, writeAheadLogOptions);
                 return eResult;
             }
         }
@@ -575,7 +575,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode SaveCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int offset, int cellSize, ushort cellType)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CSaveCell(cellId, buff + offset, cellSize, cellType, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, buff + offset, cellSize, cellType, writeAheadLogOptions);
             return eResult;
         }
 
@@ -592,7 +592,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode SaveCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int offset, int cellSize)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CSaveCell(cellId, buff + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, buff + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
             return eResult;
         }
 
@@ -607,7 +607,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode SaveCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int cellSize)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CSaveCell(cellId, buff, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, buff, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
             return eResult;
         }
 
@@ -622,7 +622,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode AddCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int cellSize)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CAddCell(cellId, buff, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, buff, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
             return eResult;
         }
 
@@ -638,7 +638,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode AddCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int offset, int cellSize)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CAddCell(cellId, buff + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, buff + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
             return eResult;
         }
 
@@ -654,7 +654,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CAddCell(cellId, p, buff.Length, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
+                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, p, buff.Length, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
                 return eResult;
             }
         }
@@ -673,7 +673,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CAddCell(cellId, p + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
+                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, p + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
                 return eResult;
             }
         }
@@ -693,7 +693,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CAddCell(cellId, p + offset, cellSize, cellType, writeAheadLogOptions);
+                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, p + offset, cellSize, cellType, writeAheadLogOptions);
                 return eResult;
             }
         }
@@ -711,7 +711,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode AddCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int offset, int cellSize, ushort cellType)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CAddCell(cellId, buff + offset, cellSize, cellType, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, buff + offset, cellSize, cellType, writeAheadLogOptions);
             return eResult;
         }
 
@@ -727,7 +727,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode UpdateCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int offset, int cellSize)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CUpdateCell(cellId, buff + offset, cellSize, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedUpdateCell(cellId, buff + offset, cellSize, writeAheadLogOptions);
             return eResult;
         }
 
@@ -742,7 +742,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode UpdateCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int cellSize)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CUpdateCell(cellId, buff, cellSize, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedUpdateCell(cellId, buff, cellSize, writeAheadLogOptions);
             return eResult;
         }
 
@@ -758,7 +758,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CUpdateCell(cellId, p, buff.Length, writeAheadLogOptions);
+                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedUpdateCell(cellId, p, buff.Length, writeAheadLogOptions);
                 return eResult;
             }
         }
@@ -777,7 +777,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CUpdateCell(cellId, p + offset, cellSize, writeAheadLogOptions);
+                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedUpdateCell(cellId, p + offset, cellSize, writeAheadLogOptions);
                 return eResult;
             }
         }
@@ -791,7 +791,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode RemoveCell(CellAccessOptions writeAheadLogOptions, long cellId)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CRemoveCell(cellId, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedRemoveCell(cellId, writeAheadLogOptions);
             return eResult;
         }
 

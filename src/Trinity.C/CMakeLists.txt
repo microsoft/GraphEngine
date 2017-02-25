@@ -7,7 +7,7 @@ file(GLOB_RECURSE SRCS src/*.cpp src/*.rc include/*.cpp)
 
 IF(UNIX) 
     MESSAGE(STATUS "Build on Unix/Linux") 
-    ADD_DEFINITIONS(-DTRINITYC_EXPORTS -D_CRT_SECURE_NO_WARNINGS -DUNICODE -D_UNICODE)
+    ADD_DEFINITIONS(-DTRINITYC_EXPORTS -D_CRT_SECURE_NO_WARNINGS -DUNICODE -D_UNICODE -DCORECLR)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -Wall -std=c++14 -Wno-write-strings -Wno-unknown-pragmas -pthread")
     LINK_LIBRARIES(crypto;ssl;)
     ADD_LIBRARY(Trinity.C SHARED ${SRCS})

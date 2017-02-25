@@ -151,7 +151,7 @@ namespace Trinity.Storage
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        internal static extern TrinityErrorCode CSaveCell(long cellId, byte* buff, int size, ushort cellType, CellAccessOptions options);
+        internal static extern TrinityErrorCode CLoggedSaveCell(long cellId, byte* buff, int size, ushort cellType, CellAccessOptions options);
 
 #if !CORECLR
         [SecurityCritical]
@@ -159,7 +159,7 @@ namespace Trinity.Storage
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        internal static extern TrinityErrorCode CAddCell(long cellId, byte* buff, int size, ushort cellType, CellAccessOptions options);
+        internal static extern TrinityErrorCode CLoggedAddCell(long cellId, byte* buff, int size, ushort cellType, CellAccessOptions options);
 
 #if !CORECLR
         [SecurityCritical]
@@ -167,7 +167,7 @@ namespace Trinity.Storage
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        internal static extern TrinityErrorCode CUpdateCell(long cellId, byte* buff, int size, CellAccessOptions options);
+        internal static extern TrinityErrorCode CLoggedUpdateCell(long cellId, byte* buff, int size, CellAccessOptions options);
 
 #if !CORECLR
         [SecurityCritical]
@@ -175,7 +175,7 @@ namespace Trinity.Storage
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        internal static extern TrinityErrorCode CRemoveCell(long cellId, CellAccessOptions options);
+        internal static extern TrinityErrorCode CLoggedRemoveCell(long cellId, CellAccessOptions options);
 
         #endregion
 

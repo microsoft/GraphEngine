@@ -17,7 +17,7 @@ namespace Trinity
     internal static class TrinityC
     {
 #if CORECLR
-        internal const string AssemblyName = "Trinity.C";
+        internal const string AssemblyName = "Trinity";
 #else
         internal const string AssemblyName = "Trinity.C.dll";
 #endif

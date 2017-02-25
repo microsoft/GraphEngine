@@ -21,7 +21,7 @@ namespace Trinity.Mathematics
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        internal static extern double multiply_double_vector(double* dv1, double* dv2, int count);
+        internal static extern double C_multiply_double_vector(double* dv1, double* dv2, int count);
 
 #if !CORECLR
         [SecurityCritical]
@@ -29,7 +29,7 @@ namespace Trinity.Mathematics
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        internal static extern double multiply_sparse_double_vector(double* dv1, double* dv2, int* idx, int count);
+        internal static extern double C_multiply_sparse_double_vector(double* dv1, double* dv2, int* idx, int count);
     }
 
     unsafe class MathUtility
@@ -40,10 +40,10 @@ namespace Trinity.Mathematics
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double multiply_double_vector(double* dv1, double* dv2, int count) { return CMathUtility.multiply_double_vector(dv1, dv2, count); }
+        public static double multiply_double_vector(double* dv1, double* dv2, int count) { return CMathUtility.C_multiply_double_vector(dv1, dv2, count); }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double multiply_sparse_double_vector(double* dv1, double* dv2, int* idx, int count) { return CMathUtility.multiply_sparse_double_vector(dv1, dv2, idx, count); }
+        public static double multiply_sparse_double_vector(double* dv1, double* dv2, int* idx, int count) { return CMathUtility.C_multiply_sparse_double_vector(dv1, dv2, idx, count); }
 
         public static int GetMedian(int low, int high)
         {
