@@ -78,8 +78,8 @@ namespace Trinity.Storage
 
         static LocalMemoryStorage()
         {
-            TrinityConfig.LoadTrinityConfig();
             InternalCalls.__init();
+            TrinityConfig.LoadTrinityConfig();
             //BackgroundThread.StartMemoryStorageBgThreads();
         }
 
