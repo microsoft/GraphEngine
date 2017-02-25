@@ -130,14 +130,5 @@ namespace Trinity
                 }
             }
         }
-
-        [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-        internal static extern unsafe void CLogInitializeLogger(string logDir);
-
-        [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-        internal static extern void CLogSetLogLevel(LogLevel level);
-
-        [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-        internal static extern void CLogSetEchoOnConsole(bool is_set);
     }
 }
