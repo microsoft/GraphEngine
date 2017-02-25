@@ -74,7 +74,9 @@ namespace Trinity.Storage
         #endregion
 
         internal static volatile bool initialized = false;
+
         private object m_lock = new object();
+
 
         static LocalMemoryStorage()
         {
