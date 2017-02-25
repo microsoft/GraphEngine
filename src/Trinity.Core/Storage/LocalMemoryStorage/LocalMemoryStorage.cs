@@ -150,8 +150,12 @@ namespace Trinity.Storage
 
         private void Dispose(bool disposing)
         {
-            CloseWriteAheadLogFile();
-            CLocalMemoryStorage.CDispose();
+            if (initialized)
+            {
+                CloseWriteAheadLogFile();
+                CLocalMemoryStorage.CDispose();
+                initialized = false;
+            }
             if(disposing)
             {
                 GC.SuppressFinalize(this);
