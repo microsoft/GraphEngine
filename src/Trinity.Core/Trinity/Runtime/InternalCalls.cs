@@ -370,7 +370,6 @@ namespace Trinity
             // TODO we have to figure out whether to auto-release Trinity.C for multiple platforms,
             // or to rely on a nuget package to deliver the correct binary for a specific platform.
 
-            // TODO maybe on *nix we have to modify LD_LIBRARY_PATH to properly load Trinity.C
             TrinityC.Ping();
             __INIT_TRINITY_C__();
 

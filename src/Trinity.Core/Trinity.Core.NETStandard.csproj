@@ -10,9 +10,9 @@
     <AssemblyName>Trinity.Core</AssemblyName>
     <RootNamespace>Trinity.Core</RootNamespace>
     <OutputTypeEx>library</OutputTypeEx>
-    <Version>1.0.9</Version>
-    <AssemblyVersion>1.0.9.0</AssemblyVersion>
-    <FileVersion>1.0.9.0</FileVersion>
+    <Version>1.0.10</Version>
+    <AssemblyVersion>1.0.10.0</AssemblyVersion>
+    <FileVersion>1.0.10.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
