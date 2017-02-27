@@ -1,4 +1,4 @@
-package io.graphengine.spark
+package io.graphengine.spark.trinity
 
 import org.apache.spark.Partition
 import org.apache.spark.sql.types._
@@ -7,7 +7,6 @@ import org.json4s.JsonAST._
 import org.json4s.native.Json
 import org.json4s.native.JsonMethods._
 
-import scala.collection.mutable.ArrayBuffer
 import scalaj.http.{Http, HttpOptions, HttpRequest}
 
 trait TrinityClient {
