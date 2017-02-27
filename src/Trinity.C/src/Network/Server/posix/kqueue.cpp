@@ -50,8 +50,9 @@ namespace Trinity
             }
         }
 
-        bool RearmFD(int fd)
+        bool RearmFD(PerSocketContextObject* pContext)
         {
+            int fd = pContext->fd;
             struct kevent kevt;
             EV_SET(&kevt, fd, EVFILT_READ, EV_ENABLE, 0, 0, NULL);
             return -1 != kevent(kqueue_fd, &kevt, 1, NULL, 0, NULL);

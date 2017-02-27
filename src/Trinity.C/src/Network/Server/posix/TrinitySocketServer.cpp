@@ -101,6 +101,7 @@ namespace Trinity
 
         void SocketAcceptThreadProc()
         {
+            char clientaddr[INET6_ADDRSTRLEN];
             while (true)
             {
                 sockaddr addr;
@@ -112,6 +113,13 @@ namespace Trinity
                     if (EINVAL == errno) { break; }
                     else { continue; } // XXX in the Windows side we shutdown the networking subsystem here
                 }
+
+                if (NULL == inet_ntop(addr.sa_family, addr.sa_data, clientaddr, INET6_ADDRSTRLEN))
+                {
+                    strcpy(clientaddr, "Unknown address");
+                };
+                Diagnostics::WriteLine(Diagnostics::LogLevel::Debug, "ServerSocket: Incomming connection from {0}", String(clientaddr));
+
                 PerSocketContextObject * pContext = AllocatePerSocketContextObject(connected_sock_fd);
                 AddPerSocketContextObject(pContext);
                 EnterEventMonitor(pContext);
@@ -170,6 +178,10 @@ namespace Trinity
                 return -1;
             }
 
+            Diagnostics::WriteLine(Diagnostics::LogLevel::Info, "Listening endpoint :{0}", port);
+
+            Diagnostics::WriteLine(Diagnostics::LogLevel::Info, "Waiting for client connection ...");
+
             socket_accept_thread = new std::thread(SocketAcceptThreadProc);
 
             return accept_sock;
@@ -188,7 +200,7 @@ namespace Trinity
             close(accept_sock);
             UninitializeEventMonitor();
 
-            while (g_threadpool_size) { usleep(100000); }
+            while (g_threadpool_size > 0) { usleep(100000); }
             /* Now, all WorkerThreadProc exit. Proceed to close all client sockets. */
             psco_spinlock.lock();
             std::vector<PerSocketContextObject*> psco_vec = std::vector<PerSocketContextObject*>(psco_map.size());
@@ -294,7 +306,7 @@ namespace Trinity
                 pContext->RemainingBytesToSend -= bytesSent;
             } while (pContext->RemainingBytesToSend > 0);
             ResetContextObjects(pContext);
-            RearmFD(pContext->fd);
+            RearmFD(pContext);
         }
 
         void CloseClientConnection(PerSocketContextObject* pContext, bool lingering)
