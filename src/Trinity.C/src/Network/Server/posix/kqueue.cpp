@@ -34,14 +34,11 @@ namespace Trinity
                     }
                     else if (kevt_out.flags & EVFILT_READ)
                     {
-                        if (pContext->WaitingHandshakeMessage)
+                        if (ProcessRecv(pContext))
                         {
-                            CheckHandshakeResult(pContext);
-                            continue;
+                            _pContext = pContext;
+                            break;
                         }
-                        _pContext = pContext;
-                        ProcessRecv(pContext);
-                        break;
                     }
                 }
             }

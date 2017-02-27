@@ -29,14 +29,11 @@ namespace Trinity
                     }
                     else if (ep_event.events & EPOLLIN)
                     {
-                        if (pContext->WaitingHandshakeMessage)
+                        if (ProcessRecv(pContext))
                         {
-                            CheckHandshakeResult(pContext);
-                            continue;
+                            _pContext = pContext;
+                            break;
                         }
-                        _pContext = pContext;
-                        ProcessRecv(pContext);
-                        break;
                     }
                 }
             }
@@ -55,9 +52,9 @@ namespace Trinity
             epoll_fd = epoll_create1(0);
             if (-1 == epoll_fd)
             {
+                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Cannot create epoll set: {0}", errno);
                 return -1;
             }
-            printf("epoll_fd: %d\n", epoll_fd);
             return 0;
         }
 
@@ -75,7 +72,7 @@ namespace Trinity
             ep_event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
             if (-1 == epoll_ctl(epoll_fd, EPOLL_CTL_ADD, pContext->fd, &ep_event))
             {
-                fprintf(stderr, "cannot register connected sock fd to epoll instance");
+                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Cannot register connected sock fd to epoll instance");
                 CloseClientConnection(pContext, false);
                 return -1;
             }
