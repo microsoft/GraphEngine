@@ -179,7 +179,7 @@ namespace Trinity
         {
             /* signal the accept thread that we are shutting down */
             shutdown(accept_sock, SHUT_RD);
-            if (socket_accept_thread)
+            if (socket_accept_thread != nullptr)
             {
                 socket_accept_thread->join();
                 delete socket_accept_thread;
@@ -187,7 +187,16 @@ namespace Trinity
             }
             close(accept_sock);
             UninitializeEventMonitor();
-            // TODO close existing connections
+
+            while (g_threadpool_size) { usleep(100000); }
+            /* Now, all WorkerThreadProc exit. Proceed to close all client sockets. */
+            psco_spinlock.lock();
+            std::vector<PerSocketContextObject*> psco_vec = std::vector<PerSocketContextObject*>(psco_map.size());
+            for (auto& psco : psco_map) { psco_vec.push_back(psco.second); }
+            psco_spinlock.unlock();
+
+            for (auto& psco : psco_vec) { CloseClientConnection(psco, false); }
+
             return 0;
         }
 
@@ -259,6 +268,8 @@ namespace Trinity
             if (pContext->WaitingHandshakeMessage)
             {
                 CheckHandshakeResult(pContext);
+                // handshake check either posts handshake succeed, or close the connection,
+                // so here we do not receive a real request.
                 return false;
             }
             else

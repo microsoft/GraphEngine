@@ -41,6 +41,12 @@ namespace Trinity
                         }
                     }
                 }
+                else
+                {
+                    /* Assume that kqueue is destroyed, and we're shutting down the server. */
+                    _pContext = NULL;
+                    break;
+                }
             }
         }
 

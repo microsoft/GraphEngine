@@ -19,7 +19,7 @@ namespace Trinity
             epoll_event ep_event;
             while (true)
             {
-                if (1 == epoll_wait(epoll_fd, &ep_event, 1, -1))
+                if (1 == epoll_wait(epoll_fd, &ep_event, /*nr_events*/ 1, /*timeout*/ -1))
                 {
                     PerSocketContextObject* pContext = GetPerSocketContextObject(ep_event.data.fd);
                     if ((ep_event.events & EPOLLERR) || (ep_event.events & EPOLLHUP))
@@ -35,6 +35,12 @@ namespace Trinity
                             break;
                         }
                     }
+                }
+                else
+                {
+                    /* Assume that epoll set is destroyed, and we're shutting down the server. */
+                    _pContext = NULL;
+                    break;
                 }
             }
         }
