@@ -3,7 +3,9 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 using System;
+#if !CORECLR
 using System.Runtime.ConstrainedExecution;
+#endif
 using System.Threading;
 using System.Runtime;
 
@@ -12,7 +14,7 @@ namespace Trinity.Core.Lib
 #pragma warning disable 0420
     class XRandom : Random
     {
-        #region spin lock
+#region spin lock
         private volatile int spinlock = 0;
 
         private void GetLock()
@@ -28,12 +30,14 @@ namespace Trinity.Core.Lib
             }
         }
 
+#if !CORECLR
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
+#endif
         private void UnLock()
         {
             spinlock = 0;
         }
-        #endregion
+#endregion
 
         public XRandom() : base() { }
         public XRandom(int seed) : base(seed) { }

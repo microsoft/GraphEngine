@@ -39,7 +39,7 @@ namespace Trinity.Win32
 
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        [StructLayout(LayoutKind.Sequential)]
         internal struct MEMORYSTATUSEX
         {
             public int dwLength;
@@ -53,7 +53,7 @@ namespace Trinity.Win32
             public ulong ullAvailExtendedVirtual;
         }
 
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true)]
         static extern internal bool GlobalMemoryStatusEx(ref MEMORYSTATUSEX lpBuffer);
 
         [DllImport("psapi.dll", SetLastError = true)]

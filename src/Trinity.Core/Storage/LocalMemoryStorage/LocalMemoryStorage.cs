@@ -75,6 +75,9 @@ namespace Trinity.Storage
 
         internal static volatile bool initialized = false;
 
+        private object m_lock = new object();
+
+
         static LocalMemoryStorage()
         {
             InternalCalls.__init();
