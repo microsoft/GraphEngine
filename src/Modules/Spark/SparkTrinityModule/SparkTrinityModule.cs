@@ -11,7 +11,6 @@ using System.IO;
 using Trinity.Diagnostics;
 using System.Diagnostics;
 using Trinity.Modules.Spark.Protocols.TSL;
-using Trinity.Storage;
 
 namespace Trinity.Modules.Spark
 {
