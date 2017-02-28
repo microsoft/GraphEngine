@@ -40,7 +40,7 @@ namespace Trinity
 				((*p == '.') || (*p < 33)));
 
 			// Display the message
-			printf("\n  WARNING: %s failed with error %d (%s)", msg, eNum, String::FromWcharArray(sysMsg));
+			printf("\n  WARNING: %s failed with error %d (%s)", msg, eNum, String::FromWcharArray(sysMsg).c_str());
 		}
 
 
