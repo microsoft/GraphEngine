@@ -17,7 +17,14 @@ namespace Trinity.Configuration
     public sealed class StorageConfig
     {
         static StorageConfig s_StorageConfig = new StorageConfig();
-        private StorageConfig() { m_StorageRoot = DefaultStorageRoot; }
+        private StorageConfig()
+        {
+            StorageRoot     = DefaultStorageRoot;
+            TrunkCount      = c_MaxTrunkCount;
+            ReadOnly        = c_DefaultReadOnly;
+            StorageCapacity = c_DefaultStorageCapacityProfile;
+            DefragInterval  = c_DefaultDefragInterval;
+        }
         [ConfigInstance]
         public static StorageConfig Instance { get { return s_StorageConfig; } }
         [ConfigEntryName]
@@ -43,9 +50,13 @@ namespace Trinity.Configuration
         #endregion
 
         internal const int    c_MaxTrunkCount = 256;
+        internal const bool   c_DefaultReadOnly = false;
         internal const ushort c_UndefinedCellType = 0;
+        internal const int    c_DefaultDefragInterval = 600;
+        internal const StorageCapacityProfile 
+                              c_DefaultStorageCapacityProfile = StorageCapacityProfile.Max8G;
         internal int          m_GCParallelism = 16;
-        internal int          m_DefragInterval = 600;
+        internal int          m_DefragInterval;
         private  string       m_StorageRoot = "";
 
         [ConfigSetting(Optional: true)]
@@ -96,7 +107,7 @@ namespace Trinity.Configuration
             {
                 if (m_StorageRoot == null || m_StorageRoot.Length == 0)
                 {
-                        m_StorageRoot = DefaultStorageRoot;
+                    m_StorageRoot = DefaultStorageRoot;
                 }
 
                 if (!Directory.Exists(m_StorageRoot))

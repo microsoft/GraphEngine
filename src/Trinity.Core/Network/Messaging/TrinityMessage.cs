@@ -35,7 +35,7 @@ namespace Trinity.Network.Messaging
         internal TrinityMessage(TrinityMessageType msgType, ushort msgId, int size)
         {
             Size = TrinityProtocol.MsgHeader + size;
-            Buffer = (byte*)CMemory.malloc((ulong)Size);
+            Buffer = (byte*)CMemory.C_malloc((ulong)Size);
             *(int*)Buffer = TrinityProtocol.TrinityMsgHeader + size;
             *(Buffer + TrinityProtocol.MsgTypeOffset) = (byte)msgType;
             *(ushort*)(Buffer + TrinityProtocol.MsgIdOffset) = msgId;
@@ -49,7 +49,7 @@ namespace Trinity.Network.Messaging
         internal TrinityMessage(TrinityErrorCode errorCode, int size)
         {
             Size = TrinityProtocol.MsgHeader + size;
-            Buffer = (byte*)CMemory.malloc((ulong)Size);
+            Buffer = (byte*)CMemory.C_malloc((ulong)Size);
             *(int*)Buffer = TrinityProtocol.TrinityMsgHeader + size;
             *(int*)(Buffer + TrinityProtocol.TrinityMsgHeader) = (int)errorCode;
         }
@@ -61,7 +61,7 @@ namespace Trinity.Network.Messaging
         internal TrinityMessage(TrinityErrorCode errorCode)
         {
             Size = TrinityProtocol.MsgHeader;
-            Buffer = (byte*)CMemory.malloc((ulong)Size);
+            Buffer = (byte*)CMemory.C_malloc((ulong)Size);
             *(int*)Buffer = TrinityProtocol.TrinityMsgHeader;
             *(int*)(Buffer + TrinityProtocol.TrinityMsgHeader) = (int)errorCode;
         }
@@ -72,7 +72,7 @@ namespace Trinity.Network.Messaging
         internal unsafe TrinityMessage(byte* buffer, int offset, int size)
         {
             Size = TrinityProtocol.MsgHeader + size;
-            Buffer = (byte*)CMemory.malloc((ulong)Size);
+            Buffer = (byte*)CMemory.C_malloc((ulong)Size);
             *(int*)Buffer = TrinityProtocol.TrinityMsgHeader + size;
             Memory.Copy(buffer, offset, Buffer + TrinityProtocol.MsgHeader, 0, size);
         }
@@ -84,7 +84,7 @@ namespace Trinity.Network.Messaging
         internal unsafe TrinityMessage(int size)
         {
             Size = size;
-            Buffer = (byte*)CMemory.malloc((ulong)size);
+            Buffer = (byte*)CMemory.C_malloc((ulong)size);
             *(int*)Buffer = size - TrinityProtocol.SocketMsgHeader;
         }
 
@@ -102,7 +102,7 @@ namespace Trinity.Network.Messaging
         /// </summary>
         public void Dispose()
         {
-            CMemory.free(Buffer);
+            CMemory.C_free(Buffer);
         }
 
         /// <summary>

@@ -35,6 +35,7 @@ namespace Trinity.Network
         private ushort m_AsynReqIdOffset;
         private MemoryCloud memory_cloud;
         private bool m_started = false;
+        private object m_lock = new object();
         // XXX ThreadStatic does not work well with async/await. Find a solution.
         [ThreadStatic]
         private static HttpListenerContext s_current_http_ctx = null;
@@ -237,7 +238,7 @@ namespace Trinity.Network
             //  Otherwise, this request should be dispatched by
             DispatchHttpRequest(context, endpoint_name, url.Substring(separator_idx + 1));
 
-        cleanup:
+            cleanup:
             //  Erase the context as it is not being processed anymore.
             s_current_http_ctx = null;
         }
@@ -273,85 +274,89 @@ namespace Trinity.Network
         /// <summary>
         /// Starts a Trinity instance.
         /// </summary>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public void Start()
         {
-            if (m_started) return;
-            try
+            lock (m_lock)
             {
-                Log.WriteLine(LogLevel.Debug, "Starting communication instance.");
-                var _config = TrinityConfig.CurrentClusterConfig;
-
-                _config.RunningMode = this.RunningMode;
-                Global.CommunicationInstance = this;
-
-                if (_InstanceList.Count == 0)
+                if (m_started) return;
+                try
                 {
-                    Log.WriteLine(LogLevel.Warning, "No distributed instances configured. Turning on local test mode.");
-                    TrinityConfig.LocalTest = true;
+                    Log.WriteLine(LogLevel.Debug, "Starting communication instance.");
+                    var _config = TrinityConfig.CurrentClusterConfig;
+
+                    _config.RunningMode = this.RunningMode;
+                    Global.CommunicationInstance = this;
+
+                    if (_InstanceList.Count == 0)
+                    {
+                        Log.WriteLine(LogLevel.Warning, "No distributed instances configured. Turning on local test mode.");
+                        TrinityConfig.LocalTest = true;
+                    }
+
+                    //  Initialize message handlers
+                    MessageHandlers.Initialize();
+                    RegisterMessageHandler();
+
+                    //  Initialize message passing networking
+                    NativeNetwork.StartTrinityServer((UInt16)_config.ListeningPort);
+                    Log.WriteLine("My IPEndPoint: " + _config.MyBoundIP + ":" + _config.ListeningPort);
+
+                    //  Initialize cloud storage
+                    memory_cloud = Global.CloudStorage;
+
+                    //  Initialize the modules
+                    _InitializeModules();
+
+                    if (HasHttpEndpoints())
+                        StartHttpServer();
+
+                    Console.WriteLine("Working Directory: {0}", Global.MyAssemblyPath);
+                    Console.WriteLine(_config.OutputCurrentConfig());
+                    Console.WriteLine(TrinityConfig.OutputCurrentConfig());
+
+                    m_started = true;
+                    Log.WriteLine("{0} {1} is successfully started.", RunningMode, _config.MyInstanceId);
+                    _RaiseStartedEvents();
                 }
-
-                //  Initialize message handlers
-                MessageHandlers.Initialize();
-                RegisterMessageHandler();
-
-                //  Initialize message passing networking
-                NativeNetwork.StartTrinityServer((UInt16)_config.ListeningPort);
-                Log.WriteLine("My IPEndPoint: " + _config.MyBoundIP + ":" + _config.ListeningPort);
-
-                //  Initialize cloud storage
-                memory_cloud = Global.CloudStorage;
-
-                //  Initialize the modules
-                _InitializeModules();
-
-                if (HasHttpEndpoints())
-                    StartHttpServer();
-
-                Console.WriteLine("Working Directory: {0}", Global.MyAssemblyPath);
-                Console.WriteLine(_config.OutputCurrentConfig());
-                Console.WriteLine(TrinityConfig.OutputCurrentConfig());
-
-                m_started = true;
-                Log.WriteLine("{0} {1} is successfully started.", RunningMode, _config.MyInstanceId);
-                _RaiseStartedEvents();
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(LogLevel.Error, "CommunicationInstance: " + ex.ToString());
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, "CommunicationInstance: " + ex.ToString());
+                }
             }
         }
 
         /// <summary>
         /// Stops a Trinity instance.
         /// </summary>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public void Stop()
         {
-            if (!m_started) return;
-            try
+            lock (m_lock)
             {
-                Log.WriteLine(LogLevel.Debug, "Stopping communication instance.");
+                if (!m_started) return;
+                try
+                {
+                    Log.WriteLine(LogLevel.Debug, "Stopping communication instance.");
 
-                //  TODO notify the modules
-                if (HasHttpEndpoints())
-                    StopHttpServer();
+                    //  TODO notify the modules
+                    if (HasHttpEndpoints())
+                        StopHttpServer();
 
-                //  Unregister cloud storage
-                memory_cloud = null;
+                    //  Unregister cloud storage
+                    memory_cloud = null;
 
-                //  Shutdown message passing networking
-                NativeNetwork.StopTrinityServer();
+                    //  Shutdown message passing networking
+                    NativeNetwork.StopTrinityServer();
 
-                //  Unregister communication instance
-                Global.CommunicationInstance = null;
-                var _config = TrinityConfig.CurrentClusterConfig;
-                m_started = false;
-                Log.WriteLine("{0} {1} is successfully stopped.", RunningMode, _config.MyInstanceId);
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(LogLevel.Error, "CommunicationInstance: " + ex.ToString());
+                    //  Unregister communication instance
+                    Global.CommunicationInstance = null;
+                    var _config = TrinityConfig.CurrentClusterConfig;
+                    m_started = false;
+                    Log.WriteLine("{0} {1} is successfully stopped.", RunningMode, _config.MyInstanceId);
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, "CommunicationInstance: " + ex.ToString());
+                }
             }
         }
 

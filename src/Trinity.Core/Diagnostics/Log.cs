@@ -245,13 +245,13 @@ namespace Trinity.Diagnostics
         }
 
 
-        [DllImport("Trinity.C.dll", CharSet = CharSet.Unicode)]
+        [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode)]
         private static extern unsafe void CLogWriteLine(int level, string p_buf);
 
-        [DllImport("Trinity.C.dll")]
+        [DllImport(TrinityC.AssemblyName)]
         private static extern void CLogFlush();
 
-        [DllImport("Trinity.C.dll", CharSet = CharSet.Unicode)]
+        [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode)]
         private static extern TrinityErrorCode CLogCollectEntries(
             [Out] out ulong arr_size,
             [Out] out IntPtr entries);

@@ -10,6 +10,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Trinity.Configuration;
 using Trinity.Utilities;
+using System.Linq;
 
 namespace Trinity
 {
@@ -57,7 +58,7 @@ namespace Trinity
         {
             TrinityC.Ping();
             InternalCalls.__init();
-
+            GetConfigurationInstances().ToList();
             LoadTrinityConfig(false);
         }
 
@@ -129,6 +130,5 @@ namespace Trinity
                 }
             }
         }
-
     }
 }

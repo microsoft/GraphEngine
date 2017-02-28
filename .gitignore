@@ -73,10 +73,12 @@ CMakeCache.txt
 *.VC.db
 pingme.txt
 CleanVSProject.exe
+*.so
+slnx.sqlite
 .vs/
 /src/Modules/Spark/spark-trinity/build/sbt-launch-0.13.13.jar
 /src/Modules/Spark/spark-trinity/project/project/target/config-classes
 /src/Modules/Spark/spark-trinity/project/target
 /src/Modules/Spark/spark-trinity/target
-*.so
 /src/Modules/Spark/spark-trinity/.idea
+/src/Trinity.C/Makefile
