@@ -66,7 +66,7 @@ namespace Trinity.Network
             CNativeNetwork.EnterSocketServerThreadPool();
             while (true)
             {
-                void* pContext;
+                void* pContext = null;
                 CNativeNetwork.AwaitRequest(out pContext);
                 // a null pContext means that the completion port is closing.
                 if (pContext == null)

@@ -136,7 +136,7 @@ namespace Trinity
                         // the accept call is interrupted. assume the server has been shutdown.
                         return 0;
                     }
-                    Diagnostics::WriteLine(Diagnostics::LogLevel::Fatal, "ServerSocket: Cannot create accept socket, error code {0}.", errorCode);
+                    Diagnostics::WriteLine(Diagnostics::LogLevel::Fatal, "ServerSocket: Cannot accept incoming connection, error code {0}.", errorCode);
                     return ShutdownSocketServer();
                 }
 

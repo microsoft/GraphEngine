@@ -67,7 +67,7 @@ namespace Trinity
         int                     InitializeEventMonitor();   // Initialize the event monitor, and start the accept thread
         int                     UninitializeEventMonitor(); // Tear down the event monitor, and stop the accept thread; After call returns, there should be no more connections;
         int                     EnterEventMonitor(PerSocketContextObject* pContext); // Puts a new connection into the event monitor
-        bool                    RearmFD(int fd); 
+        bool                    RearmFD(PerSocketContextObject* pContext); 
 #pragma endregion
     }
 }
