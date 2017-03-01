@@ -1,4 +1,4 @@
-// Graph Engine
+﻿// Graph Engine
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
@@ -65,7 +65,7 @@ namespace Trinity.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 3375:5cbdaf1fe963.
+        ///   Looks up a localized string similar to 3760:e48479fb6909.
         /// </summary>
         internal static string BuildRev {
             get {
@@ -74,7 +74,7 @@ namespace Trinity.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to b4ea80c784524981eef50af90b0f9c928b8cc45ceed1fb7dfce39d4696d31af8135cf9502aa7307a1fe0998f71b629a0532b4032633bf31633239e9f01ea121f.
+        ///   Looks up a localized string similar to fa51ab3030c599fef38ad7a677097fd46487084bcf9a577e751b20423f545ba9ab7bbf05d351c96eb00b716db066d9e04d2b0d6a3184b6d84384cfe21595c251.
         /// </summary>
         internal static string Trinity_C_sha512 {
             get {
