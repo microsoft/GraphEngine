@@ -157,6 +157,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ExpressionSerializer.cs" />
     <Compile Include="JsonDSLTest.cs" />
     <Compile Include="JsonDSLTest2.cs" />
     <Compile Include="LambdaDSLTest.cs" />
