@@ -3,7 +3,7 @@ if [%REPO_ROOT%] == [] (
 )
 
 set MSBUILD_EXE="C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe"
-set NUGET_EXE=%REPO_ROOT%\build\NuGet.exe
+set NUGET_EXE=%REPO_ROOT%\tools\NuGet.exe
 
 set TRINITY_C_SLN=%REPO_ROOT%\src\Trinity.C\Trinity.C.sln
 set TRINITY_CORE_SLN=%REPO_ROOT%\src\Trinity.Core\Trinity.Core.sln
