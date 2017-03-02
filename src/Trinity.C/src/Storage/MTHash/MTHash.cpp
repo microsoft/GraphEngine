@@ -155,9 +155,26 @@ namespace Storage
             return TrinityErrorCode::E_FAILURE;
 
         MT_ENUMERATOR it(this);
+        bool null_cellptr = false;
         while (it.MoveNext() == TrinityErrorCode::E_SUCCESS)
         {
+            if (nullptr == it.CellPtr()) 
+            { 
+                null_cellptr = true; 
+                continue;
+            }
             md5.hash(it.CellPtr(), (uint32_t) it.CellSize());
+        }
+
+        if (null_cellptr)
+        {
+            /**
+             * !Note, when null cell pointers are detected, it is very likely that it is caused by a missing .lo file,
+             * because memory pool cells all have addresses of the form TrunkPtr + offset, not likely null, but if
+             * the .lo file is missing, during LoadLO() we simply initialize all LO slots to null. This log will provide
+             * extra information in the situation, before LoadStorage() finally decides that the checksum mismatches.
+             */
+            Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "MTHash {0}: null cell pointers detected. Missing large object file?", memory_trunk->TrunkId);
         }
 
         md5.getValue(hash_buffer);
