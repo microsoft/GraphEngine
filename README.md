@@ -1,5 +1,7 @@
 # Graph Engine - Open Source
 
+[![Build Status](http://ci.graphengine.io/job/graphengine-master-win/badge/icon)](http://ci.graphengine.io/job/graphengine-master-win)
+
 Microsoft [Graph Engine](http://www.graphengine.io/) is a distributed
 in-memory data processing engine, underpinned by a strongly-typed
 in-memory key-value store and a general distributed computation
