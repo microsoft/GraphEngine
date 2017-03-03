@@ -8,6 +8,7 @@ set NUGET_EXE=%REPO_ROOT%\tools\NuGet.exe
 set TRINITY_C_SLN=%REPO_ROOT%\src\Trinity.C\Trinity.C.sln
 set TRINITY_CORE_SLN=%REPO_ROOT%\src\Trinity.Core\Trinity.Core.sln
 set LIKQ_SLN=%REPO_ROOT%\src\LIKQ\LIKQ.sln
+set SPARK_MODULE_ROOT=%REPO_ROOT%\src\Modules\Spark
 
 :: Run msbuild to build Trinity.C
 %MSBUILD_EXE% /p:Configuration=Release %TRINITY_C_SLN%
@@ -39,3 +40,6 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 :: Run msbuild to build FanoutSearch.Server
 %MSBUILD_EXE% /p:Configuration=Release %REPO_ROOT%\src\LIKQ\FanoutSearch.Server\FanoutSearch.Server.csproj
 if %errorlevel% neq 0 exit /b %errorlevel%
+
+:: Build spark module
+call %SPARK_MODULE_ROOT%\build.bat
