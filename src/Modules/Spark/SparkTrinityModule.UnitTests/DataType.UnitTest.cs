@@ -1,14 +1,18 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
+﻿// Graph Engine
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+//
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Trinity.Modules.Spark;
+using Xunit;
 
-namespace Trinity.Modules.Spark.Tests
+namespace SparkTrinityModule.UnitTests
 {
-    [TestClass]
     public class DataTypeUnitTests
     {
-        [TestMethod]
+        [Fact]
         public void ConvertFromType_PrimitiveType_ReturnDataType()
         {
             var primitiveTypes = new List<Type>
@@ -22,13 +26,13 @@ namespace Trinity.Modules.Spark.Tests
             primitiveTypes.ForEach(type =>
             {
                 var dt = DataType.ConvertFromType(type);
-                Assert.AreEqual(typeof(DataType), dt.GetType());
-                Assert.AreEqual(type.FullName, dt.TypeName);
+                Assert.Equal(typeof(DataType), dt.GetType());
+                Assert.Equal(type.FullName, dt.TypeName);
                 Console.WriteLine(dt.TypeName);
             });
         }
 
-        [TestMethod]
+        [Fact]
         public void ConvertFromType_SpecialValueType_ReturnDataType()
         {
             var primitiveTypes = new List<Type>
@@ -39,19 +43,19 @@ namespace Trinity.Modules.Spark.Tests
             primitiveTypes.ForEach(type =>
             {
                 var dt = DataType.ConvertFromType(type);
-                Assert.AreEqual(typeof(DataType), dt.GetType());
-                Assert.AreEqual(type.FullName, dt.TypeName);
+                Assert.Equal(typeof(DataType), dt.GetType());
+                Assert.Equal(type.FullName, dt.TypeName);
                 Console.WriteLine(dt.TypeName);
             });
         }
 
-        [TestMethod]
+        [Fact]
         public void ConvertFromType_StringType_ReturnDataType()
         {
             var type = typeof(string);
             var dt = DataType.ConvertFromType(type);
-            Assert.AreEqual(typeof(DataType), dt.GetType());
-            Assert.AreEqual(type.FullName, dt.TypeName);
+            Assert.Equal(typeof(DataType), dt.GetType());
+            Assert.Equal(type.FullName, dt.TypeName);
         }
 
         public struct TestStruct
@@ -59,22 +63,22 @@ namespace Trinity.Modules.Spark.Tests
             public int testField;
         }
 
-        [TestMethod]
+        [Fact]
         public void ConvertFromType_StructType_ReturnStructType()
         {
             var type = typeof(TestStruct);
             var dt = DataType.ConvertFromType(type) as StructType;
-            Assert.IsNotNull(dt);
-            Assert.AreEqual(typeof(StructType).Name, dt.TypeName);
+            Assert.NotNull(dt);
+            Assert.Equal(typeof(StructType).Name, dt.TypeName);
 
             type.GetFields().ToList().ForEach(f =>
             {
                 var field = dt.Fields.FirstOrDefault(x => x.Name == f.Name);
-                Assert.IsNotNull(field);
+                Assert.NotNull(field);
             });
         }
 
-        [TestMethod]
+        [Fact]
         public void ConvertFromType_Nullable_ReturnNullableValueType()
         {
             var nullableTypes = new List<Type>
@@ -85,15 +89,15 @@ namespace Trinity.Modules.Spark.Tests
             var dataTypes = nullableTypes.Select(type => DataType.ConvertFromType(type) as NullableValueType).ToList();
             dataTypes.ForEach(dt =>
             {
-                Assert.IsNotNull(dt);
-                Assert.AreEqual(typeof(NullableValueType).Name, dt.TypeName);
+                Assert.NotNull(dt);
+                Assert.Equal(typeof(NullableValueType).Name, dt.TypeName);
             });
 
-            Assert.AreEqual(typeof(int).FullName, dataTypes[0].ArgumentType.TypeName);
-            Assert.AreEqual(typeof(StructType), dataTypes[1].ArgumentType.GetType());
+            Assert.Equal(typeof(int).FullName, dataTypes[0].ArgumentType.TypeName);
+            Assert.Equal(typeof(StructType), dataTypes[1].ArgumentType.GetType());
         }
 
-        [TestMethod]
+        [Fact]
         public void ConvertFromType_List_ReturnArrayType()
         {
             var listTypes = new List<Type>
@@ -111,13 +115,13 @@ namespace Trinity.Modules.Spark.Tests
             for (int i = 0; i < listTypes.Count; i++)
             {
                 var dt = DataType.ConvertFromType(listTypes[i]) as ArrayType;
-                Assert.IsNotNull(dt);
-                Assert.AreEqual(typeof(ArrayType).Name, dt.TypeName);
-                Assert.AreEqual(expectedElementDataTypes[i], dt.ElementType.GetType());
+                Assert.NotNull(dt);
+                Assert.Equal(typeof(ArrayType).Name, dt.TypeName);
+                Assert.Equal(expectedElementDataTypes[i], dt.ElementType.GetType());
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void ConvertFromType_Unsupported_ReturnDataType()
         {
             var unsupportedTypes = new List<Type>
@@ -128,8 +132,8 @@ namespace Trinity.Modules.Spark.Tests
             unsupportedTypes.ForEach(type =>
             {
                 var dt = DataType.ConvertFromType(type);
-                Assert.AreEqual(typeof(DataType), dt.GetType());
-                Assert.AreEqual(type.FullName, dt.TypeName);
+                Assert.Equal(typeof(DataType), dt.GetType());
+                Assert.Equal(type.FullName, dt.TypeName);
             });
         }
     }

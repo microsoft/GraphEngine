@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SparkTrinityModule.Tests")]
+[assembly: AssemblyTitle("SparkTrinityModule.UnitTests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("MSIT")]
-[assembly: AssemblyProduct("SparkTrinityModule.Tests")]
+[assembly: AssemblyProduct("SparkTrinityModule.UnitTests")]
 [assembly: AssemblyCopyright("Copyright © MSIT 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("193b322d-7a32-4d95-a4c2-f0415c6ce90e")]
+[assembly: Guid("75ce52b0-eb26-40ba-afea-455c5bbefce3")]
 
 // Version information for an assembly consists of the following four values:
 //
