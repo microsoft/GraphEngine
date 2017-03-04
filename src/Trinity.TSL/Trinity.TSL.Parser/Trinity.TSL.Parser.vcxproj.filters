@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Code">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Code\TraverseModule">
+      <UniqueIdentifier>{c9a86370-3d31-46d6-9b09-f9ffbf2cfd32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\ParserModule">
+      <UniqueIdentifier>{dad66185-48bb-4d8b-9234-7b49d1c4f923}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\ParserModule\FLEX/BISON generated">
+      <UniqueIdentifier>{a440a4f6-2955-4677-95b8-f71e029dda84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Library interface">
+      <UniqueIdentifier>{c287a53b-4ddb-46d2-b092-7c0736f405da}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Trinity.TSL.Parser.h">
+      <Filter>Code\Library interface</Filter>
+    </ClInclude>
+    <ClInclude Include="debug.h">
+      <Filter>Code\ParserModule</Filter>
+    </ClInclude>
+    <ClInclude Include="error.h">
+      <Filter>Code\ParserModule</Filter>
+    </ClInclude>
+    <ClInclude Include="flex_bison_common.h">
+      <Filter>Code\ParserModule</Filter>
+    </ClInclude>
+    <ClInclude Include="SyntaxNode.h">
+      <Filter>Code</Filter>
+    </ClInclude>
+    <ClInclude Include="dependency_resolver.h">
+      <Filter>Code\TraverseModule</Filter>
+    </ClInclude>
+    <ClInclude Include="parser.tab.h">
+      <Filter>Code\ParserModule\FLEX/BISON generated</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="get_children.cpp">
+      <Filter>Code\TraverseModule</Filter>
+    </ClCompile>
+    <ClCompile Include="error.cpp">
+      <Filter>Code\ParserModule</Filter>
+    </ClCompile>
+    <ClCompile Include="dependency_resolver.cpp">
+      <Filter>Code\TraverseModule</Filter>
+    </ClCompile>
+    <ClCompile Include="tb_dependency_check.cpp">
+      <Filter>Code\TraverseModule</Filter>
+    </ClCompile>
+    <ClCompile Include="tb_semantc_check.cpp">
+      <Filter>Code\TraverseModule</Filter>
+    </ClCompile>
+    <ClCompile Include="SyntaxNode.cpp">
+      <Filter>Code</Filter>
+    </ClCompile>
+    <ClCompile Include="lex.flex.cpp">
+      <Filter>Code\ParserModule\FLEX/BISON generated</Filter>
+    </ClCompile>
+    <ClCompile Include="parser.tab.cpp">
+      <Filter>Code\ParserModule\FLEX/BISON generated</Filter>
+    </ClCompile>
+    <ClCompile Include="debug.cpp">
+      <Filter>Code\ParserModule</Filter>
+    </ClCompile>
+    <ClCompile Include="Trinity.TSL.Parser.cpp">
+      <Filter>Code\Library interface</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Flex Include="lex.l">
+      <Filter>Code\ParserModule</Filter>
+    </Flex>
+  </ItemGroup>
+  <ItemGroup>
+    <Bison Include="parser.y">
+      <Filter>Code\ParserModule</Filter>
+    </Bison>
+  </ItemGroup>
+</Project>

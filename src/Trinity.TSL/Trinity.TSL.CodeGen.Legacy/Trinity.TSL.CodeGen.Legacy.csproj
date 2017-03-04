@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{EED9A7B9-4D19-478E-82A2-232B6B048CD4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Trinity.TSL</RootNamespace>
+    <AssemblyName>Trinity.TSL.CodeGen.Legacy</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\..\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>..\..\..\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\BuildProfile\ProductInfo.cs">
+      <Link>ProductInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Trinity.Core\Network\Messaging\Protocol.cs">
+      <Link>Network\Protocol.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Trinity.Core\Network\Messaging\TrinityMessageType.cs">
+      <Link>Network\TrinityMessageType.cs</Link>
+    </Compile>
+    <Compile Include="Configuration\TrinityConfig.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TSL\CodeTemplates\AccessorCodeTemplate.cs" />
+    <Compile Include="TSL\CodeTemplates\CellCodeTemplate.cs" />
+    <Compile Include="TSL\CodeTemplates\Containers\Array.cs" />
+    <Compile Include="TSL\CodeTemplates\Containers\List.cs" />
+    <Compile Include="TSL\CodeTemplates\EqualOperatorCodeTemplate.cs" />
+    <Compile Include="TSL\CodeTemplates\ImplicitOperatorCodeTemplate.cs" />
+    <Compile Include="TSL\CodeTemplates\MessagePassing\AbstractProxyTemplate.cs" />
+    <Compile Include="TSL\CodeTemplates\MessagePassing\AbstractModuleTemplate.cs" />
+    <Compile Include="TSL\CodeTemplates\MessagePassing\AbstractServerTemplate.cs" />
+    <Compile Include="TSL\CodeTemplates\MessagePassing\MessageAccessorCollection.cs" />
+    <Compile Include="TSL\CodeTemplates\MessagePassing\ContractTemplate.cs" />
+    <Compile Include="TSL\CodeTemplates\MessagePassing\MessageAccessorTemplate.cs" />
+    <Compile Include="TSL\CodeTemplates\MessagePassing\ProtocolGroupTemplate.cs" />
+    <Compile Include="TSL\CodeTemplates\MesssageReaderWriterTemplate.cs" />
+    <Compile Include="TSL\CodeTemplates\OptionalFieldCalculator.cs" />
+    <Compile Include="TSL\CodeTemplates\StorageExtension\StorageCodeTemplate.Cell.cs" />
+    <Compile Include="TSL\CodeTemplates\StorageExtension\StorageCodeTemplate.CellAccessorAction.cs" />
+    <Compile Include="TSL\CodeTemplates\StorageExtension\StorageCodeTemplate.CellConverter.cs" />
+    <Compile Include="TSL\CodeTemplates\StorageExtension\StorageCodeTemplate.CellType.cs" />
+    <Compile Include="TSL\CodeTemplates\StorageExtension\StorageCodeTemplate.cs" />
+    <Compile Include="TSL\CodeTemplates\StorageExtension\StorageCodeTemplate.ForEach.cs" />
+    <Compile Include="TSL\CodeTemplates\StructCodeTemplate.cs" />
+    <Compile Include="TSL\CodeTemplates\Verbatim\Verbatim.cs" />
+    <Compile Include="TSL\Compiler\TSLCompiler.GenCode.cs" />
+    <Compile Include="TSL\Compiler\TSLCompiler.Properties.cs" />
+    <Compile Include="TSL\Compiler\TSLCompiler.Utility.cs" />
+    <Compile Include="TSL\Descriptor\AbstractStruct.cs" />
+    <Compile Include="TSL\Descriptor\AttributeDescriptor.cs" />
+    <Compile Include="TSL\Descriptor\EnumDescriptor.cs" />
+    <Compile Include="TSL\Descriptor\ProtocolDescriptor.cs" />
+    <Compile Include="TSL\Descriptor\ProtocolGroupDescriptor.cs" />
+    <Compile Include="TSL\Descriptor\StructDescriptor.cs" />
+    <Compile Include="TSL\Descriptor\TrinitySettingsDescriptor.cs" />
+    <Compile Include="TSL\Field\DynamicFieldTypes.cs" />
+    <Compile Include="TSL\Field\FieldTypes.cs" />
+    <Compile Include="TSL\Field\FixedFieldTypes.cs" />
+    <Compile Include="TSL\Field\StructFieldType.cs" />
+    <Compile Include="TSL\Field\UnresolvedFieldType.cs" />
+    <Compile Include="TSL\SpecificationScript.cs" />
+    <Compile Include="TSL\SyntaxParser\CompilerError.cs" />
+    <Compile Include="TSL\Test\ObjectGenerator.cs" />
+    <Compile Include="TSL\Test\TestCaseFactory.cs" />
+    <Compile Include="TSL\Test\TestModules\TestArray.cs" />
+    <Compile Include="TSL\Test\TestModules\TestAtom.cs" />
+    <Compile Include="TSL\Test\TestModules\TestBitArray.cs" />
+    <Compile Include="TSL\Test\TestModules\TestBitList.cs" />
+    <Compile Include="TSL\Test\TestModules\TestCodeTemplate.cs" />
+    <Compile Include="TSL\Test\TestModules\TestFormat.cs" />
+    <Compile Include="TSL\Test\TestModules\TestList.cs" />
+    <Compile Include="TSL\Test\TestModules\TestString.cs" />
+    <Compile Include="TSL\TypeSystem\TSLType.cs" />
+    <Compile Include="Utilities\CodeWriter.cs" />
+    <Compile Include="TSL\WrappedSyntaxTreeHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="TSL\Compiler\TSLCompiler.GenCode.Interface.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
