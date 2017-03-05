@@ -28,11 +28,6 @@ namespace Trinity
         std::string GetDataTypeDisplayString(NFieldType* n_field_type);
         std::string GetNonNullableValueTypeString(NFieldType* n_field_type);
 
-        std::string GetJsonRegexArrayString(NFieldType* n_field_type);
-        std::string GetJsonRegexListString(NFieldType* n_field_type);
-        std::string GetJsonRegexStructString(NStructBase* n_struct);
-        std::string GetJsonRegexCellString(NStructBase* n_struct);
-
         inline std::string GetNamespace()
         {
             return target_namespace;

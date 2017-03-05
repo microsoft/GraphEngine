@@ -27,8 +27,6 @@ namespace t_Namespace
     [MAP_LIST("t_struct", "node->structList")]
     [MAP_VAR("t_cell_name", "name")]
     [MAP_VAR("t_struct_name", "name")]
-    [MAP_VAR("t_json_rgx_array", "Trinity::Codegen::GetJsonRegexArrayString($$)", MemberOf = "t_data_type")]
-    [MAP_VAR("t_json_rgx_list", "Trinity::Codegen::GetJsonRegexListString($$)", MemberOf = "t_data_type")]
     [MAP_VAR("t_array_iterator_prefix", "Trinity::Codegen::GetDataTypeDisplayString($$->arrayInfo.arrayElement)", MemberOf = "t_data_type")]
     [MAP_LIST("t_array_iterator_list", "arrayInfo.array_dimension_size", MemberOf = "t_data_type")]
     [MAP_VAR("t_array_iterator_length", "", MemberOf = "t_array_iterator_list")]
