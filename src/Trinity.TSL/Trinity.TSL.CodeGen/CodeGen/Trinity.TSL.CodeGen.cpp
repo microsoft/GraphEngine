@@ -8,20 +8,12 @@
 #define NF(x) #x, x
 
 template<typename Func, typename N>
-static void fileop_impl(const String& target_path, const String& name, Func gen, N* node, const char* fmode, std::vector<std::string*>* files)
+static void write_file(const String& target_path, const String& name, Func gen, N* node, std::vector<std::string*>* files)
 {
-    if (!strcmp(fmode, "a"))
-    {
-        Console::WriteLine("Updating {0}.cs...", name);
-    }
-    else
-    {
-        Console::WriteLine("Generating {0}.cs...", name);
-    }
+    Console::WriteLine("Generating {0}.cs...", name);
     std::string* content         = gen(node);
     Trinity::String content_path = Path::GetFullPath(Path::Combine(target_path, name + ".cs"));
 
-    /* Case-insensitive filesystem/filename duplication fix, must be synchronized with TSLCompiler.GenCode.Interface.cs */
     String lower_content_path = content_path;
     lower_content_path.ToLower();
     while (files && files->end() != std::find_if(files->begin(), files->end(), 
@@ -37,7 +29,7 @@ static void fileop_impl(const String& target_path, const String& name, Func gen,
     if (!Directory::Exists(content_dir))
         Directory::EnsureDirectory(content_dir);
     FILE *fp;
-    _wfopen_s(&fp, Trinity::String(content_path).ToWcharArray(), Trinity::String(fmode).ToWcharArray());
+    _wfopen_s(&fp, Trinity::String(content_path).ToWcharArray(), _u("w"));
 
     if (fp == NULL)
     {
@@ -57,18 +49,6 @@ static void fileop_impl(const String& target_path, const String& name, Func gen,
     {
         files->push_back(new std::string(content_path.c_str()));
     }
-}
-
-template<typename Func, typename N>
-static void write_file(const String& target_path, const String& name, Func gen, N* node, std::vector<std::string*>* files)
-{
-    fileop_impl(target_path, name, gen, node, "w", files);
-}
-
-template<typename Func, typename N>
-static void append_file(const String& target_path, const String& name, Func gen, N* node, std::vector<std::string*>* files)
-{
-    fileop_impl(target_path, name, gen, node, "a", files);
 }
 
 namespace Trinity
@@ -403,6 +383,8 @@ namespace Trinity
 
             String lib_path             = Path::Combine(target_path, "Lib");
             String linq_path            = Path::Combine(lib_path, "LINQ");
+            String cell_path            = Path::Combine(target_path, "Cells");
+            String struct_path          = Path::Combine(target_path, "Structs");
             String substring_index_path = Path::Combine(lib_path, "SubstringIndex");
 
             if (tsl->cellList->size() != 0)
@@ -450,12 +432,12 @@ namespace Trinity
             /* Cell and Struct */
             for (auto* cell : *tsl->cellList)
             {
-                append_file(target_path, *cell->name, Cell, cell, NULL);
+                write_file(cell_path, *cell->name, Cell, cell, files);
             }
 
             for (auto* _struct : *tsl->structList)
             {
-                append_file(target_path, "Structs", Struct, _struct, NULL);
+                write_file(struct_path, *_struct->name, Struct, _struct, files);
             }
 
             uninitialize();
