@@ -103,28 +103,6 @@ namespace Trinity.TSL
 {
     public partial class TSLCompiler
     {
-        private static string GenerateCellTypeEnum(SpecificationScript script)
-        {
-            if (script.CellDescriptors.Count == 0)
-                return "";
-
-            CodeWriter cw = new CodeWriter(
-            @"
-    public enum CellType : ushort 
-    {
-        Undefined = 0,");
-
-
-            foreach (var desc in script.CellDescriptors)
-            {
-                cw += @"
-        " + desc.Name + ",";
-            }
-            cw += @"
-    }";
-            return cw.ToString();
-        }
-
         /// <summary>
         /// For fixed fields
         /// </summary>

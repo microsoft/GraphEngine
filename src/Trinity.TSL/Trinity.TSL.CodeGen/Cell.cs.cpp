@@ -14,7 +14,28 @@ NCell* node)
         {
             string* source = new string();
             
-source->append(R"::(
+source->append(R"::(using System;
+using System.Text;
+using System.Collections.Generic;
+using System.Collections;
+using System.Collections.Concurrent;
+using System.Runtime.InteropServices;
+using System.Data;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Runtime.ExceptionServices;
+using System.Security;
+using Trinity;
+using Trinity.Core.Lib;
+using Trinity.Storage;
+using Trinity.Utilities;
+using Trinity.TSL.Lib;
+using Trinity.Network;
+using Trinity.Network.Sockets;
+using Trinity.Network.Messaging;
+using Trinity.TSL;
+using System.Runtime.CompilerServices;
 namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(

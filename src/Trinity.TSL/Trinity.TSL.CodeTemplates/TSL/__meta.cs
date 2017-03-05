@@ -66,8 +66,7 @@ namespace Trinity.TSL
         internal static string MemberOf = "";
 
         internal static int t_array_dimension_list = 0;
-
-
+        internal const int t_ushort = 0;
 
         internal static void ___END()
         {

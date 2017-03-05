@@ -1,5 +1,4 @@
-﻿/*MUTE*/
-using System;
+﻿using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Collections;
@@ -22,7 +21,6 @@ using Trinity.Network.Sockets;
 using Trinity.Network.Messaging;
 using Trinity.TSL;
 using System.Runtime.CompilerServices;
-/*MUTE_END*/
 #pragma warning disable
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/

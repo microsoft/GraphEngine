@@ -89,6 +89,7 @@
   <ItemGroup>
     <ClCompile Include="Cell.cs.cpp" />
     <ClCompile Include="CellSelectors.cs.cpp" />
+    <ClCompile Include="CellTypeEnum.cs.cpp" />
     <ClCompile Include="CommunicationSchema.cs.cpp" />
     <ClCompile Include="Enum.cs.cpp" />
     <ClCompile Include="ExtensionAttribute.cs.cpp" />

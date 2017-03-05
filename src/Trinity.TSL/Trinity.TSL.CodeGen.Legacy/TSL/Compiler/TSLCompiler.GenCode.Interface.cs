@@ -54,8 +54,6 @@ namespace Trinity.TSL
 @"
 {
 ";
-            cw += GenerateCellTypeEnum(script);
-
             foreach (StructDescriptor struct_desc in script.StructDescriptors)
             {
                 cw += GenerateChildTypeDeclarations(types, struct_desc);

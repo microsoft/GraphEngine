@@ -25,6 +25,7 @@ namespace Trinity
 
         std::string* GenericCell(NTSL* node);
         std::string* Enum(NTSL* node);
+        std::string* CellTypeEnum(NTSL* node);
         std::string* Cell(NCell* node);
         std::string* Struct(NStruct* node);
         std::string* ExternalParser(NTSL* node);
