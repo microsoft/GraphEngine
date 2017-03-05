@@ -134,10 +134,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CodeGen\common.h">
+    <ClInclude Include="CodeGen\Trinity.TSL.CodeGen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CodeGen\Trinity.TSL.CodeGen.h">
+    <ClInclude Include="CodeGen\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
