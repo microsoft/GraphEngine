@@ -36,6 +36,8 @@ namespace Trinity.TSL.Metagen
 
         private static void ProcessDirectory(string directoryPath)
         {
+            directoryPath = Path.GetFullPath(directoryPath);
+
             Environment.CurrentDirectory = directoryPath;
 
             foreach (var file in Directory.GetFiles(directoryPath))

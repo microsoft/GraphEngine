@@ -26,6 +26,7 @@ namespace t_Namespace
     [MAP_LIST("t_field_attribute", "attributes", MemberOf = "t_field")]
     [MAP_VAR("t_field_attribute_key", "key")]
     [MAP_VAR("t_field_attribute_value", "value")]
+    [MAP_VAR("t_int", "GET_ITERATOR_VALUE()")]
     public class StorageSchema : __meta, IStorageSchema
     {
         #region CellType lookup table
@@ -150,9 +151,8 @@ namespace t_Namespace
                 {
                     /*FOREACH*/
                     /*USE_LIST("t_field")*/
-                    case x_int/*GET_ITERATOR_VALUE()*/:
+                    case t_int:
                         return t_field_name;
-                        break;
                     /*END*/
                 }
 

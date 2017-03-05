@@ -375,7 +375,7 @@ compatible_1 = true;
 if (compatible_1)
 {
 source->append(R"::(
-                case  )::");
+                case )::");
 source->append(Codegen::GetString(iterator_1));
 source->append(R"::(:
                     )::");
@@ -512,7 +512,7 @@ source->append(R"::(
 int iter_val_2 = 0;
 for(const std::string& attr : field_attributes_1){
 source->append(R"::(
-                    case  )::");
+                    case )::");
 source->append(Codegen::GetString(iter_val_2++));
 source->append(R"::(:
                         )::");
@@ -1228,7 +1228,7 @@ compatible_2 = true;
 if (compatible_2)
 {
 source->append(R"::(
-                case  )::");
+                case )::");
 source->append(Codegen::GetString(iterator_1));
 source->append(R"::(:
                     )::");
@@ -1365,7 +1365,8 @@ source->append(R"::(
 int iter_val_4 = 0;
 for(const std::string& attr : field_attributes_1){
 source->append(R"::(
-                    case  )::");
+                    case )::");
+source->append(Codegen::GetString(iter_val_4++));
 source->append(Codegen::GetString(iter_val_4++));
 source->append(R"::(:
                         )::");

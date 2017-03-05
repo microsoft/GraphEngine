@@ -33,7 +33,7 @@ namespace t_Namespace
                 /*USE_LIST("t_data_type")*/
                 /*META_VAR("int", "enum_depth", "$t_field_type->enumerate_depth($t_data_type)")*/
                 /*IF("%enum_depth >= 0")*/
-                case x_uint /*GET_ITERATOR_VALUE()*/:
+                case t_uint /*GET_ITERATOR_VALUE()*/:
                     {
                         IF("%enum_depth == 0");
                         yield return TypeConverter<T>.ConvertFrom_t_field_type_display(this.t_field_name);

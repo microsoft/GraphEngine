@@ -68,16 +68,13 @@ namespace Trinity.TSL.Metagen
 
         private static string Preprocess(string literal)
         {
-            //see http://stackoverflow.com/questions/13278793/regex-end-of-line-anchor-doesnt-always-work
+            //Use RegexOption.Multiline to allow regex to match against each line, not regarding the string as a whole.
             Regex __meta_remove              = new Regex(@"__meta\s*,\s*|\s*\:\s*__meta\s*$|__meta\s*\.", RegexOptions.Multiline);
-            //Regex line_comment_remove        = new Regex(@"^\s*\/\/[^\/].*", RegexOptions.Multiline);
             Regex line_comment_remove        = new Regex(@"(?<=^(?:[^""\\\/]|""(?:[^""\\]|\\.)*"")*)\/\/[^\/].*", RegexOptions.Multiline);
             Regex struct_indicator_operation = new Regex(@"(?<=\[STRUCT\]([^{])*)class", RegexOptions.Multiline);  /**Lookbehind and find [Struct], then find a class. If { is found, break.*/
             Regex struct_indicator_remove    = new Regex(@"\[STRUCT\]");
             Regex macro_remove               = new Regex(@"^\#.*", RegexOptions.Multiline);
             Regex collapse_lines             = new Regex(@"(^\s*$)+", RegexOptions.Multiline);
-            Regex x_identifiers              = new Regex(@"(?<!(\w|\d|_))x_(\w|\d|_)*");
-            Regex num_remove                 = new Regex(@"9*");//XXX weird. need a better solution.
 
             literal = __meta_remove.Replace(literal, String.Empty);
             literal = line_comment_remove.Replace(literal, String.Empty);
@@ -89,8 +86,6 @@ namespace Trinity.TSL.Metagen
 
             literal = collapse_lines.Replace(literal, String.Empty);
 
-            literal = x_identifiers.Replace(literal, String.Empty);
-            literal = num_remove.Replace(literal, String.Empty);
             return literal;
         }
     }

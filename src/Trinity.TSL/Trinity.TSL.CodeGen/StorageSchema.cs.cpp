@@ -249,7 +249,6 @@ source->append(R"::(:
                         return )::");
 source->append(Codegen::GetString((*((*(node->cellList))[iterator_1]->fieldList))[iterator_2]->name));
 source->append(R"::(;
-                        break;
                     )::");
 }
 source->append(R"::(

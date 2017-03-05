@@ -1,5 +1,4 @@
-﻿/*MUTE*/
-using System;
+﻿using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Collections;
@@ -21,13 +20,13 @@ using Trinity.Network.Sockets;
 using Trinity.Network.Messaging;
 using Trinity.TSL;
 using System.Text.RegularExpressions;
-/*MUTE_END*/
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
 namespace t_Namespace
 {
     [TARGET("NStruct")]
     [STRUCT]
+    //It is possible to re-map variables on the fly.
     [MAP_LIST("t_field", "node->fieldList")]
     [MAP_VAR("t_field_name", "name")]
     [MAP_VAR("t_field_type", "fieldType")]
@@ -35,8 +34,6 @@ namespace t_Namespace
 
     [MAP_VAR("t_struct_name", "node->name")]
 
-    //It is possible to re-map variables on the fly.
-    [MAP_VAR("t_json_rgx_struct", "Trinity::Codegen::GetJsonRegexStructString(node)")]
     /// <summary>
     /// A .NET runtime object representation of t_struct_name defined in TSL.
     /// </summary>

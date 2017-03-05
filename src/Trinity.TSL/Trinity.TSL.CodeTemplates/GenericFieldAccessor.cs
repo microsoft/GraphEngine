@@ -29,6 +29,7 @@ namespace t_Namespace
     [MAP_VAR("t_array_dimension_list", "")]
     [MAP_VAR("t_field_type_2", "fieldType", MemberOf = "t_member")]
     [MAP_VAR("t_field_type_2_display", "Trinity::Codegen::GetDataTypeDisplayString($$->fieldType)", MemberOf = "t_member")]
+    [MAP_VAR("t_uint", "GET_ITERATOR_VALUE()")]
     [STRUCT]
     internal class GenericFieldAccessor : __meta
     {
@@ -61,7 +62,7 @@ namespace t_Namespace
                     /*FOREACH*/
                     /*USE_LIST("t_member")*/
                     /*  IF("$t_member_type->is_struct()")*/
-                    case x_uint/*GET_ITERATOR_VALUE()*/:
+                    case t_uint:
                         GenericFieldAccessor.SetField(accessor.t_member_name, fieldName, field_divider_idx + 1, value);
                         break;
                     /*  END*/
@@ -82,7 +83,7 @@ namespace t_Namespace
             {
                 /*FOREACH*/
                 /*USE_LIST("t_member")*/
-                case x_uint/*GET_ITERATOR_VALUE()*/:
+                case t_uint:
                     {
                         t_field_type_2 conversion_result = TypeConverter<T>.ConvertTo_t_field_type_2_display(value);
                         MODULE_CALL("AccessorFieldAssignment", "$t_member", "\"accessor\"", "\"conversion_result\"");
@@ -107,7 +108,7 @@ namespace t_Namespace
                     /*FOREACH*/
                     /*USE_LIST("t_member")*/
                     /*  IF("$t_member_type->is_struct()")*/
-                    case x_uint/*GET_ITERATOR_VALUE()*/:
+                    case t_uint:
                         return GenericFieldAccessor.GetField<T>(accessor.t_member_name, fieldName, field_divider_idx + 1);
                     /*  END*/
                     /*END*/
@@ -126,7 +127,7 @@ namespace t_Namespace
             {
                 /*FOREACH*/
                 /*USE_LIST("t_member")*/
-                case x_uint/*GET_ITERATOR_VALUE()*/:
+                case t_uint:
                     return TypeConverter<T>.ConvertFrom_t_field_type_2_display(accessor.t_member_name);
                     break;
                 /*END*/

@@ -49,10 +49,12 @@ namespace t_Namespace
     [MAP_LIST("t_field_attribute", "attributes", MemberOf = "t_field")]
     [MAP_VAR("t_field_attribute_key", "key")]
     [MAP_VAR("t_field_attribute_value", "value")]
-    [MAP_VAR("t_json_rgx_cell", "Trinity::Codegen::GetJsonRegexCellString(node)")]
     [MAP_LIST("t_data_type", "Trinity::Codegen::TSLExternalParserDataTypeVector")]
     [MAP_VAR("t_data_type", "")]
     [MAP_VAR("t_data_type_display", "Trinity::Codegen::GetDataTypeDisplayString($$)")]
+    [MAP_VAR("t_int", "GET_ITERATOR_VALUE()")]
+    [MAP_VAR("t_uint", "GET_ITERATOR_VALUE()")]
+    [MAP_VAR("t_int_2", "%iter_val++")]
 
     /*META_VAR("std::unordered_set<std::string>", "field_attributes")*/
     /*FOREACH()*/
@@ -203,7 +205,7 @@ namespace t_Namespace
                     break;
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
-                case x_int/*GET_ITERATOR_VALUE()*/:
+                case t_int:
                     return TypeConverter<T>.ConvertFrom_t_field_type_display(this.t_field_name);
                 /*END*/
             }
@@ -233,7 +235,7 @@ namespace t_Namespace
                     break;
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
-                case x_int/*GET_ITERATOR_VALUE()*/:
+                case t_int:
                     this.t_field_name = TypeConverter<T>.ConvertTo_t_field_type_display(value);
                     break;
                 /*END*/
@@ -254,7 +256,7 @@ namespace t_Namespace
             {
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
-                case x_int/*GET_ITERATOR_VALUE()*/:
+                case t_int:
                     IF("$t_field_type->is_optional()");
                     return this.t_field_name != null;
                     ELSE();
@@ -294,7 +296,7 @@ namespace t_Namespace
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
                 /*IF("$t_field_type->is_string() || $t_field_type->is_list()")*/
-                case x_int/*GET_ITERATOR_VALUE()*/:
+                case t_int:
                     IF("$t_field_type->is_string()");
                     {
                         if (this.t_field_name == null)
@@ -358,7 +360,7 @@ namespace t_Namespace
                 /*    END()*/
                 /*  END()*/
                 /*  IF("%compatible")*/
-                case x_uint /*GET_ITERATOR_VALUE()*/:
+                case t_uint:
                     FOREACH();
                     USE_LIST("t_field");
                     IF("$t_data_type->is_convertible_from($t_field_type)");
@@ -408,7 +410,7 @@ namespace t_Namespace
             {
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
-                case x_int/*GET_ITERATOR_VALUE()*/:
+                case t_int:
                     return _enumerate_from_t_field_name<T>();
                 /*END*/
                 default:
@@ -433,7 +435,7 @@ namespace t_Namespace
                 {
                     /*META_VAR("int", "iter_val", "0")*/
                     /*META("for(const std::string& attr : %field_attributes){")*/
-                    case x_int /*META_OUTPUT(%iter_val++)*/:
+                    case t_int_2:
                         FOREACH();
                         {
                             USE_LIST("t_field");
@@ -1146,7 +1148,7 @@ namespace t_Namespace
                     /*FOREACH*/
                     /*USE_LIST("t_field")*/
                     /*  IF("$t_field_type->is_struct()")*/
-                    case x_int/*GET_ITERATOR_VALUE()*/:
+                    case t_int:
                         return GenericFieldAccessor.GetField<T>(this.t_field_name, fieldName, field_divider_idx + 1);
                     /*  END*/
                     /*END*/
@@ -1165,7 +1167,7 @@ namespace t_Namespace
                     break;
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
-                case x_int/*GET_ITERATOR_VALUE()*/:
+                case t_int:
                     return TypeConverter<T>.ConvertFrom_t_field_type_display(this.t_field_name);
                 /*END*/
             }
@@ -1189,7 +1191,7 @@ namespace t_Namespace
                     /*FOREACH*/
                     /*USE_LIST("t_field")*/
                     /*  IF("$t_field_type->is_struct()")*/
-                    case x_int/*GET_ITERATOR_VALUE()*/:
+                    case t_int:
                         GenericFieldAccessor.SetField(this.t_field_name, fieldName, field_divider_idx + 1, value);
                         break;
                     /*  END*/
@@ -1210,7 +1212,7 @@ namespace t_Namespace
                     break;
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
-                case x_int/*GET_ITERATOR_VALUE()*/:
+                case t_int:
                     {
                         t_field_type conversion_result = TypeConverter<T>.ConvertTo_t_field_type_display(value);
                         MODULE_CALL("AccessorFieldAssignment", "$t_field", "\"this\"", "\"conversion_result\"");
@@ -1232,7 +1234,7 @@ namespace t_Namespace
             {
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
-                case x_int/*GET_ITERATOR_VALUE()*/:
+                case t_int:
                     IF("$t_field_type->is_optional()");
                     return this.Contains_t_field_name;
                     ELSE();
@@ -1262,7 +1264,7 @@ namespace t_Namespace
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
                 /*IF("$t_field_type->is_string() || $t_field_type->is_list()")*/
-                case x_int/*GET_ITERATOR_VALUE()*/:
+                case t_int:
                     IF("$t_field_type->is_string()");
                     {
                         IF("$t_field_type->is_optional()");
@@ -1327,7 +1329,7 @@ namespace t_Namespace
                 /*    END()*/
                 /*  END()*/
                 /*  IF("%compatible")*/
-                case x_uint /*GET_ITERATOR_VALUE()*/:
+                case t_uint:
                     FOREACH();
                     USE_LIST("t_field");
                     IF("$t_data_type->is_convertible_from($t_field_type)");
@@ -1378,7 +1380,7 @@ namespace t_Namespace
             {
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
-                case x_int/*GET_ITERATOR_VALUE()*/:
+                case t_int:
                     return _enumerate_from_t_field_name<T>();
                 /*END*/
                 default:
@@ -1403,7 +1405,7 @@ namespace t_Namespace
                 {
                     /*META_VAR("int", "iter_val", "0")*/
                     /*META("for(const std::string& attr : %field_attributes){")*/
-                    case x_int /*META_OUTPUT(%iter_val++)*/:
+                    case t_int_2 /*META_OUTPUT(%iter_val++)*/:
                         FOREACH();
                         {
                             USE_LIST("t_field");

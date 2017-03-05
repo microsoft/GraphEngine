@@ -58,9 +58,10 @@ namespace Trinity.TSL
 
         internal static void MAP_VAR(string from, string to, string MemberOf = "") { }
 
-        internal const uint x_uint = 0;
+        internal const uint t_uint = 0;
 
-        internal const int x_int = 0;
+        internal const int t_int = 0;
+        internal const int t_int_2 = 0;
 
         internal static string MemberOf = "";
 

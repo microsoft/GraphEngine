@@ -13,15 +13,6 @@ namespace Trinity.TSL
         const string src_storage = "Storage.cs";
         const string src_external = "External.cs";
         const string src_tql = "TQL.cs";
-        const string phase1_assembly_name = "Trinity.Extension.Accessor";
-        const string phase2_assembly_name = "Trinity.Extension.Storage";
-        const string phase1_assembly = "Trinity.Extension.Accessor.dll";
-        const string phase2_assembly = "Trinity.Extension.Storage.dll";
-
-        /// <summary>
-        /// Value = "Trinity.Extension.dll"
-        /// </summary>
-        const string default_assembly_name = "Trinity.Extension";
 
         #region Feature toggles and constants
         public static bool CompileWithDebugFeatures = false;

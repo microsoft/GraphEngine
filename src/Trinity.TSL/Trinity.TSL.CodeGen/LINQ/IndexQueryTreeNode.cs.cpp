@@ -45,15 +45,15 @@ source->append(R"::(.Linq
         internal String                     queryString         = null;
         /// <summary>
         /// See issue #155
-        /// http://graph006:00/redmine/issues/155
+        /// http://graph006:9009/redmine/issues/155
         /// </summary>
         internal List<String>               wildcard_query      = null;
         internal IndexQueryTreeNode Optimize()
         {
             if (children != null)
             {
-                List<IndexQueryTreeNode> new_child_list = new List)::");
-source->append(R"::(<IndexQueryTreeNode>();
+                List<IndexQueryTreeNode> new_child_list = new Li)::");
+source->append(R"::(st<IndexQueryTreeNode>();
                 foreach (var child in children)
                 {
                     var new_child = child.Optimize();
@@ -78,9 +78,9 @@ source->append(R"::(<IndexQueryTreeNode>();
                 else
                     normal   = child;
             }
-            switch (type)
- )::");
-source->append(R"::(           {
+            switch (type))::");
+source->append(R"::(
+            {
                 case NodeType.NOT:
                     /* Drop NOT queries */
                     if (children[0].type == NodeType.NOT)
@@ -106,8 +106,8 @@ source->append(R"::(           {
                     {
                         if (empty != null)
                             return normal;
-                      )::");
-source->append(R"::(  if (universe != null)
+                    )::");
+source->append(R"::(    if (universe != null)
                             return universe;
                         if (children.Count == 1)
                             return children[0];
