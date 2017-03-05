@@ -126,18 +126,18 @@
     <ClCompile Include="MODULES\EnumerateFromFieldModule.cs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Trinity.TSL.CodeGen.cpp">
+    <ClCompile Include="CodeGen\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="CodeGen\Trinity.TSL.CodeGen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="common.h">
+    <ClInclude Include="CodeGen\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Trinity.TSL.CodeGen.h">
+    <ClInclude Include="CodeGen\Trinity.TSL.CodeGen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

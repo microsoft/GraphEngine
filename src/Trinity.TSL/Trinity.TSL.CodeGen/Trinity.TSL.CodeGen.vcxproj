@@ -114,7 +114,7 @@
     <ClCompile Include="LINQ\IndexQueryTreeExecutor.cs.cpp" />
     <ClCompile Include="LINQ\IndexQueryTreeNode.cs.cpp" />
     <ClCompile Include="LINQ\PLINQWrapper.cs.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="CodeGen\main.cpp" />
     <ClCompile Include="MODULES\AccessorFieldAssignment.cs.cpp" />
     <ClCompile Include="MODULES\CommunicationSchemaModule.cs.cpp" />
     <ClCompile Include="MODULES\EnumerateFromFieldModule.cs.cpp" />
@@ -125,11 +125,11 @@
     <ClCompile Include="Struct.cs.cpp" />
     <ClCompile Include="Throw.cs.cpp" />
     <ClCompile Include="Traits.cs.cpp" />
-    <ClCompile Include="Trinity.TSL.CodeGen.cpp" />
+    <ClCompile Include="CodeGen\Trinity.TSL.CodeGen.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="common.h" />
-    <ClInclude Include="Trinity.TSL.CodeGen.h" />
+    <ClInclude Include="CodeGen\common.h" />
+    <ClInclude Include="CodeGen\Trinity.TSL.CodeGen.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Trinity.TSL.Parser\Trinity.TSL.Parser.vcxproj">
