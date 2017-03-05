@@ -20,6 +20,7 @@ namespace t_Namespace
             MAP_VAR("t_field_type_display", "Trinity::Codegen::GetDataTypeDisplayString(node->fieldType)");
             MAP_LIST("t_data_type", "Trinity::Codegen::TSLExternalParserDataTypeVector");
             MAP_VAR("t_data_type", "");
+            MAP_VAR("t_uint", "GET_ITERATOR_VALUE()");
             IF("$t_field->is_optional()");
             IF("%for_accessor");
             if (this.Contains_t_field_name)
@@ -33,7 +34,7 @@ namespace t_Namespace
                 /*USE_LIST("t_data_type")*/
                 /*META_VAR("int", "enum_depth", "$t_field_type->enumerate_depth($t_data_type)")*/
                 /*IF("%enum_depth >= 0")*/
-                case t_uint /*GET_ITERATOR_VALUE()*/:
+                case t_uint:
                     {
                         IF("%enum_depth == 0");
                         yield return TypeConverter<T>.ConvertFrom_t_field_type_display(this.t_field_name);

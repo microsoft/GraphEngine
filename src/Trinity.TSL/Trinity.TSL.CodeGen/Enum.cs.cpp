@@ -42,8 +42,8 @@ source->append(R"::( : byte
 for (size_t iterator_2 = 0; iterator_2 < ((*(node->enumList))[iterator_1]->enumEntryList)->size();++iterator_2)
 {
 source->append(Codegen::GetString((*((*(node->enumList))[iterator_1]->enumEntryList))[iterator_2]->name));
-source->append(R"::( = 9)::");
-source->append(Codegen::GetString((*((*(node->enumList))[iterator_1]->enumEntryList))[iterator_2]->value));
+source->append(R"::( = )::");
+source->append(Codegen::GetString(Codegen::GetString((*((*(node->enumList))[iterator_1]->enumEntryList))[iterator_2]->value)));
 if (iterator_2 < ((*(node->enumList))[iterator_1]->enumEntryList)->size() - 1)
 source->append(",");
 }

@@ -46,7 +46,7 @@ int enum_depth_1 = node->fieldType->enumerate_depth((*(Trinity::Codegen::TSLExte
 if (enum_depth_1 >= 0)
 {
 source->append(R"::(
-                case t_uint)::");
+                case )::");
 source->append(Codegen::GetString(iterator_1));
 source->append(R"::(:
                     {

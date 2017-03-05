@@ -16,6 +16,7 @@ namespace t_Namespace
     [MAP_LIST("t_type", "enumEntryList", MemberOf = "t_enum")]
     [MAP_VAR("t_type_name", "name")]
     [MAP_VAR("t_type_value", "value")]
+    [MAP_VAR("t_int", "META_OUTPUT($t_type_value)")]
     [FOREACH]
     /// <summary>
     /// Represents the enum type t_enum_name defined in the TSL.
@@ -23,7 +24,7 @@ namespace t_Namespace
     public enum t_enum_name : byte
     {
         [FOREACH(",")]
-        t_type_name = 9/*META_OUTPUT($t_type_value)*/
+        t_type_name = __meta.t_int
         /*END*/
     }
     /*END*/
