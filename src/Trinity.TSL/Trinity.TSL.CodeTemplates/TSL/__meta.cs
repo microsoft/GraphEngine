@@ -62,6 +62,8 @@ namespace Trinity.TSL
 
         internal const int t_int = 0;
         internal const int t_int_2 = 0;
+        internal const int t_int_3 = 0;
+        internal const int t_int_4 = 0;
 
         internal static string MemberOf = "";
 

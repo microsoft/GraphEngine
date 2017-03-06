@@ -432,6 +432,7 @@ void SemanticCheckForStructBase(NStructBase* node)
             break;
         }
     }
+    node->layoutType = reached_dynamic ? LT_DYNAMIC : LT_FIXED;
 }
 
 DEFINE_TB_SEMANTIC_CHECK(NStruct, {

@@ -14,9 +14,7 @@
 #include "Array.h"
 #include "Collections/List.h"
 
-#ifndef __cplusplus_cli
 #include <thread>
-#endif
 
 #if defined(TRINITY_PLATFORM_WINDOWS)
 typedef wchar_t u16char;
@@ -607,9 +605,7 @@ namespace Trinity
         static String ToString(const char* value) { return String(value); }
         static String ToString(const u16char* value) { return String::FromWcharArray(value, -1); }
         static String ToString(char value) { return String(1, value); }
-#ifndef __cplusplus_cli
         static String ToString(const std::thread::id &thread_id) { std::stringstream stream; stream << thread_id; return stream.str(); }
-#endif
 
         //TODO more TryParse types
         bool TryParse(String& value)
@@ -862,26 +858,4 @@ namespace Trinity
     typedef String string;
     typedef std::reference_wrapper<const String> cstring_ref;
 
-#pragma region C++/CLI extension
-#ifdef __cplusplus_cli
-    Trinity::String ManagedStringToUTF8String(System::String^ buffer)
-    {
-        Trinity::Array<u16char> wcharArray(buffer->Length);
-        for (size_t i = 0; i < wcharArray.Length(); ++i)
-            wcharArray[i] = buffer[i];
-        return Trinity::String::FromWcharArray(wcharArray);
-    }
-    System::String^ UTF8StringToManagedString(const Trinity::String& str)
-    {
-        auto buffer = str.ToWcharArray();
-        System::Text::StringBuilder^ ret = gcnew System::Text::StringBuilder();
-        for (auto wc: buffer)
-            if (wc != 0)
-                ret->Append(wc);
-            else
-                break;
-        return ret->ToString();
-    }
-#endif
-#pragma endregion
 }

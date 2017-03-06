@@ -77,9 +77,6 @@ namespace Trinity
 #ifdef TRINITY_PLATFORM_WINDOWS
                     _setmode(_fileno(stdout), _O_U8TEXT);
 #endif
-#ifdef __cplusplus_cli
-                    System::Console::OutputEncoding = System::Text::Encoding::UTF8;
-#endif
                 }
             };
 

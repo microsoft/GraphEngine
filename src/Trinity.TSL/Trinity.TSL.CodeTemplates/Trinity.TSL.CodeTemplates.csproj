@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="CellSelectors.cs" />
     <Compile Include="CellTypeEnum.cs" />
+    <Compile Include="Containers\Array.cs" />
     <Compile Include="Enum.cs" />
     <Compile Include="ExtensionAttribute.cs" />
     <Compile Include="ExternalParser.cs" />

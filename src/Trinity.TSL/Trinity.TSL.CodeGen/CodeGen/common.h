@@ -67,10 +67,12 @@ namespace Trinity
         {
             return "";
         }
+        inline const std::string Discard(const std::string* str)
+        {
+            return "";
+        }
         
-        std::string data_type_get_string_container_accessor_name(NFieldType* type);
-
-        std::string data_type_get_array_type_with_size_string(NFieldType* type);
+        bool data_type_need_accessor(NFieldType* type);
 
         bool data_type_compatible_with_cell(NFieldType* type, NCell* cell);
 
@@ -88,7 +90,9 @@ namespace Trinity
 
         bool data_type_is_not_duplicate_array(NFieldType* type, std::vector<NFieldType*>* type_list);
 
-        std::string data_type_get_accessor_type_string(NFieldType* type);
+        std::string data_type_get_array_type_with_size_string(NFieldType* type);
+
+        std::string data_type_get_accessor_name(NFieldType* type);
 
         std::string get_http_handler_parameters(NProtocol* protocol);
 

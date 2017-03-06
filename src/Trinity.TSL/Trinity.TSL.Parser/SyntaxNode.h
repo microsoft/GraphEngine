@@ -228,7 +228,7 @@ public:
     int enumerate_depth(NFieldType*);
     TypeConversionAction get_type_conversion_action(NFieldType*);
     NFieldType* get_container_element_type();
-    size_t atom_size();
+    size_t type_size();
     std::string get_atom_type();
     void fill_with_sub_field_types(std::vector<NFieldType*>* list);
     std::vector<NFieldType*>* resolve_container_chain();
@@ -260,6 +260,7 @@ public:
     ~NStructBase() { /* TODO */ }
     std::vector<NField*> *fieldList;
     std::vector<NKVPair*> *attributes;
+    LayoutType layoutType;
 
     bool has_optional_fields()
     {
@@ -273,7 +274,6 @@ public:
 protected:
     friend class NField;
     friend class NFieldType;
-    LayoutType layoutType;
 };
 
 class NStruct : public NStructBase

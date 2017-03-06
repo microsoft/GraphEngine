@@ -903,7 +903,7 @@ for (size_t iterator_1 = 0; iterator_1 < (TSLSubstringIndexedListTypes)->size();
 {
 source->append(R"::(
         public static bool ElementContainsSubstring(this )::");
-source->append(Codegen::GetString(data_type_get_string_container_accessor_name((*(TSLSubstringIndexedListTypes))[iterator_1].get())));
+source->append(Codegen::GetString(data_type_get_accessor_name((*(TSLSubstringIndexedListTypes))[iterator_1].get())));
 source->append(R"::(/*_*/)::");
 source->append(Codegen::GetString("list"));
 source->append(R"::(, IEnumerable<string> substrings)
@@ -956,7 +956,7 @@ source->append(R"::(
             return false;
         }
         public static bool ElementContainsSubstring(this )::");
-source->append(Codegen::GetString(data_type_get_string_container_accessor_name((*(TSLSubstringIndexedListTypes))[iterator_1].get())));
+source->append(Codegen::GetString(data_type_get_accessor_name((*(TSLSubstringIndexedListTypes))[iterator_1].get())));
 source->append(R"::(/*_*/list, params string[] substrings)
         {
             return ElementContainsSubstring(list, substrings as IEnumerable<string>);

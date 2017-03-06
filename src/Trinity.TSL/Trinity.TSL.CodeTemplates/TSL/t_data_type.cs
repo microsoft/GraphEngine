@@ -86,6 +86,7 @@ namespace Trinity.TSL
         public unsafe t_field_type Value { get; set; }
 
         public bool HasValue { get; set; }
+        public unsafe void* CellPtr { get; internal set; }
 
         internal void Set(int idx, bool p)
         {

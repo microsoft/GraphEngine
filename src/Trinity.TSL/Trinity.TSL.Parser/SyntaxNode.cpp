@@ -148,7 +148,6 @@ bool NFieldType::is_integral()
         return false;
     switch (atom_token)
     {
-        //case T_BOOLTYPE:
     case T_BYTETYPE:
     case T_SBYTETYPE:
     case T_SHORTTYPE:
@@ -369,11 +368,11 @@ bool NFieldType::is_assignable_from(NFieldType* that)
     if (this->is_integral() && that->is_integral())
     {
         return
-            (this->atom_size() > that->atom_size() && (this->is_signed() || !that->is_signed()))
+            (this->type_size() > that->type_size() && (this->is_signed() || !that->is_signed()))
             ||
-            (this->atom_size() == that->atom_size()
-            &&
-            this->is_signed() == that->is_signed());
+            (this->type_size() == that->type_size()
+             &&
+             this->is_signed() == that->is_signed());
     }
 
     if (this->is_bool() && that->is_bool())
@@ -387,7 +386,7 @@ bool NFieldType::is_assignable_from(NFieldType* that)
         if (this->is_decimal() /* && !that->is_decimal() */)
             return false;
 
-        return this->atom_size() > that->atom_size();
+        return this->type_size() > that->type_size();
     }
 
     /* anything else, we say this is not assignable from that. */
@@ -491,7 +490,7 @@ int _enumerate_rank(NFieldType* type)
  * them to strings.
  * On the other hand, "the order of the element is no more than that type" means that when we
  * want to enumerate containers ("that" is a container), we do not dig too much into "this",
- * and wrap high-order "this" container elements into "that". For example, calling 
+ * and wrap high-order "this" container elements into "that". For example, calling
  * List<int>->enumerate_depth(List<List<int>>) should not wrap each integer element into List<List<int>>,
  * but rather, wrap the whole List<int> into a single element in List<List<int>>. The same applies
  * to List<List<int>>->enumerate_depth(List<int>), we do not enumerate 2nd-order (integer) elements
@@ -499,7 +498,7 @@ int _enumerate_rank(NFieldType* type)
  * elements.
  *
  * @returns     N if that is convertible from the N-th order container element (this->element->element...),
-                (Go down orders) without wrapping the N-th order container element into a container. 
+                (Go down orders) without wrapping the N-th order container element into a container.
  * -otherwise-  0 if that is convertible from this. (Direct conversion, or go up orders)
  * -otherwise- -1 if cannot enumerate.
  */
@@ -551,33 +550,57 @@ NFieldType* NFieldType::get_container_element_type()
     return NULL;
 }
 
-size_t NFieldType::atom_size()
+size_t NFieldType::type_size()
 {
-    if (!is_atom())
-        return -1;
-    switch (atom_token)
+    if (layoutType != LT_FIXED) { return -1; }
+
+    if (is_atom())
     {
-    case T_BYTETYPE:
-    case T_SBYTETYPE:
-    case T_BOOLTYPE:
-        return 1;
-    case T_SHORTTYPE:
-    case T_USHORTTYPE:
-        return 2;
-    case T_INTTYPE:
-    case T_UINTTYPE:
-    case T_FLOATTYPE:
-        return 4;
-    case T_LONGTYPE:
-    case T_ULONGTYPE:
-    case T_DOUBLETYPE:
-        return 8;
-    case T_DECIMALTYPE:
-        return 16;
-    default:
-        //TODO datetime, guid size
-        return -1;
+        switch (atom_token)
+        {
+        case T_BYTETYPE:
+        case T_SBYTETYPE:
+        case T_BOOLTYPE:
+            return 1;
+        case T_SHORTTYPE:
+        case T_USHORTTYPE:
+            return 2;
+        case T_INTTYPE:
+        case T_UINTTYPE:
+        case T_FLOATTYPE:
+            return 4;
+        case T_LONGTYPE:
+        case T_ULONGTYPE:
+        case T_DOUBLETYPE:
+        case T_DATETIMETYPE:
+            return 8;
+        case T_DECIMALTYPE:
+        case T_GUIDTYPE:
+            return 16;
+        }
     }
+    else if (is_struct())
+    {
+        size_t size = 0;
+        for (auto &field : *referencedNStruct->fieldList)
+        {
+            size += field->fieldType->type_size();
+        }
+        return size;
+    }
+    else if (is_array())
+    {
+        size_t size = 1;
+        for (auto s : *arrayInfo.array_dimension_size) { size *= s; }
+        return size * arrayInfo.arrayElement->type_size();
+    }
+    else if (is_enum())
+    {
+        return 1;
+    }
+
+    error("type_size(): unknown type");
+    return -1;
 }
 
 std::string NFieldType::get_atom_type()

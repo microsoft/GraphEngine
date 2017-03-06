@@ -534,7 +534,7 @@ namespace t_Namespace
     [MAP_LIST("t_substring_indexed_list_type", "TSLSubstringIndexedListTypes")]
     [MAP_VAR("t_substring_indexed_list_type", "")]
     [MAP_VAR("t_data_type", "", MemberOf = "t_substring_indexed_list_type")]
-    [MAP_VAR("t_field_type", "data_type_get_string_container_accessor_name($$.get())", MemberOf = "t_substring_indexed_list_type")]
+    [MAP_VAR("t_field_type", "data_type_get_accessor_name($$.get())", MemberOf = "t_substring_indexed_list_type")]
     /// <summary>
     /// Provides interfaces to be translated to index queires in Linq expressions.
     /// </summary>
