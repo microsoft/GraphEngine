@@ -11,6 +11,8 @@ using System.IO;
 using Trinity.Diagnostics;
 using System.Diagnostics;
 using Trinity.Modules.Spark.Protocols.TSL;
+using Newtonsoft.Json.Linq;
+using Trinity.Storage;
 
 namespace Trinity.Modules.Spark
 {
@@ -33,7 +35,18 @@ namespace Trinity.Modules.Spark
 
         public override void PartitionsHandler(PartitionsRequestStruct request, HttpListenerResponse response)
         {
-            var partitions = GetPartitions(request.cellType, request.batchSize);
+            IEnumerable<JObject> filters = null;
+            try
+            {
+                var filterArray = JsonConvert.DeserializeObject(request.filters) as JArray;
+                if (filterArray != null)
+                    filters = filterArray.Select(_ => _ as JObject);
+            }
+            catch
+            {
+            }
+
+            var partitions = GetPartitions(request.cellType, request.batchSize, filters);
             var jsonResponse = JsonConvert.SerializeObject(partitions);
             using (var sw = new StreamWriter(response.OutputStream))
             {
@@ -57,20 +70,27 @@ namespace Trinity.Modules.Spark
             return StructType.ConvertFromCellDescriptor(cellDesc);
         }
 
-        public object GetPartitions(string cellType, int batchSize)
+        public object GetPartitions(string cellType, int batchSize, IEnumerable<JObject> filters)
         {
             var partitions = new List<List<long>>();
 
             if (batchSize <= 0)
                 return partitions;
 
-            var cellIds = Global.LocalStorage.GenericCellAccessor_Selector().Where(c => c.TypeName == cellType).Select(c => c.CellID);
+            var cellDesc = Global.StorageSchema.CellDescriptors.FirstOrDefault(_ => _.TypeName == cellType);
+            if (cellDesc == null)
+                return partitions;
+
+            var cells = Global.LocalStorage.GenericCellAccessor_Selector().AsQueryable();
+            var filtersExpr = FilterExpressionBuilder.BuildExpression(cells, cellDesc, filters);
+            var cellsFiltered = cells.Provider.CreateQuery<ICellAccessor>(filtersExpr);
+
             var part = new List<long>();
             var count = 0;
 
-            foreach (var id in cellIds)
+            foreach (var cell in cellsFiltered)
             {
-                part.Add(id);
+                part.Add(cell.CellID);
                 count++;
                 if (count == batchSize)
                 {
@@ -99,23 +119,6 @@ namespace Trinity.Modules.Spark
 
             timer.Stop();
             Log.WriteLine(LogLevel.Info, $"GetPartition[cellType={cellType}, cellIds={cellIds.Count()} succeeded: count={cells.Count()}, timer={(long)timer.Elapsed.TotalMilliseconds}");
-
-            return cells;
-        }
-
-        public IEnumerable<object> GetPartition(string cellType, int partitions, int partitionId)
-        {
-            if (partitions <= 0 || partitionId >= partitions)
-                return new List<object>();
-
-            var timer = Stopwatch.StartNew();
-
-            var cells = Global.LocalStorage.GenericCellAccessor_Selector()
-                .Where(c => c.TypeName == cellType && Math.Abs(c.CellID % partitions) == partitionId)
-                .Select(c => c.ToString()).ToList();
-
-            timer.Stop();
-            Log.WriteLine(LogLevel.Info, $"GetPartition[cellType={cellType}, partitions={partitions}, partitionId={partitionId}] succeeded: count={cells.Count}, timer={(long)timer.Elapsed.TotalMilliseconds}");
 
             return cells;
         }

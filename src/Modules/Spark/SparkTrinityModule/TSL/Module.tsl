@@ -16,6 +16,7 @@ struct PartitionsRequestStruct
 {
 	string cellType;
 	int batchSize;
+	string filters;
 }
 
 struct GetPartitionRequestStruct
