@@ -27,7 +27,7 @@ source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
     public unsafe class )::");
-source->append(Codegen::GetString(node));
+source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::( : IEnumerable<)::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node->arrayInfo.arrayElement)));
 source->append(R"::(>
@@ -53,7 +53,7 @@ source->append(R"::(;
         internal byte* CellPtr;
         internal long? CellID;
         internal )::");
-source->append(Codegen::GetString(node));
+source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::((byte* _CellPtr)
         {
             this.CellPtr = _CellPtr;
@@ -153,7 +153,9 @@ else
 {
 source->append(R"::(
                 {
-                    return *(data_type_get_accessor_name(node->arrayInfo.arrayElement)*)offset;
+                    return *()::");
+source->append(Codegen::GetString(data_type_get_accessor_name(node->arrayInfo.arrayElement)));
+source->append(R"::(*)offset;
                 }
                 )::");
 }
@@ -191,7 +193,9 @@ else
 {
 source->append(R"::(
                 {
-                    *(data_type_get_accessor_name(node->arrayInfo.arrayElement)*)offset = value;
+                    *()::");
+source->append(Codegen::GetString(data_type_get_accessor_name(node->arrayInfo.arrayElement)));
+source->append(R"::(*)offset = value;
                 }
                 )::");
 }
@@ -202,7 +206,7 @@ source->append(R"::(
         /// <summary>
         /// Performs the specified action on each element
         /// </summary>
-        /// <param name=""action"">A lambda expression which has one parameter indicates element in array</param>
+        /// <param name="action">A lambda expression which has one parameter indicates element in array</param>
         public unsafe void ForEach(Action<)::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node->arrayInfo.arrayElement)));
 source->append(R"::(> action)
@@ -230,7 +234,9 @@ else
 {
 source->append(R"::(
                 {
-                    action(*(data_type_get_accessor_name(node->arrayInfo.arrayElement)*)targetPtr);
+                    action(*()::");
+source->append(Codegen::GetString(data_type_get_accessor_name(node->arrayInfo.arrayElement)));
+source->append(R"::(*)targetPtr);
                     targetPtr += )::");
 source->append(Codegen::GetString(node->arrayInfo.arrayElement->type_size()));
 source->append(R"::(;
@@ -245,10 +251,10 @@ source->append(R"::(
             byte* targetPtr;
             byte* endPtr;
             )::");
-source->append(Codegen::GetString(node));
+source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::( target;
             internal _iterator()::");
-source->append(Codegen::GetString(node));
+source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::( target)
             {
                 targetPtr   = target.CellPtr;
@@ -279,7 +285,9 @@ else
 {
 source->append(R"::(
                 {
-                    return (*(data_type_get_accessor_name(node->arrayInfo.arrayElement)*)targetPtr);
+                    return *()::");
+source->append(Codegen::GetString(data_type_get_accessor_name(node->arrayInfo.arrayElement)));
+source->append(R"::(*)targetPtr;
                 }
                 )::");
 }
@@ -311,8 +319,8 @@ source->append(R"::(> GetEnumerator()
         /// <summary>
         /// Sets a range of elements in the Array to zero, to false, or to null, depending on the element type.
         /// </summary>
-        /// <param name=""index"">The starting index of the range of elements to clear.</param>
-        /// <param name=""length"">The number of elements to clear.</param>
+        /// <param name="index">The starting index of the range of elements to clear.</param>
+        /// <param name="length">The number of elements to clear.</param>
         public unsafe void Clear(int index, int length)
         {
             if (index < 0 || length < 0 ||index >= Length || index+length > Length) throw new IndexOutOfRangeException();
@@ -323,9 +331,9 @@ source->append(Codegen::GetString(node->arrayInfo.arrayElement->type_size()));
 source->append(R"::());
         }
         public static bool operator == ()::");
-source->append(Codegen::GetString(node));
+source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::( a, )::");
-source->append(Codegen::GetString(node));
+source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::( b)
         {
             if (ReferenceEquals(a, b))
@@ -338,9 +346,9 @@ source->append(Codegen::GetString(node->arrayInfo.arrayElement->type_size()));
 source->append(R"::();
         }
         public static bool operator != ()::");
-source->append(Codegen::GetString(node));
+source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::( a,)::");
-source->append(Codegen::GetString(node));
+source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::( b)
         {
             return !(a == b);

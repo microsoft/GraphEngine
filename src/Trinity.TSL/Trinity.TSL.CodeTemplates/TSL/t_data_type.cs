@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,6 +32,11 @@ namespace Trinity.TSL
         public static implicit operator string(t_data_type x)
         {
             return "";
+        }
+
+        public static implicit operator t_accessor_type(t_data_type x)
+        {
+            throw new NotFiniteNumberException();
         }
 
         public static implicit operator t_data_type(BitArray x)

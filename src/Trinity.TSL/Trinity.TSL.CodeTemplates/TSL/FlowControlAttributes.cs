@@ -3,7 +3,7 @@
 
 namespace Trinity.TSL
 {
-    [AttributeUsage(AttributeTargets.All, AllowMultiple=true)]
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     public class FOREACHAttribute : System.Attribute
     {
         public FOREACHAttribute() { }
@@ -121,7 +121,7 @@ namespace Trinity.TSL
         public USE_LISTAttribute(string target_list) { }
     }
 
-    [AttributeUsage(AttributeTargets.All, AllowMultiple=true)]
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     public class MODULE_BEGINAttribute : System.Attribute
     {
         public MODULE_BEGINAttribute() { }
@@ -133,34 +133,40 @@ namespace Trinity.TSL
         public MODULE_ENDAttribute() { }
     }
 
-    [AttributeUsage(AttributeTargets.All, AllowMultiple=true)]
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     public class TARGETAttribute : System.Attribute
     {
         public TARGETAttribute(string target) { }
     }
 
-    [AttributeUsage(AttributeTargets.All, AllowMultiple=true)]
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     public class META_VARAttribute : System.Attribute
     {
         public META_VARAttribute(string type, string name) { }
         public META_VARAttribute(string type, string name, string value) { }
     }
 
-    [AttributeUsage(AttributeTargets.All, AllowMultiple=true)]
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     public class METAAttribute : System.Attribute
     {
         public METAAttribute(string cmd) { }
     }
 
-    [AttributeUsage(AttributeTargets.All, AllowMultiple=true)]
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     public class MUTEAttribute : System.Attribute
     {
         public MUTEAttribute() { }
     }
 
-    [AttributeUsage(AttributeTargets.All, AllowMultiple=true)]
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     public class MUTE_ENDAttribute : System.Attribute
     {
         public MUTE_ENDAttribute() { }
+    }
+
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+    public class LITERAL_OUTPUTAttribute : System.Attribute
+    {
+        public LITERAL_OUTPUTAttribute(string content) { }
     }
 }

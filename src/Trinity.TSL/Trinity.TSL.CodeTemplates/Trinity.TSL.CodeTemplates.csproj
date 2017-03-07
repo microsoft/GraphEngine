@@ -40,6 +40,7 @@
     <Compile Include="CellSelectors.cs" />
     <Compile Include="CellTypeEnum.cs" />
     <Compile Include="Containers\Array.cs" />
+    <Compile Include="Containers\List.cs" />
     <Compile Include="Enum.cs" />
     <Compile Include="ExtensionAttribute.cs" />
     <Compile Include="ExternalParser.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="MODULES\PushPointer.cs" />
     <Compile Include="Cell.cs" />
     <Compile Include="Serializer.cs" />
+    <Compile Include="TSL\t_accessor_type.cs" />
     <Compile Include="TSL\t_base_class_name.cs" />
     <Compile Include="CommunicationModule.cs" />
     <Compile Include="StorageSchema.cs" />
@@ -84,6 +86,7 @@
     <Compile Include="TSL\t_data_type_array_element_type.cs" />
     <Compile Include="TSL\t_field_type_list_element_type.cs" />
     <Compile Include="TSL\t_field_type_2_element_type.cs" />
+    <Compile Include="TSL\t_list.cs" />
     <Compile Include="_Test.cs" />
     <Compile Include="TSL\CellType.cs" />
     <Compile Include="TSL\CompilerService.cs" />

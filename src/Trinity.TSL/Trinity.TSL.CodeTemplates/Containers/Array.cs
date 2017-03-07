@@ -11,15 +11,15 @@ using Trinity.TSL;
 namespace t_Namespace
 {
     [TARGET("NFieldType")]
-    [MAP_VAR("t_array_name", "node")]
-    [MAP_VAR("t_data_type", "data_type_get_accessor_name(node->arrayInfo.arrayElement)")]
+    [MAP_VAR("t_array_name", "data_type_get_accessor_name(node)")]
+    [MAP_VAR("t_accessor_type", "data_type_get_accessor_name(node->arrayInfo.arrayElement)")]
     [MAP_LIST("t_dim", "node->arrayInfo.array_dimension_size")]
     [MAP_VAR("t_dim_idx", "Discard($$) + GetString(GET_ITERATOR_VALUE())")]
     [MAP_VAR("t_int", "", MemberOf = "t_dim")]
     [MAP_VAR("t_int_2", "node->arrayInfo.array_dimension_size->size()")]
     [MAP_VAR("t_int_3", "node->arrayInfo.arrayElement->type_size()")]
     [MAP_VAR("t_int_4", "([&](int idx){int offset = 1;for(int i=idx + 1;i<node->arrayInfo.array_dimension_size->size();++i){offset *= (*(node->arrayInfo.array_dimension_size))[i];} return offset;})(GET_ITERATOR_VALUE())")]
-    public unsafe class t_array_name : __meta, IEnumerable<t_data_type>
+    public unsafe class t_array_name : __meta, IEnumerable<t_accessor_type>
     {
         [FOREACH]
         private static readonly int SizeDimt_dim_idx = t_int;
@@ -64,13 +64,13 @@ namespace t_Namespace
         }
 
         [IF("data_type_need_accessor(node->arrayInfo.arrayElement)")]
-        t_data_type elementAccessor;
+        t_accessor_type elementAccessor;
         [END]
         /// <summary>
         /// Gets or sets the element at the specified index
         /// </summary>
         /// <returns>Corresponding element at the specified index</returns>
-        public unsafe t_data_type this[
+        public unsafe t_accessor_type this[
             /*FOREACH(",")*/
             int indexDimt_dim_idx
             /*END*/
@@ -94,7 +94,7 @@ namespace t_Namespace
                 }
                 ELSE();
                 {
-                    LITERAL_OUTPUT("return *($t_data_type*)offset;");
+                    return *(t_accessor_type*)offset;
                 }
                 END();
             }
@@ -112,7 +112,7 @@ namespace t_Namespace
                 }
                 ELSE();
                 {
-                    LITERAL_OUTPUT("*($t_data_type*)offset = value;");
+                    *(t_accessor_type*)offset = value;
                 }
                 END();
             }
@@ -121,8 +121,8 @@ namespace t_Namespace
         /// <summary>
         /// Performs the specified action on each element
         /// </summary>
-        /// <param name=""action"">A lambda expression which has one parameter indicates element in array</param>
-        public unsafe void ForEach(Action<t_data_type> action)
+        /// <param name="action">A lambda expression which has one parameter indicates element in array</param>
+        public unsafe void ForEach(Action<t_accessor_type> action)
         {
             byte* targetPtr = CellPtr;
             byte* endPtr = CellPtr + Length * t_int_3;
@@ -136,7 +136,7 @@ namespace t_Namespace
                 }
                 ELSE();
                 {
-                    LITERAL_OUTPUT("action(*($t_data_type*)targetPtr);");
+                    action(*(t_accessor_type*)targetPtr);
                     targetPtr += t_int_3;
                 }
                 END();
@@ -158,7 +158,7 @@ namespace t_Namespace
             {
                 return (targetPtr < endPtr);
             }
-            internal t_data_type current()
+            internal t_accessor_type current()
             {
                 IF("data_type_need_accessor(node->arrayInfo.arrayElement)");
                 {
@@ -167,7 +167,7 @@ namespace t_Namespace
                 }
                 ELSE();
                 {
-                    LITERAL_OUTPUT("return (*($t_data_type*)targetPtr);");
+                    return *(t_accessor_type*)targetPtr;
                 }
                 END();
             }
@@ -177,7 +177,7 @@ namespace t_Namespace
                 targetPtr += t_int_3;
             }
         }
-        public IEnumerator<t_data_type> GetEnumerator()
+        public IEnumerator<t_accessor_type> GetEnumerator()
         {
             _iterator _it = new _iterator(this);
             while (_it.good())
@@ -195,8 +195,8 @@ namespace t_Namespace
         /// <summary>
         /// Sets a range of elements in the Array to zero, to false, or to null, depending on the element type.
         /// </summary>
-        /// <param name=""index"">The starting index of the range of elements to clear.</param>
-        /// <param name=""length"">The number of elements to clear.</param>
+        /// <param name="index">The starting index of the range of elements to clear.</param>
+        /// <param name="length">The number of elements to clear.</param>
         public unsafe void Clear(int index, int length)
         {
             if (index < 0 || length < 0 ||index >= Length || index+length > Length) throw new IndexOutOfRangeException();

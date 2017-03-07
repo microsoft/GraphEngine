@@ -157,12 +157,7 @@ namespace Trinity.TSL
 
                 processed_types.Add(field.Type.Name);
 
-                if (field.Type is ArrayType)
-                {
-                    ret += ContainerCodeTemplate.GenerateArrayCode(field.Type as ArrayType);
-                    continue;
-                }
-                else if (field.Type is StringType)
+                if (field.Type is StringType)
                 {
                     //ret += ContainerCodeTemplate.GenerateStringCode(field.Type as StringType);
                     processed_types.Add(field.Type.Name);

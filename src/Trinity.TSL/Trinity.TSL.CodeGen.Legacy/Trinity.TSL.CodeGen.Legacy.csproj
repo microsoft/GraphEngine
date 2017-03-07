@@ -58,7 +58,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TSL\CodeTemplates\AccessorCodeTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\CellCodeTemplate.cs" />
-    <Compile Include="TSL\CodeTemplates\Containers\Array.cs" />
     <Compile Include="TSL\CodeTemplates\Containers\List.cs" />
     <Compile Include="TSL\CodeTemplates\EqualOperatorCodeTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\ImplicitOperatorCodeTemplate.cs" />
