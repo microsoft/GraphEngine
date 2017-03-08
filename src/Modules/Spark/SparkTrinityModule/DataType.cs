@@ -5,6 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
 using Trinity.Storage;
 
 namespace Trinity.Modules.Spark
@@ -16,56 +18,49 @@ namespace Trinity.Modules.Spark
         public static DataType ConvertFromType(Type type)
         {
             if (type == null)
-                throw new ArgumentNullException();
+                return null;
 
-            if (type.IsPrimitive)
+            if (type.IsPrimitive ||
+                type == typeof(decimal) ||
+                type == typeof(DateTime) ||
+                type == typeof(Guid) ||
+                type == typeof(string))
                 return new DataType { TypeName = type.FullName };
 
-            if (type.IsValueType)
+            if (type.IsGenericType && type.FullName.StartsWith(typeof(Nullable<>).FullName))
+                return new NullableValueType
+                {
+                    TypeName = typeof(NullableValueType).Name,
+                    ArgumentType = ConvertFromType(type.GenericTypeArguments[0])
+                };
+
+            if (type.IsGenericType && type.FullName.StartsWith(typeof(List<>).FullName))
+                return new ArrayType
+                {
+                    TypeName = typeof(ArrayType).Name,
+                    ElementType = ConvertFromType(type.GetGenericArguments()[0])
+                };
+
+            if (type.IsArray)
+                return new ArrayType
+                {
+                    TypeName = typeof(ArrayType).Name,
+                    ElementType = ConvertFromType(type.GetElementType())
+                };
+
+            if (type.IsValueType && !type.IsEnum || type.IsClass && !type.IsGenericType)
             {
-                if (type.IsGenericType) // Nullable value type
+                var fieldsTypes = new List<StructField>();
+                fieldsTypes.AddRange(type.GetFields().Select(f => StructField.ConvertFromFieldInfo(f)));
+                fieldsTypes.AddRange(type.GetProperties().Select(p => StructField.ConvertFromPropertyInfo(p)));
+                return new StructType
                 {
-                    return new NullableValueType
-                    {
-                        TypeName = typeof(NullableValueType).Name,
-                        ArgumentType = ConvertFromType(type.GenericTypeArguments[0])
-                    };
-                }
-                else if (type != typeof(DateTime) && type != typeof(decimal) && type != typeof(Guid))
-                {
-                    return new StructType
-                    {
-                        TypeName = typeof(StructType).Name,
-                        Fields = type.GetFields().Select(f =>
-                        {
-                            var fieldType = ConvertFromType(f.FieldType);
-                            return new StructField
-                            {
-                                Name = f.Name,
-                                Type = fieldType,
-                                Nullable = fieldType is NullableValueType
-                            };
-                        })
-                    };
-                }
+                    TypeName = typeof(StructType).Name,
+                    Fields = fieldsTypes
+                };
             }
 
-            if (type.IsGenericType)
-            {
-                if (type.FullName.StartsWith("System.Collections.Generic.List"))
-                {
-                    return new ArrayType
-                    {
-                        TypeName = typeof(ArrayType).Name,
-                        ElementType = ConvertFromType(type.GetGenericArguments()[0])
-                    };
-                }
-            }
-
-            return new DataType
-            {
-                TypeName = type.FullName
-            };
+            return new DataType { TypeName = type.FullName };
         }
     }
 
@@ -99,6 +94,34 @@ namespace Trinity.Modules.Spark
                 Type = type,
                 Nullable = fd.Optional || (type is NullableValueType)
             };
+        }
+
+        public static StructField ConvertFromFieldInfo(FieldInfo field)
+        {
+            var fieldType = DataType.ConvertFromType(field.FieldType);
+            return new StructField
+            {
+                Name = GetMemberName(field),
+                Type = fieldType,
+                Nullable = fieldType is NullableValueType
+            };
+        }
+
+        public static StructField ConvertFromPropertyInfo(PropertyInfo prop)
+        {
+            var propType = DataType.ConvertFromType(prop.PropertyType);
+            return new StructField
+            {
+                Name = GetMemberName(prop),
+                Type = propType,
+                Nullable = propType is NullableValueType
+            };
+        }
+
+        static string GetMemberName(MemberInfo member)
+        {
+            var dataMemberAttr = member.GetCustomAttribute<DataMemberAttribute>();
+            return dataMemberAttr == null ? member.Name : dataMemberAttr.Name;
         }
     }
 
