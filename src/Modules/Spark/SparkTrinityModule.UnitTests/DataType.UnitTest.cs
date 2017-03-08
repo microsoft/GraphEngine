@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Trinity.Modules.Spark;
 using Xunit;
 
@@ -28,7 +29,6 @@ namespace SparkTrinityModule.UnitTests
                 var dt = DataType.ConvertFromType(type);
                 Assert.Equal(typeof(DataType), dt.GetType());
                 Assert.Equal(type.FullName, dt.TypeName);
-                Console.WriteLine(dt.TypeName);
             });
         }
 
@@ -45,7 +45,6 @@ namespace SparkTrinityModule.UnitTests
                 var dt = DataType.ConvertFromType(type);
                 Assert.Equal(typeof(DataType), dt.GetType());
                 Assert.Equal(type.FullName, dt.TypeName);
-                Console.WriteLine(dt.TypeName);
             });
         }
 
@@ -135,6 +134,24 @@ namespace SparkTrinityModule.UnitTests
                 Assert.Equal(typeof(DataType), dt.GetType());
                 Assert.Equal(type.FullName, dt.TypeName);
             });
+        }
+
+        class TestClass
+        {
+            public int Foo { get; set; }
+
+            [DataMember(Name = "bar")]
+            public int Bar { get; set; }
+        }
+
+        [Fact]
+        public void ConvertFromType_DataMemberName()
+        {
+            var dt = DataType.ConvertFromType(typeof(TestClass)) as StructType;
+            Assert.NotNull(dt);
+            Assert.Equal(2, dt.Fields.Count());
+            Assert.Equal("Foo", dt.Fields.ElementAt(0).Name);
+            Assert.Equal("bar", dt.Fields.ElementAt(1).Name);
         }
     }
 }
