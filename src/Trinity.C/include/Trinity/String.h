@@ -855,7 +855,6 @@ namespace Trinity
     inline void swap(String& x, String& y) { swap(x._string, y._string); }
 #pragma endregion
 
-    typedef String string;
     typedef std::reference_wrapper<const String> cstring_ref;
 
 }
