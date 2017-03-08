@@ -51,6 +51,7 @@ namespace Trinity
         std::string* longListAccessor(NTSL* node);
         std::string* StringAccessor(NTSL* node);
         std::string* U8StringAccessor(NTSL* node);
+        std::string* Containers(NTSL* node);
 
 #pragma region Indexer and LINQ
         std::string* Indexer(NTSL* node);

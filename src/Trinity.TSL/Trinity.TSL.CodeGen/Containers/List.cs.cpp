@@ -14,15 +14,7 @@ NFieldType* node)
         {
             string* source = new string();
             
-source->append(R"::(using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Trinity.Core.Lib;
-using Trinity.TSL;
-using Trinity.TSL.Lib;
+source->append(R"::(
 namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(

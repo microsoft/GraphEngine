@@ -147,61 +147,6 @@ namespace Trinity.TSL
             return ret;
         }
 
-        private static string GenerateChildTypeDeclarations(HashSet<string> processed_types, StructDescriptor struct_desc)
-        {
-            string ret = "";
-            foreach (Field field in struct_desc.AllFields)
-            {
-                if (processed_types.Contains(field.Type.Name))
-                    continue;
-
-                processed_types.Add(field.Type.Name);
-
-                if (field.Type is StringType)
-                {
-                    //ret += ContainerCodeTemplate.GenerateStringCode(field.Type as StringType);
-                    processed_types.Add(field.Type.Name);
-                    continue;
-                }
-                else if (field.Type is U8StringType)
-                {
-                    //ret += ContainerCodeTemplate.GenerateStringCode(field.Type as U8StringType);
-                    processed_types.Add(field.Type.Name);
-                    continue;
-                }
-                else if (field.Type is ListType)
-                {
-                    ret += ContainerCodeTemplate.GenerateListCode(field.Type as ListType);
-                    StructDescriptor tempFD = new StructDescriptor((field.Type as ListType).ElementFieldType);
-                    ret += GenerateChildTypeDeclarations(processed_types, tempFD);
-                    continue;
-                }
-                else if (field.Type is GuidType)
-                {
-                    //ret += ContainerCodeTemplate.GenerateGuidCode(field.Type as GuidType);
-                    processed_types.Add(field.Type.Name);
-                    continue;
-                }
-                else if (field.Type is DateTimeType)
-                {
-                    //ret += ContainerCodeTemplate.GenerateDateTimeCode(field.Type as DateTimeType);
-                    processed_types.Add(field.Type.Name);
-                    continue;
-                }
-                else if (field.Type is EnumType)
-                {
-                    //ret += ContainerCodeTemplate.GenerateEnumCode(field.Type as EnumType);
-                    processed_types.Add(field.Type.Name);
-                    continue;
-                }
-                else if (!(field.Type is AtomType || field.Type is StructFieldType))
-                {
-                    throw new NotImplementedException();
-                }
-            }
-            return ret;
-        }
-
         internal static string ResizeFunctionDelegate()
         {
             return "internal ResizeFunctionDelegate ResizeFunction;";

@@ -93,6 +93,7 @@
     <ClCompile Include="CodeGen\common.cpp" />
     <ClCompile Include="CommunicationSchema.cs.cpp" />
     <ClCompile Include="Containers\Array.cs.cpp" />
+    <ClCompile Include="Containers\Containers.cpp" />
     <ClCompile Include="Containers\List.cs.cpp" />
     <ClCompile Include="Enum.cs.cpp" />
     <ClCompile Include="ExtensionAttribute.cs.cpp" />

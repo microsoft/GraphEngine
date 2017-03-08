@@ -1,12 +1,11 @@
-﻿using System;
+﻿/*MUTE*/
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Trinity.Core.Lib;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
+/*MUTE_END*/
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
 namespace t_Namespace

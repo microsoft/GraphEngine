@@ -417,6 +417,9 @@ namespace Trinity
             write_file(lib_path, NF(StringAccessor), tsl, files);
             write_file(lib_path, NF(U8StringAccessor), tsl, files);
 
+            /* containers */
+            write_file(lib_path, NF(Containers), tsl, files);
+
             /* Index and LINQ */
             if (contains_substring_index)
             {

@@ -56,7 +56,6 @@ namespace Trinity.TSL
 ";
             foreach (StructDescriptor struct_desc in script.StructDescriptors)
             {
-                cw += GenerateChildTypeDeclarations(types, struct_desc);
                 cw += StructCodeTemplate.GenerateStructCode(struct_desc);
                 cw += StructCodeTemplate.GenerateAccessorCode(struct_desc);
             }
@@ -76,7 +75,6 @@ namespace Trinity.TSL
     @"
 {
 ";
-                cw += GenerateChildTypeDeclarations(types, cell_desc);
                 cw += StructCodeTemplate.GenerateStructCode(cell_desc, forCell: true);
                 cw += CellCodeTemplate.GenerateCellCode(cell_desc);
 

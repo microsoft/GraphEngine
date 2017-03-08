@@ -144,6 +144,9 @@
     <ClCompile Include="Containers\List.cs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Containers\Containers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CodeGen\Trinity.TSL.CodeGen.h">

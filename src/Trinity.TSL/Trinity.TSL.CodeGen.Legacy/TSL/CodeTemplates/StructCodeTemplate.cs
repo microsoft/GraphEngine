@@ -39,8 +39,6 @@ namespace Trinity.TSL
         internal byte* CellPtr;
         internal long? CellID;
         ";
-            ret += GenerateReferencedCellID(structDesc);
-
             if (!structDesc.IsFixed())//Dynamic struct need resize function
             {
                 ret += TSLCompiler.ResizeFunctionDelegate();
@@ -190,11 +188,6 @@ namespace Trinity.TSL
         ///</summary>
         public long CellID;";
 
-            if (!forCell)
-            {
-                ret += GenerateReferencedCellID(struct_desc);
-            }
-
             #region Constructor with cellID + parameters
             if (forCell)
             {
@@ -269,10 +262,6 @@ namespace Trinity.TSL
                     }
                 }
             }
-
-            #region Extern Field for Cell
-            ret += GenerateExternPropertiesCodeForCell(struct_desc);
-            #endregion
 
             #region Implicit conversions from/to a corresponded tuple
             /*
@@ -403,151 +392,6 @@ namespace Trinity.TSL
             return ret;
         }
 
-        #region Generate Extern Field Code for Cell
-        public static string GenerateExternPropertiesCodeForCell(StructDescriptor struct_desc)
-        {
-            string ret = "";
-            foreach (var field in struct_desc.ExternFields)
-            {
-                ret += GenerateExternFieldCodeForCell(struct_desc, field);
-            }
-            return ret;
-        }
-
-        private static string GenerateExternFieldCodeForCell(StructDescriptor cell, Field field)
-        {
-            if (field.Type is ListType)
-            {
-                string elementFieldTypeStr = (field.Type as ListType).ElementFieldType.CSharpName;
-                return @"
-        public " + field.Type.CSharpName + " " + field.Name + @"
-        {
-            get
-            {
-                List<object> searchResults = Global.LocalStorage.DiskStorage.SearchAsList(" + "\"" + cell.Name + "\", \"" + field.Name +
-                                          "\", this.CellID);" + @"
-                List<" + elementFieldTypeStr + @"> result = new List<" + elementFieldTypeStr + ">();" + @"
-                foreach(var val in searchResults)
-                {
-                    result.Add((" + elementFieldTypeStr + @")val);
-                }
-                return result" + @";
-            }
-        }
-
-        public void AddTo" + field.Name + "(" + elementFieldTypeStr + " " + "value)" + @"
-        {
-            Global.LocalStorage.DiskStorage.InsertOrUpdate(" + "\"" + cell.Name + "\", \"" + field.Name + "\", this.CellID, value);" + @"
-        }
-
-        public void Clear" + field.Name + @"()
-        {
-            Global.LocalStorage.DiskStorage.Delete(" + "\"" + cell.Name + "\", \"" + field.Name + "\", this.CellID);" + @"
-        }
-";
-            }
-            else if (field.Type is ArrayType)
-            {
-                string elementFieldTypeStr = (field.Type as ListType).ElementFieldType.CSharpName;
-                return @"
-        public " + field.Type.CSharpName + " " + field.Name + @"
-        {
-            get
-            {
-                object[] searchResults = Global.LocalStorage.DiskStorage.SearchAsArray(" + "\"" + cell.Name + "\", \"" + field.Name +
-                                          "\", this.CellID);" + @"
-                " + elementFieldTypeStr + @"[] result = new " + elementFieldTypeStr + "[searchResults.Length];" + @"
-                foreach(int i = 0; i < searchResults.Length; i++)
-                {
-                    result[i] = (" + elementFieldTypeStr + @") searchResults[i];
-                }
-                return result" + @";
-            }
-        }
-
-        public void AddTo" + field.Name + "(" + elementFieldTypeStr + " " + "value)" + @"
-        {
-            Global.LocalStorage.DiskStorage.InsertOrUpdate(" + "\"" + cell.Name + "\", \"" + field.Name + "\", this.CellID, value);" + @"
-        }
-
-        public void Clear" + field.Name + @"()
-        {
-            Global.LocalStorage.DiskStorage.Delete(" + "\"" + cell.Name + "\", \"" + field.Name + "\", this.CellID);" + @"
-        }
-";
-            }
-            else
-            {
-                return @"
-        public " + field.Type.CSharpName + " " + field.Name + @"
-        {
-            get
-            {
-                return (" + field.Type.CSharpName + ")Global.LocalStorage.DiskStorage.Search(" + "\"" + cell.Name + "\", \"" + field.Name +
-                                          "\", this.CellID)" + @";
-            }
-            set
-            {
-                Global.LocalStorage.DiskStorage.InsertOrUpdate(" + "\"" + cell.Name + "\", \"" + field.Name + "\", this.CellID, value" + @");
-            }
-        }
-";
-            }
-
-        }
-        #endregion
-
-        private static string GenerateReferencedCellID(StructDescriptor struct_desc)
-        {
-            CodeWriter c = new CodeWriter(2);
-            string FKStruct = null;
-
-            if (struct_desc.Attribute != null && struct_desc.Attribute.AttributeValuePairs.TryGetValue("FKStruct", out FKStruct))
-            {
-                if (FKStruct.Equals("true", StringComparison.CurrentCultureIgnoreCase))
-                {
-
-
-                    string data_source = null;
-
-                    //TODO obsolete
-                    if (struct_desc.Attribute.AttributeValuePairs.TryGetValue("DataSource", out data_source))
-                    {
-                        string[] data_source_parts = data_source.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-
-                        string DB = data_source_parts.First();
-                        string Table = data_source_parts.Last();
-
-                        string table_id = string.Format(CultureInfo.InvariantCulture, "{0}_Cells.{1}", DB, Table);
-
-                        string key_columns = null;
-                        if (struct_desc.Attribute.AttributeValuePairs.TryGetValue("Key", out key_columns))
-                        {
-                            //Console.WriteLine("x");
-                            string[] columns = key_columns.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                            c.WL();
-                            c.WL("public long ReferencedCellID");
-                            c.WL("{");
-                            c.WL1("get");
-                            c.WL1("{");
-                            c.WL2("return Global.LocalStorage.GetCellID((int){0},{1});", table_id, string.Join(",", columns));
-                            c.WL1("}");
-                            c.WL("}");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Cannot find the Key attribute for FKStruct.");
-                        }
-
-                    }
-                    else
-                    {
-                        Console.WriteLine("error: cannot find data source for current FKStruct.");
-                    }
-                }
-            }
-            return c.ToString();
-        }
         #endregion
     }
 }
