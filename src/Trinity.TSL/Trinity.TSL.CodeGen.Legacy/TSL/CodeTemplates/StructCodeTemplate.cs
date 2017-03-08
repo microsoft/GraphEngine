@@ -55,29 +55,6 @@ namespace Trinity.TSL
                 ret += @"
         }
 ";
-
-
-                if (isReadOnly)
-                {
-                    ret +=
-    @"
-        public static implicit operator " + struct_header + @"(" + structDesc.Name + @"_Accessor accessor )
-        {
-            return new " + struct_header + @"(accessor.CellPtr, accessor.ResizeFunction);
-        }
-";
-                }
-                else
-                {
-                    ret +=
-    @"
-        public static implicit operator " + struct_header + @"(" + structDesc.Name + @"_Accessor_ReadOnly accessor )
-        {
-            return new " + struct_header + @"(accessor.CellPtr, accessor.ResizeFunction);
-        }
-";
-                }
-
             }
             else//Fixed
             {
@@ -92,27 +69,6 @@ namespace Trinity.TSL
                 ret += @"
         }
 ";
-
-                if (isReadOnly)
-                {
-                    ret +=
-    @"
-        public static implicit operator " + struct_header + @"(" + structDesc.Name + @"_Accessor accessor )
-        {
-            return new " + struct_header + @"(accessor.CellPtr);
-        }
-";
-                }
-                else
-                {
-                    ret +=
-    @"
-        public static implicit operator " + struct_header + @"(" + structDesc.Name + @"_Accessor_ReadOnly accessor )
-        {
-            return new " + struct_header + @"(accessor.CellPtr);
-        }
-";
-                }
             }
 
             ret += AccessorCodeTemplate.GenerateOptionalFieldMap(structDesc);
@@ -126,13 +82,11 @@ namespace Trinity.TSL
             byte* targetPtr = CellPtr;
 ";
             ret += AccessorCodeTemplate.GenerateFieldPushPointerCode(structDesc, structDesc.Fields.Count, "this");
-            {
-                ret += @"
+            ret += @"
             int size = (int)(targetPtr - CellPtr);
             byte[] ret = new byte[size];
             Memory.Copy(CellPtr,0,ret,0,size);
             return ret;";
-            }
             ret += @"
         }
 ";
@@ -263,94 +217,7 @@ namespace Trinity.TSL
                 }
             }
 
-            #region Implicit conversions from/to a corresponded tuple
-            /*
-             * public static implicit operator Tuple<int,int,List<int>>(KVTupleExtended FormatStruct)
-             * {
-             *      return new Tuple<int,int,List<int>>(FormatStruct.WordID,FormatStruct.WordFreq,FormatStruct.list);
-             * }
-             * 
-            */
 
-            if (struct_desc.Fields.Count <= 8 && struct_desc.Fields.Count > 0)
-            {
-
-                string tupleTypeString = "Tuple<";
-                foreach (Field field in struct_desc.Fields)
-                {
-                    if (struct_desc.OptionalFieldSequenceMap.ContainsKey(field))
-                        tupleTypeString += TSLCompiler.GetNullableTypeName(field) + ",";
-                    else
-                        tupleTypeString += field.Type.CSharpName + ",";
-                }
-                tupleTypeString = tupleTypeString.Remove(tupleTypeString.Length - 1) + ">";
-
-                ret += @"
-        public static implicit operator " + tupleTypeString + "(" + struct_desc.Name + @" FormatStruct)
-        {
-            return new " + tupleTypeString + "(";
-                foreach (Field field in struct_desc.Fields)
-                {
-                    ret += "FormatStruct." + field.Name + ",";
-                }
-                ret = ret.Remove(ret.Length - 1);
-                ret += ");" + @"
-        }
-";
-
-                ret += @"
-        public static implicit operator " + struct_desc.Name + @" (" + tupleTypeString + @"tuple)
-        {
-            return new " + struct_desc.Name + "(";
-                for (int i = 0; i < struct_desc.Fields.Count; ++i)
-                {
-                    if (i < 7)
-                        ret += "tuple.Item" + (i + 1).ToString(CultureInfo.InvariantCulture) + ",";
-                    else
-                        ret += "tuple.Rest,";
-                }
-                ret = ret.Remove(ret.Length - 1);
-                ret += ");" + @"
-        }
-";
-
-                if (struct_desc.Fields.Count == 2)//A struct with two fields can be converted from/to a KeyValuePair too
-                {
-                    string keyValuePairString = "KeyValuePair<";
-                    foreach (Field field in struct_desc.Fields)
-                    {
-                        if (struct_desc.OptionalFieldSequenceMap.ContainsKey(field))
-                            keyValuePairString += TSLCompiler.GetNullableTypeName(field) + ",";
-                        else
-                            keyValuePairString += field.Type.CSharpName + ",";
-                    }
-                    keyValuePairString = keyValuePairString.Remove(keyValuePairString.Length - 1) + ">";
-
-                    ret += @"
-        public static implicit operator " + keyValuePairString + "(" + struct_desc.Name + @" FormatStruct)
-        {
-            return new " + keyValuePairString + "(";
-                    foreach (Field field in struct_desc.Fields)
-                    {
-                        ret += "FormatStruct." + field.Name + ",";
-                    }
-                    ret = ret.Remove(ret.Length - 1);
-                    ret += ");" + @"
-        }
-";
-
-                    ret += @"
-        public static implicit operator " + struct_desc.Name + @" (" + keyValuePairString + @"tuple)
-        {
-                return new " + struct_desc.Name + "(";
-                    ret += "tuple.Key,tuple.Value";
-                    ret += ");" + @"
-        }
-";
-                }
-            }
-
-            #endregion
 
             #region Override of "==" Operator
             ret += @"

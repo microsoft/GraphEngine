@@ -45,26 +45,7 @@ namespace Trinity.TSL
             };
             #endregion
 
-            cw += Verbatim.GetHeader(script);
-
             string default_namespace = "namespace " + script.RootNamespace;
-
-            cw += default_namespace;
-            cw +=
-@"
-{
-";
-            foreach (StructDescriptor struct_desc in script.StructDescriptors)
-            {
-                cw += StructCodeTemplate.GenerateStructCode(struct_desc);
-                cw += StructCodeTemplate.GenerateAccessorCode(struct_desc);
-            }
-            cw +=
-@"
-}
-";
-            cw += Verbatim.GetFooter();
-            commit_source_file(src_struct_accessor);
 
             foreach (StructDescriptor cell_desc in script.CellDescriptors)
             {

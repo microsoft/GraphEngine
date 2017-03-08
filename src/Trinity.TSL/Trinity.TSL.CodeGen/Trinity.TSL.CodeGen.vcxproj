@@ -134,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CodeGen\common.h" />
+    <ClInclude Include="CodeGen\OptionalFieldCalculator.h" />
     <ClInclude Include="CodeGen\Trinity.TSL.CodeGen.h" />
   </ItemGroup>
   <ItemGroup>

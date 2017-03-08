@@ -155,5 +155,8 @@
     <ClInclude Include="CodeGen\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CodeGen\OptionalFieldCalculator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
