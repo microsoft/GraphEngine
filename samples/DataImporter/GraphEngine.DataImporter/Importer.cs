@@ -216,7 +216,7 @@ namespace GraphEngine.DataImporter
                  }
                  catch (Exception e)
                  {
-                     //Log.WriteLine(LogLevel.Error, "An error occured during import: \n{0}\n", e.Message);
+                     Log.WriteLine(LogLevel.Error, "An error occured during import: \n{0}\n", e.Message);
                  }
              });
         }
@@ -237,8 +237,9 @@ namespace GraphEngine.DataImporter
                 case ".txt":
                     return new JsonImporter();
                 case ".csv":
+                    return new SvImporter(',');
                 case ".tsv":
-                    return new CsvImporter();
+                    return new SvImporter('\t');
                 case ".ntriples":
                     return g_opts.Sorted ? (IImporter)new UnsortedRDFImporter() : new SortedRDFImporter();
                 default:

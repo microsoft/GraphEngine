@@ -8,15 +8,21 @@ using Trinity.Storage;
 
 namespace GraphEngine.DataImporter
 {
-    class CsvImporter : IImporter<string>
+    class SvImporter : IImporter<string>
     {
         private List<string> m_fieldNames;
+        private char separator;
+
         private JsonImporter m_jsonImporter = new JsonImporter();
 
+        public SvImporter(char FileSeparator)
+        {
+            separator = FileSeparator;
+        }
         public ICell ImportEntity(string type, string content, long? parent_id = null)
         {
             int fieldsCount = m_fieldNames.Count;
-            var fields = CsvSplit(content);
+            var fields = CsvSplit(content, separator);
             if (fields.Count != fieldsCount)
             {
                 throw new ImporterException("Invalid record. The number of a field ({0}) must equal to {1}: {2}",
@@ -60,7 +66,7 @@ namespace GraphEngine.DataImporter
         public IEnumerable<string> PreprocessInput(IEnumerable<string> input)
         {
             string headerRow = input.First();
-            m_fieldNames = new List<string>(headerRow.Split(new char[] { ',', '\t' }, StringSplitOptions.RemoveEmptyEntries));
+            m_fieldNames = new List<string>(headerRow.Split(new char[] { separator }, StringSplitOptions.RemoveEmptyEntries));
             
             return input.Skip(1);
         }
@@ -71,7 +77,7 @@ namespace GraphEngine.DataImporter
             return cellDesc.GetFieldDescriptors().ToDictionary(_ => _.Name);
         }
 
-        private static List<string> CsvSplit(string line)
+        private static List<string> CsvSplit(string line, char separator)
         {
             if (line == null)
                 throw new ArgumentNullException();
@@ -85,7 +91,7 @@ namespace GraphEngine.DataImporter
             for (; curIndex < line.Length; curIndex++)
             {
                 char c = line[curIndex];
-                if ((c == ',' || c == '\t') && cDoubleQuotes % 2 == 0)
+                if ((c == separator) && cDoubleQuotes % 2 == 0)
                 {
                     fields.Add(SanitizeCsvField(line.Substring(beginIndex, curIndex - beginIndex)));
                     beginIndex = curIndex + 1;
