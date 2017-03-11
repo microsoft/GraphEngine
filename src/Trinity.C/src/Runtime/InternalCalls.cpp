@@ -276,7 +276,7 @@ DLL_EXPORT void              CSetWriteAheadLogFile(FILE* fp) { Storage::LocalMem
 DLL_EXPORT void              CWriteAheadLogComputeChecksum(Storage::LocalMemoryStorage::Logging::PLOG_RECORD_HEADER plog, char* buffer) { Storage::LocalMemoryStorage::Logging::ComputeChecksum(plog, buffer); }
 DLL_EXPORT BOOL              CWriteAheadLogValidateChecksum(Storage::LocalMemoryStorage::Logging::PLOG_RECORD_HEADER plog, char* buffer) { return Storage::LocalMemoryStorage::Logging::ValidateChecksum(plog, buffer) ? TRUE : FALSE; }
 
-DLL_EXPORT char*             CResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta) { return Storage::LocalMemoryStorage::ResizeCell(cellId, cellEntryIndex, offset, delta); }
+DLL_EXPORT TrinityErrorCode  CResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, char*& cell_ptr) { return Storage::LocalMemoryStorage::ResizeCell(cellId, cellEntryIndex, offset, delta, cell_ptr); }
 DLL_EXPORT TrinityErrorCode  CGetCellType(cellid_t cellId, uint16_t& cellType) { return Storage::LocalMemoryStorage::GetCellType(cellId, cellType); }
 DLL_EXPORT void              CReleaseCellLock(cellid_t cellId, int32_t cellEntryIndex) { Storage::LocalMemoryStorage::ReleaseCellLock(cellId, cellEntryIndex); }
 DLL_EXPORT BOOL              CContains(cellid_t cellid) { return Storage::LocalMemoryStorage::Contains(cellid) ? TRUE : FALSE; }
