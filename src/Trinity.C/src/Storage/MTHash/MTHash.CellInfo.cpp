@@ -278,7 +278,7 @@ namespace Storage
                 LEAVE_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
                 /// add_memory_entry_flag epilogue
 
-                return TrinityErrorCode::E_SUCCESS;
+                return eResult;
             }
         }
         ReleaseBucketLock(bucket_index);
