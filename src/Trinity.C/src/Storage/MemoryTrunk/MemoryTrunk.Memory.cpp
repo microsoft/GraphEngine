@@ -162,7 +162,7 @@ namespace Storage
     EXPAND_RETURN:
         if (ret == false)
         {
-            Trinity::Diagnostics::FatalError("Trunk {0}: CommittedMemoryExpand failed.", TrunkId);
+            Trinity::Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "CommittedMemoryExpand: MemoryTrunk {0} failed to expand.", TrunkId);
         }
         return ret;
     RELOAD_RETURN:
@@ -185,7 +185,7 @@ namespace Storage
 
         temp_head_group.append_head = (uint32_t)ReloadImpl(); // Update hashtable.CellEntries
 
-        InfoLog(String("Reload: MemoryTrunk {0} reloaded."), TrunkId);
+        Diagnostics::WriteLine(Diagnostics::LogLevel::Info, "Reload: MemoryTrunk {0} reloaded.", TrunkId);
 
         if (temp_head_group.append_head == 0xFFFFFFFF) //Reload buffer allocation failed!
         {

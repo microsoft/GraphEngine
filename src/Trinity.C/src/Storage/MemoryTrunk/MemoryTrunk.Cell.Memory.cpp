@@ -11,7 +11,12 @@ namespace Storage
 
     TrinityErrorCode MemoryTrunk::AddMemoryCell(int32_t cell_length, int32_t cellEntryIndex, OUT int32_t& cell_offset)
     {
-        if (cell_length < 0) return TrinityErrorCode::E_INVALID_ARGUMENTS;
+        cell_offset = 0;
+
+        if (cell_length < 0)
+        {
+            return TrinityErrorCode::E_INVALID_ARGUMENTS;
+        }
 
         if (cell_length >= TrinityConfig::LargeObjectThreshold())
         {

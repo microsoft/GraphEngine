@@ -7,6 +7,41 @@
 
 namespace Storage
 {
+    // !Called when a free entry is acquired, but memory allocation fails.
+    // In this situation, we still hold the cell lock, but the bucket lock
+    // is released. Thus we should take the bucket lock back and scan for
+    // the free entry (the bucket chain could have changed).
+    void MTHash::_discard_locked_free_entry(uint32_t bucket_index, int32_t free_entry)
+    {
+        int32_t previous_entry_index = -1;
+
+        GetBucketLock(bucket_index);
+        for (int32_t entry_index = Buckets[bucket_index]; entry_index >= 0; entry_index = MTEntries[entry_index].NextEntry)
+        {
+            if (free_entry == entry_index)
+            {
+                std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
+                (CellEntryAtomicPtr + entry_index)->store(-1, std::memory_order_relaxed);
+
+                if (previous_entry_index < 0)
+                {
+                    Buckets[bucket_index] = MTEntries[entry_index].NextEntry;
+                }
+                else
+                {
+                    MTEntries[previous_entry_index].NextEntry = MTEntries[entry_index].NextEntry;
+                }
+
+                FreeEntry(entry_index);
+                ReleaseEntryLock(entry_index);
+                break;
+            }
+            previous_entry_index = entry_index;
+        }
+        ReleaseBucketLock(bucket_index);
+    }
+
+
     CELL_ACQUIRE_LOCK TrinityErrorCode MTHash::CGetLockedCellInfo4CellAccessor(IN cellid_t cellId, OUT int32_t &cellSize, OUT uint16_t &type, OUT char* &cellPtr, OUT int32_t &entryIndex)
     {
         uint32_t bucket_index = GetBucketIndex(cellId);
@@ -130,8 +165,7 @@ namespace Storage
         }
         else
         {
-            FreeEntry(free_entry);
-            ReleaseEntryLock(free_entry);
+            _discard_locked_free_entry(bucket_index, free_entry);
         }
 
         /// add_memory_entry_flag epilogue
@@ -189,8 +223,7 @@ namespace Storage
         }
         else
         {
-            FreeEntry(free_entry);
-            ReleaseEntryLock(free_entry);
+            _discard_locked_free_entry(bucket_index, free_entry);
         }
         /// add_memory_entry_flag epilogue
         LEAVE_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
@@ -353,8 +386,7 @@ namespace Storage
         }
         else
         {
-            FreeEntry(free_entry);
-            ReleaseEntryLock(free_entry);
+            _discard_locked_free_entry(bucket_index, free_entry);
         }
         /// add_memory_entry_flag epilogue
         LEAVE_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();

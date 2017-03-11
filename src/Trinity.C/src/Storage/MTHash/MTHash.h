@@ -206,7 +206,6 @@ namespace Storage
         // Cell manipulation interfaces
         CELL_ATOMIC         TrinityErrorCode RemoveCell            (IN cellid_t cellId);
         CELL_ATOMIC         TrinityErrorCode RemoveCell            (IN cellid_t cellId,         IN CellAccessOptions options);
-        CELL_LOCK_PROTECTED void             UpdateCellImpl        (IN int32_t  entry_index,    IN char* cell_buffer, IN int32_t cell_length);
         CELL_LOCK_PROTECTED TrinityErrorCode ResizeCell            (IN int32_t  cellEntryIndex, IN int32_t offsetInCell, IN int32_t sizeDelta, OUT char*& cell_ptr);
         /////////////////////////////////
 
@@ -229,6 +228,9 @@ namespace Storage
 
         // Checksum
         TrinityErrorCode GetMD5Hash(OUT char* hash);
+    private:
+        CELL_LOCK_PROTECTED void _discard_locked_free_entry(IN uint32_t bucket_index, IN int32_t entry_index);
+
     };
 
 #define ENTER_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION() \
