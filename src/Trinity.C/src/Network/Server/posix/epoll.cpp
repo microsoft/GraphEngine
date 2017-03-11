@@ -6,6 +6,7 @@
 #if defined(__linux__)
 #include "TrinitySocketServer.h"
 #include <sys/epoll.h>
+#include <sys/eventfd.h>
 
 
 namespace Trinity
@@ -19,9 +20,17 @@ namespace Trinity
             epoll_event ep_event;
             while (true)
             {
-                if (1 == epoll_wait(epoll_fd, &ep_event, 1, -1))
+                if (1 == epoll_wait(epoll_fd, &ep_event, /*nr_events*/ 1, /*timeout*/ -1))
                 {
-                    PerSocketContextObject* pContext = GetPerSocketContextObject(ep_event.data.fd);
+                    PerSocketContextObject* pContext = (PerSocketContextObject*)ep_event.data.ptr;
+                    if (NULL == pContext)
+                    {
+                        /* Assume that epoll set is destroyed, and we're shutting down the server. */
+                        _pContext = NULL;
+                        /* Drain the evfd semaphore */
+                        break;
+                    }
+
                     if ((ep_event.events & EPOLLERR) || (ep_event.events & EPOLLHUP))
                     {
                         CloseClientConnection(pContext, false);
@@ -29,25 +38,23 @@ namespace Trinity
                     }
                     else if (ep_event.events & EPOLLIN)
                     {
-                        if (pContext->WaitingHandshakeMessage)
+                        if (ProcessRecv(pContext))
                         {
-                            CheckHandshakeResult(pContext);
-                            continue;
+                            _pContext = pContext;
+                            break;
                         }
-                        _pContext = pContext;
-                        ProcessRecv(pContext);
-                        break;
                     }
                 }
             }
         }
 
-        bool RearmFD(int fd)
+        bool RearmFD(PerSocketContextObject* pContext)
         {
             epoll_event ep_event;
-            ep_event.data.fd = fd;
+            ep_event.data.fd = pContext->fd;
+            ep_event.data.ptr = pContext;
             ep_event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
-            return epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &ep_event) == 0;
+            return epoll_ctl(epoll_fd, EPOLL_CTL_MOD, pContext->fd, &ep_event) == 0;
         }
 
         int InitializeEventMonitor()
@@ -55,15 +62,30 @@ namespace Trinity
             epoll_fd = epoll_create1(0);
             if (-1 == epoll_fd)
             {
+                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Cannot create epoll set: {0}", errno);
                 return -1;
             }
-            printf("epoll_fd: %d\n", epoll_fd);
             return 0;
         }
 
         int UninitializeEventMonitor()
         {
-            //TODO
+            uint32_t thread_cnt = g_threadpool_size;
+            int evfd = eventfd(0, EFD_NONBLOCK);
+            epoll_event ep_event;
+            ep_event.data.fd = evfd;
+            ep_event.data.ptr = NULL;
+            // use level-trigger so that everyone is woke up when the semaphore is not drained
+            ep_event.events = EPOLLIN; 
+            epoll_ctl(epoll_fd, EPOLL_CTL_ADD, evfd, &ep_event);
+
+            for (uint32_t i = 0; i < thread_cnt; ++i)
+            {
+                eventfd_write(evfd, 1);
+            }
+            while (g_threadpool_size > 0) { usleep(100000); }
+
+            close(evfd);
             close(epoll_fd);
             return 0;
         }
@@ -72,10 +94,11 @@ namespace Trinity
         {
             epoll_event ep_event;
             ep_event.data.fd = pContext->fd;
+            ep_event.data.ptr = pContext;
             ep_event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
             if (-1 == epoll_ctl(epoll_fd, EPOLL_CTL_ADD, pContext->fd, &ep_event))
             {
-                fprintf(stderr, "cannot register connected sock fd to epoll instance");
+                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Cannot register connected sock fd to epoll instance");
                 CloseClientConnection(pContext, false);
                 return -1;
             }

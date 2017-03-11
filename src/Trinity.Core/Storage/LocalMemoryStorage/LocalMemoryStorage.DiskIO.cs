@@ -29,25 +29,28 @@ namespace Trinity.Storage
         /// TrinityErrorCode.E_SUCCESS if loading succeeds; 
         /// Other error codes indicate a failure.
         /// </returns>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public TrinityErrorCode LoadStorage()
         {
-            TrinityErrorCode ret = CLocalMemoryStorage.CLoadStorage();
-            //TODO WAL and cell type signatures should migrate to KVStore extensions.
-            InitializeWriteAheadLogFile();
-
-            LoadCellTypeSignatures();
-
-            try
+            lock (m_lock)
             {
-                StorageLoaded();
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(LogLevel.Error, "StorageLoaded event handler: {0}", ex.ToString());
-            }
+                TrinityErrorCode ret = CLocalMemoryStorage.CLoadStorage();
 
-            return ret;
+                //TODO WAL and cell type signatures should migrate to KVStore extensions.
+                InitializeWriteAheadLogFile();
+
+                LoadCellTypeSignatures();
+
+                try
+                {
+                    StorageLoaded();
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, "StorageLoaded event handler: {0}", ex.ToString());
+                }
+
+                return ret;
+            }
         }
 
         /// <summary>
@@ -57,27 +60,30 @@ namespace Trinity.Storage
         /// TrinityErrorCode.E_SUCCESS if saving succeeds;
         /// Other error codes indicate a failure.
         /// </returns>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public TrinityErrorCode SaveStorage()
         {
-            TrinityErrorCode ret = CLocalMemoryStorage.CSaveStorage();
-            if (TrinityErrorCode.E_SUCCESS == ret)
+            lock (m_lock)
             {
-                CreateWriteAheadLogFile();
+                TrinityErrorCode ret = CLocalMemoryStorage.CSaveStorage();
 
-                SaveCellTypeSignatures();
+                if (ret == TrinityErrorCode.E_SUCCESS)
+                {
+                    CreateWriteAheadLogFile();
 
-                try
-                {
-                    StorageSaved();
+                    SaveCellTypeSignatures();
+
+                    try
+                    {
+                        StorageSaved();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteLine(LogLevel.Error, "StorageSaved event handler: {0}", ex.ToString());
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Log.WriteLine(LogLevel.Error, "StorageSaved event handler: {0}", ex.ToString());
-                }
+
+                return ret;
             }
-
-            return ret;
         }
 
         /// <summary>
@@ -87,23 +93,26 @@ namespace Trinity.Storage
         /// TrinityErrorCode.E_SUCCESS if resetting succeeds; 
         /// Other error codes indicate a failure.
         /// </returns>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public TrinityErrorCode ResetStorage()
         {
-            string path          = WriteAheadLogFilePath;
-            TrinityErrorCode ret = CLocalMemoryStorage.CResetStorage();
-            ResetWriteAheadLog(path);
-
-            try
+            lock (m_lock)
             {
-                StorageReset();
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(LogLevel.Error, "StorageReset event handler: {0}", ex.ToString());
-            }
+                string path          = WriteAheadLogFilePath;
+                TrinityErrorCode ret = CLocalMemoryStorage.CResetStorage();
 
-            return ret;
+                ResetWriteAheadLog(path);
+
+                try
+                {
+                    StorageReset();
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, "StorageReset event handler: {0}", ex.ToString());
+                }
+
+                return ret;
+            }
         }
 
 
@@ -136,7 +145,7 @@ namespace Trinity.Storage
 
                 int min_len = Math.Min(schema_sig_from_storage_root.Length, schema_sig_from_tsl.Length);
 
-                for (int i=0; i<min_len; ++i)
+                for (int i = 0; i<min_len; ++i)
                 {
                     if (schema_sig_from_storage_root[i] != schema_sig_from_tsl[i])
                     {

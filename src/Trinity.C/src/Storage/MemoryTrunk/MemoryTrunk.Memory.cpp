@@ -200,7 +200,7 @@ namespace Storage
 
         temp_head_group.append_head = (uint32_t)ReloadImpl(); // Update hashtable.CellEntries
 
-        InfoLog("Memory trunk {0} reloaded.", TrunkId);
+        InfoLog(String("Memory trunk {0} reloaded."), TrunkId);
 
         if (temp_head_group.append_head == 0xFFFFFFFF) //Reload buffer allocation failed!
         {

@@ -1,4 +1,8 @@
-package io.graphengine.spark
+// Graph Engine
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+//
+package io.graphengine.spark.trinity
 
 import org.apache.spark.Partition
 import org.apache.spark.sql.types._
@@ -7,7 +11,6 @@ import org.json4s.JsonAST._
 import org.json4s.native.Json
 import org.json4s.native.JsonMethods._
 
-import scala.collection.mutable.ArrayBuffer
 import scalaj.http.{Http, HttpOptions, HttpRequest}
 
 trait TrinityClient {
@@ -29,12 +32,37 @@ class TrinityHttpJsonClient(trinityOptions: TrinityOptions)
     override def index: Int = idx
   }
 
-  def toSparkDataType(fieldType: String): DataType = fieldType match {
-    case "Int32" => IntegerType
-    case "Int64" => LongType
-    case "Boolean" => BooleanType
-    case "DateTime" => TimestampType
-    case "String" => StringType
+  def getStructField(field: JObject): StructField = {
+    implicit val formats = DefaultFormats;
+    StructField(
+      (field \ "name").extract[String],
+      getCatalystType((field \ "type").asInstanceOf[JObject]),
+      (field \ "nullable").extract[Boolean])
+  }
+
+  def getCatalystType(jObj: JObject): DataType = {
+    implicit val formats = DefaultFormats;
+    (jObj \ "typeName").extract[String] match {
+      case "System.Byte"       => ByteType
+      case "System.SByte"      => ByteType
+      case "System.Boolean"    => BooleanType
+      case "System.Char"       => StringType
+      case "System.Int16"      => IntegerType
+      case "System.UInt16"     => IntegerType
+      case "System.Int32"      => IntegerType
+      case "System.UInt32"     => LongType
+      case "System.Int64"      => LongType
+      case "System.UInt64"     => DecimalType(20, 0)
+      case "System.Single"     => FloatType
+      case "System.Double"     => DoubleType
+      case "System.Decimal"    => DecimalType.SYSTEM_DEFAULT
+      case "System.DateTime"   => TimestampType
+      case "System.Guid"       => StringType
+      case "System.String"     => StringType
+      case "ArrayType"         => ArrayType(getCatalystType((jObj \ "elementType").asInstanceOf[JObject]))
+      case "NullableValueType" => getCatalystType((jObj \ "argumentType").asInstanceOf[JObject])
+      case "StructType"        => StructType((jObj \ "fields").asInstanceOf[JArray].children.map(f => getStructField(f.asInstanceOf[JObject])))
+    }
   }
 
   def post(path: String, data: String, compress: Boolean = true): HttpRequest = Http(s"${trinityOptions.serverAddress}$path")
@@ -46,19 +74,7 @@ class TrinityHttpJsonClient(trinityOptions: TrinityOptions)
 
   override def getSchema(cellType: String): StructType = {
     val json = parse(post("/Spark/Schema/", s"""{"cellType":"${trinityOptions.cellType}"}""").asString.body)
-
-    val arrayBuffer = ArrayBuffer.empty[StructField]
-    for {JObject(x) <- json
-         JField("name", JString(name)) <- x
-         JField("dataType", JString(dataType)) <- x
-         JField("nullable", JBool(nullable)) <- x
-         JField("isList", JBool(isList)) <- x} {
-      val t = toSparkDataType(dataType)
-      val dt = if (isList) ArrayType(t, nullable) else t
-      arrayBuffer += new StructField(name, dt, nullable)
-    }
-
-    StructType(arrayBuffer.toArray)
+    getCatalystType(json.asInstanceOf[JObject]).asInstanceOf[StructType]
   }
 
   override def getPartitions(cellType: String): Array[Partition] = {

@@ -4,50 +4,38 @@
 //
 TrinitySettings 
 {
-	RootNamespace: SparkTrinity.Protocols.TSL;
+	RootNamespace: Trinity.Modules.Spark.Protocols.TSL;
 }
 
-struct SchemaRequestStruct
+struct RequestBodyStruct
 {
-	string cellType;
+	string jsonBody;
 }
 
-struct PartitionsRequestStruct
-{
-	string cellType;
-	int batchSize;
-}
-
-struct GetPartitionRequestStruct
-{
-	string cellType;
-	List<long> partition;
-}
-
-protocol Schema
+protocol GetSchema
 {
 	Type: HTTP;
-	Request: SchemaRequestStruct;
+	Request: RequestBodyStruct;
 	Response: stream;
 }
 
-protocol Partitions
+protocol GetPartitions
 {
 	Type: HTTP;
-	Request: PartitionsRequestStruct;
+	Request: RequestBodyStruct;
 	Response: stream;
 }
 
 protocol GetPartition
 {
 	Type: HTTP;
-	Request: GetPartitionRequestStruct;
+	Request: RequestBodyStruct;
 	Response: stream;
 }
 
 module SparkTrinity
 {
-	protocol Schema;
-	protocol Partitions;
+	protocol GetSchema;
+	protocol GetPartitions;
 	protocol GetPartition;
 }

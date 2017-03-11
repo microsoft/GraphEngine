@@ -73,8 +73,7 @@
     <RemoteBuildOutputs>$(RemoteRootDir)/$(ProjectName)/libTrinity.C.so</RemoteBuildOutputs>
     <AdditionalSourcesToCopyMapping>CMakeLists.txt;$(AdditionalSourcesToCopyMapping)</AdditionalSourcesToCopyMapping>
     <NMakeIncludeSearchPath>D:\linux_headers\include\x86_64-linux-gnu;D:\linux_headers\include;src;include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakePreprocessorDefinitions>
-    </NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>CORECLR</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <ItemGroup>
     <ClInclude Include="include\arch\cpu.h" />

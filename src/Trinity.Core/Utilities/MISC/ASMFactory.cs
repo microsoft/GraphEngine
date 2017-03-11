@@ -15,6 +15,7 @@ namespace Trinity.Utilities
 {
     internal class ASMFactory
     {
+#if !CORECLR
         static ASMFactory()
         {
             Log.WriteLine(LogLevel.Verbose, "ASMFactory", "ASM factory initializing.");
@@ -449,5 +450,6 @@ namespace Trinity.Utilities
             Assembly asm = Assembly.ReflectionOnlyLoad(asmBytes);
             return asm.FullName;
         }
+#endif
     }
 }

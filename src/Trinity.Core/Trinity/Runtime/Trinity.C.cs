@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,12 +15,20 @@ namespace Trinity.Core.Lib
 {
     class CTrinityC
     {
+#if !CORECLR
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
         public static extern void TestEntry();
 
+#if !CORECLR
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
-        internal static extern int GetLastError();
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern int C_GetLastError();
     }
 }

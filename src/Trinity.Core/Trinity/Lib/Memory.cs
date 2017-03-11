@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
-using System.Runtime.ConstrainedExecution;
 using System.Runtime;
 
 namespace Trinity.Core.Lib
@@ -48,7 +47,7 @@ namespace Trinity.Core.Lib
         /// <returns>true if buff1 identical to buff2, otherwise false.</returns>
         public static unsafe bool Compare(byte* buff1, byte* buff2, int count)
         {
-            return CMemory.memcmp(buff2, buff1, (ulong)count) == 0;
+            return CMemory.C_memcmp(buff2, buff1, (ulong)count) == 0;
         }
 
         /// <summary>

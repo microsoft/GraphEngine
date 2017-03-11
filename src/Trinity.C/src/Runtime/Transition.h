@@ -116,7 +116,7 @@ namespace Runtime
         //YieldProcessor();
     }
 
-#if defined (TRINITY_PLATFORM_WINDOWS)
+#if defined (TRINITY_PLATFORM_WINDOWS) && !defined (CORECLR)
 #define TRINITY_FORCE_PREEMTIVE
 //#define TRINITY_DISABLE_PREEMPTIVE
 //#define TRINITY_OPTIONAL_PREEMPTIVE

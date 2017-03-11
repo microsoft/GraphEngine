@@ -6,7 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+#if !CORECLR
 using System.Runtime.ConstrainedExecution;
+#endif
 using System.Security;
 using System.Security.Cryptography;
 
@@ -41,7 +43,9 @@ namespace Trinity.Core.Lib
             return 3;
         }
 
+#if !CORECLR
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         internal static int GetPrime(int min)
         {
             if (min < 0)
@@ -101,7 +105,11 @@ namespace Trinity.Core.Lib
             if (s != null && s.Length != 0)
             {
                 byte[] bytes = BitHelper.GetBytes(s);
+#if CORECLR
+                SHA256 hash = SHA256.Create();
+#else
                 SHA256 hash = new SHA256CryptoServiceProvider();
+#endif
                 byte[] hashBytes = hash.ComputeHash(bytes);
                 return BitHelper.ToInt64(hashBytes, 0) ^ BitHelper.ToInt64(hashBytes, 8) ^ BitHelper.ToInt64(hashBytes, 24);
             }

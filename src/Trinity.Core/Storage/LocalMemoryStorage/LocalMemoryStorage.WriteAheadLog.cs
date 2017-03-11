@@ -52,13 +52,21 @@ namespace Trinity.Storage
         public ushort CELL_TYPE;
         public byte   CHECKSUM; // 8-bit second-order check
 
+#if !CORECLR
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
         internal static extern void CWriteAheadLogComputeChecksum(LOG_RECORD_HEADER* plog, byte* bufferPtr);
 
 
+#if !CORECLR
         [SecurityCritical]
         [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
         internal static extern bool CWriteAheadLogValidateChecksum(LOG_RECORD_HEADER* plog, byte* content);
 
     }
@@ -80,7 +88,7 @@ namespace Trinity.Storage
 
         internal void Initialize()
         {
-            fixed (LOG_FILE_HEADER *p = &this)
+            fixed (LOG_FILE_HEADER* p = &this)
             {
                 p->LOG_MAGIC_HEAD[0] = 0x54;
                 p->LOG_MAGIC_HEAD[1] = 0x4c;
@@ -118,13 +126,15 @@ namespace Trinity.Storage
         /// Tries to close the WAL file.
         /// Only called when the local storage is being disposed.
         /// </summary>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         private unsafe void CloseWriteAheadLogFile()
         {
-            if (m_logfile == null) return;
-            if (0 != CStdio.fclose(m_logfile))
+            lock (m_lock)
             {
-                Log.WriteLine(LogLevel.Error, "Failed to close the log file");
+                if (m_logfile == null) return;
+                if (0 != CStdio.C_fclose(m_logfile))
+                {
+                    Log.WriteLine(LogLevel.Error, "Failed to close the log file");
+                }
             }
         }
 
@@ -132,27 +142,27 @@ namespace Trinity.Storage
         /// Initialises the write-ahead logging file associated
         /// with the primary image.
         /// </summary>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         private unsafe void InitializeWriteAheadLogFile()
         {
-            if (TrinityConfig.ReadOnly)
-                return;
-
-            Log.WriteLine(LogLevel.Info, "Initializing logging facility");
-
-            try
+            lock (m_lock)
             {
+                if (TrinityConfig.ReadOnly)
+                    return;
 
-                LoadWriteAheadLogFile();
-                /* After loading, the log file will be dropped. 
-                 * So we proceed to create a new one.  
-                 */
-                CreateWriteAheadLogFile();
+                Log.WriteLine(LogLevel.Info, "Initializing logging facility");
 
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(LogLevel.Warning, "Failed to setup the log-ahead directory: {0}", ex);
+                try
+                {
+                    LoadWriteAheadLogFile();
+                    /* After loading, the log file will be dropped. 
+                     * So we proceed to create a new one.  
+                     */
+                    CreateWriteAheadLogFile();
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Warning, "Failed to setup the log-ahead directory: {0}", ex);
+                }
             }
         }
 
@@ -166,88 +176,94 @@ namespace Trinity.Storage
         /// <summary>
         /// Drops the current log file and clean up the member variables.
         /// </summary>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         private unsafe void DropWriteAheadLogFile()
         {
-            if (TrinityConfig.ReadOnly)
-                return;
-
-            if (m_logfile == null)
-                return;
-
-            Debug.Assert(m_logfile      != null);
-            Debug.Assert(m_logfile_path != null);
-
-            Log.WriteLine(LogLevel.Info, "Dropping write-ahead-log file {0}", m_logfile_path);
-
-            if (0 != CStdio.fclose(m_logfile))
+            lock (m_lock)
             {
-                Log.WriteLine(LogLevel.Error, "Failed to close the log file");
-            }
+                if (TrinityConfig.ReadOnly)
+                    return;
 
-            try
-            {
-                File.Delete(m_logfile_path);
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(LogLevel.Error, "Failed to delete the log file: {0}", ex);
-            }
+                if (m_logfile == null)
+                    return;
 
-            _update_write_ahead_log_file(null, null);
+                Debug.Assert(m_logfile      != null);
+                Debug.Assert(m_logfile_path != null);
+
+                Log.WriteLine(LogLevel.Info, "Dropping write-ahead-log file {0}", m_logfile_path);
+
+                if (0 != CStdio.C_fclose(m_logfile))
+                {
+                    Log.WriteLine(LogLevel.Error, "Failed to close the log file");
+                }
+
+                try
+                {
+                    File.Delete(m_logfile_path);
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, "Failed to delete the log file: {0}", ex);
+                }
+
+                _update_write_ahead_log_file(null, null);
+            }
         }
 
         /// <summary>
         /// Creates a new log file for current storage.
         /// If the file exists, it will be overwritten.
         /// </summary>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         private unsafe void CreateWriteAheadLogFile()
         {
-            if (TrinityConfig.ReadOnly)
-                return;
-
-            string path = WriteAheadLogFilePath;
-
-            Log.WriteLine(LogLevel.Info, "Creating write-ahead log file {0}", path);
-
-            DropWriteAheadLogFile();
-
-            if (File.Exists(path))
+            lock (m_lock)
             {
-                BackupWriteAheadLogFile(path);
+                if (TrinityConfig.ReadOnly)
+                    return;
+
+                string path = WriteAheadLogFilePath;
+
+                Log.WriteLine(LogLevel.Info, "Creating write-ahead log file {0}", path);
+
+                DropWriteAheadLogFile();
+
+                if (File.Exists(path))
+                {
+                    BackupWriteAheadLogFile(path);
+                }
+
+                void* new_fp = null;
+                if (0 != Stdio._wfopen_s(out new_fp, path, "wb"))
+                {
+                    Log.WriteLine(LogLevel.Error, "Cannot open the log file");
+                    return;
+                }
+
+                LOG_FILE_HEADER header = LOG_FILE_HEADER.New();
+
+                GetTrinityImageSignature(&header.LOG_ASSOCIATED_IMAGE_SIGNATURE);
+
+                CStdio.C_fwrite(&header, (ulong)sizeof(LOG_FILE_HEADER), 1, new_fp);
+                CStdio.C_fflush(new_fp);
+
+                _update_write_ahead_log_file(path, new_fp);
             }
-
-            void* new_fp = null;
-            if (0 != Stdio._wfopen_s(out new_fp, path, "wb"))
-            {
-                Log.WriteLine(LogLevel.Error, "Cannot open the log file");
-                return;
-            }
-
-            LOG_FILE_HEADER header = LOG_FILE_HEADER.New();
-
-            GetTrinityImageSignature(&header.LOG_ASSOCIATED_IMAGE_SIGNATURE);
-
-            CStdio.fwrite(&header, (ulong)sizeof(LOG_FILE_HEADER), 1, new_fp);
-            CStdio.fflush(new_fp);
-
-            _update_write_ahead_log_file(path, new_fp);
         }
 
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         private void ResetWriteAheadLog(string path)
         {
-            if (TrinityConfig.ReadOnly)
-                return;
+            lock (m_lock)
+            {
+                if (TrinityConfig.ReadOnly)
+                    return;
 
-            DropWriteAheadLogFile();
+                DropWriteAheadLogFile();
 
-            if (File.Exists(path))
-                BackupWriteAheadLogFile(path);
+                if (File.Exists(path))
+                    BackupWriteAheadLogFile(path);
 
-            InitializeWriteAheadLogFile();
+                InitializeWriteAheadLogFile();
+            }
         }
 
         /// <summary>
@@ -274,9 +290,7 @@ namespace Trinity.Storage
             }
             catch (Exception ex)
             {
-
                 Log.WriteLine(LogLevel.Error, "Cannot backup the log file {0}: {1}", path, ex);
-
             }
 
         }
@@ -286,202 +300,190 @@ namespace Trinity.Storage
         /// and when the logs are synced, save the storage to an image, then
         /// drop the old log file.
         /// </summary>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         private void LoadWriteAheadLogFile()
         {
-            if (TrinityConfig.ReadOnly)
-                return;
-
-            string path = WriteAheadLogFilePath;
-
-            Log.WriteLine(LogLevel.Info, "Loading write-ahead log file {0}", path);
-
-            LOG_FILE_HEADER         header              = LOG_FILE_HEADER.New();
-            TRINITY_IMAGE_SIGNATURE current_sig         = new TRINITY_IMAGE_SIGNATURE();
-            LOG_RECORD_HEADER       record_header       = new LOG_RECORD_HEADER();
-            long                    record_cnt          = 0;
-            byte[]                  cell_buff           = new byte[128];
-            void*                   new_fp              = null;
-            bool                    ver_compatible      = true;
-            bool                    img_compatible      = true;
-
-            GetTrinityImageSignature(&current_sig);
-
-            DropWriteAheadLogFile();
-
-            if (!File.Exists(path))
+            lock (m_lock)
             {
-                Log.WriteLine(LogLevel.Info, "Write ahead log doesn't exist, quit loading.");
-                return;
-            }
+                if (TrinityConfig.ReadOnly)
+                    return;
 
-            if (0 != Stdio._wfopen_s(out new_fp, path, "rb"))
-            {
-                Log.WriteLine(LogLevel.Fatal, "Cannot open write ahead log for read. Exiting.");
-                goto load_fail;
-            }
+                string path = WriteAheadLogFilePath;
 
-            /* Read log header */
+                Log.WriteLine(LogLevel.Info, "Loading write-ahead log file {0}", path);
 
-            if (1 != CStdio.fread(&header, (ulong)sizeof(LOG_FILE_HEADER), 1, new_fp))
-            {
-                Log.WriteLine(LogLevel.Fatal, "Cannot read write-ahead-log header. Exiting.");
-                goto load_fail;
-            }
+                LOG_FILE_HEADER         header              = LOG_FILE_HEADER.New();
+                TRINITY_IMAGE_SIGNATURE current_sig         = new TRINITY_IMAGE_SIGNATURE();
+                LOG_RECORD_HEADER       record_header       = new LOG_RECORD_HEADER();
+                long                    record_cnt          = 0;
+                byte[]                  cell_buff           = new byte[128];
+                void*                   new_fp              = null;
+                bool                    ver_compatible      = true;
+                bool                    img_compatible      = true;
 
-            ver_compatible = header.CompatibilityCheck();
-            img_compatible = Memory.Compare((byte*)&header.LOG_ASSOCIATED_IMAGE_SIGNATURE, (byte*)&current_sig, sizeof(TRINITY_IMAGE_SIGNATURE));
+                GetTrinityImageSignature(&current_sig);
 
-            if (!ver_compatible || !img_compatible)
-            {
-                /* The log is not ours. Ignore if it's empty. */
-                if (0 == CStdio.feof(new_fp))
+                DropWriteAheadLogFile();
+
+                if (!File.Exists(path))
                 {
-                    Log.WriteLine(LogLevel.Warning, "Found incompatible empty write-ahead-log file, ignoring.");
-                    CStdio.fclose(new_fp);
+                    Log.WriteLine(LogLevel.Info, "Write ahead log doesn't exist, quit loading.");
                     return;
                 }
-                else if (this.CellCount != 0)
+
+                if (0 != Stdio._wfopen_s(out new_fp, path, "rb"))
                 {
-                    goto load_incompatible;
+                    Log.WriteLine(LogLevel.Fatal, "Cannot open write ahead log for read. Exiting.");
+                    goto load_fail;
                 }
-                /* Otherwise, (CellCount is 0), it indicates that we're recovering from a fresh start. */
-            }
 
-            Log.WriteLine(LogLevel.Info, "Reading log file.");
+                /* Read log header */
 
-            while (1 == CStdio.fread(&record_header, (ulong)sizeof(LOG_RECORD_HEADER), 1, new_fp))
-            {
-                if (record_header.CONTENT_LEN >= 0)
+                if (1 != CStdio.C_fread(&header, (ulong)sizeof(LOG_FILE_HEADER), 1, new_fp))
                 {
-                    /* Ensure space for the cell buffer */
-                    if (record_header.CONTENT_LEN > cell_buff.Length)
+                    Log.WriteLine(LogLevel.Fatal, "Cannot read write-ahead-log header. Exiting.");
+                    goto load_fail;
+                }
+
+                ver_compatible = header.CompatibilityCheck();
+                img_compatible = Memory.Compare((byte*)&header.LOG_ASSOCIATED_IMAGE_SIGNATURE, (byte*)&current_sig, sizeof(TRINITY_IMAGE_SIGNATURE));
+
+                if (!ver_compatible || !img_compatible)
+                {
+                    /* The log is not ours. Ignore if it's empty. */
+                    if (0 == CStdio.C_feof(new_fp))
                     {
-                        if (record_header.CONTENT_LEN < 1<<20)
+                        Log.WriteLine(LogLevel.Warning, "Found incompatible empty write-ahead-log file, ignoring.");
+                        CStdio.C_fclose(new_fp);
+                        return;
+                    }
+                    else if (this.CellCount != 0)
+                    {
+                        goto load_incompatible;
+                    }
+                    /* Otherwise, (CellCount is 0), it indicates that we're recovering from a fresh start. */
+                }
+
+                Log.WriteLine(LogLevel.Info, "Reading log file.");
+
+                while (1 == CStdio.C_fread(&record_header, (ulong)sizeof(LOG_RECORD_HEADER), 1, new_fp))
+                {
+                    if (record_header.CONTENT_LEN >= 0)
+                    {
+                        /* Ensure space for the cell buffer */
+                        if (record_header.CONTENT_LEN > cell_buff.Length)
                         {
-                            cell_buff = new byte[record_header.CONTENT_LEN * 2];
+                            if (record_header.CONTENT_LEN < 1<<20)
+                            {
+                                cell_buff = new byte[record_header.CONTENT_LEN * 2];
+                            }
+                            else
+                            {
+                                cell_buff = new byte[record_header.CONTENT_LEN];
+                            }
                         }
-                        else
+
+                        fixed (byte* p_buff = cell_buff)
                         {
-                            cell_buff = new byte[record_header.CONTENT_LEN];
+                            if (1 != CStdio.C_fread(p_buff, (ulong)record_header.CONTENT_LEN, 1, new_fp) && record_header.CONTENT_LEN != 0)
+                            {
+                                Log.WriteLine(LogLevel.Error, "Incomplete write-ahead-log record at the end of file");
+                                break;
+                            }
+
+                            if (false == LOG_RECORD_HEADER.CWriteAheadLogValidateChecksum(&record_header, p_buff))
+                            {
+                                Log.WriteLine(LogLevel.Fatal, "Checksum mismatch for log record #{0}", record_cnt);
+                                goto load_fail;
+                            }
+
+                            this.SaveCell(record_header.CELL_ID, p_buff, record_header.CONTENT_LEN, record_header.CELL_TYPE);
                         }
                     }
-
-                    fixed (byte* p_buff = cell_buff)
+                    else /* if (record_header.CONTENT_LEN < 0) */
                     {
-                        if (1 != CStdio.fread(p_buff, (ulong)record_header.CONTENT_LEN, 1, new_fp) && record_header.CONTENT_LEN != 0)
-                        {
-                            Log.WriteLine(LogLevel.Error, "Incomplete write-ahead-log record at the end of file");
-                            break;
-                        }
-
-                        if (false == LOG_RECORD_HEADER.CWriteAheadLogValidateChecksum(&record_header, p_buff))
+                        if (false == LOG_RECORD_HEADER.CWriteAheadLogValidateChecksum(&record_header, null))
                         {
                             Log.WriteLine(LogLevel.Fatal, "Checksum mismatch for log record #{0}", record_cnt);
                             goto load_fail;
                         }
-
-                        this.SaveCell(record_header.CELL_ID, p_buff, record_header.CONTENT_LEN, record_header.CELL_TYPE);
+                        this.RemoveCell(record_header.CELL_ID);
                     }
+
+                    ++record_cnt;
                 }
-                else /* if (record_header.CONTENT_LEN < 0) */
+
+                goto load_success;
+
+                ////////////////////////////////////////
+                load_incompatible:
+
+                if (ver_compatible)
                 {
-                    if (false == LOG_RECORD_HEADER.CWriteAheadLogValidateChecksum(&record_header, null))
-                    {
-                        Log.WriteLine(LogLevel.Fatal, "Checksum mismatch for log record #{0}", record_cnt);
-                        goto load_fail;
-                    }
-                    this.RemoveCell(record_header.CELL_ID);
+                    Log.WriteLine(LogLevel.Fatal, "The log file is incompatible with the current version. Cannot recover.");
                 }
 
-                ++record_cnt;
-            }
-
-            goto load_success;
-
-        ////////////////////////////////////////
-        load_incompatible:
-
-            if (ver_compatible)
-            {
-                Log.WriteLine(LogLevel.Fatal, "The log file is incompatible with the current version. Cannot recover.");
-            }
-
-            if (img_compatible)
-            {
-                Log.WriteLine(LogLevel.Fatal, "The log file has a different signature than the current image. Cannot recover.");
-            }
-
-            goto load_fail;
-
-        ////////////////////////////////////////
-        load_success:
-
-            Log.WriteLine(LogLevel.Info, "Write-ahead-log successfully loaded. Recovered {0} records.", record_cnt);
-
-            if (0 != CStdio.fclose(new_fp))
-            {
-                Log.WriteLine(LogLevel.Error, "Cannot close the write-ahead-log file. Logging disabled.");
-                return;
-            }
-
-            /* Only save storage when the log is not empty. */
-            if (record_cnt == 0 || TrinityErrorCode.E_SUCCESS == SaveStorage())
-            {
-                /* Save storage succeded. Dropping old logs now. */
-                try
+                if (img_compatible)
                 {
-                    File.Delete(path);
+                    Log.WriteLine(LogLevel.Fatal, "The log file has a different signature than the current image. Cannot recover.");
                 }
-                catch (Exception ex)
-                {
-                    Log.WriteLine(LogLevel.Error, "Failed to delete the old logs: {0}", ex);
-                }
-            }
-            else
-            {
-                /* Save storage failed. */
-                Log.WriteLine(LogLevel.Fatal, "Failed to save the recovered storage. The old log is retained");
+
                 goto load_fail;
+
+                ////////////////////////////////////////
+                load_success:
+
+                Log.WriteLine(LogLevel.Info, "Write-ahead-log successfully loaded. Recovered {0} records.", record_cnt);
+
+                if (0 != CStdio.C_fclose(new_fp))
+                {
+                    Log.WriteLine(LogLevel.Error, "Cannot close the write-ahead-log file. Logging disabled.");
+                    return;
+                }
+
+                /* Only save storage when the log is not empty. */
+                if (record_cnt == 0 || TrinityErrorCode.E_SUCCESS == SaveStorage())
+                {
+                    /* Save storage succeded. Dropping old logs now. */
+                    try
+                    {
+                        File.Delete(path);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteLine(LogLevel.Error, "Failed to delete the old logs: {0}", ex);
+                    }
+                }
+                else
+                {
+                    /* Save storage failed. */
+                    Log.WriteLine(LogLevel.Fatal, "Failed to save the recovered storage. The old log is retained");
+                    goto load_fail;
+                }
+
+                return;
+
+                ////////////////////////////////////////
+                load_fail:
+
+                if (new_fp != null)
+                    CStdio.C_fclose(new_fp);
+                Environment.Exit(-1);
             }
-
-            return;
-
-        ////////////////////////////////////////
-        load_fail:
-
-            if (new_fp != null)
-                CStdio.fclose(new_fp);
-            Environment.Exit(-1);
-
         }
 
         /// <summary>
         /// Only for unit test purpose.
         /// </summary>
-        [MethodImpl(MethodImplOptions.Synchronized)]
         internal void _reset_write_ahead_log_status()
         {
-            if (m_logfile != null)
-                CStdio.fclose(m_logfile);
+            lock (m_lock)
+            {
+                if (m_logfile != null)
+                    CStdio.C_fclose(m_logfile);
 
-            _update_write_ahead_log_file(null, null);
+                _update_write_ahead_log_file(null, null);
+            }
         }
-
-        /// <summary>
-        /// Logs a cell action to the persistent storage.
-        /// </summary>
-        /// <param name="cellId">The 64-bit cell id.</param>
-        /// <param name="cellPtr">A pointer pointing to the underlying cell buffer.</param>
-        /// <param name="cellSize">The size of the cell in bytes.</param>
-        /// <param name="cellType">A 16-bit unsigned integer indicating the cell type.</param>
-        /// <param name="options">An flag indicating a cell access option.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe static void WriteAheadLog(long cellId, byte* cellPtr, int cellSize, ushort cellType, CellAccessOptions options)
-        {
-            CLocalMemoryStorage.CWriteAheadLog(cellId, cellPtr, cellSize, cellType, options);
-        }
-
         #endregion
 
         #region Overridden write-ahead logged cell interfaces
@@ -498,7 +500,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CSaveCell(cellId, p, buff.Length, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
+                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, p, buff.Length, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
                 return eResult;
             }
         }
@@ -516,7 +518,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CSaveCell(cellId, p, buff.Length, cellType, writeAheadLogOptions);
+                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, p, buff.Length, cellType, writeAheadLogOptions);
                 return eResult;
             }
         }
@@ -535,7 +537,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CSaveCell(cellId, p + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
+                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, p + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
                 return eResult;
             }
         }
@@ -555,7 +557,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CSaveCell(cellId, p + offset, cellSize, cellType, writeAheadLogOptions);
+                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, p + offset, cellSize, cellType, writeAheadLogOptions);
                 return eResult;
             }
         }
@@ -573,7 +575,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode SaveCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int offset, int cellSize, ushort cellType)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CSaveCell(cellId, buff + offset, cellSize, cellType, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, buff + offset, cellSize, cellType, writeAheadLogOptions);
             return eResult;
         }
 
@@ -590,7 +592,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode SaveCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int offset, int cellSize)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CSaveCell(cellId, buff + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, buff + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
             return eResult;
         }
 
@@ -605,7 +607,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode SaveCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int cellSize)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CSaveCell(cellId, buff, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, buff, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
             return eResult;
         }
 
@@ -620,7 +622,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode AddCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int cellSize)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CAddCell(cellId, buff, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, buff, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
             return eResult;
         }
 
@@ -636,7 +638,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode AddCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int offset, int cellSize)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CAddCell(cellId, buff + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, buff + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
             return eResult;
         }
 
@@ -652,7 +654,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CAddCell(cellId, p, buff.Length, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
+                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, p, buff.Length, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
                 return eResult;
             }
         }
@@ -671,7 +673,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CAddCell(cellId, p + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
+                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, p + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
                 return eResult;
             }
         }
@@ -691,7 +693,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CAddCell(cellId, p + offset, cellSize, cellType, writeAheadLogOptions);
+                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, p + offset, cellSize, cellType, writeAheadLogOptions);
                 return eResult;
             }
         }
@@ -709,7 +711,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode AddCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int offset, int cellSize, ushort cellType)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CAddCell(cellId, buff + offset, cellSize, cellType, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, buff + offset, cellSize, cellType, writeAheadLogOptions);
             return eResult;
         }
 
@@ -725,7 +727,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode UpdateCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int offset, int cellSize)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CUpdateCell(cellId, buff + offset, cellSize, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedUpdateCell(cellId, buff + offset, cellSize, writeAheadLogOptions);
             return eResult;
         }
 
@@ -740,7 +742,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode UpdateCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int cellSize)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CUpdateCell(cellId, buff, cellSize, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedUpdateCell(cellId, buff, cellSize, writeAheadLogOptions);
             return eResult;
         }
 
@@ -756,7 +758,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CUpdateCell(cellId, p, buff.Length, writeAheadLogOptions);
+                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedUpdateCell(cellId, p, buff.Length, writeAheadLogOptions);
                 return eResult;
             }
         }
@@ -775,7 +777,7 @@ namespace Trinity.Storage
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CUpdateCell(cellId, p + offset, cellSize, writeAheadLogOptions);
+                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedUpdateCell(cellId, p + offset, cellSize, writeAheadLogOptions);
                 return eResult;
             }
         }
@@ -789,7 +791,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode RemoveCell(CellAccessOptions writeAheadLogOptions, long cellId)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CRemoveCell(cellId, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedRemoveCell(cellId, writeAheadLogOptions);
             return eResult;
         }
 

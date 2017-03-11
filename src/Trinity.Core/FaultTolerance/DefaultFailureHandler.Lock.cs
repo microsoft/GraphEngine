@@ -9,9 +9,11 @@ using System.Text;
 using Trinity.Diagnostics;
 using System.Net;
 using Trinity.Network.Messaging;
-using System.Runtime.ConstrainedExecution;
 using System.Threading;
 using System.Runtime;
+#if !CORECLR
+using System.Runtime.ConstrainedExecution;
+#endif
 
 namespace Trinity.FaultTolerance
 {
@@ -28,10 +30,12 @@ namespace Trinity.FaultTolerance
                 return false;
         }
 
+#if !CORECLR
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
+#endif
         private static void UnLock()
         {
-            spinlock = 0;
+           spinlock = 0;
         }
     }
 }

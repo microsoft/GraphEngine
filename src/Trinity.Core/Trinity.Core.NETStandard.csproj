@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RuntimeFrameworkVersion>2.0.0-beta-001509-00</RuntimeFrameworkVersion>
+    <AssemblyName>Trinity.Core</AssemblyName>
+    <RootNamespace>Trinity</RootNamespace>
+    <OutputTypeEx>library</OutputTypeEx>
+    <Version>1.0.15</Version>
+    <AssemblyVersion>1.0.15.0</AssemblyVersion>
+    <FileVersion>1.0.15.0</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <DefineConstants>TRACE;DEBUG;CORECLR;NETCOREAPP2_0</DefineConstants>
+    <OutputPath>..\..\bin\coreclr</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <DefineConstants>RELEASE;CORECLR;NETCOREAPP2_0</DefineConstants>
+    <OutputPath>..\..\bin\coreclr</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="BuildNuGetPkg\**" />
+    <EmbeddedResource Remove="BuildNuGetPkg\**" />
+    <None Remove="BuildNuGetPkg\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="GraphEngine.Core.nuspec" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\lib\coreclr\libTrinity.so" Link="libTrinity.so" />
+    <EmbeddedResource Include="..\..\lib\coreclr\Trinity.dll" Link="Trinity.dll" />
+  </ItemGroup>
+
+</Project>
