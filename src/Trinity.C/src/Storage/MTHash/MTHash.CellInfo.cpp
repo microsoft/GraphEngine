@@ -7,6 +7,22 @@
 
 namespace Storage
 {
+    // !Called when a free entry is acquired, but memory allocation fails.
+    // In this situation, we still hold the cell lock, but the bucket lock
+    // is released. 
+    // Note: deadlock may happen here, which means that it is not guaranteed
+    // we can get the bucket lock while still holding the cell lock. Thus
+    // we should take a pessimistic approach: we simply write -1 to the cell entry
+    // so it appears to be a deleted entry (still in the bucket chain), which could
+    // be collected later.
+    void MTHash::_discard_locked_free_entry(uint32_t bucket_index, int32_t free_entry)
+    {
+        std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
+        (CellEntryAtomicPtr + free_entry)->store(-1, std::memory_order_relaxed);
+        ReleaseEntryLock(free_entry);
+    }
+
+
     CELL_ACQUIRE_LOCK TrinityErrorCode MTHash::CGetLockedCellInfo4CellAccessor(IN cellid_t cellId, OUT int32_t &cellSize, OUT uint16_t &type, OUT char* &cellPtr, OUT int32_t &entryIndex)
     {
         return _Lookup_LockEntry_Or_NotFound(cellId,
@@ -45,6 +61,7 @@ namespace Storage
         // OUT params
         &cellPtr, &entryIndex](const int32_t entry_index, const uint32_t bucket_index, const int32_t _)
         {
+            TrinityErrorCode eResult;
             ReleaseBucketLock(bucket_index);
             int32_t updated_cell_offset = CellEntries[entry_index].offset;
 
@@ -55,11 +72,11 @@ namespace Storage
             if (size > CellSize(entry_index))
             {
                 if (updated_cell_offset < 0)
-                    memory_trunk->ExpandLargeObject(-updated_cell_offset, CellSize(entry_index), size);
+                    eResult = memory_trunk->ExpandLargeObject(-updated_cell_offset, CellSize(entry_index), size);
                 else
                 {
-                    updated_cell_offset = memory_trunk->AddMemoryCell(size, entry_index);
-                    MarkTrunkDirty();
+                    eResult = memory_trunk->AddMemoryCell(size, entry_index, updated_cell_offset);
+                    if (eResult == TrinityErrorCode::E_SUCCESS) { MarkTrunkDirty(); }
                 }
             }
 
@@ -73,16 +90,19 @@ namespace Storage
 
             CellEntry entry ={ updated_cell_offset, size };
             std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
-            (CellEntryAtomicPtr + entry_index)->store(entry.location);
+
+            if (eResult == TrinityErrorCode::E_SUCCESS)
+            {
+                (CellEntryAtomicPtr + entry_index)->store(entry.location);
+                if (CellTypeEnabled)
+                    MTEntries[entry_index].CellType = type;
+            }
 
             /// add_memory_entry_flag epilogue
             LEAVE_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
             /// add_memory_entry_flag epilogue
 
-            if (CellTypeEnabled)
-                MTEntries[entry_index].CellType = type;
-
-            return TrinityErrorCode::E_SUCCESS;
+            return eResult;
         },
         [this, cellId, type, size, 
         //OUT params
@@ -95,14 +115,14 @@ namespace Storage
             MTEntries[free_entry].Key = cellId;
             MTEntries[free_entry].NextEntry = Buckets[bucket_index];
             Buckets[bucket_index] = free_entry;
-
             ReleaseBucketLock(bucket_index);
 
             /// add_memory_entry_flag prologue
             ENTER_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
             /// add_memory_entry_flag prologue
 
-            int32_t cell_offset = memory_trunk->AddMemoryCell(size, free_entry);
+            int32_t cell_offset;
+            eResult = memory_trunk->AddMemoryCell(size, free_entry, cell_offset);
 
             // output
             if (cell_offset < 0)
@@ -112,17 +132,25 @@ namespace Storage
             entryIndex = free_entry;
             /////////////////////////////
 
-            if (CellTypeEnabled)
-                MTEntries[free_entry].CellType = type;
-
             CellEntry entry ={ cell_offset, size };
             std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
-            (CellEntryAtomicPtr + free_entry)->store(entry.location);
+
+            if (eResult == TrinityErrorCode::E_SUCCESS)
+            {
+                (CellEntryAtomicPtr + free_entry)->store(entry.location);
+                if (CellTypeEnabled)
+                    MTEntries[free_entry].CellType = type;
+            }
+            else
+            {
+                _discard_locked_free_entry(bucket_index, free_entry);
+            }
+
             /// add_memory_entry_flag epilogue
             LEAVE_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
             /// add_memory_entry_flag epilogue
 
-            return TrinityErrorCode::E_SUCCESS;
+            return eResult;
             ////////////////////////////////////////////////////////////
         });
     }
@@ -144,13 +172,13 @@ namespace Storage
             MTEntries[free_entry].Key = cellId;
             MTEntries[free_entry].NextEntry = Buckets[bucket_index];
             Buckets[bucket_index] = free_entry;
-
             ReleaseBucketLock(bucket_index);
 
             /// add_memory_entry_flag prologue
             ENTER_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
             /// add_memory_entry_flag prologue
-            int32_t cell_offset = memory_trunk->AddMemoryCell(size, free_entry);
+            int32_t cell_offset;
+            eResult = memory_trunk->AddMemoryCell(size, free_entry, cell_offset);
 
             // output
             if (cell_offset < 0)
@@ -160,17 +188,24 @@ namespace Storage
             entryIndex = free_entry;
             //////////////////////////
 
-            if (CellTypeEnabled)
-                MTEntries[free_entry].CellType = type;
-
             CellEntry entry ={ cell_offset, size };
             std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
-            (CellEntryAtomicPtr + free_entry)->store(entry.location);
+
+            if (eResult == TrinityErrorCode::E_SUCCESS)
+            {
+                (CellEntryAtomicPtr + free_entry)->store(entry.location);
+                if (CellTypeEnabled)
+                    MTEntries[free_entry].CellType = type;
+            }
+            else
+            {
+                _discard_locked_free_entry(bucket_index, free_entry);
+            }
             /// add_memory_entry_flag epilogue
             LEAVE_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
             /// add_memory_entry_flag epilogue
 
-            return TrinityErrorCode::E_SUCCESS;
+            return eResult;
         });
     }
 
@@ -182,6 +217,7 @@ namespace Storage
         &cellPtr, &entryIndex](const int32_t entry_index, const uint32_t bucket_index, const int32_t _){
             ReleaseBucketLock(bucket_index);
             int32_t updated_cell_offset = CellEntries[entry_index].offset;
+            TrinityErrorCode eResult = TrinityErrorCode::E_SUCCESS;
 
             /// add_memory_entry_flag prologue
             ENTER_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
@@ -189,11 +225,11 @@ namespace Storage
             if (size > CellSize(entry_index))
             {
                 if (updated_cell_offset < 0)
-                    memory_trunk->ExpandLargeObject(-updated_cell_offset, CellSize(entry_index), size);
+                    eResult = memory_trunk->ExpandLargeObject(-updated_cell_offset, CellSize(entry_index), size);
                 else
                 {
-                    updated_cell_offset = memory_trunk->AddMemoryCell(size, entry_index);
-                    MarkTrunkDirty();
+                    eResult = memory_trunk->AddMemoryCell(size, entry_index, updated_cell_offset);
+                    if (eResult == TrinityErrorCode::E_SUCCESS) { MarkTrunkDirty(); }
                 }
             }
 
@@ -207,12 +243,15 @@ namespace Storage
 
             CellEntry entry ={ updated_cell_offset, size };
             std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
-            (CellEntryAtomicPtr + entry_index)->store(entry.location);
+            if (eResult == TrinityErrorCode::E_SUCCESS)
+            {
+                (CellEntryAtomicPtr + entry_index)->store(entry.location);
+            }
             /// add_memory_entry_flag epilogue
             LEAVE_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
             /// add_memory_entry_flag epilogue
 
-            return TrinityErrorCode::E_SUCCESS;
+            return eResult;
 
         }, 
         [this](const uint32_t bucket_index){
@@ -290,7 +329,8 @@ namespace Storage
             /// add_memory_entry_flag prologue
             ENTER_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
             /// add_memory_entry_flag prologue
-            int32_t cell_offset = memory_trunk->AddMemoryCell(size, free_entry);
+            int32_t cell_offset;
+            eResult = memory_trunk->AddMemoryCell(size, free_entry, cell_offset);
 
 #pragma region output
             /* size is IN */
@@ -301,12 +341,21 @@ namespace Storage
             entryIndex = free_entry;
 #pragma endregion
 
-            if (CellTypeEnabled)
-                MTEntries[free_entry].CellType = type;
-
             CellEntry entry ={ cell_offset, size };
             std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
-            (CellEntryAtomicPtr + free_entry)->store(entry.location);
+
+            if (eResult == TrinityErrorCode::E_SUCCESS)
+            {
+                (CellEntryAtomicPtr + free_entry)->store(entry.location);
+                if (CellTypeEnabled)
+                    MTEntries[free_entry].CellType = type;
+                // !Note, for AddOrUse, we return E_CELL_NOT_FOUND for 'add' case
+                eResult = TrinityErrorCode::E_CELL_NOT_FOUND;
+            }
+            else
+            {
+                _discard_locked_free_entry(bucket_index, free_entry);
+            }
             /// add_memory_entry_flag epilogue
             LEAVE_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
             /// add_memory_entry_flag epilogue

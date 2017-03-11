@@ -15,6 +15,7 @@ namespace Storage
     uint64_t MTHash::MTEntryOffset;
     uint64_t MTHash::BucketMemoryOffset;
     uint64_t MTHash::BucketLockerMemoryOffset;
+    uint64_t MTHash::LookupLossyCounter = 0;
 
     void MTHash::AllocateMTHash()
     {

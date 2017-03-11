@@ -584,12 +584,12 @@ namespace Storage
             }
         }
 
-        char* ResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta)
+        TrinityErrorCode ResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, char*& cell_ptr)
         {
             TRINITY_INTEROP_ENTER_UNMANAGED();
             PTHREAD_CONTEXT p_ctx = GetCurrentThreadContext();
             p_ctx->SetLockingCell(cellId);
-            char* result = hashtables[GetTrunkId(cellId)].ResizeCell(cellEntryIndex, offset, delta);
+            TrinityErrorCode result = hashtables[GetTrunkId(cellId)].ResizeCell(cellEntryIndex, offset, delta, cell_ptr);
             TRINITY_INTEROP_LEAVE_UNMANAGED();
             return result;
         }

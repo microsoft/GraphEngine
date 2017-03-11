@@ -84,10 +84,35 @@ namespace Trinity.Storage
         /// <param name="offset">The offset starting which the underlying storage needs to expand or shrink.</param>
         /// <param name="delta">The size to expand or shrink, in bytes.</param>
         /// <returns>The pointer pointing to the underlying cell buffer after resizing.</returns>
+        /// <exception cref="System.OutOfMemoryException">Resize fails because the system runs out of memory.</exception>
+        /// <exception cref="System.ArgumentException">Resize fails because the given parameters are not valid.</exception>
+        /// <exception cref="System.Exception">Resize fails because of other errors.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public byte* ResizeCell(long cell_id, int cellEntryIndex, int offset, int delta)
         {
-            return CLocalMemoryStorage.CResizeCell(cell_id, cellEntryIndex, offset, delta);
+            byte* cellPtr;
+            TrinityErrorCode code = CLocalMemoryStorage.CResizeCell(cell_id, cellEntryIndex, offset, delta, out cellPtr);
+            if (code == TrinityErrorCode.E_SUCCESS) return cellPtr;
+
+            string err_msg = "ResizeCell encountered an error.";
+            if (code == TrinityErrorCode.E_NOMEM) throw new OutOfMemoryException(err_msg);
+            if (code == TrinityErrorCode.E_INVALID_ARGUMENTS) throw new ArgumentException(err_msg);
+            throw new Exception(err_msg);
+        }
+
+        /// <summary>
+        /// Resizes the cell with the specified cell id.
+        /// </summary>
+        /// <param name="cell_id">A 64-bit cell id.</param>
+        /// <param name="cellEntryIndex">The hash slot index corresponding to the current cell.</param>
+        /// <param name="offset">The offset starting which the underlying storage needs to expand or shrink.</param>
+        /// <param name="delta">The size to expand or shrink, in bytes.</param>
+        /// <param name="cellPtr">The pointer pointing to the underlying cell buffer after resizing.</param>
+        /// <returns>The status code, E_SUCCESS for a succeeded resize operation. When the operation does not complete successfully, the original cell pointer and the content are not affected, but the out parameter cellPtr is undefined.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public TrinityErrorCode ResizeCell(long cell_id, int cellEntryIndex, int offset, int delta, out byte* cellPtr)
+        {
+            return CLocalMemoryStorage.CResizeCell(cell_id, cellEntryIndex, offset, delta, out cellPtr);
         }
 
         /// <summary>

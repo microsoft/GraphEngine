@@ -64,11 +64,13 @@ namespace Storage
         CELL_ACQUIRE_LOCK   TrinityErrorCode CGetLockedCellInfo4CellAccessor(IN cellid_t cellId, OUT int32_t &size, OUT uint16_t &type, OUT char* &cellPtr, OUT int32_t &entryIndex);
         CELL_ACQUIRE_LOCK   TrinityErrorCode CGetLockedCellInfo4LoadCell(IN cellid_t cellId, OUT int32_t &size, OUT char* &cellPtr, OUT int32_t &entryIndex);
         CELL_ACQUIRE_LOCK   TrinityErrorCode CGetLockedCellInfo4AddOrUseCell(IN cellid_t cellId, IN OUT int32_t &size, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex);
-        CELL_LOCK_PROTECTED char*            ResizeCell(IN cellid_t cellId, IN int32_t cellEntryIndex, IN int32_t offset, IN int32_t delta);
         CELL_LOCK_PROTECTED void             ReleaseCellLock(IN cellid_t cellId, IN int32_t entryIndex);
         CELL_LOCK_PROTECTED TrinityErrorCode CLockedGetCellSize(IN cellid_t cellId, IN int32_t entryIndex, OUT int32_t &size);
 
         ///////////////////////////////////
+
+        // cell manipulation interfaces
+        TrinityErrorCode ResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, OUT char*& cell_ptr);
 
         //   non-logging interfaces
         CELL_ATOMIC         TrinityErrorCode LoadCell(cellid_t cellId, Array<char>& cellBuff);

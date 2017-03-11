@@ -71,7 +71,7 @@ namespace Trinity.Storage
 #else
         [DllImport(TrinityC.AssemblyName)]
 #endif
-        internal static extern byte* CResizeCell(long cell_id, int cellEntryIndex, int offset, int delta);
+        internal static extern TrinityErrorCode CResizeCell(long cell_id, int cellEntryIndex, int offset, int delta, out byte* cellPtr);
 
 #if !CORECLR
         [SecurityCritical]
