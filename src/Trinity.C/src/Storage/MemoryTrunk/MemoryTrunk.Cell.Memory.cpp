@@ -9,20 +9,23 @@ namespace Storage
 {
     using namespace Trinity::Diagnostics;
 
-    int32_t MemoryTrunk::AddMemoryCell(int32_t cell_length, int32_t cellEntryIndex)
+    TrinityErrorCode MemoryTrunk::AddMemoryCell(int32_t cell_length, int32_t cellEntryIndex, OUT int32_t& cell_offset)
     {
-        int32_t ret;
+        if (cell_length < 0) return TrinityErrorCode::E_INVALID_ARGUMENTS;
+
         if (cell_length >= TrinityConfig::LargeObjectThreshold())
         {
+            char* cell_ptr = (char*)AllocateLargeObject(cell_length);
+            if (cell_ptr == NULL) return TrinityErrorCode::E_NOMEM;
             lo_lock.lock();
             if (LOIndex >= LOCapacity)
             {
                 ResizeLOContainer();
             }
 
-            LOPtrs[LOIndex] = (char*)AllocateLargeObject(cell_length);
+            LOPtrs[LOIndex] = cell_ptr;
             LOPreservedSizeArray[LOIndex] = 0;
-            ret = -LOIndex;
+            cell_offset = -LOIndex;
             LOIndex++;
             LOCount++;
             lo_lock.unlock();
@@ -30,30 +33,35 @@ namespace Storage
         else
         {
             char* cell_ptr = CellAlloc((uint32_t)cell_length, cellEntryIndex);
-            ret = (int32_t)(cell_ptr - trunkPtr);
+            if (cell_ptr == NULL) return TrinityErrorCode::E_NOMEM;
+            cell_offset = (int32_t)(cell_ptr - trunkPtr);
         }
 
-        return ret;
+        return TrinityErrorCode::E_SUCCESS;
     }
 
-    void MemoryTrunk::ExpandLargeObject(int32_t lo_index, int32_t original_size, int32_t new_size)
+    TrinityErrorCode MemoryTrunk::ExpandLargeObject(int32_t lo_index, int32_t original_size, int32_t new_size)
     {
+        if (new_size < 0) return TrinityErrorCode::E_INVALID_ARGUMENTS;
+
         if ((new_size - original_size) <= LOPreservedSizeArray[lo_index])
         {
             LOPreservedSizeArray[lo_index] -= (new_size - original_size);
-            return;
+            return TrinityErrorCode::E_SUCCESS;
         }
 
         int32_t roundup_newsize = Memory::RoundUpToPage(new_size);
-        LOPreservedSizeArray[lo_index] = (roundup_newsize - new_size) + TrinityConfig::LOReservationSize; //Reserve 1MB bytes more every time
-
+        //Reserve 1MB more every time
         if (!Memory::ExpandMemoryRegion(LOPtrs[lo_index], (uint64_t)Memory::RoundUpToPage(original_size), (uint64_t)(roundup_newsize + TrinityConfig::LOReservationSize)))
         {
-            FatalError(1, "Memory Trunk {0}: Cannot expand large object. \n MemoryTrunk: ExpandLargeObject : Out of memory", TrunkId);
+            Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Memory Trunk {0}: Cannot expand large object. \n MemoryTrunk: ExpandLargeObject : Out of memory", TrunkId);
+            return TrinityErrorCode::E_NOMEM;
         }
+        LOPreservedSizeArray[lo_index] = (roundup_newsize - new_size) + TrinityConfig::LOReservationSize; 
+        return TrinityErrorCode::E_SUCCESS;
     }
 
-    void MemoryTrunk::ShrinkLargeObject(int32_t lo_index, int32_t original_size, int32_t new_size)
+    TrinityErrorCode MemoryTrunk::ShrinkLargeObject(int32_t lo_index, int32_t original_size, int32_t new_size)
     {
         uint32_t roundedup_currentsize = Memory::RoundUpToPage(original_size);
         uint32_t roundedup_newsize = Memory::RoundUpToPage(new_size);
@@ -63,6 +71,8 @@ namespace Storage
         {
             Memory::ShrinkMemoryRegion(LOPtrs[lo_index], roundedup_currentsize, roundedup_newsize);
             LOPreservedSizeArray[lo_index] = Memory::RoundUpToPage(new_size) - new_size;
-        }        
+        }
+
+        return TrinityErrorCode::E_SUCCESS;
     }
 }

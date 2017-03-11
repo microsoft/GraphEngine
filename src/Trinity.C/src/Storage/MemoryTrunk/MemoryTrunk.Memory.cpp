@@ -42,7 +42,9 @@ namespace Storage
             {
                 continue;
             }
-            Trinity::Diagnostics::FatalError("Memory Trunk {0} is out of Memory. \n MemoryTrunk: CellAlloc : Out of memory", TrunkId);
+            alloc_lock.unlock();
+            Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "CellAlloc: MemoryTrunk {0} is out of Memory.", TrunkId);
+            return NULL;
         } while (true);
     }
 

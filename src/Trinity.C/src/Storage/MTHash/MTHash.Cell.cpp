@@ -196,9 +196,10 @@ namespace Storage
     // --------------------------------------------
     // |length|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|
     // --------------------------------------------
-    CELL_LOCK_PROTECTED char* MTHash::ResizeCell(int32_t cellEntryIndex, int32_t offsetInCell, int32_t sizeDelta)
+    CELL_LOCK_PROTECTED TrinityErrorCode MTHash::ResizeCell(int32_t cellEntryIndex, int32_t offsetInCell, int32_t sizeDelta, OUT char*& _cell_ptr)
     {
-        char* _cell_ptr = nullptr;
+        _cell_ptr = nullptr;
+        TrinityErrorCode eResult = TrinityErrorCode::E_SUCCESS;
         int32_t currentOffset = CellEntries[cellEntryIndex].offset;
 
         if (currentOffset < 0)//Large object
@@ -208,7 +209,8 @@ namespace Storage
 
             if (sizeDelta > 0)
             {
-                memory_trunk->ExpandLargeObject(-currentOffset, CellEntries[cellEntryIndex].size, CellEntries[cellEntryIndex].size + sizeDelta);
+                eResult = memory_trunk->ExpandLargeObject(-currentOffset, CellEntries[cellEntryIndex].size, CellEntries[cellEntryIndex].size + sizeDelta);
+                if (TrinityErrorCode::E_SUCCESS != eResult) { return eResult; }
                 memmove(
                     _cell_ptr + offsetInCell + sizeDelta,
                     _cell_ptr + offsetInCell,
@@ -220,7 +222,8 @@ namespace Storage
                     _cell_ptr + offsetInCell,
                     _cell_ptr + offsetInCell - sizeDelta,
                     (uint64_t)(CellEntries[cellEntryIndex].size - offsetInCell + sizeDelta));
-                memory_trunk->ShrinkLargeObject(-currentOffset, CellEntries[cellEntryIndex].size, CellEntries[cellEntryIndex].size + sizeDelta);
+                eResult = memory_trunk->ShrinkLargeObject(-currentOffset, CellEntries[cellEntryIndex].size, CellEntries[cellEntryIndex].size + sizeDelta);
+                if (TrinityErrorCode::E_SUCCESS != eResult) { return eResult; }
             }
             CellEntries[cellEntryIndex].size += sizeDelta;
             /////////////////////////////////////////////////////////
@@ -235,7 +238,7 @@ namespace Storage
                  * Actual allocated space   (AS) = CS up-aligned to RB.
                  * Occupied bytes           (OB) = occupied reserved space, this is not AS.
                  * New size to allocate     (TA) = (CS + delta), TA is up-aligned to the boundary of reserved memory.
-				 *								   If (OB + delta) >= RB, we have run out of reserved space.
+                 *								   If (OB + delta) >= RB, we have run out of reserved space.
                  *                                 In this case, we grow RF until it holds at least one delta size, or
                  *                                 until RF == 22 (in which case we may need multiple RB
                  *                                 to hold one delta).
@@ -258,26 +261,28 @@ namespace Storage
                         reserved_bytes = 1 << reservation_factor;
                     }
 
-					int32_t new_cell_size = (CellSize(cellEntryIndex) + sizeDelta);
+                    int32_t new_cell_size = (CellSize(cellEntryIndex) + sizeDelta);
                     // size_to_alloc is up-aligned to the boundary of reserved memory
                     int32_t size_to_alloc = new_cell_size & ~(reserved_bytes - 1);
-					while (size_to_alloc <= new_cell_size)
-						size_to_alloc += reserved_bytes;
+                    while (size_to_alloc <= new_cell_size)
+                        size_to_alloc += reserved_bytes;
 
-					if (size_to_alloc >= TrinityConfig::LargeObjectThreshold())
+                    if (size_to_alloc >= TrinityConfig::LargeObjectThreshold())
                     {
                         //! Fall back to non-reserving
-						size_to_alloc = new_cell_size;
+                        size_to_alloc = new_cell_size;
                     }
 
-					if (size_to_alloc == new_cell_size)
-						reservation_factor = 0; //! reset the reservation factor
+                    if (size_to_alloc == new_cell_size)
+                        reservation_factor = 0; //! reset the reservation factor
 
                     /// add_memory_entry_flag prologue
                     ENTER_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
                     /// add_memory_entry_flag prologue
 
-					newOffset = memory_trunk->AddMemoryCell(size_to_alloc, cellEntryIndex);
+                    eResult = memory_trunk->AddMemoryCell(size_to_alloc, cellEntryIndex, newOffset);
+                    if (eResult != TrinityErrorCode::E_SUCCESS) goto cleanup;
+
                     _cell_ptr = (newOffset >= 0) ? (memory_trunk->trunkPtr + newOffset) : (memory_trunk->LOPtrs[-newOffset]);
                     currentOffset = CellEntries[cellEntryIndex].offset;//currentOffset must be updated(as Reload may happen)
 
@@ -302,6 +307,7 @@ namespace Storage
                     //This line will potentially turn the cell into a LO. Don't move it before the "if"
                     CellEntries[cellEntryIndex].offset = newOffset;
 
+                cleanup:
                     /// add_memory_entry_flag epilogue
                     LEAVE_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
                     /// add_memory_entry_flag epilogue
@@ -329,6 +335,7 @@ namespace Storage
             }
             ////////////////////////////////////////////////////////////////////////////////////
         }
-        return _cell_ptr;
+
+        return eResult;
     }
 }
