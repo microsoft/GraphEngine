@@ -98,27 +98,27 @@ namespace Storage
                         eResult = memory_trunk->ExpandLargeObject(-updated_cell_offset, CellSize(entry_index), size);
                     else
                     {
-                        eResult = memory_trunk->AddMemoryCell(size, entry_index, updated_cell_offset);
+                        eResult = memory_trunk->AddMemoryCell(size, entry_index, OUT updated_cell_offset);
                         if (eResult == TrinityErrorCode::E_SUCCESS) { MarkTrunkDirty(); }
                     }
                 }
 
-                // output
-                if (updated_cell_offset < 0)
-                    cellPtr = memory_trunk->LOPtrs[-updated_cell_offset];
-                else
-                    cellPtr = memory_trunk->trunkPtr + updated_cell_offset;
-                entryIndex = entry_index;
                 /////////////////////////
-
-                CellEntry entry ={ updated_cell_offset, size };
-                std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
 
                 if (eResult == TrinityErrorCode::E_SUCCESS)
                 {
+                    CellEntry entry ={ updated_cell_offset, size };
+                    std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
                     (CellEntryAtomicPtr + entry_index)->store(entry.location);
+
                     if (CellTypeEnabled)
                         MTEntries[entry_index].CellType = type;
+                    // output
+                    if (updated_cell_offset < 0)
+                        cellPtr = memory_trunk->LOPtrs[-updated_cell_offset];
+                    else
+                        cellPtr = memory_trunk->trunkPtr + updated_cell_offset;
+                    entryIndex = entry_index;
                 }
 
                 /// add_memory_entry_flag epilogue
@@ -144,24 +144,22 @@ namespace Storage
         /// add_memory_entry_flag prologue
 
         int32_t cell_offset;
-        eResult = memory_trunk->AddMemoryCell(size, free_entry, cell_offset);
-
-        // output
-        if (cell_offset < 0)
-            cellPtr = memory_trunk->LOPtrs[-cell_offset];
-        else
-            cellPtr = memory_trunk->trunkPtr + cell_offset;
-        entryIndex = free_entry;
-        /////////////////////////////
-
-        CellEntry entry ={ cell_offset, size };
-        std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
+        eResult = memory_trunk->AddMemoryCell(size, free_entry, OUT cell_offset);
 
         if (eResult == TrinityErrorCode::E_SUCCESS)
         {
+            CellEntry entry ={ cell_offset, size };
+            std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
             (CellEntryAtomicPtr + free_entry)->store(entry.location);
+
             if (CellTypeEnabled)
                 MTEntries[free_entry].CellType = type;
+            // output
+            if (cell_offset < 0)
+                cellPtr = memory_trunk->LOPtrs[-cell_offset];
+            else
+                cellPtr = memory_trunk->trunkPtr + cell_offset;
+            entryIndex = free_entry;
         }
         else
         {
@@ -202,24 +200,23 @@ namespace Storage
         ENTER_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
         /// add_memory_entry_flag prologue
         int32_t cell_offset;
-        eResult = memory_trunk->AddMemoryCell(size, free_entry, cell_offset);
+        eResult = memory_trunk->AddMemoryCell(size, free_entry, OUT cell_offset);
 
-        // output
-        if (cell_offset < 0)
-            cellPtr = memory_trunk->LOPtrs[-cell_offset];
-        else
-            cellPtr = memory_trunk->trunkPtr + cell_offset;
-        entryIndex = free_entry;
-        //////////////////////////
-
-        CellEntry entry ={ cell_offset, size };
-        std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
 
         if (eResult == TrinityErrorCode::E_SUCCESS)
         {
+            CellEntry entry ={ cell_offset, size };
+            std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
             (CellEntryAtomicPtr + free_entry)->store(entry.location);
+
             if (CellTypeEnabled)
                 MTEntries[free_entry].CellType = type;
+            // output
+            if (cell_offset < 0)
+                cellPtr = memory_trunk->LOPtrs[-cell_offset];
+            else
+                cellPtr = memory_trunk->trunkPtr + cell_offset;
+            entryIndex = free_entry;
         }
         else
         {
@@ -255,24 +252,23 @@ namespace Storage
                         eResult = memory_trunk->ExpandLargeObject(-updated_cell_offset, CellSize(entry_index), size);
                     else
                     {
-                        eResult = memory_trunk->AddMemoryCell(size, entry_index, updated_cell_offset);
+                        eResult = memory_trunk->AddMemoryCell(size, entry_index, OUT updated_cell_offset);
                         if (eResult == TrinityErrorCode::E_SUCCESS) { MarkTrunkDirty(); }
                     }
                 }
 
-                // output
-                if (updated_cell_offset < 0)
-                    cellPtr = memory_trunk->LOPtrs[-updated_cell_offset];
-                else
-                    cellPtr = memory_trunk->trunkPtr + updated_cell_offset;
-                entryIndex = entry_index;
-                ////////////////////////////
-
-                CellEntry entry ={ updated_cell_offset, size };
-                std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
                 if (eResult == TrinityErrorCode::E_SUCCESS)
                 {
+                    CellEntry entry ={ updated_cell_offset, size };
+                    std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
                     (CellEntryAtomicPtr + entry_index)->store(entry.location);
+
+                    // output
+                    if (updated_cell_offset < 0)
+                        cellPtr = memory_trunk->LOPtrs[-updated_cell_offset];
+                    else
+                        cellPtr = memory_trunk->trunkPtr + updated_cell_offset;
+                    entryIndex = entry_index;
                 }
                 /// add_memory_entry_flag epilogue
                 LEAVE_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
@@ -326,9 +322,13 @@ namespace Storage
                 GetEntryLock(entry_index);
                 ReleaseBucketLock(bucket_index);
 
+                if (CellTypeEnabled && MTEntries[entry_index].CellType != type)
+                {
+                    ReleaseEntryLock(entry_index);
+                    return TrinityErrorCode::E_WRONG_CELL_TYPE;
+                }
                 int32_t cell_offset = CellEntries[entry_index].offset;
 
-#pragma region output
                 /* size is OUT */
                 size = CellSize(entry_index);
                 if (cell_offset < 0)
@@ -336,13 +336,6 @@ namespace Storage
                 else
                     cellPtr = memory_trunk->trunkPtr + cell_offset;
                 entryIndex = entry_index;
-#pragma endregion
-
-                if (CellTypeEnabled && MTEntries[entry_index].CellType != type)
-                {
-                    ReleaseEntryLock(entry_index);
-                    return TrinityErrorCode::E_WRONG_CELL_TYPE;
-                }
 
                 return TrinityErrorCode::E_CELL_FOUND;
             }
@@ -362,25 +355,22 @@ namespace Storage
         ENTER_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
         /// add_memory_entry_flag prologue
         int32_t cell_offset;
-        eResult = memory_trunk->AddMemoryCell(size, free_entry, cell_offset);
-
-#pragma region output
-        /* size is IN */
-        if (cell_offset < 0)
-            cellPtr = memory_trunk->LOPtrs[-cell_offset];
-        else
-            cellPtr = memory_trunk->trunkPtr + cell_offset;
-        entryIndex = free_entry;
-#pragma endregion
-
-        CellEntry entry ={ cell_offset, size };
-        std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
+        eResult = memory_trunk->AddMemoryCell(size, free_entry, OUT cell_offset);
 
         if (eResult == TrinityErrorCode::E_SUCCESS)
         {
+            CellEntry entry ={ cell_offset, size };
+            std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
             (CellEntryAtomicPtr + free_entry)->store(entry.location);
+
             if (CellTypeEnabled)
                 MTEntries[free_entry].CellType = type;
+            /* size is IN, cellPtr is OUT */
+            if (cell_offset < 0)
+                cellPtr = memory_trunk->LOPtrs[-cell_offset];
+            else
+                cellPtr = memory_trunk->trunkPtr + cell_offset;
+            entryIndex = free_entry;
             // !Note, for AddOrUse, we return E_CELL_NOT_FOUND for 'add' case
             eResult = TrinityErrorCode::E_CELL_NOT_FOUND;
         }
