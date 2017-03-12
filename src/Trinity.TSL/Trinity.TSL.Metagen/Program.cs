@@ -55,10 +55,10 @@ namespace Trinity.TSL.Metagen
         {
             try
             {
+                filename              = Path.GetFullPath(filename);
                 String literal        = File.ReadAllText(filename);
                 string name           = Path.GetFileNameWithoutExtension(filename);
-                string dir_path       = Path.GetFullPath(filename);
-                dir_path              = dir_path.Substring(0, dir_path.Length - Path.GetFileName(filename).Length);
+                string dir_path       = filename.Substring(0, filename.Length - Path.GetFileName(filename).Length).Trim('\\');
                 dir_path              = Path.Combine(s_root, @"..\Trinity.TSL.CodeGen\", dir_path.Substring(s_root.Length));
                 string targetFilename = Path.Combine(dir_path, Path.GetFileName(filename)+".cpp");
                 bool needProcess      = (File.GetLastWriteTime(targetFilename) < File.GetLastWriteTime(filename));
