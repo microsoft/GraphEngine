@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -223,27 +225,28 @@ namespace GraphEngine.DataImporter
 
         public static IImporter GetImporter(string path)
         {
-            string filename = Path.GetFileName(path);
-            string filetype = Path.GetExtension(filename).ToLower();
-
-            if (filetype == ".gz" || filetype == ".zip")
+            IEnumerable<string> text = FileReader.ReadFile(path);
+            string headerRow = text.First();
+            JObject jobj = null;
+            try
             {
-                filetype = Path.GetExtension(Path.GetFileNameWithoutExtension(filename)).ToLower();
+                jobj = JObject.Parse(headerRow);
+                return new JsonImporter();
             }
-
-            switch (filetype)
+            catch(Exception)
             {
-                case ".json":
-                case ".txt":
-                    return new JsonImporter();
-                case ".csv":
-                    return new SvImporter(',');
-                case ".tsv":
-                    return new SvImporter('\t');
-                case ".ntriples":
+                if (headerRow.Count(c => c == ',') >= headerRow.Count(c => c == '\t')&&headerRow.Count(c => c == ',') >= headerRow.Count(c => c == '/'))
+                {
+                    return new DsvImporter(new char [] { ',' });
+                }
+                else if (headerRow.Count(c => c == '\t') >= headerRow.Count(c => c == ',')&&headerRow.Count(c => c == '\t') >= headerRow.Count(c => c == '/'))
+                {
+                    return new DsvImporter(new char [] { '\t' });
+                }
+                else
+                {
                     return g_opts.Sorted ? (IImporter)new UnsortedRDFImporter() : new SortedRDFImporter();
-                default:
-                    return null;
+                }
             }
         }
     }

@@ -62,7 +62,7 @@
   <ItemGroup>
     <Compile Include="CmdOptions.cs" />
     <Compile Include="CodeWriter.cs" />
-    <Compile Include="SvImporter.cs" />
+    <Compile Include="DsvImporter.cs" />
     <Compile Include="FileReader.cs" />
     <Compile Include="IGenerator.cs" />
     <Compile Include="Importer.cs" />
