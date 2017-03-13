@@ -45,7 +45,7 @@ namespace Trinity.Storage
         /// which already calls InternalCalls.__init(), it is not necessary to
         /// make a C wrapper for this struct.
         /// </summary>
-        static LOG_RECORD_HEADER() { InternalCalls.__init(); }
+        static LOG_RECORD_HEADER() { TrinityC.Init(); }
 
         public long   CELL_ID;
         public int    CONTENT_LEN;

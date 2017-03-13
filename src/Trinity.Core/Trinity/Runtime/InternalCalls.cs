@@ -168,18 +168,6 @@ namespace Trinity
     }
     partial class InternalCalls
     {
-        static unsafe InternalCalls()
-        {
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-            {
-                TrinityC.Ping();
-                // ---------------- Methods are JITted in Register(), RuntimeHelpers.PrepareMethod
-                Win32.NativeAPI.timeBeginPeriod(1);
-                __INIT_TRINITY_C__();
-                Register();
-            }
-        }
-
         /// <summary>
         /// Hotswap a C# method with a C function in internal call table
         /// </summary>
@@ -225,7 +213,11 @@ namespace Trinity
                 throw new InvalidOperationException("HotSwap: Failed to find method!");
             }
         }
-        private static unsafe void Register()
+
+        /// <summary>
+        /// !!Caution: Only call this from TrinityC.cs
+        /// </summary>
+        internal static unsafe void Register()
         {
             foreach (var entry in iCallEntries)
             {
@@ -335,14 +327,6 @@ namespace Trinity
             return ptype.FullName;
         }
 
-        internal static void __init()
-        {
-            //Nothing, just trigger the static constructor
-        }
-
-        [DllImport(TrinityC.AssemblyName)]
-        private static extern unsafe void __INIT_TRINITY_C__();
-
         [DllImport(TrinityC.AssemblyName)]
         static private unsafe extern bool RegisterInternalCall(void* MethodTablePtr, string name);
 
@@ -354,25 +338,8 @@ namespace Trinity
     {
         static InternalCalls()
         {
-            // TODO we have to figure out whether to auto-release Trinity.C for multiple platforms,
-            // or to rely on a nuget package to deliver the correct binary for a specific platform.
-
             TrinityC.Ping();
-            __INIT_TRINITY_C__();
-
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-            {
-                Win32.NativeAPI.timeBeginPeriod(1);
-            }
         }
-
-        internal static void __init()
-        {
-            //Nothing, just trigger the static constructor
-        }
-
-        [DllImport(TrinityC.AssemblyName)]
-        private static extern unsafe void __INIT_TRINITY_C__();
     }
 
 #endif

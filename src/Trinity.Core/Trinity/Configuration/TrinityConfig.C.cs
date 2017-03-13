@@ -18,7 +18,7 @@ namespace Trinity
     {
         static CTrinityConfig()
         {
-            TrinityC.Ping();
+            TrinityC.Init();
         }
 
         [DllImport(TrinityC.AssemblyName)]

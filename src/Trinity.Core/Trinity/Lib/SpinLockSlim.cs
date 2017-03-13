@@ -19,7 +19,7 @@ namespace Trinity.Core.Lib
     {
         static SpinLockSlim()
         {
-            InternalCalls.__init();
+            TrinityC.Init();
         }
 
         internal static void GetLock(ref int spinlock)

@@ -80,7 +80,7 @@ namespace Trinity.Storage
 
         static LocalMemoryStorage()
         {
-            InternalCalls.__init();
+            TrinityC.Init();
             TrinityConfig.LoadTrinityConfig();
             //BackgroundThread.StartMemoryStorageBgThreads();
         }
@@ -159,7 +159,7 @@ namespace Trinity.Storage
                 CLocalMemoryStorage.CDispose();
                 initialized = false;
             }
-            if(disposing)
+            if (disposing)
             {
                 GC.SuppressFinalize(this);
             }

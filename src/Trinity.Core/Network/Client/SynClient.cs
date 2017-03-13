@@ -38,7 +38,7 @@ namespace Trinity.Network.Client
 
         static SynClient()
         {
-            InternalCalls.__init();
+            TrinityC.Init();
             HeartbeatBuffer = (byte*)Memory.malloc(TrinityProtocol.MsgHeader);
             *(int*)HeartbeatBuffer = TrinityProtocol.TrinityMsgHeader;
             *(HeartbeatBuffer + TrinityProtocol.MsgTypeOffset) = (byte)TrinityMessageType.PRESERVED_SYNC;
