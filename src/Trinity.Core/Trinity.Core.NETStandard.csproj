@@ -38,8 +38,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="..\..\lib\coreclr\libTrinity.so" Link="libTrinity.so" />
-    <EmbeddedResource Include="..\..\lib\coreclr\Trinity.dll" Link="Trinity.dll" />
+    <EmbeddedResource Include="..\..\bin\coreclr\libTrinity.so" Link="libTrinity.so" />
+    <EmbeddedResource Include="..\..\bin\coreclr\Trinity.dll" Link="Trinity.dll" />
   </ItemGroup>
 
 </Project>

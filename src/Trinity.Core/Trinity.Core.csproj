@@ -317,7 +317,7 @@
     <Compile Include="Utilities\MISC\ProgressBar.cs" />
     <Compile Include="Diagnostics\TrinityDebug.cs" />
     <Compile Include="Win32\NativeAPI.cs" />
-    <EmbeddedResource Include="..\..\lib\Trinity.C.dll">
+    <EmbeddedResource Include="..\..\bin\Trinity.C.dll">
       <Link>Trinity.C.dll</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
