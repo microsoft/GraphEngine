@@ -115,7 +115,7 @@ namespace Trinity.Storage
 
     /**
      * Note: There are a lot of stdio operations in the code in this file. 
-     *       These lines are inside LocalMemoryStorage, which calls InternalCalls.__init(),
+     *       These lines are inside LocalMemoryStorage, which calls TrinityC.Init(),
      *       so that we can call CStdio directly.
      */
 

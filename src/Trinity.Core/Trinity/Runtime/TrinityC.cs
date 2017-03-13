@@ -63,32 +63,13 @@ namespace Trinity
                     }
                 }
 
-                if (found)
+                if (!found)
                 {
-                    return;
+#endif
+                    ReleaseNativeAssembly(native_assembly_name, trinity_c_path);
+#if !CORECLR
                 }
 #endif
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                Stream resourceStream = assembly.GetManifestResourceStream("Trinity." + native_assembly_name);
-                try
-                {
-                    using (FileStream fs = new FileStream(trinity_c_path, FileMode.Create))
-                    {
-                        resourceStream.CopyTo(fs);
-                        fs.Flush();
-                    }
-                    if (resourceStream != null)
-                        resourceStream.Dispose();
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Trinity.C cannot be released, please make sure the working directory is writable.");
-                    if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                    {
-                        Win32.NativeAPI.timeEndPeriod(1);
-                    }
-                    Environment.Exit(0);
-                }
 
                 /* native assembly is released. initialize Trinity.C now */
                 __INIT_TRINITY_C__();
@@ -102,6 +83,31 @@ namespace Trinity
                 }
 
                 s_initialized = true;
+            }
+        }
+
+        private static void ReleaseNativeAssembly(string native_assembly_name, string trinity_c_path)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            Stream resourceStream = assembly.GetManifestResourceStream("Trinity." + native_assembly_name);
+            try
+            {
+                using (FileStream fs = new FileStream(trinity_c_path, FileMode.Create))
+                {
+                    resourceStream.CopyTo(fs);
+                    fs.Flush();
+                }
+                if (resourceStream != null)
+                    resourceStream.Dispose();
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Trinity.C cannot be released, please make sure the working directory is writable.");
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    Win32.NativeAPI.timeEndPeriod(1);
+                }
+                Environment.Exit(0);
             }
         }
 
