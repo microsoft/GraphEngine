@@ -45,19 +45,6 @@ namespace Trinity
          *************************************************************/
         static private List<InternalCallEntry> iCallEntries = new List<InternalCallEntry>
         {
-    #region TrinityConfig
-            new InternalCallEntry("SetStorageRoot"                          , typeof(CTrinityConfig)),
-            new InternalCallEntry("CReadOnly"                               , typeof(CTrinityConfig)),
-            new InternalCallEntry("CSetReadOnly"                            , typeof(CTrinityConfig)),
-            new InternalCallEntry("CTrunkCount"                             , typeof(CTrinityConfig)),
-            new InternalCallEntry("CSetTrunkCount"                          , typeof(CTrinityConfig)),
-            new InternalCallEntry("GetStorageCapacityProfile"               , typeof(CTrinityConfig)),
-            new InternalCallEntry("SetStorageCapacityProfile"               , typeof(CTrinityConfig)),
-            new InternalCallEntry("CLargeObjectThreshold"                   , typeof(CTrinityConfig)),
-            new InternalCallEntry("CSetLargeObjectThreshold"                , typeof(CTrinityConfig)),
-            new InternalCallEntry("CSetGCDefragInterval"                    , typeof(CTrinityConfig)),
-    #endregion
-
     #region File I/O
             new InternalCallEntry("C_wfopen_s"                              , typeof(CStdio)),
             new InternalCallEntry("C_fread"                                 , typeof(CStdio)),

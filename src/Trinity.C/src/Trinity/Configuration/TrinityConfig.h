@@ -86,10 +86,8 @@ namespace TrinityConfig
     PROPERTY(int32_t, LargeObjectThreshold);
 
     String StorageRoot();
-    void SetStorageRoot(const char* buffer, int32_t length);
     void SetStorageRoot(String storageRoot);
     String LogDirectory();
-    void SetLogDirectory(const char* buffer, int32_t length);
     void SetLogDirectory(String logDir);
     void SetGCDefragInterval(int32_t interval);
 
