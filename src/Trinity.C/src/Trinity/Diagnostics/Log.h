@@ -86,17 +86,5 @@ namespace Trinity
         {
             FatalError(1, format, arguments...);
         }
-
-
-#ifdef TRINITY_DEBUG
-#define FatalLog(format, ...) Trinity::Diagnostics::WriteLine(Trinity::Diagnostics::LogLevel::Fatal, __FILE__, __LINE__, format, __VA_ARGS__)
-#define ErrorLog(format, ...) Trinity::Diagnostics::WriteLine(Trinity::Diagnostics::LogLevel::Error, __FILE__, __LINE__, format, __VA_ARGS__)
-#define WarningLog(format, ...) Trinity::Diagnostics::WriteLine(Trinity::Diagnostics::LogLevel::Warning, __FILE__, __LINE__, format, __VA_ARGS__)
-#define InfoLog(format, ...) Trinity::Diagnostics::WriteLine(Trinity::Diagnostics::LogLevel::Info, __FILE__, __LINE__, format, __VA_ARGS__)
-#define DebugLog(format, ...) Trinity::Diagnostics::WriteLine(Trinity::Diagnostics::LogLevel::Debug, __FILE__, __LINE__, format, __VA_ARGS__)
-#define VerboseLog(format, ...) Trinity::Diagnostics::WriteLine(Trinity::Diagnostics::LogLevel::Verbose, __FILE__, __LINE__, format, __VA_ARGS__)
-#else
-#define Log(level, format, ...)
-#endif
     }
 }
