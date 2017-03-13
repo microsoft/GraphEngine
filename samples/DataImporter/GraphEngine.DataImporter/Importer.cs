@@ -225,28 +225,58 @@ namespace GraphEngine.DataImporter
 
         public static IImporter GetImporter(string path)
         {
-            IEnumerable<string> text = FileReader.ReadFile(path);
-            string headerRow = text.First();
-            JObject jobj = null;
-            try
+            string filename = Path.GetFileName(path);
+            string filetype = Path.GetExtension(filename).ToLower();
+
+            if (filetype == ".gz" || filetype == ".zip")
             {
-                jobj = JObject.Parse(headerRow);
-                return new JsonImporter();
+                filetype = Path.GetExtension(Path.GetFileNameWithoutExtension(filename)).ToLower();
             }
-            catch(Exception)
+
+            switch (filetype)
             {
-                if (headerRow.Count(c => c == ',') >= headerRow.Count(c => c == '\t')&&headerRow.Count(c => c == ',') >= headerRow.Count(c => c == '/'))
-                {
-                    return new DsvImporter(new char [] { ',' });
-                }
-                else if (headerRow.Count(c => c == '\t') >= headerRow.Count(c => c == ',')&&headerRow.Count(c => c == '\t') >= headerRow.Count(c => c == '/'))
-                {
-                    return new DsvImporter(new char [] { '\t' });
-                }
-                else
-                {
+                case ".json":
+                    return new JsonImporter();
+                case ".csv":
+                    return new DsvImporter(new char[] { ',' });
+                case ".tsv":
+                    return new DsvImporter(new char[] { '\t' });
+                case ".ntriples":
                     return g_opts.Sorted ? (IImporter)new UnsortedRDFImporter() : new SortedRDFImporter();
-                }
+                default:
+                    {
+                        IEnumerable<string> text = FileReader.ReadFile(path);
+                        using (IEnumerator<string> line = text.GetEnumerator())
+                        {
+                            line.MoveNext();
+                            string headerRow = line.Current;
+                            JObject jobj = null;
+                            try
+                            {
+                                jobj = JObject.Parse(headerRow);
+                                return new JsonImporter();
+                            }
+                            catch (Exception)
+                            {
+                            }
+                            if (headerRow.Count(c => c == ',') >= headerRow.Count(c => c == '\t') && headerRow.Count(c => c == ',') >= headerRow.Count(c => c == '/'))
+                            {
+                                return new DsvImporter(new char[] { ',' });
+                            }
+                            else if (headerRow.Count(c => c == '\t') >= headerRow.Count(c => c == ',') && headerRow.Count(c => c == '\t') >= headerRow.Count(c => c == '/'))
+                            {
+                                return new DsvImporter(new char[] { '\t' });
+                            }
+                            else if (headerRow.Count(c => c == '/') >= headerRow.Count(c => c == '\t') && headerRow.Count(c => c == '/') >= headerRow.Count(c => c == ','))
+                            {
+                                return g_opts.Sorted ? (IImporter)new UnsortedRDFImporter() : new SortedRDFImporter();
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        } 
+                    }
             }
         }
     }

@@ -15,9 +15,9 @@ namespace GraphEngine.DataImporter
 
         private JsonImporter m_jsonImporter = new JsonImporter();
 
-        public DsvImporter(char [] FileSeparators)
+        public DsvImporter(char [] fileSeparators)
         {
-            separators = FileSeparators;
+            separators = fileSeparators;
         }
         public ICell ImportEntity(string type, string content, long? parent_id = null)
         {
