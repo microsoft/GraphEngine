@@ -401,8 +401,6 @@ DEFINE_TB_SEMANTIC_CHECK(NFieldType, {
 })
 
 DEFINE_TB_SEMANTIC_CHECK(NField, {
-    //I came up with an idea: group all the bits together
-
     auto &&kvgroup = group_entries_by_key(attributes);
     error_on_duplicate_entries(this, kvgroup, "Duplicate attributes with same keys: ");
 
@@ -410,7 +408,6 @@ DEFINE_TB_SEMANTIC_CHECK(NField, {
     {
         error("Invalid field name.");
     }
-
 })
 
 void SemanticCheckForStructBase(NStructBase* node)
@@ -424,6 +421,7 @@ void SemanticCheckForStructBase(NStructBase* node)
     bool reached_dynamic = false;
     for (auto *field : *node->fieldList)
     {
+        field->parent = node;
         if (field->getLayoutType() == LT_DYNAMIC || field->is_optional())
             reached_dynamic = true;
         else if (reached_dynamic /* and layout type is FIXED */)

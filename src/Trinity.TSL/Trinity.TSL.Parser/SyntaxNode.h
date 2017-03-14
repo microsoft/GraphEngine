@@ -242,6 +242,7 @@ public:
     NFieldType *fieldType;
     std::vector<int> *modifiers;
     std::vector<NKVPair*> *attributes;
+    NStructBase *parent;
     ~NField() { delete modifiers; delete_children(); /* TODO delete attributes */ }
     ADDITIONAL_ERROR_REPORT("Field", NNamed);
     DECLARE_TRAVERSE_MODULE;
@@ -261,6 +262,8 @@ public:
     std::vector<NField*> *fieldList;
     std::vector<NKVPair*> *attributes;
     LayoutType layoutType;
+    /* true for struct, false for cell. */
+    virtual bool is_struct() = 0;
 
     bool has_optional_fields()
     {
@@ -281,6 +284,7 @@ class NStruct : public NStructBase
 public:
     ADDITIONAL_ERROR_REPORT("Struct", NNamed);
     DECLARE_TRAVERSE_MODULE;
+    virtual bool is_struct() override { return true; }
 };
 
 /**
@@ -315,7 +319,7 @@ class NCell : public NStructBase
 public:
     ADDITIONAL_ERROR_REPORT("Cell", NNamed);
     DECLARE_TRAVERSE_MODULE;
-
+    virtual bool is_struct() override { return false; }
     std::vector<NIndex*>* indexList;
 };
 
