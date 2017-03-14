@@ -101,7 +101,7 @@ namespace Trinity.TSL.Metagen
                             }
                         }
 
-                        throw ex;
+                        throw;
                     }
                 }
                 else
@@ -118,7 +118,7 @@ namespace Trinity.TSL.Metagen
                     Console.WriteLine(ex.InnerException.ToString());
                 }
 
-                throw ex;
+                throw;
             }
         }
 

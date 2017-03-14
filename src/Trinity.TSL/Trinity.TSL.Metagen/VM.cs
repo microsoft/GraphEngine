@@ -636,12 +636,11 @@ namespace Trinity
                         //func.Invoke(this, null);
                         d_instruction_method_table[current_instruction.type.ToString()]();
                     }
-                    catch (Exception ex)
+                    catch 
                     {
                         Console.WriteLine("Current instruction:");
                         Console.WriteLine(current_instruction);
-                        Exception throw_ex = new Exception("", ex);
-                        throw throw_ex;
+                        throw;
                     }
                 }
             }

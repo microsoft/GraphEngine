@@ -273,9 +273,7 @@ namespace Trinity.TSL.Metagen
                 Console.WriteLine("Text:");
                 Console.WriteLine(text.Substring(startIdx, len));
 
-                Console.WriteLine(e.StackTrace);
-
-                throw e;
+                throw;
             }
 
             return meta;
