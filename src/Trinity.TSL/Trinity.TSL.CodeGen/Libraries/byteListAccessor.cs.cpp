@@ -358,9 +358,9 @@ source->append(R"::(name="index">The zero-based index in the source List at whic
         {
             if (array == null) throw new ArgumentNullException("array is null.");
             if (arrayIndex < 0 || index < 0 || count < 0) throw new ArgumentOutOfRangeException("arrayIndex is less than 0 or index is less than 0 or count is less than 0.");
-            if (array.Length - arrayIndex < Count - index) throw new ArgumentException("The number of elements from index to the end of the source List is greater than the available space from arrayIndex to the end of the destination array)::");
-source->append(R"::(. ");
-            if (index >= Count) throw new ArgumentException("index is equal to or greater than the Count of the source List.");
+            if (array.Length - arrayIndex < count) throw new ArgumentException("The number of elements from index to the end of the source List is greater than the available space from arrayIndex to the end of the destination array. ");
+ )::");
+source->append(R"::(           if (index + count > Count) throw new ArgumentException("Source list does not have enough elements to copy.");
             Memory.Copy(CellPtr, 0, array, arrayIndex, count);
         }
         /// <summary>
@@ -372,8 +372,8 @@ source->append(R"::(. ");
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
             if (index < 0) throw new ArgumentOutOfRangeException("index is less than 0.");
-            if (index > Count) throw new ArgumentOutOfRangeException("index is)::");
-source->append(R"::( greater than Count.");
+            if (index > Count) throw new ArgumentOutOfRangeException("index is greater than )::");
+source->append(R"::(Count.");
             byteListAccessor tmpAccessor = collection;
             byte* targetPtr = CellPtr;
             targetPtr += index;
@@ -391,9 +391,9 @@ source->append(R"::( greater than Count.");
         public unsafe void RemoveRange(int index, int count)
         {
             if (index < 0) throw new ArgumentOutOfRangeException("index is less than 0.");
-            if (index > Count) throw new ArgumentOutOfRangeException("index is greater than Count.")::");
-source->append(R"::();
-            if (index + count > Count) throw new ArgumentException("index and count do not denote a valid range of elements in the List.");
+            if (index > Count) throw new ArgumentOutOfRangeException("index is greater than Count.");
+          )::");
+source->append(R"::(  if (index + count > Count) throw new ArgumentException("index and count do not denote a valid range of elements in the List.");
             byte* targetPtr = CellPtr;
             targetPtr += index;
             int offset = (int)(targetPtr - CellPtr);
@@ -413,8 +413,8 @@ source->append(R"::();
         {
             if ((object)accessor == null) return null;
             List<byte> list = new List<byte>();
-            accessor.ForEach(element => li)::");
-source->append(R"::(st.Add(element));
+            accessor.ForEach(element => list.Add(element)::");
+source->append(R"::());
             return list;
         }
         /// <summary>
@@ -441,9 +441,9 @@ source->append(R"::(st.Add(element));
                 targetPtr += sizeof(int);
                 for (int iterator_0 = 0; iterator_0 < value.Count; ++iterator_0)
                 {
-                    *(byte*)targetPtr = value[iterator)::");
-source->append(R"::(_0];
-                    targetPtr++;
+                    *(byte*)targetPtr = value[iterator_0];
+        )::");
+source->append(R"::(            targetPtr++;
                 }
             }
             else
@@ -472,9 +472,9 @@ source->append(R"::(_0];
                 targetPtr += sizeof(int);
             }
             byte* tmpcellptr = BufferAllocator.AllocBuffer((int)targetPtr);
-            targetPtr = tmpcell)::");
-source->append(R"::(ptr;
-            if (value != null)
+            targetPtr = tmpcellptr;
+        )::");
+source->append(R"::(    if (value != null)
             {
                 *(int*)targetPtr = value.Length;
                 targetPtr += sizeof(int);
@@ -498,8 +498,8 @@ source->append(R"::(ptr;
         /// </summary>
         /// <param name="a">The first byteList to compare, or null. </param>
         /// <param name="b">The second byteList to compare, or null. </param>
-        /// <returns>true if the value of <paramref name="a" /> is the same as the value of <paramref)::");
-source->append(R"::( name="b" />; otherwise, false.</returns>
+        /// <returns>true if the value of <paramref name="a" /> is the same as the value of <paramref name="b" />; )::");
+source->append(R"::(otherwise, false.</returns>
         public static bool operator ==(byteListAccessor a, byteListAccessor b)
         {
             if (ReferenceEquals(a, b))
@@ -518,8 +518,8 @@ source->append(R"::( name="b" />; otherwise, false.</returns>
         {
             return !(a == b);
         }
-  )::");
-source->append(R"::(      /// <summary>
+        /// <sum)::");
+source->append(R"::(mary>
         /// Determines whether this instance and a specified object have the same value.
         /// </summary>
         /// <param name="obj">The byteList to compare to this instance.</param>

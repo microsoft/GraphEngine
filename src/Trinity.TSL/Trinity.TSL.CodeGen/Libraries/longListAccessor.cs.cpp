@@ -428,8 +428,8 @@ source->append(R"::(ination array.");
             if (array == null) throw new ArgumentNullException("array is null.");
             if (arrayIndex < 0 || index <)::");
 source->append(R"::( 0 || count < 0) throw new ArgumentOutOfRangeException("arrayIndex is less than 0 or index is less than 0 or count is less than 0.");
-            if (array.Length - arrayIndex < Count - index) throw new ArgumentException("The number of elements from index to the end of the source List is greater than the available space from arrayIndex to the end of the destination array. ");
-            if (index >= Count) throw new ArgumentException("index is equal to or greater than the Count of the source List.");
+            if (array.Length - arrayIndex < count) throw new ArgumentException("The number of elements from index to the end of the source List is greater than the available space from arrayIndex to the end of the destination array. ");
+            if (index + count > Count) throw new ArgumentException("Source list does not have enough elements to copy.");
             fixed (long* lp = array)
             {
                 Memory.Copy(CellPtr, index, lp, arrayIndex, count);
@@ -439,8 +439,8 @@ source->append(R"::( 0 || count < 0) throw new ArgumentOutOfRangeException("arra
         /// Inserts the elements of a collection into the List at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index at which the new elements should be inserted.</param>
-        /// <param name="collection">The collection whose elements should be inserted into the List. The collection itself )::");
-source->append(R"::(cannot be null, but it can contain elements that are null, if type T is a reference type.</param>
+        /// <param name="collection">The collection whose elements should be inserted into the List. The collection itself cannot be null)::");
+source->append(R"::(, but it can contain elements that are null, if type T is a reference type.</param>
         public unsafe void InsertRange(int index, List<long> collection)
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
@@ -457,8 +457,8 @@ source->append(R"::(cannot be null, but it can contain elements that are null, i
         /// <summary>
         /// Removes a range of elements from the List.
         /// </summary>
-        /// <para)::");
-source->append(R"::(m name="index">The zero-based starting index of the range of elements to remove.</param>
+        /// <param name="index")::");
+source->append(R"::(>The zero-based starting index of the range of elements to remove.</param>
         /// <param name="count">The number of elements to remove.</param>
         public unsafe void RemoveRange(int index, int count)
         {
@@ -475,8 +475,8 @@ source->append(R"::(m name="index">The zero-based starting index of the range of
         /// <summary>
         /// Implicitly converts a longList instance to a List{long} instance.
         /// </summary>
-        /// <param name="a)::");
-source->append(R"::(ccessor">The longList instance.</param>
+        /// <param name="accessor">The l)::");
+source->append(R"::(ongList instance.</param>
         /// <returns>A List{long} instance.</returns>
         public unsafe static implicit operator List<long>(longListAccessor accessor)
         {
@@ -501,8 +501,8 @@ source->append(R"::(ccessor">The longList instance.</param>
             {
                 targetPtr += sizeof(int);
             }
-            byte* tmpcellptr = Buff)::");
-source->append(R"::(erAllocator.AllocBuffer((int)targetPtr);
+            byte* tmpcellptr = BufferAllocator.Al)::");
+source->append(R"::(locBuffer((int)targetPtr);
             targetPtr = tmpcellptr;
             if (value != null)
             {
@@ -528,8 +528,8 @@ source->append(R"::(erAllocator.AllocBuffer((int)targetPtr);
         /// </summary>
         /// <param name="a">The first longList to compare, or null. </param>
         /// <param name="b">The second longList to compare, or null. </param>
-        /// <)::");
-source->append(R"::(returns>true if the value of <paramref name="a" /> is the same as the value of <paramref name="b" />; otherwise, false.</returns>
+        /// <returns>true i)::");
+source->append(R"::(f the value of <paramref name="a" /> is the same as the value of <paramref name="b" />; otherwise, false.</returns>
         public static bool operator ==(longListAccessor a, longListAccessor b)
         {
             if (ReferenceEquals(a, b))
@@ -544,8 +544,8 @@ source->append(R"::(returns>true if the value of <paramref name="a" /> is the sa
         /// <returns>true if the value of <paramref name="a" /> is different from the value of <paramref name="b" />; otherwise, false.</returns>
         /// <param name="a">The first longList to compare, or null. </param>
         /// <param name="b">The second longList to compare, or null. </param>
-        public static bool operator !=(longList)::");
-source->append(R"::(Accessor a, longListAccessor b)
+        public static bool operator !=(longListAccessor a, lo)::");
+source->append(R"::(ngListAccessor b)
         {
             return !(a == b);
         }

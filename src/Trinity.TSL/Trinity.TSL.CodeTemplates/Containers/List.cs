@@ -332,7 +332,14 @@ namespace t_Namespace
             {
                 //" + listtype.ElementFieldType.GenerateAssignCodeForConstructor("element", 0, true) + @"
             }
-            //TSLCompiler.AppendCodeForContainer() +
+
+            // TODO AppendCodeForContainer IAccessor code reuse
+            int size = (int)targetPtr;
+            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), *(int*)(this.CellPtr-sizeof(int))+sizeof(int), size);
+            targetPtr = this.CellPtr + (*(int*)this.CellPtr)+sizeof(int);
+            *(int*)this.CellPtr += size;
+            this.CellPtr += sizeof(int);
+
             //   listtype.ElementFieldType.GenerateAssignCodeForConstructor("element", 0, false) + @"
         }
 
@@ -360,7 +367,11 @@ namespace t_Namespace
             }
             END();
             int offset = (int)(targetPtr - CellPtr);
-            //" + TSLCompiler.InsertAndRemoveAtCodeForContainer() + @"
+            // InsertAndRemoveAtCodeForContainer TODO IAccessor reuse
+            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), offset + sizeof(int), size);
+            *(int*)this.CellPtr += size;
+            this.CellPtr += sizeof(int);
+
             targetPtr = this.CellPtr + offset;
             //" + listtype.ElementFieldType.GenerateAssignCodeForConstructor("element", 0, false) + @"
         }
@@ -433,7 +444,11 @@ namespace t_Namespace
             }
 
             int offset = (int)(targetPtr - CellPtr);
-            //" + TSLCompiler.InsertAndRemoveAtCodeForContainer() + @"
+            // InsertAndRemoveAtCodeForContainer TODO IAccessor reuse
+            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), offset + sizeof(int), size);
+            *(int*)this.CellPtr += size;
+            this.CellPtr += sizeof(int);
+
             targetPtr = this.CellPtr + offset;
             //" + listtype.ElementFieldType.GenerateAssignCodeForConstructor("element", 0, false) + @"
         }
@@ -454,8 +469,11 @@ namespace t_Namespace
             int offset = (int)(targetPtr - CellPtr);
             byte* oldtargetPtr = targetPtr;
             //" + listtype.ElementFieldType.GeneratePushPointerCode() + @"
+            // InsertAndRemoveAtCodeForContainer TODO IAccessor reuse
             int size = (int)(oldtargetPtr - targetPtr);
-            //" + TSLCompiler.InsertAndRemoveAtCodeForContainer() + @"
+            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), offset + sizeof(int), size);
+            *(int*)this.CellPtr += size;
+            this.CellPtr += sizeof(int);
         }
 
         /// <summary>

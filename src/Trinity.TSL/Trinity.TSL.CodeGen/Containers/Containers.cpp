@@ -32,6 +32,7 @@ using Trinity.TSL.Lib;
                     if (element->is_atom()) switch (element->atom_token)
                     {
                     case T_BYTETYPE: case T_INTTYPE: case T_LONGTYPE: case T_DOUBLETYPE:
+                        /* skip hand-written templates */
                         continue;
                     }
                     container_code = List(ft);

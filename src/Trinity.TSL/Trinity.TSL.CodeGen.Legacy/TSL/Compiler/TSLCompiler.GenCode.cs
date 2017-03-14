@@ -129,22 +129,14 @@ namespace Trinity.TSL
         /// <returns></returns>
         internal static string AppendCodeForContainer()
         {
-            return @"
-            int size = (int)targetPtr;
-            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), *(int*)(this.CellPtr-sizeof(int))+sizeof(int),size);
-            targetPtr = this.CellPtr + (*(int*)this.CellPtr)+sizeof(int);
-            *(int*)this.CellPtr += size;
-            this.CellPtr += sizeof(int);
-";
+            //DONE, see List.cs
+            return "";
         }
 
         internal static string InsertAndRemoveAtCodeForContainer()
         {
-            return @"
-            this.CellPtr = this.ResizeFunction(this.CellPtr - 4, offset + 4, size);
-            *(int*)this.CellPtr += size;
-            this.CellPtr += 4;
-";
+            //DONE, see List.cs
+            return "";
         }
 
         internal static string GenerateAssignmentPrototypeParameterList(string header, StructDescriptor cell_desc, bool noFirstBlockSymbolAndNoParameterTypeAndNoDefaultValues = false, bool no_leading_comma = false, string extraParameterString = null)

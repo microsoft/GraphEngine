@@ -31,7 +31,7 @@ namespace Trinity.TSL.Metagen
             }
 
             s_root = Path.GetFullPath(args[0]);
-            ProcessDirectory(args[0]);
+            ProcessDirectory(s_root);
         }
 
         private static void ProcessDirectory(string directoryPath)
@@ -58,8 +58,13 @@ namespace Trinity.TSL.Metagen
                 filename              = Path.GetFullPath(filename);
                 String literal        = File.ReadAllText(filename);
                 string name           = Path.GetFileNameWithoutExtension(filename);
-                string dir_path       = filename.Substring(0, filename.Length - Path.GetFileName(filename).Length).Trim('\\');
-                dir_path              = Path.Combine(s_root, @"..\Trinity.TSL.CodeGen\", dir_path.Substring(s_root.Length));
+                string dir_path       = filename
+                    .Substring(0, filename.Length - Path.GetFileName(filename).Length)
+                    .Substring(s_root.Length)
+                    .Trim('\\');
+
+                dir_path = Path.Combine(s_root, @"..\Trinity.TSL.CodeGen\", dir_path);
+
                 string targetFilename = Path.Combine(dir_path, Path.GetFileName(filename)+".cpp");
                 bool needProcess      = (File.GetLastWriteTime(targetFilename) < File.GetLastWriteTime(filename));
 

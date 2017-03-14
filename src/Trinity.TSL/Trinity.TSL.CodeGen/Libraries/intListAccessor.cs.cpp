@@ -358,9 +358,9 @@ source->append(R"::(>The zero-based index in the source List at which copying be
         {
             if (array == null) throw new ArgumentNullException("array is null.");
             if (arrayIndex < 0 || index < 0 || count < 0) throw new ArgumentOutOfRangeException("arrayIndex is less than 0 or index is less than 0 or count is less than 0.");
-            if (array.Length - arrayIndex < Count - index) throw new ArgumentException("The number of elements from index to the end of the source List is greater than the available space from arrayIndex to the end of the destination array. ");
-      )::");
-source->append(R"::(      if (index >= Count) throw new ArgumentException("index is equal to or greater than the Count of the source List.");
+            if (array.Length - arrayIndex < count) throw new ArgumentException("The number of elements from index to the end of the source List is greater than the available space from arrayIndex to the end of the destination array. ");
+            if)::");
+source->append(R"::( (index + count > Count) throw new ArgumentException("Source list does not have enough elements to copy.");
             fixed (int* ip = array)
             {
                 Memory.Copy(CellPtr, index, ip, arrayIndex, count);
@@ -375,8 +375,8 @@ source->append(R"::(      if (index >= Count) throw new ArgumentException("index
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
             if (index < 0) throw new ArgumentOutOfRangeException("index is less than 0.");
-            if (inde)::");
-source->append(R"::(x > Count) throw new ArgumentOutOfRangeException("index is greater than Count.");
+            if (index > Count) thr)::");
+source->append(R"::(ow new ArgumentOutOfRangeException("index is greater than Count.");
             intListAccessor tmpAccessor = collection;
             int offset = (index << 2);
             CellPtr = ResizeFunction(CellPtr - 4, offset + 4, tmpAccessor.length);
@@ -393,8 +393,8 @@ source->append(R"::(x > Count) throw new ArgumentOutOfRangeException("index is g
         {
             if (index < 0) throw new ArgumentOutOfRangeException("index is less than 0.");
             if (index > Count) throw new ArgumentOutOfRangeException("index is greater than Count.");
-            if (index + co)::");
-source->append(R"::(unt > Count) throw new ArgumentException("index and count do not denote a valid range of elements in the List.");
+            if (index + count > Count) t)::");
+source->append(R"::(hrow new ArgumentException("index and count do not denote a valid range of elements in the List.");
             int offset = (index << 2);
             int size = -(count << 2);
             CellPtr = ResizeFunction(CellPtr - 4, offset + 4, size);
@@ -416,8 +416,8 @@ source->append(R"::(unt > Count) throw new ArgumentException("index and count do
         /// <summary>
         /// Implicitly converts a List{int} instance to an intList instance.
         /// </summary>
-        /// <p)::");
-source->append(R"::(aram name="value">The List{int} instance.</param>
+        /// <param name="val)::");
+source->append(R"::(ue">The List{int} instance.</param>
         /// <returns>An intList instance.</returns>
         public unsafe static implicit operator intListAccessor(List<int> value)
         {
@@ -445,8 +445,8 @@ source->append(R"::(aram name="value">The List{int} instance.</param>
             else
             {
                 *(int*)targetPtr = 0;
-                t)::");
-source->append(R"::(argetPtr += sizeof(int);
+                targetPtr += si)::");
+source->append(R"::(zeof(int);
             }
             intListAccessor ret = new intListAccessor(tmpcellptr, null);
             ret.CellID = null;
@@ -466,9 +466,9 @@ source->append(R"::(argetPtr += sizeof(int);
               return false;
             if (a.CellPtr == b.CellPtr) return true;
             if (a.length != b.length) return false;
-            return Memory.Compare(a.CellPtr, b.CellPtr, )::");
-source->append(R"::(a.length);
-        }
+            return Memory.Compare(a.CellPtr, b.CellPtr, a.length);
+  )::");
+source->append(R"::(      }
         /// <summary>Determines whether two specified intList have different values.</summary>
         /// <returns>true if the value of <paramref name="a" /> is different from the value of <paramref name="b" />; otherwise, false.</returns>
         /// <param name="a">The first intList to compare, or null. </param>
@@ -484,9 +484,9 @@ source->append(R"::(a.length);
         /// <returns>true if <paramref name="obj" /> is a doubleList and its value is the same as this instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
-            intListAccessor b = obj as intListAccesso)::");
-source->append(R"::(r;
-            if (b == null)
+            intListAccessor b = obj as intListAccessor;
+          )::");
+source->append(R"::(  if (b == null)
                 return false;
             return (this == b);
         }

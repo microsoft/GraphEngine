@@ -747,8 +747,8 @@ source->append(R"::([] array, int arrayIndex, int count)
         {
             if (array == null) throw new ArgumentNullException("array is null.");
             if (arrayIndex < 0 || index < 0 || count < 0) throw new ArgumentOutOfRangeException("arrayIndex is less than 0 or index is less than 0 or count is less than 0.");
-            if (array.Length - arrayIndex < Count - index) throw new ArgumentException("The number of elements from index to the end of the source List is greater than the available space from arrayIndex to the end of the destination array. ");
-            if (index >= Count) throw new ArgumentException("index is equal to or greater than the Count of the source List.");
+            if (array.Length - arrayIndex < count) throw new ArgumentException("The number of elements from index to the end of the source List is greater than the available space from arrayIndex to the end of the destination array. ");
+            if (index + count > Count) throw new ArgumentException("Source list does not have enough elements to copy.");
             int j = 0;
             for (int i = index; i < index + count; i++)
             {
@@ -759,8 +759,8 @@ source->append(R"::([] array, int arrayIndex, int count)
         /// <summary>
         /// Inserts the elements of a collection into the List at the specified index.
         /// </summary>
-        /// )::");
-source->append(R"::(<param name="index">The zero-based index at which the new elements should be inserted.</param>
+        /// <param name="i)::");
+source->append(R"::(ndex">The zero-based index at which the new elements should be inserted.</param>
         /// <param name="collection">The collection whose elements should be inserted into the List. The collection itself cannot be null, but it can contain elements that are null, if type T is a reference type.</param>
         public unsafe void InsertRange(int index, )::");
 source->append(Codegen::GetString(node));
