@@ -36,8 +36,6 @@ namespace t_Namespace
     [MAP_VAR("t_struct_name", "node->name")]
     [META_VAR("bool", "struct_nonempty", "node->fieldList->size() > 0")]
     [META_VAR("bool", "struct_fixed", "node->layoutType == LT_FIXED")]
-    [META_VAR("OptionalFieldCalculator", "optcalc", "OptionalFieldCalculator(node)")]
-    [MAP_VAR("t_int", "%optcalc.headerLength")]
     /// <summary>
     /// A .NET runtime object representation of t_struct_name defined in TSL.
     /// </summary>
@@ -57,7 +55,7 @@ namespace t_Namespace
         }
         [END]
 
-        public static bool operator ==(t_struct_name a, t_struct_name b)
+        public static bool operator == (t_struct_name a, t_struct_name b)
         {
             // If both are null, or both are same instance, return true.
             if (System.Object.ReferenceEquals(a, b))
@@ -150,56 +148,17 @@ namespace t_Namespace
             /*END*/)
         {
             CellPtr = _CellPtr;
+            IF("!%struct_fixed");
             ResizeFunction = func;
-            //foreach (var field in structDesc.Fields)
-            //{
-            //    ret += TSLCompiler.GenerateAccessorFieldAssignmentCode(new DynamicStructFieldType(structDesc), field.Type, isReadOnly, field.Name + "_Accessor_Field", false);
-            //}
-        }
+            END();
 
-        internal static string[] optional_field_names = null;
-        ///<summary>
-        ///Get an array of the names of all optional fields for object type t_struct_name.
-        ///</summary>
-        public static string[] GetOptionalFieldNames()
-        {
-            if (optional_field_names == null)
-                optional_field_names = new string[]
-                {
-                    /*FOREACH(",")*/
-                    /*META("if($t_field->is_optional())continue;")*/
-                    "t_field_name"
-                    /*END*/
-                };
-            return optional_field_names;
-        }
-
-        ///<summary>
-        ///Get a list of the names of available optional fields in the object being operated by this accessor.
-        ///</summary>
-        internal List<string> GetNotNullOptionalFields()
-        {
-            List<string> list = new List<string>();
-            BitArray ba = new BitArray(GetOptionalFieldMap());
-            string[] optional_fields = GetOptionalFieldNames();
-            for (int i = 0; i < ba.Count; i++)
-            {
-                if (ba[i])
-                    list.Add(optional_fields[i]);
-            }
-            return list;
-        }
-
-        internal unsafe byte[] GetOptionalFieldMap()
-        {
-            IF("%optcalc.headerLength > 0");
-            byte [] bytes = new byte[t_int];
-            Memory.Copy(CellPtr, 0, bytes, 0, t_int);
-            return bytes;
-            ELSE();
-            return new byte[0];
+            FOREACH();
+            USE_LIST("t_field");
+            MODULE_CALL("StructFieldAccessorInitialization", "$t_field");
             END();
         }
+
+        [MODULE_CALL("OptionalFields", "node")]
 
         ///<summary>
         ///Copies the struct content into a byte array.

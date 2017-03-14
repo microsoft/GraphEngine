@@ -1,6 +1,7 @@
 #pragma once
 #include "Trinity.TSL.CodeGen.h"
 #include "OptionalFieldCalculator.h"
+#include "AccessorType.h"
 #include <string>
 #include <SyntaxNode.h>
 using std::string;

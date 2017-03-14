@@ -67,8 +67,8 @@ namespace Trinity.TSL
             throw new NotImplementedException();
         }
 
-        unsafe public delegate byte* Bar(byte* a, int b, int c);
-        unsafe public t_field_type(object foo, Bar bar) { }
+        unsafe public delegate byte* ResizeDelegate(byte* a, int b, int c);
+        unsafe public t_field_type(object foo, ResizeDelegate bar) { }
         unsafe public t_field_type() { }
 
         internal byte* CellPtr;

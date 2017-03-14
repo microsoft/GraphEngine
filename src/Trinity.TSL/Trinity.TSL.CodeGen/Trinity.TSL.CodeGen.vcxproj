@@ -90,6 +90,7 @@
     <ClCompile Include="Cell.cs.cpp" />
     <ClCompile Include="CellSelectors.cs.cpp" />
     <ClCompile Include="CellTypeEnum.cs.cpp" />
+    <ClCompile Include="CodeGen\AccessorInitialization.cpp" />
     <ClCompile Include="CodeGen\common.cpp" />
     <ClCompile Include="CommunicationSchema.cs.cpp" />
     <ClCompile Include="Containers\Array.cs.cpp" />
@@ -124,6 +125,7 @@
     <ClCompile Include="MODULES\CommunicationSchemaModule.cs.cpp" />
     <ClCompile Include="MODULES\EnumerateFromFieldModule.cs.cpp" />
     <ClCompile Include="MODULES\HTTPModule.cs.cpp" />
+    <ClCompile Include="MODULES\OptionalFields.cs.cpp" />
     <ClCompile Include="MODULES\PushPointer.cs.cpp" />
     <ClCompile Include="StorageSchema.cs.cpp" />
     <ClCompile Include="Serializer.cs.cpp" />
@@ -133,6 +135,7 @@
     <ClCompile Include="CodeGen\Trinity.TSL.CodeGen.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CodeGen\AccessorType.h" />
     <ClInclude Include="CodeGen\common.h" />
     <ClInclude Include="CodeGen\OptionalFieldCalculator.h" />
     <ClInclude Include="CodeGen\Trinity.TSL.CodeGen.h" />

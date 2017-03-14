@@ -35,7 +35,7 @@ namespace t_Namespace
             ResizeFunction = func;
             CellPtr += 4;
 
-            //cw += TSLCompiler.GenerateAccessorFieldAssignmentCode(listtype, listtype.ElementFieldType, false, "elementAccessor", false);
+            MODULE_CALL("ListElementAccessorInitialization", "$t_data_type");
         }
 
         internal int length

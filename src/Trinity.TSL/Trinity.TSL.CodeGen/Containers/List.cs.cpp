@@ -40,6 +40,16 @@ source->append(R"::((byte* _CellPtr, ResizeFunctionDelegate func)
             CellPtr = _CellPtr;
             ResizeFunction = func;
             CellPtr += 4;
+            )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::ListElementAccessorInitialization(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
         }
         internal int length
         {

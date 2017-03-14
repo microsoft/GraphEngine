@@ -56,7 +56,6 @@ namespace Trinity.TSL
     @"
 {
 ";
-                cw += StructCodeTemplate.GenerateStructCode(cell_desc, forCell: true);
                 cw += CellCodeTemplate.GenerateCellCode(cell_desc);
 
                 cw +=

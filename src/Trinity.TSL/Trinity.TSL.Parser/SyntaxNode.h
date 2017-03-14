@@ -61,6 +61,7 @@ class NStruct;
 class NIndex;
 class NCell;
 class NFieldType;
+class NStructBase;
 
 namespace Trinity
 {
@@ -242,7 +243,7 @@ public:
     NFieldType *fieldType;
     std::vector<int> *modifiers;
     std::vector<NKVPair*> *attributes;
-    NStructBase *parent;
+    NStructBase* parent;
     ~NField() { delete modifiers; delete_children(); /* TODO delete attributes */ }
     ADDITIONAL_ERROR_REPORT("Field", NNamed);
     DECLARE_TRAVERSE_MODULE;

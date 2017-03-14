@@ -43,7 +43,6 @@ source->append(R"::(
     )::");
 bool struct_nonempty_1 = node->fieldList->size() > 0;
 bool struct_fixed_1 = node->layoutType == LT_FIXED;
-OptionalFieldCalculator optcalc_1 = OptionalFieldCalculator(node);
 source->append(R"::(
     /// <summary>
     /// A .NET runtime object representation of )::");
@@ -95,7 +94,7 @@ source->append(R"::(
         )::");
 }
 source->append(R"::(
-        public static bool operator ==()::");
+        public static bool operator == ()::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::( a, )::");
 source->append(Codegen::GetString(node->name));
@@ -242,73 +241,36 @@ source->append(R"::(
 source->append(R"::()
         {
             CellPtr = _CellPtr;
+            )::");
+if (!struct_fixed_1)
+{
+source->append(R"::(
             ResizeFunction = func;
-        }
-        internal static string[] optional_field_names = null;
-        ///<summary>
-        ///Get an array of the names of all optional fields for object type )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(.
-        ///</summary>
-        public static string[] GetOptionalFieldNames()
-        {
-            if (optional_field_names == null)
-                optional_field_names = new string[]
-                {
-                    )::");
+            )::");
+}
 for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
 {
-if((*(node->fieldList))[iterator_1]->is_optional())continue;
-source->append(R"::(
-                    ")::");
-source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::("
-                    )::");
-if (iterator_1 < (node->fieldList)->size() - 1)
-source->append(",");
-}
-source->append(R"::(
-                };
-            return optional_field_names;
-        }
-        ///<summary>
-        ///Get a list of the names of available optional fields in the object being operated by this accessor.
-        ///</summary>
-        internal List<string> GetNotNullOptionalFields()
-        {
-            List<string> list = new List<string>();
-            BitArray ba = new BitArray(GetOptionalFieldMap());
-            string[] optional_fields = GetOptionalFieldNames();
-            for (int i = 0; i < ba.Count; i++)
-            {
-                if (ba[i])
-                    list.Add(optional_fields[i]);
-            }
-            return list;
-        }
-        internal unsafe byte[] GetOptionalFieldMap()
-        {
-            )::");
-if (optcalc_1.headerLength > 0)
+
 {
-source->append(R"::(
-            byte [] bytes = new byte[)::");
-source->append(Codegen::GetString(optcalc_1.headerLength));
-source->append(R"::(];
-            Memory.Copy(CellPtr, 0, bytes, 0, )::");
-source->append(Codegen::GetString(optcalc_1.headerLength));
-source->append(R"::();
-            return bytes;
-            )::");
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::StructFieldAccessorInitialization((*(node->fieldList))[iterator_1], &module_ctx);
+    source->append(*module_content);
+    delete module_content;
 }
-else
-{
-source->append(R"::(
-            return new byte[0];
-            )::");
 }
 source->append(R"::(
         }
+        )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::OptionalFields(node, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
         ///<summary>
         ///Copies the struct content into a byte array.
         ///</summary>

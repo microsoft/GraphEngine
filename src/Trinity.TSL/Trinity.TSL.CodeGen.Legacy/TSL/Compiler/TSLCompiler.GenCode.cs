@@ -108,82 +108,19 @@ namespace Trinity.TSL
         /// </summary>
         internal static string GenerateAccessorFieldAssignmentCodeForFixedField(FieldType fieldType, bool isReadOnly, string accessor_field_name)
         {
-            string ret = "";
-            string accessor_type_name = TSLCompiler.GetAccessorTypeName(isReadOnly, fieldType);
-            if (!(fieldType is AtomType || fieldType is EnumType))
-            {
-                ret += @"
-        " + accessor_field_name + " = new " + accessor_type_name;
-
-                //non atom fixed types
-                ret += @"(null);
-";
-            }
-            return ret;
+            //DONE, see AccessorInitialization.cpp
+            return "";
         }
 
         internal static string GenerateAccessorFieldAssignmentCode(FieldType parent, FieldType fieldType, bool isReadOnly, string accessor_field_name, bool parentIsCell)
         {
-            string ret = "";
-            string accessor_type_name = TSLCompiler.GetAccessorTypeName(isReadOnly, fieldType);
-            if (!(fieldType is AtomType || fieldType is EnumType))
-            {
-                ret += @"
-        " + accessor_field_name + " = new " + accessor_type_name;
-
-                if (fieldType is DynamicFieldType)
-                {
-                    ret += @"(null," +
-                        ((parent is StructFieldType) ?
-                            (TSLCompiler.ResizeLambdaFunctionBodyForFormat(parentIsCell)) :
-                            (TSLCompiler.ResizeLambdaFunctionBodyForContainer()))
-                        + @");
-";
-                }
-                else//non atom fixed types
-                    ret += @"(null);
-";
-            }
-            return ret;
+            //DONE, see AccessorInitialization.cpp
+            return "";
         }
 
         internal static string ResizeFunctionDelegate()
         {
             return "internal ResizeFunctionDelegate ResizeFunction;";
-        }
-
-        internal static string ResizeLambdaFunctionBodyForFormat(bool parentIsCell)
-        {
-            if (parentIsCell)
-                return @"
-                (ptr,ptr_offset,delta)=>
-                {
-                    int substructure_offset = (int)(ptr - this.CellPtr);
-                    this.ResizeFunction(this.CellPtr, ptr_offset + substructure_offset, delta);
-                    return this.CellPtr + substructure_offset;
-                }";
-            else
-                return @"
-                (ptr,ptr_offset,delta)=>
-                {
-                    int substructure_offset = (int)(ptr - this.CellPtr);
-                    this.CellPtr = this.ResizeFunction(this.CellPtr, ptr_offset + substructure_offset, delta);
-                    return this.CellPtr + substructure_offset;
-                }";
-        }
-
-        //if parent is a Container, we'll have to increase its size field
-        internal static string ResizeLambdaFunctionBodyForContainer()
-        {
-            return @"
-                (ptr,ptr_offset,delta)=>
-                {
-                    int substructure_offset = (int)(ptr - this.CellPtr);
-                    this.CellPtr = this.ResizeFunction(this.CellPtr-sizeof(int), ptr_offset + substructure_offset +sizeof(int), delta);
-                    *(int*)this.CellPtr += delta;
-                    this.CellPtr += sizeof(int);
-                    return this.CellPtr + substructure_offset;
-                }";
         }
 
         /// <summary>

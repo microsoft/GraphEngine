@@ -12,6 +12,8 @@ namespace Trinity.TSL
     /// </summary>
     public struct t_accessor_type
     {
+        internal t_field_type t_field_name { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
+
         public unsafe byte* CellPtr { get; internal set; }
         public long CellID { get; internal set; }
 
@@ -36,6 +38,11 @@ namespace Trinity.TSL
         }
 
         public static implicit operator t_accessor_type(BitArray x)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void Remove_t_field_name()
         {
             throw new NotImplementedException();
         }

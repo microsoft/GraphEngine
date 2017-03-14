@@ -302,7 +302,7 @@ namespace Trinity
          */
         std::string data_type_get_accessor_name(NFieldType* type)
         {
-            string ret;
+            String ret;
             switch (type->fieldType)
             {
             case FT_ARRAY:

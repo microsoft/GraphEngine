@@ -70,6 +70,10 @@ namespace Trinity
             std::string* EnumerateFromFieldModule(NField* node, ModuleContext* context);
             std::string* CommunicationSchemaModule(NProtocolGroup* node, ModuleContext* context);
             std::string* AccessorFieldAssignment(NField* node, ModuleContext* context);
+            std::string* CellFieldAccessorInitialization(NField* node, ModuleContext* context);
+            std::string* StructFieldAccessorInitialization(NField* node, ModuleContext* context);
+            std::string* ListElementAccessorInitialization(NFieldType* node, ModuleContext* context);
+            std::string* OptionalFields(NStructBase* node, ModuleContext* context);
         }
 
 #pragma endregion

@@ -108,9 +108,6 @@
     <ClCompile Include="MODULES\HTTPModule.cs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MODULES\AccessorFieldAssignment.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="StorageSchema.cs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -147,6 +144,15 @@
     <ClCompile Include="Containers\Containers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CodeGen\AccessorInitialization.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MODULES\OptionalFields.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MODULES\AccessorFieldAssignment.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CodeGen\Trinity.TSL.CodeGen.h">
@@ -156,6 +162,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CodeGen\OptionalFieldCalculator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CodeGen\AccessorType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
