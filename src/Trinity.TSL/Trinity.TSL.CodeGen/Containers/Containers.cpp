@@ -25,7 +25,7 @@ using Trinity.TSL.Lib;
 )::");
             for (auto &ft : *TSLExternalParserDataTypeVector)
             {
-                std::string* container_code;
+                std::string* container_code = nullptr;
                 if (ft->is_list())
                 {
                     auto element = ft->listElementType;
