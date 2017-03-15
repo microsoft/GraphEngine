@@ -27,6 +27,9 @@ namespace GraphEngine.DataImporter
         [Option('s', "sorted", HelpText="Specifies that the data is already sorted/grouped by entities", DefaultValue = false)]
         public bool Sorted { get; set; }
 
+        [Option('p', "delimiter", HelpText="Specifies the delimiter of CSV or TSV file",Required =false)]
+        public string delimiter { get; set; }
+
         [ValueList(typeof(List<string>))]
         public IList<string> ExplicitFiles { get; set; }
 

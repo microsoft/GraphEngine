@@ -54,7 +54,7 @@ namespace GraphEngine.DataImporter
 
             foreach (var file in files)
             {
-                ImportFile(file);
+                ImportFile(file, options);
             }
 
             ImportReverseEdges();
@@ -172,11 +172,11 @@ namespace GraphEngine.DataImporter
  });
         }
 
-        private static void ImportFile(string file)
+        private static void ImportFile(string file, CmdOptions options)
         {
             Log.WriteLine("Importing {0}", file);
             string typename = Path.GetFileNameWithoutExtension(file);
-            IImporter importer = GetImporter(file);
+            IImporter importer = GetImporter(file, options.delimiter);
 
             if (importer == null)
             {
@@ -223,8 +223,9 @@ namespace GraphEngine.DataImporter
              });
         }
 
-        public static IImporter GetImporter(string path)
+        public static IImporter GetImporter(string path, string delimiter)
         {
+            bool delimiterSpecific = delimiter == null ? false : true;
             string filename = Path.GetFileName(path);
             string filetype = Path.GetExtension(filename).ToLower();
 
@@ -238,9 +239,9 @@ namespace GraphEngine.DataImporter
                 case ".json":
                     return new JsonImporter();
                 case ".csv":
-                    return new DsvImporter(new char[] { ',' });
+                    return new CsvImporter(delimiterSpecific? delimiter[0]:',');
                 case ".tsv":
-                    return new DsvImporter(new char[] { '\t' });
+                    return new CsvImporter(delimiterSpecific? delimiter[0]:'\t');
                 case ".ntriples":
                     return g_opts.Sorted ? (IImporter)new UnsortedRDFImporter() : new SortedRDFImporter();
                 default:
@@ -261,11 +262,11 @@ namespace GraphEngine.DataImporter
                             }
                             if (headerRow.Count(c => c == ',') >= headerRow.Count(c => c == '\t') && headerRow.Count(c => c == ',') >= headerRow.Count(c => c == '/'))
                             {
-                                return new DsvImporter(new char[] { ',' });
+                                 return new CsvImporter(delimiterSpecific? delimiter[0]:',');
                             }
                             else if (headerRow.Count(c => c == '\t') >= headerRow.Count(c => c == ',') && headerRow.Count(c => c == '\t') >= headerRow.Count(c => c == '/'))
                             {
-                                return new DsvImporter(new char[] { '\t' });
+                                return new CsvImporter(delimiterSpecific? delimiter[0]:'\t');
                             }
                             else if (headerRow.Count(c => c == '/') >= headerRow.Count(c => c == '\t') && headerRow.Count(c => c == '/') >= headerRow.Count(c => c == ','))
                             {
