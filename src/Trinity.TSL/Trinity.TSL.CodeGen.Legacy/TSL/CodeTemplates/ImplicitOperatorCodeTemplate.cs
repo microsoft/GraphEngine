@@ -273,65 +273,8 @@ namespace Trinity.TSL.CodeTemplates
 
         internal static string GenerateArrayImplicitOperatorCode(ArrayType arraytype)
         {
-            string ret = "";
-            ret += @"
-        public unsafe static implicit operator " + arraytype.ElementType.CSharpName + @"[";
-            for (int i = 0; i < arraytype.lengths.Length - 1; i++) ret += ',';
-            ret += "](" + arraytype.Name + @" accessor)
-        {
-            " + arraytype.ElementType.CSharpName + "[";
-            for (int i = 0; i < arraytype.lengths.Length - 1; i++) ret += ',';
-            ret += @"] ret = new " + arraytype.ElementType.CSharpName + "[";
-            for (int i = 0; i < arraytype.lengths.Length; i++) ret += arraytype.Name + ".SizeDim" + (i + 1).ToString(CultureInfo.InvariantCulture) + ",";
-            ret = ret.TrimEnd(",".ToCharArray());
-            ret += @"];";
-            if (TSLCompiler.IsValueType(arraytype.ElementType))
-            {
-                ret += @"
-            fixed (" + arraytype.ElementType.CSharpName + @"* p = ret)
-            {
-                Memory.Copy(accessor.CellPtr, p, ";
-                for (int i = 0; i < arraytype.lengths.Length; i++) ret += arraytype.Name + ".SizeDim" + (i + 1).ToString(CultureInfo.InvariantCulture) + "*";
-                ret += arraytype.ElementType.Length.ToString(CultureInfo.InvariantCulture) + @");
-            }";
-            }
-            else//We can't get pointer!
-            {
-                string accessor_type;
-                if (arraytype.ElementType is StructFieldType)
-                {
-                    accessor_type = arraytype.ElementType.Name + "_Accessor";
-                }
-                else
-                {
-                    accessor_type = arraytype.ElementType.Name;
-                }
-                ret += @"
-            " + accessor_type + " elementAccessor = new " + accessor_type + @"(accessor.CellPtr);
-            ";
-                string varName = "ret[";
-                for (int i = 0; i < arraytype.lengths.Length; ++i)
-                {
-                    ret += string.Format(CultureInfo.InvariantCulture, "for(int iterator_{0} = 0;iterator_{0} < {1};++iterator_{0})\r\n", i, arraytype.lengths[i]);
-                    varName += "iterator_" + i + ",";
-                }
-                varName = varName.TrimEnd(",".ToCharArray()) + "]";
-                ret += @"
-                {
-                    " + varName + " = " + @"elementAccessor;
-                    elementAccessor.CellPtr += " + arraytype.ElementType.Length + @";
-                }
-            ";
-            }
-            ret += @"
-            return ret;
+            return "";
         }
-";
-            ret += GenerateReverseImplicitOperaterCode(arraytype, false, false);
-
-            return ret;
-        }
-
         internal static string ArraySetPropertiesCode(Field field, string accessor_field_name, bool createOptionalField)
         {
             return "";

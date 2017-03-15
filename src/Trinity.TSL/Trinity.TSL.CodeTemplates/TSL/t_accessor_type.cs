@@ -12,6 +12,11 @@ namespace Trinity.TSL
     /// </summary>
     public struct t_accessor_type
     {
+        public unsafe t_accessor_type(byte* cellPtr) : this()
+        {
+            CellPtr=cellPtr;
+        }
+
         internal t_field_type t_field_name { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
 
         public unsafe byte* CellPtr { get; internal set; }

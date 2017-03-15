@@ -93,6 +93,11 @@ namespace Trinity.TSL
             return 0;
         }
 
+        public static implicit operator int(t_field_type x)
+        {
+            return 0;
+        }
+
         public static implicit operator t_field_type(bool x)
         {
             throw new NotImplementedException();

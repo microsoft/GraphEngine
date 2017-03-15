@@ -323,6 +323,94 @@ source->append(R"::(, 0, (ulong)(length * )::");
 source->append(Codegen::GetString(node->arrayInfo.arrayElement->type_size()));
 source->append(R"::());
         }
+        public unsafe static implicit operator )::");
+source->append(Codegen::GetString(node->arrayInfo.arrayElement));
+source->append(R"::([ )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->arrayInfo.array_dimension_size)->size();++iterator_1)
+{
+if (iterator_1 < (node->arrayInfo.array_dimension_size)->size() - 1)
+source->append(",");
+}
+source->append(R"::( ]
+            ()::");
+source->append(Codegen::GetString(data_type_get_accessor_name(node)));
+source->append(R"::( accessor)
+        {
+            )::");
+source->append(Codegen::GetString(node->arrayInfo.arrayElement));
+source->append(R"::([ )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->arrayInfo.array_dimension_size)->size();++iterator_1)
+{
+if (iterator_1 < (node->arrayInfo.array_dimension_size)->size() - 1)
+source->append(",");
+}
+source->append(R"::( ] ret 
+                = new )::");
+source->append(Codegen::GetString(node->arrayInfo.arrayElement));
+source->append(R"::([ )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->arrayInfo.array_dimension_size)->size();++iterator_1)
+{
+source->append(Codegen::GetString((*(node->arrayInfo.array_dimension_size))[iterator_1]));
+if (iterator_1 < (node->arrayInfo.array_dimension_size)->size() - 1)
+source->append(",");
+}
+source->append(R"::( ];
+            )::");
+if (data_type_need_accessor(node->arrayInfo.arrayElement))
+{
+source->append(R"::(
+            fixed ()::");
+source->append(Codegen::GetString(node->arrayInfo.arrayElement));
+source->append(R"::(* p = ret)
+            {
+                Memory.Copy(accessor.CellPtr, p, )::");
+source->append(Codegen::GetString(node->type_size()));
+source->append(R"::();
+            }
+            )::");
+}
+else
+{
+source->append(Codegen::GetString(data_type_get_accessor_name(node->arrayInfo.arrayElement)));
+source->append(R"::( _element = new )::");
+source->append(Codegen::GetString(data_type_get_accessor_name(node->arrayInfo.arrayElement)));
+source->append(R"::((accessor.CellPtr);
+            )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->arrayInfo.array_dimension_size)->size();++iterator_1)
+{
+source->append(R"::(
+            for (int )::");
+source->append(Codegen::GetString(Discard((*(node->arrayInfo.array_dimension_size))[iterator_1]) + "iterator_" + GetString(iterator_1)));
+source->append(R"::( = 0; )::");
+source->append(Codegen::GetString(Discard((*(node->arrayInfo.array_dimension_size))[iterator_1]) + "iterator_" + GetString(iterator_1)));
+source->append(R"::( < )::");
+source->append(Codegen::GetString((*(node->arrayInfo.array_dimension_size))[iterator_1]));
+source->append(R"::(; ++)::");
+source->append(Codegen::GetString(Discard((*(node->arrayInfo.array_dimension_size))[iterator_1]) + "iterator_" + GetString(iterator_1)));
+source->append(R"::()
+            )::");
+}
+source->append(R"::(
+            {
+                ret[
+                    )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->arrayInfo.array_dimension_size)->size();++iterator_1)
+{
+source->append(Codegen::GetString(Discard((*(node->arrayInfo.array_dimension_size))[iterator_1]) + "iterator_" + GetString(iterator_1)));
+if (iterator_1 < (node->arrayInfo.array_dimension_size)->size() - 1)
+source->append(",");
+}
+source->append(R"::(
+                    ] = _element;
+                _element.CellPtr += )::");
+source->append(Codegen::GetString(node->type_size()));
+source->append(R"::( ;
+            }
+            )::");
+}
+source->append(R"::(
+            return ret;
+        }
         public static bool operator == ()::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::( a, )::");

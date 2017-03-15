@@ -12,12 +12,14 @@ namespace t_Namespace
     [TARGET("NFieldType")]
     [MAP_VAR("t_array_name", "data_type_get_accessor_name(node)")]
     [MAP_VAR("t_accessor_type", "data_type_get_accessor_name(node->arrayInfo.arrayElement)")]
+    [MAP_VAR("t_data_type", "node->arrayInfo.arrayElement")]
     [MAP_LIST("t_dim", "node->arrayInfo.array_dimension_size")]
     [MAP_VAR("t_dim_idx", "Discard($$) + GetString(GET_ITERATOR_VALUE())")]
     [MAP_VAR("t_int", "", MemberOf = "t_dim")]
     [MAP_VAR("t_int_2", "node->arrayInfo.array_dimension_size->size()")]
     [MAP_VAR("t_int_3", "node->arrayInfo.arrayElement->type_size()")]
     [MAP_VAR("t_int_4", "([&](int idx){int offset = 1;for(int i=idx + 1;i<node->arrayInfo.array_dimension_size->size();++i){offset *= (*(node->arrayInfo.array_dimension_size))[i];} return offset;})(GET_ITERATOR_VALUE())")]
+    [MAP_VAR("t_iterator", "Discard($$) + \"iterator_\" + GetString(GET_ITERATOR_VALUE())", MemberOf = "t_dim")]
     public unsafe class t_array_name : __meta, IEnumerable<t_accessor_type>
     {
         [FOREACH]
@@ -202,7 +204,38 @@ namespace t_Namespace
             Memory.memset(CellPtr + index* t_int_3, 0, (ulong)(length * t_int_3));
         }
 
-            //TODO ret += ImplicitOperatorCodeTemplate.GenerateArrayImplicitOperatorCode(arraytype);
+        public unsafe static implicit operator t_data_type[ /*FOREACH(",")*/ /*USE_LIST("t_dim")*/ /*END*/ ]
+            (t_array_name accessor)
+        {
+            t_data_type[ /*FOREACH(",")*/ /*USE_LIST("t_dim")*/ /*END*/ ] ret 
+                = new t_data_type[ /*FOREACH(",")*/ t_int /*END*/ ];
+
+            IF("data_type_need_accessor($t_data_type)");
+            fixed (t_data_type* p = ret)
+            {
+                Memory.Copy(accessor.CellPtr, p, META_OUTPUT("node->type_size()"));
+            }
+            ELSE();
+
+            t_accessor_type _element = new t_accessor_type(accessor.CellPtr);
+
+            FOREACH();
+            USE_LIST("t_dim");
+            for (int t_iterator = 0; t_iterator < t_int; ++t_iterator)
+            /*END*/
+            {
+                ret[
+                    /*FOREACH(",")*/
+                    t_iterator
+                    /*END*/
+                    ] = _element;
+                _element.CellPtr += META_OUTPUT("node->type_size()"); ;
+            }
+
+            END();
+
+            return ret;
+        }
 
         public static bool operator == (t_array_name a, t_array_name b)
         {

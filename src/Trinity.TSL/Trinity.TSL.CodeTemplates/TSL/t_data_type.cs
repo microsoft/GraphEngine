@@ -86,10 +86,10 @@ namespace Trinity.TSL
             throw new NotImplementedException();
         }
 
-        public t_field_type t_field_name;
+        public t_field_type t_field_name { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
 
 
-        public unsafe t_field_type Value { get; set; }
+        public unsafe t_field_type Value { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
 
         public bool HasValue { get; set; }
         public unsafe void* CellPtr { get; internal set; }
