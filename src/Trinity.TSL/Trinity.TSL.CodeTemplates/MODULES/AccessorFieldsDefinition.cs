@@ -87,8 +87,8 @@ namespace t_Namespace
                     throw new Exception("Optional field t_field_name doesn't exist for current cell.");
                 }
                 END();
+                byte* targetPtr = CellPtr;
                 //cw += @" " + pushcode;
-                byte* targetPtr = null;
 
                 IF("!%field_need_accessor");
 
@@ -110,7 +110,7 @@ namespace t_Namespace
             }
             set
             {
-                byte* targetPtr = null;
+                byte* targetPtr = CellPtr;
 
                 IF("%field_need_accessor");
                 if ((object)value == null) throw new ArgumentNullException("The assigned variable is null.");
@@ -146,11 +146,13 @@ namespace t_Namespace
             }
         }
 
+
         [END]//FOREACH
 
 
         [MODULE_END]
 
+        public unsafe byte* CellPtr { get; private set; }
         private long CellID;
         private unsafe byte* ResizeFunction(byte* targetPtr, int v1, string v2)
         {

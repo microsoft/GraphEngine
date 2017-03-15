@@ -6,6 +6,12 @@
 using std::string;
 using namespace Trinity::Codegen;
 
+/**
+ * Note, these resize lambda expressions do not use the CellPtr field of the accessor itself.
+ * So it is fine to not update CellPtr of a accessor field before resizing (or even not update
+ * it afterwards, if we are in an accessor field setter and the accessor won't be used).
+ * For lists, the resize function will also update the length at (listAccessor.CellPtr - 4).
+ */
 static void _GenerateAccessorFieldInitializationCode(std::string* source, NFieldType* fieldType, std::string accessorName, AccessorType accessorType)
 {
     if (!data_type_need_accessor(fieldType)) return;

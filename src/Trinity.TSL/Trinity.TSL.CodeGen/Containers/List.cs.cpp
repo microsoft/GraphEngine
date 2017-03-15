@@ -184,7 +184,6 @@ else
 source->append(R"::(
                 {
                     if ((object)value == null) throw new ArgumentNullException("The assigned variable is null.");
-                    elementAccessor.CellID = this.CellID;
                     byte* targetPtr = CellPtr;
                     )::");
 if (element_fixed_1)
@@ -203,6 +202,10 @@ source->append(R"::(
                     }
                     )::");
 }
+source->append(R"::(
+                    elementAccessor.CellID = this.CellID;
+                    elementAccessor.CellPtr = targetPtr;
+                    )::");
 
 {
     ModuleContext module_ctx;

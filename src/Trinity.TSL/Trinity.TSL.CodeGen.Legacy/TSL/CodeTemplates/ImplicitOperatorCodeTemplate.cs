@@ -332,276 +332,30 @@ namespace Trinity.TSL.CodeTemplates
             return ret;
         }
 
-        //All container'storage set properties code are the same, except for BitListType
-        public static string ContainerSetPropertiesCode(FieldType type, string accessorName, bool CreateOptionalField)
-        {
-            string ret = "";
-
-            ret += @"
-              int length = *(int*)(value.CellPtr - 4);";
-
-            if (!CreateOptionalField)
-                ret += @"
-
-                //senario: cell_a.inlinks = cell_b.inlinks,
-                //the later part will invoke the Get, filling cell_b.inlinks(a inlink_accessor_fiedld)'storage CellID
-                int oldlength = *(int*)targetPtr;
-                if (value.CellID != " + accessorName + @".CellID)
-                {
-                    //if not in the same Cell
-                    " + accessorName + @".CellPtr = " + accessorName + @".ResizeFunction(targetPtr, 0, length - oldlength);
-                    Memory.Copy(value.CellPtr - 4, " + accessorName + @".CellPtr, length + 4);
-                }
-                else
-                {
-                    byte[] tmpcell = new byte[length + 4];
-                    fixed (byte* tmpcellptr = tmpcell)
-                    {                        
-                        Memory.Copy(value.CellPtr - 4, tmpcellptr, length + 4);
-                        " + accessorName + @".CellPtr = " + accessorName + @".ResizeFunction(targetPtr, 0, length - oldlength);
-                        Memory.Copy(tmpcellptr, " + accessorName + @".CellPtr, length + 4);
-                    }
-                }
-                " + accessorName + @".CellPtr += 4;
-";
-            else//We're creating the container, not resizing it, so we will not access *targetPtr for an old length
-                ret += @"
-                //senario: cell_a.inlinks = cell_b.inlinks,
-                //the later part will invoke the Get, filling cell_b.inlinks(a inlink_accessor_fiedld)'storage CellID
-                if (value.CellID != " + accessorName + @".CellID)
-                {
-                    //if not in the same Cell
-                    " + accessorName + @".CellPtr = " + accessorName + @".ResizeFunction(targetPtr, 0, length + 4);
-                    Memory.Copy(value.CellPtr - 4, " + accessorName + @".CellPtr, length + 4);
-                }
-                else
-                {
-                    byte[] tmpcell = new byte[*(int*)(value.CellPtr - 4) + 4];
-                    fixed (byte* tmpcellptr = tmpcell)
-                    {                        
-                        Memory.Copy(value.CellPtr - 4, tmpcellptr, length + 4);
-                        " + accessorName + @".CellPtr = " + accessorName + @".ResizeFunction(targetPtr, 0, length + 4);
-                        Memory.Copy(tmpcellptr, " + accessorName + @".CellPtr, length + 4);
-                    }
-                }
-                " + accessorName + @".CellPtr += 4;
-";
-            return ret;
-        }
-
-
-        //All list indexer container'storage set properties code are the same, except for BitListType
-        public static string ContainerListIndexerSetPropertiesCode(FieldType type, string accessorName)
-        {
-            string ret = "";
-
-            ret += @"
-              int length = *(int*)(value.CellPtr - 4);";
-
-            ret += @"
-                int offset = (int)(targetPtr-CellPtr);
-                int oldlength = *(int*)targetPtr;
-                if (value.CellID != this.CellID)
-                {
-                    //if not in the same Cell
-                  this.CellPtr = " + accessorName + @".ResizeFunction(this.CellPtr, (int)(targetPtr-CellPtr), length - oldlength);
-                    Memory.Copy(value.CellPtr - 4, this.CellPtr+offset, length + 4);
-                }
-                else
-                {
-                    byte[] tmpcell = new byte[length + 4];
-                    fixed (byte* tmpcellptr = tmpcell)
-                    {                        
-                        Memory.Copy(value.CellPtr - 4, tmpcellptr, length + 4);
-                        this.CellPtr = " + accessorName + @".ResizeFunction(this.CellPtr,(int)(targetPtr-CellPtr), length - oldlength);
-                        Memory.Copy(tmpcellptr, this.CellPtr + offset, length + 4);
-                    }
-                }
-";
-            return ret;
-        }
- 
         internal static string ArraySetPropertiesCode(Field field, string accessor_field_name, bool createOptionalField)
         {
-            string ret = "";
-
-            //string accessor_field_name = field.Name + "_Accessor_Field";
-            string elementLength = "";
-            if (field.Type is ArrayType) elementLength = (field.Type as ArrayType).ElementType.Length.ToString(CultureInfo.InvariantCulture);
-            if (!createOptionalField)
-            {
-                ret = @"
-                Memory.Copy(value.CellPtr, targetPtr, " + accessor_field_name + @" .Length * " + elementLength + @");";
-            }
-            else
-            {
-                ret = @"
-                int offset = (int)(targetPtr - CellPtr);
-                int length = " + accessor_field_name + @".Length * " + elementLength + @";
-                if (value.CellID != this.CellID)
-                {
-                    this.CellPtr = this.ResizeFunction(this.CellPtr, offset, length);
-                    Memory.Copy(value.CellPtr, this.CellPtr + offset, length);
-                }
-                else
-                {
-                    byte[] tmpcell = new byte[length];
-                    fixed (byte* tmpcellptr = tmpcell)
-                    {
-                        Memory.Copy(value.CellPtr, tmpcellptr, length);
-                        this.CellPtr = this.ResizeFunction(this.CellPtr, offset, length);
-                        Memory.Copy(tmpcellptr, this.CellPtr + offset, length);
-                    }
-                }
-";
-            }
-            return ret;
+            return "";
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="field"></param>
-        /// <param name="createOptionalField"></param>
-        /// <param name="whoseReizeFunc">this parameter is for List[indexer]'storage setter</param>
-        /// <returns></returns>
-        internal static string FormatSetPropertiesCode(Field field, bool createOptionalField, string whoseReizeFunc = "this")
-        {
-            bool isfixed = field.Type is FixedStructFieldType;
-            string ret = @"
-                int offset = (int)(targetPtr - CellPtr);
-                byte* oldtargetPtr = targetPtr;
-";
-            if (!createOptionalField)
-            {
-                ret += field.Type.GeneratePushPointerCode();
-                ret += @"int oldlength = (int)(targetPtr - oldtargetPtr);";
-            }
-            else
-                ret += @"int oldlength = 0;
-";
-            ret += @"                targetPtr = value.CellPtr;
-";
-            ret += field.Type.GeneratePushPointerCode() + @"
-                int newlength = (int)(targetPtr - value.CellPtr);
-";
-            if (isfixed)
-                ret += @"Memory.Copy(value.CellPtr, oldtargetPtr, oldlength);";
-            else
-                ret += @"
-                if (newlength != oldlength)
-                {
-                    if (value.CellID != this.CellID)
-                    {
-                        this.CellPtr = "+whoseReizeFunc+@".ResizeFunction(this.CellPtr, offset, newlength - oldlength);
-                        Memory.Copy(value.CellPtr, this.CellPtr + offset, newlength);
-                    }
-                    else
-                    {
-                        byte[] tmpcell = new byte[newlength];
-                        fixed (byte* tmpcellptr = tmpcell)
-                        {
-                            Memory.Copy(value.CellPtr, tmpcellptr, newlength);
-                            this.CellPtr = "+whoseReizeFunc+@".ResizeFunction(this.CellPtr, offset, newlength - oldlength);
-                            Memory.Copy(tmpcellptr, this.CellPtr + offset, newlength);
-                        }
-                    }
-                }
-                else
-                {
-                    Memory.Copy(value.CellPtr, oldtargetPtr, oldlength);
-                }
-";
-
-            return ret;
-        }
-
         internal static string GuidSetPropertiesCode(Field field, bool createOptionalField)
         {
-            string ret = "";
-            if (!createOptionalField)
-            {
-                ret = @"
-                Memory.Copy(value.CellPtr, targetPtr, 16);";
-            }
-            else
-            {
-                ret = @"
-                int offset = (int)(targetPtr - CellPtr);
-                if (value.CellID != this.CellID)
-                {
-                    this.CellPtr = this.ResizeFunction(this.CellPtr, offset, 16);
-                    Memory.Copy(value.CellPtr, this.CellPtr + offset, 16);
-                }
-                else
-                {
-                    byte[] tmpcell = new byte[16];
-                    fixed (byte* tmpcellptr = tmpcell)
-                    {
-                        Memory.Copy(value.CellPtr, tmpcellptr, 16);
-                        this.CellPtr = this.ResizeFunction(this.CellPtr, offset, 16);
-                        Memory.Copy(tmpcellptr, this.CellPtr + offset, 16);
-                    }
-                }
-";
-            }
-            return ret;
+            return "";
         }
-
         internal static string DateTimeSetPropertiesCode(Field field, bool createOptionalField)
         {
-            string ret = "";
-            if (!createOptionalField)
-            {
-                ret = @"
-                *(long*)targetPtr = *(long*)value.CellPtr;";
-            }
-            else
-            {
-                ret = @"
-                int offset = (int)(targetPtr - CellPtr);
-                if (value.CellID != this.CellID)
-                {
-                    this.CellPtr = this.ResizeFunction(this.CellPtr, offset, 8);
-                    *(long*)(CellPtr + offset) = *(long*)value.CellPtr;
-                }
-                else
-                {
-                    long tmp = *(long*)value.CellPtr;
-                    this.CellPtr = this.ResizeFunction(this.CellPtr, offset, 8);
-                    *(long*)(CellPtr + offset) = tmp;
-                }
-";
-            }
-            return ret;
+            return "";
         }
-
         internal static string EnumSetPropertiesCode(Field field, bool createOptionalField)
         {
-            string ret = "";
-            if (!createOptionalField)
-            {
-                ret = @"
-                *(byte*)targetPtr = *(byte*)value.CellPtr;";
-            }
-            else
-            {
-                ret = @"
-                int offset = (int)(targetPtr - CellPtr);
-                if (value.CellID != this.CellID)
-                {
-                    this.CellPtr = this.ResizeFunction(this.CellPtr, offset, sizeof(byte));
-                    *(byte*)(CellPtr + offset) = *(byte*)value.CellPtr;
-                }
-                else
-                {
-                    byte tmp = *(byte*)value.CellPtr;
-                    this.CellPtr = this.ResizeFunction(this.CellPtr, offset, sizeof(byte));
-                    *(byte*)(CellPtr + offset) = tmp;
-                }
-";
-            }
-            return ret;
+            return "";
         }
+        public static string ContainerSetPropertiesCode(FieldType type, string accessorName, bool CreateOptionalField)
+        {
+            return "";
+        }
+        internal static string FormatSetPropertiesCode(Field field, bool createOptionalField, string whoseReizeFunc = "this")
+        {
+            return "";
+        }
+
     }
 }

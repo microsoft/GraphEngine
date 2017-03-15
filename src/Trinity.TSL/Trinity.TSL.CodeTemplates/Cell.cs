@@ -53,6 +53,8 @@ namespace t_Namespace
     [MAP_VAR("t_int", "GET_ITERATOR_VALUE()")]
     [MAP_VAR("t_uint", "GET_ITERATOR_VALUE()")]
     [MAP_VAR("t_int_2", "%iter_val++")]
+    [META_VAR("bool", "struct_nonempty", "node->fieldList->size() > 0")]
+    [MAP_VAR("t_accessor_type", "data_type_get_accessor_name($$->fieldType)", MemberOf = "t_field")]
 
     /*META_VAR("std::unordered_set<std::string>", "field_attributes")*/
     /*FOREACH()*/
@@ -67,36 +69,35 @@ namespace t_Namespace
     /// </summary>
     public partial class t_cell_name : __meta, ICell
     {
-        #region MUTE
-        [MUTE]
+        ///<summary>
+        ///The id of the cell.
+        ///</summary>
         public long CellID;
-        public t_cell_name(long cell_id)
+        ///<summary>
+        ///Initializes a new instance of t_cell_name with the specified parameters.
+        ///</summary>
+        public t_cell_name(long cell_id, [FOREACH(",")] t_field_type t_field_name = default(t_field_type)/*END*/)
         {
+            FOREACH();
+            this.t_field_name = t_field_name;
+            END();
             CellID = cell_id;
-        }
-
-        public t_cell_name()
-        {
         }
 
         //Loop via pre-defined variables
         //Will expand to C++ for(...)
-
-        public t_cell_name(long cell_id, [FOREACH(",")]  t_field_type t_field_name/**/)
+        [IF("%struct_nonempty")]
+        ///<summary>
+        ///Initializes a new instance of t_cell_name with the specified parameters.
+        ///</summary>
+        public t_cell_name([FOREACH(",")] t_field_type t_field_name = default(t_field_type)/*END*/)
         {
             FOREACH();
             this.t_field_name = t_field_name;
             END();
-            CellID = cell_id;
+            CellID = CellIDFactory.NewCellID();
         }
-
-        public t_cell_name([FOREACH(",")] t_field_type t_field_name/**/)
-        {
-            FOREACH();
-            this.t_field_name = t_field_name;
-            END();
-            CellID = Trinity.Core.Lib.CellIDFactory.NewCellID();
-        }
+        [END]
 
         [FOREACH]
         public t_field_type t_field_name;
@@ -114,17 +115,22 @@ namespace t_Namespace
             {
                 return false;
             }
+            IF("%struct_nonempty");
             // Return true if the fields match:
-            return /*FOREACH("&&")*/(a.t_field_name == b.t_field_name)/**/;
+            return
+                /*FOREACH("&&")*/
+                (a.t_field_name == b.t_field_name)
+                /*END*/
+                ;
+            ELSE();
+            return true;
+            END();
         }
 
         public static bool operator !=(t_cell_name a, t_cell_name b)
         {
             return !(a == b);
         }
-
-        /*MUTE_END*/
-        #endregion//MUTE
 
         #region Text processing
         /// <summary>
@@ -165,6 +171,7 @@ namespace t_Namespace
         }
         #endregion
 
+        #region Lookup tables
         internal static StringLookupTable FieldLookupTable = new StringLookupTable(
             /*FOREACH(",")*/
             "t_field_name"
@@ -180,6 +187,7 @@ namespace t_Namespace
             /*END*/
             /*END*/
         };
+        #endregion
 
         #region ICell implementation
 
@@ -205,7 +213,7 @@ namespace t_Namespace
                 /*USE_LIST("t_field")*/
                 case t_int:
                     return TypeConverter<T>.ConvertFrom_t_field_type_display(this.t_field_name);
-                /*END*/
+                    /*END*/
             }
 
             /* Should not reach here */
@@ -450,7 +458,7 @@ namespace t_Namespace
                         }
                         END();
                         break;
-                    /*META("}")*/
+                        /*META("}")*/
                 }
             }
             yield break;
@@ -539,77 +547,29 @@ namespace t_Namespace
     /// <summary>
     /// Provides in-place operations of t_cell_name defined in TSL.
     /// </summary>
-    public unsafe partial class t_cell_name_Accessor : __meta, ICellAccessor
+    public unsafe class t_cell_name_Accessor : __meta, ICellAccessor
     {
-        #region MUTE
-        [MUTE]
-
-        public t_cell_name_Accessor(long cellId, byte[] buffer)
+        internal t_cell_name_Accessor(long cellId, byte[] buffer)
         {
             this.CellID       = cellId;
             this.handle       = GCHandle.Alloc(buffer, GCHandleType.Pinned);
             this.CellPtr      = (byte*)handle.AddrOfPinnedObject().ToPointer();
 
             FOREACH();
-            IF("$t_field_type->layoutType == LT_DYNAMIC");
-            {
-                t_field_name_Accessor_Field = new t_field_type(null,
-                        (ptr, ptr_offset, delta) =>
-                        {
-                            int substructure_offset = (int)(ptr - this.CellPtr);
-                            this.ResizeFunction(this.CellPtr, ptr_offset + substructure_offset, delta);
-                            return this.CellPtr + substructure_offset;
-                        });
-                END();
-            }
-            END();
+            USE_LIST("t_field");
+            MODULE_CALL("CellFieldAccessorInitialization", "$t_field");
+            END();//FOREACH
 
             this.CellEntryIndex = -1;
         }
 
-
-        //TODO any better representation?
-        [IF("node->has_optional_fields()")]
-        //Macros are used to prevent redefinition errors
-        //Macros will be stripped away
-#if true
-        internal static string[] optional_field_names;
-        public static string[] GetOptionalFieldNames()
-        {
-            if (optional_field_names == null)
-                optional_field_names = new string[] { };
-            return optional_field_names;
-        }
-        internal List<string> GetNotNullOptionalFields()
-        {
-            List<string> list = new List<string>();
-            BitArray ba = new BitArray(GetOptionalFieldMap());
-            string[] optional_fields = GetOptionalFieldNames();
-            for (int i = 0; i < ba.Count; i++)
-            {
-                if (ba[i])
-                    list.Add(optional_fields[i]);
-            }
-            return list;
-        }
-
-        internal unsafe byte[] GetOptionalFieldMap()
-        {
-            return new byte[0];
-        }
-#else
-        [ELSE]
-        [END]
-#endif
+        [MODULE_CALL("OptionalFields", "node")]
 
         public byte[] ToByteArray()
         {
             byte* targetPtr = CellPtr;
 
-            PushPointerModule.PushPointer(targetPtr);
-
-            //targetPtr += 4;
-            //targetPtr += 4 + *(int*)targetPtr;
+            //cw += AccessorCodeTemplate.GenerateFieldPushPointerCode(cellDesc, cellDesc.Fields.Count, "this");
 
             int size = (int)(targetPtr - CellPtr);
             byte[] ret = new byte[size];
@@ -617,20 +577,14 @@ namespace t_Namespace
             return ret;
         }
 
-
         internal unsafe t_cell_name_Accessor(long cellId, CellAccessOptions options)
         {
             Initialize(cellId, options);
 
-            //TODO
-
-            //__fields_Accessor_Field = new intList(null,
-            //        (ptr, ptr_offset, delta) =>
-            //        {
-            //            int substructure_offset = (int)(ptr - this.CellPtr);
-            //            this.ResizeFunction(this.CellPtr, ptr_offset + substructure_offset, delta);
-            //            return this.CellPtr + substructure_offset;
-            //        });
+            FOREACH();
+            USE_LIST("t_field");
+            MODULE_CALL("CellFieldAccessorInitialization", "$t_field");
+            END();//FOREACH
 
             this.CellID = cellId;
         }
@@ -639,203 +593,56 @@ namespace t_Namespace
         {
             CellPtr = _CellPtr;
 
-            //TODO
-
-            //__fields_Accessor_Field = new intList(null,
-            //        (ptr, ptr_offset, delta) =>
-            //        {
-            //            int substructure_offset = (int)(ptr - this.CellPtr);
-            //            this.ResizeFunction(this.CellPtr, ptr_offset + substructure_offset, delta);
-            //            return this.CellPtr + substructure_offset;
-            //        });
+            FOREACH();
+            USE_LIST("t_field");
+            MODULE_CALL("CellFieldAccessorInitialization", "$t_field");
+            END();//FOREACH
 
             this.CellEntryIndex = -1;
         }
 
-        internal static unsafe byte[] construct(long CellID, int sender = default(int), List<int> receiver = null)
+        internal static unsafe byte[] construct(long CellID /*IF("%struct_nonempty")*/,/*END*/  [FOREACH(",")] t_field_type t_field_name = default(t_field_type) /*END*/)
         {
+            //ret += GenerateParametersToByteArrayCode(
+            //    cellDesc,
+            //    generatePreserveHeaderCode: false,
+            //    forCell: true);
 
-            byte* targetPtr = null;
-
-            PushPointerModule.PushPointer(targetPtr);
-
-            //targetPtr += 4;
-
-            //if (receiver != null)
-            //{
-            //    targetPtr += receiver.Count * 4 + sizeof(int);
-            //}
-            //else
-            //{
-            //    targetPtr += sizeof(int);
-            //}
-
-
-            byte[] tmpcell = new byte[(int)(targetPtr)];
-            fixed (byte* tmpcellptr = tmpcell)
-            {
-                targetPtr = tmpcellptr;
-
-                CompilerService.PushAndAssign();
-
-                //*(int*)targetPtr = sender;
-                //targetPtr += 4;
-
-                //if (receiver != null)
-                //{
-                //    *(int*)targetPtr = receiver.Count * 4;
-                //    targetPtr += sizeof(int);
-                //    for (int iterator_0 = 0; iterator_0 < receiver.Count; ++iterator_0)
-                //    {
-                //        *(int*)targetPtr = receiver[iterator_0];
-                //        targetPtr += 4;
-
-                //    }
-
-                //}
-                //else
-                //{
-                //    *(int*)targetPtr = 0;
-                //    targetPtr += sizeof(int);
-                //}
-
-            }
-
-            return tmpcell;
+            //return tmpcell;
+            throw new NotImplementedException();
         }
-        //int sender_Accessor_Field;
-        //public unsafe int sender
-        //{
-        //    get
-        //    {
 
-        //        byte* targetPtr = CellPtr;
+        [MODULE_CALL("AccessorFieldsDefinition", "node")]
+        [MUTE]
+        #region MUTE
+        t_accessor_type t_field_name_Accessor_Field;
 
-        //        return *(int*)(targetPtr);
-        //    }
+        internal void Remove_t_field_name()
+        {
+            throw new NotImplementedException();
+        }
 
-        //    set
-        //    {
-        //        byte* targetPtr = CellPtr;
-
-        //        *(int*)(targetPtr) = value;
-        //    }
-        //}
-
-        [FOREACH]
-        t_field_type t_field_name_Accessor_Field;
-        [END]
-
-        [FOREACH]
+        internal bool Contains_t_field_name
+        {
+            get;
+            set;
+        }
         public unsafe t_field_type t_field_name
         {
-            get
-            {
-
-                byte* targetPtr = CellPtr;
-                targetPtr += 4;
-
-                t_field_name_Accessor_Field.CellPtr = targetPtr + 4;
-                t_field_name_Accessor_Field.CellID = this.CellID;
-                return t_field_name_Accessor_Field;
-
-            }
-
-            set
-            {
-                if ((object)value == null) throw new ArgumentNullException("The assigned variable is null.");
-                byte* targetPtr = CellPtr;
-                targetPtr += 4;
-
-                t_field_name_Accessor_Field.CellID = this.CellID;
-
-                int length = *(int*)(value.CellPtr - 4);
-
-                //senario: cell_a.inlinks = cell_b.inlinks,
-                //the later part will invoke the Get, filling cell_b.inlinks(a inlink_accessor_fiedld)'storage CellID
-                int oldlength = *(int*)targetPtr;
-                if (value.CellID != t_field_name_Accessor_Field.CellID)
-                {
-                    //if not in the same Cell
-                    t_field_name_Accessor_Field.CellPtr = t_field_name_Accessor_Field.ResizeFunction(targetPtr, 0, length - oldlength);
-                    Memory.Copy(value.CellPtr - 4, t_field_name_Accessor_Field.CellPtr, length + 4);
-                }
-                else
-                {
-                    byte[] tmpcell = new byte[length + 4];
-                    fixed (byte* tmpcellptr = tmpcell)
-                    {
-                        Memory.Copy(value.CellPtr - 4, tmpcellptr, length + 4);
-                        t_field_name_Accessor_Field.CellPtr = t_field_name_Accessor_Field.ResizeFunction(targetPtr, 0, length - oldlength);
-                        Memory.Copy(tmpcellptr, t_field_name_Accessor_Field.CellPtr, length + 4);
-                    }
-                }
-                t_field_name_Accessor_Field.CellPtr += 4;
-
-            }
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
         }
-        [END]
 
-        public static unsafe implicit operator t_cell_name(t_cell_name_Accessor accessor)
+        public unsafe static implicit operator t_cell_name_Accessor(t_cell_name cell)
         {
-
-            if (accessor.CellID != null)
-                return new t_cell_name(accessor.CellID.Value, /*FOREACH(",")*/accessor.t_field_name/**/);
-            else
-                return new t_cell_name(/*FOREACH(",")*/accessor.t_field_name/**/);
+            throw new NotImplementedException();
         }
-
-        public unsafe static implicit operator t_cell_name_Accessor(t_cell_name guid)
+        public unsafe static implicit operator t_cell_name(t_cell_name_Accessor cell)
         {
-            byte* targetPtr = null;
-
-            {
-                CompilerService.Push();
-                //targetPtr += 4;
-
-                //if (guid.receiver != null)
-                //{
-                //    targetPtr += guid.receiver.Count * 4 + sizeof(int);
-                //}
-                //else
-                //{
-                //    targetPtr += sizeof(int);
-                //}
-
-
-            }
-            byte* tmpcellptr = BufferAllocator.AllocBuffer((int)targetPtr);
-            targetPtr = tmpcellptr;
-
-            {
-                CompilerService.PushAndAssign();
-
-                //*(int*)targetPtr = guid.sender;
-                //targetPtr += 4;
-
-                //if (guid.receiver != null)
-                //{
-                //    *(int*)targetPtr = guid.receiver.Count * 4;
-                //    targetPtr += sizeof(int);
-                //    for (int iterator_1 = 0; iterator_1 < guid.receiver.Count; ++iterator_1)
-                //    {
-                //        *(int*)targetPtr = guid.receiver[iterator_1];
-                //        targetPtr += 4;
-
-                //    }
-
-                //}
-                //else
-                //{
-                //    *(int*)targetPtr = 0;
-                //    targetPtr += sizeof(int);
-                //}
-
-            }
-            t_cell_name_Accessor ret = new t_cell_name_Accessor(tmpcellptr);
-            ret.CellID = guid.CellID;
-            return ret;
+            throw new NotImplementedException();
         }
+        #endregion
+        [MUTE_END]
 
         public static bool operator ==(t_cell_name_Accessor a, t_cell_name b)
         {
@@ -850,25 +657,7 @@ namespace t_Namespace
 
         public static bool operator ==(t_cell_name_Accessor a, t_cell_name_Accessor b)
         {
-            if (ReferenceEquals(a, b))
-                return true;
-            if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-                return false;
-            // If both are same instance, return true.
-            if (a.CellPtr == b.CellPtr) return true;
-
-            byte* targetPtr = a.CellPtr;
-            targetPtr += 4;
-            targetPtr += 4 + *(int*)targetPtr;
-
-            int lengthA = (int)(targetPtr - a.CellPtr);
-            targetPtr = b.CellPtr;
-            targetPtr += 4;
-            targetPtr += 4 + *(int*)targetPtr;
-
-            int lengthB = (int)(targetPtr - b.CellPtr);
-            if (lengthA != lengthB) return false;
-            return Memory.Compare(a.CellPtr, b.CellPtr, lengthA);
+            throw new NotImplementedException();
         }
 
         public static bool operator !=(t_cell_name_Accessor a, t_cell_name_Accessor b)
@@ -876,18 +665,6 @@ namespace t_Namespace
             return !(a == b);
         }
 
-        internal void Remove_t_field_name()
-        {
-            throw new NotImplementedException();
-        }
-
-        internal bool Contains_t_field_name
-        {
-            get;
-            set;
-        }
-        /*MUTE_END*/
-        #endregion//MUTE
 
         #region Fields
         /// <summary>
@@ -903,9 +680,9 @@ namespace t_Namespace
         /// Get the cell id. The value can be null when the id is undefined.
         /// </summary>
         public long? CellID { get; internal set; }
-        internal    int         	  		CellEntryIndex;
-        internal    bool        	  		m_IsIterator   = false;
-        internal    CellAccessOptions 		m_options      = 0;
+        internal    int                     CellEntryIndex;
+        internal    bool                    m_IsIterator   = false;
+        internal    CellAccessOptions       m_options      = 0;
         private     GCHandle                handle;
         private     const CellAccessOptions c_WALFlags     = CellAccessOptions.StrongLogAhead | CellAccessOptions.WeakLogAhead;
         #endregion
@@ -1115,6 +892,7 @@ namespace t_Namespace
         }
         #endregion//Public
 
+        #region Lookup tables
         internal static StringLookupTable FieldLookupTable = new StringLookupTable(
             /*FOREACH(",")*/
             "t_field_name"
@@ -1130,6 +908,7 @@ namespace t_Namespace
             /*END*/
             /*END*/
         };
+        #endregion
 
         #region ICell implementation
         public T GetField<T>(string fieldName)
@@ -1213,7 +992,7 @@ namespace t_Namespace
                 case t_int:
                     {
                         t_field_type conversion_result = TypeConverter<T>.ConvertTo_t_field_type_display(value);
-                        MODULE_CALL("AccessorFieldAssignment", "$t_field", "\"this\"", "\"conversion_result\"");
+                        MODULE_CALL("ValueToAccessorFieldAssignment", "$t_field", "\"this\"", "\"conversion_result\"");
                     }
                     break;
                 /*END*/

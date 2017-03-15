@@ -15,7 +15,7 @@ namespace Trinity.TSL
         internal t_field_type t_field_name { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
 
         public unsafe byte* CellPtr { get; internal set; }
-        public long CellID { get; internal set; }
+        public long? CellID { get{throw new NotImplementedException(); } internal set{throw new NotImplementedException(); } }
 
         public static bool operator ==(t_accessor_type a, int b)
         {

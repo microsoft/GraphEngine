@@ -122,7 +122,7 @@ source->append(R"::( doesn't exist for current cell.");
                 )::");
 }
 source->append(R"::(
-                byte* targetPtr = null;
+                byte* targetPtr = CellPtr;
                 )::");
 if (!field_need_accessor_1)
 {
@@ -160,7 +160,7 @@ source->append(R"::(
             }
             set
             {
-                byte* targetPtr = null;
+                byte* targetPtr = CellPtr;
                 )::");
 if (field_need_accessor_1)
 {
@@ -233,18 +233,10 @@ std::string* module_content = Modules::AccessorToAccessorFieldAssignment((*(node
     delete module_content;
 }
 }
-if (!field_need_accessor_1)
-{
 source->append(R"::(
                 *()::");
 source->append(Codegen::GetString(data_type_get_accessor_name((*(node->fieldList))[iterator_1]->fieldType)));
 source->append(R"::(*)(targetPtr) = value;
-                )::");
-}
-else
-{
-}
-source->append(R"::(
             }
         }
         )::");

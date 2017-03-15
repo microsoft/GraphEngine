@@ -23,10 +23,7 @@ namespace t_Namespace
     public unsafe class t_list_accessor : __meta, IEnumerable<t_accessor_type>
     {
         internal byte* CellPtr;
-        [MUTE]
-        internal long CellID;
-        [MUTE_END]
-        [LITERAL_OUTPUT("internal long? CellID;")]//we should output long?, but we use long here to maintain POD for t_accessor_type
+        internal long? CellID;
         ResizeFunctionDelegate ResizeFunction;
 
         internal t_list_accessor(byte* _CellPtr, ResizeFunctionDelegate func)
