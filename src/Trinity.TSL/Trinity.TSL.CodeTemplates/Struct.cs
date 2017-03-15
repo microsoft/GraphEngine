@@ -173,10 +173,13 @@ namespace t_Namespace
             return ret;
         }
 
-        //ret += AccessorCodeTemplate.GenerateFieldPropertiesCode(structDesc, isReadOnly);
+        [MODULE_CALL("AccessorFieldsDefinition", "node")]
 
         //    ret += ImplicitOperatorCodeTemplate.GenerateFormatImplicitOperatorCode(structDesc, isReadOnly, !structDesc.IsFixed());
 
         //    ret += EqualOperatorCodeTemplate.GenerateFormatEqualOperatorCode(structDesc, isReadOnly);
+        [MUTE]
+        void foo() { }
+        /*MUTE_END*/
     }
 }

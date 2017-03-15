@@ -41,6 +41,7 @@ source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
     )::");
+bool struct_nonempty_1 = node->fieldList->size() > 0;
 std::unordered_set<std::string> field_attributes_1;
 for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
 {
@@ -63,9 +64,146 @@ source->append(R"::( defined in TSL.
 source->append(Codegen::GetString(node->name));
 source->append(R"::( : ICell
     {
-        #region MUTE
-        
-        #endregion
+        ///<summary>
+        ///The id of the cell.
+        ///</summary>
+        public long CellID;
+        ///<summary>
+        ///Initializes a new instance of )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::( with the specified parameters.
+        ///</summary>
+        public )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::((long cell_id, )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::( = default()::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
+source->append(R"::())::");
+if (iterator_1 < (node->fieldList)->size() - 1)
+source->append(",");
+}
+source->append(R"::()
+        {
+            )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+source->append(R"::(
+            this.)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::( = )::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::(;
+            )::");
+}
+source->append(R"::(
+            CellID = cell_id;
+        }
+        )::");
+if (struct_nonempty_1)
+{
+source->append(R"::(
+        ///<summary>
+        ///Initializes a new instance of )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::( with the specified parameters.
+        ///</summary>
+        public )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(()::");
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::( = default()::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
+source->append(R"::())::");
+if (iterator_1 < (node->fieldList)->size() - 1)
+source->append(",");
+}
+source->append(R"::()
+        {
+            )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+source->append(R"::(
+            this.)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::( = )::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::(;
+            )::");
+}
+source->append(R"::(
+            CellID = CellIDFactory.NewCellID();
+        }
+        )::");
+}
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+source->append(R"::(
+        public )::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::(;
+        )::");
+}
+source->append(R"::(
+        public static bool operator ==()::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::( a, )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::( b)
+        {
+            if (System.Object.ReferenceEquals(a, b))
+            {
+                return true;
+            }
+            if (((object)a == null) || ((object)b == null))
+            {
+                return false;
+            }
+            )::");
+if (struct_nonempty_1)
+{
+source->append(R"::(
+            return
+                )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+source->append(R"::(
+                (a.)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::( == b.)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::()
+                )::");
+if (iterator_1 < (node->fieldList)->size() - 1)
+source->append("&&");
+}
+source->append(R"::(
+                ;
+            )::");
+}
+else
+{
+source->append(R"::(
+            return true;
+            )::");
+}
+source->append(R"::(
+        }
+        public static bool operator !=()::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::( a, )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::( b)
+        {
+            return !(a == b);
+        }
         #region Text processing
         /// <summary>
         /// Converts the string representation of a )::");
@@ -120,6 +258,7 @@ source->append(R"::(.</returns>
             return Serializer.ToString(this);
         }
         #endregion
+        #region Lookup tables
         internal static StringLookupTable FieldLookupTable = new StringLookupTable(
             )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
@@ -150,6 +289,7 @@ source->append(R"::("
 }
 source->append(R"::(
         };
+        #endregion
         #region ICell implementation
         /// <summary>
         /// Get the field of the specified name in the cell.
@@ -181,7 +321,7 @@ source->append(Codegen::GetString(Trinity::Codegen::GetDataTypeDisplayString((*(
 source->append(R"::((this.)::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::();
-                )::");
+                    )::");
 }
 source->append(R"::(
             }
@@ -565,7 +705,7 @@ source->append(R"::(
 }
 source->append(R"::(
                         break;
-                    )::");
+                        )::");
 }
 source->append(R"::(
                 }
@@ -677,13 +817,154 @@ source->append(R"::(;
 source->append(Codegen::GetString(node->name));
 source->append(R"::( defined in TSL.
     /// </summary>
-    public unsafe partial class )::");
+    public unsafe class )::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::(_Accessor : ICellAccessor
     {
-        #region MUTE
-        
-        #endregion
+        internal )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor(long cellId, byte[] buffer)
+        {
+            this.CellID       = cellId;
+            this.handle       = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+            this.CellPtr      = (byte*)handle.AddrOfPinnedObject().ToPointer();
+            )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::CellFieldAccessorInitialization((*(node->fieldList))[iterator_1], &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+}
+source->append(R"::(
+            this.CellEntryIndex = -1;
+        }
+        )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::OptionalFields(node, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
+        public byte[] ToByteArray()
+        {
+            byte* targetPtr = CellPtr;
+            int size = (int)(targetPtr - CellPtr);
+            byte[] ret = new byte[size];
+            Memory.Copy(CellPtr, 0, ret, 0, size);
+            return ret;
+        }
+        internal unsafe )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor(long cellId, CellAccessOptions options)
+        {
+            Initialize(cellId, options);
+            )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::CellFieldAccessorInitialization((*(node->fieldList))[iterator_1], &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+}
+source->append(R"::(
+            this.CellID = cellId;
+        }
+        public unsafe )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor(byte* _CellPtr)
+        {
+            CellPtr = _CellPtr;
+            )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::CellFieldAccessorInitialization((*(node->fieldList))[iterator_1], &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+}
+source->append(R"::(
+            this.CellEntryIndex = -1;
+        }
+        internal static unsafe byte[] construct(long CellID )::");
+if (struct_nonempty_1)
+{
+source->append(R"::(,)::");
+}
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::( = default()::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
+source->append(R"::() )::");
+if (iterator_1 < (node->fieldList)->size() - 1)
+source->append(",");
+}
+source->append(R"::()
+        {
+            throw new NotImplementedException();
+        }
+        )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::AccessorFieldsDefinition(node, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
+        public static bool operator ==()::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor a, )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::( b)
+        {
+            )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor bb = b;
+            return (a == bb);
+        }
+        public static bool operator !=()::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor a, )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::( b)
+        {
+            return !(a == b);
+        }
+        public static bool operator ==()::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor a, )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor b)
+        {
+            throw new NotImplementedException();
+        }
+        public static bool operator !=()::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor a, )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor b)
+        {
+            return !(a == b);
+        }
         #region Fields
         /// <summary>
         /// Get a pointer to the underlying raw binary blob. Take caution when accessing data with
@@ -698,10 +979,10 @@ source->append(R"::(_Accessor : ICellAccessor
         /// Get the cell id. The value can be null when the id is undefined.
         /// </summary>
         public long? CellID { get; internal set; }
-        internal    int         	  		CellEntryIndex;
-        internal    bool        	  		m_IsIterator   = false;
-        internal    CellAccessOpt)::");
-source->append(R"::(ions 		m_options      = 0;
+        internal    int                     CellEntryIndex;
+        internal    bool                    m_IsIterator   = false;
+        internal    CellAccessOptions )::");
+source->append(R"::(      m_options      = 0;
         private     GCHandle                handle;
         private     const CellAccessOptions c_WALFlags     = CellAccessOptions.StrongLogAhead | CellAccessOptions.WeakLogAhead;
         #endregion
@@ -722,8 +1003,8 @@ source->append(R"::(ions 		m_options      = 0;
                         {
                             Throw.cell_not_found(cellId);
                         }
-                     )::");
-source->append(R"::(   else if ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
+                      )::");
+source->append(R"::(  else if ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
                         {
                             byte[]  defaultContent    = construct(cellId);
                             int     size              = defaultContent.Length;
@@ -924,6 +1205,7 @@ source->append(R"::(.</returns>
             return Serializer.ToString(this);
         }
         #endregion
+        #region Lookup tables
         internal static StringLookupTable FieldLookupTable = new StringLookupTable(
             )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
@@ -954,6 +1236,7 @@ source->append(R"::("
 }
 source->append(R"::(
         };
+        #endregion
         #region ICell implementation
         public T GetField<T>(string fieldName)
         {
@@ -1070,7 +1353,7 @@ source->append(R"::((value);
     module_ctx.m_stack_depth = 0;
 module_ctx.m_arguments.push_back(Codegen::GetString("this"));
 module_ctx.m_arguments.push_back(Codegen::GetString("conversion_result"));
-std::string* module_content = Modules::AccessorFieldAssignment((*(node->fieldList))[iterator_1], &module_ctx);
+std::string* module_content = Modules::ValueToAccessorFieldAssignment((*(node->fieldList))[iterator_1], &module_ctx);
     source->append(*module_content);
     delete module_content;
 }

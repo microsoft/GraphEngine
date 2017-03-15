@@ -67,7 +67,8 @@
     <Compile Include="LINQ\IndexQueryTreeExecutor.cs" />
     <Compile Include="LINQ\IndexQueryTreeNode.cs" />
     <Compile Include="LINQ\PLINQWrapper.cs" />
-    <Compile Include="MODULES\AccessorFieldAssignment.cs" />
+    <Compile Include="MODULES\ValueToAccessorFieldAssignment.cs" />
+    <Compile Include="MODULES\AccessorFieldsDefinition.cs" />
     <Compile Include="MODULES\CommunicationSchemaModule.cs" />
     <Compile Include="MODULES\EnumerateFromFieldModule.cs" />
     <Compile Include="MODULES\MessagePassingMethods.cs" />

@@ -11,7 +11,7 @@ namespace Trinity
         namespace Modules
         {
             string* 
-AccessorFieldAssignment(
+ValueToAccessorFieldAssignment(
 NField* node, ModuleContext* context)
             {
                 string* source = new string();

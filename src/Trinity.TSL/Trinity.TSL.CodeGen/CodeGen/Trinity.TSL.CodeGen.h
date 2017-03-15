@@ -69,7 +69,9 @@ namespace Trinity
             std::string* HTTPModule(NProtocolGroup* node, ModuleContext* context);
             std::string* EnumerateFromFieldModule(NField* node, ModuleContext* context);
             std::string* CommunicationSchemaModule(NProtocolGroup* node, ModuleContext* context);
-            std::string* AccessorFieldAssignment(NField* node, ModuleContext* context);
+            std::string* ValueToAccessorFieldAssignment(NField* node, ModuleContext* context);
+            std::string* AccessorToAccessorFieldAssignment(NFieldType* node, ModuleContext* context);
+            std::string* AccessorFieldsDefinition(NStructBase* node, ModuleContext* context);
             std::string* CellFieldAccessorInitialization(NField* node, ModuleContext* context);
             std::string* StructFieldAccessorInitialization(NField* node, ModuleContext* context);
             std::string* ListElementAccessorInitialization(NFieldType* node, ModuleContext* context);

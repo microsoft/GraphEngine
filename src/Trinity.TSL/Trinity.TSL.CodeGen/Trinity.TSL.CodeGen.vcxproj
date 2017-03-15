@@ -91,6 +91,7 @@
     <ClCompile Include="CellSelectors.cs.cpp" />
     <ClCompile Include="CellTypeEnum.cs.cpp" />
     <ClCompile Include="CodeGen\AccessorInitialization.cpp" />
+    <ClCompile Include="CodeGen\AccessorToAccessorFieldDefinition.cpp" />
     <ClCompile Include="CodeGen\common.cpp" />
     <ClCompile Include="CommunicationSchema.cs.cpp" />
     <ClCompile Include="Containers\Array.cs.cpp" />
@@ -121,12 +122,13 @@
     <ClCompile Include="LINQ\IndexQueryTreeNode.cs.cpp" />
     <ClCompile Include="LINQ\PLINQWrapper.cs.cpp" />
     <ClCompile Include="CodeGen\main.cpp" />
-    <ClCompile Include="MODULES\AccessorFieldAssignment.cs.cpp" />
+    <ClCompile Include="MODULES\AccessorFieldsDefinition.cs.cpp" />
     <ClCompile Include="MODULES\CommunicationSchemaModule.cs.cpp" />
     <ClCompile Include="MODULES\EnumerateFromFieldModule.cs.cpp" />
     <ClCompile Include="MODULES\HTTPModule.cs.cpp" />
     <ClCompile Include="MODULES\OptionalFields.cs.cpp" />
     <ClCompile Include="MODULES\PushPointer.cs.cpp" />
+    <ClCompile Include="MODULES\ValueToAccessorFieldAssignment.cs.cpp" />
     <ClCompile Include="StorageSchema.cs.cpp" />
     <ClCompile Include="Serializer.cs.cpp" />
     <ClCompile Include="Struct.cs.cpp" />

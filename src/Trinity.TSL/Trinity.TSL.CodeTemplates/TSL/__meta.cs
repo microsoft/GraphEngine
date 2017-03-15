@@ -40,7 +40,7 @@ namespace Trinity.TSL
 
         internal static void META_VAR(string type, string name, string value = "") { }
 
-        internal static void META_OUTPUT(string cmd) { throw new NotImplementedException(); }
+        internal static t_field_type META_OUTPUT(string cmd) { throw new NotImplementedException(); }
 
         internal static void TARGET(string type) { }
 
@@ -64,6 +64,7 @@ namespace Trinity.TSL
         internal const int t_int_2 = 0;
         internal const int t_int_3 = 0;
         internal const int t_int_4 = 0;
+        internal const bool t_bool = false;
 
         internal static string MemberOf = "";
 

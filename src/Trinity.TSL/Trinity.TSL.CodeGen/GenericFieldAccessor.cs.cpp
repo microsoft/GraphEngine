@@ -127,7 +127,7 @@ source->append(R"::((value);
     module_ctx.m_stack_depth = 0;
 module_ctx.m_arguments.push_back(Codegen::GetString("accessor"));
 module_ctx.m_arguments.push_back(Codegen::GetString("conversion_result"));
-std::string* module_content = Modules::AccessorFieldAssignment((*((*(node->structList))[iterator_1]->fieldList))[iterator_2], &module_ctx);
+std::string* module_content = Modules::ValueToAccessorFieldAssignment((*((*(node->structList))[iterator_1]->fieldList))[iterator_2], &module_ctx);
     source->append(*module_content);
     delete module_content;
 }

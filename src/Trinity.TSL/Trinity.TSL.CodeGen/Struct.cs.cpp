@@ -282,6 +282,16 @@ source->append(R"::(
             Memory.Copy(CellPtr,0,ret,0,size);
             return ret;
         }
+        )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::AccessorFieldsDefinition(node, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
     }
 }
 )::");

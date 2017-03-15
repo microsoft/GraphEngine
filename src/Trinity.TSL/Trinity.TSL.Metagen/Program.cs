@@ -117,7 +117,6 @@ namespace Trinity.TSL.Metagen
             catch (Exception ex)
             {
                 Console.WriteLine("Error on file {0}", filename);
-                Console.WriteLine(ex.StackTrace);
                 if (ex.InnerException != null)
                 {
                     Console.WriteLine(ex.InnerException.ToString());

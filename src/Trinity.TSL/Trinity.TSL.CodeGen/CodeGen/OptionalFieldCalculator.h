@@ -30,7 +30,7 @@ namespace Trinity
                 fieldSequence %= 8;
                 String mask = String::Format("0x{0:2}", (void*)((1 << fieldSequence)));
                 return String::Format(R":(
-                    *({0} + {1}) |= {2}):", pointerName, offset, mask);
+                    *({0} + {1}) |= {2};):", pointerName, offset, mask);
             }
             std::string GenerateMaskOffCode(NField* field)
             {
@@ -39,7 +39,7 @@ namespace Trinity
                 fieldSequence %= 8;
                 String mask = String::Format("0x{0:2}", (void*)(~(1 << fieldSequence)));
                 return String::Format(R":(
-                    *({0} + {1}) &= {2}):", pointerName, offset, mask);
+                    *({0} + {1}) &= {2};):", pointerName, offset, mask);
             }
             std::string GenerateReadBitExpression(NField* field)
             {
@@ -56,7 +56,7 @@ namespace Trinity
                 for (int i = 0; i < headerLength; ++i)
                 {
                     ret += String::Format(R":(
-                    *({0} + {1}) = 0x00):", pointerName, i);
+                    *({0} + {1}) = 0x00;):", pointerName, i);
                 }
                 return ret;
             }

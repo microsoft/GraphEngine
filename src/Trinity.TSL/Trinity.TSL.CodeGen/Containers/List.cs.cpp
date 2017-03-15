@@ -131,7 +131,6 @@ source->append(R"::(
                     elementAccessor.CellPtr = (this.CellPtr + index * )::");
 source->append(Codegen::GetString(element_len_1));
 source->append(R"::();
-                    elementAccessor.CellID = this.CellID;
                     )::");
 }
 else
@@ -143,7 +142,7 @@ source->append(R"::(
                         {
                         }
                         )::");
-if (node->listElementType->is_string() || node->listElementType->is_list())
+if (data_type_is_length_prefixed(node->listElementType))
 {
 source->append(R"::(
                         elementAccessor.CellPtr = targetPtr + 4;
@@ -153,7 +152,6 @@ else
 {
 source->append(R"::(
                         elementAccessor.CellPtr = targetPtr;
-                        elementAccessor.CellID = this.CellID;
                         )::");
 }
 source->append(R"::(
@@ -161,6 +159,7 @@ source->append(R"::(
                     )::");
 }
 source->append(R"::(
+                    elementAccessor.CellID = this.CellID;
                     return elementAccessor;
                 }
                 )::");
@@ -204,6 +203,16 @@ source->append(R"::(
                     }
                     )::");
 }
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+module_ctx.m_arguments.push_back(Codegen::GetString("elementAccessor"));
+module_ctx.m_arguments.push_back(Codegen::GetString("FieldExists"));
+std::string* module_content = Modules::AccessorToAccessorFieldAssignment(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
 source->append(R"::(
                 }
                 )::");
@@ -234,6 +243,7 @@ source->append(R"::(> action)
         {
             byte* targetPtr = CellPtr;
             byte* endPtr = CellPtr + length;
+            elementAccessor.CellID = this.CellID;
             while (targetPtr < endPtr)
             {
                 )::");
@@ -262,11 +272,11 @@ source->append(R"::(;
                 }
                 )::");
 }
-else if (node->listElementType->is_struct())
+else if (data_type_is_length_prefixed(node->listElementType))
 {
 source->append(R"::(
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.CellPtr = targetPtr + 4;
                     action(elementAccessor);
                 }
                 )::");
@@ -275,7 +285,7 @@ else
 {
 source->append(R"::(
                 {
-                    elementAccessor.CellPtr = targetPtr + 4;
+                    elementAccessor.CellPtr = targetPtr;
                     action(elementAccessor);
                 }
                 )::");
@@ -321,11 +331,11 @@ source->append(R"::(;
                 }
                 )::");
 }
-else if (node->listElementType->is_struct())
+else if (data_type_is_length_prefixed(node->listElementType))
 {
 source->append(R"::(
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.CellPtr = targetPtr + 4;
                     action(elementAccessor, index);
                 }
                 )::");
@@ -334,7 +344,7 @@ else
 {
 source->append(R"::(
                 {
-                    elementAccessor.CellPtr = targetPtr + 4;
+                    elementAccessor.CellPtr = targetPtr;
                     action(elementAccessor, index);
                 }
                 )::");
@@ -385,11 +395,11 @@ source->append(R"::(
                 }
                 )::");
 }
-else if (node->listElementType->is_struct())
+else if (data_type_is_length_prefixed(node->listElementType))
 {
 source->append(R"::(
                 {
-                    target.elementAccessor.CellPtr = targetPtr;
+                    target.elementAccessor.CellPtr = targetPtr + 4;
                     return target.elementAccessor;
                 }
                 )::");
@@ -398,7 +408,7 @@ else
 {
 source->append(R"::(
                 {
-                    target.elementAccessor.CellPtr = targetPtr + 4;
+                    target.elementAccessor.CellPtr = targetPtr;
                     return target.elementAccessor;
                 }
                 )::");
@@ -408,36 +418,19 @@ source->append(R"::(
             internal void move_next()
             {
                 )::");
-if (!element_need_accessor_1)
+if (element_fixed_1)
 {
 source->append(R"::(
                 {
                     targetPtr += )::");
 source->append(Codegen::GetString(element_len_1));
 source->append(R"::(;
-                }
-                )::");
-}
-else if (element_fixed_1)
-{
-source->append(R"::(
-                {
-                    targetPtr += )::");
-source->append(Codegen::GetString(element_len_1));
-source->append(R"::(;
-                }
-                )::");
-}
-else if (node->listElementType->is_struct())
-{
-source->append(R"::(
-                {
                 }
                 )::");
 }
 else
 {
-source->append(R"::(
+source->append(R"::( 
                 {
                 }
                 )::");
@@ -471,6 +464,11 @@ source->append(R"::( element)
             byte* targetPtr = null;
             {
             }
+            int size = (int)targetPtr;
+            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), *(int*)(this.CellPtr-sizeof(int))+sizeof(int), size);
+            targetPtr = this.CellPtr + (*(int*)this.CellPtr)+sizeof(int);
+            *(int*)this.CellPtr += size;
+            this.CellPtr += sizeof(int);
         }
         /// <summary>
         /// Inserts an element into the List at the specified index.
@@ -506,6 +504,9 @@ source->append(R"::(
 }
 source->append(R"::(
             int offset = (int)(targetPtr - CellPtr);
+            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), offset + sizeof(int), size);
+            *(int*)this.CellPtr += size;
+            this.CellPtr += sizeof(int);
             targetPtr = this.CellPtr + offset;
         }
         /// <summary>
@@ -565,22 +566,10 @@ source->append(R"::(;
                 }
                 )::");
 }
-else if (node->listElementType->is_struct())
+else if (data_type_is_length_prefixed(node->listElementType))
 {
-source->append(R"::(
-                {
-                    elementAccessor.CellPtr = targetPtr;
-                    if (comparison(elementAccessor, element)<=0)
-                    {
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                )::");
 }
-else
+else if (node->listElementType->is_struct())
 {
 source->append(R"::(
                 {
@@ -595,9 +584,27 @@ source->append(R"::(
                 }
                 )::");
 }
+else
+{
+source->append(R"::(
+                {
+                    elementAccessor.CellPtr = targetPtr;
+                    if (comparison(elementAccessor, element)<=0)
+                    {
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                )::");
+}
 source->append(R"::(
             }
             int offset = (int)(targetPtr - CellPtr);
+            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), offset + sizeof(int), size);
+            *(int*)this.CellPtr += size;
+            this.CellPtr += sizeof(int);
             targetPtr = this.CellPtr + offset;
         }
         /// <summary>
@@ -614,12 +621,15 @@ source->append(R"::(
             int offset = (int)(targetPtr - CellPtr);
             byte* oldtargetPtr = targetPtr;
             int size = (int)(oldtargetPtr - targetPtr);
+            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), offset + siz)::");
+source->append(R"::(eof(int), size);
+            *(int*)this.CellPtr += size;
+            this.CellPtr += sizeof(int);
         }
         /// <summary>
         /// Adds the elements of the specified collection to the end of the List
         /// </summary>
-        /// <param name="collection">The collection whose elements should be added to the end of the List. The collection itself cannot )::");
-source->append(R"::(be null.</param>
+        /// <param name="collection">The collection whose elements should be added to the end of the List. The collection itself cannot be null.</param>
         public unsafe void AddRange()::");
 source->append(Codegen::GetString(node));
 source->append(R"::( collection)

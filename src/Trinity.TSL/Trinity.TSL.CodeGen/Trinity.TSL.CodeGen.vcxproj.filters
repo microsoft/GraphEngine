@@ -150,7 +150,13 @@
     <ClCompile Include="MODULES\OptionalFields.cs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MODULES\AccessorFieldAssignment.cs.cpp">
+    <ClCompile Include="MODULES\AccessorFieldsDefinition.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MODULES\ValueToAccessorFieldAssignment.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CodeGen\AccessorToAccessorFieldDefinition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

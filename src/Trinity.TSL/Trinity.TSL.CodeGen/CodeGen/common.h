@@ -92,6 +92,8 @@ namespace Trinity
 
         bool data_type_is_not_duplicate_array(NFieldType* type, std::vector<NFieldType*>* type_list);
 
+        bool data_type_is_length_prefixed(NFieldType* type);
+
         std::string data_type_get_array_type_with_size_string(NFieldType* type);
 
         std::string data_type_get_accessor_name(NFieldType* type);

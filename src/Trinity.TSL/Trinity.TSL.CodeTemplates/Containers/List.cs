@@ -88,7 +88,6 @@ namespace t_Namespace
                 {
                     IF("%element_fixed");
                     elementAccessor.CellPtr = (this.CellPtr + index * t_int);
-                    elementAccessor.CellID = this.CellID;
                     ELSE();
                     {
                         byte* targetPtr = CellPtr;
@@ -96,14 +95,14 @@ namespace t_Namespace
                         {
                             //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
                         }
-                        IF("node->listElementType->is_string() || node->listElementType->is_list()");
+                        IF("data_type_is_length_prefixed(node->listElementType)");
                         elementAccessor.CellPtr = targetPtr + 4;
                         ELSE();
                         elementAccessor.CellPtr = targetPtr;
-                        elementAccessor.CellID = this.CellID;
                         END();
                     }
                     END();
+                    elementAccessor.CellID = this.CellID;
                     return elementAccessor;
                 }
                 END();
@@ -125,38 +124,7 @@ namespace t_Namespace
                         //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
                     }
                     END();
-                    //TODO SetProperties
-                    //    #region if (field.Type is StructFieldType || field.Type is DynamicArrayType || field.Type is ArrayType||Guid||DateTime)
-                    //    if (field.Type is StructFieldType || field.Type is ArrayType || field.Type is GuidType || field.Type is DateTimeType)
-                    //    {
-                    //        if (field.Type is ArrayType)
-                    //        {
-
-                    //            cw += @"
-                    //" + ImplicitOperatorCodeTemplate.ArraySetPropertiesCode(field, accessor_field_name, false);
-                    //        }
-                    //        else if (field.Type is StructFieldType)
-                    //        {
-                    //            cw += ImplicitOperatorCodeTemplate.FormatSetPropertiesCode(field, false, "elementAccessor");
-                    //        }
-                    //        else if (field.Type is GuidType)
-                    //        {
-                    //            cw += @"
-                    //" + ImplicitOperatorCodeTemplate.GuidSetPropertiesCode(field, false);
-                    //        }
-                    //        else if (field.Type is DateTimeType)
-                    //        {
-                    //            cw += @"
-                    //" + ImplicitOperatorCodeTemplate.DateTimeSetPropertiesCode(field, false);
-                    //        }
-                    //    }
-                    //    #endregion
-                    //    #region else if (field.Type is ListType || field.Type is StringType || field.Type is U8StringType)
-                    //    else if (field.Type is ListType || field.Type is StringType || field.Type is U8StringType)
-                    //    {
-                    //        cw += ImplicitOperatorCodeTemplate.ContainerListIndexerSetPropertiesCode(field.Type, accessor_field_name);
-                    //    }
-                    //    #endregion
+                    MODULE_CALL("AccessorToAccessorFieldAssignment", "$t_data_type", "\"elementAccessor\"", "\"FieldExists\"");
                 }
                 END();
             }
@@ -184,6 +152,7 @@ namespace t_Namespace
         {
             byte* targetPtr = CellPtr;
             byte* endPtr = CellPtr + length;
+            elementAccessor.CellID = this.CellID;
             while (targetPtr < endPtr)
             {
                 IF("!%element_need_accessor");
@@ -197,15 +166,15 @@ namespace t_Namespace
                     action(elementAccessor);
                     targetPtr += t_int;
                 }
-                ELIF("node->listElementType->is_struct()");
+                ELIF("data_type_is_length_prefixed(node->listElementType)");
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.CellPtr = targetPtr + 4;
                     action(elementAccessor);
                     //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
                 }
                 ELSE();
                 {
-                    elementAccessor.CellPtr = targetPtr + 4;
+                    elementAccessor.CellPtr = targetPtr;
                     action(elementAccessor);
                     //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
                 }
@@ -233,15 +202,15 @@ namespace t_Namespace
                     action(elementAccessor, index);
                     targetPtr += t_int;
                 }
-                ELIF("node->listElementType->is_struct()");
+                ELIF("data_type_is_length_prefixed(node->listElementType)");
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.CellPtr = targetPtr + 4;
                     action(elementAccessor, index);
                     //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
                 }
                 ELSE();
                 {
-                    elementAccessor.CellPtr = targetPtr + 4;
+                    elementAccessor.CellPtr = targetPtr;
                     action(elementAccessor, index);
                     //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
                 }
@@ -275,33 +244,25 @@ namespace t_Namespace
                     target.elementAccessor.CellPtr = targetPtr;
                     return (target.elementAccessor);
                 }
-                ELIF("node->listElementType->is_struct()");
+                ELIF("data_type_is_length_prefixed(node->listElementType)");
                 {
-                    target.elementAccessor.CellPtr = targetPtr;
+                    target.elementAccessor.CellPtr = targetPtr + 4;
                     return target.elementAccessor;
                 }
                 ELSE();
                 {
-                    target.elementAccessor.CellPtr = targetPtr + 4;
+                    target.elementAccessor.CellPtr = targetPtr;
                     return target.elementAccessor;
                 }
                 END();
             }
             internal void move_next()
             {
-                IF("!%element_need_accessor");
+                IF("%element_fixed");
                 {
                     targetPtr += t_int;
                 }
-                ELIF("%element_fixed");
-                {
-                    targetPtr += t_int;
-                }
-                ELIF("node->listElementType->is_struct()");
-                {
-                    //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
-                }
-                ELSE();
+                ELSE(); // dynamic
                 {
                     //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
                 }
@@ -416,9 +377,10 @@ namespace t_Namespace
                         break;
                     }
                 }
+                ELIF("data_type_is_length_prefixed(node->listElementType)");
                 ELIF("node->listElementType->is_struct()");
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.CellPtr = targetPtr + 4;
                     if (comparison(elementAccessor, element)<=0)
                     {
                         //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
@@ -430,7 +392,7 @@ namespace t_Namespace
                 }
                 ELSE();
                 {
-                    elementAccessor.CellPtr = targetPtr + 4;
+                    elementAccessor.CellPtr = targetPtr;
                     if (comparison(elementAccessor, element)<=0)
                     {
                         //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();

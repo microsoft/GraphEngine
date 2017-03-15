@@ -86,7 +86,7 @@ namespace t_Namespace
                 case t_uint:
                     {
                         t_field_type_2 conversion_result = TypeConverter<T>.ConvertTo_t_field_type_2_display(value);
-                        MODULE_CALL("AccessorFieldAssignment", "$t_member", "\"accessor\"", "\"conversion_result\"");
+                        MODULE_CALL("ValueToAccessorFieldAssignment", "$t_member", "\"accessor\"", "\"conversion_result\"");
                         break;
                     }
                 /*END*/

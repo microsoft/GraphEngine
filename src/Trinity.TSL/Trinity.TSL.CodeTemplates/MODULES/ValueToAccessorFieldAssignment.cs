@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Trinity.TSL
 {
-    class AccessorFieldAssignment : __meta
+    class ValueToAccessorFieldAssignment : __meta
     {
         internal class __Accessor
         {
@@ -19,8 +19,11 @@ namespace Trinity.TSL
             }
         }
         /// <summary>
-        /// AccessorFieldAssignment:
-        /// Assign from t_source_name into t_accessor_name.(node->fieldName)
+        /// ValueToAccessorFieldAssignment:
+        /// Assign from t_source_name into t_accessor_name.
+        /// t_source_name is a value/reference, not an accessor, so it will
+        /// be implicitly converted to accessor first. This module is used
+        /// internally to support the icell interfaces.
         /// Arguments:
         /// 0. Accessor name
         /// 1. Assignment source name.

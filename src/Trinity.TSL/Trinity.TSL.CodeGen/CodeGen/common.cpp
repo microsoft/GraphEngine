@@ -325,6 +325,16 @@ namespace Trinity
             return "";
         }
 
+        /**
+         * Tells if the given data type is prefixed by a (currently) 4-byte 
+         * length field in the cell memory. Currently, only variable-length
+         * containers have such layouts (strings and lists).
+         */
+        bool data_type_is_length_prefixed(NFieldType* type)
+        {
+            return (type->is_string() || type->is_list());
+        }
+
         std::string data_type_get_array_type_with_size_string(NFieldType* type)
         {
             //TODO assert type->is_array()

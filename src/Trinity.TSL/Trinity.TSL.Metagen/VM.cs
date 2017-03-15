@@ -287,8 +287,13 @@ namespace Trinity.TSL.Metagen
          */
         private string META_GetVar(string var_name)
         {
-            var list_prefix = LISTVAR_GetListName(var_name);
-            var result = d_var[var_name];
+            string list_prefix = LISTVAR_GetListName(var_name);
+            string result;
+
+            if(!d_var.TryGetValue(var_name, out result))
+            {
+                throw new Exception("META_GetVar: undefined variable " + var_name);
+            }
 
             /* Interpret META commands (if any) in the MAP_VAR target string */
             List<MetaToken> meta_tokens = Metagen.GetTokens(ref result);
