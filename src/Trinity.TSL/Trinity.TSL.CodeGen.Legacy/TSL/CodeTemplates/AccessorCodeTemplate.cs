@@ -3,23 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using Trinity.TSL.CodeTemplates;
 using Trinity.Utilities;
 
 namespace Trinity.TSL
 {
     class AccessorCodeTemplate
     {
-        public static string GenerateFieldPropertiesCode(StructDescriptor structDesc, bool isReadOnly)
-        {
-            return "";
-        }
-
-        internal static string GenerateOptionalFieldMap(StructDescriptor structDesc)
-        {
-            return "";
-        }
-
         internal static string GenerateFieldPushPointerCode(StructDescriptor structDesc, int cnt, string cellName)
         {
             string indent = "            ";

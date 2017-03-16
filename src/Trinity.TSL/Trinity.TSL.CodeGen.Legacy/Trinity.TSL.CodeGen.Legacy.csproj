@@ -58,8 +58,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TSL\CodeTemplates\AccessorCodeTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\CellCodeTemplate.cs" />
-    <Compile Include="TSL\CodeTemplates\EqualOperatorCodeTemplate.cs" />
-    <Compile Include="TSL\CodeTemplates\ImplicitOperatorCodeTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\MessagePassing\AbstractProxyTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\MessagePassing\AbstractModuleTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\MessagePassing\AbstractServerTemplate.cs" />
@@ -75,7 +73,6 @@
     <Compile Include="TSL\CodeTemplates\StorageExtension\StorageCodeTemplate.CellType.cs" />
     <Compile Include="TSL\CodeTemplates\StorageExtension\StorageCodeTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\StorageExtension\StorageCodeTemplate.ForEach.cs" />
-    <Compile Include="TSL\CodeTemplates\StructCodeTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\Verbatim\Verbatim.cs" />
     <Compile Include="TSL\Compiler\TSLCompiler.GenCode.cs" />
     <Compile Include="TSL\Compiler\TSLCompiler.Properties.cs" />

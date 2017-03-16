@@ -47,25 +47,6 @@ namespace Trinity.TSL
 
             string default_namespace = "namespace " + script.RootNamespace;
 
-            foreach (StructDescriptor cell_desc in script.CellDescriptors)
-            {
-                cw = Verbatim.GetHeader(script);
-
-                cw += default_namespace;
-                cw +=
-    @"
-{
-";
-                cw += CellCodeTemplate.GenerateCellCode(cell_desc);
-
-                cw +=
-@"
-}
-";
-                cw += Verbatim.GetFooter();
-                commit_source_file(cell_desc.Name + ".cs");
-            }
-
             //reset code writer
             cw = Verbatim.GetHeader(script);
             cw += default_namespace;
