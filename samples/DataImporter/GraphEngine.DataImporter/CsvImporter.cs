@@ -96,17 +96,16 @@ namespace GraphEngine.DataImporter
                     cDoubleQuotes = 0;
                     beginWithDoubleQuote = true;
                 }
-                else if (c == delimiter && cDoubleQuotes % 2 == 0 && beginWithDoubleQuote && line[curIndex - 1] == '"' && curIndex > 0)
+                else if (c == delimiter && cDoubleQuotes % 2 == 0 && beginWithDoubleQuote && curIndex > 0)
                 {
-                    fields.Add(SanitizeCsvField(CheckDoubleQuote(line.Substring(beginIndex, curIndex - beginIndex))));
+                    fields.Add(SanitizeCsvField(line.Substring(beginIndex, curIndex - beginIndex)));
                     beginIndex = curIndex + 1;
                     cDoubleQuotes = 0;
                     beginWithDoubleQuote = true;
                 }
-                else if (c == delimiter && (!beginWithDoubleQuote || line[curIndex - 1] != '"' || beginIndex + 1 == curIndex || curIndex == 0))
+                else if (c == delimiter && (!beginWithDoubleQuote || curIndex == 0))
                 {
-                    fields.Add(CheckDoubleQuote(line.Substring(beginIndex, curIndex - beginIndex)));
-
+                    fields.Add((line.Substring(beginIndex, curIndex - beginIndex)));
                     beginIndex = curIndex + 1;
                     cDoubleQuotes = 0;
                     beginWithDoubleQuote = true;
@@ -120,17 +119,17 @@ namespace GraphEngine.DataImporter
                         //throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
                     }
                 }
-            }
+            } 
 
             if (beginIndex < curIndex)
             {
-                if (!beginWithDoubleQuote || line[curIndex - 1] != '"' || beginIndex + 1 == curIndex)
+                if (!beginWithDoubleQuote)
                 {
-                    fields.Add(CheckDoubleQuote(line.Substring(beginIndex, curIndex - beginIndex)));
+                    fields.Add(line.Substring(beginIndex, curIndex - beginIndex));
                 }
                 else
                 {
-                       fields.Add(SanitizeCsvField(CheckDoubleQuote(line.Substring(beginIndex, curIndex - beginIndex))));
+                    fields.Add(SanitizeCsvField(line.Substring(beginIndex, curIndex - beginIndex)));
                 }
             }
             if (beginIndex == curIndex && beginIndex == line.Length)
@@ -149,28 +148,21 @@ namespace GraphEngine.DataImporter
             string sanitized = trim ? field.Trim() : field;
             if (sanitized == "" && treatEmptyAsNull)
                 return null;
-            if (sanitized.StartsWith("\""))
+            if (sanitized.StartsWith("\"") && sanitized.EndsWith("\""))
             {
-                if (!sanitized.EndsWith("\""))
-                    throw new ImporterException("Field is not properly quoted: {0}", field);
-
                 sanitized = sanitized.Substring(1, sanitized.Length - 2);
-                if(sanitized.Count(c => c=='\"') % 4 !=0)
+                if(sanitized.Count(c => c=='\"') % 2 !=0)
+                {
+                   throw new ImporterException("Field is not properly quoted: {0}", field); 
+                }
+                if (sanitized.Count(c=> c=='\"') != sanitized.Replace("\"\"", "\"").Count(c=> c=='\"') * 2)
                 {
                     throw new ImporterException("Field is not properly quoted: {0}", field);
                 }
-            }
             sanitized = sanitized.Replace("\"\"", "\"");
+            }
 
             return sanitized;
-        }
-        private static string CheckDoubleQuote(string source)
-        {
-            if (source.Count(c => c == '"') % 2 == 1)
-            {
-                throw new ImporterException("Field is not properly quoted: {0}", source);
-            }
-            return source;
         }
 
         public bool IgnoreType()
