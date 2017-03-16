@@ -612,7 +612,16 @@ namespace t_Namespace
             *(int*)CellPtr += size;
             this.CellPtr += 4;
         }
-        //cw += ImplicitOperatorCodeTemplate.GenerateListImplicitOperaterCode(listtype);
+
+        public unsafe static implicit operator t_list (t_list_accessor accessor)
+        {
+            if((object)accessor == null) return null;
+            t_list list = new t_list();
+            accessor.ForEach(element => list.Add(element));
+            return list;
+        }
+        [MODULE_CALL("AccessorReverseImplicitOperator", "node")]
+
         public static bool operator ==(t_list_accessor a, t_list_accessor b)
         {
             if (ReferenceEquals(a, b))

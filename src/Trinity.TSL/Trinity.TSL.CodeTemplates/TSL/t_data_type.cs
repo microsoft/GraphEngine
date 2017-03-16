@@ -34,11 +34,6 @@ namespace Trinity.TSL
             return "";
         }
 
-        public static implicit operator t_accessor_type(t_data_type x)
-        {
-            throw new NotFiniteNumberException();
-        }
-
         public static implicit operator t_data_type(BitArray x)
         {
             throw new NotImplementedException();
@@ -93,6 +88,7 @@ namespace Trinity.TSL
 
         public bool HasValue { get; set; }
         public unsafe void* CellPtr { get; internal set; }
+        public long? CellID { get { throw new NotImplementedException(); } internal set { throw new NotImplementedException(); } }
 
         internal void Set(int idx, bool p)
         {

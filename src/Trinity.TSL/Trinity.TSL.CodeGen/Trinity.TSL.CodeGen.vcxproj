@@ -123,6 +123,7 @@
     <ClCompile Include="LINQ\PLINQWrapper.cs.cpp" />
     <ClCompile Include="CodeGen\main.cpp" />
     <ClCompile Include="MODULES\AccessorFieldsDefinition.cs.cpp" />
+    <ClCompile Include="MODULES\AccessorReverseImplicitOperator.cs.cpp" />
     <ClCompile Include="MODULES\CommunicationSchemaModule.cs.cpp" />
     <ClCompile Include="MODULES\EnumerateFromFieldModule.cs.cpp" />
     <ClCompile Include="MODULES\HTTPModule.cs.cpp" />

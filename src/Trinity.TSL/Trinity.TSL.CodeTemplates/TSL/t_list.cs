@@ -24,5 +24,10 @@ namespace Trinity.TSL
         {
             throw new NotFiniteNumberException();
         }
+
+        internal void Add(t_accessor_type element)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -59,6 +59,11 @@ namespace Trinity
             return GetDataTypeString_impl(n_field_type);
         }
 
+        /**
+         * The "DisplayString" is not a type string, but serves as a part
+         * of a variable name/function name. All symbols invalid in an identifier
+         * are removed, for example, List<int> becomes List_int.
+         */
         std::string GetDataTypeDisplayString(NFieldType* n_field_type)
         {
             std::string ret;
@@ -313,7 +318,8 @@ namespace Trinity
             case FT_LIST:
                 return data_type_get_accessor_name(type->listElementType) + "ListAccessor";
             case FT_ATOM:
-                //TODO
+                // FT_ATOM need no accessor, the accessor type is the non-nullable value type.
+                return GetNonNullableValueTypeString(type);
                 break;
             case FT_ENUM:
                 return *type->referencedNEnum->name;

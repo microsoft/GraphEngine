@@ -97,6 +97,14 @@ namespace t_Namespace
             END();
             CellID = CellIDFactory.NewCellID();
         }
+
+        [MUTE]
+        public t_cell_name(long cell_id, t_field_type t_field_name = null, t_field_type t_field_name1 = null) : this(cell_id, t_field_name)
+        {
+            throw new NotImplementedException();
+        }
+        [MUTE_END]
+
         [END]
 
         [FOREACH]
@@ -408,6 +416,7 @@ namespace t_Namespace
             /*END*/
             /*META("}")*/
             );
+        private t_field_type t_field_name1;
         #endregion
 
         public IEnumerable<T> EnumerateField<T>(string fieldName)
@@ -637,12 +646,53 @@ namespace t_Namespace
         {
             throw new NotImplementedException();
         }
-        public unsafe static implicit operator t_cell_name(t_cell_name_Accessor cell)
-        {
-            throw new NotImplementedException();
-        }
         #endregion
         [MUTE_END]
+
+        public static unsafe implicit operator t_cell_name(t_cell_name_Accessor accessor)
+        {
+            FOREACH();
+            IF("$t_field->is_optional()");
+            t_field_type _t_field_name = default(t_field_type);
+            if (accessor.Contains_t_field_name)
+            {
+                IF("$t_field->is_value_type()");
+                _t_field_name = (t_field_type_remove_nullable)accessor.t_field_name;
+                ELSE();
+                _t_field_name = accessor.t_field_name;
+                END();
+            }
+            END();
+            END();
+
+            if (accessor.CellID != null)
+            {
+                return new t_cell_name(accessor.CellID.Value,
+                /*FOREACH(",")*/
+                /*IF("$t_field->is_optional()")*/
+                _t_field_name /*MUTE*/ , /*MUTE_END*/
+                                         /*ELSE*/
+                        accessor.t_field_name
+                /*END*/
+                /*END*/
+                );
+            }
+            else
+            {
+                return new t_cell_name(
+                /*FOREACH(",")*/
+                /*IF("$t_field->is_optional()")*/
+                _t_field_name /*MUTE*/ , /*MUTE_END*/
+                                         /*ELSE*/
+                        accessor.t_field_name
+                /*END*/
+                /*END*/
+                );
+            }
+        }
+        [MODULE_CALL("AccessorReverseImplicitOperator", "node")]
+
+
 
         public static bool operator ==(t_cell_name_Accessor a, t_cell_name b)
         {
@@ -946,7 +996,7 @@ namespace t_Namespace
                 /*USE_LIST("t_field")*/
                 case t_int:
                     return TypeConverter<T>.ConvertFrom_t_field_type_display(this.t_field_name);
-                /*END*/
+                    /*END*/
             }
 
             /* Should not reach here */
@@ -995,7 +1045,7 @@ namespace t_Namespace
                         MODULE_CALL("ValueToAccessorFieldAssignment", "$t_field", "\"this\"", "\"conversion_result\"");
                     }
                     break;
-                /*END*/
+                    /*END*/
             }
         }
 
@@ -1199,7 +1249,7 @@ namespace t_Namespace
                         }
                         END();
                         break;
-                    /*META("}")*/
+                        /*META("}")*/
                 }
             }
             yield break;

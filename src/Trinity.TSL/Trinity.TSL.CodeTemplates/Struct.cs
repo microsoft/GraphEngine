@@ -32,7 +32,7 @@ namespace t_Namespace
     [MAP_VAR("t_field", "")]
     [MAP_VAR("t_field_name", "name")]
     [MAP_VAR("t_field_type", "fieldType")]
-    [MAP_VAR("t_field_type_display", "Trinity::Codegen::GetDataTypeDisplayString($$->fieldType)")]
+    [MAP_VAR("t_data_type", "Trinity::Codegen::GetNonNullableValueTypeString($$->fieldType)", MemberOf = "t_field")]
     [MAP_VAR("t_struct_name", "node->name")]
     [META_VAR("bool", "struct_nonempty", "node->fieldList->size() > 0")]
     [META_VAR("bool", "struct_fixed", "node->layoutType == LT_FIXED")]
@@ -53,9 +53,10 @@ namespace t_Namespace
             this.t_field_name = t_field_name;
             END();
         }
+
         [END]
 
-        public static bool operator == (t_struct_name a, t_struct_name b)
+        public static bool operator ==(t_struct_name a, t_struct_name b)
         {
             // If both are null, or both are same instance, return true.
             if (System.Object.ReferenceEquals(a, b))
@@ -86,6 +87,7 @@ namespace t_Namespace
 
         [FOREACH]
         public t_field_type t_field_name;
+
         [END]
 
         /// <summary>
@@ -125,6 +127,14 @@ namespace t_Namespace
         {
             return Serializer.ToString(this);
         }
+
+        [MUTE]
+        public t_struct_name(t_field_type t_field_name = null, t_field_type t_field_name1 = default(t_field_type)) : this(t_field_name)
+        {
+            throw new NotImplementedException();
+        }
+
+        /*MUTE_END*/
     }
 
     /// <summary>
@@ -140,6 +150,7 @@ namespace t_Namespace
 
         [IF("!%struct_fixed")]
         internal ResizeFunctionDelegate ResizeFunction;
+
         [END]
 
         internal unsafe t_struct_name_Accessor(byte* _CellPtr
@@ -169,17 +180,44 @@ namespace t_Namespace
             //ret += AccessorCodeTemplate.GenerateFieldPushPointerCode(structDesc, structDesc.Fields.Count, "this");
             int size = (int)(targetPtr - CellPtr);
             byte[] ret = new byte[size];
-            Memory.Copy(CellPtr,0,ret,0,size);
+            Memory.Copy(CellPtr, 0, ret, 0, size);
             return ret;
         }
 
         [MODULE_CALL("AccessorFieldsDefinition", "node")]
 
-        //    ret += ImplicitOperatorCodeTemplate.GenerateFormatImplicitOperatorCode(structDesc, isReadOnly, !structDesc.IsFixed());
+        public static unsafe implicit operator t_struct_name(t_struct_name_Accessor accessor)
+        {
+            FOREACH();
+            IF("$t_field->is_optional()");
+            t_field_type _t_field_name = default(t_field_type);
+            if (accessor.Contains_t_field_name)
+            {
+                IF("$t_field->is_value_type()");
+                _t_field_name = (t_data_type)accessor.t_field_name;
+                ELSE();
+                _t_field_name = accessor.t_field_name;
+                END();
+            }
+            END();
+            END();
 
-        //    ret += EqualOperatorCodeTemplate.GenerateFormatEqualOperatorCode(structDesc, isReadOnly);
+            return new t_struct_name(
+                /*FOREACH(",")*/
+                    /*IF("$t_field->is_optional()")*/
+                        _t_field_name /*MUTE*/ , /*MUTE_END*/
+                    /*ELSE*/
+                        accessor.t_field_name
+                    /*END*/
+                /*END*/
+                );
+        }
+
+        [MODULE_CALL("AccessorReverseImplicitOperator", "node")]
+
         [MUTE]
-        void foo() { }
+        public bool Contains_t_field_name { get; private set; }
+        private t_field_type t_field_name;
         /*MUTE_END*/
     }
 }

@@ -60,6 +60,11 @@ namespace Trinity.TSL
         }
     }
 
+    public unsafe class t_field_type_remove_nullable : t_field_type
+    {
+
+    }
+
     public unsafe class t_field_type
     {
         public IEnumerator GetEnumerator()

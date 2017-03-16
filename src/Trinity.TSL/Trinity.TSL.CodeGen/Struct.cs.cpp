@@ -94,7 +94,7 @@ source->append(R"::(
         )::");
 }
 source->append(R"::(
-        public static bool operator == ()::");
+        public static bool operator ==()::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::( a, )::");
 source->append(Codegen::GetString(node->name));
@@ -205,6 +205,7 @@ source->append(R"::(>(input);
         {
             return Serializer.ToString(this);
         }
+        
     }
     /// <summary>
     /// Provides in-place operations of )::");
@@ -279,7 +280,7 @@ source->append(R"::(
             byte* targetPtr = CellPtr;
             int size = (int)(targetPtr - CellPtr);
             byte[] ret = new byte[size];
-            Memory.Copy(CellPtr,0,ret,0,size);
+            Memory.Copy(CellPtr, 0, ret, 0, size);
             return ret;
         }
         )::");
@@ -292,6 +293,62 @@ std::string* module_content = Modules::AccessorFieldsDefinition(node, &module_ct
     delete module_content;
 }
 source->append(R"::(
+        public static unsafe implicit operator )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(()::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor accessor)
+        {
+            )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+if ((*(node->fieldList))[iterator_1]->is_optional())
+{
+source->append(Codegen::GetString(Trinity::Codegen::GetNonNullableValueTypeString((*(node->fieldList))[iterator_1]->fieldType)));
+source->append(R"::( _)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::( = default()::");
+source->append(Codegen::GetString(Trinity::Codegen::GetNonNullableValueTypeString((*(node->fieldList))[iterator_1]->fieldType)));
+source->append(R"::();
+            if (accessor.Contains_)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::()
+            {
+                _)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::( = accessor.)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::(;
+            }
+            )::");
+}
+}
+source->append(R"::(
+            return new )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::((
+                )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+if ((*(node->fieldList))[iterator_1]->is_optional())
+{
+source->append(R"::(
+                        _)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+}
+else
+{
+source->append(R"::(
+                        accessor.)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+}
+if (iterator_1 < (node->fieldList)->size() - 1)
+source->append(",");
+}
+source->append(R"::(
+                );
+        }
+        
     }
 }
 )::");

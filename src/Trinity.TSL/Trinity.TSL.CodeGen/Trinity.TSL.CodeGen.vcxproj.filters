@@ -159,6 +159,9 @@
     <ClCompile Include="CodeGen\AccessorToAccessorFieldDefinition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MODULES\AccessorReverseImplicitOperator.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CodeGen\Trinity.TSL.CodeGen.h">

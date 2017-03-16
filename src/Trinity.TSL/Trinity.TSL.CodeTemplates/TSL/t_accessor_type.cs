@@ -10,7 +10,7 @@ namespace Trinity.TSL
     /// <summary>
     /// Mocking accessors. We make this mock a POD so that pointers apply.
     /// </summary>
-    public struct t_accessor_type
+    public partial struct t_accessor_type
     {
         public unsafe t_accessor_type(byte* cellPtr) : this()
         {

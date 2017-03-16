@@ -167,7 +167,7 @@ public:
     union
     {
         NEnum*   referencedNEnum;
-        NStruct* referencedNStruct;
+        NStructBase* referencedNStruct;
     };
 
     /**

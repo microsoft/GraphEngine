@@ -14,6 +14,7 @@ namespace t_Namespace
         [MAP_LIST("t_field", "node->fieldList")]
         [MAP_VAR("t_field", "")]
         [MAP_VAR("t_field_name", "name", MemberOf = "t_field")]
+        [MAP_VAR("t_field_type_remove_nullable", "Trinity::Codegen::GetNonNullableValueTypeString($$->fieldType)")]
         [MAP_VAR("t_field_type", "fieldType")]
         [MAP_VAR("t_accessor_type", "data_type_get_accessor_name($$->fieldType)", MemberOf = "t_field")]
 
