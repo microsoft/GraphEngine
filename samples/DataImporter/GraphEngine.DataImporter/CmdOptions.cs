@@ -12,23 +12,26 @@ namespace GraphEngine.DataImporter
 {
     class CmdOptions
     {
-        [Option('t', "tsl", HelpText="Specifies the TSL assembly for data importing.", MutuallyExclusiveSet = "Action")]
+        [Option('t', "tsl", HelpText = "Specifies the TSL assembly for data importing.", MutuallyExclusiveSet = "Action")]
         public string TSLAssembly { get; set; }
 
-        [Option('d', "dir", HelpText="Import all .json and .txt files from directory", Required=false)]
+        [Option('d', "dir", HelpText = "Import all .json and .txt files from directory", Required=false)]
         public string InputDirectory { get; set; }
 
-        [Option('o', "output", HelpText="Specifies data import output directory for importing tasks, and specifies the output TSL file name for TSL generation tasks", Required=false)]
+        [Option('o', "output", HelpText = "Specifies data import output directory for importing tasks, and specifies the output TSL file name for TSL generation tasks", Required=false)]
         public string Output { get; set; }
 
-        [Option('g', "generate_tsl", HelpText="Generates TSL", MutuallyExclusiveSet = "Action")]
+        [Option('g', "generate_tsl", HelpText = "Generates TSL", MutuallyExclusiveSet = "Action")]
         public bool GenerateTSL { get; set; }
 
-        [Option('s', "sorted", HelpText="Specifies that the data is already sorted/grouped by entities", DefaultValue = false)]
+        [Option('s', "sorted", HelpText = "Specifies that the data is already sorted/grouped by entities", DefaultValue = false)]
         public bool Sorted { get; set; }
 
-        [Option('p', "delimiter", HelpText="Specifies the delimiter of CSV or TSV file",Required =false)]
-        public string delimiter { get; set; }
+        [Option('p', "delimiter", HelpText = "Specifies the delimiter of CSV or TSV file", Required = false)]
+        public char delimiter { get; set; }
+
+        [Option('f', "fileFormat", HelpText = "Specifies the file format", Required = false)]
+        public string fileFormat { get; set; }
 
         [ValueList(typeof(List<string>))]
         public IList<string> ExplicitFiles { get; set; }

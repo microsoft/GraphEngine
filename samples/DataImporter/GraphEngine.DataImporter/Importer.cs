@@ -176,7 +176,7 @@ namespace GraphEngine.DataImporter
         {
             Log.WriteLine("Importing {0}", file);
             string typename = Path.GetFileNameWithoutExtension(file);
-            IImporter importer = GetImporter(file, options.delimiter);
+            IImporter importer = GetImporter(file, options);
 
             if (importer == null)
             {
@@ -223,25 +223,32 @@ namespace GraphEngine.DataImporter
              });
         }
 
-        public static IImporter GetImporter(string path, string delimiter)
+        private static IImporter GetImporter(string path, CmdOptions options)
         {
-            bool delimiterSpecific = delimiter == null ? false : true;
-            string filename = Path.GetFileName(path);
-            string filetype = Path.GetExtension(filename).ToLower();
-
-            if (filetype == ".gz" || filetype == ".zip")
+            string filename, filetype;
+            bool delimiterSpecific = options.delimiter == '\0' ? false : true;
+            if (options.fileFormat != null)
             {
-                filetype = Path.GetExtension(Path.GetFileNameWithoutExtension(filename)).ToLower();
+                filetype = options.fileFormat.StartsWith(".") ? options.fileFormat : "." + options.fileFormat;
             }
+            else
+            {
+                filename = Path.GetFileName(path);
+                filetype = Path.GetExtension(filename).ToLower();
 
+                if (filetype == ".gz" || filetype == ".zip")
+                {
+                    filetype = Path.GetExtension(Path.GetFileNameWithoutExtension(filename)).ToLower();
+                }
+            }
             switch (filetype)
             {
                 case ".json":
                     return new JsonImporter();
                 case ".csv":
-                    return new CsvImporter(delimiterSpecific? delimiter[0]:',');
+                    return new CsvImporter(delimiterSpecific ? options.delimiter : ',');
                 case ".tsv":
-                    return new CsvImporter(delimiterSpecific? delimiter[0]:'\t');
+                    return new CsvImporter(delimiterSpecific ? options.delimiter : '\t');
                 case ".ntriples":
                     return g_opts.Sorted ? (IImporter)new UnsortedRDFImporter() : new SortedRDFImporter();
                 default:
@@ -262,11 +269,11 @@ namespace GraphEngine.DataImporter
                             }
                             if (headerRow.Count(c => c == ',') >= headerRow.Count(c => c == '\t') && headerRow.Count(c => c == ',') >= headerRow.Count(c => c == '/'))
                             {
-                                 return new CsvImporter(delimiterSpecific? delimiter[0]:',');
+                                 return new CsvImporter(delimiterSpecific? options.delimiter:',');
                             }
                             else if (headerRow.Count(c => c == '\t') >= headerRow.Count(c => c == ',') && headerRow.Count(c => c == '\t') >= headerRow.Count(c => c == '/'))
                             {
-                                return new CsvImporter(delimiterSpecific? delimiter[0]:'\t');
+                                return new CsvImporter(delimiterSpecific? options.delimiter:'\t');
                             }
                             else if (headerRow.Count(c => c == '/') >= headerRow.Count(c => c == '\t') && headerRow.Count(c => c == '/') >= headerRow.Count(c => c == ','))
                             {
