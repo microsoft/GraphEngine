@@ -149,6 +149,17 @@ namespace GraphEngine.DataImporter
             string sanitized = trim ? field.Trim() : field;
             if (sanitized == "" && treatEmptyAsNull)
                 return null;
+            if (sanitized.StartsWith("\""))
+            {
+                if (!sanitized.EndsWith("\""))
+                    throw new ImporterException("Field is not properly quoted: {0}", field);
+
+                sanitized = sanitized.Substring(1, sanitized.Length - 2);
+                if(sanitized.Count(c => c=='\"') % 4 !=0)
+                {
+                    throw new ImporterException("Field is not properly quoted: {0}", field);
+                }
+            }
             sanitized = sanitized.Replace("\"\"", "\"");
 
             return sanitized;

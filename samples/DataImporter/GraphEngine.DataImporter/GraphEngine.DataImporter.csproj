@@ -11,10 +11,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GraphEngine.DataImporter</RootNamespace>
     <AssemblyName>GraphEngine.DataImporter</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -49,6 +50,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -62,7 +64,7 @@
   <ItemGroup>
     <Compile Include="CmdOptions.cs" />
     <Compile Include="CodeWriter.cs" />
-    <Compile Include="DsvImporter.cs" />
+    <Compile Include="CsvImporter.cs" />
     <Compile Include="FileReader.cs" />
     <Compile Include="IGenerator.cs" />
     <Compile Include="Importer.cs" />
@@ -80,6 +82,7 @@
     <Compile Include="TSLGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
