@@ -205,14 +205,13 @@ source->append(R"::(>(input);
         {
             return Serializer.ToString(this);
         }
-        
     }
     /// <summary>
     /// Provides in-place operations of )::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::( defined in TSL.
     /// </summary>
-    public unsafe class )::");
+    public unsafe partial class )::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::(_Accessor
     {
@@ -304,21 +303,40 @@ for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
 {
 if ((*(node->fieldList))[iterator_1]->is_optional())
 {
-source->append(Codegen::GetString(Trinity::Codegen::GetNonNullableValueTypeString((*(node->fieldList))[iterator_1]->fieldType)));
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
 source->append(R"::( _)::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::( = default()::");
-source->append(Codegen::GetString(Trinity::Codegen::GetNonNullableValueTypeString((*(node->fieldList))[iterator_1]->fieldType)));
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
 source->append(R"::();
             if (accessor.Contains_)::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::()
             {
+                )::");
+if ((*(node->fieldList))[iterator_1]->fieldType->is_value_type())
+{
+source->append(R"::(
+                _)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::( = ()::");
+source->append(Codegen::GetString(Trinity::Codegen::GetNonNullableValueTypeString((*(node->fieldList))[iterator_1]->fieldType)));
+source->append(R"::()accessor.)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::(;
+                )::");
+}
+else
+{
+source->append(R"::(
                 _)::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::( = accessor.)::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::(;
+                )::");
+}
+source->append(R"::(
             }
             )::");
 }
@@ -348,7 +366,24 @@ source->append(",");
 source->append(R"::(
                 );
         }
-        
+        )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::StructAccessorReverseImplicitOperator(node, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::StructAccessorEqualOperator(node, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
     }
 }
 )::");

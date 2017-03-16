@@ -56,6 +56,14 @@ namespace t_Namespace
 
         [END]
 
+        [MUTE]
+        //Mocking ctor
+        public t_struct_name(t_field_type t_field_name = null, t_field_type t_field_name1 = default(t_field_type)) : this(t_field_name)
+        {
+            throw new NotImplementedException();
+        }
+        [MUTE_END]
+
         public static bool operator ==(t_struct_name a, t_struct_name b)
         {
             // If both are null, or both are same instance, return true.
@@ -127,20 +135,12 @@ namespace t_Namespace
         {
             return Serializer.ToString(this);
         }
-
-        [MUTE]
-        public t_struct_name(t_field_type t_field_name = null, t_field_type t_field_name1 = default(t_field_type)) : this(t_field_name)
-        {
-            throw new NotImplementedException();
-        }
-
-        /*MUTE_END*/
     }
 
     /// <summary>
     /// Provides in-place operations of t_struct_name defined in TSL.
     /// </summary>
-    public unsafe class t_struct_name_Accessor : __meta
+    public unsafe partial class t_struct_name_Accessor : __meta
     {
         ///<summary>
         ///The pointer to the content of the object.
@@ -193,7 +193,7 @@ namespace t_Namespace
             t_field_type _t_field_name = default(t_field_type);
             if (accessor.Contains_t_field_name)
             {
-                IF("$t_field->is_value_type()");
+                IF("$t_field_type->is_value_type()");
                 _t_field_name = (t_data_type)accessor.t_field_name;
                 ELSE();
                 _t_field_name = accessor.t_field_name;
@@ -213,7 +213,9 @@ namespace t_Namespace
                 );
         }
 
-        [MODULE_CALL("AccessorReverseImplicitOperator", "node")]
+        [MODULE_CALL("StructAccessorReverseImplicitOperator", "node")]
+
+        [MODULE_CALL("StructAccessorEqualOperator", "node")]
 
         [MUTE]
         public bool Contains_t_field_name { get; private set; }

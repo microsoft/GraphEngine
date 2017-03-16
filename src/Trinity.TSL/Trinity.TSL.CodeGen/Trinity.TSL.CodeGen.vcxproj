@@ -93,6 +93,7 @@
     <ClCompile Include="CodeGen\AccessorInitialization.cpp" />
     <ClCompile Include="CodeGen\AccessorToAccessorFieldDefinition.cpp" />
     <ClCompile Include="CodeGen\common.cpp" />
+    <ClCompile Include="CodeGen\StructAccessorReverseImplicitOperator.cpp" />
     <ClCompile Include="CommunicationSchema.cs.cpp" />
     <ClCompile Include="Containers\Array.cs.cpp" />
     <ClCompile Include="Containers\Containers.cpp" />
@@ -129,6 +130,7 @@
     <ClCompile Include="MODULES\HTTPModule.cs.cpp" />
     <ClCompile Include="MODULES\OptionalFields.cs.cpp" />
     <ClCompile Include="MODULES\PushPointer.cs.cpp" />
+    <ClCompile Include="MODULES\StructAccessorEqualOperator.cs.cpp" />
     <ClCompile Include="MODULES\ValueToAccessorFieldAssignment.cs.cpp" />
     <ClCompile Include="StorageSchema.cs.cpp" />
     <ClCompile Include="Serializer.cs.cpp" />

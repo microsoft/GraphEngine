@@ -99,7 +99,7 @@ namespace t_Namespace
         }
 
         [MUTE]
-        public t_cell_name(long cell_id, t_field_type t_field_name = null, t_field_type t_field_name1 = null) : this(cell_id, t_field_name)
+        public t_cell_name(long cell_id, t_field_type t_field_name , t_field_type t_field_name1 ) : this(cell_id, t_field_name)
         {
             throw new NotImplementedException();
         }
@@ -416,7 +416,6 @@ namespace t_Namespace
             /*END*/
             /*META("}")*/
             );
-        private t_field_type t_field_name1;
         #endregion
 
         public IEnumerable<T> EnumerateField<T>(string fieldName)
@@ -646,6 +645,17 @@ namespace t_Namespace
         {
             throw new NotImplementedException();
         }
+
+        public static bool operator ==(t_cell_name_Accessor a, t_cell_name_Accessor b)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static bool operator !=(t_cell_name_Accessor a, t_cell_name_Accessor b)
+        {
+            return !(a == b);
+        }
+
         #endregion
         [MUTE_END]
 
@@ -656,7 +666,7 @@ namespace t_Namespace
             t_field_type _t_field_name = default(t_field_type);
             if (accessor.Contains_t_field_name)
             {
-                IF("$t_field->is_value_type()");
+                IF("$t_field_type->is_value_type()");
                 _t_field_name = (t_field_type_remove_nullable)accessor.t_field_name;
                 ELSE();
                 _t_field_name = accessor.t_field_name;
@@ -690,8 +700,9 @@ namespace t_Namespace
                 );
             }
         }
-        [MODULE_CALL("AccessorReverseImplicitOperator", "node")]
+        [MODULE_CALL("StructAccessorReverseImplicitOperator", "node")]
 
+        [MODULE_CALL("StructAccessorEqualOperator", "node")]
 
 
         public static bool operator ==(t_cell_name_Accessor a, t_cell_name b)
@@ -701,16 +712,6 @@ namespace t_Namespace
         }
 
         public static bool operator !=(t_cell_name_Accessor a, t_cell_name b)
-        {
-            return !(a == b);
-        }
-
-        public static bool operator ==(t_cell_name_Accessor a, t_cell_name_Accessor b)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static bool operator !=(t_cell_name_Accessor a, t_cell_name_Accessor b)
         {
             return !(a == b);
         }

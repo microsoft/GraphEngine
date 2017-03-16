@@ -69,6 +69,7 @@
     <Compile Include="LINQ\IndexQueryTreeNode.cs" />
     <Compile Include="LINQ\PLINQWrapper.cs" />
     <Compile Include="MODULES\AccessorReverseImplicitOperator.cs" />
+    <Compile Include="MODULES\StructAccessorEqualOperator.cs" />
     <Compile Include="MODULES\ValueToAccessorFieldAssignment.cs" />
     <Compile Include="MODULES\AccessorFieldsDefinition.cs" />
     <Compile Include="MODULES\CommunicationSchemaModule.cs" />

@@ -930,6 +930,127 @@ std::string* module_content = Modules::AccessorFieldsDefinition(node, &module_ct
     delete module_content;
 }
 source->append(R"::(
+        public static unsafe implicit operator )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(()::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor accessor)
+        {
+            )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+if ((*(node->fieldList))[iterator_1]->is_optional())
+{
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
+source->append(R"::( _)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::( = default()::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
+source->append(R"::();
+            if (accessor.Contains_)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::()
+            {
+                )::");
+if ((*(node->fieldList))[iterator_1]->fieldType->is_value_type())
+{
+source->append(R"::(
+                _)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::( = ()::");
+source->append(Codegen::GetString(Trinity::Codegen::GetNonNullableValueTypeString((*(node->fieldList))[iterator_1]->fieldType)));
+source->append(R"::()accessor.)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::(;
+                )::");
+}
+else
+{
+source->append(R"::(
+                _)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::( = accessor.)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::(;
+                )::");
+}
+source->append(R"::(
+            }
+            )::");
+}
+}
+source->append(R"::(
+            if (accessor.CellID != null)
+            {
+                return new )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::((accessor.CellID.Value,
+                )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+if ((*(node->fieldList))[iterator_1]->is_optional())
+{
+source->append(R"::(
+                _)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+}
+else
+{
+source->append(R"::(
+                        accessor.)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+}
+if (iterator_1 < (node->fieldList)->size() - 1)
+source->append(",");
+}
+source->append(R"::(
+                );
+            }
+            else
+            {
+                return new )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::((
+                )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+if ((*(node->fieldList))[iterator_1]->is_optional())
+{
+source->append(R"::(
+                _)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+}
+else
+{
+source->append(R"::(
+                        accessor.)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+}
+if (iterator_1 < (node->fieldList)->size() - 1)
+source->append(",");
+}
+source->append(R"::(
+                );
+            }
+        }
+        )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::StructAccessorReverseImplicitOperator(node, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::StructAccessorEqualOperator(node, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
         public static bool operator ==()::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::(_Accessor a, )::");
@@ -949,22 +1070,6 @@ source->append(R"::( b)
         {
             return !(a == b);
         }
-        public static bool operator ==()::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor a, )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor b)
-        {
-            throw new NotImplementedException();
-        }
-        public static bool operator !=()::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor a, )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor b)
-        {
-            return !(a == b);
-        }
         #region Fields
         /// <summary>
         /// Get a pointer to the underlying raw binary blob. Take caution when accessing data with
@@ -981,8 +1086,8 @@ source->append(R"::(_Accessor b)
         public long? CellID { get; internal set; }
         internal    int                     CellEntryIndex;
         internal    bool                    m_IsIterator   = false;
-        internal    CellAccessOptions )::");
-source->append(R"::(      m_options      = 0;
+        internal    CellAccessOptions       m_o)::");
+source->append(R"::(ptions      = 0;
         private     GCHandle                handle;
         private     const CellAccessOptions c_WALFlags     = CellAccessOptions.StrongLogAhead | CellAccessOptions.WeakLogAhead;
         #endregion
@@ -1003,8 +1108,8 @@ source->append(R"::(      m_options      = 0;
                         {
                             Throw.cell_not_found(cellId);
                         }
-                      )::");
-source->append(R"::(  else if ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
+                        else if)::");
+source->append(R"::( ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
                         {
                             byte[]  defaultContent    = construct(cellId);
                             int     size              = defaultContent.Length;
@@ -1287,7 +1392,7 @@ source->append(Codegen::GetString(Trinity::Codegen::GetDataTypeDisplayString((*(
 source->append(R"::((this.)::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::();
-                )::");
+                    )::");
 }
 source->append(R"::(
             }
@@ -1360,7 +1465,7 @@ std::string* module_content = Modules::ValueToAccessorFieldAssignment((*(node->f
 source->append(R"::(
                     }
                     break;
-                )::");
+                    )::");
 }
 source->append(R"::(
             }
@@ -1702,7 +1807,7 @@ source->append(R"::(
 }
 source->append(R"::(
                         break;
-                    )::");
+                        )::");
 }
 source->append(R"::(
                 }

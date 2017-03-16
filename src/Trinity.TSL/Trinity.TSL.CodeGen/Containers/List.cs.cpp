@@ -817,6 +817,31 @@ source->append(R"::(     if (index + count > Count) throw new ArgumentException(
             *(int*)CellPtr += size;
             this.CellPtr += 4;
         }
+        public unsafe static implicit operator )::");
+source->append(Codegen::GetString(node));
+source->append(R"::( ()::");
+source->append(Codegen::GetString(data_type_get_accessor_name(node)));
+source->append(R"::( accessor)
+        {
+            if((object)accessor == null) return null;
+            )::");
+source->append(Codegen::GetString(node));
+source->append(R"::( list = new )::");
+source->append(Codegen::GetString(node));
+source->append(R"::(();
+            accessor.ForEach(element => list.Add(element));
+            return list;
+        }
+        )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::AccessorReverseImplicitOperator(node, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
         public static bool operator ==()::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::( a, )::");

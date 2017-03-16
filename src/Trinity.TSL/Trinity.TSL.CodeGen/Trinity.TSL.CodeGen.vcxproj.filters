@@ -162,6 +162,12 @@
     <ClCompile Include="MODULES\AccessorReverseImplicitOperator.cs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MODULES\StructAccessorEqualOperator.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CodeGen\StructAccessorReverseImplicitOperator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CodeGen\Trinity.TSL.CodeGen.h">

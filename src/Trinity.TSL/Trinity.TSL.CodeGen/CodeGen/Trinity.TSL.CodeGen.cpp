@@ -263,7 +263,8 @@ namespace Trinity
                     {
                         if (field->fieldType->is_struct())
                         {
-                            auto referencedStruct = field->fieldType->referencedNStruct;
+                            NStruct* referencedStruct = dynamic_cast<NStruct*>(field->fieldType->referencedNStruct);
+                            if (!referencedStruct) { error(cell, "CalculateIndexVariables: referencing a cell"); continue; }
                             IndexAddSubstructure(structBase, field);
                             structBase = referencedStruct;
                             structSet.insert(referencedStruct);
