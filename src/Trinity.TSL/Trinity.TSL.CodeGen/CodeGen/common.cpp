@@ -1,6 +1,7 @@
 #include <corelib>
 #include "Trinity.TSL.CodeGen.h"
 #include "common.h"
+#include "parser.tab.h"
 namespace Trinity
 {
     namespace Codegen
@@ -318,8 +319,25 @@ namespace Trinity
             case FT_LIST:
                 return data_type_get_accessor_name(type->listElementType) + "ListAccessor";
             case FT_ATOM:
-                // FT_ATOM need no accessor, the accessor type is the non-nullable value type.
-                return GetNonNullableValueTypeString(type);
+                if (data_type_need_accessor(type))
+                {
+                    switch (type->atom_token)
+                    {
+                    case T_DATETIMETYPE:
+                        return "DateTimeAccessor";
+                    case T_GUIDTYPE:
+                        return "GuidAccessor";
+                    case T_STRINGTYPE:
+                        return "StringAccessor";
+                    case T_U8STRINGTYPE:
+                        return "U8StringAccessor";
+                    }
+                }
+                else
+                {
+                    // these FT_ATOM need no accessor, the accessor type is the non-nullable value type.
+                    return GetNonNullableValueTypeString(type);
+                }
                 break;
             case FT_ENUM:
                 return *type->referencedNEnum->name;
@@ -332,7 +350,7 @@ namespace Trinity
         }
 
         /**
-         * Tells if the given data type is prefixed by a (currently) 4-byte 
+         * Tells if the given data type is prefixed by a (currently) 4-byte
          * length field in the cell memory. Currently, only variable-length
          * containers have such layouts (strings and lists).
          */
