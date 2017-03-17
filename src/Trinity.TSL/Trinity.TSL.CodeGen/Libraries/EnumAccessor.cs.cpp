@@ -1,6 +1,6 @@
 #include "common.h"
 #include <string>
-#include <SyntaxNode.h>
+#include "SyntaxNode.h"
 
 using std::string;
 

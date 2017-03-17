@@ -117,6 +117,9 @@ namespace Trinity
          */
         bool data_type_need_accessor(NFieldType* type)
         {
+            // TODO POD structs like DateTime and Guid does not require accessors.
+            // Investigate whether we can simply modify the code here and make
+            // the codegen generate more efficient code.
             return type->layoutType == LT_DYNAMIC || type->is_struct() || type->is_datetime() || type->is_guid();
         }
 

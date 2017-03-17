@@ -20,11 +20,11 @@ namespace Trinity.TSL
         public unsafe static implicit operator t_accessor_type(t_data_type field)
         {
             byte* targetPtr = null;
-            //ret += fieldtype.GenerateAssignCodeForConstructor("field", 0, true) + @"
+            __meta.MODULE_CALL("PushPointerFromVariable", "node", "\"field\"", "\"push\"");
             byte* tmpcellptr = BufferAllocator.AllocBuffer((int)targetPtr);
             Memory.memset(tmpcellptr, 0, (ulong)targetPtr);
             targetPtr = tmpcellptr;
-            //ret += fieldtype.GenerateAssignCodeForConstructor("field", 0, false) + @"
+            __meta.MODULE_CALL("PushPointerFromVariable", "node", "\"field\"", "\"assign\"");
 
 
             t_accessor_type ret;

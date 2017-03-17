@@ -1,7 +1,7 @@
 #include "common.h"
 #include "AccessorType.h"
 #include <string>
-#include <SyntaxNode.h>
+#include "SyntaxNode.h"
 
 using std::string;
 using namespace Trinity::Codegen;
@@ -16,8 +16,8 @@ static void _GenerateAccessorFieldInitializationCode(std::string* source, NField
 {
     if (!data_type_need_accessor(fieldType)) return;
 
-    source->append(R"::(
-        )::").append(accessorName).append(" = new ").append(data_type_get_accessor_name(fieldType));
+    source->append("\
+        ").append(accessorName).append(" = new ").append(data_type_get_accessor_name(fieldType));
     if (fieldType->layoutType == LT_FIXED)
     {
         source->append("(null);");

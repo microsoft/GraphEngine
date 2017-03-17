@@ -508,7 +508,7 @@ namespace Trinity.TSL.Metagen
             OutputToMeta(
 @"#include ""common.h""
 #include <string>
-#include <SyntaxNode.h>
+#include ""SyntaxNode.h""
 
 using std::string;
 
@@ -538,7 +538,7 @@ namespace Trinity
             OutputToMeta(
 @"#include ""common.h""
 #include <string>
-#include <SyntaxNode.h>
+#include ""SyntaxNode.h""
 
 using std::string;
 

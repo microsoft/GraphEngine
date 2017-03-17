@@ -1,6 +1,6 @@
 #include "common.h"
 #include <string>
-#include <SyntaxNode.h>
+#include "SyntaxNode.h"
 
 using std::string;
 
@@ -14,7 +14,12 @@ NFieldType* node)
         {
             string* source = new string();
             
-source->append(R"::(
+source->append(R"::(using System;
+using System.Collections;
+using System.Collections.Generic;
+using Trinity.Core.Lib;
+using Trinity.TSL;
+using Trinity.TSL.Lib;
 namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
@@ -543,12 +548,36 @@ source->append(R"::( element)
         {
             byte* targetPtr = null;
             {
+                )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+module_ctx.m_arguments.push_back(Codegen::GetString("element"));
+module_ctx.m_arguments.push_back(Codegen::GetString("push"));
+std::string* module_content = Modules::PushPointerFromVariable(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
             }
             int size = (int)targetPtr;
             this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), *(int*)(this.CellPtr-sizeof(int))+sizeof(int), size);
             targetPtr = this.CellPtr + (*(int*)this.CellPtr)+sizeof(int);
             *(int*)this.CellPtr += size;
             this.CellPtr += sizeof(int);
+            )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+module_ctx.m_arguments.push_back(Codegen::GetString("element"));
+module_ctx.m_arguments.push_back(Codegen::GetString("assign"));
+std::string* module_content = Modules::PushPointerFromVariable(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
         }
         /// <summary>
         /// Inserts an element into the List at the specified index.
@@ -562,6 +591,18 @@ source->append(R"::( element)
             if (index < 0 || index > Count) throw new IndexOutOfRangeException();
             byte* targetPtr = null;
             {
+                )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+module_ctx.m_arguments.push_back(Codegen::GetString("element"));
+module_ctx.m_arguments.push_back(Codegen::GetString("push"));
+std::string* module_content = Modules::PushPointerFromVariable(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
             }
             int size = (int)targetPtr;
             targetPtr = CellPtr;
@@ -598,6 +639,18 @@ source->append(R"::(
             *(int*)this.CellPtr += size;
             this.CellPtr += sizeof(int);
             targetPtr = this.CellPtr + offset;
+            )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+module_ctx.m_arguments.push_back(Codegen::GetString("element"));
+module_ctx.m_arguments.push_back(Codegen::GetString("assign"));
+std::string* module_content = Modules::PushPointerFromVariable(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
         }
         /// <summary>
         /// Inserts an element into a sorted list.
@@ -612,6 +665,18 @@ source->append(R"::(> comparison)
         {
             byte* targetPtr = null;
             {
+                )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+module_ctx.m_arguments.push_back(Codegen::GetString("element"));
+module_ctx.m_arguments.push_back(Codegen::GetString("push"));
+std::string* module_content = Modules::PushPointerFromVariable(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
             }
             int size = (int)targetPtr;
             targetPtr = CellPtr;
@@ -716,6 +781,18 @@ source->append(R"::(
             *(int*)this.CellPtr += size;
             this.CellPtr += sizeof(int);
             targetPtr = this.CellPtr + offset;
+            )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+module_ctx.m_arguments.push_back(Codegen::GetString("element"));
+module_ctx.m_arguments.push_back(Codegen::GetString("assign"));
+std::string* module_content = Modules::PushPointerFromVariable(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
         }
         /// <summary>
         /// Removes the element at the specified index of the List.

@@ -1,7 +1,7 @@
 #include "common.h"
 #include "AccessorType.h"
 #include <string>
-#include <SyntaxNode.h>
+#include "SyntaxNode.h"
 
 using std::string;
 using namespace Trinity::Codegen;
@@ -10,11 +10,11 @@ static void _ValueTypeToAccessorFieldAssignment(NFieldType* type, bool create_op
 {
     if (create_optional)
     {
-        source->append(R"::(
-                targetPtr = this.ResizeFunction(targetPtr, 0, )::").append(Codegen::GetString(type->type_size())).append(");");
+        source->append("\
+                targetPtr = this.ResizeFunction(targetPtr, 0, ").append(Codegen::GetString(type->type_size())).append(");");
     }
-    source->append(R"::(
-                *()::").append(GetString(type)).append("*)targetPtr = value;");
+    source->append("\
+                *(").append(GetString(type)).append("*)targetPtr = value;");
 }
 
 static void _FixedLengthAccessorFieldAssignment(NFieldType* type, string accessor_field_name, bool create_optional, string* source)
@@ -22,8 +22,8 @@ static void _FixedLengthAccessorFieldAssignment(NFieldType* type, string accesso
     string fieldLength = Codegen::GetString(type->type_size());
     if (!create_optional)
     {
-        source->append(R"::(
-                Memory.Copy(value.CellPtr, targetPtr, )::" + fieldLength + "); ");
+        source->append("\
+                Memory.Copy(value.CellPtr, targetPtr, " + fieldLength + "); ");
     }
     else
     {

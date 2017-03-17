@@ -1,6 +1,6 @@
 #include "common.h"
 #include <string>
-#include <SyntaxNode.h>
+#include "SyntaxNode.h"
 
 using std::string;
 
@@ -26,10 +26,32 @@ source->append(Codegen::GetString(GetNonNullableValueTypeString(node)));
 source->append(R"::( field)
         {
             byte* targetPtr = null;
+            )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = context->m_stack_depth + 1;
+module_ctx.m_arguments.push_back(Codegen::GetString("field"));
+module_ctx.m_arguments.push_back(Codegen::GetString("push"));
+std::string* module_content = Modules::PushPointerFromVariable(node, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
             byte* tmpcellptr = BufferAllocator.AllocBuffer((int)targetPtr);
             Memory.memset(tmpcellptr, 0, (ulong)targetPtr);
             targetPtr = tmpcellptr;
             )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = context->m_stack_depth + 1;
+module_ctx.m_arguments.push_back(Codegen::GetString("field"));
+module_ctx.m_arguments.push_back(Codegen::GetString("assign"));
+std::string* module_content = Modules::PushPointerFromVariable(node, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::( ret;
             )::");

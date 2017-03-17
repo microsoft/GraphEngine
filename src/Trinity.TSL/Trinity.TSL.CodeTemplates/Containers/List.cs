@@ -1,11 +1,9 @@
-﻿/*MUTE*/
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using Trinity.Core.Lib;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
-/*MUTE_END*/
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
 namespace t_Namespace
@@ -288,7 +286,7 @@ namespace t_Namespace
         {
             byte* targetPtr = null;
             {
-                //" + listtype.ElementFieldType.GenerateAssignCodeForConstructor("element", 0, true) + @"
+                MODULE_CALL("PushPointerFromVariable", "$t_data_type", "\"element\"", "\"push\"");
             }
 
             // TODO AppendCodeForContainer IAccessor code reuse
@@ -298,7 +296,7 @@ namespace t_Namespace
             *(int*)this.CellPtr += size;
             this.CellPtr += sizeof(int);
 
-            //   listtype.ElementFieldType.GenerateAssignCodeForConstructor("element", 0, false) + @"
+            MODULE_CALL("PushPointerFromVariable", "$t_data_type", "\"element\"", "\"assign\"");
         }
 
         /// <summary>
@@ -311,7 +309,7 @@ namespace t_Namespace
             if (index < 0 || index > Count) throw new IndexOutOfRangeException();
             byte* targetPtr = null;
             {
-                //" + listtype.ElementFieldType.GenerateAssignCodeForConstructor("element", 0, true) + @"
+                MODULE_CALL("PushPointerFromVariable", "$t_data_type", "\"element\"", "\"push\"");
             }
             int size = (int)targetPtr;
 
@@ -331,7 +329,7 @@ namespace t_Namespace
             this.CellPtr += sizeof(int);
 
             targetPtr = this.CellPtr + offset;
-            //" + listtype.ElementFieldType.GenerateAssignCodeForConstructor("element", 0, false) + @"
+            MODULE_CALL("PushPointerFromVariable", "$t_data_type", "\"element\"", "\"assign\"");
         }
 
         /// <summary>
@@ -343,7 +341,7 @@ namespace t_Namespace
         {
             byte* targetPtr = null;
             {
-                //" + listtype.ElementFieldType.GenerateAssignCodeForConstructor("element", 0, true) + @"
+                MODULE_CALL("PushPointerFromVariable", "$t_data_type", "\"element\"", "\"push\"");
             }
             int size = (int)targetPtr;
             targetPtr = CellPtr;
@@ -409,7 +407,7 @@ namespace t_Namespace
             this.CellPtr += sizeof(int);
 
             targetPtr = this.CellPtr + offset;
-            //" + listtype.ElementFieldType.GenerateAssignCodeForConstructor("element", 0, false) + @"
+            MODULE_CALL("PushPointerFromVariable", "$t_data_type", "\"element\"", "\"assign\"");
         }
 
         /// <summary>

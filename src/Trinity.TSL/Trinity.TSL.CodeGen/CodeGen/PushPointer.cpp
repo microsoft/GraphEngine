@@ -1,12 +1,15 @@
 #include "common.h"
 #include "AccessorType.h"
 #include <string>
-#include <SyntaxNode.h>
+#include "SyntaxNode.h"
+#include "parser.tab.h"
 
 using std::string;
 using namespace Trinity::Codegen;
 
+static std::string indent = "            ";
 static void push_impl(std::string* source, int stack_depth, NStructBase* node, NField* push_until);
+static void push_and_assign_impl(std::string* source, int stack_depth, NFieldType* node, std::string varName, bool OnlyPushPointer);
 
 static void push_impl(std::string* source, int stack_depth, NFieldType* type)
 {
@@ -38,7 +41,6 @@ static void push_impl(std::string* source, int stack_depth, NStructBase* node, N
 {
     source->append("{");
 
-    std::string indent = "            ";
     int pushnum = 0;
     std::string opt_ptr_name = "optheader_" + GetString(stack_depth);
     OptionalFieldCalculator opt(node, opt_ptr_name);
@@ -47,7 +49,6 @@ static void push_impl(std::string* source, int stack_depth, NStructBase* node, N
         *source += indent + "byte* " + opt_ptr_name + " = targetPtr;\n";
         *source += indent + "targetPtr += " + opt.headerLength + ";\n";
     }
-    pushnum = 0;
 
     auto flush_batchpush = [&]()
     {
@@ -99,6 +100,322 @@ static void push_impl(std::string* source, int stack_depth, NStructBase* node, N
     source->append("}");
 }
 
+static void push_and_assign_direct(std::string* source, int stack_depth, NFieldType* node, std::string varName, bool OnlyPushPointer)
+{
+    if (!OnlyPushPointer)
+    {
+        *source += indent + "*(" + GetNonNullableValueTypeString(node) + "*)targetPtr = " + varName + ";\n";
+    }
+    *source += indent + "targetPtr += " + GetString(node->type_size()) + ";\n";
+}
+
+static void push_and_assign_guid(std::string* source, int stack_depth, NFieldType* node, std::string varName, bool OnlyPushPointer)
+{
+    if (OnlyPushPointer)
+        *source += "targetPtr += 16;";
+    else *source += R"::(
+        {
+            byte[] tmpGuid = )::" + varName + R"::(.ToByteArray();
+            fixed(byte* tmpGuidPtr = tmpGuid)
+            {
+                Memory.Copy(tmpGuidPtr, targetPtr, 16);
+            }
+            targetPtr += 16;
+        }
+)::";
+}
+
+static void push_and_assign_datetime(std::string* source, int stack_depth, NFieldType* node, std::string varName, bool OnlyPushPointer)
+{
+    if (OnlyPushPointer)
+        *source += "targetPtr += 8;";
+    else *source += R"::(
+        {
+            *(long*)targetPtr = )::" + varName + R"::(.ToBinary();
+            targetPtr += 8;
+        }
+)::";
+}
+
+static void push_and_assign_struct(std::string* source, int stack_depth, NFieldType* node, std::string varName, bool OnlyPushPointer)
+{
+    if (OnlyPushPointer && node->layoutType == LT_FIXED)
+    {
+        *source += "targetPtr += " + GetString(node->type_size()) + ";\n";
+        return;
+    }
+
+    *source += "\n" + indent + "{\n";
+    std::string pointer_name = "optheader_" + GetString(stack_depth);
+    OptionalFieldCalculator opt(node->referencedNStruct, pointer_name);
+
+    if (opt.fieldCount != 0)
+    {
+        if (!OnlyPushPointer)
+        {
+            *source += indent + "byte* " + pointer_name + " = targetPtr;\n";
+            *source += indent + opt.GenerateClearAllBitsCode();
+        }
+        *source += indent + "targetPtr += " + GetString(opt.headerLength) + ";\n";
+    }
+
+    for (auto field : *node->referencedNStruct->fieldList)
+    {
+        bool currentFieldIsOptional = field->is_optional();
+        string field_name = varName + "." + *field->name;
+        if (currentFieldIsOptional)
+        {
+            *source += indent + "if( " + field_name + "!= null)\n";
+            *source += indent + "{\n";
+        }
+        if (currentFieldIsOptional && field->fieldType->is_value_type())
+        {
+            field_name += ".Value";
+        }
+
+        push_and_assign_impl(source, stack_depth + 1, field->fieldType, field_name, OnlyPushPointer);
+
+        if (currentFieldIsOptional)
+        {
+            if (!OnlyPushPointer)
+                *source += opt.GenerateMaskOnCode(field);
+            *source += "\n" + indent + "}\n";
+        }
+    }
+
+    *source += "\n" + indent + "}";
+}
+
+static void push_and_assign_array(std::string* source, int stack_depth, NFieldType* node, std::string varName, bool OnlyPushPointer)
+{
+    /* Note, element-wise push-assign code in the legacy codegen was dropped. */
+    string total_length_string = GetString(node->arrayInfo.arrayElement->type_size());
+    string element_type = GetNonNullableValueTypeString(node);
+    string pointer = "storedPtr_" + GetString(stack_depth);
+    if (OnlyPushPointer)
+    {
+        *source += "targetPtr += " + total_length_string + ";\n";
+        return;
+    }
+    int arity = node->arrayInfo.array_dimension_size->size();
+
+    *source += indent + "if(" + varName + "!= null){\n";
+    *source += indent + "   if(" + varName + ".Rank != " + GetString(arity) + ") throw new IndexOutOfRangeException(\"The assigned array'storage Rank mismatch.\");\n";
+    *source += indent + "   if(";
+    for (int i = 0; i < arity; i++)
+        *source += varName + ".GetLength(" + GetString(i) + ") != " + GetString(node->arrayInfo.array_dimension_size->at(i)) + " || ";
+    // Trim " || "
+    source->pop_back(); source->pop_back(); source->pop_back(); source->pop_back();
+    *source += ") throw new IndexOutOfRangeException(\"The assigned array'storage dimension mismatch.\");\n";
+
+    *source += indent + "   fixed(" + element_type + "* " + pointer + " = " + varName + ")\n";
+    *source += indent + "       Memory.memcpy(targetPtr, " + pointer + ", (ulong)(" + total_length_string + "));\n";
+    *source += indent + "}else{\n";
+    *source += indent + "   Memory.memcpy(targetPtr, 0, (ulong)(" + total_length_string + "));\n";
+    *source += indent + "}";
+    *source += indent + "targetPtr += " + total_length_string + ";\n";
+}
+
+static void push_and_assign_string(std::string* source, int stack_depth, NFieldType* node, std::string varName, bool OnlyPushPointer)
+{
+    string strlen_name   = "strlen_" + GetString(stack_depth);
+    string pstr_name     = "pstr_" + GetString(stack_depth);
+
+    if (!OnlyPushPointer)
+    {
+        *source += R"::(
+        if()::" + varName + R"::(!= null)
+        {
+            int )::" + strlen_name + " = " + varName + R"::(.Length * 2;
+            *(int*)targetPtr = )::" + strlen_name + R"::(;
+            targetPtr += sizeof(int);
+            fixed(char* )::" + pstr_name + " = " + varName + R"::(
+            {
+                Memory.Copy()::" + pstr_name + ", targetPtr, " + strlen_name + R"::();
+                targetPtr += )::" + strlen_name + R"::(;
+            }
+        }else
+        {
+            *(int*)targetPtr = 0;
+            targetPtr += sizeof(int);
+        }
+)::";
+    }
+    else//Only push pointer
+    {
+        *source += R"::(
+        if()::" + varName + R"::(!= null)
+        {
+            int )::" + strlen_name + " = " + varName + R"::(.Length * 2;
+            targetPtr += )::" + strlen_name + R"::(+sizeof(int);
+        }else
+        {
+            targetPtr += sizeof(int);
+        }
+)::";
+    }
+}
+
+static void push_and_assign_u8string(std::string* source, int stack_depth, NFieldType* node, std::string varName, bool OnlyPushPointer)
+{
+    string u8buffer_name = "u8buffer_" + GetString(stack_depth);
+    string u8len_name    = "u8len_" + GetString(stack_depth);
+
+    if (!OnlyPushPointer)
+    {
+        *source += R"::(
+        if():: "+ VarName + R"::(!= null)
+        {
+            byte[] )::" + u8buffer_name + " = Encoding.UTF8.GetBytes(" + varName + R"::();
+            int )::" + u8len_name + " = " + u8buffer_name + R"::(.Length;
+            *(int*)targetPtr = )::" + u8len_name + R"::(;
+            targetPtr += sizeof(int);
+            Memory.Copy()::" + u8buffer_name + ", targetPtr, " + u8len_name + R"::();
+            targetPtr += "+ u8len_name + R"::(;
+        }else
+        {
+            *(int*)targetPtr = 0;
+            targetPtr += sizeof(int);
+        }
+)::";
+    }
+    else//Only push pointer
+    {
+        *source += R"::(
+        if()::" + varName + R"::(!= null)
+        {
+            int )::" + u8len_name + " = Encoding.UTF8.GetByteCount(" + varName + R"::();
+            targetPtr += )::" + u8len_name + R"::( + sizeof(int);
+        }else
+        {
+            targetPtr += sizeof(int);
+        }
+)::";
+    }
+}
+
+static void push_and_assign_list(std::string* source, int stack_depth, NFieldType* node, std::string varName, bool OnlyPushPointer)
+{
+    string iterator_name = "iterator_" + GetString(stack_depth);
+    string pointer_name = "storedPtr_" + GetString(stack_depth);
+
+    if (node->listElementType->layoutType == LT_FIXED)
+    {
+        string len_str = GetString(node->listElementType->type_size());
+        string precalculated_length = varName + ".Count*" + len_str;
+        if (!OnlyPushPointer)
+        {
+            *source += R"::(
+if()::" + varName + R"::(!= null)
+{
+    *(int*)targetPtr = )::" + precalculated_length + ";";
+            *source += R"::(
+    targetPtr += sizeof(int);
+    for(int )::" + iterator_name + " = 0;" + iterator_name + "<" + varName + ".Count;++" + iterator_name + R"::()
+    {
+)::";
+            push_and_assign_impl(source, stack_depth + 1, node->listElementType, varName + "[" + iterator_name + "]", OnlyPushPointer);
+            *source += R"::(
+    }
+)::";
+            *source += R"::(
+}else
+{
+    *(int*)targetPtr = 0;
+    targetPtr += sizeof(int);
+}
+)::";
+        }
+        else//Only push pointer
+        {
+            *source += R"::(
+if()::" + varName + R"::(!= null)
+{
+    targetPtr += )::" + precalculated_length + R"::(+sizeof(int);
+}else
+{
+    targetPtr += sizeof(int);
+}
+)::";
+        }
+    }
+    else
+    {
+        *source += R"::(
+{
+)::";
+        if (!OnlyPushPointer)
+        {
+            *source += R"::(byte *)::" + pointer_name + R"::( = targetPtr;
+";
+                }
+
+                *source += R"::(
+    targetPtr += sizeof(int);
+    if()::" + varName + R"::(!= null)
+    {
+        for(int )::" + iterator_name + " = 0;" + iterator_name + "<" + varName + ".Count;++" + iterator_name + R"::()
+        {
+)::";
+            push_and_assign_impl(source, stack_depth + 1, node->listElementType, varName + "[" + iterator_name + "]", OnlyPushPointer);
+            *source += R"::(
+        }
+    }
+)::";
+
+            if (!OnlyPushPointer)
+            {
+                *source += "*(int*))::" + pointer_name + " = (int)(targetPtr - " + pointer_name + R"::( - 4);
+)::";
+            }
+            *source += R"::(
+}
+)::";
+        }
+    }
+}
+
+static void push_and_assign_impl(std::string* source, int stack_depth, NFieldType* node, std::string varName, bool OnlyPushPointer)
+{
+    if (!data_type_need_accessor(node))
+    {
+        push_and_assign_direct(source, stack_depth, node, varName, OnlyPushPointer);
+    }
+    // TODO datetime, fixed struct, guid can be merged to !data_type_need_accessor
+    else if (node->is_datetime())
+    {
+        push_and_assign_datetime(source, stack_depth, node, varName, OnlyPushPointer);
+    }
+    else if (node->is_guid())
+    {
+        push_and_assign_guid(source, stack_depth, node, varName, OnlyPushPointer);
+    }
+    else if (node->is_struct())
+    {
+        push_and_assign_struct(source, stack_depth, node, varName, OnlyPushPointer);
+    }
+    else if (node->is_array())
+    {
+        push_and_assign_array(source, stack_depth, node, varName, OnlyPushPointer);
+    }
+    else if (node->is_list())
+    {
+        push_and_assign_list(source, stack_depth, node, varName, OnlyPushPointer);
+    }
+    else if (node->is_string() && node->atom_token == T_STRINGTYPE)
+    {
+        push_and_assign_string(source, stack_depth, node, varName, OnlyPushPointer);
+    }
+    else if (node->is_string() && node->atom_token == T_U8STRINGTYPE)
+    {
+        push_and_assign_u8string(source, stack_depth, node, varName, OnlyPushPointer);
+    }
+    else
+    {
+        error(node, "push_and_assign_impl: unknown field type");
+    }
+}
+
 namespace Trinity
 {
     namespace Codegen
@@ -136,6 +453,32 @@ namespace Trinity
                 return source;
             }
 
+            /**
+             * Checks a variable, and parallely push the "targetPtr" pointer, optionally
+             * also assign the value from the variable into targetPtr.
+             *
+             * Arguments:
+             *  0. varname: the variable to check against.
+             *  1. action: "push" for push-only; "assign" for assign-and-push
+             *
+             * Note:
+             *  For value-type optional fields, a nullable (type?) variable cannot be
+             *  directly assigned, and we should append ".Value" to varname. Since
+             *  we don't know whether varname is Nullable<T> or not, it is the caller's
+             *  responsibility to maintain a proper 'varname'.
+             */
+            std::string* PushPointerFromVariable(NFieldType* node, ModuleContext* context)
+            {
+                bool push_only;
+                if (context->m_arguments[1] == "push") { push_only = true; }
+                else if (context->m_arguments[1] == "assign") { push_only = false; }
+                else { error(node, "PushPointerFromVariable: unrecognized action " + context->m_arguments[1]); }
+
+                std::string varname = context->m_arguments[0];
+                std::string* source = new std::string();
+                push_and_assign_impl(source, context->m_stack_depth, node, varname, push_only);
+                return source;
+            }
         }
     }
 }

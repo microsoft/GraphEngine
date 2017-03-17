@@ -2,7 +2,7 @@
 #include "Trinity.TSL.CodeGen.h"
 #include "AccessorType.h"
 #include <string>
-#include <SyntaxNode.h>
+#include "SyntaxNode.h"
 
 namespace Trinity
 {
