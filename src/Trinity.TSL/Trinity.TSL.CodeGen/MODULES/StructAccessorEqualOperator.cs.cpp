@@ -29,8 +29,28 @@ source->append(R"::(_Accessor b)
                 return false;
             if (a.CellPtr == b.CellPtr) return true;
             byte* targetPtr = a.CellPtr;
+            )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = context->m_stack_depth + 1;
+std::string* module_content = Modules::PushPointerThroughStruct(node, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
             int lengthA = (int)(targetPtr - a.CellPtr);
             targetPtr = b.CellPtr;
+            )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = context->m_stack_depth + 1;
+std::string* module_content = Modules::PushPointerThroughStruct(node, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
             int lengthB = (int)(targetPtr - b.CellPtr);
             if(lengthA != lengthB) return false;
             return Memory.Compare(a.CellPtr,b.CellPtr,lengthA);

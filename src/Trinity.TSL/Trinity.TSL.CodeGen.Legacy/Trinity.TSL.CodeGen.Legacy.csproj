@@ -56,7 +56,6 @@
     </Compile>
     <Compile Include="Configuration\TrinityConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TSL\CodeTemplates\AccessorCodeTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\CellCodeTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\MessagePassing\AbstractProxyTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\MessagePassing\AbstractModuleTemplate.cs" />

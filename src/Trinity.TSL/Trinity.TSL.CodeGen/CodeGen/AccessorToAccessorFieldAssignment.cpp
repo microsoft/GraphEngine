@@ -49,7 +49,7 @@ static void _FixedLengthAccessorFieldAssignment(NFieldType* type, string accesso
     }
 }
 
-static void _StructAccessorFieldAssignment(NFieldType* type, string accessor_field_name, bool create_optional, string* source)
+static void _StructAccessorFieldAssignment(NFieldType* type, string accessor_field_name, bool create_optional, string* source, ModuleContext* context)
 {
     bool isfixed = type->layoutType == LT_FIXED;
     string ret = R"::(
@@ -58,7 +58,7 @@ static void _StructAccessorFieldAssignment(NFieldType* type, string accessor_fie
 
     if (!create_optional)
     {
-        //ret += field.Type.GeneratePushPointerCode();
+        Modules::PushPointerThroughFieldType(type, context);
         ret += R"::(
                 int oldlength = (int)(targetPtr - oldtargetPtr);)::";
     }
@@ -70,7 +70,7 @@ static void _StructAccessorFieldAssignment(NFieldType* type, string accessor_fie
 
     ret += R"::(
                 targetPtr = value.CellPtr;)::";
-    //ret += field.Type.GeneratePushPointerCode(); 
+    Modules::PushPointerThroughFieldType(type, context);
     ret += R"::(
                 int newlength = (int)(targetPtr - value.CellPtr);)::";
     if (isfixed)
@@ -185,7 +185,7 @@ namespace Trinity
                 }
                 else if (type->is_struct())
                 {
-                    _StructAccessorFieldAssignment(type, accessor_name, create_optional, source);
+                    _StructAccessorFieldAssignment(type, accessor_name, create_optional, source, context);
                 }
                 else
                 {

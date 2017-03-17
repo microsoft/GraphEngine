@@ -23,7 +23,7 @@ namespace t_Namespace
         [META_VAR("bool", "field_optional", "($t_field->is_optional())")]
         [META_VAR("bool", "field_need_accessor", "(data_type_need_accessor($t_field_type))")]
         [META_VAR("bool", "field_lenprefix", "(data_type_is_length_prefixed($t_field_type))")]
-        [META_VAR("OptionalFieldCalculator", "optcalc", "OptionalFieldCalculator(node)")]
+        [META_VAR("OptionalFieldCalculator", "optcalc", "OptionalFieldCalculator(node, \"this.CellPtr\")")]
         [META_VAR("std::string", "accessor_field_name", "(*$t_field_name) + \"_Accessor_Field\"")]
         [IF("%field_need_accessor")]
         t_accessor_type t_field_name_Accessor_Field;
@@ -68,10 +68,11 @@ namespace t_Namespace
                 throw new Exception("Optional field t_field_name doesn't exist for current cell.");
             }
             this.Contains_t_field_name = false;
-            //" + pushcode + @"
-            //byte* startPtr = targetPtr;
-            //" + field.Type.GeneratePushPointerCode() + @"
-            //this.ResizeFunction(startPtr, 0, (int)(startPtr - targetPtr));
+            byte* targetPtr = CellPtr;
+            MODULE_CALL("PushPointerToCurrentField", "$t_field");
+            byte* startPtr = targetPtr;
+            MODULE_CALL("PushPointerThroughFieldType", "$t_field_type");
+            this.ResizeFunction(startPtr, 0, (int)(startPtr - targetPtr));
         }
         [END]
 
@@ -89,7 +90,7 @@ namespace t_Namespace
                 }
                 END();
                 byte* targetPtr = CellPtr;
-                //cw += @" " + pushcode;
+                MODULE_CALL("PushPointerToCurrentField", "$t_field");
 
                 IF("!%field_need_accessor");
 
@@ -111,14 +112,13 @@ namespace t_Namespace
             }
             set
             {
-                byte* targetPtr = CellPtr;
-
                 IF("%field_need_accessor");
                 if ((object)value == null) throw new ArgumentNullException("The assigned variable is null.");
                 t_field_name_Accessor_Field.CellID = this.CellID;
                 END();
 
-                //cw += pushcode + @"
+                byte* targetPtr = CellPtr;
+                MODULE_CALL("PushPointerToCurrentField", "$t_field");
 
                 IF("%field_optional");
 
@@ -155,7 +155,7 @@ namespace t_Namespace
 
         public unsafe byte* CellPtr { get; private set; }
         private long CellID;
-        private unsafe byte* ResizeFunction(byte* targetPtr, int v1, string v2)
+        private unsafe byte* ResizeFunction(byte* targetPtr, int v1, int v2)
         {
             throw new NotImplementedException();
         }

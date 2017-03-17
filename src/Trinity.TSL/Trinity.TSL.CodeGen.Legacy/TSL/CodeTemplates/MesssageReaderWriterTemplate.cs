@@ -13,6 +13,11 @@ namespace Trinity.TSL
         {
             string ret = "";
 
+            // TODO in the new codegen we dropped readonly accessors.
+            // here we should adapt the code a bit, that we can introduce 
+            // a resize function that always throws an exception when it
+            // is called.
+
             string className = struct_desc.Name + "Reader";
             string baseClassName = struct_desc.Name + base_class_suffix;
             string baseConstructor = "base(buf + offset" + (struct_desc.IsFixed() ? (")") : (",null)"));

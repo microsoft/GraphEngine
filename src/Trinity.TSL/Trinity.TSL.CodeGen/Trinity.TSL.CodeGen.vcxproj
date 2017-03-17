@@ -57,6 +57,8 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)Trinity.TSL.Parser;$(SolutionDir)..\Trinity.C\include;$(ProjectDir)\CodeGen</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
+      <MinimalRebuild>false</MinimalRebuild>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -77,6 +79,7 @@
       <PreprocessorDefinitions>WCHAR_OUTPUT;WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)Trinity.TSL.Parser;$(SolutionDir)..\Trinity.C\include;$(ProjectDir)$(ProjectDir)\CodeGen</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -91,8 +94,9 @@
     <ClCompile Include="CellSelectors.cs.cpp" />
     <ClCompile Include="CellTypeEnum.cs.cpp" />
     <ClCompile Include="CodeGen\AccessorInitialization.cpp" />
-    <ClCompile Include="CodeGen\AccessorToAccessorFieldDefinition.cpp" />
+    <ClCompile Include="CodeGen\AccessorToAccessorFieldAssignment.cpp" />
     <ClCompile Include="CodeGen\common.cpp" />
+    <ClCompile Include="CodeGen\PushPointer.cpp" />
     <ClCompile Include="CodeGen\StructAccessorReverseImplicitOperator.cpp" />
     <ClCompile Include="CommunicationSchema.cs.cpp" />
     <ClCompile Include="Containers\Array.cs.cpp" />
@@ -129,7 +133,6 @@
     <ClCompile Include="MODULES\EnumerateFromFieldModule.cs.cpp" />
     <ClCompile Include="MODULES\HTTPModule.cs.cpp" />
     <ClCompile Include="MODULES\OptionalFields.cs.cpp" />
-    <ClCompile Include="MODULES\PushPointer.cs.cpp" />
     <ClCompile Include="MODULES\StructAccessorEqualOperator.cs.cpp" />
     <ClCompile Include="MODULES\ValueToAccessorFieldAssignment.cs.cpp" />
     <ClCompile Include="StorageSchema.cs.cpp" />

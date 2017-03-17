@@ -77,7 +77,6 @@
     <Compile Include="MODULES\MessagePassingMethods.cs" />
     <Compile Include="MODULES\HTTPModule.cs" />
     <Compile Include="MODULES\OptionalFields.cs" />
-    <Compile Include="MODULES\PushPointer.cs" />
     <Compile Include="Cell.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="TSL\t_accessor_type.cs" />

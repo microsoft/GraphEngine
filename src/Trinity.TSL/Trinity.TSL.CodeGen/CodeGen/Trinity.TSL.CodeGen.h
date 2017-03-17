@@ -79,6 +79,10 @@ namespace Trinity
             std::string* StructFieldAccessorInitialization(NField* node, ModuleContext* context);
             std::string* ListElementAccessorInitialization(NFieldType* node, ModuleContext* context);
             std::string* OptionalFields(NStructBase* node, ModuleContext* context);
+
+            std::string* PushPointerToCurrentField(NField* node, ModuleContext* context);
+            std::string* PushPointerThroughFieldType(NFieldType* node, ModuleContext* context);
+            std::string* PushPointerThroughStruct(NStructBase* node, ModuleContext* context);
         }
 
 #pragma endregion

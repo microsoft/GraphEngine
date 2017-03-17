@@ -102,9 +102,6 @@
     <ClCompile Include="ExtensionAttribute.cs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MODULES\PushPointer.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MODULES\HTTPModule.cs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -156,9 +153,6 @@
     <ClCompile Include="MODULES\ValueToAccessorFieldAssignment.cs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CodeGen\AccessorToAccessorFieldDefinition.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MODULES\AccessorReverseImplicitOperator.cs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -166,6 +160,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CodeGen\StructAccessorReverseImplicitOperator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CodeGen\PushPointer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CodeGen\AccessorToAccessorFieldAssignment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -577,7 +577,7 @@ namespace t_Namespace
         {
             byte* targetPtr = CellPtr;
 
-            //cw += AccessorCodeTemplate.GenerateFieldPushPointerCode(cellDesc, cellDesc.Fields.Count, "this");
+            MODULE_CALL("PushPointerThroughStruct", "node");
 
             int size = (int)(targetPtr - CellPtr);
             byte[] ret = new byte[size];

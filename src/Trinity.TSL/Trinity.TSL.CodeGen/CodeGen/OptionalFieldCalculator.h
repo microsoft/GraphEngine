@@ -73,6 +73,7 @@ namespace Trinity
                     if (f->is_optional())
                         ++seq;
                 }
+                return seq;
             }
 
             NStructBase* nstruct;

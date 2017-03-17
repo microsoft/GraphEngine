@@ -22,7 +22,7 @@ bool field_fixed_1 = ((*(node->fieldList))[iterator_1]->fieldType->layoutType ==
 bool field_optional_1 = ((*(node->fieldList))[iterator_1]->is_optional());
 bool field_need_accessor_1 = (data_type_need_accessor((*(node->fieldList))[iterator_1]->fieldType));
 bool field_lenprefix_1 = (data_type_is_length_prefixed((*(node->fieldList))[iterator_1]->fieldType));
-OptionalFieldCalculator optcalc_1 = OptionalFieldCalculator(node);
+OptionalFieldCalculator optcalc_1 = OptionalFieldCalculator(node, "this.CellPtr");
 std::string accessor_field_name_1 = (*(*(node->fieldList))[iterator_1]->name) + "_Accessor_Field";
 if (field_need_accessor_1)
 {
@@ -91,6 +91,29 @@ source->append(R"::( doesn't exist for current cell.");
             this.Contains_)::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::( = false;
+            byte* targetPtr = CellPtr;
+            )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = context->m_stack_depth + 1;
+std::string* module_content = Modules::PushPointerToCurrentField((*(node->fieldList))[iterator_1], &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
+            byte* startPtr = targetPtr;
+            )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = context->m_stack_depth + 1;
+std::string* module_content = Modules::PushPointerThroughFieldType((*(node->fieldList))[iterator_1]->fieldType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
+            this.ResizeFunction(startPtr, 0, (int)(startPtr - targetPtr));
         }
         )::");
 }
@@ -124,6 +147,14 @@ source->append(R"::( doesn't exist for current cell.");
 source->append(R"::(
                 byte* targetPtr = CellPtr;
                 )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = context->m_stack_depth + 1;
+std::string* module_content = Modules::PushPointerToCurrentField((*(node->fieldList))[iterator_1], &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
 if (!field_need_accessor_1)
 {
 source->append(R"::(
@@ -160,7 +191,6 @@ source->append(R"::(
             }
             set
             {
-                byte* targetPtr = CellPtr;
                 )::");
 if (field_need_accessor_1)
 {
@@ -170,6 +200,17 @@ source->append(R"::(
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::(_Accessor_Field.CellID = this.CellID;
                 )::");
+}
+source->append(R"::(
+                byte* targetPtr = CellPtr;
+                )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = context->m_stack_depth + 1;
+std::string* module_content = Modules::PushPointerToCurrentField((*(node->fieldList))[iterator_1], &module_ctx);
+    source->append(*module_content);
+    delete module_content;
 }
 if (field_optional_1)
 {

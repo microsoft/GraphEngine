@@ -23,10 +23,10 @@ namespace t_Namespace
             // If both are same instance, return true.
             if (a.CellPtr == b.CellPtr) return true;
             byte* targetPtr = a.CellPtr;
-            //ret += AccessorCodeTemplate.GenerateFieldPushPointerCode(formattype, formattype.Fields.Count, "a");
+            MODULE_CALL("PushPointerThroughStruct", "node");
             int lengthA = (int)(targetPtr - a.CellPtr);
             targetPtr = b.CellPtr;
-            //ret += AccessorCodeTemplate.GenerateFieldPushPointerCode(formattype, formattype.Fields.Count, "b");
+            MODULE_CALL("PushPointerThroughStruct", "node");
             int lengthB = (int)(targetPtr - b.CellPtr);
             if(lengthA != lengthB) return false;
             return Memory.Compare(a.CellPtr,b.CellPtr,lengthA);

@@ -177,7 +177,7 @@ namespace t_Namespace
         public byte[] ToByteArray()
         {
             byte* targetPtr = CellPtr;
-            //ret += AccessorCodeTemplate.GenerateFieldPushPointerCode(structDesc, structDesc.Fields.Count, "this");
+            MODULE_CALL("PushPointerThroughStruct", "node");
             int size = (int)(targetPtr - CellPtr);
             byte[] ret = new byte[size];
             Memory.Copy(CellPtr, 0, ret, 0, size);

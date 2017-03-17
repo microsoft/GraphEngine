@@ -277,6 +277,16 @@ source->append(R"::(
         public byte[] ToByteArray()
         {
             byte* targetPtr = CellPtr;
+            )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::PushPointerThroughStruct(node, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
             int size = (int)(targetPtr - CellPtr);
             byte[] ret = new byte[size];
             Memory.Copy(CellPtr, 0, ret, 0, size);

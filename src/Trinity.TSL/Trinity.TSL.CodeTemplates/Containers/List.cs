@@ -62,7 +62,7 @@ namespace t_Namespace
                 int ret = 0;
                 while (targetPtr < endPtr)
                 {
-                    //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
+                    MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
                     ++ret;
                 }
                 return ret;
@@ -90,7 +90,7 @@ namespace t_Namespace
                         byte* targetPtr = CellPtr;
                         while (index-- > 0)
                         {
-                            //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
+                            MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
                         }
                         IF("data_type_is_length_prefixed(node->listElementType)");
                         elementAccessor.CellPtr = targetPtr + 4;
@@ -118,7 +118,7 @@ namespace t_Namespace
                     ELSE();
                     while (index-- > 0)
                     {
-                        //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
+                        MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
                     }
                     END();
                     MODULE_CALL("AccessorToAccessorFieldAssignment", "$t_data_type", "\"elementAccessor\"", "\"FieldExists\"");
@@ -167,13 +167,13 @@ namespace t_Namespace
                 {
                     elementAccessor.CellPtr = targetPtr + 4;
                     action(elementAccessor);
-                    //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
+                    MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
                 }
                 ELSE();
                 {
                     elementAccessor.CellPtr = targetPtr;
                     action(elementAccessor);
-                    //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
+                    MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
                 }
                 END();
             }
@@ -203,13 +203,13 @@ namespace t_Namespace
                 {
                     elementAccessor.CellPtr = targetPtr + 4;
                     action(elementAccessor, index);
-                    //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
+                    MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
                 }
                 ELSE();
                 {
                     elementAccessor.CellPtr = targetPtr;
                     action(elementAccessor, index);
-                    //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
+                    MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
                 }
                 END();
             }
@@ -261,7 +261,7 @@ namespace t_Namespace
                 }
                 ELSE(); // dynamic
                 {
-                    //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
+                    MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
                 }
                 END();
             }
@@ -321,7 +321,7 @@ namespace t_Namespace
             ELSE();
             for (int i = 0; i < index; i++)
             {
-                //" + listtype.ElementFieldType.GeneratePushPointerCode() + @"
+                MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
             }
             END();
             int offset = (int)(targetPtr - CellPtr);
@@ -380,7 +380,7 @@ namespace t_Namespace
                     elementAccessor.CellPtr = targetPtr + 4;
                     if (comparison(elementAccessor, element)<=0)
                     {
-                        //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
+                        MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
                     }
                     else
                     {
@@ -392,7 +392,7 @@ namespace t_Namespace
                     elementAccessor.CellPtr = targetPtr;
                     if (comparison(elementAccessor, element)<=0)
                     {
-                        //cw += (listtype.ElementFieldType as DynamicFieldType).GeneratePushPointerCode();
+                        MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
                     }
                     else
                     {
@@ -423,11 +423,11 @@ namespace t_Namespace
             byte* targetPtr = CellPtr;
             for (int i = 0; i < index; i++)
             {
-                //" + listtype.ElementFieldType.GeneratePushPointerCode() + @"
+                MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
             }
             int offset = (int)(targetPtr - CellPtr);
             byte* oldtargetPtr = targetPtr;
-            //" + listtype.ElementFieldType.GeneratePushPointerCode() + @"
+            MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
             // InsertAndRemoveAtCodeForContainer TODO IAccessor reuse
             int size = (int)(oldtargetPtr - targetPtr);
             this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), offset + sizeof(int), size);
@@ -577,7 +577,7 @@ namespace t_Namespace
             byte* targetPtr = CellPtr;
             for (int i = 0; i < index; i++)
             {
-                //cw += listtype.ElementFieldType.GeneratePushPointerCode();
+                MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
             }
             int offset = (int)(targetPtr - CellPtr);
             CellPtr = ResizeFunction(CellPtr - 4, offset + 4, tmpAccessor.length);
@@ -599,13 +599,13 @@ namespace t_Namespace
             byte* targetPtr = CellPtr;
             for (int i = 0; i < index; i++)
             {
-                //cw += listtype.ElementFieldType.GeneratePushPointerCode();
+                MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
             }
             int offset = (int)(targetPtr - CellPtr);
             byte* oldtargetPtr = targetPtr;
             for (int i = 0; i < count; i++)
             {
-                //cw += listtype.ElementFieldType.GeneratePushPointerCode();
+                MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
             }
             int size = (int)(oldtargetPtr - targetPtr);
             CellPtr = ResizeFunction(CellPtr - 4, offset + 4, size);

@@ -90,6 +90,16 @@ source->append(R"::(
                 int ret = 0;
                 while (targetPtr < endPtr)
                 {
+                    )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::PushPointerThroughFieldType(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
                     ++ret;
                 }
                 return ret;
@@ -140,6 +150,16 @@ source->append(R"::(
                         byte* targetPtr = CellPtr;
                         while (index-- > 0)
                         {
+                            )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::PushPointerThroughFieldType(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
                         }
                         )::");
 if (data_type_is_length_prefixed(node->listElementType))
@@ -200,6 +220,16 @@ else
 source->append(R"::(
                     while (index-- > 0)
                     {
+                        )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::PushPointerThroughFieldType(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
                     }
                     )::");
 }
@@ -278,6 +308,16 @@ source->append(R"::(
                 {
                     elementAccessor.CellPtr = targetPtr + 4;
                     action(elementAccessor);
+                    )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::PushPointerThroughFieldType(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
                 }
                 )::");
 }
@@ -287,6 +327,16 @@ source->append(R"::(
                 {
                     elementAccessor.CellPtr = targetPtr;
                     action(elementAccessor);
+                    )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::PushPointerThroughFieldType(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
                 }
                 )::");
 }
@@ -337,6 +387,16 @@ source->append(R"::(
                 {
                     elementAccessor.CellPtr = targetPtr + 4;
                     action(elementAccessor, index);
+                    )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::PushPointerThroughFieldType(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
                 }
                 )::");
 }
@@ -346,6 +406,16 @@ source->append(R"::(
                 {
                     elementAccessor.CellPtr = targetPtr;
                     action(elementAccessor, index);
+                    )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::PushPointerThroughFieldType(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
                 }
                 )::");
 }
@@ -432,6 +502,16 @@ else
 {
 source->append(R"::( 
                 {
+                    )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::PushPointerThroughFieldType(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
                 }
                 )::");
 }
@@ -499,6 +579,16 @@ else
 source->append(R"::(
             for (int i = 0; i < index; i++)
             {
+                )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::PushPointerThroughFieldType(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
             }
             )::");
 }
@@ -576,6 +666,16 @@ source->append(R"::(
                     elementAccessor.CellPtr = targetPtr + 4;
                     if (comparison(elementAccessor, element)<=0)
                     {
+                        )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::PushPointerThroughFieldType(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
                     }
                     else
                     {
@@ -591,6 +691,16 @@ source->append(R"::(
                     elementAccessor.CellPtr = targetPtr;
                     if (comparison(elementAccessor, element)<=0)
                     {
+                        )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::PushPointerThroughFieldType(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
                     }
                     else
                     {
@@ -617,12 +727,31 @@ source->append(R"::(
             byte* targetPtr = CellPtr;
             for (int i = 0; i < index; i++)
             {
+                )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::PushPointerThroughFieldType(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
             }
             int offset = (int)(targetPtr - CellPtr);
             byte* oldtargetPtr = targetPtr;
+            )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::PushPointerThroughFieldType(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
             int size = (int)(oldtargetPtr - targetPtr);
-            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), offset + siz)::");
-source->append(R"::(eof(int), size);
+            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), offset + sizeof(int), size);
             *(int*)this.CellPtr += size;
             this.CellPtr += sizeof(int);
         }
@@ -785,6 +914,16 @@ source->append(R"::( tmpAccessor = collection;
             byte* targetPtr = CellPtr;
             for (int i = 0; i < index; i++)
             {
+                )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::PushPointerThroughFieldType(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
             }
             int offset = (int)(targetPtr - CellPtr);
             CellPtr = ResizeFunction(CellPtr - 4, offset + 4, tmpAccessor.length);
@@ -801,16 +940,36 @@ source->append(R"::( tmpAccessor = collection;
         {
             if (index < 0) throw new ArgumentOutOfRangeException("index is less than 0.");
             if (index > Count) throw new ArgumentOutOfRangeException("index is greater than Count.");
-       )::");
-source->append(R"::(     if (index + count > Count) throw new ArgumentException("index and count do not denote a valid range of elements in the List.");
+            if (index + count > Count) throw new ArgumentException("index and count do not denote a valid range of elements in the Li)::");
+source->append(R"::(st.");
             byte* targetPtr = CellPtr;
             for (int i = 0; i < index; i++)
             {
+                )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::PushPointerThroughFieldType(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
             }
             int offset = (int)(targetPtr - CellPtr);
             byte* oldtargetPtr = targetPtr;
             for (int i = 0; i < count; i++)
             {
+                )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::PushPointerThroughFieldType(node->listElementType, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
             }
             int size = (int)(oldtargetPtr - targetPtr);
             CellPtr = ResizeFunction(CellPtr - 4, offset + 4, size);
