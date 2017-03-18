@@ -15,6 +15,8 @@ namespace t_Namespace
          * This module generates code that evaluate the parameters and serialize them
          * into a buffer. For a cell, the code serializes to byte[] tmpcell; For a message
          * accessor, it serializes to an unmanaged buffer tmpcellptr;
+         * Arguments:
+         *  0. target       "cell" for cell target; "message" for message accessor.
          */
         public unsafe void serialize()
         {
@@ -32,14 +34,14 @@ namespace t_Namespace
             targetPtr = (byte*)preservedHeaderLength;
             END();
 
-            MODULE_CALL("PushPointerFromParameters", "node", "\"\"", "\"push\"");
+            MODULE_CALL("PushPointerFromParameters", "node", "\"push\"");
 
             IF("%forcell");
             byte[] tmpcell = new byte[(int)(targetPtr)];
             fixed (byte* tmpcellptr = tmpcell)
             {
                 targetPtr = tmpcellptr;
-                MODULE_CALL("PushPointerFromParameters", "node", "\"\"", "\"assign\"");
+                MODULE_CALL("PushPointerFromParameters", "node", "\"assign\"");
             }
             ELSE();
             {
@@ -49,7 +51,7 @@ namespace t_Namespace
                 targetPtr = tmpcellptr;
                 tmpcellptr += preservedHeaderLength;
                 targetPtr  += preservedHeaderLength;
-                MODULE_CALL("PushPointerFromParameters", "node", "\"\"", "\"assign\"");
+                MODULE_CALL("PushPointerFromParameters", "node", "\"assign\"");
             }
             END();
 

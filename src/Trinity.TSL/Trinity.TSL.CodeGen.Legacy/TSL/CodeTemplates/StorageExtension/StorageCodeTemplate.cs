@@ -12,12 +12,6 @@ namespace Trinity.TSL
         {
             StringBuilder ret = new StringBuilder();
 
-            //Cell load/save/use extensions
-            foreach (var cell_desc in script.CellDescriptors)
-            {
-                ret.Append(GenerateStorageExtensionForCell(cell_desc, script));
-            }
-
             ret.Append(GenerateCellTypeExtension(script));
             //ret.Append(GenerateForEachExtension());
             //ret.Append(GenerateCellAction(script));

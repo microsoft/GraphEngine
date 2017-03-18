@@ -36,7 +36,6 @@ source->append(R"::(
 {
     ModuleContext module_ctx;
     module_ctx.m_stack_depth = context->m_stack_depth + 1;
-module_ctx.m_arguments.push_back(Codegen::GetString(""));
 module_ctx.m_arguments.push_back(Codegen::GetString("push"));
 std::string* module_content = Modules::PushPointerFromParameters(node, &module_ctx);
     source->append(*module_content);
@@ -54,7 +53,6 @@ source->append(R"::(
 {
     ModuleContext module_ctx;
     module_ctx.m_stack_depth = context->m_stack_depth + 1;
-module_ctx.m_arguments.push_back(Codegen::GetString(""));
 module_ctx.m_arguments.push_back(Codegen::GetString("assign"));
 std::string* module_content = Modules::PushPointerFromParameters(node, &module_ctx);
     source->append(*module_content);
@@ -79,7 +77,6 @@ source->append(R"::(
 {
     ModuleContext module_ctx;
     module_ctx.m_stack_depth = context->m_stack_depth + 1;
-module_ctx.m_arguments.push_back(Codegen::GetString(""));
 module_ctx.m_arguments.push_back(Codegen::GetString("assign"));
 std::string* module_content = Modules::PushPointerFromParameters(node, &module_ctx);
     source->append(*module_content);
