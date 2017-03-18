@@ -120,7 +120,8 @@ namespace Trinity
             // TODO POD structs like DateTime and Guid does not require accessors.
             // Investigate whether we can simply modify the code here and make
             // the codegen generate more efficient code.
-            return type->layoutType == LT_DYNAMIC || type->is_struct() || type->is_datetime() || type->is_guid();
+            // NOTE POD structs have no arrays, so LT_FIXED is not a sufficient condition for POD.
+            return type->layoutType == LT_DYNAMIC || type->is_array() || type->is_struct() || type->is_datetime() || type->is_guid();
         }
 
         /**
@@ -345,7 +346,7 @@ namespace Trinity
             case FT_ENUM:
                 return *type->referencedNEnum->name;
             case FT_STRUCT:
-                return *type->referencedNStruct->name + "Accessor";
+                return *type->referencedNStruct->name + "_Accessor";
             }
 
             error(type, "data_type_get_accessor_name: Unknown type");

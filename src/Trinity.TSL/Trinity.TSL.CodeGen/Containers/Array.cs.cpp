@@ -328,6 +328,7 @@ source->append(Codegen::GetString(node->arrayInfo.arrayElement));
 source->append(R"::([ )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->arrayInfo.array_dimension_size)->size();++iterator_1)
 {
+source->append(R"::(  )::");
 if (iterator_1 < (node->arrayInfo.array_dimension_size)->size() - 1)
 source->append(",");
 }
@@ -341,6 +342,7 @@ source->append(Codegen::GetString(node->arrayInfo.arrayElement));
 source->append(R"::([ )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->arrayInfo.array_dimension_size)->size();++iterator_1)
 {
+source->append(R"::(  )::");
 if (iterator_1 < (node->arrayInfo.array_dimension_size)->size() - 1)
 source->append(",");
 }
@@ -350,13 +352,15 @@ source->append(Codegen::GetString(node->arrayInfo.arrayElement));
 source->append(R"::([ )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->arrayInfo.array_dimension_size)->size();++iterator_1)
 {
+source->append(R"::( )::");
 source->append(Codegen::GetString((*(node->arrayInfo.array_dimension_size))[iterator_1]));
+source->append(R"::( )::");
 if (iterator_1 < (node->arrayInfo.array_dimension_size)->size() - 1)
 source->append(",");
 }
 source->append(R"::( ];
             )::");
-if (data_type_need_accessor(node->arrayInfo.arrayElement))
+if (!data_type_need_accessor(node->arrayInfo.arrayElement))
 {
 source->append(R"::(
             fixed ()::");
@@ -411,6 +415,16 @@ source->append(R"::( ;
 source->append(R"::(
             return ret;
         }
+        )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::AccessorReverseImplicitOperator(node, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
         public static bool operator == ()::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::( a, )::");

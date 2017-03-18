@@ -7,7 +7,7 @@ namespace t_Namespace
     [MAP_LIST("t_cell", "node->cellList")]
     [MAP_VAR("t_cell_name", "name")]
     [MAP_VAR("t_ushort", "GET_ITERATOR_VALUE() + 1")]
-    public enum CellTypeEnum : ushort
+    public enum CellType: ushort
     {
         Undefined = 0,
         /*FOREACH("")*/

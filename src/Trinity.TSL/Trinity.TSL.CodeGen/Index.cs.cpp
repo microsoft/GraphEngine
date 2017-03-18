@@ -567,7 +567,7 @@ field_name_2 = "accessor." + *(*(TSLIndexTargetVector))[iterator_1]->target;
 int final_element_1 = -1;
 for (size_t iterator_2 = 0; iterator_2 < (container_chain_1)->size();++iterator_2)
 {
-source->append(R"::(
+source->append(R"::( 
                                     foreach (var )::");
 source->append(Codegen::GetString(std::string("element_") + GetString(iterator_2)));
 source->append(R"::( in )::");
@@ -656,7 +656,7 @@ source->append(R"::("/>.
             /// </summary>
             public static readonly )::");
 source->append(Codegen::GetString((*((*TSLIndexIdentifierSubstructureMap)[(*(TSLIndexIdentifierCellVector))[iterator_1]]))[iterator_2]->fieldType->referencedNStruct->name));
-source->append(R"::(/*_*/)::");
+source->append(R"::( )::");
 source->append(Codegen::GetString((*((*TSLIndexIdentifierSubstructureMap)[(*(TSLIndexIdentifierCellVector))[iterator_1]]))[iterator_2]->name));
 source->append(R"::( = new )::");
 source->append(Codegen::GetString((*((*TSLIndexIdentifierSubstructureMap)[(*(TSLIndexIdentifierCellVector))[iterator_1]]))[iterator_2]->fieldType->referencedNStruct->name));
@@ -721,7 +721,7 @@ source->append(R"::("/>
             /// </summary>
             public )::");
 source->append(Codegen::GetString((*((*TSLIndexIdentifierSubstructureMap)[(*(TSLIndexIdentifierStructVector))[iterator_1]]))[iterator_2]->fieldType->referencedNStruct->name));
-source->append(R"::(/*_*/)::");
+source->append(R"::( )::");
 source->append(Codegen::GetString((*((*TSLIndexIdentifierSubstructureMap)[(*(TSLIndexIdentifierStructVector))[iterator_1]]))[iterator_2]->name));
 source->append(R"::( = new )::");
 source->append(Codegen::GetString((*((*TSLIndexIdentifierSubstructureMap)[(*(TSLIndexIdentifierStructVector))[iterator_1]]))[iterator_2]->fieldType->referencedNStruct->name));
@@ -841,6 +841,7 @@ for (size_t iterator_1 = 0; iterator_1 < (TSLSubstringIndexedListTypes)->size();
 source->append(R"::(
         public static bool ElementContainsSubstring(this )::");
 source->append(Codegen::GetString((*(TSLSubstringIndexedListTypes))[iterator_1]));
+source->append(R"::( )::");
 source->append(Codegen::GetString("list"));
 source->append(R"::(, IEnumerable<string> substrings)
         {
@@ -904,7 +905,7 @@ for (size_t iterator_1 = 0; iterator_1 < (TSLSubstringIndexedListTypes)->size();
 source->append(R"::(
         public static bool ElementContainsSubstring(this )::");
 source->append(Codegen::GetString(data_type_get_accessor_name((*(TSLSubstringIndexedListTypes))[iterator_1].get())));
-source->append(R"::(/*_*/)::");
+source->append(R"::( )::");
 source->append(Codegen::GetString("list"));
 source->append(R"::(, IEnumerable<string> substrings)
         {
@@ -957,7 +958,7 @@ source->append(R"::(
         }
         public static bool ElementContainsSubstring(this )::");
 source->append(Codegen::GetString(data_type_get_accessor_name((*(TSLSubstringIndexedListTypes))[iterator_1].get())));
-source->append(R"::(/*_*/list, params string[] substrings)
+source->append(R"::( list, params string[] substrings)
         {
             return ElementContainsSubstring(list, substrings as IEnumerable<string>);
         }

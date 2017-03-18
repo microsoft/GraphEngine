@@ -210,7 +210,7 @@ namespace t_Namespace
             t_data_type[ /*FOREACH(",")*/ /*USE_LIST("t_dim")*/ /*END*/ ] ret 
                 = new t_data_type[ /*FOREACH(",")*/ t_int /*END*/ ];
 
-            IF("data_type_need_accessor($t_data_type)");
+            IF("!data_type_need_accessor($t_data_type)");
             fixed (t_data_type* p = ret)
             {
                 Memory.Copy(accessor.CellPtr, p, META_OUTPUT("node->type_size()"));
@@ -236,6 +236,8 @@ namespace t_Namespace
 
             return ret;
         }
+
+        [MODULE_CALL("AccessorReverseImplicitOperator", "node")]
 
         public static bool operator == (t_array_name a, t_array_name b)
         {

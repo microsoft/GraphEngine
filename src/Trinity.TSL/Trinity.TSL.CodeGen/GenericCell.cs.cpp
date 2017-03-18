@@ -505,7 +505,7 @@ source->append(R"::(_ptr = buff)
                     {
                         )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_Accessor/*_*/)::");
+source->append(R"::(_Accessor )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(_accessor = new )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));

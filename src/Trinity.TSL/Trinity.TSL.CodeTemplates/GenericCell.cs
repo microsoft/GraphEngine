@@ -340,7 +340,7 @@ namespace t_Namespace
                 case CellType.t_cell_name:
                     fixed (byte* t_cell_name_ptr = buff)
                     {
-                        t_cell_name_Accessor/*_*/t_cell_name_accessor = new t_cell_name_Accessor(t_cell_name_ptr);
+                        t_cell_name_Accessor t_cell_name_accessor = new t_cell_name_Accessor(t_cell_name_ptr);
                         t_cell_name_accessor.CellID = cellId;
                         return (t_cell_name)t_cell_name_accessor;
                     }

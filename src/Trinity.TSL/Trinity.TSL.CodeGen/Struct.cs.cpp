@@ -69,6 +69,7 @@ source->append(R"::(()::");
 for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
 {
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
+source->append(R"::( )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::( = default()::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
@@ -152,6 +153,7 @@ for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
 source->append(R"::(
         public )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
+source->append(R"::( )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::(;
         )::");
@@ -363,6 +365,7 @@ if ((*(node->fieldList))[iterator_1]->is_optional())
 source->append(R"::(
                         _)::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::( )::");
 }
 else
 {

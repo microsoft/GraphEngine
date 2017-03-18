@@ -15,8 +15,8 @@ namespace Trinity.TSL
         [TARGET("NFieldType")]
         [MAP_VAR("t_accessor_type", "data_type_get_accessor_name(node)")]
         [MAP_VAR("t_data_type", "GetNonNullableValueTypeString(node)")]
-        [META_VAR("bool", "has_resize", "(node->layoutType != LT_FIXED)")]
         [META_VAR("bool", "for_cell", "(node->is_struct() && !node->referencedNStruct->is_struct())")]
+        [META_VAR("bool", "has_resize", "(!%for_cell && node->layoutType != LT_FIXED)")]
         public unsafe static implicit operator t_accessor_type(t_data_type field)
         {
             byte* targetPtr = null;

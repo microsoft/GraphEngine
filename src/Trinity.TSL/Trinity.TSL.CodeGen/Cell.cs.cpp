@@ -78,7 +78,9 @@ source->append(Codegen::GetString(node->name));
 source->append(R"::((long cell_id, )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
 {
+source->append(R"::( )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
+source->append(R"::( )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::( = default()::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
@@ -116,7 +118,9 @@ source->append(Codegen::GetString(node->name));
 source->append(R"::(()::");
 for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
 {
+source->append(R"::( )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
+source->append(R"::( )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::( = default()::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
@@ -147,6 +151,7 @@ for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
 source->append(R"::(
         public )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
+source->append(R"::( )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::(;
         )::");
@@ -916,9 +921,12 @@ if (struct_nonempty_1)
 {
 source->append(R"::(,)::");
 }
+source->append(R"::(  )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
 {
+source->append(R"::( )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
+source->append(R"::( )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::( = default()::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
@@ -1003,6 +1011,7 @@ if ((*(node->fieldList))[iterator_1]->is_optional())
 source->append(R"::(
                 _)::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::( )::");
 }
 else
 {
@@ -1029,6 +1038,7 @@ if ((*(node->fieldList))[iterator_1]->is_optional())
 source->append(R"::(
                 _)::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::( )::");
 }
 else
 {
@@ -1786,6 +1796,7 @@ for(const std::string& attr : field_attributes_1){
 source->append(R"::(
                     case )::");
 source->append(Codegen::GetString(iter_val_4++));
+source->append(R"::( )::");
 source->append(Codegen::GetString(iter_val_4++));
 source->append(R"::(:
                         )::");

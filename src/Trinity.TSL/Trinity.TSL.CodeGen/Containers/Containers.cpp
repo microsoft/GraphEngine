@@ -42,8 +42,11 @@ using Trinity.TSL.Lib;
                     container_code = Array(ft);
                 }
 
-                source->append(*container_code);
-                delete container_code;
+                if (container_code != nullptr)
+                {
+                    source->append(*container_code);
+                    delete container_code;
+                }
             }
 
             return source;

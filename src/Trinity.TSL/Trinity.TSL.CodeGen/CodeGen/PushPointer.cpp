@@ -200,8 +200,8 @@ static void push_and_assign_struct(std::string* source, int stack_depth, NFieldT
 static void push_and_assign_array(std::string* source, int stack_depth, NFieldType* node, std::string varName, bool OnlyPushPointer)
 {
     /* Note, element-wise push-assign code in the legacy codegen was dropped. */
-    string total_length_string = GetString(node->arrayInfo.arrayElement->type_size());
-    string element_type = GetNonNullableValueTypeString(node);
+    string total_length_string = GetString(node->type_size());
+    string element_type = GetNonNullableValueTypeString(node->arrayInfo.arrayElement);
     string pointer = "storedPtr_" + GetString(stack_depth);
     if (OnlyPushPointer)
     {
@@ -222,7 +222,7 @@ static void push_and_assign_array(std::string* source, int stack_depth, NFieldTy
     *source += indent + "   fixed(" + element_type + "* " + pointer + " = " + varName + ")\n";
     *source += indent + "       Memory.memcpy(targetPtr, " + pointer + ", (ulong)(" + total_length_string + "));\n";
     *source += indent + "}else{\n";
-    *source += indent + "   Memory.memcpy(targetPtr, 0, (ulong)(" + total_length_string + "));\n";
+    *source += indent + "   Memory.memset(targetPtr, 0, (ulong)(" + total_length_string + "));\n";
     *source += indent + "}";
     *source += indent + "targetPtr += " + total_length_string + ";\n";
 }
@@ -240,7 +240,7 @@ static void push_and_assign_string(std::string* source, int stack_depth, NFieldT
             int )::" + strlen_name + " = " + varName + R"::(.Length * 2;
             *(int*)targetPtr = )::" + strlen_name + R"::(;
             targetPtr += sizeof(int);
-            fixed(char* )::" + pstr_name + " = " + varName + R"::(
+            fixed(char* )::" + pstr_name + " = " + varName + R"::()
             {
                 Memory.Copy()::" + pstr_name + ", targetPtr, " + strlen_name + R"::();
                 targetPtr += )::" + strlen_name + R"::(;
@@ -358,31 +358,30 @@ if()::" + varName + R"::(!= null)
         if (!OnlyPushPointer)
         {
             *source += R"::(byte *)::" + pointer_name + R"::( = targetPtr;
-";
-                }
+)::";
+        }
 
-                *source += R"::(
+        *source += R"::(
     targetPtr += sizeof(int);
     if()::" + varName + R"::(!= null)
     {
         for(int )::" + iterator_name + " = 0;" + iterator_name + "<" + varName + ".Count;++" + iterator_name + R"::()
         {
 )::";
-            push_and_assign_impl(source, stack_depth + 1, node->listElementType, varName + "[" + iterator_name + "]", OnlyPushPointer);
-            *source += R"::(
+        push_and_assign_impl(source, stack_depth + 1, node->listElementType, varName + "[" + iterator_name + "]", OnlyPushPointer);
+        *source += R"::(
         }
     }
 )::";
 
-            if (!OnlyPushPointer)
-            {
-                *source += "*(int*))::" + pointer_name + " = (int)(targetPtr - " + pointer_name + R"::( - 4);
-)::";
-            }
-            *source += R"::(
-}
+        if (!OnlyPushPointer)
+        {
+            *source += "*(int*)" + pointer_name + " = (int)(targetPtr - " + pointer_name + R"::( - 4);
 )::";
         }
+        *source += R"::(
+}
+)::";
     }
 }
 
@@ -512,6 +511,7 @@ namespace Trinity
                 NFieldType *field = new NFieldType();
                 field->fieldType = FT_STRUCT;
                 field->referencedNStruct = node;
+                field->referencedTypeName = node->name;
                 field->layoutType = node->layoutType;
 
                 std::string* source = new std::string();

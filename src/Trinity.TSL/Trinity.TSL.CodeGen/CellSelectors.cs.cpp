@@ -741,7 +741,7 @@ source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::( within the local memory storage.</returns>
         public static )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_local_selector/*_*/)::");
+source->append(R"::(_local_selector )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(_Selector(this LocalMemoryStorage storage)
         {
@@ -760,7 +760,7 @@ source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(_Accessor within the local memory storage.</returns>
         public static )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_Accessor_local_selector/*_*/)::");
+source->append(R"::(_Accessor_local_selector )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(_Accessor_Selector(this LocalMemoryStorage storage)
         {

@@ -93,7 +93,6 @@
     <Compile Include="TSL\t_field_type_2_element_type.cs" />
     <Compile Include="TSL\t_list.cs" />
     <Compile Include="_Test.cs" />
-    <Compile Include="TSL\CellType.cs" />
     <Compile Include="TSL\CompilerService.cs" />
     <Compile Include="TSL\FlowControlAttributes.cs" />
     <Compile Include="TSL\t_data_type.cs" />

@@ -223,7 +223,7 @@ namespace t_Namespace
                     MAP_VAR("t_array_iterator_string", "t_array_iterator_prefix + '_' + GetString(GET_ITERATOR_VALUE()) + Discard($$)", MemberOf = "t_array_iterator_list");
 
                     FOREACH();
-                    for (int t_array_iterator_string = 0; t_array_iterator_string < t_array_iterator_length/*_*/ ; ++t_array_iterator_string)
+                    for (int t_array_iterator_string = 0; t_array_iterator_string < t_array_iterator_length; ++t_array_iterator_string)
                     /*END*/
                     {
                         IF("$t_field_type->is_assignable_from($t_field_type_2->arrayInfo.arrayElement)");

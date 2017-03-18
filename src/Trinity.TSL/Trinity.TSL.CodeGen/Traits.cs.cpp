@@ -449,7 +449,7 @@ source->append(R"::( = 0; )::");
 source->append(Codegen::GetString(Codegen::GetString(Trinity::Codegen::GetDataTypeDisplayString((*(Trinity::Codegen::TSLExternalParserDataTypeVector))[iterator_1]->arrayInfo.arrayElement)) + '_' + GetString(iterator_3) + Discard((*((*(Trinity::Codegen::TSLExternalParserDataTypeVector))[iterator_1]->arrayInfo.array_dimension_size))[iterator_3])));
 source->append(R"::( < )::");
 source->append(Codegen::GetString((*((*(Trinity::Codegen::TSLExternalParserDataTypeVector))[iterator_1]->arrayInfo.array_dimension_size))[iterator_3]));
-source->append(R"::(/*_*/ ; ++)::");
+source->append(R"::(; ++)::");
 source->append(Codegen::GetString(Codegen::GetString(Trinity::Codegen::GetDataTypeDisplayString((*(Trinity::Codegen::TSLExternalParserDataTypeVector))[iterator_1]->arrayInfo.arrayElement)) + '_' + GetString(iterator_3) + Discard((*((*(Trinity::Codegen::TSLExternalParserDataTypeVector))[iterator_1]->arrayInfo.array_dimension_size))[iterator_3])));
 source->append(R"::()
                     )::");

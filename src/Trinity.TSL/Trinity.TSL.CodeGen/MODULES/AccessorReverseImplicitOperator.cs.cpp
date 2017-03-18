@@ -16,8 +16,8 @@ NFieldType* node, ModuleContext* context)
             {
                 string* source = new string();
                 
-bool has_resize_1 = (node->layoutType != LT_FIXED);
 bool for_cell_1 = (node->is_struct() && !node->referencedNStruct->is_struct());
+bool has_resize_1 = (!for_cell_1 && node->layoutType != LT_FIXED);
 source->append(R"::(
         public unsafe static implicit operator )::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));

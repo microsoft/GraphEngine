@@ -14,12 +14,7 @@ NFieldType* node)
         {
             string* source = new string();
             
-source->append(R"::(using System;
-using System.Collections;
-using System.Collections.Generic;
-using Trinity.Core.Lib;
-using Trinity.TSL;
-using Trinity.TSL.Lib;
+source->append(R"::(
 namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
@@ -37,7 +32,7 @@ source->append(R"::(>
     {
         internal byte* CellPtr;
         internal long? CellID;
-        ResizeFunctionDelegate ResizeFunction;
+        internal ResizeFunctionDelegate ResizeFunction;
         internal )::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::((byte* _CellPtr, ResizeFunctionDelegate func)

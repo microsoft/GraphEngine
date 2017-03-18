@@ -165,11 +165,11 @@ source->append(R"::(
             try
             {
                 jarray = JArray.Parse(s);
-                value = new )::");
+                value = new  )::");
 source->append(Codegen::GetString(data_type_get_array_type_with_size_string((*(Trinity::Codegen::TSLExternalParserDataTypeVector))[iterator_1])));
-source->append(R"::(;)::");
+source->append(R"::( ;)::");
 source->append(Codegen::GetString((*(Trinity::Codegen::TSLExternalParserDataTypeVector))[iterator_1]->arrayInfo.arrayElement));
-source->append(R"::( element;
+source->append(R"::(  element;
                 int )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetDataTypeDisplayString((*(Trinity::Codegen::TSLExternalParserDataTypeVector))[iterator_1]->arrayInfo.arrayElement)));
 source->append(R"::(_offset = 0;
@@ -183,7 +183,7 @@ source->append(R"::( = 0; )::");
 source->append(Codegen::GetString(Codegen::GetString(Trinity::Codegen::GetDataTypeDisplayString((*(Trinity::Codegen::TSLExternalParserDataTypeVector))[iterator_1]->arrayInfo.arrayElement)) + '_' + GetString(iterator_2) + Discard((*((*(Trinity::Codegen::TSLExternalParserDataTypeVector))[iterator_1]->arrayInfo.array_dimension_size))[iterator_2])));
 source->append(R"::( < )::");
 source->append(Codegen::GetString((*((*(Trinity::Codegen::TSLExternalParserDataTypeVector))[iterator_1]->arrayInfo.array_dimension_size))[iterator_2]));
-source->append(R"::(/*_*/ ; ++)::");
+source->append(R"::(; ++)::");
 source->append(Codegen::GetString(Codegen::GetString(Trinity::Codegen::GetDataTypeDisplayString((*(Trinity::Codegen::TSLExternalParserDataTypeVector))[iterator_1]->arrayInfo.arrayElement)) + '_' + GetString(iterator_2) + Discard((*((*(Trinity::Codegen::TSLExternalParserDataTypeVector))[iterator_1]->arrayInfo.array_dimension_size))[iterator_2])));
 source->append(R"::()
                 )::");

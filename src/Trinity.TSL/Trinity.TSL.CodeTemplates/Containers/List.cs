@@ -1,9 +1,11 @@
-﻿using System;
+﻿/*MUTE*/
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Trinity.Core.Lib;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
+/*MUTE_END*/
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
 namespace t_Namespace
@@ -22,7 +24,7 @@ namespace t_Namespace
     {
         internal byte* CellPtr;
         internal long? CellID;
-        ResizeFunctionDelegate ResizeFunction;
+        internal ResizeFunctionDelegate ResizeFunction;
 
         internal t_list_accessor(byte* _CellPtr, ResizeFunctionDelegate func)
         {

@@ -21,6 +21,30 @@ bool            c_delay_sign;
 bool            c_no_warnings;
 #pragma endregion
 
+void help()
+{
+    Console::WriteLine("Trinity Specification Language Codegen: transpiles TSL scripts ");
+    Console::WriteLine("to C# source files for data modeling, message passing modeling,");
+    Console::WriteLine("and data interchange for a Graph Engine application.           ");
+    Console::WriteLine("                                                               ");
+    Console::WriteLine("usage:                                                         ");
+    Console::WriteLine("Trinity.TSL.CodeGen.exe [options] [1.tsl 2.tsl ...]            ");
+    Console::WriteLine("                                                               ");
+    Console::WriteLine("options:                                                       ");
+    Console::WriteLine("    -h/--help           Print this help.                       ");
+    Console::WriteLine("    -g/--Debug          Enable debugging features.             ");
+    Console::WriteLine("    -n/--RootNamespace  Specifies the root namespace.          ");
+    Console::WriteLine("                        Defaults to 'Trinity.Extension'.       ");
+    Console::WriteLine("    -r/--ProjectRoot    Specifies the root of the project.     ");
+    Console::WriteLine("                        Defaults to the current directory.     ");
+    Console::WriteLine("    -s/--ScriptList     Specifies a list of tsl scripts,       ");
+    Console::WriteLine("                        separated by ';'                       ");
+    Console::WriteLine("                        Files specified by -s will be processed");
+    Console::WriteLine("                        together with other files given in the ");
+    Console::WriteLine("                        arguments.                             ");
+    Console::WriteLine("    --NoWarning         Suppresses TSL transpiler warnings.    ");
+}
+
 #ifdef TRINITY_PLATFORM_WINDOWS
 bool get_parameters(int argc, u16char** argv)
 #else
@@ -28,28 +52,34 @@ bool get_parameters(int argc, char** argv)
 #endif
 {
     auto args                                      = CommandLineTools::GetArguments(argc, argv);
-    auto BuildDataModelingProjectWithDebugFeatures = CommandLineTools::DefineOption<bool>("g", "BuildDataModelingProjectWithDebugFeatures");
-    auto TPJ_Namespace                             = CommandLineTools::DefineOption<Trinity::String>("ns", "RootNamespace");
-    auto TSL_ProjectRoot                           = CommandLineTools::DefineOption<Trinity::String>("r", "ProjectRoot");
-    auto TPJ_ScriptFileList                        = CommandLineTools::DefineOption<Trinity::String>("ScriptList", "ScriptList"); //TPJ: TSL project
-    auto TPJ_OutputPath                            = CommandLineTools::DefineOption<Trinity::String>("p", "OutputPath");
+    auto BuildDataModelingProjectWithDebugFeatures = CommandLineTools::DefineOption<bool>("g", "Debug");
+    auto Namespace                                 = CommandLineTools::DefineOption<Trinity::String>("n", "RootNamespace");
+    auto ProjectRoot                               = CommandLineTools::DefineOption<Trinity::String>("r", "ProjectRoot");
+    auto ScriptFileList                            = CommandLineTools::DefineOption<Trinity::String>("s", "ScriptList"); //TPJ: TSL project
+    auto OutputPath                                = CommandLineTools::DefineOption<Trinity::String>("o", "OutputPath");
     auto NoWarning                                 = CommandLineTools::DefineOption<bool>("NoWarning", "NoWarning");
-    auto TPJ_Reference                             = CommandLineTools::DefineOption<Trinity::String>("r", "Reference");
+    auto Help                                      = CommandLineTools::DefineOption<bool>("h", "help");
 
     CommandLineTools::GetOpt(args,
                              BuildDataModelingProjectWithDebugFeatures,
-                             TPJ_Namespace,
-                             TSL_ProjectRoot,
-                             TPJ_ScriptFileList,
-                             TPJ_OutputPath,
-                             TPJ_Reference,
-                             NoWarning);
+                             Namespace,
+                             ProjectRoot,
+                             ScriptFileList,
+                             OutputPath,
+                             NoWarning,
+                             Help);
+
+    if (Help.value)
+    {
+        help();
+        return false;
+    }
 
     c_debug            = BuildDataModelingProjectWithDebugFeatures.set;
-    c_namespace        = TPJ_Namespace.set ? TPJ_Namespace.value.Trim() : "Trinity.Extension";
-    c_project_root     = TSL_ProjectRoot.set ? TSL_ProjectRoot.value.Trim() : ".";
-    c_script_list      = TPJ_ScriptFileList.value.Trim().Split(";").ToList();
-    c_output_path      = TPJ_OutputPath.set ? TPJ_OutputPath.value.Trim() : ".";
+    c_namespace        = Namespace.set ? Namespace.value.Trim() : "Trinity.Extension";
+    c_project_root     = ProjectRoot.set ? ProjectRoot.value.Trim() : ".";
+    c_script_list      = ScriptFileList.value.Trim().Split(";").ToList();
+    c_output_path      = OutputPath.set ? OutputPath.value.Trim() : ".";
     c_no_warnings      = NoWarning.set;
 
     /* Append any other arguments to the file list. */
@@ -57,7 +87,9 @@ bool get_parameters(int argc, char** argv)
     {
         if (arg.StartsWith('-'))
         {
-            error("Unrecognized parameter: " + arg); return false;
+            error("Unrecognized parameter: " + arg); 
+            help();
+            return false;
         }
         else
         {
@@ -80,7 +112,7 @@ bool get_parameters(int argc, char** argv)
     if (c_script_list.empty())
     {
         error("No input specified.");
-        // TODO print help
+        help();
         return false;
     }
 

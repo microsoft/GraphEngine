@@ -35,7 +35,7 @@ if (tsl->find_protocol((*(node->protocolList))[iterator_1]->name)->is_http_proto
 source->append(R"::(
             { ")::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
-source->append(R"::(",)::");
+source->append(R"::(", )::");
 source->append(Codegen::GetString(iterator_1));
 source->append(R"::(  }
             ,)::");
@@ -91,7 +91,7 @@ protocol_1 = tsl->find_protocol((*(node->protocolList))[iterator_1]->name);
 if (protocol_1->is_http_protocol())
 {
 source->append(R"::(
-                case )::");
+                case  )::");
 source->append(Codegen::GetString(iterator_1));
 source->append(R"::( :
                     {

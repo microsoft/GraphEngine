@@ -855,7 +855,10 @@ namespace Trinity
         private void OutputLiteralToTemplate(string text)
         {
             if (0 == text.Count(x => !char.IsWhiteSpace(x)))
-                return;
+            {
+                if(text.Contains('\n'))
+                    return;
+            }
             l_literal_buffer.Add(text);
         }
 

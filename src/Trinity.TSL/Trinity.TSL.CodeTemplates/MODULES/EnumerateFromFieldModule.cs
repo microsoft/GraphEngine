@@ -45,7 +45,7 @@ namespace t_Namespace
                             var element0 = this.t_field_name;
                             META("for(%enum_iter = 1; %enum_iter <= %enum_depth; ++%enum_iter){");
                             META("%enum_type = %enum_type->get_container_element_type();");
-                            foreach (var element/*META_OUTPUT("%enum_iter")*/ in /*MUTE*/this.t_field_name/*MUTE_END*/ /*LITERAL_OUTPUT("element")*/ /*META_OUTPUT("%enum_iter - 1")*/)
+                            foreach (var element/*META_OUTPUT("%enum_iter")*/ in /*MUTE*/this.t_field_name/*MUTE_END*/ /*LITERAL_OUTPUT("element")*//*META_OUTPUT("%enum_iter - 1")*/)
                             /*META("}")*/
                             //for
                             {

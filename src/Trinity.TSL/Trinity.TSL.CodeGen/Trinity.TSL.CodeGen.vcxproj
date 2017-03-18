@@ -78,7 +78,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WCHAR_OUTPUT;WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Trinity.TSL.Parser;$(SolutionDir)..\Trinity.C\include;$(ProjectDir)$(ProjectDir)\CodeGen</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Trinity.TSL.Parser;$(SolutionDir)..\Trinity.C\include;$(ProjectDir)\CodeGen</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>

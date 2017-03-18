@@ -124,7 +124,7 @@ namespace t_Namespace
                     return ret;
                 }
             }
-            internal static t_field_name_descriptor/*_*/t_field_name = new t_field_name_descriptor();
+            internal static t_field_name_descriptor t_field_name = new t_field_name_descriptor();
             [END]
 
             #region ICellDescriptor

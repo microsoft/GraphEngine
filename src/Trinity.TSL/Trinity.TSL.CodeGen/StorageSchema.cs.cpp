@@ -196,7 +196,7 @@ source->append(R"::(
             }
             internal static )::");
 source->append(Codegen::GetString((*((*(node->cellList))[iterator_1]->fieldList))[iterator_2]->name));
-source->append(R"::(_descriptor/*_*/)::");
+source->append(R"::(_descriptor )::");
 source->append(Codegen::GetString((*((*(node->cellList))[iterator_1]->fieldList))[iterator_2]->name));
 source->append(R"::( = new )::");
 source->append(Codegen::GetString((*((*(node->cellList))[iterator_1]->fieldList))[iterator_2]->name));

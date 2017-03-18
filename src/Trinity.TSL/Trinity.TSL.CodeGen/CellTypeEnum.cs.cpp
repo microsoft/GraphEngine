@@ -19,7 +19,7 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
-    public enum CellTypeEnum : ushort
+    public enum CellType: ushort
     {
         Undefined = 0,
         )::");

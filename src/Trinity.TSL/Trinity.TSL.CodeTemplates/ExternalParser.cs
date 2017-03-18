@@ -133,7 +133,7 @@ namespace t_Namespace
                 META_OUTPUT("$t_data_type_array_element_type"); LITERAL_OUTPUT(" element;");
                 int t_array_iterator_prefix_offset = 0;
                 FOREACH();
-                for (int t_array_iterator_string = 0; t_array_iterator_string < t_array_iterator_length/*_*/ ; ++t_array_iterator_string)
+                for (int t_array_iterator_string = 0; t_array_iterator_string < t_array_iterator_length; ++t_array_iterator_string)
                 /*END*/
                 {
                     IF("data_type_need_external_parser($t_data_type_array_element_type)");

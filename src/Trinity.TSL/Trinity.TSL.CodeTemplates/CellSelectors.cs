@@ -613,7 +613,7 @@ namespace t_Namespace
         /// </summary>
         /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> object.</param>
         /// <returns>All the t_cell_name within the local memory storage.</returns>
-        public static t_cell_name_local_selector/*_*/t_cell_name_Selector(this LocalMemoryStorage storage)
+        public static t_cell_name_local_selector t_cell_name_Selector(this LocalMemoryStorage storage)
         {
             return new t_cell_name_local_selector(storage);
         }
@@ -623,7 +623,7 @@ namespace t_Namespace
         /// </summary>
         /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> object.</param>
         /// <returns>All the t_cell_name_Accessor within the local memory storage.</returns>
-        public static t_cell_name_Accessor_local_selector/*_*/t_cell_name_Accessor_Selector(this LocalMemoryStorage storage)
+        public static t_cell_name_Accessor_local_selector t_cell_name_Accessor_Selector(this LocalMemoryStorage storage)
         {
             return new t_cell_name_Accessor_local_selector(storage);
         }

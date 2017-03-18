@@ -21,7 +21,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TslDebugArguments)' == ''">
-    <TslDebugArguments Condition="'$(Configuration)' != 'Release'">--BuildDataModelingProjectWithDebugFeatures</TslDebugArguments>
+    <TslDebugArguments Condition="'$(Configuration)' != 'Release'">--Debug</TslDebugArguments>
     <TslDebugArguments Condition="'$(Configuration)' == 'Release'"></TslDebugArguments>
   </PropertyGroup>
 
@@ -33,14 +33,7 @@
   </ItemGroup>
 
   <!--
-    * TslCodegenCs - transform .bond files into .cs files
-    *    If we use output transforms from TslCodegen to the resulting targets we can get partial/minimal rebuilds
-    *    on change, but this doesn't reflect the internal import logic of bond.  A change to common.bond would
-    *    only rebuild common*cs, not all the others that import common.bond.  Without a bond parser prepass we
-    *    must rebuild all .bond files when any of them change.  We force that by putting a non-transform output
-    *    (bondfiles.tmp) in the list so IFF any input changes, then all inputs rebuild since MSBuild can't
-    *    know what should create the unmapped output item and so can't be selective.
-    *    NOTE - this still won't catch changes to files outside declared TslCodegen elements.
+    * TslCodegenCs - transform .tsl files into .cs files
   -->
   <Target Name="TslCodegenCs"
           Inputs="@(TslCodegen)"
@@ -54,10 +47,8 @@
                      ProjectRoot="$(MSBuildProjectDirectory)" 
                      ScriptList="@(TslCodegen)" 
                      OutputPath="$(TslOutputPath)" 
-                     AssemblyName="_not_compile_tsl_.dll" 
-                     Command="$(TslDebugArguments) --BuildDataModelingProject"
-                     RootNamespace="$(RootNamespace)"
-                     GenCodeOnly="true"/>
+                     Command="$(TslDebugArguments)"
+                     RootNamespace="$(RootNamespace)"/>
     <!-- The TSL compiler will generate an assembly info. We don't need it here. -->
     <Delete Files="$(TslGeneratedCodePath)AssemblyInfo.cs"/>
 

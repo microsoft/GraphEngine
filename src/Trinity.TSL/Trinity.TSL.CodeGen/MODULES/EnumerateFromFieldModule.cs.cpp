@@ -78,7 +78,7 @@ enum_type_1 = enum_type_1->get_container_element_type();
 source->append(R"::(
                             foreach (var element)::");
 source->append(Codegen::GetString(enum_iter_1));
-source->append(R"::( in element)::");
+source->append(R"::( in  element)::");
 source->append(Codegen::GetString(enum_iter_1 - 1));
 source->append(R"::()
                             )::");

@@ -392,6 +392,7 @@ namespace Trinity
             {
                 write_file(lib_path, NF(GenericCell), tsl, files);
                 write_file(lib_path, NF(StorageSchema), tsl, files);
+                write_file(lib_path, NF(CellTypeEnum), tsl, files);
             }
 
             write_file(lib_path, NF(Enum), tsl, files);
@@ -434,7 +435,6 @@ namespace Trinity
             write_file(linq_path, NF(PLINQWrapper), tsl, files);
 
             /* Cell and Struct */
-            write_file(cell_path, NF(CellTypeEnum), tsl, files);
 
             for (auto* cell : *tsl->cellList)
             {

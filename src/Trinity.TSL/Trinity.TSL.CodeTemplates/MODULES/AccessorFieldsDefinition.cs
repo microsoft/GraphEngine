@@ -16,6 +16,7 @@ namespace t_Namespace
         [MAP_VAR("t_field_name", "name", MemberOf = "t_field")]
         [MAP_VAR("t_field_type_remove_nullable", "Trinity::Codegen::GetNonNullableValueTypeString($$->fieldType)")]
         [MAP_VAR("t_field_type", "fieldType")]
+        [MAP_VAR("t_data_type", "fieldType" , MemberOf = "t_field")]
         [MAP_VAR("t_accessor_type", "data_type_get_accessor_name($$->fieldType)", MemberOf = "t_field")]
 
         [FOREACH]
@@ -94,7 +95,7 @@ namespace t_Namespace
 
                 IF("!%field_need_accessor");
 
-                return *(t_accessor_type*)(targetPtr);
+                return *(t_data_type*)(targetPtr);
 
                 ELIF("%field_lenprefix");
 
@@ -141,9 +142,6 @@ namespace t_Namespace
                 MODULE_CALL("AccessorToAccessorFieldAssignment", "$t_field_type", "%accessor_field_name", "\"FieldExists\"");
 
                 END();
-
-                *(t_accessor_type*)(targetPtr) = value;
-
             }
         }
 

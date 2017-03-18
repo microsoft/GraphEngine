@@ -127,7 +127,7 @@ static void _LengthPrefixedAccessorFieldAssignment(NFieldType* type, string acce
     }
 
     ret += R"::(
-                if (value.CellID != " + accessorName + @".CellID)
+                if (value.CellID != )::" + accessor_field_name + R"::(.CellID)
                 {
                     //if not in the same Cell
                     )::" + accessor_field_name + ".CellPtr = " + accessor_field_name + ".ResizeFunction(targetPtr, 0, " + resize_len + R"::();
@@ -140,7 +140,7 @@ static void _LengthPrefixedAccessorFieldAssignment(NFieldType* type, string acce
                     {                        
                         Memory.Copy(value.CellPtr - 4, tmpcellptr, length + 4);
                         )::" + accessor_field_name + ".CellPtr = " + accessor_field_name + ".ResizeFunction(targetPtr, 0, " + resize_len + R"::();
-                        Memory.Copy(tmpcellptr, " + accessorName + @".CellPtr, length + 4);
+                        Memory.Copy(tmpcellptr, )::" + accessor_field_name + R"::(.CellPtr, length + 4);
                     }
                 }
 )::";

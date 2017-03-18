@@ -27,6 +27,7 @@ std::string accessor_field_name_1 = (*(*(node->fieldList))[iterator_1]->name) + 
 if (field_need_accessor_1)
 {
 source->append(Codegen::GetString(data_type_get_accessor_name((*(node->fieldList))[iterator_1]->fieldType)));
+source->append(R"::( )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::(_Accessor_Field;
         )::");
@@ -125,6 +126,7 @@ source->append(R"::(.
         ///</summary>
         public unsafe )::");
 source->append(Codegen::GetString(data_type_get_accessor_name((*(node->fieldList))[iterator_1]->fieldType)));
+source->append(R"::( )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::(
         {
@@ -159,7 +161,7 @@ if (!field_need_accessor_1)
 {
 source->append(R"::(
                 return *()::");
-source->append(Codegen::GetString(data_type_get_accessor_name((*(node->fieldList))[iterator_1]->fieldType)));
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
 source->append(R"::(*)(targetPtr);
                 )::");
 }
@@ -275,9 +277,6 @@ std::string* module_content = Modules::AccessorToAccessorFieldAssignment((*(node
 }
 }
 source->append(R"::(
-                *()::");
-source->append(Codegen::GetString(data_type_get_accessor_name((*(node->fieldList))[iterator_1]->fieldType)));
-source->append(R"::(*)(targetPtr) = value;
             }
         }
         )::");

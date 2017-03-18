@@ -442,7 +442,7 @@ namespace t_Namespace
             /// <summary>
             /// The index identifier representing <see cref="t_Namespace.t_cell_name.t_field_name"/>.
             /// </summary>
-            public static readonly t_struct_2_name/*_*/t_field_name = new t_struct_2_name();
+            public static readonly t_struct_2_name t_field_name = new t_struct_2_name();
 #pragma warning enable
             [END]
             [END]
@@ -472,7 +472,7 @@ namespace t_Namespace
             /// <summary>
             /// The index identifier representing <see cref="t_Namespace.t_struct_name.t_field_name"/>
             /// </summary>
-            public t_struct_2_name/*_*/t_field_name = new t_struct_2_name();
+            public t_struct_2_name t_field_name = new t_struct_2_name();
             /**/
             /**/
             [MAP_LIST("t_target", "(*TSLIndexIdentifierTargetMap)[$t_struct]")]
@@ -626,7 +626,7 @@ namespace t_Namespace
 
         [FOREACH]
         [MAP_VAR("t_list", "\"list\"")]
-        public static bool ElementContainsSubstring(this t_field_type/*_*/t_list, IEnumerable<string> substrings)
+        public static bool ElementContainsSubstring(this t_field_type t_list, IEnumerable<string> substrings)
         {
             if (substrings == null || substrings.Count() == 0)
                 return true;
@@ -661,7 +661,7 @@ namespace t_Namespace
             __meta.END();
             return false;
         }
-        public static bool ElementContainsSubstring(this t_field_type/*_*/list, params string[] substrings)
+        public static bool ElementContainsSubstring(this t_field_type list, params string[] substrings)
         {
             return ElementContainsSubstring(list, substrings as IEnumerable<string>);
         }
