@@ -64,8 +64,6 @@
     <Compile Include="TSL\CodeTemplates\MessagePassing\MessageAccessorTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\MessagePassing\ProtocolGroupTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\MesssageReaderWriterTemplate.cs" />
-    <Compile Include="TSL\CodeTemplates\StorageExtension\StorageCodeTemplate.CellType.cs" />
-    <Compile Include="TSL\CodeTemplates\StorageExtension\StorageCodeTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\Verbatim\Verbatim.cs" />
     <Compile Include="TSL\Compiler\TSLCompiler.GenCode.cs" />
     <Compile Include="TSL\Compiler\TSLCompiler.Properties.cs" />
