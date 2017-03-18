@@ -611,11 +611,7 @@ namespace t_Namespace
 
         internal static unsafe byte[] construct(long CellID /*IF("%struct_nonempty")*/,/*END*/  [FOREACH(",")] t_field_type t_field_name = default(t_field_type) /*END*/)
         {
-            //ret += GenerateParametersToByteArrayCode(
-            //    cellDesc,
-            //    generatePreserveHeaderCode: false,
-            //    forCell: true);
-
+            //ret += GenerateParametersToByteArrayCode(cellDesc,generatePreserveHeaderCode: false,forCell: true); 
             //return tmpcell;
             throw new NotImplementedException();
         }

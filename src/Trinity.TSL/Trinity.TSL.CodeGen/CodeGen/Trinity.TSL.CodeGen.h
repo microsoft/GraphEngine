@@ -84,6 +84,8 @@ namespace Trinity
             std::string* PushPointerThroughFieldType(NFieldType* node, ModuleContext* context);
             std::string* PushPointerThroughStruct(NStructBase* node, ModuleContext* context);
             std::string* PushPointerFromVariable(NFieldType* node, ModuleContext* context);
+            std::string* PushPointerFromParameters(NStructBase* node, ModuleContext* context);
+            std::string* SerializeParametersToBuffer(NStructBase* node, ModuleContext* context);
         }
 
 #pragma endregion

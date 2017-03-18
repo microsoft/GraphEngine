@@ -162,7 +162,18 @@ static void push_and_assign_struct(std::string* source, int stack_depth, NFieldT
     for (auto field : *node->referencedNStruct->fieldList)
     {
         bool currentFieldIsOptional = field->is_optional();
-        string field_name = varName + "." + *field->name;
+        string field_name;
+
+        if (varName == "")
+        {
+            /* empty varName means the field is directly accessible as a parameter */
+            field_name = *field->name;
+        }
+        else
+        {
+            field_name = varName + "." + *field->name;
+        }
+
         if (currentFieldIsOptional)
         {
             *source += indent + "if( " + field_name + "!= null)\n";
@@ -458,7 +469,11 @@ namespace Trinity
              * also assign the value from the variable into targetPtr.
              *
              * Arguments:
-             *  0. varname: the variable to check against.
+             *  0. varname: the variable to check against. If the given NFieldType
+             *     is a struct, an empty varname means that the field values are
+             *     given as parameters, accessible directly from "fieldname", instead
+             *     of being accessible from "varname.fieldname". SerializeParametersToBuffer
+             *     module uses this form.
              *  1. action: "push" for push-only; "assign" for assign-and-push
              *
              * Note:
@@ -477,6 +492,32 @@ namespace Trinity
                 std::string varname = context->m_arguments[0];
                 std::string* source = new std::string();
                 push_and_assign_impl(source, context->m_stack_depth, node, varname, push_only);
+                return source;
+            }
+
+            /**
+             * Like PushPointerFromVariable, but does not look inside a struct to access the fields.
+             * Instead it expcets the fields to be given as parameters.
+             *
+             * Arguments:
+             *  0. action: "push" for push-only; "assign" for assign-and-push
+             */
+            std::string* PushPointerFromParameters(NStructBase* node, ModuleContext* context)
+            {
+                bool push_only;
+                if (context->m_arguments[0] == "push") { push_only = true; }
+                else if (context->m_arguments[0] == "assign") { push_only = false; }
+                else { error(node, "PushPointerFromParameters: unrecognized action " + context->m_arguments[0]); }
+
+                NFieldType *field = new NFieldType();
+                field->fieldType = FT_STRUCT;
+                field->referencedNStruct = node;
+                field->layoutType = node->layoutType;
+
+                std::string* source = new std::string();
+                push_and_assign_impl(source, context->m_stack_depth, field, "", push_only);
+
+                delete field;
                 return source;
             }
         }

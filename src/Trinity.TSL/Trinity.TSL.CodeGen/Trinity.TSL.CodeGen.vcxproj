@@ -133,6 +133,7 @@
     <ClCompile Include="MODULES\EnumerateFromFieldModule.cs.cpp" />
     <ClCompile Include="MODULES\HTTPModule.cs.cpp" />
     <ClCompile Include="MODULES\OptionalFields.cs.cpp" />
+    <ClCompile Include="MODULES\SerializeParametersToBuffer.cs.cpp" />
     <ClCompile Include="MODULES\StructAccessorEqualOperator.cs.cpp" />
     <ClCompile Include="MODULES\ValueToAccessorFieldAssignment.cs.cpp" />
     <ClCompile Include="StorageSchema.cs.cpp" />

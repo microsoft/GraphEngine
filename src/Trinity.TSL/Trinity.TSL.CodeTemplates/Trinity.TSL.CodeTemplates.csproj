@@ -68,6 +68,7 @@
     <Compile Include="LINQ\IndexQueryTreeExecutor.cs" />
     <Compile Include="LINQ\IndexQueryTreeNode.cs" />
     <Compile Include="LINQ\PLINQWrapper.cs" />
+    <Compile Include="MODULES\SerializeParametersToBuffer.cs" />
     <Compile Include="MODULES\AccessorReverseImplicitOperator.cs" />
     <Compile Include="MODULES\StructAccessorEqualOperator.cs" />
     <Compile Include="MODULES\ValueToAccessorFieldAssignment.cs" />
