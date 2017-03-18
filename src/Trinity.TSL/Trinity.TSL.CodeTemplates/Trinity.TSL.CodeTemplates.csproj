@@ -40,6 +40,7 @@
   <ItemGroup>
     <Compile Include="CellSelectors.cs" />
     <Compile Include="CellTypeEnum.cs" />
+    <Compile Include="CellTypeExtension.cs" />
     <Compile Include="Containers\Array.cs" />
     <Compile Include="Containers\List.cs" />
     <Compile Include="Enum.cs" />

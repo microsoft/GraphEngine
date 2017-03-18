@@ -93,6 +93,7 @@
     <ClCompile Include="Cell.cs.cpp" />
     <ClCompile Include="CellSelectors.cs.cpp" />
     <ClCompile Include="CellTypeEnum.cs.cpp" />
+    <ClCompile Include="CellTypeExtension.cs.cpp" />
     <ClCompile Include="CodeGen\AccessorInitialization.cpp" />
     <ClCompile Include="CodeGen\AccessorToAccessorFieldAssignment.cpp" />
     <ClCompile Include="CodeGen\common.cpp" />

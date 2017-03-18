@@ -393,6 +393,7 @@ namespace Trinity
                 write_file(lib_path, NF(GenericCell), tsl, files);
                 write_file(lib_path, NF(StorageSchema), tsl, files);
                 write_file(lib_path, NF(CellTypeEnum), tsl, files);
+                write_file(lib_path, NF(CellTypeExtension), tsl, files);
             }
 
             write_file(lib_path, NF(Enum), tsl, files);

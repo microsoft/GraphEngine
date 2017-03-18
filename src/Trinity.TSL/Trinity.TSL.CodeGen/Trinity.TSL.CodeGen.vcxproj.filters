@@ -171,6 +171,9 @@
     <ClCompile Include="MODULES\SerializeParametersToBuffer.cs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CellTypeExtension.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CodeGen\Trinity.TSL.CodeGen.h">
