@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Trinity.TSL.CodeTemplates;
 using Trinity.Utilities;
 
 namespace Trinity.TSL

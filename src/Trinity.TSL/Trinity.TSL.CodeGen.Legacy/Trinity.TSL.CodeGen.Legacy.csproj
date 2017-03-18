@@ -56,7 +56,6 @@
     </Compile>
     <Compile Include="Configuration\TrinityConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TSL\CodeTemplates\CellCodeTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\MessagePassing\AbstractProxyTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\MessagePassing\AbstractModuleTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\MessagePassing\AbstractServerTemplate.cs" />
@@ -65,7 +64,6 @@
     <Compile Include="TSL\CodeTemplates\MessagePassing\MessageAccessorTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\MessagePassing\ProtocolGroupTemplate.cs" />
     <Compile Include="TSL\CodeTemplates\MesssageReaderWriterTemplate.cs" />
-    <Compile Include="TSL\CodeTemplates\OptionalFieldCalculator.cs" />
     <Compile Include="TSL\CodeTemplates\StorageExtension\StorageCodeTemplate.Cell.cs" />
     <Compile Include="TSL\CodeTemplates\StorageExtension\StorageCodeTemplate.CellAccessorAction.cs" />
     <Compile Include="TSL\CodeTemplates\StorageExtension\StorageCodeTemplate.CellConverter.cs" />
