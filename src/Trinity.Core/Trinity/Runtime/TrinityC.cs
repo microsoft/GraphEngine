@@ -50,10 +50,10 @@ namespace Trinity
                 }
 #endif
                 string trinity_c_path = Path.Combine(assembly_path, native_assembly_name);
+                bool found = false;
 #if !CORECLR
                 string trinity_c_md5 = Resources.Trinity_C_sha512.Trim().ToLowerInvariant();
 
-                bool found = false;
                 if (File.Exists(trinity_c_path))
                 {
                     string md5 = SecureHashHelper.GetFileSHA512(trinity_c_path).Trim().ToLowerInvariant();
@@ -62,14 +62,12 @@ namespace Trinity
                         found = true;
                     }
                 }
+#endif
 
                 if (!found)
                 {
-#endif
                     ReleaseNativeAssembly(native_assembly_name, trinity_c_path);
-#if !CORECLR
                 }
-#endif
 
                 /* native assembly is released. initialize Trinity.C now */
                 __INIT_TRINITY_C__();
