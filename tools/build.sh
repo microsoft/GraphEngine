@@ -27,9 +27,6 @@ then
 	"ubuntu 16.04")
 		dotnet_url="https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-dev-ubuntu.16.04-x64.latest.tar.gz"
 		;;
-	"ubuntu 14.04")
-		dotnet_url="https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-dev-ubuntu-x64.latest.tar.gz"
-		;;
 	*)
 		echo "error: unsupported distro." 1>&2
 		exit -1

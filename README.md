@@ -57,13 +57,17 @@ After that, run `tools/build_coreclr.bat`.
 
 ## Building for Linux
 
-Execute `tools/build.sh`.
-When the build script is executed, a nuget package will be built at 
+Install `g++`, `cmake` and `libssl-dev`, then execute `tools/build.sh`.
+When the build script is executed for the first time, it will download
+and unarchive the latest CoreCLR 2.0 SDK to `tools/dotnet`.
+A nuget package will be built at 
 `bin/coreclr/GraphEngine.CoreCLR._version_.nupkg`. `bin/coreclr` will
 be registered as a local NuGet repository, and the local package cache
 for `GraphEngine.CoreCLR` will be cleared. So every time the package is
 built, you can use `dotnet restore` to update to the new package in your
 project.
+
+Note: the build script currently only supports `Ubuntu 16.04`.
 
 # License
 
