@@ -20,7 +20,7 @@ namespace Trinity
     {
         static Stdio()
         {
-            InternalCalls.__init();
+            TrinityC.Init();
         }
 
         internal static readonly int EOF = -1;
