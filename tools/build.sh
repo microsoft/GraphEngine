@@ -79,3 +79,4 @@ setup_nuget_repo()
 build_trinity_c
 build_trinity_core
 setup_nuget_repo
+
