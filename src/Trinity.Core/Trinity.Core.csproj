@@ -224,7 +224,6 @@
     <Compile Include="Trinity\Lib\SpinLockSlim.cs" />
     <Compile Include="Trinity\Runtime\errno_t.cs" />
     <Compile Include="Utilities\IO\Stdio.cs" />
-    <Compile Include="Trinity\Runtime\Trinity.C.cs" />
     <Compile Include="Trinity\Lib\TrinityList.cs" />
     <Compile Include="Trinity\Lib\RandomFactory.cs" />
     <Compile Include="Diagnostics\NamespaceDoc.cs" />
@@ -273,7 +272,7 @@
     <Compile Include="Trinity\Lib\DictionaryHelper.cs" />
     <Compile Include="Trinity\Lib\HashHelper.cs" />
     <Compile Include="Trinity\Lib\CellIDFactory.cs" />
-    <Compile Include="Trinity\Runtime\InternalCalls.cs" />
+    <Compile Include="Trinity\Runtime\TrinityC.InternalCalls.cs" />
     <Compile Include="Trinity\Lib\Memory.C.cs" />
     <Compile Include="Trinity\Lib\Memory.cs" />
     <Compile Include="Trinity\Lib\RWULock.cs" />

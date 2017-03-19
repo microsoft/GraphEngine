@@ -59,11 +59,6 @@ ICallEntry ICallTable[] =
     { "Trinity.Mathematics.CMathUtility::C_multiply_double_vector"                    , &multiply_double_vector },
     { "Trinity.Mathematics.CMathUtility::C_multiply_sparse_double_vector"             , &multiply_sparse_double_vector },
 
-#if defined(TRINITY_PLATFORM_WINDOWS)
-    { "Trinity.Core.Lib.CTrinityC::C_GetLastError"                                    , &GetLastError },
-#else
-    { "Trinity.Core.Lib.CTrinityC::C_GetLastError"                                    , &errno },
-#endif
     //====================== LocalMemoryStorage ==========================//
 
     { "Trinity.Storage.CLocalMemoryStorage::CInitialize"                            , &Storage::LocalMemoryStorage::Initialize },
@@ -156,19 +151,6 @@ DLL_EXPORT BOOL __stdcall RegisterInternalCall(void* _MethodDescPtr, char* Funct
     if (!Memory::MemoryInject(&(desc->m_Flags), methodFlags)) { return FALSE; }
     if (!Memory::MemoryInject(&(desc->m_MethodPointer), (uint64_t)(ICallTable[iCallIndex].Address))) { return FALSE; }
     return TRUE;
-}
-
-/******************************************************************************
-Before calling this, make sure that both source and target addresses are JITted!
-******************************************************************************/
-DLL_EXPORT void __stdcall HotSwapCSharpMethod(void* TargetMethodDescPtr, void* SourceMethodDescPtr)
-{
-    MethodDesc *src = (MethodDesc*)SourceMethodDescPtr;
-    MethodDesc *dst = (MethodDesc*)TargetMethodDescPtr;
-
-    uint64_t dst_addr = (uint64_t)dst->m_MethodPointer;
-    Memory::MemoryInject(&dst->m_MethodPointer, (uint64_t)src->m_MethodPointer);
-    Memory::MemoryInject(&src->m_MethodPointer, dst_addr);
 }
 
 #else

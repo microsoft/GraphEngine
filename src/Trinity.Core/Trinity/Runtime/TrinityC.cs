@@ -16,7 +16,7 @@ using Trinity.Utilities;
 
 namespace Trinity
 {
-    internal static class TrinityC
+    internal static partial class TrinityC
     {
 #if CORECLR
         internal const string AssemblyName = "Trinity";
@@ -76,7 +76,7 @@ namespace Trinity
                 {
                     Win32.NativeAPI.timeBeginPeriod(1);
 #if !CORECLR
-                    InternalCalls.Register();
+                    Register();
 #endif
                 }
 
