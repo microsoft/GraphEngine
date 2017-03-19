@@ -83,3 +83,5 @@ slnx.sqlite
 /src/Modules/Spark/spark-trinity/.idea
 /src/Trinity.C/Makefile
 xUnitReports
+tools/NuGet.exe
+tools/dotnet/*
