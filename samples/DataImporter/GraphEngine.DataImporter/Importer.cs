@@ -225,6 +225,7 @@ namespace GraphEngine.DataImporter
 
         private static IImporter GetImporter(string path, CmdOptions options)
         {
+            char comma = ',', tab = '\t', slash = '/';
             string filename, filetype;
             bool delimiterSpecific = options.delimiter == '\0' ? false : true;
             if (options.fileFormat != null)
@@ -246,9 +247,9 @@ namespace GraphEngine.DataImporter
                 case ".json":
                     return new JsonImporter();
                 case ".csv":
-                    return new CsvImporter(delimiterSpecific ? options.delimiter : ',');
+                    return new CsvImporter(delimiterSpecific ? options.delimiter : comma);
                 case ".tsv":
-                    return new CsvImporter(delimiterSpecific ? options.delimiter : '\t');
+                    return new CsvImporter(delimiterSpecific ? options.delimiter : tab);
                 case ".ntriples":
                     return g_opts.Sorted ? (IImporter)new UnsortedRDFImporter() : new SortedRDFImporter();
                 default:
@@ -267,15 +268,15 @@ namespace GraphEngine.DataImporter
                             catch (Exception)
                             {
                             }
-                            if (headerRow.Count(c => c == ',') >= headerRow.Count(c => c == '\t') && headerRow.Count(c => c == ',') >= headerRow.Count(c => c == '/'))
+                            if (headerRow.Count(c => c == comma) >= headerRow.Count(c => c == tab) && headerRow.Count(c => c == comma) >= headerRow.Count(c => c == slash))
                             {
-                                 return new CsvImporter(delimiterSpecific? options.delimiter:',');
+                                 return new CsvImporter(delimiterSpecific? options.delimiter: comma);
                             }
-                            else if (headerRow.Count(c => c == '\t') >= headerRow.Count(c => c == ',') && headerRow.Count(c => c == '\t') >= headerRow.Count(c => c == '/'))
+                            else if (headerRow.Count(c => c == tab) >= headerRow.Count(c => c == comma) && headerRow.Count(c => c == tab) >= headerRow.Count(c => c == slash))
                             {
-                                return new CsvImporter(delimiterSpecific? options.delimiter:'\t');
+                                return new CsvImporter(delimiterSpecific? options.delimiter: tab);
                             }
-                            else if (headerRow.Count(c => c == '/') >= headerRow.Count(c => c == '\t') && headerRow.Count(c => c == '/') >= headerRow.Count(c => c == ','))
+                            else if (headerRow.Count(c => c == slash) >= headerRow.Count(c => c == tab) && headerRow.Count(c => c == slash) >= headerRow.Count(c => c == comma))
                             {
                                 return g_opts.Sorted ? (IImporter)new UnsortedRDFImporter() : new SortedRDFImporter();
                             }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GraphEngine.DataImporter
 {
-    class CsvParser
+    public class CsvParser
     {
         public List<string> CsvSplit(string line, char delimiter)
         {
@@ -53,27 +53,27 @@ namespace GraphEngine.DataImporter
 
         public string SanitizeCsvField(string field, bool trim = false, bool treatEmptyAsNull = true)
         {
-
+            string quotation = "\"", escape = "\"\"";
             if (field == null)
                 return null;
 
             string sanitized = trim ? field.Trim() : field;
             if (sanitized == "" && treatEmptyAsNull)
                 return null;
-            if (sanitized.StartsWith("\""))
+            if (sanitized.StartsWith(quotation))
             {
-                if (sanitized.EndsWith("\""))
+                if (sanitized.EndsWith(quotation) && sanitized.Length > 1)
                 {
                     sanitized = sanitized.Substring(1, sanitized.Length - 2);
                     if (sanitized.Count(c => c == '\"') % 2 != 0)
                     {
                         throw new ImporterException("Field is not properly quoted: {0}", field);
                     }
-                    if (sanitized.Count(c => c == '\"') != sanitized.Replace("\"\"", "\"").Count(c => c == '\"') * 2)
+                    if (sanitized.Count(c => c == '\"') != sanitized.Replace(escape, quotation).Count(c => c == '\"') * 2)
                     {
                         throw new ImporterException("Field is not properly quoted: {0}", field);
                     }
-                    sanitized = sanitized.Replace("\"\"", "\"");
+                    sanitized = sanitized.Replace(escape, quotation);
                 }
                 else
                 {

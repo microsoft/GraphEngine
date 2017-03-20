@@ -46,7 +46,7 @@ namespace GraphEngine.DataImporter
             };
 
             help.AddPreOptionsLine("Import from files to Graph Engine storage.");
-            help.AddPreOptionsLine(string.Format("Usage: {0} [-t tsl_assembly|-g] [-d directory] [-o output_dir] [explicit files]", Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
+            help.AddPreOptionsLine(string.Format("Usage: {0} [-t tsl_assembly|-g] [-d directory] [-o output_dir] [-p delimiter] [-f file_format] [explicit files]", Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
 
             help.AddOptions(this);
             help.AddPostOptionsLine("Only files with .json, .csv, .tsv and .ntriples suffix are recognized.");
