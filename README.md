@@ -59,7 +59,7 @@ After that, run `tools/build_coreclr.bat`.
 
 ## Building for Linux
 
-Install `g++`, `cmake` and `libssl-dev`, then execute `tools/build.sh`.
+Install `libunwind8`, `g++`, `cmake` and `libssl-dev`, then execute `tools/build.sh`.
 When the build script is executed for the first time, it will download
 and unarchive the latest CoreCLR 2.0 SDK to `tools/dotnet`.
 A nuget package will be built at 
