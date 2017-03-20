@@ -914,6 +914,7 @@ NField::NField(NField* const other)
     this->fieldType = new NFieldType(other->fieldType);
     this->fieldType->field = this;
     this->modifiers = new vector<int>();
+    this->modifiers->insert(this->modifiers->end(), other->modifiers->begin(), other->modifiers->end());
     this->attributes = new vector<NKVPair*>();
     this->parent = nullptr;
     this->name = new string(*other->name);
