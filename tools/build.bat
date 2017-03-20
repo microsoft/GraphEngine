@@ -4,7 +4,7 @@ if [%REPO_ROOT%] == [] (
 
 setlocal enabledelayedexpansion
 
-set MSBUILD_EXE="C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe"
+set MSBUILD_EXE="C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe"
 set NUGET_EXE="%REPO_ROOT%\tools\NuGet.exe"
 
 if not exist %NUGET_EXE% (
