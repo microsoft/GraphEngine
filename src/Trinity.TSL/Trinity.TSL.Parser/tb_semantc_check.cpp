@@ -489,8 +489,8 @@ DEFINE_TB_SEMANTIC_CHECK(NProtocol, {
     }
 })
 DEFINE_TB_SEMANTIC_CHECK(NProtocolReference, {
-    if (!tsl->find_protocol(name))
-    error("Undefined protocol.");
+    this->referencedNProtocol = tsl->find_protocol(this->name);
+    if (!this->referencedNProtocol) { error("Undefined protocol."); }
 })
 
 void NProtocolProperty::tb_semantic_check()

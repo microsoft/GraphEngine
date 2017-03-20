@@ -98,6 +98,10 @@ namespace Trinity
 
         std::string data_type_get_accessor_name(NFieldType* type);
 
+        std::string get_comm_class_basename(NProtocolGroup* protocol_group);
+
+        std::string get_comm_protocol_type_string(NProtocol* protocol);
+
         std::string get_http_handler_parameters(NProtocol* protocol);
 
         std::string get_http_handler_calling_parameters(NProtocol* protocol);

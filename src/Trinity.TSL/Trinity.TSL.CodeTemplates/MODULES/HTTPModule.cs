@@ -19,18 +19,18 @@ namespace t_Namespace
     [MODULE_BEGIN]
     [TARGET("NProtocolGroup")]
     [MAP_VAR("t_server", "node")]
-    [MAP_VAR("t_base_class_name", "context->m_arguments[0]")]
+    [MAP_VAR("t_base_class_name", "get_comm_class_basename(node)")]
     [MAP_VAR("t_server_name", "node->name")]
-    [META_VAR("NProtocol*", "protocol")]
+    [MAP_LIST("t_protocol", "protocolList", MemberOf = "t_server")]
+    [MAP_VAR("t_protocol_name", "name", MemberOf = "t_protocol")]
+    [MAP_VAR("t_protocol", "referencedNProtocol", MemberOf = "t_protocol")]
     public abstract partial class t_server_nameBase : t_base_class_name
     {
-        [MAP_LIST("t_protocol_list", "protocolList", MemberOf = "t_server")]
-        [MAP_VAR("t_protocol_name", "name", MemberOf = "t_protocol_list")]
         #region Handler lookup table
         private static Dictionary<string, uint> s_HttpHandlerLookupTable = new Dictionary<string, uint>
         {
             /*FOREACH*/
-            /*IF("tsl->find_protocol($t_protocol_name)->is_http_protocol()")*/
+            /*IF("$t_protocol->is_http_protocol()")*/
             { "t_protocol_name",/*MUTE*/ 0 /*MUTE_END*/ /*GET_ITERATOR_VALUE()*/  }
             /*LITERAL_OUTPUT(",")*/
             /*END*/
@@ -39,10 +39,9 @@ namespace t_Namespace
         #endregion
 
         [FOREACH]
-        [USE_LIST("t_protocol_list")]
-        [META("%protocol = tsl->find_protocol($t_protocol_name);")]
-        [IF("%protocol->is_http_protocol()")]
-        public abstract void t_protocol_nameHandler(/*META_OUTPUT("get_http_handler_parameters(%protocol)")*/);
+        [USE_LIST("t_protocol")]
+        [IF("$t_protocol->is_http_protocol()")]
+        public abstract void t_protocol_nameHandler(/*META_OUTPUT("get_http_handler_parameters($t_protocol)")*/);
         [END]//IF
         [END]//FOREACH
 
@@ -75,13 +74,12 @@ namespace t_Namespace
             switch (handler_id)
             {
                 /*FOREACH*/
-                /*USE_LIST("t_protocol_list")*/
-                /*META("%protocol = tsl->find_protocol($t_protocol_name);")*/
-                /*IF("%protocol->is_http_protocol()")*/
+                /*USE_LIST("t_protocol")*/
+                /*IF("$t_protocol->is_http_protocol()")*/
                 case /*MUTE*/0/*MUTE_END*/ /*GET_ITERATOR_VALUE*/ :
                     {
-                        IF("%protocol->pt_request == PT_STRUCT_REQUEST");
-                        MAP_VAR("t_struct_name", "tsl->find_struct_or_cell(%protocol->request_message_struct)->name");
+                        IF("$t_protocol->pt_request == PT_STRUCT_REQUEST");
+                        MAP_VAR("t_struct_name", "tsl->find_struct_or_cell($t_protocol->request_message_struct)->name");
                         string          json_string;
                         t_struct_name   request_struct;
                         if (method == "GET")
@@ -108,14 +106,14 @@ namespace t_Namespace
                         }
                         END();
 
-                        IF("%protocol->pt_response == PT_STRUCT_RESPONSE");
-                        MAP_VAR("t_struct_name", "tsl->find_struct_or_cell(%protocol->response_message_struct)->name");
+                        IF("$t_protocol->pt_response == PT_STRUCT_RESPONSE");
+                        MAP_VAR("t_struct_name", "tsl->find_struct_or_cell($t_protocol->response_message_struct)->name");
                         t_struct_name   response_struct /*MUTE*/ = null /*MUTE_END*/;
                         END();
 
-                        t_protocol_nameHandler(/*META_OUTPUT("get_http_handler_calling_parameters(%protocol)")*/);
+                        t_protocol_nameHandler(/*META_OUTPUT("get_http_handler_calling_parameters($t_protocol)")*/);
 
-                        IF("%protocol->pt_response == PT_STRUCT_RESPONSE");
+                        IF("$t_protocol->pt_response == PT_STRUCT_RESPONSE");
 
                         context.Response.ContentType = "application/json";
 

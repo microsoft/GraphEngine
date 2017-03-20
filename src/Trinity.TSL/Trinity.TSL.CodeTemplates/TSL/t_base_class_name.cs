@@ -9,6 +9,12 @@ namespace t_Namespace.MODULES
 {
     public abstract class t_base_class_name : __meta
     {
+        protected ushort t_protocol_typeIdOffset = 0;
+        protected virtual void RegisterMessageHandler()
+        {
+
+        }
+
         protected virtual void RootHttpHandler(HttpListenerContext context)
         {
             throw new NotImplementedException();

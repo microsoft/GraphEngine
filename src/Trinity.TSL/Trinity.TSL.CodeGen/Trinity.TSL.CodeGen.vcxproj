@@ -130,6 +130,7 @@
     <ClCompile Include="CodeGen\main.cpp" />
     <ClCompile Include="MODULES\AccessorFieldsDefinition.cs.cpp" />
     <ClCompile Include="MODULES\AccessorReverseImplicitOperator.cs.cpp" />
+    <ClCompile Include="MODULES\CommunicationClass.cs.cpp" />
     <ClCompile Include="MODULES\CommunicationSchemaModule.cs.cpp" />
     <ClCompile Include="MODULES\EnumerateFromFieldModule.cs.cpp" />
     <ClCompile Include="MODULES\HTTPModule.cs.cpp" />
@@ -137,6 +138,7 @@
     <ClCompile Include="MODULES\SerializeParametersToBuffer.cs.cpp" />
     <ClCompile Include="MODULES\StructAccessorEqualOperator.cs.cpp" />
     <ClCompile Include="MODULES\ValueToAccessorFieldAssignment.cs.cpp" />
+    <ClCompile Include="Protocols.cs.cpp" />
     <ClCompile Include="StorageSchema.cs.cpp" />
     <ClCompile Include="Serializer.cs.cpp" />
     <ClCompile Include="Struct.cs.cpp" />

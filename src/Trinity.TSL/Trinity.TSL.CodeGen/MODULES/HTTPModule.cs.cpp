@@ -16,12 +16,11 @@ NProtocolGroup* node, ModuleContext* context)
             {
                 string* source = new string();
                 
-NProtocol* protocol_1;
 source->append(R"::(
     public abstract partial class )::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::(Base : )::");
-source->append(Codegen::GetString(context->m_arguments[0]));
+source->append(Codegen::GetString(get_comm_class_basename(node)));
 source->append(R"::(
     {
         #region Handler lookup table
@@ -30,7 +29,7 @@ source->append(R"::(
             )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->protocolList)->size();++iterator_1)
 {
-if (tsl->find_protocol((*(node->protocolList))[iterator_1]->name)->is_http_protocol())
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->is_http_protocol())
 {
 source->append(R"::(
             { ")::");
@@ -47,14 +46,13 @@ source->append(R"::(
         )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->protocolList)->size();++iterator_1)
 {
-protocol_1 = tsl->find_protocol((*(node->protocolList))[iterator_1]->name);
-if (protocol_1->is_http_protocol())
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->is_http_protocol())
 {
 source->append(R"::(
         public abstract void )::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(Handler()::");
-source->append(Codegen::GetString(get_http_handler_parameters(protocol_1)));
+source->append(Codegen::GetString(get_http_handler_parameters((*(node->protocolList))[iterator_1]->referencedNProtocol)));
 source->append(R"::();
         )::");
 }
@@ -87,8 +85,7 @@ source->append(R"::( url.IndexOf('?');
                 )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->protocolList)->size();++iterator_1)
 {
-protocol_1 = tsl->find_protocol((*(node->protocolList))[iterator_1]->name);
-if (protocol_1->is_http_protocol())
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->is_http_protocol())
 {
 source->append(R"::(
                 case  )::");
@@ -96,13 +93,11 @@ source->append(Codegen::GetString(iterator_1));
 source->append(R"::( :
                     {
                         )::");
-if (protocol_1->pt_request == PT_STRUCT_REQUEST)
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->pt_request == PT_STRUCT_REQUEST)
 {
 source->append(R"::(
                         string          json_string;
-                        )::");
-source->append(Codegen::GetString(tsl->find_struct_or_cell(protocol_1->request_message_struct)->name));
-source->append(R"::(   request_struct;
+                        t_struct_name   request_struct;
                         if (method == "GET")
                         {
                             if (querystring_idx == -1)
@@ -120,27 +115,25 @@ source->append(R"::(   request_struct;
                             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                             return;
                         }
-                        if (!)::");
-source->append(Codegen::GetString(tsl->find_struct_or_cell(protocol_1->request_message_struct)->name));
-source->append(R"::(.TryParse(json_string, out request_struct))
-                        {
+                        if (!t_struct_name.TryParse(json_string, out request_struct))
+                 )::");
+source->append(R"::(       {
                             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                             return;
                         }
                         )::");
 }
-if (protocol_1->pt_response == PT_STRUCT_RESPONSE)
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->pt_response == PT_STRUCT_RESPONSE)
 {
-source->append(Codegen::GetString(tsl->find_struct_or_cell(protocol_1->response_message_struct)->name));
-source->append(R"::(   response_struct ;
+source->append(R"::(t_struct_name   response_struct ;
                         )::");
 }
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(Handler()::");
-source->append(Codegen::GetString(get_http_handler_calling_parameters(protocol_1)));
+source->append(Codegen::GetString(get_http_handler_calling_parameters((*(node->protocolList))[iterator_1]->referencedNProtocol)));
 source->append(R"::();
                         )::");
-if (protocol_1->pt_response == PT_STRUCT_RESPONSE)
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->pt_response == PT_STRUCT_RESPONSE)
 {
 source->append(R"::(
                         context.Response.ContentType = "application/json";

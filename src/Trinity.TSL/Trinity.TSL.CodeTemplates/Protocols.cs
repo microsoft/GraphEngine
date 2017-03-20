@@ -1,17 +1,11 @@
-﻿#pragma warning disable 0162 // disable the "unreachable code" warning
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using Trinity;
-using Trinity.Network;
-using Trinity.Network.Http;
 using Trinity.TSL;
-using Trinity.TSL.Lib;
+using Trinity.Network;
+using Trinity.Network.Messaging;
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
 namespace t_Namespace
@@ -23,28 +17,23 @@ namespace t_Namespace
     [MAP_VAR("t_server", "")]
     [MAP_VAR("t_proxy", "")]
     [MAP_VAR("t_module", "")]
-    #region Server
+
     [FOREACH]
     [USE_LIST("t_server")]
-    [MODULE_CALL("HTTPModule", "$t_server")]
+    [MODULE_CALL("CommunicationClass", "$t_server")]
     [END]
-    #endregion
 
-    #region Proxy
     [FOREACH]
     [USE_LIST("t_proxy")]
-    [MODULE_CALL("HTTPModule", "$t_proxy")]
+    [MODULE_CALL("CommunicationClass", "$t_proxy")]
     [END]
-    #endregion
 
-    #region Module
     [FOREACH]
     [USE_LIST("t_module")]
-    [MODULE_CALL("HTTPModule", "$t_module")]
+    [MODULE_CALL("CommunicationClass", "$t_module")]
     [END]
-    #endregion
 
     [MUTE]
-    class http_place_holder { }
+    class protocol_place_holder { }
     /*MUTE_END*/
 }

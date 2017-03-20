@@ -22,7 +22,7 @@ namespace t_Namespace
     [MAP_VAR("t_base_class_name", "context->m_arguments[0]")]
     [MAP_VAR("t_server_name", "node->name")]
     [MAP_LIST("t_protocol", "node->protocolList")]
-    [MAP_VAR("t_protocol", "tsl->find_protocol($$->name)")]
+    [MAP_VAR("t_protocol", "referencedNProtocol")]
     [MAP_VAR("t_protocol_name", "name", MemberOf="t_protocol")]
     [MAP_VAR("t_request_signature", "get_signature_string(tsl->find_struct_or_cell(tsl->find_protocol($$->name)->request_message_struct))", MemberOf="t_protocol")]
     [MAP_VAR("t_response_signature", "get_signature_string(tsl->find_struct_or_cell(tsl->find_protocol($$->name)->response_message_struct))", MemberOf="t_protocol")]

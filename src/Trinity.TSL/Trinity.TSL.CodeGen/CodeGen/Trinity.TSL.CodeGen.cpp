@@ -401,6 +401,7 @@ namespace Trinity
             write_file(lib_path, NF(Traits), tsl, files);
             write_file(lib_path, NF(GenericFieldAccessor), tsl, files);
             write_file(lib_path, NF(HTTP), tsl, files);
+            write_file(lib_path, NF(Protocols), tsl, files);
             write_file(lib_path, NF(CommunicationSchema), tsl, files);
             write_file(lib_path, NF(Serializer), tsl, files);
             write_file(lib_path, NF(CellSelectors), tsl, files);

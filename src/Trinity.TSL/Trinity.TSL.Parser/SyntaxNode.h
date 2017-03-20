@@ -39,6 +39,13 @@ enum ProtocolPropertyType
     PT_STRUCT_RESPONSE,
 };
 
+enum ProtocolGroupType
+{
+    PGT_SERVER,
+    PGT_PROXY,
+    PGT_MODULE
+};
+
 enum LayoutType
 {
     LT_FIXED,
@@ -366,8 +373,8 @@ public:
     ProtocolPropertyType  pt_response   = PT_UNDEFINED;
     ProtocolPropertyType  pt_type       = PT_UNDEFINED;
 
-    inline bool has_request()             { return (pt_request  != PT_UNDEFINED); }
-    inline bool has_response()            { return (pt_response != PT_UNDEFINED); }
+    inline bool has_request()             { return (pt_request  != PT_UNDEFINED && pt_request != PT_VOID_REQUEST); }
+    inline bool has_response()            { return (pt_response != PT_UNDEFINED && pt_response != PT_VOID_RESPONSE); }
     inline bool has_protocol_type()       { return (pt_type     != PT_UNDEFINED); }
     inline bool is_http_protocol()        { return (pt_type     == PT_HTTP); }
     inline bool is_syn_req_protocol()     { return (pt_type     == PT_SYN  && pt_response == PT_VOID_RESPONSE); }
@@ -418,6 +425,7 @@ class NProtocolReference : public NNamed
 public:
     ADDITIONAL_ERROR_REPORT("Protocol reference", NNamed);
     DECLARE_TRAVERSE_MODULE;
+    NProtocol* referencedNProtocol;
 };
 
 class NProtocolGroup : public NNamed
@@ -425,24 +433,28 @@ class NProtocolGroup : public NNamed
 public:
     bool has_http_protocol();
     std::vector<NProtocolReference*> *protocolList;
+    virtual ProtocolGroupType type() = 0;
 };
 class NServer : public NProtocolGroup
 {
 public:
     ADDITIONAL_ERROR_REPORT("Server", NNamed);
     DECLARE_TRAVERSE_MODULE;
+    ProtocolGroupType type() override { return PGT_SERVER; }
 };
 class NProxy : public NProtocolGroup
 {
 public:
     ADDITIONAL_ERROR_REPORT("Proxy", NNamed);
     DECLARE_TRAVERSE_MODULE;
+    ProtocolGroupType type() override { return PGT_PROXY; }
 };
 class NModule : public NProtocolGroup
 {
 public:
     ADDITIONAL_ERROR_REPORT("Module", NNamed);
     DECLARE_TRAVERSE_MODULE;
+    ProtocolGroupType type() override { return PGT_MODULE; }
 };
 
 class NTSL : public Node

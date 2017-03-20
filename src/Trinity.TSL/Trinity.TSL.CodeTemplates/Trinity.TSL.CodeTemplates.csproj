@@ -80,10 +80,11 @@
     <Compile Include="MODULES\HTTPModule.cs" />
     <Compile Include="MODULES\OptionalFields.cs" />
     <Compile Include="Cell.cs" />
+    <Compile Include="Protocols.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="TSL\t_accessor_type.cs" />
     <Compile Include="TSL\t_base_class_name.cs" />
-    <Compile Include="CommunicationModule.cs" />
+    <Compile Include="MODULES\CommunicationClass.cs" />
     <Compile Include="StorageSchema.cs" />
     <Compile Include="Struct.cs" />
     <Compile Include="Throw.cs" />

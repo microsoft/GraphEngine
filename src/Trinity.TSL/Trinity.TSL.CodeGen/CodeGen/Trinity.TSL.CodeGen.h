@@ -34,6 +34,7 @@ namespace Trinity
         std::string* GenericCellAccessor(NTSL* node);
         std::string* GenericFieldAccessor(NTSL* node);
         std::string* HTTP(NTSL* node);
+        std::string* Protocols(NTSL* node);
         std::string* Serializer(NTSL* node);
         std::string* CellSelectors(NTSL* node);
         std::string* Index(NTSL* node);
@@ -70,6 +71,7 @@ namespace Trinity
             std::string* HTTPModule(NProtocolGroup* node, ModuleContext* context);
             std::string* EnumerateFromFieldModule(NField* node, ModuleContext* context);
             std::string* CommunicationSchemaModule(NProtocolGroup* node, ModuleContext* context);
+            std::string* CommunicationClass(NProtocolGroup* node, ModuleContext* context);
             std::string* ValueToAccessorFieldAssignment(NField* node, ModuleContext* context);
             std::string* AccessorToAccessorFieldAssignment(NFieldType* node, ModuleContext* context);
             std::string* AccessorFieldsDefinition(NStructBase* node, ModuleContext* context);

@@ -29,12 +29,12 @@ source->append(R"::(CommunicationSchema : ICommunicationSchema
                 )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->protocolList)->size();++iterator_1)
 {
-if (tsl->find_protocol((*(node->protocolList))[iterator_1]->name)->is_syn_req_protocol())
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->is_syn_req_protocol())
 {
 source->append(R"::(
                 {
                     )::");
-if (tsl->find_protocol((*(node->protocolList))[iterator_1]->name)->pt_request == PT_VOID_REQUEST)
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->pt_request == PT_VOID_REQUEST)
 {
 source->append(R"::(
                     request_sig = "void";
@@ -74,12 +74,12 @@ source->append(R"::(
                 )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->protocolList)->size();++iterator_1)
 {
-if (tsl->find_protocol((*(node->protocolList))[iterator_1]->name)->is_syn_req_rsp_protocol())
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->is_syn_req_rsp_protocol())
 {
 source->append(R"::(
                 {
                     )::");
-if (tsl->find_protocol((*(node->protocolList))[iterator_1]->name)->pt_request == PT_VOID_REQUEST)
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->pt_request == PT_VOID_REQUEST)
 {
 source->append(R"::(
                     request_sig = "void";
@@ -122,12 +122,12 @@ source->append(R"::(
                 )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->protocolList)->size();++iterator_1)
 {
-if (tsl->find_protocol((*(node->protocolList))[iterator_1]->name)->is_asyn_req_protocol())
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->is_asyn_req_protocol())
 {
 source->append(R"::(
                 {
                     )::");
-if (tsl->find_protocol((*(node->protocolList))[iterator_1]->name)->pt_request == PT_VOID_REQUEST)
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->pt_request == PT_VOID_REQUEST)
 {
 source->append(R"::(
                     request_sig = "void";
@@ -172,7 +172,7 @@ source->append(R"::("; }
                 )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->protocolList)->size();++iterator_1)
 {
-if (tsl->find_protocol((*(node->protocolList))[iterator_1]->name)->is_http_protocol())
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->is_http_protocol())
 {
 source->append(R"::(
                 yield return ")::");
@@ -208,7 +208,7 @@ source->append(R"::(
             )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->protocolList)->size();++iterator_1)
 {
-if (tsl->find_protocol((*(node->protocolList))[iterator_1]->name)->is_syn_req_protocol())
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->is_syn_req_protocol())
 {
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(,
@@ -225,7 +225,7 @@ source->append(R"::(
             )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->protocolList)->size();++iterator_1)
 {
-if (tsl->find_protocol((*(node->protocolList))[iterator_1]->name)->is_syn_req_rsp_protocol())
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->is_syn_req_rsp_protocol())
 {
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(,
@@ -243,7 +243,7 @@ source->append(R"::(
             )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->protocolList)->size();++iterator_1)
 {
-if (tsl->find_protocol((*(node->protocolList))[iterator_1]->name)->is_asyn_req_protocol())
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->is_asyn_req_protocol())
 {
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(,

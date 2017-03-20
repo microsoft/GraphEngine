@@ -382,6 +382,31 @@ namespace Trinity
             return ret;
         }
 
+        std::string get_comm_class_basename(NProtocolGroup* protocol_group)
+        {
+            switch (protocol_group->type())
+            {
+            case PGT_SERVER:
+                return "TrinityServer";
+            case PGT_PROXY:
+                return "TrinityProxy";
+            case PGT_MODULE:
+                return "CommunicationModule";
+            default:
+                error(protocol_group, "get_comm_class_basename");
+            }
+        }
+
+        std::string get_comm_protocol_type_string(NProtocol* protocol)
+        {
+            if (protocol->is_syn_req_protocol())
+                return "SynReq";
+            if (protocol->is_syn_req_rsp_protocol())
+                return "SynReqRsp";
+            if (protocol->is_asyn_req_protocol())
+                return "AsynReq";
+        }
+
         std::string get_http_handler_parameters(NProtocol* protocol)
         {
             std::string ret;
