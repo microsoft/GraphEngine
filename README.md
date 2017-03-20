@@ -1,6 +1,8 @@
 # Graph Engine - Open Source
 
-[![Build Status](http://ci.graphengine.io/job/graphengine-master-win/badge/icon)](http://ci.graphengine.io/job/graphengine-master-win)
+|Windows | Ubuntu 16.04 |
+|:------:|:------:|
+|[![Build Status](http://ci.graphengine.io/job/graphengine-master-win/badge/icon)](http://ci.graphengine.io/job/graphengine-master-win)|[![Build Status](http://ci.graphengine.io/job/graphengine-master-ubuntu1604/badge/icon)](http://ci.graphengine.io/job/graphengine-master-ubuntu1604/)|
 
 Microsoft [Graph Engine](http://www.graphengine.io/) is a distributed
 in-memory data processing engine, underpinned by a strongly-typed
