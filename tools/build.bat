@@ -1,5 +1,5 @@
 if [%REPO_ROOT%] == [] (
-  set REPO_ROOT=%dp0..\
+  set REPO_ROOT=%cd%
 )
 
 setlocal enabledelayedexpansion
