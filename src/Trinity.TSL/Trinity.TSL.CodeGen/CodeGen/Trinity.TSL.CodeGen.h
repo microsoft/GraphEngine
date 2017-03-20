@@ -72,6 +72,7 @@ namespace Trinity
             std::string* EnumerateFromFieldModule(NField* node, ModuleContext* context);
             std::string* CommunicationSchemaModule(NProtocolGroup* node, ModuleContext* context);
             std::string* CommunicationClass(NProtocolGroup* node, ModuleContext* context);
+            std::string* MessagePassingMethods(NProtocolGroup* node, ModuleContext* context);
             std::string* ValueToAccessorFieldAssignment(NField* node, ModuleContext* context);
             std::string* AccessorToAccessorFieldAssignment(NFieldType* node, ModuleContext* context);
             std::string* AccessorFieldsDefinition(NStructBase* node, ModuleContext* context);

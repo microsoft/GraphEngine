@@ -50,7 +50,6 @@
     <Compile Include="GenericFieldAccessor.cs" />
     <Compile Include="CommunicationSchema.cs" />
     <Compile Include="Libraries\U8StringAccessor.cs" />
-    <Compile Include="MessagePassingExtension.cs" />
     <Compile Include="HTTP.cs" />
     <Compile Include="Index.cs" />
     <Compile Include="InvertedIndex\Bigram\Indexer.cs" />

@@ -405,6 +405,19 @@ namespace Trinity
                 return "SynReqRsp";
             if (protocol->is_asyn_req_protocol())
                 return "AsynReq";
+            error(protocol, "get_comm_protocol_type_string");
+        }
+
+        // Must be synchronized with TrinityMessageType
+        std::string get_comm_protocol_trinitymessagetype(NProtocol* protocol)
+        {
+            if (protocol->is_syn_req_protocol())
+                return "TrinityMessageType.SYNC";
+            if (protocol->is_syn_req_rsp_protocol())
+                return "TrinityMessageType.SYNC_WITH_RSP";
+            if (protocol->is_asyn_req_protocol())
+                return "TrinityMessageType.ASYNC";
+            error(protocol, "get_comm_protocol_type_string");
         }
 
         std::string get_http_handler_parameters(NProtocol* protocol)

@@ -100,6 +100,8 @@ namespace Trinity
 
         std::string get_comm_class_basename(NProtocolGroup* protocol_group);
 
+        std::string get_comm_protocol_trinitymessagetype(NProtocol* protocol);
+
         std::string get_comm_protocol_type_string(NProtocol* protocol);
 
         std::string get_http_handler_parameters(NProtocol* protocol);

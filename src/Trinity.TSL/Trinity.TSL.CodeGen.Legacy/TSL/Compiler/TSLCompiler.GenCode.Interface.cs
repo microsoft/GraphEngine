@@ -54,9 +54,6 @@ namespace Trinity.TSL
 {
 ";
             cw +=
-                AbstractServerTemplate.GenerateCode(script) +
-                AbstractProxyTemplate.GenerateCode(script) +
-                AbstractModuleTemplate.GenerateCode(script) +
                 ContractTemplate.GenerateCode() +
                 MessageAccessorTemplate.GenerateCode();
 

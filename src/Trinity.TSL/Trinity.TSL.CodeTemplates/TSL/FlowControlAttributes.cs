@@ -18,7 +18,7 @@ namespace Trinity.TSL
         public IFAttribute(string value) { }
     }
 
-    [AttributeUsage(AttributeTargets.All)]
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     public class ELIFAttribute : System.Attribute
     {
         public ELIFAttribute(bool value) { }
@@ -151,6 +151,13 @@ namespace Trinity.TSL
     {
         public METAAttribute(string cmd) { }
     }
+
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+    public class META_OUTPUTAttribute : System.Attribute
+    {
+        public META_OUTPUTAttribute(string cmd) { }
+    }
+
 
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     public class MUTEAttribute : System.Attribute

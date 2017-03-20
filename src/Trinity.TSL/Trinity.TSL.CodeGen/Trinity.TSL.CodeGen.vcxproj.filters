@@ -180,6 +180,9 @@
     <ClCompile Include="MODULES\CommunicationClass.cs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MODULES\MessagePassingMethods.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CodeGen\Trinity.TSL.CodeGen.h">

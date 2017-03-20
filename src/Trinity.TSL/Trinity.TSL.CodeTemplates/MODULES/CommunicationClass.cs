@@ -8,11 +8,11 @@ using Trinity.Network;
 using Trinity.Network.Messaging;
 using Trinity.TSL;
 
-/*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
 namespace t_Namespace
 {
     [MODULE_BEGIN]
     [TARGET("NProtocolGroup")]
+    [MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")]
     [MAP_VAR("t_base_class_name", "get_comm_class_basename(node)")]
     [MAP_VAR("t_comm_name", "node->name")]
     [MAP_LIST("t_protocol", "node->protocolList")]
@@ -20,6 +20,7 @@ namespace t_Namespace
     [MAP_VAR("t_protocol_name", "name")]
     [MAP_VAR("t_protocol_name_2", "name")]
     [MAP_VAR("t_protocol_name_3", "name")]
+    [MAP_VAR("t_protocol_name_4", "name")]
     [MAP_VAR("t_protocol_request", "referencedNProtocol->request_message_struct")]
     [MAP_VAR("t_protocol_response", "referencedNProtocol->response_message_struct")]
     [MAP_VAR("t_protocol_type", "get_comm_protocol_type_string($$->referencedNProtocol)")]
@@ -32,13 +33,17 @@ namespace t_Namespace
                 META("if($t_protocol->is_http_protocol()){continue;}");
 
                 IF("node->type() == PGT_MODULE");
-                MessageRegistry.RegisterMessageHandler((ushort)(this.t_protocol_typeIdOffset + (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name), _t_protocol_nameHandler);
+                MessageRegistry.RegisterMessageHandler((ushort)(this.t_protocol_typeIdOffset + (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name), _t_protocol_name_4Handler);
                 ELSE();
-                MessageRegistry.RegisterMessageHandler((ushort)(ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name, _t_protocol_nameHandler);
+                MessageRegistry.RegisterMessageHandler((ushort)(ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name, _t_protocol_name_4Handler);
                 END();
             }
             END();
         }
+
+        [MUTE]
+        void _t_protocol_name_4Handler(SynReqArgs args) { }
+        [MUTE_END]
 
         [FOREACH]
         [META("if($t_protocol->is_http_protocol()){continue;}")]
@@ -90,7 +95,33 @@ namespace t_Namespace
         void commclass__placeholder() { }
         /*MUTE_END*/
     }
-    /*MODULE_END*/
+
+    [MODULE_END]
+    public unsafe class t_protocol_responseWriter
+    {
+        internal byte* buffer;
+
+        public t_protocol_responseWriter()
+        {
+        }
+
+        public int CellPtr { get; internal set; }
+        public int Length { get; internal set; }
+    }
+
+
+    public unsafe class t_protocol_requestReader
+    {
+        private byte* buffer;
+        private int offset;
+
+        public t_protocol_requestReader(byte* buffer, int offset)
+        {
+            this.buffer=buffer;
+            this.offset=offset;
+        }
+    }
+
 
     public unsafe class t_protocol_typeArgs
     {

@@ -37,7 +37,9 @@ if (node->type() == PGT_MODULE)
 source->append(R"::(
                 MessageRegistry.RegisterMessageHandler((ushort)(this.)::");
 source->append(Codegen::GetString(get_comm_protocol_type_string((*(node->protocolList))[iterator_1]->referencedNProtocol)));
-source->append(R"::(IdOffset + (ushort)global::t_Namespace.TSL.)::");
+source->append(R"::(IdOffset + (ushort)global::)::");
+source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
+source->append(R"::(.TSL.)::");
 source->append(Codegen::GetString(get_comm_class_basename(node)));
 source->append(R"::(.)::");
 source->append(Codegen::GetString(node->name));
@@ -53,7 +55,9 @@ source->append(R"::(Handler);
 else
 {
 source->append(R"::(
-                MessageRegistry.RegisterMessageHandler((ushort)(ushort)global::t_Namespace.TSL.)::");
+                MessageRegistry.RegisterMessageHandler((ushort)(ushort)global::)::");
+source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
+source->append(R"::(.TSL.)::");
 source->append(Codegen::GetString(get_comm_class_basename(node)));
 source->append(R"::(.)::");
 source->append(Codegen::GetString(node->name));

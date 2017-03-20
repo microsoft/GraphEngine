@@ -14,15 +14,4 @@ namespace Trinity.TSL
         TrinityProxy,
         CommunicationModule
     }
-    /// <summary>
-    /// Shared class to generate code for Proxy/server.
-    /// </summary>
-    class ProtocolGroupTemplate
-    {
-        internal static string GenerateCode(ProtocolGroupType base_class, List<ProtocolGroupDescriptor> descs)
-        {
-            return "";
-        }
-
-    }
 }
