@@ -38,15 +38,15 @@ namespace t_Namespace
 
             IF("%forcell");
             byte[] tmpcell = new byte[(int)(targetPtr)];
-            fixed (byte* tmpcellptr = tmpcell)
+            fixed (byte* _tmpcellptr = tmpcell)
             {
-                targetPtr = tmpcellptr;
+                targetPtr = _tmpcellptr;
                 MODULE_CALL("PushPointerFromParameters", "node", "\"assign\"");
             }
             ELSE();
+            byte* tmpcellptr = (byte*)Memory.malloc((ulong)targetPtr);
             {
                 BufferLength     = (int)targetPtr;
-                byte* tmpcellptr = (byte*)Memory.malloc((ulong)targetPtr);
                 Memory.memset(tmpcellptr, 0, (ulong)targetPtr);
                 targetPtr = tmpcellptr;
                 tmpcellptr += preservedHeaderLength;

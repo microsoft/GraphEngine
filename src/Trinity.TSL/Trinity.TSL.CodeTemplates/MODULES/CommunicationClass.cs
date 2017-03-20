@@ -24,7 +24,7 @@ namespace t_Namespace
     [MAP_VAR("t_protocol_request", "referencedNProtocol->request_message_struct")]
     [MAP_VAR("t_protocol_response", "referencedNProtocol->response_message_struct")]
     [MAP_VAR("t_protocol_type", "get_comm_protocol_type_string($$->referencedNProtocol)")]
-    public abstract partial class t_comm_name : t_base_class_name
+    public abstract partial class t_comm_nameBase : t_base_class_name
     {
         protected override void RegisterMessageHandler()
         {

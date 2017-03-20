@@ -19,7 +19,7 @@ NProtocolGroup* node, ModuleContext* context)
 source->append(R"::(
     public abstract partial class )::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::( : )::");
+source->append(R"::(Base : )::");
 source->append(Codegen::GetString(get_comm_class_basename(node)));
 source->append(R"::(
     {

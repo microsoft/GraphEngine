@@ -15,8 +15,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Trinity.TSL.Parser", "Trini
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Trinity.C", "..\Trinity.C\Trinity.C.vcxproj", "{53440B2C-3D01-40DA-BBAE-36B654541EE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.TSL.CodeGen.Legacy", "Trinity.TSL.CodeGen.Legacy\Trinity.TSL.CodeGen.Legacy.csproj", "{EED9A7B9-4D19-478E-82A2-232B6B048CD4}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Trinity.TSL.CodeGen", "Trinity.TSL.CodeGen\Trinity.TSL.CodeGen.vcxproj", "{2DC8606A-1350-4AC8-A6E9-083EF7A14F10}"
 EndProject
 Global
@@ -45,8 +43,6 @@ Global
 		{8DF908E2-3C7D-4E7E-B07B-0E23E027F4E0}.Release|Any CPU.Build.0 = Release|Win32
 		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Release|Any CPU.ActiveCfg = Release|x64
-		{EED9A7B9-4D19-478E-82A2-232B6B048CD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EED9A7B9-4D19-478E-82A2-232B6B048CD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DC8606A-1350-4AC8-A6E9-083EF7A14F10}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{2DC8606A-1350-4AC8-A6E9-083EF7A14F10}.Debug|Any CPU.Build.0 = Debug|Win32
 		{2DC8606A-1350-4AC8-A6E9-083EF7A14F10}.Release|Any CPU.ActiveCfg = Release|Win32

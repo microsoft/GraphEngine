@@ -394,6 +394,7 @@ namespace Trinity
                 return "CommunicationModule";
             default:
                 error(protocol_group, "get_comm_class_basename");
+                return "";
             }
         }
 
@@ -406,6 +407,7 @@ namespace Trinity
             if (protocol->is_asyn_req_protocol())
                 return "AsynReq";
             error(protocol, "get_comm_protocol_type_string");
+            return "";
         }
 
         // Must be synchronized with TrinityMessageType
@@ -418,6 +420,7 @@ namespace Trinity
             if (protocol->is_asyn_req_protocol())
                 return "TrinityMessageType.ASYNC";
             error(protocol, "get_comm_protocol_type_string");
+            return "";
         }
 
         std::string get_http_handler_parameters(NProtocol* protocol)

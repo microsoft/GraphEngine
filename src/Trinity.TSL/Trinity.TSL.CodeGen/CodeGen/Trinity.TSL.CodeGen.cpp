@@ -16,8 +16,8 @@ static void write_file(const String& target_path, const String& name, Func gen, 
 
     String lower_content_path = content_path;
     lower_content_path.ToLower();
-    while (files && files->end() != std::find_if(files->begin(), files->end(), 
-        [&](const std::string* pfname){ return String(pfname->c_str()).ToLower() == lower_content_path; }))
+    while (files && files->end() != std::find_if(files->begin(), files->end(),
+                                                 [&](const std::string* pfname) { return String(pfname->c_str()).ToLower() == lower_content_path; }))
     {
         content_path = lower_content_path = Path::Combine(
             Path::GetDirectoryName(content_path),
@@ -80,6 +80,8 @@ namespace Trinity
         std::unordered_map<NIndex*, int>*                            TSLIndexIdMap = NULL;
         std::vector<NIndex*>*                                        TSLIndexTargetVector = NULL;
 
+        std::unordered_set<NStructBase*>                             message_structs;
+
 #pragma region Helper functions
         NFieldType* _get_raw_ptr(NFieldType* ptr)
         {
@@ -136,6 +138,60 @@ namespace Trinity
                 {
                     i = vec->erase(i);
                 }
+            }
+        }
+
+        void CalculateMessageAccessors(NTSL* tsl)
+        {
+            std::unordered_set<NStructBase*> message_cells;
+            auto try_add = [&](std::string* name)
+            {
+                if (name == nullptr) return;
+                auto s = tsl->find_struct_or_cell(name);
+                if (s == nullptr) return;
+                if (s->is_struct()) message_structs.insert(s);
+                else message_cells.insert(s);
+            };
+
+            for (auto proto : *tsl->protocolList)
+            {
+                if (proto->is_http_protocol()) continue;
+                if (proto->has_request()) { try_add(proto->request_message_struct); }
+                if (proto->has_response()) { try_add(proto->response_message_struct); }
+            }
+
+            /* add cell structs for messages */
+            for (auto msg_cell : message_cells)
+            {
+                /* deep copy from msg_cell */
+                NStruct* s = new NStruct(msg_cell);
+                /* append _Message to the name of the cell */
+                *s->name += "_Message";
+
+                /* add optional long CellId field */
+                NField *field = new NField();
+                field->attributes = new std::vector<NKVPair*>();
+                field->parent = msg_cell;
+                field->modifiers = new std::vector<int>();
+                field->modifiers->push_back(T_OPTIONALMODIFIER);
+                field->name = new std::string("CellId");
+
+                field->fieldType = new NFieldType();
+                field->fieldType->field = field;
+                field->fieldType->fieldType = FT_ATOM;
+                field->fieldType->atom_token = T_LONGTYPE;
+                field->fieldType->layoutType = LT_FIXED;
+
+                s->fieldList->push_back(field);
+
+                /* add the cell struct to the struct list */
+                tsl->structList->push_back(s);
+                /* replicate it back to a cell, add to message accessor list. 
+                 * note, this NCell will only be used for generating a message accessor.
+                 */
+                NCell* c = new NCell(s);
+                *c->name = *msg_cell->name;
+                message_structs.insert(c);
             }
         }
 
@@ -346,6 +402,7 @@ namespace Trinity
             NEW(TSLIndexIdMap);
             NEW(TSLIndexTargetVector);
 
+            CalculateMessageAccessors(tsl);
             CalculateCellFieldDataTypes(tsl);
             CalculateExternalParserDataTypes(tsl);
             CalculateSerializerDataTypes(tsl);
@@ -447,6 +504,11 @@ namespace Trinity
             {
                 write_file(struct_path, *_struct->name, Struct, _struct, files);
             }
+
+            /* Message accessors */
+            std::vector<NStructBase*> message_accessors;
+            message_accessors.insert(message_accessors.end(), message_structs.begin(), message_structs.end());
+            write_file(lib_path, NF(MessageAccessors), &message_accessors, files);
 
             uninitialize();
             return files;

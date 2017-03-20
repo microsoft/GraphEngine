@@ -35,6 +35,7 @@ namespace Trinity
         std::string* GenericFieldAccessor(NTSL* node);
         std::string* HTTP(NTSL* node);
         std::string* Protocols(NTSL* node);
+        std::string* MessageAccessors(std::vector<NStructBase*>* node);
         std::string* Serializer(NTSL* node);
         std::string* CellSelectors(NTSL* node);
         std::string* Index(NTSL* node);

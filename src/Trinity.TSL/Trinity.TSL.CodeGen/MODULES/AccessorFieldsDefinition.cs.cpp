@@ -161,7 +161,7 @@ if (!field_need_accessor_1)
 {
 source->append(R"::(
                 return *()::");
-source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
+source->append(Codegen::GetString(GetNonNullableValueTypeString((*(node->fieldList))[iterator_1]->fieldType)));
 source->append(R"::(*)(targetPtr);
                 )::");
 }

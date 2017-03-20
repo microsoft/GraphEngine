@@ -130,6 +130,8 @@ public:
 class NKVPair : public Node
 {
 public:
+    NKVPair() {}
+    NKVPair(NKVPair* const other) { key = new std::string(*other->key); value = new std::string(*other->value); }
     ADDITIONAL_ERROR_REPORT("'" + *key + "':", Node);
     DECLARE_TRAVERSE_MODULE;
     std::string* key;
@@ -247,11 +249,13 @@ public:
 class NField : public NNamed
 {
 public:
+    NField() {}
+    NField(NField* const);//deep-copy
     NFieldType *fieldType;
     std::vector<int> *modifiers;
     std::vector<NKVPair*> *attributes;
     NStructBase* parent;
-    ~NField() { delete modifiers; delete_children(); /* TODO delete attributes */ }
+    ~NField() { delete modifiers; delete_children(); for (auto attr : *attributes) delete attr; delete attributes; }
     ADDITIONAL_ERROR_REPORT("Field", NNamed);
     DECLARE_TRAVERSE_MODULE;
     friend class NStructBase;
@@ -266,10 +270,11 @@ public:
 class NStructBase : public NNamed
 {
 public:
-    ~NStructBase() { /* TODO */ }
+    NStructBase() {}
+    NStructBase(NStructBase* const);//deep copy
     std::vector<NField*> *fieldList;
     std::vector<NKVPair*> *attributes;
-    LayoutType layoutType;
+    LayoutType getLayoutType();
     /* true for struct, false for cell. */
     virtual bool is_struct() = 0;
 
@@ -292,6 +297,9 @@ class NStruct : public NStructBase
 public:
     ADDITIONAL_ERROR_REPORT("Struct", NNamed);
     DECLARE_TRAVERSE_MODULE;
+    NStruct() {}
+    NStruct(NStructBase* other) : NStructBase(other) {}//deep copy
+    ~NStruct() { delete_children(); }
     virtual bool is_struct() override { return true; }
 };
 
@@ -327,6 +335,9 @@ class NCell : public NStructBase
 public:
     ADDITIONAL_ERROR_REPORT("Cell", NNamed);
     DECLARE_TRAVERSE_MODULE;
+    NCell() {}
+    NCell(NStructBase* const other) : NStructBase(other) { indexList = new std::vector<NIndex*>(); }
+    ~NCell() { delete_children(); }
     virtual bool is_struct() override { return false; }
     std::vector<NIndex*>* indexList;
 };

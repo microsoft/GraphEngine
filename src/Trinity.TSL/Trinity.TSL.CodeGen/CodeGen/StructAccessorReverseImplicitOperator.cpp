@@ -16,7 +16,7 @@ namespace Trinity
                 type->fieldType = FT_STRUCT;
                 type->referencedNStruct = node;
                 type->referencedTypeName = node->name;
-                type->layoutType = node->layoutType;
+                type->layoutType = node->getLayoutType();
 
                 std::string* ret = AccessorReverseImplicitOperator(type, ctx);
 

@@ -14,7 +14,7 @@ static void _ValueTypeToAccessorFieldAssignment(NFieldType* type, bool create_op
                 targetPtr = this.ResizeFunction(targetPtr, 0, ").append(Codegen::GetString(type->type_size())).append(");");
     }
     source->append("\
-                *(").append(GetString(type)).append("*)targetPtr = value;");
+                *(").append(GetNonNullableValueTypeString(type)).append("*)targetPtr = value;");
 }
 
 static void _FixedLengthAccessorFieldAssignment(NFieldType* type, string accessor_field_name, bool create_optional, string* source)

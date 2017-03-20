@@ -42,7 +42,7 @@ source->append(R"::(
 {
     )::");
 bool struct_nonempty_1 = node->fieldList->size() > 0;
-bool struct_fixed_1 = node->layoutType == LT_FIXED;
+bool struct_fixed_1 = node->getLayoutType() == LT_FIXED;
 source->append(R"::(
     /// <summary>
     /// A .NET runtime object representation of )::");
@@ -397,6 +397,15 @@ std::string* module_content = Modules::StructAccessorEqualOperator(node, &module
     delete module_content;
 }
 source->append(R"::(
+        /// <summary>
+        /// Serializes this object to a Json string.
+        /// </summary>
+        /// <returns>The Json string serialized.</returns>
+        public override string ToString()
+        {
+            return Serializer.ToString(this);
+        }
+        
     }
 }
 )::");

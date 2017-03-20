@@ -35,7 +35,7 @@ namespace t_Namespace
     [MAP_VAR("t_data_type", "Trinity::Codegen::GetNonNullableValueTypeString($$->fieldType)", MemberOf = "t_field")]
     [MAP_VAR("t_struct_name", "node->name")]
     [META_VAR("bool", "struct_nonempty", "node->fieldList->size() > 0")]
-    [META_VAR("bool", "struct_fixed", "node->layoutType == LT_FIXED")]
+    [META_VAR("bool", "struct_fixed", "node->getLayoutType() == LT_FIXED")]
     /// <summary>
     /// A .NET runtime object representation of t_struct_name defined in TSL.
     /// </summary>
@@ -153,6 +153,10 @@ namespace t_Namespace
 
         [END]
 
+        [MUTE]
+        internal unsafe t_struct_name_Accessor(byte* _CellPtr) { throw new NotImplementedException(); }
+        [MUTE_END]
+
         internal unsafe t_struct_name_Accessor(byte* _CellPtr
             /*IF("!%struct_fixed")*/
             , ResizeFunctionDelegate func
@@ -216,6 +220,15 @@ namespace t_Namespace
         [MODULE_CALL("StructAccessorReverseImplicitOperator", "node")]
 
         [MODULE_CALL("StructAccessorEqualOperator", "node")]
+
+        /// <summary>
+        /// Serializes this object to a Json string.
+        /// </summary>
+        /// <returns>The Json string serialized.</returns>
+        public override string ToString()
+        {
+            return Serializer.ToString(this);
+        }
 
         [MUTE]
         public bool Contains_t_field_name { get; private set; }

@@ -28,35 +28,31 @@ namespace Trinity
                 int fieldSequence = _getFieldSequence(field);
                 int offset = fieldSequence / 8;
                 fieldSequence %= 8;
-                String mask = String::Format("0x{0:2}", (void*)((1 << fieldSequence)));
-                return String::Format(R":(
-                    *({0} + {1}) |= {2};):", pointerName, offset, mask);
+                String mask = _getHex(1 << fieldSequence);
+                return String::Format(R":(*({0} + {1}) |= {2};):", pointerName, offset, mask);
             }
             std::string GenerateMaskOffCode(NField* field)
             {
                 int fieldSequence = _getFieldSequence(field);
                 int offset = fieldSequence / 8;
                 fieldSequence %= 8;
-                String mask = String::Format("0x{0:2}", (void*)(~(1 << fieldSequence)));
-                return String::Format(R":(
-                    *({0} + {1}) &= {2};):", pointerName, offset, mask);
+                String mask = _getHex(~(1 << fieldSequence));
+                return String::Format(R":(*({0} + {1}) &= {2};):", pointerName, offset, mask);
             }
             std::string GenerateReadBitExpression(NField* field)
             {
                 int fieldSequence = _getFieldSequence(field);
                 int offset = fieldSequence / 8;
                 fieldSequence %= 8;
-                String mask = String::Format("0x{0:2}", (void*)((1 << fieldSequence)));
-                return String::Format(R":(
-                    (0 != (*({0} + {1}) & {2}):", pointerName, offset, mask);
+                String mask = _getHex(1 << fieldSequence);
+                return String::Format(R":((0 != (*({0} + {1}) & {2}))):", pointerName, offset, mask);
             }
             std::string GenerateClearAllBitsCode()
             {
                 string ret = "";
                 for (int i = 0; i < headerLength; ++i)
                 {
-                    ret += String::Format(R":(
-                    *({0} + {1}) = 0x00;):", pointerName, i);
+                    ret += String::Format(R":(*({0} + {1}) = 0x00;):", pointerName, i);
                 }
                 return ret;
             }
@@ -74,6 +70,16 @@ namespace Trinity
                         ++seq;
                 }
                 return seq;
+            }
+
+            String _getHex(int value)
+            {
+                char* hexarr = "0123456789ABCDEF";
+                value &= 0xFF;
+                String ret = "0x";
+                ret.Append(hexarr[value >> 4]);
+                ret.Append(hexarr[value & 0x0F]);
+                return ret;
             }
 
             NStructBase* nstruct;

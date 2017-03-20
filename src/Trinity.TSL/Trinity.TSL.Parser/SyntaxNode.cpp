@@ -906,6 +906,24 @@ NIndex::NIndex(NCell* cell, NField* field, NKVPair* indexDescriptor)
     this->target_field = target_field;
 }
 
+/**
+ * Copy construct, parent pointer is dropped.
+ */
+NField::NField(NField* const other)
+{
+    this->fieldType = new NFieldType(other->fieldType);
+    this->fieldType->field = this;
+    this->modifiers = new vector<int>();
+    this->attributes = new vector<NKVPair*>();
+    this->parent = nullptr;
+    this->name = new string(*other->name);
+
+    for (auto a_ : *other->attributes)
+    {
+        NKVPair* a = new NKVPair(a_);
+    }
+}
+
 void NField::aggregate_indices(NCell* cell)
 {
     std::vector<NIndex*>    *indexList = cell->indexList;
@@ -984,6 +1002,40 @@ void NStructBase::fill_with_sub_field_types(std::vector<NFieldType*>* list)
     {
         list->push_back(field->fieldType);
         field->fieldType->fill_with_sub_field_types(list);
+    }
+}
+
+LayoutType NStructBase::getLayoutType()
+{
+    for (auto *field : *fieldList)
+    {
+        if (field->getLayoutType() == LT_DYNAMIC || field->is_optional())
+            return LT_DYNAMIC;
+    }
+
+    return LT_FIXED;
+}
+
+/**
+ * Copy construct.
+ */
+
+NStructBase::NStructBase(NStructBase* const other)
+{
+    fieldList = new vector<NField*>();
+    attributes = new vector<NKVPair*>();
+    name = new string(*other->name);
+
+    for (auto f_ : *other->fieldList)
+    {
+        NField* f = new NField(f_);
+        f->parent = this;
+        fieldList->push_back(f);
+    }
+
+    for (auto a_ : *other->attributes)
+    {
+        NKVPair* a = new NKVPair(a_);
     }
 }
 

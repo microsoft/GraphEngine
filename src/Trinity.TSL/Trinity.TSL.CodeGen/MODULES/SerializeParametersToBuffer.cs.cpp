@@ -45,9 +45,9 @@ if (forcell_1)
 {
 source->append(R"::(
             byte[] tmpcell = new byte[(int)(targetPtr)];
-            fixed (byte* tmpcellptr = tmpcell)
+            fixed (byte* _tmpcellptr = tmpcell)
             {
-                targetPtr = tmpcellptr;
+                targetPtr = _tmpcellptr;
                 )::");
 
 {
@@ -65,9 +65,9 @@ source->append(R"::(
 else
 {
 source->append(R"::(
+            byte* tmpcellptr = (byte*)Memory.malloc((ulong)targetPtr);
             {
                 BufferLength     = (int)targetPtr;
-                byte* tmpcellptr = (byte*)Memory.malloc((ulong)targetPtr);
                 Memory.memset(tmpcellptr, 0, (ulong)targetPtr);
                 targetPtr = tmpcellptr;
                 tmpcellptr += preservedHeaderLength;

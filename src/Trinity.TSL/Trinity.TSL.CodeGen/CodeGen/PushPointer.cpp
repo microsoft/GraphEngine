@@ -47,7 +47,7 @@ static void push_impl(std::string* source, int stack_depth, NStructBase* node, N
     if (opt.fieldCount != 0)//Contains optional fields.
     {
         *source += indent + "byte* " + opt_ptr_name + " = targetPtr;\n";
-        *source += indent + "targetPtr += " + opt.headerLength + ";\n";
+        *source += indent + "targetPtr += " + GetString(opt.headerLength) + ";\n";
     }
 
     auto flush_batchpush = [&]()
@@ -512,7 +512,7 @@ namespace Trinity
                 field->fieldType = FT_STRUCT;
                 field->referencedNStruct = node;
                 field->referencedTypeName = node->name;
-                field->layoutType = node->layoutType;
+                field->layoutType = node->getLayoutType();
 
                 std::string* source = new std::string();
                 push_and_assign_impl(source, context->m_stack_depth, field, "", push_only);

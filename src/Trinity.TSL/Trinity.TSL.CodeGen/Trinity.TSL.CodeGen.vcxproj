@@ -128,6 +128,7 @@
     <ClCompile Include="LINQ\IndexQueryTreeNode.cs.cpp" />
     <ClCompile Include="LINQ\PLINQWrapper.cs.cpp" />
     <ClCompile Include="CodeGen\main.cpp" />
+    <ClCompile Include="MessageAccessors.cs.cpp" />
     <ClCompile Include="MODULES\AccessorFieldsDefinition.cs.cpp" />
     <ClCompile Include="MODULES\AccessorReverseImplicitOperator.cs.cpp" />
     <ClCompile Include="MODULES\CommunicationClass.cs.cpp" />

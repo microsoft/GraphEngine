@@ -379,7 +379,7 @@ namespace Trinity
             }
             return *this;
         }
-        String& PadLeft(size_t totalWidth, char paddingChar)
+        String& PadLeft(size_t totalWidth, char paddingChar = ' ')
         {
             //XXX totalWidth boundary check
             size_t width = _width();
@@ -387,21 +387,13 @@ namespace Trinity
                 return Insert(0, (totalWidth - width), paddingChar);
             return *this;//XXX padding failed should not ignore
         }
-        String& PadLeft(size_t totalWidth)
-        {
-            return PadLeft(totalWidth, ' ');
-        }
-        String& PadRight(size_t totalWidth, char paddingChar)
+        String& PadRight(size_t totalWidth, char paddingChar = ' ')
         {
             //XXX totalWidth boundary check
             size_t width = _width();
             if (width < totalWidth)
                 return Insert(Length(), (totalWidth - width), paddingChar);
             return *this;//XXX padding failed should not ignore
-        }
-        String& PadRight(size_t totalWidth)
-        {
-            return PadRight(totalWidth, ' ');
         }
         String& ToLower()
         {
@@ -468,9 +460,13 @@ namespace Trinity
 
                 String substitution = vec[tpl_index];
                 if (tpl_padding > 0)
+                {
                     substitution.PadRight(tpl_padding);
+                }
                 else if (tpl_padding < 0)
-                    substitution.PadLeft(tpl_padding);
+                {
+                    substitution.PadLeft(-tpl_padding);
+                }
 
                 ret.Replace("{" + tpl + "}", substitution);
 
@@ -588,10 +584,10 @@ namespace Trinity
         template<typename T>static String
             ToString(T* ptr)
         {
-            const int buffer_size = sizeof(T*) * 2;
+            const int buffer_size = sizeof(uint64_t) * 2;
             char buf[buffer_size + 1];//every byte needs two chars to represent in hex
 #if defined(TRINITY_PLATFORM_WINDOWS)
-            sprintf_s(buf, buffer_size, "%llX", (uint64_t)ptr);
+            sprintf_s(buf, buffer_size + 1, "%llX", (uint64_t)ptr);
 #else
             sprintf(buf, "%llX", (uint64_t)ptr);
 #endif

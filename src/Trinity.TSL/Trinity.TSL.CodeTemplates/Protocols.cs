@@ -69,7 +69,6 @@ namespace t_Namespace
     /*END*/
     #endregion
 
-
     [MUTE]
     class protocol_place_holder { }
     /*MUTE_END*/
