@@ -41,11 +41,11 @@ export PATH="$REPO_ROOT/tools/dotnet":$PATH
 build_trinity_c()
 {
 	echo "Building Trinity.C"
-	mkdir -p "$REPO_ROOT/bin/coreclr" && pushd "$_"
-	cmake "$REPO_ROOT/src/Trinity.C"
-	make
+	mkdir -p "$REPO_ROOT/bin/coreclr" && pushd "$_" || exit -1
+	cmake "$REPO_ROOT/src/Trinity.C" || exit -1
+	make || exit -1
 	# copy native Trinity.C for Windows-CoreCLR
-	cp "$REPO_ROOT/lib/Trinity.dll" "$REPO_ROOT/bin/coreclr/Trinity.dll"
+	cp "$REPO_ROOT/lib/Trinity.dll" "$REPO_ROOT/bin/coreclr/Trinity.dll" || exit -1
 	popd
 }
 
@@ -54,9 +54,9 @@ build_trinity_core()
 {
 	echo "Building Trinity.Core"
 	pushd "$REPO_ROOT/src/Trinity.Core"
-	dotnet restore Trinity.Core.NETStandard.sln
-	dotnet build Trinity.Core.NETStandard.sln
-	dotnet pack Trinity.Core.NETStandard.sln
+	dotnet restore Trinity.Core.NETStandard.sln || exit -1
+	dotnet build Trinity.Core.NETStandard.sln || exit -1
+	dotnet pack Trinity.Core.NETStandard.sln || exit -1
 }
 
 # register local nuget repo, remove GraphEngine.CoreCLR packages in the cache.
