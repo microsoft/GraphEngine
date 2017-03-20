@@ -6,7 +6,7 @@ using System.IO;
 using System.Threading.Tasks;
 using GraphEngine.DataImporter;
 
-namespace CsvparserTest
+namespace CsvParserTest
 {
     class Program
     {
@@ -40,7 +40,6 @@ namespace CsvparserTest
                     }
                 }
             }
-
         }
     }
 }
