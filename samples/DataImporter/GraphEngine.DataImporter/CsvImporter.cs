@@ -57,16 +57,13 @@ namespace GraphEngine.DataImporter
                     jsonObj[fieldName] = jsonArray;
                 }
             }
-            
             return m_jsonImporter.ImportEntity(type, jsonObj.ToString(), parent_id);
         }
 
         public IEnumerable<string> PreprocessInput(IEnumerable<string> input)
         {
             string headerRow = input.First();
-
             m_fieldNames = new List<string>(headerRow.Split(new char[] { delimiter } , StringSplitOptions.RemoveEmptyEntries));
-            
             return input.Skip(1);
         }
 

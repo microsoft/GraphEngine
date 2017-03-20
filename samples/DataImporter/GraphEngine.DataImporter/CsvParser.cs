@@ -80,7 +80,6 @@ namespace GraphEngine.DataImporter
                     throw new ImporterException("Field is not properly quoted: {0}", field);
                 }
             }
-
             return sanitized;
         }
     }

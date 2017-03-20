@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphEngine.DataImporter", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C7FD7516-B498-4944-AC5E-B86742CE270D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvparserTest", "CsvparserTest\CsvparserTest.csproj", "{EFB01F24-47EF-4FBA-9B60-8310045C6D56}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvParserTest", "CsvparserTest\CsvParserTest.csproj", "{EFB01F24-47EF-4FBA-9B60-8310045C6D56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
