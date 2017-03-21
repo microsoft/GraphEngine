@@ -28,7 +28,7 @@ namespace GraphEngine.DataImporter
             string filetype = Path.GetExtension(filename).ToLower();
 
             CompressionMode mode = CompressionMode.None;
-            long counter = 0;
+
             if (filetype == ".gz")
             {
                 mode = CompressionMode.GZip;
@@ -36,7 +36,9 @@ namespace GraphEngine.DataImporter
             else if (filetype == ".zip")
             {
                 mode = CompressionMode.Zip;
-            }           
+            }//TODO more
+
+            long counter = 0;
             using (var fs = File.Open(path, FileMode.Open, FileAccess.Read))
             using (var stream = GetInputStream(fs, mode))
             using (var sr = new StreamReader(stream))
@@ -52,7 +54,6 @@ namespace GraphEngine.DataImporter
                 }
             }
             Log.WriteLine("Loaded {0} lines.", counter);
-            //return File.ReadLines(filename);
         }
 
         private static Stream GetInputStream(FileStream fs, CompressionMode mode)
@@ -64,6 +65,7 @@ namespace GraphEngine.DataImporter
                 case CompressionMode.GZip:
                     return new GZipStream(new BufferedStream(fs), System.IO.Compression.CompressionMode.Decompress);
                 case CompressionMode.Zip:
+                    //TODO zip have directory structure
                     throw new NotImplementedException();
                 default:
                     throw new NotFiniteNumberException();

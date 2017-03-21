@@ -10,18 +10,19 @@ namespace GraphEngine.DataImporter
     class CsvImporter : IImporter<string>
     {
         private List<string> m_fieldNames;
-        private char delimiter;
-
         private JsonImporter m_jsonImporter = new JsonImporter();
-        private CsvParser parser = new CsvParser();
-        public CsvImporter(char fileDelimiter)
+        private CsvParser parser;
+
+        public CsvImporter(char delimiter)
         {
-            delimiter = fileDelimiter;
+            parser = new CsvParser(delimiter);   
         }
+
         public ICell ImportEntity(string type, string content, long? parent_id = null)
         {
-            int fieldsCount = m_fieldNames.Count;
-            var fields = parser.CsvSplit(content, delimiter);
+            var fields = parser.CsvSplit(content);
+            int fieldsCount;
+            fieldsCount = m_fieldNames.Count;
             if (fields.Count != fieldsCount)
             {
                 throw new ImporterException("Invalid record. The number of a field ({0}) must equal to {1}: {2}",
@@ -62,9 +63,9 @@ namespace GraphEngine.DataImporter
 
         public IEnumerable<string> PreprocessInput(IEnumerable<string> input)
         {
-            string headerRow = input.First();
-            m_fieldNames = new List<string>(headerRow.Split(new char[] { delimiter } , StringSplitOptions.RemoveEmptyEntries));
-            return input.Skip(1);
+                string headerRow = input.First();
+                m_fieldNames = new List<string>(parser.CsvSplit(headerRow));
+                return input.Skip(1);
         }
 
         private static Dictionary<string, IFieldDescriptor> GetFieldDescriptors(string type)

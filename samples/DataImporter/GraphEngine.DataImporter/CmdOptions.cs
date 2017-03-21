@@ -28,10 +28,10 @@ namespace GraphEngine.DataImporter
         public bool Sorted { get; set; }
 
         [Option('p', "delimiter", HelpText = "Specifies the delimiter of CSV or TSV file", Required = false)]
-        public char delimiter { get; set; }
+        public char Delimiter { get; set; }
 
         [Option('f', "fileFormat", HelpText = "Specifies the file format", Required = false)]
-        public string fileFormat { get; set; }
+        public string FileFormat { get; set; }
 
         [ValueList(typeof(List<string>))]
         public IList<string> ExplicitFiles { get; set; }
