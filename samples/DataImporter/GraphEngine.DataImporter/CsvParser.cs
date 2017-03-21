@@ -25,7 +25,10 @@ namespace GraphEngine.DataImporter
             int beginIndex = 0;
             int curIndex = 0;
             int cDoubleQuotes = 0;
-            string processedLine = line + delimiter;
+            string processedLine = line;
+
+            if (!processedLine.EndsWith(delimiter.ToString()))
+                processedLine = processedLine + delimiter;
 
             for (; curIndex < processedLine.Length; curIndex++)
             {

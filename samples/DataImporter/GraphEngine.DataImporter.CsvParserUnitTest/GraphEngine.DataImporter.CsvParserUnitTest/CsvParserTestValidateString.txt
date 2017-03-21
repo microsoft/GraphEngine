@@ -1,0 +1,12 @@
+123 aaa bbb
+123 I am fine, thank you! aaa
+123 "thank you," he said. aaa
+"hello"
+Unexpected double-quote at position 3 of """"hello""""
+Unexpected double-quote at position 5 of aaa,b"bb,ccc
+Unexpected double-quote at position 8 of 123,"123"1231"
+Unexpected double-quote at position 4 of 123,",123,123
+Unexpected double-quote at position 7 of 123,"aa"aa,123
+Unexpected double-quote at position 6 of 123,aa"aa",123
+Unexpected double-quote at position 7 of aaa,"bb"b",ccc
+Unexpected double-quote at position 10 of ",123,123,"aaa",123
