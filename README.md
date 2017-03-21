@@ -49,7 +49,7 @@ Please submit bugs and feature requests in [GitHub Issues](https://github.com/Mi
 
 ## Building for Windows
 
-Make sure Visual Studio 2015 is installed. To build the `.Net Framework 4.5.1` version, you can either built the 
+Make sure [Visual C++ 2015 Build Tools](http://landinghub.visualstudio.com/visual-cpp-build-tools) is installed for MSBuild and VC++ compiler toolchains. To build the `.Net Framework 4.5.1` version, you can either built the 
 projects (except `Trinity.Core.NETStandard.sln`) one by one with Visual Studio, or
 run `tools/build.bat`.
 
