@@ -22,6 +22,7 @@ fi
 # check if we have dotnet sdk
 if [ ! -e "$REPO_ROOT/tools/dotnet" ];
 then
+	tmp=$(tempfile)
 	echo "dotnet sdk not found, downloading."
 	case "$ID $VERSION_ID" in
 	"ubuntu 16.04")
@@ -32,8 +33,10 @@ then
 		exit -1
 		;;
 	esac
+	wget $dotnet_url -O $tmp || exit -1
 	mkdir "$REPO_ROOT/tools/dotnet"
-	wget $dotnet_url -O - | tar -xz -C "$REPO_ROOT/tools/dotnet"
+	tar -xzf $tmp -C "$REPO_ROOT/tools/dotnet" || exit -1
+	rm $tmp
 fi
 export PATH="$REPO_ROOT/tools/dotnet":$PATH
 
@@ -41,11 +44,14 @@ export PATH="$REPO_ROOT/tools/dotnet":$PATH
 build_trinity_c()
 {
 	echo "Building Trinity.C"
-	mkdir -p "$REPO_ROOT/bin/coreclr" && pushd "$_" || exit -1
+	mkdir -p "$REPO_ROOT/bin/coreclr" || exit -1
+	mkdir -p "$REPO_ROOT/bin/build_trinityc" && pushd "$_" || exit -1
 	cmake "$REPO_ROOT/src/Trinity.C" || exit -1
 	make || exit -1
 	# copy native Trinity.C for Windows-CoreCLR
 	cp "$REPO_ROOT/lib/Trinity.dll" "$REPO_ROOT/bin/coreclr/Trinity.dll" || exit -1
+	# copy freshly built Trinity.C for Linux-CoreCLR
+	cp "$REPO_ROOT/bin/build_trinityc/libTrinity.so" "$REPO_ROOT/bin/coreclr/libTrinity.so" || exit -1
 	popd
 }
 
