@@ -118,7 +118,7 @@ NFieldType::NFieldType(NFieldType* const that)
         this->referencedTypeName = that->referencedTypeName;
         break;
     default:
-        throw exception("NFieldType::NFieldType(NFieldType* const that)");
+        error("NFieldType::NFieldType(NFieldType* const that)");
     }
 }
 

@@ -54,8 +54,7 @@ vector<vector<T>> group_entries_by_key(vector<T>* input)
     unordered_set<string> keys;
     for (auto *node : *input)
     {
-        deduper.insert(unordered_multimap<string, T>::value_type(
-            get_key(node), node));
+        deduper.insert(std::make_pair(get_key(node), node));
         keys.insert(get_key(node));
     }
 
@@ -65,7 +64,7 @@ vector<vector<T>> group_entries_by_key(vector<T>* input)
     {
         vector<T> list;
         auto its = deduper.equal_range(key);
-        for (unordered_multimap<string, T>::iterator it = its.first; it != its.second; ++it)
+        for (auto it = its.first; it != its.second; ++it)
             list.push_back(it->second);
         ret.push_back(std::move(list));
     }
@@ -74,7 +73,7 @@ vector<vector<T>> group_entries_by_key(vector<T>* input)
 }
 
 template <typename T>
-bool error_on_duplicate_entries(Node* node, vector<vector<T>> &list, const string& msg)
+bool error_on_duplicate_entries(Node* node, const vector<vector<T>> &list, const string& msg)
 {
     bool dup = false;
     for (auto &entry_group : list)
@@ -88,7 +87,7 @@ bool error_on_duplicate_entries(Node* node, vector<vector<T>> &list, const strin
     return dup;
 }
 
-bool error_on_duplicate_entries(Node* node, vector<vector<string*>> &list, const string& msg)
+bool error_on_duplicate_entries(Node* node, const vector<vector<string*>> &&list, const string& msg)
 {
     bool dup = false;
     for (auto &entry_group : list)
@@ -529,8 +528,8 @@ DEFINE_TB_SEMANTIC_CHECK(NEnum, {
     //http://msdn.microsoft.com/en-us/library/whbyts4t.aspx
     //And confirmed that C# has the same behaviors
 
-    error_on_duplicate_entries(this,
-    group_entries_by_key(enumEntryList), "Duplicate enum entry name: ");
+    auto &&enum_group = group_entries_by_key(enumEntryList);
+    error_on_duplicate_entries(this, enum_group, "Duplicate enum entry name: ");
 
     //assign default values to the unassigned entries
     int32_t default_value = 0;

@@ -6,6 +6,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <Trinity/String.h>
+#include "os/os.h"
 using namespace std;
 
 int error_count = 0;
@@ -19,7 +20,11 @@ void error(string locationString, string msg)
     Trinity::String t_msg(msg.c_str());
     if (locationString != "")
     {
+#ifdef TRINITY_PLATFORM_WINDOWS
         wprintf(L"%ls : ", t_loc.ToWcharArray().data());
+#else
+        printf("%s : ", t_loc.c_str());
+#endif
     }
 
     if (t_msg.IndexOf("Warning:") != t_msg.npos)
@@ -28,12 +33,20 @@ void error(string locationString, string msg)
         {
             t_msg.Replace("Warning:", "");
             // XXX warning as info message
+#ifdef TRINITY_PLATFORM_WINDOWS
             wprintf(L"%ls\n", t_msg.ToWcharArray().data());
+#else
+            printf("%s\n", t_msg.c_str());
+#endif
         }
     }
     else
     {
+#ifdef TRINITY_PLATFORM_WINDOWS
         wprintf(L"Error: %ls\n", t_msg.ToWcharArray().data());
+#else
+        printf("Error: %s\n", t_msg.c_str());
+#endif
         ++error_count;
     }
 }
@@ -65,7 +78,11 @@ static void __snprintf(const char *buf, size_t max_size, char *s, ...)
 {
     va_list vlist;
     va_start(vlist, s);
+#ifdef TRINITY_PLATFORM_WINDOWS
     vsnprintf_s((char*)buf, max_size, max_size, s, vlist);
+#else
+    vsnprintf((char*)buf, max_size, s, vlist);
+#endif
     va_end(vlist);
 }
 
@@ -87,7 +104,11 @@ static string YYLTYPE2str(YYLTYPE loc)
 //yyerror always call error
 static void __yyerror_impl(YYLTYPE loc, const char *s, va_list args)
 {
+#ifdef TRINITY_PLATFORM_WINDOWS
     vsnprintf_s(error_buffer, sizeof(error_buffer), sizeof(error_buffer), s, args);
+#else
+    vsnprintf(error_buffer, sizeof(error_buffer), s, args);
+#endif
     string loc_str = YYLTYPE2str(loc);
     error(loc_str, string(error_buffer));
 }
