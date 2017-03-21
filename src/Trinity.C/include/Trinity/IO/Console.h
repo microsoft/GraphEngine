@@ -117,45 +117,47 @@ namespace Trinity
 #endif
             }
 
-            inline void Write(const String& line)
+            template<typename ...Args>
+            inline void Write(const String& format, Args... arguments)
             {
+                String content = String::Format(format, arguments...);
                 _lock_console();
 #ifdef TRINITY_PLATFORM_WINDOWS
-                std::wcout << (u16char*)line.ToWcharArray();
+                std::wcout << (u16char*)(content.ToWcharArray());
 #else
-                std::cout << line;
+                std::cout << content;
 #endif
                 _unlock_console();
+            }
+
+            template<typename ...Args>
+            inline void WriteLine(const String& format, Args... arguments)
+            {
+                String content = String::Format(format, arguments...);
+                _lock_console();
+#ifdef TRINITY_PLATFORM_WINDOWS
+                std::wcout << (u16char*)(content.ToWcharArray()) << std::endl;
+#else
+                std::cout << content << std::endl;
+#endif
+                _unlock_console();
+            }
+
+            template<typename T>
+            inline void WriteLine(const T& argument)
+            {
+                WriteLine("{0}", argument);
             }
 
             inline void WriteLine()
             {
-                _lock_console();
-#ifdef TRINITY_PLATFORM_WINDOWS
-                std::wcout << std::endl;
-#else
-                std::cout << std::endl;
-#endif
-                _unlock_console();
-            }
-
-            template<typename ...Args>
-            inline void Write(const String& format, Args... arguments)
-            {
-                Write(String::Format(format, arguments...));
+                WriteLine("");
             }
 
             template<typename T>
-            inline void Write(T argument)
+            inline void Write(const T& argument)
             {
                 Write(String::Format("{0}", argument));
-            }
-
-            template<typename ...Args>
-            inline void WriteLine(Args... arguments)
-            {
-                Write(arguments...);
-                WriteLine();
             }
 
             template<typename ...Args>

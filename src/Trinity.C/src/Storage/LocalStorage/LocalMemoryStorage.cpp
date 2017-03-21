@@ -154,10 +154,10 @@ namespace Storage
             TRINITY_INTEROP_LEAVE_UNMANAGED();
         }
 
-        char* ResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta)
+        TrinityErrorCode ResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, char*& cell_ptr)
         {
             TRINITY_INTEROP_ENTER_UNMANAGED();
-            char* ret = hashtables[GetTrunkId(cellId)].ResizeCell(cellEntryIndex, offset, delta);
+            TrinityErrorCode ret = hashtables[GetTrunkId(cellId)].ResizeCell(cellEntryIndex, offset, delta, cell_ptr);
             TRINITY_INTEROP_LEAVE_UNMANAGED();
             return ret;
         }

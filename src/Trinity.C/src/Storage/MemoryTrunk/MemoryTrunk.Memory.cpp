@@ -31,7 +31,15 @@ namespace Storage
         {
             if (head.append_head + cellSize <= head.committed_head)
             {
-                cell_p = trunkPtr + head.append_head;
+                /**! Note, a special case here is that the trunk is
+                 *   already full (all 2GB space are occupied), so that
+                 *   append_head == committed_head == TrunkLength. If we
+                 *   now save a cell with length 0, then the if-condition still holds but
+                 *   we get a cell_ptr out of the range of the current trunk, which could 
+                 *   make (cell_ptr - trunkPtr) negative (TrunkLength = INT_MAX + 1).
+                 */
+
+                cell_p = trunkPtr + (head.append_head % TrunkLength);
                 head.append_head += cellSize;
                 hashtable->MTEntries[entryIndex].EntryLock -= 2; //! Release the exclusion flag
                 alloc_lock.unlock();
@@ -42,7 +50,9 @@ namespace Storage
             {
                 continue;
             }
-            Trinity::Diagnostics::FatalError("Memory Trunk {0} is out of Memory. \n MemoryTrunk: CellAlloc : Out of memory", TrunkId);
+            alloc_lock.unlock();
+            Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "CellAlloc: MemoryTrunk {0} is out of Memory.", TrunkId);
+            return NULL;
         } while (true);
     }
 
@@ -75,20 +85,20 @@ namespace Storage
             if (CurrentVMAllocUnit <= available_space)
             {
                 ret = Memory::ExpandMemoryFromCurrentPosition(trunkPtr + head.committed_head, CurrentVMAllocUnit);
-                head.committed_head += CurrentVMAllocUnit;
-                goto SUCCESS_RETURN;
+                if (ret) head.committed_head += CurrentVMAllocUnit;
+                goto EXPAND_RETURN;
             }
 
             // Not large enough for VMAllocUnit, but enough for minimum_to_expand
             if (minimum_to_expand <= available_space)
             {
                 ret = Memory::ExpandMemoryFromCurrentPosition(trunkPtr + head.committed_head, minimum_to_expand);
-                head.committed_head += minimum_to_expand;
-                goto SUCCESS_RETURN;
+                if (ret) head.committed_head += minimum_to_expand;
+                goto EXPAND_RETURN;
             }
 
             // Out of memory, try to reload later
-            goto FAIL_RETURN;
+            goto RELOAD_RETURN;
         }
 #pragma endregion
 
@@ -99,16 +109,16 @@ namespace Storage
         if (CurrentVMAllocUnit <= available_space)
         {
             ret = Memory::ExpandMemoryFromCurrentPosition(trunkPtr + head.committed_head, CurrentVMAllocUnit);
-            head.committed_head += CurrentVMAllocUnit;
-            goto SUCCESS_RETURN;
+            if (ret) head.committed_head += CurrentVMAllocUnit;
+            goto EXPAND_RETURN;
         }
 
         // Not enough for VMAllocUnit, but enough for minimum_to_expand
         if (minimum_to_expand <= available_space)
         {
             ret = Memory::ExpandMemoryFromCurrentPosition(trunkPtr + head.committed_head, minimum_to_expand);
-            head.committed_head += minimum_to_expand;
-            goto SUCCESS_RETURN;
+            if (ret) head.committed_head += minimum_to_expand;
+            goto EXPAND_RETURN;
         }
 
         // There is not enough virtual memory between committed_head to trunk_end
@@ -119,15 +129,19 @@ namespace Storage
         {
             //First allocate the memory between committed_head to trunk_end
             uint32_t padding_size = available_space;
-            Memory::ExpandMemoryFromCurrentPosition(trunkPtr + head.committed_head, padding_size);
+            ret = Memory::ExpandMemoryFromCurrentPosition(trunkPtr + head.committed_head, padding_size);
+            if (!ret) goto EXPAND_RETURN;
 
             //Then allocate memory between trunk_ptr to committed_tail
             split_lock.lock();
             ret = Memory::ExpandMemoryFromCurrentPosition(trunkPtr, CurrentVMAllocUnit);
-            head.append_head = 0; //warp back to head
-            head.committed_head = CurrentVMAllocUnit;
+            if (ret)
+            {
+                head.append_head = 0; //warp back to head
+                head.committed_head = CurrentVMAllocUnit;
+            }
             split_lock.unlock();
-            goto SUCCESS_RETURN;
+            goto EXPAND_RETURN;
         }
 
         // Not enough for VMAllocUnit, but enough for minimum_to_expand
@@ -135,29 +149,31 @@ namespace Storage
         {
             //First allocate the memory between committed_head to trunk_end
             uint32_t padding_size = available_space;
-            Memory::ExpandMemoryFromCurrentPosition(trunkPtr + head.committed_head, padding_size);
+            ret = Memory::ExpandMemoryFromCurrentPosition(trunkPtr + head.committed_head, padding_size);
+            if (!ret) goto EXPAND_RETURN;
 
             //Then allocate memory between trunk_ptr to committed_tail
             split_lock.lock();
             ret = Memory::ExpandMemoryFromCurrentPosition(trunkPtr, minimum_to_expand);
-            head.append_head = 0; //warp back to head
-            head.committed_head = minimum_to_expand;
+            if (ret)
+            {
+                head.append_head = 0; //warp back to head
+                head.committed_head = minimum_to_expand;
+            }
             split_lock.unlock();
-            goto SUCCESS_RETURN;
+            goto EXPAND_RETURN;
         }
 
         // Out of memory
-        goto FAIL_RETURN;
-
+        goto RELOAD_RETURN;
 #pragma endregion
-
-    SUCCESS_RETURN :
+    EXPAND_RETURN:
         if (ret == false)
         {
-            Trinity::Diagnostics::FatalError("Trunk {0}: CommittedMemoryExpand failed.", TrunkId);
+            Trinity::Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "CommittedMemoryExpand: MemoryTrunk {0} failed to expand.", TrunkId);
         }
         return ret;
-    FAIL_RETURN:
+    RELOAD_RETURN:
         return Reload(minimum_size);
     }
 
@@ -177,14 +193,15 @@ namespace Storage
 
         temp_head_group.append_head = (uint32_t)ReloadImpl(); // Update hashtable.CellEntries
 
-        InfoLog(String("Memory trunk {0} reloaded."), TrunkId);
+        Diagnostics::WriteLine(Diagnostics::LogLevel::Info, "Reload: MemoryTrunk {0} reloaded.", TrunkId);
 
         if (temp_head_group.append_head == 0xFFFFFFFF) //Reload buffer allocation failed!
         {
             hashtable->ReleaseAllEntryLocksExceptArena();
             defrag_lock.unlock();
 
-            Trinity::Diagnostics::FatalError("Trunk: {0}, run out of memory during trunk reloading, buffer allocation failed. \n MemoryTrunk: Reload: Out of memory", TrunkId);
+            Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Reload: MemoryTrunk {0} temporary buffer allocation failed.", TrunkId);
+            return false;
         }
 
         uint32_t available_space = TrunkLength - temp_head_group.append_head;
@@ -192,7 +209,8 @@ namespace Storage
         {
             hashtable->ReleaseAllEntryLocksExceptArena();
             defrag_lock.unlock();
-            Trinity::Diagnostics::FatalError("Trunk: {0}, run out of memory during trunk reloading, available size: {1}, required size: {2}. \n MemoryTrunk: Reload: Out of memory", TrunkId, available_space, minimum_size);
+            Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Reload: MemoryTrunk {0} run out of memory during trunk reloading, available size: {1}, required size: {2}.", TrunkId, available_space, minimum_size);
+            return false;
         }
 
         temp_head_group.committed_head = (temp_head_group.append_head + Memory::PAGE_RANGE) & Memory::PAGE_MASK;
@@ -207,6 +225,9 @@ namespace Storage
         return true;
     }
 
+    // return new append_head on reload success
+    // return -1 when a temporary buffer cannot be allocated
+    // panics and exits when there's data loss caused by memory allocation errors.
     int32_t MemoryTrunk::ReloadImpl()
     {
         CellEntry* entries = hashtable->CellEntries;
@@ -250,8 +271,7 @@ namespace Storage
         size_t append_head = cp - buffer;
         if (Memory::MemoryCommit(trunkPtr, append_head) == NULL)
         {
-            free(buffer);
-            return -1;
+            Trinity::Diagnostics::FatalError("ReloadImpl: MemoryTrunk {0} fails to reclaim memory after data's been moved to a temporary buffer.", TrunkId);
         }
 
         memcpy(trunkPtr, buffer, append_head);

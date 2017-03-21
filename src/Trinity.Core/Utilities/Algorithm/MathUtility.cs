@@ -36,7 +36,7 @@ namespace Trinity.Mathematics
     {
         static MathUtility()
         {
-            InternalCalls.__init();
+            TrinityC.Init();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

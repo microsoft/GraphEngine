@@ -38,12 +38,6 @@ namespace TrinityConfig
         return storage_root;
     }
 
-    void SetStorageRoot(const char* buffer, int32_t length)
-    {
-        storage_root = String::FromWcharArray((u16char*)buffer, length >> 1);
-        Diagnostics::WriteLine(LogLevel::Verbose, "StorageRoot set to {0}", storage_root);
-    }
-
     void SetStorageRoot(String storageRoot)
     {
         storage_root = storageRoot;
@@ -55,11 +49,6 @@ namespace TrinityConfig
         if (log_directory.Empty())
             log_directory = Path::CompletePath(Path::Combine(Path::MyAssemblyPath(), "trinity-log"), true);
         return log_directory;
-    }
-
-    void SetLogDirectory(const char* buffer, int32_t length)
-    {
-        log_directory = String::FromWcharArray((u16char*)buffer, length >> 1);
     }
 
     void SetLogDirectory(String logDir)
@@ -242,7 +231,17 @@ namespace TrinityConfig
 }
 
 // exported getter/setter
-DLL_EXPORT BOOL __stdcall CHandshake() { return TrinityConfig::Handshake() ? TRUE : FALSE; }
-DLL_EXPORT VOID __stdcall CSetHandshake(bool value) { TrinityConfig::SetHandshake(value); }
-DLL_EXPORT BOOL __stdcall CClientDisableSendBuffer() { return TrinityConfig::ClientDisableSendBuffer() ? TRUE : FALSE; }
-DLL_EXPORT VOID __stdcall CSetClientDisableSendBuffer(bool value) { TrinityConfig::SetClientDisableSendBuffer(value); }
+DLL_EXPORT BOOL    CHandshake() { return TrinityConfig::Handshake() ? TRUE : FALSE; }
+DLL_EXPORT VOID    CSetHandshake(bool value) { TrinityConfig::SetHandshake(value); }
+DLL_EXPORT BOOL    CClientDisableSendBuffer() { return TrinityConfig::ClientDisableSendBuffer() ? TRUE : FALSE; }
+DLL_EXPORT VOID    CSetClientDisableSendBuffer(bool value) { TrinityConfig::SetClientDisableSendBuffer(value); }
+DLL_EXPORT VOID    SetStorageRoot(const char* buffer, int32_t length) { TrinityConfig::SetStorageRoot(String::FromWcharArray((u16char*)buffer, length >> 1)); }
+DLL_EXPORT BOOL    CReadOnly() { return TrinityConfig::ReadOnly() ? TRUE : FALSE; }
+DLL_EXPORT void    CSetReadOnly(bool value) { TrinityConfig::SetReadOnly(value); }
+DLL_EXPORT int32_t CTrunkCount() { return TrinityConfig::TrunkCount(); }
+DLL_EXPORT void    CSetTrunkCount(int32_t value) { TrinityConfig::SetTrunkCount(value); }
+DLL_EXPORT int32_t GetStorageCapacityProfile() { return TrinityConfig::GetStorageCapacityProfile(); }
+DLL_EXPORT void    SetStorageCapacityProfile(int32_t value) { TrinityConfig::SetStorageCapacityProfile(value); }
+DLL_EXPORT int32_t CLargeObjectThreshold() { return TrinityConfig::LargeObjectThreshold(); }
+DLL_EXPORT void    CSetLargeObjectThreshold(int32_t value) { TrinityConfig::SetLargeObjectThreshold(value); }
+DLL_EXPORT void    CSetGCDefragInterval(int32_t value) { TrinityConfig::SetGCDefragInterval(value); }

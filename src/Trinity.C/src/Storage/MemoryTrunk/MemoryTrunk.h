@@ -148,12 +148,13 @@ namespace Storage
         /////////////////////////////////////////////////////
 
         /*********************** Memory ************************/
-        int32_t AddMemoryCell(int32_t cell_length, int32_t cellEntryIndex);
-        void ExpandLargeObject(int32_t lo_index, int32_t original_size, int32_t new_size);
-        void ShrinkLargeObject(int32_t lo_index, int32_t original_size, int32_t new_size);
+        TrinityErrorCode AddMemoryCell(int32_t cell_length, int32_t cellEntryIndex, OUT int32_t& cell_offset);
+        TrinityErrorCode ExpandLargeObject(int32_t lo_index, int32_t original_size, int32_t new_size);
+        TrinityErrorCode ShrinkLargeObject(int32_t lo_index, int32_t original_size, int32_t new_size);
         ////////////////////////////////////////////////////////
-
+        
         char* AllocateLargeObject(int32_t);
+
         int32_t ReloadImpl();
         void DisposeTrunkBuffer();
         inline void BufferedDecommitMemory(void* lpAddr, uint64_t size)

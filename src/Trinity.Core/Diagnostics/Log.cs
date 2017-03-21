@@ -93,7 +93,7 @@ namespace Trinity.Diagnostics
 
         static Log()
         {
-            TrinityC.Ping();
+            TrinityC.Init();
             TrinityConfig.LoadTrinityConfig(false);
 
             string unitTestAssemblyName = "Microsoft.VisualStudio.QualityTools.UnitTestFramework";
