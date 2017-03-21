@@ -49,6 +49,18 @@ build_trinity_c()
 	popd
 }
 
+# build Trinity.TSL
+build_trinity_tsl()
+{
+	echo "Building Trinity.TSL"
+	mkdir -p "$REPO_ROOT/bin/tsl" && pushd "$_" || exit -1
+	cmake "$REPO_ROOT/src/Trinity.TSL" || exit -1
+	make || exit -1
+	# copy native Trinity.C for Windows-CoreCLR
+	cp "Trinity.TSL.CodeGen" "$REPO_ROOT/bin/coreclr/" || exit -1
+	popd
+}
+
 # build Trinity.Core
 build_trinity_core()
 {
@@ -57,6 +69,7 @@ build_trinity_core()
 	dotnet restore Trinity.Core.NETStandard.sln || exit -1
 	dotnet build Trinity.Core.NETStandard.sln || exit -1
 	dotnet pack Trinity.Core.NETStandard.sln || exit -1
+	popd
 }
 
 # register local nuget repo, remove GraphEngine.CoreCLR packages in the cache.
@@ -74,6 +87,7 @@ setup_nuget_repo()
 }
 
 build_trinity_c
+build_trinity_tsl
 build_trinity_core
 setup_nuget_repo
 
