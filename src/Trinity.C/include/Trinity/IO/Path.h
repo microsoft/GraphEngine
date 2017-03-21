@@ -32,6 +32,13 @@ namespace Trinity
             static const char WindowsDirectorySeparator = '\\';
             static const char UnixDirectorySeparator = '/';
             static const char *DirectorySeparators = "/\\";
+
+#if defined(TRINITY_PLATFORM_WINDOWS)
+            static const char DirectorySeparator = WindowsDirectorySeparator;
+#else
+            static const char DirectorySeparator = UnixDirectorySeparator;
+#endif
+
 #pragma warning(pop)
             inline String ChangeExtension(const String& path);
             inline bool IsUncPath(const String& path)
@@ -89,12 +96,44 @@ namespace Trinity
                     return path.Length() == 3;
                 }
             }
+
+            inline String GetDirectoryName(const String& path)
+            {
+                if (IsPathRootOnly(path))
+                    return "";
+                size_t idx = path.FindLastOf(DirectorySeparators);
+                if (idx == String::npos)
+                    return "";
+                String ret = path.Substring(0, idx + 1);
+
+                if (IsPathRootOnly(ret))
+                    return ret;
+                ret.PopBack();
+                return ret;
+            }
+
+            inline String GetFileName(const String& path)
+            {
+                size_t len = path.Length();
+                size_t idx = len;
+                while (--idx != String::npos)
+#ifdef TRINITY_PLATFORM_WINDOWS
+                    if (path[idx] == WindowsDirectorySeparator || path[idx] == UnixDirectorySeparator)
+#else
+                    if (path[idx] == UnixDirectorySeparator)
+#endif
+                        return path.Substring(idx + 1);
+                return path;
+            }
+
+            // forward-declare Combine
+            template<typename ...Args> String Combine(const Args& ...paths);
+
             //Expand and normalize a path
             /*
             according to http://msdn.microsoft.com/en-us/library/windows/desktop/aa364963(v=vs.85).aspx
             GetFullPathName and {Get, Set}CurrentDirectory are not safe under
             multithreaded env
-
             TODO resource guard for these routines
             */
             inline String GetFullPath(const String& path)
@@ -112,27 +151,39 @@ namespace Trinity
                 return String::FromWcharArray(wfull_path).Replace(UnixDirectorySeparator, WindowsDirectorySeparator);
 #else// other platforms
 
-                char* full_path_buf = new char[PATH_MAX];
-                char* full_path = realpath(path.c_str(), full_path_buf);
-                if (full_path == NULL) 
+                String p = path;
+                String remainder = "";
+                while(true)
                 {
-                    // There are several cases where realpath returns NULL
-                    // due to some errors, but the full path is completed
-                    // and placed into our buffer. See the man pages for
-                    // realpath for details.
-                    auto error = errno;
-                    do
+                    // move up through the directories until realpath
+                    // returns a valid path
+                    char* full_path = realpath(p.c_str(), NULL);
+                    if(full_path == NULL)
                     {
-                        if(error == EACCES)  break;
-                        if(error == EIO)     break;
-                        if(error == ENOENT)  break;
-                        if(error == ENOTDIR) break;
-                        full_path_buf[0] = 0; 
-                    }while (0);
+                        if(p.Length() == 0 || IsPathRootOnly(p))
+                        {
+                            return "";
+                        }
+
+                        remainder = Combine(GetFileName(p), remainder);
+                        p = GetDirectoryName(p);
+                    }
+                    else
+                    {
+                        String ret(full_path);
+                        free(full_path);
+                        if(!remainder.Empty())
+                        {
+                            ret = ret + DirectorySeparator + remainder;
+                        }
+
+                        if(ret.Length() > 1 && ret.EndsWith(DirectorySeparator))
+                            ret.PopBack();
+
+
+                        return ret;
+                    }
                 }
-                String ret(full_path_buf);
-                delete[] full_path_buf;
-                return ret;
 #endif
             }
 
@@ -150,28 +201,20 @@ namespace Trinity
                 if (IsPathRooted(child))
                     return GetFullPath(child);
 
-                char separator;
-
-#if defined(TRINITY_PLATFORM_WINDOWS)
-                separator = WindowsDirectorySeparator;
-#else
-                separator = UnixDirectorySeparator;
-#endif
-
                 String ret = parent;
 
 #if defined(TRINITY_PLATFORM_WINDOWS)
                 if (!ret.EndsWith(WindowsDirectorySeparator) && !ret.EndsWith(UnixDirectorySeparator))//no separators at the tail of parent
 #else
-                if (!ret.EndsWith(separator) && ret.Length() != 0)//no separators at the tail of parent
+                if (!ret.EndsWith(DirectorySeparator) && ret.Length() != 0)//no separators at the tail of parent
 #endif
                 {
-                    ret.PushBack(separator);
+                    ret.PushBack(DirectorySeparator);
                 }
 #if defined(TRINITY_PLATFORM_WINDOWS)
                 size_t child_start_idx = child.FindFirstNotOf(DirectorySeparators);
 #else
-                size_t child_start_idx = child.FindFirstNotOf(separator);
+                size_t child_start_idx = child.FindFirstNotOf(DirectorySeparator);
 #endif
 
                 if (child_start_idx != String::npos)
@@ -211,31 +254,6 @@ namespace Trinity
                 return __combine_impl(paths...);
             }
 
-
-            inline String GetDirectoryName(const String& path)
-            {
-                if (IsPathRootOnly(path))
-                    return "";
-                size_t idx = path.FindLastOf(DirectorySeparators);
-                if (idx == String::npos)
-                    return "";
-                String ret = path.Substring(0, idx + 1);
-
-                if (IsPathRootOnly(ret))
-                    return ret;
-                ret.PopBack();
-                return ret;
-            }
-
-            inline String GetFileName(const String& path)
-            {
-                size_t len = path.Length();
-                size_t idx = len;
-                while (--idx != String::npos)
-                    if (path[idx] == WindowsDirectorySeparator || path[idx] == UnixDirectorySeparator)
-                        return path.Substring(idx + 1);
-                return path;
-            }
 
             inline String GetExtension(String path)
             {
