@@ -38,8 +38,10 @@ void help()
     Console::WriteLine("    -g/--Debug          Enable debugging features.             ");
     Console::WriteLine("    -n/--RootNamespace  Specifies the root namespace.          ");
     Console::WriteLine("                        Defaults to 'Trinity.Extension'.       ");
-    Console::WriteLine("    -r/--ProjectRoot    Specifies the root of the project.     ");
+    Console::WriteLine("    -p/--ProjectRoot    Specifies the root of the project.     ");
     Console::WriteLine("                        Defaults to the current directory.     ");
+    Console::WriteLine("    -o/--OutputPath     Specifies the path of the output files.");
+    Console::WriteLine("                        Defaults to 'GeneratedCode'            ");
     Console::WriteLine("    -s/--ScriptList     Specifies a list of tsl scripts,       ");
     Console::WriteLine("                        separated by ';'                       ");
     Console::WriteLine("                        Files specified by -s will be processed");
@@ -57,7 +59,7 @@ bool get_parameters(int argc, char** argv)
     auto args                                      = CommandLineTools::GetArguments(argc, argv);
     auto BuildDataModelingProjectWithDebugFeatures = CommandLineTools::DefineOption<bool>("g", "Debug");
     auto Namespace                                 = CommandLineTools::DefineOption<Trinity::String>("n", "RootNamespace");
-    auto ProjectRoot                               = CommandLineTools::DefineOption<Trinity::String>("r", "ProjectRoot");
+    auto ProjectRoot                               = CommandLineTools::DefineOption<Trinity::String>("p", "ProjectRoot");
     auto ScriptFileList                            = CommandLineTools::DefineOption<Trinity::String>("s", "ScriptList"); //TPJ: TSL project
     auto OutputPath                                = CommandLineTools::DefineOption<Trinity::String>("o", "OutputPath");
     auto NoWarning                                 = CommandLineTools::DefineOption<bool>("NoWarning", "NoWarning");

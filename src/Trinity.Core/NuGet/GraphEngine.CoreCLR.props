@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Paths -->
+  <PropertyGroup>
+    <!-- Probe for a tools\ directory which will contain Trinity.TSL.Compiler.exe. -->
+    <TSL_PATH Condition="('$(TSL_PATH)' == '') And Exists('$(MSBuildThisFileDirectory)..\..\tools')">$(MSBuildThisFileDirectory)..\..\</TSL_PATH>
+    <TSL_PATH Condition="('$(TSL_PATH)' == '') And Exists('$(MSBuildThisFileDirectory)..\tools')">$(MSBuildThisFileDirectory)..\</TSL_PATH>
+    <TSL_PATH Condition="('$(TSL_PATH)' == '')">$(MSBuildThisFileDirectory)..\..\</TSL_PATH>
+    <TSL_CODEGEN_PATH Condition="'$(OS)' == 'Windows NT'">$(TSL_PATH)tools\Trinity.TSL.CodeGen.exe</TSL_CODEGEN_PATH>
+    <TSL_CODEGEN_PATH Condition="'$(TSL_CODEGEN_PATH)' == ''">$(TSL_PATH)tools\Trinity.TSL.CodeGen.exe</TSL_CODEGEN_PATH>
+  </PropertyGroup>
+
+  <!-- Configurations -->
+  <PropertyGroup>
+    <!-- Allow unsafe code to compile -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- Disable "prefer 32-bit mode", so that the program runs in 64 bit mode and loads Trinity.C correctly. -->
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+
+</Project>

@@ -62,8 +62,10 @@ build_trinity_tsl()
 	mkdir -p "$REPO_ROOT/bin/tsl" && pushd "$_" || exit -1
 	cmake "$REPO_ROOT/src/Trinity.TSL" || exit -1
 	make || exit -1
-	# copy native Trinity.C for Windows-CoreCLR
-	cp "Trinity.TSL.CodeGen" "$REPO_ROOT/bin/coreclr/" || exit -1
+	# copy native Trinity.TSL.CodeGen.exe for Windows
+	cp "$REPO_ROOT/tools/Trinity.TSL.CodeGen.exe" "$REPO_ROOT/bin/" || exit -1
+	# copy freshly built Trinity.TSL.CodeGen for Linux
+	cp "Trinity.TSL.CodeGen" "$REPO_ROOT/bin/" || exit -1
 	popd
 }
 
