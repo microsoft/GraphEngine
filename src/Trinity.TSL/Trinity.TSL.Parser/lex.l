@@ -26,6 +26,7 @@ typedef uint32_t flex_uint32_t;
 #include "parser.tab.h"
 
 #include <Trinity/IO/Path.h>
+#include "os/os.h"
  
 using namespace std;
 using namespace Trinity::IO;
@@ -212,6 +213,7 @@ int push_new_file(string *filename)
         error(string("Warning: Duplicated inclusion: '")+*filename+"'");
         return 2;//TODO error number
     }
+#ifdef TRINITY_PLATFORM_WINDOWS
     /* Convert UTF-8 filename to UTF-16 */
     auto utf16_filename_arr = Trinity::String(filename->c_str()).ToWcharArray();
     if((error_no = _wfopen_s(&fp, utf16_filename_arr, L"r")) != 0)
@@ -219,6 +221,14 @@ int push_new_file(string *filename)
         error(string("Could not open input file '") + *filename + "'.");
         return error_no;
     }
+#else
+    if(NULL == (fp = fopen(filename->c_str(), "r")))
+    {
+        error(string("Could not open input file '") + *filename + "'.");
+        error_no = errno;
+        return error_no;
+    }
+#endif
 
     strip_utf8_bom(fp);
 

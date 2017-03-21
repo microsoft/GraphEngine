@@ -1,15 +1,18 @@
+#include <os/os.h>
 #include <utilities>
 #include <corelib>
 #include <io>
 
 #include <iostream>
 #include <fcntl.h>
+
+#ifdef TRINITY_PLATFORM_WINDOWS
 #include <io.h>
 #include <tchar.h>
+#endif
 
 #include "Trinity.TSL.CodeGen.h"
 #include "Trinity.TSL.Parser.h"
-#include <os/os.h>
 
 #pragma region Parameters
 bool            c_debug;
@@ -182,7 +185,9 @@ int wmain(int argc, u16char** argv)
 int main(int argc, char** argv)
 #endif
 {
+#ifdef TRINITY_PLATFORM_WINDOWS
     _setmode(_fileno(stdout), _O_U8TEXT);
+#endif
 
     NTSL*                                               unmanaged_syntax_tree;
 
