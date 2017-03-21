@@ -7,7 +7,7 @@
     <TSL_PATH Condition="('$(TSL_PATH)' == '') And Exists('$(MSBuildThisFileDirectory)..\..\tools')">$(MSBuildThisFileDirectory)..\..\</TSL_PATH>
     <TSL_PATH Condition="('$(TSL_PATH)' == '') And Exists('$(MSBuildThisFileDirectory)..\tools')">$(MSBuildThisFileDirectory)..\</TSL_PATH>
     <TSL_PATH Condition="('$(TSL_PATH)' == '')">$(MSBuildThisFileDirectory)..\..\</TSL_PATH>
-    <TSL_CODEGEN_PATH Condition="'$(OS)' == 'Windows NT'">$(TSL_PATH)tools\Trinity.TSL.CodeGen.exe</TSL_CODEGEN_PATH>
+    <TSL_CODEGEN_PATH Condition="'$(OS)' == 'Windows_NT'">$(TSL_PATH)tools\Trinity.TSL.CodeGen.exe</TSL_CODEGEN_PATH>
     <TSL_CODEGEN_PATH Condition="'$(TSL_CODEGEN_PATH)' == ''">$(TSL_PATH)tools\Trinity.TSL.CodeGen</TSL_CODEGEN_PATH>
   </PropertyGroup>
 
