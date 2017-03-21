@@ -38,7 +38,7 @@
           BeforeTargets="CoreCompile"
           Condition="'@(TslCodegen)' != ''">
 
-    <Exec Command="chmod u+x $(TSL_CODEGEN_PATH)" />
+    <Exec Condition="'$(OS)' != 'Windows_NT' " Command="chmod u+x $(TSL_CODEGEN_PATH)" />
     <RemoveDir Directories="$(TslGeneratedCodePath)" ContinueOnError="true" />
     <MakeDir Directories="$(TslGeneratedCodePath)" ContinueOnError="true"/>
     <Exec Command="$(TSL_CODEGEN_PATH) --ProjectRoot $(MSBuildProjectDirectory) --ScriptList @(TslCodegen) --RootNamespace $(RootNamespace) --OutputPath $(TslOutputPath) $(TslDebugArguments)" />
