@@ -19,12 +19,9 @@ namespace GraphEngine.DataImporter.CsvParserUnitTest
             {
                 using (StreamReader sv = new StreamReader("..\\..\\CsvParserTestValidateString.txt"))
                 {
-
-                    string line;
-                    string result;
-                    while ((line = si.ReadLine()) != null)
+                    string line, result, validation;
+                    while ((line = si.ReadLine()) != null && (validation = sv.ReadLine()) != null) 
                     {
-                        string validation = sv.ReadLine();
                         try
                         {
                             List<string> list = parser.CsvSplit(line);
