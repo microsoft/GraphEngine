@@ -49,25 +49,26 @@ Please submit bugs and feature requests in [GitHub Issues](https://github.com/Mi
 
 ## Building for Windows
 
-To build the `.Net Framework 4.5.1` version, you can either built the 
-projects (except `Trinity.Core.NETStandard.sln`) one by one with Visual Studio, or
-run `tools/build.bat`.
+To build the `.Net Framework 4.5.1` version, you can either build the
+projects, except for `Trinity.Core.NETStandard.sln`, one by one with
+Visual Studio, or run `tools/build.bat`.
 
-To build the `CoreCLR` version, you'll need to first download and install the
-latest [CoreCLR 2.0 SDK](https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-dev-win-x64.latest.exe).
-After that, run `tools/build_coreclr.bat`.
+To build the `CoreCLR` version, you need to download and install the
+latest [CoreCLR 2.0
+SDK](https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-dev-win-x64.latest.exe).
+Then, run `tools/build_coreclr.bat`.
 
 ## Building for Linux
 
-Install `libunwind8`, `g++`, `cmake` and `libssl-dev`, then execute `tools/build.sh`.
-When the build script is executed for the first time, it will download
-and unarchive the latest CoreCLR 2.0 SDK to `tools/dotnet`.
-A nuget package will be built at 
-`bin/coreclr/GraphEngine.CoreCLR._version_.nupkg`. `bin/coreclr` will
-be registered as a local NuGet repository, and the local package cache
-for `GraphEngine.CoreCLR` will be cleared. So every time the package is
-built, you can use `dotnet restore` to update to the new package in your
-project.
+Install `libunwind8`, `g++`, `cmake` and `libssl-dev`, then execute
+`tools/build.sh`.  When the build script is executed for the first
+time, it will download and install the latest CoreCLR 2.0 SDK to
+`tools/dotnet`.  A nuget package will be built and put at
+`bin/coreclr/GraphEngine.CoreCLR._version_.nupkg`. The folder
+`bin/coreclr` will be registered as a local NuGet repository and the
+local package cache for `GraphEngine.CoreCLR` will be cleared. After
+the package is built, you can run `dotnet restore` to use the newly
+built package.
 
 Note: the build script currently only supports `Ubuntu 16.04`.
 
