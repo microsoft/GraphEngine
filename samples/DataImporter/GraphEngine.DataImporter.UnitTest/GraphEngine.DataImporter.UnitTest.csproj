@@ -64,7 +64,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CsvParserTestInputString.txt" />
-    <Content Include="CsvParserTestValidateString.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GraphEngine.DataImporter\GraphEngine.DataImporter.csproj">

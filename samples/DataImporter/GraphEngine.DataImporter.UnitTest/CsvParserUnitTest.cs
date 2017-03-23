@@ -19,12 +19,8 @@ namespace GraphEngine.DataImporter.UnitTest
         [Fact]
         public void Csv_Quote_Process()
         {
-            int beginLine = 0;
-            StreamReader sr = new StreamReader("..\\..\\CsvParserTestInputString.txt");
-            for (int i = 0; i < beginLine; i++)
-                sr.ReadLine();
-            string line = sr.ReadLine();
-            string validation = sr.ReadLine();
+            string line = "123,\"aaa\",bbb";
+            string validation = "123 aaa bbb";
             string result;
             try
             {
@@ -36,18 +32,13 @@ namespace GraphEngine.DataImporter.UnitTest
                 result = e.Message;
             }
             Assert.Equal(result, validation);
-            sr.Close();
         }
 
         [Fact]
         public void Csv_CommaInQuote_Process()
         {
-            int beginLine = 2;
-            StreamReader sr = new StreamReader("..\\..\\CsvParserTestInputString.txt");
-            for (int i = 0; i < beginLine; i++)
-                sr.ReadLine();
-            string line = sr.ReadLine();
-            string validation = sr.ReadLine();
+            string line = "123,\"I am fine, thank you!\",aaa";
+            string validation = "123 I am fine, thank you! aaa";
             string result;
             try
             {
@@ -59,18 +50,13 @@ namespace GraphEngine.DataImporter.UnitTest
                 result = e.Message;
             }
             Assert.Equal(result, validation);
-            sr.Close();
         }
 
         [Fact]
         public void Csv_Escape_Process()
         {
-            int beginLine = 4;
-            StreamReader sr = new StreamReader("..\\..\\CsvParserTestInputString.txt");
-            for (int i = 0; i < beginLine; i++)
-                sr.ReadLine();
-            string line = sr.ReadLine();
-            string validation = sr.ReadLine();
+            string line = "123,\"\"\"thank you,\"\" he said.\",aaa";
+            string validation = "123 \"thank you,\" he said. aaa";
             string result;
             try
             {
@@ -82,18 +68,13 @@ namespace GraphEngine.DataImporter.UnitTest
                 result = e.Message;
             }
             Assert.Equal(result, validation);
-            sr.Close();
         }
 
         [Fact]
         public void Csv_FieldNull_Process()
         {
-            int beginLine = 6;
-            StreamReader sr = new StreamReader("..\\..\\CsvParserTestInputString.txt");
-            for (int i = 0; i < beginLine; i++)
-                sr.ReadLine();
-            string line = sr.ReadLine();
-            string validation = sr.ReadLine();
+            string line = ",,,";
+            string validation = "   ";
             string result;
             try
             {
@@ -105,18 +86,13 @@ namespace GraphEngine.DataImporter.UnitTest
                 result = e.Message;
             }
             Assert.Equal(result, validation);
-            sr.Close();
         }
 
         [Fact]
         public void Csv_EscapeError_ThrowException()
         {
-            int beginLine = 8;
-            StreamReader sr = new StreamReader("..\\..\\CsvParserTestInputString.txt");
-            for (int i = 0; i < beginLine; i++)
-                sr.ReadLine();
-            string line = sr.ReadLine();
-            string validation = sr.ReadLine();
+            string line = "\"\"\"\"hello\"\"\"";
+            string validation = "Unexpected double-quote at position 3 of \"\"\"\"hello\"\"\"";
             string result;
             try
             {
@@ -128,18 +104,13 @@ namespace GraphEngine.DataImporter.UnitTest
                 result = e.Message;
             }
             Assert.Equal(result, validation);
-            sr.Close();
         }
 
         [Fact]
         public void Csv_QuoteNotAtStartPosition_ThrowException()
         {
-            int beginLine = 10;
-            StreamReader sr = new StreamReader("..\\..\\CsvParserTestInputString.txt");
-            for (int i = 0; i < beginLine; i++)
-                sr.ReadLine();
-            string line = sr.ReadLine();
-            string validation = sr.ReadLine();
+            string line = "aaa,b\"bb,ccc";
+            string validation = "Unexpected double-quote at position 5 of aaa,b\"bb,ccc";
             string result;
             try
             {
@@ -151,18 +122,13 @@ namespace GraphEngine.DataImporter.UnitTest
                 result = e.Message;
             }
             Assert.Equal(result, validation);
-            sr.Close();
         }
 
         [Fact]
         public void Csv_NoEndQuote_ThrowException()
         {
-            int beginLine = 12;
-            StreamReader sr = new StreamReader("..\\..\\CsvParserTestInputString.txt");
-            for (int i = 0; i < beginLine; i++)
-                sr.ReadLine();
-            string line = sr.ReadLine();
-            string validation = sr.ReadLine();
+            string line = "123,\",123,123";
+            string validation = "Unexpected double-quote at position 4 of 123,\",123,123";
             string result;
             try
             {
@@ -174,18 +140,13 @@ namespace GraphEngine.DataImporter.UnitTest
                 result = e.Message;
             }
             Assert.Equal(result, validation);
-            sr.Close();
         }
 
         [Fact]
         public void Csv_NoEscape_ThrowException()
         {
-            int beginLine = 14;
-            StreamReader sr = new StreamReader("..\\..\\CsvParserTestInputString.txt");
-            for (int i = 0; i < beginLine; i++)
-                sr.ReadLine();
-            string line = sr.ReadLine();
-            string validation = sr.ReadLine();
+            string line = "\",123,123,\"aaa\",123";
+            string validation = "Unexpected double-quote at position 10 of \",123,123,\"aaa\",123";
             string result;
             try
             {
@@ -197,18 +158,13 @@ namespace GraphEngine.DataImporter.UnitTest
                 result = e.Message;
             }
             Assert.Equal(result, validation);
-            sr.Close();
         }
 
         [Fact]
         public void Csv_QuoteNotAtEndPosition_ThrowException()
         {
-            int beginLine = 16;
-            StreamReader sr = new StreamReader("..\\..\\CsvParserTestInputString.txt");
-            for (int i = 0; i < beginLine; i++)
-                sr.ReadLine();
-            string line = sr.ReadLine();
-            string validation = sr.ReadLine();
+            string line = "123,\"aa\"aa,123";
+            string validation = "Unexpected double-quote at position 7 of 123,\"aa\"aa,123";
             string result;
             try
             {
@@ -220,18 +176,13 @@ namespace GraphEngine.DataImporter.UnitTest
                 result = e.Message;
             }
             Assert.Equal(result, validation);
-            sr.Close();
         }
 
         [Fact]
         public void Tsv_Escape_Quote_Process()
         {
-            int beginLine = 18;
-            StreamReader sr = new StreamReader("..\\..\\CsvParserTestInputString.txt");
-            for (int i = 0; i < beginLine; i++)
-                sr.ReadLine();
-            string line = sr.ReadLine();
-            string validation = sr.ReadLine();
+            string line = "aaa	\"\"\"hi\"\"	Jack\"";
+            string validation = "aaa \"hi\"	Jack";
             string result;
             try
             {
@@ -243,18 +194,13 @@ namespace GraphEngine.DataImporter.UnitTest
                 result = e.Message;
             }
             Assert.Equal(result, validation);
-            sr.Close();
         }
 
         [Fact]
         public void Tsv_NoEndQuote_ThrowException()
         {
-            int beginLine = 20;
-            StreamReader sr = new StreamReader("..\\..\\CsvParserTestInputString.txt");
-            for (int i = 0; i < beginLine; i++)
-                sr.ReadLine();
-            string line = sr.ReadLine();
-            string validation = sr.ReadLine();
+            string line = "aaa	\"hi\"\"	\"\"";
+            string validation = "Unexpected double-quote at position 4 of aaa	\"hi\"\"	\"\"";
             string result;
             try
             {
@@ -266,8 +212,7 @@ namespace GraphEngine.DataImporter.UnitTest
                 result = e.Message;
             }
             Assert.Equal(result, validation);
-            sr.Close();
-        }
 
+        }
     }
 }
