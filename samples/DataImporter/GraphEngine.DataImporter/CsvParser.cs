@@ -9,8 +9,8 @@ namespace GraphEngine.DataImporter
     public class CsvParser
     {
         private char delimiter;
-        private const string DefaultQuote = "\"";
-        private const string DefaultEscape = "\"";
+        private const char DefaultQuote = '\"';
+        private const char DefaultEscape = '\"';
 
         public CsvParser(char delimiter)
         {
@@ -46,14 +46,14 @@ namespace GraphEngine.DataImporter
                     beginIndex = curIndex + 1;
                     cDoubleQuotes = 0;
                 }
-                else if (c == '"')
+                else if (c == DefaultQuote)
                 {
                     cDoubleQuotes++;
                     if (cDoubleQuotes == 1 && curIndex != beginIndex)
                     {
                         throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
                     }
-                    else if (cDoubleQuotes % 2 == 0 && processedLine[curIndex + 1] != '"' && processedLine[curIndex + 1] != delimiter)
+                    else if (cDoubleQuotes % 2 == 0 && processedLine[curIndex + 1] != DefaultQuote && processedLine[curIndex + 1] != delimiter)
                     {
                         throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
                     }
@@ -75,7 +75,7 @@ namespace GraphEngine.DataImporter
                 return null;
 
             sanitized = sanitized.Substring(1, sanitized.Length - 2);
-            sanitized = sanitized.Replace(DefaultEscape + DefaultQuote, DefaultQuote);
+            sanitized = sanitized.Replace($"{ DefaultEscape}{ DefaultQuote}", $"{DefaultQuote}");
             return sanitized;
         }
     }
