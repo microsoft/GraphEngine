@@ -9,7 +9,8 @@ namespace GraphEngine.DataImporter
     public class CsvParser
     {
         private char delimiter;
-        string quotation = "\"", escape = "\"";
+        private const string DefaultQuote = "\"";
+        private const string DefaultEscape = "\"";
 
         public CsvParser(char delimiter)
         {
@@ -74,7 +75,7 @@ namespace GraphEngine.DataImporter
                 return null;
 
             sanitized = sanitized.Substring(1, sanitized.Length - 2);
-            sanitized = sanitized.Replace(escape + quotation, quotation);
+            sanitized = sanitized.Replace(DefaultEscape + DefaultQuote, DefaultQuote);
             return sanitized;
         }
     }

@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphEngine.DataImporter", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C7FD7516-B498-4944-AC5E-B86742CE270D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphEngine.DataImporter.CsvParserUnitTest", "GraphEngine.DataImporter.CsvParserUnitTest\GraphEngine.DataImporter.CsvParserUnitTest\GraphEngine.DataImporter.CsvParserUnitTest.csproj", "{C7F0F10A-F5B7-4CA7-9F6F-45476141C27A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphEngine.DataImporter.UnitTest", "GraphEngine.DataImporter.UnitTest\GraphEngine.DataImporter.UnitTest.csproj", "{3AAC5FBA-9FD8-4228-AD15-DBB486709871}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +19,10 @@ Global
 		{CBAE2CF8-FDC7-4F6F-A5C3-649EAAD3F7D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBAE2CF8-FDC7-4F6F-A5C3-649EAAD3F7D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBAE2CF8-FDC7-4F6F-A5C3-649EAAD3F7D4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C7F0F10A-F5B7-4CA7-9F6F-45476141C27A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C7F0F10A-F5B7-4CA7-9F6F-45476141C27A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C7F0F10A-F5B7-4CA7-9F6F-45476141C27A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C7F0F10A-F5B7-4CA7-9F6F-45476141C27A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AAC5FBA-9FD8-4228-AD15-DBB486709871}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AAC5FBA-9FD8-4228-AD15-DBB486709871}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AAC5FBA-9FD8-4228-AD15-DBB486709871}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AAC5FBA-9FD8-4228-AD15-DBB486709871}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

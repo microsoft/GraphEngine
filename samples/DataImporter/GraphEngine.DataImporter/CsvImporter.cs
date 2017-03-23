@@ -21,17 +21,16 @@ namespace GraphEngine.DataImporter
         public ICell ImportEntity(string type, string content, long? parent_id = null)
         {
             var fields = parser.CsvSplit(content);
-            int fieldsCount;
-            fieldsCount = m_fieldNames.Count;
-            if (fields.Count != fieldsCount)
+            if (fields.Count != m_fieldNames.Count)
             {
                 throw new ImporterException("Invalid record. The number of a field ({0}) must equal to {1}: {2}",
-                    fields.Count, fieldsCount, content);
+                    fields.Count, m_fieldNames.Count, content);
             }
+
             var jsonObj = new JObject();
             var fieldDescDict = GetFieldDescriptors(type);
             IFieldDescriptor fieldDesc = null;
-            for (int colIndex = 0; colIndex < fieldsCount; colIndex++)
+            for (int colIndex = 0; colIndex < m_fieldNames.Count; colIndex++)
             {
                 var fieldName = m_fieldNames[colIndex];
                 string fieldValue = fields[colIndex];
