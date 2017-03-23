@@ -63,9 +63,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CsvParserTestInputString.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\GraphEngine.DataImporter\GraphEngine.DataImporter.csproj">
       <Project>{cbae2cf8-fdc7-4f6f-a5c3-649eaad3f7d4}</Project>
       <Name>GraphEngine.DataImporter</Name>
