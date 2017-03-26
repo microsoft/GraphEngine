@@ -151,7 +151,7 @@ namespace Memory
     the current commitment state of each page.
 
     ***************************************/
-    void * MemoryCommit(void * buf, uint64_t size)
+    void * MemoryCommit(void * buf, size_t size)
     {
 #if defined(TRINITY_PLATFORM_WINDOWS)
         //Commit the desired size, the actually allocated space will be larger(up to a whole page) than the desired size.
