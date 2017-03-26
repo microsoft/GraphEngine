@@ -49,9 +49,7 @@ Please submit bugs and feature requests in [GitHub Issues](https://github.com/Mi
 
 ## Building for Windows
 
-To build the `.Net Framework 4.5.1` version, you can either build the
-projects, except for `Trinity.Core.NETStandard.sln`, one by one with
-Visual Studio, or run `tools/build.bat`.
+To build the `.Net Framework 4.5.1` version, run `tools/build.bat`.
 
 To build the `CoreCLR` version, you need to download and install the
 latest [CoreCLR 2.0
