@@ -20,199 +20,197 @@ namespace GraphEngine.DataImporter.UnitTest
         public void Csv_Quote_Process()
         {
             string line = "123,\"aaa\",bbb";
-            string validation = "123 aaa bbb";
-            string result;
+            string[] sarray = { "123", "aaa", "bbb" };
+            List<string> validation = new List<string>(sarray);
+            List<string> result = null;
+            Exception exception = null;
             try
             {
-                List<string> list = csvParser.CsvSplit(line);
-                result = String.Join(" ", list.ToArray());
+                result = csvParser.CsvSplit(line);
             }
             catch (Exception e)
             {
-                result = e.Message;
+                exception = e;
             }
-            Assert.Equal(result, validation);
+            Assert.True(result.SequenceEqual(validation));
         }
 
         [Fact]
         public void Csv_CommaInQuote_Process()
         {
             string line = "123,\"I am fine, thank you!\",aaa";
-            string validation = "123 I am fine, thank you! aaa";
-            string result;
+            string[] sarray = { "123", "I am fine, thank you!", "aaa" };
+            List<string> validation = new List<string>(sarray);
+            List<string> result = null;
+            Exception exception = null;
             try
             {
-                List<string> list = csvParser.CsvSplit(line);
-                result = String.Join(" ", list.ToArray());
+                result = csvParser.CsvSplit(line);
             }
             catch (Exception e)
             {
-                result = e.Message;
+                exception = e;
             }
-            Assert.Equal(result, validation);
+            Assert.True(result.SequenceEqual(validation));
         }
 
         [Fact]
         public void Csv_Escape_Process()
         {
             string line = "123,\"\"\"thank you,\"\" he said.\",aaa";
-            string validation = "123 \"thank you,\" he said. aaa";
-            string result;
+            string[] sarray = { "123", "\"thank you,\" he said.", "aaa" };
+            List<string> validation = new List<string>(sarray);
+            List<string> result = null;
+            Exception exception = null;
             try
             {
-                List<string> list = csvParser.CsvSplit(line);
-                result = String.Join(" ", list.ToArray());
+                result = csvParser.CsvSplit(line);
             }
             catch (Exception e)
             {
-                result = e.Message;
+                exception = e;
             }
-            Assert.Equal(result, validation);
+            Assert.True(result.SequenceEqual(validation));
         }
 
         [Fact]
         public void Csv_FieldNull_Process()
         {
             string line = ",,,";
-            string validation = "   ";
-            string result;
+            string[] sarray = { null, null, null, null };
+            List<string> validation = new List<string>(sarray);
+            List<string> result = null;
+            Exception exception = null;
             try
             {
-                List<string> list = csvParser.CsvSplit(line);
-                result = String.Join(" ", list.ToArray());
+                result = csvParser.CsvSplit(line);
             }
             catch (Exception e)
             {
-                result = e.Message;
+                exception = e;
             }
-            Assert.Equal(result, validation);
+            Assert.True(result.SequenceEqual(validation));
         }
 
         [Fact]
         public void Csv_EscapeError_ThrowException()
         {
             string line = "\"\"\"\"hello\"\"\"";
-            string validation = "Unexpected double-quote at position 3 of \"\"\"\"hello\"\"\"";
-            string result;
+            List<string> result = null;
+            Exception exception = null;
             try
             {
-                List<string> list = csvParser.CsvSplit(line);
-                result = String.Join(" ", list.ToArray());
+                result = csvParser.CsvSplit(line);
             }
             catch (Exception e)
             {
-                result = e.Message;
+                exception = e;
             }
-            Assert.Equal(result, validation);
+            Assert.NotNull(exception);
         }
 
         [Fact]
         public void Csv_QuoteNotAtStartPosition_ThrowException()
         {
             string line = "aaa,b\"bb,ccc";
-            string validation = "Unexpected double-quote at position 5 of aaa,b\"bb,ccc";
-            string result;
+            List<string> result = null;
+            Exception exception = null;
             try
             {
-                List<string> list = csvParser.CsvSplit(line);
-                result = String.Join(" ", list.ToArray());
+                result = csvParser.CsvSplit(line);
             }
             catch (Exception e)
             {
-                result = e.Message;
+                exception = e;
             }
-            Assert.Equal(result, validation);
+            Assert.NotNull(exception);
         }
 
         [Fact]
         public void Csv_NoEndQuote_ThrowException()
         {
             string line = "123,\",123,123";
-            string validation = "Unexpected double-quote at position 4 of 123,\",123,123";
-            string result;
+            List<string> result = null;
+            Exception exception = null;
             try
             {
-                List<string> list = csvParser.CsvSplit(line);
-                result = String.Join(" ", list.ToArray());
+                result = csvParser.CsvSplit(line);
             }
             catch (Exception e)
             {
-                result = e.Message;
+                exception = e;
             }
-            Assert.Equal(result, validation);
+            Assert.NotNull(exception);
         }
 
         [Fact]
         public void Csv_NoEscape_ThrowException()
         {
             string line = "\",123,123,\"aaa\",123";
-            string validation = "Unexpected double-quote at position 10 of \",123,123,\"aaa\",123";
-            string result;
+            List<string> result = null;
+            Exception exception = null;
             try
             {
-                List<string> list = csvParser.CsvSplit(line);
-                result = String.Join(" ", list.ToArray());
+                result = csvParser.CsvSplit(line);
             }
             catch (Exception e)
             {
-                result = e.Message;
+                exception = e;
             }
-            Assert.Equal(result, validation);
+            Assert.NotNull(exception);
         }
 
         [Fact]
         public void Csv_QuoteNotAtEndPosition_ThrowException()
         {
             string line = "123,\"aa\"aa,123";
-            string validation = "Unexpected double-quote at position 7 of 123,\"aa\"aa,123";
-            string result;
+            List<string> result = null;
+            Exception exception = null;
             try
             {
-                List<string> list = csvParser.CsvSplit(line);
-                result = String.Join(" ", list.ToArray());
+                result = csvParser.CsvSplit(line);
             }
             catch (Exception e)
             {
-                result = e.Message;
+                exception = e;
             }
-            Assert.Equal(result, validation);
+            Assert.NotNull(exception);
         }
 
         [Fact]
         public void Tsv_Escape_Quote_Process()
         {
             string line = "aaa	\"\"\"hi\"\"	Jack\"";
-            string validation = "aaa \"hi\"	Jack";
-            string result;
+            string[] sarray = { "aaa", "\"hi\"\tJack" };
+            List<string> validation = new List<string>(sarray);
+            List<string> result = null;
+            Exception exception = null;
             try
             {
-                List<string> list = tsvParser.CsvSplit(line);
-                result = String.Join(" ", list.ToArray());
+                result = tsvParser.CsvSplit(line);
             }
             catch (Exception e)
             {
-                result = e.Message;
+                exception = e;
             }
-            Assert.Equal(result, validation);
+            Assert.True(result.SequenceEqual(validation));
         }
 
         [Fact]
         public void Tsv_NoEndQuote_ThrowException()
         {
             string line = "aaa	\"hi\"\"	\"\"";
-            string validation = "Unexpected double-quote at position 4 of aaa	\"hi\"\"	\"\"";
-            string result;
+            List<string> result = null;
+            Exception exception = null;
             try
             {
-                List<string> list = tsvParser.CsvSplit(line);
-                result = String.Join(" ", list.ToArray());
+                result = tsvParser.CsvSplit(line);
             }
             catch (Exception e)
             {
-                result = e.Message;
+                exception = e;
             }
-            Assert.Equal(result, validation);
-
+            Assert.NotNull(exception);
         }
     }
 }
