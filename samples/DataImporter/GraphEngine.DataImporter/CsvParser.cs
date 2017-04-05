@@ -9,8 +9,8 @@ namespace GraphEngine.DataImporter
     public class CsvParser
     {
         private char delimiter;
-        private const char DefaultQuote = '\"';
-        private const char DefaultEscape = '\"';
+        private const char DefaultQuote = '"';
+        private const char DefaultEscape = '\\';
 
         public CsvParser(char delimiter)
         {
@@ -25,7 +25,7 @@ namespace GraphEngine.DataImporter
             List<string> fields = new List<string>();
             int beginIndex = 0;
             int curIndex = 0;
-            int cDoubleQuotes = 0;
+            int countQuoteEscape = 0;
             string processedLine = line + delimiter;
 
             for (; curIndex < processedLine.Length; curIndex++)
@@ -36,26 +36,31 @@ namespace GraphEngine.DataImporter
                     fields.Add(null);
                     beginIndex = curIndex + 1;
                 }
-                else if (c == delimiter && cDoubleQuotes % 2 == 0)
+                else if (c == delimiter && countQuoteEscape % 2 == 0)
                 {
-                    if (cDoubleQuotes == 0)
+                    if (countQuoteEscape == 0)
                         fields.Add(processedLine.Substring(beginIndex, curIndex - beginIndex));
                     else
                         fields.Add(SanitizeCsvField(processedLine.Substring(beginIndex, curIndex - beginIndex)));
 
                     beginIndex = curIndex + 1;
-                    cDoubleQuotes = 0;
+                    countQuoteEscape = 0;
                 }
-                else if (c == DefaultQuote)
+                else if (c == DefaultQuote || c == DefaultEscape)
                 {
-                    cDoubleQuotes++;
-                    if (cDoubleQuotes == 1 && curIndex != beginIndex)
+                    if (c == DefaultQuote || (countQuoteEscape > 0 && processedLine[curIndex + 1] == DefaultQuote))
+                        countQuoteEscape++;
+
+                    if (countQuoteEscape > 0)
                     {
-                        throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
-                    }
-                    else if (cDoubleQuotes % 2 == 0 && processedLine[curIndex + 1] != DefaultQuote && processedLine[curIndex + 1] != delimiter)
-                    {
-                        throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
+                        if (countQuoteEscape == 1 && curIndex != beginIndex && c == DefaultQuote)
+                        {
+                            throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
+                        }
+                        else if (countQuoteEscape % 2 == 0 && processedLine[curIndex + 1] != DefaultQuote && processedLine[curIndex + 1] != delimiter)
+                        {
+                            throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
+                        }
                     }
                 }
             }
@@ -75,7 +80,7 @@ namespace GraphEngine.DataImporter
                 return null;
 
             sanitized = sanitized.Substring(1, sanitized.Length - 2);
-            sanitized = sanitized.Replace($"{ DefaultEscape}{ DefaultQuote}", $"{DefaultQuote}");
+            sanitized = sanitized.Replace($"{ DefaultEscape }{ DefaultQuote }", $"{ DefaultQuote }");
             return sanitized;
         }
     }

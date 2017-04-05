@@ -20,82 +20,56 @@ namespace GraphEngine.DataImporter.UnitTest
         public void Csv_Quote_Process()
         {
             string line = "123,\"aaa\",bbb";
-            string[] sarray = { "123", "aaa", "bbb" };
-            List<string> validation = new List<string>(sarray);
+            var expectedTokens = new List<string> { "123", "aaa", "bbb" };
             List<string> result = null;
-            Exception exception = null;
-            try
-            {
-                result = csvParser.CsvSplit(line);
-            }
-            catch (Exception e)
-            {
-                exception = e;
-            }
-            Assert.True(result.SequenceEqual(validation));
+            result = csvParser.CsvSplit(line);
+            Assert.True(result.SequenceEqual(expectedTokens));
         }
 
         [Fact]
         public void Csv_CommaInQuote_Process()
         {
-            string line = "123,\"I am fine, thank you!\",aaa";
-            string[] sarray = { "123", "I am fine, thank you!", "aaa" };
-            List<string> validation = new List<string>(sarray);
+            string line = "123,\"I am fine,\\thank you!\",aaa";
+            var expectedTokens = new List<string> { "123", "I am fine,\\thank you!", "aaa" };
             List<string> result = null;
-            Exception exception = null;
-            try
-            {
-                result = csvParser.CsvSplit(line);
-            }
-            catch (Exception e)
-            {
-                exception = e;
-            }
-            Assert.True(result.SequenceEqual(validation));
+            result = csvParser.CsvSplit(line);
+            Assert.True(result.SequenceEqual(expectedTokens));
+        }
+
+        [Fact]
+        public void Csv_EscapeOnly_Process()
+        {
+            string line = "a\\a\\a,\\,c\\c\\c";
+            var expectedTokens = new List<string> { "a\\a\\a", "\\", "c\\c\\c" };
+            List<string> result = null;
+            result = csvParser.CsvSplit(line);
+            Assert.True(result.SequenceEqual(expectedTokens));
         }
 
         [Fact]
         public void Csv_Escape_Process()
         {
-            string line = "123,\"\"\"thank you,\"\" he said.\",aaa";
-            string[] sarray = { "123", "\"thank you,\" he said.", "aaa" };
-            List<string> validation = new List<string>(sarray);
+            string line = "123,\"\\\"thank you,\\\" he said.\",aaa";
+            var expectedTokens = new List<string> { "123", "\"thank you,\" he said.", "aaa" };
             List<string> result = null;
-            Exception exception = null;
-            try
-            {
-                result = csvParser.CsvSplit(line);
-            }
-            catch (Exception e)
-            {
-                exception = e;
-            }
-            Assert.True(result.SequenceEqual(validation));
+            result = csvParser.CsvSplit(line);
+            Assert.True(result.SequenceEqual(expectedTokens));
         }
 
         [Fact]
         public void Csv_FieldNull_Process()
         {
             string line = ",,,";
-            string[] sarray = { null, null, null, null };
-            List<string> validation = new List<string>(sarray);
+            var expectedTokens = new List<string> { null, null, null, null };
             List<string> result = null;
-            Exception exception = null;
-            try
-            {
-                result = csvParser.CsvSplit(line);
-            }
-            catch (Exception e)
-            {
-                exception = e;
-            }
-            Assert.True(result.SequenceEqual(validation));
+            result = csvParser.CsvSplit(line);
+            Assert.True(result.SequenceEqual(expectedTokens));
         }
 
         [Fact]
         public void Csv_EscapeError_ThrowException()
         {
-            string line = "\"\"\"\"hello\"\"\"";
+            string line = "\"\"\"\"hello\"\"\"\"";
             List<string> result = null;
             Exception exception = null;
             try
@@ -112,7 +86,7 @@ namespace GraphEngine.DataImporter.UnitTest
         [Fact]
         public void Csv_QuoteNotAtStartPosition_ThrowException()
         {
-            string line = "aaa,b\"bb,ccc";
+            string line = "aaa,\"b\"b\"b\",ccc";
             List<string> result = null;
             Exception exception = null;
             try
@@ -180,26 +154,17 @@ namespace GraphEngine.DataImporter.UnitTest
         [Fact]
         public void Tsv_Escape_Quote_Process()
         {
-            string line = "aaa	\"\"\"hi\"\"	Jack\"";
-            string[] sarray = { "aaa", "\"hi\"\tJack" };
-            List<string> validation = new List<string>(sarray);
+            string line = "aaa\t\"\\\"hi\\\"\tJack\"";
+            var expectedTokens = new List<string> { "aaa", "\"hi\"\tJack" };
             List<string> result = null;
-            Exception exception = null;
-            try
-            {
-                result = tsvParser.CsvSplit(line);
-            }
-            catch (Exception e)
-            {
-                exception = e;
-            }
-            Assert.True(result.SequenceEqual(validation));
+            result = tsvParser.CsvSplit(line);
+            Assert.True(result.SequenceEqual(expectedTokens));
         }
 
         [Fact]
         public void Tsv_NoEndQuote_ThrowException()
         {
-            string line = "aaa	\"hi\"\"	\"\"";
+            string line = "aaa\t\"hi\"\"\t\"\"";
             List<string> result = null;
             Exception exception = null;
             try

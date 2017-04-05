@@ -17,8 +17,8 @@ namespace GraphEngine.DataImporter
     {
         public ICell ImportEntity(string type, string line, long? parent_id)
         {
-            ICell cell = Global.LocalStorage.NewGenericCell(type);
-            JObject jobj = JObject.Parse(line);
+            ICell           cell       = Global.LocalStorage.NewGenericCell(type);
+            JObject         jobj       = JObject.Parse(line);
             ICellDescriptor cell_desc  = Importer.s_cellTypes[type];
             long?           cellid     = null;
 

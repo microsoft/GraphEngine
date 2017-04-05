@@ -79,9 +79,9 @@ namespace GraphEngine.DataImporter
                             if (arr.Length != 2 || string.IsNullOrEmpty(arr[0]) || string.IsNullOrEmpty(arr[1])) throw new ImporterException("Invalid {0} parameter: {1}", Consts.c_KW_ReverseEdgeImport, rev_edge_src_str);
                             return new ReverseEdgeFieldDescriptor
                             {
-                                SourceCellType  = arr[0],
+                                SourceCellType = arr[0],
                                 SourceFieldName = arr[1],
-                                TargetCellType  = cd.TypeName,
+                                TargetCellType = cd.TypeName,
                                 TargetFieldName = fd.Name
                             };
                         })
@@ -109,7 +109,7 @@ namespace GraphEngine.DataImporter
 
             Parallel.ForEach(cell_ids,
 #if DEBUG
-                new ParallelOptions{MaxDegreeOfParallelism = 1},
+                new ParallelOptions { MaxDegreeOfParallelism = 1 },
 #endif
 
  cellid =>
@@ -127,7 +127,7 @@ namespace GraphEngine.DataImporter
                  if (remote_cell == null)
                  {
                      save_otherwise_dispose = true;
-                     remote_cell        = Global.LocalStorage.NewGenericCell(rfd.TargetCellType);
+                     remote_cell = Global.LocalStorage.NewGenericCell(rfd.TargetCellType);
                      remote_cell.CellID = target_id;
                  }
 
@@ -206,7 +206,7 @@ namespace GraphEngine.DataImporter
 
             Parallel.ForEach(preprocessed_lines,
 #if DEBUG
-                new ParallelOptions{MaxDegreeOfParallelism = 1},
+                new ParallelOptions { MaxDegreeOfParallelism = 1 },
 #else
                 new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount * 2 },
 #endif
@@ -225,9 +225,11 @@ namespace GraphEngine.DataImporter
 
         private static IImporter GetImporter(string path, CmdOptions options)
         {
-            char comma = ',', tab = '\t', slash = '/';
+            const char comma = ',';
+            const char tab = '\t';
             string filename, filetype;
             bool delimiterSpecific = options.Delimiter == '\0' ? false : true;
+
             if (options.FileFormat != null)
             {
                 filetype = options.FileFormat.StartsWith(".") ? options.FileFormat : "." + options.FileFormat;
@@ -242,6 +244,7 @@ namespace GraphEngine.DataImporter
                     filetype = Path.GetExtension(Path.GetFileNameWithoutExtension(filename)).ToLower();
                 }
             }
+
             switch (filetype)
             {
                 case ".json":
@@ -254,37 +257,7 @@ namespace GraphEngine.DataImporter
                     return g_opts.Sorted ? (IImporter)new UnsortedRDFImporter() : new SortedRDFImporter();
                 default:
                     {
-                        IEnumerable<string> text = FileReader.ReadFile(path);
-                        using (IEnumerator<string> line = text.GetEnumerator())
-                        {
-                            line.MoveNext();
-                            string headerRow = line.Current;
-                            JObject jobj = null;
-                            try
-                            {
-                                jobj = JObject.Parse(headerRow);
-                                return new JsonImporter();
-                            }
-                            catch (Exception)
-                            {
-                            }
-                            if (headerRow.Count(c => c == comma) >= headerRow.Count(c => c == tab) && headerRow.Count(c => c == comma) >= headerRow.Count(c => c == slash))
-                            {
-                                 return new CsvImporter(delimiterSpecific? options.Delimiter: comma);
-                            }
-                            else if (headerRow.Count(c => c == tab) >= headerRow.Count(c => c == comma) && headerRow.Count(c => c == tab) >= headerRow.Count(c => c == slash))
-                            {
-                                return new CsvImporter(delimiterSpecific? options.Delimiter: tab);
-                            }
-                            else if (headerRow.Count(c => c == slash) >= headerRow.Count(c => c == tab) && headerRow.Count(c => c == slash) >= headerRow.Count(c => c == comma))
-                            {
-                                return g_opts.Sorted ? (IImporter)new UnsortedRDFImporter() : new SortedRDFImporter();
-                            }
-                            else
-                            {
-                                return null;
-                            }
-                        } 
+                        return null;
                     }
             }
         }
