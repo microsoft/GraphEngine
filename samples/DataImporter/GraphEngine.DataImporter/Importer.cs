@@ -228,7 +228,7 @@ namespace GraphEngine.DataImporter
             const char comma = ',';
             const char tab = '\t';
             string filename, filetype;
-            bool delimiterSpecific = options.Delimiter == '\0' ? false : true;
+            bool delimiterSpecify = (options.Delimiter == '\0') ? false : true;
 
             if (options.FileFormat != null)
             {
@@ -250,9 +250,9 @@ namespace GraphEngine.DataImporter
                 case ".json":
                     return new JsonImporter();
                 case ".csv":
-                    return new CsvImporter(delimiterSpecific ? options.Delimiter : comma);
+                    return new CsvImporter(delimiterSpecify ? options.Delimiter : comma);
                 case ".tsv":
-                    return new CsvImporter(delimiterSpecific ? options.Delimiter : tab);
+                    return new CsvImporter(delimiterSpecify ? options.Delimiter : tab);
                 case ".ntriples":
                     return g_opts.Sorted ? (IImporter)new UnsortedRDFImporter() : new SortedRDFImporter();
                 default:

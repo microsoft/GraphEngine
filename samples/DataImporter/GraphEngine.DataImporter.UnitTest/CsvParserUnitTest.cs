@@ -49,7 +49,7 @@ namespace GraphEngine.DataImporter.UnitTest
         [Fact]
         public void Csv_Escape_Process()
         {
-            string line = "123,\"\\\"thank you,\\\" he said.\",aaa";
+            string line = "123,\"\"\"thank you,\"\" he said.\",aaa";
             var expectedTokens = new List<string> { "123", "\"thank you,\" he said.", "aaa" };
             List<string> result = null;
             result = csvParser.CsvSplit(line);
@@ -154,7 +154,7 @@ namespace GraphEngine.DataImporter.UnitTest
         [Fact]
         public void Tsv_Escape_Quote_Process()
         {
-            string line = "aaa\t\"\\\"hi\\\"\tJack\"";
+            string line = "aaa\t\"\"\"hi\"\"\tJack\"";
             var expectedTokens = new List<string> { "aaa", "\"hi\"\tJack" };
             List<string> result = null;
             result = tsvParser.CsvSplit(line);

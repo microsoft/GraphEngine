@@ -46,7 +46,6 @@ namespace GraphEngine.DataImporter
                     beginIndex = curIndex + 1;
                     countQuoteEscape = 0;
                 }
-
                 else if (c == DefaultEscape && countQuoteEscape > 0 && processedLine[curIndex + 1] == DefaultQuote)
                 {
                     countQuoteEscape++;
@@ -64,10 +63,7 @@ namespace GraphEngine.DataImporter
                         throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
                     }
                 }
-
-
             }
-
 
             if (beginIndex != curIndex)
             {
@@ -84,7 +80,7 @@ namespace GraphEngine.DataImporter
                 return null;
 
             sanitized = sanitized.Substring(1, sanitized.Length - 2);
-            sanitized = sanitized.Replace($"{ DefaultEscape }", "");
+            sanitized = sanitized.Replace($"{ DefaultEscape }{ DefaultQuote }", $"{ DefaultQuote }");
             return sanitized;
         }
     }
