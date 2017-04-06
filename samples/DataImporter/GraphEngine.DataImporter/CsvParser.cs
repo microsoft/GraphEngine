@@ -10,7 +10,7 @@ namespace GraphEngine.DataImporter
     {
         private char delimiter;
         private const char DefaultQuote = '"';
-        private const char DefaultEscape = '\\';
+        private const char DefaultEscape = '"';
 
         public CsvParser(char delimiter)
         {
@@ -46,24 +46,28 @@ namespace GraphEngine.DataImporter
                     beginIndex = curIndex + 1;
                     countQuoteEscape = 0;
                 }
-                else if (c == DefaultQuote || c == DefaultEscape)
-                {
-                    if (c == DefaultQuote || (countQuoteEscape > 0 && processedLine[curIndex + 1] == DefaultQuote))
-                        countQuoteEscape++;
 
-                    if (countQuoteEscape > 0)
+                else if (c == DefaultEscape && countQuoteEscape > 0 && processedLine[curIndex + 1] == DefaultQuote)
+                {
+                    countQuoteEscape++;
+                }
+                else if (c == DefaultQuote)
+                {
+                    countQuoteEscape++;
+
+                    if (countQuoteEscape == 1 && curIndex != beginIndex)
                     {
-                        if (countQuoteEscape == 1 && curIndex != beginIndex && c == DefaultQuote)
-                        {
-                            throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
-                        }
-                        else if (countQuoteEscape % 2 == 0 && processedLine[curIndex + 1] != DefaultQuote && processedLine[curIndex + 1] != delimiter)
-                        {
-                            throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
-                        }
+                        throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
+                    }
+                    else if (countQuoteEscape % 2 == 0 && processedLine[curIndex + 1] != delimiter)
+                    {
+                        throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
                     }
                 }
+
+
             }
+
 
             if (beginIndex != curIndex)
             {
@@ -80,7 +84,7 @@ namespace GraphEngine.DataImporter
                 return null;
 
             sanitized = sanitized.Substring(1, sanitized.Length - 2);
-            sanitized = sanitized.Replace($"{ DefaultEscape }{ DefaultQuote }", $"{ DefaultQuote }");
+            sanitized = sanitized.Replace($"{ DefaultEscape }", "");
             return sanitized;
         }
     }
