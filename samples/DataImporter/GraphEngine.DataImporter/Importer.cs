@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -52,7 +54,7 @@ namespace GraphEngine.DataImporter
 
             foreach (var file in files)
             {
-                ImportFile(file);
+                ImportFile(file, options);
             }
 
             ImportReverseEdges();
@@ -77,9 +79,9 @@ namespace GraphEngine.DataImporter
                             if (arr.Length != 2 || string.IsNullOrEmpty(arr[0]) || string.IsNullOrEmpty(arr[1])) throw new ImporterException("Invalid {0} parameter: {1}", Consts.c_KW_ReverseEdgeImport, rev_edge_src_str);
                             return new ReverseEdgeFieldDescriptor
                             {
-                                SourceCellType  = arr[0],
+                                SourceCellType = arr[0],
                                 SourceFieldName = arr[1],
-                                TargetCellType  = cd.TypeName,
+                                TargetCellType = cd.TypeName,
                                 TargetFieldName = fd.Name
                             };
                         })
@@ -107,7 +109,7 @@ namespace GraphEngine.DataImporter
 
             Parallel.ForEach(cell_ids,
 #if DEBUG
-                new ParallelOptions{MaxDegreeOfParallelism = 1},
+                new ParallelOptions { MaxDegreeOfParallelism = 1 },
 #endif
 
  cellid =>
@@ -125,7 +127,7 @@ namespace GraphEngine.DataImporter
                  if (remote_cell == null)
                  {
                      save_otherwise_dispose = true;
-                     remote_cell        = Global.LocalStorage.NewGenericCell(rfd.TargetCellType);
+                     remote_cell = Global.LocalStorage.NewGenericCell(rfd.TargetCellType);
                      remote_cell.CellID = target_id;
                  }
 
@@ -170,11 +172,11 @@ namespace GraphEngine.DataImporter
  });
         }
 
-        private static void ImportFile(string file)
+        private static void ImportFile(string file, CmdOptions options)
         {
             Log.WriteLine("Importing {0}", file);
             string typename = Path.GetFileNameWithoutExtension(file);
-            IImporter importer = GetImporter(file);
+            IImporter importer = GetImporter(file, options);
 
             if (importer == null)
             {
@@ -204,7 +206,7 @@ namespace GraphEngine.DataImporter
 
             Parallel.ForEach(preprocessed_lines,
 #if DEBUG
-                new ParallelOptions{MaxDegreeOfParallelism = 1},
+                new ParallelOptions { MaxDegreeOfParallelism = 1 },
 #else
                 new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount * 2 },
 #endif
@@ -216,33 +218,47 @@ namespace GraphEngine.DataImporter
                  }
                  catch (Exception e)
                  {
-                     //Log.WriteLine(LogLevel.Error, "An error occured during import: \n{0}\n", e.Message);
+                     Log.WriteLine(LogLevel.Error, "An error occured during import: \n{0}\n", e.Message);
                  }
              });
         }
 
-        public static IImporter GetImporter(string path)
+        private static IImporter GetImporter(string path, CmdOptions options)
         {
-            string filename = Path.GetFileName(path);
-            string filetype = Path.GetExtension(filename).ToLower();
+            const char comma = ',';
+            const char tab = '\t';
+            string filename, filetype;
+            bool delimiterSpecify = (options.Delimiter == '\0') ? false : true;
 
-            if (filetype == ".gz" || filetype == ".zip")
+            if (options.FileFormat != null)
             {
-                filetype = Path.GetExtension(Path.GetFileNameWithoutExtension(filename)).ToLower();
+                filetype = options.FileFormat.StartsWith(".") ? options.FileFormat : "." + options.FileFormat;
+            }
+            else
+            {
+                filename = Path.GetFileName(path);
+                filetype = Path.GetExtension(filename).ToLower();
+
+                if (filetype == ".gz" || filetype == ".zip")
+                {
+                    filetype = Path.GetExtension(Path.GetFileNameWithoutExtension(filename)).ToLower();
+                }
             }
 
             switch (filetype)
             {
                 case ".json":
-                case ".txt":
                     return new JsonImporter();
                 case ".csv":
+                    return new CsvImporter(delimiterSpecify ? options.Delimiter : comma);
                 case ".tsv":
-                    return new CsvImporter();
+                    return new CsvImporter(delimiterSpecify ? options.Delimiter : tab);
                 case ".ntriples":
                     return g_opts.Sorted ? (IImporter)new UnsortedRDFImporter() : new SortedRDFImporter();
                 default:
-                    return null;
+                    {
+                        return null;
+                    }
             }
         }
     }

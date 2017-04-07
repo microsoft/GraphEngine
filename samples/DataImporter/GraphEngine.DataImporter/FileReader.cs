@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,7 +54,6 @@ namespace GraphEngine.DataImporter
                 }
             }
             Log.WriteLine("Loaded {0} lines.", counter);
-            //return File.ReadLines(filename);
         }
 
         private static Stream GetInputStream(FileStream fs, CompressionMode mode)
