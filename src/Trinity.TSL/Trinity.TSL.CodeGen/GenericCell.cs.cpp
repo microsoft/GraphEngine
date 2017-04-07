@@ -320,7 +320,7 @@ source->append(R"::(.GenericCellAccessor"/> instance.</returns>
                         else if ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
                         {
                             throw new ArgumentException("CellAccessOptions.CreateNewO)::");
-source->append(R"::(nCellNotFound is not valid for UseGenericCell. Cannot determine new cell type.", "options");
+source->append(R"::(nCellNotFound is not valid for this method. Cannot determine new cell type.", "options");
                         }
                         else if ((options & CellAccessOptions.ReturnNullOnCellNotFound) != 0)
                         {
@@ -354,6 +354,40 @@ source->append(R"::(
                     storage.ReleaseCellLock(CellId, entryIndex);
                     throw new CellTypeNotMatchException("Cannot determine cell type.");
              };
+        }
+        /// <summary>
+        /// Allocate a generic cell accessor on the specified cell.
+        /// If <c><see cref="Trinity.TrinityConfig.ReadOnly"/> == false</c>,
+        /// on calling this method, it attempts to acquire the lock of the cell,
+        /// and blocks until it gets the lock.
+        /// </summary>
+        /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// <param name="CellId">The id of the specified cell.</param>
+        /// <param name="options">Cell access options.</param>
+        /// <param name="cellType">Specifies the type of cell to be created.</param>
+        /// <returns>A <see cref=")::");
+source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
+source->append(R"::(.GenericCellAccessor"/> instance.</returns>
+        public unsafe ICellAccessor UseGenericCell(Trinity.Storage.LocalMemoryStorage storage, long CellId, CellAccessOptions options, string cellType)
+        {
+            switch (cellType)
+            {
+                )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->cellList)->size();++iterator_1)
+{
+source->append(R"::(
+                case ")::");
+source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
+source->append(R"::(": return )::");
+source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
+source->append(R"::(_Accessor.New(CellId, options);
+                )::");
+}
+source->append(R"::(
+                default:
+                    Throw.invalid_cell_type();
+                    return null;
+            }
         }
         #endregion
         #region LocalMemoryStorage Enumerate operations

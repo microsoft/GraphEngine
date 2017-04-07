@@ -212,7 +212,7 @@ namespace t_Namespace
                         }
                         else if ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
                         {
-                            throw new ArgumentException("CellAccessOptions.CreateNewOnCellNotFound is not valid for UseGenericCell. Cannot determine new cell type.", "options");
+                            throw new ArgumentException("CellAccessOptions.CreateNewOnCellNotFound is not valid for this method. Cannot determine new cell type.", "options");
                         }
                         else if ((options & CellAccessOptions.ReturnNullOnCellNotFound) != 0)
                         {
@@ -238,6 +238,30 @@ namespace t_Namespace
                     storage.ReleaseCellLock(CellId, entryIndex);
                     throw new CellTypeNotMatchException("Cannot determine cell type.");
              };
+        }
+        
+        /// <summary>
+        /// Allocate a generic cell accessor on the specified cell.
+        /// If <c><see cref="Trinity.TrinityConfig.ReadOnly"/> == false</c>,
+        /// on calling this method, it attempts to acquire the lock of the cell,
+        /// and blocks until it gets the lock.
+        /// </summary>
+        /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// <param name="CellId">The id of the specified cell.</param>
+        /// <param name="options">Cell access options.</param>
+        /// <param name="cellType">Specifies the type of cell to be created.</param>
+        /// <returns>A <see cref="t_Namespace.GenericCellAccessor"/> instance.</returns>
+        public unsafe ICellAccessor UseGenericCell(Trinity.Storage.LocalMemoryStorage storage, long CellId, CellAccessOptions options, string cellType)
+        {
+            switch (cellType)
+            {
+                /*FOREACH*/
+                case "t_cell_name": return t_cell_name_Accessor.New(CellId, options);
+                /*END*/
+                default:
+                    Throw.invalid_cell_type();
+                    return null;// should not reach here
+            }
         }
         #endregion
 

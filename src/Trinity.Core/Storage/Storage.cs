@@ -298,6 +298,19 @@ namespace Trinity.Storage
         ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId, CellAccessOptions options);
 
         /// <summary>
+        /// Allocate a generic cell accessor on the specified cell.
+        /// If <c><see cref="Trinity.TrinityConfig.ReadOnly"/> == false</c>,
+        /// on calling this method, it attempts to acquire the lock of the cell,
+        /// and blocks until it gets the lock.
+        /// </summary>
+        /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> object.</param>
+        /// <param name="cellId">The id of the specified cell.</param>
+        /// <param name="options">Cell access options.</param>
+        /// <param name="cellType">Specifies the type of cell to be created.</param>
+        /// <returns>A <see cref="Trinity.Storage.ICellAccessor"/> instance.</returns>
+        ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId, CellAccessOptions options, string cellType);
+
+        /// <summary>
         /// Enumerates all the typed cells within the local memory storage.
         /// The cells without a type (where CellType == 0) are skipped.
         /// </summary>
@@ -396,6 +409,11 @@ namespace Trinity.Storage
         }
 
         public ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId, CellAccessOptions options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId, CellAccessOptions options, string cellType)
         {
             throw new NotImplementedException();
         }
