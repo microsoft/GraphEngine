@@ -29,6 +29,8 @@ namespace GraphEngine.DataImporter
 
         [Option('p', "delimiter", HelpText = "Specifies the delimiter of CSV or TSV file", Required = false)]
         public char Delimiter { get; set; }
+        [Option("dtr_threshold", HelpText = "Specifies the threshold of dominating type ratio (between 0 and 1.0)", Required = false, DefaultValue = 1.0)]
+        public double DominatingTypeThreshold { get; set; }
 
         [Option('f', "fileFormat", HelpText = "Specifies the file format", Required = false)]
         public string FileFormat { get; set; }

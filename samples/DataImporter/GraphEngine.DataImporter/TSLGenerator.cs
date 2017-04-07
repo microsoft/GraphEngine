@@ -21,6 +21,7 @@ namespace GraphEngine.DataImporter
         internal static int g_type_id = 1;
         internal static CmdOptions g_opts;
         internal static string g_output_tsl_name = "generated.tsl";
+        internal static double g_field_type_aggregation_threshold = 1.0;
 
         internal static int GetFieldId(string property)
         {
@@ -68,13 +69,14 @@ namespace GraphEngine.DataImporter
         internal static void Generate(List<string> files, CmdOptions opts)
         {
             Log.WriteLine("Scanning data files to generate a TSL file.");
-            if(opts.Output != null)
+            if (opts.Output != null)
             {
                 g_output_tsl_name = opts.Output;
             }
 
             Global.LocalStorage.ResetStorage();
             g_opts = opts;
+            g_field_type_aggregation_threshold = g_opts.DominatingTypeThreshold;
             g_field_idmap.Clear();
             foreach (var file in files)
             {
@@ -227,14 +229,55 @@ namespace GraphEngine.DataImporter
 
         private static MetaField AggregateFieldInstances(IGrouping<int, MetaField> field_instances)
         {
-            int fieldId = field_instances.Key;
-            MetaField field = field_instances.Aggregate(field_instances.First(), (f, current) =>
+            if (g_field_type_aggregation_threshold < 1.0)
+            {
+                long instances_num = 0;
+                Dictionary<FieldType, long> cnt_dict  = new Dictionary<FieldType, long>();
+                Dictionary<FieldType, bool> list_dict = new Dictionary<FieldType, bool>();
+                foreach (var instance in field_instances)
+                {
+                    ++instances_num;
+                    if (cnt_dict.ContainsKey(instance.fieldType))
+                    {
+                        ++cnt_dict[instance.fieldType];
+                        list_dict[instance.fieldType] = list_dict[instance.fieldType] || instance.isList;
+                    }
+                    else
+                    {
+                        cnt_dict[instance.fieldType]  = 1;
+                        list_dict[instance.fieldType] = instance.isList;
+                    }
+                }
+
+                if (instances_num == 0) throw new ArgumentException("No instances for a field", "field_instances");
+
+                long      dominating_num  = cnt_dict.Max(_ => _.Value);
+                FieldType dominating_type = cnt_dict.First(_ => _.Value == dominating_num).Key;
+                bool      dominating_list = list_dict[dominating_type];
+
+                double dominating_type_ratio = dominating_num / (double)instances_num;
+                if (dominating_type_ratio >= g_field_type_aggregation_threshold)
+                {
+                    var dominating_field = new MetaField
+                    {
+                        fieldId   = field_instances.Key,
+                        fieldType = dominating_type,
+                        isList    = dominating_list,
+                        typeId    = field_instances.First().typeId
+                    };
+
+                    Log.WriteLine("Found dominating type {0} for Type {1}: Field {2} ({3:P1}).", dominating_type, dominating_field.typeId, dominating_field.fieldId, dominating_type_ratio);
+
+                    return dominating_field;
+                }
+            }
+
+            return field_instances.Aggregate(field_instances.First(), (f, current) =>
             {
                 f.isList = f.isList || current.isList;
                 f.fieldType = UpdateFieldType(f.fieldType, current.fieldType);
                 return f;
             });
-            return field;
         }
 
         internal static FieldType UpdateFieldType(FieldType thistype, FieldType thattype)
@@ -276,7 +319,7 @@ namespace GraphEngine.DataImporter
 #if DEBUG
                 new ParallelOptions{MaxDegreeOfParallelism = 1},
 #else
-                new ParallelOptions{MaxDegreeOfParallelism = Environment.ProcessorCount * 2},
+                new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount * 2 },
 #endif
              line =>
              {
