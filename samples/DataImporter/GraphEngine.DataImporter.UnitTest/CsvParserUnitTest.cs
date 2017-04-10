@@ -19,8 +19,9 @@ namespace GraphEngine.DataImporter.UnitTest
         [Fact]
         public void Csv_Quote_Process()
         {
-            string line = "123,\"aaa\",bbb";
-            var expectedTokens = new List<string> { "123", "aaa", "bbb" };
+            string line = "123, \"aaa\", 1.233";
+
+            var expectedTokens = new List<string> { "123", "aaa", "1.233" };
             List<string> result = null;
             result = csvParser.CsvSplit(line);
             Assert.True(result.SequenceEqual(expectedTokens));

@@ -23,10 +23,10 @@ namespace GraphEngine.DataImporter
                 throw new ArgumentNullException();
 
             List<string> fields = new List<string>();
-            int beginIndex = 0;
-            int curIndex = 0;
-            int countQuoteEscape = 0;
             string processedLine = line + delimiter;
+            int beginIndex = FirstNotBlankChar(line, 0);
+            int curIndex = beginIndex;
+            int countQuoteEscape = 0;// The count of quote and escape.
 
             for (; curIndex < processedLine.Length; curIndex++)
             {
@@ -34,7 +34,7 @@ namespace GraphEngine.DataImporter
                 if (beginIndex == curIndex && c == delimiter)
                 {
                     fields.Add(null);
-                    beginIndex = curIndex + 1;
+                    beginIndex = FirstNotBlankChar(processedLine, curIndex + 1);
                 }
                 else if (c == delimiter && countQuoteEscape % 2 == 0)
                 {
@@ -43,7 +43,7 @@ namespace GraphEngine.DataImporter
                     else
                         fields.Add(SanitizeCsvField(processedLine.Substring(beginIndex, curIndex - beginIndex)));
 
-                    beginIndex = curIndex + 1;
+                    beginIndex = FirstNotBlankChar(processedLine, curIndex + 1);
                     countQuoteEscape = 0;
                 }
                 else if (c == DefaultEscape && countQuoteEscape > 0 && processedLine[curIndex + 1] == DefaultQuote)
@@ -58,7 +58,7 @@ namespace GraphEngine.DataImporter
                     {
                         throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
                     }
-                    else if (countQuoteEscape % 2 == 0 && processedLine[curIndex + 1] != delimiter)
+                    else if (countQuoteEscape % 2 == 0 && NextNotBlankChar(processedLine, curIndex+1) != delimiter)
                     {
                         throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
                     }
@@ -82,6 +82,27 @@ namespace GraphEngine.DataImporter
             sanitized = sanitized.Substring(1, sanitized.Length - 2);
             sanitized = sanitized.Replace($"{ DefaultEscape }{ DefaultQuote }", $"{ DefaultQuote }");
             return sanitized;
+        }
+
+        public int FirstNotBlankChar(string line, int index)
+        {
+            if (index >= line.Length)
+                return line.Length;
+
+            while (line[index] == ' ' && index < line.Length)
+            {
+                index++;
+            }
+            return index;
+        }
+
+        public char NextNotBlankChar(string line, int index)
+        {
+            while (line[index] == ' ' && index < line.Length)
+            {
+                index++;
+            }
+            return line[index];
         }
     }
 }
