@@ -39,9 +39,9 @@ namespace GraphEngine.DataImporter
                 else if (c == delimiter && countQuoteEscape % 2 == 0)
                 {
                     if (countQuoteEscape == 0)
-                        fields.Add(processedLine.Substring(beginIndex, curIndex - beginIndex));
+                        fields.Add(processedLine.Substring(beginIndex, curIndex - beginIndex).Trim());
                     else
-                        fields.Add(SanitizeCsvField(processedLine.Substring(beginIndex, curIndex - beginIndex)));
+                        fields.Add(SanitizeCsvField(processedLine.Substring(beginIndex, curIndex - beginIndex).Trim()));
 
                     beginIndex = FirstNotBlankChar(processedLine, curIndex + 1);
                     countQuoteEscape = 0;

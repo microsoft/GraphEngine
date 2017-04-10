@@ -19,7 +19,7 @@ namespace GraphEngine.DataImporter.UnitTest
         [Fact]
         public void Csv_Quote_Process()
         {
-            string line = "123, \"aaa\", 1.233";
+            string line = "    123     ,     \"aaa\"   ,    1.233    ";
 
             var expectedTokens = new List<string> { "123", "aaa", "1.233" };
             List<string> result = null;
