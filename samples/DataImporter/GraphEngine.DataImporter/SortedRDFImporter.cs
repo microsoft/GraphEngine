@@ -43,7 +43,7 @@ namespace GraphEngine.DataImporter
                         string property = GetTslName(triple.Predicate);
                         if (property == "type_object_type")
                         {
-                            type_cell.AppendToField(property, (int)curType);
+                            //type_cell.AppendToField(property, (int)curType);
                         }
                         else
                         {

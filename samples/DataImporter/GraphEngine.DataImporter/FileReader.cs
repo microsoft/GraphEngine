@@ -108,8 +108,8 @@ namespace GraphEngine.DataImporter
         {
             long counter = 0;
             Queue<BlockReader> block_queue = new Queue<BlockReader>();
-            //int queue_limit = 1;
-            int queue_limit = Environment.ProcessorCount;
+            int queue_limit = 4;
+            //int queue_limit = Environment.ProcessorCount;
             string remainder = "";
 
             while (true)

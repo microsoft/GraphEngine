@@ -42,7 +42,7 @@ namespace GraphEngine.DataImporter
                 {
                     if (property == "type_object_type")
                     {
-                        type_cell.AppendToField(property, (int)curType);
+                        //type_cell.AppendToField(property, (int)curType);
                     }
                     else
                     {
