@@ -24,7 +24,7 @@ namespace GraphEngine.DataImporter
 
             List<string> fields = new List<string>();
             string processedLine = line + delimiter;
-            int beginIndex = FirstNotBlankChar(line, 0);
+            int beginIndex = NextNotSpaceCharIndex(line, 0);
             int curIndex = beginIndex;
             int countQuoteEscape = 0;// The count of quote and escape.
 
@@ -34,7 +34,7 @@ namespace GraphEngine.DataImporter
                 if (beginIndex == curIndex && c == delimiter)
                 {
                     fields.Add(null);
-                    beginIndex = FirstNotBlankChar(processedLine, curIndex + 1);
+                    beginIndex = NextNotSpaceCharIndex(processedLine, curIndex + 1);
                 }
                 else if (c == delimiter && countQuoteEscape % 2 == 0)
                 {
@@ -43,7 +43,7 @@ namespace GraphEngine.DataImporter
                     else
                         fields.Add(SanitizeCsvField(processedLine.Substring(beginIndex, curIndex - beginIndex).Trim()));
 
-                    beginIndex = FirstNotBlankChar(processedLine, curIndex + 1);
+                    beginIndex = NextNotSpaceCharIndex(processedLine, curIndex + 1);
                     countQuoteEscape = 0;
                 }
                 else if (c == DefaultEscape && countQuoteEscape > 0 && processedLine[curIndex + 1] == DefaultQuote)
@@ -58,7 +58,7 @@ namespace GraphEngine.DataImporter
                     {
                         throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
                     }
-                    else if (countQuoteEscape % 2 == 0 && NextNotBlankChar(processedLine, curIndex+1) != delimiter)
+                    else if (countQuoteEscape % 2 == 0 && processedLine[NextNotSpaceCharIndex(processedLine, curIndex + 1)] != delimiter)
                     {
                         throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
                     }
@@ -84,7 +84,7 @@ namespace GraphEngine.DataImporter
             return sanitized;
         }
 
-        public int FirstNotBlankChar(string line, int index)
+        public int NextNotSpaceCharIndex(string line, int index)
         {
             if (index >= line.Length)
                 return line.Length;
@@ -93,16 +93,8 @@ namespace GraphEngine.DataImporter
             {
                 index++;
             }
-            return index;
-        }
 
-        public char NextNotBlankChar(string line, int index)
-        {
-            while (line[index] == ' ' && index < line.Length)
-            {
-                index++;
-            }
-            return line[index];
+            return index;
         }
     }
 }
