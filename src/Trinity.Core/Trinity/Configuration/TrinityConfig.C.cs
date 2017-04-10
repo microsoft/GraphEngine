@@ -16,87 +16,42 @@ namespace Trinity
 {
     internal unsafe static class CTrinityConfig
     {
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
+        static CTrinityConfig()
+        {
+            TrinityC.Init();
+        }
+
         [DllImport(TrinityC.AssemblyName)]
-#endif
         internal static extern int GetStorageCapacityProfile();
 
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
         internal static extern void SetStorageCapacityProfile(int capacityProfile);
 
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
         internal static extern void SetStorageRoot(byte* buff, int length);
 
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
         internal static extern bool CReadOnly();
 
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
         internal static extern void CSetReadOnly(bool value);
 
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
         internal static extern int CTrunkCount();
 
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
         internal static extern int CSetTrunkCount(int value);
 
 
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
         internal static extern int CLargeObjectThreshold();
 
 
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
         internal static extern void CSetLargeObjectThreshold(int value);
 
 
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
         internal static extern void CSetGCDefragInterval(int value);
 
         [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]

@@ -27,7 +27,7 @@ namespace Trinity.Core.Lib
         {
             //Trigger the InternalCalls constructor, inject
             //native code if possible
-            InternalCalls.__init();
+            TrinityC.Init();
         }
 
         /// <summary>

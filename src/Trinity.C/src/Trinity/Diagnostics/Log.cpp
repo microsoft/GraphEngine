@@ -186,15 +186,12 @@ namespace Trinity
 
                 if (s_EchoOnConsole)
                 {
-                    Console::Write(header);
-                    Console::WriteLine(msg);
+                    Console::WriteLine(header + msg);
                 }
 
                 if (s_LogStream.Good())
                 {
-                    s_LogStream.Write(time);
-                    s_LogStream.Write(header);
-                    s_LogStream.WriteLine(msg);
+                    s_LogStream.WriteLine(time + header + msg);
                     _flush_if_necessary(logLevel);
                 }
 

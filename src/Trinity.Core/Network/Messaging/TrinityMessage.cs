@@ -17,7 +17,7 @@ namespace Trinity.Network.Messaging
     {
         static TrinityMessage()
         {
-            InternalCalls.__init();
+            TrinityC.Init();
         }
         /// <summary>
         /// A pointer pointing to the underlying buffer.

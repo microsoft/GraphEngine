@@ -56,8 +56,6 @@ namespace Trinity
 
         static TrinityConfig()
         {
-            TrinityC.Ping();
-            InternalCalls.__init();
             GetConfigurationInstances().ToList();
             LoadTrinityConfig(false);
         }

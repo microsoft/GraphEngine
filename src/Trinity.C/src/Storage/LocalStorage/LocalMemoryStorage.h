@@ -69,7 +69,7 @@ namespace Storage
         ///////////////////////////////////
 
         // cell manipulation interfaces
-        char* ResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta);
+        TrinityErrorCode ResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, OUT char*& cell_ptr);
 
         //   non-logging interfaces
         CELL_ATOMIC TrinityErrorCode LoadCell(cellid_t cellId, Array<char>& cellBuff);
