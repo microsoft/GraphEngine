@@ -5,9 +5,11 @@
 package io.graphengine.spark.trinity
 
 import org.apache.spark.Partition
+import org.apache.spark.sql.sources._
 import org.apache.spark.sql.types._
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST._
+import org.json4s.JsonDSL._
 import org.json4s.native.Json
 import org.json4s.native.JsonMethods._
 
@@ -17,9 +19,9 @@ trait TrinityClient {
 
   def getSchema(cellType: String): StructType
 
-  def getPartitions(cellType: String): Array[Partition]
+  def getPartitions(cellType: String, filters: Array[Filter]): Array[Partition]
 
-  def retrieveCells(partition: Partition, schema: StructType): Array[Any]
+  def retrieveCells(partition: Partition, schema: StructType, requiredColumns: Array[String]): Array[Any]
 }
 
 class TrinityHttpJsonClient(trinityOptions: TrinityOptions)
@@ -72,14 +74,51 @@ class TrinityHttpJsonClient(trinityOptions: TrinityOptions)
     .compress(compress)
     .postData(data)
 
+
+  def compileFilter(filter: Filter): Option[JObject] = {
+    def format(o: String, a:String, v:Any) = ("operator"->s"$o")~("attr"->s"$a")~("value"->s"$v")
+    def format2(o: String, l:List[JValue]) = ("operator"->s"$o")~("filters"->l)
+
+    Option(filter match {
+      case EqualTo(attr, value) => format("EqualTo", attr, value)
+      case GreaterThan(attr, value) => format("GreaterThan", attr, value)
+      case LessThan(attr, value) => format("LessThan", attr, value)
+      case StringStartsWith(attr, value) => format("StringStartsWith", attr, value)
+      case StringEndsWith(attr, value) => format("StringEndsWith", attr, value)
+      case StringContains(attr, value) => format("StringContains", attr, value)
+      case And(left, right) => {
+        val and = Seq(left, right).flatMap(compileFilter(_))
+        if (and.size == 2) format2("And", and.toList)
+        else null
+      }
+      case Or(left, right) => {
+        val or = Seq(left, right).flatMap(compileFilter(_))
+        if (or.size == 2) format2("Or", or.toList)
+        else null
+      }
+      case _ => {
+        println(s"NotImplemented filter ${filter.toString}")
+        null
+      }
+    })
+  }
+
   override def getSchema(cellType: String): StructType = {
     val json = parse(post("/Spark/Schema/", s"""{"cellType":"${trinityOptions.cellType}"}""").asString.body)
     getCatalystType(json.asInstanceOf[JObject]).asInstanceOf[StructType]
   }
 
-  override def getPartitions(cellType: String): Array[Partition] = {
-    val requestBody = s"""{"cellType":"${trinityOptions.cellType}", "batchSize": ${trinityOptions.batchSize}}"""
+  override def getPartitions(cellType: String, filters: Array[Filter]): Array[Partition] = {
+
+    val compiledFilters = filters.flatMap(compileFilter(_))
+
+    val requestBody = compact(render(("cellType"->trinityOptions.cellType)~("batchSize"->trinityOptions.batchSize)~("filters"->compiledFilters.toList)))
+    println(requestBody)
     val response = post("/Spark/Partitions/", requestBody, true).asString.body
+
+    if ("[]" == response)
+      return Array[Partition]()
+
     val partitions = response.substring(1, response.length-2).split("],")
     Array.tabulate(partitions.length) {
       i => {
@@ -89,10 +128,11 @@ class TrinityHttpJsonClient(trinityOptions: TrinityOptions)
     }
   }
 
-  override def retrieveCells(partition: Partition, schema: StructType): Array[Any] = {
+  override def retrieveCells(partition: Partition, schema: StructType, requiredColumns: Array[String]): Array[Any] = {
 
     val part = partition.asInstanceOf[TrinityPartition]
-    val requestBody = s"""{"cellType":"${trinityOptions.cellType}", "partition": ${Json(DefaultFormats).write(part.cellIds)}}"""
+    val requestBody = compact(render(("cellType"->trinityOptions.cellType)~("partition"->part.cellIds.toList)~("fields"->requiredColumns.toList)))
+    //println(requestBody)
     val json = parse(post("/Spark/GetPartition/", requestBody, true).asString.body)
 
     json.children.map(child => { implicit val formats = DefaultFormats; child.extract[String] }).toArray

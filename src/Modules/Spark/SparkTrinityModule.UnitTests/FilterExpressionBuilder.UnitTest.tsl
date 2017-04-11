@@ -1,0 +1,6 @@
+cell People
+{
+	string Name;
+	int Age;
+	double Salary;
+}

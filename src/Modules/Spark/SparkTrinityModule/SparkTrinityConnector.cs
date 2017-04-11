@@ -2,11 +2,14 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Trinity.Diagnostics;
+using Trinity.Storage;
 
 namespace Trinity.Modules.Spark
 {
@@ -54,19 +57,20 @@ namespace Trinity.Modules.Spark
             if (batchSize <= 0)
                 return partitions;
 
-            var cellIds = CellRepository.FindCells(cellType);
+            List<JObject> filters = null;
+            Utilities.TryGetList(json, "filters", out filters);
+
+            var cellIds = CellRepository.FindCells(cellType, filters);
             var part = new List<long>();
             var count = 0;
-
             foreach (var id in cellIds)
             {
                 part.Add(id);
                 count++;
-                if (count == batchSize)
+                if (count % batchSize == 0)
                 {
                     partitions.Add(part);
                     part = new List<long>();
-                    count = 0;
                 }
             }
 
@@ -88,10 +92,17 @@ namespace Trinity.Modules.Spark
                 return null;
             }
 
+            var cellDesc = Global.StorageSchema.CellDescriptors.FirstOrDefault(_ => _.TypeName == cellType);
+            if (cellDesc == null)
+                return null;
+
+            List<string> fieldNames = null;
+            Utilities.TryGetList(json, "fields", out fieldNames);
+
             var timer = Stopwatch.StartNew();
-            var cells = cellIds.Select(id => CellRepository.LoadCell(cellType, id));
+            var cells = cellIds.Select(id => CellRepository.LoadCell(cellType, id, fieldNames));
             timer.Stop();
-            Log.WriteLine(LogLevel.Info, $"GetPartition[cellType={cellType}, cellIds={cellIds.Count()} succeeded: count={cells.Count()}, timer={(long)timer.Elapsed.TotalMilliseconds}");
+            Log.WriteLine(LogLevel.Info, $"GetPartition[cellType={cellType}, cellIds={cellIds.Count()}] succeeded: count={cells.Count()}, timer={(long)timer.Elapsed.TotalMilliseconds}");
 
             return cells;
         }
