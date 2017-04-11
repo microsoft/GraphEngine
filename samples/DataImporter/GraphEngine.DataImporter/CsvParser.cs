@@ -35,6 +35,7 @@ namespace GraphEngine.DataImporter
                 {
                     fields.Add(null);
                     beginIndex = NextNotSpaceCharIndex(processedLine, curIndex + 1);
+                    curIndex = beginIndex - 1;
                 }
                 else if (c == delimiter && countQuoteEscape % 2 == 0)
                 {
@@ -44,6 +45,7 @@ namespace GraphEngine.DataImporter
                         fields.Add(SanitizeCsvField(processedLine.Substring(beginIndex, curIndex - beginIndex).Trim()));
 
                     beginIndex = NextNotSpaceCharIndex(processedLine, curIndex + 1);
+                    curIndex = beginIndex - 1;
                     countQuoteEscape = 0;
                 }
                 else if (c == DefaultEscape && countQuoteEscape > 0 && processedLine[curIndex + 1] == DefaultQuote)
@@ -89,7 +91,7 @@ namespace GraphEngine.DataImporter
             if (index >= line.Length)
                 return line.Length;
 
-            while (line[index] == ' ' && index < line.Length)
+            while (index < line.Length && line[index] == ' ')
             {
                 index++;
             }
