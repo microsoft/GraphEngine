@@ -42,7 +42,7 @@ namespace GraphEngine.DataImporter
                     if (countQuoteEscape == 0)
                         fields.Add(processedLine.Substring(beginIndex, curIndex - beginIndex).Trim());
                     else
-                        fields.Add(SanitizeCsvField(processedLine.Substring(beginIndex, curIndex - beginIndex).Trim()));
+                        fields.Add(SanitizeCsvField(processedLine.Substring(beginIndex, curIndex - beginIndex), true));
 
                     beginIndex = NextNotSpaceCharIndex(processedLine, curIndex + 1);
                     curIndex = beginIndex - 1;
