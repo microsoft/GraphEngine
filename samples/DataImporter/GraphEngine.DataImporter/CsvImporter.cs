@@ -13,9 +13,9 @@ namespace GraphEngine.DataImporter
         private JsonImporter m_jsonImporter = new JsonImporter();
         private CsvParser parser;
 
-        public CsvImporter(char delimiter)
+        public CsvImporter(char delimiter, bool trim)
         {
-            parser = new CsvParser(delimiter);   
+            parser = new CsvParser(delimiter, trim);   
         }
 
         public ICell ImportEntity(string type, string content, long? parent_id = null)

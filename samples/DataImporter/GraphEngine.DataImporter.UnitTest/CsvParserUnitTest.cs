@@ -13,18 +13,44 @@ namespace GraphEngine.DataImporter.UnitTest
     {
         private const char comma = ',';
         private const char tab = '\t';
-        CsvParser csvParser = new CsvParser(comma);
-        CsvParser tsvParser = new CsvParser(tab);
-
+        CsvParser csvParser = new CsvParser(comma, true);
+        CsvParser tsvParser = new CsvParser(tab, true);
+        CsvParser csvParserNotTrim = new CsvParser(comma, false);
         [Fact]
         public void Csv_Quote_Process()
         {
-            string line = "    123     ,     \"aaa\"   ,    1.233    ";
-
-            var expectedTokens = new List<string> { "123", "aaa", "1.233" };
+            string line = "    123     ,     \"  aaa  \"   ,    1.233    ";
+            var expectedTokens = new List<string> { "123", "  aaa  ", "1.233" };
             List<string> result = null;
             result = csvParser.CsvSplit(line);
             Assert.True(result.SequenceEqual(expectedTokens));
+        }
+
+        [Fact]
+        public void Csv_NotTrim_Process()
+        {
+            string line = "   123   ,   aaa   ,   1.233   ";
+            var expectedTokens = new List<string> { "   123   ", "   aaa   ", "   1.233   " };
+            List<string> result = null;
+            result = csvParserNotTrim.CsvSplit(line);
+            Assert.True(result.SequenceEqual(expectedTokens));
+        }
+
+        [Fact]
+        public void Csv_NotTrim_ThrowException()
+        {
+            string line = "    123     ,     \"  aaa  \"   ,    1.233    ";
+            List<string> result = null;
+            Exception exception = null;
+            try
+            {
+                result = csvParserNotTrim.CsvSplit(line);
+            }
+            catch (Exception e)
+            {
+                exception = e;
+            }
+            Assert.NotNull(exception);
         }
 
         [Fact]

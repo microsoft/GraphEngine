@@ -11,10 +11,11 @@ namespace GraphEngine.DataImporter
         private char delimiter;
         private const char DefaultQuote = '"';
         private const char DefaultEscape = '"';
-
-        public CsvParser(char delimiter)
+        private bool trim;
+        public CsvParser(char delimiter, bool trim)
         {
             this.delimiter = delimiter;
+            this.trim = trim;
         }
 
         public List<string> CsvSplit(string line)
@@ -24,7 +25,7 @@ namespace GraphEngine.DataImporter
 
             List<string> fields = new List<string>();
             string processedLine = line + delimiter;
-            int beginIndex = NextNotSpaceCharIndex(line, 0);
+            int beginIndex = NextNotSpaceCharIndex(line, 0, trim);
             int curIndex = beginIndex;
             int countQuoteEscape = 0;// The count of quote and escape.
 
@@ -34,17 +35,13 @@ namespace GraphEngine.DataImporter
                 if (beginIndex == curIndex && c == delimiter)
                 {
                     fields.Add(null);
-                    beginIndex = NextNotSpaceCharIndex(processedLine, curIndex + 1);
+                    beginIndex = NextNotSpaceCharIndex(processedLine, curIndex + 1, trim);
                     curIndex = beginIndex - 1;
                 }
                 else if (c == delimiter && countQuoteEscape % 2 == 0)
                 {
-                    if (countQuoteEscape == 0)
-                        fields.Add(processedLine.Substring(beginIndex, curIndex - beginIndex).Trim());
-                    else
-                        fields.Add(SanitizeCsvField(processedLine.Substring(beginIndex, curIndex - beginIndex), true));
-
-                    beginIndex = NextNotSpaceCharIndex(processedLine, curIndex + 1);
+                    fields.Add(SanitizeCsvField(processedLine.Substring(beginIndex, curIndex - beginIndex), countQuoteEscape, trim));
+                    beginIndex = NextNotSpaceCharIndex(processedLine, curIndex + 1, trim);
                     curIndex = beginIndex - 1;
                     countQuoteEscape = 0;
                 }
@@ -60,7 +57,7 @@ namespace GraphEngine.DataImporter
                     {
                         throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
                     }
-                    else if (countQuoteEscape % 2 == 0 && processedLine[NextNotSpaceCharIndex(processedLine, curIndex + 1)] != delimiter)
+                    else if (countQuoteEscape % 2 == 0 && processedLine[NextNotSpaceCharIndex(processedLine, curIndex + 1, trim)] != delimiter)
                     {
                         throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
                     }
@@ -75,25 +72,31 @@ namespace GraphEngine.DataImporter
             return fields;
         }
 
-        public string SanitizeCsvField(string field, bool trim = false, bool treatEmptyAsNull = true)
+        public string SanitizeCsvField(string field, int countQuoteEscape, bool trim = false, bool treatEmptyAsNull = true)
         {
             string sanitized = trim ? field.Trim() : field;
             if (sanitized == "" && treatEmptyAsNull)
                 return null;
 
-            sanitized = sanitized.Substring(1, sanitized.Length - 2);
-            sanitized = sanitized.Replace($"{ DefaultEscape }{ DefaultQuote }", $"{ DefaultQuote }");
+            if (countQuoteEscape != 0)
+            {
+                sanitized = sanitized.Substring(1, sanitized.Length - 2);
+                sanitized = sanitized.Replace($"{ DefaultEscape }{ DefaultQuote }", $"{ DefaultQuote }");
+            }
             return sanitized;
         }
 
-        public int NextNotSpaceCharIndex(string line, int index)
+        public int NextNotSpaceCharIndex(string line, int index, bool trim)
         {
-            if (index >= line.Length)
-                return line.Length;
-
-            while (index < line.Length && line[index] == ' ')
+            if (trim)
             {
-                index++;
+                if (index >= line.Length)
+                    return line.Length;
+
+                while (index < line.Length && line[index] == ' ')
+                {
+                    index++;
+                }
             }
 
             return index;

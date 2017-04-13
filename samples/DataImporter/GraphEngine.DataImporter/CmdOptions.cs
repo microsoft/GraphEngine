@@ -27,11 +27,14 @@ namespace GraphEngine.DataImporter
         [Option('s', "sorted", HelpText = "Specifies that the data is already sorted/grouped by entities", DefaultValue = false)]
         public bool Sorted { get; set; }
 
-        [Option('p', "delimiter", HelpText = "Specifies the delimiter of CSV or TSV file", Required = false)]
+        [Option("delimiter", HelpText = "Specifies the delimiter of CSV or TSV file", Required = false)]
         public char Delimiter { get; set; }
 
         [Option('f', "fileFormat", HelpText = "Specifies the file format", Required = false)]
         public string FileFormat { get; set; }
+
+        [Option("no_trim", HelpText = "Specifies that the data fields in CSV/TSV files are not trimmed, it does not follow a true/false value. Using --no_trim will evaluate to not trim the fields, not using it will evaluate to trim the fields", Required = false)]
+        public bool NoTrim { get; set; }
 
         [ValueList(typeof(List<string>))]
         public IList<string> ExplicitFiles { get; set; }
@@ -46,7 +49,7 @@ namespace GraphEngine.DataImporter
             };
 
             help.AddPreOptionsLine("Import from files to Graph Engine storage.");
-            help.AddPreOptionsLine(string.Format("Usage: {0} [-t tsl_assembly|-g] [-d directory] [-o output_dir] [-p delimiter] [-f file_format] [explicit files]", Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
+            help.AddPreOptionsLine(string.Format("Usage: {0} [-t tsl_assembly|-g] [-d directory] [-o output_dir] [--delimiter delimiter] [-f file_format] [--no_trim] [explicit files]", Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
 
             help.AddOptions(this);
             help.AddPostOptionsLine("Only files with .json, .csv, .tsv and .ntriples suffix are recognized.");
