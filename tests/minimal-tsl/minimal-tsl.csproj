@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>GraphEngine.Test</RootNamespace>
     <AssemblyName>minimal-tsl</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NuGetPackageImportStamp>

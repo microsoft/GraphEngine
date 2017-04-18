@@ -36,3 +36,5 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Register local nuget source
 %NUGET_EXE% sources Add -Name "Graph Engine OSS Local" -Source %REPO_ROOT%\bin\
+:: Ignore local nuget source errors
+exit /b 0
