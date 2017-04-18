@@ -29,8 +29,7 @@
     <Exec
         Command="dotnet run -p $([System.IO.Path]::GetFileName(%(Exe.Identity)))"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Exe.Identity)))"
-        ContinueOnError="false"
-        Condition="Exists('$([System.IO.Path]::GetDirectoryName(%(Exe.Identity)))\bin\Release\netcoreapp2.0\$([System.IO.Path]::GetFileNameWithoutExtension(%(Exe.Identity))).dll')"/>
+        ContinueOnError="false" />
 
     <!--xUnit tests-->
 
@@ -44,8 +43,7 @@
     <Exec
         Command="dotnet xunit"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
-        ContinueOnError="true"
-        Condition="Exists('$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))\bin\Release\netcoreapp2.0\$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))).dll')"/>
+        ContinueOnError="true" />
     <Move SourceFiles="$([System.String]::Copy('%(Test.Identity)').Replace('_coreclr','').Replace('.csproj', '.csproj.bak'))" DestinationFiles="$([System.String]::Copy('%(Test.Identity)').Replace('_coreclr',''))" />
   </Target>
 </Project>
