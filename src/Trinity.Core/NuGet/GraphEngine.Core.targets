@@ -25,9 +25,6 @@
     <TslDebugArguments Condition="'$(Configuration)' == 'Release'"></TslDebugArguments>
   </PropertyGroup>
 
-  <UsingTask TaskName="Trinity.TSL.TSLCompilerTask" AssemblyFile="$(TSL_COMPILER_TASK_PATH)" Condition=" Exists('$(TSL_COMPILER_TASK_PATH)') "/>
-  <UsingTask TaskName="Trinity.TSL.GenerateGraphEngineAssemblyInfo" AssemblyFile="$(TSL_COMPILER_TASK_PATH)" Condition=" Exists('$(TSL_COMPILER_TASK_PATH)') "/>
-
   <ItemGroup>
     <AvailableItemName Include="TslCodegen" />
   </ItemGroup>
@@ -43,22 +40,7 @@
 
     <RemoveDir Directories="$(TslGeneratedCodePath)" ContinueOnError="true" />
     <MakeDir Directories="$(TslGeneratedCodePath)" ContinueOnError="true"/>
-    <TSLCompilerTask TrinityPath="$(TSL_PATH)tools" 
-                     ProjectRoot="$(MSBuildProjectDirectory)" 
-                     ScriptList="@(TslCodegen)" 
-                     OutputPath="$(TslOutputPath)" 
-                     Command="$(TslDebugArguments)"
-                     RootNamespace="$(RootNamespace)"/>
-    <!-- The TSL compiler will generate an assembly info. We don't need it here. -->
-    <Delete Files="$(TslGeneratedCodePath)AssemblyInfo.cs"/>
-
-  </Target>
-
-  <Target Name="TslGenerateAssemblyInfo" BeforeTargets="BeforeBuild" DependsOnTargets="ResolveProjectReferences;ResolveAssemblyReferences">
-    <GenerateGraphEngineAssemblyInfo ReferencedAssemblies="@(_ResolveAssemblyReferenceResolvedFiles)" Output="Properties\GraphEngine.AssemblyInfo.cs"/>
-    <ItemGroup>
-      <Compile Include="Properties\GraphEngine.AssemblyInfo.cs"/>
-    </ItemGroup>
+    <Exec Command="$(TSL_CODEGEN_PATH) --ProjectRoot $(MSBuildProjectDirectory) --ScriptList @(TslCodegen) --RootNamespace $(RootNamespace) --OutputPath $(TslOutputPath) $(TslDebugArguments)" />
   </Target>
 
   <Target Name="TslCodegenClean"

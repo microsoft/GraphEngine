@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.TSL.CodeTemplates",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.Core", "..\Trinity.Core\Trinity.Core.csproj", "{3C57EEA4-4AC0-4F72-A2C3-2715F07E29FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.TSL.CompilerTask", "Trinity.TSL.CompilerTask\Trinity.TSL.CompilerTask.csproj", "{9BC30DE1-0C8C-4D1E-9B7B-B11997A1878E}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Trinity.TSL.Parser", "Trinity.TSL.Parser\Trinity.TSL.Parser.vcxproj", "{8DF908E2-3C7D-4E7E-B07B-0E23E027F4E0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Trinity.C", "..\Trinity.C\Trinity.C.vcxproj", "{53440B2C-3D01-40DA-BBAE-36B654541EE7}"
@@ -32,10 +30,6 @@ Global
 		{04DE924E-31BF-4C8E-82CE-FC1FC3E5342C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C57EEA4-4AC0-4F72-A2C3-2715F07E29FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3C57EEA4-4AC0-4F72-A2C3-2715F07E29FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9BC30DE1-0C8C-4D1E-9B7B-B11997A1878E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9BC30DE1-0C8C-4D1E-9B7B-B11997A1878E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9BC30DE1-0C8C-4D1E-9B7B-B11997A1878E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9BC30DE1-0C8C-4D1E-9B7B-B11997A1878E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8DF908E2-3C7D-4E7E-B07B-0E23E027F4E0}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{8DF908E2-3C7D-4E7E-B07B-0E23E027F4E0}.Debug|Any CPU.Build.0 = Debug|Win32
 		{8DF908E2-3C7D-4E7E-B07B-0E23E027F4E0}.Release|Any CPU.ActiveCfg = Release|Win32
