@@ -18,6 +18,9 @@
       <XUnitRunner>$(MSBuildProjectDirectory)\packages\xunit.runner.console.2.2.0\tools\xunit.console</XUnitRunner>
     </PropertyGroup>
 
+    <RemoveDir Directories="$(MSBuildProjectDirectory)/xunit_reports" ContinueOnError="true" />
+    <MakeDir Directories="$(MSBuildProjectDirectory)/xunit_reports" ContinueOnError="true" />
+
     <Message Text="%(Test.Identity)" />
     <Exec
         Command="$(NuGet) restore -PackagesDirectory $(MSBuildProjectDirectory)\packages"
@@ -28,7 +31,7 @@
         ContinueOnError="true"
         Properties="Configuration=Release;Platform=AnyCPU" UnloadProjectsOnCompletion="true"/>
     <Exec
-        Command="$(XUnitRunner) bin\Release\$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))).dll"
+        Command="$(XUnitRunner) bin\Release\$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))).dll -xml $(MSBuildProjectDirectory)\xunit_reports\$([System.String]::Copy(%(Test.Identity)).Replace('/','_').Replace('\','_')).xml"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
         ContinueOnError="true" Condition="Exists('$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))\bin\Release\$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))).dll')"/>
     <Exec

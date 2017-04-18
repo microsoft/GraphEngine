@@ -33,17 +33,26 @@
 
     <!--xUnit tests-->
 
+    <RemoveDir Directories="$(MSBuildProjectDirectory)/xunit_coreclr_reports" ContinueOnError="true" />
+    <MakeDir Directories="$(MSBuildProjectDirectory)/xunit_coreclr_reports" ContinueOnError="true" />
+
     <Exec
         Command="dotnet restore $([System.IO.Path]::GetFileName(%(Test.Identity)))"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
         ContinueOnError="true"/>
 
-    <Move SourceFiles="$([System.String]::Copy('%(Test.Identity)').Replace('_coreclr',''))" DestinationFiles="$([System.String]::Copy('%(Test.Identity)').Replace('_coreclr','').Replace('.csproj', '.csproj.bak'))" />
+    <Move 
+        SourceFiles="$([System.String]::Copy('%(Test.Identity)').Replace('_coreclr',''))" 
+        DestinationFiles="$([System.String]::Copy('%(Test.Identity)').Replace('_coreclr','').Replace('.csproj', '.csproj.bak'))" 
+        ContinueOnError="true"/>
         <!--Command="dotnet xunit $([System.IO.Path]::GetFileName(%(Test.Identity)))"-->
     <Exec
-        Command="dotnet xunit"
+        Command="dotnet xunit -xml $(MSBuildProjectDirectory)\xunit_coreclr_reports\$([System.String]::Copy(%(Test.Identity)).Replace('/','_').Replace('\','_')).xml"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
         ContinueOnError="true" />
-    <Move SourceFiles="$([System.String]::Copy('%(Test.Identity)').Replace('_coreclr','').Replace('.csproj', '.csproj.bak'))" DestinationFiles="$([System.String]::Copy('%(Test.Identity)').Replace('_coreclr',''))" />
+    <Move 
+        SourceFiles="$([System.String]::Copy('%(Test.Identity)').Replace('_coreclr','').Replace('.csproj', '.csproj.bak'))" 
+        DestinationFiles="$([System.String]::Copy('%(Test.Identity)').Replace('_coreclr',''))" 
+        ContinueOnError="true"/>
   </Target>
 </Project>
