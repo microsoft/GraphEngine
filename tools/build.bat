@@ -55,3 +55,6 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Build spark module
 call %SPARK_MODULE_ROOT%\build.bat
+
+:: Register local nuget source
+%NUGET_EXE% sources Add -Name "Graph Engine OSS Local" -Source %REPO_ROOT%\bin\

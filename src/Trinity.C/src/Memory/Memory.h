@@ -52,7 +52,7 @@ namespace Memory
     }
 
     void * MemoryReserve(uint64_t size);
-    void * MemoryCommit(void * buf, size_t size);
+    void * MemoryCommit(void * buf, uint64_t size);
 }
 
 #if !defined(TRINITY_PLATFORM_WINDOWS)
