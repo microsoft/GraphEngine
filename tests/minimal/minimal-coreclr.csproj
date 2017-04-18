@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.8784" />
+    <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.8850" />
   </ItemGroup>
 
 </Project>
