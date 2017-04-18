@@ -10,9 +10,9 @@
     <AssemblyName>GraphEngine.CoreCLR</AssemblyName>
     <RootNamespace>Trinity</RootNamespace>
     <OutputTypeEx>library</OutputTypeEx>
-    <Version>1.0.8784</Version>
-    <AssemblyVersion>1.0.8784.0</AssemblyVersion>
-    <FileVersion>1.0.8784.0</FileVersion>
+    <Version>1.0.8850</Version>
+    <AssemblyVersion>1.0.8850.0</AssemblyVersion>
+    <FileVersion>1.0.8850.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

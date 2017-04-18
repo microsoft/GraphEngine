@@ -7,9 +7,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0AE97FA8-E63E-48EA-8336-529FE0A9DBC0}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>tsl2</RootNamespace>
-    <AssemblyName>tsl2</AssemblyName>
+    <RootNamespace>test_name</RootNamespace>
+    <AssemblyName>test_name</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -68,7 +67,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="test.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <RuntimeFrameworkVersion>2.0.0-beta-001509-00</RuntimeFrameworkVersion>
+    <AssemblyName>test_name_coreclr</AssemblyName>
+    <RootNamespace>test_name</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

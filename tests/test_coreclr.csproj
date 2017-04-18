@@ -3,7 +3,7 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
 
   <ItemGroup>
-    <Test Include="**/*coreclr.csproj" Exclude="test_coreclr.csproj;**/*exe_coreclr.csproj"/>
+    <Test Include="**/*coreclr.csproj" Exclude="test_coreclr.csproj;**/*exe_coreclr.csproj;template/*"/>
     <Exe Include="**/*exe_coreclr.csproj"/>
     <Bak Include="**/*.csproj.bak" Exclude="**/*coreclr*"/>
   </ItemGroup>
