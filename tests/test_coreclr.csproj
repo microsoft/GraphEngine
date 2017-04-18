@@ -47,7 +47,7 @@
         ContinueOnError="true"/>
         <!--Command="dotnet xunit $([System.IO.Path]::GetFileName(%(Test.Identity)))"-->
     <Exec
-        Command="dotnet xunit -xml $(MSBuildProjectDirectory)\xunit_coreclr_reports\$([System.String]::Copy(%(Test.Identity)).Replace('/','_').Replace('\','_')).xml"
+        Command="dotnet xunit -xml $(MSBuildProjectDirectory)/xunit_coreclr_reports/$([System.String]::Copy(%(Test.Identity)).Replace('/','_').Replace('\','_')).xml"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
         ContinueOnError="true" />
     <Move 
