@@ -19,7 +19,7 @@ namespace Trinity.Tools
             try
             {
                 var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                var template = Path.Combine(dir, "template");
+                var template = Path.Combine(dir, "template", "standalone");
                 var target = args[0];
 
                 Directory.CreateDirectory(target);

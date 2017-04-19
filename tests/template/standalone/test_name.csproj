@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>test_name</RootNamespace>
     <AssemblyName>test_name</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -66,11 +66,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="test.cs" />
+    <Compile Include="test_name.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <TslCodegen Include="test.tsl" />
+    <TslCodegen Include="test_name.tsl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

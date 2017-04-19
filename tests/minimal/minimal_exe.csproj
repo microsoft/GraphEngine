@@ -8,7 +8,7 @@
     <ProjectGuid>{BDBA312D-65E3-42EA-99D4-AD0E0D03831D}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>minimal_netframework</RootNamespace>
-    <AssemblyName>minimal</AssemblyName>
+    <AssemblyName>minimal_exe</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

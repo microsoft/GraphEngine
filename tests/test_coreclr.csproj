@@ -3,7 +3,7 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
 
   <ItemGroup>
-    <Test Include="**/*coreclr.csproj" Exclude="test_coreclr.csproj;**/*exe_coreclr.csproj;template/*"/>
+    <Test Include="**/*_coreclr.csproj" Exclude="test_coreclr.csproj;**/*exe_coreclr.csproj;**/template/**/*.csproj"/>
     <Exe Include="**/*exe_coreclr.csproj"/>
     <Bak Include="**/*.csproj.bak" Exclude="**/*coreclr*"/>
   </ItemGroup>
@@ -19,12 +19,12 @@
     <Exec
         Command="dotnet restore $([System.IO.Path]::GetFileName(%(Exe.Identity)))"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Exe.Identity)))"
-        ContinueOnError="true"/>
+        ContinueOnError="false"/>
 
     <Exec
         Command="dotnet build -c Release $([System.IO.Path]::GetFileName(%(Exe.Identity)))"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Exe.Identity)))"
-        ContinueOnError="true"/>
+        ContinueOnError="false"/>
 
     <Exec
         Command="dotnet run -p $([System.IO.Path]::GetFileName(%(Exe.Identity)))"
@@ -39,7 +39,7 @@
     <Exec
         Command="dotnet restore $([System.IO.Path]::GetFileName(%(Test.Identity)))"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
-        ContinueOnError="true"/>
+        ContinueOnError="false"/>
 
     <Move 
         SourceFiles="$([System.String]::Copy('%(Test.Identity)').Replace('_coreclr',''))" 
