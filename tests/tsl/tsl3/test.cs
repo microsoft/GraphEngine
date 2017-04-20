@@ -96,4 +96,88 @@ namespace tsl3
         }
     }
 
+    [Collection("TestServer Collection")]
+    public unsafe class ProtocolTest
+    {
+        private TrinityServerFixture Fixture { get; }
+        public ProtocolTest(TrinityServerFixture fixture) { Fixture = fixture; }
+
+        [Fact]
+        public void SynWithRsp_Test()
+        {
+            using (var writer = new ReqWriter())
+            {
+                writer.FieldBeforeList = 2;
+                writer.Nums.Add(0);
+                writer.Nums.Add(7);
+                writer.FieldAfterList = 3;
+                using (var response = Global.CloudStorage.TestSynWithRspToTestServer(Global.MyServerID, writer))
+                {
+                    Assert.Equal("2 0 7 3", response.result);
+                }
+            }
+        }
+
+        [Fact]
+        public void Syn_Test()
+        {
+            using (var writer = new ReqWriter())
+            {
+                writer.FieldBeforeList = 2;
+                writer.Nums.Add(0);
+                writer.Nums.Add(7);
+                writer.FieldAfterList = 3;
+                Assert.Throws<IOException>(() => Global.CloudStorage.TestSynToTestServer(Global.MyServerID, writer));
+
+                using (var reader = new ReqReader(MakeCopyOfDataInReqWriter(writer), 0))
+                    Assert.Throws<NotImplementedException>(() => Fixture.Server.TestSynHandler(reader));
+
+                writer.FieldBeforeList = writer.FieldAfterList = 42;
+                using (var reader = new ReqReader(MakeCopyOfDataInReqWriter(writer), 0))
+                    Assert.Throws<ArgumentException>(() => Fixture.Server.TestSynHandler(reader));
+
+                writer.FieldBeforeList = 41;
+                writer.FieldAfterList = 42;
+                writer.Nums.Clear();
+                writer.Nums.AddRange(Enumerable.Repeat(1, 10).ToList());
+                using (var reader = new ReqReader(MakeCopyOfDataInReqWriter(writer), 0))
+                    Assert.Throws<InvalidDataException>(() => Fixture.Server.TestSynHandler(reader));
+            }
+        }
+
+
+        [Fact]
+        public void Asyn_Test()
+        {
+            using (var writer = new ReqWriter())
+            {
+                writer.FieldBeforeList = 2;
+                writer.Nums.Add(0);
+                writer.Nums.Add(7);
+                writer.FieldAfterList = 3;
+                // assert: here won't throw
+                Global.CloudStorage.TestAsynToTestServer(Global.MyServerID, writer);
+                using (var reader = new ReqReader(MakeCopyOfDataInReqWriter(writer), 0))
+                    Assert.Throws<NotImplementedException>(() => Fixture.Server.TestAsynHandler(reader));
+
+                writer.FieldBeforeList = writer.FieldAfterList = 42;
+                using (var reader = new ReqReader(MakeCopyOfDataInReqWriter(writer), 0))
+                    Assert.Throws<ArgumentException>(() => Fixture.Server.TestAsynHandler(reader));
+
+                writer.FieldBeforeList = 41;
+                writer.FieldAfterList = 42;
+                writer.Nums.Clear();
+                writer.Nums.AddRange(Enumerable.Repeat(1, 10).ToList());
+                using (var reader = new ReqReader(MakeCopyOfDataInReqWriter(writer), 0))
+                    Assert.Throws<InvalidDataException>(() => Fixture.Server.TestAsynHandler(reader));
+            }
+        }
+
+        private byte* MakeCopyOfDataInReqWriter(ReqWriter writer)
+        {
+            byte* newbuf = (byte*)Memory.malloc((ulong)writer.Length);
+            Memory.memcpy(newbuf, writer.CellPtr, (ulong)writer.Length);
+            return newbuf;
+        }
+    }
 }
