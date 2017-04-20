@@ -102,18 +102,27 @@ namespace tsl3
         private TrinityServerFixture Fixture { get; }
         public ProtocolTest(TrinityServerFixture fixture) { Fixture = fixture; }
 
-        [Fact]
-        public void SynWithRsp_Test()
+        [Theory]
+        [InlineData(new byte[] {1, 2, 3, 4})]
+        [InlineData(new byte[] {2, 0, 4, 8})]
+        [InlineData(new byte[] {123, 124, 75, 43})]
+        [InlineData(new byte[] {77, 88, 9, 8})]
+        [InlineData(new byte[] {77, 88, 9, 8, 77, 88, 9, 8, 77, 88, 9, 8, 77, 88, 9, 8, })]
+        public void SynWithRsp_Test(byte[] nums)
         {
+            Assert.True(nums.Length >= 4);
+            var numList = nums.ToList();
             using (var writer = new ReqWriter())
             {
-                writer.FieldBeforeList = 2;
-                writer.Nums.Add(0);
-                writer.Nums.Add(7);
-                writer.FieldAfterList = 3;
+                writer.FieldBeforeList = numList[0];
+                writer.Nums.Add(numList[1]);
+                Console.WriteLine(string.Join(" ", numList.Skip(2).Select(Convert.ToInt32).ToList()));
+                writer.Nums.AddRange(numList.Skip(2).Select(Convert.ToInt32).ToList());
+                writer.Nums.RemoveAt(writer.Nums.Count - 1);
+                writer.FieldAfterList = numList.Last();
                 using (var response = Global.CloudStorage.TestSynWithRspToTestServer(Global.MyServerID, writer))
                 {
-                    Assert.Equal("2 0 7 3", response.result);
+                    Assert.Equal(string.Join(" ", numList), response.result);
                 }
             }
         }
