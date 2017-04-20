@@ -1,0 +1,39 @@
+struct Req
+{
+	int FieldBeforeList;
+	List<int> Nums;
+	byte FieldAfterList;
+}
+
+struct Resp
+{
+	string result;
+}
+
+protocol TestSyn
+{
+	Type: Syn;
+	Request: Req;
+	Response: void;
+}
+
+protocol TestSynWithRsp
+{
+	Type: Syn;
+	Request: Req;
+	Response: Resp;
+}
+
+protocol TestAsyn
+{
+	Type: Asyn;
+	Request: Req;
+	Response: void;
+}
+
+server TestServer
+{
+	protocol TestSyn;
+	protocol TestSynWithRsp;
+	protocol TestAsyn;
+}
