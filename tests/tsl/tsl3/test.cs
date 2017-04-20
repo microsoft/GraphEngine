@@ -61,6 +61,16 @@ namespace tsl3
     }
     #endregion
 
+    public static unsafe class Utils
+    {
+        public static byte* MakeCopyOfDataInReqWriter(ReqWriter writer)
+        {
+            byte* newbuf = (byte*)Memory.malloc((ulong)writer.Length);
+            Memory.memcpy(newbuf, writer.CellPtr, (ulong)writer.Length);
+            return newbuf;
+        }
+    }
+
     public class StructTest
     {
         [Fact]
@@ -138,18 +148,18 @@ namespace tsl3
                 writer.FieldAfterList = 3;
                 Assert.Throws<IOException>(() => Global.CloudStorage.TestSynToTestServer(Global.MyServerID, writer));
 
-                using (var reader = new ReqReader(MakeCopyOfDataInReqWriter(writer), 0))
+                using (var reader = new ReqReader(Utils.MakeCopyOfDataInReqWriter(writer), 0))
                     Assert.Throws<NotImplementedException>(() => Fixture.Server.TestSynHandler(reader));
 
                 writer.FieldBeforeList = writer.FieldAfterList = 42;
-                using (var reader = new ReqReader(MakeCopyOfDataInReqWriter(writer), 0))
+                using (var reader = new ReqReader(Utils.MakeCopyOfDataInReqWriter(writer), 0))
                     Assert.Throws<ArgumentException>(() => Fixture.Server.TestSynHandler(reader));
 
                 writer.FieldBeforeList = 41;
                 writer.FieldAfterList = 42;
                 writer.Nums.Clear();
                 writer.Nums.AddRange(Enumerable.Repeat(1, 10).ToList());
-                using (var reader = new ReqReader(MakeCopyOfDataInReqWriter(writer), 0))
+                using (var reader = new ReqReader(Utils.MakeCopyOfDataInReqWriter(writer), 0))
                     Assert.Throws<InvalidDataException>(() => Fixture.Server.TestSynHandler(reader));
             }
         }
@@ -166,27 +176,20 @@ namespace tsl3
                 writer.FieldAfterList = 3;
                 // assert: here won't throw
                 Global.CloudStorage.TestAsynToTestServer(Global.MyServerID, writer);
-                using (var reader = new ReqReader(MakeCopyOfDataInReqWriter(writer), 0))
+                using (var reader = new ReqReader(Utils.MakeCopyOfDataInReqWriter(writer), 0))
                     Assert.Throws<NotImplementedException>(() => Fixture.Server.TestAsynHandler(reader));
 
                 writer.FieldBeforeList = writer.FieldAfterList = 42;
-                using (var reader = new ReqReader(MakeCopyOfDataInReqWriter(writer), 0))
+                using (var reader = new ReqReader(Utils.MakeCopyOfDataInReqWriter(writer), 0))
                     Assert.Throws<ArgumentException>(() => Fixture.Server.TestAsynHandler(reader));
 
                 writer.FieldBeforeList = 41;
                 writer.FieldAfterList = 42;
                 writer.Nums.Clear();
                 writer.Nums.AddRange(Enumerable.Repeat(1, 10).ToList());
-                using (var reader = new ReqReader(MakeCopyOfDataInReqWriter(writer), 0))
+                using (var reader = new ReqReader(Utils.MakeCopyOfDataInReqWriter(writer), 0))
                     Assert.Throws<InvalidDataException>(() => Fixture.Server.TestAsynHandler(reader));
             }
-        }
-
-        private byte* MakeCopyOfDataInReqWriter(ReqWriter writer)
-        {
-            byte* newbuf = (byte*)Memory.malloc((ulong)writer.Length);
-            Memory.memcpy(newbuf, writer.CellPtr, (ulong)writer.Length);
-            return newbuf;
         }
     }
 }
