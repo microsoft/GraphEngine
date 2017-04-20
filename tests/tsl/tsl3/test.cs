@@ -106,6 +106,79 @@ namespace tsl3
         }
     }
 
+    public unsafe class MessageAccessorTest
+    {
+        [Fact]
+        public void Writer_ShouldBasicallyWork()
+        {
+            using (var writer = new ReqWriter())
+            {
+                writer.FieldBeforeList = -42;
+                writer.Nums.Add(100);
+                writer.FieldAfterList = 42;
+                Assert.Equal(writer.FieldBeforeList, -42);
+                Assert.Equal(writer.Nums.Count, 1);
+                Assert.Equal(writer.Nums[0], 100);
+                Assert.Equal(writer.FieldAfterList, 42);
+            }
+        }
+
+        [Fact]
+        public void Writer_ShouldHaveProperlyTypedProperties()
+        {
+            {
+                var type = typeof(ReqWriter);
+                var properties = type.GetMembers().Where(m => m.MemberType == MemberTypes.Property).Cast<PropertyInfo>().ToList();
+                Assert.True(properties.Single(m => m.Name == "FieldBeforeList").PropertyType == typeof(int), "FieldBeforeList");
+                Assert.True(properties.Single(m => m.Name == "Nums").PropertyType == typeof(intListAccessor), "Nums");
+                Assert.True(properties.Single(m => m.Name == "FieldAfterList").PropertyType == typeof(byte), "FieldAfterList");
+            }
+            {
+                var type = typeof(RespWriter);
+                var property = (PropertyInfo) type.GetMember("result").Single();
+                Assert.True(property.PropertyType == typeof(StringAccessor));
+            }
+        }
+
+        [Fact]
+        public void Reader_ShouldBasicallyWork()
+        {
+            using (var writer = new ReqWriter())
+            {
+                writer.FieldBeforeList = -42;
+                writer.Nums.Add(100);
+                writer.FieldAfterList = 42;
+                using (var reader = new ReqReader(Utils.MakeCopyOfDataInReqWriter(writer), 0))
+                {
+                    Assert.Equal(reader.FieldBeforeList, -42);
+                    Assert.Equal(reader.Nums.Count, 1);
+                    Assert.Equal(reader.Nums[0], 100);
+                    Assert.Equal(reader.FieldAfterList, 42);
+                    Assert.Throws<InvalidOperationException>(() => reader.Nums[1] = 10000);
+                    Assert.Throws<InvalidOperationException>(() => reader.Nums.Add(100000));
+                }
+            }
+        }
+
+        [Fact]
+        public void Reader_ShouldHaveProperlyTypedProperties()
+        {
+            {
+                var type = typeof(ReqReader);
+                var properties = type.GetMembers().Where(m => m.MemberType == MemberTypes.Property).Cast<PropertyInfo>().ToList();
+                Assert.True(properties.Single(m => m.Name == "FieldBeforeList").PropertyType == typeof(int), "FieldBeforeList");
+                Assert.True(properties.Single(m => m.Name == "Nums").PropertyType == typeof(intListAccessor), "Nums");
+                Assert.True(properties.Single(m => m.Name == "FieldAfterList").PropertyType == typeof(byte), "FieldAfterList");
+            }
+            {
+                var type = typeof(RespReader);
+                var property = (PropertyInfo) type.GetMember("result").Single();
+                Assert.True(property.PropertyType == typeof(StringAccessor));
+            }
+        }
+
+    }
+
     [Collection("TestServer Collection")]
     public unsafe class ProtocolTest
     {
