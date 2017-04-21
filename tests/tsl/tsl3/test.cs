@@ -15,26 +15,86 @@ using Xunit.Sdk;
 
 namespace tsl3
 {
-    #region Fixture
+    #region Fixture and Utils
+    public static unsafe class Utils
+    {
+        public static byte* MakeCopyOfDataInReqWriter(ReqWriter writer)
+        {
+            byte* newbuf = (byte*)Memory.malloc((ulong)writer.Length);
+            Memory.memcpy(newbuf, writer.CellPtr, (ulong)writer.Length);
+            return newbuf;
+        }
+
+        public static int CalcForSynRsp(int before, IEnumerable<int> nums, byte after, out string response)
+        {
+            var numList = nums.ToList();
+            response = $"{before} {string.Join(" ", numList)} {after}";
+            return before + numList.Sum() + after;
+        }
+
+        public static int CalcForSyn(int before, IEnumerable<int> nums, byte after)
+        {
+            List<int> numList = nums.ToList();
+            if (before == after)
+                return before + after;
+            if (numList.Count == 10)
+                return numList.Sum();
+            return -1;
+        }
+
+        public static int CalcForAsyn(int before, IEnumerable<int> nums, byte after)
+        {
+            List<int> numList = nums.ToList();
+            return numList.Sum() - before + after;
+        }
+    }
+
     public class TestServer : TestServerBase
     {
+        public int SynWithRspResult { get; private set; } = 0;
         public override void TestSynWithRspHandler(ReqReader request, RespWriter response)
         {
-            response.result = $"{request.FieldBeforeList} {string.Join(" ", request.Nums)} {request.FieldAfterList}";
+            string resp;
+            SynWithRspResult = Utils.CalcForSynRsp(request.FieldBeforeList, request.Nums, request.FieldAfterList, out resp);
+            response.result = resp;
         }
 
+        public int SynResult { get; private set; } = 0;
         public override void TestSynHandler(ReqReader request)
         {
-            if (request.FieldBeforeList == (int) request.FieldAfterList)
-                throw new ArgumentException();
-            if (request.Nums.Count == 10)
-                throw new InvalidDataException();
-            throw new NotImplementedException();
+            SynResult = Utils.CalcForSyn(request.FieldBeforeList, request.Nums, request.FieldAfterList);
         }
 
+        public int AsynResult { get; private set; } = 0;
         public override void TestAsynHandler(ReqReader request)
         {
-            TestSynHandler(request);
+            AsynResult = Utils.CalcForAsyn(request.FieldBeforeList, request.Nums, request.FieldAfterList);
+        }
+
+        public int SynWithRsp1Result { get; private set; } = 0;
+        public override void TestSynWithRsp1Handler(ReqReader request, RespWriter response)
+        {
+            string resp;
+            SynWithRsp1Result = Utils.CalcForSynRsp(request.FieldBeforeList, request.Nums, request.FieldAfterList, out resp);
+            response.result = resp;
+        }
+
+        public int Syn1Result { get; private set; } = 0;
+        public override void TestSyn1Handler(ReqReader request)
+        {
+            Syn1Result = Utils.CalcForSyn(request.FieldBeforeList, request.Nums, request.FieldAfterList);
+        }
+
+        public int Asyn1Result { get; private set; } = 0;
+        public override void TestAsyn1Handler(ReqReader request)
+        {
+            Asyn1Result = Utils.CalcForAsyn(request.FieldBeforeList, request.Nums, request.FieldAfterList);
+        }
+
+        public void ResetCounts()
+        {
+            SynResult = AsynResult = SynWithRspResult = 0;
+            Syn1Result = Asyn1Result = SynWithRsp1Result = 0;
         }
     }
 
@@ -60,16 +120,6 @@ namespace tsl3
     {
     }
     #endregion
-
-    public static unsafe class Utils
-    {
-        public static byte* MakeCopyOfDataInReqWriter(ReqWriter writer)
-        {
-            byte* newbuf = (byte*)Memory.malloc((ulong)writer.Length);
-            Memory.memcpy(newbuf, writer.CellPtr, (ulong)writer.Length);
-            return newbuf;
-        }
-    }
 
     public class StructTest
     {

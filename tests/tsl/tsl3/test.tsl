@@ -31,9 +31,33 @@ protocol TestAsyn
 	Response: void;
 }
 
+protocol TestSyn1
+{
+	Type: Syn;
+	Request: Req;
+	Response: void;
+}
+
+protocol TestSynWithRsp1
+{
+	Type: Syn;
+	Request: Req;
+	Response: Resp;
+}
+
+protocol TestAsyn1
+{
+	Type: Asyn;
+	Request: Req;
+	Response: void;
+}
+
 server TestServer
 {
 	protocol TestSyn;
 	protocol TestSynWithRsp;
 	protocol TestAsyn;
+	protocol TestSyn1;
+	protocol TestSynWithRsp1;
+	protocol TestAsyn1;
 }
