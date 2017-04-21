@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props" Condition="Exists('..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -66,7 +66,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="test.cs" />
+    <Compile Include="MessageAccessorTest.cs" />
+    <Compile Include="ProtocolTest.cs" />
+    <Compile Include="StructTest.cs" />
+    <Compile Include="Fixtures.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
