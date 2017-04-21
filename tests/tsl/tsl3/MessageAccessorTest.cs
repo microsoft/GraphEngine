@@ -24,6 +24,12 @@ namespace tsl3
                 Assert.Equal(nums.Length - 2, writer.Nums.Count);
                 Assert.Equal(nums[1], writer.Nums[0]);
                 Assert.Equal(nums.Last(), writer.FieldAfterList);
+
+                var req = (Req)writer;
+                Assert.Equal(nums.First(), req.FieldBeforeList);
+                Assert.Equal(nums.Length - 2, req.Nums.Count);
+                Assert.Equal(nums[1], req.Nums[0]);
+                Assert.Equal(nums.Last(), req.FieldAfterList);
             }
         }
 
