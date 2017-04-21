@@ -26,10 +26,12 @@ namespace tsl3
             SynResult = Utils.CalcForSyn(request.FieldBeforeList, request.Nums, request.FieldAfterList);
         }
 
+        public ManualResetEventSlim AsynDone { get; private set; } = new ManualResetEventSlim();
         [Result] public int AsynResult { get; private set; } = 0;
         public override void TestAsynHandler(ReqReader request)
         {
             AsynResult = Utils.CalcForAsyn(request.FieldBeforeList, request.Nums, request.FieldAfterList);
+            AsynDone.Set();
         }
 
         [Result] public int SynWithRsp1Result { get; private set; } = 0;
@@ -46,16 +48,20 @@ namespace tsl3
             Syn1Result = Utils.CalcForSyn(request.FieldBeforeList, request.Nums, request.FieldAfterList);
         }
 
+        public ManualResetEventSlim Asyn1Done { get; private set; } = new ManualResetEventSlim();
         [Result] public int Asyn1Result { get; private set; } = 0;
         public override void TestAsyn1Handler(ReqReader request)
         {
             Asyn1Result = Utils.CalcForAsyn(request.FieldBeforeList, request.Nums, request.FieldAfterList);
+            Asyn1Done.Set();
         }
 
         public void ResetCounts()
         {
             SynResult = AsynResult = SynWithRspResult = 0;
             Syn1Result = Asyn1Result = SynWithRsp1Result = 0;
+            AsynDone.Reset();
+            Asyn1Done.Reset();
         }
     }
 

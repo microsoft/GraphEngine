@@ -20,10 +20,10 @@ namespace tsl3
                 writer.Nums.AddRange(nums.Skip(1).Select(_ => (int)_).ToList());
                 writer.Nums.RemoveAt(writer.Nums.Count - 1);
                 writer.FieldAfterList = nums.Last();
-                Assert.Equal(writer.FieldBeforeList, nums.First());
-                Assert.Equal(writer.Nums.Count, nums.Length);
-                Assert.Equal(writer.Nums[0], nums[1]);
-                Assert.Equal(writer.FieldAfterList, nums.Last());
+                Assert.Equal(nums.First(), writer.FieldBeforeList);
+                Assert.Equal(nums.Length - 2, writer.Nums.Count);
+                Assert.Equal(nums[1], writer.Nums[0]);
+                Assert.Equal(nums.Last(), writer.FieldAfterList);
             }
         }
 
@@ -52,10 +52,10 @@ namespace tsl3
                 writer.FieldAfterList = 42;
                 using (var reader = new ReqReader(Utils.MakeCopyOfDataInReqWriter(writer), 0))
                 {
-                    Assert.Equal(reader.FieldBeforeList, -42);
-                    Assert.Equal(reader.Nums.Count, 1);
-                    Assert.Equal(reader.Nums[0], 100);
-                    Assert.Equal(reader.FieldAfterList, 42);
+                    Assert.Equal(-42, reader.FieldBeforeList);
+                    Assert.Equal(1, reader.Nums.Count);
+                    Assert.Equal(100, reader.Nums[0]);
+                    Assert.Equal(42, reader.FieldAfterList);
                 }
             }
         }

@@ -46,6 +46,12 @@ namespace tsl3
             var type = typeof(T);
             var nonZeroProp = (PropertyInfo)type.GetMembers().Single(p => p.MemberType == MemberTypes.Property && p.Name == nonZeroField);
             Assert.Equal(expectedValue, (R)nonZeroProp.GetValue(obj));
+            EnsureResultsAreDefaultExceptOne<T, R>(obj, nonZeroField);
+        }
+
+        public static void EnsureResultsAreDefaultExceptOne<T, R>(T obj, string nonZeroField)
+        {
+            var type = typeof(T);
             var zeroProps = type.GetMembers()
                 .Where(i => i.MemberType == MemberTypes.Property)
                 .Where(i => i.CustomAttributes.Any(_ => _.AttributeType == typeof(ResultAttribute)))
