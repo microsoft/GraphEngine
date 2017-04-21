@@ -1,0 +1,68 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Xunit;
+using Trinity;
+using Trinity.Storage;
+
+namespace storage7
+{
+    public class storage7
+    {
+        [Theory]
+        [InlineData(1027, 1<<20)]
+        [InlineData(2049, 1575984)]
+        public unsafe void T1(int buff_len, int count)
+        {
+            Global.LocalStorage.ResetStorage();
+
+            byte[] buf = new byte[buff_len];
+
+
+            for (int i = 0; i < count; ++i)
+            {
+                fixed (byte* b = buf)
+                {
+                    long* p = (long*)b;
+                    for (int j = 0; j < buf.Length / sizeof(long); ++j)
+                    {
+                        p[j] = (long)(i + j);
+                    }
+                }
+                Global.LocalStorage.SaveCell(i, buf);
+            }
+
+            var before = Global.LocalStorage.CellCount;
+
+            Global.LocalStorage.SaveStorage();
+
+            Console.WriteLine("Saved storage");
+
+            Global.LocalStorage.LoadStorage();
+
+            var after = Global.LocalStorage.CellCount;
+
+            Assert.Equal(before, after);
+
+            Console.WriteLine("Begin testing ...");
+
+            for (int i = 0; i < count; ++i)
+            {
+                Assert.Equal(TrinityErrorCode.E_SUCCESS, Global.LocalStorage.LoadCell(i, out buf));
+                fixed (byte* b = buf)
+                {
+                    long* p = (long*)b;
+                    Assert.Equal(buff_len, buf.Length);
+
+                    for (int j = 0; j < buf.Length / sizeof(long); ++j)
+                    {
+                        Assert.Equal(p[j], (long)(i + j));
+                    }
+                }
+            }
+        }
+    }
+}
