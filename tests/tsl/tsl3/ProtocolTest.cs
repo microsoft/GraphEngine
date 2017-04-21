@@ -11,7 +11,7 @@ namespace tsl3
         private TrinityServerFixture Fixture { get; }
         public ProtocolTest(TrinityServerFixture fixture) { Fixture = fixture; }
 
-        public IEnumerable<object[]> GetData()
+        public static IEnumerable<object[]> GetData()
         {
             yield return new object[] { 1, new int[] { 1, 2, 3, 4 }, 4 };
             yield return new object[] { 2, new int[] { 2, 0, 4, 8 }, 8 };
