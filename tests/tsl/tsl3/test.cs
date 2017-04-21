@@ -50,17 +50,17 @@ namespace tsl3
             return numList.Sum() - before + after;
         }
 
-        public static void EnsureAllResultsAreZeroExceptOne<T>(T obj, string nonZeroField)
+        public static void EnsureResults<T, R>(T obj, string nonZeroField, R expectedValue)
         {
             var type = typeof(T);
             var nonZeroProp = (PropertyInfo)type.GetMembers().Single(p => p.MemberType == MemberTypes.Property && p.Name == nonZeroField);
-            Assert.NotEqual((int)nonZeroProp.GetValue(obj), 0);
+            Assert.Equal((R)nonZeroProp.GetValue(obj), expectedValue);
             var zeroProps = type.GetMembers()
                 .Where(i => i.MemberType == MemberTypes.Property)
                 .Where(i => i.CustomAttributes.Any(_ => _.AttributeType == typeof(ResultAttribute)))
                 .Where(i => i.Name != nonZeroField)
                 .Cast<PropertyInfo>();
-            Assert.True(zeroProps.All(p => (int)p.GetValue(obj) == 0));
+            Assert.True(zeroProps.All(p => ((R)p.GetValue(obj)).Equals(default(R))));
         }
     }
 
@@ -268,18 +268,18 @@ namespace tsl3
                 using (var response = Global.CloudStorage.TestSynWithRspToTestServer(Global.MyServerID, writer))
                 {
                     string expectedResp;
-                    Assert.Equal(Fixture.Server.SynWithRspResult, Utils.CalcForSynRsp(before, nums, after, out expectedResp));
+                    var expectedResult = Utils.CalcForSynRsp(before, nums, after, out expectedResp);
+                    Utils.EnsureResults(Fixture.Server, nameof(Fixture.Server.SynWithRspResult), expectedResult);
+                    // ensures that it is exactly SynWithRspHandler is called
                     Assert.Equal(expectedResp, response.result);
-                    Utils.EnsureAllResultsAreZeroExceptOne(Fixture.Server, nameof(Fixture.Server.SynWithRspResult));
                 }
                 Fixture.Server.ResetCounts();
                 using (var response = Global.CloudStorage.TestSynWithRsp1ToTestServer(Global.MyServerID, writer))
                 {
                     string expectedResp;
-                    Assert.Equal(Fixture.Server.SynWithRsp1Result, Utils.CalcForSynRsp(before, nums, after, out expectedResp));
+                    var expectedResult = Utils.CalcForSynRsp(before, nums, after, out expectedResp);
+                    Utils.EnsureResults(Fixture.Server, nameof(Fixture.Server.SynWithRsp1Result), expectedResult);
                     Assert.Equal(expectedResp, response.result);
-                    // ensure that it is the SynWithRsp1 is called, not SynWithRsp
-                    Utils.EnsureAllResultsAreZeroExceptOne(Fixture.Server, nameof(Fixture.Server.SynWithRsp1Result));
                 }
                 Fixture.Server.ResetCounts();
             }
@@ -293,47 +293,36 @@ namespace tsl3
             {
                 Global.CloudStorage.TestSynToTestServer(Global.MyServerID, writer);
                 {
-                    Assert.Equal(Fixture.Server.SynResult, Utils.CalcForSyn(before, nums, after));
+                    Utils.EnsureResults(Fixture.Server, nameof(Fixture.Server.SynResult), Utils.CalcForSyn(before, nums, after));
                 }
                 Fixture.Server.ResetCounts();
+
+                Global.CloudStorage.TestSyn1ToTestServer(Global.MyServerID, writer);
                 {
-                    string expectedResp;
-                    Assert.Equal(Fixture.Server.SynWithRsp1Result, Utils.CalcForSynRsp(before, nums, after, out expectedResp));
-                    Assert.Equal(expectedResp, response.result);
-                    // ensure that it is the SynWithRsp1 is called, not SynWithRsp
-                    Assert.Equal(Fixture.Server.SynWithRspResult, 0);
+                    Utils.EnsureResults(Fixture.Server, nameof(Fixture.Server.Syn1Result), Utils.CalcForSyn(before, nums, after));
                 }
                 Fixture.Server.ResetCounts();
             }
         }
 
-
-        [Fact]
-        public void Asyn_Test()
+        [Theory]
+        [MemberData(nameof(GetData))]
+        public void Asyn_Test(int before, int[] nums, byte after)
         {
-            using (var writer = new ReqWriter())
+            using (var writer = PrepareWriter(before, nums, after))
             {
-                writer.FieldBeforeList = 2;
-                writer.Nums.Add(0);
-                writer.Nums.Add(7);
-                writer.FieldAfterList = 3;
-                // assert: here won't throw
                 Global.CloudStorage.TestAsynToTestServer(Global.MyServerID, writer);
-                using (var reader = new ReqReader(Utils.MakeCopyOfDataInReqWriter(writer), 0))
-                    Assert.Throws<NotImplementedException>(() => Fixture.Server.TestAsynHandler(reader));
+                {
+                    Utils.EnsureResults(Fixture.Server, nameof(Fixture.Server.AsynResult), Utils.CalcForAsyn(before, nums, after));
+                }
+                Fixture.Server.ResetCounts();
 
-                writer.FieldBeforeList = writer.FieldAfterList = 42;
-                using (var reader = new ReqReader(Utils.MakeCopyOfDataInReqWriter(writer), 0))
-                    Assert.Throws<ArgumentException>(() => Fixture.Server.TestAsynHandler(reader));
-
-                writer.FieldBeforeList = 41;
-                writer.FieldAfterList = 42;
-                writer.Nums.Clear();
-                writer.Nums.AddRange(Enumerable.Repeat(1, 10).ToList());
-                using (var reader = new ReqReader(Utils.MakeCopyOfDataInReqWriter(writer), 0))
-                    Assert.Throws<InvalidDataException>(() => Fixture.Server.TestAsynHandler(reader));
+                Global.CloudStorage.TestAsyn1ToTestServer(Global.MyServerID, writer);
+                {
+                    Utils.EnsureResults(Fixture.Server, nameof(Fixture.Server.Asyn1Result), Utils.CalcForAsyn(before, nums, after));
+                }
+                Fixture.Server.ResetCounts();
             }
-            Fixture.Server.ResetCounts();
         }
 
         private static ReqWriter PrepareWriter(int before, int[] nums, byte after)
@@ -347,6 +336,5 @@ namespace tsl3
             writer.FieldAfterList = after;
             return writer;
         }
-
     }
 }
