@@ -16,6 +16,8 @@ using Xunit.Sdk;
 namespace tsl3
 {
     #region Fixture and Utils
+    public class ResultAttribute : Attribute { }
+
     public static unsafe class Utils
     {
         public static byte* MakeCopyOfDataInReqWriter(ReqWriter writer)
@@ -47,11 +49,24 @@ namespace tsl3
             List<int> numList = nums.ToList();
             return numList.Sum() - before + after;
         }
+
+        public static void EnsureAllResultsAreZeroExceptOne<T>(T obj, string nonZeroField)
+        {
+            var type = typeof(T);
+            var nonZeroProp = (PropertyInfo)type.GetMembers().Single(p => p.MemberType == MemberTypes.Property && p.Name == nonZeroField);
+            Assert.NotEqual((int)nonZeroProp.GetValue(obj), 0);
+            var zeroProps = type.GetMembers()
+                .Where(i => i.MemberType == MemberTypes.Property)
+                .Where(i => i.CustomAttributes.Any(_ => _.AttributeType == typeof(ResultAttribute)))
+                .Where(i => i.Name != nonZeroField)
+                .Cast<PropertyInfo>();
+            Assert.True(zeroProps.All(p => (int)p.GetValue(obj) == 0));
+        }
     }
 
     public class TestServer : TestServerBase
     {
-        public int SynWithRspResult { get; private set; } = 0;
+        [Result] public int SynWithRspResult { get; private set; } = 0;
         public override void TestSynWithRspHandler(ReqReader request, RespWriter response)
         {
             string resp;
@@ -59,19 +74,19 @@ namespace tsl3
             response.result = resp;
         }
 
-        public int SynResult { get; private set; } = 0;
+        [Result] public int SynResult { get; private set; } = 0;
         public override void TestSynHandler(ReqReader request)
         {
             SynResult = Utils.CalcForSyn(request.FieldBeforeList, request.Nums, request.FieldAfterList);
         }
 
-        public int AsynResult { get; private set; } = 0;
+        [Result] public int AsynResult { get; private set; } = 0;
         public override void TestAsynHandler(ReqReader request)
         {
             AsynResult = Utils.CalcForAsyn(request.FieldBeforeList, request.Nums, request.FieldAfterList);
         }
 
-        public int SynWithRsp1Result { get; private set; } = 0;
+        [Result] public int SynWithRsp1Result { get; private set; } = 0;
         public override void TestSynWithRsp1Handler(ReqReader request, RespWriter response)
         {
             string resp;
@@ -79,13 +94,13 @@ namespace tsl3
             response.result = resp;
         }
 
-        public int Syn1Result { get; private set; } = 0;
+        [Result] public int Syn1Result { get; private set; } = 0;
         public override void TestSyn1Handler(ReqReader request)
         {
             Syn1Result = Utils.CalcForSyn(request.FieldBeforeList, request.Nums, request.FieldAfterList);
         }
 
-        public int Asyn1Result { get; private set; } = 0;
+        [Result] public int Asyn1Result { get; private set; } = 0;
         public override void TestAsyn1Handler(ReqReader request)
         {
             Asyn1Result = Utils.CalcForAsyn(request.FieldBeforeList, request.Nums, request.FieldAfterList);
@@ -158,18 +173,24 @@ namespace tsl3
 
     public unsafe class MessageAccessorTest
     {
-        [Fact]
-        public void Writer_ShouldBasicallyWork()
+        [Theory]
+        [InlineData(new byte[] {1, 2, 3, 4})]
+        [InlineData(new byte[] {2, 0, 4, 8})]
+        [InlineData(new byte[] {123, 124, 75, 43})]
+        [InlineData(new byte[] {77, 88, 9, 8})]
+        [InlineData(new byte[] {77, 88, 9, 8, 77, 88, 9, 8, 77, 88, 9, 8, 77, 88, 9, 8, })]
+        public void Writer_ShouldBasicallyWork(byte[] nums)
         {
             using (var writer = new ReqWriter())
             {
-                writer.FieldBeforeList = -42;
-                writer.Nums.Add(100);
-                writer.FieldAfterList = 42;
-                Assert.Equal(writer.FieldBeforeList, -42);
-                Assert.Equal(writer.Nums.Count, 1);
-                Assert.Equal(writer.Nums[0], 100);
-                Assert.Equal(writer.FieldAfterList, 42);
+                writer.FieldBeforeList = nums.First();
+                writer.Nums.AddRange(nums.Skip(1).Select(_ => (int)_).ToList());
+                writer.Nums.RemoveAt(writer.Nums.Count - 1);
+                writer.FieldAfterList = nums.Last();
+                Assert.Equal(writer.FieldBeforeList, nums.First());
+                Assert.Equal(writer.Nums.Count, nums.Length);
+                Assert.Equal(writer.Nums[0], nums[1]);
+                Assert.Equal(writer.FieldAfterList, nums.Last());
             }
         }
 
@@ -184,9 +205,7 @@ namespace tsl3
                 Assert.True(properties.Single(m => m.Name == "FieldAfterList").PropertyType == typeof(byte), "FieldAfterList");
             }
             {
-                var type = typeof(RespWriter);
-                var property = (PropertyInfo) type.GetMember("result").Single();
-                Assert.True(property.PropertyType == typeof(StringAccessor));
+                Assert.True(((PropertyInfo)typeof(RespWriter).GetMember("result").Single()).PropertyType == typeof(StringAccessor));
             }
         }
 
@@ -219,9 +238,7 @@ namespace tsl3
                 Assert.True(properties.Single(m => m.Name == "FieldAfterList").PropertyType == typeof(byte), "FieldAfterList");
             }
             {
-                var type = typeof(RespReader);
-                var property = (PropertyInfo) type.GetMember("result").Single();
-                Assert.True(property.PropertyType == typeof(StringAccessor));
+                Assert.True(((PropertyInfo)typeof(RespReader).GetMember("result").Single()).PropertyType == typeof(StringAccessor));
             }
         }
 
@@ -233,55 +250,60 @@ namespace tsl3
         private TrinityServerFixture Fixture { get; }
         public ProtocolTest(TrinityServerFixture fixture) { Fixture = fixture; }
 
-        [Theory]
-        [InlineData(new byte[] {1, 2, 3, 4})]
-        [InlineData(new byte[] {2, 0, 4, 8})]
-        [InlineData(new byte[] {123, 124, 75, 43})]
-        [InlineData(new byte[] {77, 88, 9, 8})]
-        [InlineData(new byte[] {77, 88, 9, 8, 77, 88, 9, 8, 77, 88, 9, 8, 77, 88, 9, 8, })]
-        public void SynWithRsp_Test(byte[] nums)
+        public IEnumerable<object[]> GetData()
         {
-            Assert.True(nums.Length >= 4);
-            var numList = nums.ToList();
-            using (var writer = new ReqWriter())
+            yield return new object[] { 1, new int[] { 1, 2, 3, 4 }, 4 };
+            yield return new object[] { 2, new int[] { 2, 0, 4, 8 }, 8 };
+            yield return new object[] { 233, new int[] { 123, 124, 75, 43 }, 128 };
+            yield return new object[] { 12, new int[] { 77, 88, 9, 8 }, 8 };
+            yield return new object[] { 12, new int[] { 77, 88, 9, 8, 77, 88, 9, 8, 77, 88, 9, 8, 77, 88, 9, 8 }, 8 };
+        }
+
+        [Theory]
+        [MemberData(nameof(GetData))]
+        public void SynWithRsp_Test(int before, int[] nums, byte after)
+        {
+            using (var writer = PrepareWriter(before, nums, after))
             {
-                writer.FieldBeforeList = numList[0];
-                writer.Nums.Add(numList[1]);
-                Console.WriteLine(string.Join(" ", numList.Skip(2).Select(Convert.ToInt32).ToList()));
-                writer.Nums.AddRange(numList.Skip(2).Select(Convert.ToInt32).ToList());
-                writer.Nums.RemoveAt(writer.Nums.Count - 1);
-                writer.FieldAfterList = numList.Last();
                 using (var response = Global.CloudStorage.TestSynWithRspToTestServer(Global.MyServerID, writer))
                 {
-                    Assert.Equal(string.Join(" ", numList), response.result);
+                    string expectedResp;
+                    Assert.Equal(Fixture.Server.SynWithRspResult, Utils.CalcForSynRsp(before, nums, after, out expectedResp));
+                    Assert.Equal(expectedResp, response.result);
+                    Utils.EnsureAllResultsAreZeroExceptOne(Fixture.Server, nameof(Fixture.Server.SynWithRspResult));
                 }
+                Fixture.Server.ResetCounts();
+                using (var response = Global.CloudStorage.TestSynWithRsp1ToTestServer(Global.MyServerID, writer))
+                {
+                    string expectedResp;
+                    Assert.Equal(Fixture.Server.SynWithRsp1Result, Utils.CalcForSynRsp(before, nums, after, out expectedResp));
+                    Assert.Equal(expectedResp, response.result);
+                    // ensure that it is the SynWithRsp1 is called, not SynWithRsp
+                    Utils.EnsureAllResultsAreZeroExceptOne(Fixture.Server, nameof(Fixture.Server.SynWithRsp1Result));
+                }
+                Fixture.Server.ResetCounts();
             }
         }
 
-        [Fact]
-        public void Syn_Test()
+        [Theory]
+        [MemberData(nameof(GetData))]
+        public void Syn_Test(int before, int[] nums, byte after)
         {
-            using (var writer = new ReqWriter())
+            using (var writer = PrepareWriter(before, nums, after))
             {
-                writer.FieldBeforeList = 2;
-                writer.Nums.Add(0);
-                writer.Nums.Add(7);
-                writer.FieldAfterList = 3;
-                Assert.Throws<IOException>(() => Global.CloudStorage.TestSynToTestServer(Global.MyServerID, writer));
-
-                using (var reader = new ReqReader(Utils.MakeCopyOfDataInReqWriter(writer), 0))
-                    Assert.Throws<NotImplementedException>(() => Fixture.Server.TestSynHandler(reader));
-
-                writer.FieldBeforeList = writer.FieldAfterList = 42;
-                using (var reader = new ReqReader(Utils.MakeCopyOfDataInReqWriter(writer), 0))
-                    Assert.Throws<ArgumentException>(() => Fixture.Server.TestSynHandler(reader));
-
-                writer.FieldBeforeList = 41;
-                writer.FieldAfterList = 42;
-                writer.Nums.Clear();
-                writer.Nums.AddRange(Enumerable.Repeat(1, 10).ToList());
-                using (var reader = new ReqReader(Utils.MakeCopyOfDataInReqWriter(writer), 0))
-                    Assert.Throws<InvalidDataException>(() => Fixture.Server.TestSynHandler(reader));
+                Global.CloudStorage.TestSynToTestServer(Global.MyServerID, writer);
+                {
+                    Assert.Equal(Fixture.Server.SynResult, Utils.CalcForSyn(before, nums, after));
+                }
+                Fixture.Server.ResetCounts();
+                {
+                    string expectedResp;
+                    Assert.Equal(Fixture.Server.SynWithRsp1Result, Utils.CalcForSynRsp(before, nums, after, out expectedResp));
+                    Assert.Equal(expectedResp, response.result);
+                    // ensure that it is the SynWithRsp1 is called, not SynWithRsp
+                    Assert.Equal(Fixture.Server.SynWithRspResult, 0);
+                }
+                Fixture.Server.ResetCounts();
             }
         }
 
@@ -311,6 +333,20 @@ namespace tsl3
                 using (var reader = new ReqReader(Utils.MakeCopyOfDataInReqWriter(writer), 0))
                     Assert.Throws<InvalidDataException>(() => Fixture.Server.TestAsynHandler(reader));
             }
+            Fixture.Server.ResetCounts();
         }
+
+        private static ReqWriter PrepareWriter(int before, int[] nums, byte after)
+        {
+            var writer = new ReqWriter();
+            writer.FieldBeforeList = before;
+            writer.Nums.Add(nums[0]);
+            writer.Nums.AddRange(nums.Skip(1).ToList());
+            writer.Nums.RemoveAt(writer.Nums.Count - 1);
+            writer.Nums.Add(nums.Last());
+            writer.FieldAfterList = after;
+            return writer;
+        }
+
     }
 }
