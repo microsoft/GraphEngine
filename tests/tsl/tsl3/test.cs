@@ -154,8 +154,6 @@ namespace tsl3
                     Assert.Equal(reader.Nums.Count, 1);
                     Assert.Equal(reader.Nums[0], 100);
                     Assert.Equal(reader.FieldAfterList, 42);
-                    Assert.Throws<InvalidOperationException>(() => reader.Nums[1] = 10000);
-                    Assert.Throws<InvalidOperationException>(() => reader.Nums.Add(100000));
                 }
             }
         }
