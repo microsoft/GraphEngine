@@ -74,13 +74,18 @@ namespace tsl3
             {
                 Global.CloudStorage.TestAsynToTestServer(Global.MyServerID, writer);
                 {
-                    Utils.EnsureResults(Fixture.Server, nameof(Fixture.Server.AsynResult), Utils.CalcForAsyn(before, nums, after));
+                    // we have to wait here; otherwise the result may be still changing
+                    Fixture.Server.AsynDone.Wait();
+                    Utils.EnsureResultsAreDefaultExceptOne<TestServer, int>(Fixture.Server, nameof(Fixture.Server.AsynResult));
+                    Assert.Equal(Utils.CalcForAsyn(before, nums, after), Fixture.Server.AsynResult);
                 }
                 Fixture.Server.ResetCounts();
 
                 Global.CloudStorage.TestAsyn1ToTestServer(Global.MyServerID, writer);
                 {
-                    Utils.EnsureResults(Fixture.Server, nameof(Fixture.Server.Asyn1Result), Utils.CalcForAsyn(before, nums, after));
+                    Fixture.Server.Asyn1Done.Wait();
+                    Utils.EnsureResultsAreDefaultExceptOne<TestServer, int>(Fixture.Server, nameof(Fixture.Server.Asyn1Result));
+                    Assert.Equal(Utils.CalcForAsyn(before, nums, after), Fixture.Server.Asyn1Result);
                 }
                 Fixture.Server.ResetCounts();
             }
