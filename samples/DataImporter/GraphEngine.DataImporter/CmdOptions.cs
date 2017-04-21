@@ -33,7 +33,7 @@ namespace GraphEngine.DataImporter
         [Option('f', "fileFormat", HelpText = "Specifies the file format", Required = false)]
         public string FileFormat { get; set; }
 
-        [Option("nottrim", HelpText = "Specifies that the data fields in CSV/TSV files are not trimmed", Required = false)]
+        [Option("notrim", HelpText = "Specifies that the data fields in CSV/TSV files are not trimmed", Required = false)]
         public bool NoTrim { get; set; }
 
         [ValueList(typeof(List<string>))]
@@ -49,7 +49,7 @@ namespace GraphEngine.DataImporter
             };
 
             help.AddPreOptionsLine("Import from files to Graph Engine storage.");
-            help.AddPreOptionsLine(string.Format("Usage: {0} [-t tsl_assembly|-g] [-d directory] [-o output_dir] [--delimiter delimiter] [-f file_format] [--nottrim] [explicit files]", Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
+            help.AddPreOptionsLine(string.Format("Usage: {0} [-t tsl_assembly|-g] [-d directory] [-o output_dir] [--delimiter delimiter] [-f file_format] [--notrim] [explicit files]", Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
 
             help.AddOptions(this);
             help.AddPostOptionsLine("Only files with .json, .csv, .tsv and .ntriples suffix are recognized.");
