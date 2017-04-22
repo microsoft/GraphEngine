@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{2DC8606A-1350-4AC8-A6E9-083EF7A14F10}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>TrinityTSLCodeGen</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)..\..\bin\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)..\..\bin\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WCHAR_OUTPUT;WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)Trinity.TSL.Parser;$(SolutionDir)..\Trinity.C\include;$(ProjectDir)\CodeGen</AdditionalIncludeDirectories>
+      <BrowseInformation>true</BrowseInformation>
+      <MinimalRebuild>false</MinimalRebuild>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib />
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WCHAR_OUTPUT;WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)Trinity.TSL.Parser;$(SolutionDir)..\Trinity.C\include;$(ProjectDir)\CodeGen</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib />
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Cell.cs.cpp" />
+    <ClCompile Include="CellSelectors.cs.cpp" />
+    <ClCompile Include="CellTypeEnum.cs.cpp" />
+    <ClCompile Include="CellTypeExtension.cs.cpp" />
+    <ClCompile Include="CodeGen\AccessorInitialization.cpp" />
+    <ClCompile Include="CodeGen\AccessorToAccessorFieldAssignment.cpp" />
+    <ClCompile Include="CodeGen\common.cpp" />
+    <ClCompile Include="CodeGen\PushPointer.cpp" />
+    <ClCompile Include="CodeGen\StructAccessorReverseImplicitOperator.cpp" />
+    <ClCompile Include="CommunicationSchema.cs.cpp" />
+    <ClCompile Include="Containers\Array.cs.cpp" />
+    <ClCompile Include="Containers\Containers.cpp" />
+    <ClCompile Include="Containers\List.cs.cpp" />
+    <ClCompile Include="Enum.cs.cpp" />
+    <ClCompile Include="ExtensionAttribute.cs.cpp" />
+    <ClCompile Include="ExternalParser.cs.cpp" />
+    <ClCompile Include="GenericCell.cs.cpp" />
+    <ClCompile Include="GenericFieldAccessor.cs.cpp" />
+    <ClCompile Include="HTTP.cs.cpp" />
+    <ClCompile Include="Index.cs.cpp" />
+    <ClCompile Include="InvertedIndex\Bigram\Indexer.cs.cpp" />
+    <ClCompile Include="InvertedIndex\Bigram\IndexItem.cs.cpp" />
+    <ClCompile Include="InvertedIndex\Bigram\Searcher.cs.cpp" />
+    <ClCompile Include="Libraries\BufferAllocator.cs.cpp" />
+    <ClCompile Include="Libraries\byteListAccessor.cs.cpp" />
+    <ClCompile Include="Libraries\DateTimeAccessor.cs.cpp" />
+    <ClCompile Include="Libraries\doubleListAccessor.cs.cpp" />
+    <ClCompile Include="Libraries\EnumAccessor.cs.cpp" />
+    <ClCompile Include="Libraries\GuidAccessor.cs.cpp" />
+    <ClCompile Include="Libraries\intListAccessor.cs.cpp" />
+    <ClCompile Include="Libraries\longListAccessor.cs.cpp" />
+    <ClCompile Include="Libraries\StringAccessor.cs.cpp" />
+    <ClCompile Include="Libraries\U8StringAccessor.cs.cpp" />
+    <ClCompile Include="LINQ\ExpressionTreeRewritter.cs.cpp" />
+    <ClCompile Include="LINQ\IndexQueryTreeExecutor.cs.cpp" />
+    <ClCompile Include="LINQ\IndexQueryTreeNode.cs.cpp" />
+    <ClCompile Include="LINQ\PLINQWrapper.cs.cpp" />
+    <ClCompile Include="CodeGen\main.cpp" />
+    <ClCompile Include="MessageAccessors.cs.cpp" />
+    <ClCompile Include="MODULES\AccessorFieldsDefinition.cs.cpp" />
+    <ClCompile Include="MODULES\AccessorReverseImplicitOperator.cs.cpp" />
+    <ClCompile Include="MODULES\CommunicationClass.cs.cpp" />
+    <ClCompile Include="MODULES\CommunicationSchemaModule.cs.cpp" />
+    <ClCompile Include="MODULES\EnumerateFromFieldModule.cs.cpp" />
+    <ClCompile Include="MODULES\HTTPModule.cs.cpp" />
+    <ClCompile Include="MODULES\MessagePassingMethods.cs.cpp" />
+    <ClCompile Include="MODULES\OptionalFields.cs.cpp" />
+    <ClCompile Include="MODULES\SerializeParametersToBuffer.cs.cpp" />
+    <ClCompile Include="MODULES\StructAccessorEqualOperator.cs.cpp" />
+    <ClCompile Include="MODULES\ValueToAccessorFieldAssignment.cs.cpp" />
+    <ClCompile Include="Protocols.cs.cpp" />
+    <ClCompile Include="StorageSchema.cs.cpp" />
+    <ClCompile Include="Serializer.cs.cpp" />
+    <ClCompile Include="Struct.cs.cpp" />
+    <ClCompile Include="Throw.cs.cpp" />
+    <ClCompile Include="Traits.cs.cpp" />
+    <ClCompile Include="CodeGen\Trinity.TSL.CodeGen.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CodeGen\AccessorType.h" />
+    <ClInclude Include="CodeGen\common.h" />
+    <ClInclude Include="CodeGen\OptionalFieldCalculator.h" />
+    <ClInclude Include="CodeGen\Trinity.TSL.CodeGen.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.TSL.Parser\Trinity.TSL.Parser.vcxproj">
+      <Project>{8df908e2-3c7d-4e7e-b07b-0e23e027f4e0}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

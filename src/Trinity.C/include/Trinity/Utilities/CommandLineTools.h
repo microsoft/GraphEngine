@@ -18,7 +18,7 @@ namespace Trinity
                     longOption = shortOption;
                 return OptionDescriptor < OptionValueType >(shortOption, longOption);
             }
-            template<typename T>inline size_t Index(List<string>& command, OptionDescriptor<T> descriptor)
+            template<typename T>inline size_t Index(List<String>& command, OptionDescriptor<T> descriptor)
             {
                 for (size_t i = 0, length = command.size(); i < length; ++i)
                 {

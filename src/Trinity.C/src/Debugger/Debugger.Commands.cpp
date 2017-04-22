@@ -10,7 +10,7 @@
 
 #include <Storage/LocalStorage/LocalMemoryStorage.h>
 
-#define DEBUGGER_CMD(x) bool x(Array<string>& args)
+#define DEBUGGER_CMD(x) bool x(Array<String>& args)
 #define PARSE_INT(idx) int32_t arg##idx; if (args.Length() <= idx || !args[idx].TryParse(arg##idx)) return false;
 #define PARSE_INT64(idx) int64_t arg##idx; if (args.Length() <= idx || !args[idx].TryParse(arg##idx)) return false;
 

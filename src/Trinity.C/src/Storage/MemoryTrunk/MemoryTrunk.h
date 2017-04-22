@@ -202,7 +202,7 @@ namespace Storage
         /******************** DiskIO ****************************/
         inline String MemoryTrunkFilePath(const char* fileExtension, bool is_primary)
         {
-            string mp_dir;
+            String mp_dir;
             mp_dir = is_primary ? LocalMemoryStorage::GetPrimaryStorageSlot() : LocalMemoryStorage::GetSecondaryStorageSlot();
             mp_dir = Path::Combine(mp_dir, "MemoryPool");
             mp_dir = Path::CompletePath(mp_dir, true);
