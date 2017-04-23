@@ -8,7 +8,7 @@ next: /docs/manual/TSL/RESTProtocol.html
 
 ### Design Rationale
 
-{{site.name}} has a distributed in-memory infrastructure called Memory
+GE has a distributed in-memory infrastructure called Memory
 Cloud. The memory cloud is composed of a set of memory trunks.  Each
 machine in the cluster hosts 256 memory trunks. The reason we
 partition a machine's local memory space into multiple memory trunks
@@ -25,7 +25,7 @@ address.  In order to locate the value of a given key, we first
 identify the machine that stores the key-value pair, and then
 locate the key-value pair in one of the memory trunks on that machine.
 
-For different {{site.name}} applications, the value component in a
+For different GE applications, the value component in a
 key-value pair has different data structure or data schema. We use the
 term cell to denote a value component. For example, let us consider a
 cell with the following content: 1) an 32-bit integer Id; 2) a list
@@ -111,12 +111,12 @@ and manipulate data through a declarative language (such as
 SQL). However, typically, a declarative language either has very
 limited expressive power or does not have efficient implementation.
 But expressive power and efficiency are extremely important for
-{{site.name}}.
+GE.
 
-{{site.name}} stores the user data as blobs instead of runtime objects
+GE stores the user data as blobs instead of runtime objects
 so that the storage overhead is minimized. At the same time,
-{{site.name}} enables us to access the data in an object-oriented
-manner as we do in C# or Java. For example, in {{site.name}}, we can
+GE enables us to access the data in an object-oriented
+manner as we do in C# or Java. For example, in GE, we can
 do the following even the data we operate on is a blob.
 
 ```C#
@@ -126,9 +126,9 @@ cell.Links[0] = 1000001;
 ```
 
 In other words, we can still operate on blobs in an elegant,
-object-oriented manner. {{site.name}} achieves this via a _cell
+object-oriented manner. GE achieves this via a _cell
 accessor_ mechanism. Specifically, we first declare the data schema
-using a TSL script. {{site.name}} compiles the script and generates
+using a TSL script. GE compiles the script and generates
 cell accessors for the cell constructs defined in the TSL
 script. Then, we can access the blob data through the cell accessors
 as if the data is runtime C# objects, but in fact, it is the cell
@@ -164,10 +164,10 @@ data="/img/svg/CellAccessor.svg">The browser does not support
 SVG.</object>
 
 Besides the intuitive data manipulation interfaces, cell accessors
-also provide thread-safe data manipulation guarantee. {{site.name}} is
+also provide thread-safe data manipulation guarantee. GE is
 designed to run in a heavily multi-threaded environment, where a large
 number of cells interact with each other in very complex patterns. To
-make the application developers' life easier, {{site.name}} provides
+make the application developers' life easier, GE provides
 thread-safe cell manipulation interfaces via cell accessors.
 
 ### Usage

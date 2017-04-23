@@ -5,20 +5,20 @@ permalink: /docs/manual/index.html
 next: /docs/manual/FirstApp.html
 ---
 
-This manual covers everything a {{site.name}} developer needs to
-know. We assume you know nothing about {{site.name}} before reading
+This manual covers everything a GE developer needs to
+know. We assume you know nothing about GE before reading
 this manual. With the flexible data and message passing modeling
-capability, {{site.name}} makes the development of a real-time large
+capability, GE makes the development of a real-time large
 data serving system easy.
 
-In this chapter, we will introduce what {{site.name}} is, followed by
+In this chapter, we will introduce what GE is, followed by
 our design philosophy. Then we help you setup a working environment
-for playing with {{site.name}}.
+for playing with GE.
 
 This document is still in progress, and your comments are highly
 appreciated. Feel free to send [us](/support.html) mails.
 
-### What is {{site.name}}?
+### What is GE?
 
 In what follows, assume we are developers who have big data sets
 (probably with rich and complex schema) and want to serve the data to
@@ -77,7 +77,7 @@ With the structured data representation, we can write a program based
 on the semantics associated with the data fields to reason the
 granddaughter of a _Person_.
 
-{{site.name}} provides a declarative language called
+GE provides a declarative language called
 [TSL](/docs/manual/TSL/index.html) to support such fine-grained data
 modeling. As a good data modeling practice, fine-grained data modeling
 is almost always strongly-typed: for every piece of data, if possible,
@@ -102,49 +102,49 @@ occupies smaller space, but also makes the data processing easier and
 faster.
 
 After specifying the data schema using TSL, we can easily write a data
-loader to import data to {{site.name}} as will be elaborated in the
+loader to import data to GE as will be elaborated in the
 [Data Import](/docs/manual/DataImport.html) chapter later.
 
 #### Computation
 
 Having the data in the system, we can now design and implement our
 'business logic' now. For example, after we have imported a social
-network to {{site.name}}, we may want to allow the system users to
+network to GE, we may want to allow the system users to
 search relations between any two social users.
 
 Due to the great diversity of the application needs, it is almost
 impossible to use a fixed set of built-in functions to serve every
 data processing need. Instead of trying to provide an exhaustive set
-of built-in computation modules, {{site.name}} tries to provide
+of built-in computation modules, GE tries to provide
 generic building blocks to allow us to easily build such modules. The
-most important building block provided by {{site.name}} for
+most important building block provided by GE for
 distributed computation is declarative message passing. We can almost
 implement any distributed algorithm using the fine-grained
-event-driven message passing framework provided by {{site.name}}. We
+event-driven message passing framework provided by GE. We
 will cover this part in the following chapters in detail.
 
 #### Query serving
 
-For most of the time, {{site.name}} functions as the backend of the
+For most of the time, GE functions as the backend of the
 system. The computation layer is responsible for processing data
 before serving it to users.  Now let us look at how to serve backend
 services to the front-end applications.
 
-{{site.name}} provides two major methods for serving a service: REST
-APIs and {{site.name}} protocols.
+GE provides two major methods for serving a service: REST
+APIs and GE protocols.
 
 * REST APIs: They are standard, cross-platform, and easy-to-use. If we
-  specify a RESTful service protocol named `MyService`, {{site.name}}
+  specify a RESTful service protocol named `MyService`, GE
   will automatically generate a REST service endpoint:
   `http://example.com/MyService`.
 
-* {{site.name}} Protocols: They are the most efficient way to call a
+* GE Protocols: They are the most efficient way to call a
   service implemented in the computation layer.
 
-### {{site.name}} Working Environment
+### GE Working Environment
 
 The following prerequisites are required to follow this manual and
-develop {{site.name}} applications:
+develop GE applications:
 
 * Windows Server 2008 R2, Windows Server 2012, Windows 7/8/10, or above.
 
@@ -152,6 +152,6 @@ develop {{site.name}} applications:
 
 * Windows PowerShell 3.0 (or above).
 
-* {{site.name}} [Visual Studio Extension](https://visualstudiogallery.msdn.microsoft.com/12835dd2-2d0e-4b8e-9e7e-9f505bb909b8).
+* GE [Visual Studio Extension](https://visualstudiogallery.msdn.microsoft.com/12835dd2-2d0e-4b8e-9e7e-9f505bb909b8).
 
 

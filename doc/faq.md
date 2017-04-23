@@ -4,15 +4,15 @@ title: Frequently Asked Questions
 permalink: /docs/manual/faq.html
 ---
 
-##### Is {{site.fullname}} free?
+##### Is Graph Engine free?
 
 Yes.
 
-##### Is {{site.fullname}} an open-source project?
+##### Is Graph Engine an open-source project?
 
 Yes. The [code repository](https://github.com/Microsoft/GraphEngine) is on GitHub.
 
-##### Does {{site.name}} provide commercial support?
+##### Does GE provide commercial support?
 
 Currently no. But you can contact [us](/support.html) for design consulting. 
 

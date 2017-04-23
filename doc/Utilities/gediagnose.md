@@ -4,7 +4,7 @@ title: Self Diagnosis
 permalink: /docs/manual/Utilities/gediagnose.html
 ---
 
-{{site.fullname}} provides a self diagnosis tool  <a
+Graph Engine provides a self diagnosis tool  <a
   href="/downloads/tools/gediagnose.zip">gediagnose</a>. It will
 collect the runtime information and write it to a user-specified log
 file.

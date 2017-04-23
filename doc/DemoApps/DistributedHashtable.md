@@ -9,14 +9,14 @@ permalink: /docs/manual/DemoApps/DistributedHashtable.html
 Hashtable is among the most useful daily-used data structures. A
 distributed hashtable is a hashtable served by a cluster of
 machines. It can be accessed through network. We demonstrate how to
-implement a distributed hashtable on top of {{site.name}} and how it
+implement a distributed hashtable on top of GE and how it
 can be accessed via user-defined interfaces.
 
 ## Data Model
 
 A hashtable consists of a set of *buckets*, each of which is
 collection of key-value pairs. We use string to represent both the
-_Key_ and _Value_ in this demo application. In {{site.name}}, we can
+_Key_ and _Value_ in this demo application. In GE, we can
 use a _cell_ as a hashtable bucket. We define _BucketCell_ in TSL for
 this purpose:
 

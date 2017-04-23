@@ -34,7 +34,7 @@ Let us see how to implement this simple ping program. We need to specify three t
 
 * Which component of the system is responsible for handling the message?
 
-These three things can be specified using the following {{site.codename}} specification script:
+These three things can be specified using the following Trinity specification script:
 
 ```C#
 struct MyMessage
@@ -72,16 +72,16 @@ schema/structure of the message it uses is the previously defined
 _MyMessage_ and it requires no response.
 
 The last thing we need to do is to _register_ the _SynPing_ protocol
-to a {{site.name}} system component. As we have elaborated earlier,
+to a GE system component. As we have elaborated earlier,
 three system components play different roles in a distributed
-{{site.codename}} system: _server_, _proxy_, and _client_. Among them,
+Trinity system: _server_, _proxy_, and _client_. Among them,
 both _server_ and _proxy_ process messages, therefore we can register
 message passing _protocols_ on them. In this example, we register
 _SynPing_ to a server named _MyServer_.
 
-We then create a _{{site.fullname}} Project_ _Ping_ in visual
+We then create a _Graph Engine Project_ _Ping_ in visual
 studio. We cut and paste the above script to the generated
-_MyCell.tsl_ file.  Now we can create a _{{site.fullname}} Application
+_MyCell.tsl_ file.  Now we can create a _Graph Engine Application
 Project_ called _PingTest_ in visual studio.
 
 Open the generated _Program.cs_, and put the following content in:
@@ -91,12 +91,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using {{site.codename}}.Data;
-using {{site.codename}}.Storage;
-using {{site.codename}};
+using Trinity.Data;
+using Trinity.Storage;
+using Trinity;
 using System.Threading;
 
-namespace Test{{site.codename}}
+namespace TestTrinity
 {
     class MyServer : MyServerBase
     {
@@ -121,7 +121,7 @@ namespace Test{{site.codename}}
 ```
 
 After compiling the Project _Ping_, an abstract class called
-_MyServerBase_ is generated. Now we can implement our {{site.name}}
+_MyServerBase_ is generated. Now we can implement our GE
 server very easily. All we need to do is to implement the abstract
 handlers provided by _MyServerBase_. 
 
@@ -172,7 +172,7 @@ protocol AsynPing
 The only difference from protocol _SynPing_ is their Type definition,
 one is _Syn_ and the other is _Asyn_.
 
-Correspondingly, {{site.name}} will generate an _AsynPingHandler_
+Correspondingly, GE will generate an _AsynPingHandler_
 abstract method in _MyServerBase_ as well as an extension method
 called _AsynPingToMyServer_ to _CloudStorage_. We add the following
 lines to _MyServer_ class to implement the _AsynPingHandler_.
@@ -258,9 +258,9 @@ The corresponding code of the server implementation and message sending is liste
 using System;
 using System.Collections.Generic;
 using System.Text;
-using {{site.codename}}.Data;
-using {{site.codename}}.Storage;
-using {{site.codename}};
+using Trinity.Data;
+using Trinity.Storage;
+using Trinity;
 using System.Threading;
 
 namespace PingTest

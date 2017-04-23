@@ -4,20 +4,20 @@ title: Configuration Editor
 permalink: /docs/manual/Utilities/geconfig.html
 ---
 
-As introduced in the {{site.name}} [basics](/docs/manual/basics.html),
-the machines in a {{site.name}} cluster may have different roles to
-play. Each {{site.name}} instance reads its configuration file, an xml
+As introduced in the GE [basics](/docs/manual/basics.html),
+the machines in a GE cluster may have different roles to
+play. Each GE instance reads its configuration file, an xml
 file named _trinity.xml_ under its working directory, to know its role
 to play.
 
-There are three ways of configuring {{site.name}}.
+There are three ways of configuring GE.
 
 * Using the _TrinityConfig_ class.
 
 * Using the graphical configuration editor <a
   href="/downloads/tools/geconfig.zip">geconfig</a>.
 
-* Directly modifying _trinity.xml_ under the {{site.name}} application
+* Directly modifying _trinity.xml_ under the GE application
   working directory.
 
 In this chapter we mainly introduce the usage of the graphical
@@ -31,12 +31,12 @@ _geconfig_. We can choose between _embedded_ or _distributed_.
 
 <img src="/img/config/ModeSelector.png" style="padding-top: 20px; margin-left:10em;width:30em;"></img>
 
-The configuration for embedded {{site.name}} is
+The configuration for embedded GE is
 very simple. Only two parameters need to set as shown below.
 
 <img src="/img/config/embedded.png" style="padding-top: 20px; margin-left:10em;width:50em;"></img>
 
-_StorageRoot_ is the directory where {{site.name}} stores data.
+_StorageRoot_ is the directory where GE stores data.
 _LoggingLevel_ controls what kinds of messages are logged:
 _Off_ (no message is going to be logged), _Verbose_ (all
 messages will be logged), and a few levels in between.
@@ -44,11 +44,11 @@ messages will be logged), and a few levels in between.
 The distributed mode configuration editor has two tab pages.
 
 The first tab configures the servers in the cluster. You can add or
-remove {{site.name}} servers by clicking the _Add_ / _Remove_
+remove GE servers by clicking the _Add_ / _Remove_
 button. We can use one or more _#_ symbols to add a range of
 servers. Each _#_ represent a single digit. The range of the _#_
 digits is specified by the _'#' Range_.  The _Working Directory_ is
-the directory where the current {{site.name}} application can be
+the directory where the current GE application can be
 located.
 
 <img src="/img/config/addserver.png" style="padding-top: 20px; margin-left:10em;width:50em;"></img>
@@ -59,9 +59,9 @@ selected in the server list.
 <img src="/img/config/modifyserver.png" style="padding-top: 20px; margin-left:10em;width:50em;"></img>
 
 The proxy tab page is similar to the server page except it is for
-configuring {{site.name}} proxies.
+configuring GE proxies.
 
-Besides the graphical configuration editor, {{site.name}} has a public
+Besides the graphical configuration editor, GE has a public
 static class named _TrinityConfig_ for runtime configuration.  You can
 change the configuration parameters loaded from _trinity.xml_ via the
 interfaces provided by this class. For example, you can switch the

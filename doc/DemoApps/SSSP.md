@@ -13,7 +13,7 @@ updated, it sends out its current shortest distance to its adjacent
 vertices. When a vertex receives the shortest distances from its
 neighbors, it re-calculates its shortest distance to the source
 vertex. The process will continue until nothing can be updated.  In
-the following, we use {{site.name}} to model and implement this
+the following, we use GE to model and implement this
 algorithm for calculating single source shortest paths.
 
 We first define a cell struct for this problem. First of all, we
@@ -54,9 +54,9 @@ its neighbors.
 Now we define two types of messages for the computation:
 _StartSSSPMessage_ and _DistanceUpdatingMessage_. _StartSSSPMessage_
 is used to initialize an SSSP computation.  It is a simple struct
-containing only the cell id of the source vertex. A {{site.name}}
+containing only the cell id of the source vertex. A GE
 client can kick off the computation by sending a _StartSSSPMessage_ to
-all {{site.name}} servers. Receiving this message, servers will check
+all GE servers. Receiving this message, servers will check
 whether the specified source vertex is in its _LocalStorage_. If this
 is the case, it will load the source vertex's adjacent vertices and
 propagates _DistanceUpdatingMessages_ to its neighbors. On receiving a

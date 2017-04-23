@@ -8,7 +8,7 @@ permalink: /docs/manual/DemoApps/GraphGenerator.html
 
 Graph generator is a useful tool for generating synthetic graphs. We
 demonstrate how to write a simple yet efficient graph generator for
-generating RMAT graphs using {{site.name}}.
+generating RMAT graphs using GE.
 
 ## Graph Modeling
 

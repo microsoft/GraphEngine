@@ -7,7 +7,7 @@ permalink: /docs/manual/DemoApps/FriendsGraph.html
 ##### <a href="https://github.com/Microsoft/GraphEngine/tree/master/samples/Friends" target="_blank">Source Code on GitHub</a>
 
 This example is to illustrate how to model and store data in
-{{site.name}}.  In this "hello world" application, we model and store
+GE.  In this "hello world" application, we model and store
 a small social graph of the six main characters in the famous
 situation comedy *Friends*.
 
@@ -43,7 +43,7 @@ cell struct Performer
 }
 ```
 
-In Visual Studio, we can now _New_ a _{{site.fullname}} Project_
+In Visual Studio, we can now _New_ a _Graph Engine Project_
 called _FriendsCell_.  We copy and paste the tsl script shown above
 into the default TSL file.
 
@@ -52,18 +52,18 @@ Open the generated Program.cs of _Friends_ project, add the following
 namespaces to the preamble:
 
 ```C#
-using {{site.codename}};
-using {{site.codename}}.Extension;
+using Trinity;
+using Trinity.Extension;
 ```
 
-A client-side {{site.codename}} program has two running modes. One is
+A client-side Trinity program has two running modes. One is
 _Embedded_ mode, and the other is _Client_ mode.  Let us go with the
-simpler _embedded_ mode first. We can instruct {{site.codename}} to
+simpler _embedded_ mode first. We can instruct Trinity to
 run in _embedded_ mode by putting the following line at the beginning
 of the program.
 
 ```C#
-{{site.codename}}Config.CurrentRunningMode = RunningMode.Embedded;
+TrinityConfig.CurrentRunningMode = RunningMode.Embedded;
 ```
 
 Now we can get into the real business. There are six characters and
@@ -120,7 +120,7 @@ characters. All these six characters are _friends_ with each
 other. That means we need to create 15 _friends_ relationship edges
 between each pair of them. How to simplify this?
 
-In {{site.fullname}}, we can create a _hyperedge_ cell called
+In Graph Engine, we can create a _hyperedge_ cell called
 _Friendship_ and connect all these six characters using this cell. To
 do this, we extend the _MyCell.tsl_ script a bit. We add the following
 three lines to this file to create a _Friendship_ cell.
@@ -149,27 +149,27 @@ friend_ship.friends.Add(Ross.CellID);
 So far so good.  We have 12 entity cells and we define three
 relationships between these entities. But wait, we are not done
 yet. All these cells now are no more than 12 .Net objects on .Net
-runtime heap. It is neither in {{site.codename}}'s managed main memory
+runtime heap. It is neither in Trinity's managed main memory
 storage, nor persisted on disk files.
 
-Let us see how to make data persistent in {{site.codename}}. _Cell_ is the basic
-data unit in {{site.codename}}. A cell may exist in three forms.
+Let us see how to make data persistent in Trinity. _Cell_ is the basic
+data unit in Trinity. A cell may exist in three forms.
 
 * As a .Net object on .Net runtime heap.
-* As a blob of bytes in {{site.codename}}'s memory storage.
+* As a blob of bytes in Trinity's memory storage.
 * As a blob of bytes in disk files.
 
 For now, the cells we created are on the .Net runtime heap. To
-leverage the true power of {{site.codename}}, we need to save these
-cells to {{site.codename}}'s main memory storage. The reasons why we
+leverage the true power of Trinity, we need to save these
+cells to Trinity's main memory storage. The reasons why we
 need to do this was discussed in
 [Accessors](/docs/manual/TSL/accessor.html). With cells stored in the
-{{site.codename}} memory storage, we have thread-safe cell
+Trinity memory storage, we have thread-safe cell
 manipulation guarantee without losing the convenience of
 object-oriented cell accessing interfaces.
 
 Runtime objects can be easily converted into cells resident in
-{{site.codename}} memory storage.  We can save a _Performer_ cell by
+Trinity memory storage.  We can save a _Performer_ cell by
 calling _Global.LocalStorage.SavePerformer(performer)_ and save a
 Character cell by calling
 _Global.LocalStorage.SaveCharacter(character)_ as follows.
@@ -179,19 +179,19 @@ Global.LocalStorage.SavePerformer(Jennifer);
 Global.LocalStorage.SaveCharacter(Rachel);
 ```
 
-Once the data is in {{site.codename}}'s LocalStorage, we can persist
+Once the data is in Trinity's LocalStorage, we can persist
 the data to the disk by simply calling
 _Global.LocalStorage.SaveStorage()_. Below is a complete List of our
-first _hello world_ {{site.codename}} program.
+first _hello world_ Trinity program.
 
 ```C#
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-using {{site.codename}};
-using {{site.codename}}.Data;
-using {{site.codename}}.Storage;
+using Trinity;
+using Trinity.Data;
+using Trinity.Storage;
 
 namespace Friends
 {
@@ -199,7 +199,7 @@ namespace Friends
     {
         public unsafe static void Main(string[] args)
         {
-            {{site.codename}}Config.CurrentRunningMode = RunningMode.Embedded;
+            TrinityConfig.CurrentRunningMode = RunningMode.Embedded;
 
             // Characters
             Character Rachel = new Character(Name: "Rachel Green", Gender: 0, 
@@ -264,7 +264,7 @@ namespace Friends
             friend_ship.friends.Add(Chandler.CellID);
             friend_ship.friends.Add(Ross.CellID);
 
-            // Save Runtime cells to {{site.codename}} memory storage
+            // Save Runtime cells to Trinity memory storage
             Global.LocalStorage.SavePerformer(Jennifer);
             Global.LocalStorage.SavePerformer(Courteney);
             Global.LocalStorage.SavePerformer(Lisa);

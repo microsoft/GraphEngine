@@ -11,11 +11,11 @@ another is via message passing over network.  We brought in the
 concept of _protocol_ in [TSL
 Basics](/docs/manual/TSL/tsl-basics.html). Three kinds of protocols
 form the foundation of all kinds of distributed computation paradigms
-on {{site.name}}.
+on GE.
 
 ## Message Handling Flow
 
-{{site.name}} adopts _Request_ and _Response_ communication
+GE adopts _Request_ and _Response_ communication
 paradigm. The program that plays the role of servicing requests is
 called *server*. Correspondingly, the program that sends requests to a
 _server_ is called *client*. We use _server_ or _client_ to refer to
@@ -28,12 +28,12 @@ data="/img/svg/MessageHandling.svg">The browser does not
 support SVG.</object>
 
 The specification of the request/response message format and the
-server-side message handling logic together is called a {{site.name}}
+server-side message handling logic together is called a GE
 _protocol_. The request and response of a _protocol_ resembles the
 parameters and return value of a local function call, except that the
 request handling logic is performed remotely at the server side.  The
 request/response can be either a user-defined data structure specified
-in TSL or _void_ in a {{site.name}} protocol.
+in TSL or _void_ in a GE protocol.
 
 ```C#
 // A local function definition
@@ -43,7 +43,7 @@ Response func(Request myReq)
 }
 ```
 
-Three types of protocols are supported in {{site.name}}: synchronous
+Three types of protocols are supported in GE: synchronous
 protocols, asynchronous protocols, and HTTP protocols.
 
 ## Synchronous Protocols
@@ -202,7 +202,7 @@ protocol myHttpProtocol4
 ```
 
 Just like _Syn_ protocols, request and response can be void or
-user-defined data structures. {{site.name}} will start a RESTful Http
+user-defined data structures. GE will start a RESTful Http
 API endpoint for each _Http_ protocol.
 
 ```lisp
@@ -215,6 +215,6 @@ http://example.com/myHttpProtocol4/
 HTTP protocols are supposed to be used to provide RESTful service
 endpoints. They are not intended for inter-server
 communications. Whenever we need to do message passing between
-{{site.name}} servers, we should use _Syn_ or _Asyn_ {{site.name}}
+GE servers, we should use _Syn_ or _Asyn_ GE
 protocols: they are much more efficient than their RESTful
 counterparts for this purpose.

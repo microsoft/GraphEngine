@@ -6,25 +6,25 @@ permalink: /docs/manual/DataAccess/index.html
 
 ### Basics
 
-At the core of {{site.name}} is a key-value store that handles raw
-binary blobs.  You can save a blob to the {{site.name}} key-value
+At the core of GE is a key-value store that handles raw
+binary blobs.  You can save a blob to the GE key-value
 store identified by a _key_ you specified and load it back into your
 program later. A _key_ is a 64-bit integer; and the only native way of
-referencing a {{site.name}} data object (or a _cell_ in the jargon of
-{{site.name}}) is through such a _key_. Neverthless, other type of
+referencing a GE data object (or a _cell_ in the jargon of
+GE) is through such a _key_. Neverthless, other type of
 keys such as string keys can be easily realized by hashing the key to
 a 64-bit integer. Note each key can at most be associated with one
 blob _value_; saving two blob values with the same key will cause one
 to be overwritten by the other. We will also refer to the concept of
 the _key_ as _id_.
 
-{{site.name}} supports high performance concurrent key-value operators
+GE supports high performance concurrent key-value operators
 on cells with atomicity guaranteed. The built-in atomic cell operators
 include: _AddCell_, _SaveCell_, _LoadCell_, and _RemoveCell_.
 Accesses on the cell with a particular key are serialized; changes
 made by a writer are observed by everyone in a determined order.
 
-Durability is optional in {{site.name}}. We can choose whether to
+Durability is optional in GE. We can choose whether to
 commit a [write-ahead
 log](#cell-access-options) (WAL) to
 the local persistent storage or not before writing a cell. WAL
@@ -33,14 +33,14 @@ it wisely.
 
 ### Data Access Patterns
 
-{{site.name}} provides multiple data access patterns. We should weigh
+GE provides multiple data access patterns. We should weigh
 the tradeoff between convenience and performance before we decide to
 use one of the data access methods we introduce here.
 
 #### Built-in Key-Value Store Interfaces
 
 The most convenient one is to use the built-in key-value store
-interfaces, such as _SaveCell_ and _LoadCell_. In {{site.name}}, these
+interfaces, such as _SaveCell_ and _LoadCell_. In GE, these
 interfaces are provided on `Trinity.Global.LocalStorage` and
 `Trinity.Global.CloudStorage` for accessing data locally or over a
 cluster respectively. 
@@ -78,7 +78,7 @@ provided for these interfaces. We can then write:
 
 #### Remote Selective Data Access
 
-{{site.name}} supports server-side computation. It means that we do
+GE supports server-side computation. It means that we do
 not need to pull all the concerned cells over the network and then
 apply operations on them locally. We can only pass the piece of
 information we are interested in over the network. To do so, we define
@@ -145,7 +145,7 @@ We can actually perform any data access tasks via the key-value store
 interfaces. But soon we will notice that the whole cell needs to be
 loaded even we only want to access a single data field.
 In the code snippet shown above, the cells are accessed for a certain
-field. For each cell, {{site.name}} first pinpoint its memory location
+field. For each cell, GE first pinpoint its memory location
 in the memory storage. Then it calls the runtime to allocate a cell
 object and copies the cell content from the storage to the object. The
 field is then read out from the object and fed into the outer
@@ -160,7 +160,7 @@ three individual cell operations cannot be guaranteed to be executed
 as a whole.
 
 Having seen what the problems caused by using key-value store
-interfaces are, we give the cure now. In {{site.name}}, we solve
+interfaces are, we give the cure now. In GE, we solve
 problems discussed above via a mechanism called data _accessor_.
 For any cell construct defined in a TSL script, the TSL compiler
 automatically generates a cell accessor. An accessor does not possess
@@ -244,7 +244,7 @@ using (var cell = Global.LocalStorage.UseMyCell(3, CellAccessOptions.CreateNewOn
 ```
 ### Cell Selector
 
-{{site.name}} provides enumerators for iterating the cells stored in the local memory storage.
+GE provides enumerators for iterating the cells stored in the local memory storage.
 Note that enumeration on cloud memory storage is currently not
 supported. 
 
@@ -308,7 +308,7 @@ In this example, the _node.name.Contains_ clause is translated into a
 substring query. The results are then projected into a list of float
 numbers, then aggregated using a built-in LINQ interface _Min()_.
 
-{{site.name}} LINQ/PLINQ is elaborated in the [Language-Integrated
+GE LINQ/PLINQ is elaborated in the [Language-Integrated
 Query](/docs/manual/DataAccess/LINQ.html) section.
 
 ### Substring Query

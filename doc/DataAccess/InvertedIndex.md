@@ -4,8 +4,8 @@ title: Inverted Index
 permalink: /docs/manual/DataAccess/InvertedIndex.html
 ---
 
-{{site.name}} provides built-in inverted index support for substring
-queries on cell field values. {{site.name}} only indexes the cell
+GE provides built-in inverted index support for substring
+queries on cell field values. GE only indexes the cell
 field values that are marked with _[index]_ attribute in TSL.
 
 Only the cell fields with _string_ type can be indexed. There are two
@@ -47,7 +47,7 @@ It is possible to declare an index on a nested field, for example:
 ```
 
 Because there is no way to globally identify such a struct in
-{{site.name}}, the index attribute on `struct leaf` alone does not
+GE, the index attribute on `struct leaf` alone does not
 produce a valid index.  Only when such a struct is contained in a cell
 `root`, `root.leaf.data` becomes an accessible cell field; a valid
 index is formed. It is allowed to have an indexed field included in a
@@ -93,7 +93,7 @@ identifier.
 ### LINQ Integration
 
 The inverted index subsystem is integrated with LINQ.  In a LINQ query
-over a [selector](/docs/manual/DataAccess/index.html#cell-selector), {{site.name}}
+over a [selector](/docs/manual/DataAccess/index.html#cell-selector), GE
 translates the invocations of `String.Contains` on an indexed field
 into an inverted index queries. The same rule applies for
 `IEnumerable<string>.Contains`.  Refer to the [LINQ](/docs/manual/DataAccess/LINQ.html) section

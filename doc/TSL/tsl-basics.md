@@ -51,7 +51,7 @@ the TSL project.
 A _struct_ specifies a user-defined type. It is composed of three
 types of _fields_: built-in data types, other user-defined structs,
 and container types. A container type stores a collection of data
-elements. {{site.name}} currently supports three container types:
+elements. GE currently supports three container types:
 _Array<T>_, _List<T>_, _String/string_.
 
 TSL supports single-dimensional and multidimensional arrays.  A
@@ -120,9 +120,9 @@ A _Cell_ is a user-defined type. It is composed of three types of
 fields: built-in types, other user-defined TSL structs, and container
 types.
 
-The storage layer of {{site.name}} is a key-value store. The schema of
+The storage layer of GE is a key-value store. The schema of
 the _value_ part of a key-value pair can be specified by a TSL cell.
-{{site.name}} generates key-value store interfaces (_SaveCell_,  _LoadCell_,
+GE generates key-value store interfaces (_SaveCell_,  _LoadCell_,
 and _UpdateCell_, etc.) and data access methods for each cell type.  A corresponding
 cell 'accessor' will be generated for each TSL cell.  A _cell_ can be
 accessed and manipulated through its cell _accessor_ interfaces. This
@@ -154,7 +154,7 @@ At the storage level, a cell is just a blob of bytes in the main
 memory. From the point view of a developer, a cell can be considered
 as a flat structured data container. It looks very much like a
 _struct_ in C/C++ or C#. A fundamental difference between a C/C++
-_struct_ and a {{site.name}} cell is their way of organizing
+_struct_ and a GE cell is their way of organizing
 memory. All data fields in a cell are flattened in a continuous memory
 region, while a C/C++ _struct_ may contain data field references
 pointing to other data fields located at a different memory region.
@@ -165,7 +165,7 @@ _Cells_ are the basic building blocks of data modeling.  Here we use a
 simple graph modeling example to demonstrate the basic of data
 modeling techniques.
 
-Note: any cell in {{site.name}} is referenced by a 64-bit _CellId_,
+Note: any cell in GE is referenced by a 64-bit _CellId_,
 thus a list of cells can be represented by `List<CellId>` in the cell
 specification.
 

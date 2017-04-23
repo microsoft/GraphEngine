@@ -53,7 +53,7 @@ var sum = Global.LocalStorage.Node_Selector().Select(n=>n.val).Sum();
 
 The code is kept away from intermediate states(e.g., the `sum`
 variable in this example) and internal implementations. In
-{{site.name}}, certain query optimizations can be done automatically
+GE, certain query optimizations can be done automatically
 by the query execution engine to leverage the indexes defined in
 TSL. More specifically, it inspects the filters, extracts the
 substring queries, and redirects them to proper substring query
@@ -77,17 +77,17 @@ expression rewriting is as follows:
 **Note:** This subsection covers some system implementation details
   and you can safely skip it at your first reading.
 
-{{site.name}} translates the query on a selector as an _action_
+GE translates the query on a selector as an _action_
 performed over every cell of a specific type. Logically, there is no
 much difference from implementing the logic imperatively. However,
-with a certain pattern found in the query expression, {{site.name}}
+with a certain pattern found in the query expression, GE
 will rewrite the expression for optimization.
 
 Let's view a query expression as a chain `S->E_1->E_2->...->E_n`,
 where `S` denotes a selector and `E_i` denotes an query operator (a
 method from `System.Linq.Enumerable`). Let `W_i` denote the `Where`
 operators, and `S` denote the first `Select` operators in the chain.
-{{site.name}} will overlook all query operators after `S` since after
+GE will overlook all query operators after `S` since after
 a `Select` operator the data is projected into something that is not
 defined in the TSL (projecting accessor to accessor is not allowed),
 and thus not available in any substring indicies defined in TSL. Now,
@@ -95,7 +95,7 @@ let `W_1,...,W_m` denote all the `Where` operators before `S` (not
 necessarily consecutive). These are all the conditional filters
 applied onto the native cells(without projection into other types), so
 we combine them together as `W1 and W2 and ... and Wn` and regard this
-expression as a whole. {{site.name}} then examines the expression and
+expression as a whole. GE then examines the expression and
 aggregates `String.Contains` invocations on cell fields into a
 expression tree.  All the expressions under a `NOT` operator are
 ignored. This is because making a substring query then obtain its
@@ -109,7 +109,7 @@ which case we would have better ignored this rewritting.
 convenient way to query a data collection.  The expression power of
 LINQ is equivalent to those extension methods provided by the
 `System.Linq.Enumerable` class, only more convenient to use. The
-following example demonstrates LINQ in {{site.name}} versus its
+following example demonstrates LINQ in GE versus its
 imperative equivalent:
 
 ```C#
@@ -160,10 +160,10 @@ the next query operator(until it's supported).
 
 There is a limitation of `IEnumerable<T>`: `IDisposable` elements are
 not disposed along the enumeration. However, disposing a cell accessor
-after use is crucial in {{site.name}}, and **a non-disposed cell
+after use is crucial in GE, and **a non-disposed cell
 accessor will result in the target cell being locked permanantly**.
 
-This has led to the design decision made in {{site.name}}, that we actively
+This has led to the design decision made in GE, that we actively
 dispose a cell accessor when the user code finishes using the accessor
 in the enumeration loop. As a result, it is not allowed for a user to
 capture the value/reference of an accessor during an enumeration and
