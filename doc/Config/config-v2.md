@@ -8,15 +8,13 @@ A Graph Engine Configuration File is an XML file with the default name
 `trinity.xml`. When a Graph Engine instance is initialized, it will
 automatically load the default configuration file, unless
 `TrinityConfig.LoadConfig(...)` is explicitly called. The file can
-contain both the configuration settings for a single machine or a
-cluster of machines.
-
+contain configuration settings for a single machine and/or a cluster
+of machines.
 
 ### Root Node
 
 The root node is always `Trinity`. There must be exactly one root
 node. The root node has an optional attribute `ConfigVersion`.
-
 
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
@@ -26,13 +24,19 @@ node. The root node has an optional attribute `ConfigVersion`.
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ConfigVersion</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Optional. Specifies the version of the
-configuration file. Currently, the value must be 1.0 or 2.0 if it is
+
+<td class="tableblock halign-left valign-top"><p
+class="tableblock">Optional. Specifies the version of the
+configuration file. Currently, the value must be 1.0 or 2.0 if
 specified. The value "2.0" indicates that the configuration file
-conforms to the specification given here. 
-Note, if ConfigVersion is not specified, the configuration file will
-be parsed as version 1.0, which is now obsolete.</p></td>
-</tr>
+conforms to the specification 2.0 given here.  Note, if ConfigVersion
+is not specified, the configuration file will be parsed as <a
+href="/docs/manual/Config/config-v1.html" target="_blank">version 1.0</a>, which is
+now obsolete.</p></td> </tr>
+
+Note, nuget package `GraphEngine.Core` 1.0.8482 and below only
+support configuration specification 1.0.
+
 </tbody>
 </table>
 
@@ -40,16 +44,18 @@ All valid nodes under Trinity node are called **top-level elements**.
 
 ### Top-Level Elements
 
-All top-level elements must be children of the root node.
+Any top-level element must be a child node of the root node.
 
 #### Local Node
 
 A `Local` node configures the settings for the machine that reads the
 current configuration file. There can be multiple `Local`
-nodes. Multiple `Local` nodes will be _merged_.  The configuration
-settings in a local node have the highest priority. If specified, it
-will override configurations specified in a <a
-href="#cluster-node">Cluster node</a>. A `Local` node can have an optional attribute `Template`.
+nodes. Multiple `Local` nodes will be _merged_.  If a machine is
+configured by both a `Local` node and a <a
+href="#cluster-node">Cluster node</a>, the configuration settings in a
+`Local` node have higher priority. If specified, they will override
+configurations specified in a `Cluster` node. A `Local` node can have
+an optional attribute `Template`.
 
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
@@ -59,20 +65,21 @@ href="#cluster-node">Cluster node</a>. A `Local` node can have an optional attri
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Template</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Optional. The value is the ID of a template. If it is specified, the current node will inherit the attributes and child elements of the template.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional. The value is the ID of a template. If it is specified, the current node will inherit the attributes and child elements of the template node.</p></td>
 </tr>
 </tbody>
 </table>
 
 A `Local` node can have one or more <a
-href='configuration-nodes'>configuration nodes</a> as its child
+href='#configuration-nodes'>configuration nodes</a> as its child
 elements.
 
 #### Cluster Node
 
-A `Cluster` node contains information about servers and proxies of a
-Graph Engine cluster. There can be multiple cluster nodes as long as
-they have different identifiers. A `Cluster` node can have an optional attribute `Id`.
+A `Cluster` node contains configurations for servers and proxies of a
+Graph Engine cluster. There can be multiple `Cluster` nodes as long as
+they have different identifiers. A `Cluster` node can have an optional
+attribute `Id`.
 
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
@@ -83,7 +90,7 @@ they have different identifiers. A `Cluster` node can have an optional attribute
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Id</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Optional. 
-The cluster configuration identified by an Id can be retrieved later in the program. If omitted, the current Cluster configuration is then treated as the default one.
+The cluster configuration identified by an Id can be retrieved by the Id later in the program. If omitted, the current Cluster configuration is then treated as the default one.
 </p></td>
 </tr>
 </tbody>
@@ -96,9 +103,9 @@ child elements.
 
 A `Server` node specifies a configuration that can later be used to
 create TrinityServer communication instances. The properties of a
-`Server` node can either be specified via node attributes or child
+`Server` node can be specified via node attributes or child
 elements. A `Server` node can have one or more <a
-href='configuration-nodes'>configuration nodes</a> as its child
+href='#configuration-nodes'>configuration nodes</a> as its child
 elements. A `Server` node can have the following attributes.
 
 <table class="tableblock frame-all grid-all spread">
@@ -114,7 +121,7 @@ elements. A `Server` node can have the following attributes.
 class="tableblock">Endpoint</p></td>
 
 <td class="tableblock halign-left valign-top"><p
-class="tableblock">Mandatory. Specifies an Hostname:Port string that
+class="tableblock">Mandatory. Specifies an <i>Hostname:Port</i> string that
 describes the server endpoint.</p></td>
 
 </tr>
@@ -123,17 +130,17 @@ describes the server endpoint.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">AvailabilityGroup</p></td>
 
 <td class="tableblock halign-left valign-top"><p
-class="tableblock">Optional. Specifies the identifier of the
-availability group that the current server belongs to.  Each server is
-associated with an availability group.  If not specified, each server
-will be in its own default availability group.  Multiple <i>Server</i>
-nodes could have the same availability group.  The servers within the
-same availability group correspond to the same server Id in
-MemoryCloud.SendMessage methods. The <i>ServerId</i> parameter in the
-SendMessage method is the index number of the availability
-group. Note, when this attribute is used, all <i>Server</i> nodes
-within a <i>Cluster</i> node specify the attribute or none of them
-should specify.  </p></td>
+class="tableblock">Optional. Each server is associated with an
+availability group. This attribute specifies the identifier of the
+availability group that the current server belongs to.  If not
+specified, each server will be in its own default availability group.
+Multiple <i>Server</i> nodes could have the same availability group.
+The servers within the same availability group correspond to the same
+server Id in <i>MemoryCloud.SendMessage(...)</i>. The <i>ServerId</i>
+parameter in the SendMessage method is the index number of the
+availability group. Note, when this attribute is used, all
+<i>Server</i> nodes within a <i>Cluster</i> node must specify the
+attribute or none of them should specify.  </p></td>
 
 </tr>
 
@@ -148,18 +155,21 @@ template.</p></td>
 
 </tr>
 
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">AssemblyPath</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Optional. Specifies the directory of the running executable. Useful for running multiple Graph Engine instances on the same machine (listening on different ports, or bound to different network interfaces).</p></td>
+<tr> <td class="tableblock halign-left valign-top"><p
+class="tableblock">AssemblyPath</p></td> 
+<td class="tableblock
+halign-left valign-top"><p class="tableblock">Optional. Specifies the
+directory of the running Graph Engine instance. Useful for running
+multiple Graph Engine instances on the same machine (listening on
+different ports, or bound to different network interfaces).</p></td>
 </tr>
 
 </tbody>
 </table>
 
 The server nodes within a `Cluster` node are interpreted as an ordered
-list. An availability group, if not specified each `Server` node has
-its own default available group, is assigned an index numbers upon
-their first occurence. For example, if there are three `Server` nodes:
+list. An availability group is assigned an index number upon their
+first occurence. For example, if there are three `Server` nodes:
                
 ```xml
 <Server AvailabilityGroup=”AG1” .../>
@@ -170,12 +180,12 @@ their first occurence. For example, if there are three `Server` nodes:
 The three servers will be assigned index numbers 0, 1, 0,
 respectively.
 
-The reason why multiple `Server` configurations can be specified
-within a `Cluster` node is for easily deploying Graph Engine to a
-cluster of machines using a single configuration file. For a Graph
-Engine cluster consisting of multiple machines, when a Graph Engine
-instance is started, it loads the server configuration from one of the
-`Server` nodes according to the following rules:
+Multiple `Server` configurations can be specified within a `Cluster`
+node is for easily deploying Graph Engine to a cluster of machines
+using a single configuration file. For a Graph Engine cluster
+consisting of multiple machines, when a Graph Engine instance is
+started, it loads its server configuration from one of the `Server`
+nodes according to the following rules:
 
 * The `Endpoint` property matches one of the network interfaces of the machine on which the Graph Engine instance is running.
 * If `AssemblyPath` is specified, it matches the directory where the running Graph Engine instance resides.
@@ -201,7 +211,7 @@ same identifier will be [merged](#merging-configuration-nodes). A
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Id</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Mandatory. Specifies the identifier of the template, which can be referenced by configuration node.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mandatory. Specifies the identifier of the template, which can be referenced by other nodes.</p></td>
 </tr>
 </tbody>
 </table>
@@ -231,9 +241,8 @@ itself.
 
 <td class="tableblock halign-left valign-top"><p
 class="tableblock">Mandatory.  Specifies a file to import. The file
-must have .xml file extension, and has a &lt;Trinity&gt; root node,
-with the same ConfigVersion.
-</p></td>
+must have .xml file extension and has a &lt;Trinity&gt; root node with
+the same ConfigVersion.  </p></td>
 
 </tr>
 </tbody>
@@ -249,32 +258,32 @@ certain aspect of the system functionality, such as `Storage` and
 `Logging`. An external Graph Engine module could also register a
 configuration entry so that its settings can be specified in the Graph
 Engine configuration file. An external module should follow the
-following rules for registering configuration entries:
+following rules for registering a configuration entry:
 
 * One module should register only one configuration entry. The name of
-the entry should be distinctive, to avoid ambiguity. The name of the
-entry should be highly related to the module. If there are two modules
-that registered the same configuration entry name, the entries will be
+the entry should be distinctive to avoid ambiguity. The name of the
+entry should be related to the module. If there are two modules that
+register the same configuration entry name, the entries will be
 renamed to _AssemblyName:EntryName_.
 
-* When possible, use attributes to specify settings. Use children
+* Whenever possible, use attributes to specify settings. Use children
 nodes only if it is necessary, for example, to specify a list.
 
 ##### Configuration Override
 
 Overrides take place at configuration entry level. The content in an
 entry will not be merged. An entry in a lower priority configuration
-section will be overridden by the one in a higher priority
-configuration section. When a template section is referenced, it
-inherits the priority of the referencing node.
+node will be overridden by the one in a higher priority configuration
+node. When a template node is referenced, it has the priority of the
+referencing node.
 
 ##### Merging Configuration Nodes
 
-Referencing a configuration template, or specifying multiple `Local`
-configuration nodes, will result in the configuration sections being
-merged. When merging occurs, configuration entries will be laid out in
-the order they appear in the configuration file. The entries that
-appear later will override the earlier entries with the same name.
+Referencing a configuration template or specifying multiple `Local`
+configuration nodes will result in merging configuration nodes. When
+merging occurs, configuration entries will be laid out in the order
+they appear in the configuration file. The entries that appear later
+will override the earlier entries with the same name.
 
 #### Built-In Configuration Nodes
 
@@ -292,26 +301,35 @@ A `Storage` node can have the following attributes.
 <td class="tableblock halign-left valign-top"><p class="tableblock">
 TrunkCount
 </p></td>
+
 <td class="tableblock halign-left valign-top"><p class="tableblock">
-Optional. Specifies the number of memory trunks in the local memory storage. Must be a power of 2 within range [1, 256]. The default value is 256.
-</p></td>
-</tr>
+Optional. Specifies the number of memory trunks in the local memory
+storage of a Graph Engine instance. Must be a power of 2 within range
+[1, 256]. The default value is 256.  </p></td> </tr>
 
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">
 ReadOnly
 </p></td>
+
 <td class="tableblock halign-left valign-top"><p class="tableblock">
-Optional. A Boolean value that specifies whether the local memory storage is read-only. In read-only mode, the local memory storage is lock-free, but write operations will result in exceptions and system crashes. The default value is FALSE.
-</p></td>
-</tr>
+Optional. A Boolean value that specifies whether the local memory
+storage is read-only. In the read-only mode, the local memory storage
+is lock-free, write operations will result in exceptions and
+system crashes. The default value is FALSE.  </p></td> </tr>
 
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">
 StorageCapacity
 </p></td>
+
 <td class="tableblock halign-left valign-top"><p class="tableblock">
-Optional. Specifies the capacity profile of the local memory storage. A capacity profile specifies the maximum number of entries that the local memory storage can hold. The value is a string, and must have one of the following values: <i>Max256M</i>, <i>Max512M</i>, <i>Max1G</i>, <i>Max2G</i>, <i>Max4G</i>, <i>Max8G</i>, <i>Max16G</i>, <i>Max32G</i>. The default is <i>Max8G</i>.
+Optional. Specifies the capacity profile of the local memory
+storage. A capacity profile specifies the maximum number of entries
+that the local memory storage can hold. The value must be one of the
+following: <i>Max256M</i>, <i>Max512M</i>, <i>Max1G</i>, <i>Max2G</i>,
+<i>Max4G</i>, <i>Max8G</i>, <i>Max16G</i>, <i>Max32G</i>. The default
+is <i>Max8G</i>.
 
 </p></td>
 </tr>
@@ -355,7 +373,7 @@ A `Logging` node can have the following attributes.
 LogDirectory
 </p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">
-Optional. Specifies the path of a directory to store log files. The default path is the <i>trinity-log</i> in <i>AssemblyPath</i>.
+Optional. Specifies the path of a directory to store log files. The default path is the <i>trinity-log</i> directory in <i>AssemblyPath</i>.
 </p></td>
 </tr>
 
@@ -363,11 +381,12 @@ Optional. Specifies the path of a directory to store log files. The default path
 <td class="tableblock halign-left valign-top"><p class="tableblock">
 LogLevel
 </p></td>
+
 <td class="tableblock halign-left valign-top"><p class="tableblock">
-Optional. Specifies the logging level. Must be one of the following values: <i>Verbose</i>, <i>Debug</i>, <i>Info</i>, <i>Warning</i>, <i>Error</i>, <i>Fatal</i>, <i>Off</i>.
-The default level is <i>Info</i>.
-</p></td>
-</tr>
+Optional. Specifies the logging level. Its value must be one of the
+following: <i>Verbose</i>, <i>Debug</i>, <i>Info</i>, <i>Warning</i>,
+<i>Error</i>, <i>Fatal</i>, <i>Off</i>.  The default level is
+<i>Info</i>.  </p></td> </tr>
 
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">
@@ -409,7 +428,7 @@ HttpPort
 </p></td>
 
 <td class="tableblock halign-left valign-top"><p class="tableblock">
-Optional. If a server/proxy has Http endpoints, it will listen on the
+Optional. If a server/proxy has an Http endpoint, it will listen on the
 specified Http port after it is started. The value is an integer.
 When a negative integer is specified, the HTTP server is disabled and
 no port will be opened. The default port is 80. </p></td>
@@ -435,22 +454,48 @@ Optional. Specifies how many retries will be attempted when a message cannot be 
 <td class="tableblock halign-left valign-top"><p class="tableblock">
 ClientReconnectRetry
 </p></td>
+
 <td class="tableblock halign-left valign-top"><p class="tableblock">
-Optional. Specifies how many reconnect attempts will be made when a message is being sent and the connection is down. The default value is 1.
-</p></td>
-</tr>
+Optional. Specifies how many reconnect attempts will be made if the
+network connection is down during sending a message. The default value
+is 1.  </p></td> </tr>
 
 <tr> <td class="tableblock halign-left valign-top"><p
-class="tableblock"> Handshake </p></td> <td class="tableblock
-halign-left valign-top"><p class="tableblock"> Optional. A Boolean
-value that specifies whether a Trinity server/proxy/client performs
-handshaking when establishing a connection. Set this to FALSE for
-compatibility with older versions of Graph Engine. The default value
-is TRUE.  </p></td> </tr>
+class="tableblock"> Handshake </p></td>
+
+<td class="tableblock halign-left valign-top"><p class="tableblock">
+Optional. A Boolean value that specifies whether a server/proxy/client
+performs handshaking when establishing a connection.  For
+compatibility with older versions of Graph Engine that does not
+support <i>Handshake</i>, set this to FALSE. The default value is
+TRUE.  </p></td> </tr>
 
 </tbody>
 </table>
 
 A `Network` node cannot have any child elements.
 
+### Sample Configuration File
 
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Trinity ConfigVersion="2.0">
+  <Local>
+    <Logging LogToFile="TRUE" EchoOnConsole="FALSE" LogDirectory="D:\log-dir" LoggingLevel="Info" />
+    <Network HttpPort="8080" ClientMaxConn="10" />
+  </Local>
+  <Cluster>
+    <Server Endpoint="1.2.3.4:5304" Template="server-template"/>
+    <Server Endpoint="1.2.3.5:5304" Template="server-template"/>
+    <Server Endpoint="1.2.3.6:5304" Template="server-template">
+      <!--This server has some extra settings-->
+      <LIKQ Timeout="90000" />
+      <Storage ReadOnly="FALSE" StorageRoot="D:\data2" StorageCapacity="Max4G"/>
+      <Network ClientSendRetry="2" />
+    </Server>
+  </Cluster>
+  <Template Id="server-template">
+    <Storage ReadOnly="TRUE" StorageRoot="D:\data" StorageCapacity="Max1G"/>
+  </Template>
+</Trinity>
+```

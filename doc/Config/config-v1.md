@@ -8,10 +8,13 @@ permalink: /docs/manual/Config/config-v1.html
 
 The _root node_ is always `Trinity`. There must be exactly one root
 node. The root node has an attribute called `ConfigVersion` that
-specifies the version of the configuration file. Currently, the value
-must be 1.0 or 2.0 if it is specified. The value "1.0" indicates that
-the configuration file conforms to the specification given here. If
+specifies the version of the configuration file. It it is specified,
+the value must be 1.0 or 2.0. The value "1.0" indicates that the
+configuration file conforms to the specification 1.0 given here. If
 not specified, the configuration file will be parsed as version 1.0.
+
+Note, nuget package `GraphEngine.Core` 1.0.8482 and below only
+support configuration specification 1.0.
 
 All valid nodes under Trinity node are `section` nodes.
 
@@ -46,9 +49,10 @@ Optional. Specifies the path of a directory for saving and loading Graph Engine 
 
 #### Servers Section
 
-The `Servers` section specifies the endpoints and configurations of the servers in a cluster. 
-It can have a number of `Server` entries. The value of a `Server` entry is an Hostname:Port string that
-describes the server endpoint.
+The `Servers` section specifies the endpoints and configurations of
+the servers in a cluster.  It can have a number of `Server`
+entries. The value of a `Server` entry is an <i>Hostname:Port</i>
+string that describes the server endpoint.
 
 Each `Server` entry can have the following attributes.
 
@@ -63,23 +67,23 @@ Each `Server` entry can have the following attributes.
 <td class="tableblock halign-left valign-top"><p class="tableblock">AvailabilityGroup</p></td>
 
 <td class="tableblock halign-left valign-top"><p
-class="tableblock">Optional. Specifies the identifier of the
-availability group that the current server belongs to.  Each server is
-associated with an availability group.  If not specified, each server
-will be in its own default availability group.  Multiple <i>Server</i>
-nodes could have the same availability group.  The servers within the
-same availability group correspond to the same server Id in
-MemoryCloud.SendMessage methods. The <i>ServerId</i> parameter in the
-SendMessage method is the index number of the availability
-group. Note, when this attribute is used, all <i>Server</i> nodes
-within a <i>Cluster</i> node specify the attribute or none of them
-should specify.  </p></td>
+class="tableblock">Optional. Each server is associated with an
+availability group. This attribute specifies the identifier of the
+availability group that the current server belongs to.  If not
+specified, each server will be in its own default availability group.
+Multiple <i>Server</i> nodes could have the same availability group.
+The servers within the same availability group correspond to the same
+server Id in <i>MemoryCloud.SendMessage(...)</i>. The <i>ServerId</i>
+parameter in the SendMessage method is the index number of the
+availability group. Note, when this attribute is used, all
+<i>Server</i> nodes within a <i>Cluster</i> node must specify the
+attribute or none of them should specify.  </p></td>
 
 </tr>
 
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">AssemblyPath</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Optional. Specifies the directory of the running executable. Useful for running multiple Graph Engine instances on the same machine (listening on different ports, or bound to different network interfaces).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional. Specifies the directory of the running Graph Engine instance. Useful for running multiple Graph Engine instances on the same machine (listening on different ports, or bound to different network interfaces).</p></td>
 </tr>
 
 <tr>
@@ -96,7 +100,7 @@ Optional. Specifies the path of a directory for saving and loading Graph Engine 
 LoggingLevel
 </p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">
-Optional. Specifies the logging level. Must be one of the following values: <i>Verbose</i>, <i>Debug</i>, <i>Info</i>, <i>Warning</i>, <i>Error</i>, <i>Fatal</i>, <i>Off</i>.
+Optional. Specifies the logging level. Its value must be one of the following: <i>Verbose</i>, <i>Debug</i>, <i>Info</i>, <i>Warning</i>, <i>Error</i>, <i>Fatal</i>, <i>Off</i>.
 The default level is <i>Info</i>.
 </p></td>
 </tr>
@@ -127,7 +131,7 @@ HttpPort
 </p></td>
 
 <td class="tableblock halign-left valign-top"><p class="tableblock">
-Optional. If a server/proxy has Http endpoints, it will listen on the
+Optional. If a server/proxy has an Http endpoint, it will listen on the
 specified Http port after it is started. The value is an integer.
 When a negative integer is specified, the HTTP server is disabled and
 no port will be opened. The default port is 80. </p></td>
@@ -159,7 +163,7 @@ The `Logging` section can have the following entries.
 LogDirectory
 </p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">
-Optional. Specifies the path of a directory to store log files. The default path is the <i>trinity-log</i> in <i>AssemblyPath</i>.
+Optional. Specifies the path of a directory to store log files. The default path is the <i>trinity-log</i> directory in <i>AssemblyPath</i>.
 </p></td>
 </tr>
 
@@ -168,7 +172,7 @@ Optional. Specifies the path of a directory to store log files. The default path
 LogLevel
 </p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">
-Optional. Specifies the logging level. Must be one of the following values: <i>Verbose</i>, <i>Debug</i>, <i>Info</i>, <i>Warning</i>, <i>Error</i>, <i>Fatal</i>, <i>Off</i>.
+Optional. Specifies the logging level. Its value must be one of the following: <i>Verbose</i>, <i>Debug</i>, <i>Info</i>, <i>Warning</i>, <i>Error</i>, <i>Fatal</i>, <i>Off</i>.
 The default level is <i>Info</i>.
 </p></td>
 </tr>
@@ -182,7 +186,7 @@ The default level is <i>Info</i>.
 <?xml version="1.0" encoding="utf-8"?>
 <Trinity>
   <section name="Storage">
-    <entry name="StorageRoot">StorageRootPath</entry>
+    <entry name="StorageRoot">D:\storage</entry>
   </section>
   <section name="Servers">
     <entry name="Server">192.168.0.1:5304</entry>
