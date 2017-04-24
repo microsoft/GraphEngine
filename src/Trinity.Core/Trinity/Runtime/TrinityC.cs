@@ -51,18 +51,19 @@ namespace Trinity
 #endif
                 string trinity_c_path = Path.Combine(assembly_path, native_assembly_name);
                 bool found = false;
-#if !CORECLR
-                string trinity_c_md5 = Resources.Trinity_C_sha512.Trim().ToLowerInvariant();
 
                 if (File.Exists(trinity_c_path))
                 {
-                    string md5 = SecureHashHelper.GetFileSHA512(trinity_c_path).Trim().ToLowerInvariant();
-                    if (trinity_c_md5.Equals(md5))
+                    using (Stream resourceStream = GetTrinityCAssembly(native_assembly_name))
                     {
-                        found = true;
+                        string embedded_sha = SecureHashHelper.GetSHA512(resourceStream).Trim().ToLowerInvariant();
+                        string ondisk_sha = SecureHashHelper.GetFileSHA512(trinity_c_path).Trim().ToLowerInvariant();
+                        if (embedded_sha.Equals(ondisk_sha))
+                        {
+                            found = true;
+                        }
                     }
                 }
-#endif
 
                 if (!found)
                 {
@@ -86,17 +87,14 @@ namespace Trinity
 
         private static void ReleaseNativeAssembly(string native_assembly_name, string trinity_c_path)
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            Stream resourceStream = assembly.GetManifestResourceStream("Trinity." + native_assembly_name);
             try
             {
+                using (Stream resourceStream = GetTrinityCAssembly(native_assembly_name))
                 using (FileStream fs = new FileStream(trinity_c_path, FileMode.Create))
                 {
                     resourceStream.CopyTo(fs);
                     fs.Flush();
                 }
-                if (resourceStream != null)
-                    resourceStream.Dispose();
             }
             catch (Exception)
             {
@@ -107,6 +105,12 @@ namespace Trinity
                 }
                 Environment.Exit(0);
             }
+        }
+
+        private static Stream GetTrinityCAssembly(string resource_name)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            return assembly.GetManifestResourceStream("Trinity." + resource_name);
         }
 
         [DllImport(TrinityC.AssemblyName)]
