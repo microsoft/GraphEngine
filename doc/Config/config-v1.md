@@ -4,14 +4,36 @@ title: Configuration File Specification (Version 1.0)
 permalink: /docs/manual/Config/config-v1.html
 ---
 
+A Graph Engine Configuration File is an XML file with the default name
+`trinity.xml`. When a Graph Engine instance is initialized, it will
+automatically load the default configuration file, unless
+`TrinityConfig.LoadConfig(...)` is explicitly called. The file can
+contain configuration settings for a single machine and/or a cluster
+of machines.
+
 ### Root Node
 
-The _root node_ is always `Trinity`. There must be exactly one root
-node. The root node has an attribute called `ConfigVersion` that
-specifies the version of the configuration file. It it is specified,
-the value must be 1.0 or 2.0. The value "1.0" indicates that the
-configuration file conforms to the specification 1.0 given here. If
-not specified, the configuration file will be parsed as version 1.0.
+The root node is always `Trinity`. There must be exactly one root
+node. The root node has an optional attribute `ConfigVersion`.
+
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 86%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ConfigVersion</p></td>
+
+<td class="tableblock halign-left valign-top"><p
+class="tableblock">Optional. Specifies the version of the
+configuration file. Currently, the value must be 1.0 or 2.0 if
+specified. The value "1.0" indicates that the configuration file
+conforms to the specification 1.0 given here.  Note, if ConfigVersion
+is not specified, the configuration file will be parsed as version 1.0.</p></td> </tr>
+
+</tbody>
+</table>
 
 Note, nuget package `GraphEngine.Core` 1.0.8482 and below only
 support configuration specification 1.0.

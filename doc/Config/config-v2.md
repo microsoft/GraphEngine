@@ -34,11 +34,11 @@ is not specified, the configuration file will be parsed as <a
 href="/docs/manual/Config/config-v1.html" target="_blank">version 1.0</a>, which is
 now obsolete.</p></td> </tr>
 
-Note, nuget package `GraphEngine.Core` 1.0.8482 and below only
-support configuration specification 1.0.
-
 </tbody>
 </table>
+
+Note, nuget package `GraphEngine.Core` 1.0.8482 and below only
+support configuration specification 1.0.
 
 All valid nodes under Trinity node are called **top-level elements**.
 
