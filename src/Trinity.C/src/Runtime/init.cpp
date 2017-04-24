@@ -7,8 +7,19 @@
 #include "BackgroundThread/BackgroundThread.h"
 #include "Trinity/Diagnostics/LogAutoFlushTask.h"
 
+namespace Trinity
+{
+    namespace IO
+    {
+        namespace Path
+        {
+            Trinity::String g_AssemblyPath = "";
+        }
+    }
+}
+
 /* Should only be reached from CLR*/
-DLL_EXPORT VOID __stdcall __INIT_TRINITY_C__()
+DLL_EXPORT VOID __stdcall __INIT_TRINITY_C__(u16char* pAssemblyPath)
 {
 #ifdef TRINITY_PLATFORM_WINDOWS
     Memory::LargePageMinimum = GetLargePageMinimum();
@@ -22,6 +33,8 @@ DLL_EXPORT VOID __stdcall __INIT_TRINITY_C__()
 #ifdef TRINITY_OPTIONAL_PREEMPTIVE
     Runtime::__transition_enabled = true;
 #endif
+
+    Trinity::IO::Path::g_AssemblyPath = Trinity::String::FromWcharArray(pAssemblyPath, -1);
 
     BackgroundThread::TaskScheduler::Start();
 }
