@@ -12,9 +12,12 @@ namespace GraphEngine.DataImporter
 {
     class CmdOptions
     {
-        [Option('t', "tsl", HelpText = "Specifies the TSL assembly for data importing.", MutuallyExclusiveSet = "Action")]
+        [Option('a', "tsl_assembly", HelpText = "Specifies the TSL assembly for data importing.", MutuallyExclusiveSet = "Action")]
         public string TSLAssembly { get; set; }
-
+		
+        [Option('t', "tsl", HelpText = "Specifies the TSL file for data importing")]
+        public string TSL { get; set;}
+		
         [Option('d', "dir", HelpText = "Import all .json and .txt files from directory", Required = false)]
         public string InputDirectory { get; set; }
 
@@ -49,7 +52,7 @@ namespace GraphEngine.DataImporter
             };
 
             help.AddPreOptionsLine("Import from files to Graph Engine storage.");
-            help.AddPreOptionsLine(string.Format("Usage: {0} [-t tsl_assembly|-g] [-d directory] [-o output_dir] [--delimiter delimiter] [-f file_format] [--notrim] [explicit files]", Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
+            help.AddPreOptionsLine(string.Format("Usage: {0} [-a tsl_assembly|-g] [-t tsl][-d directory] [-o output_dir] [--delimiter delimiter] [-f file_format] [--notrim] [explicit files]", Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
 
             help.AddOptions(this);
             help.AddPostOptionsLine("Only files with .json, .csv, .tsv and .ntriples suffix are recognized.");

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Trinity;
 using Trinity.Diagnostics;
 using Trinity.Storage;
+using Trinity.TSL.Lib;
 
 namespace GraphEngine.DataImporter
 {
@@ -29,7 +30,13 @@ namespace GraphEngine.DataImporter
 
                 Stopwatch timer = Stopwatch.StartNew();
 
-                if (opts.TSLAssembly != null)
+                if (opts.TSL != null)
+                {
+                    var tslCompiler = new TSLCompiler();
+                    opts.TSLAssembly = tslCompiler.Compile(opts.TSL);
+                    Importer.Import(opts.TSLAssembly, files, opts);
+                }
+                else if (opts.TSLAssembly != null)
                 {
                     Importer.Import(opts.TSLAssembly, files, opts);
                 }
@@ -40,6 +47,7 @@ namespace GraphEngine.DataImporter
 
                 timer.Stop();
                 Log.WriteLine("Time: {0} seconds.", timer.ElapsedMilliseconds / 1000);
+                
             }
         }
     }
