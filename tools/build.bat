@@ -58,5 +58,7 @@ call %SPARK_MODULE_ROOT%\build.bat
 
 :: Register local nuget source
 %NUGET_EXE% sources Add -Name "Graph Engine OSS Local" -Source %REPO_ROOT%\bin\
+:: Clear local nuget cache
+for /f %i in ('dir /a:d /s /b %REPO_ROOT%\tests\packages\GraphEngine.Core*') do rmdir /S /Q %i
 :: Ignore local nuget source errors
 exit /b 0
