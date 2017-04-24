@@ -180,12 +180,12 @@ first occurence. For example, if there are three `Server` nodes:
 The three servers will be assigned index numbers 0, 1, 0,
 respectively.
 
-Multiple `Server` configurations can be specified within a `Cluster`
-node is for easily deploying Graph Engine to a cluster of machines
-using a single configuration file. For a Graph Engine cluster
-consisting of multiple machines, when a Graph Engine instance is
-started, it loads its server configuration from one of the `Server`
-nodes according to the following rules:
+Multiple `Server` nodes can be specified within a `Cluster` node is
+for easily deploying Graph Engine to a cluster of machines using a
+single configuration file. For a Graph Engine cluster consisting of
+multiple machines, when a Graph Engine instance is started, it loads
+its server configuration from one of the `Server` nodes according to
+the following rules:
 
 * The `Endpoint` property matches one of the network interfaces of the machine on which the Graph Engine instance is running.
 * If `AssemblyPath` is specified, it matches the directory where the running Graph Engine instance resides.

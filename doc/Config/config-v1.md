@@ -129,7 +129,15 @@ The default level is <i>Info</i>.
 
 </tbody>
 </table>
-                                    
+                
+Multiple `Server` entries can be specified is for easily deploying
+Graph Engine to a cluster of machines using a single configuration
+file. For a Graph Engine cluster consisting of multiple machines, when
+a Graph Engine instance is started, it loads its server configuration
+from one of the `Server` entries according to the following rules:
+
+* The `Endpoint` property matches one of the network interfaces of the machine on which the Graph Engine instance is running.
+* If `AssemblyPath` is specified, it matches the directory where the running Graph Engine instance resides.                   
 
 #### Proxies Section
 
