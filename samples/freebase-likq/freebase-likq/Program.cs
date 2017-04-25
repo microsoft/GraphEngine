@@ -23,7 +23,7 @@ namespace freebase_likq
     {
         private static SQLiteConnection s_dbconn;
         private static string s_freebase_data_blobcontainer = "https://graphengine.blob.core.windows.net/public-data";
-        private static string s_freebase_dataset = "freebase-full-dataset.zip";
+        private static string s_freebase_dataset = "freebase-full-dataset-20170410.zip";
 
         static void Main(string[] args)
         {
