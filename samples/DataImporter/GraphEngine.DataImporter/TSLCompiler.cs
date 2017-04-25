@@ -16,8 +16,6 @@ namespace GraphEngine.DataImporter
         public string Compile(string fpath)
         {
             string exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string s = Path.Combine(exePath, "TSLCompiler.csproj");
-            Console.WriteLine(s);
             Process process = new Process();
             process.StartInfo = new ProcessStartInfo("MSBuild.exe", Path.Combine(exePath, "TSLCompiler.csproj") + " /p:TSLRoot=" + fpath);
             process.Start();
