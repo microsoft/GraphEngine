@@ -43,6 +43,9 @@
       <HintPath>..\packages\CommandLineParser.1.9.71\lib\net45\CommandLine.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -56,12 +59,13 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Trinity.Core, Version=1.0.8574.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Trinity.Core, Version=1.0.8574.0, Culture=neutral, PublicKeyToken=8e2cdff5f54c266f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\GraphEngine.Core.1.0.8574\lib\Trinity.Core.dll</HintPath>
-      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CsvGenerator.cs" />
     <Compile Include="CsvParser.cs" />
     <Compile Include="CmdOptions.cs" />
     <Compile Include="CodeWriter.cs" />
@@ -76,6 +80,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IImporter.cs" />
     <Compile Include="SortedRDFImporter.cs" />
+    <Compile Include="TSLCompiler.cs" />
     <Compile Include="UnsortedRDFImporter.cs" />
     <Compile Include="SortedRDFGenerator.cs" />
     <Compile Include="UnsortedRDFTSLGenerator.cs" />
@@ -83,10 +88,14 @@
     <Compile Include="TSLGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
     <TslCodegen Include="TSLGeneratorMetadata.tsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TSLCompiler.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -95,6 +104,12 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.props'))" />
     <Error Condition="!Exists('..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.targets'))" />
+  </Target>
+  <Target Name="SpicNSpan" AfterTargets="Clean">
+    <!-- common vars https://msdn.microsoft.com/en-us/library/c02as0cs.aspx?f=255&MSPPError=-2147217396 -->
+    <Delete Files="$(TargetDir)TSLAssembly.dll" /> <!-- bin -->
+	<Delete Files="$(TargetDir)Trinity.C.dll" /> <!-- bin -->
+	<RemoveDir Directories="$(ProjectDir)$(BaseIntermediateOutputPath)" /> <!-- obj -->
   </Target>
   <Import Project="..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.targets" Condition="Exists('..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

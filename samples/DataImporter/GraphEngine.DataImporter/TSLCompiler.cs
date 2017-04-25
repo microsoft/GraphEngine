@@ -15,12 +15,12 @@ namespace GraphEngine.DataImporter
     {
         public string Compile(string fpath)
         {
-            string path = new DirectoryInfo("../../../").FullName;
+            string path = new DirectoryInfo("../../").FullName;
             Process process = new Process();
-            process.StartInfo = new ProcessStartInfo("MSBuild.exe", path+"TSLCompiler\\TSLCompiler.csproj /p:TSLRoot=" + fpath);
+            process.StartInfo = new ProcessStartInfo("MSBuild.exe", path+"TSLCompiler.csproj /p:TSLRoot=" + fpath);
             process.Start();
             process.WaitForExit();
-            return path + "TSLCompiler\\bin\\Debug\\GraphEngine.DataImporter.dll";
+            return path + "bin\\Debug\\TSLAssembly.dll";
         }
     }
 }
