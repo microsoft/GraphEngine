@@ -1,20 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.props" Condition="Exists('..\..\..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.props')" />
+  <Import Project="..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.props" Condition="Exists('..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E2A60C4A-0BF0-4E10-A940-D5984A8E383F}</ProjectGuid>
+    <ProjectGuid>{69C99EE3-C48B-451B-BDD1-28D31B7A169F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GraphEngine.DataImporter</RootNamespace>
     <AssemblyName>TSLAssembly</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-	<TSLRoot></TSLRoot>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TSLRoot>
+    </TSLRoot>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,7 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -46,9 +47,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="Trinity.Core, Version=1.0.8574.0, Culture=neutral, PublicKeyToken=8e2cdff5f54c266f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\GraphEngine.Core.1.0.8574\lib\Trinity.Core.dll</HintPath>
+    <Reference Include="Trinity.Core">
+      <HintPath>.\Trinity.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -62,10 +62,10 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.props'))" />
-    <Error Condition="!Exists('..\..\..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.targets'))" />
+    <Error Condition="!Exists('..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.props'))" />
+    <Error Condition="!Exists('..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.targets'))" />
   </Target>
-  <Import Project="..\..\..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.targets" Condition="Exists('..\..\..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.targets')" />
+  <Import Project="..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.targets" Condition="Exists('..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
