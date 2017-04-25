@@ -10,7 +10,6 @@ using Trinity.TSL;
 
 namespace GraphEngine.DataImporter
 {
-
     class TSLCompiler
     {
         public string Compile(string fpath)

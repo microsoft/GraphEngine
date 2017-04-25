@@ -107,9 +107,12 @@
   </Target>
   <Target Name="SpicNSpan" AfterTargets="Clean">
     <!-- common vars https://msdn.microsoft.com/en-us/library/c02as0cs.aspx?f=255&MSPPError=-2147217396 -->
-    <Delete Files="$(TargetDir)TSLAssembly.dll" /> <!-- bin -->
-	<Delete Files="$(TargetDir)Trinity.C.dll" /> <!-- bin -->
-	<RemoveDir Directories="$(ProjectDir)$(BaseIntermediateOutputPath)" /> <!-- obj -->
+    <Delete Files="$(TargetDir)TSLAssembly.dll" />
+    <!-- bin -->
+    <Delete Files="$(TargetDir)Trinity.C.dll" />
+    <!-- bin -->
+    <RemoveDir Directories="$(ProjectDir)$(BaseIntermediateOutputPath)" />
+    <!-- obj -->
   </Target>
   <Import Project="..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.targets" Condition="Exists('..\packages\GraphEngine.Core.1.0.8574\build\GraphEngine.Core.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
