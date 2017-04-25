@@ -214,8 +214,9 @@ public enum CellAccessOptions
    StrongLogAhead,
 
    // Specifies that write-ahead-log should be performed with weak durability.
-   // This option brings better performance, but the durability may be degraded
-   // when this option is used.
+   // This option brings better performance, but under certain circumstances 
+   // the log may fail to be persistent, for example, during a power outage 
+   // or equipment failure.
    WeakLogAhead
 }
 ```
