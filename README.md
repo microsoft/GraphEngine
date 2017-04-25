@@ -3,6 +3,7 @@
 |Windows | Ubuntu 16.04 |
 |:------:|:------:|
 |[![Build Status](http://ci.graphengine.io/job/graphengine-master-win/badge/icon)](http://ci.graphengine.io/job/graphengine-master-win)|[![Build Status](http://ci.graphengine.io/job/graphengine-master-ubuntu1604/badge/icon)](http://ci.graphengine.io/job/graphengine-master-ubuntu1604/)|
+|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/graphengine-test-win.svg)](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/graphengine-test-win.svg)|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/graphengine-test-ubuntu1604.svg)](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/graphengine-test-ubuntu1604.svg)|
 
 Microsoft [Graph Engine](http://www.graphengine.io/) is a distributed
 in-memory data processing engine, underpinned by a strongly-typed
