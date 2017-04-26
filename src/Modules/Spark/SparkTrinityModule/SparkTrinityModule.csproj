@@ -53,7 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataType.cs" />
-    <Compile Include="CellRepository.cs" />
+    <Compile Include="TrinityStorage.cs" />
     <Compile Include="FilterExpressionBuilder.cs" />
     <Compile Include="SparkTrinityConnector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

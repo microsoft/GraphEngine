@@ -47,7 +47,7 @@ namespace Trinity.Modules.Spark
             }
         }
 
-        public static bool TryGetList<T>(JObject jobj, string propName, out List<T> list)
+        public static bool TryGetEnumerable<T>(JObject jobj, string propName, out IEnumerable<T> list)
         {
             JToken token;
             if (!jobj.TryGetValue(propName, out token))
@@ -59,7 +59,7 @@ namespace Trinity.Modules.Spark
             {
                 try
                 {
-                    list = (token as JArray).ToObject<List<T>>();
+                    list = (token as JArray).ToObject<IEnumerable<T>>();
                     return true;
                 }
                 catch

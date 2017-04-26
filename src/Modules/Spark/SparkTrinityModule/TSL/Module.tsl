@@ -7,35 +7,44 @@ TrinitySettings
 	RootNamespace: Trinity.Modules.Spark.Protocols.TSL;
 }
 
-struct RequestBodyStruct
+struct FindCellsRequest
 {
-	string jsonBody;
+	string CellType;
+	optional List<string> Filters;
 }
 
-protocol GetSchema
+struct FindCellsResponse
 {
-	Type: HTTP;
-	Request: RequestBodyStruct;
-	Response: stream;
+	List<CellId> CellIds;
 }
 
-protocol GetPartitions
+protocol FindCells
 {
-	Type: HTTP;
-	Request: RequestBodyStruct;
-	Response: stream;
+	Type: Syn;
+	Request: FindCellsRequest;
+	Response: FindCellsResponse;
 }
 
-protocol GetPartition
+struct LoadCellsRequest
 {
-	Type: HTTP;
-	Request: RequestBodyStruct;
-	Response: stream;
+	List<CellId> CellIds;
+	optional List<string> Fields;
+}
+
+struct LoadCellsResponse
+{
+	List<string> Cells;
+}
+
+protocol LoadCells
+{
+	Type: Syn;
+	Request: LoadCellsRequest;
+	Response: LoadCellsResponse;
 }
 
 module SparkTrinity
 {
-	protocol GetSchema;
-	protocol GetPartitions;
-	protocol GetPartition;
+	protocol FindCells;
+	protocol LoadCells;
 }

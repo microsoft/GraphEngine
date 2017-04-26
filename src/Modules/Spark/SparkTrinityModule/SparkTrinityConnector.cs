@@ -8,8 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Trinity.Diagnostics;
-using Trinity.Storage;
 
 namespace Trinity.Modules.Spark
 {
@@ -24,8 +24,14 @@ namespace Trinity.Modules.Spark
 
     public class DefaultSparkTrinityConnector : ISparkTrinityConnector
     {
+        public ITrinityStorage Storage { get; set; }
 
-        public ICellRepository CellRepository { get; set; } = new DefaultCellRepository();
+        public Func<long, int> GetServerIdFromCellId { get; set; }
+
+        public DefaultSparkTrinityConnector(SparkTrinityModule module)
+        {
+            Storage = new DefaultTrinityStorage(module);
+        }
 
         public StructType GetSchema(string jsonstr)
         {
@@ -37,7 +43,7 @@ namespace Trinity.Modules.Spark
                 return null;
             }
 
-            return CellRepository.GetCellSchema(cellType);
+            return Storage.GetCellSchema(cellType);
         }
 
         public object GetPartitions(string jsonstr)
@@ -57,37 +63,47 @@ namespace Trinity.Modules.Spark
             if (batchSize <= 0)
                 return partitions;
 
-            List<JObject> filters = null;
-            Utilities.TryGetList(json, "filters", out filters);
+            IEnumerable<JObject> filters = null;
+            Utilities.TryGetEnumerable(json, "filters", out filters);
 
-            var cellIds = CellRepository.FindCells(cellType, filters);
-            var part = new List<long>();
-            var count = 0;
-            foreach (var id in cellIds)
+            var cellIds = Storage.FindCells(cellType, filters == null ? null : filters.Select(f => JsonConvert.SerializeObject(f)));
+            foreach(var ids in cellIds)
             {
-                part.Add(id);
-                count++;
-                if (count % batchSize == 0)
-                {
-                    partitions.Add(part);
-                    part = new List<long>();
-                }
-            }
+                if (ids == null)
+                    continue;
 
-            if (part.Count() > 0)
-                partitions.Add(part);
+                var part = new List<long>();
+                foreach (var id in ids)
+                {
+                    part.Add(id);
+                    if (part.Count == batchSize)
+                    {
+                        partitions.Add(part);
+                        part = new List<long>();
+                    }
+                }
+
+                if (part.Count > 0)
+                    partitions.Add(part);
+            }
 
             return partitions;
         }
 
         public IEnumerable<object> GetPartition(string jsonstr)
         {
+            if (GetServerIdFromCellId == null)
+            {
+                Log.WriteLine(LogLevel.Warning, "Func<long, int> GetServerIdFromCellId not set");
+                return null;
+            }
+
             JObject json;
             string cellType;
-            List<long> cellIds;
+            IEnumerable<long> cellIds;
             if (!Utilities.TryDeserializeObject(jsonstr, out json) ||
                 !Utilities.TryGetValue(json, "cellType", out cellType) ||
-                !Utilities.TryGetList(json, "partition", out cellIds))
+                !Utilities.TryGetEnumerable(json, "partition", out cellIds))
             {
                 return null;
             }
@@ -96,11 +112,27 @@ namespace Trinity.Modules.Spark
             if (cellDesc == null)
                 return null;
 
-            List<string> fieldNames = null;
-            Utilities.TryGetList(json, "fields", out fieldNames);
+            IEnumerable<string> fieldNames = null;
+            Utilities.TryGetEnumerable(json, "fields", out fieldNames);
 
             var timer = Stopwatch.StartNew();
-            var cells = cellIds.Select(id => CellRepository.LoadCell(cellType, id, fieldNames));
+            var ids = new List<long>[Global.ServerCount];
+            for (int i = 0; i < Global.ServerCount; i++) ids[i] = new List<long>();
+            foreach (var id in cellIds) ids[GetServerIdFromCellId(id)].Add(id);
+
+            var cells = new List<string>();
+            Parallel.For(0, Global.ServerCount, (serverId) =>
+            {
+                var res = Storage.LoadCells(serverId, cellType, ids[serverId], fieldNames);
+                if (res != null && res.Count() > 0)
+                {
+                    lock (cells)
+                    {
+                        cells.AddRange(res);
+                    }
+                }
+            });
+
             timer.Stop();
             Log.WriteLine(LogLevel.Info, $"GetPartition[cellType={cellType}, cellIds={cellIds.Count()}] succeeded: count={cells.Count()}, timer={(long)timer.Elapsed.TotalMilliseconds}");
 
