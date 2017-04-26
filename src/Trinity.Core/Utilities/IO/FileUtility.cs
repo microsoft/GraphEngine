@@ -81,7 +81,11 @@ namespace Trinity.Utilities
         /// <returns>The completed directory path.</returns>
         public static string CompletePath(string path, bool create_nonexistent = true)
         {
+            if (path == null) throw new ArgumentNullException("path");
+            if (path == "") path = Environment.CurrentDirectory;
+
             string _path = path;
+
             if (path[path.Length - 1] != Path.DirectorySeparatorChar)
                 _path = path + Path.DirectorySeparatorChar;
             if (create_nonexistent && (!Directory.Exists(_path)))
