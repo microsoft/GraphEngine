@@ -627,7 +627,7 @@ namespace storage4
         {
             Global.LocalStorage.ResetStorage();
             Test t = new Test(random_seed, thread_cell_range_overlap, cell_size, max_lo_size, pause_defrag, iter_cnt, ops_cnt, max_cell_count, single_trunk);
-            Assert.True(t.Run());
+            Assert.That(t.Run());
         }
     }
 }

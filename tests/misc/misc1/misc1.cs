@@ -17,7 +17,7 @@ namespace misc1
         public void global_myassemblypath_is_functional()
         {
             var path = Global.MyAssemblyPath;
-            Assert.True(Directory.GetFileSystemEntries(path).Any(_ => _.Contains("misc1")));
+            Assert.That(Directory.GetFileSystemEntries(path).Any(_ => _.Contains("misc1")));
         }
     }
 }

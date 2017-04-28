@@ -43,7 +43,7 @@ namespace config1
         public void saves_2_0_config_format()
         {
             TrinityConfig.SaveConfig("test.xml");
-            Assert.True(File.ReadAllText("test.xml").Contains("ConfigVersion=\"2.0\""));
+            Assert.That(File.ReadAllText("test.xml").Contains("ConfigVersion=\"2.0\""));
         }
     }
 }

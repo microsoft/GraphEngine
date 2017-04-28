@@ -84,7 +84,7 @@ namespace storage5
 
             foreach (var c in cells)
             {
-                Assert.True(c.CellId < cellCount / 2);
+                Assert.That(c.CellId < cellCount / 2);
             }
 
             long __count = 0;
