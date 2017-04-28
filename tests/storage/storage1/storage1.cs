@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
-using Xunit;
+using NUnit.Framework;
 using Trinity;
 using Trinity.Storage;
 
@@ -12,11 +12,10 @@ namespace storage1
 {
     public class cell_resize_1
     {
-        [Theory]
-        [InlineData(1, 10)]
-        [InlineData(10, 100)]
-        [InlineData(100, 1000)]
-        [InlineData(1000, 10000)]
+        [TestCase(1, 10)]
+        [TestCase(10, 100)]
+        [TestCase(100, 1000)]
+        [TestCase(1000, 10000)]
         public void TestCellResize(int iterations, int count)
         {
             TrinityConfig.CurrentRunningMode = RunningMode.Embedded;

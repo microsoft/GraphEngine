@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
-using Xunit;
+using NUnit.Framework;
 using Trinity;
 using Trinity.Storage;
 
@@ -13,10 +13,9 @@ namespace storage5
 {
     public class storage5
     {
-        [Theory]
-        [InlineData(100, 314, 7)]
-        [InlineData(1000, 6736, 65)]
-        [InlineData(100000, 23, 255)]
+        [TestCase(100, 314, 7)]
+        [TestCase(1000, 6736, 65)]
+        [TestCase(100000, 23, 255)]
         public unsafe void T1(int cellCount, int cellSize, byte content)
         {
             Global.LocalStorage.ResetStorage();

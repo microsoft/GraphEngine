@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xunit;
+using NUnit.Framework;
 
 using Trinity;
 using Trinity.Storage;
@@ -13,12 +13,11 @@ namespace storage2
 {
     public class storage2
     {
-        [Theory]
-        [InlineData(10, 314, 333, 7)]
-        [InlineData(100, 2, 65, 34)]
-        [InlineData(1000, 8124, 16, 1)]
-        [InlineData(10000, 999, 0, 233)]
-        [InlineData(100000, 1, 1560, 12)]
+        [TestCase(10, 314, 333, 7)]
+        [TestCase(100, 2, 65, 34)]
+        [TestCase(1000, 8124, 16, 1)]
+        [TestCase(10000, 999, 0, 233)]
+        [TestCase(100000, 1, 1560, 12)]
         public void T1(int cellCount, int s1, int s2, byte v)
         {
             byte[] buff = new byte[s1];

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
+using NUnit.Framework;
 using Trinity;
 using Trinity.Storage;
 
@@ -12,7 +12,7 @@ namespace cleanup3
 {
     public class cleanup3
     {
-        [Fact]
+        [Test]
         public void T1()
         {
             Global.LocalStorage.ResetStorage();

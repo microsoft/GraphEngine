@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
+using NUnit.Framework;
 using Trinity;
 using Trinity.Storage;
 
@@ -13,11 +13,10 @@ namespace storage6
 {
     public class storage6
     {
-        [Theory]
-        [InlineData(1<<10, 8<<20, 4)]
-        [InlineData(1<<20, 8<<10, 4)]
-        [InlineData(1<<11, 8<<16, 24)]
-        [InlineData(1<<21, 8<<8, 24)]
+        [TestCase(1<<10, 8<<20, 4)]
+        [TestCase(1<<20, 8<<10, 4)]
+        [TestCase(1<<11, 8<<16, 24)]
+        [TestCase(1<<21, 8<<8, 24)]
         public void T1(int cellSize, int count, int tCount)
         {
             byte[] content = new byte[cellSize];

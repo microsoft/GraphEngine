@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
+using NUnit.Framework;
 using Trinity;
 using Trinity.Storage;
 
@@ -12,9 +12,8 @@ namespace storage7
 {
     public class storage7
     {
-        [Theory]
-        [InlineData(1027, 1<<20)]
-        [InlineData(2049, 1575984)]
+        [TestCase(1027, 1<<20)]
+        [TestCase(2049, 1575984)]
         public unsafe void T1(int buff_len, int count)
         {
             Global.LocalStorage.ResetStorage();

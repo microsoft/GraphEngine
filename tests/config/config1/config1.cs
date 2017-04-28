@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
-using Xunit;
+using NUnit.Framework;
 using Trinity;
 using Trinity.Storage;
 
@@ -13,33 +13,33 @@ namespace config1
 {
     public class config1
     {
-        [Fact]
+        [Test]
         public void save_config_no_exception()
         {
             TrinityConfig.SaveConfig();
         }
-        [Fact]
+        [Test]
         public void save_config_no_exception_2()
         {
             TrinityConfig.SaveConfig("test2.xml");
         }
-        [Fact]
+        [Test]
         public void load_config_no_exception()
         {
             TrinityConfig.LoadConfig();
         }
-        [Fact]
+        [Test]
         public void load_config_no_exception_2()
         {
             TrinityConfig.LoadConfig("test2.xml");
         }
-        [Fact]
+        [Test]
         // https://github.com/Microsoft/GraphEngine/issues/22
         public void can_set_non_accessible_storage_root()
         {
             TrinityConfig.StorageRoot = "Y:";
         }
-        [Fact]
+        [Test]
         public void saves_2_0_config_format()
         {
             TrinityConfig.SaveConfig("test.xml");

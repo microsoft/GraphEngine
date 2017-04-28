@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
+using NUnit.Framework;
 using Trinity;
 using Trinity.Storage;
 
@@ -12,10 +12,9 @@ namespace cleanup5
 {
     public class cleanup5
     {
-        [Theory]
-        [InlineData(10)]
-        [InlineData(50)]
-        [InlineData(100)]
+        [TestCase(10)]
+        [TestCase(50)]
+        [TestCase(100)]
         public void InitUninitStressTest(int count)
         {
             for (int i=0; i<count; ++i)
