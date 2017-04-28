@@ -40,14 +40,14 @@ namespace storage5
             Console.WriteLine("Save cells done (after warm-up), took {0}", sw.ElapsedMilliseconds);
 
             byte[] cell;
-            Assert.Equal(TrinityErrorCode.E_SUCCESS, Global.LocalStorage.LoadCell(cellCount - 1, out cell));
+            Assert.AreEqual(TrinityErrorCode.E_SUCCESS, Global.LocalStorage.LoadCell(cellCount - 1, out cell));
 
             Console.WriteLine("cell size: {0}\n", cell.Length);
-            Assert.Equal(cellSize, cell.Length);
+            Assert.AreEqual(cellSize, cell.Length);
 
             for (int i = 0; i < cellSize; i++)
             {
-                Assert.Equal(content, cell[i]);
+                Assert.AreEqual(content, cell[i]);
             }
 
             sw.Restart();
@@ -63,7 +63,7 @@ namespace storage5
             }
             sw.Stop();
             Console.WriteLine("Iteration (cold): {0} \t {1}", garbage, sw.ElapsedMilliseconds);
-            Assert.Equal(garbage_expected, garbage);
+            Assert.AreEqual(garbage_expected, garbage);
 
             sw.Restart();
             id = 0;
@@ -77,7 +77,7 @@ namespace storage5
             }
             sw.Stop();
             Console.WriteLine("Iteration (warm): {0} \t {1}", garbage, sw.ElapsedMilliseconds);
-            Assert.Equal(garbage_expected, garbage);
+            Assert.AreEqual(garbage_expected, garbage);
 
 
             var cells = from c in Global.LocalStorage where c.CellId < cellCount / 2 select c;
@@ -102,8 +102,8 @@ namespace storage5
                     ++id;
                 }
             }
-            Assert.Equal(garbage_expected, garbage);
-            Assert.Equal((ulong)__count, (ulong)Global.LocalStorage.CellCount);
+            Assert.AreEqual(garbage_expected, garbage);
+            Assert.AreEqual((ulong)__count, (ulong)Global.LocalStorage.CellCount);
         }
     }
 }

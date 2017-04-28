@@ -41,9 +41,9 @@ namespace storage1
             {
                 using (var cell = Global.LocalStorage.UseGraphNode(i))
                 {
-                    Assert.Equal(iterations, cell.outLinks.Count);
-                    Assert.Equal(0, cell.inLinks.Count);
-                    Assert.Equal("MyCell", cell.value);
+                    Assert.AreEqual(iterations, cell.outLinks.Count);
+                    Assert.AreEqual(0, cell.inLinks.Count);
+                    Assert.AreEqual("MyCell", cell.value);
                 }
             }
         }

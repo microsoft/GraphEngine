@@ -24,7 +24,7 @@ namespace storage3
                 Global.LocalStorage.RemoveCell(i);
             }
 
-            Assert.Equal(0, (int)Global.LocalStorage.CellCount);
+            Assert.AreEqual(0, (int)Global.LocalStorage.CellCount);
         }
     }
 }

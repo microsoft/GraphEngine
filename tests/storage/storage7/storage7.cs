@@ -44,21 +44,21 @@ namespace storage7
 
             var after = Global.LocalStorage.CellCount;
 
-            Assert.Equal(before, after);
+            Assert.AreEqual(before, after);
 
             Console.WriteLine("Begin testing ...");
 
             for (int i = 0; i < count; ++i)
             {
-                Assert.Equal(TrinityErrorCode.E_SUCCESS, Global.LocalStorage.LoadCell(i, out buf));
+                Assert.AreEqual(TrinityErrorCode.E_SUCCESS, Global.LocalStorage.LoadCell(i, out buf));
                 fixed (byte* b = buf)
                 {
                     long* p = (long*)b;
-                    Assert.Equal(buff_len, buf.Length);
+                    Assert.AreEqual(buff_len, buf.Length);
 
                     for (int j = 0; j < buf.Length / sizeof(long); ++j)
                     {
-                        Assert.Equal(p[j], (long)(i + j));
+                        Assert.AreEqual(p[j], (long)(i + j));
                     }
                 }
             }

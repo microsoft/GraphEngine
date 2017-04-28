@@ -32,7 +32,7 @@ namespace storage6
                 for (int i = 0; i < count / tCount; ++i)
                 {
                     long id = (long)i + (pid * count / tCount);
-                    Assert.Equal(TrinityErrorCode.E_SUCCESS, Global.LocalStorage.SaveCell(id, content));
+                    Assert.AreEqual(TrinityErrorCode.E_SUCCESS, Global.LocalStorage.SaveCell(id, content));
                 }
             });
 
@@ -47,7 +47,7 @@ namespace storage6
                 for (int i = count / tCount - 1; i >= 0; --i)
                 {
                     long id = (long)i + (pid * count / tCount);
-                    Assert.Equal(TrinityErrorCode.E_SUCCESS, Global.LocalStorage.SaveCell(id, content));
+                    Assert.AreEqual(TrinityErrorCode.E_SUCCESS, Global.LocalStorage.SaveCell(id, content));
                 }
             });
 

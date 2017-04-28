@@ -24,7 +24,7 @@ namespace tsl1
         public void T2(int i)
         {
             MyCell cell = new MyCell(i);
-            Assert.Equal(i, cell.A);
+            Assert.AreEqual(i, cell.A);
         }
 
         [TestCase(1)]
@@ -33,7 +33,7 @@ namespace tsl1
         public void T3(long cell_id)
         {
             MyCell cell = new MyCell(cell_id);
-            Assert.Equal(cell_id, cell.CellID);
+            Assert.AreEqual(cell_id, cell.CellID);
         }
 
         [TestCase(1, 2)]
@@ -48,8 +48,8 @@ namespace tsl1
             Global.LocalStorage.SaveMyCell(cell);
 
             var load_cell = Global.LocalStorage.LoadMyCell(cell_id);
-            Assert.Equal(cell_id, load_cell.CellID);
-            Assert.Equal(x, load_cell.A);
+            Assert.AreEqual(cell_id, load_cell.CellID);
+            Assert.AreEqual(x, load_cell.A);
         }
 
         [TestCase(1, 2)]
@@ -65,8 +65,8 @@ namespace tsl1
 
             using (var accessor = Global.LocalStorage.UseMyCell(cell_id))
             {
-                Assert.Equal(cell_id, accessor.CellID);
-                Assert.Equal(x, accessor.A);
+                Assert.AreEqual(cell_id, accessor.CellID);
+                Assert.AreEqual(x, accessor.A);
             }
         }
 
@@ -86,8 +86,8 @@ namespace tsl1
 
             using (var accessor = Global.LocalStorage.UseMyCell(cell_id, Trinity.TSL.Lib.CellAccessOptions.CreateNewOnCellNotFound))
             {
-                Assert.Equal(cell_id, accessor.CellID);
-                Assert.Equal(x, accessor.A);
+                Assert.AreEqual(cell_id, accessor.CellID);
+                Assert.AreEqual(x, accessor.A);
             }
         }
 
@@ -118,7 +118,7 @@ namespace tsl1
             cell.SetField("A", x);
             Global.LocalStorage.SaveGenericCell(cell);
 
-            Assert.Equal(x, Global.LocalStorage.LoadMyCell(cell_id).A);
+            Assert.AreEqual(x, Global.LocalStorage.LoadMyCell(cell_id).A);
         }
 
         [TestCase(1, 2)]
@@ -131,7 +131,7 @@ namespace tsl1
         {
             Global.LocalStorage.SaveMyCell(cell_id, x);
 
-            Assert.Equal(x, Global.LocalStorage.LoadGenericCell(cell_id).GetField<int>("A"));
+            Assert.AreEqual(x, Global.LocalStorage.LoadGenericCell(cell_id).GetField<int>("A"));
         }
     }
 }
