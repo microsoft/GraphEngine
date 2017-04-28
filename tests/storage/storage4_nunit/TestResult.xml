@@ -1,4 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<test-run start-time="2017-04-27 13:21:55Z">
-  <command-line><![CDATA[..\..\packages\NUnit.ConsoleRunner.3.6.1\tools\nunit3-console.exe  bin\Release\storage4_nunit.dll --process=separate]]></command-line>
-</test-run>
