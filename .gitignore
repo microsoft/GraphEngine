@@ -88,4 +88,6 @@ tools/dotnet/*
 tools/dotnet-dev-win-x64.latest.exe
 tests/xunit_reports
 tests/xunit_coreclr_reports
+tests/nunit_reports
+tests/nunit_coreclr_reports
 tests/new_test.exe
