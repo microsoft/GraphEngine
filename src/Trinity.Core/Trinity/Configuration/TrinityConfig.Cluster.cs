@@ -14,6 +14,9 @@ using Trinity.Network;
 
 namespace Trinity
 {
+    /// <summary>
+    /// Enumerate all the types of trinity server
+    /// </summary>
     internal enum TrinityServerType : int
     {
         Server, Proxy
@@ -21,8 +24,18 @@ namespace Trinity
 
     public static partial class TrinityConfig
     {
-        private static ClusterConfig                      s_current_cluster_config = new ClusterConfig();
-        private static Dictionary<string, ClusterConfig>  s_clusterConfigurations  = new Dictionary<string, ClusterConfig>();
+        #region Fields
+        private static ClusterConfig s_current_cluster_config = new ClusterConfig();
+        private static Dictionary<string, ClusterConfig> s_clusterConfigurations = new Dictionary<string, ClusterConfig>();
+        
+        internal static int BackgroundSendingInterval = ConfigurationConstants.DefaultValue.DEFAULT_BACKGROUND_SENDING_INTERVAL;
+        internal static int HeartbeatInterval = ConfigurationConstants.DefaultValue.DEFAULT_HEARTBEAT_INTERVAL;
+        internal static int MaxSocketReconnectNum = ConfigurationConstants.DefaultValue.DEFAULT_MAXSOCKET_RECONNECTNUM;
+
+        internal const int InvalidPort = ConfigurationConstants.DefaultValue.DEFAULT_INVALID_VALUE;
+        internal static int DefaultServerPort = ConfigurationConstants.DefaultValue.DEFAULT_SERVER_PORT;
+        internal static int DefaultProxyPort = ConfigurationConstants.DefaultValue.DEFAULT_PROXY_PORT;
+        #endregion
 
         /// <summary>
         /// Represents the configuration settings for Global.CloudStorage.
@@ -110,13 +123,6 @@ namespace Trinity
         }
 
         /// <summary>
-        /// Default Value = 10 ms
-        /// </summary>
-        internal static int BackgroundSendingInterval = 10; //ms
-        internal static int HeartbeatInterval = 1000; //ms
-        internal static int MaxSocketReconnectNum = 8;
-
-        /// <summary>
         /// Indicates the number of network connections a Trinity client can connect to a Trinity server at most.
         /// </summary>
         public static int ClientMaxConn
@@ -131,10 +137,9 @@ namespace Trinity
             }
         }
 
-        //Protocol Settings
-        internal const  int InvalidPort = -1;
-        internal static int DefaultServerPort = 5304;
-        internal static int DefaultProxyPort = 7304;
+        /// <summary>
+        /// Gets the listening Port of the current cluster configuration.
+        /// </summary>
         internal static int ListeningPort
         {
             get

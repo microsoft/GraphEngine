@@ -8,40 +8,69 @@ namespace Trinity.Configuration
 {
     public sealed class NetworkConfig
     {
-        #region Fields
+        #region Singleton
         static NetworkConfig s_NetworkConfig = new NetworkConfig();
 
-        private const int c_DefaultHttpPort             = 80;
-        private const int c_DefaultClientMaxConn        = 2;
-        private const int c_DefaultClientSendRetry      = 1;
-        private const int c_DefaultClientReconnectRetry = 1;
-
-        #endregion
-        private NetworkConfig() 
+        private NetworkConfig()
         {
-            HttpPort             = c_DefaultHttpPort;
-            ClientMaxConn        = c_DefaultClientMaxConn;
-            ClientSendRetry      = c_DefaultClientSendRetry;
+            HttpPort = c_DefaultHttpPort;
+            ClientMaxConn = c_DefaultClientMaxConn;
+            ClientSendRetry = c_DefaultClientSendRetry;
             ClientReconnectRetry = c_DefaultClientReconnectRetry;
-            Handshake            = true;
+            Handshake = true;
         }
 
         [ConfigInstance]
         internal static NetworkConfig Instance { get { return s_NetworkConfig; } }
         [ConfigEntryName]
         internal static string ConfigEntry { get { return ConfigurationConstants.Tags.NETWORK; } }
+        #endregion
 
+        #region Fields
+        private const int c_DefaultHttpPort = ConfigurationConstants.DefaultValue.DEFAULT_HTTP_PORT;
+        private const int c_DefaultClientMaxConn = ConfigurationConstants.DefaultValue.DEFAULT_CLIENT_MAX_CONN;
+        private const int c_DefaultClientSendRetry = ConfigurationConstants.DefaultValue.DEFAULT_CLIENT_SEND_RETRY;
+        private const int c_DefaultClientReconnectRetry = ConfigurationConstants.DefaultValue.DEFAULT_CLIENT_RECONNECT_RETRY;
+        #endregion
+
+        #region Properties
+        /// <summary>
+        /// Gets and sets the HttpPort value, if the server/proxy has Http endpoints, 
+        /// it will listen on the specified port for Http requests after it is started.
+        /// </summary>
         [ConfigSetting(Optional: true)]
         public int HttpPort { get; set; }
+
+        /// <summary>
+        /// Gets and sets value to specify how many client connections are established 
+        /// between a client and a communication instance.
+        /// </summary>
         [ConfigSetting(Optional: true)]
         public int ClientMaxConn { get; set; }
+
+        /// <summary>
+        /// Gets and sets value to specify how many retries will be attempted when a message cannot be sent.
+        /// </summary>
         [ConfigSetting(Optional: true)]
         public int ClientSendRetry { get; set; }
+
+        /// <summary>
+        /// Gets and sets value to specify how many reconnect attempts are made
+        /// when a message is being sent and the connection is down.
+        /// </summary>
         [ConfigSetting(Optional: true)]
         public int ClientReconnectRetry { get; set; }
+
+        /// <summary>
+        /// Gets and Sets value to specify whether a Trinity server/proxy/client preforms
+        /// handshaking for a connection
+        /// </summary>
         [ConfigSetting(Optional: true)]
         public bool Handshake { get { return CTrinityConfig.CHandshake(); } set { CTrinityConfig.CSetHandshake(value); } }
+        
+     
         [ConfigSetting(Optional: true)]
-        public bool ClientDisableSendBuffer{ get { return CTrinityConfig.CClientDisableSendBuffer(); } set { CTrinityConfig.CSetClientDisableSendBuffer(value); } }
+        public bool ClientDisableSendBuffer { get { return CTrinityConfig.CClientDisableSendBuffer(); } set { CTrinityConfig.CSetClientDisableSendBuffer(value); } }
+        #endregion
     }
 }

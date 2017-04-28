@@ -17,11 +17,17 @@ namespace Trinity.Configuration
 {
     internal class XMLConfig
     {
-        private const string section_label = "section";
-        private const string entry_label = "entry";
+        #region Fields
+        private const string section_label = ConfigurationConstants.Tags.LEGACY_SECTION_LABEL;
+        private const string entry_label = ConfigurationConstants.Tags.LEGACY_ENTRY_LABEL;
         private string config_file;
         private XElement root_xelement;
-        
+        #endregion
+
+        /// <summary>
+        /// Constructor with the specified configuration file.
+        /// </summary>
+        /// <param name="xml_file_name"></param>
         public XMLConfig(string xml_file_name)
         {
             config_file = xml_file_name;
@@ -35,11 +41,21 @@ namespace Trinity.Configuration
             }
         }
 
+        /// <summary>
+        /// Stream the configuration setting to a file on the disk.
+        /// </summary>
         public void Save()
         {
             root_xelement.Save(config_file);
         }
 
+        /// <summary>
+        /// Gets value of a double type with specified section name and entry name.
+        /// </summary>
+        /// <param name="section"></param>
+        /// <param name="entry"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
         public double GetEntryValue(string section, string entry, double defaultValue)
         {
             string entry_value = GetEntryValue(section, entry);
@@ -56,6 +72,13 @@ namespace Trinity.Configuration
             }
         }
 
+        /// <summary>
+        /// Gets value of a bool type with specified section name and entry name.
+        /// </summary>
+        /// <param name="section"></param>
+        /// <param name="entry"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
         public bool GetEntryValue(string section, string entry, bool defaultValue)
         {
             string entry_value = GetEntryValue(section, entry);
@@ -72,18 +95,39 @@ namespace Trinity.Configuration
             }
         }
 
+        /// <summary>
+        /// Gets value of a string type with specified section name and entry name.
+        /// </summary>
+        /// <param name="section"></param>
+        /// <param name="entry"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
         public string GetEntryValue(string section, string entry, string defaultValue)
         {
             string entry_value = GetEntryValue(section, entry);
             return (entry_value == null ? defaultValue : entry_value);
         }
 
+        /// <summary>
+        /// Gets value of an IPAddress type with specified section name and entry name.
+        /// </summary>
+        /// <param name="section"></param>
+        /// <param name="entry"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
         public IPAddress GetEntryValue(string section, string entry, IPAddress defaultValue)
         {
             string entry_value = GetEntryValue(section, entry);
             return (entry_value == null ? defaultValue : Utilities.NetworkUtility.Hostname2IPv4Address(entry_value));
         }
 
+        /// <summary>
+        /// Gets value of a integer type with specified section name and entry name.
+        /// </summary>
+        /// <param name="section"></param>
+        /// <param name="entry"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
         public int GetEntryValue(string section, string entry, int defaultValue)
         {
             string entry_value = GetEntryValue(section, entry);
@@ -99,6 +143,13 @@ namespace Trinity.Configuration
             }
         }
 
+        /// <summary>
+        /// Gets value of a long type with specified section name and entry name.
+        /// </summary>
+        /// <param name="section"></param>
+        /// <param name="entry"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
         public long GetEntryValue(string section, string entry, long defaultValue)
         {
             string entry_value = GetEntryValue(section, entry);
@@ -115,8 +166,14 @@ namespace Trinity.Configuration
             }
         }
 
+        /// <summary>
+        /// Gets value of string type with specified section name and entry name.
+        /// </summary>
+        /// <param name="section_name"></param>
+        /// <param name="entry_name"></param>
+        /// <returns></returns>
         public string GetEntryValue(string section_name, string entry_name)
-		{
+        {
             try
             {
                 var matched_sections = from section in root_xelement.Elements(section_label)
@@ -131,21 +188,29 @@ namespace Trinity.Configuration
             {
                 return null;
             }
-		}
+        }
 
+        /// <summary>
+        /// Gets property value of a string type with specified parameters.
+        /// </summary>
+        /// <param name="section_name"></param>
+        /// <param name="entry_name"></param>
+        /// <param name="entry_value"></param>
+        /// <param name="property_name"></param>
+        /// <returns></returns>
         public string GetEntryProperty(string section_name, string entry_name, string entry_value, string property_name)
         {
             try
             {
                 var matched_sections = from section in root_xelement.Elements(section_label)
-                                       where ((string)section.Attribute("name")).Equals(section_name)
+                                       where ((string)section.Attribute(ConfigurationConstants.Tags.LEGACY_NAME)).Equals(section_name)
                                        select section;
 
-                  var property_values = from entry in matched_sections.Elements(entry_label)
-                        where ((string)entry.Attribute("name")).Equals(entry_name) && entry.Value.Equals(entry_value)
-                          select ((string)entry.Attribute(property_name));
+                var property_values = from entry in matched_sections.Elements(entry_label)
+                                      where ((string)entry.Attribute(ConfigurationConstants.Tags.LEGACY_NAME)).Equals(entry_name) && entry.Value.Equals(entry_value)
+                                      select ((string)entry.Attribute(property_name));
 
-                  return property_values.ToArray<string>()[0];
+                return property_values.ToArray<string>()[0];
             }
             catch (Exception)
             {
@@ -153,31 +218,44 @@ namespace Trinity.Configuration
             }
         }
 
-        public Dictionary<string,string> GetEntryProperties(string section_name, string entry_name, string entry_value)
+        /// <summary>
+        /// Gets all entry properties with specified parameters
+        /// </summary>
+        /// <param name="section_name"></param>
+        /// <param name="entry_name"></param>
+        /// <param name="entry_value"></param>
+        /// <returns></returns>
+        public Dictionary<string, string> GetEntryProperties(string section_name, string entry_name, string entry_value)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
             try
             {
                 var matched_sections = from section in root_xelement.Elements(section_label)
-                                       where ((string)section.Attribute("name")).Equals(section_name)
+                                       where ((string)section.Attribute(ConfigurationConstants.Tags.LEGACY_NAME)).Equals(section_name)
                                        select section;
 
                 var attributes = (from entry in matched_sections.Elements(entry_label)
-                                      where ((string)entry.Attribute("name")).Equals(entry_name) && entry.Value.Equals(entry_value)
-                                      select entry.Attributes()).ToArray()[0];
+                                  where ((string)entry.Attribute(ConfigurationConstants.Tags.LEGACY_NAME)).Equals(entry_name) && entry.Value.Equals(entry_value)
+                                  select entry.Attributes()).ToArray()[0];
                 foreach (var attribute in attributes)
                 {
                     dic.Add(attribute.Name.ToString(), attribute.Value);
                 }
-                
+
             }
             catch (Exception)
             {
-                return new Dictionary<string,string>();
+                return new Dictionary<string, string>();
             }
             return dic;
         }
 
+        /// <summary>
+        /// Gets all entry values with specified section name and entry name.
+        /// </summary>
+        /// <param name="section_name"></param>
+        /// <param name="entry_name"></param>
+        /// <returns></returns>
         public List<string> GetEntryValues(string section_name, string entry_name)
         {
             try
@@ -195,6 +273,12 @@ namespace Trinity.Configuration
             }
         }
 
+        /// <summary>
+        /// Gets all entries with specified section name and entry name.
+        /// </summary>
+        /// <param name="section_name"></param>
+        /// <param name="entry_name"></param>
+        /// <returns></returns>
         public List<XElement> GetEntries(string section_name, string entry_name)
         {
             try
@@ -212,14 +296,20 @@ namespace Trinity.Configuration
             }
         }
 
+        /// <summary>
+        /// Sets value of a entry with specified section name and entry name.
+        /// </summary>
+        /// <param name="section_name"></param>
+        /// <param name="entry_name"></param>
+        /// <param name="entry_value"></param>
         public void SetEntryValue(string section_name, string entry_name, object entry_value)
         {
             var matched_sections = from section in root_xelement.Elements(section_label)
-                                  where ((string)section.Attribute("name")).Equals(section_name)
-                                  select section;
+                                   where ((string)section.Attribute("name")).Equals(section_name)
+                                   select section;
 
             XElement selected_section;
-            
+
             if (matched_sections.Count<object>() == 0)
             {
                 //selected section doesn't exist
@@ -251,6 +341,14 @@ namespace Trinity.Configuration
             selected_entry.SetValue(entry_value);
         }
 
+        /// <summary>
+        /// Sets entry property with specified parameters.
+        /// </summary>
+        /// <param name="section_name"></param>
+        /// <param name="entry_name"></param>
+        /// <param name="entry_value"></param>
+        /// <param name="property_name"></param>
+        /// <param name="property_value"></param>
         public void SetEntryProperty(string section_name, string entry_name, object entry_value, string property_name, object property_value)
         {
             var matched_sections = from section in root_xelement.Elements(section_label)
@@ -291,6 +389,12 @@ namespace Trinity.Configuration
             selected_entry.SetAttributeValue(property_name, property_value);
         }
 
+        /// <summary>
+        /// Sets entry values with specified parameters.
+        /// </summary>
+        /// <param name="section_name"></param>
+        /// <param name="entry_name"></param>
+        /// <param name="entry_value_list"></param>
         public void SetEntryValues(string section_name, string entry_name, List<object> entry_value_list)
         {
             var matched_sections = from section in root_xelement.Elements(section_label)
@@ -319,7 +423,7 @@ namespace Trinity.Configuration
                 entry.Remove();
             }
 
-            for(int i=0;i<entry_value_list.Count;i++)
+            for (int i = 0; i < entry_value_list.Count; i++)
             {
                 XElement new_entry = new XElement(entry_label, new XAttribute("name", entry_name));
                 new_entry.SetValue(entry_value_list[i]);
@@ -327,7 +431,14 @@ namespace Trinity.Configuration
             }
         }
 
-        public void SetEntryProperties(string section_name, string entry_name,  object entry_value, Dictionary<string,object> property_values)
+        /// <summary>
+        /// Set entry properties with specified parameters.
+        /// </summary>
+        /// <param name="section_name"></param>
+        /// <param name="entry_name"></param>
+        /// <param name="entry_value"></param>
+        /// <param name="property_values"></param>
+        public void SetEntryProperties(string section_name, string entry_name, object entry_value, Dictionary<string, object> property_values)
         {
             var matched_sections = from section in root_xelement.Elements(section_label)
                                    where ((string)section.Attribute("name")).Equals(section_name)
@@ -370,6 +481,11 @@ namespace Trinity.Configuration
             }
         }
 
+        /// <summary>
+        /// Clear all entry value with specified section name and entry name.
+        /// </summary>
+        /// <param name="section_name"></param>
+        /// <param name="entry_name"></param>
         public void ClearEntryValues(string section_name, string entry_name)
         {
             var matched_sections = from section in root_xelement.Elements(section_label)
@@ -398,6 +514,6 @@ namespace Trinity.Configuration
                 entry.Remove();
             }
         }
-        
+
     }
 }

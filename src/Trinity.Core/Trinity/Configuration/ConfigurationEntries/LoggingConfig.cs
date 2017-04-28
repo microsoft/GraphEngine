@@ -24,11 +24,13 @@ namespace Trinity.Configuration
         internal static string ConfigEntry { get { return ConfigurationConstants.Tags.LOGGING; } }
         #endregion
 
+        #region Fields
         internal const  LogLevel c_DefaultLogLevel  = LogLevel.Info;
         private LogLevel         m_LogLevel         = c_DefaultLogLevel;
-        private string           m_LogDir           = "";
-        private bool             m_EchoOnConsole    = true;
-        private bool             m_LogToFile        =true;
+        private string           m_LogDir           = ConfigurationConstants.DefaultValue.BLANK;
+        private bool             m_EchoOnConsole    = ConfigurationConstants.DefaultValue.DEFAULT_VALUE_TRUE;
+        private bool             m_LogToFile        =ConfigurationConstants.DefaultValue.DEFAULT_VALUE_TRUE;
+        #endregion
 
         #region Private helpers
         private static string DefaultLogDirectory
@@ -46,13 +48,19 @@ namespace Trinity.Configuration
 
         #endregion
 
-
+        /// <summary>
+        /// Gets and sets the logging level threshold
+        /// </summary>
         [ConfigSetting(Optional:true)]
         public LogLevel LoggingLevel
         {
             get { return m_LogLevel; }
             set { m_LogLevel = value; CTrinityConfig.CLogSetLogLevel(m_LogLevel); }
         }
+
+        /// <summary>
+        /// Gets and sets the path to store log files. defaults to AssemblyPath\trinity-log\.
+        /// </summary>
         [ConfigSetting(Optional:true)]
         public string LogDirectory
         {
@@ -117,7 +125,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Gets of sets a value indicating whether the logged messages are echoed to the Console.
+        /// Gets and sets a value indicating whether the logged messages are echoed to the Console.
         /// </summary>
         [ConfigSetting(Optional: true)]
         public bool LogEchoOnConsole
@@ -125,6 +133,10 @@ namespace Trinity.Configuration
             get { return m_EchoOnConsole; }
             set { m_EchoOnConsole = value; CTrinityConfig.CLogSetEchoOnConsole(value); }
         }
+
+        /// <summary>
+        /// Gets and sets value to indicate whether to stream log entries to a file on disk.
+        /// </summary>
         [ConfigSetting(Optional:true)]
         public bool LogToFile
         {

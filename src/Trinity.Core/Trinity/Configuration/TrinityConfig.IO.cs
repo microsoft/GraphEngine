@@ -19,10 +19,16 @@ namespace Trinity
 {
     public static partial class TrinityConfig
     {
-        private const string                 c_defaultConfigFile         = "trinity.xml";
+        #region Fields
+        private const string                 c_defaultConfigFile         = ConfigurationConstants.Tags.DEFAULT_CONFIG_FILE;
         private static readonly string[]     c_builtInSectionNames       = new string[] { ConfigurationConstants.Tags.SERVER, ConfigurationConstants.Tags.PROXY };
         internal static ConfigurationSection s_localConfigurationSection = new ConfigurationSection();
+        #endregion
 
+        #region Property
+        /// <summary>
+        /// Gets path of the default configuration file.
+        /// </summary>
         internal static string DefaultConfigFile
         {
             get
@@ -30,7 +36,12 @@ namespace Trinity
                 return Path.Combine(AssemblyPath.MyAssemblyPath, c_defaultConfigFile);
             }
         }
+        #endregion
 
+        /// <summary>
+        /// Set all the value of the configuration entry
+        /// </summary>
+        /// <param name="entries"></param>
         internal static void ApplyConfigurationSettings(Dictionary<string, ConfigurationEntry> entries)
         {
             foreach (var config_instance in GetConfigurationInstances())
@@ -53,6 +64,10 @@ namespace Trinity
             }
         }
 
+        /// <summary>
+        /// Gets all the configuration instance
+        /// </summary>
+        /// <returns></returns>
         internal static IEnumerable<ConfigurationInstance> GetConfigurationInstances()
         {
             return AppDomain.CurrentDomain
@@ -200,7 +215,7 @@ namespace Trinity
         {
             LoadTrinityConfig(configFile, true);
         }
-
+        
         internal static void LoadTrinityConfig(bool forceLoad = false)
         {
             LoadTrinityConfig(DefaultConfigFile, forceLoad);
@@ -266,10 +281,14 @@ namespace Trinity
             }
         }
 
-        // !Caller holds config_load_lock
+        /// <summary>
+        /// !Caller holds config_load_lock
+        /// </summary>
+        /// <param name="trinity_config_file"></param>
         private static void LoadConfigLegacy(string trinity_config_file)
         {
             XMLConfig xml_config  = new XMLConfig(trinity_config_file);
+           
             //construct local configuration section  
             XElement localSection = new XElement(ConfigurationConstants.Tags.LOCAL);
             XElement loggingEntry = new XElement(ConfigurationConstants.Tags.LOGGING);
@@ -286,8 +305,10 @@ namespace Trinity
                 localSection.Add(storageEntry);
             if (networkEntry.Attributes().Count() > 0)
                 localSection.Add(networkEntry);
+
             //construct local ConfigurationSection
             s_localConfigurationSection = new ConfigurationSection(localSection);
+            
             //construct a clusterSections
             s_current_cluster_config = ClusterConfig._LegacyLoadClusterConfig(trinity_config_file);
 
@@ -306,14 +327,18 @@ namespace Trinity
             attribute.Value = value;
             return attribute;
         }
+        /// <summary>
+        /// Show the main infomation of current configuration
+        /// </summary>
+        /// <returns></returns>
         internal static string OutputCurrentConfig()
         {
-            //TODO more config entries.
             CodeWriter cw = new CodeWriter();
             cw.WL();
             cw.WL("StorageRoot : {0}", StorageRoot);
             cw.WL("LogDirectory: {0}", LogDirectory);
             cw.WL("LoggingLevel: {0}", LoggingLevel);
+            cw.WL("HttpPort:     {0}", HttpPort);
             cw.WL();
             return cw.ToString();
         }
