@@ -58,9 +58,8 @@ namespace Trinity.Utilities
                             if (asm == trinity_asm) continue;
                             if (asm.IsDynamic) continue;
                             if (type == typeof(System.RuntimeMethodHandle)) continue;
-                            if (type.FullName == "System.Linq.Enumerable+WhereSelectEnumerableIterator`2") continue;
-                            if (type.FullName == "System.Linq.Enumerable+WhereEnumerableIterator`1") continue;
-                            if (type.FullName == "System.Linq.Enumerable") continue;
+                            if (asm == typeof(object).Assembly) continue;
+                            if (asm == typeof(System.Linq.Enumerable).Assembly) continue;
 
                             var path = asm.Location;
                             my_assembly_path = System.IO.Path.GetDirectoryName(path) + Path.DirectorySeparatorChar;
