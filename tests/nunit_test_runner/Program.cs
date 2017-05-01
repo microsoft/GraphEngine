@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
+using System.IO;
 using NUnitLite;
 using Trinity.Core;
 using NUnit.Framework;
@@ -17,7 +18,8 @@ namespace nunitlite_runner
                 Console.Error.WriteLine("Usage: runner <test-assembly> [nunit-arg ...]");
                 return 1;
             }
-            var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(args[0]);
+            var path = Path.GetFullPath(args[0]);
+            var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(path);
             return new AutoRun(assembly).Execute(args.Skip(1).ToArray());
         }
     }
