@@ -31,10 +31,10 @@
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Exe.Identity)))"
         ContinueOnError="false" />
 
-    <!--xUnit tests-->
+    <!--nUnit tests-->
 
-    <RemoveDir Directories="$(MSBuildProjectDirectory)/xunit_coreclr_reports" ContinueOnError="true" />
-    <MakeDir Directories="$(MSBuildProjectDirectory)/xunit_coreclr_reports" ContinueOnError="true" />
+    <RemoveDir Directories="$(MSBuildProjectDirectory)/nunit_coreclr_reports" ContinueOnError="true" />
+    <MakeDir Directories="$(MSBuildProjectDirectory)/nunit_coreclr_reports" ContinueOnError="true" />
 
     <Exec
         Command="dotnet restore $([System.IO.Path]::GetFileName(%(Test.Identity)))"
@@ -47,7 +47,7 @@
         ContinueOnError="true"/>
         <!--Command="dotnet xunit $([System.IO.Path]::GetFileName(%(Test.Identity)))"-->
     <Exec
-        Command="dotnet xunit -xml $(MSBuildProjectDirectory)/xunit_coreclr_reports/$([System.String]::Copy(%(Test.Identity)).Replace('/','_').Replace('\','_')).xml"
+        Command="dotnet test --xml $(MSBuildProjectDirectory)/nunit_coreclr_reports/$([System.String]::Copy(%(Test.Identity)).Replace('/','_').Replace('\','_')).xml"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
         ContinueOnError="true" />
     <Move 
