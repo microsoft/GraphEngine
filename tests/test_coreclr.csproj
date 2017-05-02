@@ -67,7 +67,7 @@
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
         ContinueOnError="true" />
     <Exec
-        Command="dotnet $(MetaRunner) $(TestRunner) $(TestResultDir)/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))) bin/Release/netcoreapp2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))).dll --workers=1"
+        Command="dotnet $(MetaRunner) $(TestRunner) $(TestResultDir)/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))) bin/Release/netcoreapp2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))).dll --workers=1 --timeout=1800000"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
         ContinueOnError="true" Condition="Exists('$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))/bin/Release/netcoreapp2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))).dll')"/>
   </Target>
