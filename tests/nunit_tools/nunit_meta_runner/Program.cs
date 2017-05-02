@@ -13,7 +13,7 @@ using NUnit.Framework.Interfaces;
 using Trinity;
 using NUnit.Framework;
 
-namespace NUnitLiteNetCoreTest
+namespace NUnitMetaRunner
 {
     class Program
     {
@@ -21,13 +21,14 @@ namespace NUnitLiteNetCoreTest
         {
             if (args.Length < 2)
             {
-                Console.Error.WriteLine("Usage: runner <runner-path> <test-assembly> [nunitlite-arg ..]");
+                Console.Error.WriteLine("Usage: runner <runner-path> <test-assembly> <result-dir> [nunitlite-arg ..]");
                 return 1;
             }
 
             var runnerPath = Path.GetFullPath(args[0]);
-            var assemblyPath = Path.GetFullPath(args[1]);
-            var remainingOptions = args.Skip(2).ToArray();
+            var resultDirPath = Path.GetFullPath(args[1]);
+            var assemblyPath = Path.GetFullPath(args[2]);
+            var remainingOptions = args.Skip(3).ToArray();
 
             // NOTE(leasunhy): this may fail silently if some of the dependencies are not preloaded!
             //                 In that case, no tests can be discovered in `assembly`.
@@ -46,23 +47,25 @@ namespace NUnitLiteNetCoreTest
 
             foreach (var testName in allTestNames)
             {
-                var process = CreateProcessForTest(runnerPath, assemblyPath, remainingOptions, testName);
+                var process = CreateProcessForTest(runnerPath, assemblyPath, resultDirPath, remainingOptions, testName);
                 process.WaitForExit();
                 Console.WriteLine(process.StandardOutput.ReadToEnd());
+                // TODO(leasunhy): check the exit status of the process and regard the test as a failure
+                //                 if the process did not exit normally.
             }
             return 0;
         }
 
-        private static Process CreateProcessForTest(string runnerPath, string assemblyPath,
+        private static Process CreateProcessForTest(string runnerPath, string assemblyPath, string resultDir,
                                                     string[] runnerOptions, string testName)
         {
             var commandLineOptions = new List<string>();
             commandLineOptions.Add($"\"{runnerPath}\"");
             commandLineOptions.Add($"\"{assemblyPath}\"");
             commandLineOptions.AddRange(runnerOptions);
-            commandLineOptions.Add("--workers=1");
-            if (testName != null && testName != "")
-                commandLineOptions.Add($"--test={testName}");
+            commandLineOptions.Add($"--test={testName}");
+            var testResultPath = Path.Combine(resultDir, $"{testName}.xml");
+            commandLineOptions.Add($"--result=\"{testResultPath}\"");
 
             var startInfo = new ProcessStartInfo();
             startInfo.FileName = "dotnet";
