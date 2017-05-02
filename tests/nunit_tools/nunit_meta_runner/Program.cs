@@ -9,6 +9,10 @@ using NUnitLite;
 using NUnit.Framework.Api;
 using NUnit.Framework.Interfaces;
 
+// preloading dependencies
+using Trinity;
+using NUnit.Framework;
+
 namespace NUnitLiteNetCoreTest
 {
     class Program
@@ -25,6 +29,8 @@ namespace NUnitLiteNetCoreTest
             var assemblyPath = Path.GetFullPath(args[1]);
             var remainingOptions = args.Skip(2).ToArray();
 
+            // NOTE(leasunhy): this may fail silently if some of the dependencies are not preloaded!
+            //                 In that case, no tests can be discovered in `assembly`.
             var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
 
             var rootTestSuite = GetITest(assembly, remainingOptions);
@@ -40,19 +46,23 @@ namespace NUnitLiteNetCoreTest
 
             foreach (var testName in allTestNames)
             {
-                var process = CreateProcessForTest(runnerPath, assemblyPath, testName);
+                var process = CreateProcessForTest(runnerPath, assemblyPath, remainingOptions, testName);
                 process.WaitForExit();
+                Console.WriteLine(process.StandardOutput.ReadToEnd());
             }
             return 0;
         }
 
-        private static Process CreateProcessForTest(string runnerPath, string assemblyPath, string testName)
+        private static Process CreateProcessForTest(string runnerPath, string assemblyPath,
+                                                    string[] runnerOptions, string testName)
         {
             var commandLineOptions = new List<string>();
             commandLineOptions.Add($"\"{runnerPath}\"");
             commandLineOptions.Add($"\"{assemblyPath}\"");
+            commandLineOptions.AddRange(runnerOptions);
             commandLineOptions.Add("--workers=1");
-            commandLineOptions.Add($"--test={testName}");
+            if (testName != null && testName != "")
+                commandLineOptions.Add($"--test={testName}");
 
             var startInfo = new ProcessStartInfo();
             startInfo.FileName = "dotnet";
@@ -66,7 +76,6 @@ namespace NUnitLiteNetCoreTest
         private static ITest GetITest(Assembly assembly, string[] commandLineOptions)
         {
             // we should control what `options` holds
-            commandLineOptions = new [] {"--explore"};
             var options = new NUnitLiteOptions(commandLineOptions);
             var builder = new DefaultTestAssemblyBuilder();
             var runSettings = TextRunner.MakeRunSettings(options);
