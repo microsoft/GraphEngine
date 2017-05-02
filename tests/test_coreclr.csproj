@@ -29,11 +29,6 @@
         ContinueOnError="false"/>
 
     <Exec
-        Command="dotnet build -c Release $([System.IO.Path]::GetFileName(%(Exe.Identity)))"
-        WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Exe.Identity)))"
-        ContinueOnError="false"/>
-
-    <Exec
         Command="dotnet run -p $([System.IO.Path]::GetFileName(%(Exe.Identity)))"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Exe.Identity)))"
         ContinueOnError="false" />
@@ -74,6 +69,6 @@
     <Exec
         Command="dotnet $(MetaRunner) $(TestRunner) $(TestResultDir)/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))) bin/Release/netcoreapp2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))).dll --workers=1"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
-        ContinueOnError="true" />
+        ContinueOnError="true" Condition="Exists('$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))/bin/Release/netcoreapp2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))).dll')"/>
   </Target>
 </Project>
