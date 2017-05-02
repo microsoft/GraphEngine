@@ -9,10 +9,10 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <TestRunner>$(MSBuildProjectDirectory)\nunit_tools\bin\nunit_meta_runner.dll</TestRunner>
-    <MetaRunner>$(MSBuildProjectDirectory)\nunit_tools\bin\nunitlite-runner.dll</MetaRunner>
+    <MetaRunner>$(MSBuildProjectDirectory)/nunit_tools/bin/nunit_meta_runner.dll</MetaRunner>
+    <TestRunner>$(MSBuildProjectDirectory)/nunit_tools/bin/nunitlite-runner.dll</TestRunner>
+    <TestResultDir>$(MSBuildProjectDirectory)/nunit_coreclr_reports</TestResultDir>
   </PropertyGroup>
-
 
   <Target Name="Clean">
     <Move SourceFiles="$([System.String]::Copy('%(Bak.Identity)'))" DestinationFiles="$([System.String]::Copy('%(Bak.Identity)').Replace('.csproj.bak', '.csproj'))" />
@@ -58,20 +58,21 @@
         WorkingDirectory="nunit_tools/nunit_meta_runner"
         ContinueOnError="false" />
 
-    <RemoveDir Directories="$(MSBuildProjectDirectory)/nunit_coreclr_reports" ContinueOnError="true" />
-    <MakeDir Directories="$(MSBuildProjectDirectory)/nunit_coreclr_reports" ContinueOnError="true" />
+    <RemoveDir Directories="$(TestResultDir)" ContinueOnError="true" />
+    <MakeDir Directories="$(TestResultDir)" ContinueOnError="true" />
+    <MakeDir Directories="$(TestResultDir)/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity)))"
+             ContinueOnError="true" />
 
-    <!--<Exec-->
-    <!--    Command="dotnet restore $([System.IO.Path]::GetFileName(%(Test.Identity)))"-->
-    <!--    WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"-->
-    <!--    ContinueOnError="false"/>-->
-
+    <Exec
+        Command="dotnet restore $([System.IO.Path]::GetFileName(%(Test.Identity)))"
+        WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
+        ContinueOnError="false"/>
     <Exec
         Command="dotnet build -c Release $([System.IO.Path]::GetFileName(%(Test.Identity)))"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
         ContinueOnError="true" />
     <Exec
-        Command="dotnet $(MetaRunner) $(TestRunner) bin/Release/netcoreapp2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))).dll --workers=1 --result=$(MSBuildProjectDirectory)/nunit_coreclr_reports/$([System.String]::Copy(%(Test.Identity)).Replace('/','_').Replace('\','_')).xml"
+        Command="dotnet $(MetaRunner) $(TestRunner) $(TestResultDir)/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))) bin/Release/netcoreapp2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))).dll --workers=1"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
         ContinueOnError="true" />
   </Target>
