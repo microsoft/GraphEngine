@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Trinity;
 using Trinity.Storage;
+using Trinity.Network;
 
 namespace cleanup2
 {
