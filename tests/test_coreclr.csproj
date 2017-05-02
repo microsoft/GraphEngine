@@ -8,6 +8,12 @@
     <Bak Include="**/*.csproj.bak" Exclude="**/*coreclr*"/>
   </ItemGroup>
 
+  <PropertyGroup>
+    <TestRunner>$(MSBuildProjectDirectory)\nunit_tools\bin\nunit_meta_runner.dll</TestRunner>
+    <MetaRunner>$(MSBuildProjectDirectory)\nunit_tools\bin\nunitlite-runner.dll</MetaRunner>
+  </PropertyGroup>
+
+
   <Target Name="Clean">
     <Move SourceFiles="$([System.String]::Copy('%(Bak.Identity)'))" DestinationFiles="$([System.String]::Copy('%(Bak.Identity)').Replace('.csproj.bak', '.csproj'))" />
   </Target>
@@ -36,11 +42,20 @@
 
     <Exec
         Command="dotnet restore"
-        WorkingDirectory="nunit_test_runner"
+        WorkingDirectory="nunit_tools/nunit_test_runner"
         ContinueOnError="false" />
     <Exec
-        Command="dotnet build -c Release"
-        WorkingDirectory="nunit_test_runner"
+        Command="dotnet build -c Release --output $(MSBuildProjectDirectory)/nunit_tools/bin"
+        WorkingDirectory="nunit_tools/nunit_test_runner"
+        ContinueOnError="false" />
+
+    <Exec
+        Command="dotnet restore"
+        WorkingDirectory="nunit_tools/nunit_meta_runner"
+        ContinueOnError="false" />
+    <Exec
+        Command="dotnet build -c Release --output $(MSBuildProjectDirectory)/nunit_tools/bin"
+        WorkingDirectory="nunit_tools/nunit_meta_runner"
         ContinueOnError="false" />
 
     <RemoveDir Directories="$(MSBuildProjectDirectory)/nunit_coreclr_reports" ContinueOnError="true" />
@@ -56,7 +71,7 @@
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
         ContinueOnError="true" />
     <Exec
-        Command="dotnet run -p $(MSBuildProjectDirectory)/nunit_test_runner/nunitlite-runner.csproj -- bin/Release/netcoreapp2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))).dll --workers=1 --result=$(MSBuildProjectDirectory)/nunit_coreclr_reports/$([System.String]::Copy(%(Test.Identity)).Replace('/','_').Replace('\','_')).xml"
+        Command="dotnet $(MetaRunner) $(TestRunner) bin/Release/netcoreapp2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))).dll --workers=1 --result=$(MSBuildProjectDirectory)/nunit_coreclr_reports/$([System.String]::Copy(%(Test.Identity)).Replace('/','_').Replace('\','_')).xml"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
         ContinueOnError="true" />
   </Target>
