@@ -26,7 +26,7 @@ class TrinityOptions(@transient private val parameters: Map[String, String]) ext
     val host = Option(u.getHost).getOrElse(TRINITY_SERVERADDR_HOST_DEFAULT)
     val pathInUri = Option(u.getPath).getOrElse("").trim
 
-    val serverAddress = if (u.getPort == -1) s"$scheme://$host" else s"$scheme://$host:$u.getPort"
+    val serverAddress = if (u.getPort == -1) s"$scheme://$host" else s"$scheme://$host:${u.getPort}"
     val cellType = if (pathInUri.startsWith("/")) pathInUri.substring(1) else pathInUri
     require(cellType.length > 0, s"Missing $TRINITY_CELLTYPE in $TRINITY_PATH: `$path`")
     Map(TRINITY_SERVERADDR->serverAddress, TRINITY_CELLTYPE->cellType)
