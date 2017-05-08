@@ -33,6 +33,7 @@ namespace NUnitMetaRunner
             var resultDirPath = Path.GetFullPath(options.ResultDirPath);
             var assemblyPath = Path.GetFullPath(options.AssemblyPath);
             var runnerOptions = options.RunnerOptions;
+            var timeout = options.Timeout;
 
             // NOTE(leasunhy): this may fail silently if some of the dependencies are not preloaded!
             //                 In that case, no tests can be discovered in `assembly`.
@@ -51,11 +52,23 @@ namespace NUnitMetaRunner
 
             foreach (var testName in allTestNames)
             {
-                var process = CreateProcessForTest(runnerPath, assemblyPath, resultDirPath, runnerOptions, testName);
-                process.WaitForExit();
-                Console.WriteLine(process.StandardOutput.ReadToEnd());
-                // TODO(leasunhy): check the exit status of the process and regard the test as a failure
-                //                 if the process did not exit normally.
+                try
+                {
+                    var process = CreateProcessForTest(runnerPath, assemblyPath, resultDirPath, runnerOptions, testName);
+                    process.WaitForExit(timeout < 0 ? Int32.MaxValue : timeout);
+                    if (!process.HasExited)
+                    {
+                        Console.WriteLine($"Test {testName} has timed out.");
+                        process.Kill();
+                    }
+                    Console.WriteLine(process.StandardOutput.ReadToEnd());
+                    // TODO(leasunhy): check the exit status of the process and regard the test as a failure
+                    //                 if the process did not exit normally.
+                }
+                catch (Exception e)
+                {
+                    Console.Error.WriteLine(e.Message);
+                }
             }
             return 0;
         }
