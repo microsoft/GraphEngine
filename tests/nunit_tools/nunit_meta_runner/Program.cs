@@ -5,6 +5,10 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Collections.Generic;
 using System.Diagnostics;
+
+using CommandLine;
+using CommandLine.Text;
+
 using NUnitLite;
 using NUnit.Framework.Api;
 using NUnit.Framework.Interfaces;
@@ -19,22 +23,22 @@ namespace NUnitMetaRunner
     {
         public static int Main(string[] args)
         {
-            if (args.Length < 2)
+            var options = new CommandLineOptions();
+            if (!CommandLine.Parser.Default.ParseArguments(args, options))
             {
-                Console.Error.WriteLine("Usage: runner <runner-path> <test-assembly> <result-dir> [nunitlite-arg ..]");
                 return 1;
             }
 
-            var runnerPath = Path.GetFullPath(args[0]);
-            var resultDirPath = Path.GetFullPath(args[1]);
-            var assemblyPath = Path.GetFullPath(args[2]);
-            var remainingOptions = args.Skip(3).ToArray();
+            var runnerPath = Path.GetFullPath(options.RunnerPath);
+            var resultDirPath = Path.GetFullPath(options.ResultDirPath);
+            var assemblyPath = Path.GetFullPath(options.AssemblyPath);
+            var runnerOptions = options.RunnerOptions;
 
             // NOTE(leasunhy): this may fail silently if some of the dependencies are not preloaded!
             //                 In that case, no tests can be discovered in `assembly`.
             var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
 
-            var rootTestSuite = GetITest(assembly, remainingOptions);
+            var rootTestSuite = GetITest(assembly, runnerOptions);
             var allTestNames = GetDecendentTests(rootTestSuite)
                                 .Select(_ => _.FullName)
                                 .ToList();
@@ -47,7 +51,7 @@ namespace NUnitMetaRunner
 
             foreach (var testName in allTestNames)
             {
-                var process = CreateProcessForTest(runnerPath, assemblyPath, resultDirPath, remainingOptions, testName);
+                var process = CreateProcessForTest(runnerPath, assemblyPath, resultDirPath, runnerOptions, testName);
                 process.WaitForExit();
                 Console.WriteLine(process.StandardOutput.ReadToEnd());
                 // TODO(leasunhy): check the exit status of the process and regard the test as a failure
@@ -57,12 +61,12 @@ namespace NUnitMetaRunner
         }
 
         private static Process CreateProcessForTest(string runnerPath, string assemblyPath, string resultDir,
-                                                    string[] runnerOptions, string testName)
+                                                    string runnerOptions, string testName)
         {
             var commandLineOptions = new List<string>();
             commandLineOptions.Add($"\"{runnerPath}\"");
             commandLineOptions.Add($"\"{assemblyPath}\"");
-            commandLineOptions.AddRange(runnerOptions);
+            commandLineOptions.Add(runnerOptions);
             commandLineOptions.Add($"--test={testName}");
             var testResultPath = Path.Combine(resultDir, $"{testName}.xml");
             commandLineOptions.Add($"--result=\"{testResultPath}\"");
@@ -76,10 +80,10 @@ namespace NUnitMetaRunner
             return Process.Start(startInfo);
         }
 
-        private static ITest GetITest(Assembly assembly, string[] commandLineOptions)
+        private static ITest GetITest(Assembly assembly, string commandLineOptions)
         {
             // we should control what `options` holds
-            var options = new NUnitLiteOptions(commandLineOptions);
+            var options = new NUnitLiteOptions(commandLineOptions.Split(' '));
             var builder = new DefaultTestAssemblyBuilder();
             var runSettings = TextRunner.MakeRunSettings(options);
             return builder.Build(assembly, runSettings);
@@ -90,6 +94,36 @@ namespace NUnitMetaRunner
             if (root.IsSuite)
                 return root.Tests.SelectMany(GetDecendentTests);
             return new []{root};
+        }
+    }
+
+    class CommandLineOptions
+    {
+        [Option('r', "runner", Required = true,
+                HelpText = "The path to the runner for the test assembly.")]
+        public string RunnerPath { get; set; }
+
+        [Option('t', "timeout", Required = false, DefaultValue = -1,
+                HelpText = "Set timeout for each test case in milliseconds.")]
+        public int Timeout { get; set; }
+
+        [Option('d', "resultDirectory", Required = true,
+                HelpText = "Set the directory to put the results.")]
+        public string ResultDirPath { get; set; }
+
+        [Option('a', "assembly", Required = true,
+                HelpText = "The path to the test assembly.")]
+        public string AssemblyPath { get; set; }
+
+        [Option('o', "options", Required = false, DefaultValue = "",
+                HelpText = "The command line arguments to be passed to the runner.")]
+        public string RunnerOptions { get; set; }
+
+        [HelpOption]
+        public string GetUsage()
+        {
+            return HelpText.AutoBuild(this,
+                    (HelpText current) => HelpText.DefaultParsingErrorsHandler(this, current));
         }
     }
 }
