@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.CodeDom.Compiler;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -13,11 +12,11 @@ namespace GraphEngine.DataImporter
 {
     class TSLCompiler
     {
-        public string Compile(string fpath)
+        public string Compile(string tslPath)
         {
             string exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             Process process = new Process();
-            process.StartInfo = new ProcessStartInfo("MSBuild.exe", Path.Combine(exePath, "TSLCompiler.csproj") + " /p:TSLRoot=" + fpath);
+            process.StartInfo = new ProcessStartInfo("MSBuild.exe", Path.Combine(exePath, "TSLCompiler.csproj") + " /p:TSLPath=" + tslPath);
             process.Start();
             process.WaitForExit();
             return exePath + "\\bin\\Release\\TSLAssembly.dll";
