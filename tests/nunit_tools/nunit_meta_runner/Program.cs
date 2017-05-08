@@ -34,6 +34,7 @@ namespace NUnitMetaRunner
             var assemblyPath = Path.GetFullPath(options.AssemblyPath);
             var runnerOptions = options.RunnerOptions;
             var timeout = options.Timeout;
+            var randomSeed = options.RandomSeed ?? new Random().Next();
 
             // NOTE(leasunhy): this may fail silently if some of the dependencies are not preloaded!
             //                 In that case, no tests can be discovered in `assembly`.
@@ -54,7 +55,8 @@ namespace NUnitMetaRunner
             {
                 try
                 {
-                    var process = CreateProcessForTest(runnerPath, assemblyPath, resultDirPath, runnerOptions, testName);
+                    var process = CreateProcessForTest(runnerPath, assemblyPath, resultDirPath,
+                                                       randomSeed, runnerOptions, testName);
                     process.WaitForExit(timeout < 0 ? Int32.MaxValue : timeout);
                     if (!process.HasExited)
                     {
@@ -74,7 +76,7 @@ namespace NUnitMetaRunner
         }
 
         private static Process CreateProcessForTest(string runnerPath, string assemblyPath, string resultDir,
-                                                    string runnerOptions, string testName)
+                                                    int randomSeed, string runnerOptions, string testName)
         {
             var commandLineOptions = new List<string>();
             commandLineOptions.Add($"\"{runnerPath}\"");
@@ -83,6 +85,7 @@ namespace NUnitMetaRunner
             commandLineOptions.Add($"--test={testName}");
             var testResultPath = Path.Combine(resultDir, $"{testName}.xml");
             commandLineOptions.Add($"--result=\"{testResultPath}\"");
+            commandLineOptions.Add($"--seed=\"{randomSeed}\"");
 
             var startInfo = new ProcessStartInfo();
             startInfo.FileName = "dotnet";
@@ -131,6 +134,10 @@ namespace NUnitMetaRunner
         [Option('o', "options", Required = false, DefaultValue = "",
                 HelpText = "The command line arguments to be passed to the runner.")]
         public string RunnerOptions { get; set; }
+
+        [Option('s', "seed", Required = false,
+                HelpText = "The random seed to use for the tests.")]
+        public int? RandomSeed { get; set; }
 
         [HelpOption]
         public string GetUsage()
