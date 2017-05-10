@@ -55,8 +55,6 @@
 
     <RemoveDir Directories="$(TestResultDir)" ContinueOnError="true" />
     <MakeDir Directories="$(TestResultDir)" ContinueOnError="true" />
-    <MakeDir Directories="$(TestResultDir)/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity)))"
-             ContinueOnError="true" />
 
     <Exec
         Command="dotnet restore $([System.IO.Path]::GetFileName(%(Test.Identity)))"
@@ -67,7 +65,7 @@
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
         ContinueOnError="true" />
     <Exec
-        Command="dotnet $(MetaRunner) -t 1800000 -r $(TestRunner) -d $(TestResultDir)/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))) -a bin/Release/netcoreapp2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))).dll -o &quot; --workers=1&quot;"
+        Command="dotnet $(MetaRunner) -t 1800000 -r $(TestRunner) -d $(TestResultDir) -a bin/Release/netcoreapp2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))).dll -o &quot; --workers=1&quot;"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
         ContinueOnError="true" Condition="Exists('$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))/bin/Release/netcoreapp2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))).dll')"/>
   </Target>
