@@ -5,13 +5,15 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using System.Xml.Linq;
 using CommandLine;
 using CommandLine.Text;
 
 using NUnitLite;
 using NUnit.Framework.Api;
 using NUnit.Framework.Interfaces;
+
+using NUnitLiteNetCoreTest.ResultAggregator;
 
 // preloading dependencies
 using Trinity;
@@ -30,7 +32,7 @@ namespace NUnitMetaRunner
             }
 
             var runnerPath = Path.GetFullPath(options.RunnerPath);
-            var resultDirPath = Path.GetFullPath(options.ResultDirPath);
+            var resultDirRoot = Path.GetFullPath(options.ResultDirPath);
             var assemblyPath = Path.GetFullPath(options.AssemblyPath);
             var runnerOptions = options.RunnerOptions;
             var timeout = options.Timeout;
@@ -50,6 +52,10 @@ namespace NUnitMetaRunner
             {
                 Console.WriteLine(testName);
             }
+
+            var resultDirPath = Path.Combine(resultDirRoot, rootTestSuite.Name);
+            if (!Directory.Exists(resultDirPath))
+                Directory.CreateDirectory(resultDirPath);
 
             foreach (var testName in allTestNames)
             {
@@ -72,6 +78,23 @@ namespace NUnitMetaRunner
                     Console.Error.WriteLine(e.Message);
                 }
             }
+
+            var xmlDocs = Directory.EnumerateFiles(resultDirPath)
+                .Where(f => Path.GetExtension(f) == ".xml")
+                .Select(XDocument.Load)
+                .ToList();
+            if (xmlDocs.Count != allTestNames.Count)
+            {
+                Console.Error.WriteLine($"Warning: {allTestNames.Count} tests should be run in {rootTestSuite.Name}, " +
+                                        $"but only {xmlDocs.Count} result files are found.");
+            }
+
+            var aggregated = ResultAggregator.Aggregate(xmlDocs);
+            var resultFile = Path.Combine(resultDirRoot, rootTestSuite.Name + ".xml");
+            using (var output = new StreamWriter(new FileStream(resultFile, FileMode.Create)))
+            {
+                aggregated.Save(output);
+            }
             return 0;
         }
 
@@ -85,7 +108,7 @@ namespace NUnitMetaRunner
             commandLineOptions.Add($"--test={testName}");
             var testResultPath = Path.Combine(resultDir, $"{testName}.xml");
             commandLineOptions.Add($"--result=\"{testResultPath}\"");
-            commandLineOptions.Add($"--seed=\"{randomSeed}\"");
+            commandLineOptions.Add($"--seed={randomSeed}");
 
             var startInfo = new ProcessStartInfo();
             startInfo.FileName = "dotnet";
