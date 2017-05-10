@@ -1,17 +1,20 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection.Metadata;
+using System.Xml;
 using System.Xml.Linq;
 using CommandLine;
 using CommandLine.Text;
-
 using NUnitLite;
 using NUnit.Framework.Api;
 using NUnit.Framework.Interfaces;
+using NUnit.Framework.Internal;
 
 using NUnitLiteNetCoreTest.ResultAggregator;
 
@@ -43,25 +46,25 @@ namespace NUnitMetaRunner
             var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
 
             var rootTestSuite = GetITest(assembly, runnerOptions);
-            var allTestNames = GetDecendentTests(rootTestSuite)
-                                .Select(_ => _.FullName)
-                                .ToList();
+            var allTests = GetDecendentTests(rootTestSuite).ToList();
 
             Console.WriteLine("Discovered tests:");
-            foreach (var testName in allTestNames)
+            foreach (var test in allTests)
             {
-                Console.WriteLine(testName);
+                Console.WriteLine(test.FullName);
             }
 
             var resultDirPath = Path.Combine(resultDirRoot, rootTestSuite.Name);
             if (!Directory.Exists(resultDirPath))
                 Directory.CreateDirectory(resultDirPath);
 
-            foreach (var testName in allTestNames)
+            foreach (var test in allTests)
             {
+                var testName = test.FullName;
+                var testResultPath = Path.Combine(resultDirPath, $"{testName}.xml");
                 try
                 {
-                    var process = CreateProcessForTest(runnerPath, assemblyPath, resultDirPath,
+                    var process = CreateProcessForTest(runnerPath, assemblyPath, testResultPath,
                                                        randomSeed, runnerOptions, testName);
                     process.WaitForExit(timeout < 0 ? Int32.MaxValue : timeout);
                     if (!process.HasExited)
@@ -72,6 +75,11 @@ namespace NUnitMetaRunner
                     Console.WriteLine(process.StandardOutput.ReadToEnd());
                     // TODO(leasunhy): check the exit status of the process and regard the test as a failure
                     //                 if the process did not exit normally.
+                    using (var stream = File.OpenWrite(testResultPath))
+                    using (var writer = new StreamWriter(stream))
+                    {
+                        writer.WriteLine(ConstructXmlDocumentForAbnormalExit(test));
+                    }
                 }
                 catch (Exception e)
                 {
@@ -83,9 +91,9 @@ namespace NUnitMetaRunner
                 .Where(f => Path.GetExtension(f) == ".xml")
                 .Select(XDocument.Load)
                 .ToList();
-            if (xmlDocs.Count != allTestNames.Count)
+            if (xmlDocs.Count != allTests.Count)
             {
-                Console.Error.WriteLine($"Warning: {allTestNames.Count} tests should be run in {rootTestSuite.Name}, " +
+                Console.Error.WriteLine($"Warning: {allTests.Count} tests should be run in {rootTestSuite.Name}, " +
                                         $"but only {xmlDocs.Count} result files are found.");
             }
 
@@ -98,7 +106,7 @@ namespace NUnitMetaRunner
             return 0;
         }
 
-        private static Process CreateProcessForTest(string runnerPath, string assemblyPath, string resultDir,
+        private static Process CreateProcessForTest(string runnerPath, string assemblyPath, string testResultPath,
                                                     int randomSeed, string runnerOptions, string testName)
         {
             var commandLineOptions = new List<string>();
@@ -106,9 +114,8 @@ namespace NUnitMetaRunner
             commandLineOptions.Add($"\"{assemblyPath}\"");
             commandLineOptions.Add(runnerOptions);
             commandLineOptions.Add($"--test={testName}");
-            var testResultPath = Path.Combine(resultDir, $"{testName}.xml");
             commandLineOptions.Add($"--result=\"{testResultPath}\"");
-            commandLineOptions.Add($"--seed={randomSeed}");
+            commandLineOptions.Add($"--seed=\"{randomSeed}\"");
 
             var startInfo = new ProcessStartInfo();
             startInfo.FileName = "dotnet";
@@ -134,39 +141,26 @@ namespace NUnitMetaRunner
                 return root.Tests.SelectMany(GetDecendentTests);
             return new []{root};
         }
-    }
 
-    class CommandLineOptions
-    {
-        [Option('r', "runner", Required = true,
-                HelpText = "The path to the runner for the test assembly.")]
-        public string RunnerPath { get; set; }
-
-        [Option('t', "timeout", Required = false, DefaultValue = -1,
-                HelpText = "Set timeout for each test case in milliseconds.")]
-        public int Timeout { get; set; }
-
-        [Option('d', "resultDirectory", Required = true,
-                HelpText = "Set the directory to put the results.")]
-        public string ResultDirPath { get; set; }
-
-        [Option('a', "assembly", Required = true,
-                HelpText = "The path to the test assembly.")]
-        public string AssemblyPath { get; set; }
-
-        [Option('o', "options", Required = false, DefaultValue = "",
-                HelpText = "The command line arguments to be passed to the runner.")]
-        public string RunnerOptions { get; set; }
-
-        [Option('s', "seed", Required = false,
-                HelpText = "The random seed to use for the tests.")]
-        public int? RandomSeed { get; set; }
-
-        [HelpOption]
-        public string GetUsage()
+        private static string ConstructXmlDocumentForAbnormalExit(ITest test)
         {
-            return HelpText.AutoBuild(this,
-                    (HelpText current) => HelpText.DefaultParsingErrorsHandler(this, current));
+            var caseResult = new TestCaseResult((TestMethod)test);
+            var result = new ResultState(TestStatus.Failed, FailureSite.Test);
+            caseResult.SetResult(result);
+            TestResult currentResult = caseResult;
+            ITest currentTest = test;
+            while (currentTest.Parent != null)
+            {
+                var suiteResult = new TestSuiteResult((TestSuite)currentTest.Parent);
+                suiteResult.AddResult(currentResult);
+                currentResult = suiteResult;
+                currentTest = currentTest.Parent;
+            }
+            var node = currentResult.ToXml(true);
+            var res = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<test-run fullname=""" + currentTest.FullName + @""">
+" + node.OuterXml + @"</test-run>";
+            return res;
         }
     }
 }
