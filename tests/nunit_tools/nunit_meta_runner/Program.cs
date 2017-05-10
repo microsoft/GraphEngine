@@ -66,19 +66,22 @@ namespace NUnitMetaRunner
                 {
                     var process = CreateProcessForTest(runnerPath, assemblyPath, testResultPath,
                                                        randomSeed, runnerOptions, testName);
-                    process.WaitForExit(timeout < 0 ? Int32.MaxValue : timeout);
-                    if (!process.HasExited)
+                    if (!process.WaitForExit(timeout < 0 ? Int32.MaxValue : timeout))
                     {
                         Console.WriteLine($"Test {testName} has timed out.");
                         process.Kill();
+                        process.WaitForExit();
                     }
                     Console.WriteLine(process.StandardOutput.ReadToEnd());
                     // TODO(leasunhy): check the exit status of the process and regard the test as a failure
                     //                 if the process did not exit normally.
-                    using (var stream = File.OpenWrite(testResultPath))
-                    using (var writer = new StreamWriter(stream))
+                    if (process.ExitCode != 0)
                     {
-                        writer.WriteLine(ConstructXmlDocumentForAbnormalExit(test));
+                        using (var stream = File.OpenWrite(testResultPath))
+                        using (var writer = new StreamWriter(stream))
+                        {
+                            writer.WriteLine(ConstructXmlDocumentForAbnormalExit(test));
+                        }
                     }
                 }
                 catch (Exception e)
