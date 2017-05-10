@@ -77,7 +77,7 @@ namespace NUnitMetaRunner
                     //                 if the process did not exit normally.
                     if (process.ExitCode != 0)
                     {
-                        using (var stream = File.OpenWrite(testResultPath))
+                        using (var stream = new FileStream(testResultPath, FileMode.Create))
                         using (var writer = new StreamWriter(stream))
                         {
                             writer.WriteLine(ConstructXmlDocumentForAbnormalExit(test));
