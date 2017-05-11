@@ -64,6 +64,7 @@ namespace NUnitMetaRunner
                 var testResultPath = Path.Combine(resultDirPath, $"{testName}.xml");
                 try
                 {
+                    var startTime = DateTime.UtcNow;
                     var process = CreateProcessForTest(runnerPath, assemblyPath, testResultPath,
                                                        randomSeed, runnerOptions, testName);
                     if (!process.WaitForExit(timeout < 0 ? Int32.MaxValue : timeout))
@@ -72,15 +73,18 @@ namespace NUnitMetaRunner
                         process.Kill();
                         process.WaitForExit();
                     }
+                    var endTime = DateTime.UtcNow;
+
                     Console.WriteLine(process.StandardOutput.ReadToEnd());
-                    // TODO(leasunhy): check the exit status of the process and regard the test as a failure
-                    //                 if the process did not exit normally.
+
                     if (process.ExitCode != 0)
                     {
                         using (var stream = new FileStream(testResultPath, FileMode.Create))
                         using (var writer = new StreamWriter(stream))
                         {
-                            writer.WriteLine(ConstructXmlDocumentForAbnormalExit(test));
+                            var result = CreateFailedResultForTestCase(test, startTime, endTime);
+                            var xmlDoc = ConstructXmlDocumentForAbnormalExit(test, result);
+                            writer.WriteLine(xmlDoc);
                         }
                     }
                 }
@@ -145,11 +149,8 @@ namespace NUnitMetaRunner
             return new []{root};
         }
 
-        private static string ConstructXmlDocumentForAbnormalExit(ITest test)
+        private static string ConstructXmlDocumentForAbnormalExit(ITest test, TestCaseResult caseResult)
         {
-            var caseResult = new TestCaseResult((TestMethod)test);
-            var result = new ResultState(TestStatus.Failed, FailureSite.Test);
-            caseResult.SetResult(result);
             TestResult currentResult = caseResult;
             ITest currentTest = test;
             while (currentTest.Parent != null)
@@ -164,6 +165,17 @@ namespace NUnitMetaRunner
 <test-run fullname=""" + currentTest.FullName + @""">
 " + node.OuterXml + @"</test-run>";
             return res;
+        }
+
+        private static TestCaseResult CreateFailedResultForTestCase(ITest test, DateTime startTime, DateTime endTime)
+        {
+            var caseResult = new TestCaseResult((TestMethod)test);
+            var result = new ResultState(TestStatus.Failed, FailureSite.Test);
+            caseResult.SetResult(result);
+            caseResult.StartTime = startTime;
+            caseResult.EndTime = endTime;
+            caseResult.Duration = endTime.Subtract(startTime).TotalSeconds;
+            return caseResult;
         }
     }
 }
