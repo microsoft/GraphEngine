@@ -58,20 +58,23 @@ namespace NUnitMetaRunner
             if (!Directory.Exists(resultDirPath))
                 Directory.CreateDirectory(resultDirPath);
 
-            foreach (var test in allTests)
+            for (int i = 0; i < allTests.Count; ++i)
             {
+                var test = allTests[i];
                 var testName = test.FullName;
-                var testResultPath = Path.Combine(resultDirPath, $"{testName}.xml");
+                var testResultPath = Path.Combine(resultDirPath, $"{i}.xml");
                 try
                 {
                     var startTime = DateTime.UtcNow;
                     var process = CreateProcessForTest(runnerPath, assemblyPath, testResultPath,
                                                        randomSeed, runnerOptions, testName);
+                    bool timedOut = false;
                     if (!process.WaitForExit(timeout < 0 ? Int32.MaxValue : timeout))
                     {
                         Console.WriteLine($"Test {testName} has timed out.");
                         process.Kill();
                         process.WaitForExit();
+                        timedOut = true;
                     }
                     var endTime = DateTime.UtcNow;
 
@@ -82,7 +85,8 @@ namespace NUnitMetaRunner
                         using (var stream = new FileStream(testResultPath, FileMode.Create))
                         using (var writer = new StreamWriter(stream))
                         {
-                            var result = CreateFailedResultForTestCase(test, startTime, endTime);
+                            var result = CreateFailedResultForTestCase(test, startTime, endTime,
+                                    message: timedOut ? $"Test exceeded Timeout value of {timeout}ms" : null);
                             var xmlDoc = ConstructXmlDocumentForAbnormalExit(test, result);
                             writer.WriteLine(xmlDoc);
                         }
@@ -167,11 +171,12 @@ namespace NUnitMetaRunner
             return res;
         }
 
-        private static TestCaseResult CreateFailedResultForTestCase(ITest test, DateTime startTime, DateTime endTime)
+        private static TestCaseResult CreateFailedResultForTestCase(ITest test, DateTime startTime,
+                                                                    DateTime endTime, string message = null)
         {
             var caseResult = new TestCaseResult((TestMethod)test);
             var result = new ResultState(TestStatus.Failed, FailureSite.Test);
-            caseResult.SetResult(result);
+            caseResult.SetResult(result, message);
             caseResult.StartTime = startTime;
             caseResult.EndTime = endTime;
             caseResult.Duration = endTime.Subtract(startTime).TotalSeconds;
