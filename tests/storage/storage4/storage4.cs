@@ -8,7 +8,7 @@ using System.Security;
 using System.Runtime.ExceptionServices;
 using Trinity;
 using System.Globalization;
-using Xunit;
+using NUnit.Framework;
 using Trinity.Storage;
 
 namespace storage4
@@ -603,32 +603,31 @@ namespace storage4
 
     public class storage4
     {
-        [Theory]
-        [InlineData(32771, true, 128, 1<<16, false, 20000, 20000, 2 << 20, false)]
-        [InlineData(25168, false, 511, 2<<16, false, 30000, 200, 1 << 20, false)]
-        [InlineData(496827356, true, 315, 1<<15, false, 20, 200000, 1 << 20, false)]
-        [InlineData(9486, false, 7, 3<<16, false, 50000, 1000, 1 << 20, false)]
-        [InlineData(67691, true, 916, 1<<13, false, 1000, 50000, 1 << 20, false)]
-        [InlineData(459, false, 617, 1<<20, false, 10000, 5000, 1 << 20, false)]
+        [TestCase(32771, true, 128, 1<<16, false, 20000, 20000, 2 << 20, false)]
+        [TestCase(25168, false, 511, 2<<16, false, 30000, 200, 1 << 20, false)]
+        [TestCase(496827356, true, 315, 1<<15, false, 20, 200000, 1 << 20, false)]
+        [TestCase(9486, false, 7, 3<<16, false, 50000, 1000, 1 << 20, false)]
+        [TestCase(67691, true, 916, 1<<13, false, 1000, 50000, 1 << 20, false)]
+        [TestCase(459, false, 617, 1<<20, false, 10000, 5000, 1 << 20, false)]
 
-        [InlineData(32771, true, 128, 1<<16, true, 20000, 20000, 2 << 20, false)]
-        [InlineData(25168, false, 511, 2<<16, true, 30000, 200, 2 << 20, false)]
-        [InlineData(496827356, true, 315, 1<<15, true, 20, 2000000, 2 << 20, false)]
-        [InlineData(9486, false, 7, 3<<16, true, 50000, 10000, 2 << 20, false)]
-        [InlineData(67691, true, 916, 1<<13, true, 10000, 50000, 2 << 20, false)]
-        [InlineData(459, false, 617, 1<<20, true, 10000, 100000, 2 << 20, false)]
+        [TestCase(32771, true, 128, 1<<16, true, 20000, 20000, 2 << 20, false)]
+        [TestCase(25168, false, 511, 2<<16, true, 30000, 200, 2 << 20, false)]
+        [TestCase(496827356, true, 315, 1<<15, true, 20, 2000000, 2 << 20, false)]
+        [TestCase(9486, false, 7, 3<<16, true, 50000, 10000, 2 << 20, false)]
+        [TestCase(67691, true, 916, 1<<13, true, 10000, 50000, 2 << 20, false)]
+        [TestCase(459, false, 617, 1<<20, true, 10000, 100000, 2 << 20, false)]
 
-        [InlineData(32771, true, 128, 1<<16, false, 20000, 20000, 1 << 13, true)]
-        [InlineData(25168, false, 511, 2<<16, false, 30000, 200, 1 << 12, true)]
-        [InlineData(496827356, true, 315, 1<<15, false, 20, 2000000, 1 << 12, true)]
-        [InlineData(9486, false, 7, 1<<16, false, 50000, 10000, 1 << 12, true)]
-        [InlineData(67691, true, 916, 1<<13, false, 10000, 50000, 1 << 13, true)]
-        [InlineData(459, false, 617, 1<<20, false, 10000, 100000, 1 << 13, true)]
+        [TestCase(32771, true, 128, 1<<16, false, 20000, 20000, 1 << 13, true)]
+        [TestCase(25168, false, 511, 2<<16, false, 30000, 200, 1 << 12, true)]
+        [TestCase(496827356, true, 315, 1<<15, false, 20, 2000000, 1 << 12, true)]
+        [TestCase(9486, false, 7, 1<<16, false, 50000, 10000, 1 << 12, true)]
+        [TestCase(67691, true, 916, 1<<13, false, 10000, 50000, 1 << 13, true)]
+        [TestCase(459, false, 617, 1<<20, false, 10000, 100000, 1 << 13, true)]
         public void TestCMemTrunk(int random_seed, bool thread_cell_range_overlap, int cell_size, int max_lo_size, bool pause_defrag, int iter_cnt, long ops_cnt, int max_cell_count, bool single_trunk)
         {
             Global.LocalStorage.ResetStorage();
             Test t = new Test(random_seed, thread_cell_range_overlap, cell_size, max_lo_size, pause_defrag, iter_cnt, ops_cnt, max_cell_count, single_trunk);
-            Assert.True(t.Run());
+            Assert.That(t.Run());
         }
     }
 }

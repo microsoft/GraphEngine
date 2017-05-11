@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
+using NUnit.Framework;
 using Trinity;
 using Trinity.Storage;
 
@@ -12,7 +12,7 @@ namespace storage3
 {
     public class storage3
     {
-        [Fact]
+        [Test]
         public void T1()
         {
             for (int i = 0; i < 256; i++)
@@ -24,7 +24,7 @@ namespace storage3
                 Global.LocalStorage.RemoveCell(i);
             }
 
-            Assert.Equal(0, (int)Global.LocalStorage.CellCount);
+            Assert.AreEqual(0, (int)Global.LocalStorage.CellCount);
         }
     }
 }

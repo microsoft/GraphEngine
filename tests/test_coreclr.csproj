@@ -8,11 +8,18 @@
     <Bak Include="**/*.csproj.bak" Exclude="**/*coreclr*"/>
   </ItemGroup>
 
+  <PropertyGroup>
+    <MetaRunner>$(MSBuildProjectDirectory)/nunit_tools/bin/nunit_meta_runner.dll</MetaRunner>
+    <TestRunner>$(MSBuildProjectDirectory)/nunit_tools/bin/nunitlite-runner.dll</TestRunner>
+    <TestResultDir>$(MSBuildProjectDirectory)/nunit_coreclr_reports</TestResultDir>
+  </PropertyGroup>
+
   <Target Name="Clean">
     <Move SourceFiles="$([System.String]::Copy('%(Bak.Identity)'))" DestinationFiles="$([System.String]::Copy('%(Bak.Identity)').Replace('.csproj.bak', '.csproj'))" />
   </Target>
 
   <Target Name="Build">
+
 
     <!--Exe tests-->
     
@@ -22,37 +29,44 @@
         ContinueOnError="false"/>
 
     <Exec
-        Command="dotnet build -c Release $([System.IO.Path]::GetFileName(%(Exe.Identity)))"
-        WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Exe.Identity)))"
-        ContinueOnError="false"/>
-
-    <Exec
         Command="dotnet run -p $([System.IO.Path]::GetFileName(%(Exe.Identity)))"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Exe.Identity)))"
         ContinueOnError="false" />
 
-    <!--xUnit tests-->
+    <!--nUnit tests-->
 
-    <RemoveDir Directories="$(MSBuildProjectDirectory)/xunit_coreclr_reports" ContinueOnError="true" />
-    <MakeDir Directories="$(MSBuildProjectDirectory)/xunit_coreclr_reports" ContinueOnError="true" />
+    <Exec
+        Command="dotnet restore"
+        WorkingDirectory="nunit_tools/nunit_test_runner"
+        ContinueOnError="false" />
+    <Exec
+        Command="dotnet build -c Release --output $(MSBuildProjectDirectory)/nunit_tools/bin"
+        WorkingDirectory="nunit_tools/nunit_test_runner"
+        ContinueOnError="false" />
+
+    <Exec
+        Command="dotnet restore"
+        WorkingDirectory="nunit_tools/nunit_meta_runner"
+        ContinueOnError="false" />
+    <Exec
+        Command="dotnet build -c Release --output $(MSBuildProjectDirectory)/nunit_tools/bin"
+        WorkingDirectory="nunit_tools/nunit_meta_runner"
+        ContinueOnError="false" />
+
+    <RemoveDir Directories="$(TestResultDir)" ContinueOnError="true" />
+    <MakeDir Directories="$(TestResultDir)" ContinueOnError="true" />
 
     <Exec
         Command="dotnet restore $([System.IO.Path]::GetFileName(%(Test.Identity)))"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
         ContinueOnError="false"/>
-
-    <Move 
-        SourceFiles="$([System.String]::Copy('%(Test.Identity)').Replace('_coreclr',''))" 
-        DestinationFiles="$([System.String]::Copy('%(Test.Identity)').Replace('_coreclr','').Replace('.csproj', '.csproj.bak'))" 
-        ContinueOnError="true"/>
-        <!--Command="dotnet xunit $([System.IO.Path]::GetFileName(%(Test.Identity)))"-->
     <Exec
-        Command="dotnet xunit -xml $(MSBuildProjectDirectory)/xunit_coreclr_reports/$([System.String]::Copy(%(Test.Identity)).Replace('/','_').Replace('\','_')).xml"
+        Command="dotnet build -c Release $([System.IO.Path]::GetFileName(%(Test.Identity)))"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
         ContinueOnError="true" />
-    <Move 
-        SourceFiles="$([System.String]::Copy('%(Test.Identity)').Replace('_coreclr','').Replace('.csproj', '.csproj.bak'))" 
-        DestinationFiles="$([System.String]::Copy('%(Test.Identity)').Replace('_coreclr',''))" 
-        ContinueOnError="true"/>
+    <Exec
+        Command="dotnet $(MetaRunner) -t 1800000 -r $(TestRunner) -d $(TestResultDir) -a bin/Release/netcoreapp2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))).dll -o &quot; --workers=1&quot;"
+        WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))"
+        ContinueOnError="true" Condition="Exists('$([System.IO.Path]::GetDirectoryName(%(Test.Identity)))/bin/Release/netcoreapp2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(Test.Identity))).dll')"/>
   </Target>
 </Project>

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
-using Xunit;
+using NUnit.Framework;
 using Trinity;
 using Trinity.Storage;
 
@@ -13,10 +13,9 @@ namespace storage5
 {
     public class storage5
     {
-        [Theory]
-        [InlineData(100, 314, 7)]
-        [InlineData(1000, 6736, 65)]
-        [InlineData(100000, 23, 255)]
+        [TestCase(100, 314, 7)]
+        [TestCase(1000, 6736, 65)]
+        [TestCase(100000, 23, 255)]
         public unsafe void T1(int cellCount, int cellSize, byte content)
         {
             Global.LocalStorage.ResetStorage();
@@ -41,14 +40,14 @@ namespace storage5
             Console.WriteLine("Save cells done (after warm-up), took {0}", sw.ElapsedMilliseconds);
 
             byte[] cell;
-            Assert.Equal(TrinityErrorCode.E_SUCCESS, Global.LocalStorage.LoadCell(cellCount - 1, out cell));
+            Assert.AreEqual(TrinityErrorCode.E_SUCCESS, Global.LocalStorage.LoadCell(cellCount - 1, out cell));
 
             Console.WriteLine("cell size: {0}\n", cell.Length);
-            Assert.Equal(cellSize, cell.Length);
+            Assert.AreEqual(cellSize, cell.Length);
 
             for (int i = 0; i < cellSize; i++)
             {
-                Assert.Equal(content, cell[i]);
+                Assert.AreEqual(content, cell[i]);
             }
 
             sw.Restart();
@@ -64,7 +63,7 @@ namespace storage5
             }
             sw.Stop();
             Console.WriteLine("Iteration (cold): {0} \t {1}", garbage, sw.ElapsedMilliseconds);
-            Assert.Equal(garbage_expected, garbage);
+            Assert.AreEqual(garbage_expected, garbage);
 
             sw.Restart();
             id = 0;
@@ -78,14 +77,14 @@ namespace storage5
             }
             sw.Stop();
             Console.WriteLine("Iteration (warm): {0} \t {1}", garbage, sw.ElapsedMilliseconds);
-            Assert.Equal(garbage_expected, garbage);
+            Assert.AreEqual(garbage_expected, garbage);
 
 
             var cells = from c in Global.LocalStorage where c.CellId < cellCount / 2 select c;
 
             foreach (var c in cells)
             {
-                Assert.True(c.CellId < cellCount / 2);
+                Assert.That(c.CellId < cellCount / 2);
             }
 
             long __count = 0;
@@ -103,8 +102,8 @@ namespace storage5
                     ++id;
                 }
             }
-            Assert.Equal(garbage_expected, garbage);
-            Assert.Equal((ulong)__count, (ulong)Global.LocalStorage.CellCount);
+            Assert.AreEqual(garbage_expected, garbage);
+            Assert.AreEqual((ulong)__count, (ulong)Global.LocalStorage.CellCount);
         }
     }
 }

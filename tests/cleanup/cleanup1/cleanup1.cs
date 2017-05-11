@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
+using NUnit.Framework;
 using Trinity;
 using Trinity.Storage;
 using Trinity.Network;
@@ -13,7 +13,7 @@ namespace cleanup1
 {
     public class cleanup1
     {
-        [Fact]
+        [Test]
         public void T1()
         {
             TrinityServer server = new TrinityServer();

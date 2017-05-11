@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
+using NUnit.Framework;
 using Trinity;
 using Trinity.Storage;
 
@@ -12,7 +12,7 @@ namespace icall8
 {
     public class icall8
     {
-        [Fact]
+        [Test]
         public void icall_config_storageroot_get()
         {
             var val = TrinityConfig.StorageRoot;

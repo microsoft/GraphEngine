@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
+using NUnit.Framework;
 using Trinity;
 using Trinity.Storage;
 
@@ -13,11 +13,10 @@ namespace storage6
 {
     public class storage6
     {
-        [Theory]
-        [InlineData(1<<10, 8<<20, 4)]
-        [InlineData(1<<20, 8<<10, 4)]
-        [InlineData(1<<11, 8<<16, 24)]
-        [InlineData(1<<21, 8<<8, 24)]
+        [TestCase(1<<10, 8<<20, 4)]
+        [TestCase(1<<20, 8<<10, 4)]
+        [TestCase(1<<11, 8<<16, 24)]
+        [TestCase(1<<21, 8<<8, 24)]
         public void T1(int cellSize, int count, int tCount)
         {
             byte[] content = new byte[cellSize];
@@ -33,7 +32,7 @@ namespace storage6
                 for (int i = 0; i < count / tCount; ++i)
                 {
                     long id = (long)i + (pid * count / tCount);
-                    Assert.Equal(TrinityErrorCode.E_SUCCESS, Global.LocalStorage.SaveCell(id, content));
+                    Assert.AreEqual(TrinityErrorCode.E_SUCCESS, Global.LocalStorage.SaveCell(id, content));
                 }
             });
 
@@ -48,7 +47,7 @@ namespace storage6
                 for (int i = count / tCount - 1; i >= 0; --i)
                 {
                     long id = (long)i + (pid * count / tCount);
-                    Assert.Equal(TrinityErrorCode.E_SUCCESS, Global.LocalStorage.SaveCell(id, content));
+                    Assert.AreEqual(TrinityErrorCode.E_SUCCESS, Global.LocalStorage.SaveCell(id, content));
                 }
             });
 
