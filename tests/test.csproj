@@ -9,6 +9,11 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <PropertyGroup>
+    <NuGet>$(MSBuildProjectDirectory)\packages\NuGet.CommandLine.3.5.0\tools\NuGet</NuGet>
+    <NUnitRunner>$(MSBuildProjectDirectory)\packages\NUnit.ConsoleRunner.3.6.1\tools\nunit3-console</NUnitRunner>
+  </PropertyGroup>
+
   <Target Name="Build" DependsOnTargets="RunExeTests;RunUnitTests" />
 
   <Target Name="RunExeTests">
@@ -29,13 +34,8 @@
   </Target>
 
   <Target Name="RunUnitTests">
-    <PropertyGroup>
-      <NuGet>$(MSBuildProjectDirectory)\packages\NuGet.CommandLine.3.5.0\tools\NuGet</NuGet>
-      <NUnitRunner>$(MSBuildProjectDirectory)\packages\NUnit.ConsoleRunner.3.6.1\tools\nunit3-console</NUnitRunner>
-    </PropertyGroup>
-
-    <RemoveDir Directories="$(MSBuildProjectDirectory)/nunit_reports" ContinueOnError="true" />
-    <MakeDir Directories="$(MSBuildProjectDirectory)/nunit_reports" ContinueOnError="true" />
+    <RemoveDir Directories="$(MSBuildProjectDirectory)/nunit_unit_reports" ContinueOnError="true" />
+    <MakeDir Directories="$(MSBuildProjectDirectory)/nunit_unit_reports" ContinueOnError="true" />
 
     <Exec
         Command="$(NuGet) restore -PackagesDirectory $(MSBuildProjectDirectory)\packages"
@@ -46,19 +46,14 @@
         ContinueOnError="true"
         Properties="Configuration=Release;Platform=AnyCPU" UnloadProjectsOnCompletion="true"/>
     <Exec
-        Command="$(NUnitRunner) bin\Release\$([System.IO.Path]::GetFileNameWithoutExtension(%(UnitTest.Identity))).dll --agents=1 --timeout=1800000 --process=Separate --workers=1 --result=$(MSBuildProjectDirectory)\nunit_reports\$([System.String]::Copy(%(UnitTest.Identity)).Replace('/','_').Replace('\','_')).xml"
+        Command="$(NUnitRunner) bin\Release\$([System.IO.Path]::GetFileNameWithoutExtension(%(UnitTest.Identity))).dll --agents=1 --timeout=1800000 --process=Separate --workers=1 --result=$(MSBuildProjectDirectory)\nunit_unit_reports\$([System.String]::Copy(%(UnitTest.Identity)).Replace('/','_').Replace('\','_')).xml"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(UnitTest.Identity)))"
         ContinueOnError="true" Condition="Exists('$([System.IO.Path]::GetDirectoryName(%(UnitTest.Identity)))\bin\Release\$([System.IO.Path]::GetFileNameWithoutExtension(%(UnitTest.Identity))).dll')"/>
   </Target>
 
   <Target Name="RunStressTests">
-    <PropertyGroup>
-      <NuGet>$(MSBuildProjectDirectory)\packages\NuGet.CommandLine.3.5.0\tools\NuGet</NuGet>
-      <NUnitRunner>$(MSBuildProjectDirectory)\packages\NUnit.ConsoleRunner.3.6.1\tools\nunit3-console</NUnitRunner>
-    </PropertyGroup>
-
-    <RemoveDir Directories="$(MSBuildProjectDirectory)/nunit_reports" ContinueOnError="true" />
-    <MakeDir Directories="$(MSBuildProjectDirectory)/nunit_reports" ContinueOnError="true" />
+    <RemoveDir Directories="$(MSBuildProjectDirectory)/nunit_stress_reports" ContinueOnError="true" />
+    <MakeDir Directories="$(MSBuildProjectDirectory)/nunit_stress_reports" ContinueOnError="true" />
 
     <Exec
         Command="$(NuGet) restore -PackagesDirectory $(MSBuildProjectDirectory)\packages"
@@ -69,7 +64,7 @@
         ContinueOnError="true"
         Properties="Configuration=Release;Platform=AnyCPU" UnloadProjectsOnCompletion="true"/>
     <Exec
-        Command="$(NUnitRunner) bin\Release\$([System.IO.Path]::GetFileNameWithoutExtension(%(StressTest.Identity))).dll --agents=1 --timeout=1800000 --process=Separate --workers=1 --result=$(MSBuildProjectDirectory)\nunit_reports\$([System.String]::Copy(%(StressTest.Identity)).Replace('/','_').Replace('\','_')).xml"
+        Command="$(NUnitRunner) bin\Release\$([System.IO.Path]::GetFileNameWithoutExtension(%(StressTest.Identity))).dll --agents=1 --timeout=1800000 --process=Separate --workers=1 --result=$(MSBuildProjectDirectory)\nunit_stress_reports\$([System.String]::Copy(%(StressTest.Identity)).Replace('/','_').Replace('\','_')).xml"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(StressTest.Identity)))"
         ContinueOnError="true" Condition="Exists('$([System.IO.Path]::GetDirectoryName(%(StressTest.Identity)))\bin\Release\$([System.IO.Path]::GetFileNameWithoutExtension(%(StressTest.Identity))).dll')"/>
   </Target>
