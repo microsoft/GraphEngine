@@ -3,17 +3,18 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
 
   <ItemGroup>
-    <UnitTest Include="**/unittests/**/*_coreclr.csproj" Exclude="**/*exe_coreclr.csproj"/>
-    <StressTest Include="**/stresstests/**/*_coreclr.csproj" Exclude="**/*exe_coreclr.csproj"/>
-    <Exe Include="**/*exe_coreclr.csproj"/>
+    <UnitTest Include="**/unittests/**/*_coreclr.csproj" Exclude=""/>
+    <StressTest Include="**/stresstests/**/*_coreclr.csproj" Exclude=""/>
+    <ExeTest Include="**/exetests/*exe_coreclr.csproj"/>
     <Bak Include="**/*.csproj.bak" Exclude="**/*coreclr*"/>
   </ItemGroup>
 
   <PropertyGroup>
     <MetaRunner>$(MSBuildProjectDirectory)/nunit_tools/bin/nunit_meta_runner.dll</MetaRunner>
     <TestRunner>$(MSBuildProjectDirectory)/nunit_tools/bin/nunitlite-runner.dll</TestRunner>
-    <UnitTestResultDir>$(MSBuildProjectDirectory)/nunit_unit_coreclr_reports</TestResultDir>
-    <StressTestResultDir>$(MSBuildProjectDirectory)/nunit_stress_coreclr_reports</TestResultDir>
+    <UnitTestResultDir>$(MSBuildProjectDirectory)/nunit_unit_coreclr_reports</UnitTestResultDir>
+    <StressTestResultDir>$(MSBuildProjectDirectory)/nunit_stress_coreclr_reports</StressTestResultDir>
+    <ExeTestResultDir>$(MSBuildProjectDirectory)/nunit_exe_coreclr_reports</ExeTestResultDir>
   </PropertyGroup>
 
   <Target Name="Clean">
@@ -79,15 +80,17 @@
   </Target>
 
   <Target Name="RunExeTests">
-    <Exec
-        Command="dotnet restore $([System.IO.Path]::GetFileName(%(Exe.Identity)))"
-        WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Exe.Identity)))"
-        ContinueOnError="false"/>
+    <RemoveDir Directories="$(ExeTestResultDir)" ContinueOnError="true" />
+    <MakeDir Directories="$(ExeTestResultDir)" ContinueOnError="true" />
 
     <Exec
-        Command="dotnet run -p $([System.IO.Path]::GetFileName(%(Exe.Identity)))"
-        WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Exe.Identity)))"
-        ContinueOnError="false" />
+        Command="dotnet restore $([System.IO.Path]::GetFileName(%(ExeTest.Identity)))"
+        WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(ExeTest.Identity)))"
+        ContinueOnError="false"/>
+    <Exec
+        Command="dotnet run -p $([System.IO.Path]::GetFileName(%(ExeTest.Identity)))"
+        WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(ExeTest.Identity)))"
+        ContinueOnError="true" />
   </Target>
 
 </Project>
