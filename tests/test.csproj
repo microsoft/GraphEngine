@@ -12,6 +12,7 @@
   <PropertyGroup>
     <NuGet>$(MSBuildProjectDirectory)\packages\NuGet.CommandLine.3.5.0\tools\NuGet</NuGet>
     <NUnitRunner>$(MSBuildProjectDirectory)\packages\NUnit.ConsoleRunner.3.6.1\tools\nunit3-console</NUnitRunner>
+    <PackagesFolder>$(MSBuildProjectDirectory)\packages</PackagesFolder>
   </PropertyGroup>
 
   <Target Name="Build" DependsOnTargets="RunExeTests;RunUnitTests" />
@@ -19,13 +20,13 @@
   <Target Name="RunExeTests">
     <!--Exe tests-->
     <Exec
-        Command="$(NuGet) restore -PackagesDirectory $(MSBuildProjectDirectory)\packages"
+        Command="$(NuGet) restore -PackagesDirectory $(PackagesFolder)"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Exe.Identity)))"
         ContinueOnError="false"/>
     <MSBuild
         Projects="%(Exe.Identity)"
         ContinueOnError="false"
-        Properties="Configuration=Release;Platform=AnyCPU" UnloadProjectsOnCompletion="true"/>
+        Properties="Configuration=Release;Platform=AnyCPU;PackagesFolder=$(PackagesFolder)" UnloadProjectsOnCompletion="true"/>
     <Exec
         Command="bin\Release\$([System.IO.Path]::GetFileNameWithoutExtension(%(Exe.Identity))).exe"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Exe.Identity)))"
@@ -38,13 +39,13 @@
     <MakeDir Directories="$(MSBuildProjectDirectory)/nunit_unit_reports" ContinueOnError="true" />
 
     <Exec
-        Command="$(NuGet) restore -PackagesDirectory $(MSBuildProjectDirectory)\packages"
+        Command="$(NuGet) restore -PackagesDirectory $(PackagesFolder)"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(UnitTest.Identity)))"
         ContinueOnError="false"/>
     <MSBuild
         Projects="%(UnitTest.Identity)"
         ContinueOnError="true"
-        Properties="Configuration=Release;Platform=AnyCPU" UnloadProjectsOnCompletion="true"/>
+        Properties="Configuration=Release;Platform=AnyCPU;PackagesFolder=$(PackagesFolder)" UnloadProjectsOnCompletion="true"/>
     <Exec
         Command="$(NUnitRunner) bin\Release\$([System.IO.Path]::GetFileNameWithoutExtension(%(UnitTest.Identity))).dll --agents=1 --timeout=1800000 --process=Separate --workers=1 --result=$(MSBuildProjectDirectory)\nunit_unit_reports\$([System.String]::Copy(%(UnitTest.Identity)).Replace('/','_').Replace('\','_')).xml"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(UnitTest.Identity)))"
@@ -56,13 +57,13 @@
     <MakeDir Directories="$(MSBuildProjectDirectory)/nunit_stress_reports" ContinueOnError="true" />
 
     <Exec
-        Command="$(NuGet) restore -PackagesDirectory $(MSBuildProjectDirectory)\packages"
+        Command="$(NuGet) restore -PackagesDirectory $(PackagesFolder)"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(StressTest.Identity)))"
         ContinueOnError="false"/>
     <MSBuild
         Projects="%(StressTest.Identity)"
         ContinueOnError="true"
-        Properties="Configuration=Release;Platform=AnyCPU" UnloadProjectsOnCompletion="true"/>
+        Properties="Configuration=Release;Platform=AnyCPU;PackagesFolder=$(PackagesFolder)" UnloadProjectsOnCompletion="true"/>
     <Exec
         Command="$(NUnitRunner) bin\Release\$([System.IO.Path]::GetFileNameWithoutExtension(%(StressTest.Identity))).dll --agents=1 --timeout=1800000 --process=Separate --workers=1 --result=$(MSBuildProjectDirectory)\nunit_stress_reports\$([System.String]::Copy(%(StressTest.Identity)).Replace('/','_').Replace('\','_')).xml"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(StressTest.Identity)))"

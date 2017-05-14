@@ -4,8 +4,6 @@ set -e
 
 for set in unittests stresstests; do
     find "$set" -name 'packages.config' \
-           -not -path 'unittests/minimal/*' \
-           -not -path 'unittests/minimal-tsl/*' \
         | while read line
     do
         project_dir=$(dirname "$line")
