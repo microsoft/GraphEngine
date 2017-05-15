@@ -5,7 +5,7 @@
   <ItemGroup>
     <UnitTest Include="**/unittests/**/*_coreclr.csproj" Exclude=""/>
     <StressTest Include="**/stresstests/**/*_coreclr.csproj" Exclude=""/>
-    <ExeTest Include="**/exetests/*exe_coreclr.csproj"/>
+    <ExeTest Include="**/exetests/**/*_exe_coreclr.csproj"/>
     <Bak Include="**/*.csproj.bak" Exclude="**/*coreclr*"/>
   </ItemGroup>
 
