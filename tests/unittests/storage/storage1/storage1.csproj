@@ -7,8 +7,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0AE97FA8-E63E-48EA-8336-529FE0A9DBC0}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>test_name</RootNamespace>
-    <AssemblyName>test_name</AssemblyName>
+    <RootNamespace>storage1</RootNamespace>
+    <AssemblyName>storage1</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -53,11 +53,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="test_name.cs" />
+    <Compile Include="storage1.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <TslCodegen Include="test_name.tsl" />
+    <TslCodegen Include="storage1.tsl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
