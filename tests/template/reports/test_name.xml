@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<assemblies timestamp="04/18/2017 19:49:17">
+  <assembly name="tsl1_coreclr.dll" environment="64-bit .NET Standard [collection-per-class, parallel (8 threads)]" test-framework="xUnit.net 2.3.0.3642" run-date="2017-04-18" run-time="19:49:16" total="43" passed="43" failed="0" skipped="0" time="0.610" errors="0">
+    <errors />
+    <collection total="43" passed="43" failed="0" skipped="0" name="Test collection for tsl1.simple_tsl_tests" time="0.451">
+      <test name="tsl1.simple_tsl_tests.T1" type="tsl1.simple_tsl_tests" method="T1" time="0.0094766" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T9(cell_id: 1, x: 2)" type="tsl1.simple_tsl_tests" method="T9" time="0.4213617" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T9(cell_id: 2, x: 3)" type="tsl1.simple_tsl_tests" method="T9" time="0.0000467" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T9(cell_id: 3, x: 4)" type="tsl1.simple_tsl_tests" method="T9" time="0.0000081" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T9(cell_id: 1, x: 5)" type="tsl1.simple_tsl_tests" method="T9" time="0.0000033" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T9(cell_id: 3, x: 2)" type="tsl1.simple_tsl_tests" method="T9" time="0.0000024" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T9(cell_id: 6, x: 1)" type="tsl1.simple_tsl_tests" method="T9" time="0.0000057" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T8(cell_id: 1, x: 2)" type="tsl1.simple_tsl_tests" method="T8" time="0.0077149" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T8(cell_id: 2, x: 3)" type="tsl1.simple_tsl_tests" method="T8" time="0.0001457" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T8(cell_id: 3, x: 4)" type="tsl1.simple_tsl_tests" method="T8" time="0.0000081" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T8(cell_id: 1, x: 5)" type="tsl1.simple_tsl_tests" method="T8" time="0.0000045" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T8(cell_id: 3, x: 2)" type="tsl1.simple_tsl_tests" method="T8" time="0.0000033" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T8(cell_id: 6, x: 1)" type="tsl1.simple_tsl_tests" method="T8" time="0.0000051" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T3(cell_id: 1)" type="tsl1.simple_tsl_tests" method="T3" time="0.003156" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T3(cell_id: 2)" type="tsl1.simple_tsl_tests" method="T3" time="0.0000288" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T3(cell_id: 3)" type="tsl1.simple_tsl_tests" method="T3" time="0.0000021" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T4(cell_id: 1, x: 2)" type="tsl1.simple_tsl_tests" method="T4" time="0.0001714" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T4(cell_id: 2, x: 3)" type="tsl1.simple_tsl_tests" method="T4" time="0.0000069" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T4(cell_id: 3, x: 4)" type="tsl1.simple_tsl_tests" method="T4" time="0.0000033" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T4(cell_id: 1, x: 5)" type="tsl1.simple_tsl_tests" method="T4" time="0.0000027" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T4(cell_id: 3, x: 2)" type="tsl1.simple_tsl_tests" method="T4" time="0.0000021" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T4(cell_id: 6, x: 1)" type="tsl1.simple_tsl_tests" method="T4" time="0.0000033" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T7(cell_id: 1, x: 2)" type="tsl1.simple_tsl_tests" method="T7" time="0.0027138" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T7(cell_id: 2, x: 3)" type="tsl1.simple_tsl_tests" method="T7" time="0.0000521" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T7(cell_id: 3, x: 4)" type="tsl1.simple_tsl_tests" method="T7" time="0.0000304" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T7(cell_id: 1, x: 5)" type="tsl1.simple_tsl_tests" method="T7" time="0.000025" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T7(cell_id: 3, x: 2)" type="tsl1.simple_tsl_tests" method="T7" time="0.0000334" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T7(cell_id: 6, x: 1)" type="tsl1.simple_tsl_tests" method="T7" time="0.0000253" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T6(cell_id: 1, x: 2)" type="tsl1.simple_tsl_tests" method="T6" time="0.0049199" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T6(cell_id: 2, x: 3)" type="tsl1.simple_tsl_tests" method="T6" time="0.0000572" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T6(cell_id: 3, x: 4)" type="tsl1.simple_tsl_tests" method="T6" time="0.0000123" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T6(cell_id: 1, x: 5)" type="tsl1.simple_tsl_tests" method="T6" time="0.0000066" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T6(cell_id: 3, x: 2)" type="tsl1.simple_tsl_tests" method="T6" time="0.0000054" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T6(cell_id: 6, x: 1)" type="tsl1.simple_tsl_tests" method="T6" time="0.0000063" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T5(cell_id: 1, x: 2)" type="tsl1.simple_tsl_tests" method="T5" time="0.0003685" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T5(cell_id: 2, x: 3)" type="tsl1.simple_tsl_tests" method="T5" time="0.0000138" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T5(cell_id: 3, x: 4)" type="tsl1.simple_tsl_tests" method="T5" time="0.0000051" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T5(cell_id: 1, x: 5)" type="tsl1.simple_tsl_tests" method="T5" time="0.0000042" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T5(cell_id: 3, x: 2)" type="tsl1.simple_tsl_tests" method="T5" time="0.0000033" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T5(cell_id: 6, x: 1)" type="tsl1.simple_tsl_tests" method="T5" time="0.0000042" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T2(i: 1)" type="tsl1.simple_tsl_tests" method="T2" time="0.0001032" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T2(i: 2)" type="tsl1.simple_tsl_tests" method="T2" time="0.0000054" result="Pass" />
+      <test name="tsl1.simple_tsl_tests.T2(i: 3)" type="tsl1.simple_tsl_tests" method="T2" time="0.0000015" result="Pass" />
+    </collection>
+  </assembly>
+</assemblies>

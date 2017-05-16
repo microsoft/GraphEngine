@@ -27,7 +27,7 @@ namespace Trinity
         private static bool   s_initialized = false;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void Init()
+        internal unsafe static void Init()
         {
             lock (s_initlock)
             {
@@ -70,7 +70,10 @@ namespace Trinity
                 }
 
                 /* native assembly is released. initialize Trinity.C now */
-                __INIT_TRINITY_C__();
+                fixed(char* pAssemblyPath = AssemblyPath.MyAssemblyPath)
+                {
+                    __INIT_TRINITY_C__(pAssemblyPath);
+                }
 
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
@@ -110,6 +113,6 @@ namespace Trinity
         }
 
         [DllImport(TrinityC.AssemblyName)]
-        private static extern unsafe void __INIT_TRINITY_C__();
+        private static extern unsafe void __INIT_TRINITY_C__(char* pAssemblyPath);
     }
 }

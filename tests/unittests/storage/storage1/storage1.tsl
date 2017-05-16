@@ -1,0 +1,7 @@
+cell struct GraphNode
+{
+	string value;
+	List<long> outLinks;
+	List<long> inLinks;
+}
+
