@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Trinity.Storage;
 using NUnit.Framework;
-using NUnit.Framework.Sdk;
 
 namespace tsl3
 {
@@ -63,11 +62,6 @@ namespace tsl3
             AsynDone.Reset();
             Asyn1Done.Reset();
         }
-    }
-
-    [CollectionDefinition("TestServer Collection")]
-    public class TestServerCollection : ICollectionFixture<TrinityServerFixture>
-    {
     }
 
     public class TrinityServerFixture : IDisposable

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Trinity;
@@ -5,22 +6,33 @@ using NUnit.Framework;
 
 namespace tsl3
 {
-    [Collection("TestServer Collection")]
+    [TestFixture]
     public unsafe class ProtocolTest
     {
-        private TrinityServerFixture Fixture { get; }
-        public ProtocolTest(TrinityServerFixture fixture) { Fixture = fixture; }
+        private static TrinityServerFixture Fixture { get; set; }
 
-        public static IEnumerable<object[]> GetData()
+        [OneTimeSetUp]
+        public static void SetUp()
         {
-            yield return new object[] { 1, new int[] { 1, 2, 3, 4 }, 4 };
-            yield return new object[] { 2, new int[] { 2, 0, 4, 8 }, 8 };
-            yield return new object[] { 233, new int[] { 123, 124, 75, 43 }, 128 };
-            yield return new object[] { 12, new int[] { 77, 88, 9, 8 }, 8 };
-            yield return new object[] { 12, new int[] { 77, 88, 9, 8, 77, 88, 9, 8, 77, 88, 9, 8, 77, 88, 9, 8 }, 8 };
+            Fixture = new TrinityServerFixture();
         }
 
-        [MemberData(nameof(GetData))]
+        [OneTimeTearDown]
+        public static void TeadDown()
+        {
+            Fixture.Server.Stop();
+        }
+
+        public static IEnumerable<TestCaseData> GetData()
+        {
+            yield return new TestCaseData(1, new int[] { 1, 2, 3, 4 }, (byte)4);
+            yield return new TestCaseData(2, new int[] {2, 0, 4, 8}, (byte)8);
+            yield return new TestCaseData(233, new int[] {123, 124, 75, 43}, (byte)128);
+            yield return new TestCaseData(12, new int[] {77, 88, 9, 8}, (byte)8);
+            yield return new TestCaseData(12, new int[] {77, 88, 9, 8, 77, 88, 9, 8, 77, 88, 9, 8, 77, 88, 9, 8}, (byte)8);
+        }
+
+        [TestCaseSource(nameof(GetData))]
         public void SynWithRsp_Test(int before, int[] nums, byte after)
         {
             using (var writer = PrepareWriter(before, nums, after))
@@ -45,7 +57,7 @@ namespace tsl3
             }
         }
 
-        [MemberData(nameof(GetData))]
+        [TestCaseSource(nameof(GetData))]
         public void Syn_Test(int before, int[] nums, byte after)
         {
             using (var writer = PrepareWriter(before, nums, after))
@@ -64,7 +76,7 @@ namespace tsl3
             }
         }
 
-        [MemberData(nameof(GetData))]
+        [TestCaseSource(nameof(GetData))]
         public void Asyn_Test(int before, int[] nums, byte after)
         {
             using (var writer = PrepareWriter(before, nums, after))

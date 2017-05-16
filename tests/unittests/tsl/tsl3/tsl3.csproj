@@ -53,11 +53,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="tsl3.cs" />
+    <None Include="packages.config" />
+    <TslCodegen Include="test.tsl" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-    <TslCodegen Include="tsl3.tsl" />
+    <Compile Include="Fixtures.cs" />
+    <Compile Include="MessageAccessorTest.cs" />
+    <Compile Include="ProtocolTest.cs" />
+    <Compile Include="StructTest.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
