@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props" Condition="Exists('..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -101,37 +101,6 @@
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.-->
-  <Target Name="BeforeBuild">
-    <UpdateNugetVersion PackageName="GraphEngine.Core" />
-    <UpdateNugetVersion PackageName="Newtonsoft.Json" />
-  </Target>
-  <UsingTask TaskName="UpdateNugetVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
-    <ParameterGroup>
-      <PackageName ParameterType="System.String" Required="true" />
-    </ParameterGroup>
-    <Task>
-      <Using Namespace="System" />
-      <Using Namespace="System.IO" />
-      <Using Namespace="System.Text.RegularExpressions" />
-      <Code Type="Fragment" Language="cs"><![CDATA[
-            string text = File.ReadAllText("TSLCompiler.csproj");
-            Match newVersion = Regex.Match(File.ReadAllText(@"GraphEngine.DataImporter.csproj"), @"\\"+PackageName+@"\S*?\\");
-            Match oldVersion = Regex.Match(File.ReadAllText("TSLCompiler.csproj"), @"\\" + PackageName + @"\S*?\\");
-            text = text.Replace(oldVersion.Value, newVersion.Value); 
-            newVersion = Regex.Match(File.ReadAllText(@"GraphEngine.DataImporter.csproj"), PackageName + @", Version=.*?>");
-            if (newVersion.Value == "" && PackageName == "GraphEngine.Core")
-            {
-              PackageName = PackageName.Replace("GraphEngine", "Trinity");
-              newVersion = Regex.Match(File.ReadAllText(@"GraphEngine.DataImporter.csproj"), PackageName + @", Version=.*?>");
-            }
-            oldVersion = Regex.Match(File.ReadAllText("TSLCompiler.csproj"), PackageName + @", Version=.*?>");
-            text = text.Replace(oldVersion.Value, newVersion.Value); 
-            File.WriteAllText("TSLCompiler.csproj", text);
-            ]]></Code>
-    </Task>
-  </UsingTask>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>

@@ -24,7 +24,7 @@ namespace GraphEngine.DataImporter
                 List<string> files = new List<string>(opts.ExplicitFiles.Select(_ => _.Trim()));
                 if (opts.InputDirectory != null)
                 {
-                    Log.WriteLine("Including files from directory {0}", Path.GetFullPath(opts.InputDirectory));
+                  //  Log.WriteLine("Including files from directory {0}", Path.GetFullPath(opts.InputDirectory));
                     files.AddRange(Directory.GetFiles(opts.InputDirectory).Select(_ => _.Trim()));
                 }
 
