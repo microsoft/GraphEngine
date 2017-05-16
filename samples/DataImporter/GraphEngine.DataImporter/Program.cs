@@ -34,7 +34,10 @@ namespace GraphEngine.DataImporter
                 {
                     var tslCompiler = new TSLCompiler();
                     opts.TSLAssembly = tslCompiler.Compile(opts.TSL);
-                    Importer.Import(opts.TSLAssembly, files, opts);
+                    if (opts.TSLAssembly != null)
+                    {
+                        Importer.Import(opts.TSLAssembly, files, opts);
+                    }
                 }
                 else if (opts.TSLAssembly != null)
                 {
