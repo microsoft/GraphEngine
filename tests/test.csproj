@@ -27,7 +27,7 @@
         <MSBuild
             Projects="%(Exe.Identity)"
             ContinueOnError="false"
-            Properties="Configuration=Release;Platform=AnyCPU;PackagesFolder=$(PackagesFolder)" UnloadProjectsOnCompletion="true"/>
+            Properties="Configuration=Release;Platform=AnyCPU" UnloadProjectsOnCompletion="true"/>
         <Exec
             Command="bin\Release\$([System.IO.Path]::GetFileNameWithoutExtension(%(Exe.Identity))).exe"
             WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Exe.Identity)))"
@@ -49,7 +49,7 @@
         <MSBuild
             Projects="%(UnitTest.Identity)"
             ContinueOnError="true"
-            Properties="Configuration=Release;Platform=AnyCPU;PackagesFolder=$(PackagesFolder)" UnloadProjectsOnCompletion="true"/>
+            Properties="Configuration=Release;Platform=AnyCPU" UnloadProjectsOnCompletion="true"/>
         <Exec
             Command="$(MetaRunner) -t 1800000 -r $(TestRunner) -d $(ResultDir) -a $([System.IO.Path]::GetFileNameWithoutExtension(%(UnitTest.Identity))).dll -o &quot; --workers=1&quot;"
             WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(UnitTest.Identity)))\bin\Release"
@@ -70,7 +70,7 @@
         <MSBuild
             Projects="%(StressTest.Identity)"
             ContinueOnError="true"
-            Properties="Configuration=Release;Platform=AnyCPU;PackagesFolder=$(PackagesFolder)" UnloadProjectsOnCompletion="true"/>
+            Properties="Configuration=Release;Platform=AnyCPU" UnloadProjectsOnCompletion="true"/>
         <Exec
             Command="$(MetaRunner) -t 1800000 -r $(TestRunner) -d $(ResultDir) -a $([System.IO.Path]::GetFileNameWithoutExtension(%(StressTest.Identity))).dll -o &quot; --workers=1&quot;"
             WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(StressTest.Identity)))\bin\Release"
@@ -88,6 +88,6 @@
         <MSBuild
             Projects="%(ToolProjects.Identity)"
             ContinueOnError="true"
-            Properties="Configuration=Release;Platform=AnyCPU;PackagesFolder=$(PackagesFolder)" UnloadProjectsOnCompletion="true"/>
+            Properties="Configuration=Release;Platform=AnyCPU" UnloadProjectsOnCompletion="true"/>
     </Target>
 </Project>
