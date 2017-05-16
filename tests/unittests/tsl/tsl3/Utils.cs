@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Trinity.Core.Lib;
-using Xunit;
+using NUnit.Framework;
 
 namespace tsl3
 {
@@ -45,7 +45,7 @@ namespace tsl3
         {
             var type = typeof(T);
             var nonZeroProp = (PropertyInfo)type.GetMembers().Single(p => p.MemberType == MemberTypes.Property && p.Name == nonZeroField);
-            Assert.Equal(expectedValue, (R)nonZeroProp.GetValue(obj));
+            Assert.AreEqual(expectedValue, (R)nonZeroProp.GetValue(obj));
             EnsureResultsAreDefaultExceptOne<T, R>(obj, nonZeroField);
         }
 
@@ -57,7 +57,7 @@ namespace tsl3
                 .Where(i => i.CustomAttributes.Any(_ => _.AttributeType == typeof(ResultAttribute)))
                 .Where(i => i.Name != nonZeroField)
                 .Cast<PropertyInfo>();
-            Assert.True(zeroProps.All(p => ((R)p.GetValue(obj)).Equals(default(R))));
+            Assert.That(zeroProps.All(p => ((R)p.GetValue(obj)).Equals(default(R))));
         }
     }
 }

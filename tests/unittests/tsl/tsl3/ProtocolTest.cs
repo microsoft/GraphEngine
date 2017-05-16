@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Trinity;
-using Xunit;
+using NUnit.Framework;
 
 namespace tsl3
 {
@@ -20,7 +20,6 @@ namespace tsl3
             yield return new object[] { 12, new int[] { 77, 88, 9, 8, 77, 88, 9, 8, 77, 88, 9, 8, 77, 88, 9, 8 }, 8 };
         }
 
-        [Theory]
         [MemberData(nameof(GetData))]
         public void SynWithRsp_Test(int before, int[] nums, byte after)
         {
@@ -32,7 +31,7 @@ namespace tsl3
                     var expectedResult = Utils.CalcForSynRsp(before, nums, after, out expectedResp);
                     Utils.EnsureResults(Fixture.Server, nameof(Fixture.Server.SynWithRspResult), expectedResult);
                     // ensures that it is exactly SynWithRspHandler is called
-                    Assert.Equal(expectedResp, response.result);
+                    Assert.AreEqual(expectedResp, response.result);
                 }
                 Fixture.Server.ResetCounts();
                 using (var response = Global.CloudStorage.TestSynWithRsp1ToTestServer(Global.MyServerID, writer))
@@ -40,13 +39,12 @@ namespace tsl3
                     string expectedResp;
                     var expectedResult = Utils.CalcForSynRsp(before, nums, after, out expectedResp);
                     Utils.EnsureResults(Fixture.Server, nameof(Fixture.Server.SynWithRsp1Result), expectedResult);
-                    Assert.Equal(expectedResp, response.result);
+                    Assert.AreEqual(expectedResp, response.result);
                 }
                 Fixture.Server.ResetCounts();
             }
         }
 
-        [Theory]
         [MemberData(nameof(GetData))]
         public void Syn_Test(int before, int[] nums, byte after)
         {
@@ -66,7 +64,6 @@ namespace tsl3
             }
         }
 
-        [Theory]
         [MemberData(nameof(GetData))]
         public void Asyn_Test(int before, int[] nums, byte after)
         {
@@ -77,7 +74,7 @@ namespace tsl3
                     // we have to wait here; otherwise the result may be still changing
                     Fixture.Server.AsynDone.Wait();
                     Utils.EnsureResultsAreDefaultExceptOne<TestServer, int>(Fixture.Server, nameof(Fixture.Server.AsynResult));
-                    Assert.Equal(Utils.CalcForAsyn(before, nums, after), Fixture.Server.AsynResult);
+                    Assert.AreEqual(Utils.CalcForAsyn(before, nums, after), Fixture.Server.AsynResult);
                 }
                 Fixture.Server.ResetCounts();
 
@@ -85,7 +82,7 @@ namespace tsl3
                 {
                     Fixture.Server.Asyn1Done.Wait();
                     Utils.EnsureResultsAreDefaultExceptOne<TestServer, int>(Fixture.Server, nameof(Fixture.Server.Asyn1Result));
-                    Assert.Equal(Utils.CalcForAsyn(before, nums, after), Fixture.Server.Asyn1Result);
+                    Assert.AreEqual(Utils.CalcForAsyn(before, nums, after), Fixture.Server.Asyn1Result);
                 }
                 Fixture.Server.ResetCounts();
             }

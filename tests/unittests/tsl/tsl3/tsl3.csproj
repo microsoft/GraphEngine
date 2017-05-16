@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props" Condition="Exists('..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props')" />
+  <Import Project="$(PackagesFolder)\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props" Condition="Exists('$(PackagesFolder)\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>tsl3</RootNamespace>
     <AssemblyName>tsl3</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(PackagesFolder)\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -45,46 +45,29 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="Trinity.Core, Version=1.0.8850.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\GraphEngine.Core.1.0.8850\lib\Trinity.Core.dll</HintPath>
+      <HintPath>$(PackagesFolder)\GraphEngine.Core.1.0.8850\lib\Trinity.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\xunit.abstractions.2.0.1\lib\net35\xunit.abstractions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="xunit.assert, Version=2.2.0.3545, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\xunit.assert.2.2.0\lib\netstandard1.1\xunit.assert.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="xunit.core, Version=2.2.0.3545, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\xunit.extensibility.core.2.2.0\lib\netstandard1.1\xunit.core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="xunit.execution.desktop, Version=2.2.0.3545, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\xunit.extensibility.execution.2.2.0\lib\net452\xunit.execution.desktop.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="nunit.framework, Version=3.6.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>$(PackagesFolder)\NUnit.3.6.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MessageAccessorTest.cs" />
-    <Compile Include="ProtocolTest.cs" />
-    <Compile Include="StructTest.cs" />
-    <Compile Include="Fixtures.cs" />
-    <Compile Include="Utils.cs" />
+    <Compile Include="tsl3.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <TslCodegen Include="test.tsl" />
+    <TslCodegen Include="tsl3.tsl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props'))" />
-    <Error Condition="!Exists('..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.targets'))" />
+    <Error Condition="!Exists('$(PackagesFolder)\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props')" Text="$([System.String]::Format('$(ErrorText)', '$(PackagesFolder)\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props'))" />
+    <Error Condition="!Exists('$(PackagesFolder)\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(PackagesFolder)\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.targets'))" />
   </Target>
-  <Import Project="..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.targets" Condition="Exists('..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.targets')" />
+  <Import Project="$(PackagesFolder)\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.targets" Condition="Exists('$(PackagesFolder)\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
