@@ -20,7 +20,7 @@ namespace GraphEngine.DataImporter
                 string importerProjectPath = Path.Combine(exePath, @"..\..\GraphEngine.DataImporter.csproj");
                 string tslProjectPath = Path.Combine(exePath, "TSLCompiler.csproj");
 
-                UpdateProjectVersion(importerProjectPath, tslProjectPath);
+                UpdateProjectVersion(importerProjectPath, tslProjectPath, @"<Project ToolsVersion=.*?\..*?>");
                 UpdateNugetVersion(importerProjectPath, tslProjectPath, "GraphEngine.Core");
                 UpdateNugetVersion(importerProjectPath, tslProjectPath, "Newtonsoft.Json");
 
@@ -36,7 +36,7 @@ namespace GraphEngine.DataImporter
                 string importerClrProjectPath = Path.Combine(exePath, @"..\..\..\GraphEngine.DataImporter.Clr.csproj");
                 string tslClrProjectPath = Path.Combine(exePath, "TSLCompiler.Clr.csproj");
 
-                UpdateProjectVersionClr(importerClrProjectPath, tslClrProjectPath);
+                UpdateProjectVersion(importerClrProjectPath, tslClrProjectPath, @"<TargetFramework>.*?\..*?</TargetFramework>");
                 UpdateNugetVersionClr(importerClrProjectPath, tslClrProjectPath, "GraphEngine.CoreCLR");
                 UpdateNugetVersionClr(importerClrProjectPath, tslClrProjectPath, "Newtonsoft.Json");
 
@@ -59,10 +59,10 @@ namespace GraphEngine.DataImporter
             }
         }
 
-        private void UpdateProjectVersion(string importerProjectPath, string tslProjectPath)
+        private void UpdateProjectVersion(string importerProjectPath, string tslProjectPath, string pattern)
         {
-            Match newVersion = Regex.Match(File.ReadAllText(importerProjectPath), @"<Project ToolsVersion=.*?\..*?>");
-            Match oldVersion = Regex.Match(File.ReadAllText(tslProjectPath), @"<Project ToolsVersion=.*?\..*?>");
+            Match newVersion = Regex.Match(File.ReadAllText(importerProjectPath), pattern);
+            Match oldVersion = Regex.Match(File.ReadAllText(tslProjectPath), pattern);
             string text = File.ReadAllText(tslProjectPath);
             text = text.Replace(oldVersion.Value, newVersion.Value);
             File.WriteAllText(tslProjectPath, text);
@@ -85,15 +85,6 @@ namespace GraphEngine.DataImporter
             oldVersion = Regex.Match(File.ReadAllText(tslProjectPath), packageName + @", Version=.*?>");
             text = text.Replace(oldVersion.Value, newVersion.Value);
             File.WriteAllText(tslProjectPath, text);
-        }
-
-        private void UpdateProjectVersionClr(string importerClrProjectPath, string tslClrProjectPath)
-        {
-            Match newVersion = Regex.Match(File.ReadAllText(importerClrProjectPath), @"<TargetFramework>.*?\..*?</TargetFramework>");
-            Match oldVersion = Regex.Match(File.ReadAllText(tslClrProjectPath), @"<TargetFramework>.*?\..*?</TargetFramework>");
-            string text = File.ReadAllText(tslClrProjectPath);
-            text = text.Replace(oldVersion.Value, newVersion.Value);
-            File.WriteAllText(tslClrProjectPath, text);
         }
 
         private void UpdateNugetVersionClr(string importerClrProjectPath, string tslClrProjectPath,string packageName)
