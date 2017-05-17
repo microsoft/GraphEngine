@@ -12,9 +12,6 @@ namespace GraphEngine.DataImporter
 {
     class CmdOptions
     {
-        [Option('a', "tsl_assembly", HelpText = "Specifies the TSL assembly for data importing.", MutuallyExclusiveSet = "Action")]
-        public string TSLAssembly { get; set; }
-		
         [Option('t', "tsl", HelpText = "Specifies the TSL file for data importing")]
         public string TSL { get; set;}
 		
@@ -39,6 +36,9 @@ namespace GraphEngine.DataImporter
         [Option("notrim", HelpText = "Specifies that the data fields in CSV/TSV files are not trimmed", Required = false)]
         public bool NoTrim { get; set; }
 
+        [Option('a', "tsl_assembly", HelpText = "Specifies the TSL assembly for data importing.", MutuallyExclusiveSet = "Action")]
+        public string TSLAssembly { get; set; }
+		
         [ValueList(typeof(List<string>))]
         public IList<string> ExplicitFiles { get; set; }
 
@@ -52,7 +52,7 @@ namespace GraphEngine.DataImporter
             };
 
             help.AddPreOptionsLine("Import from files to Graph Engine storage.");
-            help.AddPreOptionsLine(string.Format("Usage: {0} [-a tsl_assembly|-g] [-t tsl] [-d directory] [-o output_dir] [--delimiter delimiter] [-f file_format] [--notrim] [explicit files]", Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
+            help.AddPreOptionsLine(string.Format("Usage: {0} [-t tsl] [-d directory] [-o output_dir] [--delimiter delimiter] [-f file_format] [--notrim] [-a tsl_assembly|-g] [explicit files]", Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
 
             help.AddOptions(this);
             help.AddPostOptionsLine("Only files with .json, .csv, .tsv and .ntriples suffix are recognized.");
