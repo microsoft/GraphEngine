@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props" Condition="Exists('..\..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -7,8 +7,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0AE97FA8-E63E-48EA-8336-529FE0A9DBC0}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>TSL.SmokeTest.1</RootNamespace>
-    <AssemblyName>TSL.SmokeTest.1</AssemblyName>
+    <RootNamespace>TSL.SmokeTest1</RootNamespace>
+    <AssemblyName>TSL.SmokeTest1</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>

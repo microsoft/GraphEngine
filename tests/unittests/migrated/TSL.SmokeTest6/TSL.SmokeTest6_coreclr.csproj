@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <RuntimeFrameworkVersion>2.0.0-beta-001509-00</RuntimeFrameworkVersion>
-    <AssemblyName>TSL.SmokeTest.1_coreclr</AssemblyName>
-    <RootNamespace>TSL.SmokeTest.1</RootNamespace>
+    <AssemblyName>TSL.SmokeTest6_coreclr</AssemblyName>
+    <RootNamespace>TSL.SmokeTest6</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
