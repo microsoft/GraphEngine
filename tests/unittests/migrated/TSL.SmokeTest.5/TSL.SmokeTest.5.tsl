@@ -1,0 +1,43 @@
+struct S1
+{
+    List<string> string_list;
+}
+
+cell struct C1
+{
+	List<string> string_list;
+}
+
+cell struct C2
+{
+    optional S1 s1;
+	List<float> float_list;
+}
+
+cell struct C3
+{
+    List<decimal> decimal_list;
+}
+
+cell struct C4
+{
+    DateTime time;	
+}
+
+struct MessagePayload
+{
+    optional string o1;
+    optional string o2;	
+}
+
+protocol Message
+{
+    Request:MessagePayload;
+    Response:MessagePayload;
+    Type:Syn;	
+}
+
+server TSL5Server1
+{
+    protocol Message;	
+}

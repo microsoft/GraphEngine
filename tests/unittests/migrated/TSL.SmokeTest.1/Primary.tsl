@@ -1,0 +1,110 @@
+TrinitySettings test
+{
+    RootNamespace :TSL.Coverage.Test;	
+}
+
+Enum A
+{
+    haha,
+    hehe
+}
+
+cell struct B
+{
+    A x;
+    [index:target=e.z]
+    optional msg y;	
+    int z;
+    [index:type=substring]
+    string a;
+    [index]
+    List<List<string>> strList;
+    List<msg> msgList;
+    bool b;
+    [index:target=monster]
+    MONSTER monster;
+}
+
+struct MONSTER
+{
+    List<List<List<List<string>>>>	monster;
+    optional int x;
+}
+
+cell struct C
+{
+    int x;
+    bool y;	
+}
+
+cell struct C1
+{
+    int x;
+    bool y;	
+    Optional string z;
+}
+
+cell struct C2
+{
+    optional int x;	
+    optional int b;
+}
+
+struct msg
+{
+    List<long> a;
+    /*
+    Optional int b;
+    Optional int x;
+    int[5] c;
+    float[10] d;
+    */
+    msg_substruct e;
+}
+
+struct msg_substruct
+{
+    decimal[3,2] a;
+    int x;
+    string y;
+    optional List<string> z;
+}
+
+protocol X
+{	
+    Type:Syn;
+    Request:msg;
+    Response:void;
+}
+
+protocol Z
+{
+    Type:HTTP;
+    Request:msg;
+    Response:msg;	
+}
+
+protocol Z2
+{
+    Type:HTTP;
+    Request:C2;
+    Response:D2;	
+}
+
+protocol Z3
+{
+    Type:HTTP;
+    Request:D2;
+    Response:B;
+}
+
+server Y
+{	
+    protocol X;
+    protocol Z;
+}
+
+server Y2
+{
+    protocol Z2;
+}

@@ -1,0 +1,74 @@
+cell struct D
+{
+    uint x;
+    double y;
+    string z;
+    List<int> a;
+    int[7] c;
+    int[9] d;
+    optional int[5] b;
+}
+
+cell struct D2
+{
+    double[10] y;
+    DateTime[100,100] xx;
+    Guid[100,100] yy;
+    string z;
+    optional int x;
+    [GraphEdge]
+    Optional List<long> a;
+    Optional string b;
+    Optional List<double[2]> c;
+    Optional msg d;
+    List<DateTime> datetimes;
+    DateTime zz;
+    optional DateTime aa;
+}
+
+cell struct D3
+{
+    int x;
+    double y;
+    string z;
+}
+
+cell struct D4
+{
+    int[100,100] x;	
+}
+
+cell JsonTestCell
+{
+    DateTime datetime;
+	Guid guid;
+}
+
+struct DateTimeList
+{
+    List<DateTime> datetimes;	
+}
+
+struct GuidList
+{
+    List<Guid> guids;	
+}
+
+cell struct optional_long_test
+{
+    [GraphEdge]
+    optional long test;	
+}
+
+cell EnumerateFieldTestCell
+{
+    [string]	
+    List<string> strList;
+    [string]	
+    List<List<string>> strListList;
+    [string]
+    string str;	
+    List<List<int>> intListList;
+    List<int> intList;
+    int i;
+}

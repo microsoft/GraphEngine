@@ -1,0 +1,47 @@
+protocol P1
+{
+    Type    :Syn;
+    Request :void;	
+    Response:void;
+}
+
+protocol P2
+{
+    Type    :Syn;
+    Request :void;
+    Response:void;	
+}
+
+struct HttpMessage
+{
+    string message;
+}
+
+// This is an HTTP protocol, accessible as a RESTful API
+protocol P3
+{
+    Type    :HTTP;
+	Request :void;
+	Response:HttpMessage;
+}
+
+server BaseServer
+{
+    protocol P1;
+}
+
+proxy BaseProxy
+{
+    protocol P2;
+}
+
+// A derived server. Note that it derives from
+// both a server and a proxy.
+server DerivedServer : BaseServer, BaseProxy
+{
+    // New protocols can be declared in the 
+	// derived class to extend functionality.
+    // To access this HTTP protocol, type:
+	// 'http://localhost/P3/{}' into your browser.
+    protocol P3;	
+}
