@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Linq;
 
-namespace NUnitLiteNetCoreTest.ResultAggregator
+namespace NUnitMetaRunner
 {
     internal interface INodeInfo
     {

@@ -10,8 +10,8 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <MetaRunner>$(MSBuildProjectDirectory)/nunit_tools/bin/nunit_meta_runner.dll</MetaRunner>
-    <TestRunner>$(MSBuildProjectDirectory)/nunit_tools/bin/nunitlite-runner.dll</TestRunner>
+    <MetaRunner>$(MSBuildProjectDirectory)/nunit_tools/bin/nunit_meta_runner_coreclr.dll</MetaRunner>
+    <TestRunner>$(MSBuildProjectDirectory)/nunit_tools/bin/nunitlite-runner_coreclr.dll</TestRunner>
     <UnitTestResultDir>$(MSBuildProjectDirectory)/nunit_unit_coreclr_reports</UnitTestResultDir>
     <StressTestResultDir>$(MSBuildProjectDirectory)/nunit_stress_coreclr_reports</StressTestResultDir>
     <ExeTestResultDir>$(MSBuildProjectDirectory)/nunit_exe_coreclr_reports</ExeTestResultDir>
@@ -23,20 +23,20 @@
 
   <Target Name="Init">
     <Exec
-        Command="dotnet restore"
+        Command="dotnet restore nunitlite-runner_coreclr.csproj"
         WorkingDirectory="nunit_tools/nunit_test_runner"
         ContinueOnError="false" />
     <Exec
-        Command="dotnet build -c Release --output $(MSBuildProjectDirectory)/nunit_tools/bin"
+        Command="dotnet build -c Release --output $(MSBuildProjectDirectory)/nunit_tools/bin nunitlite-runner_coreclr.csproj"
         WorkingDirectory="nunit_tools/nunit_test_runner"
         ContinueOnError="false" />
 
     <Exec
-        Command="dotnet restore"
+        Command="dotnet restore nunit_meta_runner_coreclr.csproj"
         WorkingDirectory="nunit_tools/nunit_meta_runner"
         ContinueOnError="false" />
     <Exec
-        Command="dotnet build -c Release --output $(MSBuildProjectDirectory)/nunit_tools/bin"
+        Command="dotnet build -c Release --output $(MSBuildProjectDirectory)/nunit_tools/bin nunit_meta_runner_coreclr.csproj"
         WorkingDirectory="nunit_tools/nunit_meta_runner"
         ContinueOnError="false" />
   </Target>

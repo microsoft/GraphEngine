@@ -3,10 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Reflection;
-using System.Runtime.Loader;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection.Metadata;
 using System.Xml;
 using System.Xml.Linq;
 using CommandLine;
@@ -16,11 +14,13 @@ using NUnit.Framework.Api;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 
-using NUnitLiteNetCoreTest.ResultAggregator;
-
 // preloading dependencies
 using Trinity;
 using NUnit.Framework;
+
+#if !NETFRAMEWORK
+using System.Runtime.Loader;
+#endif
 
 namespace NUnitMetaRunner
 {
@@ -43,7 +43,7 @@ namespace NUnitMetaRunner
 
             // NOTE(leasunhy): this may fail silently if some of the dependencies are not preloaded!
             //                 In that case, no tests can be discovered in `assembly`.
-            var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
+            var assembly = LoadAssembly(assemblyPath);
 
             var rootTestSuite = GetITest(assembly, runnerOptions);
             var allTests = GetDecendentTests(rootTestSuite).ToList();
@@ -117,19 +117,34 @@ namespace NUnitMetaRunner
             return 0;
         }
 
+        private static Assembly LoadAssembly(string path)
+        {
+#if NETFRAMEWORK
+            return Assembly.LoadFrom(path);
+#else
+            return AssemblyLoadContext.Default.LoadFromAssemblyPath(path);
+#endif
+        }
+
         private static Process CreateProcessForTest(string runnerPath, string assemblyPath, string testResultPath,
                                                     int randomSeed, string runnerOptions, string testName)
         {
+            var startInfo = new ProcessStartInfo();
             var commandLineOptions = new List<string>();
+
+#if NETFRAMEWORK
+            startInfo.FileName = runnerPath;
+#else
+            startInfo.FileName = "dotnet";
             commandLineOptions.Add($"\"{runnerPath}\"");
+#endif
+
             commandLineOptions.Add($"\"{assemblyPath}\"");
             commandLineOptions.Add(runnerOptions);
-            commandLineOptions.Add($"--test={testName}");
+            commandLineOptions.Add($"--test=\"{testName}\"");
             commandLineOptions.Add($"--result=\"{testResultPath}\"");
             commandLineOptions.Add($"--seed=\"{randomSeed}\"");
 
-            var startInfo = new ProcessStartInfo();
-            startInfo.FileName = "dotnet";
             startInfo.Arguments = string.Join(" ", commandLineOptions);
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;

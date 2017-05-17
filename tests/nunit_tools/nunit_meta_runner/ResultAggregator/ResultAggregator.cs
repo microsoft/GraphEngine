@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace NUnitLiteNetCoreTest.ResultAggregator
+namespace NUnitMetaRunner
 {
     public static class ResultAggregator
     {
