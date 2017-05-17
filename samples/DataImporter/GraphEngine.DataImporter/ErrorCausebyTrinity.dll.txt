@@ -1,0 +1,47 @@
+C:\Program Files\dotnet\sdk\2.0.0-preview2-005905\Microsoft.Common.CurrentVersion.targets(1964,5): error MSB4018: The "Resolve
+AssemblyReference" task failed unexpectedly.\r [D:\GitHub\GraphEngine\samples\DataImporter\GraphEngine.DataImporter\bin\Releas
+e\netcoreapp2.0\TSLcompiler.Clr.csproj]
+C:\Program Files\dotnet\sdk\2.0.0-preview2-005905\Microsoft.Common.CurrentVersion.targets(1964,5): error MSB4018: System.Inval
+idOperationException: PE image does not have metadata.\r [D:\GitHub\GraphEngine\samples\DataImporter\GraphEngine.DataImporter\
+bin\Release\netcoreapp2.0\TSLcompiler.Clr.csproj]
+C:\Program Files\dotnet\sdk\2.0.0-preview2-005905\Microsoft.Common.CurrentVersion.targets(1964,5): error MSB4018:    at System
+.Reflection.PortableExecutable.PEReader.GetMetadataBlock()\r [D:\GitHub\GraphEngine\samples\DataImporter\GraphEngine.DataImpor
+ter\bin\Release\netcoreapp2.0\TSLcompiler.Clr.csproj]
+C:\Program Files\dotnet\sdk\2.0.0-preview2-005905\Microsoft.Common.CurrentVersion.targets(1964,5): error MSB4018:    at System
+.Reflection.Metadata.PEReaderExtensions.GetMetadataReader(PEReader peReader, MetadataReaderOptions options, MetadataStringDeco
+der utf8Decoder)\r [D:\GitHub\GraphEngine\samples\DataImporter\GraphEngine.DataImporter\bin\Release\netcoreapp2.0\TSLcompiler.
+Clr.csproj]
+C:\Program Files\dotnet\sdk\2.0.0-preview2-005905\Microsoft.Common.CurrentVersion.targets(1964,5): error MSB4018:    at System
+.Reflection.Metadata.PEReaderExtensions.GetMetadataReader(PEReader peReader)\r [D:\GitHub\GraphEngine\samples\DataImporter\Gra
+phEngine.DataImporter\bin\Release\netcoreapp2.0\TSLcompiler.Clr.csproj]
+C:\Program Files\dotnet\sdk\2.0.0-preview2-005905\Microsoft.Common.CurrentVersion.targets(1964,5): error MSB4018:    at Micros
+oft.Build.Shared.AssemblyNameExtension.GetAssemblyNameEx(String path)\r [D:\GitHub\GraphEngine\samples\DataImporter\GraphEngin
+e.DataImporter\bin\Release\netcoreapp2.0\TSLcompiler.Clr.csproj]
+C:\Program Files\dotnet\sdk\2.0.0-preview2-005905\Microsoft.Common.CurrentVersion.targets(1964,5): error MSB4018:    at Micros
+oft.Build.Tasks.ReferenceTable.SetPrimaryAssemblyReferenceItem(ITaskItem referenceAssemblyName)\r [D:\GitHub\GraphEngine\sampl
+es\DataImporter\GraphEngine.DataImporter\bin\Release\netcoreapp2.0\TSLcompiler.Clr.csproj]
+C:\Program Files\dotnet\sdk\2.0.0-preview2-005905\Microsoft.Common.CurrentVersion.targets(1964,5): error MSB4018:    at Micros
+oft.Build.Tasks.ReferenceTable.SetPrimaryItems(ITaskItem[] referenceAssemblyFiles, ITaskItem[] referenceAssemblyNames, ArrayLi
+st exceptions)\r [D:\GitHub\GraphEngine\samples\DataImporter\GraphEngine.DataImporter\bin\Release\netcoreapp2.0\TSLcompiler.Cl
+r.csproj]
+C:\Program Files\dotnet\sdk\2.0.0-preview2-005905\Microsoft.Common.CurrentVersion.targets(1964,5): error MSB4018:    at Micros
+oft.Build.Tasks.ReferenceTable.ComputeClosure(DependentAssembly[] remappedAssembliesValue, ITaskItem[] referenceAssemblyFiles,
+ITaskItem[] referenceAssemblyNames, ArrayList exceptions)\r [D:\GitHub\GraphEngine\samples\DataImporter\GraphEngine.DataImpor
+ter\bin\Release\netcoreapp2.0\TSLcompiler.Clr.csproj]
+C:\Program Files\dotnet\sdk\2.0.0-preview2-005905\Microsoft.Common.CurrentVersion.targets(1964,5): error MSB4018:    at Micros
+oft.Build.Tasks.ResolveAssemblyReference.Execute(FileExists fileExists, DirectoryExists directoryExists, GetDirectories getDir
+ectories, GetAssemblyName getAssemblyName, GetAssemblyMetadata getAssemblyMetadata, GetLastWriteTime getLastWriteTime, GetAsse
+mblyRuntimeVersion getRuntimeVersion, GetAssemblyPathInGac getAssemblyPathInGac, IsWinMDFile isWinMDFile, ReadMachineTypeFromP
+EHeader readMachineTypeFromPEHeader)\r [D:\GitHub\GraphEngine\samples\DataImporter\GraphEngine.DataImporter\bin\Release\netcor
+eapp2.0\TSLcompiler.Clr.csproj]
+C:\Program Files\dotnet\sdk\2.0.0-preview2-005905\Microsoft.Common.CurrentVersion.targets(1964,5): error MSB4018:    at Micros
+oft.Build.Tasks.ResolveAssemblyReference.Execute()\r [D:\GitHub\GraphEngine\samples\DataImporter\GraphEngine.DataImporter\bin\
+Release\netcoreapp2.0\TSLcompiler.Clr.csproj]
+C:\Program Files\dotnet\sdk\2.0.0-preview2-005905\Microsoft.Common.CurrentVersion.targets(1964,5): error MSB4018:    at Micros
+oft.Build.BackEnd.TaskExecutionHost.Microsoft.Build.BackEnd.ITaskExecutionHost.Execute()\r [D:\GitHub\GraphEngine\samples\Data
+Importer\GraphEngine.DataImporter\bin\Release\netcoreapp2.0\TSLcompiler.Clr.csproj]
+C:\Program Files\dotnet\sdk\2.0.0-preview2-005905\Microsoft.Common.CurrentVersion.targets(1964,5): error MSB4018:    at Micros
+oft.Build.BackEnd.TaskBuilder.<ExecuteInstantiatedTask>d__25.MoveNext() [D:\GitHub\GraphEngine\samples\DataImporter\GraphEngin
+e.DataImporter\bin\Release\netcoreapp2.0\TSLcompiler.Clr.csproj]
+    0 Warning(s)
+    1 Error(s)

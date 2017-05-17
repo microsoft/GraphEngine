@@ -35,7 +35,7 @@ namespace GraphEngine.DataImporter
                 {
                     string errorMessage = File.ReadAllText(Path.Combine(exePath, "errors.log"));
                     Console.WriteLine("TSL File Compile Error:"); 
-                    ColoredConsoleWrite(ConsoleColor.Red , errorMessage);
+                    ColoredConsoleWrite(ConsoleColor.Red, errorMessage);
                     File.Delete(Path.Combine(exePath, "errors.log"));
                     return null;
                 }
@@ -115,6 +115,7 @@ namespace GraphEngine.DataImporter
             text = text.Replace(oldVersion.Value, newVersion.Value);
             File.WriteAllText(tslClrProjectPath, text);
         }
+
         private static void ColoredConsoleWrite(ConsoleColor color, string text)
         {
             ConsoleColor originalColor = Console.ForegroundColor;
