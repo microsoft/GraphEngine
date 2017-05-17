@@ -412,10 +412,11 @@ public static class FanoutSearchDescriptorEvaluator
                     fs_desc.m_origin = ConstructCollection<long>(origin_cell_query).ToList();
                     break;
                 case SyntaxKind.NumericLiteralExpression:
+                case SyntaxKind.UnaryMinusExpression:
+                case SyntaxKind.UnaryPlusExpression:
                     {
-                        var origin_cellid = Get<LiteralExpressionSyntax>(origin_cell_query);
                         long cell_id = 0;
-                        var parse_result = long.TryParse(origin_cellid.Token.ValueText, out cell_id);
+                        var parse_result = long.TryParse(origin_cell_query.ToString(), out cell_id);
                         ThrowIf(!parse_result, "Expecting a cell id", origin_cell_query);
                         fs_desc.m_origin = new List<long> { cell_id };
                         break;
