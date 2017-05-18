@@ -3,7 +3,7 @@
 DataImporter is a cross-platform module of Microsoft [Graph Engine](https://www.graphengine.io/) for [data importing](https://www.graphengine.io/docs/manual/DataImport.html). It supports to import data files in types of CSV, TSV, JSON and RDF, saving input data to Graph Engine storages.
 
 ## Usage
-To use DataImporter, you need to [build Graph Engine](https://github.com/Microsoft/GraphEngine) first.
+To build DataImporter, you need to [build Graph Engine](https://github.com/Microsoft/GraphEngine) first.
 The input files include [TSL file](https://www.graphengine.io/docs/manual/TSL/tsl-basics.html) and data file,
 and the output is Graph Engine data storage.
 
@@ -31,15 +31,15 @@ The type must be defined as a Graph Engine cell in the TSL.
 |--help|Display this help screen.|
 
   
-### In Windows
+### On Windows
 Open the `GraphEngine.DataImporter.sln` with Visual Studio 2017/2015, build the project and generate the GraphEngine.DataImporter.exe (the exe can't move to other folders).  
 
 ```
 GraphEngine.DataImporter.exe [-t tsl] [-d directory] [-o output_dir] [--delimiter delimiter] [-f file_format] [--notrim] [-a tsl_assembly|-g] [explicit files]
 ```
 
-### In Linux
-In `GraphEngine.DataImporter` folder:   
+### On Linux
+In the `GraphEngine.DataImporter` folder:   
 
 ```
 dotnet restore GraphEngine.DataImporter.Clr.csproj  
