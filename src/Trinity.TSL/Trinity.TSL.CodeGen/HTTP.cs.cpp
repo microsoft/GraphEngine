@@ -32,6 +32,7 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
+    
     #region Server
     )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->serverList)->size();++iterator_1)

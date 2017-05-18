@@ -30,6 +30,7 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(.InvertedIndex
 {
+    
     struct PairInfo
     {
         public int pos;
@@ -81,9 +82,9 @@ source->append(R"::(.InvertedIndex\", index_name);
         {
             byte[] buffer = new byte[65536 << 3];
             using (FileStream fs = new FileStream(bg_index_file, FileMode.Open, FileAccess.Read, FileShare.Read, 1 << 10, false))
-            {)::");
-source->append(R"::(
-                fs.Read(buffer, 0, buffer.Length);
+            {
+                fs.Rea)::");
+source->append(R"::(d(buffer, 0, buffer.Length);
             }
             bg_index = new long[65536];
             fixed (byte* bp = buffer)
@@ -108,8 +109,8 @@ source->append(R"::(
                     {
                         if (index_len > buff_len)
                         {
-                            if (fs.Rea)::");
-source->append(R"::(d(reading_buffer, 0, buff_len) == buff_len)
+                            if (fs.Read(reading_buffer, 0, buff_len) == buff_le)::");
+source->append(R"::(n)
                             {
                                 Memory.Copy(reading_buffer, IndexBufferPointer + p, buff_len);
                                 index_len -= buff_len;
@@ -131,10 +132,10 @@ source->append(R"::(d(reading_buffer, 0, buff_len) == buff_len)
             }
             else
                 br_index = new BinaryReader(new FileStream(index_file, FileMode.Open, FileAccess.Read, FileShare.Read, 512 << 10, false));
-  )::");
-source->append(R"::(      }
+        }
         /// <summary>
-        /// Performs a substring search.
+        /// Performs a substring)::");
+source->append(R"::( search.
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
@@ -156,10 +157,10 @@ source->append(R"::(      }
         /// <summary>
         /// Performs a wildcard search for the specified query.
         /// </summary>
-        /// <param name="query">A query string that can contain arbitrary number of wildcard symbo)::");
-source->append(R"::(l *.</param>
+        /// <param name="query">A query string that can contain arbitrary number of wildcard symbol *.</param>
         /// <returns>A list of matched cell Ids.</returns>
-        internal List<long> WildcardSearch(string query)
+        )::");
+source->append(R"::(internal List<long> WildcardSearch(string query)
         {
             return SubstringSearch(query.Split(wildcards, StringSplitOptions.RemoveEmptyEntries));
         }
@@ -179,10 +180,10 @@ source->append(R"::(l *.</param>
         /// </summary>
         /// <param name="keywords">A list of keywords.</param>
         /// <returns>A list of matched cell Ids.</returns>
- )::");
-source->append(R"::(       internal List<long> SubstringSearch(params string[] keywords)
+        internal List<long> SubstringSearch(params string[] keywords)
         {
-            if (keywords == null || keywords.Length == 0)
+            if (keywo)::");
+source->append(R"::(rds == null || keywords.Length == 0)
                 return new List<long>(0);
             if (keywords.Length == 1)
                 return SubstringSearch(keywords[0]);
@@ -200,9 +201,9 @@ source->append(R"::(       internal List<long> SubstringSearch(params string[] k
                 List<PairInfo> pairList = SplitKeyword(bytes);
                 if (pairList.Count == 0)
                     return new List<long>(0);
-                va)::");
-source->append(R"::(r _result = SearchSubString4WildcardSearch(pairList);
-                if (_result == null || _result.Count == 0)
+                var _result = SearchSubString4WildcardSearch(pairList);
+                if (_result == null || _result.Count == )::");
+source->append(R"::(0)
                     return new List<long>(0);
                 partialResults.Add(_result);
             }
@@ -215,9 +216,9 @@ source->append(R"::(r _result = SearchSubString4WildcardSearch(pairList);
              * if we can successfully go through all the pairCount elements in IndexItemList,
              * then we found a match. Otherwise, we continue by checking the next elements in IndexItemList[0].
              *
-             * Successfully)::");
-source->append(R"::( going through all the elements in IndexItemList means:
-             * The distance between the current item offset in partialResults[i] and
+             * Successfully going through all the elements in IndexItemList means:
+             * The distance between the current item offset in par)::");
+source->append(R"::(tialResults[i] and
              * the current item offset in partialResults[i-1] >= keywords[i-1].Length.
              * ***************************************************************************************************/
             int keywordCount = keywords.Length;
@@ -236,11 +237,11 @@ source->append(R"::( going through all the elements in IndexItemList means:
                     {
                         IndexItem item = new IndexItem();
                         bool match = false;
-                        int j)::");
-source->append(R"::( = IteratorList[i];
+                        int j = IteratorList[i];
                         for (; j < partialResults[i].Count; j++)
                         {
-                            item = partialResults[i][j];
+                            )::");
+source->append(R"::(item = partialResults[i][j];
                             if (item.CellId >= current_item.CellId)
                             {
                                 break;
@@ -260,11 +261,11 @@ source->append(R"::( = IteratorList[i];
                         {
                             item = partialResults[i][j];
                             int distance = item.Offset - offset;
-   )::");
-source->append(R"::(                         if (distance >= keywords[i - 1].Length)
+                            if (distance >= keywords[i - 1].Length)
                             {
                                 offset = item.Offset;
-                                match = true;
+        )::");
+source->append(R"::(                        match = true;
                                 break;
                             }
                             j++;
@@ -284,13 +285,13 @@ source->append(R"::(                         if (distance >= keywords[i - 1].Len
                 }
                 else
                     iterator_0++; 
-         )::");
-source->append(R"::(   } while (iterator_0 < partialResults[0].Count);
+            } while (iterator_0 < partialResults[0].Count);
             #endregion
             return Result;
         }
         /// <summary>
-        /// Split a key word into a list of bigrams.
+        /// Split a key word into a list of)::");
+source->append(R"::( bigrams.
         /// </summary>
         /// <param name="bytes">A array of bytes whose length is larger than 1.</param>
         /// <returns>pairList</returns>
@@ -315,15 +316,15 @@ source->append(R"::(   } while (iterator_0 < partialResults[0].Count);
                 }
                 else 
                 {
-                    pi.A = )::");
-source->append(R"::(pre_byte;
+                    pi.A = pre_byte;
                     pi.B = bytes[p];
                     pi.pos = pos - 1;
                     pairList.Add(pi);
                     pos++;
                     p++;
                 }
-            } while (p != bytes.Length);
+        )::");
+source->append(R"::(    } while (p != bytes.Length);
             return pairList;
         }
         private void ReleaseGCHandle(List<GCHandle> gchandlers)
@@ -344,14 +345,14 @@ source->append(R"::(pre_byte;
                 return Result;
             IndexItem*[] IndexItemList = new IndexItem*[pairCount];
             int[] DistanceList = new int[pairCount];
-            int[] ItemCountList = new int[pairCou)::");
-source->append(R"::(nt];
+            int[] ItemCountList = new int[pairCount];
             int[] IteratorList = new int[pairCount]; 
             int offset = pairList[0].pos;
             for (int i = 0; i < pairCount; i++)
             {
                 if (InMemory)
-                    IndexItemList[i] = ReadIndexItemListFromRAM(pairList[i].A, pairList[i].B, out ItemCountList[i]);
+                    IndexItemLi)::");
+source->append(R"::(st[i] = ReadIndexItemListFromRAM(pairList[i].A, pairList[i].B, out ItemCountList[i]);
                 else
                     IndexItemList[i] = ReadIndexItemListFromDisk(pairList[i].A, pairList[i].B, out ItemCountList[i], ref gchandlers);
                 DistanceList[i] = pairList[i].pos - offset;
@@ -365,12 +366,12 @@ source->append(R"::(nt];
             }
             #region K-way search
             /****************************************************************************************************
-             * Each element in the IndexItemList represents a bigram pair (e)::");
-source->append(R"::(.g., ab or bc).
+             * Each element in the IndexItemList represents a bigram pair (e.g., ab or bc).
              * Each IndexItem is sorted by IndexItem.CellId and IndexItem.Offset
              * We perform k-way search starting from IndexItemList[0]
              * For a cellId at IndexItemList[0][iterator_0],
-             * if we can successfully go through all the pairCount elements in IndexItemList,
+             * )::");
+source->append(R"::(if we can successfully go through all the pairCount elements in IndexItemList,
              * then we found a match. Otherwise, we continue by checking the next elements in IndexItemList[0].
              *
              * Successfully going through all the elements in IndexItemList means:
@@ -382,15 +383,15 @@ source->append(R"::(.g., ab or bc).
             offset = 0;
             do
             {
-                IndexItem current_item = IndexItemList[0][iterato)::");
-source->append(R"::(r_0];
+                IndexItem current_item = IndexItemList[0][iterator_0];
                 if (current_item.CellId >= cellId)
                 {
                     offset = current_item.Offset;
                     int i = 1;
                     for (; i < pairCount; i++)
                     {
-                        IndexItem item = new IndexItem();
+                        IndexItem)::");
+source->append(R"::( item = new IndexItem();
                         bool match = false;
                         int j = IteratorList[i];
                         for (; j < ItemCountList[i]; j++)
@@ -407,131 +408,6 @@ source->append(R"::(r_0];
                                 ReleaseGCHandle(gchandlers);
                             return Result;
                         }
-                        IteratorList[i] =)::");
-source->append(R"::( j;
-                        if (item.CellId > current_item.CellId) 
-                        {
-                            cellId = item.CellId;
-                            iterator_0++; 
-                            break;
-                        }
-                        Debug.Assert(item.CellId == current_item.CellId);
-                        do
-                        {
-                            item = IndexItemList[i][j];
-                            int distance = item.Offset - offset;
-                            if (distance == DistanceList[i])
-                            {
-                                offset = item.Offset;
-                                match = true;
-                                break;
-                            }
-                            else if (distance > DistanceList[i])
-                                break;
-                            j++;
-                        } while (j < ItemCountList[i] && IndexItemList[i][j].CellId == current_item.CellId);
-  )::");
-source->append(R"::(                      if (!match)
-                        {
-                            iterator_0++;
-                            break;
-                        }
-                    }
-                    if (i == pairCount)
-                    {
-                        Result.Add(current_item.CellId);
-                        while (iterator_0 < ItemCountList[0] && current_item.CellId == IndexItemList[0][iterator_0].CellId)
-                            iterator_0++;
-                    }
-                }
-                else
-                    iterator_0++; 
-            } while (iterator_0 < ItemCountList[0]);
-            #endregion
-            if (!InMemory)
-                ReleaseGCHandle(gchandlers);
-            return Result;
-        }
-        /// <summary>
-        /// The only difference from SearchSubString is that the returning result is a List of IntexIndex.
-        /// </summary>
-        /// <param name="pairList"></param>
-        /// <returns></returns>
-        private List)::");
-source->append(R"::(<IndexItem> SearchSubString4WildcardSearch(List<PairInfo> pairList)
-        {
-            List<GCHandle> gchandlers = null;
-            if (!InMemory)
-                gchandlers = new List<GCHandle>();
-            List<IndexItem> Result = new List<IndexItem>();
-            int pairCount = pairList.Count;
-            if (pairCount == 0)
-                return Result;
-            IndexItem*[] IndexItemList = new IndexItem*[pairCount];
-            int[] DistanceList = new int[pairCount];
-            int[] ItemCountList = new int[pairCount];
-            int[] IteratorList = new int[pairCount]; 
-            int offset = pairList[0].pos;
-            for (int i = 0; i < pairCount; i++)
-            {
-                if (InMemory)
-                    IndexItemList[i] = ReadIndexItemListFromRAM(pairList[i].A, pairList[i].B, out ItemCountList[i]);
-                else
-                    IndexItemList[i] = ReadIndexItemListFromDisk(pairList[i].A, pairList[i].B, out ItemCountList[i], ref gchandlers);
-)::");
-source->append(R"::(                DistanceList[i] = pairList[i].pos - offset;
-                offset = pairList[i].pos;
-                if (ItemCountList[i] == 0)
-                {
-                    if (InMemory)
-                        ReleaseGCHandle(gchandlers);
-                    return null;
-                }
-            }
-            #region K-way search
-            /****************************************************************************************************
-             * Each element in the IndexItemList represents a bigram pair (e.g., ab or bc).
-             * Each IndexItem is sorted by IndexItem.CellId and IndexItem.Offset
-             * We perform k-way search starting from IndexItemList[0]
-             * For a cellId at IndexItemList[0][iterator_0],
-             * if we can successfully go through all the pairCount elements in IndexItemList,
-             * then we found a match. Otherwise, we continue by checking the next elements in IndexItemList[0].
-             *
-             * Succ)::");
-source->append(R"::(essfully going through all the elements in IndexItemList means:
-             * The distance between the current item offset in IndexItemList[i] and
-             * the current item offset in IndexItemList[i-1] equals DistanceList[i].
-             * ***************************************************************************************************/
-            int iterator_0 = 0; 
-            long cellId = long.MinValue;
-            offset = 0;
-            do
-            {
-                IndexItem current_item = IndexItemList[0][iterator_0];
-                if (current_item.CellId >= cellId)
-                {
-                    offset = current_item.Offset;
-                    int i = 1;
-                    for (; i < pairCount; i++)
-                    {
-                        IndexItem item = new IndexItem();
-                        bool match = false;
-                        int j = IteratorList[i];
-                        for (; j < ItemCountList[i]; j++)
-                        {
-   )::");
-source->append(R"::(                         item = IndexItemList[i][j];
-                            if (item.CellId >= current_item.CellId)
-                            {
-                                break;
-                            }
-                        }
-                        if (j == ItemCountList[i]) 
-                        {
-                            if (InMemory)
-                                ReleaseGCHandle(gchandlers);
-                            return Result;
-                        }
                         IteratorList[i] = j;
                         if (item.CellId > current_item.CellId) 
                         {
@@ -539,12 +415,12 @@ source->append(R"::(                         item = IndexItemList[i][j];
                             iterator_0++; 
                             break;
                         }
-                        Debug.Assert(item.CellId == current_item.CellId);
+                        Debug.)::");
+source->append(R"::(Assert(item.CellId == current_item.CellId);
                         do
                         {
                             item = IndexItemList[i][j];
-                            int dist)::");
-source->append(R"::(ance = item.Offset - offset;
+                            int distance = item.Offset - offset;
                             if (distance == DistanceList[i])
                             {
                                 offset = item.Offset;
@@ -563,11 +439,135 @@ source->append(R"::(ance = item.Offset - offset;
                     }
                     if (i == pairCount)
                     {
+                        Result.Add(current_item.Ce)::");
+source->append(R"::(llId);
+                        while (iterator_0 < ItemCountList[0] && current_item.CellId == IndexItemList[0][iterator_0].CellId)
+                            iterator_0++;
+                    }
+                }
+                else
+                    iterator_0++; 
+            } while (iterator_0 < ItemCountList[0]);
+            #endregion
+            if (!InMemory)
+                ReleaseGCHandle(gchandlers);
+            return Result;
+        }
+        /// <summary>
+        /// The only difference from SearchSubString is that the returning result is a List of IntexIndex.
+        /// </summary>
+        /// <param name="pairList"></param>
+        /// <returns></returns>
+        private List<IndexItem> SearchSubString4WildcardSearch(List<PairInfo> pairList)
+        {
+            List<GCHandle> gchandlers = null;
+            if (!InMemory)
+                gchandlers = new List<GCHandle>();
+            List<IndexItem> Result = new List<IndexItem>();
+            int pairCount = pairList.Count;
+            if)::");
+source->append(R"::( (pairCount == 0)
+                return Result;
+            IndexItem*[] IndexItemList = new IndexItem*[pairCount];
+            int[] DistanceList = new int[pairCount];
+            int[] ItemCountList = new int[pairCount];
+            int[] IteratorList = new int[pairCount]; 
+            int offset = pairList[0].pos;
+            for (int i = 0; i < pairCount; i++)
+            {
+                if (InMemory)
+                    IndexItemList[i] = ReadIndexItemListFromRAM(pairList[i].A, pairList[i].B, out ItemCountList[i]);
+                else
+                    IndexItemList[i] = ReadIndexItemListFromDisk(pairList[i].A, pairList[i].B, out ItemCountList[i], ref gchandlers);
+                DistanceList[i] = pairList[i].pos - offset;
+                offset = pairList[i].pos;
+                if (ItemCountList[i] == 0)
+                {
+                    if (InMemory)
+                        ReleaseGCHandle(gchandlers);
+                    return null;
+                }
+            }
+            #region K-)::");
+source->append(R"::(way search
+            /****************************************************************************************************
+             * Each element in the IndexItemList represents a bigram pair (e.g., ab or bc).
+             * Each IndexItem is sorted by IndexItem.CellId and IndexItem.Offset
+             * We perform k-way search starting from IndexItemList[0]
+             * For a cellId at IndexItemList[0][iterator_0],
+             * if we can successfully go through all the pairCount elements in IndexItemList,
+             * then we found a match. Otherwise, we continue by checking the next elements in IndexItemList[0].
+             *
+             * Successfully going through all the elements in IndexItemList means:
+             * The distance between the current item offset in IndexItemList[i] and
+             * the current item offset in IndexItemList[i-1] equals DistanceList[i].
+             * ***************************************************************************************************/
+      )::");
+source->append(R"::(      int iterator_0 = 0; 
+            long cellId = long.MinValue;
+            offset = 0;
+            do
+            {
+                IndexItem current_item = IndexItemList[0][iterator_0];
+                if (current_item.CellId >= cellId)
+                {
+                    offset = current_item.Offset;
+                    int i = 1;
+                    for (; i < pairCount; i++)
+                    {
+                        IndexItem item = new IndexItem();
+                        bool match = false;
+                        int j = IteratorList[i];
+                        for (; j < ItemCountList[i]; j++)
+                        {
+                            item = IndexItemList[i][j];
+                            if (item.CellId >= current_item.CellId)
+                            {
+                                break;
+                            }
+                        }
+                        if (j == ItemCountList[i]) 
+                        {
+                            if (InMemory)
+        )::");
+source->append(R"::(                        ReleaseGCHandle(gchandlers);
+                            return Result;
+                        }
+                        IteratorList[i] = j;
+                        if (item.CellId > current_item.CellId) 
+                        {
+                            cellId = item.CellId;
+                            iterator_0++; 
+                            break;
+                        }
+                        Debug.Assert(item.CellId == current_item.CellId);
+                        do
+                        {
+                            item = IndexItemList[i][j];
+                            int distance = item.Offset - offset;
+                            if (distance == DistanceList[i])
+                            {
+                                offset = item.Offset;
+                                match = true;
+                                break;
+                            }
+                            else if (distance > DistanceList[i])
+                                break;)::");
+source->append(R"::(
+                            j++;
+                        } while (j < ItemCountList[i] && IndexItemList[i][j].CellId == current_item.CellId);
+                        if (!match)
+                        {
+                            iterator_0++;
+                            break;
+                        }
+                    }
+                    if (i == pairCount)
+                    {
                         Result.Add(current_item);
                         while (iterator_0 < ItemCountList[0] && current_item.CellId == IndexItemList[0][iterator_0].CellId)
                             iterator_0++;
-  )::");
-source->append(R"::(                  }
+                    }
                 }
                 else
                     iterator_0++; 
@@ -579,7 +579,8 @@ source->append(R"::(                  }
         }
         private IndexItem* ReadIndexItemListFromDisk(int a, int b, out int count, ref List<GCHandle> gchandlers)
         {
-            long pos = bg_index[(a << 8) + b];
+           )::");
+source->append(R"::( long pos = bg_index[(a << 8) + b];
             if (pos == -1)
             {
                 count = 0;
@@ -594,8 +595,7 @@ source->append(R"::(                  }
             br_index.Read(buffer, 0, buffer.Length);
             var gchandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
             gchandlers.Add(gchandle);
-            return)::");
-source->append(R"::( (IndexItem*)gchandle.AddrOfPinnedObject().ToPointer();
+            return (IndexItem*)gchandle.AddrOfPinnedObject().ToPointer();
         }
         private IndexItem* ReadIndexItemListFromRAM(int a, int b, out int count)
         {
@@ -608,7 +608,8 @@ source->append(R"::( (IndexItem*)gchandle.AddrOfPinnedObject().ToPointer();
             count = *(int*)(IndexBufferPointer + pos);
             if (count == 0)
                 return null;
-            return (IndexItem*)(IndexBufferPointer + pos + sizeof(int));
+      )::");
+source->append(R"::(      return (IndexItem*)(IndexBufferPointer + pos + sizeof(int));
         }
     }
 }

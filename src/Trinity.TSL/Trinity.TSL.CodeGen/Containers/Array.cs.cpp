@@ -19,6 +19,7 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
+    
     public unsafe class )::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::( : IEnumerable<)::");
@@ -59,10 +60,10 @@ source->append(R"::((byte* _CellPtr)
             get
             {
                 return
-                    /*)::");
+                    )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->arrayInfo.array_dimension_size)->size();++iterator_1)
 {
-source->append(R"::(*/
+source->append(R"::(
                     SizeDim)::");
 source->append(Codegen::GetString(Discard((*(node->arrayInfo.array_dimension_size))[iterator_1]) + GetString(iterator_1)));
 if (iterator_1 < (node->arrayInfo.array_dimension_size)->size() - 1)

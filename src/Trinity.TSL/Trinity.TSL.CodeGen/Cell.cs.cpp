@@ -47,11 +47,7 @@ for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
 {
 for (size_t iterator_2 = 0; iterator_2 < ((*(node->fieldList))[iterator_1]->attributes)->size();++iterator_2)
 {
-source->append(R"::(
-    /*    )::");
 field_attributes_1.insert(*(*((*(node->fieldList))[iterator_1]->attributes))[iterator_2]->key);
-source->append(R"::(*/
-    )::");
 }
 }
 source->append(R"::(
@@ -1110,9 +1106,9 @@ source->append(R"::( b)
         public long? CellID { get; internal set; }
         internal    int                     CellEntryIndex;
         internal    bool                    m_IsIterator   = false;
-        internal    CellAccessOptions       m_o)::");
-source->append(R"::(ptions      = 0;
-        private     GCHandle                handle;
+        internal    CellAccessOptions       m_options      = 0;
+  )::");
+source->append(R"::(      private     GCHandle                handle;
         private     const CellAccessOptions c_WALFlags     = CellAccessOptions.StrongLogAhead | CellAccessOptions.WeakLogAhead;
         #endregion
         #region Internal
@@ -1132,8 +1128,8 @@ source->append(R"::(ptions      = 0;
                         {
                             Throw.cell_not_found(cellId);
                         }
-                        else if)::");
-source->append(R"::( ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
+                        else if ((options & CellAccessOptions.CreateN)::");
+source->append(R"::(ewOnCellNotFound) != 0)
                         {
                             byte[]  defaultContent    = construct(cellId);
                             int     size              = defaultContent.Length;
@@ -1799,8 +1795,6 @@ int iter_val_4 = 0;
 for(const std::string& attr : field_attributes_1){
 source->append(R"::(
                     case )::");
-source->append(Codegen::GetString(iter_val_4++));
-source->append(R"::( )::");
 source->append(Codegen::GetString(iter_val_4++));
 source->append(R"::(:
                         )::");

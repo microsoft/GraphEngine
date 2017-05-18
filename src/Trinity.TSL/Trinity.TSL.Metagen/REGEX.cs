@@ -35,7 +35,7 @@ namespace Trinity.TSL.Metagen
         #region Helper functions
         static string         parameter_seq  = @"(?:[^""]|""(?:[^""\\]|\\.)*?"")";
         static REGEX_CAT_FUNC or             = (strs) => string.Join("|", strs);
-        static REGEX_OP_FUNC  comment        = (str)  => @"\/\*\s*_*" + str + @"(?:[^\w](?:[^\/\*]|\/[^\*])*?)?\s*\*\/";
+        static REGEX_OP_FUNC  comment        = (str)  => @"\/\*\s*_*" + str + @"(?:[^\w](?:[^\/\*]|\/[^\*]|\*)*?)?\s*\*\/";
         static REGEX_OP_FUNC  square_bracket = (str)  => @"\[_*" + str + @"(?:[^\w\]]"+ parameter_seq + @"*?)?\]";
         static REGEX_OP_FUNC  func_call      = (str)  => @"_*" + str + @"\s*\(" + parameter_seq + @"*?\)[;]?";
         static REGEX_OP_FUNC  common_form    = (str)  => or(comment(str), square_bracket(str), func_call(str));

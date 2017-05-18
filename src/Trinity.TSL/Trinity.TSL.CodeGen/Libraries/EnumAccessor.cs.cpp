@@ -27,6 +27,7 @@ source->append(R"::(
     /// <summary>
     /// Represents a 256-bit enum type.
     /// </summary>
+    
     public unsafe class EnumAccessor
     {
         internal byte* CellPtr;
@@ -61,8 +62,8 @@ source->append(R"::(
         /// <summary>
         /// Converts a EnumAccessor accessor to a byte value.
         /// </summary>
-        /// <p)::");
-source->append(R"::(aram name="accessor">A EnumAccessor accessor.</param>
+        /// <param name="accessor">A EnumAc)::");
+source->append(R"::(cessor accessor.</param>
         /// <returns>A byte.</returns>
         public static implicit operator byte(EnumAccessor accessor)
         {
@@ -84,9 +85,9 @@ source->append(R"::(aram name="accessor">A EnumAccessor accessor.</param>
         /// </summary>
         /// <param name="a">A EnumAccessor instance.</param>
         /// <param name="b">Another EnumAccessor instance.</param>
-        /// <returns>true if the two given EnumAccessor instances have )::");
-source->append(R"::(the same value; otherwise, false.</returns>
-        public static bool operator ==(EnumAccessor a, EnumAccessor b)
+        /// <returns>true if the two given EnumAccessor instances have the same value; otherwise, false.</returns>
+     )::");
+source->append(R"::(   public static bool operator ==(EnumAccessor a, EnumAccessor b)
         {
             if (ReferenceEquals(a, b))
               return true;
@@ -107,8 +108,8 @@ source->append(R"::(the same value; otherwise, false.</returns>
         /// <summary>
         /// Returns a value indicating whether this instance is equal to a specified object.
         /// </summary>
-   )::");
-source->append(R"::(     /// <param name="obj">An object to compare with this instance or null.</param>       
+        /// <param name="obj">An object to compare with this instance or)::");
+source->append(R"::( null.</param>       
         /// <returns>true if obj is an instance of EnumAccessor and equals the value of this instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {

@@ -43,6 +43,7 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
+    
     /// <summary>
     /// Provides indexing capabilities on <see cref="Trinity.Storage.LocalMemoryStorage"/>.
     /// The target field to query on is specified with <paramref name="query"/>, <seealso cref=")::");
@@ -362,9 +363,9 @@ source->append(R"::(
         /// <c>S=..q1....q2..q3{and so on}...qn...</c> is a match.
         /// </item>
         /// <item>
-        /// <c>S=.....q1q2..q4{and there are missing substrings in the sequence}...qn...</c> is not m)::");
-source->append(R"::(atch.
-        /// </item>
+        /// <c>S=.....q1q2..q4{and there are missing substrings in the sequence}...qn...</c> is not match.
+        //)::");
+source->append(R"::(/ </item>
         /// <item>
         /// <c>S=..q5..q3.q1{all the substrings in the sequence are present, but never in the corresponding order}...qn...</c> is not match.
         /// </item>
@@ -418,9 +419,9 @@ source->append(R"::(
         /// <c>S=..q1....q2..q3{and so on}...qn...</c> is a match.
         /// </item>
         /// <item>
-        /// <c>S=.....q1q2..q4{and there are missing substrings in the sequence}...qn...</c> is not m)::");
-source->append(R"::(atch.
-        /// </item>
+        /// <c>S=.....q1q2..q4{and there are missing substrings in the sequence}...qn...</c> is not match.
+        //)::");
+source->append(R"::(/ </item>
         /// <item>
         /// <c>S=..q5..q3.q1{all the substrings in the sequence are present, but never in the corresponding order}...qn...</c> is not match.
         /// </item>
@@ -548,6 +549,7 @@ if ((*(TSLIndexTargetVector))[iterator_1]->target_field->fieldType->is_string())
 {
 source->append(R"::(
                                 {
+                                    
                                     new_index.AddItem(accessor.)::");
 source->append(Codegen::GetString((*(TSLIndexTargetVector))[iterator_1]->target));
 source->append(R"::(, accessor.CellID.Value);
@@ -578,6 +580,7 @@ field_name_2 = std::string("element_") + GetString(iterator_2); ++final_element_
 }
 source->append(R"::(
                                     {
+                                        
                                         new_index.AddItem((string))::");
 source->append(Codegen::GetString(std::string("element_") + GetString(final_element_1)));
 source->append(R"::(, accessor.CellID.Value);
@@ -791,8 +794,7 @@ source->append(R"::(.Index.Target_Cell_Name.Target_Field_Name.
     /// <summary>
     /// Provides interfaces to be translated to index queires in Linq expressions.
     /// </summary>
-    public static class SubstringQ)::");
-source->append(R"::(ueryExtension
+    public static class SubstringQueryExtension
     {
         )::");
 if (contains_substring_index)
@@ -823,9 +825,9 @@ source->append(R"::(
         }
         public static bool Contains(this StringAccessor @string, IEnumerable<string> substrings)
         {
-            if (substrings == null || substrings.)::");
-source->append(R"::(Count() == 0)
-                return true;
+            if (substrings == null || substrings.Count() == 0)
+          )::");
+source->append(R"::(      return true;
             if (@string == (object)null)
                 throw new ArgumentNullException("string");
             return Contains((string)@string, substrings);

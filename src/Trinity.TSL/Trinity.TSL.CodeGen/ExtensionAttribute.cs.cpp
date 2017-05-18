@@ -24,6 +24,7 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
+    
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
     public class ImportGraphEngineExtensionAttribute : Attribute
     {

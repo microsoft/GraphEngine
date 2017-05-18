@@ -25,6 +25,7 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(.Linq
 {
+    
     internal class RewrittableWhereCaluseVisitor<T> : ExpressionVisitor
     {
         private  List<MethodCallExpression> m_where_clauses         = new List<MethodCallExpression>();
@@ -41,9 +42,9 @@ source->append(R"::(.Linq
         /// Visits the expression and get a list of rewrittable where clauses.
         /// We say a clause is rewrittable, if there's no select clause before
         /// it in the call chain.
-        /// !It is then the inner most where clauses that get packed into this )::");
-source->append(R"::(list.
-        /// </summary>
+        /// !It is then the inner most where clauses that get packed into this list.
+     )::");
+source->append(R"::(   /// </summary>
         internal List<LambdaExpression> RewrittableWhereClauses
         {
             get
@@ -66,10 +67,10 @@ source->append(R"::(list.
                      */
                     if (((LambdaExpression)((UnaryExpression)(node.Arguments[1])).Operand).Body.Type == m_type)
                         throw new Exception("Cannot select into accessors.");
-                    m_where_clause)::");
-source->append(R"::(s.Clear();
+                    m_where_clauses.Clear();
                 }
-                return base.VisitMethodCall(node);
+     )::");
+source->append(R"::(           return base.VisitMethodCall(node);
             }
             else
             {
@@ -96,9 +97,9 @@ source->append(R"::(s.Clear();
         {
             m_inject_enumerator = true;
             m_queryable         = queryable;
-            m_constant_type )::");
-source->append(R"::(    = constantInjectionTargetType;
-            return Visit(expression);
+            m_constant_type     = constantInjectionTargetType;
+            return Visit()::");
+source->append(R"::(expression);
         }
     }
     internal class PredicateSubjectRewritter<T> : ExpressionVisitor
@@ -125,9 +126,9 @@ source->append(R"::(    = constantInjectionTargetType;
         }
     }
     internal class IndexQueryTreeGenerator<T> : ExpressionVisitor
-    )::");
-source->append(R"::({
-        private  static Type                        s_type                  = typeof(T);
+    {
+        private  static Type                        s_type                  = type)::");
+source->append(R"::(of(T);
         private  static Type                        s_bool_type             = typeof(Boolean);
         private  static Type                        s_string_type           = typeof(string);
         private         IndexQueryTreeNode          m_current_node          = null;
@@ -147,10 +148,10 @@ source->append(R"::({
             m_index_access_table = index_table;
             m_is_cell            = is_cell;
         }
-        IndexQuer)::");
-source->append(R"::(yTreeNode VisitChild(Expression child)
+        IndexQueryTreeNode VisitChild(Expression child)
         {
-            IndexQueryTreeNode original_node = m_current_node;
+            IndexQueryTreeNode original_node = m_curr)::");
+source->append(R"::(ent_node;
             Visit(child);
             if (m_current_node != original_node)
             {
@@ -174,11 +175,11 @@ source->append(R"::(yTreeNode VisitChild(Expression child)
         }
         void BinaryBuildTree(IndexQueryTreeNode.NodeType type, BinaryExpression node)
         {
-            IndexQueryTreeNode query_node    = new IndexQueryTreeNode { type = type, children = new List<IndexQueryTreeNode>()::");
-source->append(R"::() };
+            IndexQueryTreeNode query_node    = new IndexQueryTreeNode { type = type, children = new List<IndexQueryTreeNode>() };
             VisitChildren(query_node.children, node.Left, node.Right);
             if (query_node.children.Count != 0)
-                m_current_node = query_node;
+)::");
+source->append(R"::(                m_current_node = query_node;
         }
         void UnaryBuildTree(IndexQueryTreeNode.NodeType type, UnaryExpression node)
         {
@@ -196,11 +197,11 @@ source->append(R"::() };
                 case ExpressionType.Parameter:
                     /* In our query predicate, accessor is the parameter */
                     return true;
-                case ExpressionTyp)::");
-source->append(R"::(e.Call:
+                case ExpressionType.Call:
                     {
                         var call_exp = exp as MethodCallExpression;
-                        if (_is_accessor_exp(call_exp.Object))
+                        if (_is_accessor_ex)::");
+source->append(R"::(p(call_exp.Object))
                             return true;
                         foreach (var argument in call_exp.Arguments)
                             if (_is_accessor_exp(argument))
@@ -222,14 +223,14 @@ source->append(R"::(e.Call:
                 return func();
             }
             else if (exp.NodeType == ExpressionType.Constant)
-           )::");
-source->append(R"::( {
+            {
                 return (bool)(exp as ConstantExpression).Value;
             }
             else
                 return null;
         }
-        private void _equality_build_tree(BinaryExpression node, bool is_equal)
+        private void _equal)::");
+source->append(R"::(ity_build_tree(BinaryExpression node, bool is_equal)
         {
             if (node.Left.Type != s_bool_type || node.Right.Type != s_bool_type)
                 return;
@@ -246,12 +247,12 @@ source->append(R"::( {
                 constant = rconstant;
             else
                 exp.Add(node.Right);
-            if (lconstant.HasValue &&)::");
-source->append(R"::( rconstant.HasValue)
+            if (lconstant.HasValue && rconstant.HasValue)
             {
                 m_current_node = new IndexQueryTreeNode(
                     _equal_helper(lconstant.Value, rconstant.Value)?
-                        IndexQueryTreeNode.NodeType.UNIVERSE:IndexQueryTreeNode.NodeType.EMPTY);
+                      )::");
+source->append(R"::(  IndexQueryTreeNode.NodeType.UNIVERSE:IndexQueryTreeNode.NodeType.EMPTY);
                 return;
             }
             IndexQueryTreeNode query_node;
@@ -271,10 +272,10 @@ source->append(R"::( rconstant.HasValue)
                     { /* keep m_current_node as is */ }
                     else
                     {
-                     )::");
-source->append(R"::(   query_node = new IndexQueryTreeNode(IndexQueryTreeNode.NodeType.NOT) { children = new List<IndexQueryTreeNode> { child_node } };
+                        query_node = new IndexQueryTreeNode(IndexQueryTreeNode.NodeType.NOT) { children = new List<IndexQueryTreeNode> { child_node } };
                         m_current_node = query_node;
-                    }
+                    )::");
+source->append(R"::(}
                 }
             }
             else
@@ -292,15 +293,15 @@ source->append(R"::(   query_node = new IndexQueryTreeNode(IndexQueryTreeNode.No
                         /* we have query actions on both sides */
                         m_current_node = query_node;
                         break;
-                    def)::");
-source->append(R"::(ault:
+                    default:
                         throw new Exception("Internal error T5010");
                 }
             }
         }
         private void NotEqualBuildTree(BinaryExpression node)
         {
-            _equality_build_tree(node, is_equal: false);
+            _equality_build_tree()::");
+source->append(R"::(node, is_equal: false);
         }
         private void EqualBuildTree(BinaryExpression node)
         {
@@ -320,8 +321,7 @@ source->append(R"::(ault:
                 case ExpressionType.Equal:
                     EqualBuildTree(node);
                     break;
-        )::");
-source->append(R"::(        case ExpressionType.NotEqual:
+                case ExpressionType.NotEqual:
                     NotEqualBuildTree(node);
                     break;
             }
@@ -329,7 +329,8 @@ source->append(R"::(        case ExpressionType.NotEqual:
         }
         protected override Expression VisitUnary(UnaryExpression node)
         {
-            switch (node.NodeType)
+      )::");
+source->append(R"::(      switch (node.NodeType)
             {
                 case ExpressionType.Not:
                     UnaryBuildTree(IndexQueryTreeNode.NodeType.NOT, node);
@@ -348,13 +349,13 @@ source->append(R"::(        case ExpressionType.NotEqual:
                 goto method_call_cleanup;
             var     member_string       = _get_member_string(call_object);
             string  index_access_method;
-            if (m)::");
-source->append(R"::(_index_access_table.TryGetValue(member_string, out index_access_method) &&
+            if (m_index_access_table.TryGetValue(member_string, out index_access_method) &&
                 index_access_method == node.Method.Name)
             {
                 if (node.Arguments.Count != 1)
                     goto method_call_cleanup;
-                var    arg             = node.Arguments[0];
+                var    arg )::");
+source->append(R"::(            = node.Arguments[0];
                 string query_string    = null;
                 if (arg.NodeType == ExpressionType.Constant)
                     query_string = (string)(arg as ConstantExpression).Value;
@@ -369,12 +370,12 @@ source->append(R"::(_index_access_table.TryGetValue(member_string, out index_acc
                 if (query_string == null)
                     goto method_call_cleanup;
                 /* 
-            )::");
-source->append(R"::(     * @note    Gotcha. It's an index query method call!  
+                 * @note    Gotcha. It's an index query method call!  
                  */
                 m_current_node             = new IndexQueryTreeNode(IndexQueryTreeNode.NodeType.QUERY);
                 m_current_node.queryTarget = member_string;
-                m_current_node.queryString = query_string;
+                m_current_node.queryStr)::");
+source->append(R"::(ing = query_string;
             }
             /*
              * @note    We don't have to go deeper into the rabbit hole,
@@ -394,8 +395,7 @@ source->append(R"::(     * @note    Gotcha. It's an index query method call!
             var str = exp.ToString();
             if (str.StartsWith("accessor.", StringComparison.Ordinal))
             {
-                str = m_cell_n)::");
-source->append(R"::(ame + str.Substring("accessor".Length);
+                str = m_cell_name + str.Substring("accessor".Length);
                 return str;
             }
             else
