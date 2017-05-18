@@ -273,7 +273,14 @@ source->append(R"::(> action)
         {
             byte* targetPtr = CellPtr;
             byte* endPtr = CellPtr + length;
+            )::");
+if (element_need_accessor_1)
+{
+source->append(R"::(
             elementAccessor.CellID = this.CellID;
+            )::");
+}
+source->append(R"::(
             while (targetPtr < endPtr)
             {
                 )::");
