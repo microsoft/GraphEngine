@@ -1231,7 +1231,7 @@ namespace t_Namespace
                 {
                     /*META_VAR("int", "iter_val", "0")*/
                     /*META("for(const std::string& attr : %field_attributes){")*/
-                    case t_int_2 /*META_OUTPUT(%iter_val++)*/:
+                    case t_int_2:
                         FOREACH();
                         {
                             USE_LIST("t_field");
