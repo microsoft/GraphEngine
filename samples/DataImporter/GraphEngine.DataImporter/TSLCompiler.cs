@@ -47,32 +47,32 @@ namespace GraphEngine.DataImporter
             }
             else if (frameWork.StartsWith(".NETCoreApp"))
             {
-                string importerClrProjectPath = Path.Combine(exePath, @"..\..\..\GraphEngine.DataImporter.Clr.csproj");
-                string tslClrProjectPath = Path.Combine(exePath, "TSLCompiler.Clr.csproj");
+                string importerClrProjectPath = Path.Combine(exePath, @"../../../GraphEngine.DataImporter.Clr.csproj");
+                string tslClrProjectPath = Path.Combine(exePath, "TSLcompiler.Clr.csproj");
 
                 UpdateProjectVersion(importerClrProjectPath, tslClrProjectPath, @"<TargetFramework>(.*?\..*?)+</TargetFramework>");
                 UpdateNugetVersionClr(importerClrProjectPath, tslClrProjectPath, "GraphEngine.CoreCLR");
                 UpdateNugetVersionClr(importerClrProjectPath, tslClrProjectPath, "Newtonsoft.Json");
 
-                if (File.Exists(exePath + @"\bin\Release\netcoreapp" + frameVersion + @"\TSLAssembly.CoreCLR.dll"))
+                if (File.Exists(exePath + @"/bin/Release/netcoreapp" + frameVersion + @"/TSLAssembly.CoreCLR.dll"))
                 {
-                    File.Delete(exePath + @"\bin\Release\netcoreapp" + frameVersion + @"\TSLAssembly.CoreCLR.dll");
+                    File.Delete(exePath + @"/bin/Release/netcoreapp" + frameVersion + @"/TSLAssembly.CoreCLR.dll");
                 }
 
                 Process restoreProcess = new Process();
                 // Need to add the path of dotnet.exe to PATH environment variable first.
-                restoreProcess.StartInfo = new ProcessStartInfo("dotnet.exe", " restore " + Path.Combine(exePath, "TSLcompiler.Clr.csproj"));
+                restoreProcess.StartInfo = new ProcessStartInfo("dotnet", " restore " + Path.Combine(exePath, "TSLcompiler.Clr.csproj"));
                 restoreProcess.Start();
                 restoreProcess.WaitForExit();
 
                 Process buildProcess = new Process();
-                buildProcess.StartInfo = new ProcessStartInfo("dotnet.exe", @" build " + Path.Combine(exePath, "TSLcompiler.Clr.csproj") + @" -c Release /p:TSLPath=" + tslFilePath);
+                buildProcess.StartInfo = new ProcessStartInfo("dotnet", @" build " + Path.Combine(exePath, "TSLcompiler.Clr.csproj") + @" -c Release /p:TSLPath=" + tslFilePath);
                 buildProcess.Start();
                 buildProcess.WaitForExit();
 
-                if (File.Exists(exePath + @"\bin\Release\netcoreapp" + frameVersion + @"\TSLAssembly.CoreCLR.dll"))
+                if (File.Exists(exePath + @"/bin/Release/netcoreapp" + frameVersion + @"/TSLAssembly.CoreCLR.dll"))
                 {
-                    return exePath + @"\bin\Release\netcoreapp" + frameVersion + @"\TSLAssembly.CoreCLR.dll";
+                    return exePath + @"/bin/Release/netcoreapp" + frameVersion + @"/TSLAssembly.CoreCLR.dll";
                 }
                 else
                 {
