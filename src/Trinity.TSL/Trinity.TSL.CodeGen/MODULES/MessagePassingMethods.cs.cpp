@@ -22,6 +22,8 @@ std::string comm_id_1;
 std::string send_message_method_1;
 for (size_t iterator_1 = 0; iterator_1 < (node->protocolList)->size();++iterator_1)
 {
+if (!(*(node->protocolList))[iterator_1]->referencedNProtocol->is_http_protocol())
+{
 source->append(R"::(
         #region prototype definition template variables
         )::");
@@ -240,6 +242,7 @@ source->append(R"::(Reader(response.Buffer, response.Offset);
             finally { }
         }
         )::");
+}
 }
 }
 

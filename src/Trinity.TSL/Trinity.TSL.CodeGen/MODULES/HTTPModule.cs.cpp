@@ -97,7 +97,9 @@ if ((*(node->protocolList))[iterator_1]->referencedNProtocol->pt_request == PT_S
 {
 source->append(R"::(
                         string          json_string;
-                        t_struct_name   request_struct;
+                        )::");
+source->append(Codegen::GetString(Codegen::GetString(tsl->find_struct_or_cell((*(node->protocolList))[iterator_1]->referencedNProtocol->request_message_struct)->name)));
+source->append(R"::(   request_struct;
                         if (method == "GET")
                         {
                             if (querystring_idx == -1)
@@ -115,17 +117,19 @@ source->append(R"::(
                             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                             return;
                         }
-                        if (!t_struct_name.TryParse(json_string, out request_struct))
+                        if (!)::");
+source->append(Codegen::GetString(Codegen::GetString(tsl->find_struct_or_cell((*(node->protocolList))[iterator_1]->referencedNProtocol->request_message_struct)->name)));
+source->append(R"::(.TryParse(json_string, out request_struct))
                         {
-            )::");
-source->append(R"::(                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                             return;
                         }
                         )::");
 }
 if ((*(node->protocolList))[iterator_1]->referencedNProtocol->pt_response == PT_STRUCT_RESPONSE)
 {
-source->append(R"::(t_struct_name   response_struct ;
+source->append(Codegen::GetString(Codegen::GetString(tsl->find_struct_or_cell((*(node->protocolList))[iterator_1]->referencedNProtocol->response_message_struct)->name)));
+source->append(R"::(   response_struct ;
                         )::");
 }
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
