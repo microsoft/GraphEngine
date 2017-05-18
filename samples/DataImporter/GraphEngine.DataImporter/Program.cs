@@ -38,6 +38,10 @@ namespace GraphEngine.DataImporter
                     {
                         Importer.Import(opts.TSLAssembly, files, opts);
                     }
+                    else
+                    {
+                        Log.WriteLine("TSL File Compile Error."); 
+                    }
                 }
                 else if (opts.TSLAssembly != null)
                 {

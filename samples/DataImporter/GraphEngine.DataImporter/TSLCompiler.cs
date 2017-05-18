@@ -31,18 +31,19 @@ namespace GraphEngine.DataImporter
                 process.Start();
                 process.WaitForExit();
 
-                if (File.Exists(Path.Combine(exePath, "errors.log")))
+                string errorMessage = File.ReadAllText(Path.Combine(exePath, "errors.log"));
+                if (errorMessage=="")
                 {
-                    string errorMessage = File.ReadAllText(Path.Combine(exePath, "errors.log"));
-                    Console.WriteLine("TSL File Compile Error:"); 
+                    File.Delete(Path.Combine(exePath, "errors.log"));
+                    return exePath + @"\bin\Release\TSLAssembly.dll";
+                }
+                else
+                {
                     ColoredConsoleWrite(ConsoleColor.Red, errorMessage);
                     File.Delete(Path.Combine(exePath, "errors.log"));
                     return null;
                 }
-                else
-                {
-                    return exePath + @"\bin\Release\TSLAssembly.dll";
-                }
+
             }
             else if (frameWork.StartsWith(".NETCoreApp"))
             {
@@ -52,6 +53,11 @@ namespace GraphEngine.DataImporter
                 UpdateProjectVersion(importerClrProjectPath, tslClrProjectPath, @"<TargetFramework>(.*?\..*?)+</TargetFramework>");
                 UpdateNugetVersionClr(importerClrProjectPath, tslClrProjectPath, "GraphEngine.CoreCLR");
                 UpdateNugetVersionClr(importerClrProjectPath, tslClrProjectPath, "Newtonsoft.Json");
+
+                if (File.Exists(exePath + @"\bin\Release\netcoreapp" + frameVersion + @"\TSLAssembly.CoreCLR.dll"))
+                {
+                    File.Delete(exePath + @"\bin\Release\netcoreapp" + frameVersion + @"\TSLAssembly.CoreCLR.dll");
+                }
 
                 Process restoreProcess = new Process();
                 // Need to add the path of dotnet.exe to PATH environment variable first.
@@ -72,11 +78,13 @@ namespace GraphEngine.DataImporter
                 {
                     return null;
                 }
+
             }
             else
             {
                 return null;
             }
+
         }
 
         private void UpdateProjectVersion(string importerProjectPath, string tslProjectPath, string pattern)
