@@ -564,6 +564,7 @@ size_t NFieldType::type_size()
             return 1;
         case T_SHORTTYPE:
         case T_USHORTTYPE:
+		case T_CHARTYPE:
             return 2;
         case T_INTTYPE:
         case T_UINTTYPE:
