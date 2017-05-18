@@ -71,18 +71,16 @@ source->append(R"::( with the specified parameters.
         ///</summary>
         public )::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::((long cell_id, )::");
+source->append(R"::((long cell_id )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
 {
-source->append(R"::( )::");
+source->append(R"::(, )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
 source->append(R"::( )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::( = default()::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
 source->append(R"::())::");
-if (iterator_1 < (node->fieldList)->size() - 1)
-source->append(",");
 }
 source->append(R"::()
         {
@@ -1002,10 +1000,13 @@ source->append(R"::(
             {
                 return new )::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::((accessor.CellID.Value,
+source->append(R"::((accessor.CellID.Value
                 )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
 {
+source->append(R"::(
+                ,
+                )::");
 if ((*(node->fieldList))[iterator_1]->is_optional())
 {
 source->append(R"::(
@@ -1019,8 +1020,6 @@ source->append(R"::(
                         accessor.)::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 }
-if (iterator_1 < (node->fieldList)->size() - 1)
-source->append(",");
 }
 source->append(R"::(
                 );
