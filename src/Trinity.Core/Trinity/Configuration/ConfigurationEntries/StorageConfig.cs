@@ -65,7 +65,7 @@ namespace Trinity.Configuration
 
         #region Properties
         /// <summary>
-        /// Gets and sets value to specify the number of memory trunks in the local memory storage.
+        /// Represents a value to specify the number of memory trunks in the local memory storage.
         /// </summary>
         [ConfigSetting(Optional: true)]
         public int TrunkCount
@@ -82,7 +82,8 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Gets and sets value to specify whether the local memory storatge is read-only.
+        /// Represents a value to specify whether the local memory storatge is read-only.
+        /// if the value is true read-only mode is on and any changes in a cell is forbidden
         /// </summary>
         [ConfigSetting(Optional: true)]
         public bool ReadOnly
@@ -99,7 +100,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Gets and sets value to specify the local memory storage capacity profile.
+        /// Represents a value to specify the local memory storage capacity profile.
         /// </summary>
         [ConfigSetting(Optional: true)]
         public StorageCapacityProfile StorageCapacity
@@ -115,7 +116,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Gets and sets the path for saving persistent storage disk images.Defaults to AssemblyPath\storage.
+        /// Represents the path for saving persistent storage disk images.Defaults to AssemblyPath\storage.
         /// </summary>
         [ConfigSetting(Optional: true)]
         public unsafe string StorageRoot
@@ -195,7 +196,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Default = 10 M
+        /// Represents a value to specify the Large Object Threshold, Default = 10 M
         /// </summary>
         internal int LargeObjectThreshold
         {
@@ -217,7 +218,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Defragmentation frequency, Default Value = 600
+        /// Represents a value to specify the Defragmentation frequency, Default Value = 600
         /// </summary>
         [ConfigSetting(Optional: true)]
         public int DefragInterval
