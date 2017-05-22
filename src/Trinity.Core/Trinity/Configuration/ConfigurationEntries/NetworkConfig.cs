@@ -35,34 +35,34 @@ namespace Trinity.Configuration
 
         #region Properties
         /// <summary>
-        /// Gets and sets the HttpPort value, if the server/proxy has Http endpoints, 
+        /// Represents the HttpPort value, if the server/proxy has Http endpoints, 
         /// it will listen on the specified port for Http requests after it is started.
         /// </summary>
         [ConfigSetting(Optional: true)]
         public int HttpPort { get; set; }
 
         /// <summary>
-        /// Gets and sets value to specify how many client connections are established 
+        /// Represents value to specify how many client connections are established 
         /// between a client and a communication instance.
         /// </summary>
         [ConfigSetting(Optional: true)]
         public int ClientMaxConn { get; set; }
 
         /// <summary>
-        /// Gets and sets value to specify how many retries will be attempted when a message cannot be sent.
+        /// Represents value to specify how many retries will be attempted when a message cannot be sent.
         /// </summary>
         [ConfigSetting(Optional: true)]
         public int ClientSendRetry { get; set; }
 
         /// <summary>
-        /// Gets and sets value to specify how many reconnect attempts are made
+        /// Represents value to specify how many reconnect attempts are made
         /// when a message is being sent and the connection is down.
         /// </summary>
         [ConfigSetting(Optional: true)]
         public int ClientReconnectRetry { get; set; }
 
         /// <summary>
-        /// Gets and Sets value to specify whether a Trinity server/proxy/client preforms
+        /// Represents value to specify whether a Trinity server/proxy/client preforms
         /// handshaking for a connection
         /// </summary>
         [ConfigSetting(Optional: true)]
