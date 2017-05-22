@@ -49,7 +49,7 @@ namespace Trinity.Configuration
         #endregion
 
         /// <summary>
-        /// Gets and sets the logging level threshold
+        /// Represents the logging level threshold
         /// </summary>
         [ConfigSetting(Optional:true)]
         public LogLevel LoggingLevel
@@ -59,7 +59,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Gets and sets the path to store log files. defaults to AssemblyPath\trinity-log\.
+        /// Represents the path to store log files. defaults to AssemblyPath\trinity-log\.
         /// </summary>
         [ConfigSetting(Optional:true)]
         public string LogDirectory
@@ -125,7 +125,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Gets and sets a value indicating whether the logged messages are echoed to the Console.
+        /// Represents a value indicating whether the logged messages are echoed to the Console.
         /// </summary>
         [ConfigSetting(Optional: true)]
         public bool LogEchoOnConsole
@@ -135,7 +135,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Gets and sets value to indicate whether to stream log entries to a file on disk.
+        /// Represents a value indicating whether to stream log entries to a file on disk.
         /// </summary>
         [ConfigSetting(Optional:true)]
         public bool LogToFile
