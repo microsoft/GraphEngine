@@ -56,14 +56,13 @@ namespace Trinity.Configuration
 
         /// <summary>
         /// Represents value to specify how many reconnect attempts are made
-        /// when a message is being sent and the connection is down.
         /// </summary>
         [ConfigSetting(Optional: true)]
         public int ClientReconnectRetry { get; set; }
 
         /// <summary>
         /// Represents value to specify whether a Trinity server/proxy/client preforms
-        /// handshaking for a connection
+        /// handshaking for a connection, if the value is true, it will preforms handshaking for a connection.
         /// </summary>
         [ConfigSetting(Optional: true)]
         public bool Handshake { get { return CTrinityConfig.CHandshake(); } set { CTrinityConfig.CSetHandshake(value); } }
