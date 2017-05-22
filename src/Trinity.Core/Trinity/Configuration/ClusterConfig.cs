@@ -377,7 +377,7 @@ namespace Trinity
         }
 
         /// <summary>
-        ///  Display the current configuration information to the console.
+        /// Return the current configuration information.
         /// </summary>
         /// <returns></returns>
         internal string OutputCurrentConfig()
