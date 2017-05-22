@@ -249,7 +249,7 @@ namespace Trinity
         }
 
         /// <summary>
-        /// Gets the id of current server in a cluster according to the type of current server.
+        /// Gets the id of current host in a cluster according to running mode of the host.
         /// </summary>
         public int MyInstanceId
         {
@@ -317,7 +317,7 @@ namespace Trinity
         #endregion
 
         /// <summary>
-        /// Gets the information of the current server.
+        /// Gets the ServerInfo object of current server and it represents the specific information on the current server.
         /// </summary>
         /// <returns></returns>
         internal ServerInfo GetMyServerInfo()
@@ -348,7 +348,7 @@ namespace Trinity
         }
 
         /// <summary>
-        /// Gets the information of the current proxy.
+        /// Gets the ServerInfo object of current server and it represents the specific information on the current proxy.
         /// </summary>
         /// <returns></returns>
         internal ServerInfo GetMyProxyInfo()
@@ -377,7 +377,7 @@ namespace Trinity
         }
 
         /// <summary>
-        /// Stream the configuration information to the standard output.
+        ///  Display the current configuration information to the console.
         /// </summary>
         /// <returns></returns>
         internal string OutputCurrentConfig()
