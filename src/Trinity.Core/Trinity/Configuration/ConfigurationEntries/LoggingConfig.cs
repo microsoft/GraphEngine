@@ -126,6 +126,7 @@ namespace Trinity.Configuration
 
         /// <summary>
         /// Represents a value indicating whether the logged messages are echoed to the Console.
+        /// if the value is true, it will be eachoed to the Console.
         /// </summary>
         [ConfigSetting(Optional: true)]
         public bool LogEchoOnConsole
@@ -135,7 +136,8 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Represents a value indicating whether to stream log entries to a file on disk.
+        /// Represents a value indicating whether to store log entries to a file on disk.
+        /// if the value is true, it will be stored to disk. 
         /// </summary>
         [ConfigSetting(Optional:true)]
         public bool LogToFile
