@@ -39,7 +39,7 @@ namespace Trinity
         #endregion
 
         /// <summary>
-        /// Set all the value of the configuration entry
+        /// Applies the configuration settings from the given dictionary of setting entries, into the configuration object.
         /// </summary>
         /// <param name="entries"></param>
         internal static void ApplyConfigurationSettings(Dictionary<string, ConfigurationEntry> entries)
@@ -65,7 +65,7 @@ namespace Trinity
         }
 
         /// <summary>
-        /// Gets all the configuration instance
+        /// Gets all the configuration instances
         /// </summary>
         /// <returns></returns>
         internal static IEnumerable<ConfigurationInstance> GetConfigurationInstances()
@@ -328,7 +328,7 @@ namespace Trinity
             return attribute;
         }
         /// <summary>
-        /// Show the main infomation of current configuration
+        /// Return the main infomation of current configuration
         /// </summary>
         /// <returns></returns>
         internal static string OutputCurrentConfig()
