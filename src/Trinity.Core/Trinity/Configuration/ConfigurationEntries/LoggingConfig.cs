@@ -141,7 +141,7 @@ namespace Trinity.Configuration
         public bool LogToFile
         {
             get { return m_LogToFile; }
-            set { m_LogToFile = value;}//TODO:
+            set { m_LogToFile = value;}
         }
     }
 }
