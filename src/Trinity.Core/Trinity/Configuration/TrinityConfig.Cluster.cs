@@ -15,7 +15,7 @@ using Trinity.Network;
 namespace Trinity
 {
     /// <summary>
-    /// Enumerate all the types of trinity server
+    /// Represents all the types of trinity server
     /// </summary>
     internal enum TrinityServerType : int
     {
