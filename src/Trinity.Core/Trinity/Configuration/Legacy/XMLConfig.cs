@@ -25,7 +25,7 @@ namespace Trinity.Configuration
         #endregion
 
         /// <summary>
-        /// Constructor with the specified configuration file.
+        /// Constructs a XMLConfig object with the specified configuration file.
         /// </summary>
         /// <param name="xml_file_name"></param>
         public XMLConfig(string xml_file_name)
@@ -42,7 +42,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Stream the configuration setting to a file on the disk.
+        /// Store the configuration setting to a file on the disk.
         /// </summary>
         public void Save()
         {
@@ -50,7 +50,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Gets value of a double type with specified section name and entry name.
+        /// Gets the value of a configuration entry with specified section name and entry name.
         /// </summary>
         /// <param name="section"></param>
         /// <param name="entry"></param>
@@ -73,7 +73,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Gets value of a bool type with specified section name and entry name.
+        /// Gets the value of a configuration entry with specified section name and entry name.
         /// </summary>
         /// <param name="section"></param>
         /// <param name="entry"></param>
@@ -96,7 +96,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Gets value of a string type with specified section name and entry name.
+        /// Gets the value of a configuration entry with specified section name and entry name.
         /// </summary>
         /// <param name="section"></param>
         /// <param name="entry"></param>
@@ -109,7 +109,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Gets value of an IPAddress type with specified section name and entry name.
+        /// Gets the value of a configuration entry with specified section name and entry name.
         /// </summary>
         /// <param name="section"></param>
         /// <param name="entry"></param>
@@ -122,7 +122,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Gets value of a integer type with specified section name and entry name.
+        /// Gets the value of a configuration entry with specified section name and entry name.
         /// </summary>
         /// <param name="section"></param>
         /// <param name="entry"></param>
@@ -144,7 +144,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Gets value of a long type with specified section name and entry name.
+        /// Gets the value of a configuration entry with specified section name and entry name.
         /// </summary>
         /// <param name="section"></param>
         /// <param name="entry"></param>
@@ -167,7 +167,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Gets value of string type with specified section name and entry name.
+        /// Gets the value of a configuration entry with specified section name and entry name.
         /// </summary>
         /// <param name="section_name"></param>
         /// <param name="entry_name"></param>
@@ -191,7 +191,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Gets property value of a string type with specified parameters.
+        /// Gets the property value of a configuration entry with specified parameters.
         /// </summary>
         /// <param name="section_name"></param>
         /// <param name="entry_name"></param>
@@ -297,7 +297,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Sets value of a entry with specified section name and entry name.
+        /// Sets the value of configuration entry with specified section name and entry name.
         /// </summary>
         /// <param name="section_name"></param>
         /// <param name="entry_name"></param>
@@ -342,7 +342,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Sets entry property with specified parameters.
+        /// Sets the configuration entry property with specified parameters.
         /// </summary>
         /// <param name="section_name"></param>
         /// <param name="entry_name"></param>
@@ -390,7 +390,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Sets entry values with specified parameters.
+        /// Sets the entry values with specified parameters.
         /// </summary>
         /// <param name="section_name"></param>
         /// <param name="entry_name"></param>
