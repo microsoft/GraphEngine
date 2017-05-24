@@ -83,8 +83,14 @@ namespace Trinity.Storage
         {
             get
             {
-                return CLocalMemoryStorage.CTotalCellSize();
+                return _TotalCellSizeWrapper();
             }
+        }
+
+        [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
+        private ulong _TotalCellSizeWrapper()
+        {
+            return CLocalMemoryStorage.CTotalCellSize();
         }
     }
 }
