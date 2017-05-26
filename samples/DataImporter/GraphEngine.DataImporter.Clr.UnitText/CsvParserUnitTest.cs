@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Xunit;
 using GraphEngine.DataImporter;
 
-namespace GraphEngine.DataImporter.UnitTest
+namespace GraphEngine.DataImporter
 {
     public class CsvParserUnitTest
     {

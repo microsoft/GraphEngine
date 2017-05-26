@@ -11,10 +11,12 @@ namespace GraphEngine.DataImporter
         private char delimiter;
         private const char DefaultQuote = '"';
         private const char DefaultEscape = '"';
+        private bool trim;
 
-        public CsvParser(char delimiter)
+        public CsvParser(char delimiter, bool trim)
         {
             this.delimiter = delimiter;
+            this.trim = trim;
         }
 
         public List<string> CsvSplit(string line)
@@ -23,10 +25,10 @@ namespace GraphEngine.DataImporter
                 throw new ArgumentNullException();
 
             List<string> fields = new List<string>();
-            int beginIndex = 0;
-            int curIndex = 0;
-            int countQuoteEscape = 0;
             string processedLine = line + delimiter;
+            int beginIndex = NextCharIndex(line, 0, trim);
+            int curIndex = beginIndex;
+            int countQuoteEscape = 0;// The count of quote and escape.
 
             for (; curIndex < processedLine.Length; curIndex++)
             {
@@ -34,16 +36,14 @@ namespace GraphEngine.DataImporter
                 if (beginIndex == curIndex && c == delimiter)
                 {
                     fields.Add(null);
-                    beginIndex = curIndex + 1;
+                    beginIndex = NextCharIndex(processedLine, curIndex + 1, trim);
+                    curIndex = beginIndex - 1;
                 }
                 else if (c == delimiter && countQuoteEscape % 2 == 0)
                 {
-                    if (countQuoteEscape == 0)
-                        fields.Add(processedLine.Substring(beginIndex, curIndex - beginIndex));
-                    else
-                        fields.Add(SanitizeCsvField(processedLine.Substring(beginIndex, curIndex - beginIndex)));
-
-                    beginIndex = curIndex + 1;
+                    fields.Add(SanitizeCsvField(processedLine.Substring(beginIndex, curIndex - beginIndex), countQuoteEscape != 0, trim));
+                    beginIndex = NextCharIndex(processedLine, curIndex + 1, trim);
+                    curIndex = beginIndex - 1;
                     countQuoteEscape = 0;
                 }
                 else if (c == DefaultEscape && countQuoteEscape > 0 && processedLine[curIndex + 1] == DefaultQuote)
@@ -58,7 +58,7 @@ namespace GraphEngine.DataImporter
                     {
                         throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
                     }
-                    else if (countQuoteEscape % 2 == 0 && processedLine[curIndex + 1] != delimiter)
+                    else if (countQuoteEscape % 2 == 0 && processedLine[NextCharIndex(processedLine, curIndex + 1, trim)] != delimiter)
                     {
                         throw new ImporterException("Unexpected double-quote at position {0} of {1}", curIndex, line);
                     }
@@ -73,15 +73,35 @@ namespace GraphEngine.DataImporter
             return fields;
         }
 
-        public string SanitizeCsvField(string field, bool trim = false, bool treatEmptyAsNull = true)
+        public string SanitizeCsvField(string field, bool haveQuote, bool trim = false, bool treatEmptyAsNull = true)
         {
             string sanitized = trim ? field.Trim() : field;
+
             if (sanitized == "" && treatEmptyAsNull)
                 return null;
 
-            sanitized = sanitized.Substring(1, sanitized.Length - 2);
-            sanitized = sanitized.Replace($"{ DefaultEscape }{ DefaultQuote }", $"{ DefaultQuote }");
+            if (haveQuote)
+            {
+                sanitized = sanitized.Substring(1, sanitized.Length - 2);
+                sanitized = sanitized.Replace($"{ DefaultEscape }{ DefaultQuote }", $"{ DefaultQuote }");
+            }
             return sanitized;
+        }
+
+        public int NextCharIndex(string line, int index, bool trim)
+        {
+            if (trim)
+            {
+                if (index >= line.Length)
+                    return line.Length;
+
+                while (index < line.Length && line[index] == ' ')
+                {
+                    index++;
+                }
+            }
+
+            return index;
         }
     }
 }
