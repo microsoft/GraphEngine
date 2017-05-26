@@ -1,0 +1,4 @@
+cell struct MyCell
+{
+	int A;
+}

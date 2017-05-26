@@ -32,6 +32,7 @@ namespace Trinity
             static const char WindowsDirectorySeparator = '\\';
             static const char UnixDirectorySeparator = '/';
             static const char *DirectorySeparators = "/\\";
+            extern String g_AssemblyPath;
 
 #if defined(TRINITY_PLATFORM_WINDOWS)
             static const char DirectorySeparator = WindowsDirectorySeparator;
@@ -325,13 +326,16 @@ namespace Trinity
 
             inline String MyAssemblyPath()
             {
+                if (g_AssemblyPath != "") return g_AssemblyPath;
+
 #if defined(TRINITY_PLATFORM_WINDOWS)
                 Array<u16char> lpFilename(1024);
                 HMODULE        hmodule = GetModuleHandleW(L"Trinity.C.dll");
                 /* If Trinity.C.dll is absent, we default to the executing assembly (sending NULL into the API) */
                 GetModuleFileNameW(hmodule, lpFilename, static_cast<DWORD>(lpFilename.Length()));
                 lpFilename[lpFilename.Length() - 1] = 0;
-                return GetDirectoryName(GetFullPath(String::FromWcharArray(lpFilename, -1)));
+                g_AssemblyPath = GetDirectoryName(GetFullPath(String::FromWcharArray(lpFilename, -1)));
+                return g_AssemblyPath;
 #elif defined(TRINITY_PLATFORM_LINUX)
                 // XXX does not make sense if MyAssemblyPath always point to the mono host...
                 char* filename_buf    = new char[1024];
@@ -340,7 +344,8 @@ namespace Trinity
                 filename_buf[filename_buf_size] = 0;
                 String ret(filename_buf);
                 delete[] filename_buf;
-                return GetDirectoryName(ret);
+                g_AssemblyPath = GetDirectoryName(ret);
+                return g_AssemblyPath;
 #else
 #error Not supported
 #endif

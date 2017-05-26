@@ -78,8 +78,8 @@ source->append(R"::(
                 RootHttpHandler(context);
                 return;
             }
-            var querystring_idx =)::");
-source->append(R"::( url.IndexOf('?');
+            var querystring_idx = url.IndexOf('?'))::");
+source->append(R"::(;
             switch (handler_id)
             {
                 )::");
@@ -97,7 +97,9 @@ if ((*(node->protocolList))[iterator_1]->referencedNProtocol->pt_request == PT_S
 {
 source->append(R"::(
                         string          json_string;
-                        t_struct_name   request_struct;
+                        )::");
+source->append(Codegen::GetString(Codegen::GetString(tsl->find_struct_or_cell((*(node->protocolList))[iterator_1]->referencedNProtocol->request_message_struct)->name)));
+source->append(R"::(   request_struct;
                         if (method == "GET")
                         {
                             if (querystring_idx == -1)
@@ -115,9 +117,10 @@ source->append(R"::(
                             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                             return;
                         }
-                        if (!t_struct_name.TryParse(json_string, out request_struct))
-                 )::");
-source->append(R"::(       {
+                        if (!)::");
+source->append(Codegen::GetString(Codegen::GetString(tsl->find_struct_or_cell((*(node->protocolList))[iterator_1]->referencedNProtocol->request_message_struct)->name)));
+source->append(R"::(.TryParse(json_string, out request_struct))
+                        {
                             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                             return;
                         }
@@ -125,7 +128,8 @@ source->append(R"::(       {
 }
 if ((*(node->protocolList))[iterator_1]->referencedNProtocol->pt_response == PT_STRUCT_RESPONSE)
 {
-source->append(R"::(t_struct_name   response_struct ;
+source->append(Codegen::GetString(Codegen::GetString(tsl->find_struct_or_cell((*(node->protocolList))[iterator_1]->referencedNProtocol->response_message_struct)->name)));
+source->append(R"::(   response_struct ;
                         )::");
 }
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
@@ -150,8 +154,8 @@ source->append(R"::(
                             else if (iframe_callback != null)
                             {
                                 context.Response.ContentType = "text/html";
-                                sw.Write("<script language=\"javascript\" type)::");
-source->append(R"::(=\"text/javascript\">window.top.window.{0}(", iframe_callback);
+                                sw.Write("<script language=\"javascript\" type=\"text/javas)::");
+source->append(R"::(cript\">window.top.window.{0}(", iframe_callback);
                                 sw.Write(Serializer.ToString(response_struct));
                                 sw.Write(");</script>");
                             }

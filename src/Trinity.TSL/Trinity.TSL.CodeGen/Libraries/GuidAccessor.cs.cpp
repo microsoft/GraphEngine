@@ -29,6 +29,7 @@ source->append(R"::(
     /// <summary>
     /// Represents a Trinity type corresponding .Net Guid type.
     /// </summary>
+    
     public unsafe class GuidAccessor
     {
         internal byte* CellPtr;
@@ -70,9 +71,9 @@ source->append(R"::(.GuidAccessor"/>
         ///     Converts the string representation of a GUID to the equivalent <see cref="System.Guid"/>
         ///     structure.
         /// </summary>
-        /// <param name)::");
-source->append(R"::(="input">
-        ///     The GUID to convert.
+        /// <param name="input">
+        ///     The GU)::");
+source->append(R"::(ID to convert.
         /// </param>
         /// <param name="value">
         ///     The structure that will contain the parsed value.
@@ -104,11 +105,11 @@ source->append(R"::(="input">
         {
             byte[] ret = new byte[16];
             fixed (byte* ptr = ret)
-            {)::");
-source->append(R"::(
+            {
                 Memory.Copy(CellPtr, ptr, 16);
             }
-            return ret;
+ )::");
+source->append(R"::(           return ret;
         }
         /// <summary>
         /// Returns a string representation of the value of this instance in registry format. 
@@ -130,8 +131,8 @@ source->append(R"::(
         /// <summary>
         /// Returns a string representation of the value of this Guid instance, according to the provided format specifier.
         /// </summary>
-        /// <param name="format">A single format specifier that indicates )::");
-source->append(R"::(how to format the value of this Guid. The format parameter can be "N", "D", "B", "P", or "X". If format is null or an empty string (""), "D" is used. </param>
+        /// <param name="format">A single format specifier that indicates how to format the value of this Guid. The format parameter can be "N", "D", "B", "P")::");
+source->append(R"::(, or "X". If format is null or an empty string (""), "D" is used. </param>
         /// <returns>The value of this Guid, represented as a series of lowercase hexadecimal digits in the specified format. </returns>
         public string ToString(string format)
         {
@@ -151,9 +152,9 @@ source->append(R"::(how to format the value of this Guid. The format parameter c
         /// <summary>
         /// Implicitly converts a Guid instance to a GuidAccessor instance.
         /// </summary>
-        /)::");
-source->append(R"::(// <param name="value">The Guid instance.</param>
-        /// <returns>A GuidAccessor instance.</returns>
+        /// <param name="value">The Guid instance.</param>
+        /// <returns>A GuidAccessor instance.</retur)::");
+source->append(R"::(ns>
         public static implicit operator GuidAccessor(Guid value)
         {
             byte* tmpcellptr = BufferAllocator.AllocBuffer(16);
@@ -172,11 +173,11 @@ source->append(R"::(// <param name="value">The Guid instance.</param>
         /// </summary>
         /// <param name="a">The first GuidAccessor to compare, or null. </param>
         /// <param name="b">The second GuidAccessor to compare, or null. </param>
-        /// <returns>true if the value of <paramref name="a" /> is the same as the value of <paramref name="b" />; otherwis)::");
-source->append(R"::(e, false.</returns>
+        /// <returns>true if the value of <paramref name="a" /> is the same as the value of <paramref name="b" />; otherwise, false.</returns>
         public static bool operator ==(GuidAccessor a, GuidAccessor b)
         {
-            if (ReferenceEquals(a, b))
+            if (Re)::");
+source->append(R"::(ferenceEquals(a, b))
               return true;
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
               return false;
@@ -192,11 +193,11 @@ source->append(R"::(e, false.</returns>
             return !(a == b);
         }
         /// <summary>
-        /// Determines whether this instance and a specified obj)::");
-source->append(R"::(ect have the same value.
+        /// Determines whether this instance and a specified object have the same value.
         /// </summary>
         /// <param name="obj">The GuidAccessor to compare to this instance.</param>
-        /// <returns>true if <paramref name="obj" /> is a GuidAccessor and its value is the same as this instance; otherwise, false.</returns>
+   )::");
+source->append(R"::(     /// <returns>true if <paramref name="obj" /> is a GuidAccessor and its value is the same as this instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
             GuidAccessor b = obj as GuidAccessor;

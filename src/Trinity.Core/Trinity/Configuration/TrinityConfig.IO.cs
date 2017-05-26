@@ -114,13 +114,16 @@ namespace Trinity
                 }
                 catch (Exception) { }
             }
+            string dir = Path.GetDirectoryName(configFile);
+            if (dir == string.Empty) dir = Global.MyAssemblyPath;
+
             FileUtility.CompletePath(Path.GetDirectoryName(configFile), true);
             #region create basic xml info
             XmlDocument configXml = new XmlDocument();
             XmlDeclaration declaration = configXml.CreateXmlDeclaration("1.0", "utf-8", null);
             XmlNode rootNode = configXml.CreateElement(ConfigurationConstants.Tags.ROOT_NODE);
             XmlAttribute version = configXml.CreateAttribute(ConfigurationConstants.Attrs.CONFIG_VERSION);
-            version.Value = "1.0";
+            version.Value = ConfigurationConstants.Tags.CURRENTVER;
             rootNode.Attributes.Append(version);
             #endregion
             #region Get Local Setting Info

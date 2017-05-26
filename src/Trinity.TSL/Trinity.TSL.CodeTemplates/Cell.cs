@@ -76,7 +76,7 @@ namespace t_Namespace
         ///<summary>
         ///Initializes a new instance of t_cell_name with the specified parameters.
         ///</summary>
-        public t_cell_name(long cell_id, [FOREACH(",")] t_field_type t_field_name = default(t_field_type)/*END*/)
+        public t_cell_name(long cell_id /*FOREACH*/, t_field_type t_field_name = default(t_field_type)/*END*/)
         {
             FOREACH();
             this.t_field_name = t_field_name;
@@ -675,8 +675,9 @@ namespace t_Namespace
 
             if (accessor.CellID != null)
             {
-                return new t_cell_name(accessor.CellID.Value,
-                /*FOREACH(",")*/
+                return new t_cell_name(accessor.CellID.Value
+                /*FOREACH*/
+                ,
                 /*IF("$t_field->is_optional()")*/
                 _t_field_name /*MUTE*/ , /*MUTE_END*/
                                          /*ELSE*/
@@ -1231,7 +1232,7 @@ namespace t_Namespace
                 {
                     /*META_VAR("int", "iter_val", "0")*/
                     /*META("for(const std::string& attr : %field_attributes){")*/
-                    case t_int_2 /*META_OUTPUT(%iter_val++)*/:
+                    case t_int_2:
                         FOREACH();
                         {
                             USE_LIST("t_field");

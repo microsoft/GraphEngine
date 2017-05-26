@@ -149,7 +149,9 @@ namespace t_Namespace
         {
             byte* targetPtr = CellPtr;
             byte* endPtr = CellPtr + length;
+            IF("%element_need_accessor");
             elementAccessor.CellID = this.CellID;
+            END();
             while (targetPtr < endPtr)
             {
                 IF("!%element_need_accessor");

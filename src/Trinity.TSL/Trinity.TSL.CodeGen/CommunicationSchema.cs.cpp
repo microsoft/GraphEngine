@@ -33,6 +33,7 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
+    
     internal class ProtocolDescriptor : IProtocolDescriptor
     {
         public string Name

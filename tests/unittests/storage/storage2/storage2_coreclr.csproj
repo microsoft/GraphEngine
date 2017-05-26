@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RuntimeFrameworkVersion>2.0.0-beta-001509-00</RuntimeFrameworkVersion>
+    <AssemblyName>storage2_coreclr</AssemblyName>
+    <RootNamespace>storage2</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="nunit" Version="3.6.1" />
+    <PackageReference Include="GraphEngine.CoreCLR" version="1.0.8850"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <TslCodegen Include="**/*.tsl" />
+    <Compile Remove="Properties/*.cs" />
+  </ItemGroup>
+</Project>

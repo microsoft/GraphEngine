@@ -419,8 +419,9 @@ void SemanticCheckForStructBase(NStructBase* node)
     //Raise a warning if there's a fixed field after a dynamic one
     bool reached_dynamic = false;
     for (auto *field : *node->fieldList)
-    {
         field->parent = node;
+    for (auto *field : *node->fieldList)
+    {
         if (field->getLayoutType() == LT_DYNAMIC || field->is_optional())
             reached_dynamic = true;
         else if (reached_dynamic /* and layout type is FIXED */)

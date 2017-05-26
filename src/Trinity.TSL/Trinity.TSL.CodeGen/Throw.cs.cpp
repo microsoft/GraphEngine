@@ -29,6 +29,7 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
+    
     class Throw
     {
         )::");
@@ -76,9 +77,9 @@ source->append(R"::(
         internal static void incompatible_with_cell()
         {
             throw new DataTypeIncompatibleException("Data type incompatible with the cell.");
-    )::");
-source->append(R"::(    }
-        internal static void array_dimension_size_mismatch(string type)
+        }
+        )::");
+source->append(R"::(internal static void array_dimension_size_mismatch(string type)
         {
             throw new ArgumentException(type + ": Array dimension size mismatch.");
         }
@@ -101,9 +102,9 @@ source->append(R"::(    }
         }
         internal static void cell_not_found()
         {
-            throw new CellNotFoundExceptio)::");
-source->append(R"::(n("The cell is not found.");
-        }
+            throw new CellNotFoundException("The cell is not found.");
+   )::");
+source->append(R"::(     }
         internal static void cell_not_found(long CellID)
         {
             throw new CellNotFoundException("The cell with id = " + CellID + " not found.");

@@ -28,10 +28,10 @@ source->append(R"::(
             )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->protocolList)->size();++iterator_1)
 {
+if((*(node->protocolList))[iterator_1]->referencedNProtocol->is_http_protocol()){continue;}
 source->append(R"::(
             {
                 )::");
-if((*(node->protocolList))[iterator_1]->referencedNProtocol->is_http_protocol()){continue;}
 if (node->type() == PGT_MODULE)
 {
 source->append(R"::(

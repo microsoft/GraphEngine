@@ -45,6 +45,7 @@ namespace t_Namespace
 
         [FOREACH]
         [USE_LIST("t_protocol")]
+        [IF("!$t_protocol->is_http_protocol()")]
 
         #region prototype definition template variables
         [IF("node->type() == PGT_SERVER")]
@@ -129,6 +130,7 @@ namespace t_Namespace
         }
         [END]
 
+        [END]//IF not HTTP
         [END]//FOREACH
 
         [MODULE_END]

@@ -29,6 +29,7 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
+    
     /// <summary>
     /// Exposes Load/Save/New operations of <see cref="Trinity.Storage.ICell"/> and Use operation on <see cref="Trinity.Storage.ICellAccessor"/> on <see cref="Trinity.Storage.LocalMemoryStorage"/> and <see cref="Trinity.Storage.MemoryCloud"/>.
     /// </summary>
@@ -319,8 +320,8 @@ source->append(R"::(.GenericCellAccessor"/> instance.</returns>
                         }
                         else if ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
                         {
-                            throw new ArgumentException("CellAccessOptions.CreateNewO)::");
-source->append(R"::(nCellNotFound is not valid for this method. Cannot determine new cell type.", "options");
+                            throw new ArgumentException("CellAccessOptions.CreateNewOnCellNotFound is no)::");
+source->append(R"::(t valid for this method. Cannot determine new cell type.", "options");
                         }
                         else if ((options & CellAccessOptions.ReturnNullOnCellNotFound) != 0)
                         {
@@ -520,8 +521,8 @@ source->append(R"::(
                     case TrinityErrorCode.E_NETWORK_SEND_FAILURE:
                         throw new System.IO.IOException("Network error while accessing the cell.");
                     default:
- )::");
-source->append(R"::(                       throw new Exception("Cannot access the cell. Error code: " + err.ToString());
+                       )::");
+source->append(R"::( throw new Exception("Cannot access the cell. Error code: " + err.ToString());
                 }
             }
             switch ((CellType)type)

@@ -30,6 +30,7 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
+    
     internal class ExternalParser
     {
         )::");
@@ -164,6 +165,7 @@ else if ((*(Trinity::Codegen::TSLExternalParserDataTypeVector))[iterator_1]->is_
 source->append(R"::(
             try
             {
+                
                 jarray = JArray.Parse(s);
                 value = new  )::");
 source->append(Codegen::GetString(data_type_get_array_type_with_size_string((*(Trinity::Codegen::TSLExternalParserDataTypeVector))[iterator_1])));
