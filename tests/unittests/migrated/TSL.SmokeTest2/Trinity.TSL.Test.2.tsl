@@ -35,13 +35,9 @@ proxy BaseProxy
     protocol P2;
 }
 
-// A derived server. Note that it derives from
-// both a server and a proxy.
-server DerivedServer : BaseServer, BaseProxy
+server DerivedServer
 {
-    // New protocols can be declared in the 
-	// derived class to extend functionality.
-    // To access this HTTP protocol, type:
-	// 'http://localhost/P3/{}' into your browser.
+    protocol P1;
+    protocol P2;
     protocol P3;	
 }

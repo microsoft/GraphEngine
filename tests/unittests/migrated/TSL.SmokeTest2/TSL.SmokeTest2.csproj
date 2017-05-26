@@ -54,8 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <TslCodegen Include="ServerInheritageExample.tsl" />
     <TslCodegen Include="Trinity.TSL.Test.tsl" />
+    <TslCodegen Include="Trinity.TSL.Test.2.tsl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
