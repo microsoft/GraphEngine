@@ -21,9 +21,9 @@ namespace t_Namespace
     [MAP_VAR("t_server", "node")]
     [MAP_VAR("t_base_class_name", "get_comm_class_basename(node)")]
     [MAP_VAR("t_server_name", "node->name")]
-    [MAP_LIST("t_protocol", "protocolList", MemberOf = "t_server")]
+    [MAP_LIST("t_protocol", "node->protocolList")]
     [MAP_VAR("t_protocol_name", "name", MemberOf = "t_protocol")]
-    [MAP_VAR("t_protocol", "referencedNProtocol", MemberOf = "t_protocol")]
+    [MAP_VAR("t_protocol", "referencedNProtocol")]
     public abstract partial class t_server_nameBase : t_base_class_name
     {
         #region Handler lookup table
@@ -79,7 +79,7 @@ namespace t_Namespace
                 case /*MUTE*/0/*MUTE_END*/ /*GET_ITERATOR_VALUE*/ :
                     {
                         IF("$t_protocol->pt_request == PT_STRUCT_REQUEST");
-                        MAP_VAR("t_struct_name", "tsl->find_struct_or_cell($t_protocol->request_message_struct)->name");
+                        MAP_VAR("t_struct_name", "META_OUTPUT(tsl->find_struct_or_cell($t_protocol->request_message_struct)->name)");
                         string          json_string;
                         t_struct_name   request_struct;
                         if (method == "GET")
@@ -107,7 +107,7 @@ namespace t_Namespace
                         END();
 
                         IF("$t_protocol->pt_response == PT_STRUCT_RESPONSE");
-                        MAP_VAR("t_struct_name", "tsl->find_struct_or_cell($t_protocol->response_message_struct)->name");
+                        MAP_VAR("t_struct_name", "META_OUTPUT(tsl->find_struct_or_cell($t_protocol->response_message_struct)->name)");
                         t_struct_name   response_struct /*MUTE*/ = null /*MUTE_END*/;
                         END();
 

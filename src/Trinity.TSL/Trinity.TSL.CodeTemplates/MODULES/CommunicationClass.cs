@@ -29,9 +29,8 @@ namespace t_Namespace
         protected override void RegisterMessageHandler()
         {
             FOREACH();
+            META("if($t_protocol->is_http_protocol()){continue;}");
             {
-                META("if($t_protocol->is_http_protocol()){continue;}");
-
                 IF("node->type() == PGT_MODULE");
                 MessageRegistry.RegisterMessageHandler((ushort)(this.t_protocol_typeIdOffset + (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name), _t_protocol_name_4Handler);
                 ELSE();

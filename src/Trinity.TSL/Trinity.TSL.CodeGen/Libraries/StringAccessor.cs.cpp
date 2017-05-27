@@ -28,6 +28,7 @@ source->append(R"::(
     /// <summary>
     /// Represents a TSL string corresponding to a string instance.
     /// </summary>
+    
     public unsafe class StringAccessor : IEnumerable<char>
     {
         internal byte* CellPtr;
@@ -58,9 +59,9 @@ source->append(R"::(
         }
         /// <summary>
         /// Gets the Char object at a specified position in the current String object.
-        /// </summa)::");
-source->append(R"::(ry>
-        /// <param name="index">A position in the current string. </param>
+        /// </summary>
+        /// <param nam)::");
+source->append(R"::(e="index">A position in the current string. </param>
         /// <returns>The object at position index.</returns>
         public unsafe char this[int index]
         {
@@ -87,11 +88,11 @@ source->append(R"::(ry>
             fixed (byte* retptr = ret)
             {
                 Memory.Copy(CellPtr, retptr, length);
-                ret)::");
-source->append(R"::(urn ret;
+                return ret;
             }
         }
-        /// <summary>
+        /// <summa)::");
+source->append(R"::(ry>
         /// Returns a value indicating whether the given substring occurs within the string.
         /// </summary>
         /// <param name="substring">The string to seek.</param>
@@ -111,9 +112,9 @@ source->append(R"::(urn ret;
         /// <summary>
         /// Performs the specified action on each char
         /// </summary>
-        /// <param name="action">A lambda expression whic)::");
-source->append(R"::(h has one parameter indicates char in string</param>
-        public unsafe void ForEach(Action<char> action)
+        /// <param name="action">A lambda expression which has one parameter indicates char in string</param>
+        public unsaf)::");
+source->append(R"::(e void ForEach(Action<char> action)
         {
             byte* targetPtr = CellPtr;
             byte* endPtr = CellPtr + length;
@@ -138,11 +139,11 @@ source->append(R"::(h has one parameter indicates char in string</param>
             }
         }
         internal unsafe struct _iterator
-        {)::");
-source->append(R"::(
+        {
             byte* targetPtr;
             byte* endPtr;
-            internal _iterator(StringAccessor target)
+            internal _iterator(StringAcce)::");
+source->append(R"::(ssor target)
             {
                 targetPtr = target.CellPtr;
                 endPtr    = target.CellPtr + target.length;
@@ -171,12 +172,12 @@ source->append(R"::(
             _iterator it = new _iterator(this);
             while(it.good())
             {
-                yield return it.c)::");
-source->append(R"::(urrent();
+                yield return it.current();
                 it.move_next();
             }
         }
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        System.Collections.IEnumerator System.Collections.)::");
+source->append(R"::(IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
@@ -195,13 +196,13 @@ source->append(R"::(urrent();
         /// </summary>
         /// <param name="value">The string instance.</param>
         /// <returns>The StringAccessor instance.</returns>
-        public unsafe static implicit operator StringAccessor(string )::");
-source->append(R"::(value)
+        public unsafe static implicit operator StringAccessor(string value)
         {
             byte* targetPtr = null;
             if (value != null)
             {
-                targetPtr += (value.Length << 1) + sizeof(int);
+                targetPtr += (value.Length <<)::");
+source->append(R"::( 1) + sizeof(int);
             }
             else
             {
@@ -227,11 +228,11 @@ source->append(R"::(value)
             return ret;
         }
         /// <summary>
-        /// Determines whether two specified StringAccessor have the same)::");
-source->append(R"::( value.
+        /// Determines whether two specified StringAccessor have the same value.
         /// </summary>
         /// <param name="a">The first StringAccessor to compare, or null. </param>
-        /// <param name="b">The second StringAccessor to compare, or null. </param>
+        /// <param name="b">The second StringAccessor to)::");
+source->append(R"::( compare, or null. </param>
         /// <returns>true if the value of <paramref name="a" /> is the same as the value of <paramref name="b" />; otherwise, false.</returns>
         public static bool operator ==(StringAccessor a, StringAccessor b)
         {
@@ -247,9 +248,9 @@ source->append(R"::( value.
         /// </summary>
         /// <param name="a">The StringAccessor to compare, or null. </param>
         /// <param name="b">The string to compare, or null. </param>
-        /// <retur)::");
-source->append(R"::(ns>true if the value of <paramref name="a" /> is the same as the value of <paramref name="b" />; otherwise, false.</returns>
-        public static bool operator ==(StringAccessor a, string b)
+        /// <returns>true if the value of <paramref name="a" /> is the same as the value of <paramref name="b" />; otherwise, false.</returns>
+        public static bool operator ==(StringAccessor a, strin)::");
+source->append(R"::(g b)
         {
             if (ReferenceEquals(a, b))
               return true;
@@ -264,13 +265,13 @@ source->append(R"::(ns>true if the value of <paramref name="a" /> is the same as
         public static bool operator !=(StringAccessor a, string b)
         {
             if ((object)a == null && (object)b == null) return false;
-            if (((object)a == null) || ((o)::");
-source->append(R"::(bject)b == null)) return true;
+            if (((object)a == null) || ((object)b == null)) return true;
             return a.ToString() != b;
         }
         /// <summary>
         /// Determines whether this instance and a specified object have the same value.
-        /// </summary>
+        )::");
+source->append(R"::(/// </summary>
         /// <param name="obj">The StringAccessor to compare to this instance.</param>
         /// <returns>true if obj is a StringAccessor and its value is the same as this instance; otherwise, false.</returns>
         public override bool Equals(object obj)
@@ -290,13 +291,13 @@ source->append(R"::(bject)b == null)) return true;
             return this.ToString() == b.ToString();
         }
         /// <summary>Returns the hash code for this StringAccessor.</summary>
-     )::");
-source->append(R"::(   /// <returns>A 32-bit signed integer hash code.</returns>
+        /// <returns>A 32-bit signed integer hash code.</returns>
         public override unsafe int GetHashCode()
         {
             char* strPtr = (char*)CellPtr;
             int n1 = 0x15051505;
-            int n2 = n1;
+            int n2 = n1)::");
+source->append(R"::(;
             int* intPtr = (int*)strPtr;
             for (int i = (length >> 1); i > 0; i -= 4)
             {
@@ -313,8 +314,7 @@ source->append(R"::(   /// <returns>A 32-bit signed integer hash code.</returns>
         /// <summary>Determines whether the two specified StringAccessor have different values.</summary>
         /// <returns>true if the value of <paramref name="a" /> is different from the value of <paramref name="b" />; otherwise, false.</returns>
         /// <param name="a">The first StringAccessor to compare, or null. </param>
-        /// )::");
-source->append(R"::(<param name="b">The second StringAccessor to compare, or null. </param>
+        /// <param name="b">The second StringAccessor to compare, or null. </param>
         public static bool operator !=(StringAccessor a, StringAccessor b)
         {
             return !(a == b);

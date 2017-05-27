@@ -24,6 +24,7 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(.Linq
 {
+    
     internal class IndexQueryTreeNode
     {
         internal enum NodeType
@@ -52,8 +53,8 @@ source->append(R"::(.Linq
         {
             if (children != null)
             {
-                List<IndexQueryTreeNode> new_child_list = new Li)::");
-source->append(R"::(st<IndexQueryTreeNode>();
+                List<IndexQueryTreeNode> new_child_list = new List<IndexQueryTreeNode>()::");
+source->append(R"::();
                 foreach (var child in children)
                 {
                     var new_child = child.Optimize();
@@ -78,10 +79,10 @@ source->append(R"::(st<IndexQueryTreeNode>();
                 else
                     normal   = child;
             }
-            switch (type))::");
-source->append(R"::(
+            switch (type)
             {
-                case NodeType.NOT:
+                case NodeType)::");
+source->append(R"::(.NOT:
                     /* Drop NOT queries */
                     if (children[0].type == NodeType.NOT)
                         return children[0].children[0];
@@ -106,9 +107,9 @@ source->append(R"::(
                     {
                         if (empty != null)
                             return normal;
-                    )::");
-source->append(R"::(    if (universe != null)
-                            return universe;
+                        if (universe != null)
+                            return universe;)::");
+source->append(R"::(
                         if (children.Count == 1)
                             return children[0];
                         else

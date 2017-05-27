@@ -28,6 +28,7 @@ source->append(R"::(
     /// <summary>
     /// Represents a TSL string corresponding to a string instance.
     /// </summary>
+    
     public unsafe class U8StringAccessor
     {
         internal byte* CellPtr;
@@ -56,9 +57,9 @@ source->append(R"::(
         public unsafe override string ToString()
         {
             int len = this.Length;
-            byte[] content = new byte[len])::");
-source->append(R"::(;
-            fixed (byte* pcontent = content)
+            byte[] content = new byte[len];
+            fixed (byte)::");
+source->append(R"::(* pcontent = content)
             {
                 Memory.Copy(this.CellPtr, pcontent, len);
             }
@@ -83,9 +84,9 @@ source->append(R"::(;
         /// <param name="substring">The string to seek.</param>
         /// <returns>true if the value parameter occurs within this string, or if value is 
         ///          the empty string (""); otherwise, false.
-        /// </retu)::");
-source->append(R"::(rns>
-        public unsafe bool Contains(string substring)
+        /// </returns>
+        public unsafe bool Contains(string s)::");
+source->append(R"::(ubstring)
         {
             /*
              *  @note   Relying on .NET's implementation of string search
@@ -108,9 +109,9 @@ source->append(R"::(rns>
         /// <summary>
         /// Implicitly converts a string instance to a U8String instance.
         /// </summary>
- )::");
-source->append(R"::(       /// <param name="value">The string instance.</param>
-        /// <returns>The StringAccessor instance.</returns>
+        /// <param name="value">The string instance.</param>
+        ///)::");
+source->append(R"::( <returns>The StringAccessor instance.</returns>
         public unsafe static implicit operator U8StringAccessor(string value)
         {
             if (value == null) value = "";
@@ -128,8 +129,8 @@ source->append(R"::(       /// <param name="value">The string instance.</param>
         /// </summary>
         /// <param name="a">The first StringAccessor to compare, or null. </param>
         /// <param name="b">The second StringAccessor to compare, or null. </param>
-        /// <returns>true if the value )::");
-source->append(R"::(of <paramref name="a" /> is the same as the value of <paramref name="b" />; otherwise, false.</returns>
+        /// <returns>true if the value of <paramref name="a" /> is the same as the value of <paramref name="b" />; otherwise,)::");
+source->append(R"::( false.</returns>
         public static bool operator ==(U8StringAccessor a, U8StringAccessor b)
         {
             if (ReferenceEquals(a, b))
@@ -147,10 +148,10 @@ source->append(R"::(of <paramref name="a" /> is the same as the value of <paramr
         /// <returns>true if the value of <paramref name="a" /> is the same as the value of <paramref name="b" />; otherwise, false.</returns>
         public static bool operator ==(U8StringAccessor a, string b)
         {
-            if (ReferenceE)::");
-source->append(R"::(quals(a, b))
+            if (ReferenceEquals(a, b))
                 return true;
-            if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+            if (ReferenceEquals(a, null) || ReferenceEquals()::");
+source->append(R"::(b, null))
                 return false;
             return a.ToString() == b;
         }
@@ -167,9 +168,9 @@ source->append(R"::(quals(a, b))
         /// <summary>
         /// Determines whether this instance and a specified object have the same value.
         /// </summary>
-      )::");
-source->append(R"::(  /// <param name="obj">The StringAccessor to compare to this instance.</param>
-        /// <returns>true if obj is a StringAccessor and its value is the same as this instance; otherwise, false.</returns>
+        /// <param name="obj">The StringAccessor to compare to this instance.</param>
+        /// <returns>true if obj is )::");
+source->append(R"::(a StringAccessor and its value is the same as this instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
             if (obj == null)
@@ -192,9 +193,9 @@ source->append(R"::(  /// <param name="obj">The StringAccessor to compare to thi
         {
             return HashHelper.HashBytes(this.CellPtr, this.Length);
         }
-        /// <summary>D)::");
-source->append(R"::(etermines whether the two specified StringAccessor have different values.</summary>
-        /// <returns>true if the value of <paramref name="a" /> is different from the value of <paramref name="b" />; otherwise, false.</returns>
+        /// <summary>Determines whether the two specified StringAccessor have different values.</summary>
+        /// <returns>true if the value of <paramref)::");
+source->append(R"::( name="a" /> is different from the value of <paramref name="b" />; otherwise, false.</returns>
         /// <param name="a">The first StringAccessor to compare, or null. </param>
         /// <param name="b">The second StringAccessor to compare, or null. </param>
         public static bool operator !=(U8StringAccessor a, U8StringAccessor b)
