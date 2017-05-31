@@ -5,6 +5,19 @@ struct TestStruct
     List<long> LongList;
     List<byte> ByteList;
     List<string> StringList;
+    List<FixedLengthStruct> FixedLengthStructList;
+    List<VariableLengthStruct> VariableLengthStructList;
+}
+
+struct FixedLengthStruct
+{
+    int Num;
+    double DoubleNum;
+}
+
+struct VariableLengthStruct
+{
+    string Str;
 }
 
 protocol TestProtocol  // for TestStructWriter
