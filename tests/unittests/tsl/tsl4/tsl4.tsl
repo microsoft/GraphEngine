@@ -1,0 +1,15 @@
+struct TestStruct
+{
+    List<int> IntList;
+    List<double> DoubleList;
+    List<long> LongList;
+    List<byte> ByteList;
+    List<string> StringList;
+}
+
+protocol TestProtocol  // for TestStructWriter
+{
+    Type: Syn;
+    Request: TestStruct;
+    Response: TestStruct;
+}
