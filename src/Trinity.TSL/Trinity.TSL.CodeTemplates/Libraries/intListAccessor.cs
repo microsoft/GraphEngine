@@ -10,7 +10,7 @@ using Trinity.TSL.Lib;
 namespace t_Namespace
 {
     /// <summary>
-    /// Represents a TSL double list corresponding to List{double}.
+    /// Represents a TSL int list corresponding to List{int}.
     /// </summary>
     [TARGET("NTSL")]
     public unsafe class intListAccessor : IEnumerable<int>
