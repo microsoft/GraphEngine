@@ -413,13 +413,13 @@ source->append(R"::(rray">The one-dimensional Array that is the destination of t
             if (array.Length - arrayIndex < Count) throw new ArgumentException("The number of elements in the source List is greater than the available space from arrayIndex to the end of the destination array.");
             fixed (long* lp = array)
             {
-                Memory.Copy(CellPtr, 0, lp, arrayIndex, length);
+                Memory.Copy(CellPtr, 0, lp, arrayIndex * sizeof(long), length);
             }
         }
         /// <summary>
-        /// Copies a range of elements from the List to a compatible one-dimensional array, starting at the specified index of the ptr1 array.
-       )::");
-source->append(R"::( /// </summary>
+        /// Copies a range of elements from the List to a compatible one-dimensional array, starting at the specified index of the ptr1)::");
+source->append(R"::( array.
+        /// </summary>
         /// <param name="index">The zero-based index in the source List at which copying begins.</param>
         /// <param name="array">The one-dimensional Array that is the destination of the elements copied from List. The Array must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>;
@@ -428,12 +428,12 @@ source->append(R"::( /// </summary>
         {
             if (array == null) throw new ArgumentNullException("array is null.");
             if (arrayIndex < 0 || index < 0 || count < 0) throw new ArgumentOutOfRangeException("arrayIndex is less than 0 or index is less than 0 or count is less than 0.");
-            if (array.Length - arrayIndex < count) throw new ArgumentException("The number of elements from index to the end of the source List is greater than the available space from arrayIndex to the end of th)::");
-source->append(R"::(e destination array. ");
+            if (array.Length - arrayIndex < count) throw new ArgumentException("The number of elements from index to the end of the source List is greater than the available space from arrayIndex t)::");
+source->append(R"::(o the end of the destination array. ");
             if (index + count > Count) throw new ArgumentException("Source list does not have enough elements to copy.");
             fixed (long* lp = array)
             {
-                Memory.Copy(CellPtr, index, lp, arrayIndex, count);
+                Memory.Copy(CellPtr, index * sizeof(long), lp, arrayIndex * sizeof(long), count * sizeof(long));
             }
         }
         /// <summary>
@@ -444,9 +444,9 @@ source->append(R"::(e destination array. ");
         public unsafe void InsertRange(int index, List<long> collection)
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
-            if (index < 0) throw new ArgumentOutOfRangeException("index is less than 0.");
-      )::");
-source->append(R"::(      if (index > Count) throw new ArgumentOutOfRangeException("index is greater than Count.");
+            if (index < 0) throw new )::");
+source->append(R"::(ArgumentOutOfRangeException("index is less than 0.");
+            if (index > Count) throw new ArgumentOutOfRangeException("index is greater than Count.");
             longListAccessor tmpAccessor = collection;
             byte* targetPtr = CellPtr + (index << 3);
             int offset = (int)(targetPtr - CellPtr);
@@ -463,8 +463,8 @@ source->append(R"::(      if (index > Count) throw new ArgumentOutOfRangeExcepti
         public unsafe void RemoveRange(int index, int count)
         {
             if (index < 0) throw new ArgumentOutOfRangeException("index is less than 0.");
-            if (index > Count) throw new ArgumentOutOfRangeE)::");
-source->append(R"::(xception("index is greater than Count.");
+)::");
+source->append(R"::(            if (index > Count) throw new ArgumentOutOfRangeException("index is greater than Count.");
             if (index + count > Count) throw new ArgumentException("index and count do not denote a valid range of elements in the List.");
             byte* targetPtr = CellPtr + (index << 3);
             int offset = (int)(targetPtr - CellPtr);
@@ -482,11 +482,11 @@ source->append(R"::(xception("index is greater than Count.");
         {
             if ((object)accessor == null) return null;
             List<long> list = new List<long>();
-            accessor.ForEach(element => list.Add(element));
+            accessor.ForEach(element => list.Add)::");
+source->append(R"::((element));
             return list;
         }
-        /// )::");
-source->append(R"::(<summary>
+        /// <summary>
         /// Implicitly converts a List{long} instance to a longList instance.
         /// </summary>
         /// <param name="value">The List{long} instance.</param>
@@ -510,10 +510,10 @@ source->append(R"::(<summary>
                 targetPtr += sizeof(int);
                 for (int iterator_0 = 0; iterator_0 < value.Count; ++iterator_0)
                 {
-                    *(long*)targetPtr = value[iterator_0];
+                    *(long*)targetPtr = val)::");
+source->append(R"::(ue[iterator_0];
                     targetPtr += 8;
-        )::");
-source->append(R"::(        }
+                }
             }
             else
             {
@@ -536,9 +536,9 @@ source->append(R"::(        }
               return true;
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
               return false;
-            if (a.CellPtr == b.CellPtr) return true;
-       )::");
-source->append(R"::(     if (a.length != b.length) return false;
+ )::");
+source->append(R"::(           if (a.CellPtr == b.CellPtr) return true;
+            if (a.length != b.length) return false;
             return Memory.Compare(a.CellPtr, b.CellPtr, a.length);
         }
         /// <summary>Determines whether two specified longList have different values.</summary>
@@ -553,9 +553,9 @@ source->append(R"::(     if (a.length != b.length) return false;
         /// Determines whether this instance and a specified object have the same value.
         /// </summary>
         /// <param name="obj">The longList to compare to this instance.</param>
-        /// <returns>true if <paramref name="obj" /> is a longList and its value is the same as this instance; otherwise, false.</returns>
-        public overri)::");
-source->append(R"::(de bool Equals(object obj)
+        /// <returns>true if <paramref name="obj" /> is a longList and its value is the same as this)::");
+source->append(R"::( instance; otherwise, false.</returns>
+        public override bool Equals(object obj)
         {
             longListAccessor b = obj as longListAccessor;
             if (b == null)

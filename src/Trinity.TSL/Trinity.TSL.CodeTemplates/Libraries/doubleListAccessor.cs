@@ -401,7 +401,7 @@ namespace t_Namespace
             //ForEach((x, i) => array[i + arrayIndex] = x);
             fixed (double* dp = array)
             {
-                Memory.Copy(CellPtr, 0, dp, arrayIndex, length);
+                Memory.Copy(CellPtr, 0, dp, arrayIndex * sizeof(double), length);
             }
         }
 
@@ -420,7 +420,7 @@ namespace t_Namespace
             if (index >= Count) throw new ArgumentException("index is equal to or greater than the Count of the source List.");
             fixed (double* dp = array)
             {
-                Memory.Copy(CellPtr, index, dp, arrayIndex, count);
+                Memory.Copy(CellPtr, index * sizeof(double), dp, arrayIndex * sizeof(double), count * sizeof(double));
             }
         }
 

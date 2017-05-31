@@ -346,7 +346,7 @@ namespace t_Namespace
             //ForEach((x, i) => array[i + arrayIndex] = x);
             fixed (int* ip = array)
             {
-                Memory.Copy(CellPtr, 0, ip, arrayIndex, length);
+                Memory.Copy(CellPtr, 0, ip, arrayIndex * sizeof(int), length);
             }
         }
 
@@ -365,7 +365,7 @@ namespace t_Namespace
             if (index + count > Count) throw new ArgumentException("Source list does not have enough elements to copy.");
             fixed (int* ip = array)
             {
-                Memory.Copy(CellPtr, index, ip, arrayIndex, count);
+                Memory.Copy(CellPtr, index * sizeof(int), ip, arrayIndex * sizeof(int), count * sizeof(int));
             }
         }
 

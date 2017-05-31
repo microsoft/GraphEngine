@@ -420,7 +420,7 @@ namespace t_Namespace
             //ForEach((x, i) => array[i + arrayIndex] = x);
             fixed (long* lp = array)
             {
-                Memory.Copy(CellPtr, 0, lp, arrayIndex, length);
+                Memory.Copy(CellPtr, 0, lp, arrayIndex * sizeof(long), length);
             }
         }
 
@@ -445,7 +445,7 @@ namespace t_Namespace
             //}
             fixed (long* lp = array)
             {
-                Memory.Copy(CellPtr, index, lp, arrayIndex, count);
+                Memory.Copy(CellPtr, index * sizeof(long), lp, arrayIndex * sizeof(long), count * sizeof(long));
             }
         }
 

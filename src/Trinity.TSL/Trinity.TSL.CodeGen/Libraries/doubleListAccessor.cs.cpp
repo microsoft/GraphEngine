@@ -397,15 +397,15 @@ source->append(R"::(dex">The zero-based index in array at which copying begins.<
             if (array.Length - arrayIndex < Count) throw new ArgumentException("The number of elements in the source List is greater than the available space from arrayIndex to the end of the destination array.");
             fixed (double* dp = array)
             {
-                Memory.Copy(CellPtr, 0, dp, arrayIndex, length);
+                Memory.Copy(CellPtr, 0, dp, arrayIndex * sizeof(double), length);
             }
         }
         /// <summary>
         /// Copies a range of elements from the List to a compatible one-dimensional array, starting at the specified index of the ptr1 array.
         /// </summary>
         /// <param name="index">The zero-based index in the source List at which copying begins.</param>
-        /// <param name="array">The one-dimens)::");
-source->append(R"::(ional Array that is the destination of the elements copied from List. The Array must have zero-based indexing.</param>
+        /// <param name="arra)::");
+source->append(R"::(y">The one-dimensional Array that is the destination of the elements copied from List. The Array must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>;
         /// <param name="count">The number of elements to copy.</param>
         public unsafe void CopyTo(int index, double[] array, int arrayIndex, int count)
@@ -413,11 +413,11 @@ source->append(R"::(ional Array that is the destination of the elements copied f
             if (array == null) throw new ArgumentNullException("array is null.");
             if (arrayIndex < 0 || index < 0 || count < 0) throw new ArgumentOutOfRangeException("arrayIndex is less than 0 or index is less than 0 or count is less than 0.");
             if (array.Length - arrayIndex < Count - index) throw new ArgumentException("The number of elements from index to the end of the source List is greater than the available space from arrayIndex to the end of the destination array. ");
-            if (index >= Count) throw new ArgumentException("index is equal to or greater than the Count of the source List.");
-    )::");
-source->append(R"::(        fixed (double* dp = array)
+            if (index >= Count) throw new ArgumentException("index is equal to or greater than the Count of the sou)::");
+source->append(R"::(rce List.");
+            fixed (double* dp = array)
             {
-                Memory.Copy(CellPtr, index, dp, arrayIndex, count);
+                Memory.Copy(CellPtr, index * sizeof(double), dp, arrayIndex * sizeof(double), count * sizeof(double));
             }
         }
         /// <summary>
@@ -429,9 +429,9 @@ source->append(R"::(        fixed (double* dp = array)
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
             if (index < 0) throw new ArgumentOutOfRangeException("index is less than 0.");
-            if (index > Count) throw new ArgumentOutOfRangeException("index is greater than Count.");
-            doubleListAccessor tmpAccessor = collect)::");
-source->append(R"::(ion;
+            if (index > Count) throw new ArgumentOutOfRangeException("index is greater)::");
+source->append(R"::( than Count.");
+            doubleListAccessor tmpAccessor = collection;
             byte* targetPtr = CellPtr + (index << 3);
             int offset = (int)(targetPtr - CellPtr);
             CellPtr = ResizeFunction(CellPtr - 4, offset + 4, tmpAccessor.length);
@@ -448,8 +448,8 @@ source->append(R"::(ion;
         {
             if (index < 0) throw new ArgumentOutOfRangeException("index is less than 0.");
             if (index > Count) throw new ArgumentOutOfRangeException("index is greater than Count.");
-            if (index + count > Count) throw new ArgumentException("index and count do not denote a valid)::");
-source->append(R"::( range of elements in the List.");
+            if (index + count > Count)::");
+source->append(R"::() throw new ArgumentException("index and count do not denote a valid range of elements in the List.");
             byte* targetPtr = CellPtr + (index << 3);
             int offset = (int)(targetPtr - CellPtr);
             int size = -(count << 3);
@@ -470,10 +470,10 @@ source->append(R"::( range of elements in the List.");
             return list;
         }
         /// <summary>
-        /// Implicitly converts a List{double} instance to a doubleList instance.
+        /// Implicitly converts a List{double} insta)::");
+source->append(R"::(nce to a doubleList instance.
         /// </summary>
-        /// <pa)::");
-source->append(R"::(ram name="value">The List{double} instance.</param>
+        /// <param name="value">The List{double} instance.</param>
         /// <returns>The doubleList instance.</returns>
         public unsafe static implicit operator doubleListAccessor(List<double> value)
         {
@@ -499,10 +499,10 @@ source->append(R"::(ram name="value">The List{double} instance.</param>
                 }
             }
             else
-            {
+           )::");
+source->append(R"::( {
                 *(int*)targetPtr = 0;
-                targetPtr +)::");
-source->append(R"::(= sizeof(int);
+                targetPtr += sizeof(int);
             }
             doubleListAccessor ret = new doubleListAccessor(tmpcellptr, null);
             ret.CellID = null;
@@ -521,9 +521,9 @@ source->append(R"::(= sizeof(int);
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
               return false;
             if (a.CellPtr == b.CellPtr) return true;
-            if (a.length != b.length) return false;
-            return Memory.Compare(a.CellPtr, b.CellPtr, a.len)::");
-source->append(R"::(gth);
+            if (a.length != b.length) return )::");
+source->append(R"::(false;
+            return Memory.Compare(a.CellPtr, b.CellPtr, a.length);
         }
         /// <summary>Determines whether two specified doubleList have different values.</summary>
         /// <returns>true if the value of <paramref name="a" /> is different from the value of <paramref name="b" />; otherwise, false.</returns>
@@ -538,10 +538,10 @@ source->append(R"::(gth);
         /// </summary>
         /// <param name="obj">The doubleList to compare to this instance.</param>
         /// <returns>true if <paramref name="obj" /> is a doubleList and its value is the same as this instance; otherwise, false.</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object ob)::");
+source->append(R"::(j)
         {
-            doubleListAccessor b = obj as doubleListAcc)::");
-source->append(R"::(essor;
+            doubleListAccessor b = obj as doubleListAccessor;
             if (b == null)
                 return false;
             return (this == b);
