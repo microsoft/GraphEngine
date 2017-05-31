@@ -368,7 +368,7 @@ namespace t_Namespace
             //	array[j + arrayIndex] = this[i];
             //	++j;
             //}
-            Memory.Copy(CellPtr, 0, array, arrayIndex, count);
+            Memory.Copy(CellPtr, index, array, arrayIndex, count);
         }
 
         /// <summary>
