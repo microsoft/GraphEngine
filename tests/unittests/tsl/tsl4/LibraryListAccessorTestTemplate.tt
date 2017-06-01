@@ -1,0 +1,119 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<# var types = new List<string> {"int", "byte", "double", "long", "string", "FixedLengthStruct", "VariableLengthStruct"}; #>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using NUnit.Framework;
+using Trinity;
+using Trinity.Storage;
+
+namespace tsl4
+{
+<# foreach (var type in types)
+   {
+       var capType = type.Substring(0, 1).ToUpperInvariant() + type.Substring(1);
+#>
+    public class <#= capType #>ListAccessorTests
+    {
+        #region CopyAll
+        [Test]
+        public void CopyToTest_CopyAll_Success() => Utils.WithWriter(writer =>
+        {
+            var array = new <#= type #>[10];
+            writer.<#= capType #>List.CopyTo(array);
+            Assert.That(array, Is.EqualTo(writer.<#= capType #>List.Select(e => (<#= type #>)e)));
+        });
+
+        [Test]
+        public void CopyToTest_CopyAll_DstNoSpace() => Utils.WithWriter(writer =>
+        {
+            var array = new <#= type #>[5];
+            Assert.That(() => { writer.<#= capType #>List.CopyTo(array); }, Throws.ArgumentException);
+        });
+        #endregion
+
+        #region CopyAllWithDstOffset
+        [Test]
+        public void CopyToTest_CopyAllWithDstOffset_Success() => Utils.WithWriter(writer =>
+        {
+            var array = new <#= type #>[15];
+            writer.<#= capType #>List.CopyTo(array, 5);
+            Assert.That(array.Take(5), Has.Exactly(5).EqualTo(default(<#= type #>)));
+            Assert.That(array.Skip(5), Is.EqualTo(writer.<#= capType #>List.Select(e => (<#= type #>)e)));
+        });
+
+        [Test]
+        public void CopyToTest_CopyAllWithDstOffset_DstNoSpace() => Utils.WithWriter(writer =>
+        {
+            var array = new <#= type #>[5];
+            Assert.That(() => { writer.<#= capType #>List.CopyTo(array, 3); }, Throws.ArgumentException);
+        });
+
+        [Test]
+        public void CopyToTest_CopyAllWithDstOffset_OffsetOutOfRange() => Utils.WithWriter(writer =>
+        {
+            var array = new <#= type #>[100];
+            Assert.That(() => { writer.<#= capType #>List.CopyTo(array, 102); }, Throws.ArgumentException);
+            Assert.That(() => { writer.<#= capType #>List.CopyTo(array, -20); }, Throws.TypeOf<ArgumentOutOfRangeException>());
+        });
+        #endregion
+
+        #region CopyWithOffsetsAndCount
+        [Test]
+        public void CopyToTest_CopyAllWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
+        {
+            var array = new <#= type #>[15];
+            writer.<#= capType #>List.CopyTo(2, array, 3, 5);
+            Assert.That(array.Take(3), Has.Exactly(3).EqualTo(default(<#= type #>)));
+            Assert.That(array.Skip(3).Take(5), Is.EqualTo(writer.<#= capType #>List.Skip(2).Take(5).Select(e => (<#= type #>)e)));
+            Assert.That(array.Skip(8), Has.Exactly(15 - 8).EqualTo(default(<#= type #>)));
+        });
+
+        [Test]
+        public void CopyToTest_CopyAllWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
+        {
+            var array = new <#= type #>[5];
+            Assert.That(() => { writer.<#= capType #>List.CopyTo(2, array, 3, 5); }, Throws.ArgumentException);
+            Assert.That(() => { writer.<#= capType #>List.CopyTo(0, array, 1, 5); }, Throws.ArgumentException);
+        });
+
+        [Test]
+        public void CopyToTest_CopyAllWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
+        {
+            var array = new <#= type #>[100];
+            Assert.That(() => { writer.<#= capType #>List.CopyTo(2, array, 102, 5); }, Throws.ArgumentException);
+            Assert.That(() => { writer.<#= capType #>List.CopyTo(2, array, -20, 5); }, Throws.TypeOf<ArgumentOutOfRangeException>());
+        });
+
+        [Test]
+        public void CopyToTest_CopyAllWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
+        {
+            var array = new <#= type #>[100];
+            Assert.That(() => { writer.<#= capType #>List.CopyTo(200, array, 0, 5); }, Throws.ArgumentException);
+            Assert.That(() => { writer.<#= capType #>List.CopyTo(-200, array, 0, 200); }, Throws.TypeOf<ArgumentOutOfRangeException>());
+        });
+
+        [Test]
+        public void CopyToTest_CopyAllWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
+        {
+            var array = new <#= type #>[100];
+            Assert.That(() => { writer.<#= capType #>List.CopyTo(200, array, 0, -200); }, Throws.TypeOf<ArgumentOutOfRangeException>());
+            Assert.That(() => { writer.<#= capType #>List.CopyTo(0, array, 0, -200); }, Throws.TypeOf<ArgumentOutOfRangeException>());
+        });
+        #endregion
+    }
+
+<#
+}
+#>
+
+}

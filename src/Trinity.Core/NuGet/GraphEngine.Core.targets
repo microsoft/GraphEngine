@@ -40,7 +40,7 @@
 
     <RemoveDir Directories="$(TslGeneratedCodePath)" ContinueOnError="true" />
     <MakeDir Directories="$(TslGeneratedCodePath)" ContinueOnError="true"/>
-    <Exec Command="$(TSL_CODEGEN_PATH) --ProjectRoot $(MSBuildProjectDirectory) --ScriptList @(TslCodegen) --RootNamespace $(RootNamespace) --OutputPath $(TslOutputPath) $(TslDebugArguments)" />
+    <Exec Command="&quot;$(TSL_CODEGEN_PATH)&quot; --ProjectRoot &quot;$(MSBuildProjectDirectory)&quot; --ScriptList &quot;@(TslCodegen)&quot; --RootNamespace $(RootNamespace) --OutputPath $(TslOutputPath) $(TslDebugArguments)" />
   </Target>
 
   <Target Name="TslCodegenClean"

@@ -361,11 +361,11 @@ source->append(R"::(yIndex">The zero-based index in array at which copying begin
             if (arrayIndex < 0 || index < 0 || count < 0) throw new ArgumentOutOfRangeException("arrayIndex is less than 0 or index is less than 0 or count is less than 0.");
             if (array.Length - arrayIndex < count) throw new ArgumentException("The number of elements from index to the end of the source List is greater than the available space from arrayIndex to the end of the destination array. ");
             if (index + count > Count) throw new ArgumentException("Source list does not have enough elements to copy.");
-            Memory.Copy(CellPtr, 0, array, arrayIndex, count);
+            Memory.Copy(CellPtr, index, array, arrayIndex, count);
         }
         /// <summary>
-        /// Inserts the elements of a collection into the List at the s)::");
-source->append(R"::(pecified index.
+        /// Inserts the elements of a collection into the List at t)::");
+source->append(R"::(he specified index.
         /// </summary>
         /// <param name="index">The zero-based index at which the new elements should be inserted.</param>
         /// <param name="collection">The collection whose elements should be inserted into the List. The collection itself cannot be null, but it can contain elements that are null, if type T is a reference type.</param>
@@ -379,8 +379,8 @@ source->append(R"::(pecified index.
             targetPtr += index;
             int offset = (int)(targetPtr - CellPtr);
             CellPtr = ResizeFunction(CellPtr - 4, offset + 4, tmpAccessor.length);
-            Memory.Copy(t)::");
-source->append(R"::(mpAccessor.CellPtr, CellPtr + offset + 4, tmpAccessor.length);
+            Memory.Co)::");
+source->append(R"::(py(tmpAccessor.CellPtr, CellPtr + offset + 4, tmpAccessor.length);
             *(int*)CellPtr += tmpAccessor.length;
             this.CellPtr += 4;
         }
@@ -398,8 +398,8 @@ source->append(R"::(mpAccessor.CellPtr, CellPtr + offset + 4, tmpAccessor.length
             targetPtr += index;
             int offset = (int)(targetPtr - CellPtr);
             byte* oldtargetPtr = targetPtr;
-            targ)::");
-source->append(R"::(etPtr += count;
+            )::");
+source->append(R"::(targetPtr += count;
             int size = (int)(oldtargetPtr - targetPtr);
             CellPtr = ResizeFunction(CellPtr - 4, offset + 4, size);
             *(int*)CellPtr += size;
@@ -423,8 +423,8 @@ source->append(R"::(etPtr += count;
         /// <param name="value">The List{byte} instance.</param>
         /// <returns></returns>
         public unsafe static implicit operator byteListAccessor(List<byte> value)
-     )::");
-source->append(R"::(   {
+ )::");
+source->append(R"::(       {
             byte* targetPtr = null;
             if (value != null)
             {
@@ -456,8 +456,8 @@ source->append(R"::(   {
             return ret;
         }
         /// <summary>
-        /)::");
-source->append(R"::(// Implicitly convert a byte array to a byteList instance.
+     )::");
+source->append(R"::(   /// Implicitly convert a byte array to a byteList instance.
         /// </summary>
         /// <param name="value">The array of bytes.</param>
         /// <returns>A byteList instance.</returns>
@@ -486,8 +486,8 @@ source->append(R"::(// Implicitly convert a byte array to a byteList instance.
             }
             else
             {
-    )::");
-source->append(R"::(            *(int*)targetPtr = 0;
+)::");
+source->append(R"::(                *(int*)targetPtr = 0;
                 targetPtr += sizeof(int);
             }
             byteListAccessor ret = new byteListAccessor(tmpcellptr, null);
@@ -508,8 +508,8 @@ source->append(R"::(            *(int*)targetPtr = 0;
               return false;
             if (a.CellPtr == b.CellPtr) return true;
             if (a.length != b.length) return false;
-            re)::");
-source->append(R"::(turn Memory.Compare(a.CellPtr, b.CellPtr, a.length);
+          )::");
+source->append(R"::(  return Memory.Compare(a.CellPtr, b.CellPtr, a.length);
         }
         /// <summary>Determines whether two specified byteList have different values.</summary>
         /// <returns>true if the value of <paramref name="a" /> is different from the value of <paramref name="b" />; otherwise, false.</returns>
@@ -526,8 +526,8 @@ source->append(R"::(turn Memory.Compare(a.CellPtr, b.CellPtr, a.length);
         /// <returns>true if obj is a byteList and its value is the same as this instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
-            byteListAccessor b = obj as by)::");
-source->append(R"::(teListAccessor;
+            byteListAccessor b = obj a)::");
+source->append(R"::(s byteListAccessor;
             if (b == null)
                 return false;
             return (this == b);
