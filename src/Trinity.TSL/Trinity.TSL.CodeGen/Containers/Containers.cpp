@@ -28,16 +28,20 @@ using Trinity.TSL.Lib;
 )::");
 			std::set<string> initialized_types;
 
-            for (auto cell : *ntsl->cellList)
+            for (auto cell : *tsl->cellList)
             {
-                for (auto field : *cell->fieldList)
-                    generate_container_code_for(field->fieldType, initialized_types, source);
+                for (auto ft : *cell->fieldList)
+                {
+                    generate_container_code_for(ft->fieldType, initialized_types, source);
+                }
             }
 
-            for (auto struct_ : *ntsl->structList)
+            for (auto struct_ : *tsl->structList)
             {
-                for (auto field : *struct_->fieldList)
-                    generate_container_code_for(field->fieldType, initialized_types, source);
+                for (auto ft : *struct_->fieldList)
+                {
+                    generate_container_code_for(ft->fieldType, initialized_types, source);
+                }
             }
 
             return source;
@@ -63,10 +67,13 @@ using Trinity.TSL.Lib;
                     return;
                 }
                 container_code = List(ft);
+                generate_container_code_for(element, initialized_types, source);
             }
             else if (ft->is_array())
             {
                 container_code = Array(ft);
+                auto element = ft->arrayInfo.arrayElement;
+                generate_container_code_for(element, initialized_types, source);
             }
 
             if (container_code != nullptr)
