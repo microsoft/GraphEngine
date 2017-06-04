@@ -41,7 +41,7 @@ namespace t_Namespace
         }
 
         [FOREACH]
-        [IF("data_type_need_set_field($t_data_type, Trinity::Codegen::TSLSerializerDataTypeVector) && data_type_is_not_duplicate_array($t_data_type, Trinity::Codegen::TSLSerializerDataTypeVector)")]
+        [IF("data_type_need_type_id($t_data_type, Trinity::Codegen::TSLSerializerDataTypeVector) && data_type_is_not_duplicate_array($t_data_type, Trinity::Codegen::TSLSerializerDataTypeVector)")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         /// <summary>
         /// Serializes a t_data_type object to Json string.
@@ -92,7 +92,7 @@ namespace t_Namespace
 
         [MAP_LIST("t_field", "referencedNStruct->fieldList", MemberOf = "t_data_type")]
         [FOREACH]
-        [IF("data_type_need_set_field($t_data_type, Trinity::Codegen::TSLSerializerDataTypeVector) && data_type_is_not_duplicate_array($t_data_type, Trinity::Codegen::TSLSerializerDataTypeVector)")]
+        [IF("data_type_need_type_id($t_data_type, Trinity::Codegen::TSLSerializerDataTypeVector) && data_type_is_not_duplicate_array($t_data_type, Trinity::Codegen::TSLSerializerDataTypeVector)")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void ToString_impl(t_data_type value, StringBuilder str_builder, bool in_json)
         {

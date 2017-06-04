@@ -252,6 +252,9 @@ namespace Trinity
 
             /* We nailed out the optional Nullable<T> issue */
 
+            if (type->is_list())
+                return data_type_need_type_id(type->listElementType, type_list);
+
             if (!type->is_array())
                 return true;
 
