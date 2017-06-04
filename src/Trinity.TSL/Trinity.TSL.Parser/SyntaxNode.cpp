@@ -674,6 +674,18 @@ void NFieldType::parse_array_dimension_size()
     arrayInfo.array_dimension_list = NULL;
 }
 
+int NFieldType::compare_array_dimension_size_with(NFieldType* that)
+{
+    for (size_t dim = 0; dim < this->arrayInfo.array_dimension_size->size(); ++dim)
+    {
+        //TODO invent an iterator over two/more containers
+        int ret = this->arrayInfo.array_dimension_size->at(dim) - that->arrayInfo.array_dimension_size->at(dim);
+        if (ret != 0)
+            return ret;
+    }
+    return 0;
+}
+
 int NFieldType_Compare(NFieldType* lhs, NFieldType* rhs)
 {
     int ret;

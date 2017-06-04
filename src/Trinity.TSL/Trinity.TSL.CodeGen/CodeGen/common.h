@@ -90,6 +90,8 @@ namespace Trinity
 
         bool data_type_need_type_id(NFieldType* type, std::vector<NFieldType*>* type_list);
 
+        bool data_type_is_not_duplicate_nested_list_of_array(NFieldType* type, std::vector<NFieldType*>* type_list);
+
         bool data_type_is_not_duplicate_array(NFieldType* type, std::vector<NFieldType*>* type_list);
 
         bool data_type_is_length_prefixed(NFieldType* type);

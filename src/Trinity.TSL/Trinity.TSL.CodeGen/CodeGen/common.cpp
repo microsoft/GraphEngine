@@ -253,12 +253,57 @@ namespace Trinity
             /* We nailed out the optional Nullable<T> issue */
 
             if (type->is_list())
-                return data_type_need_type_id(type->listElementType, type_list);
+                return data_type_is_not_duplicate_nested_list_of_array(type, type_list);
 
             if (!type->is_array())
                 return true;
 
             return data_type_is_not_duplicate_array(type, type_list);
+        }
+
+        int get_list_nest_depth_and_element_type(NFieldType* type, NFieldType*& element_type)
+        {
+            int acc = 1;
+            while (type->listElementType->is_list())
+            {
+                type = type->listElementType;
+                acc += 1;
+            }
+            element_type = type->listElementType;
+            return acc;
+        }
+
+        bool data_type_is_not_duplicate_nested_list_of_array(NFieldType* type, std::vector<NFieldType*>* type_list)
+        {
+            NFieldType* this_element_type;
+            int this_depth = get_list_nest_depth_and_element_type(type, this_element_type);
+            if (!this_element_type->is_array())
+                return true;
+
+            for (NFieldType* p_type : *type_list)
+            {
+                if (!p_type->is_list())
+                    continue;
+
+                NFieldType* that_element_type;
+                int that_depth = get_list_nest_depth_and_element_type(p_type, that_element_type);
+                if (this_depth != that_depth)
+                    continue;
+                if (!this_element_type->is_array_same_rank_same_element_type(that_element_type))
+                    continue;
+
+                int cmp = this_element_type->compare_array_dimension_size_with(that_element_type);
+                if (cmp > 0)
+                    return false;
+                if (cmp < 0)
+                    continue;
+
+                /* If we reach here, it means that our deduplication routine has failed. */
+                error("Internal error T5004.");
+                return false;
+            }
+
+            return true;
         }
 
         /**
@@ -286,24 +331,14 @@ namespace Trinity
                 if (type->is_array_same_rank_same_element_type(p_type))
                 {
                     /* We hit a very similar one. Now compare the dimension sizes. */
-                    for (int i = 0, size = p_type->arrayInfo.array_dimension_size->size(); i != size; ++i)
-                    {
-                        //TODO invent an iterator over two/more containers
-                        int cmp =
-                            type->arrayInfo.array_dimension_size->at(i)
-                            -
-                            p_type->arrayInfo.array_dimension_size->at(i);
-
-                        if (cmp > 0)
-                            return false;
-                        if (cmp < 0)
-                            goto array_is_less;
-                    }
+                    int cmp = type->compare_array_dimension_size_with(p_type);
+                    if (cmp > 0)
+                        return false;
+                    if (cmp < 0)
+                        continue;
                     /* If we reach here, it means that our deduplication routine has failed. */
                     error("Internal error T5004.");
                     return false;
-                array_is_less:
-                    continue;/*for p_type*/
                 }
             }
             /* We're safe now. */
