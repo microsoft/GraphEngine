@@ -14,10 +14,7 @@ namespace Trinity
             {
             case FT_ARRAY:
                 ret.append(GetString(n_field_type->arrayInfo.arrayElement));
-                ret.append("[");
-                for (size_t dim = 1; dim < n_field_type->arrayInfo.array_dimension_size->size(); ++dim)
-                    ret.append(",");
-                ret.append("]");
+                ret.append(data_type_get_array_size_specifier_string(n_field_type));
                 return ret;
             case FT_ATOM:
                 atom_str = n_field_type->get_atom_type();
@@ -416,6 +413,16 @@ namespace Trinity
                     first = false;
                 ret.append(std::to_string(dim_size));
             }
+            ret.append("]");
+            return ret;
+        }
+
+        std::string data_type_get_array_size_specifier_string(NFieldType *type)
+        {
+            std::string ret;
+            ret.append("[");
+            for (size_t i = 1; i < type->arrayInfo.array_dimension_size->size(); ++i)
+                ret.append(",");
             ret.append("]");
             return ret;
         }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using t_Namespace;
 
 namespace Trinity.TSL
 {
@@ -111,6 +112,16 @@ namespace Trinity.TSL
         }
 
         internal string ToString(CultureInfo cultureInfo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static implicit operator t_data_type_array_element_type(t_data_type v)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal object Clone()
         {
             throw new NotImplementedException();
         }

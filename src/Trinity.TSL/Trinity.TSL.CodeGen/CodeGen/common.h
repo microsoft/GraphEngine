@@ -98,6 +98,8 @@ namespace Trinity
 
         std::string data_type_get_array_type_with_size_string(NFieldType* type);
 
+        std::string data_type_get_array_size_specifier_string(NFieldType* type);
+
         std::string data_type_get_accessor_name(NFieldType* type);
 
         std::string get_comm_class_basename(NProtocolGroup* protocol_group);

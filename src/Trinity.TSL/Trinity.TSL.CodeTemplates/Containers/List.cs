@@ -15,6 +15,7 @@ namespace t_Namespace
     [MAP_VAR("t_list", "node")]
     [MAP_VAR("t_accessor_type", "data_type_get_accessor_name(node->listElementType)")]
     [MAP_VAR("t_data_type", "node->listElementType")]
+    [MAP_VAR("t_data_type_array_element_type", "node->listElementType->arrayInfo.arrayElement")]
     [META_VAR("int", "element_len", "node->listElementType->type_size()")]
     [META_VAR("bool", "element_fixed", "(%element_len > -1)")]
     [META_VAR("bool", "element_need_accessor", "data_type_need_accessor(node->listElementType)")]
@@ -520,6 +521,7 @@ namespace t_Namespace
             return ret;
         }
 
+        [IF("!$t_data_type->is_array()")]
         /// <summary>
         /// Copies the entire List to a compatible one-dimensional array, starting at the beginning of the ptr1 array.
         /// </summary>
@@ -564,6 +566,52 @@ namespace t_Namespace
                 ++j;
             }
         }
+        [ELSE]  // if t_data_type is array
+        /// <summary>
+        /// Copies the entire List to a compatible one-dimensional array, starting at the beginning of the ptr1 array.
+        /// </summary>
+        /// <param name="array">The one-dimensional Array that is the destination of the elements copied from List. The Array must have zero-based indexing.</param>
+        public unsafe void CopyTo(t_data_type_array_element_type[]/*META_OUTPUT("Trinity::Codegen::data_type_get_array_size_specifier_string($t_data_type)")*/ array)
+        {
+            if (array == null) throw new ArgumentNullException("array is null.");
+            if (array.Length < Count) throw new ArgumentException("The number of elements in the source List is greater than the number of elements that the destination array can contain.");
+            ForEach((x, i) => array[i] = (t_data_type)((t_data_type)x).Clone());
+        }
+
+        /// <summary>
+        /// Copies the entire List to a compatible one-dimensional array, starting at the specified index of the ptr1 array.
+        /// </summary>
+        /// <param name="array">The one-dimensional Array that is the destination of the elements copied from List. The Array must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+        public unsafe void CopyTo(t_data_type_array_element_type[]/*META_OUTPUT("Trinity::Codegen::data_type_get_array_size_specifier_string($t_data_type)")*/ array, int arrayIndex)
+        {
+            if (array == null) throw new ArgumentNullException("array is null.");
+            if (arrayIndex < 0) throw new ArgumentOutOfRangeException("arrayIndex is less than 0.");
+            if (array.Length - arrayIndex < Count) throw new ArgumentException("The number of elements in the source List is greater than the available space from arrayIndex to the end of the destination array.");
+            ForEach((x, i) => array[i + arrayIndex] = (t_data_type)((t_data_type)x).Clone());
+        }
+
+        /// <summary>
+        /// Copies a range of elements from the List to a compatible one-dimensional array, starting at the specified index of the ptr1 array.
+        /// </summary>
+        /// <param name="index">The zero-based index in the source List at which copying begins.</param>
+        /// <param name="array">The one-dimensional Array that is the destination of the elements copied from List. The Array must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>;
+        /// <param name="count">The number of elements to copy.</param>
+        public unsafe void CopyTo(int index, t_data_type_array_element_type[]/*META_OUTPUT("Trinity::Codegen::data_type_get_array_size_specifier_string($t_data_type)")*/ array, int arrayIndex, int count)
+        {
+            if (array == null) throw new ArgumentNullException("array is null.");
+            if (arrayIndex < 0 || index < 0 || count < 0) throw new ArgumentOutOfRangeException("arrayIndex is less than 0 or index is less than 0 or count is less than 0.");
+            if (array.Length - arrayIndex < count) throw new ArgumentException("The number of elements from index to the end of the source List is greater than the available space from arrayIndex to the end of the destination array. ");
+            if (index + count > Count) throw new ArgumentException("Source list does not have enough elements to copy.");
+            int j = 0;
+            for (int i = index; i < index + count; i++)
+            {
+                array[j + arrayIndex] = (t_data_type)((t_data_type)this[i]).Clone();
+                ++j;
+            }
+        }
+        [END]  // if t_data_type is array
 
         /// <summary>
         /// Inserts the elements of a collection into the List at the specified index.
