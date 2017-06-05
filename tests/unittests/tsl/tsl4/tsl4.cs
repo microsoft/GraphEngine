@@ -23,12 +23,22 @@ namespace tsl4
                 StringList = Enumerable.Range(0, 10).Select(i => i.ToString()).ToList(),
                 FixedLengthStructList = Enumerable.Range(0, 10).Select(i => new FixedLengthStruct(i, i)).ToList(),
                 VariableLengthStructList = Enumerable.Range(0, 10).Select(i => new VariableLengthStruct(i.ToString())).ToList(),
+                IntArrayList = Enumerable.Range(0, 10).Select(i =>
+                {
+                    var ret = new int[3, 2];
+                    ret[i % 3, i % 2] = i;
+                    return ret;
+                }).ToList(),
             };
 
         public static void WithWriter(Action<TestStructWriter> action)
         {
             using (var writer = GetWriter())
                 action(writer);
+
+            var a = "int[1, 2]";
+            var d = new string(a.TakeWhile(c => c != '[').ToArray());
+            var b = new string(a.Where(Char.IsDigit).ToArray());
         }
     }
 }
