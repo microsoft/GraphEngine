@@ -50,10 +50,15 @@ namespace Trinity
     /// </summary>
     public unsafe static partial class TrinityConfig
     {
+        #region Fields
         internal static bool is_config_loaded = false;
         private static object config_load_lock = new object();
         internal const bool RWTimeout = false;
+        #endregion
 
+        /// <summary>
+        /// Static constructor
+        /// </summary>
         static TrinityConfig()
         {
             GetConfigurationInstances().ToList();
@@ -85,13 +90,19 @@ namespace Trinity
             get { return LoggingConfig.Instance.LogDirectory; }
             set { LoggingConfig.Instance.LogDirectory = value; }
         }
-
+        
+        /// <summary>
+        /// Gets and Sets the bool value to represent whether to echo log entry on the standard output.
+        /// </summary>
         public static bool LogEchoOnConsole
         {
             get { return LoggingConfig.Instance.LogEchoOnConsole; }
             set { LoggingConfig.Instance.LogEchoOnConsole = value; }
         }
 
+        /// <summary>
+        /// Gets and Sets the bool value to represent whether to stream log entries to a file on disk.
+        /// </summary>
         public static bool LogToFile
         {
             get { return LoggingConfig.Instance.LogToFile; }

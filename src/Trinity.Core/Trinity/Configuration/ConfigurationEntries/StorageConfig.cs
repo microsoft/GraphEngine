@@ -16,6 +16,7 @@ namespace Trinity.Configuration
 {
     public sealed class StorageConfig
     {
+        #region Singleton
         static StorageConfig s_StorageConfig = new StorageConfig();
         private StorageConfig()
         {
@@ -29,6 +30,7 @@ namespace Trinity.Configuration
         public static StorageConfig Instance { get { return s_StorageConfig; } }
         [ConfigEntryName]
         internal static string ConfigEntry { get { return ConfigurationConstants.Tags.STORAGE; } }
+        #endregion
 
         #region Private static helpers
         private static void ThrowCreatingStorageRootException(string storageroot)
@@ -49,16 +51,22 @@ namespace Trinity.Configuration
         private static string DefaultStorageRoot { get { return Path.Combine(AssemblyPath.MyAssemblyPath, "storage"); } }
         #endregion
 
-        internal const int    c_MaxTrunkCount = 256;
-        internal const bool   c_DefaultReadOnly = false;
-        internal const ushort c_UndefinedCellType = 0;
-        internal const int    c_DefaultDefragInterval = 600;
+        #region Fields
+        internal const int    c_MaxTrunkCount = ConfigurationConstants.DefaultValue.MAX_TRUNK_COUNT;
+        internal const bool c_DefaultReadOnly = ConfigurationConstants.DefaultValue.DEFAULT_VALUE_FALSE;
+        internal const ushort c_UndefinedCellType = ConfigurationConstants.DefaultValue.UNDEFINED_CELL_TYPE;
+        internal const int    c_DefaultDefragInterval = ConfigurationConstants.DefaultValue.DEFAULT_DEFRAG_INTERVAL;
         internal const StorageCapacityProfile 
                               c_DefaultStorageCapacityProfile = StorageCapacityProfile.Max8G;
-        internal int          m_GCParallelism = 16;
+        internal int          m_GCParallelism = ConfigurationConstants.DefaultValue.DEFALUT_GC_PATRALLELISM;
         internal int          m_DefragInterval;
-        private  string       m_StorageRoot = "";
+        private  string       m_StorageRoot = ConfigurationConstants.DefaultValue.BLANK;
+        #endregion
 
+        #region Properties
+        /// <summary>
+        /// Represents a value to specify the number of memory trunks in the local memory storage.
+        /// </summary>
         [ConfigSetting(Optional: true)]
         public int TrunkCount
         {
@@ -73,6 +81,10 @@ namespace Trinity.Configuration
             }
         }
 
+        /// <summary>
+        /// Represents a value to specify whether the local memory storatge is read-only.
+        /// if the value is true read-only mode is on and any changes in a cell is forbidden
+        /// </summary>
         [ConfigSetting(Optional: true)]
         public bool ReadOnly
         {
@@ -87,6 +99,9 @@ namespace Trinity.Configuration
             }
         }
 
+        /// <summary>
+        /// Represents a value to specify the local memory storage capacity profile.
+        /// </summary>
         [ConfigSetting(Optional: true)]
         public StorageCapacityProfile StorageCapacity
         {
@@ -100,6 +115,9 @@ namespace Trinity.Configuration
             }
         }
 
+        /// <summary>
+        /// Represents the path for saving persistent storage disk images.Defaults to AssemblyPath\storage.
+        /// </summary>
         [ConfigSetting(Optional: true)]
         public unsafe string StorageRoot
         {
@@ -177,9 +195,8 @@ namespace Trinity.Configuration
             }
         }
 
-
         /// <summary>
-        /// Default = 10 M
+        /// Represents a value to specify the Large Object Threshold, Default = 10 M
         /// </summary>
         internal int LargeObjectThreshold
         {
@@ -201,7 +218,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Defragmentation frequency, Default Value = 600
+        /// Represents a value to specify the Defragmentation frequency, Default Value = 600
         /// </summary>
         [ConfigSetting(Optional: true)]
         public int DefragInterval
@@ -209,9 +226,10 @@ namespace Trinity.Configuration
             get { return m_DefragInterval; }
             set { m_DefragInterval = value; CTrinityConfig.CSetGCDefragInterval(m_DefragInterval); }
         }
+        #endregion
     }
 }
-
+#region tips
 /*
  Rough storage profiling
 +-------------------------+--------------------
@@ -225,3 +243,4 @@ namespace Trinity.Configuration
   16G                     |   3162496K
   32G                     |   4213124K
 */
+#endregion
