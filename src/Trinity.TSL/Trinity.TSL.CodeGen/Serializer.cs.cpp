@@ -49,7 +49,7 @@ source->append(R"::(
         )::");
 for (size_t iterator_1 = 0; iterator_1 < (Trinity::Codegen::TSLSerializerDataTypeVector)->size();++iterator_1)
 {
-if (data_type_need_set_field((*(Trinity::Codegen::TSLSerializerDataTypeVector))[iterator_1], Trinity::Codegen::TSLSerializerDataTypeVector) && data_type_is_not_duplicate_array((*(Trinity::Codegen::TSLSerializerDataTypeVector))[iterator_1], Trinity::Codegen::TSLSerializerDataTypeVector))
+if (data_type_need_type_id((*(Trinity::Codegen::TSLSerializerDataTypeVector))[iterator_1], Trinity::Codegen::TSLSerializerDataTypeVector) && data_type_is_not_duplicate_array((*(Trinity::Codegen::TSLSerializerDataTypeVector))[iterator_1], Trinity::Codegen::TSLSerializerDataTypeVector))
 {
 source->append(R"::(
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -130,7 +130,7 @@ source->append(R"::(
 }
 for (size_t iterator_1 = 0; iterator_1 < (Trinity::Codegen::TSLSerializerDataTypeVector)->size();++iterator_1)
 {
-if (data_type_need_set_field((*(Trinity::Codegen::TSLSerializerDataTypeVector))[iterator_1], Trinity::Codegen::TSLSerializerDataTypeVector) && data_type_is_not_duplicate_array((*(Trinity::Codegen::TSLSerializerDataTypeVector))[iterator_1], Trinity::Codegen::TSLSerializerDataTypeVector))
+if (data_type_need_type_id((*(Trinity::Codegen::TSLSerializerDataTypeVector))[iterator_1], Trinity::Codegen::TSLSerializerDataTypeVector) && data_type_is_not_duplicate_array((*(Trinity::Codegen::TSLSerializerDataTypeVector))[iterator_1], Trinity::Codegen::TSLSerializerDataTypeVector))
 {
 source->append(R"::(
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

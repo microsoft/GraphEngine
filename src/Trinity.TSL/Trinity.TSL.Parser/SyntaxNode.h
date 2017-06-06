@@ -244,6 +244,7 @@ public:
     std::vector<NFieldType*>* resolve_container_chain();
 
     void parse_array_dimension_size();
+    int compare_array_dimension_size_with(NFieldType* that);
 };
 
 class NField : public NNamed

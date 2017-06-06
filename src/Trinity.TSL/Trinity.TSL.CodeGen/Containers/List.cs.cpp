@@ -925,6 +925,10 @@ source->append(R"::(> match)
             });
             return ret;
         }
+        )::");
+if (!node->listElementType->is_array())
+{
+source->append(R"::(
         /// <summary>
         /// Copies the entire List to a compatible one-dimensional array, starting at the beginning of the ptr1 array.
         /// </summary>
@@ -974,11 +978,84 @@ source->append(R"::([] array, int arrayIndex, int count)
                 ++j;
             }
         }
+        )::");
+}
+else
+{
+source->append(R"::(  
+        /// <summary>
+        /// Copies the entire List to a compatible one-dimensional array, starting at the beginning of the ptr1 array.
+        /// </summary>
+        /// <param name="array">The one-dimensional Array that is the destination of the elements copied from List. The Array must have zero-based indexing.</param>
+        public unsafe void CopyTo()::");
+source->append(Codegen::GetString(node->listElementType->arrayInfo.arrayElement));
+source->append(R"::([])::");
+source->append(Codegen::GetString(Trinity::Codegen::data_type_get_array_size_specifier_string(node->listElementType)));
+source->append(R"::( array)
+        {
+            if (array == null) throw new ArgumentNullException("array is null.");
+            if (array.Length < Count) throw new ArgumentException("The number of elements in the source List is greater than the number of elements that the destination array can contain.");
+            ForEach((x, i) => array[i] = ()::");
+source->append(Codegen::GetString(node->listElementType));
+source->append(R"::()(()::");
+source->append(Codegen::GetString(node->listElementType));
+source->append(R"::()x).Clone());
+        }
+        /// <summary>
+        /// Copies the entire List to a compatible one-dimensional array, starting at the specified index of the ptr1 array.
+        /// </summary>
+        /// <param name="array">The one-dimensional Array that is the destination of the elements copied from List. The Array must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+        public unsafe void CopyTo()::");
+source->append(Codegen::GetString(node->listElementType->arrayInfo.arrayElement));
+source->append(R"::([])::");
+source->append(Codegen::GetString(Trinity::Codegen::data_type_get_array_size_specifier_string(node->listElementType)));
+source->append(R"::( array, int arrayIndex)
+        {
+            if (array == null) throw new ArgumentNullException("array is null.");
+            if (arrayIndex < 0) throw new ArgumentOutOfRangeException("arrayIndex is less than 0.");
+            if (array.Length - arrayIndex < Count) throw new ArgumentException("The number of elements in the source List is greater than the available space from arrayIndex to the end of the destination array.");
+            ForEach((x, i) => array[i + arrayIndex] = ()::");
+source->append(Codegen::GetString(node->listElementType));
+source->append(R"::()(()::");
+source->append(Codegen::GetString(node->listElementType));
+source->append(R"::()x).Clone());
+        }
+        /// <summary>
+        /// Copies a range of elements from the List to a compatible one-dimensional array, starting at the specified index of the ptr1 array.
+        /// </summary>
+        /// <param name="index">The zero-based index in the source List at which copying begins.</param>
+        /// <param name="array">The one-dimensional Array that is the destination of the elements copied from List. The Array must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>;
+        /// <param name="count">The number of elements to copy.</param>
+        public unsafe void CopyTo(int index, )::");
+source->append(Codegen::GetString(node->listElementType->arrayInfo.arrayElement));
+source->append(R"::([])::");
+source->append(Codegen::GetString(Trinity::Codegen::data_type_get_array_size_specifier_string(node->listElementType)));
+source->append(R"::( array, int arrayIndex, int count)
+        {
+            if (array == null) throw new ArgumentNullException("array is null.");
+            if (arrayIndex < 0 || index < 0 || count < 0) throw new ArgumentOutOfRangeException("arrayIndex is less than 0 or index is less than 0 or count is less than 0.");
+            if (array.Length - arrayIndex < count) throw new ArgumentException("The number of elements from index to the end of the source List is greater than the available space from arrayIndex to the end of the destination array. ");
+            if (index + count > Count) throw new ArgumentException("Source list does not have enough elements to copy.");
+            int j = 0;
+            for (int i = index; i < index + count; i++)
+            {
+                array[j + arrayIndex] = ()::");
+source->append(Codegen::GetString(node->listElementType));
+source->append(R"::()(()::");
+source->append(Codegen::GetString(node->listElementType));
+source->append(R"::()this[i]).Clone();
+                ++j;
+            }
+        }
+        )::");
+}
+source->append(R"::(  
         /// <summary>
         /// Inserts the elements of a collection into the List at the specified index.
         /// </summary>
-        /// <param name="index">The zero-)::");
-source->append(R"::(based index at which the new elements should be inserted.</param>
+        /// <param name="index">The zero-based index at which the new elements should be inserted.</param>
         /// <param name="collection">The collection whose elements should be inserted into the List. The collection itself cannot be null, but it can contain elements that are null, if type T is a reference type.</param>
         public unsafe void InsertRange(int index, )::");
 source->append(Codegen::GetString(node));

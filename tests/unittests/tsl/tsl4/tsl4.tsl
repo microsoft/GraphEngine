@@ -5,6 +5,7 @@ struct TestStruct
     List<long> LongList;
     List<byte> ByteList;
     List<string> StringList;
+    List<int[3, 2]> IntArrayList;
     List<FixedLengthStruct> FixedLengthStructList;
     List<VariableLengthStruct> VariableLengthStructList;
 }

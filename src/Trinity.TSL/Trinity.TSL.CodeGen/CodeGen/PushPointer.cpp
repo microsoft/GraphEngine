@@ -275,14 +275,14 @@ static void push_and_assign_u8string(std::string* source, int stack_depth, NFiel
     if (!OnlyPushPointer)
     {
         *source += R"::(
-        if():: "+ VarName + R"::(!= null)
+        if()::"+ varName + R"::(!= null)
         {
             byte[] )::" + u8buffer_name + " = Encoding.UTF8.GetBytes(" + varName + R"::();
             int )::" + u8len_name + " = " + u8buffer_name + R"::(.Length;
             *(int*)targetPtr = )::" + u8len_name + R"::(;
             targetPtr += sizeof(int);
             Memory.Copy()::" + u8buffer_name + ", targetPtr, " + u8len_name + R"::();
-            targetPtr += "+ u8len_name + R"::(;
+            targetPtr += )::"+ u8len_name + R"::(;
         }else
         {
             *(int*)targetPtr = 0;
