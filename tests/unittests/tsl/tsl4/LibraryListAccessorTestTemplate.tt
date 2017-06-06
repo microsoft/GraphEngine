@@ -99,7 +99,7 @@ namespace tsl4
 
         #region CopyWithOffsetsAndCount
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
         {
             var array = GetArray(15);
             writer.<#= listName #>.CopyTo(2, array, 3, 5);
@@ -109,7 +109,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
         {
             var array = GetArray(5);
             Assert.That(() => { writer.<#= listName #>.CopyTo(2, array, 3, 5); }, Throws.ArgumentException);
@@ -117,7 +117,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.<#= listName #>.CopyTo(2, array, 102, 5); }, Throws.ArgumentException);
@@ -125,7 +125,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.<#= listName #>.CopyTo(200, array, 0, 5); }, Throws.ArgumentException);
@@ -133,7 +133,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.<#= listName #>.CopyTo(200, array, 0, -200); }, Throws.TypeOf<ArgumentOutOfRangeException>());

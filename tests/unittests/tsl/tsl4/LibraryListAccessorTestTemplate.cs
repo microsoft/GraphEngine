@@ -72,7 +72,7 @@ namespace tsl4
 
         #region CopyWithOffsetsAndCount
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
         {
             var array = GetArray(15);
             writer.IntList.CopyTo(2, array, 3, 5);
@@ -82,7 +82,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
         {
             var array = GetArray(5);
             Assert.That(() => { writer.IntList.CopyTo(2, array, 3, 5); }, Throws.ArgumentException);
@@ -90,7 +90,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.IntList.CopyTo(2, array, 102, 5); }, Throws.ArgumentException);
@@ -98,7 +98,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.IntList.CopyTo(200, array, 0, 5); }, Throws.ArgumentException);
@@ -106,7 +106,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.IntList.CopyTo(200, array, 0, -200); }, Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -169,7 +169,7 @@ namespace tsl4
 
         #region CopyWithOffsetsAndCount
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
         {
             var array = GetArray(15);
             writer.ByteList.CopyTo(2, array, 3, 5);
@@ -179,7 +179,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
         {
             var array = GetArray(5);
             Assert.That(() => { writer.ByteList.CopyTo(2, array, 3, 5); }, Throws.ArgumentException);
@@ -187,7 +187,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.ByteList.CopyTo(2, array, 102, 5); }, Throws.ArgumentException);
@@ -195,7 +195,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.ByteList.CopyTo(200, array, 0, 5); }, Throws.ArgumentException);
@@ -203,7 +203,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.ByteList.CopyTo(200, array, 0, -200); }, Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -266,7 +266,7 @@ namespace tsl4
 
         #region CopyWithOffsetsAndCount
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
         {
             var array = GetArray(15);
             writer.DoubleList.CopyTo(2, array, 3, 5);
@@ -276,7 +276,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
         {
             var array = GetArray(5);
             Assert.That(() => { writer.DoubleList.CopyTo(2, array, 3, 5); }, Throws.ArgumentException);
@@ -284,7 +284,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.DoubleList.CopyTo(2, array, 102, 5); }, Throws.ArgumentException);
@@ -292,7 +292,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.DoubleList.CopyTo(200, array, 0, 5); }, Throws.ArgumentException);
@@ -300,7 +300,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.DoubleList.CopyTo(200, array, 0, -200); }, Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -363,7 +363,7 @@ namespace tsl4
 
         #region CopyWithOffsetsAndCount
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
         {
             var array = GetArray(15);
             writer.LongList.CopyTo(2, array, 3, 5);
@@ -373,7 +373,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
         {
             var array = GetArray(5);
             Assert.That(() => { writer.LongList.CopyTo(2, array, 3, 5); }, Throws.ArgumentException);
@@ -381,7 +381,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.LongList.CopyTo(2, array, 102, 5); }, Throws.ArgumentException);
@@ -389,7 +389,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.LongList.CopyTo(200, array, 0, 5); }, Throws.ArgumentException);
@@ -397,7 +397,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.LongList.CopyTo(200, array, 0, -200); }, Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -460,7 +460,7 @@ namespace tsl4
 
         #region CopyWithOffsetsAndCount
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
         {
             var array = GetArray(15);
             writer.StringList.CopyTo(2, array, 3, 5);
@@ -470,7 +470,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
         {
             var array = GetArray(5);
             Assert.That(() => { writer.StringList.CopyTo(2, array, 3, 5); }, Throws.ArgumentException);
@@ -478,7 +478,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.StringList.CopyTo(2, array, 102, 5); }, Throws.ArgumentException);
@@ -486,7 +486,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.StringList.CopyTo(200, array, 0, 5); }, Throws.ArgumentException);
@@ -494,7 +494,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.StringList.CopyTo(200, array, 0, -200); }, Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -557,7 +557,7 @@ namespace tsl4
 
         #region CopyWithOffsetsAndCount
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
         {
             var array = GetArray(15);
             writer.FixedLengthStructList.CopyTo(2, array, 3, 5);
@@ -567,7 +567,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
         {
             var array = GetArray(5);
             Assert.That(() => { writer.FixedLengthStructList.CopyTo(2, array, 3, 5); }, Throws.ArgumentException);
@@ -575,7 +575,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.FixedLengthStructList.CopyTo(2, array, 102, 5); }, Throws.ArgumentException);
@@ -583,7 +583,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.FixedLengthStructList.CopyTo(200, array, 0, 5); }, Throws.ArgumentException);
@@ -591,7 +591,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.FixedLengthStructList.CopyTo(200, array, 0, -200); }, Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -654,7 +654,7 @@ namespace tsl4
 
         #region CopyWithOffsetsAndCount
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
         {
             var array = GetArray(15);
             writer.VariableLengthStructList.CopyTo(2, array, 3, 5);
@@ -664,7 +664,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
         {
             var array = GetArray(5);
             Assert.That(() => { writer.VariableLengthStructList.CopyTo(2, array, 3, 5); }, Throws.ArgumentException);
@@ -672,7 +672,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.VariableLengthStructList.CopyTo(2, array, 102, 5); }, Throws.ArgumentException);
@@ -680,7 +680,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.VariableLengthStructList.CopyTo(200, array, 0, 5); }, Throws.ArgumentException);
@@ -688,7 +688,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.VariableLengthStructList.CopyTo(200, array, 0, -200); }, Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -752,7 +752,7 @@ namespace tsl4
 
         #region CopyWithOffsetsAndCount
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
         {
             var array = GetArray(15);
             writer.IntArrayList.CopyTo(2, array, 3, 5);
@@ -762,7 +762,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
         {
             var array = GetArray(5);
             Assert.That(() => { writer.IntArrayList.CopyTo(2, array, 3, 5); }, Throws.ArgumentException);
@@ -770,7 +770,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.IntArrayList.CopyTo(2, array, 102, 5); }, Throws.ArgumentException);
@@ -778,7 +778,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.IntArrayList.CopyTo(200, array, 0, 5); }, Throws.ArgumentException);
@@ -786,7 +786,7 @@ namespace tsl4
         });
 
         [Test]
-        public void CopyToTest_CopyAllWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
+        public void CopyToTest_CopyWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
         {
             var array = GetArray(100);
             Assert.That(() => { writer.IntArrayList.CopyTo(200, array, 0, -200); }, Throws.TypeOf<ArgumentOutOfRangeException>());
