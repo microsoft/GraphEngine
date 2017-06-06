@@ -48,6 +48,12 @@ namespace NUnitMetaRunner
             var rootTestSuite = GetITest(assembly, runnerOptions);
             var allTests = GetDecendentTests(rootTestSuite).ToList();
 
+            if (allTests.Count == 0)
+            {
+                Console.WriteLine($"Ignoring assembly {assemblyPath} : no tests found");
+                return 0;
+            }
+
             Console.WriteLine("Discovered tests:");
             foreach (var test in allTests)
             {
