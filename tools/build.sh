@@ -88,7 +88,7 @@ setup_nuget_repo()
 	then
 		echo "registering NuGet local repository '$nuget_repo_name'."
 		nuget_repo_location=$(printf "%q" "$REPO_ROOT/bin/coreclr")
-		sed -i "s#  </packageSources>#    <add key=\"$nuget_repo_name\" value=\"$nuget_repo_location\" \/>\n  <\/packageSources>#g" ~/.nuget/NuGet/NuGet.Config
+		sed -i "s#</packageSources>#    <add key=\"$nuget_repo_name\" value=\"$nuget_repo_location\" \/>\n  <\/packageSources>#g" ~/.nuget/NuGet/NuGet.Config
 	fi
 	echo "remove local package cache."
 	rm -rf ~/.nuget/packages/graphengine.coreclr
