@@ -43,7 +43,8 @@ dotnet pack %TRINITY_CORE_SLN%
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Register local nuget source
-%NUGET_EXE% sources Add -Name "Graph Engine OSS Local" -Source %REPO_ROOT%\bin\
+%NUGET_EXE% sources Remove -Name "Graph Engine OSS Local CoreCLR"
+%NUGET_EXE% sources Add -Name "Graph Engine OSS Local CoreCLR" -Source %REPO_ROOT%\bin\coreclr
 :: Clear local nuget cache
 rmdir /S /Q %USERPROFILE%\.nuget\packages\graphengine.coreclr
 :: Ignore local nuget source errors
