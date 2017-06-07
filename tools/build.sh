@@ -84,12 +84,13 @@ build_trinity_core()
 setup_nuget_repo()
 {
 	nuget_repo_name="Graph Engine OSS Local" 
-	if [ "$(grep "$nuget_repo_name" ~/.nuget/NuGet/NuGet.Config)" == "" ];
+    nuget_repo_location=$(printf "%q" "$REPO_ROOT/bin/coreclr")
+	echo "registering NuGet local repository '$nuget_repo_name'."
+	if [ "$(grep "$nuget_repo_name" ~/.nuget/NuGet/NuGet.Config)" != "" ];
 	then
-		echo "registering NuGet local repository '$nuget_repo_name'."
-		nuget_repo_location=$(printf "%q" "$REPO_ROOT/bin/coreclr")
-		sed -i "s#</packageSources>#    <add key=\"$nuget_repo_name\" value=\"$nuget_repo_location\" \/>\n  <\/packageSources>#g" ~/.nuget/NuGet/NuGet.Config
+        sed -i "/$nuget_repo_name/d" ~/.nuget/NuGet/NuGet.Config
 	fi
+	sed -i "s#</packageSources>#    <add key=\"$nuget_repo_name\" value=\"$nuget_repo_location\" \/>\n  <\/packageSources>#g" ~/.nuget/NuGet/NuGet.Config
 	echo "remove local package cache."
 	rm -rf ~/.nuget/packages/graphengine.coreclr
 }
