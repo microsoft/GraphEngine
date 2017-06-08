@@ -336,7 +336,7 @@ class NCell : public NStructBase
 public:
     ADDITIONAL_ERROR_REPORT("Cell", NNamed);
     DECLARE_TRAVERSE_MODULE;
-    NCell() {}
+    NCell() : indexList(nullptr) {}
     NCell(NStructBase* const other) : NStructBase(other) { indexList = new std::vector<NIndex*>(); }
     ~NCell() { delete_children(); }
     virtual bool is_struct() override { return false; }
