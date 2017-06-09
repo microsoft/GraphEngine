@@ -57,6 +57,8 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 call %SPARK_MODULE_ROOT%\build.bat
 
 :: Register local nuget source
+:: calling `nuget sources list` will create the config file if it does not exist
+%NUGET_EXE% sources list
 %NUGET_EXE% sources Remove -Name "Graph Engine OSS Local"
 %NUGET_EXE% sources Add -Name "Graph Engine OSS Local" -Source %REPO_ROOT%\bin\
 :: Clear local nuget cache
