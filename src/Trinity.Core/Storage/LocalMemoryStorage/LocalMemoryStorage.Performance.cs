@@ -22,7 +22,7 @@ namespace Trinity.Storage
         /// <summary>
         /// The total amount of trunk memory, in bytes.
         /// </summary>
-        internal ulong CommittedTrunkMemory
+        public ulong CommittedTrunkMemory
         {
             get
             {
@@ -39,7 +39,7 @@ namespace Trinity.Storage
         /// <summary>
         /// The total amount of memory consumed by the trunk indexes, in bytes.
         /// </summary>
-        internal ulong CommittedIndexMemory
+        public ulong CommittedIndexMemory
         {
             get
             {
