@@ -68,6 +68,7 @@ GraphEngine.Lib
 build/*
 *.tapp
 CMakeFiles
+.vscode/
 cmake_install.cmake
 CMakeCache.txt
 *.VC.db
