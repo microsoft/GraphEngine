@@ -17,6 +17,7 @@ using Trinity.Daemon;
 using System.Diagnostics;
 using Trinity.Core.Lib;
 using System.Runtime.CompilerServices;
+using Trinity.Configuration;
 
 namespace Trinity.Storage
 {
@@ -30,6 +31,7 @@ namespace Trinity.Storage
         {
             lock (m_lock)
             {
+                if(TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
                 bool ret = CLocalMemoryStorage.CLoadStorage();
 
                 //TODO WAL and cell type signatures should migrate to KVStore extensions.
@@ -58,6 +60,7 @@ namespace Trinity.Storage
         {
             lock (m_lock)
             {
+                if(TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
                 bool ret = CLocalMemoryStorage.CSaveStorage();
 
                 if (ret)
@@ -88,6 +91,7 @@ namespace Trinity.Storage
         {
             lock (m_lock)
             {
+                if(TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
                 string path   = WriteAheadLogFilePath;
                 bool   ret    = CLocalMemoryStorage.CResetStorage();
 
@@ -104,6 +108,42 @@ namespace Trinity.Storage
 
                 return ret;
             }
+        }
+
+        /// <summary>
+        /// Synchronizes storage root path with Trinity.C.
+        /// Creates the directory if it does not exist.
+        /// </summary>
+        private static TrinityErrorCode CSynchronizeStorageRoot()
+        {
+            string storage_root = StorageConfig.Instance.StorageRoot;
+            if (!Directory.Exists(storage_root))
+            {
+                try
+                {
+                    Directory.CreateDirectory(storage_root);
+                }
+                catch
+                {
+                    Log.WriteLine(LogLevel.Error, "Error occurs when creating StorageRoot: " + storage_root);
+                    return TrinityErrorCode.E_FAILURE;
+                }
+            }
+
+            try
+            {
+                byte[] buff = BitHelper.GetBytes(storage_root);
+                fixed (byte* p = buff)
+                {
+                    CTrinityConfig.SetStorageRoot(p, buff.Length);
+                }
+            }
+            catch
+            {
+                return TrinityErrorCode.E_FAILURE;
+            }
+
+            return TrinityErrorCode.E_SUCCESS;
         }
 
 
