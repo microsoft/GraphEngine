@@ -286,13 +286,14 @@ namespace Trinity
                     if (instance.AssemblyPath != null)
                     {
                         if (IPAddressComparer.IsLocalhost(instance.HostName) && 
-                            FileUtility.CompletePath(instance.AssemblyPath, false).ToLowerInvariant().Equals(Global.MyAssemblyPath.ToLowerInvariant()))
+                            FileUtility.ComparePath(instance.AssemblyPath, Global.MyAssemblyPath))
                         {
                             return instance;
                         }
                     }
                 }
             }
+
             for (int i = 0; i < Servers.Count; i++)
             {
                 foreach (var instance in Servers[i].Instances)
@@ -317,7 +318,7 @@ namespace Trinity
                     if (instance.AssemblyPath != null)
                     {
                         if (IPAddressComparer.IsLocalhost(instance.HostName) && 
-                            FileUtility.CompletePath(instance.AssemblyPath, false).ToLowerInvariant().Equals(Global.MyAssemblyPath.ToLowerInvariant()))
+                            FileUtility.ComparePath(instance.AssemblyPath, Global.MyAssemblyPath))
                         {
                             return instance;
                         }
