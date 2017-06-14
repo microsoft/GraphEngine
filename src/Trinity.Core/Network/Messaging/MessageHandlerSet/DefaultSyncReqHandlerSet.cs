@@ -61,10 +61,11 @@ namespace Trinity.Network.Messaging
                     {
                         //IPAddress(4)+Port(4)
                         IPAddress aggregator_address = BitHelper.ToIPAddress(args.Buffer, args.Offset);
-                        IPEndPoint ipe = new IPEndPoint(aggregator_address, *(int*)(args.Buffer + args.Offset + 4));
+                        int aggregator_port = *(int*)(args.Buffer + args.Offset + 4);
+                        ServerInfo si = new ServerInfo(aggregator_address.ToString(), aggregator_port, "", LogLevel.Info);
                         lock (Global.ProxyTable)
                         {
-                            Global.ProxyTable[ipe] = new Storage.RemoteStorage(ipe, TrinityConfig.ClientMaxConn);
+                            Global.ProxyTable[si.EndPoint] = new Storage.RemoteStorage(si, TrinityConfig.ClientMaxConn);
                         }
                     }
                 });

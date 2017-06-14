@@ -19,6 +19,7 @@ using System.Runtime.CompilerServices;
 using System.Globalization;
 using Trinity.Network.Messaging;
 using System.Diagnostics;
+using Trinity.Utilities;
 
 namespace Trinity.Network
 {
@@ -283,6 +284,10 @@ namespace Trinity.Network
                 {
                     Log.WriteLine(LogLevel.Debug, "Starting communication instance.");
                     var _config = TrinityConfig.CurrentClusterConfig;
+                    var _si = _config.GetMyServerInfo() ?? _config.GetMyProxyInfo();
+                    var _my_ip = Global.MyIPAddress;
+
+                    if (_si != null) _my_ip = NetworkUtility.Hostname2IPv4Address(_si.HostName);
 
                     _config.RunningMode = this.RunningMode;
                     Global.CommunicationInstance = this;
@@ -299,7 +304,7 @@ namespace Trinity.Network
 
                     //  Initialize message passing networking
                     NativeNetwork.StartTrinityServer((UInt16)_config.ListeningPort);
-                    Log.WriteLine("My IPEndPoint: " + _config.MyBoundIP + ":" + _config.ListeningPort);
+                    Log.WriteLine("My IPEndPoint: " + _my_ip + ":" + _config.ListeningPort);
 
                     //  Initialize cloud storage
                     memory_cloud = Global.CloudStorage;

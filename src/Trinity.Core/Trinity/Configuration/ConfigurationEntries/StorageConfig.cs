@@ -15,6 +15,9 @@ using Trinity.Utilities;
 
 namespace Trinity.Configuration
 {
+    /// <summary>
+    /// Contains settings for the configuration section "Storage".
+    /// </summary>
     public sealed class StorageConfig
     {
         #region Singleton

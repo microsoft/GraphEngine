@@ -82,7 +82,7 @@ namespace Trinity.Storage
                             {
                                 foreach (var instance in TrinityConfig.Proxies[i].Instances)
                                 {
-                                    new_proxy_list.Add(new RemoteStorage(instance.EndPoint, TrinityConfig.ClientMaxConn));
+                                    new_proxy_list.Add(new RemoteStorage(instance, TrinityConfig.ClientMaxConn));
                                 }
                             }
 
