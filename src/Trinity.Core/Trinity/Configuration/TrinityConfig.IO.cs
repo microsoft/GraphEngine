@@ -134,11 +134,11 @@ namespace Trinity
 
             FileUtility.CompletePath(Path.GetDirectoryName(configFile), true);
             #region create basic xml info
-            XmlDocument configXml = new XmlDocument();
+            XmlDocument configXml      = new XmlDocument();
             XmlDeclaration declaration = configXml.CreateXmlDeclaration("1.0", "utf-8", null);
-            XmlNode rootNode = configXml.CreateElement(ConfigurationConstants.Tags.ROOT_NODE);
-            XmlAttribute version = configXml.CreateAttribute(ConfigurationConstants.Attrs.CONFIG_VERSION);
-            version.Value = ConfigurationConstants.Tags.CURRENTVER;
+            XmlNode rootNode           = configXml.CreateElement(ConfigurationConstants.Tags.ROOT_NODE);
+            XmlAttribute version       = configXml.CreateAttribute(ConfigurationConstants.Attrs.CONFIG_VERSION);
+            version.Value              = ConfigurationConstants.Tags.CURRENTVER;
             rootNode.Attributes.Append(version);
             #endregion
             #region Get Local Setting Info
@@ -168,7 +168,7 @@ namespace Trinity
                         foreach (var server in ag.Instances)
                         {
                             XmlNode serverNode = configXml.CreateElement(c_builtInSectionNames[i]);
-                            serverNode.Attributes.Append(SetAttribute(configXml, ConfigurationConstants.Attrs.ENDPOINT, server.EndPoint.ToString()));
+                            serverNode.Attributes.Append(SetAttribute(configXml, ConfigurationConstants.Attrs.ENDPOINT, String.Format("{0}:{1}", server.HostName, server.Port)));
                             if (server.AssemblyPath != null)
                                 serverNode.Attributes.Append(SetAttribute(configXml, ConfigurationConstants.Attrs.ASSEMBLY_PATH, server.AssemblyPath));
                             if (server.Id!=null)
@@ -218,7 +218,7 @@ namespace Trinity
         {
             LoadTrinityConfig(configFile, true);
         }
-        
+
         internal static void LoadTrinityConfig(bool forceLoad = false)
         {
             LoadTrinityConfig(DefaultConfigFile, forceLoad);
@@ -254,6 +254,7 @@ namespace Trinity
                         }
                     }
 
+                    // The default cluster config is the one without an Id.
                     s_current_cluster_config = new ClusterConfig(clusterSections.FirstOrDefault(
                         _ => _.Attribute(ConfigurationConstants.Attrs.ID) == null) ??
                             new XElement(ConfigurationConstants.Tags.CLUSTER));
@@ -291,7 +292,7 @@ namespace Trinity
         private static void LoadConfigLegacy(string trinity_config_file)
         {
             XMLConfig xml_config  = new XMLConfig(trinity_config_file);
-           
+
             //construct local configuration section  
             XElement localSection = new XElement(ConfigurationConstants.Tags.LOCAL);
             XElement loggingEntry = new XElement(ConfigurationConstants.Tags.LOGGING);
@@ -311,7 +312,7 @@ namespace Trinity
 
             //construct local ConfigurationSection
             s_localConfigurationSection = new ConfigurationSection(localSection);
-            
+
             //construct a clusterSections
             s_current_cluster_config = ClusterConfig._LegacyLoadClusterConfig(trinity_config_file);
 

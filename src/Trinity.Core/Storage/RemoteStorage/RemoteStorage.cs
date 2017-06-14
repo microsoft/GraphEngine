@@ -38,11 +38,11 @@ namespace Trinity.Storage
         private MemoryCloud memory_cloud;
         public int MyServerId;
 
-        internal RemoteStorage(IPEndPoint ip_endpoint, int connPerServer)
+        internal RemoteStorage(ServerInfo server_info, int connPerServer)
         {
             for (int i = 0; i < connPerServer; i++)
             {
-                ConnectIPEndPoint(ip_endpoint);
+                Connect(server_info);
             }
         }
 
@@ -57,7 +57,7 @@ namespace Trinity.Storage
                 {
                     for (int i = 0; i < trinityServer.Instances.Count; i++)
                     {
-                        ConnectIPEndPoint(trinityServer.Instances[i].EndPoint);
+                        Connect(trinityServer.Instances[i]);
                     }
                 }
                 BackgroundThread.AddBackgroundTask(new BackgroundTask(Heartbeat, TrinityConfig.HeartbeatInterval));
@@ -71,13 +71,14 @@ namespace Trinity.Storage
             }
         }
 
-        private void ConnectIPEndPoint(IPEndPoint ip_endpoint)
+        private void Connect(ServerInfo server_info)
         {
             while (true)
             {
                 try
                 {
-                    var client = new Network.Client.SynClient(ip_endpoint);
+                    var ep = server_info.EndPoint;
+                    var client = new Network.Client.SynClient(ep);
                     if (client.sock_connected)
                     {
                         ConnPool.Add(client);
@@ -86,9 +87,9 @@ namespace Trinity.Storage
                         break;
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    Log.WriteLine(LogLevel.Debug, "Cannot connect to {0}", ip_endpoint);
+                    Log.WriteLine(LogLevel.Debug, "RemoteStorage: Cannot connect to {0}:{1}: {2}", server_info.HostName, server_info.Port, ex.Message);
                     Thread.Sleep(100);
                 }
             }
