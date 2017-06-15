@@ -2,9 +2,10 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RuntimeFrameworkVersion>2.0.0-beta-001509-00</RuntimeFrameworkVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CommandLineParser" Version="1.9.71" />
+    <PackageReference Include="CommandLineParser" Version="2.1.1-beta" />
     <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.8850" />
     <PackageReference Include="NUnit" Version="3.6.1" />
     <PackageReference Include="NUnitLite" Version="3.6.1" />
