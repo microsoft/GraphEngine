@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Xml;
 using System.Xml.Linq;
 using CommandLine;
-using CommandLine.Text;
 using NUnitLite;
 using NUnit.Framework.Api;
 using NUnit.Framework.Interfaces;
@@ -28,12 +27,13 @@ namespace NUnitMetaRunner
     {
         public static int Main(string[] args)
         {
-            var options = new CommandLineOptions();
-            if (!CommandLine.Parser.Default.ParseArguments(args, options))
-            {
-                return 1;
-            }
+            return CommandLine.Parser.Default.ParseArguments<CommandLineOptions>(args)
+                    .MapResult(options => MainCore(options),
+                               _ => 1);
+        }
 
+        private static int MainCore(CommandLineOptions options)
+        {
             var runnerPath = Path.GetFullPath(options.RunnerPath);
             var resultDirRoot = Path.GetFullPath(options.ResultDirPath);
             var assemblyPath = Path.GetFullPath(options.AssemblyPath);
