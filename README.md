@@ -1,10 +1,10 @@
 # Graph Engine - Open Source
 
-|Windows | Ubuntu 16.04 |
-|:------:|:------:|
-|[![Build Status](http://ci.graphengine.io/job/graphengine-master-win/badge/icon)](http://ci.graphengine.io/job/graphengine-master-win)|[![Build Status](http://ci.graphengine.io/job/graphengine-master-ubuntu1604/badge/icon)](http://ci.graphengine.io/job/graphengine-master-ubuntu1604/)|
-|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/graphengine-test-win.svg)](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/graphengine-test-win.svg)|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/graphengine-test-ubuntu1604.svg)](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/graphengine-test-ubuntu1604.svg)|
-
+| - | Windows .NET Framework | Windows .NET Core | Ubuntu 16.04 .NET Core |
+|:------:|:------:|:------:|:------:|
+|Build|[![Build Status](http://ci.graphengine.io/buildStatus/icon?job=GraphEngine-Windows-NetFX)](http://ci.graphengine.io/job/GraphEngine-Windows-NetFX/)|[![Build Status](http://ci.graphengine.io/buildStatus/icon?job=GraphEngine-Windows-NetCore)](http://ci.graphengine.io/job/GraphEngine-Windows-NetCore/)|[![Build Status](http://ci.graphengine.io/buildStatus/icon?job=GraphEngine-Ubuntu-NetCore)](http://ci.graphengine.io/job/GraphEngine-Ubuntu-NetCore/)
+|Tests|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/GraphEngine-Windows-NetFx.svg)](http://ci.graphengine.io/job/GraphEngine-Windows-NetFx/)|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/GraphEngine-Windows-NetCore.svg)](http://ci.graphengine.io/job/GraphEngine-Windows-NetCore/)|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/GraphEngine-Ubuntu-NetCore.svg)](http://ci.graphengine.io/job/GraphEngine-Ubuntu-NetCore/)|
+|Stress|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/GraphEngine-Windows-NetFx-Stress.svg)](http://ci.graphengine.io/job/GraphEngine-Windows-NetFx-Stress/)|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/GraphEngine-Windows-NetCore-Stress.svg)](http://ci.graphengine.io/job/GraphEngine-Windows-NetCore-Stress/)|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/GraphEngine-Ubuntu1604-NetCore-Stress.svg)](http://ci.graphengine.io/job/GraphEngine-Ubuntu-NetCore-Stress/)|
 Microsoft [Graph Engine](http://www.graphengine.io/) is a distributed
 in-memory data processing engine, underpinned by a strongly-typed
 in-memory key-value store and a general distributed computation
