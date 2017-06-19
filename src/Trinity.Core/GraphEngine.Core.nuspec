@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>GraphEngine.Core</id>
-    <version>1.0.8784</version>
+    <version>1.0.8850</version>
     <title>Graph Engine Core</title>
     <authors>Microsoft Graph Engine Team</authors>
     <owners>Microsoft Corporation</owners>
@@ -20,10 +20,7 @@
   </metadata>
   <files>
       <file src="..\..\bin\Trinity.Core.dll" target="lib" /> 
-      <file src="..\..\tools\Trinity.TSL.CodeGen.dll" target="tools" /> 
-      <file src="..\..\tools\Trinity.TSL.Compiler.exe" target="tools" /> 
-      <file src="..\..\tools\Trinity.TSL.ManagedWrapper.dll" target="tools" /> 
-      <file src="..\..\tools\Trinity.TSL.CompilerTask.dll" target="tools" /> 
+      <file src="..\..\bin\Trinity.TSL.CodeGen.exe" target="tools" /> 
       <file src="NuGet\GraphEngine.Core.props" target="build" /> 
       <file src="NuGet\GraphEngine.Core.targets" target="build" /> 
   </files>

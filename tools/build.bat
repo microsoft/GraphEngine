@@ -1,5 +1,5 @@
 if [%REPO_ROOT%] == [] (
-  set REPO_ROOT=%cd%
+  set REPO_ROOT=%~dp0..
 )
 
 setlocal enabledelayedexpansion
@@ -13,12 +13,17 @@ if not exist %NUGET_EXE% (
 )
 
 set TRINITY_C_SLN=%REPO_ROOT%\src\Trinity.C\Trinity.C.sln
+set TRINITY_TSL_SLN=%REPO_ROOT%\src\Trinity.TSL\Trinity.TSL.sln
 set TRINITY_CORE_SLN=%REPO_ROOT%\src\Trinity.Core\Trinity.Core.sln
 set LIKQ_SLN=%REPO_ROOT%\src\LIKQ\LIKQ.sln
 set SPARK_MODULE_ROOT=%REPO_ROOT%\src\Modules\Spark
 
 :: Run msbuild to build Trinity.C
 %MSBUILD_EXE% /p:Configuration=Release %TRINITY_C_SLN%
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+:: Run msbuild to build Trinity.TSL.CodeGen
+%MSBUILD_EXE% /p:Configuration=Release %TRINITY_TSL_SLN%
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Run nuget to restore nuget packages for Trinity.Core
@@ -50,3 +55,13 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Build spark module
 call %SPARK_MODULE_ROOT%\build.bat
+
+:: Register local nuget source
+:: calling `nuget sources list` will create the config file if it does not exist
+%NUGET_EXE% sources list
+%NUGET_EXE% sources Remove -Name "Graph Engine OSS Local"
+%NUGET_EXE% sources Add -Name "Graph Engine OSS Local" -Source %REPO_ROOT%\bin\
+:: Clear local nuget cache
+:: for /f %i in ('dir /a:d /s /b %REPO_ROOT%\tests\packages\GraphEngine.Core*') do rmdir /S /Q %i
+:: Ignore local nuget source errors
+exit /b 0

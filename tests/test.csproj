@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <ItemGroup>
+        <UnitTest Include="**/unittests/**/*.csproj" Exclude="**/*_exe.csproj;**/*_coreclr.csproj"/>
+        <StressTest Include="**/stresstests/**/*.csproj" Exclude="**/*_exe.csproj;**/*_coreclr.csproj"/>
+        <Exe Include="**/exetests/**/*_exe.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="packages.config" />
+    </ItemGroup>
+    <PropertyGroup>
+        <NuGet>$(MSBuildProjectDirectory)\packages\NuGet.CommandLine.3.5.0\tools\NuGet</NuGet>
+        <PackagesFolder>$(MSBuildProjectDirectory)\packages</PackagesFolder>
+        <MetaRunner>$(MSBuildProjectDirectory)\nunit_tools\nunit_meta_runner\bin\Release\nunit_meta_runner.exe</MetaRunner>
+        <TestRunner>$(MSBuildProjectDirectory)\nunit_tools\nunit_test_runner\bin\Release\nunitlite-runner.exe</TestRunner>
+    </PropertyGroup>
+
+    <Target Name="Build" DependsOnTargets="RunExeTests;RunUnitTests" />
+
+    <Target Name="RunExeTests">
+        <!--Exe tests-->
+        <Exec
+            Command="$(NuGet) restore -PackagesDirectory $(PackagesFolder)"
+            WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Exe.Identity)))"
+            ContinueOnError="false"/>
+        <MSBuild
+            Projects="%(Exe.Identity)"
+            ContinueOnError="false"
+            Properties="Configuration=Release;Platform=AnyCPU" UnloadProjectsOnCompletion="true"/>
+        <Exec
+            Command="bin\Release\$([System.IO.Path]::GetFileNameWithoutExtension(%(Exe.Identity))).exe"
+            WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(Exe.Identity)))"
+            ContinueOnError="false"
+            Condition="Exists('$([System.IO.Path]::GetDirectoryName(%(Exe.Identity)))\bin\Release\$([System.IO.Path]::GetFileNameWithoutExtension(%(Exe.Identity))).exe')"/>
+    </Target>
+
+    <Target Name="RunUnitTests" DependsOnTargets="Init">
+        <PropertyGroup>
+            <ResultDir>$(MSBuildProjectDirectory)/nunit_unit_reports</ResultDir>
+        </PropertyGroup>
+        <RemoveDir Directories="$(ResultDir)" ContinueOnError="true" />
+        <MakeDir Directories="$(ResultDir)" ContinueOnError="true" />
+
+        <Exec
+            Command="$(NuGet) restore -PackagesDirectory $(PackagesFolder)"
+            WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(UnitTest.Identity)))"
+            ContinueOnError="false"/>
+        <MSBuild
+            Projects="%(UnitTest.Identity)"
+            ContinueOnError="true"
+            Properties="Configuration=Release;Platform=AnyCPU" UnloadProjectsOnCompletion="true"/>
+        <Exec
+            Command="$(MetaRunner) -t 1800000 -r $(TestRunner) -d $(ResultDir) -a $([System.IO.Path]::GetFileNameWithoutExtension(%(UnitTest.Identity))).dll -o &quot; --workers=1&quot;"
+            WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(UnitTest.Identity)))\bin\Release"
+            ContinueOnError="true" Condition="Exists('$([System.IO.Path]::GetDirectoryName(%(UnitTest.Identity)))\bin\Release\$([System.IO.Path]::GetFileNameWithoutExtension(%(UnitTest.Identity))).dll')"/>
+    </Target>
+
+    <Target Name="RunStressTests" DependsOnTargets="Init">
+        <PropertyGroup>
+            <ResultDir>$(MSBuildProjectDirectory)/nunit_stress_reports</ResultDir>
+        </PropertyGroup>
+        <RemoveDir Directories="$(ResultDir)" ContinueOnError="true" />
+        <MakeDir Directories="$(ResultDir)" ContinueOnError="true" />
+
+        <Exec
+            Command="$(NuGet) restore -PackagesDirectory $(PackagesFolder)"
+            WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(StressTest.Identity)))"
+            ContinueOnError="false"/>
+        <MSBuild
+            Projects="%(StressTest.Identity)"
+            ContinueOnError="true"
+            Properties="Configuration=Release;Platform=AnyCPU" UnloadProjectsOnCompletion="true"/>
+        <Exec
+            Command="$(MetaRunner) -t 1800000 -r $(TestRunner) -d $(ResultDir) -a $([System.IO.Path]::GetFileNameWithoutExtension(%(StressTest.Identity))).dll -o &quot; --workers=1&quot;"
+            WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(StressTest.Identity)))\bin\Release"
+            ContinueOnError="true" Condition="Exists('$([System.IO.Path]::GetDirectoryName(%(StressTest.Identity)))\bin\Release\$([System.IO.Path]::GetFileNameWithoutExtension(%(StressTest.Identity))).dll')"/>
+    </Target>
+
+    <Target Name="Init">
+        <ItemGroup>
+            <ToolProjects Include="**/nunit_tools/**/*.csproj" Exclude="**/*_coreclr.csproj" />
+        </ItemGroup>
+        <Exec
+            Command="$(NuGet) restore -PackagesDirectory $(PackagesFolder) packages.config"
+            WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(ToolProjects.Identity)))"
+            ContinueOnError="false"/>
+        <MSBuild
+            Projects="%(ToolProjects.Identity)"
+            ContinueOnError="true"
+            Properties="Configuration=Release;Platform=AnyCPU" UnloadProjectsOnCompletion="true"/>
+    </Target>
+</Project>

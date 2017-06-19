@@ -1,0 +1,95 @@
+TrinitySettings
+{
+	RootNamespace: TSLUnitTest;
+}
+
+cell struct StringTestCell
+{
+    string str;
+}
+
+cell struct DateTimeTestCell
+{
+	DateTime dt;	
+}
+
+struct PressureTestMessage
+{
+    int echo_num;	
+}
+
+protocol PressureTestProtocol
+{
+    Type:Syn;
+    Request:PressureTestMessage;
+    Response:PressureTestMessage;	
+}
+
+server PressureTestServer
+{
+    protocol PressureTestProtocol;	
+}
+
+struct NestedStructForJsonParseTest
+{
+    List<string> strings;
+}
+
+struct CombinedStructForJsonParseTest
+{
+    int int_val;
+    NestedStructForJsonParseTest nested;
+    string outer_string;
+}
+
+struct FanoutQueryMessage
+{
+    byte               maxHop;
+    List<CellId>       origin;
+    string             originQuery;
+    List<string>       predicates;
+	List<List<string>> edge_types;
+    List<List<string>> return_selection;
+    int                skip_count;
+    int                take_count;
+}
+
+struct BatchQueryMessage
+{
+    FanoutQueryMessage Query;	
+    optional string    OriginPredicate;
+    optional string    StartFromCategory;
+}
+
+protocol SynProtocolNoResponse
+{
+    Type : Syn;
+    Request: void;	
+}
+
+protocol SynProtocolNoRequestNoResponse
+{
+    Type: Syn;
+}
+
+protocol AsynProtocolNoResponse
+{
+    Type: Asyn;
+    Request: void;	
+}
+
+protocol AsynProtocolNoRequestNoResponse
+{
+    Type: Asyn;
+}
+
+protocol HttpProtocolNoResponse
+{
+    Type: Http;
+    Request: void;	
+}
+
+protocol HttpProtocolNoRequestNoResponse
+{
+    Type: HTTP;
+}

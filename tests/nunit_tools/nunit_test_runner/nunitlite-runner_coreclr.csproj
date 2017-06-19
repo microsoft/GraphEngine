@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RuntimeFrameworkVersion>2.0.0-preview</RuntimeFrameworkVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="graphengine.coreclr" Version="1.0.8850" />
+    <PackageReference Include="nunit" Version="3.6.1" />
+    <PackageReference Include="NUnitLite" Version="3.6.1" />
+  </ItemGroup>
+</Project>

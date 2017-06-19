@@ -36,7 +36,7 @@ namespace Trinity
             if (!File.Exists(xmlConfig))
                 return;
             xml_config = new XMLConfig(configFile);
-            LoadConfig();
+            _LegacyLoadConfig();
         }
 
         internal static ClusterConfig _LegacyLoadClusterConfig(string xmlConfig)
@@ -135,12 +135,9 @@ namespace Trinity
         {
             get
             {
-                return Servers
-                    .SelectMany(_ => _.Instances
-                        .Select(instance =>
-                            new IPEndPoint(
-                                instance.EndPoint.Address,
-                                instance.EndPoint.Port))).ToList();
+                return Servers.SelectMany(_ => _.Instances
+                        .Select(instance => instance.EndPoint))
+                        .ToList();
             }
         }
 
@@ -151,47 +148,9 @@ namespace Trinity
         {
             get
             {
-                return Proxies
-                    .SelectMany(_ => _.Instances
-                        .Select(instance =>
-                            new IPEndPoint(
-                                instance.EndPoint.Address,
-                                instance.EndPoint.Port))).ToList();
-            }
-        }
-
-        /// <summary>
-        /// Gets the Ip address of the current server in the cluster.
-        /// </summary>
-        internal IPAddress MyBoundIP
-        {
-            get
-            {
-                IPAddress my_ip_address;
-                if (RunningMode == RunningMode.Server)
-                {
-                    var instance = GetMyServerInfo();
-                    if (instance != null)
-                    {
-                        if (IPAddress.TryParse(instance.HostName, out my_ip_address))
-                        {
-                            return my_ip_address;
-                        }
-                    }
-                }
-
-                if (RunningMode == RunningMode.Proxy)
-                {
-                    var instance = GetMyProxyInfo();
-                    if (instance != null)
-                    {
-                        if (IPAddress.TryParse(instance.HostName, out my_ip_address))
-                        {
-                            return my_ip_address;
-                        }
-                    }
-                }
-                return Global.MyIPAddress;
+                return Proxies.SelectMany(_ => _.Instances
+                        .Select(instance => instance.EndPoint))
+                        .ToList();
             }
         }
 
@@ -224,8 +183,7 @@ namespace Trinity
                 var instance = GetMyServerInfo();
                 if (instance != null)
                 {
-                    Global.MyIPAddress = instance.EndPoint.Address;
-                    return instance.EndPoint.Port;
+                    return instance.Port;
                 }
                 return TrinityConfig.DefaultServerPort;
             }
@@ -241,8 +199,7 @@ namespace Trinity
                 var instance = GetMyProxyInfo();
                 if (instance != null)
                 {
-                    Global.MyIPAddress = instance.EndPoint.Address;
-                    return instance.EndPoint.Port;
+                    return instance.Port;
                 }
                 return TrinityConfig.DefaultProxyPort;
             }
@@ -328,19 +285,20 @@ namespace Trinity
                 {
                     if (instance.AssemblyPath != null)
                     {
-                        if (IPAddressComparer.CompareIPAddress(instance.EndPoint.Address, Global.MyIPAddress) == 0 &&
-                    FileUtility.CompletePath(instance.AssemblyPath, false).ToLowerInvariant().Equals(Global.MyAssemblyPath.ToLowerInvariant()))
+                        if (IPAddressComparer.IsLocalhost(instance.HostName) && 
+                            FileUtility.ComparePath(instance.AssemblyPath, Global.MyAssemblyPath))
                         {
                             return instance;
                         }
                     }
                 }
             }
+
             for (int i = 0; i < Servers.Count; i++)
             {
                 foreach (var instance in Servers[i].Instances)
                 {
-                    if (IPAddressComparer.CompareIPAddress(instance.EndPoint.Address, Global.MyIPAddress) == 0)
+                    if (IPAddressComparer.IsLocalhost(instance.HostName))
                         return instance;
                 }
             }
@@ -359,8 +317,8 @@ namespace Trinity
                 {
                     if (instance.AssemblyPath != null)
                     {
-                        if (IPAddressComparer.CompareIPAddress(instance.EndPoint.Address, Global.MyIPAddress) == 0 &&
-                            FileUtility.CompletePath(instance.AssemblyPath, false).ToLowerInvariant().Equals(Global.MyAssemblyPath.ToLowerInvariant()))
+                        if (IPAddressComparer.IsLocalhost(instance.HostName) && 
+                            FileUtility.ComparePath(instance.AssemblyPath, Global.MyAssemblyPath))
                         {
                             return instance;
                         }
@@ -369,7 +327,7 @@ namespace Trinity
 
                 foreach (var instance in Proxies[i].Instances)
                 {
-                    if (IPAddressComparer.CompareIPAddress(instance.EndPoint.Address, Global.MyIPAddress) == 0)
+                    if (IPAddressComparer.IsLocalhost(instance.HostName))
                         return instance;
                 }
             }
@@ -394,7 +352,7 @@ namespace Trinity
             {
                 foreach (var instance in server.Instances)
                 {
-                    cw.WL("    {0}", instance.EndPoint);
+                    cw.WL("    {0}:{1}", instance.HostName, instance.Port);
                 }
             }
             #endregion
@@ -405,7 +363,7 @@ namespace Trinity
             {
                 foreach (var instance in proxy.Instances)
                 {
-                    cw.WL("    {0}", instance.EndPoint);
+                    cw.WL("    {0}:{1}", instance.HostName, instance.Port);
                 }
             }
             #endregion
@@ -415,16 +373,16 @@ namespace Trinity
             cw.WL();
             return cw.ToString();
         }
-       
-        private void LoadConfig()
+
+        private void _LegacyLoadConfig()
         {
             try
             {
                 Servers.Clear();
-                Servers.AddRange(GetAvailabilityGroupList(xml_config, "Servers", "Server", "ServerId"));
+                Servers.AddRange(_LegacyGetAvailabilityGroupList(xml_config, "Servers", "Server", "ServerId"));
 
                 Proxies.Clear();
-                Proxies.AddRange(GetAvailabilityGroupList(xml_config, "Proxies", "Proxy", "ProxyId"));
+                Proxies.AddRange(_LegacyGetAvailabilityGroupList(xml_config, "Proxies", "Proxy", "ProxyId"));
             }
             catch (Exception e)
             {
@@ -437,7 +395,7 @@ namespace Trinity
         /// <summary>
         /// Obtain a list of AvailabilityGroup from XML config.
         /// </summary>
-        private IEnumerable<AvailabilityGroup> GetAvailabilityGroupList(XMLConfig config, string xml_section_name, string xml_server_info_entry_name, string xml_agroup_id_attribute_name)
+        private IEnumerable<AvailabilityGroup> _LegacyGetAvailabilityGroupList(XMLConfig config, string xml_section_name, string xml_server_info_entry_name, string xml_agroup_id_attribute_name)
         {
             var server_entry_list = config.GetEntries(xml_section_name, xml_server_info_entry_name);
             Dictionary<string, List<ServerInfo>> id_infolist_dict = new Dictionary<string, List<ServerInfo>>();
@@ -445,55 +403,47 @@ namespace Trinity
             {
                 var str_ip_endpoint = server_entry_list[i].Value;
                 string[] parts = str_ip_endpoint.Split(new char[] { ':' });
-                IPEndPoint ep = Utilities.NetworkUtility.Hostname2IPEndPoint(str_ip_endpoint.Trim());
 
-                if (ep != null)
-                {
+                Dictionary<string, string> pvs = server_entry_list[i].Attributes().ToDictionary(attr => attr.Name.ToString(), attr => attr.Value);
 
-                    Dictionary<string, string> pvs = server_entry_list[i].Attributes().ToDictionary(attr => attr.Name.ToString(), attr => attr.Value);
+                string assemblyPath = null;
+                string Id = null;
+                LogLevel loggingLevel = LoggingConfig.c_DefaultLogLevel;
+                string storageRoot = null;
 
-                    string assemblyPath = null;
-                    string Id = null;
-                    LogLevel loggingLevel = LoggingConfig.c_DefaultLogLevel;
-                    string storageRoot = null;
+                if (pvs.ContainsKey(ConfigurationConstants.Attrs.ASSEMBLY_PATH))
+                    assemblyPath = FileUtility.CompletePath(pvs[ConfigurationConstants.Attrs.ASSEMBLY_PATH], false);
 
-                    if (pvs.ContainsKey(ConfigurationConstants.Attrs.ASSEMBLY_PATH))
-                        assemblyPath = FileUtility.CompletePath(pvs[ConfigurationConstants.Attrs.ASSEMBLY_PATH], false);
+                if (pvs.TryGetValue(ConfigurationConstants.Attrs.STORAGE_ROOT, out storageRoot))
+                    storageRoot = storageRoot.Trim();
 
-                    if (pvs.TryGetValue(ConfigurationConstants.Attrs.STORAGE_ROOT, out storageRoot))
-                        storageRoot = storageRoot.Trim();
+                if (pvs.ContainsKey(ConfigurationConstants.Attrs.LOGGING_LEVEL))
+                    loggingLevel = (LogLevel)Enum.Parse(typeof(LogLevel), pvs[ConfigurationConstants.Attrs.LOGGING_LEVEL], true);
 
-                    if (pvs.ContainsKey(ConfigurationConstants.Attrs.LOGGING_LEVEL))
-                        loggingLevel = (LogLevel)Enum.Parse(typeof(LogLevel), pvs[ConfigurationConstants.Attrs.LOGGING_LEVEL], true);
+                if (pvs.TryGetValue(xml_agroup_id_attribute_name, out Id))
+                    Id = Id.Trim();
+                else
+                    Id = i.ToString(CultureInfo.InvariantCulture);
 
-                    if (pvs.TryGetValue(xml_agroup_id_attribute_name, out Id))
-                        Id = Id.Trim();
-                    else
-                        Id = i.ToString(CultureInfo.InvariantCulture);
-
-                    ServerInfo si = ServerInfo._LegacyCreateServerInfo(
+                ServerInfo si = ServerInfo._LegacyCreateServerInfo(
                         hostName: parts[0].Trim(),
+                        port: int.Parse(parts[1]),
                         //httpPort: TrinityConfig.HttpPort,
                         assemblyPath: assemblyPath,
                         availabilityGroup: Id,
                         storageRoot: storageRoot,
-                        endpoint: ep,
                         loggingLevel: loggingLevel.ToString());
 
 
-                    List<ServerInfo> list = null;
-                    if (!id_infolist_dict.TryGetValue(si.Id, out list))
-                    {
-                        list = new List<ServerInfo>();
-                        id_infolist_dict.Add(si.Id, list);
-                    }
-                    list.Add(si);
-                }
-                else
+                List<ServerInfo> list = null;
+                if (!id_infolist_dict.TryGetValue(si.Id, out list))
                 {
-                    Log.WriteLine(LogLevel.Info, "Cannot resolve {0}, ignoring.", str_ip_endpoint);
+                    list = new List<ServerInfo>();
+                    id_infolist_dict.Add(si.Id, list);
                 }
+                list.Add(si);
             }
+
             return id_infolist_dict.Select(_ => new AvailabilityGroup(_.Key, _.Value.Select(si => (ServerInfo)si)));
         }
     }

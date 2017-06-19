@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Trinity.Configuration
 {
+    /// <summary>
+    /// Contains settings for the configuration section "Network".
+    /// </summary>
     public sealed class NetworkConfig
     {
         #region Singleton

@@ -309,7 +309,7 @@ namespace Trinity.Storage
 
                 string path = WriteAheadLogFilePath;
 
-                Log.WriteLine(LogLevel.Info, "Loading write-ahead log file {0}", path);
+                Log.WriteLine(LogLevel.Debug, "Loading write-ahead log file {0}", path);
 
                 LOG_FILE_HEADER         header              = LOG_FILE_HEADER.New();
                 TRINITY_IMAGE_SIGNATURE current_sig         = new TRINITY_IMAGE_SIGNATURE();
@@ -326,7 +326,7 @@ namespace Trinity.Storage
 
                 if (!File.Exists(path))
                 {
-                    Log.WriteLine(LogLevel.Info, "Write ahead log doesn't exist, quit loading.");
+                    Log.WriteLine(LogLevel.Debug, "Write ahead log doesn't exist, quit loading.");
                     return;
                 }
 

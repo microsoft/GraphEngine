@@ -55,6 +55,20 @@ build_trinity_c()
 	popd
 }
 
+# build Trinity.TSL
+build_trinity_tsl()
+{
+	echo "Building Trinity.TSL"
+	mkdir -p "$REPO_ROOT/bin/tsl" && pushd "$_" || exit -1
+	cmake "$REPO_ROOT/src/Trinity.TSL" || exit -1
+	make || exit -1
+	# copy native Trinity.TSL.CodeGen.exe for Windows
+	cp "$REPO_ROOT/tools/Trinity.TSL.CodeGen.exe" "$REPO_ROOT/bin/" || exit -1
+	# copy freshly built Trinity.TSL.CodeGen for Linux
+	cp "Trinity.TSL.CodeGen" "$REPO_ROOT/bin/" || exit -1
+	popd
+}
+
 # build Trinity.Core
 build_trinity_core()
 {
@@ -63,23 +77,26 @@ build_trinity_core()
 	dotnet restore Trinity.Core.NETStandard.sln || exit -1
 	dotnet build Trinity.Core.NETStandard.sln || exit -1
 	dotnet pack Trinity.Core.NETStandard.sln || exit -1
+	popd
 }
 
 # register local nuget repo, remove GraphEngine.CoreCLR packages in the cache.
 setup_nuget_repo()
 {
 	nuget_repo_name="Graph Engine OSS Local" 
-	if [ "$(grep "$nuget_repo_name" ~/.nuget/NuGet/NuGet.Config)" == "" ];
+    nuget_repo_location=$(printf "%q" "$REPO_ROOT/bin/coreclr")
+	echo "registering NuGet local repository '$nuget_repo_name'."
+	if [ "$(grep "$nuget_repo_name" ~/.nuget/NuGet/NuGet.Config)" != "" ];
 	then
-		echo "registering NuGet local repository '$nuget_repo_name'."
-		nuget_repo_location=$(printf "%q" "$REPO_ROOT/bin/coreclr")
-		sed -i "s#  </packageSources>#    <add key=\"$nuget_repo_name\" value=\"$nuget_repo_location\" \/>\n  <\/packageSources>#g" ~/.nuget/NuGet/NuGet.Config
+        sed -i "/$nuget_repo_name/d" ~/.nuget/NuGet/NuGet.Config
 	fi
+	sed -i "s#</packageSources>#    <add key=\"$nuget_repo_name\" value=\"$nuget_repo_location\" \/>\n  <\/packageSources>#g" ~/.nuget/NuGet/NuGet.Config
 	echo "remove local package cache."
 	rm -rf ~/.nuget/packages/graphengine.coreclr
 }
 
 build_trinity_c
+build_trinity_tsl
 build_trinity_core
 setup_nuget_repo
 

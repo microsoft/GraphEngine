@@ -177,7 +177,7 @@ namespace Trinity.Configuration
         /// <returns></returns>
         private string GetFullPath(string filename)
         {
-            return Path.GetFullPath(filename).ToLower();
+            return Path.GetFullPath(filename);
         }
         /// <summary>
         /// Load configuration file with specified file name by linq

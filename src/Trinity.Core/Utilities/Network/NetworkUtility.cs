@@ -37,10 +37,17 @@ namespace Trinity.Utilities
         /// </returns>
         public override int Compare(IPAddress ipA, IPAddress ipB)
         {
-            return CompareIPAddress(ipA, ipB);
+            return SameHost(ipA, ipB);
         }
 
-        internal static int CompareIPAddress(IPAddress ipA, IPAddress ipB)
+        internal static bool IsLocalhost(string hostname)
+        {
+            var local_ip = Global.MyIPAddress;
+            var host_ips = Dns.GetHostAddresses(hostname);
+            return host_ips.Any(_ => 0 == SameHost(_, local_ip));
+        }
+
+        internal static int SameHost(IPAddress ipA, IPAddress ipB)
         {
             byte[] x_bytes = ipA.GetAddressBytes();
             byte[] y_bytes = ipB.GetAddressBytes();
@@ -131,7 +138,7 @@ namespace Trinity.Utilities
         /// </returns>
         public override int Compare(IPEndPoint ipeA, IPEndPoint ipeB)
         {
-            int ip_cmp_result = IPAddressComparer.CompareIPAddress(ipeA.Address, ipeB.Address);
+            int ip_cmp_result = IPAddressComparer.SameHost(ipeA.Address, ipeB.Address);
             if (ip_cmp_result == 0)
             {
                 if (ipeA.Port < ipeB.Port)
@@ -204,6 +211,18 @@ namespace Trinity.Utilities
             return false;
         }
 
+        /// <summary>
+        /// Returns the Internet Protocol (IP) addresses for the specified host.
+        /// </summary>
+        /// <param name="host">The host name or IP address to resolve.</param>
+        /// <returns>
+        /// The IP address of the host. If multiple IP addresses point to the host, a preferred one is selected.
+        /// </returns>
+        /// <exception cref="System.Net.Sockets.SocketException">An error occured when resolving the hostname.</exception>
+        /// <exception cref="ArgumentNullException">host is null. </exception>
+        /// <exception cref="ArgumentOutOfRangeException">The length of host is greater than 255 characters.</exception>
+        /// <exception cref="ArgumentException">host is an invalid IP address.</exception>
+        /// <exception cref="FormatException">Invalid host IP address override.</exception>
         public static IPAddress Hostname2IPv4Address(string host)
         {
             if (host.Length == 0)
@@ -270,6 +289,16 @@ namespace Trinity.Utilities
             }
         }
 
+        /// <summary>
+        /// Converts an endpoint string in the form "hostname:port" to the corresponding IPEndPoint instance.
+        /// </summary>
+        /// <param name="ep_value">The endpoint string.</param>
+        /// <returns>Returns the corresponding IPEndPoint instance.</returns>
+        /// <exception cref="ArgumentNullException">ep_value is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The length of host is greater than 255 characters.</exception>
+        /// <exception cref="ArgumentException">ep_value, the host or the port extracted from it is invalid</exception>
+        /// <exception cref="System.Net.Sockets.SocketException">An error occured when resolving the hostname.</exception>
+        /// <exception cref="FormatException">Invalid host IP address override.</exception>
         public static IPEndPoint Hostname2IPEndPoint(string ep_value)
         {
             if (ep_value == null)
@@ -286,7 +315,8 @@ namespace Trinity.Utilities
             if (!int.TryParse(ep_tuple[1].Trim(), System.Globalization.NumberStyles.None, CultureInfo.InvariantCulture, out port))
                 throw new ArgumentException(String.Format("Invalid endpoint port '{0}'", ep_tuple[1]));
 
-            return new IPEndPoint(Hostname2IPv4Address(ep_tuple[0]), port);
+            IPAddress addr = Hostname2IPv4Address(ep_tuple[0]);
+            return new IPEndPoint(addr, port);
         }
 
         /// <summary>
