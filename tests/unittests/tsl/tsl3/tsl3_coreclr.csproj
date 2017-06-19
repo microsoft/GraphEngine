@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RuntimeFrameworkVersion>2.0.0-preview</RuntimeFrameworkVersion>
     <AssemblyName>tsl3_coreclr</AssemblyName>
     <RootNamespace>tsl3</RootNamespace>
   </PropertyGroup>

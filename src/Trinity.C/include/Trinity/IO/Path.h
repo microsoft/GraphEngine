@@ -329,6 +329,7 @@ namespace Trinity
                 if (g_AssemblyPath != "") return g_AssemblyPath;
 
 #if defined(TRINITY_PLATFORM_WINDOWS)
+                // XXX for CoreCLR, Trinity.C.dll is shared so multiple instances will get the same path for the assembly
                 Array<u16char> lpFilename(1024);
                 HMODULE        hmodule = GetModuleHandleW(L"Trinity.C.dll");
                 /* If Trinity.C.dll is absent, we default to the executing assembly (sending NULL into the API) */

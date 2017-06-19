@@ -6,7 +6,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    
+    <RuntimeFrameworkVersion>2.0.0-preview</RuntimeFrameworkVersion>
     <AssemblyName>GraphEngine.CoreCLR</AssemblyName>
     <RootNamespace>Trinity</RootNamespace>
     <OutputTypeEx>library</OutputTypeEx>

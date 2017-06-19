@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RuntimeFrameworkVersion>2.0.0-preview</RuntimeFrameworkVersion>
     <AssemblyName>storage5_coreclr</AssemblyName>
     <RootNamespace>storage5</RootNamespace>
   </PropertyGroup>
