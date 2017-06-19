@@ -33,7 +33,7 @@ namespace Trinity
             {
                 if (s_initialized) return;
 
-                string assembly_path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                string assembly_path = AssemblyPath.TrinityCorePath;
 #if !CORECLR
                 string native_assembly_name = "Trinity.C.dll";
 #else

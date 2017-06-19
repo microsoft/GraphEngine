@@ -12,6 +12,15 @@ namespace Trinity.Utilities
     internal static class AssemblyPath
     {
         private static string my_assembly_path = null;
+        private static Assembly trinity_asm = Assembly.GetExecutingAssembly();
+        internal static string TrinityCorePath
+        {
+            get
+            {
+                return Path.GetDirectoryName(trinity_asm.Location) + Path.DirectorySeparatorChar;
+
+            }
+        }
         internal static string MyAssemblyPath
         {
             get
@@ -19,7 +28,6 @@ namespace Trinity.Utilities
                 if (my_assembly_path == null)
                 {
                     //  primary heuristics: find the assembly that calls into Trinity
-                    Assembly trinity_asm = Assembly.GetExecutingAssembly();
                     int firstTrinityFrame = 0;
                     for (int skipFrames = 1; ; skipFrames++)
                     {
@@ -72,7 +80,7 @@ namespace Trinity.Utilities
                 if (my_assembly_path == null)
                 {
                     //  last resort heuristic: return the path of the Trinity assembly.
-                    my_assembly_path = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar;
+                    my_assembly_path = System.IO.Path.GetDirectoryName(trinity_asm.Location) + Path.DirectorySeparatorChar;
                 }
 
                 return my_assembly_path;

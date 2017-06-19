@@ -88,7 +88,7 @@
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(ExeTest.Identity)))"
         ContinueOnError="false"/>
     <Exec
-        Command="dotnet run -p $([System.IO.Path]::GetFileName(%(ExeTest.Identity)))"
+        Command="dotnet run -c Release -p $([System.IO.Path]::GetFileName(%(ExeTest.Identity)))"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(ExeTest.Identity)))"
         ContinueOnError="true" />
   </Target>
