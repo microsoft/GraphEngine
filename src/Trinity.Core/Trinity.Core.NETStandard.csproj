@@ -72,8 +72,16 @@
     <EmbeddedResource Include="..\..\bin\coreclr\Trinity.dll" Link="Trinity.dll" />
   </ItemGroup>
 
+
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+    <ThreadPoolMinThreads>20</ThreadPoolMinThreads>
+    <ThreadPoolMaxThreads>300</ThreadPoolMaxThreads>
+  </PropertyGroup>
 
 </Project>
