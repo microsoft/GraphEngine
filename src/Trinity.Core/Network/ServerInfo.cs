@@ -51,7 +51,7 @@ namespace Trinity.Network
 
         internal static ServerInfo _LegacyCreateServerInfo(string hostName, int port, string assemblyPath, string storageRoot, string loggingLevel, string availabilityGroup)
         {
-            return new ServerInfo(hostName, port, assemblyPath, storageRoot, loggingLevel, availabilityGroup);
+            return new ServerInfo(hostName, port, assemblyPath, availabilityGroup, storageRoot, loggingLevel);
         }
 
         /// <summary>
