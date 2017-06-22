@@ -171,18 +171,18 @@ namespace Storage
 
         String GetPrimaryStorageSlot()
         {
-           auto storage_root = TrinityConfig::StorageRoot();
-			if (storage_root.Length() == 0)
-				return Path::CompletePath(Path::Combine(storage_root, s_primaryStorageSlot), false);
-			return Path::CompletePath(Path::Combine(storage_root, s_primaryStorageSlot), true);
+	     auto storage_root = TrinityConfig::StorageRoot();
+	     if (storage_root.Length() == 0)
+		return Path::CompletePath(Path::Combine(storage_root, s_primaryStorageSlot), false);
+	     return Path::CompletePath(Path::Combine(storage_root, s_primaryStorageSlot), true);
         }
 
         String GetSecondaryStorageSlot()
         {
-            auto storage_root = TrinityConfig::StorageRoot();
-			if (storage_root.Length() == 0)
-				return Path::CompletePath(Path::Combine(storage_root, s_secondaryStorageSlot), false);
-			return Path::CompletePath(Path::Combine(storage_root, s_secondaryStorageSlot), true);
+             auto storage_root = TrinityConfig::StorageRoot();
+	     if (storage_root.Length() == 0)
+		return Path::CompletePath(Path::Combine(storage_root, s_secondaryStorageSlot), false);
+	     return Path::CompletePath(Path::Combine(storage_root, s_secondaryStorageSlot), true);
         }
 
         static std::mutex s_critical_lock;
