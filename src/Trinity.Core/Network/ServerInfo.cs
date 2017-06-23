@@ -27,7 +27,7 @@ namespace Trinity.Network
             string[] parts = endpoint.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
 
             HostName = parts[0].Trim();
-            Port     = int.Parse(parts[1].Trim());
+            Port = int.Parse(parts[1].Trim());
             AssemblyPath = configSection.Attribute(ConfigurationConstants.Attrs.ASSEMBLY_PATH) == null ? null : configSection.Attribute(ConfigurationConstants.Attrs.ASSEMBLY_PATH).Value;
             Id = configSection.Attribute(ConfigurationConstants.Attrs.AVAILABILITY_GROUP) == null ? null : configSection.Attribute(ConfigurationConstants.Attrs.AVAILABILITY_GROUP).Value;
         }
@@ -51,7 +51,7 @@ namespace Trinity.Network
 
         internal static ServerInfo _LegacyCreateServerInfo(string hostName, int port, string assemblyPath, string storageRoot, string loggingLevel, string availabilityGroup)
         {
-            return new ServerInfo(hostName, port, assemblyPath, storageRoot, loggingLevel, availabilityGroup);
+            return new ServerInfo(hostName, port, assemblyPath, availabilityGroup, storageRoot, loggingLevel);
         }
 
         /// <summary>
