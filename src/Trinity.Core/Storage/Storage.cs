@@ -9,7 +9,7 @@ using System.Text;
 using Trinity;
 using Trinity.Network.Messaging;
 using Trinity.TSL.Lib;
-
+using Trinity.Diagnostics;
 namespace Trinity.Storage
 {
     /// <summary>
@@ -19,7 +19,14 @@ namespace Trinity.Storage
     {
         static Storage()
         {
-            TrinityConfig.LoadTrinityConfig();
+            try
+            {
+                TrinityConfig.LoadTrinityConfig();
+            }
+            catch
+            {
+                Log.WriteLine(LogLevel.Error, "Failure to load config file, the default configuration takes effect");
+            }
         }
 
         #region Key-value Store interfaces

@@ -81,7 +81,15 @@ namespace Trinity.Storage
         static LocalMemoryStorage()
         {
             TrinityC.Init();
-            TrinityConfig.LoadTrinityConfig();
+            try
+            {
+                TrinityConfig.LoadTrinityConfig();
+            }
+            catch
+            {
+                Log.WriteLine(LogLevel.Error, "Failure to load config file, the default configuration takes effect");
+            }
+            CSynchronizeStorageRoot();
             //BackgroundThread.StartMemoryStorageBgThreads();
         }
 
