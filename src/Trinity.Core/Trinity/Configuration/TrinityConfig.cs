@@ -62,7 +62,14 @@ namespace Trinity
         static TrinityConfig()
         {
             GetConfigurationInstances().ToList();
-            LoadTrinityConfig(false);
+            try
+            {
+                LoadTrinityConfig();
+            }
+            catch
+            {
+                Log.WriteLine(LogLevel.Error, "Failure to load config file, the default configuration takes effect");
+            }
         }
 
         /// <summary>
