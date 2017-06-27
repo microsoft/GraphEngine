@@ -25,7 +25,7 @@ namespace Trinity.Storage
             }
             catch
             {
-                Log.WriteLine(LogLevel.Error, "Failure to load config file, the default configuration takes effect");
+                Log.WriteLine(LogLevel.Error, "Failure to load config file, falling back to default Storage behavior");
             }
         }
 
