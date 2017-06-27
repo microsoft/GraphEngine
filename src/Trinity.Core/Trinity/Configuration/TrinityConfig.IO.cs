@@ -116,9 +116,10 @@ namespace Trinity
             {
                 SaveConfig(DefaultConfigFile);
             }
-            catch
+            catch(Exception e)
             {
-                Log.WriteLine(LogLevel.Error, "Failure to save config file");
+                Log.WriteLine(LogLevel.Error, e.Message);
+                throw;
             }
         }
 
@@ -211,9 +212,10 @@ namespace Trinity
                 configXml.InsertBefore(declaration, configXml.DocumentElement);
                 configXml.Save(configFile);
             }
-            catch
+            catch(Exception e)
             {
-                Log.WriteLine(LogLevel.Error, "Failure to save config file");
+                Log.WriteLine(LogLevel.Error, e.Message);
+                throw;
             }
         }
 
@@ -226,9 +228,10 @@ namespace Trinity
             {
                 LoadTrinityConfig(true);
             }
-            catch
+            catch(Exception e)
             {
-                Log.WriteLine(LogLevel.Error, "Failure to load config file, the default configuration takes effect");
+                Log.WriteLine(LogLevel.Error, e.Message);
+                throw;
             }
         }
 
@@ -242,9 +245,10 @@ namespace Trinity
             {
                 LoadTrinityConfig(configFile, true);
             }
-            catch
+             catch(Exception e)
             {
-                Log.WriteLine(LogLevel.Error, "Failure to load config file, the default configuration takes effect");
+                Log.WriteLine(LogLevel.Error, e.Message);
+                throw;
             }
         }
 
