@@ -68,9 +68,12 @@ namespace Trinity.Storage
         #endregion
 
         #region KVStore extension facility
-        public event Action StorageLoaded  = delegate { };
-        public event Action StorageSaved    = delegate{ };
-        public event Action StorageReset   = delegate{ };
+        public event Action StorageBeforeLoad = delegate { };
+        public event Action StorageBeforeSave = delegate { };
+        public event Action StorageBeforeReset = delegate { };
+        public event Action StorageLoaded = delegate { };
+        public event Action StorageSaved = delegate{ };
+        public event Action StorageReset = delegate{ };
         #endregion
 
         internal static volatile bool initialized = false;

@@ -31,7 +31,16 @@ namespace Trinity.Storage
         {
             lock (m_lock)
             {
-                if(TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
+                try
+                {
+                    StorageBeforeLoad();
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, "StorageBeforeLoad event handler: {0}", ex.ToString());
+                }
+
+                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
                 bool ret = CLocalMemoryStorage.CLoadStorage();
 
                 //TODO WAL and cell type signatures should migrate to KVStore extensions.
@@ -60,7 +69,16 @@ namespace Trinity.Storage
         {
             lock (m_lock)
             {
-                if(TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
+                try
+                {
+                    StorageBeforeSave();
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, "StorageBeforeSave event handler: {0}", ex.ToString());
+                }
+
+                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
                 bool ret = CLocalMemoryStorage.CSaveStorage();
 
                 if (ret)
@@ -91,7 +109,16 @@ namespace Trinity.Storage
         {
             lock (m_lock)
             {
-                if(TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
+                try
+                {
+                    StorageBeforeReset();
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, "StorageBeforeReset event handler: {0}", ex.ToString());
+                }
+
+                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
                 string path   = WriteAheadLogFilePath;
                 bool   ret    = CLocalMemoryStorage.CResetStorage();
 
