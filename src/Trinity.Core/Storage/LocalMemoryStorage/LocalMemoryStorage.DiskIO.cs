@@ -37,7 +37,7 @@ namespace Trinity.Storage
                 }
                 catch (Exception ex)
                 {
-                    Log.WriteLine(LogLevel.Error, "StorageBeforeLoad event handler: {0}", ex.ToString());
+                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeLoad event handler: {0}", ex.ToString());
                 }
 
                 if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
@@ -54,7 +54,7 @@ namespace Trinity.Storage
                 }
                 catch (Exception ex)
                 {
-                    Log.WriteLine(LogLevel.Error, "StorageLoaded event handler: {0}", ex.ToString());
+                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageLoaded event handler: {0}", ex.ToString());
                 }
 
                 return ret;
@@ -75,7 +75,7 @@ namespace Trinity.Storage
                 }
                 catch (Exception ex)
                 {
-                    Log.WriteLine(LogLevel.Error, "StorageBeforeSave event handler: {0}", ex.ToString());
+                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeSave event handler: {0}", ex.ToString());
                 }
 
                 if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
@@ -93,7 +93,7 @@ namespace Trinity.Storage
                     }
                     catch (Exception ex)
                     {
-                        Log.WriteLine(LogLevel.Error, "StorageSaved event handler: {0}", ex.ToString());
+                        Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageSaved event handler: {0}", ex.ToString());
                     }
                 }
 
@@ -115,7 +115,7 @@ namespace Trinity.Storage
                 }
                 catch (Exception ex)
                 {
-                    Log.WriteLine(LogLevel.Error, "StorageBeforeReset event handler: {0}", ex.ToString());
+                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeReset event handler: {0}", ex.ToString());
                 }
 
                 if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
@@ -130,7 +130,7 @@ namespace Trinity.Storage
                 }
                 catch (Exception ex)
                 {
-                    Log.WriteLine(LogLevel.Error, "StorageReset event handler: {0}", ex.ToString());
+                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageReset event handler: {0}", ex.ToString());
                 }
 
                 return ret;
