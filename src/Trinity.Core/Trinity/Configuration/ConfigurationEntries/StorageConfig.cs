@@ -47,7 +47,7 @@ namespace Trinity.Configuration
             throw new ArgumentException("ReadOnly flag cannot be disabled once enabled.");
         }
 
-        private static string DefaultStorageRoot { get { return Path.Combine(AssemblyPath.MyAssemblyPath, "storage"); } }
+        private static string DefaultStorageRoot { get { return Path.Combine(AssemblyUtility.MyAssemblyPath, "storage"); } }
         #endregion
 
         #region Fields

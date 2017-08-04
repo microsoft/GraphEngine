@@ -97,8 +97,7 @@ namespace Trinity.Diagnostics
             TrinityConfig.LoadTrinityConfig(false);
 
             string unitTestAssemblyName = "Microsoft.VisualStudio.QualityTools.UnitTestFramework";
-            bool isInUnitTest           = AppDomain.CurrentDomain.GetAssemblies()
-                .Any(a => a.FullName.StartsWith(unitTestAssemblyName, StringComparison.Ordinal));
+            bool isInUnitTest           = AssemblyUtility.AnyAssembly(a => a.FullName.StartsWith(unitTestAssemblyName, StringComparison.Ordinal));
 
             if (isInUnitTest)
             {

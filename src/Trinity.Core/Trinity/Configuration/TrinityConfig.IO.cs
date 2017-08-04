@@ -33,7 +33,7 @@ namespace Trinity
         {
             get
             {
-                return Path.Combine(AssemblyPath.MyAssemblyPath, c_defaultConfigFile);
+                return Path.Combine(AssemblyUtility.MyAssemblyPath, c_defaultConfigFile);
             }
         }
         #endregion
@@ -68,14 +68,13 @@ namespace Trinity
         /// Gets all the configuration instances
         /// </summary>
         /// <returns></returns>
-        internal static IEnumerable<ConfigurationInstance> GetConfigurationInstances()
+        internal static List<ConfigurationInstance> GetConfigurationInstances()
         {
-            return AppDomain.CurrentDomain
-                .GetAssemblies()
-                .SelectMany(_ => _.GetTypes())
+            return AssemblyUtility.GetAllTypes()
                 .Where(_ => _.IsClass && !_.IsAbstract)
                 .Select(CreateConfigurationEntryTuple)
-                .Where(_ => _ != null);
+                .Where(_ => _ != null)
+                .ToList();
         }
 
         /// <summary>

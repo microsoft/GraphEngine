@@ -40,7 +40,7 @@ namespace Trinity.Configuration
         {
             get
             {
-                return Path.Combine(AssemblyPath.MyAssemblyPath,"trinity-log");
+                return Path.Combine(AssemblyUtility.MyAssemblyPath,"trinity-log");
             }
         }
 

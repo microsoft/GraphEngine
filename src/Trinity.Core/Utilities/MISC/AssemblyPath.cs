@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Trinity.Utilities
 {
-    internal static class AssemblyPath
+    internal static class AssemblyUtility
     {
         private static string my_assembly_path = null;
         private static Assembly trinity_asm = Assembly.GetExecutingAssembly();
@@ -85,6 +85,54 @@ namespace Trinity.Utilities
 
                 return my_assembly_path;
             }
+        }
+
+        internal static bool AnyAssembly(Func<Assembly, bool> pred)
+        {
+            foreach(var asm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
+                {
+                    if (pred(asm)) return true;
+                }
+                catch { }
+            }
+
+            return false;
+        }
+
+        internal static List<Type> GetAllTypes(Assembly asm)
+        {
+
+            List<Type> types = new List<Type>();
+            try
+            {
+                foreach (var type in asm.GetTypes())
+                {
+                    types.Add(type);
+                }
+            }
+            catch { }
+            return types;
+        }
+
+        internal static List<Type> GetAllTypes()
+        {
+            List<Type> types = new List<Type>();
+            try
+            {
+                foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    try
+                    {
+                        types.AddRange(GetAllTypes(asm));
+                    }
+                    catch { }
+                }
+            }
+            catch { }
+
+            return types;
         }
     }
 }

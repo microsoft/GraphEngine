@@ -70,6 +70,7 @@ namespace FanoutSearch
                 queryPath = queryPath_token.ToString();
                 if (QueryPathInvalid(queryPath)) { throw new FanoutSearchQueryException("Invalid query path"); }
             }
+            Log.WriteLine(LogLevel.Debug, "{0}", $"Json query: {queryString} \r\n QueryPath = {queryPath}");
 
             FanoutSearchDescriptor fanoutSearch_desc;
             fanoutSearch_desc = new FanoutSearchDescriptor(queryPath, queryObject);
@@ -78,6 +79,7 @@ namespace FanoutSearch
 
         private static FanoutSearchDescriptor _LambdaQuery_impl(string lambda)
         {
+            Log.WriteLine(LogLevel.Debug, "{0}", $"Lambda query: {lambda}");
             return LambdaDSL.Evaluate(lambda);
         }
 
