@@ -94,7 +94,14 @@ namespace Trinity.Diagnostics
         static Log()
         {
             TrinityC.Init();
-            TrinityConfig.LoadTrinityConfig(false);
+            try
+            {
+                TrinityConfig.LoadTrinityConfig();
+            }
+            catch
+            {
+                Log.WriteLine(LogLevel.Error, "Failure to load config file, falling back to default log behavior");
+            }
 
             string unitTestAssemblyName = "Microsoft.VisualStudio.QualityTools.UnitTestFramework";
             bool isInUnitTest           = AssemblyUtility.AnyAssembly(a => a.FullName.StartsWith(unitTestAssemblyName, StringComparison.Ordinal));

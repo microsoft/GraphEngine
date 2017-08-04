@@ -31,7 +31,16 @@ namespace Trinity.Storage
         {
             lock (m_lock)
             {
-                if(TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
+                try
+                {
+                    StorageBeforeLoad();
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeLoad event handler: {0}", ex.ToString());
+                }
+
+                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
                 bool ret = CLocalMemoryStorage.CLoadStorage();
 
                 //TODO WAL and cell type signatures should migrate to KVStore extensions.
@@ -45,7 +54,7 @@ namespace Trinity.Storage
                 }
                 catch (Exception ex)
                 {
-                    Log.WriteLine(LogLevel.Error, "StorageLoaded event handler: {0}", ex.ToString());
+                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageLoaded event handler: {0}", ex.ToString());
                 }
 
                 return ret;
@@ -60,7 +69,16 @@ namespace Trinity.Storage
         {
             lock (m_lock)
             {
-                if(TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
+                try
+                {
+                    StorageBeforeSave();
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeSave event handler: {0}", ex.ToString());
+                }
+
+                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
                 bool ret = CLocalMemoryStorage.CSaveStorage();
 
                 if (ret)
@@ -75,7 +93,7 @@ namespace Trinity.Storage
                     }
                     catch (Exception ex)
                     {
-                        Log.WriteLine(LogLevel.Error, "StorageSaved event handler: {0}", ex.ToString());
+                        Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageSaved event handler: {0}", ex.ToString());
                     }
                 }
 
@@ -91,7 +109,16 @@ namespace Trinity.Storage
         {
             lock (m_lock)
             {
-                if(TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
+                try
+                {
+                    StorageBeforeReset();
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeReset event handler: {0}", ex.ToString());
+                }
+
+                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
                 string path   = WriteAheadLogFilePath;
                 bool   ret    = CLocalMemoryStorage.CResetStorage();
 
@@ -103,7 +130,7 @@ namespace Trinity.Storage
                 }
                 catch (Exception ex)
                 {
-                    Log.WriteLine(LogLevel.Error, "StorageReset event handler: {0}", ex.ToString());
+                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageReset event handler: {0}", ex.ToString());
                 }
 
                 return ret;

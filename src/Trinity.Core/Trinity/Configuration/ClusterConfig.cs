@@ -411,8 +411,8 @@ namespace Trinity
                 LogLevel loggingLevel = LoggingConfig.c_DefaultLogLevel;
                 string storageRoot = null;
 
-                if (pvs.ContainsKey(ConfigurationConstants.Attrs.ASSEMBLY_PATH))
-                    assemblyPath = FileUtility.CompletePath(pvs[ConfigurationConstants.Attrs.ASSEMBLY_PATH], false);
+                if (pvs.ContainsKey(ConfigurationConstants.Attrs.LEGACY_ASSEMBLY_PATH))
+                    assemblyPath = FileUtility.CompletePath(pvs[ConfigurationConstants.Attrs.LEGACY_ASSEMBLY_PATH], false);
 
                 if (pvs.TryGetValue(ConfigurationConstants.Attrs.STORAGE_ROOT, out storageRoot))
                     storageRoot = storageRoot.Trim();
