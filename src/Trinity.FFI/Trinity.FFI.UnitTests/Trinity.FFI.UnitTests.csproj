@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RuntimeFrameworkVersion>2.0.0-preview</RuntimeFrameworkVersion>
+    <AssemblyName>Trinity.FFI.UnitTests</AssemblyName>
+    <RootNamespace>Trinity.FFI.UnitTests</RootNamespace>
+    <AllowUnsafe>true</AllowUnsafe>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit" Version="2.3.0-beta2-build3683" />
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.0-beta2-build3683" />
+    <PackageReference Include="GraphEngine.CoreCLR" version="1.0.8850"/>
+    <ProjectReference Include="..\Trinity.FFI\Trinity.FFI.csproj"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <TslCodegen Include="**/*.tsl" />
+    <Compile Remove="Properties/*.cs" />
+  </ItemGroup>
+</Project>
