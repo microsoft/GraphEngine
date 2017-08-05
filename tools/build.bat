@@ -49,13 +49,6 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 %MSBUILD_EXE% /p:Configuration=Release %REPO_ROOT%\src\LIKQ\BuildNuGetPkg\BuildNuGetPkg.csproj
 if %errorlevel% neq 0 exit /b %errorlevel%
 
-:: Run msbuild to build FanoutSearch.Server
-%MSBUILD_EXE% /p:Configuration=Release %REPO_ROOT%\src\LIKQ\FanoutSearch.Server\FanoutSearch.Server.csproj
-if %errorlevel% neq 0 exit /b %errorlevel%
-
-:: Build spark module
-call %SPARK_MODULE_ROOT%\build.bat
-
 :: Register local nuget source
 :: calling `nuget sources list` will create the config file if it does not exist
 %NUGET_EXE% sources list
@@ -64,4 +57,10 @@ call %SPARK_MODULE_ROOT%\build.bat
 :: Clear local nuget cache
 :: for /f %i in ('dir /a:d /s /b %REPO_ROOT%\tests\packages\GraphEngine.Core*') do rmdir /S /Q %i
 :: Ignore local nuget source errors
-exit /b 0
+:: Run msbuild to build FanoutSearch.Server
+%MSBUILD_EXE% /p:Configuration=Release %REPO_ROOT%\src\LIKQ\FanoutSearch.Server\FanoutSearch.Server.csproj
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+:: Build spark module
+call %SPARK_MODULE_ROOT%\build.bat
+exit /b %errorlevel%
