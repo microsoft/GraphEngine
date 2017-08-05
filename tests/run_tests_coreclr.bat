@@ -5,4 +5,4 @@ if [%REPO_ROOT%] == [] (
 set NUGET_EXE="%REPO_ROOT%\tools\NuGet.exe"
 set DOTNET_EXE="dotnet"
 
-%DOTNET_EXE% build %REPO_ROOT%\tests\test_coreclr.csproj
+%DOTNET_EXE% msbuild %REPO_ROOT%\tests\test_coreclr.csproj
