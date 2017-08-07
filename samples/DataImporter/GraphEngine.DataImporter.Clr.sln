@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphEngine.DataImporter.Clr", "GraphEngine.DataImporter\GraphEngine.DataImporter.Clr.csproj", "{AC3BCA2F-1843-498A-A0EA-41B2899341EE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphEngine.DataImporter.Clr.UnitText", "GraphEngine.DataImporter.Clr.UnitText\GraphEngine.DataImporter.Clr.UnitText.csproj", "{AD3DE707-5C83-46EC-8298-CC8807DF8798}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphEngine.DataImporter.Clr.UnitTest", "GraphEngine.DataImporter.Clr.UnitTest\GraphEngine.DataImporter.Clr.UnitTest.csproj", "{AD3DE707-5C83-46EC-8298-CC8807DF8798}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
