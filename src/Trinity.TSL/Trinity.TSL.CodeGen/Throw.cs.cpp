@@ -29,7 +29,6 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
-    
     class Throw
     {
         )::");
@@ -77,9 +76,9 @@ source->append(R"::(
         internal static void incompatible_with_cell()
         {
             throw new DataTypeIncompatibleException("Data type incompatible with the cell.");
-        }
-        )::");
-source->append(R"::(internal static void array_dimension_size_mismatch(string type)
+    )::");
+source->append(R"::(    }
+        internal static void array_dimension_size_mismatch(string type)
         {
             throw new ArgumentException(type + ": Array dimension size mismatch.");
         }
@@ -102,9 +101,9 @@ source->append(R"::(internal static void array_dimension_size_mismatch(string ty
         }
         internal static void cell_not_found()
         {
-            throw new CellNotFoundException("The cell is not found.");
-   )::");
-source->append(R"::(     }
+            throw new CellNotFoundExceptio)::");
+source->append(R"::(n("The cell is not found.");
+        }
         internal static void cell_not_found(long CellID)
         {
             throw new CellNotFoundException("The cell with id = " + CellID + " not found.");
@@ -116,6 +115,10 @@ source->append(R"::(     }
         internal static unsafe void cannot_parse(string value, string type_str)
         {
             throw new ArgumentException("Cannot parse \""+value+"\" into " + type_str + ".");
+        }
+        internal static unsafe byte* invalid_resize_on_fixed_struct()
+        {
+            throw new InvalidOperationException("Invalid resize operation on a fixed struct.");
         }
     }
 }

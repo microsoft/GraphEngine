@@ -29,7 +29,6 @@ source->append(R"::(
     /// <summary>
     /// Reusable buffer.
     /// </summary>
-    
     internal unsafe class BufferAllocator
     {
         [ThreadStatic]
@@ -57,9 +56,9 @@ source->append(R"::(
             {
                 m_bufferLen = length;
                 need_realloc = true;
-            }
-         )::");
-source->append(R"::(   if (need_realloc)
+)::");
+source->append(R"::(            }
+            if (need_realloc)
             {
                 m_bufferPtr = (byte*)Memory.realloc(m_bufferPtr, (ulong)m_bufferLen);
             }

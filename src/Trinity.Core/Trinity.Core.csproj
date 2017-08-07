@@ -121,6 +121,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Storage\IAccessor.cs" />
     <Compile Include="Storage\ICell.cs" />
     <Compile Include="Storage\IStorageSchema.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.Enumeration.cs" />

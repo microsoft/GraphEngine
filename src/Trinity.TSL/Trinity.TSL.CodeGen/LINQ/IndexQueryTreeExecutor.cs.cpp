@@ -24,7 +24,6 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(.Linq
 {
-    
     internal delegate List<long> SubstringQueryDelegate(string value);
     internal delegate List<long> SubstringWildcardQueryDelegate(List<string> value);
     internal class IndexQueryTreeExecutor
@@ -42,8 +41,8 @@ source->append(R"::(.Linq
             if (node == null)
                 return null;
             HashSet<long> ret;
-            switch (node.)::");
-source->append(R"::(type)
+            sw)::");
+source->append(R"::(itch (node.type)
             {
                 case IndexQueryTreeNode.NodeType.AND:
                     ret = Execute(node.children[0]);
@@ -63,8 +62,8 @@ source->append(R"::(type)
                         ret = new HashSet<long>(m_substring_query_wildcard[node.queryTarget](node.wildcard_query));
                     break;
                 default:
-                    throw new NotImplementedE)::");
-source->append(R"::(xception("Internal error T5012.");
+              )::");
+source->append(R"::(      throw new NotImplementedException("Internal error T5012.");
             }
             return ret;
         }

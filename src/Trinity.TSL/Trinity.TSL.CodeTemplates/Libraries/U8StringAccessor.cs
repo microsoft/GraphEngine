@@ -5,6 +5,7 @@ using System.Text;
 using Trinity.Core.Lib;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
+using Trinity.Storage;
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
 namespace t_Namespace
@@ -13,11 +14,10 @@ namespace t_Namespace
     /// Represents a TSL string corresponding to a string instance.
     /// </summary>
     [TARGET("NTSL")]
-    public unsafe class U8StringAccessor
+    public unsafe class U8StringAccessor : IAccessor
     {
         internal byte* CellPtr;
         internal long? CellID;
-        internal ResizeFunctionDelegate ResizeFunction;
 
         internal U8StringAccessor(byte* _CellPtr, ResizeFunctionDelegate func)
         {
@@ -37,20 +37,7 @@ namespace t_Namespace
             }
         }
 
-        /// <summary>
-        /// Returns this instance of String
-        /// </summary>
-        /// <returns>The current string.</returns>
-        public unsafe override string ToString()
-        {
-            int len = this.Length;
-            byte[] content = new byte[len];
-            fixed (byte* pcontent = content)
-            {
-                Memory.Copy(this.CellPtr, pcontent, len);
-            }
-            return Encoding.UTF8.GetString(content);
-        }
+        #region IAccessor Implementation
 
         /// <summary>
         /// Copies the elements to a new byte array
@@ -64,6 +51,44 @@ namespace t_Namespace
                 Memory.Copy(CellPtr, retptr, Length);
                 return ret;
             }
+        }
+
+        /// <summary>
+        /// Get the pointer to the underlying buffer.
+        /// </summary>
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return CellPtr - sizeof(int);
+        }
+
+        /// <summary>
+        /// Get the length of the buffer.
+        /// </summary>
+        public unsafe int GetBufferLength()
+        {
+            return Length + sizeof(int);
+        }
+
+        /// <summary>
+        /// The ResizeFunctionDelegate that should be called when this accessor is trying to resize itself.
+        /// </summary>
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+
+        #endregion
+
+        /// <summary>
+        /// Returns this instance of String
+        /// </summary>
+        /// <returns>The current string.</returns>
+        public unsafe override string ToString()
+        {
+            int len = this.Length;
+            byte[] content = new byte[len];
+            fixed (byte* pcontent = content)
+            {
+                Memory.Copy(this.CellPtr, pcontent, len);
+            }
+            return Encoding.UTF8.GetString(content);
         }
 
         /// <summary>

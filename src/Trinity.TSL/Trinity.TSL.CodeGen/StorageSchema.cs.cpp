@@ -28,7 +28,6 @@ source->append(R"::(
     /// <summary>
     /// Exposes the data modeling schema defined in the TSL.
     /// </summary>
-    
     public class StorageSchema : IStorageSchema
     {
         #region CellType lookup table

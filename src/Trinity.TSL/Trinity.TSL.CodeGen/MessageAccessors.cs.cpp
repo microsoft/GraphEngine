@@ -197,8 +197,8 @@ source->append(R"::(
                         target_length = (target_length << 1);
                     }
                     byte* tmpBuffer = (byte*)Memory.malloc((ulong)target_length);
-                    Memory.me)::");
-source->append(R"::(mcpy(
+     )::");
+source->append(R"::(               Memory.memcpy(
                         tmpBuffer,
                         currentBufferPtr,
                         (ulong)(ptr + ptr_offset - currentBufferPtr));
@@ -220,9 +220,9 @@ source->append(R"::(mcpy(
                 Memory.memmove(
                     ptr + ptr_offset,
                     ptr + ptr_offset - delta,
-                    (ulong)(Length - (ptr + ptr_offset - delta - this.CellPtr)));
-                Length += del)::");
-source->append(R"::(ta;
+                    (ulong)(Length - (ptr + ptr_offset - delta - )::");
+source->append(R"::(this.CellPtr)));
+                Length += delta;
                 return ptr;
             }
         }

@@ -15,7 +15,7 @@ if not exist %NUGET_EXE% (
 set TRINITY_C_SLN=%REPO_ROOT%\src\Trinity.C\Trinity.C.sln
 set TRINITY_TSL_SLN=%REPO_ROOT%\src\Trinity.TSL\Trinity.TSL.sln
 set TRINITY_CORE_SLN=%REPO_ROOT%\src\Trinity.Core\Trinity.Core.sln
-set LIKQ_SLN=%REPO_ROOT%\src\LIKQ\LIKQ.sln
+set LIKQ_SLN=%REPO_ROOT%\src\Modules\LIKQ\LIKQ.sln
 set SPARK_MODULE_ROOT=%REPO_ROOT%\src\Modules\Spark
 
 :: Run msbuild to build Trinity.C
@@ -43,24 +43,26 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 :: for /f %i in ('dir /a:d /s /b %REPO_ROOT%\tests\packages\GraphEngine.Core*') do rmdir /S /Q %i
 :: Ignore local nuget source errors
 
+:: TODO currently LIKQ relies on .NET 4.6 which is not on our build
+:: server. Disable it temporarily now.
 :: Run nuget to restore nuget packages for LIKQ
-%NUGET_EXE% restore %LIKQ_SLN%
-if %errorlevel% neq 0 exit /b %errorlevel%
+:: %NUGET_EXE% restore %LIKQ_SLN%
+:: if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: TODO: Fix the build of LIKQ\FanoutSerach\FanoutSearch.UnitTest
 :: and then build LIKQ.sln as a whole
 
 :: Run msbuild to build FanoutSearch
-%MSBUILD_EXE% /p:Configuration=Release %REPO_ROOT%\src\LIKQ\FanoutSearch\FanoutSearch.csproj
-if %errorlevel% neq 0 exit /b %errorlevel%
+:: %MSBUILD_EXE% /p:Configuration=Release %REPO_ROOT%\src\Modules\LIKQ\FanoutSearch\FanoutSearch.csproj
+:: if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Run msbuild to build LIKQ nuget package
-%MSBUILD_EXE% /p:Configuration=Release %REPO_ROOT%\src\LIKQ\BuildNuGetPkg\BuildNuGetPkg.csproj
-if %errorlevel% neq 0 exit /b %errorlevel%
+:: %MSBUILD_EXE% /p:Configuration=Release %REPO_ROOT%\src\Modules\LIKQ\BuildNuGetPkg\BuildNuGetPkg.csproj
+:: if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Run msbuild to build FanoutSearch.Server
-%MSBUILD_EXE% /p:Configuration=Release %REPO_ROOT%\src\LIKQ\FanoutSearch.Server\FanoutSearch.Server.csproj
-if %errorlevel% neq 0 exit /b %errorlevel%
+:: %MSBUILD_EXE% /p:Configuration=Release %REPO_ROOT%\src\Modules\LIKQ\FanoutSearch.Server\FanoutSearch.Server.csproj
+:: if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Build spark module
 call %SPARK_MODULE_ROOT%\build.bat

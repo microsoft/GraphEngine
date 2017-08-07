@@ -573,6 +573,7 @@ namespace t_Namespace
 
         [MODULE_CALL("OptionalFields", "node")]
 
+        #region IAccessor Implementation
         public byte[] ToByteArray()
         {
             byte* targetPtr = CellPtr;
@@ -584,6 +585,24 @@ namespace t_Namespace
             Memory.Copy(CellPtr, 0, ret, 0, size);
             return ret;
         }
+
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return CellPtr;
+        }
+
+        public unsafe int GetBufferLength()
+        {
+            byte* targetPtr = CellPtr;
+
+            MODULE_CALL("PushPointerThroughStruct", "node");
+
+            int size = (int)(targetPtr - CellPtr);
+            return size;
+        }
+
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+        #endregion
 
         internal unsafe t_cell_name_Accessor(long cellId, CellAccessOptions options)
         {
@@ -797,6 +816,12 @@ namespace t_Namespace
             this.CellEntryIndex = cellEntryIndex;
             this.m_options      = options;
 
+            this.ResizeFunction = (byte* ptr, int ptr_offset, int delta) =>
+            {
+                int offset = (int)(ptr - CellPtr) + ptr_offset;
+                CellPtr = Global.LocalStorage.ResizeCell((long)CellID, CellEntryIndex, offset, delta);
+                return CellPtr + (offset - ptr_offset);
+            };
         }
 
         [ThreadStatic]
@@ -849,13 +874,6 @@ namespace t_Namespace
             ret.m_options      = options;
 
             return ret;
-        }
-
-        internal unsafe byte* ResizeFunction(byte* ptr, int ptr_offset, int delta)
-        {
-            int offset = (int)(ptr - CellPtr) + ptr_offset;
-            CellPtr    = Global.LocalStorage.ResizeCell((long)CellID, CellEntryIndex, offset, delta);
-            return CellPtr + (offset - ptr_offset);
         }
 
         internal static t_cell_name_Accessor AllocIterativeAccessor(CellInfo info)
