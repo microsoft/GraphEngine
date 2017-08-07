@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.FFI", "Trinity.FFI/Trinity.FFI.csproj", "{BA71DB0A-EFDF-44AF-95AE-0583CEAEBD2A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.FFI", "Trinity.FFI\Trinity.FFI.csproj", "{BA71DB0A-EFDF-44AF-95AE-0583CEAEBD2A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.FFI.UnitTests", "Trinity.FFI.UnitTests\Trinity.FFI.UnitTests.csproj", "{82DBC14A-6EAC-44A8-827D-41298ED29A2B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{BA71DB0A-EFDF-44AF-95AE-0583CEAEBD2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA71DB0A-EFDF-44AF-95AE-0583CEAEBD2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA71DB0A-EFDF-44AF-95AE-0583CEAEBD2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82DBC14A-6EAC-44A8-827D-41298ED29A2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82DBC14A-6EAC-44A8-827D-41298ED29A2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82DBC14A-6EAC-44A8-827D-41298ED29A2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82DBC14A-6EAC-44A8-827D-41298ED29A2B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

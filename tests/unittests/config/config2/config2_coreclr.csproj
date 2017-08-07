@@ -10,7 +10,7 @@
   <ItemGroup>
     <PackageReference Include="nunit" Version="3.6.1" />
     <PackageReference Include="dotnet-test-nunit" Version="3.4.0-beta-3" />
-    <PackageReference Include="GraphEngine.CoreCLR" version="1.0.8850"/>
+    <PackageReference Include="GraphEngine.CoreCLR" version="1.0.8967"/>
   </ItemGroup>
 
   <ItemGroup>

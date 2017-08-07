@@ -1,11 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <RuntimeFrameworkVersion>2.0.0-preview2</RuntimeFrameworkVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Trinity.FFI</AssemblyName>
+    <RootNamespace>Trinity.FFI</RootNamespace>
     <AllowUnsafe>true</AllowUnsafe>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.8850"/>
+    <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.8967" />
   </ItemGroup>
 </Project>
