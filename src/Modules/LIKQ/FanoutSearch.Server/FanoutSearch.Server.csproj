@@ -164,7 +164,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\BuildProfile\ProductInfo.cs">
+    <Compile Include="..\..\..\BuildProfile\ProductInfo.cs">
       <Link>ProductInfo.cs</Link>
     </Compile>
     <Compile Include="Program.cs" />

@@ -15,7 +15,7 @@ if not exist %NUGET_EXE% (
 set TRINITY_C_SLN=%REPO_ROOT%\src\Trinity.C\Trinity.C.sln
 set TRINITY_TSL_SLN=%REPO_ROOT%\src\Trinity.TSL\Trinity.TSL.sln
 set TRINITY_CORE_SLN=%REPO_ROOT%\src\Trinity.Core\Trinity.Core.sln
-set LIKQ_SLN=%REPO_ROOT%\src\LIKQ\LIKQ.sln
+set LIKQ_SLN=%REPO_ROOT%\src\Modules\LIKQ\LIKQ.sln
 set SPARK_MODULE_ROOT=%REPO_ROOT%\src\Modules\Spark
 
 :: Run msbuild to build Trinity.C
@@ -51,15 +51,15 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 :: and then build LIKQ.sln as a whole
 
 :: Run msbuild to build FanoutSearch
-%MSBUILD_EXE% /p:Configuration=Release %REPO_ROOT%\src\LIKQ\FanoutSearch\FanoutSearch.csproj
+%MSBUILD_EXE% /p:Configuration=Release %REPO_ROOT%\src\Modules\LIKQ\FanoutSearch\FanoutSearch.csproj
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Run msbuild to build LIKQ nuget package
-%MSBUILD_EXE% /p:Configuration=Release %REPO_ROOT%\src\LIKQ\BuildNuGetPkg\BuildNuGetPkg.csproj
+%MSBUILD_EXE% /p:Configuration=Release %REPO_ROOT%\src\Modules\LIKQ\BuildNuGetPkg\BuildNuGetPkg.csproj
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Run msbuild to build FanoutSearch.Server
-%MSBUILD_EXE% /p:Configuration=Release %REPO_ROOT%\src\LIKQ\FanoutSearch.Server\FanoutSearch.Server.csproj
+%MSBUILD_EXE% /p:Configuration=Release %REPO_ROOT%\src\Modules\LIKQ\FanoutSearch.Server\FanoutSearch.Server.csproj
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Build spark module
