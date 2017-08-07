@@ -20,6 +20,7 @@ using System.Linq;
 using System.Text;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
+using Trinity.Storage;
 namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
@@ -27,8 +28,7 @@ source->append(R"::(
     /// <summary>
     /// Represents a 256-bit enum type.
     /// </summary>
-    
-    public unsafe class EnumAccessor
+    public unsafe class EnumAccessor : IAccessor
     {
         internal byte* CellPtr;
         internal long? CellID;
@@ -43,14 +43,7 @@ source->append(R"::(
                 return sizeof(byte);
             }
         }
-        /// <summary>
-        /// Gets the byte value.
-        /// </summary>
-        /// <returns>A byte.</returns>
-        public byte ToByte()
-        {
-            return *(byte*)CellPtr;
-        }
+        #region IAccessor Implementation
         /// <summary>
         /// Gets the underlying blob.
         /// </summary>
@@ -60,10 +53,37 @@ source->append(R"::(
             return new byte[] { *(byte*)CellPtr };
         }
         /// <summary>
+        /// Get the pointer to the underlying buffer.
+        /// </summary>
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return CellPtr;
+        }
+        /// <summary>
+        /// Get the length of the buffer.
+   )::");
+source->append(R"::(     /// </summary>
+        public unsafe int GetBufferLength()
+        {
+            return length;
+        }
+        /// <summary>
+        /// The ResizeFunctionDelegate that should be called when this accessor is trying to resize itself.
+        /// </summary>
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+        #endregion
+        /// <summary>
+        /// Gets the byte value.
+        /// </summary>
+        /// <returns>A byte.</returns>
+        public byte ToByte()
+        {
+            return *(byte*)CellPtr;
+        }
+        /// <summary>
         /// Converts a EnumAccessor accessor to a byte value.
         /// </summary>
-        /// <param name="accessor">A EnumAc)::");
-source->append(R"::(cessor accessor.</param>
+        /// <param name="accessor">A EnumAccessor accessor.</param>
         /// <returns>A byte.</returns>
         public static implicit operator byte(EnumAccessor accessor)
         {
@@ -71,7 +91,8 @@ source->append(R"::(cessor accessor.</param>
         }
         /// <summary>
         /// Converts a byte value to a EnumAccessor value.
-        /// </summary>
+        /// </s)::");
+source->append(R"::(ummary>
         /// <param name="value">A byte value.</param>
         /// <returns>A EnumAccessor value.</returns>
         public static implicit operator EnumAccessor(byte value)
@@ -86,14 +107,14 @@ source->append(R"::(cessor accessor.</param>
         /// <param name="a">A EnumAccessor instance.</param>
         /// <param name="b">Another EnumAccessor instance.</param>
         /// <returns>true if the two given EnumAccessor instances have the same value; otherwise, false.</returns>
-     )::");
-source->append(R"::(   public static bool operator ==(EnumAccessor a, EnumAccessor b)
+        public static bool operator ==(EnumAccessor a, EnumAccessor b)
         {
             if (ReferenceEquals(a, b))
               return true;
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
               return false;
-            return *a.CellPtr == *b.CellPtr;
+            return *a.CellPtr == *)::");
+source->append(R"::(b.CellPtr;
         }
         /// <summary>
         /// Returns a value indicating whether two given EnumAccessor instances have the same value.
@@ -108,12 +129,12 @@ source->append(R"::(   public static bool operator ==(EnumAccessor a, EnumAccess
         /// <summary>
         /// Returns a value indicating whether this instance is equal to a specified object.
         /// </summary>
-        /// <param name="obj">An object to compare with this instance or)::");
-source->append(R"::( null.</param>       
+        /// <param name="obj">An object to compare with this instance or null.</param>       
         /// <returns>true if obj is an instance of EnumAccessor and equals the value of this instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
-            return ((obj is EnumAccessor) && ((*CellPtr) == (((EnumAccessor)obj).ToByte())));
+            return ((obj is EnumAccessor) && ()::");
+source->append(R"::((*CellPtr) == (((EnumAccessor)obj).ToByte())));
         }
         /// <summary>
         /// Returns the hash code of the underlying value.

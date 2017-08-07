@@ -78,8 +78,8 @@ source->append(R"::(
                 RootHttpHandler(context);
                 return;
             }
-            var querystring_idx = url.IndexOf('?'))::");
-source->append(R"::(;
+            var querystring_idx =)::");
+source->append(R"::( url.IndexOf('?');
             switch (handler_id)
             {
                 )::");
@@ -154,8 +154,8 @@ source->append(R"::(
                             else if (iframe_callback != null)
                             {
                                 context.Response.ContentType = "text/html";
-                                sw.Write("<script language=\"javascript\" type=\"text/javas)::");
-source->append(R"::(cript\">window.top.window.{0}(", iframe_callback);
+                                sw.Write("<script language=\"javascript\" type)::");
+source->append(R"::(=\"text/javascript\">window.top.window.{0}(", iframe_callback);
                                 sw.Write(Serializer.ToString(response_struct));
                                 sw.Write(");</script>");
                             }

@@ -852,6 +852,7 @@ std::string* module_content = Modules::OptionalFields(node, &module_ctx);
     delete module_content;
 }
 source->append(R"::(
+        #region IAccessor Implementation
         public byte[] ToByteArray()
         {
             byte* targetPtr = CellPtr;
@@ -870,6 +871,28 @@ source->append(R"::(
             Memory.Copy(CellPtr, 0, ret, 0, size);
             return ret;
         }
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return CellPtr;
+        }
+        public unsafe int GetBufferLength()
+        {
+            byte* targetPtr = CellPtr;
+            )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::PushPointerThroughStruct(node, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
+            int size = (int)(targetPtr - CellPtr);
+            return size;
+        }
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+        #endregion
         internal unsafe )::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::(_Accessor(long cellId, CellAccessOptions options)
@@ -1105,9 +1128,9 @@ source->append(R"::( b)
         public long? CellID { get; internal set; }
         internal    int                     CellEntryIndex;
         internal    bool                    m_IsIterator   = false;
-        internal    CellAccessOptions       m_options      = 0;
-  )::");
-source->append(R"::(      private     GCHandle                handle;
+        internal    CellAccessOptions       m_o)::");
+source->append(R"::(ptions      = 0;
+        private     GCHandle                handle;
         private     const CellAccessOptions c_WALFlags     = CellAccessOptions.StrongLogAhead | CellAccessOptions.WeakLogAhead;
         #endregion
         #region Internal
@@ -1127,8 +1150,8 @@ source->append(R"::(      private     GCHandle                handle;
                         {
                             Throw.cell_not_found(cellId);
                         }
-                        else if ((options & CellAccessOptions.CreateN)::");
-source->append(R"::(ewOnCellNotFound) != 0)
+                        else if)::");
+source->append(R"::( ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
                         {
                             byte[]  defaultContent    = construct(cellId);
                             int     size              = defaultContent.Length;
@@ -1169,6 +1192,12 @@ source->append(R"::()
             this.CellPtr        = cellPtr;
             this.CellEntryIndex = cellEntryIndex;
             this.m_options      = options;
+            this.ResizeFunction = (byte* ptr, int ptr_offset, int delta) =>
+            {
+                int offset = (int)(ptr - CellPtr) + ptr_offset;
+                CellPtr = Global.LocalStorage.ResizeCell((long)CellID, CellEntryIndex, offset, delta);
+                return CellPtr + (offset - ptr_offset);
+            };
         }
         [ThreadStatic]
         internal static )::");
@@ -1227,12 +1256,6 @@ source->append(R"::(_Accessor(cellPtr);
             ret.CellEntryIndex = entryIndex;
             ret.m_options      = options;
             return ret;
-        }
-        internal unsafe byte* ResizeFunction(byte* ptr, int ptr_offset, int delta)
-        {
-            int offset = (int)(ptr - CellPtr) + ptr_offset;
-            CellPtr    = Global.LocalStorage.ResizeCell((long)CellID, CellEntryIndex, offset, delta);
-            return CellPtr + (offset - ptr_offset);
         }
         internal static )::");
 source->append(Codegen::GetString(node->name));

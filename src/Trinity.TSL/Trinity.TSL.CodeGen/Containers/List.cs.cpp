@@ -882,8 +882,8 @@ source->append(R"::( collection)
             this.CellPtr += 4;
         }
         /// <summary>
-        /// Removes all elements from the)::");
-source->append(R"::( List
+        /// Remove)::");
+source->append(R"::(s all elements from the List
         /// </summary>
         public unsafe void Clear()
         {
@@ -960,8 +960,8 @@ source->append(R"::([] array, int arrayIndex)
         /// </summary>
         /// <param name="index">The zero-based index in the source List at which copying begins.</param>
         /// <param name="array">The one-dimensional Array that is the destination of the elements copied from List. The Array must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based index in arr)::");
-source->append(R"::(ay at which copying begins.</param>;
+        /// <param name="arrayIndex">The zero-based i)::");
+source->append(R"::(ndex in array at which copying begins.</param>;
         /// <param name="count">The number of elements to copy.</param>
         public unsafe void CopyTo(int index, )::");
 source->append(Codegen::GetString(node->listElementType));
@@ -1096,9 +1096,9 @@ source->append(R"::(
         {
             if (index < 0) throw new ArgumentOutOfRangeException("index is less than 0.");
             if (index > Count) throw new ArgumentOutOfRangeException("index is greater than Count.");
-            if (index + count > Count) throw new ArgumentException("index and count do not denote a valid range of elements in the List.");
-         )::");
-source->append(R"::(   byte* targetPtr = CellPtr;
+            if (index + count > Count) throw new ArgumentException("index and count do not denote a valid range of elements in the Li)::");
+source->append(R"::(st.");
+            byte* targetPtr = CellPtr;
             for (int i = 0; i < index; i++)
             {
                 )::");

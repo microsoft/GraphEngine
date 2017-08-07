@@ -428,8 +428,8 @@ source->append(R"::(", Index.s_AccessorSubstringIndexAccessMethod, is_cell: fals
             {
                 return (TResult)m_accessor_enumerable.GetEnumerator();
             }
-            Type result_type  )::");
-source->append(R"::(        = typeof(TResult);
+            Type res)::");
+source->append(R"::(ult_type          = typeof(TResult);
             bool result_is_enumerable = (result_type.GenericTypeArguments.Count() == 1);
             Type element_type         = result_is_enumerable ? result_type.GenericTypeArguments[0] : result_type;
             if (result_is_enumerable)
@@ -445,9 +445,9 @@ source->append(R"::(        = typeof(TResult);
             {
                 var  lambda               = Expression.Lambda<Func<TResult>>(trimmed_expression);
                 var  func                 = (lambda).Compile();
-                var  result               = func();
-              )::");
-source->append(R"::(  return result;
+                var  result               =)::");
+source->append(R"::( func();
+                return result;
             }
         }
         #region Not implemented
@@ -540,8 +540,8 @@ source->append(R"::(", Index.s_CellSubstringIndexAccessMethod, is_cell: true);
                 return (TResult)s_cell_enumerable.GetEnumerator();
             }
             Type result_type          = typeof(TResult);
-            bool)::");
-source->append(R"::( result_is_enumerable = (result_type.GenericTypeArguments.Count() == 1);
+     )::");
+source->append(R"::(       bool result_is_enumerable = (result_type.GenericTypeArguments.Count() == 1);
             Type element_type         = result_is_enumerable ? result_type.GenericTypeArguments[0] : result_type;
             if (result_is_enumerable)
             {
@@ -558,10 +558,10 @@ source->append(R"::( result_is_enumerable = (result_type.GenericTypeArguments.Co
                 var  func                 = (lambda).Compile();
                 var  result               = func();
                 return result;
-            }
-        }
  )::");
-source->append(R"::(       #region Not implemented
+source->append(R"::(           }
+        }
+        #region Not implemented
         public IQueryable CreateQuery(Expression expression)
         {
             throw new NotImplementedException();
