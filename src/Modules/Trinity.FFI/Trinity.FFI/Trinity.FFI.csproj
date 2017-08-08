@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RuntimeFrameworkVersion>2.0.0-preview2</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion>2.1.0-preview1</RuntimeFrameworkVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Trinity.FFI</AssemblyName>
     <RootNamespace>Trinity.FFI</RootNamespace>

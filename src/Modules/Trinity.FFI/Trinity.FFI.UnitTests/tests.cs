@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -115,27 +116,33 @@ namespace Trinity.FFI.UnitTests
             TypeCodec.FreeTypeCode(ptype);
 
             ptype = TypeCodec.EncodeType<TestStruct_1>();
-            Assert.Equal(typeof(TestStruct_1), TypeCodec.DecodeType(ptype));
+            Assert.Equal(typeof(ValueTuple<int, double>), TypeCodec.DecodeType(ptype));
             TypeCodec.FreeTypeCode(ptype);
 
             ptype = TypeCodec.EncodeType<TestStruct_2>();
-            Assert.Equal(typeof(TestStruct_2), TypeCodec.DecodeType(ptype));
+            Assert.Equal(typeof(ValueTuple<string, string, string, string>), TypeCodec.DecodeType(ptype));
             TypeCodec.FreeTypeCode(ptype);
 
             ptype = TypeCodec.EncodeType<TestStruct_3>();
-            Assert.Equal(typeof(TestStruct_3), TypeCodec.DecodeType(ptype));
+            Assert.Equal(typeof(ValueTuple<
+                ValueTuple<string, string, string, string>, 
+                string, 
+                List<ValueTuple<int, double>>>), TypeCodec.DecodeType(ptype));
             TypeCodec.FreeTypeCode(ptype);
 
             ptype = TypeCodec.EncodeType<TestClass_1>();
-            Assert.Equal(typeof(TestClass_1), TypeCodec.DecodeType(ptype));
+            Assert.Equal(typeof(ValueTuple<int, double>), TypeCodec.DecodeType(ptype));
             TypeCodec.FreeTypeCode(ptype);
 
             ptype = TypeCodec.EncodeType<TestClass_2>();
-            Assert.Equal(typeof(TestClass_2), TypeCodec.DecodeType(ptype));
+            Assert.Equal(typeof(ValueTuple<string, string, string, string>), TypeCodec.DecodeType(ptype));
             TypeCodec.FreeTypeCode(ptype);
 
             ptype = TypeCodec.EncodeType<TestClass_3>();
-            Assert.Equal(typeof(TestClass_3), TypeCodec.DecodeType(ptype));
+            Assert.Equal(typeof(ValueTuple<
+                ValueTuple<string, string, string, string>, 
+                string, 
+                List<ValueTuple<int, double>>>), TypeCodec.DecodeType(ptype));
             TypeCodec.FreeTypeCode(ptype);
         }
     }

@@ -38,7 +38,7 @@ namespace Trinity.FFI
             Memory.free(up);
         }
 
-        private static List<TYPECODE> EncodeType_impl(Type T)
+        private static List<TYPECODE> EncodeType_impl(Type T, bool padding = false)
         {
             List<TYPECODE> code = new List<TYPECODE>();
 
@@ -87,7 +87,14 @@ namespace Trinity.FFI
                 code.AddRange(EncodeType_impl(T.GetGenericArguments().First()));
             }
 
-            if(!T.IsAbstract && (T.IsClass || (T.IsValueType && !T.IsPrimitive && !T.IsEnum)))
+            //  Only scan the type as a struct/class, when:
+            //  
+            //   1. We are not detecting the type as anything else.
+            //   This prevents accidental scanning of Lists, string, etc.
+            //   2. It is not abstract. We do not support abstract classes.
+            //   3. It is either a class, or a value type that is not primitive,
+            //   and not a enum (which means that it is really a struct).
+            if(code.Count == 0 && !T.IsAbstract && (T.IsClass || (T.IsValueType && !T.IsPrimitive && !T.IsEnum)))
             {
                 code.Add(TYPECODE.TUPLE);
                 List<List<TYPECODE>> fields = new List<List<TYPECODE>>();
@@ -109,7 +116,7 @@ namespace Trinity.FFI
                 throw new ArgumentException($"Cannot encode the specified type {T.ToString()}");
 
             // Pad it to ulong
-            while(code.Count % sizeof(ulong) != 0)
+            while(padding && code.Count % sizeof(ulong) != 0)
             {
                 code.Add(TYPECODE.NULL);
             }
@@ -124,7 +131,7 @@ namespace Trinity.FFI
 
         public static ulong* EncodeType(Type T)
         {
-            List<TYPECODE> code = EncodeType_impl(T);
+            List<TYPECODE> code = EncodeType_impl(T, padding: true);
             fixed(TYPECODE* bp = code.ToArray())
             {
                 ulong* up = (ulong*)Memory.malloc((ulong)code.Count);
@@ -169,15 +176,46 @@ namespace Trinity.FFI
                     {
                         byte cnt = (byte)*(p++);
                         Type[] elements = new Type[cnt];
-                        for(int i=0;i<cnt;++i)
+                        for (int i = 0; i < cnt; ++i)
                         {
                             elements[i] = DecodeType_impl(ref p);
                         }
-                        return typeof(ValueTuple<>).MakeGenericType(elements);
+                        return BuildValueTuple(elements);
                     }
                 default:
                     throw new ArgumentException("Cannot decode type");
             }
+        }
+
+        private static Type BuildValueTuple(Type[] elements)
+        {
+            if (elements.Length == 0)
+                throw new ArgumentException();
+
+            switch(elements.Length)
+            {
+                case 1:
+                    return typeof(ValueTuple<>).MakeGenericType(elements);
+                case 2:
+                    return typeof(ValueTuple<,>).MakeGenericType(elements);
+                case 3:
+                    return typeof(ValueTuple<,,>).MakeGenericType(elements);
+                case 4:
+                    return typeof(ValueTuple<,,,>).MakeGenericType(elements);
+                case 5:
+                    return typeof(ValueTuple<,,,,>).MakeGenericType(elements);
+                case 6:
+                    return typeof(ValueTuple<,,,,,>).MakeGenericType(elements);
+                case 7:
+                    return typeof(ValueTuple<,,,,,,>).MakeGenericType(elements);
+                case 8:
+                    return typeof(ValueTuple<,,,,,,,>).MakeGenericType(elements);
+            }
+
+            // Got to chain TRest
+            var rest = typeof(ValueTuple<,,,,,,,>).MakeGenericType(elements.Skip(7).ToArray());
+
+            return typeof(ValueTuple<,,,,,,,>).MakeGenericType(elements.Take(7).Concat(new[]{ rest }).ToArray());
         }
 
         public static Type DecodeType(void* T)
