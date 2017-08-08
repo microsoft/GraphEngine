@@ -33,12 +33,12 @@ namespace Trinity.FFI
 
     public unsafe static class TypeCodec
     {
-        public static void FreeTypeCode(ulong* up)
+        public static void FreeTypeCode(byte* up)
         {
             Memory.free(up);
         }
 
-        private static List<TYPECODE> EncodeType_impl(Type T, bool padding = false)
+        private static List<TYPECODE> EncodeType_impl(Type T)
         {
             List<TYPECODE> code = new List<TYPECODE>();
 
@@ -115,26 +115,20 @@ namespace Trinity.FFI
             if(code.Count == 0)
                 throw new ArgumentException($"Cannot encode the specified type {T.ToString()}");
 
-            // Pad it to ulong
-            while(padding && code.Count % sizeof(ulong) != 0)
-            {
-                code.Add(TYPECODE.NULL);
-            }
-
             return code;
         }
 
-        public static ulong* EncodeType<T>()
+        public static byte* EncodeType<T>()
         {
             return EncodeType(typeof(T));
         }
 
-        public static ulong* EncodeType(Type T)
+        public static byte* EncodeType(Type T)
         {
-            List<TYPECODE> code = EncodeType_impl(T, padding: true);
+            List<TYPECODE> code = EncodeType_impl(T);
             fixed(TYPECODE* bp = code.ToArray())
             {
-                ulong* up = (ulong*)Memory.malloc((ulong)code.Count);
+                byte* up = (byte*)Memory.malloc((byte)code.Count);
                 Memory.memcpy(up, bp, (ulong)code.Count);
                 return up;
             }
