@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Trinity.Diagnostics;
 
 namespace Trinity.Utilities
 {
@@ -60,8 +61,8 @@ namespace Trinity.Utilities
                         try
                         {
                             var method = stackFrame.GetMethod();
-                            var type   = method.DeclaringType;
-                            var asm    = method.Module.Assembly;
+                            var type = method.DeclaringType;
+                            var asm = method.Module.Assembly;
 
                             if (asm == trinity_asm) continue;
                             if (asm.IsDynamic) continue;
@@ -89,7 +90,7 @@ namespace Trinity.Utilities
 
         internal static bool AnyAssembly(Func<Assembly, bool> pred)
         {
-            foreach(var asm in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
             {
                 try
                 {
@@ -116,23 +117,116 @@ namespace Trinity.Utilities
             return types;
         }
 
+        internal static List<Type> GetAllTypes(Func<Type, bool> typePred)
+        {
+            List<Type> satisfied_types = new List<Type>();
+            foreach (var type in ForAllAssemblies(asm => GetAllTypes(asm)).SelectMany(_ => _))
+            {
+                try
+                {
+                    if (typePred(type))
+                    {
+                        satisfied_types.Add(type);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Verbose, "{0}", ex.ToString());
+                }
+            }
+
+            return satisfied_types;
+        }
+
         internal static List<Type> GetAllTypes()
         {
-            List<Type> types = new List<Type>();
+            return ForAllAssemblies(asm => GetAllTypes(asm))
+                .SelectMany(_ => _)
+                .ToList();
+        }
+
+        /// <summary>
+        /// projections to null are ignored.
+        /// </summary>
+        internal static IEnumerable<TBase> GetAllTypes<TBase>(Func<Type, TBase> type_projector)
+            where TBase : class
+        {
+            List<TBase> satisfied_instances = new List<TBase>();
+            foreach (var type in GetAllTypes())
+            {
+                try
+                {
+                    var instance = type_projector(type);
+
+                    if (instance != null)
+                    {
+                        satisfied_instances.Add(instance);
+                        break;
+                    }
+                }
+                catch { }
+            }
+
+            return satisfied_instances;
+        }
+
+        internal static IEnumerable<TBase> GetAllTypes<TBase, TAttribute>(Func<Type, bool> type_pred, Func<TAttribute, TBase> attr_projector)
+            where TAttribute : Attribute
+            where TBase : class
+        {
+            List<TBase> satisfied_instances = new List<TBase>();
+            foreach (var type in GetAllTypes(type_pred))
+            {
+                try
+                {
+                    foreach(var attr in type.GetCustomAttributes<TAttribute>(inherit: true))
+                    {
+                        try
+                        {
+                            var instance = attr_projector(attr);
+
+                            if(instance != null)
+                            {
+                                satisfied_instances.Add(instance);
+                                break;
+                            }
+                        } catch { }
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Verbose, "{0}", ex.ToString());
+                }
+            }
+
+            return satisfied_instances;
+        }
+
+
+        internal static List<T> ForAllAssemblies<T>(Func<Assembly, T> func)
+        {
+            var all_loaded_assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            List<T> ret = new List<T>();
             try
             {
-                foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+                foreach (var assembly in all_loaded_assemblies)
                 {
                     try
                     {
-                        types.AddRange(GetAllTypes(asm));
+                        ret.Add(func(assembly));
                     }
                     catch { }
                 }
             }
             catch { }
 
-            return types;
+            return ret;
+        }
+
+        internal static void ForAllAssemblies(Action<Assembly> func)
+        {
+            ForAllAssemblies(asm => { func(asm); return true; });
         }
     }
 }

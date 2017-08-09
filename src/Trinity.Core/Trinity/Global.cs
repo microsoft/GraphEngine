@@ -52,16 +52,18 @@ namespace Trinity
             Debug.Assert(schemaRunningMode == RunningMode.Server || schemaRunningMode == RunningMode.Proxy);
 
             var schema_interface_type = typeof(ICommunicationSchema);
-            var default_schema_type = typeof(DefaultCommunicationSchema);
             var comm_instance_base_type = schemaRunningMode == RunningMode.Server ? typeof(TrinityServer) : typeof(TrinityProxy);
-            var comm_instance_schema_attrs = from type in AssemblyUtility.GetAllTypes()
-                                             where comm_instance_base_type.IsAssignableFrom(type)
-                                             select type.GetCustomAttributes(typeof(CommunicationSchemaAttribute), inherit: true).FirstOrDefault() as CommunicationSchemaAttribute;
-            var schema_instances = from schema_attr in comm_instance_schema_attrs
-                                   where schema_attr != null
-                                   select schema_attr.CommunicationSchemaType.GetConstructor(new Type[] { }).Invoke(new object[] { }) as ICommunicationSchema;
 
-            return schema_instances;
+            //  When no other communication schemas are loaded, 
+            //  it is guaranteed that DefaultCommunicationSchema
+            //  will be detected.
+
+            return AssemblyUtility.GetAllTypes<ICommunicationSchema, CommunicationSchemaAttribute>(
+                _ => comm_instance_base_type.IsAssignableFrom(_),
+                _ => _.CommunicationSchemaType
+                      .GetConstructor(new Type[] { })
+                      .Invoke(new object[] { }) 
+                      as ICommunicationSchema);
         }
 
         private static void _RegisterTSLStorageExtension(IGenericCellOperations genericCellOps, IStorageSchema storageSchema)
@@ -120,9 +122,10 @@ namespace Trinity
 
             try
             {
-                loaded_tuple = AppDomain.CurrentDomain.GetAssemblies()
-                               .Select(_ => _LoadTSLStorageExtension(_))
-                               .Where(_ => _.Item1 != null && _.Item2 != null).FirstOrDefault();
+                loaded_tuple = AssemblyUtility
+                               .ForAllAssemblies(_LoadTSLStorageExtension)
+                               .Where(_ => _.Item1 != null && _.Item2 != null)
+                               .FirstOrDefault();
             }
             catch (Exception e) { Log.WriteLine(LogLevel.Error, "An error occur while scanning for TSL storage extension: {0}", e.ToString()); }
 
@@ -148,12 +151,7 @@ namespace Trinity
             // and forcibly enumerate its custom attributes. When the import extension
             // attribute is enumerated, it will trigger CLR to load its assembly, and thus
             // AppDomain.CurrentDomain.GetAssemblies will contain the extension assembly.
-            var all_loaded_assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var assembly_attributes = all_loaded_assemblies.SelectMany(_ =>
-            {
-                try { return _.GetCustomAttributes(); }
-                catch { return Enumerable.Empty<Attribute>(); }
-            }).ToList();
+            AssemblyUtility.ForAllAssemblies(_ => _.GetCustomAttributes().ToList());
         }
     }
 }

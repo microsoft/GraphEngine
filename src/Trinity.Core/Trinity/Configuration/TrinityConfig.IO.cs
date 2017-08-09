@@ -70,11 +70,7 @@ namespace Trinity
         /// <returns></returns>
         internal static List<ConfigurationInstance> GetConfigurationInstances()
         {
-            return AssemblyUtility.GetAllTypes()
-                .Where(_ => _.IsClass && !_.IsAbstract)
-                .Select(CreateConfigurationEntryTuple)
-                .Where(_ => _ != null)
-                .ToList();
+            return AssemblyUtility.GetAllTypes<ConfigurationInstance>(CreateConfigurationInstance).ToList();
         }
 
         /// <summary>
@@ -82,12 +78,13 @@ namespace Trinity
         ///   1. It contains a static property annotated with [ConfigInstance], returning an instance of the type
         ///   2. It contains a static property annotated with [ConfigEntryName], returning a string
         /// </summary>
-        private static ConfigurationInstance CreateConfigurationEntryTuple(Type type)
+        private static ConfigurationInstance CreateConfigurationInstance(Type type)
         {
             do
             {
                 try
                 {
+                    if (type.IsAbstract) break;
                     var static_properties = type.GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
                     var singleton_instance_prop = static_properties.FirstOrDefault(_ => _.GetCustomAttribute<ConfigInstanceAttribute>() != null && _.PropertyType == type);
                     if (singleton_instance_prop == null) break;

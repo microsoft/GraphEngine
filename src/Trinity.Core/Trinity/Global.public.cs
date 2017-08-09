@@ -27,6 +27,14 @@ namespace Trinity
     /// </summary>
     public static partial class Global
     {
+        /// <summary>
+        /// Initializes Graph Engine.
+        /// This method will be automatically called
+        /// when the static constructor of `Global`
+        /// is triggered. However, when the Graph Engine
+        /// is uninitialized, one would have to manually
+        /// call this again before using the local memory storage.
+        /// </summary>
         public static void Initialize()
         {
             lock (s_storage_init_lock)
@@ -35,9 +43,14 @@ namespace Trinity
                 _LoadTSLExtensions();
                 _ScanForTSLStorageExtension();
                 s_master_init_flag = true;
+                //TODO clean up background tasks
             }
         }
 
+        /// <summary>
+        /// Uninitializes the Graph Engine, including the
+        /// communication instance, message passing, and local memory storage.
+        /// </summary>
         public static void Uninitialize()
         {
             lock (s_storage_init_lock)

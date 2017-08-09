@@ -229,7 +229,7 @@
     <Compile Include="Utilities\CodeTempl\Disposal.cs" />
     <Compile Include="Utilities\IO\CodeWriter.cs" />
     <Compile Include="Utilities\IO\DataTable.cs" />
-    <Compile Include="Utilities\MISC\AssemblyPath.cs" />
+    <Compile Include="Utilities\MISC\AssemblyUtility.cs" />
     <Compile Include="Utilities\MISC\DataType.cs" />
     <Compile Include="Utilities\MISC\ASMFactory.cs" />
     <Compile Include="Utilities\NamespaceDoc.cs" />
