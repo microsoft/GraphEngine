@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -29,6 +30,18 @@ namespace Trinity.FFI
         BOOL,
         TUPLE,
         LIST,
+    }
+
+    public class TooManyFieldsInTupleException : ArgumentOutOfRangeException
+    {
+        public TooManyFieldsInTupleException(string paramName, string message) : base(paramName, message)
+        {
+        }
+    }
+
+    public class TypeCodecException : Exception
+    {
+        public TypeCodecException(string message) : base(message) { }
     }
 
     public unsafe static class TypeCodec
@@ -103,7 +116,7 @@ namespace Trinity.FFI
                     fields.Add(EncodeType_impl(field.FieldType));
                 }
                 if(fields.Count > 255)
-                    throw new ArgumentException($"Too many fields in Tuple type {T.ToString()}");
+                    throw new TooManyFieldsInTupleException(nameof(T), $"Too many fields in Tuple type {T.ToString()}");
                 code.Add((TYPECODE)fields.Count);
                 foreach(var field in fields)
                 {
@@ -113,7 +126,7 @@ namespace Trinity.FFI
 
             // Throw if we don't pick up anything
             if(code.Count == 0)
-                throw new ArgumentException($"Cannot encode the specified type {T.ToString()}");
+                throw new TypeCodecException($"Cannot encode the specified type {T.ToString()}");
 
             return code;
         }
@@ -177,39 +190,45 @@ namespace Trinity.FFI
                         return BuildValueTuple(elements);
                     }
                 default:
-                    throw new ArgumentException("Cannot decode type");
+                    throw new TypeCodecException("Cannot decode type");
             }
         }
 
-        private static Type BuildValueTuple(Type[] elements)
+        private static Type BuildValueTuple(Type[] elements, int i = 0)
         {
-            if (elements.Length == 0)
-                throw new ArgumentException();
+            int len = elements.Length - i;
+            if (len == 0)
+                throw new TypeCodecException("At least one type required to construct a ValueTuple");
 
-            switch(elements.Length)
+            switch(len)
             {
                 case 1:
-                    return typeof(ValueTuple<>).MakeGenericType(elements);
+                    return typeof(ValueTuple<>).MakeGenericType(elements[i]);
                 case 2:
-                    return typeof(ValueTuple<,>).MakeGenericType(elements);
+                    return typeof(ValueTuple<,>).MakeGenericType(elements[i], elements[i+1]);
                 case 3:
-                    return typeof(ValueTuple<,,>).MakeGenericType(elements);
+                    return typeof(ValueTuple<,,>).MakeGenericType(elements[i], elements[i+1], elements[i+2]);
                 case 4:
-                    return typeof(ValueTuple<,,,>).MakeGenericType(elements);
+                    return typeof(ValueTuple<,,,>).MakeGenericType(elements[i], elements[i+1], elements[i+2], elements[i+3]);
                 case 5:
-                    return typeof(ValueTuple<,,,,>).MakeGenericType(elements);
+                    return typeof(ValueTuple<,,,,>).MakeGenericType(elements[i], elements[i+1], elements[i+2], elements[i+3], elements[i+4]);
                 case 6:
-                    return typeof(ValueTuple<,,,,,>).MakeGenericType(elements);
+                    return typeof(ValueTuple<,,,,,>).MakeGenericType(elements[i], elements[i+1], elements[i+2], elements[i+3], elements[i+4], elements[i+5]);
                 case 7:
-                    return typeof(ValueTuple<,,,,,,>).MakeGenericType(elements);
-                case 8:
-                    return typeof(ValueTuple<,,,,,,,>).MakeGenericType(elements);
+                    return typeof(ValueTuple<,,,,,,>).MakeGenericType(elements[i], elements[i+1], elements[i+2], elements[i+3], elements[i+4], elements[i+5], elements[i+6]);
             }
-
             // Got to chain TRest
-            var rest = typeof(ValueTuple<,,,,,,,>).MakeGenericType(elements.Skip(7).ToArray());
 
-            return typeof(ValueTuple<,,,,,,,>).MakeGenericType(elements.Take(7).Concat(new[]{ rest }).ToArray());
+            Debug.Assert(i == 0);
+            int j = len - len % 7;
+            Type t = BuildValueTuple(elements, j);
+            do
+            {
+                j = j - 7;
+                t = typeof(ValueTuple<,,,,,,,>).MakeGenericType(elements[j], elements[j + 1], elements[j + 2], elements[j + 3], elements[j + 4], elements[j + 5], elements[j + 6], t);
+            } while (j > 0);
+
+            return t;
         }
 
         public static Type DecodeType(void* T)
