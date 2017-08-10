@@ -179,7 +179,7 @@ namespace Trinity.Storage
             if (my_schema_signature != remote_schema_signature)
             {
                 Log.WriteLine(LogLevel.Fatal, "Local communication schema signature not matching the remote one.\r\n\tLocal: {0}\r\n\tRemote: {1}", my_schema_signature, remote_schema_signature);
-                Global.Exit(-1);
+                throw new InvalidOperationException();
             }
         }
 

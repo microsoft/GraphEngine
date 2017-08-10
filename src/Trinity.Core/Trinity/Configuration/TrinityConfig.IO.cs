@@ -20,8 +20,8 @@ namespace Trinity
     public static partial class TrinityConfig
     {
         #region Fields
-        private const string                 c_defaultConfigFile         = ConfigurationConstants.Tags.DEFAULT_CONFIG_FILE;
-        private static readonly string[]     c_builtInSectionNames       = new string[] { ConfigurationConstants.Tags.SERVER, ConfigurationConstants.Tags.PROXY };
+        private const string c_defaultConfigFile = ConfigurationConstants.Tags.DEFAULT_CONFIG_FILE;
+        private static readonly string[] c_builtInSectionNames = new string[] { ConfigurationConstants.Tags.SERVER, ConfigurationConstants.Tags.PROXY };
         internal static ConfigurationSection s_localConfigurationSection = new ConfigurationSection();
         #endregion
 
@@ -57,7 +57,14 @@ namespace Trinity
                 {
                     if (config_entry.Settings != null && config_entry.Settings.ContainsKey(config_setting.Name))
                     {
-                        config_setting.SetValue(config_instance.Instance, config_entry.Settings[config_setting.Name].GetValue(config_setting.PropertyType));
+                        try
+                        {
+                            config_setting.SetValue(config_instance.Instance, config_entry.Settings[config_setting.Name].GetValue(config_setting.PropertyType));
+                        }
+                        catch
+                        {
+                            //TODO log down the error?
+                        }
                     }
                 }
 
@@ -70,7 +77,7 @@ namespace Trinity
         /// <returns></returns>
         internal static List<ConfigurationInstance> GetConfigurationInstances()
         {
-            return AssemblyUtility.GetAllTypes<ConfigurationInstance>(CreateConfigurationInstance).ToList();
+            return AssemblyUtility.GetAllTypeInstances(CreateConfigurationInstance).ToList();
         }
 
         /// <summary>
@@ -84,7 +91,6 @@ namespace Trinity
             {
                 try
                 {
-                    if (type.IsAbstract) break;
                     var static_properties = type.GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
                     var singleton_instance_prop = static_properties.FirstOrDefault(_ => _.GetCustomAttribute<ConfigInstanceAttribute>() != null && _.PropertyType == type);
                     if (singleton_instance_prop == null) break;
@@ -112,7 +118,7 @@ namespace Trinity
             {
                 SaveConfig(DefaultConfigFile);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Log.WriteLine(LogLevel.Error, e.Message);
                 throw;
@@ -208,7 +214,7 @@ namespace Trinity
                 configXml.InsertBefore(declaration, configXml.DocumentElement);
                 configXml.Save(configFile);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Log.WriteLine(LogLevel.Error, e.Message);
                 throw;
@@ -224,7 +230,7 @@ namespace Trinity
             {
                 LoadTrinityConfig(true);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Log.WriteLine(LogLevel.Error, e.Message);
                 throw;
@@ -241,7 +247,7 @@ namespace Trinity
             {
                 LoadTrinityConfig(configFile, true);
             }
-             catch(Exception e)
+            catch (Exception e)
             {
                 Log.WriteLine(LogLevel.Error, e.Message);
                 throw;
@@ -320,7 +326,7 @@ namespace Trinity
         /// <param name="trinity_config_file"></param>
         private static void LoadConfigLegacy(string trinity_config_file)
         {
-            XMLConfig xml_config  = new XMLConfig(trinity_config_file);
+            XMLConfig xml_config = new XMLConfig(trinity_config_file);
 
             //construct local configuration section  
             XElement localSection = new XElement(ConfigurationConstants.Tags.LOCAL);

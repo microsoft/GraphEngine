@@ -53,13 +53,14 @@ namespace Trinity
 
             var schema_interface_type = typeof(ICommunicationSchema);
             var comm_instance_base_type = schemaRunningMode == RunningMode.Server ? typeof(TrinityServer) : typeof(TrinityProxy);
+            var default_comm_schema = typeof(DefaultCommunicationSchema);
 
             //  When no other communication schemas are loaded, 
             //  it is guaranteed that DefaultCommunicationSchema
             //  will be detected.
 
-            return AssemblyUtility.GetAllTypes<ICommunicationSchema, CommunicationSchemaAttribute>(
-                _ => comm_instance_base_type.IsAssignableFrom(_),
+            return AssemblyUtility.GetAllClassInstances<ICommunicationSchema, CommunicationSchemaAttribute>(
+                _ => comm_instance_base_type.IsAssignableFrom(_) && _ != default_comm_schema,
                 _ => _.CommunicationSchemaType
                       .GetConstructor(new Type[] { })
                       .Invoke(new object[] { }) 
@@ -78,24 +79,16 @@ namespace Trinity
 
         private static Tuple<IGenericCellOperations, IStorageSchema> _LoadTSLStorageExtension(Assembly extension_assembly)
         {
-            Type                   provider_interface_type     = typeof(IGenericCellOperations);
             Type                   default_provider_type       = typeof(DefaultGenericCellOperations);
             Type                   schema_interface_type       = typeof(IStorageSchema);
             Type                   default_storage_schema_type = typeof(DefaultStorageSchema);
             IGenericCellOperations _generic_cell_ops           = null;
             IStorageSchema         _storage_schema             = null;
 
-
-            var provider_type = (from type in AssemblyUtility.GetAllTypes(extension_assembly)
-                                 where type.IsClass && provider_interface_type.IsAssignableFrom(type) && type != default_provider_type
-                                 select type).FirstOrDefault();
-
+            var provider_type = AssemblyUtility.GetAllClassTypes<IGenericCellOperations>(_ => _ != default_provider_type, extension_assembly).FirstOrDefault();
             if (provider_type == null) goto _return;
 
-            var schema_type = (from type in AssemblyUtility.GetAllTypes(extension_assembly)
-                               where type.IsClass && schema_interface_type.IsAssignableFrom(type) && type != default_storage_schema_type
-                               select type).FirstOrDefault();
-
+            var schema_type = AssemblyUtility.GetAllClassTypes<IStorageSchema>( _ => _ != default_storage_schema_type, extension_assembly).FirstOrDefault();
             if (schema_type == null) goto _return;
 
             try
@@ -118,16 +111,11 @@ namespace Trinity
         {
             Log.WriteLine(LogLevel.Info, "Scanning for TSL storage extension.");
 
-            Tuple<IGenericCellOperations, IStorageSchema> loaded_tuple = default(Tuple<IGenericCellOperations, IStorageSchema>);
-
-            try
-            {
-                loaded_tuple = AssemblyUtility
-                               .ForAllAssemblies(_LoadTSLStorageExtension)
-                               .Where(_ => _.Item1 != null && _.Item2 != null)
-                               .FirstOrDefault();
-            }
-            catch (Exception e) { Log.WriteLine(LogLevel.Error, "An error occur while scanning for TSL storage extension: {0}", e.ToString()); }
+            Tuple<IGenericCellOperations, IStorageSchema> loaded_tuple 
+                = AssemblyUtility
+                  .ForAllAssemblies(_LoadTSLStorageExtension)
+                  .Where(_ => _.Item1 != null && _.Item2 != null)
+                  .FirstOrDefault();
 
             if (loaded_tuple == default(Tuple<IGenericCellOperations, IStorageSchema>))
             {

@@ -102,28 +102,41 @@ namespace Trinity.Utilities
             return false;
         }
 
-        internal static List<Type> GetAllTypes(Assembly asm)
+        /// <summary>
+        /// Get non-abstract class types
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
+        internal static List<Type> GetAllClassTypes(Assembly assembly = null)
         {
-
-            List<Type> types = new List<Type>();
-            try
-            {
-                foreach (var type in asm.GetTypes())
-                {
-                    types.Add(type);
-                }
-            }
-            catch { }
-            return types;
+            return GetAllClassTypes_impl(assembly, t => true);
         }
 
-        internal static List<Type> GetAllTypes(Func<Type, bool> typePred)
+        internal static List<Type> GetAllClassTypes(Func<Type, bool> typePred, Assembly assembly = null)
+        {
+            return GetAllClassTypes_impl(assembly, typePred);
+        }
+
+        internal static List<Type> GetAllClassTypes<TBase>(Func<Type, bool> typePred, Assembly assembly = null)
+            where TBase : class
+        {
+            return GetAllClassTypes_impl(assembly, t => typePred(t) && typeof(TBase).IsAssignableFrom(t));
+        }
+
+        private static List<Type> GetAllClassTypes_impl(Assembly assembly, Func<Type, bool> typePred)
         {
             List<Type> satisfied_types = new List<Type>();
-            foreach (var type in ForAllAssemblies(asm => GetAllTypes(asm)).SelectMany(_ => _))
+            List<Type> all_types;
+
+            if (assembly == null) all_types = ForAllAssemblies(asm => GetAllClassTypes(asm)).SelectMany(_ => _).ToList();
+            else all_types = GetAllClassTypes(assembly);
+
+            foreach (var type in all_types)
             {
                 try
                 {
+                    if (type.IsAbstract) continue;
+
                     if (typePred(type))
                     {
                         satisfied_types.Add(type);
@@ -138,21 +151,61 @@ namespace Trinity.Utilities
             return satisfied_types;
         }
 
-        internal static List<Type> GetAllTypes()
-        {
-            return ForAllAssemblies(asm => GetAllTypes(asm))
-                .SelectMany(_ => _)
-                .ToList();
-        }
 
         /// <summary>
         /// projections to null are ignored.
         /// </summary>
-        internal static IEnumerable<TBase> GetAllTypes<TBase>(Func<Type, TBase> type_projector)
+        internal static List<TBase> GetAllTypeInstances<TBase>(Func<Type, TBase> type_projector)
+            where TBase : class
+        {
+            return GetAllClassInstances_impl(type_projector, GetAllClassTypes());
+        }
+
+        /// <summary>
+        /// projections to null are ignored
+        /// </summary>
+        internal static List<TBase> GetAllTypeInstances<TBase>(Assembly assembly, Func<Type, TBase> type_projector)
+            where TBase : class
+        {
+            return GetAllClassInstances_impl(type_projector, GetAllClassTypes(assembly));
+        }
+
+        internal static List<TBase> GetAllClassInstances<TBase, TAttribute>(Func<Type, bool> type_pred, Func<TAttribute, TBase> attr_projector)
+            where TAttribute : Attribute
+            where TBase : class
+        {
+            return GetAllClassInstances_impl(type =>
+            {
+                try
+                {
+                    if (!type_pred(type)) return null;
+                    foreach (var attr in type.GetCustomAttributes<TAttribute>(inherit: true))
+                    {
+                        try
+                        {
+                            var instance = attr_projector(attr);
+
+                            if (instance != null)
+                            {
+                                return instance;
+                            }
+                        }
+                        catch { }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Verbose, "{0}", ex.ToString());
+                }
+                return null;
+            }, GetAllClassTypes());
+        }
+
+        private static List<TBase> GetAllClassInstances_impl<TBase>(Func<Type, TBase> type_projector, List<Type> types)
             where TBase : class
         {
             List<TBase> satisfied_instances = new List<TBase>();
-            foreach (var type in GetAllTypes())
+            foreach (var type in types)
             {
                 try
                 {
@@ -170,63 +223,28 @@ namespace Trinity.Utilities
             return satisfied_instances;
         }
 
-        internal static IEnumerable<TBase> GetAllTypes<TBase, TAttribute>(Func<Type, bool> type_pred, Func<TAttribute, TBase> attr_projector)
-            where TAttribute : Attribute
-            where TBase : class
-        {
-            List<TBase> satisfied_instances = new List<TBase>();
-            foreach (var type in GetAllTypes(type_pred))
-            {
-                try
-                {
-                    foreach(var attr in type.GetCustomAttributes<TAttribute>(inherit: true))
-                    {
-                        try
-                        {
-                            var instance = attr_projector(attr);
-
-                            if(instance != null)
-                            {
-                                satisfied_instances.Add(instance);
-                                break;
-                            }
-                        } catch { }
-
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.WriteLine(LogLevel.Verbose, "{0}", ex.ToString());
-                }
-            }
-
-            return satisfied_instances;
-        }
-
-
         internal static List<T> ForAllAssemblies<T>(Func<Assembly, T> func)
         {
-            var all_loaded_assemblies = AppDomain.CurrentDomain.GetAssemblies();
             List<T> ret = new List<T>();
+            ForAllAssemblies(asm => { ret.Add(func(asm)); });
+            return ret;
+        }
+
+        internal static void ForAllAssemblies(Action<Assembly> func)
+        {
+            var all_loaded_assemblies = AppDomain.CurrentDomain.GetAssemblies();
             try
             {
                 foreach (var assembly in all_loaded_assemblies)
                 {
                     try
                     {
-                        ret.Add(func(assembly));
+                        func(assembly);
                     }
                     catch { }
                 }
             }
             catch { }
-
-            return ret;
-        }
-
-        internal static void ForAllAssemblies(Action<Assembly> func)
-        {
-            ForAllAssemblies(asm => { func(asm); return true; });
         }
     }
 }
