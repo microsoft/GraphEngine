@@ -1,32 +1,33 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 using Trinity.Storage;
+using Python.Runtime;
 
-namespace Trinity.FFI
+namespace Trinity.FFI.Python
 {
-    internal class ProgramRunner
+    class CPythonRuntime : ILanguageRuntime
     {
-        #region Fields
-        private ILanguageRuntimeProvider m_runtimeProvider;
-        private ConcurrentStack<ILanguageRuntime> m_runtimes;
-        #endregion
+        private Py.GILState m_GIL;
 
-        public ProgramRunner(ILanguageRuntimeProvider runtime_provider)
+        public CPythonRuntime()
         {
-            m_runtimeProvider = runtime_provider;
-            m_runtimes = new ConcurrentStack<ILanguageRuntime>();
+            m_GIL = Py.GIL();
         }
-
-        public string RuntimeName => m_runtimeProvider.Name;
 
         public void Dispose()
         {
+            m_GIL.Dispose();
+        }
+
+        public void LoadProgram(string path)
+        {
+            throw new NotImplementedException();
         }
 
         public void RegisterOperations(IGenericCellOperations storageOperations, IGenericMessagePassingOperations messagePassingOperations)
         {
+            throw new NotImplementedException();
         }
 
         public string Run(int methodId, string input)
@@ -44,7 +45,7 @@ namespace Trinity.FFI
             throw new NotImplementedException();
         }
 
-        internal void LoadProgram(string file)
+        int ILanguageRuntime.LoadProgram(string path)
         {
             throw new NotImplementedException();
         }

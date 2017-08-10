@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="pythonnet\**" />
+    <EmbeddedResource Remove="pythonnet\**" />
+    <None Remove="pythonnet\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.FFI\Trinity.FFI.csproj" />
+    <ProjectReference Include="pythonnet\src\runtime\Python.Runtime.15.csproj" />
+  </ItemGroup>
+
+</Project>

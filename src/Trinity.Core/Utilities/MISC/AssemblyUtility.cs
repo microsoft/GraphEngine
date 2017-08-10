@@ -127,7 +127,7 @@ namespace Trinity.Utilities
         /// </remarks>
         public static List<Type> GetAllClassTypes(Assembly assembly = null)
         {
-            return GetAllClassTypes_impl(assembly, t => true);
+            return GetAllTypes_impl(assembly, t => true);
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace Trinity.Utilities
         /// </remarks>
         public static List<Type> GetAllClassTypes(Func<Type, bool> typePredicate, Assembly assembly = null)
         {
-            return GetAllClassTypes_impl(assembly, typePredicate);
+            return GetAllTypes_impl(assembly, typePredicate);
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace Trinity.Utilities
         public static List<Type> GetAllClassTypes<TBase>(Func<Type, bool> typePredicate, Assembly assembly = null)
             where TBase : class
         {
-            return GetAllClassTypes_impl(assembly, t => typePredicate(t) && typeof(TBase).IsAssignableFrom(t));
+            return GetAllTypes_impl(assembly, t => typePredicate(t) && typeof(TBase).IsAssignableFrom(t));
         }
 
         /// <summary>
@@ -163,16 +163,30 @@ namespace Trinity.Utilities
             where TBase : class
             where TAttribute: Attribute
         {
-            return GetAllClassTypes_impl(assembly, t => t.GetCustomAttributes<TAttribute>(inherit: true).Any());
+            return GetAllTypes_impl(assembly, t => t.GetCustomAttributes<TAttribute>(inherit: true).Any());
         }
 
-        private static List<Type> GetAllClassTypes_impl(Assembly assembly, Func<Type, bool> typePredicate)
+        private static List<Type> GetAllTypes_impl(Assembly assembly)
+        {
+            List<Type> ret = new List<Type>();
+            try
+            {
+                foreach(var type in assembly.GetTypes())
+                {
+                    ret.Add(type);
+                }
+            }
+            catch { }
+            return ret;
+        }
+
+        private static List<Type> GetAllTypes_impl(Assembly assembly, Func<Type, bool> typePredicate)
         {
             List<Type> satisfied_types = new List<Type>();
             List<Type> all_types;
 
-            if (assembly == null) all_types = ForAllAssemblies(asm => GetAllClassTypes(asm)).SelectMany(_ => _).ToList();
-            else all_types = GetAllClassTypes(assembly);
+            if (assembly == null) all_types = ForAllAssemblies(asm => GetAllTypes_impl(asm)).SelectMany(_ => _).ToList();
+            else all_types = GetAllTypes_impl(assembly);
 
             foreach (var type in all_types)
             {
@@ -265,6 +279,8 @@ namespace Trinity.Utilities
             {
                 try
                 {
+                    if (!typeof(TBase).IsAssignableFrom(type)) continue;
+
                     var instance = type_projector(type);
 
                     if (instance != null)

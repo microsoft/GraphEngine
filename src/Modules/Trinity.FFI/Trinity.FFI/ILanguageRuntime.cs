@@ -5,7 +5,7 @@ using Trinity.Storage;
 
 namespace Trinity.FFI
 {
-    enum ThreadingModel
+    public enum ThreadingModel
     {
         //  For runtimes like V8, Chakra, CPython etc.
         SingleThreaded,
@@ -16,7 +16,7 @@ namespace Trinity.FFI
         AutoThreaded,
     }
 
-    enum RuntimeModel
+    public enum RuntimeModel
     {
         //  For runtimes holding process-level resources, like the 
         //  Global Interpreter Lock (GIL) for CPython.
@@ -32,13 +32,22 @@ namespace Trinity.FFI
         MultipleRuntime,
     }
 
-    interface ILanguageRuntime
+    public delegate string SynchronousFFIHandler(string input);
+    public delegate void AsynchronousFFIHandler(string input);
+
+    public interface ILanguageRuntime : IDisposable
     {
-        TrinityErrorCode RegisterGenericCellOps(IGenericCellOperations operations);
-        TrinityErrorCode RegisterGenericMessagePassingInterfaces(IGenericCellOperations operations);
+        void RegisterOperations(IGenericCellOperations storageOperations, IGenericMessagePassingOperations messagePassingOperations);
+        /// <summary>
+        /// Loads a program from the given path, and then execute the entry point.
+        /// </summary>
+        int LoadProgram(string path);
+        string Run(int methodId, string input);
+        int RunAsync(int methodId, string input);
+        int Wait(int handle, int timeout, out string output);
     }
 
-    interface ILanguageRuntimeProvider
+    public interface ILanguageRuntimeProvider
     {
         //  Specifies the name of the runtime.
         string Name { get; }
@@ -47,5 +56,6 @@ namespace Trinity.FFI
         //  Specifies the runtime model.
         RuntimeModel RuntimeModel { get; }
         string[] SupportedSuffix { get; }
+        ILanguageRuntime NewRuntime();
     }
 }

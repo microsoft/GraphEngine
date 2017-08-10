@@ -1,0 +1,3 @@
+[submodule "src/Modules/Trinity.FFI/Trinity.FFI.Python/pythonnet"]
+	path = src/Modules/Trinity.FFI/Trinity.FFI.Python/pythonnet
+	url = https://github.com/pythonnet/pythonnet.git

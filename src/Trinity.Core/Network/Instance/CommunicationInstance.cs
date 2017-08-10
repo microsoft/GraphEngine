@@ -287,7 +287,6 @@ namespace Trinity.Network
 
                     _ScanForAutoRegisteredModules();
 
-
                     var _config = TrinityConfig.CurrentClusterConfig;
                     var _si = _config.GetMyServerInfo() ?? _config.GetMyProxyInfo();
                     var _my_ip = Global.MyIPAddress;

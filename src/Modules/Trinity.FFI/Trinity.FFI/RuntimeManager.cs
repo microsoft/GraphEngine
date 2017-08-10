@@ -35,6 +35,7 @@ namespace Trinity.FFI
         {
             m_module = Global.CommunicationInstance.GetCommunicationModule<FFIModule>();
             m_comm_instance_started = true;
+            _TryStartFFIPrograms();
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -45,12 +46,15 @@ namespace Trinity.FFI
             foreach (var runtime_provider in m_providers)
             {
                 ProgramRunner runner = new ProgramRunner(runtime_provider);
+                Log.WriteLine("Discovered foreign runtime provider '{0}'.", runtime_provider.Name);
                 foreach (var format in runtime_provider.SupportedSuffix)
                 {
                     m_runners[format] = runner;
+                    Log.WriteLine(LogLevel.Debug, "Use {0} to load *.{1}.", runtime_provider.Name, format);
                 }
             }
             m_global_initialized = true;
+            _TryStartFFIPrograms();
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -72,9 +76,10 @@ namespace Trinity.FFI
                 try
                 {
                     var suffix = Path.GetExtension(file);
-                    if(m_provider_formats.TryGetValue(suffix, out var runtime_provider))
+                    if(m_runners.TryGetValue(suffix, out var runner))
                     {
-                        Log.WriteLine("Loading program {0}.", Path.GetFileName(file));
+                        Log.WriteLine("Loading program {0} with {1}.", Path.GetFileName(file), runner.RuntimeName);
+                        runner.LoadProgram(file);
                     }
                 }
                 catch { }
