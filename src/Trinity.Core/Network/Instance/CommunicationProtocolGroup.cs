@@ -20,18 +20,15 @@ namespace Trinity.Network
     public abstract class CommunicationProtocolGroup
     {
         #region Fields
-        HashSet<Type> m_RegisteredModuleTypes = new HashSet<Type>();
+        protected HashSet<Type> m_RegisteredModuleTypes = new HashSet<Type>();
         /// <summary>
         /// Raised when the host communication instance is started.
         /// </summary>
-        public event Action Started;
+        public event Action Started = delegate { };
         #endregion
         internal void _RaiseStartedEvent()
         {
-            if (Started != null)
-            {
-                Started();
-            }
+            Started();
         }
 
         internal abstract CommunicationInstance GetCommunicationInstance();

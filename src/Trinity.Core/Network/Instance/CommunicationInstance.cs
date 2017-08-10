@@ -20,6 +20,7 @@ using System.Globalization;
 using Trinity.Network.Messaging;
 using System.Diagnostics;
 using Trinity.Utilities;
+using Trinity.Extension;
 
 namespace Trinity.Network
 {
@@ -283,6 +284,10 @@ namespace Trinity.Network
                 try
                 {
                     Log.WriteLine(LogLevel.Debug, "Starting communication instance.");
+
+                    _ScanForAutoRegisteredModules();
+
+
                     var _config = TrinityConfig.CurrentClusterConfig;
                     var _si = _config.GetMyServerInfo() ?? _config.GetMyProxyInfo();
                     var _my_ip = Global.MyIPAddress;
@@ -330,6 +335,15 @@ namespace Trinity.Network
             }
         }
 
+        private void _ScanForAutoRegisteredModules()
+        {
+            Log.WriteLine("Scanning for auto-registered communication modules.");
+            foreach(var m in AssemblyUtility.GetAllClassTypes<CommunicationModule, AutoRegisteredCommunicationModuleAttribute>())
+            {
+                m_RegisteredModuleTypes.Add(m);
+            }
+        }
+
         /// <summary>
         /// Stops a Trinity instance.
         /// </summary>
@@ -370,6 +384,7 @@ namespace Trinity.Network
             this._RaiseStartedEvent();
             foreach (var module in m_CommunicationModules.Values)
                 module._RaiseStartedEvent();
+            Global._RaiseCommunicationInstanceStarted();
         }
 
         internal T _GetCommunicationModule_impl<T>() where T : CommunicationModule

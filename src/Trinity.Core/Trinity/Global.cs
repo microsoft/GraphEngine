@@ -19,6 +19,7 @@ using Trinity.Storage;
 using Trinity.Utilities;
 using Trinity.Diagnostics;
 using System.Runtime.CompilerServices;
+using Trinity.Extension;
 
 namespace Trinity
 {
@@ -41,6 +42,20 @@ namespace Trinity
         private static object s_comm_instance_lock = new object();
         private static bool   s_master_init_flag = false;
         private static List<Storage.MemoryCloud> s_registered_memoryclouds = new List<MemoryCloud>();
+
+        /// <summary>
+        /// Raised when initialization is complete.
+        /// </summary>
+        public static event Action Initialized  = delegate { };
+        /// <summary>
+        /// Raised when uninitialization is complete.
+        /// </summary>
+        public static event Action Uninitialized = delegate { };
+
+        /// <summary>
+        /// Raised when the communication instance (server or proxy) is started.
+        /// </summary>
+        public static event Action CommunicationInstanceStarted  = delegate { };
 
         static Global()
         {
@@ -102,6 +117,29 @@ namespace Trinity
             return Tuple.Create(_generic_cell_ops, _storage_schema);
         }
 
+        /// <returns>E_SUCCESS if all the tasks are successfully executed. E_FAILURE otherwise.</returns>
+        private static TrinityErrorCode _ScanForStartupTasks()
+        {
+            Log.WriteLine(LogLevel.Info, "Scanning for startup tasks.");
+            bool all_good = true;
+            var tasks = AssemblyUtility.GetAllClassInstances(t => t.GetConstructor(new Type[] { }).Invoke(new object[] { }) as IStartupTask);
+            foreach(var task in tasks)
+            {
+                try
+                {
+                    task.Run();
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, "An error occured while executing a startup task: {0}", ex.ToString());
+                    all_good = false;
+                }
+            }
+
+            return all_good ? TrinityErrorCode.E_SUCCESS : TrinityErrorCode.E_FAILURE;
+        }
+
+
         /// <returns>E_SUCCESS or E_FAILURE</returns>
         private static TrinityErrorCode _ScanForTSLStorageExtension()
         {
@@ -136,6 +174,11 @@ namespace Trinity
             // attribute is enumerated, it will trigger CLR to load its assembly, and thus
             // AppDomain.CurrentDomain.GetAssemblies will contain the extension assembly.
             AssemblyUtility.ForAllAssemblies(_ => _.GetCustomAttributes().ToList());
+        }
+
+        internal static void _RaiseCommunicationInstanceStarted()
+        {
+            CommunicationInstanceStarted();
         }
     }
 }

@@ -94,6 +94,10 @@
     </Compile>
     <Compile Include="Daemon\NamespaceDoc.cs" />
     <Compile Include="Diagnostics\SystemStatus.cs" />
+    <Compile Include="Extension\AutoRegisteredCommunicationModuleAttribute.cs" />
+    <Compile Include="Extension\IGenericCellOperations.cs" />
+    <Compile Include="Extension\GraphEngineExtensionAttribute.cs" />
+    <Compile Include="Extension\IStartupTask.cs" />
     <Compile Include="FaultTolerance\DefaultFailureHandler.cs" />
     <Compile Include="FaultTolerance\DefaultFailureHandler.Lock.cs" />
     <Compile Include="FaultTolerance\Delegates.cs" />
@@ -104,10 +108,10 @@
     <Compile Include="Network\Http\CommonHttpHandlers.cs" />
     <Compile Include="Network\Http\NamespaceDoc.cs" />
     <Compile Include="Network\Http\TrinityHttpServer.cs" />
-    <Compile Include="Network\Interfaces\ICommunicationSchema.cs" />
+    <Compile Include="Extension\ICommunicationSchema.cs" />
     <Compile Include="Network\Instance\CommunicationProtocolGroup.cs" />
     <Compile Include="Network\Instance\CommunicationInstance.cs" />
-    <Compile Include="Network\Interfaces\IProtocolDescriptor.cs" />
+    <Compile Include="Extension\IProtocolDescriptor.cs" />
     <Compile Include="Network\Messaging\MessageArgs\UnhandledException.cs" />
     <Compile Include="Network\Messaging\PreservedMessages.cs" />
     <Compile Include="Network\Messaging\TrinityMessageType.cs" />
@@ -123,7 +127,7 @@
     </Compile>
     <Compile Include="Storage\IAccessor.cs" />
     <Compile Include="Storage\ICell.cs" />
-    <Compile Include="Storage\IStorageSchema.cs" />
+    <Compile Include="Extension\IStorageSchema.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.Enumeration.cs" />
     <Compile Include="Storage\LocalMemoryStorage\Delegates.cs" />
     <Compile Include="Storage\Exceptions.cs" />

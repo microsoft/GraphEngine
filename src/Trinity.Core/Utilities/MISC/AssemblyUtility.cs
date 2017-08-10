@@ -153,6 +153,19 @@ namespace Trinity.Utilities
             return GetAllClassTypes_impl(assembly, t => typePredicate(t) && typeof(TBase).IsAssignableFrom(t));
         }
 
+        /// <summary>
+        /// Get non-abstract class types
+        /// </summary>
+        /// <remarks>
+        /// Exceptions are swallowed.
+        /// </remarks>
+        public static List<Type> GetAllClassTypes<TBase, TAttribute>(Assembly assembly = null)
+            where TBase : class
+            where TAttribute: Attribute
+        {
+            return GetAllClassTypes_impl(assembly, t => t.GetCustomAttributes<TAttribute>(inherit: true).Any());
+        }
+
         private static List<Type> GetAllClassTypes_impl(Assembly assembly, Func<Type, bool> typePredicate)
         {
             List<Type> satisfied_types = new List<Type>();
