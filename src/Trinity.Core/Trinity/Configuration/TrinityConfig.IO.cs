@@ -77,7 +77,7 @@ namespace Trinity
         /// <returns></returns>
         internal static List<ConfigurationInstance> GetConfigurationInstances()
         {
-            return AssemblyUtility.GetAllTypeInstances(CreateConfigurationInstance).ToList();
+            return AssemblyUtility.GetAllClassInstances(CreateConfigurationInstance).ToList();
         }
 
         /// <summary>

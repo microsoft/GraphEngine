@@ -40,7 +40,7 @@ namespace Trinity
             lock (s_storage_init_lock)
             {
                 if (s_master_init_flag) return;
-                _LoadTSLExtensions();
+                _LoadGraphEngineExtensions();
                 _ScanForTSLStorageExtension();
                 s_master_init_flag = true;
                 //TODO clean up background tasks

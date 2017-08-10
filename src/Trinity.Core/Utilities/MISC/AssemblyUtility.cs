@@ -10,11 +10,18 @@ using Trinity.Diagnostics;
 
 namespace Trinity.Utilities
 {
-    internal static class AssemblyUtility
+    /// <summary>
+    /// Provides utility functions to manipulate assemblies, types and instances.
+    /// </summary>
+    public static class AssemblyUtility
     {
         private static string my_assembly_path = null;
         private static Assembly trinity_asm = Assembly.GetExecutingAssembly();
-        internal static string TrinityCorePath
+
+        /// <summary>
+        /// The directory containing the GraphEngine core assembly.
+        /// </summary>
+        public static string TrinityCorePath
         {
             get
             {
@@ -22,7 +29,11 @@ namespace Trinity.Utilities
 
             }
         }
-        internal static string MyAssemblyPath
+
+        /// <summary>
+        /// Returns the directory path containing the user assembly calling into MyAssemblyPath.
+        /// </summary>
+        public static string MyAssemblyPath
         {
             get
             {
@@ -88,7 +99,13 @@ namespace Trinity.Utilities
             }
         }
 
-        internal static bool AnyAssembly(Func<Assembly, bool> pred)
+        /// <summary>
+        /// Tells if any assembly satisfies the predicate.
+        /// </summary>
+        /// <remarks>
+        /// Exceptions are swallowed.
+        /// </remarks>
+        public static bool AnyAssembly(Func<Assembly, bool> pred)
         {
             foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -105,25 +122,38 @@ namespace Trinity.Utilities
         /// <summary>
         /// Get non-abstract class types
         /// </summary>
-        /// <param name="assembly"></param>
-        /// <returns></returns>
-        internal static List<Type> GetAllClassTypes(Assembly assembly = null)
+        /// <remarks>
+        /// Exceptions are swallowed.
+        /// </remarks>
+        public static List<Type> GetAllClassTypes(Assembly assembly = null)
         {
             return GetAllClassTypes_impl(assembly, t => true);
         }
 
-        internal static List<Type> GetAllClassTypes(Func<Type, bool> typePred, Assembly assembly = null)
+        /// <summary>
+        /// Get non-abstract class types.
+        /// </summary>
+        /// <remarks>
+        /// Exceptions are swallowed.
+        /// </remarks>
+        public static List<Type> GetAllClassTypes(Func<Type, bool> typePredicate, Assembly assembly = null)
         {
-            return GetAllClassTypes_impl(assembly, typePred);
+            return GetAllClassTypes_impl(assembly, typePredicate);
         }
 
-        internal static List<Type> GetAllClassTypes<TBase>(Func<Type, bool> typePred, Assembly assembly = null)
+        /// <summary>
+        /// Get non-abstract class types
+        /// </summary>
+        /// <remarks>
+        /// Exceptions are swallowed.
+        /// </remarks>
+        public static List<Type> GetAllClassTypes<TBase>(Func<Type, bool> typePredicate, Assembly assembly = null)
             where TBase : class
         {
-            return GetAllClassTypes_impl(assembly, t => typePred(t) && typeof(TBase).IsAssignableFrom(t));
+            return GetAllClassTypes_impl(assembly, t => typePredicate(t) && typeof(TBase).IsAssignableFrom(t));
         }
 
-        private static List<Type> GetAllClassTypes_impl(Assembly assembly, Func<Type, bool> typePred)
+        private static List<Type> GetAllClassTypes_impl(Assembly assembly, Func<Type, bool> typePredicate)
         {
             List<Type> satisfied_types = new List<Type>();
             List<Type> all_types;
@@ -137,7 +167,7 @@ namespace Trinity.Utilities
                 {
                     if (type.IsAbstract) continue;
 
-                    if (typePred(type))
+                    if (typePredicate(type))
                     {
                         satisfied_types.Add(type);
                     }
@@ -151,26 +181,39 @@ namespace Trinity.Utilities
             return satisfied_types;
         }
 
-
         /// <summary>
-        /// projections to null are ignored.
+        /// Project from types to instances.
+        /// Projections to null are ignored.
         /// </summary>
-        internal static List<TBase> GetAllTypeInstances<TBase>(Func<Type, TBase> type_projector)
+        /// <param name="assembly">The assembly constraint. Passing null to scan all loaded assemblies.</param>
+        /// <param name="typeProjector">The projector.</param>
+        /// <typeparam name="TBase">The base class constraint.</typeparam>
+        /// <remarks>
+        /// Exceptions are swallowed.
+        /// </remarks>
+        public static List<TBase> GetAllClassInstances<TBase>(Func<Type, TBase> typeProjector, Assembly assembly = null)
             where TBase : class
         {
-            return GetAllClassInstances_impl(type_projector, GetAllClassTypes());
+            return GetAllClassInstances_impl(typeProjector, GetAllClassTypes(assembly));
         }
 
         /// <summary>
-        /// projections to null are ignored
+        /// Project from types to instances.
+        /// Projections to null are ignored.
         /// </summary>
-        internal static List<TBase> GetAllTypeInstances<TBase>(Assembly assembly, Func<Type, TBase> type_projector)
-            where TBase : class
-        {
-            return GetAllClassInstances_impl(type_projector, GetAllClassTypes(assembly));
-        }
-
-        internal static List<TBase> GetAllClassInstances<TBase, TAttribute>(Func<Type, bool> type_pred, Func<TAttribute, TBase> attr_projector)
+        /// <param name="assembly">The assembly constraint. Passing null to scan all loaded assemblies.</param>
+        /// <param name="type_pred">The predicate that filters wanted types.</param>
+        /// <param name="attr_projector">The attribute-to-type projector.</param>
+        /// <typeparam name="TBase">The base class constraint.</typeparam>
+        /// <typeparam name="TAttribute">
+        /// The attribute constraint. Can be an inherited attribute.
+        /// If there are multiple attributes of this type attached to a class,
+        /// the first one projecting to a non-null instance will be selected.
+        /// </typeparam>
+        /// <remarks>
+        /// Exceptions are swallowed.
+        /// </remarks>
+        public static List<TBase> GetAllClassInstances<TBase, TAttribute>(Func<Type, bool> type_pred, Func<TAttribute, TBase> attr_projector, Assembly assembly = null)
             where TAttribute : Attribute
             where TBase : class
         {
@@ -198,7 +241,7 @@ namespace Trinity.Utilities
                     Log.WriteLine(LogLevel.Verbose, "{0}", ex.ToString());
                 }
                 return null;
-            }, GetAllClassTypes());
+            }, GetAllClassTypes(assembly));
         }
 
         private static List<TBase> GetAllClassInstances_impl<TBase>(Func<Type, TBase> type_projector, List<Type> types)
@@ -223,14 +266,23 @@ namespace Trinity.Utilities
             return satisfied_instances;
         }
 
-        internal static List<T> ForAllAssemblies<T>(Func<Assembly, T> func)
+        /// <summary>
+        /// Iterate over all assemblies and perform projection.
+        /// </summary>
+        /// <typeparam name="T">The projection target type.</typeparam>
+        /// <param name="func">The projector.</param>
+        public static List<T> ForAllAssemblies<T>(Func<Assembly, T> func)
         {
             List<T> ret = new List<T>();
             ForAllAssemblies(asm => { ret.Add(func(asm)); });
             return ret;
         }
 
-        internal static void ForAllAssemblies(Action<Assembly> func)
+        /// <summary>
+        /// Iterate over all assemblies and perform an action for each of them.
+        /// </summary>
+        /// <param name="action">The action.</param>
+        public static void ForAllAssemblies(Action<Assembly> action)
         {
             var all_loaded_assemblies = AppDomain.CurrentDomain.GetAssemblies();
             try
@@ -239,7 +291,7 @@ namespace Trinity.Utilities
                 {
                     try
                     {
-                        func(assembly);
+                        action(assembly);
                     }
                     catch { }
                 }

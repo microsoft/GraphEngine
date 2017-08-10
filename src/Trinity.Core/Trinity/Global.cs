@@ -55,10 +55,6 @@ namespace Trinity
             var comm_instance_base_type = schemaRunningMode == RunningMode.Server ? typeof(TrinityServer) : typeof(TrinityProxy);
             var default_comm_schema = typeof(DefaultCommunicationSchema);
 
-            //  When no other communication schemas are loaded, 
-            //  it is guaranteed that DefaultCommunicationSchema
-            //  will be detected.
-
             return AssemblyUtility.GetAllClassInstances<ICommunicationSchema, CommunicationSchemaAttribute>(
                 _ => comm_instance_base_type.IsAssignableFrom(_) && _ != default_comm_schema,
                 _ => _.CommunicationSchemaType
@@ -131,7 +127,7 @@ namespace Trinity
             }
         }
 
-        private static void _LoadTSLExtensions()
+        private static void _LoadGraphEngineExtensions()
         {
             // Sometimes even if the assembly is tagged with the import extension attribute,
             // the extension assembly still won't get loaded. To alleviate this, we acquire
