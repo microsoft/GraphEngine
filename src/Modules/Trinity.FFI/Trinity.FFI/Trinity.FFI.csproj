@@ -11,4 +11,8 @@
   <ItemGroup>
     <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.8967" />
   </ItemGroup>
+
+  <ItemGroup>
+    <TslCodegen Include="**/*.tsl" />
+  </ItemGroup>
 </Project>

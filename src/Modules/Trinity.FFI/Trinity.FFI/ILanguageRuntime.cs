@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Trinity.Storage;
 
 namespace Trinity.FFI
 {
@@ -31,11 +32,20 @@ namespace Trinity.FFI
         MultipleRuntime,
     }
 
+    interface ILanguageRuntime
+    {
+        TrinityErrorCode RegisterGenericCellOps(IGenericCellOperations operations);
+        TrinityErrorCode RegisterGenericMessagePassingInterfaces(IGenericCellOperations operations);
+    }
+
     interface ILanguageRuntimeProvider
     {
+        //  Specifies the name of the runtime.
+        string Name { get; }
         //  Specifies the threading model for a runtime.
         ThreadingModel ThreadingModel { get; }
         //  Specifies the runtime model.
         RuntimeModel RuntimeModel { get; }
+        string[] SupportedSuffix { get; }
     }
 }
