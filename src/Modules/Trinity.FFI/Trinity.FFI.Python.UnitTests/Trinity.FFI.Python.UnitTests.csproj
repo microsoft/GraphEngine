@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Trinity.FFI.Python\pythonnet\src\runtime\Python.Runtime.15.csproj" />
+    <ProjectReference Include="..\pythonnet\src\runtime\Python.Runtime.15.csproj" />
     <ProjectReference Include="..\Trinity.FFI.Python\Trinity.FFI.Python.csproj" />
   </ItemGroup>
 
