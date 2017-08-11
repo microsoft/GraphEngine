@@ -47,8 +47,10 @@ namespace Trinity.FFI.UnitTests
         }
     }
 
-    public class MockRuntimeProvider : ILanguageRuntimeProvider
+    public class MockRuntimeProvider_SS : ILanguageRuntimeProvider
     {
+        public static int s_runtime_cnt = 0;
+
         public string Name => "MockL";
 
         public ThreadingModel ThreadingModel => ThreadingModel.SingleThreaded;
@@ -59,6 +61,7 @@ namespace Trinity.FFI.UnitTests
 
         public ILanguageRuntime NewRuntime()
         {
+            ++s_runtime_cnt;
             return new MockRuntime();
         }
     }
@@ -85,9 +88,10 @@ namespace Trinity.FFI.UnitTests
 
             var fp = Path.Combine(FFIConfig.Instance.ProgramDirectory, "test.txt");
 
-            File.WriteAllText(fp, "hey");
+            File.WriteAllText(fp, " ");
 
             Assert.Equal(fp, MockRuntime.s_loadprogram_called);
+            Assert.Equal(1, MockRuntimeProvider_SS.s_runtime_cnt);
 
             server.Stop();
         }

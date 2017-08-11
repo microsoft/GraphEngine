@@ -6,17 +6,52 @@ using Trinity.Storage;
 
 namespace Trinity.FFI
 {
-    internal class ProgramRunner
+    internal class ProgramRunner : IDisposable
     {
         #region Fields
+        private FFIModule m_module;
         private ILanguageRuntimeProvider m_runtimeProvider;
         private ConcurrentStack<ILanguageRuntime> m_runtimes;
+
         #endregion
 
-        public ProgramRunner(ILanguageRuntimeProvider runtime_provider)
+        public ProgramRunner(ILanguageRuntimeProvider runtime_provider, FFIModule module)
         {
             m_runtimeProvider = runtime_provider;
             m_runtimes = new ConcurrentStack<ILanguageRuntime>();
+            m_module = module;
+
+            //  Two situations where we just allocate a single runtime:
+            //  1. The provider specified that only one runtime can be created.
+            //  2. The provider claims that a runtime has multi-threading capabilities.
+            if (runtime_provider.RuntimeModel == RuntimeModel.SingleRuntime ||
+               runtime_provider.ThreadingModel == ThreadingModel.MultiThreaded)
+            {
+                _AllocSingleRuntime();
+            }
+            else
+            {
+                _AllocMultiRuntime();
+
+            }
+
+            if (m_runtimeProvider.ThreadingModel == ThreadingModel.SingleThreaded)
+            {
+
+            }
+            else
+            {
+
+            }
+        }
+
+        private void _AllocSingleRuntime()
+        {
+            m_runtimes.Push(m_runtimeProvider.NewRuntime());
+        }
+
+        private void _AllocMultiRuntime()
+        {
         }
 
         public string RuntimeName => m_runtimeProvider.Name;

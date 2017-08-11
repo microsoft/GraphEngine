@@ -26,6 +26,7 @@ namespace Trinity.FFI
         public void Run()
         {
             Global.Initialized += _OnGlobalInitialized;
+            Global.Uninitialized += _OnGlobalUninitialized;
             Global.CommunicationInstanceStarted += _OnCommunicationInstanceStart;
             Log.WriteLine("Trinity.FFI loaded.");
         }
@@ -45,7 +46,7 @@ namespace Trinity.FFI
             m_providers = AssemblyUtility.GetAllClassInstances(t => t.GetConstructor(new Type[] { }).Invoke(new object[] { }) as ILanguageRuntimeProvider);
             foreach (var runtime_provider in m_providers)
             {
-                ProgramRunner runner = new ProgramRunner(runtime_provider);
+                ProgramRunner runner = new ProgramRunner(runtime_provider, m_module);
                 Log.WriteLine("Discovered foreign runtime provider '{0}'.", runtime_provider.Name);
                 foreach (var format in runtime_provider.SupportedSuffix)
                 {
@@ -55,6 +56,20 @@ namespace Trinity.FFI
             }
             m_global_initialized = true;
             _TryStartFFIPrograms();
+        }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        private void _OnGlobalUninitialized()
+        {
+            m_comm_instance_started = false;
+            m_global_initialized = false;
+
+            foreach(var runner in m_runners)
+            {
+                runner.Value.Dispose();
+            }
+
+            m_runners.Clear();
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]

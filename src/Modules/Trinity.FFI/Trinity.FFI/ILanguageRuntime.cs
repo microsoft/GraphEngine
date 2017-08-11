@@ -10,10 +10,9 @@ namespace Trinity.FFI
         //  For runtimes like V8, Chakra, CPython etc.
         SingleThreaded,
         //  For runtimes like CLR, JVM or C-runtime.
+        //  Also for functional programming runtimes, 
+        //  and message-passing runtimes (Haskell, Erlang etc.)
         MultiThreaded,
-        //  For functional programming runtimes, and message-passing 
-        //  runtimes (Haskell, Erlang etc.)
-        AutoThreaded,
     }
 
     public enum RuntimeModel
