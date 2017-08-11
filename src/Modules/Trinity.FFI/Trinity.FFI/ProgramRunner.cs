@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
 using Trinity.Storage;
 
 namespace Trinity.FFI
@@ -11,14 +9,14 @@ namespace Trinity.FFI
         #region Fields
         private FFIModule m_module;
         private ILanguageRuntimeProvider m_runtimeProvider;
-        private ConcurrentStack<ILanguageRuntime> m_runtimes;
-
+        private BlockingCollection<ILanguageRuntime> m_runtimes;
+        private bool m_singleThreaded;
         #endregion
 
         public ProgramRunner(ILanguageRuntimeProvider runtime_provider, FFIModule module)
         {
             m_runtimeProvider = runtime_provider;
-            m_runtimes = new ConcurrentStack<ILanguageRuntime>();
+            m_runtimes = new BlockingCollection<ILanguageRuntime>(new ConcurrentQueue<ILanguageRuntime>());
             m_module = module;
 
             //  Two situations where we just allocate a single runtime:
@@ -35,53 +33,96 @@ namespace Trinity.FFI
 
             }
 
-            if (m_runtimeProvider.ThreadingModel == ThreadingModel.SingleThreaded)
-            {
-
-            }
-            else
-            {
-
-            }
+            m_singleThreaded = (m_runtimeProvider.ThreadingModel == ThreadingModel.SingleThreaded);
         }
 
         private void _AllocSingleRuntime()
         {
-            m_runtimes.Push(m_runtimeProvider.NewRuntime());
+            m_runtimes.Add(m_runtimeProvider.NewRuntime());
         }
 
         private void _AllocMultiRuntime()
         {
+            for (int i = 0; i < Environment.ProcessorCount; ++i)
+            {
+                m_runtimes.Add(m_runtimeProvider.NewRuntime());
+            }
         }
 
         public string RuntimeName => m_runtimeProvider.Name;
 
         public void Dispose()
         {
+            foreach (var runtime in m_runtimes)
+            {
+                runtime.Dispose();
+            }
         }
 
         public void RegisterOperations(IGenericCellOperations storageOperations, IGenericMessagePassingOperations messagePassingOperations)
         {
+            foreach(var runtime in m_runtimes)
+            {
+                runtime.RegisterOperations(storageOperations, messagePassingOperations);
+            }
         }
 
-        public string Run(int methodId, string input)
+        public string SynHandler(int methodId, string input)
         {
-            throw new NotImplementedException();
+            ILanguageRuntime runtime = null;
+            try
+            {
+                runtime = _GetRuntime();
+                return runtime.SynHandler(methodId, input);
+            }
+            finally
+            {
+                if (runtime != null) _PutRuntime(runtime);
+            }
         }
 
-        public int RunAsync(int methodId, string input)
+        public void AsynHandler(int methodId, string input)
         {
-            throw new NotImplementedException();
+            ILanguageRuntime runtime = null;
+            try
+            {
+                runtime = _GetRuntime();
+                runtime.AsynHandler(methodId, input);
+            }
+            finally
+            {
+                if (runtime != null) _PutRuntime(runtime);
+            }
         }
 
-        public int Wait(int handle, int timeout, out string output)
+        internal int LoadProgram(string file)
         {
-            throw new NotImplementedException();
+            ILanguageRuntime runtime = null;
+            try
+            {
+                runtime = _GetRuntime();
+                return runtime.LoadProgram(file);
+            }
+            finally
+            {
+                if (runtime != null) _PutRuntime(runtime);
+            }
         }
 
-        internal void LoadProgram(string file)
+        //  This operation will be blocked until we
+        //  have a free runtime.
+        private ILanguageRuntime _GetRuntime()
         {
-            throw new NotImplementedException();
+            var runtime = m_runtimes.Take();
+            // If the runtime supports multi-threading, immediately put it back to the pool.
+            if (!m_singleThreaded) m_runtimes.Add(runtime);
+
+            return runtime;
+        }
+
+        private void _PutRuntime(ILanguageRuntime runtime)
+        {
+            if (m_singleThreaded) m_runtimes.Add(runtime);
         }
     }
 }

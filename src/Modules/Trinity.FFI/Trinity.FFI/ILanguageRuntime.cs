@@ -41,9 +41,8 @@ namespace Trinity.FFI
         /// Loads a program from the given path, and then execute the entry point.
         /// </summary>
         int LoadProgram(string path);
-        string Run(int methodId, string input);
-        int RunAsync(int methodId, string input);
-        int Wait(int handle, int timeout, out string output);
+        string SynHandler(int methodId, string input);
+        void AsynHandler(int methodId, string input);
     }
 
     public interface ILanguageRuntimeProvider

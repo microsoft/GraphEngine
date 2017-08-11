@@ -30,21 +30,16 @@ namespace Trinity.FFI.UnitTests
             s_registeroperations_called = true;
         }
 
-        public string Run(int methodId, string input)
+        public string SynHandler(int methodId, string input)
         {
             return "";
         }
 
-        public int RunAsync(int methodId, string input)
+        public void AsynHandler(int methodId, string input)
         {
-            return 0;
+            return;
         }
 
-        public int Wait(int handle, int timeout, out string output)
-        {
-            output = null;
-            return 0;
-        }
     }
 
     public class MockRuntimeProvider_SS : ILanguageRuntimeProvider

@@ -18,36 +18,26 @@ namespace Trinity.FFI.Python
         public void Dispose()
         {
             m_GIL.Dispose();
-        }
-
-        public void LoadProgram(string path)
-        {
-            throw new NotImplementedException();
+            PythonEngine.Shutdown();
         }
 
         public void RegisterOperations(IGenericCellOperations storageOperations, IGenericMessagePassingOperations messagePassingOperations)
         {
-            throw new NotImplementedException();
         }
 
-        public string Run(int methodId, string input)
+        public int LoadProgram(string path)
         {
-            throw new NotImplementedException();
+            return 0;
         }
 
-        public int RunAsync(int methodId, string input)
+        public string SynHandler(int methodId, string input)
         {
-            throw new NotImplementedException();
+            return "";
         }
 
-        public int Wait(int handle, int timeout, out string output)
+        public void AsynHandler(int methodId, string input)
         {
-            throw new NotImplementedException();
-        }
-
-        int ILanguageRuntime.LoadProgram(string path)
-        {
-            throw new NotImplementedException();
+            return;
         }
     }
 }

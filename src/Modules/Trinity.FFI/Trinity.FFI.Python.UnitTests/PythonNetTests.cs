@@ -13,6 +13,29 @@ namespace Trinity.FFI.Python.UnitTests
             return Math.Abs(a - b) < 0.00001;
         }
 
+        [Fact] void pythonToNETCallback()
+        {
+            using (Py.GIL())
+            {
+                //new PyObject()
+            }
+        }
+
+        [Fact]
+        public void inlinePythonCode()
+        {
+            string pcode = @"
+import numpy as np
+a = np.array([1,2,3])
+print(a.tolist())
+";
+
+            using (Py.GIL())
+            {
+                PythonEngine.Exec(pcode);
+            }
+        }
+
         [Fact]
         public void PythonNetWorksHere()
         {
