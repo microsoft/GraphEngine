@@ -12,7 +12,6 @@ namespace Trinity.FFI.UnitTests
     {
         public static bool s_dispose_called = false;
         public static string s_loadprogram_called = null;
-        public static bool s_registeroperations_called = false;
 
         public void Dispose()
         {
@@ -23,11 +22,6 @@ namespace Trinity.FFI.UnitTests
         {
             s_loadprogram_called = path;
             return 0;
-        }
-
-        public void RegisterOperations(IGenericCellOperations storageOperations, IGenericMessagePassingOperations messagePassingOperations)
-        {
-            s_registeroperations_called = true;
         }
 
         public string SynHandler(int methodId, string input)
@@ -89,6 +83,9 @@ namespace Trinity.FFI.UnitTests
             Assert.Equal(1, MockRuntimeProvider_SS.s_runtime_cnt);
 
             server.Stop();
+            Global.Uninitialize();
+
+            Assert.Equal(true, MockRuntime.s_dispose_called);
         }
     }
 }

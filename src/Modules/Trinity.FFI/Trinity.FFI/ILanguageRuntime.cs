@@ -36,7 +36,6 @@ namespace Trinity.FFI
 
     public interface ILanguageRuntime : IDisposable
     {
-        void RegisterOperations(IGenericCellOperations storageOperations, IGenericMessagePassingOperations messagePassingOperations);
         /// <summary>
         /// Loads a program from the given path, and then execute the entry point.
         /// </summary>

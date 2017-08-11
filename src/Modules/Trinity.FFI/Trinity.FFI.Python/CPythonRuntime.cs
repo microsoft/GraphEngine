@@ -21,10 +21,6 @@ namespace Trinity.FFI.Python
             PythonEngine.Shutdown();
         }
 
-        public void RegisterOperations(IGenericCellOperations storageOperations, IGenericMessagePassingOperations messagePassingOperations)
-        {
-        }
-
         public int LoadProgram(string path)
         {
             return 0;

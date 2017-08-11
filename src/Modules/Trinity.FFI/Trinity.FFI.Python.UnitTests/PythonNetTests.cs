@@ -22,6 +22,36 @@ namespace Trinity.FFI.Python.UnitTests
         }
 
         [Fact]
+        public void inlinePythonCode_persistent()
+        {
+            string pcode = @"
+import numpy as np
+a = np.array([1,2,3])
+print(a.tolist())
+";
+
+            string pcode_2 = @"
+b = np.array([1,2,3])
+print(b.tolist())";
+
+            using (Py.GIL())
+            {
+                PythonEngine.Exec(pcode);
+                PythonEngine.Exec(pcode2);
+            }
+
+            string pcode_3 = @"
+c = np.array([1,2,3])
+print(c.tolist())";
+
+            using (Py.GIL())
+            {
+                PythonEngine.Exec(pcode3);
+            }
+        }
+
+
+        [Fact]
         public void inlinePythonCode()
         {
             string pcode = @"

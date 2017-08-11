@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using Trinity.Storage;
+using Trinity.TSL.Lib;
 
 namespace Trinity.FFI
 {
@@ -11,19 +12,30 @@ namespace Trinity.FFI
         private ILanguageRuntimeProvider m_runtimeProvider;
         private BlockingCollection<ILanguageRuntime> m_runtimes;
         private bool m_singleThreaded;
+        private int m_runtime_type_id = 0;
+        private static int s_runtime_cnt = 0;
+        private const int c_runtime_cnt_max = 255;
+        private const uint c_max_protocol_id = (1 << 24) - 1;
         #endregion
 
+        /// <summary>
+        /// Each runner has a protocol address space of 24bits, and
+        /// there can be at most 255 types of runners in the system.
+        /// </summary>
         public ProgramRunner(ILanguageRuntimeProvider runtime_provider, FFIModule module)
         {
+            if (s_runtime_cnt == c_runtime_cnt_max) throw new InvalidOperationException("Maximum number of language runtime providers reached.");
+
             m_runtimeProvider = runtime_provider;
-            m_runtimes = new BlockingCollection<ILanguageRuntime>(new ConcurrentQueue<ILanguageRuntime>());
-            m_module = module;
+            m_runtimes        = new BlockingCollection<ILanguageRuntime>(new ConcurrentQueue<ILanguageRuntime>());
+            m_module          = module;
+            m_runtime_type_id = s_runtime_cnt++;
 
             //  Two situations where we just allocate a single runtime:
             //  1. The provider specified that only one runtime can be created.
             //  2. The provider claims that a runtime has multi-threading capabilities.
-            if (runtime_provider.RuntimeModel == RuntimeModel.SingleRuntime ||
-               runtime_provider.ThreadingModel == ThreadingModel.MultiThreaded)
+            if (runtime_provider.RuntimeModel   == RuntimeModel.SingleRuntime ||
+                runtime_provider.ThreadingModel == ThreadingModel.MultiThreaded)
             {
                 _AllocSingleRuntime();
             }
@@ -59,16 +71,9 @@ namespace Trinity.FFI
             }
         }
 
-        public void RegisterOperations(IGenericCellOperations storageOperations, IGenericMessagePassingOperations messagePassingOperations)
-        {
-            foreach(var runtime in m_runtimes)
-            {
-                runtime.RegisterOperations(storageOperations, messagePassingOperations);
-            }
-        }
-
         public string SynHandler(int methodId, string input)
         {
+            CellAccessOptions.WeakLogAhead
             ILanguageRuntime runtime = null;
             try
             {
