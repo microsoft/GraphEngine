@@ -30,7 +30,7 @@ a = np.array([1,2,3])
 print(a.tolist())
 ";
 
-            string pcode_2 = @"
+            string pcode2 = @"
 b = np.array([1,2,3])
 print(b.tolist())";
 
@@ -40,7 +40,7 @@ print(b.tolist())";
                 PythonEngine.Exec(pcode2);
             }
 
-            string pcode_3 = @"
+            string pcode3 = @"
 c = np.array([1,2,3])
 print(c.tolist())";
 

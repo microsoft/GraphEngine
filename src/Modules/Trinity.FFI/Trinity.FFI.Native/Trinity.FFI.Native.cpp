@@ -6,11 +6,6 @@
 
 static struct TRINITY_INTERFACES g_interfaces;
 
-struct Cell
-{
-    void* m_handle;
-};
-
 TRINITYFFINATIVE_API void  TRINITY_FFI_SET_INTERFACES(const TRINITY_INTERFACES* interfaces)
 {
     memcpy(&g_interfaces, interfaces, sizeof(TRINITY_INTERFACES));
