@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Trinity.Extension;
 using Trinity.Network;
 using Trinity.Storage;
+using Trinity.Utilities;
 using Xunit;
 
 namespace Trinity.FFI.UnitTests
@@ -55,8 +57,24 @@ namespace Trinity.FFI.UnitTests
         }
     }
 
+    public class StartupTask : IStartupTask
+    {
+        public static bool run = false;
+        public void Run()
+        {
+            run = true;
+        }
+    }
+
     public class RuntimeTests
     {
+        [Fact]
+        public void IStartupTaskExecuted()
+        {
+            Global.Initialize();
+            Assert.True(StartupTask.run);
+        }
+
         [Fact]
         public void ModuleAutoload()
         {
@@ -72,12 +90,13 @@ namespace Trinity.FFI.UnitTests
         public void LoadsRuntime()
         {
             Global.Initialize();
+
+            FileUtility.CompletePath(FFIConfig.Instance.ProgramDirectory, create_nonexistent: true);
+            var fp = Path.Combine(FFIConfig.Instance.ProgramDirectory, "test.txt");
+            File.WriteAllText(fp, " ");
+
             TrinityServer server = new TrinityServer();
             server.Start();
-
-            var fp = Path.Combine(FFIConfig.Instance.ProgramDirectory, "test.txt");
-
-            File.WriteAllText(fp, " ");
 
             Assert.Equal(fp, MockRuntime.s_loadprogram_called);
             Assert.Equal(1, MockRuntimeProvider_SS.s_runtime_cnt);

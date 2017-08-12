@@ -59,7 +59,7 @@ namespace Trinity.FFI
                 sync_send = TrinityWrapper.trinity_ffi_sync_send,
             };
 
-            Native.TRINITY_FFI_SET_INTERFACES(m_interfaces);
+            Native.TRINITY_FFI_SET_INTERFACES(ref m_interfaces);
 
             //  Two situations where we just allocate a single runtime:
             //  1. The provider specified that only one runtime can be created.

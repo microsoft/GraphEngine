@@ -10,7 +10,7 @@ namespace Trinity.FFI.Python
 
         public RuntimeModel RuntimeModel => RuntimeModel.SingleRuntime;
 
-        public string[] SupportedSuffix => new[] { "py" };
+        public string[] SupportedSuffix => new[] { ".py" };
 
         public ILanguageRuntime NewRuntime()
         {

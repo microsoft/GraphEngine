@@ -33,9 +33,9 @@ namespace Trinity.FFI
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_REMOVECELL(long cellId);
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_CLOUD_REMOVECELL(long cellId);
 
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_NEWCELL_1([MarshalAs(UnmanagedType.LPStr)]string cellType, out IntPtr cell);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_NEWCELL_2(long cellId, [MarshalAs(UnmanagedType.LPStr)]string cellType, out IntPtr cell);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_NEWCELL_3([MarshalAs(UnmanagedType.LPStr)]string cellType, [MarshalAs(UnmanagedType.LPStr)]string cellContent, out IntPtr cell);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_NEWCELL_1(string cellType, out IntPtr cell);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_NEWCELL_2(long cellId, string cellType, out IntPtr cell);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_NEWCELL_3(string cellType, string cellContent, out IntPtr cell);
 
     internal unsafe delegate string TRINITY_FFI_CELL_TOSTRING(IntPtr cell);
     internal unsafe delegate long TRINITY_FFI_CELL_GETID(IntPtr cell);
@@ -126,6 +126,6 @@ namespace Trinity.FFI
     internal static unsafe class Native
     {
         [DllImport("trinity_ffi", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-        internal static extern void TRINITY_FFI_SET_INTERFACES([MarshalAs(UnmanagedType.LPStruct)] TRINITY_INTERFACES interfaces);
+        internal static extern void TRINITY_FFI_SET_INTERFACES(ref TRINITY_INTERFACES interfaces);
     }
 }

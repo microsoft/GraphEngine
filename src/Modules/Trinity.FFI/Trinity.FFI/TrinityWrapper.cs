@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using Trinity.Core.Lib;
 using Trinity.Storage;
 using Trinity.TSL.Lib;
 
@@ -113,6 +114,8 @@ namespace Trinity.FFI
         {
             try
             {
+                // XXX always NULL cellType; crashes when this function returns
+                // even if we manually set cellType.
                 ICell c = Global.LocalStorage.NewGenericCell(cellType);
                 GCHandle handle = GCHandle.Alloc(c);
                 cell = GCHandle.ToIntPtr(handle);
