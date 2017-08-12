@@ -40,6 +40,7 @@ namespace Trinity.FFI
                 cell_appendfield = TrinityWrapper.trinity_ffi_cell_append,
                 cell_getfield = TrinityWrapper.trinity_ffi_cell_get,
                 cell_getid = TrinityWrapper.trinity_ffi_cell_getid,
+                cell_dispose = TrinityWrapper.trinity_ffi_cell_dispose,
                 cell_hasfield = TrinityWrapper.trinity_ffi_cell_has,
                 cell_removefield = TrinityWrapper.trinity_ffi_cell_delete,
                 cell_setfield = TrinityWrapper.trinity_ffi_cell_set,

@@ -28,7 +28,7 @@ namespace Trinity.FFI
 
         //IEnumerable<ICellAccessor> EnumerateGenericCellAccessors(LocalMemoryStorage storage){ }
         //IEnumerable<ICell> EnumerateGenericCells(LocalMemoryStorage storage){ }
-        public static TrinityErrorCode trinity_ffi_local_loadcell(long cellId, out IntPtr cell)
+        public static TrinityErrorCode trinity_ffi_local_loadcell(long cellId, ref IntPtr cell)
         {
             try
             {
@@ -43,7 +43,7 @@ namespace Trinity.FFI
                 return TrinityErrorCode.E_FAILURE;
             }
         }
-        public static TrinityErrorCode trinity_ffi_cloud_loadcell(long cellId, out IntPtr cell)
+        public static TrinityErrorCode trinity_ffi_cloud_loadcell(long cellId, ref IntPtr cell)
         {
             try
             {
@@ -110,12 +110,10 @@ namespace Trinity.FFI
             return Global.CloudStorage.RemoveCell(cellId);
         }
 
-        public static TrinityErrorCode trinity_ffi_newcell_1(string cellType, out IntPtr cell)
+        public static TrinityErrorCode trinity_ffi_newcell_1(string cellType, ref IntPtr cell)
         {
             try
             {
-                // XXX always NULL cellType; crashes when this function returns
-                // even if we manually set cellType.
                 ICell c = Global.LocalStorage.NewGenericCell(cellType);
                 GCHandle handle = GCHandle.Alloc(c);
                 cell = GCHandle.ToIntPtr(handle);
@@ -128,7 +126,7 @@ namespace Trinity.FFI
             }
         }
 
-        public static TrinityErrorCode trinity_ffi_newcell_2(long cellId, string cellType, out IntPtr cell)
+        public static TrinityErrorCode trinity_ffi_newcell_2(long cellId, string cellType, ref IntPtr cell)
         {
             try
             {
@@ -144,7 +142,7 @@ namespace Trinity.FFI
             }
         }
 
-        public static TrinityErrorCode trinity_ffi_newcell_3(string cellType, string cellContent, out IntPtr cell)
+        public static TrinityErrorCode trinity_ffi_newcell_3(string cellType, string cellContent, ref IntPtr cell)
         {
             try
             {
@@ -175,6 +173,7 @@ namespace Trinity.FFI
         {
             try
             {
+                // XXX not called
                 ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
                 return c.ToString();
             }

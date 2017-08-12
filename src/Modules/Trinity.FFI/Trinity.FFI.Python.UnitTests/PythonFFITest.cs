@@ -1,6 +1,7 @@
 ﻿using Python.Runtime;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Trinity.Network;
@@ -20,12 +21,18 @@ namespace Trinity.FFI.Python.UnitTests
             // try to invoke trinity-specific python code here
             var fp = Path.Combine(FFIConfig.Instance.ProgramDirectory, "test.py");
             File.WriteAllText(fp, @"
-a = trinity.cell('MyCell')
+with open('MyCell.txt', 'w') as f:
+    a = trinity.cell('MyCell')
+    print(a)
+    f.write(a)
 ");
             TrinityServer server = new TrinityServer();
             server.Start();
 
             Global.Uninitialize();
+
+            Assert.True(File.Exists("MyCell.txt"));
+            Debug.WriteLine(File.ReadAllText("MyCell.txt"));
         }
     }
 }

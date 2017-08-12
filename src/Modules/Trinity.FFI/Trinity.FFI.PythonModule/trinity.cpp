@@ -9,26 +9,27 @@ extern "C" {
         Cell cell_handle;
     } TrinityCell_Object;
 
-    void trinity_cell_dealloc(TrinityCell_Object*);
     int64_t trinity_cell_init(TrinityCell_Object *self, PyObject *args, PyObject *kwds);
+    void trinity_cell_dealloc(TrinityCell_Object*);
+    PyObject* trinity_cell_tostring(TrinityCell_Object*);
 
     static PyTypeObject trinity_cellType = {
         PyVarObject_HEAD_INIT(NULL, 0) 
         "trinity.cell", /* tp_name */
         sizeof(TrinityCell_Object),                    /* tp_basicsize */
         0,                                             /* tp_itemsize */
-        (destructor)trinity_cell_dealloc,                          /* tp_dealloc */
+        (destructor)trinity_cell_dealloc,              /* tp_dealloc */
         0,                                             /* tp_print */
         0,                                             /* tp_getattr */
         0,                                             /* tp_setattr */
         0,                                             /* tp_reserved */
-        0,                                             /* tp_repr */
+        (reprfunc) trinity_cell_tostring,              /* tp_repr */
         0,                                             /* tp_as_number */
         0,                                             /* tp_as_sequence */
         0,                                             /* tp_as_mapping */
         0,                                             /* tp_hash  */
         0,                                             /* tp_call */
-        0,                                             /* tp_str */
+        (reprfunc) trinity_cell_tostring,              /* tp_str */
         0,                                             /* tp_getattro */
         0,                                             /* tp_setattro */
         0,                                             /* tp_as_buffer */
@@ -64,7 +65,7 @@ extern "C" {
     int64_t
     trinity_cell_init(TrinityCell_Object *self, PyObject *args, PyObject *kwds)
     {
-        PyObject *cellType = NULL, *cellContent = NULL;
+        char *cellType = NULL, *cellContent = NULL;
         int64_t cellId = 0;
     
         static char *kwlist_1[] = {"cellType", "cellId", NULL};
@@ -72,7 +73,7 @@ extern "C" {
 
         if (PyArg_ParseTupleAndKeywords(args, kwds, "is", kwlist_1, &cellType, &cellId))
         {
-            return (TrinityErrorCode::E_SUCCESS == pTrinity->newcell_2(cellId, PyUnicode_AsUTF8(cellType), &self->cell_handle))
+            return (TrinityErrorCode::E_SUCCESS == pTrinity->newcell_2(cellId, cellType, &(self->cell_handle)))
             ? 0 : -1;
         }
 
@@ -80,12 +81,12 @@ extern "C" {
         {
             if(!cellContent)
             {
-                return (TrinityErrorCode::E_SUCCESS == pTrinity->newcell_1(PyUnicode_AsUTF8(cellType), &self->cell_handle))
+                return (TrinityErrorCode::E_SUCCESS == pTrinity->newcell_1(cellType, &(self->cell_handle)))
                 ? 0 : -1;
             }
             else
             {
-                return (TrinityErrorCode::E_SUCCESS == pTrinity->newcell_3(PyUnicode_AsUTF8(cellType), PyUnicode_AsUTF8(cellContent), &self->cell_handle))
+                return (TrinityErrorCode::E_SUCCESS == pTrinity->newcell_3(cellType, cellContent, &(self->cell_handle)))
                 ? 0 : -1;
             }
         }
@@ -98,6 +99,15 @@ extern "C" {
     {
         pTrinity->cell_dispose(self->cell_handle);
         Py_TYPE(self)->tp_free((PyObject*)self);
+    }
+
+    PyObject* 
+    trinity_cell_tostring(TrinityCell_Object* self)
+    {
+        char* str = pTrinity->cell_tostring(self->cell_handle);
+        PyObject* obj = PyUnicode_FromString(str);
+        free(str);
+        return obj;
     }
 
     static PyMethodDef trinity_ffi_methods[] = {
