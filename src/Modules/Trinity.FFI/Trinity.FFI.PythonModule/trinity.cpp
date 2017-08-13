@@ -53,7 +53,8 @@ extern "C" {
         0,                           /* tp_alloc */
         0,                 /* tp_new */
     };
-    static TRINITY_INTERFACES *pTrinity;
+
+    static TRINITY_INTERFACES *pTrinity = NULL;
 
     PyObject*
     _Init(PyObject *self)
@@ -61,7 +62,183 @@ extern "C" {
         pTrinity = TRINITY_FFI_GET_INTERFACES();
         Py_RETURN_NONE;
     }
+    
+    PyObject*
+    sync_registry(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
 
+    PyObject*
+    async_registry(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+
+    PyObject*
+    sync_send(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    async_send(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+
+    PyObject*
+    local_loadstorage(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    local_savestorage(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    local_resetstorage(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+
+    PyObject*
+    cloud_loadstorage(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    cloud_savestorage(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    cloud_resetstorage(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    local_loadcell(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    cloud_loadcell(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+
+    PyObject*
+    local_savecell_1(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    local_savecell_2(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    cloud_savecell(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+
+    PyObject*
+    local_removecell(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    cloud_removecell(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+
+    PyObject*
+    newcell_1(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    newcell_2(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    newcell_3(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+
+    PyObject*
+    cell_tostring(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    cell_getid(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    cell_setid(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    cell_hasfield(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    cell_getfield(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    cell_setfield(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    cell_appendfield(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    PyObject*
+    cell_removefield(PyObject *self, PyObject *args, PyObject *kwds)
+    {
+        return NULL;
+    }
+
+    // {{{cell object functions
     int64_t
     trinity_cell_init(TrinityCell_Object *self, PyObject *args, PyObject *kwds)
     {
@@ -109,9 +286,35 @@ extern "C" {
         free(str);
         return obj;
     }
+    //}}}
 
     static PyMethodDef trinity_ffi_methods[] = {
         {"Init", (PyCFunction)_Init, METH_NOARGS, "Initialize the interfaces. Called upon Python runtime initialization."},
+        {"sync_registry", (PyCFunction)sync_registry, METH_VARARGS, ""},
+        {"async_registry", (PyCFunction)async_registry, METH_VARARGS, ""},
+        {"sync_send", (PyCFunction)sync_send, METH_VARARGS, ""},
+        {"async_send", (PyCFunction)async_send, METH_VARARGS, ""},
+        {"local_loadstorage", (PyCFunction)local_loadstorage, METH_VARARGS, ""},
+        {"local_savestorage", (PyCFunction)local_savestorage, METH_VARARGS, ""},
+        {"local_resetstorage", (PyCFunction)local_resetstorage, METH_VARARGS, ""},
+        {"cloud_loadstorage", (PyCFunction)cloud_loadstorage, METH_VARARGS, ""},
+        {"cloud_savestorage", (PyCFunction)cloud_savestorage, METH_VARARGS, ""},
+        {"cloud_resetstorage", (PyCFunction)cloud_resetstorage, METH_VARARGS, ""},
+        {"local_loadcell", (PyCFunction)local_loadcell, METH_VARARGS, ""},
+        {"cloud_loadcell", (PyCFunction)cloud_loadcell, METH_VARARGS, ""},
+        {"local_savecell_1", (PyCFunction)local_savecell_1, METH_VARARGS, ""},
+        {"local_savecell_2", (PyCFunction)local_savecell_2, METH_VARARGS, ""},
+        {"cloud_savecell", (PyCFunction)cloud_savecell, METH_VARARGS, ""},
+        {"local_removecell", (PyCFunction)local_removecell, METH_VARARGS, ""},
+        {"cloud_removecell", (PyCFunction)cloud_removecell, METH_VARARGS, ""},
+        {"cell_tostring", (PyCFunction)cell_tostring, METH_VARARGS, ""},
+        {"cell_getid", (PyCFunction)cell_getid, METH_VARARGS, ""},
+        {"cell_setid", (PyCFunction)cell_setid, METH_VARARGS},
+        {"cell_hasfield", (PyCFunction)cell_hasfield, METH_VARARGS, ""},
+        {"cell_getfield", (PyCFunction)cell_getfield, METH_VARARGS, ""},
+        {"cell_setfield", (PyCFunction)cell_setfield, METH_VARARGS, ""},
+        {"cell_appendfield", (PyCFunction)cell_appendfield, METH_VARARGS, ""},
+        {"cell_removefield", (PyCFunction)cell_removefield, METH_VARARGS, ""},
         {NULL, NULL, 0, NULL}};
 
     static struct PyModuleDef trinity_ffi_module = {
