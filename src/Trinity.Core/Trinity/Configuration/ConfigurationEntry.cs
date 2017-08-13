@@ -94,7 +94,7 @@ namespace Trinity.Configuration
 
         internal void Apply(object instance)
         {
-            var props    = GetConfigProperties(instance);
+            var props = GetConfigProperties(instance);
             var settings = from prop in props
                            join setting in m_settings.Values
                            on prop.Name equals setting.Key
@@ -104,6 +104,15 @@ namespace Trinity.Configuration
                            join child in m_children
                            on prop.Name equals child.Name
                            group child by prop;
+
+            var mandatory_props = GetMandatoryConfigProperties(instance);
+            foreach (var p in mandatory_props)
+            {
+                if (!ContainsSetting(p.Name))
+                {
+                    throw new InvalidOperationException($"Missing non-optional setting '{p.Name}'");
+                }
+            }
 
             foreach (var tuple in settings)
             {
@@ -123,11 +132,17 @@ namespace Trinity.Configuration
             {
                 var prop = group.Key;
                 var l = MakeList(prop);
-                foreach(var child in group)
+                foreach (var child in group)
                 {
                     l.Add(MakeElement(prop, child));
                 }
+                prop.SetValue(instance, l);
             }
+        }
+
+        private bool ContainsSetting(string name)
+        {
+            return m_settings.ContainsKey(name) || m_children.Any(_ => _.Name == name);
         }
 
         private object MakeElement(PropertyInfo prop, ConfigurationEntry child)
@@ -148,7 +163,7 @@ namespace Trinity.Configuration
         /// </summary>
         internal static ConfigurationEntry ExtractConfigurationEntry(ConfigurationInstance instance)
         {
-            return ExtractConfigurationEntry(instance, instance.EntryName);
+            return ExtractConfigurationEntry(instance.Instance, instance.EntryName);
         }
 
         private static ConfigurationEntry ExtractConfigurationEntry(object instance, string name)
@@ -181,6 +196,14 @@ namespace Trinity.Configuration
                     .GetProperties(BindingFlags.Instance | BindingFlags.Public)
                     .Where(_ => _.GetCustomAttribute<ConfigSettingAttribute>() != null);
         }
+
+        private static IEnumerable<PropertyInfo> GetMandatoryConfigProperties(object instance)
+        {
+            return instance.GetType()
+                    .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                    .Where(_ => { var attr = _.GetCustomAttribute<ConfigSettingAttribute>(); return attr != null && !attr.Optional; });
+        }
+
 
         private static ConfigurationEntry ExtractConfigurationEntry(object value, PropertyInfo prop)
         {

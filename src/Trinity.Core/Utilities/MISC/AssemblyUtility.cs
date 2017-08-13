@@ -286,7 +286,6 @@ namespace Trinity.Utilities
                     if (instance != null)
                     {
                         satisfied_instances.Add(instance);
-                        break;
                     }
                 }
                 catch { }

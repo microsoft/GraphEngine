@@ -89,7 +89,7 @@ namespace Trinity
                 if (!entries.ContainsKey(config_instance.EntryName)) { continue; }
                 ConfigurationEntry config_entry = entries[config_instance.EntryName];
 
-                config_entry.Apply(config_instance);
+                config_entry.Apply(config_instance.Instance);
             }
         }
 
@@ -99,7 +99,7 @@ namespace Trinity
         /// <returns></returns>
         internal static List<ConfigurationInstance> GetConfigurationInstances()
         {
-            return AssemblyUtility.GetAllClassInstances(CreateConfigurationInstance).ToList();
+            return Enumerable.OfType<ConfigurationInstance>(AssemblyUtility.GetAllClassInstances<object>(CreateConfigurationInstance)).ToList();
         }
 
         /// <summary>
