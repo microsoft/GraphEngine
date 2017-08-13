@@ -58,8 +58,6 @@ namespace GraphEngine
 
         static void Main(string[] args)
         {
-            TrinityConfig.LoadConfig(@"C:\Users\Yatao\git\GraphEngine\src\GraphEngine\GraphEngine\bin\Debug\netcoreapp2.0\trinity.xml");
-            Console.WriteLine(TrinityConfig.StorageRoot);
             LoadPlugins(PluginConfig.Instance);
             Global.Initialize();
             TrinityServer server = new TrinityServer();
