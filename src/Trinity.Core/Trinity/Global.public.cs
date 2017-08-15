@@ -27,17 +27,39 @@ namespace Trinity
     /// </summary>
     public static partial class Global
     {
+        /// <summary>
+        /// Initializes Graph Engine.
+        /// This method will be automatically called
+        /// when the static constructor of `Global`
+        /// is triggered. However, when the Graph Engine
+        /// is uninitialized, one would have to manually
+        /// call this again before using the local memory storage.
+        /// </summary>
         public static void Initialize()
         {
             lock (s_storage_init_lock)
             {
                 if (s_master_init_flag) return;
-                _LoadTSLExtensions();
+                _LoadGraphEngineExtensions();
                 _ScanForTSLStorageExtension();
+                _ScanForStartupTasks();
                 s_master_init_flag = true;
+                //TODO clean up background tasks
+            }
+            try
+            {
+                Initialized();
+            }
+            catch
+            {
+                //TODO log
             }
         }
 
+        /// <summary>
+        /// Uninitializes the Graph Engine, including the
+        /// communication instance, message passing, and local memory storage.
+        /// </summary>
         public static void Uninitialize()
         {
             lock (s_storage_init_lock)
@@ -66,6 +88,15 @@ namespace Trinity
                     BackgroundThread.Stop();
                     s_master_init_flag = false;
                 }
+
+            try
+            {
+                Uninitialized();
+            }
+            catch
+            {
+                //TODO log
+            }
         }
 
         /// <summary>
@@ -106,11 +137,11 @@ namespace Trinity
         {
             lock (s_storage_init_lock)
             {
-                var old_storage_schema  = storage_schema;
+                var old_storage_schema = storage_schema;
                 var old_genops_provider = generic_cell_ops;
 
-                var loaded_tuple        = _LoadTSLStorageExtension(Assembly.LoadFrom(assemblyFilePath));
-                var new_storage_schema  = loaded_tuple.Item2;
+                var loaded_tuple = _LoadTSLStorageExtension(Assembly.LoadFrom(assemblyFilePath));
+                var new_storage_schema = loaded_tuple.Item2;
                 var new_genops_provider = loaded_tuple.Item1;
 
                 if (new_storage_schema == null || new_genops_provider == null) { throw new InvalidOperationException("The specified assembly is not a TSL extension."); }
@@ -121,8 +152,8 @@ namespace Trinity
 
                     var old_schema_signatures = old_storage_schema.CellTypeSignatures;
                     var new_schema_signatures = new_storage_schema.CellTypeSignatures;
-                    var incremental           = true;
-                    var sigs_len              = old_schema_signatures.Count();
+                    var incremental = true;
+                    var sigs_len = old_schema_signatures.Count();
 
                     if (new_schema_signatures.Count() < sigs_len) { incremental = false; }
                     else { incremental = Enumerable.SequenceEqual(old_schema_signatures, new_schema_signatures.Take(sigs_len)); }

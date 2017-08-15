@@ -39,6 +39,14 @@ namespace Trinity.Configuration
             {
                 return bool.Parse(Literal);
             }
+            else if (type == typeof(float))
+            {
+                return float.Parse(Literal);
+            }
+            else if (type == typeof(double))
+            {
+                return double.Parse(Literal);
+            }
             else
             {
                 throw new ArgumentException(String.Format("Unsupported configuration value type: {0}", type.ToString()), "type");

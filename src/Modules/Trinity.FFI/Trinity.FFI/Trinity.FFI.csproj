@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RuntimeFrameworkVersion>2.1.0-preview1</RuntimeFrameworkVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Trinity.FFI</AssemblyName>
+    <RootNamespace>Trinity.FFI</RootNamespace>
+    <AllowUnsafe>true</AllowUnsafe>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>GraphEngine.FFI</PackageId>
+    <Authors>Microsoft Graph Engine Team</Authors>
+    <Company>Microsoft Corporation</Company>
+    <Product>GraphEngine.FFI</Product>
+    <Description>GraphEngine foreign function interface</Description>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
+    <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
+    <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
+    <Copyright>Copyright 2017</Copyright>
+    <Version>1.0.8967</Version>
+    <RepositoryUrl>https://github.com/Microsoft/GraphEngine/</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\bin\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\bin</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.8967" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TslCodegen Include="**/*.tsl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\lib\trinity_ffi.dll">
+      <PackagePath>lib\netstandard2.0</PackagePath>
+    </Content>
+    <None Include="..\lib\trinity_ffi.dll" Link="trinity_ffi.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

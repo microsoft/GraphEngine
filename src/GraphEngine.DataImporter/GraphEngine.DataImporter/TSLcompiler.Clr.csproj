@@ -9,7 +9,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.8850" />
+    <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.8967" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
   </ItemGroup>
   <ItemGroup>
