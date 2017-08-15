@@ -19,34 +19,9 @@ using System.Globalization;
 
 namespace Trinity.Storage
 {
-    public unsafe partial class MemoryCloud
+    public unsafe partial class FixedMemoryCloud
     {
         #region Internal
-        internal void SendMessageToServer(int serverId, TrinityMessage msg)
-        {
-            StorageTable[serverId].SendMessage(msg);
-        }
-
-        internal void SendMessageToServer(int serverId, TrinityMessage msg, out TrinityResponse response)
-        {
-            StorageTable[serverId].SendMessage(msg, out response);
-        }
-
-        internal void SendMessageToServer(int serverId, byte[] message, int offset, int size)
-        {
-            fixed (byte* p = message)
-            {
-                StorageTable[serverId].SendMessage(p + offset, size);
-            }
-        }
-        internal void SendMessageToServer(int serverId, byte[] message, int offset, int size, out TrinityResponse response)
-        {
-            fixed (byte* p = message)
-            {
-                StorageTable[serverId].SendMessage(p + offset, size, out response);
-            }
-        }
-
         internal bool _canSendAsynRspMessage()
         {
             // condition: 
@@ -66,7 +41,7 @@ namespace Trinity.Storage
         /// <summary>
         /// Gets a list of Trinity proxy.
         /// </summary>
-        internal List<RemoteStorage> ProxyList
+        public override IList<RemoteStorage> ProxyList
         {
             get
             {
@@ -130,37 +105,13 @@ namespace Trinity.Storage
 
         #endregion
 
-        #region Public
-        /// <summary>
-        /// Send a binary message to the specified Trinity server.
-        /// </summary>
-        /// <param name="serverId">A 32-bit server id.</param>
-        /// <param name="buffer">A binary message buffer.</param>
-        /// <param name="size">The size of the message.</param>
-        public void SendMessageToServer(int serverId, byte* buffer, int size)
-        {
-            StorageTable[serverId].SendMessage(buffer, size);
-        }
-
-        /// <summary>
-        /// Send a binary message to the specified Trinity server.
-        /// </summary>
-        /// <param name="serverId">A 32-bit server id.</param>
-        /// <param name="buffer">A binary message buffer.</param>
-        /// <param name="size">The size of the message.</param>
-        /// <param name="response">The TrinityResponse object returned by the Trinity server.</param>
-        public void SendMessageToServer(int serverId, byte* buffer, int size, out TrinityResponse response)
-        {
-            StorageTable[serverId].SendMessage(buffer, size, out response);
-        }
-
         /// <summary>
         /// Send a binary message to the specified Trinity proxy.
         /// </summary>
         /// <param name="proxyId">A 32-bit proxy id.</param>
         /// <param name="buffer">A binary message buffer.</param>
         /// <param name="size">The size of the message.</param>
-        public void SendMessageToProxy(int proxyId, byte* buffer, int size)
+        public override void SendMessageToProxy(int proxyId, byte* buffer, int size)
         {
             GetProxy(proxyId).SendMessage(buffer, size);
         }
@@ -172,10 +123,9 @@ namespace Trinity.Storage
         /// <param name="buffer">A binary message buffer.</param>
         /// <param name="size">The size of the message.</param>
         /// <param name="response">The TrinityResponse object returned by the Trinity proxy.</param>
-        public void SendMessageToProxy(int proxyId, byte* buffer, int size, out TrinityResponse response)
+        public override void SendMessageToProxy(int proxyId, byte* buffer, int size, out TrinityResponse response)
         {
             GetProxy(proxyId).SendMessage(buffer, size, out response);
         }
-        #endregion
     }
 }

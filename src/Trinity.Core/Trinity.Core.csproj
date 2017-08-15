@@ -128,6 +128,7 @@
     <Compile Include="Storage\IAccessor.cs" />
     <Compile Include="Storage\ICell.cs" />
     <Compile Include="Extension\IStorageSchema.cs" />
+    <Compile Include="Storage\MemoryCloud.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.Enumeration.cs" />
     <Compile Include="Storage\LocalMemoryStorage\Delegates.cs" />
     <Compile Include="Storage\Exceptions.cs" />
@@ -140,7 +141,6 @@
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.Performance.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.TrunkAddressing.cs" />
     <Compile Include="Network\AvailabilityGroup.cs" />
-    <Compile Include="Storage\MemoryCloud\MemoryCloud.Event.cs" />
     <Compile Include="Storage\StorageCapacityProfile.cs" />
     <Compile Include="Trinity\Configuration\ConfigurationConstants.cs" />
     <Compile Include="Trinity\Configuration\ConfigurationEntries\LoggingConfig.cs" />
@@ -192,11 +192,11 @@
     <Compile Include="Network\Messaging\MessageDispatch.cs" />
     <Compile Include="Daemon\BackgroundTask.cs" />
     <Compile Include="Daemon\BackgroundThread.cs" />
-    <Compile Include="Storage\MemoryCloud\MemoryCloud.Cmd.cs" />
-    <Compile Include="Storage\MemoryCloud\MemoryCloud.cs" />
-    <Compile Include="Storage\MemoryCloud\MemoryCloud.Message.cs" />
-    <Compile Include="Storage\MemoryCloud\MemoryCloud.KVStore.cs" />
-    <Compile Include="Storage\MemoryCloud\MemoryCloud.Utility.cs" />
+    <Compile Include="Storage\FixMemoryCloud\FixedMemoryCloud.Cmd.cs" />
+    <Compile Include="Storage\FixMemoryCloud\FixedMemoryCloud.cs" />
+    <Compile Include="Storage\FixMemoryCloud\FixedMemoryCloud.Message.cs" />
+    <Compile Include="Storage\FixMemoryCloud\FixedMemoryCloud.KVStore.cs" />
+    <Compile Include="Storage\FixMemoryCloud\FixedMemoryCloud.Utility.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.Message.cs" />
     <Compile Include="Storage\RemoteStorage\RemoteStorage.Message.cs" />
@@ -268,7 +268,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Network\Http\index.html" />
     <Content Include="Resources\Trinity.C.sha512.txt" />
-    <Compile Include="Storage\MemoryCloud\MemoryCloud.GenericCell.cs" />
     <None Include="GraphEngine.Core.nuspec">
       <SubType>Designer</SubType>
     </None>

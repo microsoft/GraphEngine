@@ -194,11 +194,11 @@ namespace Trinity.Storage
         #endregion
 
         #region Message Sending Interfaces
-        internal abstract void SendMessage(TrinityMessage message);
-        internal abstract void SendMessage(TrinityMessage message, out TrinityResponse response);
+        protected internal abstract void SendMessage(TrinityMessage message);
+        protected internal abstract void SendMessage(TrinityMessage message, out TrinityResponse response);
         /*------------------------------------------------------------------------------*/
-        internal abstract void SendMessage(byte* message, int size);
-        internal abstract void SendMessage(byte* message, int size, out TrinityResponse response);
+        protected internal abstract void SendMessage(byte* message, int size);
+        protected internal abstract void SendMessage(byte* message, int size, out TrinityResponse response);
         #endregion
 
         /// <summary>

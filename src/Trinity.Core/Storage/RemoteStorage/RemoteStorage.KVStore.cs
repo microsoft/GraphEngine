@@ -16,7 +16,7 @@ using Trinity.Configuration;
 
 namespace Trinity.Storage
 {
-    internal unsafe partial class RemoteStorage : Storage, IDisposable
+    public unsafe partial class RemoteStorage : Storage, IDisposable
     {
         public override TrinityErrorCode LoadCell(long cell_id, out byte[] cellBuff)
         {

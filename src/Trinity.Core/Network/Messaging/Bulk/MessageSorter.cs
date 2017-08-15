@@ -43,7 +43,7 @@ namespace Trinity.Network.Messaging
         {
             for (int i = 0; i < cellIdList.Count; i++)
             {
-                dest_cell_ids[memory_cloud.StaticGetServerIdByCellId(cellIdList[i])].Add(cellIdList[i]);
+                dest_cell_ids[memory_cloud.GetServerIdByCellId(cellIdList[i])].Add(cellIdList[i]);
             }
         }
 
@@ -53,7 +53,7 @@ namespace Trinity.Network.Messaging
         /// <param name="cellId">A 64-bit cell Id.</param>
         public void Add(long cellId)
         {
-            dest_cell_ids[memory_cloud.StaticGetServerIdByCellId(cellId)].Add(cellId);
+            dest_cell_ids[memory_cloud.GetServerIdByCellId(cellId)].Add(cellId);
         }
 
         /// <summary>

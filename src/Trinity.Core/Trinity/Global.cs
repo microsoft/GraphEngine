@@ -35,18 +35,19 @@ namespace Trinity
         internal static Storage.LocalMemoryStorage local_storage = null;
         internal static Storage.MemoryCloud cloud_storage = null;
         internal static IGenericCellOperations generic_cell_ops = null;
+        internal static Func<MemoryCloud> new_memorycloud_func = null;
         internal static IStorageSchema storage_schema = null;
         internal static CommunicationInstance communication_instance = null;
         internal static Dictionary<IPEndPoint, Storage.RemoteStorage> ProxyTable = new Dictionary<IPEndPoint, Storage.RemoteStorage>();
         private static object s_storage_init_lock = new object();
         private static object s_comm_instance_lock = new object();
-        private static bool   s_master_init_flag = false;
+        private static bool s_master_init_flag = false;
         private static List<Storage.MemoryCloud> s_registered_memoryclouds = new List<MemoryCloud>();
 
         /// <summary>
         /// Raised when initialization is complete.
         /// </summary>
-        public static event Action Initialized  = delegate { };
+        public static event Action Initialized = delegate { };
         /// <summary>
         /// Raised when uninitialization is complete.
         /// </summary>
@@ -55,7 +56,7 @@ namespace Trinity
         /// <summary>
         /// Raised when the communication instance (server or proxy) is started.
         /// </summary>
-        public static event Action CommunicationInstanceStarted  = delegate { };
+        public static event Action CommunicationInstanceStarted = delegate { };
 
         static Global()
         {
@@ -74,7 +75,7 @@ namespace Trinity
                 _ => comm_instance_base_type.IsAssignableFrom(_) && _ != default_comm_schema,
                 _ => _.CommunicationSchemaType
                       .GetConstructor(new Type[] { })
-                      .Invoke(new object[] { }) 
+                      .Invoke(new object[] { })
                       as ICommunicationSchema);
         }
 
@@ -90,16 +91,16 @@ namespace Trinity
 
         private static Tuple<IGenericCellOperations, IStorageSchema> _LoadTSLStorageExtension(Assembly extension_assembly)
         {
-            Type                   default_provider_type       = typeof(DefaultGenericCellOperations);
-            Type                   schema_interface_type       = typeof(IStorageSchema);
-            Type                   default_storage_schema_type = typeof(DefaultStorageSchema);
-            IGenericCellOperations _generic_cell_ops           = null;
-            IStorageSchema         _storage_schema             = null;
+            Type default_provider_type = typeof(DefaultGenericCellOperations);
+            Type schema_interface_type = typeof(IStorageSchema);
+            Type default_storage_schema_type = typeof(DefaultStorageSchema);
+            IGenericCellOperations _generic_cell_ops = null;
+            IStorageSchema _storage_schema = null;
 
             var provider_type = AssemblyUtility.GetAllClassTypes<IGenericCellOperations>(_ => _ != default_provider_type, extension_assembly).FirstOrDefault();
             if (provider_type == null) goto _return;
 
-            var schema_type = AssemblyUtility.GetAllClassTypes<IStorageSchema>( _ => _ != default_storage_schema_type, extension_assembly).FirstOrDefault();
+            var schema_type = AssemblyUtility.GetAllClassTypes<IStorageSchema>(_ => _ != default_storage_schema_type, extension_assembly).FirstOrDefault();
             if (schema_type == null) goto _return;
 
             try
@@ -123,7 +124,7 @@ namespace Trinity
             Log.WriteLine(LogLevel.Info, "Scanning for startup tasks.");
             bool all_good = true;
             var tasks = AssemblyUtility.GetAllClassInstances(t => t.GetConstructor(new Type[] { }).Invoke(new object[] { }) as IStartupTask);
-            foreach(var task in tasks)
+            foreach (var task in tasks)
             {
                 try
                 {
@@ -145,7 +146,7 @@ namespace Trinity
         {
             Log.WriteLine(LogLevel.Info, "Scanning for TSL storage extension.");
 
-            Tuple<IGenericCellOperations, IStorageSchema> loaded_tuple 
+            Tuple<IGenericCellOperations, IStorageSchema> loaded_tuple
                 = AssemblyUtility
                   .ForAllAssemblies(_LoadTSLStorageExtension)
                   .Where(_ => _.Item1 != null && _.Item2 != null)
@@ -163,6 +164,35 @@ namespace Trinity
                 _RegisterTSLStorageExtension(loaded_tuple.Item1, loaded_tuple.Item2);
                 return TrinityErrorCode.E_SUCCESS;
             }
+        }
+
+        /// <returns>E_SUCCESS or E_FAILURE</returns>
+        private static TrinityErrorCode _ScanForMemoryCloudExtension()
+        {
+            Log.WriteLine(LogLevel.Info, "Scanning for MemoryCloud extensions.");
+            new_memorycloud_func = () => new FixedMemoryCloud();
+
+            var memcloud_types = AssemblyUtility.GetAllClassTypes<MemoryCloud>(t => t != typeof(FixedMemoryCloud));
+
+            //TODO read memcloud type from config
+            //currently we just pick the first one
+            var mc_type = memcloud_types.FirstOrDefault();
+            do
+            {
+                if (mc_type == null) break;
+                try
+                {
+                    var ctor = mc_type.GetConstructor(new Type[] { });
+                    if (ctor == null) break;
+                    new_memorycloud_func = () => ctor.Invoke(new object[] { }) as MemoryCloud;
+                }
+                catch { break; }
+                Log.WriteLine(LogLevel.Info, "MemoryCloud extension '{0}' loaded.", mc_type.Name);
+                return TrinityErrorCode.E_SUCCESS;
+            } while (false);
+
+            Log.WriteLine(LogLevel.Info, "No MemoryCloud extension found.", mc_type.Name);
+            return TrinityErrorCode.E_FAILURE;
         }
 
         private static void _LoadGraphEngineExtensions()

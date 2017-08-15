@@ -43,6 +43,7 @@ namespace Trinity
                 _LoadGraphEngineExtensions();
                 _ScanForTSLStorageExtension();
                 _ScanForStartupTasks();
+                _ScanForMemoryCloudExtension();
                 s_master_init_flag = true;
                 //TODO clean up background tasks
             }
@@ -104,25 +105,15 @@ namespace Trinity
         /// </summary>
         /// <param name="config">A ClusterConfig instance.</param>
         /// <returns>The newly created cloud storage instance.</returns>
-        public static MemoryCloud CreateCloudStorage(ClusterConfig config)
+        public static MemoryCloud CreateCloudStorage()
         {
             lock (s_storage_init_lock)
             {
-                MemoryCloud mc = new MemoryCloud(config);
+                MemoryCloud mc = new_memorycloud_func();
                 mc.RegisterGenericOperationsProvider(generic_cell_ops);
                 s_registered_memoryclouds.Add(mc);
                 return mc;
             }
-        }
-
-        /// <summary>
-        /// Creates a cloud storage instance with the specified name.
-        /// </summary>
-        /// <param name="configFile">The file path of a configuration file.</param>
-        /// <returns>The newly created cloud storage instance.</returns>
-        public static MemoryCloud CreateCloudStorage(string configFile)
-        {
-            return CreateCloudStorage(ClusterConfig._LegacyLoadClusterConfig(configFile));
         }
 
         /// <summary>
@@ -215,8 +206,8 @@ namespace Trinity
                         {
                             if (cloud_storage == null)
                             {
-                                cloud_storage = CreateCloudStorage(TrinityConfig.CurrentClusterConfig);
-                                cloud_storage.Open(false);
+                                cloud_storage = CreateCloudStorage();
+                                cloud_storage.Open(TrinityConfig.CurrentClusterConfig, false);
                             }
                             Thread.MemoryBarrier();
                             isCloudStorageInited = true;
@@ -278,7 +269,7 @@ namespace Trinity
         {
             get
             {
-                return CloudStorage.MyServerId;
+                return CloudStorage.MyPartitionId;
             }
         }
 

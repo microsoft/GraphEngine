@@ -27,7 +27,7 @@ using Trinity.Configuration;
 namespace Trinity.Storage
 {
 #pragma warning disable 0420
-    internal partial class RemoteStorage : Storage, IDisposable
+    public partial class RemoteStorage : Storage
     {
         BlockingCollection<Network.Client.SynClient> ConnPool = new BlockingCollection<Network.Client.SynClient>(new ConcurrentQueue<Network.Client.SynClient>());
 
@@ -35,7 +35,7 @@ namespace Trinity.Storage
         internal bool connected = false;
         private int m_send_retry = NetworkConfig.Instance.ClientSendRetry;
         private int m_client_count = 0;
-        private MemoryCloud memory_cloud;
+        private FixedMemoryCloud memory_cloud;
         public int MyServerId;
 
         internal RemoteStorage(ServerInfo server_info, int connPerServer)
@@ -46,7 +46,7 @@ namespace Trinity.Storage
             }
         }
 
-        internal RemoteStorage(AvailabilityGroup trinityServer, int connPerServer, MemoryCloud mc, int serverId, bool nonblocking)
+        internal RemoteStorage(AvailabilityGroup trinityServer, int connPerServer, FixedMemoryCloud mc, int serverId, bool nonblocking)
         {
             this.memory_cloud = mc;
             this.MyServerId = serverId;
@@ -145,7 +145,7 @@ namespace Trinity.Storage
         private void InvalidateSynClients()
         {
             List<SynClient> clients = new List<SynClient>();
-            for (int i=0; i<m_client_count; ++i)
+            for (int i = 0; i<m_client_count; ++i)
             {
                 clients.Add(GetClient());
             }
