@@ -128,7 +128,7 @@
     <Compile Include="Storage\IAccessor.cs" />
     <Compile Include="Storage\ICell.cs" />
     <Compile Include="Extension\IStorageSchema.cs" />
-    <Compile Include="Storage\MemoryCloud.cs" />
+    <Compile Include="Storage\MemoryCloud\MemoryCloud.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.Enumeration.cs" />
     <Compile Include="Storage\LocalMemoryStorage\Delegates.cs" />
     <Compile Include="Storage\Exceptions.cs" />
@@ -273,6 +273,7 @@
     </None>
     <None Include="NuGet\GraphEngine.Core.props" />
     <None Include="NuGet\GraphEngine.Core.targets" />
+    <Compile Include="Storage\MemoryCloud\MemoryCloud.KVStore.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
