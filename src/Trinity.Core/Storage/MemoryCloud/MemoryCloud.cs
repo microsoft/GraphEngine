@@ -10,12 +10,10 @@ using Trinity.Network.Messaging;
 
 namespace Trinity.Storage
 {
-    public abstract class MemoryCloudProvider
-    {
-        public abstract MemoryCloud NewMemoryCloud(ClusterConfig config);
-    }
-
-    public unsafe abstract class MemoryCloud : IDisposable
+    /// <summary>
+    /// Provides methods for interacting with the distributed memory store.
+    /// </summary>
+    public unsafe abstract partial class MemoryCloud : IDisposable
     {
         #region Abstract interfaces
         public abstract bool Open(ClusterConfig config, bool nonblocking);
@@ -30,7 +28,6 @@ namespace Trinity.Storage
         public abstract bool SaveStorage();
         public abstract bool ResetStorage();
         #endregion
-
         #region Base implementation
         internal Storage[] StorageTable;
         private Action<MemoryCloud, ICell> m_SaveGenericCell_ICell;

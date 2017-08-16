@@ -191,7 +191,7 @@ namespace Trinity
                 return TrinityErrorCode.E_SUCCESS;
             } while (false);
 
-            Log.WriteLine(LogLevel.Info, "No MemoryCloud extension found.", mc_type.Name);
+            Log.WriteLine(LogLevel.Info, "No MemoryCloud extension found.");
             return TrinityErrorCode.E_FAILURE;
         }
 
