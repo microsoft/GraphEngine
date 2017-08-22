@@ -252,9 +252,5 @@ namespace Trinity.Storage
             return (*(((byte*)&cellId) + 1)) % partition_count;
         }
 
-        static void Main(string[] args)
-        {
-            
-        }
     }
 }
