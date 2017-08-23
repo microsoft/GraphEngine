@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.8
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GECustomCommunicationsStack", "GECustomCommunicationsStack\GECustomCommunicationsStack.csproj", "{ED241F87-98E0-4FA6-B4C9-601E28D07A99}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.CustomCommunicationsStack", "GECustomCommunicationsStack\GE.CustomCommunicationsStack.csproj", "{ED241F87-98E0-4FA6-B4C9-601E28D07A99}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Service Fabric Infrastructure Library", "GE Service Fabric Infrastructure Library", "{216E51C6-D32B-4280-8D68-28E1858D71A4}"
 EndProject
@@ -22,6 +22,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.ServiceFabric.ServiceCommon.Module", "..\..\GE Service Fabric SCL\GE.ServiceFabric.ServiceCommonLibrary\GE.ServiceFabric.ServiceCommon.Module.csproj", "{6EDD63CD-B3F1-4F9C-B581-18BD953AE553}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.ServiceFabric.Infrastructure.Module", "..\..\GE Service Fabric Infrastructure\GE.ServiceFabric.Infrastructure.Module\GE.ServiceFabric.Infrastructure.Module.csproj", "{32925961-D539-49EE-8E90-9C848124663F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Service Fabric Services", "GE Service Fabric Services", "{FEC17E5C-E3CB-4A35-A6C6-5EE5827B6F9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -82,6 +84,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{ED241F87-98E0-4FA6-B4C9-601E28D07A99} = {FEC17E5C-E3CB-4A35-A6C6-5EE5827B6F9A}
 		{9225B856-9D09-427F-A25F-D9572840A8CA} = {24E24355-4915-492B-BBCE-8319B16D295B}
 		{AC5E20E6-2604-4629-8761-4ACDD3C5C94A} = {24E24355-4915-492B-BBCE-8319B16D295B}
 		{2279959C-F24F-4F3D-8917-6E5DFC7B5764} = {3CFF89C3-9777-4C55-84D4-87604405D626}
