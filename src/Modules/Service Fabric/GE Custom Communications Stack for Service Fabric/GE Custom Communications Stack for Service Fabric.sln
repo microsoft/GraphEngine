@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.8
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.CustomCommunicationsStack", "GECustomCommunicationsStack\GE.CustomCommunicationsStack.csproj", "{ED241F87-98E0-4FA6-B4C9-601E28D07A99}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.ServiceFabric.Services.Communication.Trinity.Runtime", "GECustomCommunicationsStack\GE.ServiceFabric.Services.Communication.Trinity.Runtime.csproj", "{ED241F87-98E0-4FA6-B4C9-601E28D07A99}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Service Fabric Infrastructure Library", "GE Service Fabric Infrastructure Library", "{216E51C6-D32B-4280-8D68-28E1858D71A4}"
 EndProject
