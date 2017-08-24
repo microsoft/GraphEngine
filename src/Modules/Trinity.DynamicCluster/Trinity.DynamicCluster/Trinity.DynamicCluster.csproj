@@ -52,7 +52,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChunkedStorage.cs" />
+    <Compile Include="DynamicClusterCommModule.cs" />
+    <Compile Include="DynamicClusterConfig.cs" />
+    <Compile Include="DynamicMemoryCloud.Cmd.cs" />
     <Compile Include="DynamicMemoryCloud.cs" />
+    <Compile Include="DynamicMemoryCloud.KVStore.cs" />
+    <Compile Include="DynamicMemoryCloud.Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -25,7 +25,7 @@ namespace Trinity.Storage
     public unsafe partial class FixedMemoryCloud : MemoryCloud
     {
         private int server_count = -1;
-        private int my_server_id = -1;
+        private int my_partition_id = -1;
         private int my_proxy_id = -1;
         internal ClusterConfig cluster_config;
 
@@ -36,7 +36,7 @@ namespace Trinity.Storage
         {
             get
             {
-                return my_server_id;
+                return my_partition_id;
             }
         }
 
@@ -54,7 +54,7 @@ namespace Trinity.Storage
         /// <summary>
         /// The number of servers in the cluster.
         /// </summary>
-        public override int ServerCount
+        public override int PartitionCount
         {
             get
             {
@@ -85,7 +85,7 @@ namespace Trinity.Storage
         {
             this.cluster_config = config;
             server_count = cluster_config.Servers.Count;
-            my_server_id = cluster_config.MyServerId;
+            my_partition_id = cluster_config.MyServerId;
             my_proxy_id = cluster_config.MyProxyId;
 
             bool server_found = false;
@@ -114,7 +114,7 @@ namespace Trinity.Storage
                 goto server_not_found;
             }
 
-            StaticGetServerIdByCellId = this.GetServerIdByCellIdDefault;
+            StaticGetPartitionByCellId = this.GetServerIdByCellIdDefault;
 
             if (!nonblocking) { CheckServerProtocolSignatures(); } // TODO should also check in nonblocking setup when any remote storage is connected
             // else this.ServerConnected += (_, __) => {};
@@ -176,7 +176,7 @@ namespace Trinity.Storage
         /// <returns>true if the cell is in local storage; otherwise, false.</returns>
         public override bool IsLocalCell(long cellId)
         {
-            return (StaticGetServerIdByCellId(cellId) == my_server_id);
+            return (StaticGetPartitionByCellId(cellId) == my_partition_id);
         }
     }
 }

@@ -15,6 +15,7 @@ namespace Trinity.DynamicCluster
         // we also need a protocol to "discuss" about chunk allocation. (P2)
         // route messages to a specific storage
         List<Storage.Storage> Storages; // <----
+        Dictionary<Storage.Storage, ChunkCollection> Chunks; //<-----
         MemoryCloud m_MemoryCloud; // get ChunkIds from m_MemoryCloud and decide routing.
 
         bool ContainsLocalStorage { get { throw new NotFiniteNumberException(); } }
@@ -132,6 +133,22 @@ namespace Trinity.DynamicCluster
         protected override void SendMessage(byte* message, int size, out TrinityResponse response)
         {
             throw new NotImplementedException();
+        }
+
+
+        internal bool IsLocal(long cellId)
+        {
+            return PickStorage(cellId).Any(s => s == Global.LocalStorage);
+        }
+
+        private IEnumerable<Storage.Storage> PickStorage(long cellId)
+        {
+            return PickStorage(s => Chunks[s].Covers(cellId));
+        }
+
+        private IEnumerable<Storage.Storage> PickStorage(Func<Storage.Storage, bool> pred)
+        {
+            return Storages.Where(pred);
         }
     }
 }

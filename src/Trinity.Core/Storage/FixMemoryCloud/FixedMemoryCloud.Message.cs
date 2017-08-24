@@ -27,7 +27,7 @@ namespace Trinity.Storage
             // condition: 
             // 1. I am a server within this memory cloud
             // 2. I am a proxy within this memory cloud
-            return (my_server_id != -1 || my_proxy_id != -1);
+            return (my_partition_id != -1 || my_proxy_id != -1);
         }
 
         #endregion
