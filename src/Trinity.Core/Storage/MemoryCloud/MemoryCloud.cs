@@ -20,7 +20,7 @@ namespace Trinity.Storage
         public abstract int MyPartitionId { get; }
         public abstract int MyProxyId { get; }
         public abstract IEnumerable<int> MyChunkIds { get; }
-        public abstract int ServerCount { get; }
+        public abstract int PartitionCount { get; }
         public abstract int ProxyCount { get; }
         public abstract IList<RemoteStorage> ProxyList { get; }
         public abstract bool IsLocalCell(long cellId);
@@ -29,7 +29,8 @@ namespace Trinity.Storage
         public abstract bool ResetStorage();
         #endregion
         #region Base implementation
-        internal Storage[] StorageTable;
+        // XXX an implementation shall initialize this!
+        protected internal Storage[] StorageTable;
         private Action<MemoryCloud, ICell> m_SaveGenericCell_ICell;
         private Func<MemoryCloud, long, ICell> m_LoadGenericCell_long;
         private Func<string, ICell> m_NewGenericCell_string;
@@ -221,16 +222,16 @@ namespace Trinity.Storage
         /// <summary>
         /// Gets the Id of the server on which the cell with the specified cell Id is located.
         /// </summary>
-        protected GetServerIdByCellIdDelegate StaticGetServerIdByCellId;
+        protected GetServerIdByCellIdDelegate StaticGetPartitionByCellId;
 
 
         /// <summary>
         /// Sets a user-defined data partitioning method.
         /// </summary>
-        /// <param name="getServerIdByCellIdMethod">A method that transforms a 64-bit cell Id to a Trinity server Id.</param>
-        public void SetPartitionMethod(GetServerIdByCellIdDelegate getServerIdByCellIdMethod)
+        /// <param name="getPartitionIdByCellIdMethod">A method that transforms a 64-bit cell Id to a Trinity server Id.</param>
+        public void SetPartitionMethod(GetServerIdByCellIdDelegate getPartitionIdByCellIdMethod)
         {
-            StaticGetServerIdByCellId = getServerIdByCellIdMethod;
+            StaticGetPartitionByCellId = getPartitionIdByCellIdMethod;
         }
 
         /// <summary>
@@ -238,15 +239,15 @@ namespace Trinity.Storage
         /// </summary>
         /// <param name="cellId">A 64-bit cell Id.</param>
         /// <returns>A Trinity server Id.</returns>
-        public int GetServerIdByCellId(long cellId)
+        public int GetPartitionIdByCellId(long cellId)
         {
-            return StaticGetServerIdByCellId(cellId);
+            return StaticGetPartitionByCellId(cellId);
         }
 
 
         protected Storage GetStorageByCellId(long cellId)
         {
-            return StorageTable[GetServerIdByCellId(cellId)];
+            return StorageTable[GetPartitionIdByCellId(cellId)];
         }
 
         #region IDisposable

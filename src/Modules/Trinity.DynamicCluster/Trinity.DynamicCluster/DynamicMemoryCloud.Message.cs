@@ -1,4 +1,4 @@
-// Graph Engine
+﻿// Graph Engine
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
@@ -19,7 +19,7 @@ using System.Globalization;
 
 namespace Trinity.Storage
 {
-    public unsafe partial class FixedMemoryCloud
+    public unsafe partial class DynamicMemoryCloud
     {
         #region Internal
         internal bool _canSendAsynRspMessage()
@@ -27,7 +27,7 @@ namespace Trinity.Storage
             // condition: 
             // 1. I am a server within this memory cloud
             // 2. I am a proxy within this memory cloud
-            return (my_partition_id != -1 || my_proxy_id != -1);
+            return (m_partitionId != -1 || my_proxy_id != -1);
         }
 
         #endregion
