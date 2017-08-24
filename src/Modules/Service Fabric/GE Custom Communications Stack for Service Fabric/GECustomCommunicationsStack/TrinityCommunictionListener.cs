@@ -1,4 +1,5 @@
 ﻿using System.Fabric;
+using System.Net;
 using System.ServiceModel.Channels;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace GE.ServiceFabric.Services.Communiction.Trinity.Runtime
     /// A Microsoft Trinity Communiactions based listener for Service Fabric based stateless and stateful
     /// service.
     /// </summary>
-    public class TrinityCommunictionListener<TServiceContract> : CommunicationInstance, ICommunicationListener
+    public class TrinityCommunictionListener<TServiceContract> : TrinityServer, ICommunicationListener
     {
         public TrinityCommunictionListener(ServiceContext serviceContext, TServiceContract trinityServiceObject)
         {
@@ -39,6 +40,36 @@ namespace GE.ServiceFabric.Services.Communiction.Trinity.Runtime
         public void Abort()
         {
             throw new System.NotImplementedException();
+        }
+
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        protected override void RegisterMessageHandler()
+        {
+            base.RegisterMessageHandler();
+        }
+
+        protected override void RootHttpHandler(HttpListenerContext ctx)
+        {
+            base.RootHttpHandler(ctx);
+        }
+
+        protected override void DispatchHttpRequest(HttpListenerContext ctx, string handlerName, string url)
+        {
+            base.DispatchHttpRequest(ctx, handlerName, url);
         }
     }
 }
