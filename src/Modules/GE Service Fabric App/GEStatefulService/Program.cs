@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using GE.Reference.Stateful.Service;
 using Microsoft.ServiceFabric.Services.Runtime;
 
 namespace GE.Stateful.Service
@@ -19,10 +20,10 @@ namespace GE.Stateful.Service
                 // When Service Fabric creates an instance of this service type,
                 // an instance of the class is created in this host process.
 
-                ServiceRuntime.RegisterServiceAsync("GEStatefulServiceType",
-                    context => new GE.Stateful.Service.GEStatefulService(context)).GetAwaiter().GetResult();
+                ServiceRuntime.RegisterServiceAsync("GEReferenceStatefulServiceType",
+                    context => new GEReferenceStatefulService(context)).GetAwaiter().GetResult();
 
-                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(GE.Stateful.Service.GEStatefulService).Name);
+                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(GEReferenceStatefulService).Name);
 
                 // Prevents this host process from terminating so services keep running.
                 Thread.Sleep(Timeout.Infinite);

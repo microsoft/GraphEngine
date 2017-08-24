@@ -21,12 +21,6 @@ namespace GE.ServiceFabric.Services.Communiction.Trinity.Runtime
             
         }
 
-        public TrinityCommunictionListener(ServiceContext serviceContext, TServiceContract trinityServiceObject,
-                                           Binding listenerBinding = null, string endpointResourceName = null)
-        {
-            
-        }
-
         public Task<string> OpenAsync(CancellationToken cancellationToken)
         {
             throw new System.NotImplementedException();

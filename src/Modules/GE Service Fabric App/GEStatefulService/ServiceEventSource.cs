@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace GE.Stateful.Service
 {
-    [EventSource(Name = "InKnowWorks-GEServiceFabricApp-GEStatefulService")]
+    [EventSource(Name = "InKnowWorks-GEReferenceServiceFabricApp-GEReferenceStatefulService")]
     internal sealed class ServiceEventSource : EventSource
     {
         public static readonly ServiceEventSource Current = new ServiceEventSource();

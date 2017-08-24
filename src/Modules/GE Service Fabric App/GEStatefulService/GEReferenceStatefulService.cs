@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Fabric;
 using System.Threading;
 using System.Threading.Tasks;
+using GE.Stateful.Service;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 
-namespace GE.Stateful.Service
+namespace GE.Reference.Stateful.Service
 {
     /// <summary>
     /// An instance of this class is created for each service replica by the Service Fabric runtime.
     /// </summary>
-    internal sealed class GEStatefulService : StatefulService
+    internal sealed class GEReferenceStatefulService : StatefulService
     {
-        public GEStatefulService(StatefulServiceContext context)
+        public GEReferenceStatefulService(StatefulServiceContext context)
             : base(context)
         { }
 

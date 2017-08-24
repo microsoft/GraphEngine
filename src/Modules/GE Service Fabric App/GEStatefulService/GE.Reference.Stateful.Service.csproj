@@ -7,8 +7,8 @@
     <ProjectGuid>{AC5E20E6-2604-4629-8761-4ACDD3C5C94A}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GE.Stateful.Service</RootNamespace>
-    <AssemblyName>GE.Stateful.Service</AssemblyName>
+    <RootNamespace>GE.Reference.Stateful.Service</RootNamespace>
+    <AssemblyName>GE.Reference.Stateful.Service</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -83,7 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="GEStatefulService.cs" />
+    <Compile Include="GEReferenceStatefulService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ServiceEventSource.cs" />
   </ItemGroup>

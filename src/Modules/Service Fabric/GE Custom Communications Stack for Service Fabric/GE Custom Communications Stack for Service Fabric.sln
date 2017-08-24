@@ -7,11 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.ServiceFabric.Services.C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Service Fabric Infrastructure Library", "GE Service Fabric Infrastructure Library", "{216E51C6-D32B-4280-8D68-28E1858D71A4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Service Fabric App", "GE Service Fabric App", "{24E24355-4915-492B-BBCE-8319B16D295B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Reference Service Fabric App", "GE Reference Service Fabric App", "{24E24355-4915-492B-BBCE-8319B16D295B}"
 EndProject
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "GEServiceFabricApp", "..\..\GE Service Fabric App\GEServiceFabricApp\GEServiceFabricApp.sfproj", "{9225B856-9D09-427F-A25F-D9572840A8CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.Stateful.Service", "..\..\GE Service Fabric App\GEStatefulService\GE.Stateful.Service.csproj", "{AC5E20E6-2604-4629-8761-4ACDD3C5C94A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.Reference.Stateful.Service", "..\..\GE Service Fabric App\GEStatefulService\GE.Reference.Stateful.Service.csproj", "{AC5E20E6-2604-4629-8761-4ACDD3C5C94A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Service Fabric Client", "GE Service Fabric Client", "{3CFF89C3-9777-4C55-84D4-87604405D626}"
 EndProject
@@ -24,6 +24,17 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.ServiceFabric.Infrastructure.Module", "..\..\GE Service Fabric Infrastructure\GE.ServiceFabric.Infrastructure.Module\GE.ServiceFabric.Infrastructure.Module.csproj", "{32925961-D539-49EE-8E90-9C848124663F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Service Fabric Services", "GE Service Fabric Services", "{FEC17E5C-E3CB-4A35-A6C6-5EE5827B6F9A}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\..\..\..\IKW GE Dev\ike-ge-availability.readme.md = ..\..\..\..\..\..\IKW GE Dev\ike-ge-availability.readme.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.Reference.Service.Common", "..\..\GE Service Fabric App\GEServiceCommon\GE.Service.Common\GE.Reference.Service.Common.csproj", "{934362EF-231C-4A74-91FF-8B7E381666C4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Reference App Server", "GE Reference App Server", "{EF5D5848-1044-4ED6-BB55-9BD720ADD1B3}"
+EndProject
+Project("{FD8A01E6-12A1-461A-AF0E-51EBE962703F}") = "GE.Reference.ServerApp.TSL", "..\..\GE App Server\GE.ServerApp.TSLProject\GE.Reference.ServerApp.TSL.tproj", "{895C4FC9-2A7A-4AFE-A4CB-F3269DDBDB95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.ReferenceServerApp", "..\..\GE App Server\GE.ServerApp\GE.ReferenceServerApp.csproj", "{F7E5AC0D-4CF2-45D9-A988-5F6070A92FD5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,6 +90,26 @@ Global
 		{32925961-D539-49EE-8E90-9C848124663F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{32925961-D539-49EE-8E90-9C848124663F}.Release|x64.ActiveCfg = Release|Any CPU
 		{32925961-D539-49EE-8E90-9C848124663F}.Release|x64.Build.0 = Release|Any CPU
+		{934362EF-231C-4A74-91FF-8B7E381666C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{934362EF-231C-4A74-91FF-8B7E381666C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{934362EF-231C-4A74-91FF-8B7E381666C4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{934362EF-231C-4A74-91FF-8B7E381666C4}.Debug|x64.Build.0 = Debug|Any CPU
+		{934362EF-231C-4A74-91FF-8B7E381666C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{934362EF-231C-4A74-91FF-8B7E381666C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{934362EF-231C-4A74-91FF-8B7E381666C4}.Release|x64.ActiveCfg = Release|Any CPU
+		{934362EF-231C-4A74-91FF-8B7E381666C4}.Release|x64.Build.0 = Release|Any CPU
+		{895C4FC9-2A7A-4AFE-A4CB-F3269DDBDB95}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{895C4FC9-2A7A-4AFE-A4CB-F3269DDBDB95}.Debug|x64.ActiveCfg = Debug|x64
+		{895C4FC9-2A7A-4AFE-A4CB-F3269DDBDB95}.Debug|x64.Build.0 = Debug|x64
+		{895C4FC9-2A7A-4AFE-A4CB-F3269DDBDB95}.Release|Any CPU.ActiveCfg = Release|x64
+		{895C4FC9-2A7A-4AFE-A4CB-F3269DDBDB95}.Release|x64.ActiveCfg = Release|x64
+		{895C4FC9-2A7A-4AFE-A4CB-F3269DDBDB95}.Release|x64.Build.0 = Release|x64
+		{F7E5AC0D-4CF2-45D9-A988-5F6070A92FD5}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{F7E5AC0D-4CF2-45D9-A988-5F6070A92FD5}.Debug|x64.ActiveCfg = Debug|x64
+		{F7E5AC0D-4CF2-45D9-A988-5F6070A92FD5}.Debug|x64.Build.0 = Debug|x64
+		{F7E5AC0D-4CF2-45D9-A988-5F6070A92FD5}.Release|Any CPU.ActiveCfg = Release|x64
+		{F7E5AC0D-4CF2-45D9-A988-5F6070A92FD5}.Release|x64.ActiveCfg = Release|x64
+		{F7E5AC0D-4CF2-45D9-A988-5F6070A92FD5}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +121,9 @@ Global
 		{2279959C-F24F-4F3D-8917-6E5DFC7B5764} = {3CFF89C3-9777-4C55-84D4-87604405D626}
 		{6EDD63CD-B3F1-4F9C-B581-18BD953AE553} = {F7FDC6BD-AF14-42DC-830D-AC5FD3A0D153}
 		{32925961-D539-49EE-8E90-9C848124663F} = {216E51C6-D32B-4280-8D68-28E1858D71A4}
+		{934362EF-231C-4A74-91FF-8B7E381666C4} = {24E24355-4915-492B-BBCE-8319B16D295B}
+		{895C4FC9-2A7A-4AFE-A4CB-F3269DDBDB95} = {EF5D5848-1044-4ED6-BB55-9BD720ADD1B3}
+		{F7E5AC0D-4CF2-45D9-A988-5F6070A92FD5} = {EF5D5848-1044-4ED6-BB55-9BD720ADD1B3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7AF5EF34-EA30-45FC-B446-EE1BF5F6CD9B}

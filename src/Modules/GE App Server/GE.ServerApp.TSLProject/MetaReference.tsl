@@ -1,0 +1,19 @@
+// Graph Engine
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
+//
+//////////////////////////////////////////////////////////////////////
+// Sample Refernece User-defined Datatypes
+[OntologyResource]
+struct SemanticTriple
+{
+	string Subject;
+	string Predicate;
+	string Object;
+}
+
+[Ontology]
+struct AxiomaticSemanticTriple
+{
+	List<CellId> TerminologicalBase;
+}

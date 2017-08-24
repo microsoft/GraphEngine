@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>895c4fc9-2a7a-4afe-a4cb-f3269ddbdb95</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>GE.ServerApp.TSLProject</RootNamespace>
+    <AssemblyName>GE.ServerApp.TSLProject</AssemblyName>
+    <Platform>x64</Platform>
+    <CleanSourceCodeAfterBuild>true</CleanSourceCodeAfterBuild>
+    <GenerateDebugSymbols>true</GenerateDebugSymbols>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <AssemblyOriginatorKeyFile>Trinity.snk</AssemblyOriginatorKeyFile>
+    <GenerateDocumentation>true</GenerateDocumentation>
+    <Name>GE.Reference.ServerApp.TSL</Name>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <OutputPath>bin\Debug\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\Release\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DocumentationFile>$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
+    <TSLCompiler>$(TrinityPath)\Trinity.TSL.Compiler.exe</TSLCompiler>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(GenerateDebugSymbols) == true">
+    <DebugArguments>--BuildDataModelingProjectWithDebugFeatures</DebugArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(GenerateDebugSymbols) == false">
+    <DebugArguments>
+    </DebugArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(CleanSourceCodeAfterBuild) == true">
+    <CleanSourceArguments>--Clean</CleanSourceArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(CleanSourceCodeAfterBuild) == false">
+    <CleanSourceArguments>
+    </CleanSourceArguments>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <UsingTask Condition="Exists('$(TrinityPath)\Trinity.TSL.CompilerTask.dll')" TaskName="Trinity.TSL.TSLCompilerTask" AssemblyFile="$(TrinityPath)\Trinity.TSL.CompilerTask.dll" />
+  <Target Name="TSLCompilerProbe">
+    <Error Condition="'$(TrinityPath)' == ''" Text="TrinityPath not found." />
+    <Error Condition="!Exists('$(TrinityPath)\Trinity.TSL.Compiler.exe')" Text="No compatible TSL compiler found in '$(TrinityPath)'. Only Trinity.TSL.Compiler.exe is supported." />
+    <Error Condition="!Exists('$(TrinityPath)\Trinity.TSL.CompilerTask.dll')" Text="The TSL compiler MSBuild task is not found. Please update your Graph Engine SDK." />
+  </Target>
+  <Target Name="CoreBuild" Inputs="@(Content)" Outputs="$(OutputPath)\$(AssemblyName).dll;$(DocumentationFile)" DependsOnTargets="TSLCompilerProbe">
+    <RemoveDir Directories="$(MSBuildProjectDirectory)\bin;$(MSBuildProjectDirectory)\obj" ContinueOnError="true" />
+    <TSLCompilerTask TrinityPath="$(TrinityPath)" ProjectRoot="$(MSBuildProjectDirectory)" ScriptList="@(Content)" OutputPath="$(OutputPath)" AssemblyName="$(AssemblyName).dll" RootNamespace="$(RootNamespace)" Command="$(CleanSourceArguments) $(DebugArguments) --BuildDataModelingProject" />
+    <Move SourceFiles="$(OutputPath)\doc.xml" DestinationFiles="$(DocumentationFile)" ContinueOnError="true" />
+  </Target>
+  <Target Name="Clean">
+    <RemoveDir Directories="$(MSBuildProjectDirectory)\bin;$(MSBuildProjectDirectory)\obj" ContinueOnError="true" />
+  </Target>
+  <Target Name="Rebuild" DependsOnTargets="Clean;Build">
+  </Target>
+  <ItemGroup>
+    <Content Include="MetaReference.tsl" />
+  </ItemGroup>
+</Project>
