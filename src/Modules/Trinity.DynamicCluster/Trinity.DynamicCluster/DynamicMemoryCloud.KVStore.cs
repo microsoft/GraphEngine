@@ -16,7 +16,7 @@ using Trinity.Network.Messaging;
 
 namespace Trinity.Storage
 {
-    public partial class DynamicMemoryCloud
+    public partial class DynamicMemoryCloud : MemoryCloud
     {
         /// <summary>
         /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.

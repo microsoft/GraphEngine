@@ -76,7 +76,7 @@ namespace Trinity.Storage
                     var proxies = ProxyList;
 
                     BackgroundThread.ClearAllTasks(); // To disable heartbeat
-                    Parallel.For(0, ServerCount, i =>
+                    Parallel.For(0, PartitionCount, i =>
                         {
                             ShutDown(i);
                         }
@@ -100,8 +100,8 @@ namespace Trinity.Storage
         public override long GetTotalMemoryUsage()
         {
             TrinityMessage tm = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC_WITH_RSP, (ushort)RequestType.QueryMemoryWorkingSet, 0);
-            long[] memUsage = new long[ServerCount];
-            Parallel.For(0, ServerCount, sid =>
+            long[] memUsage = new long[PartitionCount];
+            Parallel.For(0, PartitionCount, sid =>
                 {
                     TrinityResponse response;
                     SendMessageToServer(sid, tm, out response);

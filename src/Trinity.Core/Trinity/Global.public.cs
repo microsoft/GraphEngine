@@ -225,7 +225,7 @@ namespace Trinity
         {
             get
             {
-                return CloudStorage.ServerCount;
+                return CloudStorage.PartitionCount;
             }
         }
 
