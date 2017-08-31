@@ -21,16 +21,25 @@ namespace Trinity.Storage
     {
         //private int server_count = -1;
         private int partition_count = -1;    
-        private int m_partitionId = -1;
+        private int my_partition_id = -1;
         private int my_proxy_id = -1;
+        private ChunkCollection m_chunks = new ChunkCollection();
         //private int my_partition_id = -1;
-        Dictionary<int, int> server_in_partition = new Dictionary<int, int>();
-        private List<List<int>> server_host_chunk = new List<List<int>>();
+        //Dictionary<int, int> server_in_partition = new Dictionary<int, int>();
+        //private List<List<int>> server_host_chunk = new List<List<int>>();
         //private List<int> my_hosting_chunks = new List<int>();
-        
-        private List<long> chunk_range = new List<long>();
+
+        private static List<long> chunk_range = new List<long>();
+        public static List<long> ChunkRange
+        {
+            get { return chunk_range; }
+
+            //set { chunk_range = value; }
+        }
 
         internal ClusterConfig cluster_config;
+
+        
 
         public void OnStorageJoin(RemoteStorage remoteStorage)
         {
@@ -41,6 +50,7 @@ namespace Trinity.Storage
 
         private object _QueryChunkedRemoteStorageInformation(RemoteStorage remoteStorage)
         {
+            
             throw new NotImplementedException();
         }
 
@@ -120,25 +130,9 @@ namespace Trinity.Storage
         public override bool Open(ClusterConfig config, bool nonblocking)
         {
             this.cluster_config = config;
-            m_partitionId = DynamicClusterConfig.Instance.LocalPartitionId;
+            my_partition_id = DynamicClusterConfig.Instance.LocalPartitionId;
             my_proxy_id = -1;
-            //
-            chunk_range.Add(256); //C0
-            chunk_range.Add(512); //C1
-            chunk_range.Add(1024); //C2
-            chunk_range.Add(long.MaxValue);//C3
-            //
-            server_host_chunk.Add(new List<int>() { 0, 2 });
-            server_host_chunk.Add(new List<int>() { 0, 1, 3 });
-            server_host_chunk.Add(new List<int>() { 0, 1, 2, 3 });
-            //
-            this.partition_count = 2;
-            server_in_partition.Add(0, 0);
-            server_in_partition.Add(1, 0);
-            server_in_partition.Add(2, 1);
-
-            bool server_found = false;
-            int partition_count = this.PartitionCount;
+            partition_count = DynamicClusterConfig.Instance.PartitionCount;
             StorageTable = new Storage[partition_count];
 
             if (partition_count == 0)
@@ -194,15 +188,6 @@ namespace Trinity.Storage
                     return i;
             }
             return -1;
-        }
-
-        private int GetChunkIdByCellId(long cellId)
-        {
-            int chunk_id = 0;
-            for (chunk_id = 0; chunk_id < ChunkCount; chunk_id++)
-                if (cellId < chunk_range[chunk_id]) break;
-
-            return chunk_id;
         }
     }
 }
