@@ -23,10 +23,41 @@ namespace Trinity.DynamicCluster
         // need a protocol to communicate within an AG: QueryYourChunkIds
         // we also need a protocol to "discuss" about chunk allocation. (P2)
         // route messages to a specific storage
-        List<Storage.Storage> Storages; // <----
-        Dictionary<Storage.Storage, ChunkCollection> Chunks; //<-----ChunkCollection
+        private List<Storage.Storage> Storages; // <----
+        private Dictionary<Storage.Storage, ChunkCollection> Chunks; //<-----ChunkCollection
         //DynamicMemoryCloud m_MemoryCloud; // get ChunkIds from m_MemoryCloud and decide routing.???????
         //List<long> chunk_range = DynamicMemoryCloud.ChunkRange;
+        
+        internal TrinityErrorCode Mount(Storage.Storage s)
+        {
+            try
+            {
+                Storages.Add(s);
+                return TrinityErrorCode.E_SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteLine(LogLevel.Error, "Errors occurred during Mount.");
+                Log.WriteLine(LogLevel.Error, ex.ToString());
+                return TrinityErrorCode.E_FAILURE;
+            }
+        }
+
+        internal TrinityErrorCode UnMount(Storage.Storage s)
+        {
+            try
+            {
+                Storages.Remove(s);
+                return TrinityErrorCode.E_SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteLine(LogLevel.Error, "Errors occurred during Mount.");
+                Log.WriteLine(LogLevel.Error, ex.ToString());
+                return TrinityErrorCode.E_FAILURE;
+            }
+        }
+
         static internal long GetChunkIdByCellIdStatic(long cellId)
         {
             int chunk_id = -1;
@@ -430,8 +461,12 @@ namespace Trinity.DynamicCluster
             throw new NotImplementedException();
         }
 
+        internal bool ContainsStorage(Storage.Storage storage)
+        {
+            return Storages.Any<Storage.Storage>(_ => _ == storage);
+        }
 
-        internal bool ContainsLocalStorage(long cellId)
+        internal bool IsLocal(long cellId)
         {
             return PickStorages(cellId).Any(s => s == Global.LocalStorage);
         }
@@ -445,6 +480,13 @@ namespace Trinity.DynamicCluster
         {
             return Storages.Where(pred);
         }
+        internal ChunkCollection MyChunkIdList(Storage.Storage storage)
+        {
+            return Chunks[storage];
+        }
+
+
+
     }
 
     internal class ChunkCollection : List<long>
