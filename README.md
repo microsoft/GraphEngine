@@ -53,7 +53,7 @@ Please submit bugs and feature requests in [GitHub Issues](https://github.com/Mi
 
 To build the `.Net Framework` version, install [Visual Studio
 2017](https://www.visualstudio.com/) with Windows 10 SDK
-(10.0.15063.0) for Desktop and run `tools/build.bat`.
+(10.0.15063.0) for Desktop C++ selected and run `tools/build.bat`.
 
 To build the `CoreCLR` version, you need to download and install the
 latest [CoreCLR 2.0
