@@ -471,6 +471,25 @@ bool NFieldType::is_alias()
     else { return this->is_string() && this->atom_token == T_U8STRINGTYPE; }
 }
 
+/**
+ * A FieldType has corresponding pointer type if and only if:
+ * 1. its layout is LT_FIXED AND
+ * 2. it is NOT an array AND
+ * 3. it is NOT a struct containing a field whose type has no pointer type.
+ */
+bool NFieldType::has_pointer_type()
+{
+    if (this->layoutType != LT_FIXED || this->is_array()) return false;
+    if (!this->is_struct()) return true;
+
+    for (NField* field : *this->referencedNStruct->fieldList)
+    {
+        if (!field->fieldType->has_pointer_type())
+            return false;
+    }
+    return true;
+}
+
 int _enumerate_rank(NFieldType* type)
 {
     NFieldType* ft_container_element = type->get_container_element_type();
