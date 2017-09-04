@@ -236,14 +236,6 @@ std::string* module_content = Modules::AccessorToAccessorFieldAssignment((*(node
     source->append(*module_content);
     delete module_content;
 }
-if (!field_need_accessor_1)
-{
-source->append(R"::( 
-                    targetPtr = this.ResizeFunction(targetPtr, 0, )::");
-source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType->type_size()));
-source->append(R"::();
-                    )::");
-}
 source->append(R"::(
                 }
                 else
