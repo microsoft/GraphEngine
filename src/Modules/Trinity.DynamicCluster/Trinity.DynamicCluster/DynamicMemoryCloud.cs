@@ -24,10 +24,7 @@ namespace Trinity.Storage
         private int my_partition_id = -1;
         private int my_proxy_id = -1;
         private ChunkCollection m_chunks = new ChunkCollection();
-        //private int my_partition_id = -1;
-        //Dictionary<int, int> server_in_partition = new Dictionary<int, int>();
-        //private List<List<int>> server_host_chunk = new List<List<int>>();
-        //private List<int> my_hosting_chunks = new List<int>();
+        private ChunkedStorage[] ChunkedStorageTable;//better to integrate in memorycloud.cs? 
 
         private static List<long> chunk_range = new List<long>();
         public static List<long> ChunkRange
@@ -37,21 +34,43 @@ namespace Trinity.Storage
             //set { chunk_range = value; }
         }
 
-        internal ClusterConfig cluster_config;
+        internal ClusterConfig cluster_config;//TODO will be substituted
+        internal DynamicClusterConfig dynamic_cluster_config;
 
         
 
-        public void OnStorageJoin(RemoteStorage remoteStorage)
+        public TrinityErrorCode OnStorageJoin(RemoteStorage remoteStorage)
         {
-            var remotestorage_info = _QueryChunkedRemoteStorageInformation(remoteStorage);
+            var remotestorage_info = new _QueryChunkedRemoteStorageInformationReuslt();
+            TrinityErrorCode eResult = _QueryChunkedRemoteStorageInformation(remoteStorage, out remotestorage_info);
+            if (eResult!=TrinityErrorCode.E_SUCCESS) return eResult;
             var chunks = remotestorage_info.chunks;
             var p = remotestorage_info.partitionid;
+            ChunkedStorageTable[i].Mount(remoteStorage);
+            return TrinityErrorCode.E_SUCCESS;
         }
 
-        private object _QueryChunkedRemoteStorageInformation(RemoteStorage remoteStorage)
+        private struct _QueryChunkedRemoteStorageInformationReuslt
         {
-            
-            throw new NotImplementedException();
+            internal int partitionid;
+            internal ChunkCollection chunks;
+        }
+
+        private TrinityErrorCode _QueryChunkedRemoteStorageInformation(RemoteStorage remoteStorage, out _QueryChunkedRemoteStorageInformationReuslt result)
+        {
+            int i = 0;
+            for (i=0; !ChunkedStorageTable[i].ContainsStorage(remoteStorage); i++)
+            {
+                if (i == PartitionCount)
+                {
+                    result.partitionid = -1;
+                    result.chunks = [];
+                    return TrinityErrorCode.E_FAILURE; //TODO need new err code.
+                }
+            }
+            result.partitionid = i;
+            result.chunks = ChunkedStorageTable[i].QueryChunkCollection(remoteStorage);
+            return TrinityErrorCode.E_SUCCESS;
         }
 
         /// <summary>
@@ -60,19 +79,22 @@ namespace Trinity.Storage
         /// [OnStorageJoin]
         /// </summary>
         /// <param name="remoteStorage"></param>
-        public void OnStorageLeave(RemoteStorage remoteStorage)
+        public TrinityErrorCode OnStorageLeave(RemoteStorage remoteStorage)
         {
-
+            var remotestorage_info = new _QueryChunkedRemoteStorageInformationReuslt();
+            TrinityErrorCode eResult = _QueryChunkedRemoteStorageInformation(remoteStorage, out remotestorage_info);
+            if (eResult != TrinityErrorCode.E_SUCCESS) return eResult;
+            var chunks = remotestorage_info.chunks;
+            var p = remotestorage_info.partitionid;
+            ChunkedStorageTable[i].Unmount(remoteStorage);
+            return TrinityErrorCode.E_SUCCESS;
         }
 
-        public override IEnumerable<int> MyChunkIds
+        public override IEnumerable<int> MyChunkIds//better if named MyChunkCollection, return type is list?
         {
             get
             {
-                List<int> my_hosting_chunks = new List<int>();
-                my_hosting_chunks = server_host_chunk[m_partitionId];
-
-                return my_hosting_chunks;
+                return (m_chunks as IEnumerable<int>);
             }
         }
 
@@ -80,10 +102,7 @@ namespace Trinity.Storage
         {
             get
             {
-                int my_partition_id = -1;
-                my_partition_id = server_in_partition[m_partitionId];
-
-                return my_partition_id;
+                return dynamic_cluster_config.LocalPartitionId;
             }
         }
 
@@ -115,10 +134,7 @@ namespace Trinity.Storage
         {
             get
             {
-                int chunk_count = -1;
-                chunk_count = chunk_range.Count;
-
-                return chunk_count;
+                return m_chunks.Count;
             }
         }
 
@@ -133,7 +149,7 @@ namespace Trinity.Storage
             my_partition_id = DynamicClusterConfig.Instance.LocalPartitionId;
             my_proxy_id = -1;
             partition_count = DynamicClusterConfig.Instance.PartitionCount;
-            StorageTable = new Storage[partition_count];
+            StorageTable = new ChunkedStorage[partition_count];
 
             if (partition_count == 0)
                 goto server_not_found;

@@ -44,7 +44,7 @@ namespace Trinity.DynamicCluster
             }
         }
 
-        internal TrinityErrorCode UnMount(Storage.Storage s)
+        internal TrinityErrorCode Unmount(Storage.Storage s)
         {
             try
             {
@@ -298,7 +298,7 @@ namespace Trinity.DynamicCluster
             throw new NotImplementedException();
         }
 
-        internal bool ContainsStorage(Storage.Storage storage)
+        public bool ContainsStorage(Storage.Storage storage)
         {
             return Storages.Any<Storage.Storage>(_ => _ == storage);
         }
@@ -317,9 +317,9 @@ namespace Trinity.DynamicCluster
         {
             return Storages.Where(pred);
         }
-        internal ChunkCollection MyChunkIdList(Storage.Storage storage)
+        public ChunkCollection QueryChunkCollection(Storage.Storage storage)
         {
-            return Chunks[storage];
+           return Chunks[storage];
         }
 
 
