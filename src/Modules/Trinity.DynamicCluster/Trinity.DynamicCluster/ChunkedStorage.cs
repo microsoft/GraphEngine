@@ -27,7 +27,7 @@ namespace Trinity.DynamicCluster
         private List<Storage.Storage> Storages; // <----
         private Dictionary<Storage.Storage, ChunkCollection> Chunks; //<-----ChunkCollection
         //DynamicMemoryCloud m_MemoryCloud; // get ChunkIds from m_MemoryCloud and decide routing.???????
-        //List<long> chunk_range = DynamicMemoryCloud.ChunkRange;
+        List<long> chunk_range = DynamicMemoryCloud.ChunkRange;
         
         internal TrinityErrorCode Mount(Storage.Storage s)
         {
@@ -58,7 +58,7 @@ namespace Trinity.DynamicCluster
                 return TrinityErrorCode.E_FAILURE;
             }
         }
-
+        
         static internal long GetChunkIdByCellIdStatic(long cellId)
         {
             int chunk_id = -1;
@@ -320,6 +320,29 @@ namespace Trinity.DynamicCluster
         public ChunkCollection QueryChunkCollection(Storage.Storage storage)
         {
            return Chunks[storage];
+        }
+
+        public void AddChunkCollection(Storage.Storage storage, ChunkCollection cc)
+        {
+            if (Chunks.ContainsKey(storage))
+            {
+                Chunks[storage].AddRange(cc);
+                Chunks[storage] = Chunks[storage].Distinct() as ChunkCollection;
+            }
+            else
+            {
+                Chunks.Add(storage, cc);
+            }
+        }
+
+        public TrinityErrorCode RemoveChunkCollection(Storage.Storage storage, ChunkCollection cc)
+        {
+            if (cc.All(i => Chunks[storage].Contains(i)))
+            {
+                Chunks[storage].RemoveAll(i => cc.Contains(i));
+                return TrinityErrorCode.E_SUCCESS;
+            }
+            else return TrinityErrorCode.E_FAILURE;
         }
 
 
