@@ -1,0 +1,17 @@
+struct _QueryChunkedRemoteStorageInformationReuslt
+{
+    int partitionid;
+    List<long> chunks;
+}
+
+protocol QueryChunkedRemoteStorageInformation
+{
+    Type: Syn;
+    Request: void;
+    Response: _QueryChunkedRemoteStorageInformationReuslt;	
+}
+
+module DynamicCluster
+{
+    protocol QueryChunkedRemoteStorageInformation;	
+}

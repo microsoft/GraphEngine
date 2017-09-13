@@ -29,11 +29,11 @@ namespace Trinity.DynamicCluster
         //DynamicMemoryCloud m_MemoryCloud; // get ChunkIds from m_MemoryCloud and decide routing.???????
         List<long> chunk_range = DynamicMemoryCloud.ChunkRange;
         
-        internal TrinityErrorCode Mount(Storage.Storage s)
+        internal TrinityErrorCode Mount(Storage.Storage s, _QueryChunkedRemoteStorageInformationReusltReader info)
         {
             try
             {
-                Storages.Add(s);
+                OnChunkCollectionAdded(s, new ChunkCollection(info.chunks.ToList()));
                 return TrinityErrorCode.E_SUCCESS;
             }
             catch (Exception ex)
@@ -278,22 +278,22 @@ namespace Trinity.DynamicCluster
             }
         }
 
-        public override void SendMessage(TrinityMessage message)
+        protected override void SendMessage(TrinityMessage message)
         {
             throw new NotImplementedException();
         }
 
-        public override void SendMessage(byte* message, int size)
+        protected override void SendMessage(byte* message, int size)
         {
             throw new NotImplementedException();
         }
 
-        public override void SendMessage(TrinityMessage message, out TrinityResponse response)
+        protected override void SendMessage(TrinityMessage message, out TrinityResponse response)
         {
             throw new NotImplementedException();
         }
 
-        public override void SendMessage(byte* message, int size, out TrinityResponse response)
+        protected override void SendMessage(byte* message, int size, out TrinityResponse response)
         {
             throw new NotImplementedException();
         }
@@ -322,40 +322,58 @@ namespace Trinity.DynamicCluster
            return Chunks[storage];
         }
 
-        public void AddChunkCollection(Storage.Storage storage, ChunkCollection cc)
+        public void OnChunkCollectionAdded(Storage.Storage storage, ChunkCollection cc)
         {
             if (Chunks.ContainsKey(storage))
             {
                 Chunks[storage].AddRange(cc);
-                Chunks[storage] = Chunks[storage].Distinct() as ChunkCollection;
             }
             else
             {
-                Chunks.Add(storage, cc);
+                Storages.Add(storage);
+                Chunks[storage] = cc;
             }
         }
 
-        public TrinityErrorCode RemoveChunkCollection(Storage.Storage storage, ChunkCollection cc)
+        public TrinityErrorCode OnChunkCollectionRemoved(Storage.Storage storage, ChunkCollection cc)
         {
-            if (cc.All(i => Chunks[storage].Contains(i)))
-            {
-                Chunks[storage].RemoveAll(i => cc.Contains(i));
-                return TrinityErrorCode.E_SUCCESS;
-            }
-            else return TrinityErrorCode.E_FAILURE;
+            ChunkCollection collection;
+            if (!Chunks.TryGetValue(storage, out collection))
+                return TrinityErrorCode.E_FAILURE;
+
+            return collection.RemoveSlice(cc);
         }
-
-
-
     }
 
-    internal class ChunkCollection : List<long>
+    internal class ChunkCollection
     {
+        private HashSet<long> m_list = new HashSet<long>();
+
+        public ChunkCollection(IEnumerable<long> chunks)
+        {
+            foreach (var c in chunks)
+                m_list.Add(c);
+        }
+
+        internal void AddRange(ChunkCollection cc)
+        {
+            throw new NotImplementedException();
+        }
+
         internal bool Covers(long cellId)
         {
             long chunk_id = ChunkedStorage.GetChunkIdByCellIdStatic(cellId);
-            if (this.Any<long>(_ => _ == chunk_id)) return true;
-            else return false;
+            return m_list.Contains(chunk_id);
+        }
+
+        /// <summary>
+        /// A = A - B
+        /// A is current collection
+        /// B is collection
+        /// </summary>
+        internal TrinityErrorCode RemoveSlice(ChunkCollection collection)
+        {
+            throw new NotImplementedException();
         }
     }
 

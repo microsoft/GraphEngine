@@ -10,26 +10,18 @@ using Trinity.Network;
 namespace Trinity.DynamicCluster
 {
     [AutoRegisteredCommunicationModule]
-    class DynamicClusterCommModule : CommunicationModule
+    class DynamicClusterCommModule : DynamicClusterBase
     {
         public override string GetModuleName()
         {
             return "DynamicClusterCommModule";
         }
 
-        protected override void DispatchHttpRequest(HttpListenerContext ctx, string endpointName, string url)
+        public override void QueryChunkedRemoteStorageInformationHandler(_QueryChunkedRemoteStorageInformationReusltWriter response)
         {
-            throw new NotImplementedException();
-        }
-
-        protected override void RegisterMessageHandler()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void RootHttpHandler(HttpListenerContext ctx)
-        {
-            throw new NotImplementedException();
+            var dmc = Global.CloudStorage as Trinity.Storage.DynamicMemoryCloud;
+            response.partitionid = dmc.MyPartitionId;
+            response.chunks.AddRange(dmc.MyChunkIds.Cast<long>().ToList());
         }
     }
 }

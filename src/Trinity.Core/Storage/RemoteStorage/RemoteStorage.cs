@@ -38,7 +38,7 @@ namespace Trinity.Storage
         private FixedMemoryCloud memory_cloud;
         public int MyServerId;
 
-        internal RemoteStorage(ServerInfo server_info, int connPerServer)
+        protected internal RemoteStorage(ServerInfo server_info, int connPerServer)
         {
             for (int i = 0; i < connPerServer; i++)
             {

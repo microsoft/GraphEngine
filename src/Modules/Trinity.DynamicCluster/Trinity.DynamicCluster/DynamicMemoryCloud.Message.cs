@@ -16,28 +16,29 @@ using Trinity.Core.Lib;
 using Trinity.Network.Messaging;
 using Trinity.Network;
 using System.Globalization;
+using Trinity.DynamicCluster;
 
 namespace Trinity.Storage
 {
     public unsafe partial class DynamicMemoryCloud
     {
-        #region Internal
-        internal bool _canSendAsynRspMessage()
+        public override unsafe void SendMessageToServer(int serverId, byte* buffer, int size)
         {
-            // condition: 
-            // 1. I am a server within this memory cloud
-            // 2. I am a proxy within this memory cloud
-            return (m_partitionId != -1 || my_proxy_id != -1);
+            if (serverId >= 0)
+                base.SendMessageToServer(serverId, buffer, size);
+            else
+                temporaryRemoteStorageRepo[serverId].SendMessage(buffer, size);
         }
 
-        #endregion
+        public override unsafe void SendMessageToServer(int serverId, byte* buffer, int size, out TrinityResponse response)
+        {
+            if (serverId >= 0)
+                base.SendMessageToServer(serverId, buffer, size, out response);
+            else
+                temporaryRemoteStorageRepo[serverId].SendMessage(buffer, size, out response);
+        }
 
         #region Proxies
-        private List<RemoteStorage> proxy_list = null;
-
-        private object proxyList_init_lock = new object();
-
-
         /// <summary>
         /// Gets a list of Trinity proxy.
         /// </summary>
@@ -45,65 +46,9 @@ namespace Trinity.Storage
         {
             get
             {
-                if (proxy_list == null)
-                {
-                    lock (proxyList_init_lock)
-                    {
-                        if (proxy_list == null)
-                        {
-                            var new_proxy_list = new List<RemoteStorage>();
-
-                            for (int i = 0; i < TrinityConfig.Proxies.Count; i++)
-                            {
-                                foreach (var instance in TrinityConfig.Proxies[i].Instances)
-                                {
-                                    new_proxy_list.Add(new RemoteStorage(instance, TrinityConfig.ClientMaxConn));
-                                }
-                            }
-
-                            proxy_list = new_proxy_list;
-
-                            CheckProxySignatures(proxy_list);
-                        }
-                    }
-                }
-                return proxy_list;
+                throw new NotImplementedException();
             }
         }
-
-        object get_proxy_lock = new object();
-        internal RemoteStorage GetProxy(int proxyId)
-        {
-            lock (get_proxy_lock)
-            {
-                var proxy = ProxyList[proxyId];
-                if (!proxy.connected)
-                    throw new Exception(string.Format(CultureInfo.InvariantCulture, "The proxy {0} is not connected.", proxyId));
-                return proxy;
-            }
-        }
-
-
-        private Random rand = new Random();
-        internal RemoteStorage RandomProxy
-        {
-            get
-            {
-                lock (rand)
-                {
-                    try
-                    {
-                        return ProxyList[rand.Next(0, Global.ProxyCount)];
-                    }
-                    catch (Exception)
-                    {
-                        throw new Exception("No proxy is specified.");
-                    }
-                }
-            }
-        }
-
-        #endregion
 
         /// <summary>
         /// Send a binary message to the specified Trinity proxy.
@@ -113,7 +58,7 @@ namespace Trinity.Storage
         /// <param name="size">The size of the message.</param>
         public override void SendMessageToProxy(int proxyId, byte* buffer, int size)
         {
-            GetProxy(proxyId).SendMessage(buffer, size);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -125,7 +70,8 @@ namespace Trinity.Storage
         /// <param name="response">The TrinityResponse object returned by the Trinity proxy.</param>
         public override void SendMessageToProxy(int proxyId, byte* buffer, int size, out TrinityResponse response)
         {
-            GetProxy(proxyId).SendMessage(buffer, size, out response);
+            throw new NotImplementedException();
         }
+        #endregion
     }
 }

@@ -322,9 +322,10 @@ namespace Trinity.Storage
         /// <param name="serverId">A 32-bit server id.</param>
         /// <param name="buffer">A binary message buffer.</param>
         /// <param name="size">The size of the message.</param>
-        public void SendMessageToServer(int serverId, byte* buffer, int size)
+        public virtual void SendMessageToServer(int serverId, byte* buffer, int size)
         {
-            StorageTable[serverId].SendMessage(buffer, size);
+            var storage = StorageTable[serverId];
+            storage.SendMessage(buffer, size);
         }
 
         /// <summary>
@@ -334,7 +335,7 @@ namespace Trinity.Storage
         /// <param name="buffer">A binary message buffer.</param>
         /// <param name="size">The size of the message.</param>
         /// <param name="response">The TrinityResponse object returned by the Trinity server.</param>
-        public void SendMessageToServer(int serverId, byte* buffer, int size, out TrinityResponse response)
+        public virtual void SendMessageToServer(int serverId, byte* buffer, int size, out TrinityResponse response)
         {
             StorageTable[serverId].SendMessage(buffer, size, out response);
         }
