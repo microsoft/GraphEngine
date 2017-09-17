@@ -20,17 +20,17 @@ namespace Trinity.Storage
 {
     public unsafe partial class LocalMemoryStorage : Storage
     {
-        protected internal override void SendMessage(TrinityMessage message)
+        public override void SendMessage(TrinityMessage message)
         {
             SendMessage(message.Buffer, message.Size);
         }
 
-        protected internal override void SendMessage(TrinityMessage message, out TrinityResponse response)
+        public override void SendMessage(TrinityMessage message, out TrinityResponse response)
         {
             SendMessage(message.Buffer, message.Size, out response);
         }
 
-        protected internal override void SendMessage(byte* message, int size)
+        public override void SendMessage(byte* message, int size)
         {
             TrinityMessageType msgType = (TrinityMessageType)message[TrinityProtocol.MsgTypeOffset];
             int msgId = message[TrinityProtocol.MsgIdOffset];
@@ -81,7 +81,7 @@ namespace Trinity.Storage
             }
         }
 
-        protected internal override void SendMessage(byte* message, int size, out TrinityResponse response)
+        public override void SendMessage(byte* message, int size, out TrinityResponse response)
         {
             TrinityMessageType msgType = (TrinityMessageType)message[TrinityProtocol.MsgTypeOffset];
             byte msgId = message[TrinityProtocol.MsgIdOffset];

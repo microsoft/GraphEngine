@@ -78,7 +78,8 @@ namespace Trinity.Storage
             {
                 var proxy = ProxyList[proxyId];
                 if (!proxy.connected)
-                    throw new Exception(string.Format(CultureInfo.InvariantCulture, "The proxy {0} is not connected.", proxyId));
+
+                    new Exception(string.Format(CultureInfo.InvariantCulture, "The proxy {0} is not connected.", proxyId));
                 return proxy;
             }
         }

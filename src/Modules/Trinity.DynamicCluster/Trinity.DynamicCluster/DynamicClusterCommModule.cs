@@ -21,7 +21,14 @@ namespace Trinity.DynamicCluster
         {
             var dmc = Global.CloudStorage as Trinity.Storage.DynamicMemoryCloud;
             response.partitionid = dmc.MyPartitionId;
-            response.chunks.AddRange(dmc.MyChunkIds.Cast<long>().ToList());
+            response.chunks.AddRange(dmc.MyChunkIds.Cast<int>().ToList());
         }
+        public override void MotivateRemoteStorageBeforeLeavingHandler(_MotivateRemoteStorageBeforeLeavingResponseWriter response)
+        {
+            var dmc = Global.CloudStorage as Trinity.Storage.DynamicMemoryCloud;
+
+            response.finished = true;
+        }
+
     }
 }

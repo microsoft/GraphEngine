@@ -26,21 +26,7 @@ namespace Trinity.Storage
         /// <returns>true if saving succeeds; otherwise, false.</returns>
         public override bool SaveStorage()
         {
-            try
-            {
-                TrinityMessage msg = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC, (ushort)RequestType.SaveStorage, 0);
-
-                Parallel.ForEach<Storage>(StorageTable, storage =>
-                {
-                    storage.SendMessage(msg);
-                }
-                    );
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -49,21 +35,7 @@ namespace Trinity.Storage
         /// <returns>true if loading succeeds; otherwise, false.</returns>
         public override bool LoadStorage()
         {
-            try
-            {
-                TrinityMessage msg = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC, (ushort)RequestType.LoadStorage, 0);
-
-                Parallel.ForEach<Storage>(StorageTable, s =>
-                {
-                    s.SendMessage(msg);
-                }
-                    );
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -72,21 +44,7 @@ namespace Trinity.Storage
         /// <returns>true if resetting succeeds; otherwise, false.</returns>
         public override bool ResetStorage()
         {
-            try
-            {
-                TrinityMessage msg = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC, (ushort)RequestType.ResetStorage, 0);
-
-                Parallel.ForEach<Storage>(StorageTable, s =>
-                {
-                    s.SendMessage(msg);
-                }
-                    );
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
+            throw new NotImplementedException();
         }
     }
 }

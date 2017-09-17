@@ -31,23 +31,25 @@ namespace Trinity.DynamicCluster
         
         internal TrinityErrorCode Mount(Storage.Storage s, _QueryChunkedRemoteStorageInformationReusltReader info)
         {
-            try
-            {
-                OnChunkCollectionAdded(s, new ChunkCollection(info.chunks.ToList()));
-                return TrinityErrorCode.E_SUCCESS;
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(LogLevel.Error, "Errors occurred during Mount.");
-                Log.WriteLine(LogLevel.Error, ex.ToString());
-                return TrinityErrorCode.E_FAILURE;
-            }
+            HashSet<int> tempset = new HashSet<int>();
+            foreach (var c in info.chunks)
+                tempset.Add(c);
+            return OnChunkCollectionAdded(s, new HashSet<int>(tempset));
+        }
+
+        internal TrinityErrorCode Mount(Storage.Storage s, IEnumerable<int> chunks)
+        {
+            HashSet<int> tempset = new HashSet<int>();
+            foreach (var c in chunks)
+                tempset.Add(c);
+            return OnChunkCollectionAdded(s, new HashSet<int>(tempset));
         }
 
         internal TrinityErrorCode Unmount(Storage.Storage s)
         {
             try
             {
+                Chunks.Remove(s);
                 Storages.Remove(s);
                 return TrinityErrorCode.E_SUCCESS;
             }
@@ -59,7 +61,7 @@ namespace Trinity.DynamicCluster
             }
         }
         
-        static internal long GetChunkIdByCellIdStatic(long cellId)
+        static internal int GetChunkIdByCellIdStatic(long cellId)
         {
             int chunk_id = -1;
             for (chunk_id = 0; chunk_id < DynamicMemoryCloud.ChunkRange.Count; chunk_id++)
@@ -278,22 +280,22 @@ namespace Trinity.DynamicCluster
             }
         }
 
-        protected override void SendMessage(TrinityMessage message)
+        public override void SendMessage(TrinityMessage message)
         {
             throw new NotImplementedException();
         }
 
-        protected override void SendMessage(byte* message, int size)
+        public override void SendMessage(byte* message, int size)
         {
             throw new NotImplementedException();
         }
 
-        protected override void SendMessage(TrinityMessage message, out TrinityResponse response)
+        public override void SendMessage(TrinityMessage message, out TrinityResponse response)
         {
             throw new NotImplementedException();
         }
 
-        protected override void SendMessage(byte* message, int size, out TrinityResponse response)
+        public override void SendMessage(byte* message, int size, out TrinityResponse response)
         {
             throw new NotImplementedException();
         }
@@ -322,20 +324,21 @@ namespace Trinity.DynamicCluster
            return Chunks[storage];
         }
 
-        public void OnChunkCollectionAdded(Storage.Storage storage, ChunkCollection cc)
+        public TrinityErrorCode OnChunkCollectionAdded(Storage.Storage storage, IEnumerable<int> cc)
         {
             if (Chunks.ContainsKey(storage))
             {
-                Chunks[storage].AddRange(cc);
+                return Chunks[storage].AddSlice(cc);
             }
             else
             {
                 Storages.Add(storage);
-                Chunks[storage] = cc;
+                Chunks[storage] = new ChunkCollection(cc);
+                return TrinityErrorCode.E_SUCCESS;
             }
         }
 
-        public TrinityErrorCode OnChunkCollectionRemoved(Storage.Storage storage, ChunkCollection cc)
+        public TrinityErrorCode OnChunkCollectionRemoved(Storage.Storage storage, IEnumerable<int> cc)
         {
             ChunkCollection collection;
             if (!Chunks.TryGetValue(storage, out collection))
@@ -347,23 +350,28 @@ namespace Trinity.DynamicCluster
 
     internal class ChunkCollection
     {
-        private HashSet<long> m_list = new HashSet<long>();
+        private HashSet<int> m_list = new HashSet<int>();
 
-        public ChunkCollection(IEnumerable<long> chunks)
+        public ChunkCollection(IEnumerable<int> chunks)
         {
             foreach (var c in chunks)
                 m_list.Add(c);
         }
 
-        internal void AddRange(ChunkCollection cc)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         internal bool Covers(long cellId)
         {
-            long chunk_id = ChunkedStorage.GetChunkIdByCellIdStatic(cellId);
+            int chunk_id = ChunkedStorage.GetChunkIdByCellIdStatic(cellId);
             return m_list.Contains(chunk_id);
+        }
+
+        internal TrinityErrorCode AddSlice(IEnumerable<int> collection)
+        {
+            bool f = false;
+            foreach (var c in collection)
+                f = f | m_list.Add(c);
+            /*if (f)*/ return TrinityErrorCode.E_SUCCESS;
+            /*else return TrinityErrorCode.E_FAILURE;*/
         }
 
         /// <summary>
@@ -371,9 +379,21 @@ namespace Trinity.DynamicCluster
         /// A is current collection
         /// B is collection
         /// </summary>
-        internal TrinityErrorCode RemoveSlice(ChunkCollection collection)
+        internal TrinityErrorCode RemoveSlice(IEnumerable<int> collection)
         {
-            throw new NotImplementedException();
+            bool f = true;
+            foreach (var c in collection)
+                f = f & m_list.Remove(c);
+            if (f) return TrinityErrorCode.E_SUCCESS;
+            else return TrinityErrorCode.E_FAILURE;
+        }
+
+        internal IEnumerable<int> MyCollection
+        {
+            get
+            {
+                return (m_list as IEnumerable<int>);
+            }
         }
     }
 

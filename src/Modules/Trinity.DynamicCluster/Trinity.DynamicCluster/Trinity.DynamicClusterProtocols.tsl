@@ -1,7 +1,7 @@
 struct _QueryChunkedRemoteStorageInformationReuslt
 {
     int partitionid;
-    List<long> chunks;
+    List<int> chunks;
 }
 
 protocol QueryChunkedRemoteStorageInformation
@@ -13,5 +13,18 @@ protocol QueryChunkedRemoteStorageInformation
 
 module DynamicCluster
 {
-    protocol QueryChunkedRemoteStorageInformation;	
+    protocol QueryChunkedRemoteStorageInformation;
+	protocol MotivateRemoteStorageBeforeLeaving;
+}
+
+struct _MotivateRemoteStorageBeforeLeavingResponse
+{
+	bool finished;
+}
+
+protocol MotivateRemoteStorageBeforeLeaving
+{
+    Type: Syn;
+    Request: void;
+    Response: _MotivateRemoteStorageBeforeLeavingResponse;	
 }

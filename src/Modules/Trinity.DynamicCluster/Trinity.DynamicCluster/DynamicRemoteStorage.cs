@@ -15,12 +15,12 @@ namespace Trinity.DynamicCluster
         {
         }
 
-        internal unsafe void SendMessage(byte* buffer, int size)
+        public override unsafe void SendMessage(byte* buffer, int size)
         {
             base.SendMessage(buffer, size);
         }
 
-        internal unsafe void SendMessage(byte* buffer, int size, out TrinityResponse response)
+        public override unsafe void SendMessage(byte* buffer, int size, out TrinityResponse response)
         {
             base.SendMessage(buffer, size, out response);
         }

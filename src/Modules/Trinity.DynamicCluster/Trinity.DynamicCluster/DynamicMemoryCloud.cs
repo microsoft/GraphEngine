@@ -23,7 +23,7 @@ namespace Trinity.Storage
         private int partition_count = -1;    
         private int my_partition_id = -1;
         private int my_proxy_id = -1;
-        private ChunkCollection m_chunks = new ChunkCollection(new long[] { });
+        private ChunkCollection m_chunks = new ChunkCollection(new int[] { });
         //private ChunkedStorage[] ChunkedStorageTable;//better to integrate in memorycloud.cs? 
 
         private static List<long> chunk_range = new List<long>();
@@ -71,15 +71,13 @@ namespace Trinity.Storage
         public TrinityErrorCode OnStorageLeave(RemoteStorage remoteStorage)
         {
             throw new NotImplementedException();
-            ChunkedStorageTable(i).Unmount(remoteStorage);
-            return TrinityErrorCode.E_SUCCESS;
         }
 
         public override IEnumerable<int> MyChunkIds//better if named MyChunkCollection, return type is list?
         {
             get
             {
-                return (m_chunks as IEnumerable<int>);
+                return m_chunks.MyCollection;
             }
         }
 
@@ -119,7 +117,7 @@ namespace Trinity.Storage
         {
             get
             {
-                return m_chunks.Count;
+                return m_chunks.MyCollection.Count();
             }
         }
 
@@ -147,7 +145,7 @@ namespace Trinity.Storage
                 StorageTable[i] = new ChunkedStorage();
             }
 
-            if (TrinityErrorCode.E_SUCCESS != (errno = ChunkedStorageTable(my_partition_id).Mount(Global.LocalStorage)))
+            if (TrinityErrorCode.E_SUCCESS != (errno = ChunkedStorageTable(my_partition_id).Mount(Global.LocalStorage, MyChunkIds)))
             {
                 //TODO 
             }
@@ -166,7 +164,7 @@ namespace Trinity.Storage
             ServerConnected += DynamicMemoryCloud_ServerConnected;
             ServerDisconnected += DynamicMemoryCloud_ServerDisconnected;
 
-
+            bool server_found = true;
             if (cluster_config.RunningMode == RunningMode.Server && !server_found)
             {
                 goto server_not_found;
@@ -188,6 +186,7 @@ namespace Trinity.Storage
 
         public void Shutdown()
         {
+
             //TODO inform my peers that I'm leaving
         }
 
