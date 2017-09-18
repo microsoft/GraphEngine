@@ -319,9 +319,20 @@ namespace Trinity.DynamicCluster
         {
             return Storages.Where(pred);
         }
+
+        internal IEnumerable<Storage.Storage> PickAllStorages()
+        {
+            return Storages;
+        }
+
         public ChunkCollection QueryChunkCollection(Storage.Storage storage)
         {
            return Chunks[storage];
+        }
+
+        public IEnumerable<Storage.Storage> QueryRemoteStorage(IEnumerable<int> cc)
+        {
+            return Chunks.Where(s => s.Value.IdenticalTo(cc)).Select(s => s.Key);
         }
 
         public TrinityErrorCode OnChunkCollectionAdded(Storage.Storage storage, IEnumerable<int> cc)
@@ -386,6 +397,11 @@ namespace Trinity.DynamicCluster
                 f = f & m_list.Remove(c);
             if (f) return TrinityErrorCode.E_SUCCESS;
             else return TrinityErrorCode.E_FAILURE;
+        }
+
+        internal bool IdenticalTo(IEnumerable<int> collection)
+        {
+            return HashSet<int>.CreateSetComparer().Equals(m_list, (collection as HashSet<int>));
         }
 
         internal IEnumerable<int> MyCollection

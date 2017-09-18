@@ -23,12 +23,15 @@ namespace Trinity.DynamicCluster
             response.partitionid = dmc.MyPartitionId;
             response.chunks.AddRange(dmc.MyChunkIds.Cast<int>().ToList());
         }
-        public override void MotivateRemoteStorageBeforeLeavingHandler(_MotivateRemoteStorageBeforeLeavingResponseWriter response)
+        public override void MotivateRemoteStorageOnLeavingStepOneHandler(_MotivateRemoteStorageOnLeavingStepOneRequestReader request)
         {
             var dmc = Global.CloudStorage as Trinity.Storage.DynamicMemoryCloud;
-
-            response.finished = true;
+            dmc.OnStorageLeave(request.partitionid, request.chunks);
         }
-
+        public override void MotivateRemoteStorageOnLeavingStepTwoHandler(_MotivateRemoteStorageOnLeavingStepTwoResponseWriter response)
+        {
+            var dmc = Global.CloudStorage as Trinity.Storage.DynamicMemoryCloud;
+            response.leaving = dmc.MyLeavingStatus;
+        }
     }
 }

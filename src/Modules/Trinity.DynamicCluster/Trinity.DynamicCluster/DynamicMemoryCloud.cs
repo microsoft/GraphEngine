@@ -40,6 +40,11 @@ namespace Trinity.Storage
         internal NameDescriptor m_namedescriptor = new NameDescriptor();
         internal ChunkedStorage ChunkedStorageTable(int id) => StorageTable[id] as ChunkedStorage;
         private Dictionary<int, DynamicRemoteStorage> temporaryRemoteStorageRepo = new Dictionary<int, DynamicRemoteStorage>();
+        private bool m_leaving = false;
+        public bool MyLeavingStatus
+        {
+            get { return m_leaving; }
+        }
 
         internal TrinityErrorCode OnStorageJoin(DynamicRemoteStorage remoteStorage)
         {
@@ -68,9 +73,28 @@ namespace Trinity.Storage
         /// [OnStorageJoin]
         /// </summary>
         /// <param name="remoteStorage"></param>
-        public TrinityErrorCode OnStorageLeave(RemoteStorage remoteStorage)
+        internal TrinityErrorCode OnStorageLeave(int partitionid, IEnumerable<int> chunks)
         {
-            throw new NotImplementedException();
+            Random r = new Random();
+            int temp_id = 0;
+            var module = GetCommunicationModule<DynamicClusterCommModule>();
+            foreach (var s in ChunkedStorageTable(partitionid).QueryRemoteStorage(chunks))
+            {
+                lock (this)
+                {
+                    while (temporaryRemoteStorageRepo.ContainsKey(temp_id = r.Next(-10000000, -1)))
+                        /* empty body */
+                        ;
+                    temporaryRemoteStorageRepo[temp_id] = (s as DynamicRemoteStorage);
+                }
+                using (var remotestorage_info = module.MotivateRemoteStorageOnLeavingStepTwo(temp_id))
+                {
+                    if (remotestorage_info.leaving)
+                        ChunkedStorageTable(partitionid).Unmount(s);
+                }
+                temporaryRemoteStorageRepo.Remove(temp_id);
+            }
+            return TrinityErrorCode.E_SUCCESS;
         }
 
         public override IEnumerable<int> MyChunkIds//better if named MyChunkCollection, return type is list?
@@ -134,6 +158,7 @@ namespace Trinity.Storage
             this.cluster_config = config;
             my_partition_id = DynamicClusterConfig.Instance.LocalPartitionId;
             my_proxy_id = -1;
+            m_leaving = false;
             partition_count = DynamicClusterConfig.Instance.PartitionCount;
             StorageTable = new ChunkedStorage[partition_count];
 
@@ -184,10 +209,33 @@ namespace Trinity.Storage
 
         }
 
-        public void Shutdown()
+        public TrinityErrorCode Shutdown()
         {
-
+            Random r = new Random();
+            int temp_id = 0;
+            m_leaving = true;
+            var module = GetCommunicationModule<DynamicClusterCommModule>();
             //TODO inform my peers that I'm leaving
+            for (int i = 0; i < PartitionCount; i++)
+            {
+                foreach (var s in ChunkedStorageTable(i).PickAllStorages())
+                {
+                    if (s == Global.LocalStorage) continue;  
+                    lock (this)
+                    {
+                        while (temporaryRemoteStorageRepo.ContainsKey(temp_id = r.Next(-10000000, -1)))
+                            /* empty body */
+                            ;
+                        temporaryRemoteStorageRepo[temp_id] = (s as DynamicRemoteStorage);
+                    }
+                    var request = new _MotivateRemoteStorageOnLeavingStepOneRequestWriter(MyPartitionId, (MyChunkIds as List<int>));
+                    module.MotivateRemoteStorageOnLeavingStepOne(temp_id, request);
+                    temporaryRemoteStorageRepo.Remove(temp_id);                    
+                }
+            }
+
+            //then?
+            return TrinityErrorCode.E_SUCCESS;
         }
 
          private void DynamicMemoryCloud_ServerDisconnected(object sender, ServerStatusEventArgs e)
