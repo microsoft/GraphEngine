@@ -15,10 +15,11 @@ using Trinity.Utilities;
 using Trinity.Storage;
 using Trinity.DynamicCluster;
 using Trinity.Configuration;
+using System.Collections;
 
 namespace Trinity.DynamicCluster
 {
-    unsafe partial class ChunkedStorage : Storage.Storage
+    unsafe partial class ChunkedStorage : Storage.Storage, IEnumerable<Storage.Storage>
     {
         // List<Chunk> chunks;
         // need a protocol to communicate within an AG: QueryYourChunkIds
@@ -251,7 +252,7 @@ namespace Trinity.DynamicCluster
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal TrinityErrorCode _UpdateCell_impl(long cellId, byte* buff, int size)
         {
-            foreach (Storage.Storage s in PickStorages(a => Chunks[a].Covers(cellId)))
+            foreach (Storage.Storage s in this.Where(a => Chunks[a].Covers(cellId)))
             {
                 TrinityErrorCode eResult = s.UpdateCell(cellId, buff, size);
                 if (eResult != TrinityErrorCode.E_SUCCESS) return eResult;
@@ -300,11 +301,6 @@ namespace Trinity.DynamicCluster
             throw new NotImplementedException();
         }
 
-        public bool ContainsStorage(Storage.Storage storage)
-        {
-            return Storages.Any<Storage.Storage>(_ => _ == storage);
-        }
-
         internal bool IsLocal(long cellId)
         {
             return PickStorages(cellId).Any(s => s == Global.LocalStorage);
@@ -312,17 +308,7 @@ namespace Trinity.DynamicCluster
 
         private IEnumerable<Storage.Storage> PickStorages(long cellId)
         {
-            return PickStorages(s => Chunks[s].Covers(cellId));
-        }
-
-        private IEnumerable<Storage.Storage> PickStorages(Func<Storage.Storage, bool> pred)
-        {
-            return Storages.Where(pred);
-        }
-
-        internal IEnumerable<Storage.Storage> PickAllStorages()
-        {
-            return Storages;
+            return this.Where(s => Chunks[s].Covers(cellId));
         }
 
         public ChunkCollection QueryChunkCollection(Storage.Storage storage)
@@ -332,7 +318,7 @@ namespace Trinity.DynamicCluster
 
         public IEnumerable<Storage.Storage> QueryRemoteStorage(IEnumerable<int> cc)
         {
-            return Chunks.Where(s => s.Value.IdenticalTo(cc)).Select(s => s.Key);
+            return Chunks.Where(s => Enumerable.SequenceEqual(s.Value, cc)).Select(s => s.Key);
         }
 
         public TrinityErrorCode OnChunkCollectionAdded(Storage.Storage storage, IEnumerable<int> cc)
@@ -357,9 +343,21 @@ namespace Trinity.DynamicCluster
 
             return collection.RemoveSlice(cc);
         }
+
+        #region IEnumerable
+        public IEnumerator<Storage.Storage> GetEnumerator()
+        {
+            return Storages.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return Storages.GetEnumerator();
+        }
+        #endregion
     }
 
-    internal class ChunkCollection
+    internal class ChunkCollection : IEnumerable<int>
     {
         private HashSet<int> m_list = new HashSet<int>();
 
@@ -399,18 +397,14 @@ namespace Trinity.DynamicCluster
             else return TrinityErrorCode.E_FAILURE;
         }
 
-        internal bool IdenticalTo(IEnumerable<int> collection)
+        public IEnumerator<int> GetEnumerator()
         {
-            return HashSet<int>.CreateSetComparer().Equals(m_list, (collection as HashSet<int>));
+            return m_list.GetEnumerator();
         }
 
-        internal IEnumerable<int> MyCollection
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            get
-            {
-                return (m_list as IEnumerable<int>);
-            }
+            return m_list.GetEnumerator();
         }
     }
-
 }

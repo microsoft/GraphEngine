@@ -11,8 +11,11 @@ namespace Trinity.DynamicCluster
 {
     class DynamicRemoteStorage : RemoteStorage
     {
-        public DynamicRemoteStorage(ServerInfo server_info, int connPerServer) : base(server_info, connPerServer)
+        private NameDescriptor m_name;
+
+        public DynamicRemoteStorage(ServerInfo server_info, NameDescriptor name, int connPerServer) : base(server_info, connPerServer)
         {
+            m_name = name;
         }
 
         public override unsafe void SendMessage(byte* buffer, int size)

@@ -215,10 +215,9 @@ namespace Trinity.Storage
             int temp_id = 0;
             m_leaving = true;
             var module = GetCommunicationModule<DynamicClusterCommModule>();
-            //TODO inform my peers that I'm leaving
             for (int i = 0; i < PartitionCount; i++)
             {
-                foreach (var s in ChunkedStorageTable(i).PickAllStorages())
+                foreach (var s in ChunkedStorageTable(i))
                 {
                     if (s == Global.LocalStorage) continue;  
                     lock (this)
@@ -230,7 +229,7 @@ namespace Trinity.Storage
                     }
                     var request = new _MotivateRemoteStorageOnLeavingStepOneRequestWriter(MyPartitionId, (MyChunkIds as List<int>));
                     module.MotivateRemoteStorageOnLeavingStepOne(temp_id, request);
-                    temporaryRemoteStorageRepo.Remove(temp_id);                    
+                    temporaryRemoteStorageRepo.Remove(temp_id);
                 }
             }
 
@@ -251,7 +250,7 @@ namespace Trinity.Storage
         private void Connect(NameDescriptor name, ServerInfo si)
         {
             Log.WriteLine($"DynamicCluster: connecting to {name} at {si.HostName}:{si.Port}");
-            DynamicRemoteStorage rs = new DynamicRemoteStorage(si, TrinityConfig.ClientMaxConn);
+            DynamicRemoteStorage rs = new DynamicRemoteStorage(si, name, TrinityConfig.ClientMaxConn);
             OnStorageJoin(rs);
         }
 

@@ -58,6 +58,7 @@
     <Compile Include="DynamicMemoryCloud.cs" />
     <Compile Include="DynamicMemoryCloud.KVStore.cs" />
     <Compile Include="DynamicMemoryCloud.Message.cs" />
+    <Compile Include="DynamicRemoteStorage.cs" />
     <Compile Include="INameService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
