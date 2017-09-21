@@ -132,7 +132,7 @@ namespace Trinity.DynamicCluster
         public override TrinityErrorCode GetCellType(long cellId, out ushort cellType)
         {
             List<ushort> templist = new List<ushort>();
-            foreach (Storage.Storage s in PickStorages(a => Chunks[a].Covers(cellId)))
+            foreach (Storage.Storage s in PickStorages(cellId))
             {
                 TrinityErrorCode eResult = s.GetCellType(cellId, out cellType);
                 if (eResult == TrinityErrorCode.E_SUCCESS) templist.Add(cellType);
@@ -152,7 +152,7 @@ namespace Trinity.DynamicCluster
         public override TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff)
         {
             List<byte[]> templist = new List<byte[]>();
-            foreach (Storage.Storage s in PickStorages(a => Chunks[a].Covers(cellId)))
+            foreach (Storage.Storage s in PickStorages(cellId))
             {
                 TrinityErrorCode eResult = s.LoadCell(cellId, out cellBuff);
                 if (eResult == TrinityErrorCode.E_SUCCESS) templist.Add(cellBuff);
@@ -173,7 +173,7 @@ namespace Trinity.DynamicCluster
         {
             List<byte[]> tempBuffList = new List<byte[]>();
             List<ushort> tempTypeList = new List<ushort>();
-            foreach (Storage.Storage s in PickStorages(a => Chunks[a].Covers(cellId)))
+            foreach (Storage.Storage s in PickStorages(cellId))
             {
                 TrinityErrorCode eResult = s.LoadCell(cellId, out cellBuff, out cellType);
                 if (eResult == TrinityErrorCode.E_SUCCESS)
@@ -196,7 +196,7 @@ namespace Trinity.DynamicCluster
 
         public override TrinityErrorCode RemoveCell(long cellId)
         {
-            foreach (Storage.Storage s in PickStorages(a => Chunks[a].Covers(cellId)))
+            foreach (Storage.Storage s in PickStorages(cellId))
             {
                 TrinityErrorCode eResult = s.RemoveCell(cellId);
                 if (eResult != TrinityErrorCode.E_SUCCESS) return eResult;
@@ -207,7 +207,7 @@ namespace Trinity.DynamicCluster
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal TrinityErrorCode _SaveCell_impl(long cellId, byte* buff, int size, ushort cellType)
         {
-            foreach (Storage.Storage s in PickStorages(a => Chunks[a].Covers(cellId)))
+            foreach (Storage.Storage s in PickStorages(cellId))
             {
                 TrinityErrorCode eResult = s.SaveCell(cellId, buff, size, cellType);
                 if (eResult != TrinityErrorCode.E_SUCCESS) return eResult;
@@ -252,7 +252,7 @@ namespace Trinity.DynamicCluster
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal TrinityErrorCode _UpdateCell_impl(long cellId, byte* buff, int size)
         {
-            foreach (Storage.Storage s in this.Where(a => Chunks[a].Covers(cellId)))
+            foreach (Storage.Storage s in PickStorages(cellId))
             {
                 TrinityErrorCode eResult = s.UpdateCell(cellId, buff, size);
                 if (eResult != TrinityErrorCode.E_SUCCESS) return eResult;

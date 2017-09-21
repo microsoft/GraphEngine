@@ -101,7 +101,7 @@ namespace Trinity.Storage
         {
             get
             {
-                return m_chunks.MyCollection;
+                return m_chunks;
             }
         }
 
@@ -141,7 +141,7 @@ namespace Trinity.Storage
         {
             get
             {
-                return m_chunks.MyCollection.Count();
+                return m_chunks.Count();
             }
         }
 
