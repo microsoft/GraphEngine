@@ -14,30 +14,17 @@ protocol QueryChunkedRemoteStorageInformation
 module DynamicCluster
 {
     protocol QueryChunkedRemoteStorageInformation;
-	protocol MotivateRemoteStorageOnLeavingStepOne;
-	protocol MotivateRemoteStorageOnLeavingStepTwo;
+	protocol MotivateRemoteStorageOnLeaving;
 }
 
-struct _MotivateRemoteStorageOnLeavingStepOneRequest
+struct _MotivateRemoteStorageOnLeavingRequest
 {
 	int partitionid;
-    List<int> chunks;
+    string name;
 }
 
-struct _MotivateRemoteStorageOnLeavingStepTwoResponse
-{
-	bool leaving;
-}
-
-protocol MotivateRemoteStorageOnLeavingStepOne
+protocol MotivateRemoteStorageOnLeaving
 {
     Type: Asyn;
-    Request: _MotivateRemoteStorageOnLeavingStepOneRequest;
-}
-
-protocol MotivateRemoteStorageOnLeavingStepTwo
-{
-    Type: Syn;
-    Request: void;
-    Response: _MotivateRemoteStorageOnLeavingStepTwoResponse;	
+    Request: _MotivateRemoteStorageOnLeavingRequest;
 }

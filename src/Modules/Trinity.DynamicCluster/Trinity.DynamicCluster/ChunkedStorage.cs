@@ -56,12 +56,12 @@ namespace Trinity.DynamicCluster
             }
             catch (Exception ex)
             {
-                Log.WriteLine(LogLevel.Error, "Errors occurred during Mount.");
+                Log.WriteLine(LogLevel.Error, "Errors occurred during Unmount.");
                 Log.WriteLine(LogLevel.Error, ex.ToString());
                 return TrinityErrorCode.E_FAILURE;
             }
         }
-        
+
         static internal int GetChunkIdByCellIdStatic(long cellId)
         {
             int chunk_id = -1;

@@ -40,11 +40,6 @@ namespace Trinity.Storage
         internal NameDescriptor m_namedescriptor = new NameDescriptor();
         internal ChunkedStorage ChunkedStorageTable(int id) => StorageTable[id] as ChunkedStorage;
         private Dictionary<int, DynamicRemoteStorage> temporaryRemoteStorageRepo = new Dictionary<int, DynamicRemoteStorage>();
-        private bool m_leaving = false;
-        public bool MyLeavingStatus
-        {
-            get { return m_leaving; }
-        }
 
         internal TrinityErrorCode OnStorageJoin(DynamicRemoteStorage remoteStorage)
         {
@@ -73,28 +68,28 @@ namespace Trinity.Storage
         /// [OnStorageJoin]
         /// </summary>
         /// <param name="remoteStorage"></param>
-        internal TrinityErrorCode OnStorageLeave(int partitionid, IEnumerable<int> chunks)
+        internal TrinityErrorCode OnStorageLeave(int partitionid, string name)
         {
             Random r = new Random();
             int temp_id = 0;
             var module = GetCommunicationModule<DynamicClusterCommModule>();
-            foreach (var s in ChunkedStorageTable(partitionid).QueryRemoteStorage(chunks))
+            foreach (var s in ChunkedStorageTable(partitionid))
             {
-                lock (this)
+                if ((s != Global.LocalStorage) && (s as DynamicRemoteStorage).Iscalled(name))
                 {
-                    while (temporaryRemoteStorageRepo.ContainsKey(temp_id = r.Next(-10000000, -1)))
-                        /* empty body */
-                        ;
-                    temporaryRemoteStorageRepo[temp_id] = (s as DynamicRemoteStorage);
+                    lock (this)
+                    {
+                        while (temporaryRemoteStorageRepo.ContainsKey(temp_id = r.Next(-10000000, -1)))
+                            /* empty body */
+                            ;
+                        temporaryRemoteStorageRepo[temp_id] = (s as DynamicRemoteStorage);
+                    }
+                    TrinityErrorCode errno = ChunkedStorageTable(partitionid).Unmount(s);
+                    temporaryRemoteStorageRepo.Remove(temp_id);
+                    return errno;
                 }
-                using (var remotestorage_info = module.MotivateRemoteStorageOnLeavingStepTwo(temp_id))
-                {
-                    if (remotestorage_info.leaving)
-                        ChunkedStorageTable(partitionid).Unmount(s);
-                }
-                temporaryRemoteStorageRepo.Remove(temp_id);
-            }
-            return TrinityErrorCode.E_SUCCESS;
+            }    
+            return TrinityErrorCode.E_FAILURE;
         }
 
         public override IEnumerable<int> MyChunkIds//better if named MyChunkCollection, return type is list?
@@ -145,6 +140,14 @@ namespace Trinity.Storage
             }
         }
 
+        public string MyNickname
+        {
+            get
+            {
+                return m_namedescriptor.Nickname;
+            }
+        }
+
         public override bool IsLocalCell(long cellId)
         {
             return (GetStorageByCellId(cellId) as ChunkedStorage).IsLocal(cellId);
@@ -158,7 +161,6 @@ namespace Trinity.Storage
             this.cluster_config = config;
             my_partition_id = DynamicClusterConfig.Instance.LocalPartitionId;
             my_proxy_id = -1;
-            m_leaving = false;
             partition_count = DynamicClusterConfig.Instance.PartitionCount;
             StorageTable = new ChunkedStorage[partition_count];
 
@@ -213,7 +215,6 @@ namespace Trinity.Storage
         {
             Random r = new Random();
             int temp_id = 0;
-            m_leaving = true;
             var module = GetCommunicationModule<DynamicClusterCommModule>();
             for (int i = 0; i < PartitionCount; i++)
             {
@@ -227,8 +228,8 @@ namespace Trinity.Storage
                             ;
                         temporaryRemoteStorageRepo[temp_id] = (s as DynamicRemoteStorage);
                     }
-                    var request = new _MotivateRemoteStorageOnLeavingStepOneRequestWriter(MyPartitionId, (MyChunkIds as List<int>));
-                    module.MotivateRemoteStorageOnLeavingStepOne(temp_id, request);
+                    var request = new _MotivateRemoteStorageOnLeavingRequestWriter(MyPartitionId, MyNickname);
+                    module.MotivateRemoteStorageOnLeaving(temp_id, request);
                     temporaryRemoteStorageRepo.Remove(temp_id);
                 }
             }

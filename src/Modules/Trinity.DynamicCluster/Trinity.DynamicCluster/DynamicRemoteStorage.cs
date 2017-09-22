@@ -18,6 +18,16 @@ namespace Trinity.DynamicCluster
             m_name = name;
         }
 
+        public bool Iscalled(NameDescriptor nd)
+        {
+            return ((m_name.Nickname.Equals(nd.Nickname)) & (m_name.ServerId == nd.ServerId));
+        }
+
+        public bool Iscalled(String s)
+        {
+            return m_name.Nickname.Equals(s);
+        }
+
         public override unsafe void SendMessage(byte* buffer, int size)
         {
             base.SendMessage(buffer, size);
