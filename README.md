@@ -15,13 +15,13 @@ This repository contains the source code of Graph Engine and its graph
 query language -- <a
 href="https://www.graphengine.io/video/likq.video.html"
 target="_blank">Language Integrated Knowledge Query</a> (LIKQ).
-[LIKQ](https://github.com/Microsoft/GraphEngine/tree/master/src/LIKQ)
+[LIKQ](https://github.com/Microsoft/GraphEngine/tree/master/src/Modules/LIKQ)
 is a versatile graph query language on top of Graph Engine. It
 combines the capability of fast graph exploration and the flexibility
 of lambda expression: server-side computations can be expressed in
 lambda expressions, embedded in LIKQ, and executed on the server side
 during graph traversal.  LIKQ is powering [Academic Graph Search
-API](https://www.microsoft.com/cognitive-services/en-us/Academic-Knowledge-API/documentation/GraphSearchMethod),
+API](https://azure.microsoft.com/en-us/services/cognitive-services/academic-knowledge/),
 which is part of Microsoft Cognitive Services.
 
 ## Downloads
@@ -51,7 +51,9 @@ Please submit bugs and feature requests in [GitHub Issues](https://github.com/Mi
 
 ## Building for Windows
 
-To build the `.Net Framework 4.5.1` version, run `tools/build.bat`.
+To build the `.Net Framework` version, install [Visual Studio
+2017](https://www.visualstudio.com/) with Windows 10 SDK
+(10.0.15063.0) for Desktop C++ selected and run `tools/build.bat`.
 
 To build the `CoreCLR` version, you need to download and install the
 latest [CoreCLR 2.0

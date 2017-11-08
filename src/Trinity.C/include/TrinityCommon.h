@@ -17,6 +17,7 @@
 #include <atomic>
 #include <algorithm>
 #include "Runtime/Transition.h"
+#include "arch/cpu.h"
 
 #include "TrinityErrorCode.h"
 typedef int64_t cellid_t;
