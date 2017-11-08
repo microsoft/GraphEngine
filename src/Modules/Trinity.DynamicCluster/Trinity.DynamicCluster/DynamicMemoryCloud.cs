@@ -14,6 +14,7 @@ using Trinity.Network;
 using Trinity.Utilities;
 using Trinity.Storage;
 using Trinity.DynamicCluster;
+using static Trinity.DynamicCluster.Utils;
 
 namespace Trinity.Storage
 {
@@ -23,6 +24,7 @@ namespace Trinity.Storage
         private int partition_count = -1;    
         private int my_partition_id = -1;
         private int my_proxy_id = -1;
+        private Random m_rng = new Random();
         private ChunkCollection m_chunks = new ChunkCollection(new int[] { });
         //private ChunkedStorage[] ChunkedStorageTable;//better to integrate in memorycloud.cs? 
 
@@ -41,24 +43,29 @@ namespace Trinity.Storage
         internal ChunkedStorage ChunkedStorageTable(int id) => StorageTable[id] as ChunkedStorage;
         private Dictionary<int, DynamicRemoteStorage> temporaryRemoteStorageRepo = new Dictionary<int, DynamicRemoteStorage>();
 
+        private int _PutTempStorage(DynamicRemoteStorage tmpstorage)
+        {
+            lock (this)
+            {
+                int temp_id = Infinity(() => m_rng.Next(-10000000, -1))
+                         .SkipWhile(temporaryRemoteStorageRepo.ContainsKey)
+                         .First();
+                temporaryRemoteStorageRepo[temp_id] = tmpstorage;
+                return temp_id;
+            }
+        }
+
         internal TrinityErrorCode OnStorageJoin(DynamicRemoteStorage remoteStorage)
         {
             Random r = new Random();
-            int temp_id = 0;
-            lock (this)
-            {
-                while (temporaryRemoteStorageRepo.ContainsKey(temp_id = r.Next(-10000000, -1)))
-                    /* empty body */;
-                temporaryRemoteStorageRepo[temp_id] = remoteStorage;
-            }
-
+            int temp_id = _PutTempStorage(remoteStorage);
             var module = GetCommunicationModule<DynamicClusterCommModule>();
             using (var remotestorage_info = module.QueryChunkedRemoteStorageInformation(temp_id))
             {
                 ChunkedStorageTable(remotestorage_info.partitionid).Mount(remoteStorage, remotestorage_info);
             }
 
-            temporaryRemoteStorageRepo.Remove(temp_id);
+            lock (this) { temporaryRemoteStorageRepo.Remove(temp_id); }
             return TrinityErrorCode.E_SUCCESS;
         }
 
@@ -70,26 +77,15 @@ namespace Trinity.Storage
         /// <param name="remoteStorage"></param>
         internal TrinityErrorCode OnStorageLeave(int partitionid, string name)
         {
-            Random r = new Random();
-            int temp_id = 0;
-            var module = GetCommunicationModule<DynamicClusterCommModule>();
-            foreach (var s in ChunkedStorageTable(partitionid))
-            {
-                if ((s != Global.LocalStorage) && (s as DynamicRemoteStorage).Iscalled(name))
-                {
-                    lock (this)
-                    {
-                        temp_id = Utils.Infinity(() => r.Next(-10000000, -1))
-                                           .SkipWhile(temporaryRemoteStorageRepo.ContainsKey)
-                                           .First();
-                        temporaryRemoteStorageRepo[temp_id] = (s as DynamicRemoteStorage);
-                    }
-                    TrinityErrorCode errno = ChunkedStorageTable(partitionid).Unmount(s);
-                    temporaryRemoteStorageRepo.Remove(temp_id);
-                    return errno;
-                }
-            }    
-            return TrinityErrorCode.E_FAILURE;
+            var module         = GetCommunicationModule<DynamicClusterCommModule>();
+            var remote_storage = ChunkedStorageTable(partitionid)
+                                .OfType<DynamicRemoteStorage>()
+                                .FirstOrDefault(_ => _.Iscalled(name));
+            if (remote_storage == null) return TrinityErrorCode.E_FAILURE;
+            int temp_id        = _PutTempStorage(remote_storage);
+            TrinityErrorCode errno = ChunkedStorageTable(partitionid).Unmount(remote_storage);
+            lock (this) { temporaryRemoteStorageRepo.Remove(temp_id); }
+            return errno;
         }
 
         public override IEnumerable<int> MyChunkIds//better if named MyChunkCollection, return type is list?
@@ -162,15 +158,12 @@ namespace Trinity.Storage
             my_partition_id = DynamicClusterConfig.Instance.LocalPartitionId;
             my_proxy_id = -1;
             partition_count = DynamicClusterConfig.Instance.PartitionCount;
-            StorageTable = new ChunkedStorage[partition_count];
+            StorageTable = Infinity(() => new ChunkedStorage())
+                          .Take(partition_count)
+                          .ToArray();
 
             if (partition_count == 0)
                 goto server_not_found;
-
-            for (int i = 0; i < partition_count; i++)
-            {
-                StorageTable[i] = new ChunkedStorage();
-            }
 
             if (TrinityErrorCode.E_SUCCESS != (errno = ChunkedStorageTable(my_partition_id).Mount(Global.LocalStorage, MyChunkIds)))
             {
@@ -214,24 +207,17 @@ namespace Trinity.Storage
         public TrinityErrorCode Shutdown()
         {
             Random r = new Random();
-            int temp_id = 0;
             var module = GetCommunicationModule<DynamicClusterCommModule>();
-            for (int i = 0; i < PartitionCount; i++)
+            var rs = Enumerable
+                    .Range(0, PartitionCount)
+                    .SelectMany(ChunkedStorageTable)
+                    .OfType<DynamicRemoteStorage>();
+            foreach(var s in rs)
             {
-                foreach (var s in ChunkedStorageTable(i))
-                {
-                    if (s == Global.LocalStorage) continue;  
-                    lock (this)
-                    {
-                        while (temporaryRemoteStorageRepo.ContainsKey(temp_id = r.Next(-10000000, -1)))
-                            /* empty body */
-                            ;
-                        temporaryRemoteStorageRepo[temp_id] = (s as DynamicRemoteStorage);
-                    }
-                    var request = new _MotivateRemoteStorageOnLeavingRequestWriter(MyPartitionId, MyNickname);
-                    module.MotivateRemoteStorageOnLeaving(temp_id, request);
-                    temporaryRemoteStorageRepo.Remove(temp_id);
-                }
+                int temp_id = _PutTempStorage(s);
+                using (var request = new _MotivateRemoteStorageOnLeavingRequestWriter(MyPartitionId, MyNickname))
+                { module.MotivateRemoteStorageOnLeaving(temp_id, request); }
+                lock (this) { temporaryRemoteStorageRepo.Remove(temp_id); }
             }
 
             //then?
