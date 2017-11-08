@@ -79,9 +79,9 @@ namespace Trinity.Storage
                 {
                     lock (this)
                     {
-                        while (temporaryRemoteStorageRepo.ContainsKey(temp_id = r.Next(-10000000, -1)))
-                            /* empty body */
-                            ;
+                        temp_id = Utils.Infinity(() => r.Next(-10000000, -1))
+                                           .SkipWhile(temporaryRemoteStorageRepo.ContainsKey)
+                                           .First();
                         temporaryRemoteStorageRepo[temp_id] = (s as DynamicRemoteStorage);
                     }
                     TrinityErrorCode errno = ChunkedStorageTable(partitionid).Unmount(s);
