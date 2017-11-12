@@ -213,14 +213,15 @@ namespace Trinity.Utilities
         /// Projections to null are ignored.
         /// </summary>
         /// <param name="assembly">The assembly constraint. Passing null to scan all loaded assemblies.</param>
-        /// <param name="typeProjector">The projector.</param>
+        /// <param name="typeProjector">The projector. When not specified, uses the default projector (non-parametric constructor, then cast to TBase)</param>
         /// <typeparam name="TBase">The base class constraint.</typeparam>
         /// <remarks>
         /// Exceptions are swallowed.
         /// </remarks>
-        public static List<TBase> GetAllClassInstances<TBase>(Func<Type, TBase> typeProjector, Assembly assembly = null)
+        public static List<TBase> GetAllClassInstances<TBase>(Func<Type, TBase> typeProjector = null, Assembly assembly = null)
             where TBase : class
         {
+            typeProjector = typeProjector ?? (t => t.GetConstructor(new Type[] { }).Invoke(new object[] { }) as TBase);
             return GetAllClassInstances_impl(typeProjector, GetAllClassTypes(assembly));
         }
 
