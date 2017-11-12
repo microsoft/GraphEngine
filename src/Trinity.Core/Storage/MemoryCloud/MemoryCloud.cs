@@ -52,7 +52,7 @@ namespace Trinity.Storage
         /// Invokes a ServerConnected event.
         /// </summary>
         /// <param name="e">A event that indicates the server status is changed.</param>
-        protected virtual void OnConnected(ServerStatusEventArgs e)
+        protected virtual void OnConnected(RemoteStorageEventArgs e)
         {
             ServerConnected(this, e);
         }
@@ -61,20 +61,20 @@ namespace Trinity.Storage
         /// Invoked a ServerDisconnected event.
         /// </summary>
         /// <param name="e">A event that indicates the server status is changed.</param>
-        protected virtual void OnDisconnected(ServerStatusEventArgs e)
+        protected virtual void OnDisconnected(RemoteStorageEventArgs e)
         {
             ServerDisconnected(this, e);
         }
 
-        internal void ReportServerConnectedEvent(int serverId)
+        internal void ReportServerConnectedEvent(RemoteStorage rs)
         {
-            ServerStatusEventArgs e = new ServerStatusEventArgs(serverId);
+            RemoteStorageEventArgs e = new RemoteStorageEventArgs(rs);
             OnConnected(e);
         }
 
-        internal void ReportServerDisconnectedEvent(int serverId)
+        internal void ReportServerDisconnectedEvent(RemoteStorage rs)
         {
-            ServerStatusEventArgs e = new ServerStatusEventArgs(serverId);
+            RemoteStorageEventArgs e = new RemoteStorageEventArgs(rs);
             OnDisconnected(e);
         }
 
@@ -370,31 +370,24 @@ namespace Trinity.Storage
     }
 
     /// <summary>
-    /// Represents an event class that is triggered when the server status is changed.
+    /// Represents an event class that is triggered when the status of a <see cref="RemoteStorage"/> is changed.
     /// </summary>
-    public class ServerStatusEventArgs : EventArgs
+    public class RemoteStorageEventArgs : EventArgs
     {
-        private readonly int server_id;
 
         /// <summary>
         /// Constructs an instance of ServerStatusEventArgs.
         /// </summary>
-        /// <param name="serverId">The id of the server whose status is changed.</param>
-        public ServerStatusEventArgs(int serverId)
+        /// <param name="rs">The RemoteStorage whose status is changed.</param>
+        public RemoteStorageEventArgs(RemoteStorage rs)
         {
-            this.server_id = serverId;
+            this.RemoteStorage = rs;
         }
 
         /// <summary>
-        /// The id of the server whose status is changed.
+        /// The target remote storage
         /// </summary>
-        public int ServerId
-        {
-            get
-            {
-                return server_id;
-            }
-        }
+        public RemoteStorage RemoteStorage { get; private set; }
     }
 
     /// <summary>
@@ -402,6 +395,6 @@ namespace Trinity.Storage
     /// </summary>
     /// <param name="sender">The object that triggers the current event.</param>
     /// <param name="e">An instance of ServerStatusEventArgs.</param>
-    public delegate void ServerStatusEventHandler(object sender, ServerStatusEventArgs e);
+    public delegate void ServerStatusEventHandler(object sender, RemoteStorageEventArgs e);
 
 }

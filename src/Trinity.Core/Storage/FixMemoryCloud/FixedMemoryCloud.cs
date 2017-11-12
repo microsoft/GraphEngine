@@ -105,7 +105,7 @@ namespace Trinity.Storage
                 }
                 else
                 {
-                    StorageTable[i] = new RemoteStorage(cluster_config.Servers[i], TrinityConfig.ClientMaxConn, this, i, nonblocking);
+                    StorageTable[i] = new RemoteStorage(cluster_config.Servers[i].Instances, TrinityConfig.ClientMaxConn, this, i, nonblocking);
                 }
             }
 

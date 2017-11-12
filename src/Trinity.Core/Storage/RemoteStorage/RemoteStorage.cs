@@ -32,36 +32,41 @@ namespace Trinity.Storage
         BlockingCollection<Network.Client.SynClient> ConnPool = new BlockingCollection<Network.Client.SynClient>(new ConcurrentQueue<Network.Client.SynClient>());
 
         private volatile bool disposed = false;
-        internal bool connected = false;
+        internal bool m_connected = false;
         private int m_send_retry = NetworkConfig.Instance.ClientSendRetry;
         private int m_client_count = 0;
-        private FixedMemoryCloud memory_cloud;
+        private MemoryCloud m_memorycloud = null;
+        /// <summary>
+        /// Deprecated. Use PartitionId instead.
+        /// </summary>
+        [Obsolete]
         public int MyServerId;
+        /// <summary>
+        /// The partition id of this remote instance.
+        /// </summary>
+        public int PartitionId => MyServerId;
 
-        protected internal RemoteStorage(ServerInfo server_info, int connPerServer)
-        {
-            for (int i = 0; i < connPerServer; i++)
-            {
-                Connect(server_info);
-            }
-        }
+        internal RemoteStorage(ServerInfo server_info, int connPerServer) : this(new[] { server_info }, connPerServer) { }
 
-        internal RemoteStorage(AvailabilityGroup trinityServer, int connPerServer, FixedMemoryCloud mc, int serverId, bool nonblocking)
+        protected internal RemoteStorage(IEnumerable<ServerInfo> servers, int connPerServer, MemoryCloud mc = null, int partitionId = -1, bool nonblocking = false)
         {
-            this.memory_cloud = mc;
-            this.MyServerId = serverId;
+            this.m_memorycloud = mc;
+            this.MyServerId = partitionId;
 
             var connect_async_task = Task.Factory.StartNew(() =>
             {
                 for (int k = 0; k < connPerServer; k++) // make different server connections interleaved 
                 {
-                    for (int i = 0; i < trinityServer.Instances.Count; i++)
+                    foreach(var s in servers)
                     {
-                        Connect(trinityServer.Instances[i]);
+                        Connect(s);
                     }
                 }
-                BackgroundThread.AddBackgroundTask(new BackgroundTask(Heartbeat, TrinityConfig.HeartbeatInterval));
-                mc.ReportServerConnectedEvent(serverId);
+                if (mc != null && partitionId != -1)
+                {
+                    BackgroundThread.AddBackgroundTask(new BackgroundTask(Heartbeat, TrinityConfig.HeartbeatInterval));
+                    mc.ReportServerConnectedEvent(this);
+                }
             });
 
             if (!nonblocking)
@@ -83,7 +88,7 @@ namespace Trinity.Storage
                     {
                         ConnPool.Add(client);
                         ++m_client_count;
-                        connected = true;
+                        m_connected = true;
                         break;
                     }
                 }
@@ -103,18 +108,18 @@ namespace Trinity.Storage
 
             if (TrinityErrorCode.E_SUCCESS == eResult)
             {
-                if (!connected)
+                if (!m_connected)
                 {
-                    connected = true;
-                    memory_cloud.ReportServerConnectedEvent(MyServerId);
+                    m_connected = true;
+                    m_memorycloud.ReportServerConnectedEvent(this);
                 }
             }
             else
             {
-                if (connected)
+                if (m_connected)
                 {
-                    connected = false;
-                    memory_cloud.ReportServerDisconnectedEvent(MyServerId);
+                    m_connected = false;
+                    m_memorycloud.ReportServerDisconnectedEvent(this);
                     InvalidateSynClients();
                 }
             }
@@ -145,7 +150,7 @@ namespace Trinity.Storage
         private void InvalidateSynClients()
         {
             List<SynClient> clients = new List<SynClient>();
-            for (int i = 0; i<m_client_count; ++i)
+            for (int i = 0; i < m_client_count; ++i)
             {
                 clients.Add(GetClient());
             }

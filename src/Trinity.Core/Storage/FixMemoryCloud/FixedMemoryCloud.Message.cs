@@ -77,9 +77,8 @@ namespace Trinity.Storage
             lock (get_proxy_lock)
             {
                 var proxy = ProxyList[proxyId];
-                if (!proxy.connected)
-
-                    new Exception(string.Format(CultureInfo.InvariantCulture, "The proxy {0} is not connected.", proxyId));
+                if (!proxy.m_connected)
+                    throw new Exception(string.Format(CultureInfo.InvariantCulture, "The proxy {0} is not connected.", proxyId));
                 return proxy;
             }
         }
@@ -90,7 +89,7 @@ namespace Trinity.Storage
         {
             get
             {
-                lock (rand)
+                lock (get_proxy_lock)
                 {
                     try
                     {
@@ -103,8 +102,6 @@ namespace Trinity.Storage
                 }
             }
         }
-
-        #endregion
 
         /// <summary>
         /// Send a binary message to the specified Trinity proxy.
@@ -128,5 +125,7 @@ namespace Trinity.Storage
         {
             GetProxy(proxyId).SendMessage(buffer, size, out response);
         }
+        #endregion
+
     }
 }
