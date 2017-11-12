@@ -8,11 +8,11 @@ namespace Trinity.DynamicCluster
 {
     internal class Utils
     {
-        public static IEnumerable<T> Infinity<T>(Func<T> gen)
+        public static IEnumerable<T> Infinity<T>(Func<T> IO)
         {
             while (true)
             {
-                yield return gen();
+                yield return IO();
             }
         }
     }

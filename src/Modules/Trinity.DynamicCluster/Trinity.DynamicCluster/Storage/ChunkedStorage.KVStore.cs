@@ -1,70 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-
-using Trinity;
-using Trinity.Network.Messaging;
-using Trinity.Diagnostics;
 using System.Runtime.CompilerServices;
-using Trinity.Network;
-using Trinity.Utilities;
-using Trinity.Storage;
-using Trinity.DynamicCluster;
+using System.Text;
+using System.Threading.Tasks;
 using Trinity.Configuration;
-using System.Collections;
 
 namespace Trinity.DynamicCluster
 {
-    unsafe partial class ChunkedStorage : Storage.Storage, IEnumerable<Storage.Storage>
+    using Storage = Trinity.Storage.Storage;
+    internal unsafe partial class ChunkedStorage
     {
-        // List<Chunk> chunks;
-        // need a protocol to communicate within an AG: QueryYourChunkIds
-        // we also need a protocol to "discuss" about chunk allocation. (P2)
-        // route messages to a specific storage
-        private List<Storage.Storage> Storages; // <----
-        private Dictionary<Storage.Storage, ChunkCollection> Chunks; //<-----ChunkCollection
-        //DynamicMemoryCloud m_MemoryCloud; // get ChunkIds from m_MemoryCloud and decide routing.???????
-        List<long> chunk_range = DynamicMemoryCloud.ChunkRange;
-
-        internal TrinityErrorCode Mount(Storage.Storage s, _QueryChunkedRemoteStorageInformationReusltReader info)
-        {
-            return OnChunkCollectionAdded(s, info.chunks);
-        }
-
-        internal TrinityErrorCode Mount(Storage.Storage s, IEnumerable<int> chunks)
-        {
-            return OnChunkCollectionAdded(s, chunks);
-        }
-
-        internal TrinityErrorCode Unmount(Storage.Storage s)
-        {
-            try
-            {
-                Chunks.Remove(s);
-                Storages.Remove(s);
-                return TrinityErrorCode.E_SUCCESS;
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(LogLevel.Error, "Errors occurred during Unmount.");
-                Log.WriteLine(LogLevel.Error, ex.ToString());
-                return TrinityErrorCode.E_FAILURE;
-            }
-        }
-
-        internal static int GetChunkIdByCellId(long cellId)
-        {
-            return DynamicMemoryCloud.ChunkRange.FindIndex(upbound => cellId < upbound);
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal TrinityErrorCode _AddCell_impl(long cellId, byte* buff, int size, ushort cellType)
         {
-            foreach (Storage.Storage s in PickStorages(cellId))
+            foreach (Storage s in PickStorages(cellId))
             {
                 TrinityErrorCode eResult = s.AddCell(cellId, buff, size, cellType);
                 if (eResult != TrinityErrorCode.E_SUCCESS) return eResult;
@@ -112,15 +62,10 @@ namespace Trinity.DynamicCluster
             return (PickStorages(cellId).Where(s => s.Contains(cellId)).Any());
         }
 
-        public override void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-
         public override TrinityErrorCode GetCellType(long cellId, out ushort cellType)
         {
             List<ushort> templist = new List<ushort>();
-            foreach (Storage.Storage s in PickStorages(cellId))
+            foreach (Storage s in PickStorages(cellId))
             {
                 TrinityErrorCode eResult = s.GetCellType(cellId, out cellType);
                 if (eResult == TrinityErrorCode.E_SUCCESS) templist.Add(cellType);
@@ -140,7 +85,7 @@ namespace Trinity.DynamicCluster
         public override TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff)
         {
             List<byte[]> templist = new List<byte[]>();
-            foreach (Storage.Storage s in PickStorages(cellId))
+            foreach (Storage s in PickStorages(cellId))
             {
                 TrinityErrorCode eResult = s.LoadCell(cellId, out cellBuff);
                 if (eResult == TrinityErrorCode.E_SUCCESS) templist.Add(cellBuff);
@@ -161,7 +106,7 @@ namespace Trinity.DynamicCluster
         {
             List<byte[]> tempBuffList = new List<byte[]>();
             List<ushort> tempTypeList = new List<ushort>();
-            foreach (Storage.Storage s in PickStorages(cellId))
+            foreach (Storage s in PickStorages(cellId))
             {
                 TrinityErrorCode eResult = s.LoadCell(cellId, out cellBuff, out cellType);
                 if (eResult == TrinityErrorCode.E_SUCCESS)
@@ -184,7 +129,7 @@ namespace Trinity.DynamicCluster
 
         public override TrinityErrorCode RemoveCell(long cellId)
         {
-            foreach (Storage.Storage s in PickStorages(cellId))
+            foreach (Storage s in PickStorages(cellId))
             {
                 TrinityErrorCode eResult = s.RemoveCell(cellId);
                 if (eResult != TrinityErrorCode.E_SUCCESS) return eResult;
@@ -195,7 +140,7 @@ namespace Trinity.DynamicCluster
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal TrinityErrorCode _SaveCell_impl(long cellId, byte* buff, int size, ushort cellType)
         {
-            foreach (Storage.Storage s in PickStorages(cellId))
+            foreach (Storage s in PickStorages(cellId))
             {
                 TrinityErrorCode eResult = s.SaveCell(cellId, buff, size, cellType);
                 if (eResult != TrinityErrorCode.E_SUCCESS) return eResult;
@@ -240,7 +185,7 @@ namespace Trinity.DynamicCluster
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal TrinityErrorCode _UpdateCell_impl(long cellId, byte* buff, int size)
         {
-            foreach (Storage.Storage s in PickStorages(cellId))
+            foreach (Storage s in PickStorages(cellId))
             {
                 TrinityErrorCode eResult = s.UpdateCell(cellId, buff, size);
                 if (eResult != TrinityErrorCode.E_SUCCESS) return eResult;
@@ -269,133 +214,5 @@ namespace Trinity.DynamicCluster
             }
         }
 
-        public override void SendMessage(TrinityMessage message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void SendMessage(byte* message, int size)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void SendMessage(TrinityMessage message, out TrinityResponse response)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void SendMessage(byte* message, int size, out TrinityResponse response)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal bool IsLocal(long cellId)
-        {
-            return PickStorages(cellId).Any(s => s == Global.LocalStorage);
-        }
-
-        /// <summary>
-        /// Returns the storages that cover the cellId
-        /// </summary>
-        /// <param name="cellId"></param>
-        /// <returns></returns>
-        private IEnumerable<Storage.Storage> PickStorages(long cellId)
-        {
-            return this.Where(s => Chunks[s].Covers(cellId));
-        }
-
-        public ChunkCollection QueryChunkCollection(Storage.Storage storage)
-        {
-            return Chunks[storage];
-        }
-
-        public IEnumerable<Storage.Storage> QueryRemoteStorage(IEnumerable<int> cc)
-        {
-            return Chunks.Where(s => Enumerable.SequenceEqual(s.Value, cc)).Select(s => s.Key);
-        }
-
-        public TrinityErrorCode OnChunkCollectionAdded(Storage.Storage storage, IEnumerable<int> cc)
-        {
-            if (Chunks.ContainsKey(storage))
-            {
-                return Chunks[storage].AddSlice(cc);
-            }
-            else
-            {
-                Storages.Add(storage);
-                Chunks[storage] = new ChunkCollection(cc);
-                return TrinityErrorCode.E_SUCCESS;
-            }
-        }
-
-        public TrinityErrorCode OnChunkCollectionRemoved(Storage.Storage storage, IEnumerable<int> cc)
-        {
-            ChunkCollection collection;
-            if (!Chunks.TryGetValue(storage, out collection))
-                return TrinityErrorCode.E_FAILURE;
-
-            return collection.RemoveSlice(cc);
-        }
-
-        #region IEnumerable
-        public IEnumerator<Storage.Storage> GetEnumerator()
-        {
-            return Storages.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return Storages.GetEnumerator();
-        }
-        #endregion
-    }
-
-    internal class ChunkCollection : IEnumerable<int>
-    {
-        private HashSet<int> m_list;
-
-        public ChunkCollection(IEnumerable<int> chunks)
-        {
-            m_list = new HashSet<int>(chunks);
-        }
-
-        internal bool Covers(long cellId)
-        {
-            int chunk_id = ChunkedStorage.GetChunkIdByCellId(cellId);
-            return m_list.Contains(chunk_id);
-        }
-
-        internal TrinityErrorCode AddSlice(IEnumerable<int> collection)
-        {
-            foreach (var c in collection)
-            {
-                m_list.Add(c);
-            }
-            return TrinityErrorCode.E_SUCCESS;
-        }
-
-        /// <summary>
-        /// A = A - B
-        /// A is current collection
-        /// B is collection
-        /// </summary>
-        internal TrinityErrorCode RemoveSlice(IEnumerable<int> collection)
-        {
-            foreach (var c in collection)
-            {
-                m_list.Remove(c);
-            }
-            return TrinityErrorCode.E_SUCCESS;
-        }
-
-        public IEnumerator<int> GetEnumerator()
-        {
-            return m_list.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return m_list.GetEnumerator();
-        }
     }
 }

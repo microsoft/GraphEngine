@@ -12,9 +12,9 @@ namespace Trinity.DynamicCluster
 {
     public class NameDescriptor
     {
-        public Guid ServerId { get; internal set; }
+        public Guid ServerId { get; private set; }
 
-        public string Nickname { get; internal set; }
+        public string Nickname { get; private set; }
 
         public NameDescriptor()
         {
@@ -22,6 +22,12 @@ namespace Trinity.DynamicCluster
 
             ServerId = GetMachineGuid();
             Nickname = GenerateNickName(ServerId);
+        }
+
+        private NameDescriptor(string name, Guid serverId)
+        {
+            ServerId = serverId;
+            Nickname = name;
         }
 
         private string GenerateNickName(Guid serverId)
@@ -54,11 +60,18 @@ namespace Trinity.DynamicCluster
             r.NextBytes(b);
             return new Guid(b);
         }
+
+        public static implicit operator NameDescriptor(StorageInformation si)
+        {
+            return new NameDescriptor(si.name, si.id);
+        }
     }
 
     public interface INameService
     {
+        TrinityErrorCode Start();
         TrinityErrorCode PublishServerInfo(NameDescriptor name, ServerInfo serverInfo);
         event EventHandler<Tuple<NameDescriptor, ServerInfo>> NewServerInfoPublished;
+        TrinityErrorCode Stop();
     }
 }

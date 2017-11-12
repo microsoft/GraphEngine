@@ -51,14 +51,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChunkedStorage.cs" />
+    <Compile Include="Storage\ChunkedStorage.cs" />
     <Compile Include="DynamicClusterCommModule.cs" />
     <Compile Include="DynamicClusterConfig.cs" />
-    <Compile Include="DynamicMemoryCloud.Cmd.cs" />
-    <Compile Include="DynamicMemoryCloud.cs" />
-    <Compile Include="DynamicMemoryCloud.KVStore.cs" />
-    <Compile Include="DynamicMemoryCloud.Message.cs" />
-    <Compile Include="DynamicRemoteStorage.cs" />
+    <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.Cmd.cs" />
+    <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.cs" />
+    <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.KVStore.cs" />
+    <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.Message.cs" />
+    <Compile Include="Storage\ChunkedStorage.KVStore.cs" />
+    <Compile Include="Storage\DynamicRemoteStorage.cs" />
     <Compile Include="INameService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils.cs" />
@@ -68,7 +69,7 @@
     <TslCodegen Include="Trinity.DynamicClusterProtocols.tsl" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="names.txt" />
+    <EmbeddedResource Include="Resources\names.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

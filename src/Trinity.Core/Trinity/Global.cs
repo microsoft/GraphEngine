@@ -123,7 +123,7 @@ namespace Trinity
         {
             Log.WriteLine(LogLevel.Info, "Scanning for startup tasks.");
             bool all_good = true;
-            var tasks = AssemblyUtility.GetAllClassInstances(t => t.GetConstructor(new Type[] { }).Invoke(new object[] { }) as IStartupTask);
+            var tasks = AssemblyUtility.GetAllClassInstances<IStartupTask>();
             foreach (var task in tasks)
             {
                 try
