@@ -29,7 +29,7 @@ namespace Trinity.DynamicCluster
         private Dictionary<Storage.Storage, ChunkCollection> Chunks; //<-----ChunkCollection
         //DynamicMemoryCloud m_MemoryCloud; // get ChunkIds from m_MemoryCloud and decide routing.???????
         List<long> chunk_range = DynamicMemoryCloud.ChunkRange;
-        
+
         internal TrinityErrorCode Mount(Storage.Storage s, _QueryChunkedRemoteStorageInformationReusltReader info)
         {
             HashSet<int> tempset = new HashSet<int>();
@@ -62,15 +62,9 @@ namespace Trinity.DynamicCluster
             }
         }
 
-        static internal int GetChunkIdByCellIdStatic(long cellId)
+        internal static int GetChunkIdByCellId(long cellId)
         {
-            int chunk_id = -1;
-            for (chunk_id = 0; chunk_id < DynamicMemoryCloud.ChunkRange.Count; chunk_id++)
-            {
-                if (cellId > DynamicMemoryCloud.ChunkRange[chunk_id]) return chunk_id + 1;
-            }
-
-            return 0;
+            return DynamicMemoryCloud.ChunkRange.FindIndex(upbound => cellId < upbound);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -183,7 +177,7 @@ namespace Trinity.DynamicCluster
                 }
                 else return eResult;
             }
-            if (tempBuffList.Count == 0) { cellBuff = new byte[0]; cellType = 0 ; return TrinityErrorCode.E_CELL_NOT_FOUND; }
+            if (tempBuffList.Count == 0) { cellBuff = new byte[0]; cellType = 0; return TrinityErrorCode.E_CELL_NOT_FOUND; }
             if (tempBuffList.Any<byte[]>(_ => _ != tempBuffList[0]) || tempTypeList.Any<ushort>(_ => _ != tempTypeList[0]))
             {
                 cellBuff = new byte[0]; cellType = 0; return TrinityErrorCode.E_FAILURE;//TODO we need to decide new error type.
@@ -306,6 +300,11 @@ namespace Trinity.DynamicCluster
             return PickStorages(cellId).Any(s => s == Global.LocalStorage);
         }
 
+        /// <summary>
+        /// Returns the storages that cover the cellId
+        /// </summary>
+        /// <param name="cellId"></param>
+        /// <returns></returns>
         private IEnumerable<Storage.Storage> PickStorages(long cellId)
         {
             return this.Where(s => Chunks[s].Covers(cellId));
@@ -313,7 +312,7 @@ namespace Trinity.DynamicCluster
 
         public ChunkCollection QueryChunkCollection(Storage.Storage storage)
         {
-           return Chunks[storage];
+            return Chunks[storage];
         }
 
         public IEnumerable<Storage.Storage> QueryRemoteStorage(IEnumerable<int> cc)
@@ -359,28 +358,26 @@ namespace Trinity.DynamicCluster
 
     internal class ChunkCollection : IEnumerable<int>
     {
-        private HashSet<int> m_list = new HashSet<int>();
+        private HashSet<int> m_list;
 
         public ChunkCollection(IEnumerable<int> chunks)
         {
-            foreach (var c in chunks)
-                m_list.Add(c);
+            m_list = new HashSet<int>(chunks);
         }
 
-        
         internal bool Covers(long cellId)
         {
-            int chunk_id = ChunkedStorage.GetChunkIdByCellIdStatic(cellId);
+            int chunk_id = ChunkedStorage.GetChunkIdByCellId(cellId);
             return m_list.Contains(chunk_id);
         }
 
         internal TrinityErrorCode AddSlice(IEnumerable<int> collection)
         {
-            bool f = false;
             foreach (var c in collection)
-                f = f | m_list.Add(c);
-            /*if (f)*/ return TrinityErrorCode.E_SUCCESS;
-            /*else return TrinityErrorCode.E_FAILURE;*/
+            {
+                m_list.Add(c);
+            }
+            return TrinityErrorCode.E_SUCCESS;
         }
 
         /// <summary>
@@ -390,11 +387,11 @@ namespace Trinity.DynamicCluster
         /// </summary>
         internal TrinityErrorCode RemoveSlice(IEnumerable<int> collection)
         {
-            bool f = true;
             foreach (var c in collection)
-                f = f & m_list.Remove(c);
-            if (f) return TrinityErrorCode.E_SUCCESS;
-            else return TrinityErrorCode.E_FAILURE;
+            {
+                m_list.Remove(c);
+            }
+            return TrinityErrorCode.E_SUCCESS;
         }
 
         public IEnumerator<int> GetEnumerator()
