@@ -23,7 +23,7 @@ namespace Trinity.DynamicCluster
             response.partitionid = dmc.MyPartitionId;
             response.chunks.AddRange(dmc.MyChunkIds.Cast<int>().ToList());
         }
-        public override void MotivateRemoteStorageOnLeavingHandler(_MotivateRemoteStorageOnLeavingRequestReader request)
+        public override void NotifyRemoteStorageOnLeavingHandler(_NotifyRemoteStorageOnLeavingRequestReader request)
         {
             var dmc = Global.CloudStorage as Trinity.Storage.DynamicMemoryCloud;
             dmc.OnStorageLeave(request.partitionid, request.name);

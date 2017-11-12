@@ -15,6 +15,7 @@ using Trinity.Utilities;
 using Trinity.Storage;
 using Trinity.DynamicCluster;
 using static Trinity.DynamicCluster.Utils;
+using System.Collections.Concurrent;
 
 namespace Trinity.Storage
 {
@@ -41,7 +42,7 @@ namespace Trinity.Storage
         internal INameService m_nameservice; 
         internal NameDescriptor m_namedescriptor = new NameDescriptor();
         internal ChunkedStorage ChunkedStorageTable(int id) => StorageTable[id] as ChunkedStorage;
-        private Dictionary<int, DynamicRemoteStorage> temporaryRemoteStorageRepo = new Dictionary<int, DynamicRemoteStorage>();
+        private ConcurrentDictionary<int, DynamicRemoteStorage> temporaryRemoteStorageRepo = new ConcurrentDictionary<int, DynamicRemoteStorage>();
 
         private int _PutTempStorage(DynamicRemoteStorage tmpstorage)
         {
@@ -65,7 +66,7 @@ namespace Trinity.Storage
                 ChunkedStorageTable(remotestorage_info.partitionid).Mount(remoteStorage, remotestorage_info);
             }
 
-            lock (this) { temporaryRemoteStorageRepo.Remove(temp_id); }
+            temporaryRemoteStorageRepo.TryRemove(temp_id, out var _);
             return TrinityErrorCode.E_SUCCESS;
         }
 
@@ -84,7 +85,7 @@ namespace Trinity.Storage
             if (remote_storage == null) return TrinityErrorCode.E_FAILURE;
             int temp_id        = _PutTempStorage(remote_storage);
             TrinityErrorCode errno = ChunkedStorageTable(partitionid).Unmount(remote_storage);
-            lock (this) { temporaryRemoteStorageRepo.Remove(temp_id); }
+            temporaryRemoteStorageRepo.TryRemove(temp_id, out var _);
             return errno;
         }
 
@@ -215,9 +216,9 @@ namespace Trinity.Storage
             foreach(var s in rs)
             {
                 int temp_id = _PutTempStorage(s);
-                using (var request = new _MotivateRemoteStorageOnLeavingRequestWriter(MyPartitionId, MyNickname))
-                { module.MotivateRemoteStorageOnLeaving(temp_id, request); }
-                lock (this) { temporaryRemoteStorageRepo.Remove(temp_id); }
+                using (var request = new _NotifyRemoteStorageOnLeavingRequestWriter(MyPartitionId, MyNickname))
+                { module.NotifyRemoteStorageOnLeaving(temp_id, request); }
+                temporaryRemoteStorageRepo.TryRemove(temp_id, out var _);
             }
 
             //then?

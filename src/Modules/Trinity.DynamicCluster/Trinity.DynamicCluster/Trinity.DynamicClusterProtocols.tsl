@@ -4,6 +4,12 @@ struct _QueryChunkedRemoteStorageInformationReuslt
     List<int> chunks;
 }
 
+struct _NotifyRemoteStorageOnLeavingRequest
+{
+	int partitionid;
+    string name;
+}
+
 protocol QueryChunkedRemoteStorageInformation
 {
     Type: Syn;
@@ -11,20 +17,14 @@ protocol QueryChunkedRemoteStorageInformation
     Response: _QueryChunkedRemoteStorageInformationReuslt;	
 }
 
+protocol NotifyRemoteStorageOnLeaving
+{
+    Type: Asyn;
+    Request: _NotifyRemoteStorageOnLeavingRequest;
+}
+
 module DynamicCluster
 {
     protocol QueryChunkedRemoteStorageInformation;
-	protocol MotivateRemoteStorageOnLeaving;
-}
-
-struct _MotivateRemoteStorageOnLeavingRequest
-{
-	int partitionid;
-    string name;
-}
-
-protocol MotivateRemoteStorageOnLeaving
-{
-    Type: Asyn;
-    Request: _MotivateRemoteStorageOnLeavingRequest;
+	protocol NotifyRemoteStorageOnLeaving;
 }

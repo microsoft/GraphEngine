@@ -32,18 +32,12 @@ namespace Trinity.DynamicCluster
         
         internal TrinityErrorCode Mount(Storage.Storage s, _QueryChunkedRemoteStorageInformationReusltReader info)
         {
-            HashSet<int> tempset = new HashSet<int>();
-            foreach (var c in info.chunks)
-                tempset.Add(c);
-            return OnChunkCollectionAdded(s, new HashSet<int>(tempset));
+            return OnChunkCollectionAdded(s, info.chunks);
         }
 
         internal TrinityErrorCode Mount(Storage.Storage s, IEnumerable<int> chunks)
         {
-            HashSet<int> tempset = new HashSet<int>();
-            foreach (var c in chunks)
-                tempset.Add(c);
-            return OnChunkCollectionAdded(s, new HashSet<int>(tempset));
+            return OnChunkCollectionAdded(s, chunks);
         }
 
         internal TrinityErrorCode Unmount(Storage.Storage s)
