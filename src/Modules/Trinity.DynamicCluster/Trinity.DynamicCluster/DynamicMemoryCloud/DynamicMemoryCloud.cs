@@ -43,7 +43,6 @@ namespace Trinity.Storage
 
         internal TrinityErrorCode OnStorageJoin(DynamicRemoteStorage remoteStorage)
         {
-            Random r = new Random();
             // TODO refactor: DoWithTempoStorage
             int temp_id = _PutTempStorage(remoteStorage);
             var module = GetCommunicationModule<DynamicClusterCommModule>();
@@ -200,7 +199,6 @@ namespace Trinity.Storage
 
         public TrinityErrorCode Shutdown()
         {
-            Random r = new Random();
             var module = GetCommunicationModule<DynamicClusterCommModule>();
             var rs = Enumerable
                     .Range(0, PartitionCount)
