@@ -61,6 +61,7 @@ namespace Trinity.Network
         {
             HostName = hostName;
             AssemblyPath = assemblyPath;
+	        Port = port;
 
             this.Add(ConfigurationConstants.Tags.LOGGING,
                 new ConfigurationEntry(ConfigurationConstants.Tags.LOGGING,
