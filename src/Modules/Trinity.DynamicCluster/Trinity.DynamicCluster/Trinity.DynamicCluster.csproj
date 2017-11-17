@@ -51,25 +51,30 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Consensus\ILeaderElectionService.cs" />
+    <Compile Include="Consensus\NameDescriptor.cs" />
     <Compile Include="Storage\ChunkedStorage.cs" />
-    <Compile Include="DynamicClusterCommModule.cs" />
-    <Compile Include="DynamicClusterConfig.cs" />
+    <Compile Include="Communication\DynamicClusterCommModule.cs" />
+    <Compile Include="Config\DynamicClusterConfig.cs" />
     <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.Cmd.cs" />
     <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.cs" />
     <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.KVStore.cs" />
     <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.Message.cs" />
     <Compile Include="Storage\ChunkedStorage.KVStore.cs" />
     <Compile Include="Storage\DynamicRemoteStorage.cs" />
-    <Compile Include="INameService.cs" />
+    <Compile Include="Consensus\INameService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <TslCodegen Include="Trinity.DynamicClusterProtocols.tsl" />
+    <TslCodegen Include="Communication\Trinity.DynamicClusterProtocols.tsl" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\names.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Persistency\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

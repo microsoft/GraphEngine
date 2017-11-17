@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Trinity.Configuration;
 
-namespace Trinity
+namespace Trinity.DynamicCluster.Configuration
 {
     public class DynamicClusterConfig
     {

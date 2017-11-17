@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Trinity.Diagnostics;
+using Trinity.DynamicCluster.Consensus;
 using Trinity.Network;
 using Trinity.Network.Messaging;
 using Trinity.Storage;

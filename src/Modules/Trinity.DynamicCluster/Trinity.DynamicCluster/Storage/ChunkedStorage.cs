@@ -17,7 +17,7 @@ using Trinity.DynamicCluster;
 using Trinity.Configuration;
 using System.Collections;
 
-namespace Trinity.DynamicCluster
+namespace Trinity.DynamicCluster.Storage
 {
     using Storage = Trinity.Storage.Storage;
     internal unsafe partial class ChunkedStorage : Storage, IEnumerable<Storage>

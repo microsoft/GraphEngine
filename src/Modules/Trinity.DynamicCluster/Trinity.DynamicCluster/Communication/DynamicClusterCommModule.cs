@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using Trinity.Extension;
 using Trinity.Storage;
 using Trinity.Network;
+using Trinity.DynamicCluster.Storage;
 
-namespace Trinity.DynamicCluster
+namespace Trinity.DynamicCluster.Communication
 {
     [AutoRegisteredCommunicationModule]
     class DynamicClusterCommModule : DynamicClusterBase

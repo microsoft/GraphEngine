@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Trinity.Configuration;
 
-namespace Trinity.DynamicCluster
+namespace Trinity.DynamicCluster.Storage
 {
     using Storage = Trinity.Storage.Storage;
     internal unsafe partial class ChunkedStorage

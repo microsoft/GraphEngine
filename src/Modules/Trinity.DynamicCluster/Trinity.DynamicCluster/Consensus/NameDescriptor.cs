@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.NetworkInformation;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Trinity.Network;
 
-namespace Trinity.DynamicCluster
+namespace Trinity.DynamicCluster.Consensus
 {
     public class NameDescriptor
     {
@@ -65,13 +60,5 @@ namespace Trinity.DynamicCluster
         {
             return new NameDescriptor(si.name, si.id);
         }
-    }
-
-    public interface INameService
-    {
-        TrinityErrorCode Start();
-        TrinityErrorCode PublishServerInfo(NameDescriptor name, ServerInfo serverInfo);
-        event EventHandler<Tuple<NameDescriptor, ServerInfo>> NewServerInfoPublished;
-        TrinityErrorCode Stop();
     }
 }

@@ -1,23 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-
-using Trinity;
-using Trinity.Network.Messaging;
-using Trinity.Diagnostics;
-using System.Runtime.CompilerServices;
-using Trinity.Network;
-using Trinity.Utilities;
-using Trinity.Storage;
-using Trinity.DynamicCluster;
-using static Trinity.DynamicCluster.Utils;
 using System.Collections.Concurrent;
+using System.Linq;
+using Trinity.Diagnostics;
+using Trinity.Network;
+using Trinity.Storage;
+using Trinity.Utilities;
+using Trinity.DynamicCluster.Consensus;
+using Trinity.DynamicCluster.Configuration;
 
-namespace Trinity.Storage
+using static Trinity.DynamicCluster.Utils;
+using Trinity.DynamicCluster.Communication;
+
+namespace Trinity.DynamicCluster.Storage
 {
     public unsafe partial class DynamicMemoryCloud : MemoryCloud
     {

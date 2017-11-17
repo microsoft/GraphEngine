@@ -16,7 +16,7 @@ using Trinity.Core.Lib;
 using Trinity.Network.Messaging;
 using Trinity.Network;
 
-namespace Trinity.Storage
+namespace Trinity.DynamicCluster.Storage
 {
     public partial class DynamicMemoryCloud
     {

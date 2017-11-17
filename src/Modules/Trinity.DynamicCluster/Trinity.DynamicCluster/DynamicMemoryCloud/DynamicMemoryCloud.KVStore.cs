@@ -13,8 +13,9 @@ using System.Diagnostics;
 
 using Trinity;
 using Trinity.Network.Messaging;
+using Trinity.Storage;
 
-namespace Trinity.Storage
+namespace Trinity.DynamicCluster.Storage
 {
     public partial class DynamicMemoryCloud : MemoryCloud
     {
