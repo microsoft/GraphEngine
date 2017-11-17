@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace Trinity.DynamicCluster.Consensus
 {
-    interface ILeaderElectionService
+    public interface ILeaderElectionService
     {
-        TrinityErrorCode Start();
+        TrinityErrorCode Start(INameService service);
         TrinityErrorCode Stop();
+        /// <summary>
+        /// Fired when the local instance is elected as the leader.
+        /// </summary>
+        event EventHandler Elected;
     }
 }

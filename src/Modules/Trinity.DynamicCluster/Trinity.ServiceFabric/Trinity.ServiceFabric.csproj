@@ -1,20 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\GraphEngine.Core.1.0.8967\build\GraphEngine.Core.props" Condition="Exists('..\packages\GraphEngine.Core.1.0.8967\build\GraphEngine.Core.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{26DB9C05-8B53-409F-A1C9-3FD30CFEC35C}</ProjectGuid>
+    <ProjectGuid>{1C2D9269-F8FB-4AD6-8EB3-2CC3C754DDF4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Trinity.DynamicCluster</RootNamespace>
-    <AssemblyName>Trinity.DynamicCluster</AssemblyName>
+    <RootNamespace>Trinity.ServiceFabric</RootNamespace>
+    <AssemblyName>Trinity.ServiceFabric</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,12 +33,32 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.ServiceFabric.Internal, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.6.0.232\lib\net45\Microsoft.ServiceFabric.Internal.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Internal.Strings, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.6.0.232\lib\net45\Microsoft.ServiceFabric.Internal.Strings.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceFabric.Preview, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.6.0.232\lib\net45\Microsoft.ServiceFabric.Preview.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Fabric, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.6.0.232\lib\net45\System.Fabric.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Fabric.Management.ServiceModel, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.6.0.232\lib\net45\System.Fabric.Management.ServiceModel.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Fabric.Management.ServiceModel.XmlSerializers, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ServiceFabric.6.0.232\lib\net45\System.Fabric.Management.ServiceModel.XmlSerializers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Fabric.Strings, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <HintPath>..\packages\Microsoft.ServiceFabric.6.0.232\lib\net45\System.Fabric.Strings.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -48,35 +67,20 @@
     <Reference Include="System.Xml" />
     <Reference Include="Trinity.Core, Version=1.0.8967.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GraphEngine.Core.1.0.8967\lib\Trinity.Core.dll</HintPath>
-      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Availability\ClusterHealthStatus.cs" />
-    <Compile Include="Consensus\ILeaderElectionService.cs" />
-    <Compile Include="Consensus\NameDescriptor.cs" />
-    <Compile Include="Storage\ChunkedStorage.cs" />
-    <Compile Include="Communication\DynamicClusterCommModule.cs" />
-    <Compile Include="Config\DynamicClusterConfig.cs" />
-    <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.Cmd.cs" />
-    <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.cs" />
-    <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.KVStore.cs" />
-    <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.Message.cs" />
-    <Compile Include="Storage\ChunkedStorage.KVStore.cs" />
-    <Compile Include="Storage\DynamicRemoteStorage.cs" />
-    <Compile Include="Consensus\INameService.cs" />
+    <Compile Include="LeaderElectionService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <TslCodegen Include="Communication\Trinity.DynamicClusterProtocols.tsl" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\names.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Persistency\" />
+    <ProjectReference Include="..\Trinity.DynamicCluster\Trinity.DynamicCluster.csproj">
+      <Project>{26db9c05-8b53-409f-a1c9-3fd30cfec35c}</Project>
+      <Name>Trinity.DynamicCluster</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -87,11 +91,4 @@
     <Error Condition="!Exists('..\packages\GraphEngine.Core.1.0.8967\build\GraphEngine.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GraphEngine.Core.1.0.8967\build\GraphEngine.Core.targets'))" />
   </Target>
   <Import Project="..\packages\GraphEngine.Core.1.0.8967\build\GraphEngine.Core.targets" Condition="Exists('..\packages\GraphEngine.Core.1.0.8967\build\GraphEngine.Core.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
