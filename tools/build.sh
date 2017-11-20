@@ -26,7 +26,7 @@ then
 	echo "dotnet sdk not found, downloading."
 	case "$ID $VERSION_ID" in
 	"ubuntu 16.04")
-		dotnet_url="https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-dev-ubuntu.16.04-x64.latest.tar.gz"
+		dotnet_url="https://download.microsoft.com/download/D/7/2/D725E47F-A4F1-4285-8935-A91AE2FCC06A/dotnet-sdk-2.0.3-linux-x64.tar.gz"
 		;;
 	*)
 		echo "error: unsupported distro." 1>&2
