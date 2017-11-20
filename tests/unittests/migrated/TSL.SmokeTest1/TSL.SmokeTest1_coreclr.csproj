@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RuntimeFrameworkVersion>2.0.0-preview</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
     <AssemblyName>TSL.SmokeTest1_coreclr</AssemblyName>
     <RootNamespace>TSL.SmokeTest1</RootNamespace>
   </PropertyGroup>
