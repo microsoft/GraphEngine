@@ -73,11 +73,11 @@ namespace Trinity.Storage
             }
         }
 
-        public override IEnumerable<int> MyChunkIds
+        public override IEnumerable<Chunk> MyChunks
         {
             get
             {
-                yield return 0;
+                yield return Chunk.FullRangeChunk;
             }
         }
 

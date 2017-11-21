@@ -103,7 +103,6 @@ namespace Trinity
         /// <summary>
         /// Creates a cloud storage instance with the specified name.
         /// </summary>
-        /// <param name="config">A ClusterConfig instance.</param>
         /// <returns>The newly created cloud storage instance.</returns>
         public static MemoryCloud CreateCloudStorage()
         {
@@ -243,6 +242,7 @@ namespace Trinity
         /// <summary>
         /// Obsolete. Use MyServerId instead.
         /// </summary>
+        [Obsolete]
         public static int MyServerID
         {
             get
@@ -254,6 +254,7 @@ namespace Trinity
         /// <summary>
         /// Obsolete. Use MyProxyId instead.
         /// </summary>
+        [Obsolete]
         public static int MyProxyID
         {
             get

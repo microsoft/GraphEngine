@@ -308,6 +308,7 @@ namespace Trinity.Network
 
                     //  Initialize message passing networking
                     NativeNetwork.StartTrinityServer((UInt16)_config.ListeningPort);
+                    //  XXX might not be accurate: NativeNetwork.StartTrinityServer listens on all servers.
                     Log.WriteLine("My IPEndPoint: " + _my_ip + ":" + _config.ListeningPort);
 
                     //  Initialize cloud storage

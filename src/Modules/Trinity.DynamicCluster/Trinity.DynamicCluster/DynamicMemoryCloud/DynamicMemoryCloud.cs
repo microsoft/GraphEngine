@@ -7,7 +7,6 @@ using Trinity.Network;
 using Trinity.Storage;
 using Trinity.Utilities;
 using Trinity.DynamicCluster.Consensus;
-using Trinity.DynamicCluster.Configuration;
 
 using static Trinity.DynamicCluster.Utils;
 using Trinity.DynamicCluster.Communication;
@@ -16,37 +15,37 @@ namespace Trinity.DynamicCluster.Storage
 {
     public unsafe partial class DynamicMemoryCloud : MemoryCloud
     {
-        private int partition_count = -1;    
-        private int my_partition_id = -1;
-        private int my_proxy_id = -1;
         private Random m_rng = new Random();
 
         internal ClusterConfig cluster_config;//TODO will be substituted
-        internal INameService m_nameservice; 
+        internal IPartitioner m_partitioner;
+        internal ILeaderElectionService m_leaderElectionService;
+        internal INameService m_nameservice;
         internal NameDescriptor m_namedescriptor = new NameDescriptor();
-        internal ChunkedStorage ChunkedStorageTable(int id) => StorageTable[id] as ChunkedStorage;
+        internal Partition ChunkedStorageTable(int id) => StorageTable[id] as Partition;
         private ConcurrentDictionary<int, DynamicRemoteStorage> temporaryRemoteStorageRepo = new ConcurrentDictionary<int, DynamicRemoteStorage>();
 
         internal static DynamicMemoryCloud Instance => Global.CloudStorage as DynamicMemoryCloud;
 
-        private int _PutTempStorage(DynamicRemoteStorage tmpstorage)
+        private void _DoWithTempStorage(DynamicRemoteStorage remoteStorage, Action<int> action)
         {
-            return Infinity(() => m_rng.Next(-10000000, -1))
-                  .SkipWhile(_ => !temporaryRemoteStorageRepo.TryAdd(_, tmpstorage))
-                  .First();
+            int temp_id = Infinity(() => m_rng.Next(-10000000, -1))
+                         .SkipWhile(_ => !temporaryRemoteStorageRepo.TryAdd(_, remoteStorage))
+                         .First();
+            action(temp_id);
+            temporaryRemoteStorageRepo.TryRemove(temp_id, out var _);
         }
 
         internal TrinityErrorCode OnStorageJoin(DynamicRemoteStorage remoteStorage)
         {
-            // TODO refactor: DoWithTempoStorage
-            int temp_id = _PutTempStorage(remoteStorage);
-            var module = GetCommunicationModule<DynamicClusterCommModule>();
-            using (var rsp = module.QueryChunkedRemoteStorageInformation(temp_id))
+            _DoWithTempStorage(remoteStorage, id =>
             {
-                ChunkedStorageTable(rsp.info.partition).Mount(remoteStorage, rsp);
-            }
-
-            temporaryRemoteStorageRepo.TryRemove(temp_id, out var _);
+                var module = GetCommunicationModule<DynamicClusterCommModule>();
+                using (var rsp = module.QueryChunkedRemoteStorageInformation(id))
+                {
+                    ChunkedStorageTable(rsp.info.partition).Mount(remoteStorage, rsp);
+                }
+            });
             return TrinityErrorCode.E_SUCCESS;
         }
 
@@ -60,7 +59,7 @@ namespace Trinity.DynamicCluster.Storage
         /// <param name="remoteStorage"></param>
         internal TrinityErrorCode OnStorageLeave(int partition, NameDescriptor name)
         {
-            var module         = GetCommunicationModule<DynamicClusterCommModule>();
+            var module = GetCommunicationModule<DynamicClusterCommModule>();
             var remote_storage = ChunkedStorageTable(partition)
                                 .OfType<DynamicRemoteStorage>()
                                 .FirstOrDefault(_ => _.Iscalled(name));
@@ -68,85 +67,34 @@ namespace Trinity.DynamicCluster.Storage
             return ChunkedStorageTable(partition).Unmount(remote_storage);
         }
 
-        public override IEnumerable<int> MyChunkIds
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public NameDescriptor MyName => m_namedescriptor;
 
-        public NameDescriptor MyName
-        {
-            get
-            {
-                return m_namedescriptor;
-            }
-        }
-
-
-        public override int MyPartitionId
-        {
-            get
-            {
-                return DynamicClusterConfig.Instance.LocalPartitionId;
-            }
-        }
-
-        public override int MyProxyId
-        {
-            get
-            {
-                return my_proxy_id;
-            }
-        }
-
-        public override int ProxyCount
-        {
-            get
-            {
-                return cluster_config.Proxies.Count;
-            }
-        }
-
-        public override int PartitionCount
-        {
-            get
-            {
-                return DynamicClusterConfig.Instance.PartitionCount;
-            }
-        }
-
-        public int ChunkCount
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
+        public override IEnumerable<Chunk> MyChunks => m_partitioner.MyChunkList;
+        public override int MyPartitionId => m_partitioner.PartitionId;
+        public override int PartitionCount => m_partitioner.PartitionCount;
+        public int ChunkCount => m_partitioner.ChunkCount;
         public override bool IsLocalCell(long cellId)
         {
-            return (GetStorageByCellId(cellId) as ChunkedStorage).IsLocal(cellId);
+            return (GetStorageByCellId(cellId) as Partition).IsLocal(cellId);
         }
-
+        public override int MyProxyId => -1;
+        public override int ProxyCount => 0;
         public override bool Open(ClusterConfig config, bool nonblocking)
         {
+            InitializeServices();
+
             Log.WriteLine($"DynamicMemoryCloud: server {m_namedescriptor.Nickname} starting.");
             TrinityErrorCode errno = TrinityErrorCode.E_SUCCESS;
 
             this.cluster_config = config;
-            my_partition_id = DynamicClusterConfig.Instance.LocalPartitionId;
-            my_proxy_id = -1;
-            partition_count = DynamicClusterConfig.Instance.PartitionCount;
-            StorageTable = Infinity(() => new ChunkedStorage())
-                          .Take(partition_count)
+            StorageTable = Infinity(() => new Partition())
+                          .Take(PartitionCount)
                           .ToArray();
 
-            if (partition_count == 0)
+            if (PartitionCount == 0)
                 goto server_not_found;
 
-            if (TrinityErrorCode.E_SUCCESS != (errno = ChunkedStorageTable(my_partition_id).Mount(Global.LocalStorage, MyChunkIds)))
+            if (TrinityErrorCode.E_SUCCESS != (errno = ChunkedStorageTable(MyPartitionId).Mount(Global.LocalStorage, MyChunks)))
             {
                 string errmsg = $"DynamicMemoryCloud: server {m_namedescriptor.Nickname} failed to mount itself.";
                 Log.WriteLine(LogLevel.Error, errmsg);
@@ -159,23 +107,19 @@ namespace Trinity.DynamicCluster.Storage
                 goto server_not_found;
             }
 
-            InitializeNameService();
-
             if (!nonblocking) { CheckServerProtocolSignatures(); } // TODO should also check in nonblocking setup when any remote storage is connected
             // else this.ServerConnected += (_, __) => {};
 
             return true;
 
             server_not_found:
-            if (cluster_config.RunningMode == RunningMode.Server || cluster_config.RunningMode == RunningMode.Client)
-                Log.WriteLine(LogLevel.Warning, "Incorrect server configuration. Message passing via CloudStorage not possible.");
-            else if (cluster_config.RunningMode == RunningMode.Proxy)
-                Log.WriteLine(LogLevel.Warning, "No servers are found. Message passing to servers via CloudStorage not possible.");
-            return false;
+            Log.WriteLine(LogLevel.Error, "Incorrect server configuration. Message passing via CloudStorage not possible.");
+            //TODO should wait for partitioner events
+            throw new Exception();
 
         }
 
-        private void InitializeNameService()
+        internal void InitializeServices()
         {
             m_nameservice = AssemblyUtility.GetAllClassInstances<INameService>().First();
             m_nameservice.NewServerInfoPublished += (o, e) =>
@@ -187,7 +131,6 @@ namespace Trinity.DynamicCluster.Storage
                 DynamicRemoteStorage rs = new DynamicRemoteStorage(si, name, TrinityConfig.ClientMaxConn, this, 0, nonblocking: true);
                 OnStorageJoin(rs);
             };
-            m_nameservice.Start();
             ServerInfo my_si = new ServerInfo(Global.MyIPAddress.ToString(), Global.MyIPEndPoint.Port, Global.MyAssemblyPath, TrinityConfig.LoggingLevel);
             m_nameservice.PublishServerInfo(m_namedescriptor, my_si);
         }
@@ -195,18 +138,15 @@ namespace Trinity.DynamicCluster.Storage
         public TrinityErrorCode Shutdown()
         {
             var module = GetCommunicationModule<DynamicClusterCommModule>();
-            var rs = Enumerable
-                    .Range(0, PartitionCount)
-                    .SelectMany(ChunkedStorageTable)
-                    .OfType<DynamicRemoteStorage>();
-            foreach(var s in rs)
-            {
-                int temp_id = _PutTempStorage(s);
-                using (var request = new StorageInformationWriter(MyPartitionId, MyName.ServerId, MyName.Nickname))
-                { module.NotifyRemoteStorageOnLeaving(temp_id, request); }
-                temporaryRemoteStorageRepo.TryRemove(temp_id, out var _);
-            }
-
+            Enumerable
+           .Range(0, PartitionCount)
+           .SelectMany(ChunkedStorageTable)
+           .OfType<DynamicRemoteStorage>()
+           .ForEach(s => _DoWithTempStorage(s, id =>
+           {
+               using (var request = new StorageInformationWriter(MyPartitionId, MyName.ServerId, MyName.Nickname))
+               { module.NotifyRemoteStorageOnLeaving(id, request); }
+           }));
             return TrinityErrorCode.E_SUCCESS;
         }
 
@@ -223,10 +163,9 @@ namespace Trinity.DynamicCluster.Storage
             OnStorageLeave(rs.PartitionId, rs.Name);
         }
 
-        internal int GetChunkIdByCellId(long cellId)
+        internal Chunk GetChunkByCellId(long cellId)
         {
-            throw new NotImplementedException();
-            //return ChunkRange.FindIndex(upbound => cellId < upbound);
+            return MyChunks.FirstOrDefault(c => c.LowKey <= cellId && cellId <= c.HighKey);
         }
 
         private void CheckServerProtocolSignatures()
@@ -236,15 +175,6 @@ namespace Trinity.DynamicCluster.Storage
             var storage = StorageTable.Where((_, idx) => idx != my_server_id).FirstOrDefault() as RemoteStorage;
 
             CheckProtocolSignatures_impl(storage, cluster_config.RunningMode, RunningMode.Server);
-        }
-
-        private void CheckProxySignatures(IEnumerable<RemoteStorage> proxy_list)
-        {
-            Log.WriteLine("Checking {0}-Proxy protocol signatures...", cluster_config.RunningMode);
-            int my_proxy_id = (cluster_config.RunningMode == RunningMode.Proxy) ? MyProxyId : -1;
-            var storage = proxy_list.Where((_, idx) => idx != my_proxy_id).FirstOrDefault();
-
-            CheckProtocolSignatures_impl(storage, cluster_config.RunningMode, RunningMode.Proxy);
         }
     }
 }

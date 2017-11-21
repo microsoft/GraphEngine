@@ -1,32 +1,54 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2006
+VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.DynamicCluster", "Trinity.DynamicCluster\Trinity.DynamicCluster.csproj", "{26DB9C05-8B53-409F-A1C9-3FD30CFEC35C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.AzureStorage", "Trinity.AzureStorage\Trinity.AzureStorage.csproj", "{7673502E-80B7-46E7-AA78-AC7E6BAB556C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.ServiceFabric", "Trinity.ServiceFabric\Trinity.ServiceFabric.csproj", "{1C2D9269-F8FB-4AD6-8EB3-2CC3C754DDF4}"
+Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "Trinity.ServiceFabric.SmokeTest", "Trinity.ServiceFabric.SmokeTest\Trinity.ServiceFabric.SmokeTest.sfproj", "{0F44632E-1A7F-463F-954C-A84A7B1A4F69}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.ServiceFabric.GraphEngineService", "Trinity.ServiceFabric.GraphEngineService\Trinity.ServiceFabric.GraphEngineService.csproj", "{3299B302-8F94-4DB7-9331-F53F41E3E2AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{26DB9C05-8B53-409F-A1C9-3FD30CFEC35C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{26DB9C05-8B53-409F-A1C9-3FD30CFEC35C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26DB9C05-8B53-409F-A1C9-3FD30CFEC35C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{26DB9C05-8B53-409F-A1C9-3FD30CFEC35C}.Debug|x64.Build.0 = Debug|Any CPU
 		{26DB9C05-8B53-409F-A1C9-3FD30CFEC35C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26DB9C05-8B53-409F-A1C9-3FD30CFEC35C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26DB9C05-8B53-409F-A1C9-3FD30CFEC35C}.Release|x64.ActiveCfg = Release|Any CPU
+		{26DB9C05-8B53-409F-A1C9-3FD30CFEC35C}.Release|x64.Build.0 = Release|Any CPU
 		{7673502E-80B7-46E7-AA78-AC7E6BAB556C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7673502E-80B7-46E7-AA78-AC7E6BAB556C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7673502E-80B7-46E7-AA78-AC7E6BAB556C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7673502E-80B7-46E7-AA78-AC7E6BAB556C}.Debug|x64.Build.0 = Debug|Any CPU
 		{7673502E-80B7-46E7-AA78-AC7E6BAB556C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7673502E-80B7-46E7-AA78-AC7E6BAB556C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1C2D9269-F8FB-4AD6-8EB3-2CC3C754DDF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1C2D9269-F8FB-4AD6-8EB3-2CC3C754DDF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1C2D9269-F8FB-4AD6-8EB3-2CC3C754DDF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1C2D9269-F8FB-4AD6-8EB3-2CC3C754DDF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7673502E-80B7-46E7-AA78-AC7E6BAB556C}.Release|x64.ActiveCfg = Release|Any CPU
+		{7673502E-80B7-46E7-AA78-AC7E6BAB556C}.Release|x64.Build.0 = Release|Any CPU
+		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|x64.ActiveCfg = Debug|x64
+		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|x64.Build.0 = Debug|x64
+		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|x64.Deploy.0 = Debug|x64
+		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Release|Any CPU.ActiveCfg = Release|x64
+		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Release|x64.ActiveCfg = Release|x64
+		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Release|x64.Build.0 = Release|x64
+		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Release|x64.Deploy.0 = Release|x64
+		{3299B302-8F94-4DB7-9331-F53F41E3E2AB}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{3299B302-8F94-4DB7-9331-F53F41E3E2AB}.Debug|x64.ActiveCfg = Debug|x64
+		{3299B302-8F94-4DB7-9331-F53F41E3E2AB}.Debug|x64.Build.0 = Debug|x64
+		{3299B302-8F94-4DB7-9331-F53F41E3E2AB}.Release|Any CPU.ActiveCfg = Release|x64
+		{3299B302-8F94-4DB7-9331-F53F41E3E2AB}.Release|x64.ActiveCfg = Release|x64
+		{3299B302-8F94-4DB7-9331-F53F41E3E2AB}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

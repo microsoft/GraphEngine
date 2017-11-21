@@ -7,18 +7,13 @@ using Trinity.DynamicCluster.Consensus;
 
 namespace Trinity.ServiceFabric
 {
-    class LeaderElectionService : ILeaderElectionService
+    public class LeaderElectionService : ILeaderElectionService
     {
         private INameService m_namesvc;
-        public TrinityErrorCode Start(INameService service)
-        {
-            m_namesvc = service;
-            return TrinityErrorCode.E_SUCCESS;
-        }
 
-        public TrinityErrorCode Stop()
+        public void Dispose()
         {
-            return TrinityErrorCode.E_SUCCESS;
+            throw new NotImplementedException();
         }
 
         public event EventHandler Elected = delegate { };

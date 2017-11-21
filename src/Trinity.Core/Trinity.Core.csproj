@@ -128,6 +128,7 @@
     <Compile Include="Storage\IAccessor.cs" />
     <Compile Include="Storage\ICell.cs" />
     <Compile Include="Extension\IStorageSchema.cs" />
+    <Compile Include="Storage\MemoryCloud\Chunk.cs" />
     <Compile Include="Storage\MemoryCloud\MemoryCloud.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.Enumeration.cs" />
     <Compile Include="Storage\LocalMemoryStorage\Delegates.cs" />

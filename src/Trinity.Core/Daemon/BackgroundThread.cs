@@ -86,6 +86,18 @@ namespace Trinity.Daemon
             }
         }
 
+        /// <summary>
+        /// Removes a background task.
+        /// </summary>
+        /// <param name="task">A background task previously added to the background thread.</param>
+        public static void RemoveBackgroundTask(BackgroundTask task)
+        {
+            lock (s_tasklist)
+            {
+                s_tasklist.Remove(task);
+            }
+        }
+
         private static void _thread_()
         {
             timer = new Timer((x) =>

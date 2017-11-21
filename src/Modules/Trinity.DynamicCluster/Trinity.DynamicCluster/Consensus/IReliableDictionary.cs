@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Trinity.DynamicCluster.Consensus
 {
-    public interface IReliableDictionary
+    public interface IReliableDictionary: IDisposable
     {
+        TrinityErrorCode Start();
     }
 }

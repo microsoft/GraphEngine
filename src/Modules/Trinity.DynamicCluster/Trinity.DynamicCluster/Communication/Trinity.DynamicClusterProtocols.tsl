@@ -1,7 +1,14 @@
 struct _QueryChunkedRemoteStorageInformationReuslt
 {
 	StorageInformation info;
-    List<int> chunks;
+    List<ChunkInformation> chunks;
+}
+
+struct ChunkInformation
+{
+	long lowKey;
+	long highKey;
+	Guid id;
 }
 
 struct StorageInformation

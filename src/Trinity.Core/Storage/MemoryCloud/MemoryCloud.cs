@@ -19,14 +19,14 @@ namespace Trinity.Storage
         public abstract bool Open(ClusterConfig config, bool nonblocking);
         public abstract int MyPartitionId { get; }
         public abstract int MyProxyId { get; }
-        public abstract IEnumerable<int> MyChunkIds { get; }
+        public abstract IEnumerable<Chunk> MyChunks { get; }
         public abstract int PartitionCount { get; }
-        public abstract int ProxyCount { get; }
-        public abstract IList<RemoteStorage> ProxyList { get; }
         public abstract bool IsLocalCell(long cellId);
         public abstract bool LoadStorage();
         public abstract bool SaveStorage();
         public abstract bool ResetStorage();
+        public abstract int ProxyCount { get; }
+        public abstract IList<RemoteStorage> ProxyList { get; }
         #endregion
         #region Base implementation
         // XXX an implementation shall initialize this!

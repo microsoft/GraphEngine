@@ -30,7 +30,7 @@ namespace Trinity.DynamicCluster.Communication
                 name = myname.Nickname,
             };
             response.info = info;
-            response.chunks.AddRange(dmc.MyChunkIds.ToList());
+            dmc.MyChunks.ForEach(c => response.chunks.Add(new ChunkInformation { }));
         }
         public override void NotifyRemoteStorageOnLeavingHandler(StorageInformationReader request)
         {

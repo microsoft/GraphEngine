@@ -9,7 +9,7 @@ using Trinity.Configuration;
 namespace Trinity.DynamicCluster.Storage
 {
     using Storage = Trinity.Storage.Storage;
-    internal unsafe partial class ChunkedStorage
+    internal unsafe partial class Partition
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal TrinityErrorCode _AddCell_impl(long cellId, byte* buff, int size, ushort cellType)
