@@ -56,7 +56,6 @@
     <Compile Include="Consensus\ILeaderElectionService.cs" />
     <Compile Include="Consensus\IPartitioner.cs" />
     <Compile Include="Consensus\IReliableDictionary.cs" />
-    <Compile Include="Consensus\NameDescriptor.cs" />
     <Compile Include="Storage\Partition.cs" />
     <Compile Include="Communication\DynamicClusterCommModule.cs" />
     <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.Cmd.cs" />

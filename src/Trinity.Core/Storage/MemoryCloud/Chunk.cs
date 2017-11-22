@@ -8,12 +8,15 @@ namespace Trinity.Storage
 {
     public class Chunk
     {
-        public Chunk(long low, long high, Storage s)
+        public Chunk(long lowKey, long highKey, Storage storage)
+            : this(lowKey, highKey, storage, Guid.NewGuid()) { }
+
+        public Chunk(long lowKey, long highKey, Storage storage, Guid id)
         {
-            LowKey = low;
-            HighKey = high;
-            Storage = s;
-            Id = Guid.NewGuid();
+            LowKey = lowKey;
+            HighKey = highKey;
+            Storage = storage;
+            Id = id;
         }
 
         public long LowKey { get; }

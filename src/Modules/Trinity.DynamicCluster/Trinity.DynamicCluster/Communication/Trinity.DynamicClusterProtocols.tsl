@@ -15,7 +15,6 @@ struct StorageInformation
 {
 	int partition;
 	Guid id;
-    string name;
 }
 
 protocol QueryChunkedRemoteStorageInformation

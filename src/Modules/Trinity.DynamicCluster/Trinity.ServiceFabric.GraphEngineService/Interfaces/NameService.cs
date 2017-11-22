@@ -23,13 +23,20 @@ namespace Trinity.ServiceFabric
 
         public int HttpPort => GraphEngineService.Instance.HttpPort;
 
+        public Guid InstanceId { get; private set; }
+
         public NameService()
         {
             m_bgtask = new BackgroundTask(ScanNodesProc, c_bgtaskInterval);
+            InstanceId = new Guid(Enumerable.Concat(
+                             GraphEngineService.Instance.NodeContext.NodeInstanceId.ToByteArray(),
+                             Enumerable.Repeat<byte>(0x0, 16))
+                            .Take(16).ToArray());
         }
 
         public TrinityErrorCode Start()
         {
+            ServerInfo my_si = new ServerInfo(Address, Port, Global.MyAssemblyPath, TrinityConfig.LoggingLevel);
             BackgroundThread.AddBackgroundTask(m_bgtask);
             return TrinityErrorCode.E_SUCCESS;
         }
@@ -44,11 +51,6 @@ namespace Trinity.ServiceFabric
             return c_bgtaskInterval;
         }
 
-        public event EventHandler<Tuple<NameDescriptor, ServerInfo>> NewServerInfoPublished;
-
-        public TrinityErrorCode PublishServerInfo(NameDescriptor name, ServerInfo serverInfo)
-        {
-            return TrinityErrorCode.E_SUCCESS;
-        }
+        public event EventHandler<Tuple<Guid, ServerInfo>> NewServerInfoPublished = delegate { };
     }
 }

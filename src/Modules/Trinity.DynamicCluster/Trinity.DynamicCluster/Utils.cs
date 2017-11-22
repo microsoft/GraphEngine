@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -32,6 +35,37 @@ namespace Trinity.DynamicCluster
             {
                 yield return i++;
             }
+        }
+
+        public static Guid GetMachineGuid()
+        {
+            var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+            int hash = 0;
+            foreach (var net in interfaces)
+            {
+                var mac = net.GetPhysicalAddress();
+                hash = (hash << 5) ^ mac.GetHashCode();
+            }
+            Random r = new Random(hash);
+            byte[] b = new byte[16];
+            r.NextBytes(b);
+            return new Guid(b);
+        }
+
+        public static string GenerateNickName(Guid instanceId)
+        {
+            string[] names;
+            using (var sr = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Trinity.DynamicCluster.names.txt")))
+            {
+                names = sr.ReadToEnd().Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            }
+
+            int seed = instanceId.GetHashCode();
+            Random r = new Random(seed);
+            var n1 = names[r.Next(names.Length)];
+            var n2 = names[r.Next(names.Length)];
+
+            return n1 + " " + n2;
         }
     }
 }

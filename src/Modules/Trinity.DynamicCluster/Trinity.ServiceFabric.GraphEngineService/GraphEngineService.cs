@@ -90,8 +90,11 @@ namespace Trinity.ServiceFabric
 
         internal TrinityErrorCode Stop()
         {
-            TrinityServer.Stop();
-            return TrinityErrorCode.E_SUCCESS;
+            lock (s_lock)
+            {
+                TrinityServer.Stop();
+                return TrinityErrorCode.E_SUCCESS;
+            }
         }
 
         /// <summary>

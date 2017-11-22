@@ -13,20 +13,16 @@ namespace Trinity.DynamicCluster
 {
     class DynamicRemoteStorage : RemoteStorage
     {
-        private NameDescriptor m_name;
 
-        public DynamicRemoteStorage(ServerInfo server_info, NameDescriptor name, int connPerServer, MemoryCloud mc, int pid, bool nonblocking) : base(new[] { server_info }, connPerServer, mc, pid, nonblocking)
+        public DynamicRemoteStorage(ServerInfo server_info, Guid id, int connPerServer, MemoryCloud mc, int pid, bool nonblocking) : base(new[] { server_info }, connPerServer, mc, pid, nonblocking)
         {
-            Log.WriteLine($"DynamicCluster: connecting to {name.Nickname} at {server_info.HostName}:{server_info.Port}");
-            m_name = name;
+            NickName = Utils.GenerateNickName(id);
+            Log.WriteLine($"DynamicCluster: connecting to {NickName} at {server_info.HostName}:{server_info.Port}");
+            Id = id;
         }
 
-        public NameDescriptor Name => m_name;
-
-        public bool Iscalled(NameDescriptor nd)
-        {
-            return ((m_name.Nickname.Equals(nd.Nickname)) && (m_name.ServerId == nd.ServerId));
-        }
+        public string NickName { get; private set; }
+        public Guid Id { get; private set; }
 
         public override unsafe void SendMessage(byte* buffer, int size)
         {

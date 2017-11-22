@@ -22,12 +22,10 @@ namespace Trinity.DynamicCluster.Communication
         public override void QueryChunkedRemoteStorageInformationHandler(_QueryChunkedRemoteStorageInformationReusltWriter response)
         {
             var dmc = DynamicMemoryCloud.Instance;
-            var myname = dmc.MyName;
             StorageInformation info = new StorageInformation
             {
                 partition = dmc.MyPartitionId,
-                id = myname.ServerId,
-                name = myname.Nickname,
+                id = dmc.InstanceId
             };
             response.info = info;
             dmc.MyChunks.ForEach(c => response.chunks.Add(new ChunkInformation { }));
@@ -35,7 +33,7 @@ namespace Trinity.DynamicCluster.Communication
         public override void NotifyRemoteStorageOnLeavingHandler(StorageInformationReader request)
         {
             var dmc = DynamicMemoryCloud.Instance;
-            dmc.OnStorageLeave(request.partition, (StorageInformation)request);
+            dmc.OnStorageLeave(request.partition, request.id);
         }
     }
 }

@@ -7,18 +7,24 @@ namespace Trinity.DynamicCluster.Consensus
 {
     public interface INameService: IDisposable
     {
-        TrinityErrorCode Start();
         /// <summary>
-        /// Publishes the information of the local instance.
+        /// Start the name service, and publishes the information of the local instance.
         /// </summary>
-        TrinityErrorCode PublishServerInfo(NameDescriptor name, ServerInfo serverInfo);
+        TrinityErrorCode Start();
         /// <summary>
         /// Guarantees the delivery of informations regarding servers that
         /// the name service decides that this instance should connect to,
         /// regardless of whether these target instances have registered before
         /// or after <see cref="Start"/> is called.
         /// </summary>
-        event EventHandler<Tuple<NameDescriptor, ServerInfo>> NewServerInfoPublished;
+        event EventHandler<Tuple<Guid, ServerInfo>> NewServerInfoPublished;
+        /// <summary>
+        /// Obtains a unique identifier for the local instance.
+        /// Note, on the platforms where multiple instances run
+        /// on the same server, generating Ids with MAC address
+        /// or other machine fingerprints will fail.
+        /// </summary>
+        Guid InstanceId { get; }
         /// <summary>
         /// Obtains the FQDN or IP address of the local instance.
         /// </summary>
