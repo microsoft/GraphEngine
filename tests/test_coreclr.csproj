@@ -89,4 +89,6 @@
         ContinueOnError="true" />
   </Target>
 
+  <Target Name="Restore"/>
+
 </Project>
