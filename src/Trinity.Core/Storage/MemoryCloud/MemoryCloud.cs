@@ -289,7 +289,8 @@ namespace Trinity.Storage
         }
         #endregion//IDisposable
 
-        // TODO check sendmessage semantics for HA scenario
+        //  Note, HA semantics are guaranteed in the overridden methods
+        //  in Storage implementations.
         internal void SendMessageToServer(int serverId, TrinityMessage msg)
         {
             StorageTable[serverId].SendMessage(msg);

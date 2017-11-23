@@ -1,3 +1,7 @@
+enum EventType
+{
+}
+
 struct _QueryChunkedRemoteStorageInformationReuslt
 {
 	StorageInformation info;

@@ -66,22 +66,22 @@ namespace Trinity.DynamicCluster.Storage
         // TODO HA semantics should be implemented here
         public override void SendMessage(TrinityMessage message)
         {
-            throw new NotImplementedException();
+            m_storages.First().Key.SendMessage(message);
         }
 
         public override void SendMessage(byte* message, int size)
         {
-            throw new NotImplementedException();
+            m_storages.First().Key.SendMessage(message, size);
         }
 
         public override void SendMessage(TrinityMessage message, out TrinityResponse response)
         {
-            throw new NotImplementedException();
+            m_storages.First().Key.SendMessage(message, out response);
         }
 
         public override void SendMessage(byte* message, int size, out TrinityResponse response)
         {
-            throw new NotImplementedException();
+            m_storages.First().Key.SendMessage(message, size, out response);
         }
 
         internal bool IsLocal(long cellId)

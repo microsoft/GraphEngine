@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Trinity.DynamicCluster.Consensus;
 
-namespace Trinity.DynamicCluster.Consensus
+namespace Trinity.ServiceFabric.Interfaces
 {
-    public interface IReliableDictionary: IDisposable
+    class ReliableDictionaryEventQueue : IEventQueue
     {
-        TrinityErrorCode Start();
     }
 }

@@ -21,6 +21,7 @@ namespace Trinity.DynamicCluster.Storage
         internal IPartitioner m_partitioner;
         internal ILeaderElectionService m_leaderElectionService;
         internal INameService m_nameservice;
+        internal IEventQueue m_eventqueue;
         internal Partition ChunkedStorageTable(int id) => StorageTable[id] as Partition;
         private ConcurrentDictionary<int, DynamicRemoteStorage> temporaryRemoteStorageRepo = new ConcurrentDictionary<int, DynamicRemoteStorage>();
 
@@ -80,7 +81,7 @@ namespace Trinity.DynamicCluster.Storage
         public override int ProxyCount => 0;
         public override bool Open(ClusterConfig config, bool nonblocking)
         {
-            Initialize();
+            InitializeComponents();
 
             Log.WriteLine($"DynamicMemoryCloud: server {NickName} starting.");
             TrinityErrorCode errno = TrinityErrorCode.E_SUCCESS;
@@ -102,7 +103,7 @@ namespace Trinity.DynamicCluster.Storage
             return true;
         }
 
-        internal void Initialize()
+        internal void InitializeComponents()
         {
             m_nameservice = AssemblyUtility.GetAllClassInstances<INameService>().First();
             m_nameservice.NewServerInfoPublished += (o, e) =>
@@ -119,6 +120,17 @@ namespace Trinity.DynamicCluster.Storage
             m_leaderElectionService = AssemblyUtility.GetAllClassInstances<ILeaderElectionService>().First();
             m_partitioner = AssemblyUtility.GetAllClassInstances<IPartitioner>().First();
             m_partitioner.Start();
+            try
+            {
+                m_partitioner.GetPartitionIdByCellId(0);
+                SetPartitionMethod(m_partitioner.GetPartitionIdByCellId);
+                Log.WriteLine($"Partitioner [{m_partitioner.GetType().Name}] governs partitioning scheme.");
+            }
+            catch (NotImplementedException)
+            {
+                Log.WriteLine($"Partitioner [{m_partitioner.GetType().Name}] does not implement partitioning scheme, falling back to default.");
+            }
+
         }
 
         public TrinityErrorCode Shutdown()

@@ -14,7 +14,8 @@ namespace Trinity.DynamicCluster
     class DynamicRemoteStorage : RemoteStorage
     {
 
-        public DynamicRemoteStorage(ServerInfo server_info, Guid id, int connPerServer, MemoryCloud mc, int pid, bool nonblocking) : base(new[] { server_info }, connPerServer, mc, pid, nonblocking)
+        public DynamicRemoteStorage(ServerInfo server_info, Guid id, int connPerServer, MemoryCloud mc, int pid, bool nonblocking) 
+            : base(new[] { server_info }, connPerServer, mc, pid, nonblocking)
         {
             NickName = Utils.GenerateNickName(id);
             Log.WriteLine($"DynamicCluster: connecting to {NickName} at {server_info.HostName}:{server_info.Port}");

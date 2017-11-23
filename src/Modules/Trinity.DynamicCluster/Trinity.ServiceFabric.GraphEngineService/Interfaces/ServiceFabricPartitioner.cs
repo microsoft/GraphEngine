@@ -32,12 +32,12 @@ namespace Trinity.ServiceFabric.Interfaces
 
         public int GetPartitionIdByCellId(long cellId)
         {
-            //TODO DHT
             throw new NotImplementedException();
         }
 
         public TrinityErrorCode Start()
         {
+            //TODO DHT
             return TrinityErrorCode.E_SUCCESS;
         }
     }
