@@ -7,7 +7,7 @@ using Trinity.DynamicCluster.Consensus;
 
 namespace Trinity.ServiceFabric.Interfaces
 {
-    class ReliableDictionaryEventQueue : IEventQueue
+    class ReliableEventQueue : ITransactionalMetadataStore
     {
     }
 }

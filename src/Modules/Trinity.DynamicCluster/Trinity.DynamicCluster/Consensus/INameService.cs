@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Net;
 using System.Text;
+using System.Threading;
 using Trinity.Network;
 
 namespace Trinity.DynamicCluster.Consensus
 {
-    public interface INameService: IDisposable
+    /// <summary>
+    /// When a name service is started (rather than instantiated), it should publish the information of the local instance.
+    /// </summary>
+    public interface INameService: IService
     {
-        /// <summary>
-        /// Start the name service, and publishes the information of the local instance.
-        /// </summary>
-        TrinityErrorCode Start();
         /// <summary>
         /// Guarantees the delivery of informations regarding servers that
         /// the name service decides that this instance should connect to,
         /// regardless of whether these target instances have registered before
-        /// or after <see cref="Start"/> is called.
+        /// or after <see cref="Start"/> is called. Also, a name service
+        /// should report if its own info is published.
         /// </summary>
         event EventHandler<Tuple<Guid, ServerInfo>> NewServerInfoPublished;
         /// <summary>

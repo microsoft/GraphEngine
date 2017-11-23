@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Trinity.DynamicCluster.Consensus
 {
-    public interface ILeaderElectionService: IDisposable
+    public interface ILeaderElectionService: IService
     {
         /// <summary>
-        /// Fired when the local instance is elected as the leader.
+        /// Fired when a new instance is elected as the leader.
         /// </summary>
-        event EventHandler Elected;
+        event EventHandler<Guid> NewLeaderElected;
     }
 }

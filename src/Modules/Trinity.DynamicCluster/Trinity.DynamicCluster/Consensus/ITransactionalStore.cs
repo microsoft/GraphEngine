@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace Trinity.DynamicCluster.Consensus
 {
-    public interface IEventQueue: IDisposable
+    public interface ITransactionalMetadataStore : IService
     {
-        TrinityErrorCode Start();
-        //event EventHandler<>
     }
 }

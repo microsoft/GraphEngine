@@ -107,8 +107,8 @@ namespace Trinity.ServiceFabric
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
             return new[] {
-                new ServiceReplicaListener(ctx => new GraphEngineListener(ctx)),
-                new ServiceReplicaListener(ctx => new GraphEngineHttpListener(ctx)),
+                new ServiceReplicaListener(ctx => new GraphEngineListener(ctx), listenOnSecondary: true),
+                new ServiceReplicaListener(ctx => new GraphEngineHttpListener(ctx), listenOnSecondary: false),
             };
         }
 

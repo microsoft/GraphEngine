@@ -52,10 +52,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Consensus\ClusterHealthStatus.cs" />
     <Compile Include="Consensus\ILeaderElectionService.cs" />
+    <Compile Include="Consensus\ITransactionalStore.cs" />
     <Compile Include="Consensus\IPartitioner.cs" />
-    <Compile Include="Consensus\IEventQueue.cs" />
+    <Compile Include="Consensus\IService.cs" />
     <Compile Include="Storage\Partition.cs" />
     <Compile Include="Communication\DynamicClusterCommModule.cs" />
     <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.Cmd.cs" />
@@ -66,6 +66,7 @@
     <Compile Include="Storage\DynamicRemoteStorage.cs" />
     <Compile Include="Consensus\INameService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Storage\Partition.Message.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>

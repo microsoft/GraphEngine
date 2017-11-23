@@ -4,9 +4,8 @@ using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Consensus
 {
-    public interface IPartitioner: IDisposable
+    public interface IPartitioner: IService
     {
-        TrinityErrorCode Start();
         int ChunkCount { get; }
         int PartitionCount { get; }
         /// <summary>

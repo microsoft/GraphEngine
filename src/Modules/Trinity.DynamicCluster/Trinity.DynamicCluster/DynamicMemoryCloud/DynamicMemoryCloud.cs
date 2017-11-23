@@ -10,6 +10,7 @@ using Trinity.DynamicCluster.Consensus;
 
 using static Trinity.DynamicCluster.Utils;
 using Trinity.DynamicCluster.Communication;
+using System.Threading;
 
 namespace Trinity.DynamicCluster.Storage
 {
@@ -22,6 +23,9 @@ namespace Trinity.DynamicCluster.Storage
         internal ILeaderElectionService m_leaderElectionService;
         internal INameService m_nameservice;
         internal IEventQueue m_eventqueue;
+        internal ITransactionalMetadataStore m_metastore;
+        internal CancellationTokenSource m_cancelSrc;
+        internal List<CancellationToken> m_cancelTkns;
         internal Partition ChunkedStorageTable(int id) => StorageTable[id] as Partition;
         private ConcurrentDictionary<int, DynamicRemoteStorage> temporaryRemoteStorageRepo = new ConcurrentDictionary<int, DynamicRemoteStorage>();
 
@@ -54,7 +58,7 @@ namespace Trinity.DynamicCluster.Storage
         /// on those storages that has been previously sent to
         /// <see cref="OnStorageJoin"/>. However, OnStorageLeave may
         /// be called multiple times (disconnected, then reconnected,
-        /// or remote <see cref="Shutdown"/> is called).
+        /// or remote <see cref="Close"/> is called).
         /// </summary>
         /// <param name="remoteStorage"></param>
         internal TrinityErrorCode OnStorageLeave(int partition, Guid Id)
@@ -81,23 +85,19 @@ namespace Trinity.DynamicCluster.Storage
         public override int ProxyCount => 0;
         public override bool Open(ClusterConfig config, bool nonblocking)
         {
+            TrinityErrorCode errno = TrinityErrorCode.E_SUCCESS;
             InitializeComponents();
 
-            Log.WriteLine($"DynamicMemoryCloud: server {NickName} starting.");
-            TrinityErrorCode errno = TrinityErrorCode.E_SUCCESS;
-
+            m_partitioner.Start(m_cancelSrc.Token);
             this.cluster_config = config;
             StorageTable = Infinity(() => new Partition())
                           .Take(PartitionCount)
                           .ToArray();
 
-            if (TrinityErrorCode.E_SUCCESS != (errno = ChunkedStorageTable(MyPartitionId).Mount(Global.LocalStorage, MyChunks)))
-            {
-                string errmsg = $"DynamicMemoryCloud: server {NickName} failed to mount itself.";
-                Log.WriteLine(LogLevel.Error, errmsg);
-                throw new Exception(errmsg);
-            }
-
+            m_nameservice.Start(m_cancelSrc.Token);
+            m_leaderElectionService.Start(m_cancelSrc.Token);
+            m_metastore.Start(m_cancelSrc.Token);
+            m_eventqueue.Start(m_cancelSrc.Token);
             // TODO check protocol signatures for every new connection.
 
             return true;
@@ -105,6 +105,8 @@ namespace Trinity.DynamicCluster.Storage
 
         internal void InitializeComponents()
         {
+            m_cancelSrc = new CancellationTokenSource();
+
             m_nameservice = AssemblyUtility.GetAllClassInstances<INameService>().First();
             m_nameservice.NewServerInfoPublished += (o, e) =>
             {
@@ -115,11 +117,11 @@ namespace Trinity.DynamicCluster.Storage
                 DynamicRemoteStorage rs = new DynamicRemoteStorage(si, id, TrinityConfig.ClientMaxConn, this, 0, nonblocking: true);
                 OnStorageJoin(rs);
             };
-            m_nameservice.Start();
 
             m_leaderElectionService = AssemblyUtility.GetAllClassInstances<ILeaderElectionService>().First();
+            m_leaderElectionService.NewLeaderElected += OnLeaderElected;
+
             m_partitioner = AssemblyUtility.GetAllClassInstances<IPartitioner>().First();
-            m_partitioner.Start();
             try
             {
                 m_partitioner.GetPartitionIdByCellId(0);
@@ -131,9 +133,17 @@ namespace Trinity.DynamicCluster.Storage
                 Log.WriteLine($"Partitioner [{m_partitioner.GetType().Name}] does not implement partitioning scheme, falling back to default.");
             }
 
+            m_metastore = AssemblyUtility.GetAllClassInstances<ITransactionalMetadataStore>().First();
+            m_eventqueue = AssemblyUtility.GetAllClassInstances<IEventQueue>().First();
+
         }
 
-        public TrinityErrorCode Shutdown()
+        private void OnLeaderElected(object sender, Guid e)
+        {
+            //TODO
+        }
+
+        public TrinityErrorCode Close()
         {
             var module = GetCommunicationModule<DynamicClusterCommModule>();
             Enumerable
@@ -142,8 +152,12 @@ namespace Trinity.DynamicCluster.Storage
            .OfType<DynamicRemoteStorage>()
            .ForEach(s => _DoWithTempStorage(s, id =>
            {
-               using (var request = new StorageInformationWriter(MyPartitionId, m_nameservice.InstanceId))
-               { module.NotifyRemoteStorageOnLeaving(id, request); }
+               try
+               {
+                   using (var request = new StorageInformationWriter(MyPartitionId, m_nameservice.InstanceId))
+                   { module.NotifyRemoteStorageOnLeaving(id, request); }
+               }
+               catch { }
            }));
             return TrinityErrorCode.E_SUCCESS;
         }

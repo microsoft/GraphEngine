@@ -16,6 +16,7 @@ using Trinity.Storage;
 using Trinity.DynamicCluster;
 using Trinity.Configuration;
 using System.Collections;
+using System.Collections.Concurrent;
 
 namespace Trinity.DynamicCluster.Storage
 {
@@ -27,7 +28,7 @@ namespace Trinity.DynamicCluster.Storage
     /// </summary>
     internal unsafe partial class Partition : Storage, IEnumerable<Storage>
     {
-        private Dictionary<Storage, IEnumerable<Chunk>> m_storages;
+        private ConcurrentDictionary<Storage, IEnumerable<Chunk>> m_storages;
 
         internal TrinityErrorCode Mount(Storage storage, _QueryChunkedRemoteStorageInformationReusltReader info)
         {
@@ -47,7 +48,7 @@ namespace Trinity.DynamicCluster.Storage
         {
             try
             {
-                m_storages.Remove(s);
+                m_storages.TryRemove(s, out var _);
                 return TrinityErrorCode.E_SUCCESS;
             }
             catch (Exception ex)
@@ -61,27 +62,6 @@ namespace Trinity.DynamicCluster.Storage
         public override void Dispose()
         {
             m_storages.ForEach(kvp => kvp.Key.Dispose());
-        }
-
-        // TODO HA semantics should be implemented here
-        public override void SendMessage(TrinityMessage message)
-        {
-            m_storages.First().Key.SendMessage(message);
-        }
-
-        public override void SendMessage(byte* message, int size)
-        {
-            m_storages.First().Key.SendMessage(message, size);
-        }
-
-        public override void SendMessage(TrinityMessage message, out TrinityResponse response)
-        {
-            m_storages.First().Key.SendMessage(message, out response);
-        }
-
-        public override void SendMessage(byte* message, int size, out TrinityResponse response)
-        {
-            m_storages.First().Key.SendMessage(message, size, out response);
         }
 
         internal bool IsLocal(long cellId)
