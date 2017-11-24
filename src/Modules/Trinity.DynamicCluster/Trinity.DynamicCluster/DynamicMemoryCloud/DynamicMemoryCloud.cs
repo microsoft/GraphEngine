@@ -40,6 +40,13 @@ namespace Trinity.DynamicCluster.Storage
             temporaryRemoteStorageRepo.TryRemove(temp_id, out var _);
         }
 
+        private void CheckServerProtocolSignatures(DynamicRemoteStorage rs)
+        {
+            Log.WriteLine(LogLevel.Debug, $"Incoming connection from {rs.Id}, checking protocol signatures...");
+
+            CheckProtocolSignatures_impl(rs, cluster_config.RunningMode, RunningMode.Server);
+        }
+
         internal TrinityErrorCode OnStorageJoin(DynamicRemoteStorage remoteStorage)
         {
             _DoWithTempStorage(remoteStorage, id =>
@@ -210,14 +217,5 @@ namespace Trinity.DynamicCluster.Storage
             }
         }
 
-        private void CheckServerProtocolSignatures()
-        {
-            // TODO
-            Log.WriteLine("Checking {0}-Server protocol signatures...", cluster_config.RunningMode);
-            int my_server_id = (cluster_config.RunningMode == RunningMode.Server) ? MyPartitionId : -1;
-            var storage = StorageTable.Where((_, idx) => idx != my_server_id).FirstOrDefault() as RemoteStorage;
-
-            CheckProtocolSignatures_impl(storage, cluster_config.RunningMode, RunningMode.Server);
-        }
     }
 }
