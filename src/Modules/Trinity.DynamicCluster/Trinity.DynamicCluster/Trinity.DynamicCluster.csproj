@@ -52,8 +52,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Consensus\ILeaderElectionService.cs" />
-    <Compile Include="Consensus\ITransactionalStore.cs" />
+    <Compile Include="Consensus\ITaskQueue.cs" />
     <Compile Include="Consensus\IPartitioner.cs" />
     <Compile Include="Consensus\IService.cs" />
     <Compile Include="Storage\Partition.cs" />
@@ -67,6 +66,7 @@
     <Compile Include="Consensus\INameService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Storage\Partition.Message.cs" />
+    <Compile Include="Tasks\ITask.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>

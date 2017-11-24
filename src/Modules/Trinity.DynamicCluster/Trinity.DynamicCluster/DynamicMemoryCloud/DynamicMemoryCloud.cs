@@ -11,6 +11,8 @@ using Trinity.DynamicCluster.Consensus;
 using static Trinity.DynamicCluster.Utils;
 using Trinity.DynamicCluster.Communication;
 using System.Threading;
+using Trinity.DynamicCluster.Tasks;
+using System.Threading.Tasks;
 
 namespace Trinity.DynamicCluster.Storage
 {
@@ -20,10 +22,9 @@ namespace Trinity.DynamicCluster.Storage
 
         internal ClusterConfig cluster_config;//TODO will be substituted
         internal IPartitioner m_partitioner;
-        internal ILeaderElectionService m_leaderElectionService;
         internal INameService m_nameservice;
-        internal IEventQueue m_eventqueue;
-        internal ITransactionalMetadataStore m_metastore;
+        internal ITaskQueue m_taskqueue;
+        internal Thread m_tasktrd;
         internal CancellationTokenSource m_cancelSrc;
         internal List<CancellationToken> m_cancelTkns;
         internal Partition ChunkedStorageTable(int id) => StorageTable[id] as Partition;
@@ -85,7 +86,6 @@ namespace Trinity.DynamicCluster.Storage
         public override int ProxyCount => 0;
         public override bool Open(ClusterConfig config, bool nonblocking)
         {
-            TrinityErrorCode errno = TrinityErrorCode.E_SUCCESS;
             InitializeComponents();
 
             m_partitioner.Start(m_cancelSrc.Token);
@@ -95,9 +95,9 @@ namespace Trinity.DynamicCluster.Storage
                           .ToArray();
 
             m_nameservice.Start(m_cancelSrc.Token);
-            m_leaderElectionService.Start(m_cancelSrc.Token);
-            m_metastore.Start(m_cancelSrc.Token);
-            m_eventqueue.Start(m_cancelSrc.Token);
+            m_taskqueue.Start(m_cancelSrc.Token);
+            m_tasktrd = new Thread(TaskExecutionProc);
+            m_tasktrd.Start();
             // TODO check protocol signatures for every new connection.
 
             return true;
@@ -118,9 +118,6 @@ namespace Trinity.DynamicCluster.Storage
                 OnStorageJoin(rs);
             };
 
-            m_leaderElectionService = AssemblyUtility.GetAllClassInstances<ILeaderElectionService>().First();
-            m_leaderElectionService.NewLeaderElected += OnLeaderElected;
-
             m_partitioner = AssemblyUtility.GetAllClassInstances<IPartitioner>().First();
             try
             {
@@ -133,14 +130,7 @@ namespace Trinity.DynamicCluster.Storage
                 Log.WriteLine($"Partitioner [{m_partitioner.GetType().Name}] does not implement partitioning scheme, falling back to default.");
             }
 
-            m_metastore = AssemblyUtility.GetAllClassInstances<ITransactionalMetadataStore>().First();
-            m_eventqueue = AssemblyUtility.GetAllClassInstances<IEventQueue>().First();
-
-        }
-
-        private void OnLeaderElected(object sender, Guid e)
-        {
-            //TODO
+            m_taskqueue = AssemblyUtility.GetAllClassInstances<ITaskQueue>().First();
         }
 
         public TrinityErrorCode Close()
@@ -178,6 +168,40 @@ namespace Trinity.DynamicCluster.Storage
         internal Chunk GetChunkByCellId(long cellId)
         {
             return MyChunks.FirstOrDefault(c => c.Covers(cellId));
+        }
+
+        private void TaskExecutionProc()
+        {
+            while (true)
+            {
+                try
+                {
+                    if (!m_taskqueue.IsMaster)
+                    {
+                        Thread.Sleep(1000);
+                        continue;
+                    }
+                    var task = m_taskqueue.GetTask(m_cancelSrc.Token);
+                    var errno = task.Execute();
+                    if (errno == TrinityErrorCode.E_SUCCESS)
+                    {
+                        m_taskqueue.TaskCompleted(task);
+                    }
+                    else
+                    {
+                        Log.WriteLine(LogLevel.Error, $"TaskExecutionProc: task {task.Id} failed with code {errno}");
+                        m_taskqueue.TaskFailed(task);
+                    }
+                }
+                catch (TaskCanceledException)
+                {
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, $"TaskExecutionProc: {ex.ToString()}");
+                }
+            }
         }
 
         private void CheckServerProtocolSignatures()

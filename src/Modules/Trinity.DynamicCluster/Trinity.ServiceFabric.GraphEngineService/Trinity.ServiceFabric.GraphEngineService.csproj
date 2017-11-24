@@ -93,9 +93,8 @@
   <ItemGroup>
     <Compile Include="GraphEngineHttpListener.cs" />
     <Compile Include="GraphEngineListener.cs" />
-    <Compile Include="Interfaces\LeaderElectionService.cs" />
     <Compile Include="Interfaces\NameService.cs" />
-    <Compile Include="Interfaces\ReliableDictionaryEventQueue.cs" />
+    <Compile Include="Interfaces\ReliableTaskQueue.cs" />
     <Compile Include="Interfaces\ServiceFabricPartitioner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GraphEngineService.cs" />

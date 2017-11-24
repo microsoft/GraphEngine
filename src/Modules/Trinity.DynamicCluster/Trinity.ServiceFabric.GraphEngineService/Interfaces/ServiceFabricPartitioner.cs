@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Trinity.Daemon;
 using Trinity.DynamicCluster.Consensus;
 using Trinity.Storage;
+using System.Threading;
 
 namespace Trinity.ServiceFabric.Interfaces
 {
@@ -28,17 +29,17 @@ namespace Trinity.ServiceFabric.Interfaces
         public event EventHandler<int> ChunkCountUpdated = delegate { };
         public event EventHandler<int> PartitionCountUpdated = delegate { };
 
-        public void Dispose() { }
-
         public int GetPartitionIdByCellId(long cellId)
         {
             throw new NotImplementedException();
         }
 
-        public TrinityErrorCode Start()
+        public TrinityErrorCode Start(CancellationToken cancellationToken)
         {
             //TODO DHT
             return TrinityErrorCode.E_SUCCESS;
         }
+
+        public void Dispose() { }
     }
 }

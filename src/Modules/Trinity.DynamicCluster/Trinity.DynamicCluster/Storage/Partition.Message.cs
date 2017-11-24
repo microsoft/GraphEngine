@@ -11,6 +11,8 @@ namespace Trinity.DynamicCluster.Storage
     internal unsafe partial class Partition : Storage
     {
         // TODO HA semantics should be implemented here
+        // We should provide a mechanism to annotate protocols with HA semantics,
+        // and interfaces for override such semantics.
         public override void SendMessage(TrinityMessage message)
         {
             m_storages.First().Key.SendMessage(message);
@@ -44,6 +46,7 @@ namespace Trinity.DynamicCluster.Storage
         public void Broadcast(TrinityMessage message, out TrinityResponse response)
         {
             // TODO what does it mean to broadcast with response?
+            // See comments below for message group.
             throw new NotImplementedException();
         }
 
@@ -57,6 +60,12 @@ namespace Trinity.DynamicCluster.Storage
 
         // TODO First-available
 
-        // TODO partition-aware dispatch
+        // TODO chunk-aware dispatch and message grouping. Some protocols (like FanoutSearch)
+        // combines multiple cellIds into a single message. In this case we should provide a
+        // mechanism to allocate a group of messages, each representing a chunk set. On dispatch,
+        // these messages will be sent to the 
+
+        // TODO send message to a specific storage, identified by a GUID. This works for situations
+        // where a temporary state is attached to a specific storage.
     }
 }
