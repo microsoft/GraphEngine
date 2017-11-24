@@ -26,7 +26,6 @@ namespace Trinity.DynamicCluster.Storage
         internal ITaskQueue m_taskqueue;
         internal Thread m_tasktrd;
         internal CancellationTokenSource m_cancelSrc;
-        internal List<CancellationToken> m_cancelTkns;
         internal Partition ChunkedStorageTable(int id) => StorageTable[id] as Partition;
         private ConcurrentDictionary<int, DynamicRemoteStorage> temporaryRemoteStorageRepo = new ConcurrentDictionary<int, DynamicRemoteStorage>();
 
@@ -141,14 +140,21 @@ namespace Trinity.DynamicCluster.Storage
            .SelectMany(ChunkedStorageTable)
            .OfType<DynamicRemoteStorage>()
            .ForEach(s => _DoWithTempStorage(s, id =>
-           {
-               try
-               {
-                   using (var request = new StorageInformationWriter(MyPartitionId, m_nameservice.InstanceId))
-                   { module.NotifyRemoteStorageOnLeaving(id, request); }
-               }
-               catch { }
-           }));
+            {
+                try
+                {
+                    using (var request = new StorageInformationWriter(MyPartitionId, m_nameservice.InstanceId))
+                    { module.NotifyRemoteStorageOnLeaving(id, request); }
+                }
+                catch { }
+            }));
+
+            m_cancelSrc.Cancel();
+            m_nameservice.Dispose();
+            m_partitioner.Dispose();
+            m_taskqueue.Dispose();
+            m_tasktrd.Join();
+
             return TrinityErrorCode.E_SUCCESS;
         }
 
