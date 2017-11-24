@@ -119,13 +119,13 @@ namespace Trinity.DynamicCluster.Storage
             };
 
             m_partitioner = AssemblyUtility.GetAllClassInstances<IPartitioner>().First();
-            try
+            var partition_proc = m_partitioner.PartitionerProc;
+            if (partition_proc != null)
             {
-                m_partitioner.GetPartitionIdByCellId(0);
-                SetPartitionMethod(m_partitioner.GetPartitionIdByCellId);
                 Log.WriteLine($"Partitioner [{m_partitioner.GetType().Name}] governs partitioning scheme.");
+                SetPartitionMethod(partition_proc);
             }
-            catch (NotImplementedException)
+            else
             {
                 Log.WriteLine($"Partitioner [{m_partitioner.GetType().Name}] does not implement partitioning scheme, falling back to default.");
             }

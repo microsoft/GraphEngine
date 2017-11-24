@@ -18,7 +18,7 @@ namespace Trinity.DynamicCluster.Consensus
         /// or after <see cref="Start"/> is called. Also, a name service
         /// should report if its own info is published.
         /// </summary>
-        event EventHandler<Tuple<Guid, ServerInfo>> NewServerInfoPublished;
+        event EventHandler<ValueTuple<Guid, ServerInfo>> NewServerInfoPublished;
         /// <summary>
         /// Obtains a unique identifier for the local instance.
         /// Note, on the platforms where multiple instances run

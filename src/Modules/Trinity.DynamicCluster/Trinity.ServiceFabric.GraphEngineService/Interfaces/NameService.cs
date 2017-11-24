@@ -5,6 +5,7 @@ using System.Fabric;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Trinity.Daemon;
 using Trinity.DynamicCluster.Consensus;
@@ -14,8 +15,9 @@ namespace Trinity.ServiceFabric
 {
     public class NameService : INameService
     {
-        private BackgroundTask m_bgtask;
         private const int c_bgtaskInterval = 10000;
+        private BackgroundTask m_bgtask;
+        private CancellationToken m_token;
 
         public string Address => GraphEngineService.Instance.Address;
 
@@ -34,10 +36,12 @@ namespace Trinity.ServiceFabric
                             .Take(16).ToArray());
         }
 
-        public TrinityErrorCode Start()
+        public TrinityErrorCode Start(CancellationToken token)
         {
+            m_token = token;
             ServerInfo my_si = new ServerInfo(Address, Port, Global.MyAssemblyPath, TrinityConfig.LoggingLevel);
             BackgroundThread.AddBackgroundTask(m_bgtask);
+            // TODO publish
             return TrinityErrorCode.E_SUCCESS;
         }
 
@@ -51,6 +55,6 @@ namespace Trinity.ServiceFabric
             return c_bgtaskInterval;
         }
 
-        public event EventHandler<Tuple<Guid, ServerInfo>> NewServerInfoPublished = delegate { };
+        public event EventHandler<(Guid, ServerInfo)> NewServerInfoPublished = delegate { };
     }
 }

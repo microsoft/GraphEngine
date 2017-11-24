@@ -222,14 +222,14 @@ namespace Trinity.Storage
         /// <summary>
         /// Gets the Id of the server on which the cell with the specified cell Id is located.
         /// </summary>
-        protected GetServerIdByCellIdDelegate StaticGetPartitionByCellId;
+        protected GetPartitionIdByCellIdDelegate StaticGetPartitionByCellId;
 
 
         /// <summary>
         /// Sets a user-defined data partitioning method.
         /// </summary>
         /// <param name="getPartitionIdByCellIdMethod">A method that transforms a 64-bit cell Id to a Trinity server Id.</param>
-        public void SetPartitionMethod(GetServerIdByCellIdDelegate getPartitionIdByCellIdMethod)
+        public void SetPartitionMethod(GetPartitionIdByCellIdDelegate getPartitionIdByCellIdMethod)
         {
             StaticGetPartitionByCellId = getPartitionIdByCellIdMethod;
         }

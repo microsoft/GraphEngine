@@ -103,7 +103,7 @@
     <Compile Include="FaultTolerance\Delegates.cs" />
     <Compile Include="FaultTolerance\FailureHandlerRegistry.cs" />
     <Compile Include="Network\BSP\BSP.Server.cs" />
-    <Compile Include="Network\GetServerIdByCellIdDelegate.cs" />
+    <Compile Include="Network\GetPartitionIdByCellIdDelegate.cs" />
     <Compile Include="Network\Http\BadRequestException.cs" />
     <Compile Include="Network\Http\CommonHttpHandlers.cs" />
     <Compile Include="Network\Http\NamespaceDoc.cs" />

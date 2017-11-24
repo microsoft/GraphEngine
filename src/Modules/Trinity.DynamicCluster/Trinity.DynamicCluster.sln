@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2006
+VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.DynamicCluster", "Trinity.DynamicCluster\Trinity.DynamicCluster.csproj", "{26DB9C05-8B53-409F-A1C9-3FD30CFEC35C}"
 EndProject
@@ -36,17 +36,21 @@ Global
 		{7673502E-80B7-46E7-AA78-AC7E6BAB556C}.Release|x64.ActiveCfg = Release|Any CPU
 		{7673502E-80B7-46E7-AA78-AC7E6BAB556C}.Release|x64.Build.0 = Release|Any CPU
 		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|Any CPU.Build.0 = Debug|x64
 		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|x64.ActiveCfg = Debug|x64
 		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|x64.Build.0 = Debug|x64
 		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|x64.Deploy.0 = Debug|x64
 		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Release|Any CPU.ActiveCfg = Release|x64
+		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Release|Any CPU.Build.0 = Release|x64
 		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Release|x64.ActiveCfg = Release|x64
 		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Release|x64.Build.0 = Release|x64
 		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Release|x64.Deploy.0 = Release|x64
 		{3299B302-8F94-4DB7-9331-F53F41E3E2AB}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{3299B302-8F94-4DB7-9331-F53F41E3E2AB}.Debug|Any CPU.Build.0 = Debug|x64
 		{3299B302-8F94-4DB7-9331-F53F41E3E2AB}.Debug|x64.ActiveCfg = Debug|x64
 		{3299B302-8F94-4DB7-9331-F53F41E3E2AB}.Debug|x64.Build.0 = Debug|x64
 		{3299B302-8F94-4DB7-9331-F53F41E3E2AB}.Release|Any CPU.ActiveCfg = Release|x64
+		{3299B302-8F94-4DB7-9331-F53F41E3E2AB}.Release|Any CPU.Build.0 = Release|x64
 		{3299B302-8F94-4DB7-9331-F53F41E3E2AB}.Release|x64.ActiveCfg = Release|x64
 		{3299B302-8F94-4DB7-9331-F53F41E3E2AB}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection

@@ -86,6 +86,9 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="Trinity.Core, Version=1.0.8967.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GraphEngine.Core.1.0.8967\lib\Trinity.Core.dll</HintPath>
     </Reference>

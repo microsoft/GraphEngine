@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Trinity.Network;
 using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Consensus
@@ -13,11 +14,17 @@ namespace Trinity.DynamicCluster.Consensus
         /// </summary>
         int PartitionId { get; }
         IEnumerable<Chunk> MyChunkList { get; }
+        IEnumerable<Chunk> GlobalChunkList { get; }
+        (Chunk c1, Chunk c2) SplitChunk(Chunk c, long splitKey);
         /// <summary>
         /// An adapter should implement its own
-        /// partitioning scheme here.
+        /// partitioning scheme here. If it is
+        /// intended to use the default partitioning
+        /// method, return null.
         /// </summary>
-        int GetPartitionIdByCellId(long cellId);
+        GetPartitionIdByCellIdDelegate PartitionerProc { get; }
+
+        bool IsMaster { get; }
 
         event EventHandler<int> ChunkCountUpdated;
         event EventHandler<int> PartitionCountUpdated;

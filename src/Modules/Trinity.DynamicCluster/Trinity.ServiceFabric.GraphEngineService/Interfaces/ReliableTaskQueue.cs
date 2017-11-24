@@ -28,7 +28,12 @@ namespace Trinity.ServiceFabric.Interfaces
             throw new NotImplementedException();
         }
 
-        public void TaskCompleted()
+        public void TaskCompleted(ITask task)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void TaskFailed(ITask task)
         {
             throw new NotImplementedException();
         }
