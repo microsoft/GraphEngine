@@ -45,7 +45,7 @@ namespace Trinity.ServiceFabric
         {
             foreach (var log in logs)
             {
-                string msg = $"[{log.logLevel}]\t[{log.logTime}]\t{log.logMessage}";
+                string msg = $"[{log.logTime}]\t{log.logMessage}";
                 Action<string> logproc = _ => { };
                 m_logprocs.TryGetValue(log.logLevel, out logproc);
                 logproc(msg);

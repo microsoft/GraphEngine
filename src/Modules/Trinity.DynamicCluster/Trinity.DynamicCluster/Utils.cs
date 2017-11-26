@@ -28,6 +28,16 @@ namespace Trinity.DynamicCluster
             return list;
         }
 
+        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> list, Action<int, T> action)
+        {
+            int idx = 0;
+            foreach(var obj in list)
+            {
+                action(idx++, obj);
+            }
+            return list;
+        }
+
         public static IEnumerable<int> Integers()
         {
             int i = 0;
@@ -55,7 +65,7 @@ namespace Trinity.DynamicCluster
         public static string GenerateNickName(Guid instanceId)
         {
             string[] names;
-            using (var sr = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Trinity.DynamicCluster.names.txt")))
+            using (var sr = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Trinity.DynamicCluster.Resources.names.txt")))
             {
                 names = sr.ReadToEnd().Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
             }

@@ -6,9 +6,6 @@ using Trinity.Network;
 
 namespace Trinity.DynamicCluster.Consensus
 {
-    /// <summary>
-    /// When a name service is started (rather than instantiated), it should publish the information of the local instance.
-    /// </summary>
     public interface INameService: IService
     {
         /// <summary>
@@ -16,9 +13,9 @@ namespace Trinity.DynamicCluster.Consensus
         /// the name service decides that this instance should connect to,
         /// regardless of whether these target instances have registered before
         /// or after <see cref="Start"/> is called. Also, a name service
-        /// should report if its own info is published.
+        /// should not report itself (no loopback connections shall be made).
         /// </summary>
-        event EventHandler<ValueTuple<Guid, ServerInfo>> NewServerInfoPublished;
+        event EventHandler<ServerInfo> NewServerInfoPublished;
         /// <summary>
         /// Obtains a unique identifier for the local instance.
         /// Note, on the platforms where multiple instances run

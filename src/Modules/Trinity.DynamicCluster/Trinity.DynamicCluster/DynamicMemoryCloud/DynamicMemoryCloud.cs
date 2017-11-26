@@ -42,7 +42,7 @@ namespace Trinity.DynamicCluster.Storage
 
         private void CheckServerProtocolSignatures(DynamicRemoteStorage rs)
         {
-            Log.WriteLine(LogLevel.Debug, $"Incoming connection from {rs.Id}, checking protocol signatures...");
+            Log.WriteLine(LogLevel.Debug, $"Checking protocol signatures with {rs.Id}...");
 
             CheckProtocolSignatures_impl(rs, cluster_config.RunningMode, RunningMode.Server);
         }
@@ -54,8 +54,11 @@ namespace Trinity.DynamicCluster.Storage
                 var module = GetCommunicationModule<DynamicClusterCommModule>();
                 using (var rsp = module.QueryChunkedRemoteStorageInformation(id))
                 {
+                    remoteStorage.SetId(rsp.info.id);
                     ChunkedStorageTable(rsp.info.partition).Mount(remoteStorage, rsp);
                 }
+                CheckServerProtocolSignatures(remoteStorage);
+                Log.WriteLine($"DynamicCluster: '{NickName}' Connected to '{remoteStorage.NickName}' ({remoteStorage.Id})");
             });
             return TrinityErrorCode.E_SUCCESS;
         }
@@ -105,9 +108,10 @@ namespace Trinity.DynamicCluster.Storage
             m_tasktrd = new Thread(TaskExecutionProc);
             m_tasktrd.Start();
 
-            Log.WriteLine($"DynamicMemoryCloud: Partition {MyPartitionId}: Instance {InstanceId} opened.");
-            // TODO check protocol signatures for every new connection.
+            NickName = GenerateNickName(InstanceId);
+            Log.WriteLine($"DynamicMemoryCloud: Partition {MyPartitionId}: Instance '{NickName}' {InstanceId} opened.");
 
+            ChunkedStorageTable(MyPartitionId).Mount(Global.LocalStorage, MyChunks);
             return true;
         }
 
@@ -118,12 +122,8 @@ namespace Trinity.DynamicCluster.Storage
             m_nameservice = AssemblyUtility.GetAllClassInstances<INameService>().First();
             m_nameservice.NewServerInfoPublished += (o, e) =>
             {
-                var id = e.Item1;
-                var si = e.Item2;
-                Log.WriteLine($"DynamicCluster: New server info published: {GenerateNickName(id)}, {si.ToString()}");
-
-                DynamicRemoteStorage rs = new DynamicRemoteStorage(si, id, TrinityConfig.ClientMaxConn, this, 0, nonblocking: true);
-                OnStorageJoin(rs);
+                Log.WriteLine($"DynamicCluster: New server info published: {e.HostName}:{e.Port}");
+                DynamicRemoteStorage rs = new DynamicRemoteStorage(e, TrinityConfig.ClientMaxConn, this, 0, nonblocking: true);
             };
 
             m_partitioner = AssemblyUtility.GetAllClassInstances<IPartitioner>().First();

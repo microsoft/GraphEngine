@@ -109,15 +109,18 @@ namespace Trinity.ServiceFabric
         /// <returns>A collection of listeners.</returns>
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
+            //  See https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-services-communication:
+            //  When creating multiple listeners for a service, each listener must be given a unique name.
             return new[] {
-                new ServiceReplicaListener(ctx => new GraphEngineListener(ctx), listenOnSecondary: true),
-                //new ServiceReplicaListener(ctx => new GraphEngineHttpListener(ctx), listenOnSecondary: true),
+                new ServiceReplicaListener(ctx => new GraphEngineListener(ctx), "GraphEngineTrinityProtocolListener", listenOnSecondary: true),
+                new ServiceReplicaListener(ctx => new GraphEngineHttpListener(ctx), "GraphEngineHttpListener", listenOnSecondary: true),
             };
         }
 
         protected override Task OnChangeRoleAsync(ReplicaRole newRole, CancellationToken cancellationToken)
         {
             this.Role = newRole;
+            Log.WriteLine("{0}", $"Replica {Context.ReplicaOrInstanceId} changed role to {newRole}");
             return base.OnChangeRoleAsync(newRole, cancellationToken);
         }
 
@@ -141,8 +144,8 @@ namespace Trinity.ServiceFabric
                 {
                     var result = await myDictionary.TryGetValueAsync(tx, "Counter");
 
-                    GraphEngineServiceEventSource.Current.ServiceMessage(this.Context, "Current Counter Value: {0}",
-                        result.HasValue ? result.Value.ToString() : "Value does not exist.");
+                    //GraphEngineServiceEventSource.Current.ServiceMessage(this.Context, "Current Counter Value: {0}",
+                    //    result.HasValue ? result.Value.ToString() : "Value does not exist.");
 
                     await myDictionary.AddOrUpdateAsync(tx, "Counter", 0, (key, value) => ++value);
 

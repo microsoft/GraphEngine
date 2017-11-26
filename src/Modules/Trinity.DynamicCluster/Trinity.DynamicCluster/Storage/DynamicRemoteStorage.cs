@@ -14,16 +14,17 @@ namespace Trinity.DynamicCluster
     class DynamicRemoteStorage : RemoteStorage
     {
 
-        public DynamicRemoteStorage(ServerInfo server_info, Guid id, int connPerServer, MemoryCloud mc, int pid, bool nonblocking) 
-            : base(new[] { server_info }, connPerServer, mc, pid, nonblocking)
-        {
-            NickName = Utils.GenerateNickName(id);
-            Log.WriteLine($"DynamicCluster: connecting to {NickName} at {server_info.HostName}:{server_info.Port}");
-            Id = id;
-        }
+        public DynamicRemoteStorage(ServerInfo server_info, int connPerServer, MemoryCloud mc, int pid, bool nonblocking) 
+            : base(new[] { server_info }, connPerServer, mc, pid, nonblocking) { }
 
         public string NickName { get; private set; }
         public Guid Id { get; private set; }
+
+        internal void SetId(Guid id)
+        {
+            Id = id;
+            NickName = Utils.GenerateNickName(id);
+        }
 
         public override unsafe void SendMessage(byte* buffer, int size)
         {
