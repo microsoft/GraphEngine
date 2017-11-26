@@ -28,7 +28,7 @@ namespace Trinity.DynamicCluster.Storage
     /// </summary>
     internal unsafe partial class Partition : Storage, IEnumerable<Storage>
     {
-        private ConcurrentDictionary<Storage, IEnumerable<Chunk>> m_storages;
+        private ConcurrentDictionary<Storage, IEnumerable<Chunk>> m_storages = new ConcurrentDictionary<Storage, IEnumerable<Chunk>>();
 
         internal TrinityErrorCode Mount(Storage storage, _QueryChunkedRemoteStorageInformationReusltReader info)
         {

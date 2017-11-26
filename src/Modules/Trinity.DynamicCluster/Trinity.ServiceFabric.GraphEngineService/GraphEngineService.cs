@@ -33,6 +33,7 @@ namespace Trinity.ServiceFabric
         public int Port { get; private set; }
         public int HttpPort { get; private set; }
         public string Address { get; private set; }
+        public ReplicaRole Role { get; private set; }
 
         //  Passive Singleton
         public GraphEngineService(StatefulServiceContext context)
@@ -83,7 +84,7 @@ namespace Trinity.ServiceFabric
         {
             lock (s_lock)
             {
-                TrinityServer.Start();
+                TrinityServer?.Start();
                 return TrinityErrorCode.E_SUCCESS;
             }
         }
@@ -92,7 +93,9 @@ namespace Trinity.ServiceFabric
         {
             lock (s_lock)
             {
-                TrinityServer.Stop();
+                TrinityServer?.Stop();
+                TrinityServer = null;
+                Instance = null;
                 return TrinityErrorCode.E_SUCCESS;
             }
         }
@@ -108,8 +111,14 @@ namespace Trinity.ServiceFabric
         {
             return new[] {
                 new ServiceReplicaListener(ctx => new GraphEngineListener(ctx), listenOnSecondary: true),
-                new ServiceReplicaListener(ctx => new GraphEngineHttpListener(ctx), listenOnSecondary: false),
+                //new ServiceReplicaListener(ctx => new GraphEngineHttpListener(ctx), listenOnSecondary: true),
             };
+        }
+
+        protected override Task OnChangeRoleAsync(ReplicaRole newRole, CancellationToken cancellationToken)
+        {
+            this.Role = newRole;
+            return base.OnChangeRoleAsync(newRole, cancellationToken);
         }
 
         /// <summary>

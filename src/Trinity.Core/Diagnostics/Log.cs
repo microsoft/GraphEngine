@@ -78,6 +78,11 @@ namespace Trinity.Diagnostics
         /// The log level.
         /// </summary>
         public LogLevel logLevel;
+        private static DateTime UnixEpoch = new DateTime(1970, 1, 1);
+        /// <summary>
+        /// The DateTime representation of the timestamp.
+        /// </summary>
+        public DateTime logTime => UnixEpoch.AddSeconds(logTimestamp);
     }
 
     /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Fabric;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -11,31 +12,30 @@ namespace Trinity.ServiceFabric.Interfaces
 {
     class ReliableTaskQueue : ITaskQueue
     {
-        public bool IsMaster => throw new NotImplementedException();
+        public bool IsMaster => GraphEngineService.Instance.Role == ReplicaRole.Primary;
 
         public void Dispose()
         {
-            throw new NotImplementedException();
         }
 
         public ITask GetTask(CancellationToken token)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public TrinityErrorCode Start(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return TrinityErrorCode.E_SUCCESS;
         }
 
         public void TaskCompleted(ITask task)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         public void TaskFailed(ITask task)
         {
-            throw new NotImplementedException();
+            return;
         }
     }
 }

@@ -104,6 +104,8 @@ namespace Trinity.DynamicCluster.Storage
             m_taskqueue.Start(m_cancelSrc.Token);
             m_tasktrd = new Thread(TaskExecutionProc);
             m_tasktrd.Start();
+
+            Log.WriteLine($"DynamicMemoryCloud: Partition {MyPartitionId}: Instance {InstanceId} opened.");
             // TODO check protocol signatures for every new connection.
 
             return true;
@@ -195,6 +197,7 @@ namespace Trinity.DynamicCluster.Storage
                         continue;
                     }
                     var task = m_taskqueue.GetTask(m_cancelSrc.Token);
+                    if (task == null) continue;
                     var errno = task.Execute();
                     if (errno == TrinityErrorCode.E_SUCCESS)
                     {
@@ -213,9 +216,9 @@ namespace Trinity.DynamicCluster.Storage
                 catch (Exception ex)
                 {
                     Log.WriteLine(LogLevel.Error, $"TaskExecutionProc: {ex.ToString()}");
+                    Thread.Sleep(1000);
                 }
             }
         }
-
     }
 }

@@ -21,19 +21,19 @@ namespace Trinity.ServiceFabric
 
         public void Abort()
         {
-            GraphEngineService.Instance.Stop();
+            GraphEngineService.Instance?.Stop();
         }
 
         public Task CloseAsync(CancellationToken cancellationToken)
         {
-            GraphEngineService.Instance.Stop();
+            GraphEngineService.Instance?.Stop();
             return Task.FromResult(0);
         }
 
         public Task<string> OpenAsync(CancellationToken cancellationToken)
         {
-            GraphEngineService.Instance.Start();
-            return Task.FromResult($"trinity-tcp://{GraphEngineService.Instance.Address}:{GraphEngineService.Instance.Port}");
+            GraphEngineService.Instance?.Start();
+            return Task.FromResult($"tcp://{GraphEngineService.Instance.Address}:{GraphEngineService.Instance.Port}");
         }
     }
 }

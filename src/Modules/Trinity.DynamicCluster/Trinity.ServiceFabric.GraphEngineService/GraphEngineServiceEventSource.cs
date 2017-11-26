@@ -25,19 +25,30 @@ namespace Trinity.ServiceFabric
         // Instance constructor is private to enforce singleton semantics
         private GraphEngineServiceEventSource() : base()
         {
+            m_logprocs = new Dictionary<LogLevel, Action<string>>
+            {
+                { LogLevel.Debug, GraphEngineLogDebug },
+                { LogLevel.Error, GraphEngineLogErr },
+                { LogLevel.Fatal, GraphEngineLogFatal },
+                { LogLevel.Info, GraphEngineLogInfo },
+                { LogLevel.Verbose, GraphEngineLogVerbose },
+                { LogLevel.Warning, GraphEngineLogWarn },
+            };
+
             TrinityConfig.LogToFile = false;
             Log.LogsWritten += GraphEngineLogsWritten;
         }
 
+        private Dictionary<LogLevel, Action<string>> m_logprocs = null;
+        [NonEvent]
         private void GraphEngineLogsWritten(IList<LOG_ENTRY> logs)
         {
-            foreach(var log in logs)
+            foreach (var log in logs)
             {
-                string msg = $"[{log.logLevel}]\t[{log.logTimestamp}]\t{log.logMessage}";
-                if (log.logLevel == LogLevel.Info)
-                {
-                    GraphEngineLogInfo(msg);
-                }
+                string msg = $"[{log.logLevel}]\t[{log.logTime}]\t{log.logMessage}";
+                Action<string> logproc = _ => { };
+                m_logprocs.TryGetValue(log.logLevel, out logproc);
+                logproc(msg);
             }
         }
 
@@ -176,6 +187,41 @@ namespace Trinity.ServiceFabric
         public void GraphEngineLogInfo(string message)
         {
             WriteEvent(GraphEngineLogInfoEventId, message);
+        }
+
+        private const int GraphEngineLogWarnEventId = 8;
+        [Event(GraphEngineLogWarnEventId, Level = EventLevel.Warning, Message = "{0}", Keywords = Keywords.GraphEngineLog)]
+        public void GraphEngineLogWarn(string message)
+        {
+            WriteEvent(GraphEngineLogWarnEventId, message);
+        }
+
+        private const int GraphEngineLogErrEventId = 9;
+        [Event(GraphEngineLogErrEventId, Level = EventLevel.Error, Message = "{0}", Keywords = Keywords.GraphEngineLog)]
+        public void GraphEngineLogErr(string message)
+        {
+            WriteEvent(GraphEngineLogErrEventId, message);
+        }
+
+        private const int GraphEngineLogDebugEventId = 10;
+        [Event(GraphEngineLogDebugEventId, Level = EventLevel.Verbose, Message = "{0}", Keywords = Keywords.GraphEngineLog)]
+        public void GraphEngineLogDebug(string message)
+        {
+            WriteEvent(GraphEngineLogDebugEventId, message);
+        }
+
+        private const int GraphEngineLogFatalEventId = 11;
+        [Event(GraphEngineLogFatalEventId, Level = EventLevel.Critical, Message = "{0}", Keywords = Keywords.GraphEngineLog)]
+        public void GraphEngineLogFatal(string message)
+        {
+            WriteEvent(GraphEngineLogFatalEventId, message);
+        }
+
+        private const int GraphEngineLogVerboseEventId = 12;
+        [Event(GraphEngineLogVerboseEventId, Level = EventLevel.Verbose, Message = "{0}", Keywords = Keywords.GraphEngineLog)]
+        public void GraphEngineLogVerbose(string message)
+        {
+            WriteEvent(GraphEngineLogVerboseEventId, message);
         }
         #endregion
 

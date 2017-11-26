@@ -7,7 +7,7 @@
   <ServiceTypes>
     <!-- This is the name of your ServiceType. 
          This name must match the string used in RegisterServiceType call in Program.cs. -->
-    <StatefulServiceType ServiceTypeName="Trinity.ServiceFabric.GraphEngineServiceType" HasPersistedState="true" />
+    <StatefulServiceType ServiceTypeName="Trinity.ServiceFabric.GraphEngineServiceType" HasPersistedState="true"/>
   </ServiceTypes>
 
   <!-- Code package is your service executable. -->
@@ -21,15 +21,15 @@
 
   <!-- Config package is the contents of the Config directoy under PackageRoot that contains an 
        independently-updateable and versioned set of custom configuration settings for your service. -->
-  <ConfigPackage Name="Config" Version="1.0.0" />
+  <ConfigPackage Name="Config" Version="1.0.0"/>
 
   <Resources>
     <Endpoints>
       <!-- This endpoint is used by the communication listener to obtain the port on which to 
            listen. Please note that if your service is partitioned, this port is shared with 
            replicas of different partitions that are placed in your code. -->
-      <Endpoint Name="TrinityProtocolEndpoint" Protocol="tcp" Type="Internal"/>
-      <Endpoint Name="HttpEndpoint" Protocol="tcp" Type="Input"/>
+      <Endpoint Name="TrinityProtocolEndpoint" Protocol="tcp"/>
+      <Endpoint Name="HttpEndpoint" Protocol="tcp"/>
 
       <!-- This endpoint is used by the replicator for replicating the state of your service.
            This endpoint is configured through a ReplicatorSettings config section in the Settings.xml

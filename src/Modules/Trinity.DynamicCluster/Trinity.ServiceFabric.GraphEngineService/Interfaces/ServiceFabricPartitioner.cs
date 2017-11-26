@@ -32,7 +32,7 @@ namespace Trinity.ServiceFabric.Interfaces
         //  Uses Trinity default partitioning method.
         public GetPartitionIdByCellIdDelegate PartitionerProc => null;
 
-        public bool IsMaster => throw new NotImplementedException();
+        public bool IsMaster => GraphEngineService.Instance.Role == ReplicaRole.Primary;
 
         public event EventHandler<int> ChunkCountUpdated = delegate { };
         public event EventHandler<int> PartitionCountUpdated = null; // Not going to happen. SF has fixed partitioning scheme.
