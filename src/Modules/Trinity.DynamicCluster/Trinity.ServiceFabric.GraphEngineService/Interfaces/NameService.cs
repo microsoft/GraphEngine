@@ -49,15 +49,19 @@ namespace Trinity.ServiceFabric
             m_fclient = new FabricClient();
         }
 
-        //private Guid GetInstanceId() => new Guid(Enumerable.Concat(
-        //                                GraphEngineService.Instance.NodeContext.NodeInstanceId.ToByteArray(),
-        //                                Enumerable.Repeat<byte>(0x0, 16))
-        //                               .Take(16).ToArray());
+        internal static Guid GetInstanceId()
+        {
+            BigInteger low = new BigInteger(GraphEngineService.Instance.Context.ReplicaId);
+            BigInteger high = new BigInteger(GraphEngineService.Instance.PartitionId) << 64;
+            return new Guid(Enumerable.Concat((low + high).ToByteArray(),
+                                        Enumerable.Repeat<byte>(0x0, 16))
+                                       .Take(16).ToArray());
+        }
 
-        private Guid GetInstanceId() => new Guid(Enumerable.Concat(
-                                            new BigInteger(GraphEngineService.Instance.Context.ReplicaId).ToByteArray(),
-                                            Enumerable.Repeat<byte>(0x0, 16))
-                                           .Take(16).ToArray());
+        //internal static Guid GetInstanceId() => new Guid(Enumerable.Concat(
+        //                                    new BigInteger(GraphEngineService.Instance.Context.ReplicaOrInstanceId).ToByteArray(),
+        //                                    Enumerable.Repeat<byte>(0x0, 16))
+        //                                   .Take(16).ToArray());
 
         public TrinityErrorCode Start(CancellationToken token)
         {
@@ -102,7 +106,7 @@ namespace Trinity.ServiceFabric
             {
                 var ents = addr.Substring("tcp://".Length).Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                 if ($"{ents[0]}:{ents[1]}" == $"{this.Address}:{this.Port}") continue;
-                Log.WriteLine("{0}", $"NameService: {addr} added to partition {id}");
+                Log.WriteLine("{0}", $"NameService: {addr} added to partition {m_partitionIds.FindIndex(_ => _ == id)} ({id})");
                 NewServerInfoPublished(this, new ServerInfo(ents[0], int.Parse(ents[1]), null, LogLevel.Info));
             }
             m_replicaList[id] = tmp;
@@ -112,7 +116,7 @@ namespace Trinity.ServiceFabric
         private async Task<HashSet<string>> ResolvePartition(Guid partId)
         {
             var rs = await m_fclient.QueryManager.GetReplicaListAsync(partId);
-            rs.ForEach(r => Log.WriteLine("{0}", r.ReplicaAddress));
+            //rs.ForEach(r => Log.WriteLine("{0}", r.ReplicaAddress));
             var addrs = rs.Select(r => GetTrinityProtocolEndpoint(r)).Where(_ => _ != null);
             return new HashSet<string>(addrs);
         }

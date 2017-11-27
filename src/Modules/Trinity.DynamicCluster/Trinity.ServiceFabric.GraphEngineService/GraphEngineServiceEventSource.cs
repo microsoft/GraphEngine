@@ -7,10 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Trinity.Diagnostics;
+using Trinity.DynamicCluster;
 
 namespace Trinity.ServiceFabric
 {
-    [EventSource(Name = "MyCompany-Trinity.ServiceFabric.SmokeTest-Trinity.ServiceFabric.GraphEngineService")]
+    [EventSource(Name = "Microsoft-GraphEngineService-Trinity.ServiceFabric.GraphEngineService")]
     internal sealed class GraphEngineServiceEventSource : EventSource
     {
         public static readonly GraphEngineServiceEventSource Current = new GraphEngineServiceEventSource();
@@ -22,6 +23,8 @@ namespace Trinity.ServiceFabric
             Task.Run(() => { });
         }
 
+        private Dictionary<LogLevel, Action<string>> m_logprocs = null;
+        private string m_logheader = null;
         // Instance constructor is private to enforce singleton semantics
         private GraphEngineServiceEventSource() : base()
         {
@@ -46,17 +49,26 @@ namespace Trinity.ServiceFabric
             Log.WriteLine(LogLevel.Fatal, "{0}", $"Unhandled exception: {e.ExceptionObject.ToString()}.");
         }
 
-        private Dictionary<LogLevel, Action<string>> m_logprocs = null;
         [NonEvent]
         private void GraphEngineLogsWritten(IList<LOG_ENTRY> logs)
         {
+            var header = EnsureLogHeader();
             foreach (var log in logs)
             {
-                string msg = $"[{log.logTime}]\t{log.logMessage}";
+                string msg = $"{header}{log.logMessage}";
                 Action<string> logproc = _ => { };
                 m_logprocs.TryGetValue(log.logLevel, out logproc);
                 logproc(msg);
             }
+        }
+
+        [NonEvent]
+        private string EnsureLogHeader()
+        {
+            if (m_logheader != null) return m_logheader;
+            if (GraphEngineService.Instance == null) return "";
+            m_logheader = $"[P{GraphEngineService.Instance.PartitionId}-{Utils.GenerateNickName(NameService.GetInstanceId())}]\t";
+            return m_logheader;
         }
 
         #region Keywords
