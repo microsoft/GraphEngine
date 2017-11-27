@@ -14,7 +14,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="1.9.71" />
-    <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.8967" />
+    <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.9083" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
   </ItemGroup>
   <ItemGroup>

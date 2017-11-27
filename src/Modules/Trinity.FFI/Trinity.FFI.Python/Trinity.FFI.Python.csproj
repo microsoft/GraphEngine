@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>GraphEngine.FFI.Python</PackageId>
-    <Version>1.0.8967</Version>
+    <Version>1.0.9083</Version>
     <Authors>Microsoft Graph Engine Team</Authors>
     <Company>Microsoft Corporation</Company>
     <Product>GraphEngine.FFI.Python</Product>
@@ -26,7 +26,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.FFI" Version="1.0.8967" />
+    <PackageReference Include="GraphEngine.FFI" Version="1.0.9083" />
   </ItemGroup>
 
   <ItemGroup>
