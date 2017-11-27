@@ -19,7 +19,6 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
-    
     public unsafe class )::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::( : IEnumerable<)::");

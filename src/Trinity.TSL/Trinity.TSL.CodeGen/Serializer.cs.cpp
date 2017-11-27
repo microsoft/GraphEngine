@@ -30,7 +30,6 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
-    
     /// <summary>
     /// Provides facilities for serializing data to Json strings.
     /// </summary>

@@ -20,7 +20,6 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
-    
     public static class Storage_CellType_Extension
     {
         )::");

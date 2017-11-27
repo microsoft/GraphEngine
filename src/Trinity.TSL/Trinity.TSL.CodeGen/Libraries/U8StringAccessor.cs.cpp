@@ -21,6 +21,7 @@ using System.Text;
 using Trinity.Core.Lib;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
+using Trinity.Storage;
 namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
@@ -28,12 +29,10 @@ source->append(R"::(
     /// <summary>
     /// Represents a TSL string corresponding to a string instance.
     /// </summary>
-    
-    public unsafe class U8StringAccessor
+    public unsafe class U8StringAccessor : IAccessor
     {
         internal byte* CellPtr;
         internal long? CellID;
-        internal ResizeFunctionDelegate ResizeFunction;
         internal U8StringAccessor(byte* _CellPtr, ResizeFunctionDelegate func)
         {
             CellPtr = _CellPtr;
@@ -50,21 +49,7 @@ source->append(R"::(
                 return *(int*)(CellPtr - 4);
             }
         }
-        /// <summary>
-        /// Returns this instance of String
-        /// </summary>
-        /// <returns>The current string.</returns>
-        public unsafe override string ToString()
-        {
-            int len = this.Length;
-            byte[] content = new byte[len];
-            fixed (byte)::");
-source->append(R"::(* pcontent = content)
-            {
-                Memory.Copy(this.CellPtr, pcontent, len);
-            }
-            return Encoding.UTF8.GetString(content);
-        }
+        #region IAccessor Implementation
         /// <summary>
         /// Copies the elements to a new byte array
         /// </summary>
@@ -72,11 +57,46 @@ source->append(R"::(* pcontent = content)
         public unsafe byte[] ToByteArray()
         {
             byte[] ret = new byte[Length];
-            fixed (byte* retptr = ret)
+          )::");
+source->append(R"::(  fixed (byte* retptr = ret)
             {
                 Memory.Copy(CellPtr, retptr, Length);
                 return ret;
             }
+        }
+        /// <summary>
+        /// Get the pointer to the underlying buffer.
+        /// </summary>
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return CellPtr - sizeof(int);
+        }
+        /// <summary>
+        /// Get the length of the buffer.
+        /// </summary>
+        public unsafe int GetBufferLength()
+        {
+            return Length + sizeof(int);
+        }
+        /// <summary>
+        /// The ResizeFunctionDelegate that should be called when this accessor is trying to resize itself.
+        /// </summary>
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+        #endregion
+        /// <summary>
+        /// Returns this instance of String
+        /// </summary>
+        /// <returns>The current string.</returns>
+        public unsafe override string ToString()
+       )::");
+source->append(R"::( {
+            int len = this.Length;
+            byte[] content = new byte[len];
+            fixed (byte* pcontent = content)
+            {
+                Memory.Copy(this.CellPtr, pcontent, len);
+            }
+            return Encoding.UTF8.GetString(content);
         }
         /// <summary>
         /// Returns a value indicating whether the given substring occurs within the string.
@@ -85,14 +105,14 @@ source->append(R"::(* pcontent = content)
         /// <returns>true if the value parameter occurs within this string, or if value is 
         ///          the empty string (""); otherwise, false.
         /// </returns>
-        public unsafe bool Contains(string s)::");
-source->append(R"::(ubstring)
+        public unsafe bool Contains(string substring)
         {
             /*
              *  @note   Relying on .NET's implementation of string search
              *          seems to be a better idea than grinding out our own
              *          version, especially because that we're dealing with
-             *          UTF-16 NLS style strings.
+             *          UTF-16 NLS style s)::");
+source->append(R"::(trings.
              */
             return ToString().Contains(substring);
         }
@@ -110,13 +130,13 @@ source->append(R"::(ubstring)
         /// Implicitly converts a string instance to a U8String instance.
         /// </summary>
         /// <param name="value">The string instance.</param>
-        ///)::");
-source->append(R"::( <returns>The StringAccessor instance.</returns>
+        /// <returns>The StringAccessor instance.</returns>
         public unsafe static implicit operator U8StringAccessor(string value)
         {
             if (value == null) value = "";
             byte[] content = Encoding.UTF8.GetBytes(value);
-            int    len     = content.Length;
+            int    len     = content.Lengt)::");
+source->append(R"::(h;
             byte* targetPtr = BufferAllocator.AllocBuffer(sizeof(int) + len);
             *(int*)targetPtr = len;
             Memory.Copy(content, targetPtr + sizeof(int), len);
@@ -129,14 +149,14 @@ source->append(R"::( <returns>The StringAccessor instance.</returns>
         /// </summary>
         /// <param name="a">The first StringAccessor to compare, or null. </param>
         /// <param name="b">The second StringAccessor to compare, or null. </param>
-        /// <returns>true if the value of <paramref name="a" /> is the same as the value of <paramref name="b" />; otherwise,)::");
-source->append(R"::( false.</returns>
+        /// <returns>true if the value of <paramref name="a" /> is the same as the value of <paramref name="b" />; otherwise, false.</returns>
         public static bool operator ==(U8StringAccessor a, U8StringAccessor b)
         {
             if (ReferenceEquals(a, b))
                 return true;
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-                return false;
+                return)::");
+source->append(R"::( false;
             if (a.CellPtr == b.CellPtr) return true;
             return (a.ToString() == b.ToString());
         }
@@ -150,13 +170,13 @@ source->append(R"::( false.</returns>
         {
             if (ReferenceEquals(a, b))
                 return true;
-            if (ReferenceEquals(a, null) || ReferenceEquals()::");
-source->append(R"::(b, null))
+            if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
                 return false;
             return a.ToString() == b;
         }
         /// <summary>Determines whether the specified StringAccessor and string have different values.</summary>
-        /// <returns>true if the value of <paramref name="a" /> is different from the value of <paramref name="b" />; otherwise, false.</returns>
+        /// <returns>true if the value of <paramr)::");
+source->append(R"::(ef name="a" /> is different from the value of <paramref name="b" />; otherwise, false.</returns>
         /// <param name="a">The StringAccessor to compare, or null. </param>
         /// <param name="b">The String to compare, or null. </param>
         public static bool operator !=(U8StringAccessor a, string b)
@@ -169,13 +189,13 @@ source->append(R"::(b, null))
         /// Determines whether this instance and a specified object have the same value.
         /// </summary>
         /// <param name="obj">The StringAccessor to compare to this instance.</param>
-        /// <returns>true if obj is )::");
-source->append(R"::(a StringAccessor and its value is the same as this instance; otherwise, false.</returns>
+        /// <returns>true if obj is a StringAccessor and its value is the same as this instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
             if (obj == null)
                 return false;
-            StringAccessor b = obj as StringAccessor;
+            StringAccessor b = )::");
+source->append(R"::(obj as StringAccessor;
             if ((object)b == null)
             {
                 string s = obj as string;
@@ -194,10 +214,10 @@ source->append(R"::(a StringAccessor and its value is the same as this instance;
             return HashHelper.HashBytes(this.CellPtr, this.Length);
         }
         /// <summary>Determines whether the two specified StringAccessor have different values.</summary>
-        /// <returns>true if the value of <paramref)::");
-source->append(R"::( name="a" /> is different from the value of <paramref name="b" />; otherwise, false.</returns>
+        /// <returns>true if the value of <paramref name="a" /> is different from the value of <paramref name="b" />; otherwise, false.</returns>
         /// <param name="a">The first StringAccessor to compare, or null. </param>
-        /// <param name="b">The second StringAccessor to compare, or null. </param>
+        /// <param name="b">The second Stri)::");
+source->append(R"::(ngAccessor to compare, or null. </param>
         public static bool operator !=(U8StringAccessor a, U8StringAccessor b)
         {
             return !(a == b);

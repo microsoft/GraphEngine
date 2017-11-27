@@ -70,6 +70,7 @@ namespace Trinity.Configuration
             public const string HTTP_PORT          = "HttpPort";
             public const string CLIENT_MAX_CONN    = "ClientMaxConn";
             public const string ASSEMBLY_PATH      = "AssemblyPath";
+            public const string LEGACY_ASSEMBLY_PATH = "WorkingDirectory";
             public const string AVAILABILITY_GROUP = "AvailabilityGroup";
         }
     }

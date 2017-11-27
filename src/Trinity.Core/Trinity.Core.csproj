@@ -18,76 +18,11 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\bin\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;_DEV_ENV_</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Debug\Trinity-KVStore.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>$(DevEnvDir)\..\..\Team Tools\Static Analysis Tools\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisRuleDirectories>$(DevEnvDir)\..\..\Team Tools\Static Analysis Tools\FxCop\Rules</CodeAnalysisRuleDirectories>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
-    <DocumentationFile>..\..\bin\Trinity.Core.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\..\bin\</OutputPath>
-    <DefineConstants>_PUBLIC_RELEASE_PLACEHOLDER_;_DEV_ENV_</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisLogFile>bin\Release\Trinity-KVStore.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSetDirectories>$(DevEnvDir)\..\..\Team Tools\Static Analysis Tools\Rule Sets</CodeAnalysisRuleSetDirectories>
-    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisRuleDirectories>$(DevEnvDir)\..\..\Team Tools\Static Analysis Tools\FxCop\Rules</CodeAnalysisRuleDirectories>
-    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>..\..\bin\Trinity.Core.XML</DocumentationFile>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-    <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>..\..\etc\Trinity.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test-Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Test-Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-    <DocumentationFile>..\..\bin\Trinity.Core.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test-Release|x64'">
-    <OutputPath>bin\x64\Test-Release\</OutputPath>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>..\..\bin\Trinity.Core.xml</DocumentationFile>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <DefineConstants>
-    </DefineConstants>
-    <Optimize>true</Optimize>
   </PropertyGroup>
   <PropertyGroup>
     <DelaySign>false</DelaySign>
@@ -159,20 +94,24 @@
     </Compile>
     <Compile Include="Daemon\NamespaceDoc.cs" />
     <Compile Include="Diagnostics\SystemStatus.cs" />
+    <Compile Include="Extension\AutoRegisteredCommunicationModuleAttribute.cs" />
+    <Compile Include="Extension\IGenericCellOperations.cs" />
+    <Compile Include="Extension\GraphEngineExtensionAttribute.cs" />
+    <Compile Include="Extension\IStartupTask.cs" />
     <Compile Include="FaultTolerance\DefaultFailureHandler.cs" />
     <Compile Include="FaultTolerance\DefaultFailureHandler.Lock.cs" />
     <Compile Include="FaultTolerance\Delegates.cs" />
     <Compile Include="FaultTolerance\FailureHandlerRegistry.cs" />
     <Compile Include="Network\BSP\BSP.Server.cs" />
-    <Compile Include="Network\GetServerIdByCellIdDelegate.cs" />
+    <Compile Include="Network\GetPartitionIdByCellIdDelegate.cs" />
     <Compile Include="Network\Http\BadRequestException.cs" />
     <Compile Include="Network\Http\CommonHttpHandlers.cs" />
     <Compile Include="Network\Http\NamespaceDoc.cs" />
     <Compile Include="Network\Http\TrinityHttpServer.cs" />
-    <Compile Include="Network\Interfaces\ICommunicationSchema.cs" />
+    <Compile Include="Extension\ICommunicationSchema.cs" />
     <Compile Include="Network\Instance\CommunicationProtocolGroup.cs" />
     <Compile Include="Network\Instance\CommunicationInstance.cs" />
-    <Compile Include="Network\Interfaces\IProtocolDescriptor.cs" />
+    <Compile Include="Extension\IProtocolDescriptor.cs" />
     <Compile Include="Network\Messaging\MessageArgs\UnhandledException.cs" />
     <Compile Include="Network\Messaging\PreservedMessages.cs" />
     <Compile Include="Network\Messaging\TrinityMessageType.cs" />
@@ -186,8 +125,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Storage\IAccessor.cs" />
     <Compile Include="Storage\ICell.cs" />
-    <Compile Include="Storage\IStorageSchema.cs" />
+    <Compile Include="Extension\IStorageSchema.cs" />
+    <Compile Include="Storage\MemoryCloud\Chunk.cs" />
+    <Compile Include="Storage\MemoryCloud\MemoryCloud.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.Enumeration.cs" />
     <Compile Include="Storage\LocalMemoryStorage\Delegates.cs" />
     <Compile Include="Storage\Exceptions.cs" />
@@ -200,7 +142,6 @@
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.Performance.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.TrunkAddressing.cs" />
     <Compile Include="Network\AvailabilityGroup.cs" />
-    <Compile Include="Storage\MemoryCloud\MemoryCloud.Event.cs" />
     <Compile Include="Storage\StorageCapacityProfile.cs" />
     <Compile Include="Trinity\Configuration\ConfigurationConstants.cs" />
     <Compile Include="Trinity\Configuration\ConfigurationEntries\LoggingConfig.cs" />
@@ -252,11 +193,11 @@
     <Compile Include="Network\Messaging\MessageDispatch.cs" />
     <Compile Include="Daemon\BackgroundTask.cs" />
     <Compile Include="Daemon\BackgroundThread.cs" />
-    <Compile Include="Storage\MemoryCloud\MemoryCloud.Cmd.cs" />
-    <Compile Include="Storage\MemoryCloud\MemoryCloud.cs" />
-    <Compile Include="Storage\MemoryCloud\MemoryCloud.Message.cs" />
-    <Compile Include="Storage\MemoryCloud\MemoryCloud.KVStore.cs" />
-    <Compile Include="Storage\MemoryCloud\MemoryCloud.Utility.cs" />
+    <Compile Include="Storage\FixMemoryCloud\FixedMemoryCloud.Cmd.cs" />
+    <Compile Include="Storage\FixMemoryCloud\FixedMemoryCloud.cs" />
+    <Compile Include="Storage\FixMemoryCloud\FixedMemoryCloud.Message.cs" />
+    <Compile Include="Storage\FixMemoryCloud\FixedMemoryCloud.KVStore.cs" />
+    <Compile Include="Storage\FixMemoryCloud\FixedMemoryCloud.Utility.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.Message.cs" />
     <Compile Include="Storage\RemoteStorage\RemoteStorage.Message.cs" />
@@ -293,7 +234,7 @@
     <Compile Include="Utilities\CodeTempl\Disposal.cs" />
     <Compile Include="Utilities\IO\CodeWriter.cs" />
     <Compile Include="Utilities\IO\DataTable.cs" />
-    <Compile Include="Utilities\MISC\AssemblyPath.cs" />
+    <Compile Include="Utilities\MISC\AssemblyUtility.cs" />
     <Compile Include="Utilities\MISC\DataType.cs" />
     <Compile Include="Utilities\MISC\ASMFactory.cs" />
     <Compile Include="Utilities\NamespaceDoc.cs" />
@@ -328,12 +269,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Network\Http\index.html" />
     <Content Include="Resources\Trinity.C.sha512.txt" />
-    <Compile Include="Storage\MemoryCloud\MemoryCloud.GenericCell.cs" />
     <None Include="GraphEngine.Core.nuspec">
       <SubType>Designer</SubType>
     </None>
     <None Include="NuGet\GraphEngine.Core.props" />
     <None Include="NuGet\GraphEngine.Core.targets" />
+    <Compile Include="Storage\MemoryCloud\MemoryCloud.KVStore.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

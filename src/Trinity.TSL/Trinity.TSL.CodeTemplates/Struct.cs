@@ -140,18 +140,13 @@ namespace t_Namespace
     /// <summary>
     /// Provides in-place operations of t_struct_name defined in TSL.
     /// </summary>
-    public unsafe partial class t_struct_name_Accessor : __meta
+    public unsafe partial class t_struct_name_Accessor : __meta, IAccessor
     {
         ///<summary>
         ///The pointer to the content of the object.
         ///</summary>
         internal byte* CellPtr;
         internal long? CellID;
-
-        [IF("!%struct_fixed")]
-        internal ResizeFunctionDelegate ResizeFunction;
-
-        [END]
 
         [MUTE]
         internal unsafe t_struct_name_Accessor(byte* _CellPtr) { throw new NotImplementedException(); }
@@ -165,6 +160,8 @@ namespace t_Namespace
             CellPtr = _CellPtr;
             IF("!%struct_fixed");
             ResizeFunction = func;
+            ELSE();
+            ResizeFunction = (a,b,c) => { return Throw.invalid_resize_on_fixed_struct(); };
             END();
 
             FOREACH();
@@ -187,6 +184,25 @@ namespace t_Namespace
             Memory.Copy(CellPtr, 0, ret, 0, size);
             return ret;
         }
+
+        #region IAccessor
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return CellPtr;
+        }
+
+        public unsafe int GetBufferLength()
+        {
+            byte* targetPtr = CellPtr;
+
+            MODULE_CALL("PushPointerThroughStruct", "node");
+
+            int size = (int)(targetPtr - CellPtr);
+            return size;
+        }
+
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+        #endregion
 
         [MODULE_CALL("AccessorFieldsDefinition", "node")]
 

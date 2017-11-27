@@ -19,7 +19,7 @@ using Trinity.Core.Lib;
 
 namespace Trinity.Storage
 {
-    internal unsafe partial class RemoteStorage : Storage, IDisposable
+    public unsafe partial class RemoteStorage : Storage, IDisposable
     {
         /// <summary>
         /// Checks for possible errors that occur during message passing, 
@@ -57,23 +57,23 @@ namespace Trinity.Storage
             _error_check(err);
         }
 
-        internal override void SendMessage(TrinityMessage msg)
+        public override void SendMessage(TrinityMessage msg)
         {
             SendMessage(msg.Buffer, msg.Size);
         }
 
 
-        internal override void SendMessage(TrinityMessage msg, out TrinityResponse response)
+        public override void SendMessage(TrinityMessage msg, out TrinityResponse response)
         {
             SendMessage(msg.Buffer, msg.Size, out response);
         }
 
-        internal override void SendMessage(byte* message, int size)
+        public override void SendMessage(byte* message, int size)
         {
             _use_synclient(sc => sc.SendMessage(message, size));
         }
 
-        internal override void SendMessage(byte* message, int size, out TrinityResponse response)
+        public override void SendMessage(byte* message, int size, out TrinityResponse response)
         {
             TrinityResponse _rsp = null;
             _use_synclient(sc => sc.SendMessage(message, size, out _rsp));

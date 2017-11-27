@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>GraphEngine.Core</id>
-    <version>1.0.8850</version>
+    <version>1.0.9083</version>
     <title>Graph Engine Core</title>
     <authors>Microsoft Graph Engine Team</authors>
     <owners>Microsoft Corporation</owners>
@@ -15,7 +15,7 @@
     <copyright>Copyright 2017</copyright>
     <tags>Graph Engine Trinity Core Runtime TSL Compiler</tags>
     <dependencies>
-        <dependency id="Newtonsoft.Json" version="6.0.8" />
+        <dependency id="Newtonsoft.Json" version="8.0.2" />
     </dependencies>
   </metadata>
   <files>

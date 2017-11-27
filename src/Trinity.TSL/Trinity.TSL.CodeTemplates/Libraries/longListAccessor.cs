@@ -7,6 +7,7 @@ using Trinity.Core.Lib;
 using Trinity.Storage;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
+using Trinity.Storage;
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
 namespace t_Namespace
@@ -42,11 +43,10 @@ namespace t_Namespace
     /// Represents a TSL long list corresponding List{long}.
     /// </summary>
     [TARGET("NTSL")]
-    public unsafe class longListAccessor : IEnumerable<long>
+    public unsafe class longListAccessor : IAccessor, IEnumerable<long>
     {
         internal byte* CellPtr;
         internal long? CellID;
-        internal ResizeFunctionDelegate ResizeFunction;
         internal const int               c_idcache_count = 256;
         internal static CellIdCache[]    s_IdCache       = new CellIdCache[c_idcache_count];
 
@@ -64,6 +64,45 @@ namespace t_Namespace
                 return *(int*)(CellPtr - 4);
             }
         }
+
+        #region IAccessor Implementation
+
+        /// <summary>
+        /// Copies the elements to a new byte array
+        /// </summary>
+        /// <returns>Elements compactly arranged in a byte array.</returns>
+        public unsafe byte[] ToByteArray()
+        {
+            byte[] ret = new byte[length];
+            fixed (byte* retptr = ret)
+            {
+                Memory.Copy(CellPtr, retptr, length);
+                return ret;
+            }
+        }
+
+        /// <summary>
+        /// Get the pointer to the underlying buffer.
+        /// </summary>
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return CellPtr - sizeof(int);
+        }
+
+        /// <summary>
+        /// Get the length of the buffer.
+        /// </summary>
+        public unsafe int GetBufferLength()
+        {
+            return length + sizeof(int);
+        }
+
+        /// <summary>
+        /// The ResizeFunctionDelegate that should be called when this accessor is trying to resize itself.
+        /// </summary>
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Gets the number of elements actually contained in the List. 
@@ -91,20 +130,6 @@ namespace t_Namespace
             set
             {
                 *(long*)(CellPtr + (index << 3)) = value;
-            }
-        }
-
-        /// <summary>
-        /// Copies the elements to a new byte array
-        /// </summary>
-        /// <returns>Elements compactly arranged in a byte array.</returns>
-        public unsafe byte[] ToByteArray()
-        {
-            byte[] ret = new byte[length];
-            fixed (byte* retptr = ret)
-            {
-                Memory.Copy(CellPtr, retptr, length);
-                return ret;
             }
         }
 

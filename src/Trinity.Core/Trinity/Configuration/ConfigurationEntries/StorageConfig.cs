@@ -47,13 +47,13 @@ namespace Trinity.Configuration
             throw new ArgumentException("ReadOnly flag cannot be disabled once enabled.");
         }
 
-        private static string DefaultStorageRoot { get { return Path.Combine(AssemblyPath.MyAssemblyPath, "storage"); } }
+        private static string DefaultStorageRoot { get { return Path.Combine(AssemblyUtility.MyAssemblyPath, "storage"); } }
         #endregion
 
         #region Fields
         internal const int    c_MaxTrunkCount = ConfigurationConstants.DefaultValue.MAX_TRUNK_COUNT;
         internal const bool   c_DefaultReadOnly = ConfigurationConstants.DefaultValue.DEFAULT_VALUE_FALSE;
-        internal const ushort c_UndefinedCellType = ConfigurationConstants.DefaultValue.UNDEFINED_CELL_TYPE;
+        public const ushort   c_UndefinedCellType = ConfigurationConstants.DefaultValue.UNDEFINED_CELL_TYPE;
         internal const int    c_DefaultDefragInterval = ConfigurationConstants.DefaultValue.DEFAULT_DEFRAG_INTERVAL;
         internal const StorageCapacityProfile 
                               c_DefaultStorageCapacityProfile = StorageCapacityProfile.Max8G;

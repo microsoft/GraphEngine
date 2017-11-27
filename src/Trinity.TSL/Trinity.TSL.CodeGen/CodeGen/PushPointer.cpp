@@ -211,19 +211,31 @@ static void push_and_assign_array(std::string* source, int stack_depth, NFieldTy
     int arity = node->arrayInfo.array_dimension_size->size();
 
     *source += indent + "if(" + varName + "!= null){\n";
-    *source += indent + "   if(" + varName + ".Rank != " + GetString(arity) + ") throw new IndexOutOfRangeException(\"The assigned array'storage Rank mismatch.\");\n";
-    *source += indent + "   if(";
+    *source += indent + "    if(" + varName + ".Rank != " + GetString(arity) + ") throw new IndexOutOfRangeException(\"The assigned array'storage Rank mismatch.\");\n";
+    *source += indent + "    if(";
     for (int i = 0; i < arity; i++)
         *source += varName + ".GetLength(" + GetString(i) + ") != " + GetString(node->arrayInfo.array_dimension_size->at(i)) + " || ";
     // Trim " || "
     source->pop_back(); source->pop_back(); source->pop_back(); source->pop_back();
     *source += ") throw new IndexOutOfRangeException(\"The assigned array'storage dimension mismatch.\");\n";
 
-    *source += indent + "   fixed(" + element_type + "* " + pointer + " = " + varName + ")\n";
-    *source += indent + "       Memory.memcpy(targetPtr, " + pointer + ", (ulong)(" + total_length_string + "));\n";
-    *source += indent + "}else{\n";
-    *source += indent + "   Memory.memset(targetPtr, 0, (ulong)(" + total_length_string + "));\n";
-    *source += indent + "}";
+    if (!node->arrayInfo.arrayElement->has_pointer_type())
+    {
+        string iterator_name = "iterator_" + GetString(stack_depth);
+        *source += indent + "    foreach (" + element_type + " " + iterator_name + " in " + varName + ")\n";
+        *source += indent + "    {\n";
+        push_and_assign_impl(source, stack_depth + 1, node->arrayInfo.arrayElement, iterator_name, false);
+        *source += "\n";
+        *source += indent + "    }\n";
+    }
+    else
+    {
+        *source += indent + "   fixed(" + element_type + "* " + pointer + " = " + varName + ")\n";
+        *source += indent + "       Memory.memcpy(targetPtr, " + pointer + ", (ulong)(" + total_length_string + "));\n";
+    }
+    *source += indent + "} else {\n";
+    *source += indent + "    Memory.memset(targetPtr, 0, (ulong)(" + total_length_string + "));\n";
+    *source += indent + "}\n";
     *source += indent + "targetPtr += " + total_length_string + ";\n";
 }
 

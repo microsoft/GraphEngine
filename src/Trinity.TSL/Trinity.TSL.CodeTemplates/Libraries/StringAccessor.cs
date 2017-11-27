@@ -5,6 +5,7 @@ using System.Text;
 using Trinity.Core.Lib;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
+using Trinity.Storage;
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
 namespace t_Namespace
@@ -13,11 +14,10 @@ namespace t_Namespace
     /// Represents a TSL string corresponding to a string instance.
     /// </summary>
     [TARGET("NTSL")]
-    public unsafe class StringAccessor : IEnumerable<char>
+    public unsafe class StringAccessor : IAccessor, IEnumerable<char>
     {
         internal byte* CellPtr;
         internal long? CellID;
-        internal ResizeFunctionDelegate ResizeFunction;
 
         internal StringAccessor(byte* _CellPtr, ResizeFunctionDelegate func)
         {
@@ -45,6 +45,45 @@ namespace t_Namespace
             }
         }
 
+        #region IAccessor Implementation
+
+        /// <summary>
+        /// Copies the elements to a new byte array
+        /// </summary>
+        /// <returns>Elements compactly arranged in a byte array.</returns>
+        public unsafe byte[] ToByteArray()
+        {
+            byte[] ret = new byte[length];
+            fixed (byte* retptr = ret)
+            {
+                Memory.Copy(CellPtr, retptr, length);
+                return ret;
+            }
+        }
+
+        /// <summary>
+        /// Get the pointer to the underlying buffer.
+        /// </summary>
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return CellPtr - sizeof(int);
+        }
+
+        /// <summary>
+        /// Get the length of the buffer.
+        /// </summary>
+        public unsafe int GetBufferLength()
+        {
+            return length + sizeof(int);
+        }
+
+        /// <summary>
+        /// The ResizeFunctionDelegate that should be called when this accessor is trying to resize itself.
+        /// </summary>
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+
+        #endregion
+
         /// <summary>
         /// Gets the Char object at a specified position in the current String object.
         /// </summary>
@@ -65,20 +104,6 @@ namespace t_Namespace
         public unsafe override string ToString()
         {
             return Trinity.Core.Lib.BitHelper.GetString(CellPtr, *(int*)(CellPtr - 4));
-        }
-
-        /// <summary>
-        /// Copies the elements to a new byte array
-        /// </summary>
-        /// <returns>Elements compactly arranged in a byte array.</returns>
-        public unsafe byte[] ToByteArray()
-        {
-            byte[] ret = new byte[length];
-            fixed (byte* retptr = ret)
-            {
-                Memory.Copy(CellPtr, retptr, length);
-                return ret;
-            }
         }
 
         /// <summary>

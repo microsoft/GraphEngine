@@ -1,0 +1,41 @@
+enum EventType
+{
+}
+
+struct _QueryChunkedRemoteStorageInformationReuslt
+{
+	StorageInformation info;
+    List<ChunkInformation> chunks;
+}
+
+struct ChunkInformation
+{
+	long lowKey;
+	long highKey;
+	Guid id;
+}
+
+struct StorageInformation
+{
+	int partition;
+	Guid id;
+}
+
+protocol QueryChunkedRemoteStorageInformation
+{
+    Type: Syn;
+    Request: void;
+    Response: _QueryChunkedRemoteStorageInformationReuslt;	
+}
+
+protocol NotifyRemoteStorageOnLeaving
+{
+    Type: Asyn;
+    Request: StorageInformation;
+}
+
+module DynamicCluster
+{
+    protocol QueryChunkedRemoteStorageInformation;
+	protocol NotifyRemoteStorageOnLeaving;
+}

@@ -3,7 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GECustomCommunicationsStack", "GECustomCommunicationsStack\GECustomCommunicationsStack.csproj", "{ED241F87-98E0-4FA6-B4C9-601E28D07A99}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.ServiceFabric.Services.Communication.Trinity.Runtime", "GECustomCommunicationsStack\GE.ServiceFabric.Services.Communication.Trinity.Runtime.csproj", "{ED241F87-98E0-4FA6-B4C9-601E28D07A99}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Service Fabric Infrastructure Library", "GE Service Fabric Infrastructure Library", "{216E51C6-D32B-4280-8D68-28E1858D71A4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Service Fabric App", "GE Service Fabric App", "{24E24355-4915-492B-BBCE-8319B16D295B}"
+EndProject
+Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "GEServiceFabricApp", "..\..\GE Service Fabric App\GEServiceFabricApp\GEServiceFabricApp.sfproj", "{9225B856-9D09-427F-A25F-D9572840A8CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.Stateful.Service", "..\..\GE Service Fabric App\GEStatefulService\GE.Stateful.Service.csproj", "{AC5E20E6-2604-4629-8761-4ACDD3C5C94A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Service Fabric Client", "GE Service Fabric Client", "{3CFF89C3-9777-4C55-84D4-87604405D626}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GEServiceFabricConsoleApp", "..\..\GE Service Fabric Client\GEServiceFabricConsoleApp\GEServiceFabricConsoleApp.csproj", "{2279959C-F24F-4F3D-8917-6E5DFC7B5764}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Service Fabric Service Common Library", "GE Service Fabric Service Common Library", "{F7FDC6BD-AF14-42DC-830D-AC5FD3A0D153}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.ServiceFabric.ServiceCommon.Module", "..\..\GE Service Fabric SCL\GE.ServiceFabric.ServiceCommonLibrary\GE.ServiceFabric.ServiceCommon.Module.csproj", "{6EDD63CD-B3F1-4F9C-B581-18BD953AE553}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.ServiceFabric.Infrastructure.Module", "..\..\GE Service Fabric Infrastructure\GE.ServiceFabric.Infrastructure.Module\GE.ServiceFabric.Infrastructure.Module.csproj", "{32925961-D539-49EE-8E90-9C848124663F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Service Fabric Services", "GE Service Fabric Services", "{FEC17E5C-E3CB-4A35-A6C6-5EE5827B6F9A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trinity Garph Engine SF Communications Listener", "Trinity Garph Engine SF Communications Listener", "{93C24F2B-B98E-409A-80E1-756F1B3D3394}"
 EndProject
@@ -12,11 +32,15 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{ED241F87-98E0-4FA6-B4C9-601E28D07A99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ED241F87-98E0-4FA6-B4C9-601E28D07A99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED241F87-98E0-4FA6-B4C9-601E28D07A99}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{ED241F87-98E0-4FA6-B4C9-601E28D07A99}.Debug|x64.Build.0 = Debug|Any CPU
 		{ED241F87-98E0-4FA6-B4C9-601E28D07A99}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED241F87-98E0-4FA6-B4C9-601E28D07A99}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B239796D-9777-465F-BA36-DE8810CA3488}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

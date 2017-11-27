@@ -127,9 +127,6 @@ namespace t_Namespace
                 {
                     this.Contains_t_field_name = true;
                     MODULE_CALL("AccessorToAccessorFieldAssignment", "$t_field_type", "%accessor_field_name", "\"FieldDoesNotExist\"");
-                    IF("!%field_need_accessor"); // only resize now if the incoming value will not be affected.
-                    targetPtr = this.ResizeFunction(targetPtr, 0, META_OUTPUT("$t_field_type->type_size()"));
-                    END();
                 }
                 else
                 {

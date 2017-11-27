@@ -2,18 +2,10 @@ if [%REPO_ROOT%] == [] (
   set REPO_ROOT=%~dp0..
 )
 
-setlocal enabledelayedexpansion
+call %REPO_ROOT%\tools\setenv.bat
+if %errorlevel% neq 0 exit /b %errorlevel%
 
-set MSBUILD_EXE="C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe"
-set NUGET_EXE="%REPO_ROOT%\tools\NuGet.exe"
-
-if not exist %NUGET_EXE% (
-  powershell -Command "Invoke-WebRequest https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile %NUGET_EXE%"
-  if !errorlevel! neq 0 exit /b !errorlevel!
-)
-
-set TRINITY_C_SLN=%REPO_ROOT%\src\Trinity.C\Trinity.C.sln
-set TRINITY_TSL_SLN=%REPO_ROOT%\src\Trinity.TSL\Trinity.TSL.sln
+setlocal
 set TRINITY_CORE_SLN=%REPO_ROOT%\src\Trinity.Core\Trinity.Core.NETStandard.sln
 
 :: Run msbuild to build Trinity.C

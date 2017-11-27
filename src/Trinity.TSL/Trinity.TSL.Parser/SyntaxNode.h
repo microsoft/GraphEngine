@@ -235,6 +235,7 @@ public:
     bool is_array_same_rank_same_element_type(NFieldType*);
     bool can_enumerate(NFieldType*);
     bool is_alias();
+    bool has_pointer_type();
     int enumerate_depth(NFieldType*);
     TypeConversionAction get_type_conversion_action(NFieldType*);
     NFieldType* get_container_element_type();

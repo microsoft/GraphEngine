@@ -26,7 +26,7 @@
     <ProjectGuid>{53440B2C-3D01-40DA-BBAE-36B654541EE7}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>TrinityC</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
+using Trinity.Storage;
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
 namespace t_Namespace
@@ -12,7 +13,7 @@ namespace t_Namespace
     /// Represents a 256-bit enum type.
     /// </summary>
     [TARGET("NTSL")]
-    public unsafe class EnumAccessor
+    public unsafe class EnumAccessor : IAccessor
     {
         internal byte* CellPtr;
         internal long? CellID;
@@ -30,14 +31,7 @@ namespace t_Namespace
             }
         }
 
-        /// <summary>
-        /// Gets the byte value.
-        /// </summary>
-        /// <returns>A byte.</returns>
-        public byte ToByte()
-        {
-            return *(byte*)CellPtr;
-        }
+        #region IAccessor Implementation
 
         /// <summary>
         /// Gets the underlying blob.
@@ -47,6 +41,40 @@ namespace t_Namespace
         {
             return new byte[] { *(byte*)CellPtr };
         }
+
+        /// <summary>
+        /// Get the pointer to the underlying buffer.
+        /// </summary>
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return CellPtr;
+        }
+
+        /// <summary>
+        /// Get the length of the buffer.
+        /// </summary>
+        public unsafe int GetBufferLength()
+        {
+            return length;
+        }
+
+        /// <summary>
+        /// The ResizeFunctionDelegate that should be called when this accessor is trying to resize itself.
+        /// </summary>
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+
+        #endregion
+        
+
+        /// <summary>
+        /// Gets the byte value.
+        /// </summary>
+        /// <returns>A byte.</returns>
+        public byte ToByte()
+        {
+            return *(byte*)CellPtr;
+        }
+
 
         /// <summary>
         /// Converts a EnumAccessor accessor to a byte value.

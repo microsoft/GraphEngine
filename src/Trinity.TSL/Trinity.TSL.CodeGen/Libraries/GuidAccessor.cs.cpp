@@ -22,6 +22,7 @@ using System.Text;
 using Trinity.Core.Lib;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
+using Trinity.Storage;
 namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
@@ -29,8 +30,7 @@ source->append(R"::(
     /// <summary>
     /// Represents a Trinity type corresponding .Net Guid type.
     /// </summary>
-    
-    public unsafe class GuidAccessor
+    public unsafe class GuidAccessor : IAccessor
     {
         internal byte* CellPtr;
         internal long? CellID;
@@ -71,9 +71,9 @@ source->append(R"::(.GuidAccessor"/>
         ///     Converts the string representation of a GUID to the equivalent <see cref="System.Guid"/>
         ///     structure.
         /// </summary>
-        /// <param name="input">
-        ///     The GU)::");
-source->append(R"::(ID to convert.
+        /// <param name)::");
+source->append(R"::(="input">
+        ///     The GUID to convert.
         /// </param>
         /// <param name="value">
         ///     The structure that will contain the parsed value.
@@ -97,6 +97,7 @@ source->append(R"::(ID to convert.
                 return 16;
             }
         }
+        #region IAccessor Implementation
         /// <summary>
         /// Returns a 16 byte array that contains the value of this instance.
         /// </summary>
@@ -104,17 +105,37 @@ source->append(R"::(ID to convert.
         public unsafe byte[] ToByteArray()
         {
             byte[] ret = new byte[16];
-            fixed (byte* ptr = ret)
+         )::");
+source->append(R"::(   fixed (byte* ptr = ret)
             {
                 Memory.Copy(CellPtr, ptr, 16);
             }
- )::");
-source->append(R"::(           return ret;
+            return ret;
         }
+        /// <summary>
+        /// Get the pointer to the underlying buffer.
+        /// </summary>
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return CellPtr;
+        }
+        /// <summary>
+        /// Get the length of the buffer.
+        /// </summary>
+        public unsafe int GetBufferLength()
+        {
+            return length;
+        }
+        /// <summary>
+        /// The ResizeFunctionDelegate that should be called when this accessor is trying to resize itself.
+        /// </summary>
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+        #endregion
         /// <summary>
         /// Returns a string representation of the value of this instance in registry format. 
         /// </summary>
-        /// <returns>Returns a string representation of the value of this instance in registry format.</returns>
+        /// <returns>Returns a string representation of the value of this instance in registry form)::");
+source->append(R"::(at.</returns>
         public override unsafe string ToString()
         {
             Guid tmp = this;
@@ -131,10 +152,10 @@ source->append(R"::(           return ret;
         /// <summary>
         /// Returns a string representation of the value of this Guid instance, according to the provided format specifier.
         /// </summary>
-        /// <param name="format">A single format specifier that indicates how to format the value of this Guid. The format parameter can be "N", "D", "B", "P")::");
-source->append(R"::(, or "X". If format is null or an empty string (""), "D" is used. </param>
+        /// <param name="format">A single format specifier that indicates how to format the value of this Guid. The format parameter can be "N", "D", "B", "P", or "X". If format is null or an empty string (""), "D" is used. </param>
         /// <returns>The value of this Guid, represented as a series of lowercase hexadecimal digits in the specified format. </returns>
-        public string ToString(string format)
+        public string ToString(string format)::");
+source->append(R"::()
         {
             Guid tmp = this;
             return tmp.ToString(format, CultureInfo.InvariantCulture);
@@ -153,13 +174,13 @@ source->append(R"::(, or "X". If format is null or an empty string (""), "D" is 
         /// Implicitly converts a Guid instance to a GuidAccessor instance.
         /// </summary>
         /// <param name="value">The Guid instance.</param>
-        /// <returns>A GuidAccessor instance.</retur)::");
-source->append(R"::(ns>
+        /// <returns>A GuidAccessor instance.</returns>
         public static implicit operator GuidAccessor(Guid value)
         {
             byte* tmpcellptr = BufferAllocator.AllocBuffer(16);
             byte* targetPtr = tmpcellptr;
-            byte[] tmpGuid = value.ToByteArray();
+            byte[] tmpGuid = value.ToByteArray();)::");
+source->append(R"::(
             fixed (byte* tmpGuidPtr = tmpGuid)
             {
                 Memory.Copy(tmpGuidPtr, targetPtr, 16);
@@ -176,13 +197,13 @@ source->append(R"::(ns>
         /// <returns>true if the value of <paramref name="a" /> is the same as the value of <paramref name="b" />; otherwise, false.</returns>
         public static bool operator ==(GuidAccessor a, GuidAccessor b)
         {
-            if (Re)::");
-source->append(R"::(ferenceEquals(a, b))
+            if (ReferenceEquals(a, b))
               return true;
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
               return false;
             if (a.CellPtr == b.CellPtr) return true;
-            return Memory.Compare(a.CellPtr, b.CellPtr, 16);
+            retu)::");
+source->append(R"::(rn Memory.Compare(a.CellPtr, b.CellPtr, 16);
         }
         /// <summary>Determines whether two specified GuidAccessor have different values.</summary>
         /// <returns>true if the value of <paramref name="a" /> is different from the value of <paramref name="b" />; otherwise, false.</returns>
@@ -196,11 +217,11 @@ source->append(R"::(ferenceEquals(a, b))
         /// Determines whether this instance and a specified object have the same value.
         /// </summary>
         /// <param name="obj">The GuidAccessor to compare to this instance.</param>
-   )::");
-source->append(R"::(     /// <returns>true if <paramref name="obj" /> is a GuidAccessor and its value is the same as this instance; otherwise, false.</returns>
+        /// <returns>true if <paramref name="obj" /> is a GuidAccessor and its value is the same as this instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
-            GuidAccessor b = obj as GuidAccessor;
+   )::");
+source->append(R"::(         GuidAccessor b = obj as GuidAccessor;
             if (b == null)
                 return false;
             return (this == b);

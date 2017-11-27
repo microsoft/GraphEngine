@@ -23,7 +23,7 @@ namespace Trinity.Network
         /// </summary>
         public string Id;
         /// <summary>
-        /// A list of <see cref="Trinity.Network.ServerConfigurationSection"/>, each of which represents a Trinity server.
+        /// A list of <see cref="Trinity.Network.ServerInfo"/>, each of which represents a Trinity server.
         /// </summary>
         public List<ServerInfo> Instances;
 
@@ -31,7 +31,7 @@ namespace Trinity.Network
         /// Initializes a new instance of <see cref="Trinity.Network.AvailabilityGroup"/> class with one server.
         /// </summary>
         /// <param name="id">The id of the availability group.</param>
-        /// <param name="serverInfo">A <see cref="Trinity.Network.ServerConfigurationSection"/> instance containing the information of the specified server.</param>
+        /// <param name="serverInfo">A <see cref="Trinity.Network.ServerInfo"/> instance containing the information of the specified server.</param>
         public AvailabilityGroup(string id, ServerInfo serverInfo)
         {
             this.Id = id;
@@ -42,7 +42,7 @@ namespace Trinity.Network
         /// Initializes a new instance of <see cref="Trinity.Network.AvailabilityGroup"/> class with a set of servers.
         /// </summary>
         /// <param name="id">The id of the availability group.</param>
-        /// <param name="replicas">A list of <see cref="Trinity.Network.ServerConfigurationSection"/> instances representing the replicas of the <see cref="Trinity.Network.AvailabilityGroup"/>.</param>
+        /// <param name="replicas">A list of <see cref="Trinity.Network.ServerInfo"/> instances representing the replicas of the <see cref="Trinity.Network.AvailabilityGroup"/>.</param>
         public AvailabilityGroup(string id, IEnumerable<ServerInfo> replicas)
         {
             this.Id = id;
