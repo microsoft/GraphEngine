@@ -3,9 +3,9 @@ using System.Diagnostics.Tracing;
 using System.Fabric;
 using System.Threading.Tasks;
 
-namespace GE.Stateful.Service
+namespace GE.Reference.Stateful.Service
 {
-    [EventSource(Name = "InKnowWorks-GEServiceFabricApp-GEStatefulService")]
+    [EventSource(Name = "InKnowWorks-GEReferenceServiceFabricApp-GEReferenceStatefulService")]
     internal sealed class ServiceEventSource : EventSource
     {
         public static readonly ServiceEventSource Current = new ServiceEventSource();

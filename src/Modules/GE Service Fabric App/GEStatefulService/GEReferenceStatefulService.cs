@@ -7,16 +7,18 @@ using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 
-namespace GE.Stateful.Service
+namespace GE.Reference.Stateful.Service
 {
     /// <summary>
     /// An instance of this class is created for each service replica by the Service Fabric runtime.
     /// </summary>
-    internal sealed class GEStatefulService : StatefulService
+    internal sealed class GEReferenceStatefulService : StatefulService
     {
-        public GEStatefulService(StatefulServiceContext context)
+        public GEReferenceStatefulService(StatefulServiceContext context)
             : base(context)
-        { }
+        {
+            //...
+        }
 
         /// <summary>
         /// Optional override to create listeners (e.g., HTTP, Service Remoting, WCF, etc.) for this service replica to handle client or user requests.
@@ -27,6 +29,7 @@ namespace GE.Stateful.Service
         /// <returns>A collection of listeners.</returns>
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
+            // Okay this is where we need to new-up TrinityServer Implementation
             return new ServiceReplicaListener[0];
         }
 

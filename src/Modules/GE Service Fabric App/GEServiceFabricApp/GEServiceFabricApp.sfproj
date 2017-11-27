@@ -32,7 +32,7 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GEStatefulService\GE.Stateful.Service.csproj" />
+    <ProjectReference Include="..\GEStatefulService\GE.Reference.Stateful.Service.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
   <PropertyGroup>

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GEReferenceStatefulService")]
+[assembly: AssemblyTitle("GE.ServerApp")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GEReferenceStatefulService")]
+[assembly: AssemblyProduct("GE.ServerApp")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("ac5e20e6-2604-4629-8761-4acdd3c5c94a")]
+[assembly: Guid("f7e5ac0d-4cf2-45d9-a988-5f6070a92fd5")]
 
 // Version information for an assembly consists of the following four values:
 //
