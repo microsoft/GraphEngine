@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.15
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GECustomCommunicationsStack", "GECustomCommunicationsStack\GECustomCommunicationsStack.csproj", "{ED241F87-98E0-4FA6-B4C9-601E28D07A99}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trinity Garph Engine SF Communications Listener", "Trinity Garph Engine SF Communications Listener", "{93C24F2B-B98E-409A-80E1-756F1B3D3394}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.ServiceFabric.Services.Commuinications.TCP", "..\Trinity.ServiceFabric.Services.Commuinications.TCP\Trinity.ServiceFabric.Services.Commuinications.TCP.csproj", "{B239796D-9777-465F-BA36-DE8810CA3488}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +19,15 @@ Global
 		{ED241F87-98E0-4FA6-B4C9-601E28D07A99}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED241F87-98E0-4FA6-B4C9-601E28D07A99}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED241F87-98E0-4FA6-B4C9-601E28D07A99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B239796D-9777-465F-BA36-DE8810CA3488}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B239796D-9777-465F-BA36-DE8810CA3488}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B239796D-9777-465F-BA36-DE8810CA3488}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B239796D-9777-465F-BA36-DE8810CA3488}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B239796D-9777-465F-BA36-DE8810CA3488} = {93C24F2B-B98E-409A-80E1-756F1B3D3394}
 	EndGlobalSection
 EndGlobal

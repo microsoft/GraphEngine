@@ -4,12 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{ED241F87-98E0-4FA6-B4C9-601E28D07A99}</ProjectGuid>
+    <ProjectGuid>{B239796D-9777-465F-BA36-DE8810CA3488}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GECustomCommunicationsStack</RootNamespace>
-    <AssemblyName>GECustomCommunicationsStack</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <RootNamespace>Trinity.ServiceFabric.Services.Commuinications.TCP</RootNamespace>
+    <AssemblyName>Trinity.ServiceFabric.Services.Commuinications.TCP</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -44,7 +44,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="GE.TCP.CommunicationsListener\" />
+    <Folder Include="AsyncExceptionHandlers\" />
+    <Folder Include="CommunicationListeners\" />
+    <Folder Include="EndPointBehaviors\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
