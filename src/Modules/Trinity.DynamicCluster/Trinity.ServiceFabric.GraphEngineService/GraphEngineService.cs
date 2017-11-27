@@ -12,6 +12,7 @@ using Trinity.Utilities;
 using Trinity.Network;
 using Trinity.Diagnostics;
 using Trinity.Configuration;
+using System.IO;
 
 namespace Trinity.ServiceFabric
 {
@@ -69,7 +70,9 @@ namespace Trinity.ServiceFabric
             ags.Clear();
             ags.Add(new AvailabilityGroup("LOCAL", new ServerInfo("localhost", Port, null, LogLevel.Info)));
             TrinityConfig.HttpPort = HttpPort;
-            TrinityConfig.StorageRoot = Context.CodePackageActivationContext.WorkDirectory;
+            Log.WriteLine("{0}", $"WorkingDirectory={Context.CodePackageActivationContext.WorkDirectory}");
+            TrinityConfig.StorageRoot = Path.Combine(Context.CodePackageActivationContext.WorkDirectory, $"P{PartitionId}{Path.GetRandomFileName()}");
+            Log.WriteLine("{0}", $"StorageRoot={TrinityConfig.StorageRoot}");
 
             lock (s_lock)
             {

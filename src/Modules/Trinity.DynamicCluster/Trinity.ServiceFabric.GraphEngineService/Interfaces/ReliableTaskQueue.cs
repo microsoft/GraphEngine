@@ -12,7 +12,7 @@ namespace Trinity.ServiceFabric.Interfaces
 {
     class ReliableTaskQueue : ITaskQueue
     {
-        public bool IsMaster => GraphEngineService.Instance.Role == ReplicaRole.Primary;
+        public bool IsMaster => GraphEngineService.Instance?.Role == ReplicaRole.Primary;
 
         public void Dispose()
         {

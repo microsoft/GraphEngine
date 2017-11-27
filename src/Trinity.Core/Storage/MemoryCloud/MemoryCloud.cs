@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Trinity.Diagnostics;
 using Trinity.Network;
@@ -132,10 +133,10 @@ namespace Trinity.Storage
 
         internal void RegisterGenericOperationsProvider(IGenericCellOperations cloud_operations)
         {
-            m_SaveGenericCell_ICell        = cloud_operations.SaveGenericCell;
-            m_LoadGenericCell_long         = cloud_operations.LoadGenericCell;
-            m_NewGenericCell_string        = cloud_operations.NewGenericCell;
-            m_NewGenericCell_long_string   = cloud_operations.NewGenericCell;
+            m_SaveGenericCell_ICell = cloud_operations.SaveGenericCell;
+            m_LoadGenericCell_long = cloud_operations.LoadGenericCell;
+            m_NewGenericCell_string = cloud_operations.NewGenericCell;
+            m_NewGenericCell_long_string = cloud_operations.NewGenericCell;
             m_NewGenericCell_string_string = cloud_operations.NewGenericCell;
         }
 
@@ -270,10 +271,14 @@ namespace Trinity.Storage
         {
             if (!this.disposed)
             {
-                foreach (var storage in StorageTable)
+                var storagetbl = Interlocked.CompareExchange(ref StorageTable, null, StorageTable);
+                if (storagetbl != null)
                 {
-                    if (storage != null && storage != Global.local_storage)
-                        storage.Dispose();
+                    foreach (var storage in storagetbl)
+                    {
+                        if (storage != null && storage != Global.local_storage)
+                            storage.Dispose();
+                    }
                 }
 
                 this.disposed = true;

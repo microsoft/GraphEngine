@@ -6,6 +6,7 @@ using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Trinity.Core.Lib;
 
 namespace Trinity.DynamicCluster
 {
@@ -69,8 +70,7 @@ namespace Trinity.DynamicCluster
             {
                 names = sr.ReadToEnd().Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
             }
-
-            int seed = instanceId.GetHashCode();
+            int seed = (int)HashHelper.HashString2Int64(instanceId.ToString());
             Random r = new Random(seed);
             var n1 = names[r.Next(names.Length)];
             var n2 = names[r.Next(names.Length)];

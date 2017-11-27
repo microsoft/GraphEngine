@@ -37,7 +37,7 @@ namespace Trinity.ServiceFabric
 
         public Guid InstanceId { get; private set; }
 
-        public bool IsMaster => GraphEngineService.Instance.Role == ReplicaRole.Primary;
+        public bool IsMaster => GraphEngineService.Instance?.Role == ReplicaRole.Primary;
 
 
         public NameService()
@@ -53,9 +53,10 @@ namespace Trinity.ServiceFabric
         {
             BigInteger low = new BigInteger(GraphEngineService.Instance.Context.ReplicaId);
             BigInteger high = new BigInteger(GraphEngineService.Instance.PartitionId) << 64;
-            return new Guid(Enumerable.Concat((low + high).ToByteArray(),
+            var guid = new Guid(Enumerable.Concat((low + high).ToByteArray(),
                                         Enumerable.Repeat<byte>(0x0, 16))
                                        .Take(16).ToArray());
+            return guid;
         }
 
         //internal static Guid GetInstanceId() => new Guid(Enumerable.Concat(
