@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{ED241F87-98E0-4FA6-B4C9-601E28D07A99}</ProjectGuid>
+    <ProjectGuid>{32925961-D539-49EE-8E90-9C848124663F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GE.ServiceFabric.Infrastructure.Module</RootNamespace>
