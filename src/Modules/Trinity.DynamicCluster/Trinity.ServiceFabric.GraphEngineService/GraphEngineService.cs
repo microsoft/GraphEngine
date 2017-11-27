@@ -40,18 +40,6 @@ namespace Trinity.ServiceFabric
         public GraphEngineService(StatefulServiceContext context)
             : base(context)
         {
-            //  Initialize Trinity server.
-            TrinityServer = AssemblyUtility.GetAllClassInstances(
-                t => t != typeof(TrinityServer) ?
-                t.GetConstructor(new Type[] { }).Invoke(new object[] { }) as TrinityServer :
-                null)
-                .FirstOrDefault();
-            if (TrinityServer == null)
-            {
-                TrinityServer = new TrinityServer();
-                Log.WriteLine(LogLevel.Warning, "GraphEngineService: using the default communication instance.");
-            }
-
             //  Initialize other fields and properties.
             NodeContext = context.NodeContext;
             FabricClient = new FabricClient();
@@ -78,7 +66,10 @@ namespace Trinity.ServiceFabric
             {
                 if (Instance != null)
                 {
-                    throw new InvalidOperationException("Only one GraphEngineService allowed in one process.");
+                    Log.WriteLine(LogLevel.Fatal, "Only one GraphEngineService allowed in one process.");
+                    Thread.Sleep(5000);
+                    Environment.Exit(-1);
+                    //throw new InvalidOperationException("Only one GraphEngineService allowed in one process.");
                 }
                 Instance = this;
             }
@@ -88,7 +79,26 @@ namespace Trinity.ServiceFabric
         {
             lock (s_lock)
             {
-                TrinityServer?.Start();
+                //  Initialize Trinity server.
+                if (TrinityServer == null)
+                {
+                    TrinityServer = AssemblyUtility.GetAllClassInstances(
+                        t => t != typeof(TrinityServer) ?
+                        t.GetConstructor(new Type[] { }).Invoke(new object[] { }) as TrinityServer :
+                        null)
+                        .FirstOrDefault();
+                }
+                if (TrinityServer == null)
+                {
+                    TrinityServer = new TrinityServer();
+                    Log.WriteLine(LogLevel.Warning, "GraphEngineService: using the default communication instance.");
+                }
+                else
+                {
+                    Log.WriteLine(LogLevel.Info, "{0}", $"GraphEngineService: using [{TrinityServer.GetType().Name}] communication instance.");
+                }
+
+                TrinityServer.Start();
                 return TrinityErrorCode.E_SUCCESS;
             }
         }
@@ -99,7 +109,6 @@ namespace Trinity.ServiceFabric
             {
                 TrinityServer?.Stop();
                 TrinityServer = null;
-                Instance = null;
                 return TrinityErrorCode.E_SUCCESS;
             }
         }
