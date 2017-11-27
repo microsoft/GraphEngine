@@ -1,5 +1,5 @@
 if [%REPO_ROOT%] == [] (
-  set REPO_ROOT=%~dp0..
+  set REPO_ROOT="%~dp0.."
 )
 
 setlocal enabledelayedexpansion
@@ -27,7 +27,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Run nuget to restore nuget packages for Trinity.Core
-%NUGET_EXE% restore %TRINITY_CORE_SLN%
+"%NUGET_EXE%" restore %TRINITY_CORE_SLN%
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Run msbuild to build Trinity.Core
@@ -35,7 +35,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Run nuget to restore nuget packages for LIKQ
-%NUGET_EXE% restore %LIKQ_SLN%
+"%NUGET_EXE%" restore %LIKQ_SLN%
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: TODO: Fix the build of LIKQ\FanoutSerach\FanoutSearch.UnitTest
@@ -58,9 +58,9 @@ call %SPARK_MODULE_ROOT%\build.bat
 
 :: Register local nuget source
 :: calling `nuget sources list` will create the config file if it does not exist
-%NUGET_EXE% sources list
-%NUGET_EXE% sources Remove -Name "Graph Engine OSS Local"
-%NUGET_EXE% sources Add -Name "Graph Engine OSS Local" -Source %REPO_ROOT%\bin\
+"%NUGET_EXE%" sources list
+"%NUGET_EXE%" sources Remove -Name "Graph Engine OSS Local"
+"%NUGET_EXE%" sources Add -Name "Graph Engine OSS Local" -Source %REPO_ROOT%\bin\
 :: Clear local nuget cache
 :: for /f %i in ('dir /a:d /s /b %REPO_ROOT%\tests\packages\GraphEngine.Core*') do rmdir /S /Q %i
 :: Ignore local nuget source errors

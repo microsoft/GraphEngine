@@ -5,15 +5,33 @@
 //////////////////////////////////////////////////////////////////////
 // Sample Refernece User-defined Datatypes
 [OntologyResource]
-struct SemanticTriple
+cell SemanticTriple
 {
 	string Subject;
 	string Predicate;
 	string Object;
 }
 
-[Ontology]
-struct AxiomaticSemanticTriple
+//cell SemanticTriple_Object_String
+//{
+//}
+
+//cell SemanticTriple_Object_List_DateTime
+//{
+//	[CellIdKey]
+//	GUID Subject;
+//	[PredicateId]
+//	long Predicate;
+//	[XMLSchemaType=xsd^^DateTime]
+//	List<DateTime> Ojbect;
+//}
+
+
+
+[Ontology, XMLSchemaType=String]
+cell AxiomaticSemanticTriple
 {
+	// xsdconverter:: string, string -> T
+    //[Ontology, XMLSchemaType=String]
 	List<CellId> TerminologicalBase;
 }

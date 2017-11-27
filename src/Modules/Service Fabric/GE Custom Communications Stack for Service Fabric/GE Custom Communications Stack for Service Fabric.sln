@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.8
+VisualStudioVersion = 15.0.27004.2008
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.ServiceFabric.Services.Communication.Trinity.Runtime", "GECustomCommunicationsStack\GE.ServiceFabric.Services.Communication.Trinity.Runtime.csproj", "{ED241F87-98E0-4FA6-B4C9-601E28D07A99}"
 EndProject
@@ -31,8 +31,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.Reference.Service.Common", "..\..\GE Service Fabric App\GEServiceCommon\GE.Service.Common\GE.Reference.Service.Common.csproj", "{934362EF-231C-4A74-91FF-8B7E381666C4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Reference App Server", "GE Reference App Server", "{EF5D5848-1044-4ED6-BB55-9BD720ADD1B3}"
-EndProject
-Project("{FD8A01E6-12A1-461A-AF0E-51EBE962703F}") = "GE.Reference.ServerApp.TSL", "..\..\GE App Server\GE.ServerApp.TSLProject\GE.Reference.ServerApp.TSL.tproj", "{895C4FC9-2A7A-4AFE-A4CB-F3269DDBDB95}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.ReferenceServerApp", "..\..\GE App Server\GE.ServerApp\GE.ReferenceServerApp.csproj", "{F7E5AC0D-4CF2-45D9-A988-5F6070A92FD5}"
 EndProject
@@ -98,12 +96,6 @@ Global
 		{934362EF-231C-4A74-91FF-8B7E381666C4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{934362EF-231C-4A74-91FF-8B7E381666C4}.Release|x64.ActiveCfg = Release|Any CPU
 		{934362EF-231C-4A74-91FF-8B7E381666C4}.Release|x64.Build.0 = Release|Any CPU
-		{895C4FC9-2A7A-4AFE-A4CB-F3269DDBDB95}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{895C4FC9-2A7A-4AFE-A4CB-F3269DDBDB95}.Debug|x64.ActiveCfg = Debug|x64
-		{895C4FC9-2A7A-4AFE-A4CB-F3269DDBDB95}.Debug|x64.Build.0 = Debug|x64
-		{895C4FC9-2A7A-4AFE-A4CB-F3269DDBDB95}.Release|Any CPU.ActiveCfg = Release|x64
-		{895C4FC9-2A7A-4AFE-A4CB-F3269DDBDB95}.Release|x64.ActiveCfg = Release|x64
-		{895C4FC9-2A7A-4AFE-A4CB-F3269DDBDB95}.Release|x64.Build.0 = Release|x64
 		{F7E5AC0D-4CF2-45D9-A988-5F6070A92FD5}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{F7E5AC0D-4CF2-45D9-A988-5F6070A92FD5}.Debug|x64.ActiveCfg = Debug|x64
 		{F7E5AC0D-4CF2-45D9-A988-5F6070A92FD5}.Debug|x64.Build.0 = Debug|x64
@@ -122,7 +114,6 @@ Global
 		{6EDD63CD-B3F1-4F9C-B581-18BD953AE553} = {F7FDC6BD-AF14-42DC-830D-AC5FD3A0D153}
 		{32925961-D539-49EE-8E90-9C848124663F} = {216E51C6-D32B-4280-8D68-28E1858D71A4}
 		{934362EF-231C-4A74-91FF-8B7E381666C4} = {24E24355-4915-492B-BBCE-8319B16D295B}
-		{895C4FC9-2A7A-4AFE-A4CB-F3269DDBDB95} = {EF5D5848-1044-4ED6-BB55-9BD720ADD1B3}
 		{F7E5AC0D-4CF2-45D9-A988-5F6070A92FD5} = {EF5D5848-1044-4ED6-BB55-9BD720ADD1B3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

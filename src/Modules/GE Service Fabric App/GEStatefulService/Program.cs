@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
-using GE.Reference.Stateful.Service;
 using Microsoft.ServiceFabric.Services.Runtime;
 
-namespace GE.Stateful.Service
+namespace GE.Reference.Stateful.Service
 {
     internal static class Program
     {

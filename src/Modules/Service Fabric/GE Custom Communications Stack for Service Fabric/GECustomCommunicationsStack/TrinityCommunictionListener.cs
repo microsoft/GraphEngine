@@ -14,26 +14,27 @@ namespace GE.ServiceFabric.Services.Communiction.Trinity.Runtime
     /// A Microsoft Trinity Communiactions based listener for Service Fabric based stateless and stateful
     /// service.
     /// </summary>
-    public class TrinityCommunictionListener<TServiceContract> : TrinityServer, ICommunicationListener
+    public class TrinityCommunictionListener<TServiceContract, TServer> : ICommunicationListener where TServer: TrinityServer
     {
-        public TrinityCommunictionListener(ServiceContext serviceContext, TServiceContract trinityServiceObject)
+        private TServer m_server;
+        public TrinityCommunictionListener(TServer server, ServiceContext serviceContext, TServiceContract trinityServiceObject)
         {
-            
+            m_server = server;
         }
 
         public Task<string> OpenAsync(CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            return Task.Run(() => m_server.Start()) as Task<string>;
         }
 
         public Task CloseAsync(CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            return Task.Run(() => m_server.Stop());
         }
 
         public void Abort()
         {
-            throw new System.NotImplementedException();
+            ;
         }
 
         public override string ToString()
@@ -51,19 +52,5 @@ namespace GE.ServiceFabric.Services.Communiction.Trinity.Runtime
             return base.GetHashCode();
         }
 
-        protected override void RegisterMessageHandler()
-        {
-            base.RegisterMessageHandler();
-        }
-
-        protected override void RootHttpHandler(HttpListenerContext ctx)
-        {
-            base.RootHttpHandler(ctx);
-        }
-
-        protected override void DispatchHttpRequest(HttpListenerContext ctx, string handlerName, string url)
-        {
-            base.DispatchHttpRequest(ctx, handlerName, url);
-        }
     }
 }

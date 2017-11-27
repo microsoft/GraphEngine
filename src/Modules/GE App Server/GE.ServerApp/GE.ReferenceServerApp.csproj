@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\Service Fabric\GE Custom Communications Stack for Service Fabric\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props" Condition="Exists('..\..\Service Fabric\GE Custom Communications Stack for Service Fabric\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
@@ -12,6 +13,8 @@
     <AssemblyName>GE.Reference.ServerApp</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,6 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DebugType>pdbonly</DebugType>
@@ -33,6 +37,10 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\Service Fabric\GE Custom Communications Stack for Service Fabric\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,8 +48,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Trinity.Core">
-      <HintPath>GraphEngine.Lib\Trinity.Core.dll</HintPath>
+    <Reference Include="Trinity.Core, Version=1.0.8850.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Service Fabric\GE Custom Communications Stack for Service Fabric\packages\GraphEngine.Core.1.0.8850\lib\Trinity.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -49,33 +57,18 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GE.ServerApp.TSLProject\GE.Reference.ServerApp.TSL.tproj">
-      <Project>{895c4fc9-2a7a-4afe-a4cb-f3269ddbdb95}</Project>
-      <Name>GE.Reference.ServerApp.TSL</Name>
-    </ProjectReference>
+    <TslCodegen Include="MetaReference.tsl" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <ZipperPath>"$(TrinityPath)\Zipper.exe"</ZipperPath>
-    <GraphEnginePackageName>$(AssemblyName).DeploymentPackage</GraphEnginePackageName>
-  </PropertyGroup>
-  <Target Name="DeployBuild">
-    <RemoveDir Directories="$(OutputPath)$(GraphEnginePackageName)" ContinueOnError="true" />
-    <MakeDir Directories="$(OutputPath)$(GraphEnginePackageName)" ContinueOnError="true" />
-    <MSBuild Projects="$(MSBuildProjectFullPath)" Properties="TrinityPath=$(TrinityPath);OutputPath=$(OutputPath)$(GraphEnginePackageName)" Targets="Build" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\Service Fabric\GE Custom Communications Stack for Service Fabric\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Service Fabric\GE Custom Communications Stack for Service Fabric\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props'))" />
+    <Error Condition="!Exists('..\..\Service Fabric\GE Custom Communications Stack for Service Fabric\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Service Fabric\GE Custom Communications Stack for Service Fabric\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.targets'))" />
   </Target>
-  <Target Name="MakeDeploymentPackage">
-    <Exec Command="$(ZipperPath) zip &quot;$(OutputPath)$(GraphEnginePackageName)&quot; &quot;$(OutputPath)$(GraphEnginePackageName).zip&quot;" ContinueOnError="false" />
-  </Target>
-  <UsingTask TaskName="Trinity.TSL.GenerateGraphEngineAssemblyInfo" AssemblyFile="$(TrinityPath)\Trinity.TSL.CompilerTask.dll" />
-  <Target Name="BeforeBuild" DependsOnTargets="ResolveProjectReferences;ResolveAssemblyReferences">
-    <GenerateGraphEngineAssemblyInfo ReferencedAssemblies="@(_ResolveAssemblyReferenceResolvedFiles)" Output="Properties\GraphEngine.AssemblyInfo.cs" />
-    <ItemGroup>
-      <Compile Include="Properties\GraphEngine.AssemblyInfo.cs" />
-    </ItemGroup>
-    <Copy SourceFiles="$(TrinityPath)\Trinity.Core.dll" DestinationFolder="$(MSBuildProjectDirectory)\GraphEngine.Lib" ContinueOnError="true" />
-    <Copy SourceFiles="$(TrinityPath)\Trinity.Core.xml" DestinationFolder="$(MSBuildProjectDirectory)\GraphEngine.Lib" ContinueOnError="true" />
-  </Target>
+  <Import Project="..\..\Service Fabric\GE Custom Communications Stack for Service Fabric\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.targets" Condition="Exists('..\..\Service Fabric\GE Custom Communications Stack for Service Fabric\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="AfterBuild">
