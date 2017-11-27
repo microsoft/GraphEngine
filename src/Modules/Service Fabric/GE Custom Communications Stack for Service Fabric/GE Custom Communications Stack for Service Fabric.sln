@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2009
+VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.ServiceFabric.Services.Communication.Trinity.Runtime", "GECustomCommunicationsStack\GE.ServiceFabric.Services.Communication.Trinity.Runtime.csproj", "{ED241F87-98E0-4FA6-B4C9-601E28D07A99}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Service Fabric Infrastructure Library", "GE Service Fabric Infrastructure Library", "{216E51C6-D32B-4280-8D68-28E1858D71A4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Reference Service Fabric App", "GE Reference Service Fabric App", "{24E24355-4915-492B-BBCE-8319B16D295B}"
@@ -14,8 +12,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.Reference.Stateful.Service", "..\..\GE Service Fabric App\GEStatefulService\GE.Reference.Stateful.Service.csproj", "{AC5E20E6-2604-4629-8761-4ACDD3C5C94A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Service Fabric Client", "GE Service Fabric Client", "{3CFF89C3-9777-4C55-84D4-87604405D626}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GEServiceFabricConsoleApp", "..\..\GE Service Fabric Client\GEServiceFabricConsoleApp\GEServiceFabricConsoleApp.csproj", "{2279959C-F24F-4F3D-8917-6E5DFC7B5764}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Service Fabric Service Common Library", "GE Service Fabric Service Common Library", "{F7FDC6BD-AF14-42DC-830D-AC5FD3A0D153}"
 EndProject
@@ -34,10 +30,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Reference App Server", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GE.ReferenceServerApp", "..\..\GE App Server\GE.ServerApp\GE.ReferenceServerApp.csproj", "{F7E5AC0D-4CF2-45D9-A988-5F6070A92FD5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trinity Garph Engine SF Communications Listener", "Trinity Garph Engine SF Communications Listener", "{93C24F2B-B98E-409A-80E1-756F1B3D3394}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.ServiceFabric.Services.Commuinications.TCP", "..\Trinity.ServiceFabric.Services.Commuinications.TCP\Trinity.ServiceFabric.Services.Commuinications.TCP.csproj", "{B239796D-9777-465F-BA36-DE8810CA3488}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,14 +38,6 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{ED241F87-98E0-4FA6-B4C9-601E28D07A99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ED241F87-98E0-4FA6-B4C9-601E28D07A99}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ED241F87-98E0-4FA6-B4C9-601E28D07A99}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{ED241F87-98E0-4FA6-B4C9-601E28D07A99}.Debug|x64.Build.0 = Debug|Any CPU
-		{ED241F87-98E0-4FA6-B4C9-601E28D07A99}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ED241F87-98E0-4FA6-B4C9-601E28D07A99}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ED241F87-98E0-4FA6-B4C9-601E28D07A99}.Release|x64.ActiveCfg = Release|Any CPU
-		{ED241F87-98E0-4FA6-B4C9-601E28D07A99}.Release|x64.Build.0 = Release|Any CPU
 		{9225B856-9D09-427F-A25F-D9572840A8CA}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{9225B856-9D09-427F-A25F-D9572840A8CA}.Debug|x64.ActiveCfg = Debug|x64
 		{9225B856-9D09-427F-A25F-D9572840A8CA}.Debug|x64.Build.0 = Debug|x64
@@ -68,14 +52,6 @@ Global
 		{AC5E20E6-2604-4629-8761-4ACDD3C5C94A}.Release|Any CPU.ActiveCfg = Release|x64
 		{AC5E20E6-2604-4629-8761-4ACDD3C5C94A}.Release|x64.ActiveCfg = Release|x64
 		{AC5E20E6-2604-4629-8761-4ACDD3C5C94A}.Release|x64.Build.0 = Release|x64
-		{2279959C-F24F-4F3D-8917-6E5DFC7B5764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2279959C-F24F-4F3D-8917-6E5DFC7B5764}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2279959C-F24F-4F3D-8917-6E5DFC7B5764}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{2279959C-F24F-4F3D-8917-6E5DFC7B5764}.Debug|x64.Build.0 = Debug|Any CPU
-		{2279959C-F24F-4F3D-8917-6E5DFC7B5764}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2279959C-F24F-4F3D-8917-6E5DFC7B5764}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2279959C-F24F-4F3D-8917-6E5DFC7B5764}.Release|x64.ActiveCfg = Release|Any CPU
-		{2279959C-F24F-4F3D-8917-6E5DFC7B5764}.Release|x64.Build.0 = Release|Any CPU
 		{6EDD63CD-B3F1-4F9C-B581-18BD953AE553}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6EDD63CD-B3F1-4F9C-B581-18BD953AE553}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EDD63CD-B3F1-4F9C-B581-18BD953AE553}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -106,20 +82,17 @@ Global
 		{F7E5AC0D-4CF2-45D9-A988-5F6070A92FD5}.Release|Any CPU.ActiveCfg = Release|x64
 		{F7E5AC0D-4CF2-45D9-A988-5F6070A92FD5}.Release|x64.ActiveCfg = Release|x64
 		{F7E5AC0D-4CF2-45D9-A988-5F6070A92FD5}.Release|x64.Build.0 = Release|x64
-		{B239796D-9777-465F-BA36-DE8810CA3488}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B239796D-9777-465F-BA36-DE8810CA3488}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B239796D-9777-465F-BA36-DE8810CA3488}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B239796D-9777-465F-BA36-DE8810CA3488}.Debug|x64.Build.0 = Debug|Any CPU
-		{B239796D-9777-465F-BA36-DE8810CA3488}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B239796D-9777-465F-BA36-DE8810CA3488}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B239796D-9777-465F-BA36-DE8810CA3488}.Release|x64.ActiveCfg = Release|Any CPU
-		{B239796D-9777-465F-BA36-DE8810CA3488}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{B239796D-9777-465F-BA36-DE8810CA3488} = {93C24F2B-B98E-409A-80E1-756F1B3D3394}
+		{9225B856-9D09-427F-A25F-D9572840A8CA} = {FEC17E5C-E3CB-4A35-A6C6-5EE5827B6F9A}
+		{AC5E20E6-2604-4629-8761-4ACDD3C5C94A} = {24E24355-4915-492B-BBCE-8319B16D295B}
+		{6EDD63CD-B3F1-4F9C-B581-18BD953AE553} = {F7FDC6BD-AF14-42DC-830D-AC5FD3A0D153}
+		{32925961-D539-49EE-8E90-9C848124663F} = {216E51C6-D32B-4280-8D68-28E1858D71A4}
+		{934362EF-231C-4A74-91FF-8B7E381666C4} = {F7FDC6BD-AF14-42DC-830D-AC5FD3A0D153}
+		{F7E5AC0D-4CF2-45D9-A988-5F6070A92FD5} = {EF5D5848-1044-4ED6-BB55-9BD720ADD1B3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8B423481-1DBA-47A0-A201-1C6EE939CCFE}
