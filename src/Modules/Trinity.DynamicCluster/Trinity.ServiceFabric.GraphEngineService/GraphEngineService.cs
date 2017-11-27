@@ -69,6 +69,7 @@ namespace Trinity.ServiceFabric
             ags.Clear();
             ags.Add(new AvailabilityGroup("LOCAL", new ServerInfo("localhost", Port, null, LogLevel.Info)));
             TrinityConfig.HttpPort = HttpPort;
+            TrinityConfig.StorageRoot = Context.CodePackageActivationContext.WorkDirectory;
 
             lock (s_lock)
             {

@@ -37,6 +37,13 @@ namespace Trinity.ServiceFabric
 
             TrinityConfig.LogToFile = false;
             Log.LogsWritten += GraphEngineLogsWritten;
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+        }
+
+        [NonEvent]
+        private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Log.WriteLine(LogLevel.Fatal, "{0}", $"Unhandled exception: {e.ExceptionObject.ToString()}.");
         }
 
         private Dictionary<LogLevel, Action<string>> m_logprocs = null;
