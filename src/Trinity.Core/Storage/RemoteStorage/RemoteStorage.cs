@@ -40,18 +40,18 @@ namespace Trinity.Storage
         /// Deprecated. Use PartitionId instead.
         /// </summary>
         [Obsolete]
-        public int MyServerId;
+        public int MyServerId { get { return PartitionId; } set { PartitionId = value; } }
         /// <summary>
         /// The partition id of this remote instance.
         /// </summary>
-        public int PartitionId => MyServerId;
+        public int PartitionId { get; protected set; }
 
         internal RemoteStorage(ServerInfo server_info, int connPerServer) : this(new[] { server_info }, connPerServer) { }
 
         protected internal RemoteStorage(IEnumerable<ServerInfo> servers, int connPerServer, MemoryCloud mc = null, int partitionId = -1, bool nonblocking = false)
         {
             this.m_memorycloud = mc;
-            this.MyServerId = partitionId;
+            this.PartitionId = partitionId;
 
             var connect_async_task = Task.Factory.StartNew(() =>
             {

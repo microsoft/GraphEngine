@@ -44,10 +44,6 @@ namespace Trinity.DynamicCluster.Consensus
     public interface ITaskQueue : IService
     {
         /// <summary>
-        /// Indicates whether the current replica serves as a task queue master.
-        /// </summary>
-        bool IsMaster { get; }
-        /// <summary>
         /// Gets a task from the queue. The behavior
         /// is undefined when executed on a task queue slave.
         /// </summary>

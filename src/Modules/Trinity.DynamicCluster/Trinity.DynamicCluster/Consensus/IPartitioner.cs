@@ -24,7 +24,6 @@ namespace Trinity.DynamicCluster.Consensus
         /// </summary>
         GetPartitionIdByCellIdDelegate PartitionerProc { get; }
 
-        bool IsMaster { get; }
 
         event EventHandler<int> ChunkCountUpdated;
         event EventHandler<int> PartitionCountUpdated;

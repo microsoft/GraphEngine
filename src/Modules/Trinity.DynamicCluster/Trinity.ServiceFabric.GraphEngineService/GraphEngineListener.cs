@@ -2,11 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
-using Trinity.Network;
-using Trinity.Utilities;
-using System;
-using System.Linq;
-using Trinity.Diagnostics;
 
 namespace Trinity.ServiceFabric
 {

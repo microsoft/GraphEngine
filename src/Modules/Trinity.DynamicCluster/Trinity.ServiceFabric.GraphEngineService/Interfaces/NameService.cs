@@ -4,8 +4,10 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Fabric;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,7 +26,8 @@ namespace Trinity.ServiceFabric
         private CancellationToken m_token;
         private Dictionary<Guid, HashSet<string>> m_replicaList;
         private List<Guid> m_partitionIds;
-        private ServicePartitionResolver m_resolver;
+        private FabricClient m_fclient;
+        private Uri m_svcuri;
 
         public string Address => GraphEngineService.Instance.Address;
 
@@ -40,18 +43,21 @@ namespace Trinity.ServiceFabric
         public NameService()
         {
             InstanceId = GetInstanceId();
-            m_resolver = ServicePartitionResolver.GetDefault();
             m_partitionIds = GraphEngineService.Instance.Partitions.Select(_ => _.PartitionInformation.Id).ToList();
             m_replicaList = Enumerable.ToDictionary(m_partitionIds, _ => _, _ => new HashSet<string>());
+            m_svcuri = GraphEngineService.Instance.Context.ServiceName;
+            m_fclient = new FabricClient();
         }
 
-        private static Guid GetInstanceId()
-        {
-            return new Guid(Enumerable.Concat(
-                                         GraphEngineService.Instance.NodeContext.NodeInstanceId.ToByteArray(),
-                                         Enumerable.Repeat<byte>(0x0, 16))
-                                        .Take(16).ToArray());
-        }
+        //private Guid GetInstanceId() => new Guid(Enumerable.Concat(
+        //                                GraphEngineService.Instance.NodeContext.NodeInstanceId.ToByteArray(),
+        //                                Enumerable.Repeat<byte>(0x0, 16))
+        //                               .Take(16).ToArray());
+
+        private Guid GetInstanceId() => new Guid(Enumerable.Concat(
+                                            new BigInteger(GraphEngineService.Instance.Context.ReplicaId).ToByteArray(),
+                                            Enumerable.Repeat<byte>(0x0, 16))
+                                           .Take(16).ToArray());
 
         public TrinityErrorCode Start(CancellationToken token)
         {
@@ -69,16 +75,14 @@ namespace Trinity.ServiceFabric
 
         private async Task ScanNodesProc()
         {
-            ResolvedServicePartition[] resrsp = Enumerable.Repeat<ResolvedServicePartition>(null, GraphEngineService.Instance.PartitionCount).ToArray();
             while (true)
             {
                 if (m_token.IsCancellationRequested) return;
                 try
                 {
-                    var tasks = Enumerable.Range(0, resrsp.Length).Zip(resrsp, ResolvePartition);
+                    var tasks = m_partitionIds.Select(ResolvePartition);
                     await Task.WhenAll(tasks);
-                    resrsp = tasks.Select(_ => _.Result.Item1).ToArray();
-                    m_partitionIds.Zip(tasks.Select(_ => _.Result.Item2), UpdatePartition).ToList();
+                    m_partitionIds.Zip(tasks.Select(_ => _.Result), UpdatePartition).ToList();
                 }
                 catch (Exception ex)
                 {
@@ -105,19 +109,18 @@ namespace Trinity.ServiceFabric
             return 0;
         }
 
-        private async Task<(ResolvedServicePartition, HashSet<string>)> ResolvePartition(int key, ResolvedServicePartition resrsp)
+        private async Task<HashSet<string>> ResolvePartition(Guid partId)
         {
-            if (resrsp == null)
-            {
-                resrsp = await m_resolver.ResolveAsync(GraphEngineService.Instance.Context.ServiceName, new ServicePartitionKey(key), m_token);
-            }
-            else
-            {
-                resrsp = await m_resolver.ResolveAsync(resrsp, m_token);
-            }
-            var addrs = resrsp.Endpoints
-                .Select(ep => JObject.Parse(ep.Address)["Endpoints"]["GraphEngineTrinityProtocolListener"].ToString());
-            return (resrsp, new HashSet<string>(addrs));
+            var rs = await m_fclient.QueryManager.GetReplicaListAsync(partId);
+            rs.ForEach(r => Log.WriteLine("{0}", r.ReplicaAddress));
+            var addrs = rs.Select(r => GetTrinityProtocolEndpoint(r)).Where(_ => _ != null);
+            return new HashSet<string>(addrs);
+        }
+
+        private static string GetTrinityProtocolEndpoint(System.Fabric.Query.Replica r)
+        {
+            try { return JObject.Parse(r.ReplicaAddress)["Endpoints"]["GraphEngineTrinityProtocolListener"].ToString(); }
+            catch { return null; }
         }
 
         public event EventHandler<ServerInfo> NewServerInfoPublished = delegate { };

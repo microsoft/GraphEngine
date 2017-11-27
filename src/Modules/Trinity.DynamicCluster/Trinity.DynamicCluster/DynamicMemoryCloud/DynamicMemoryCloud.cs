@@ -42,7 +42,7 @@ namespace Trinity.DynamicCluster.Storage
 
         private void CheckServerProtocolSignatures(DynamicRemoteStorage rs)
         {
-            Log.WriteLine(LogLevel.Debug, $"Checking protocol signatures with {rs.Id}...");
+            Log.WriteLine(LogLevel.Debug, $"Checking protocol signatures with '{rs.NickName}' ({rs.Id})...");
 
             CheckProtocolSignatures_impl(rs, cluster_config.RunningMode, RunningMode.Server);
         }
@@ -54,11 +54,11 @@ namespace Trinity.DynamicCluster.Storage
                 var module = GetCommunicationModule<DynamicClusterCommModule>();
                 using (var rsp = module.QueryChunkedRemoteStorageInformation(id))
                 {
-                    remoteStorage.SetId(rsp.info.id);
+                    remoteStorage.SetId(rsp.info.id, rsp.info.partition);
                     ChunkedStorageTable(rsp.info.partition).Mount(remoteStorage, rsp);
                 }
                 CheckServerProtocolSignatures(remoteStorage);
-                Log.WriteLine($"DynamicCluster: '{NickName}' Connected to '{remoteStorage.NickName}' ({remoteStorage.Id})");
+                Log.WriteLine($"DynamicCluster: Connected to '{remoteStorage.NickName}' ({remoteStorage.Id})");
             });
             return TrinityErrorCode.E_SUCCESS;
         }

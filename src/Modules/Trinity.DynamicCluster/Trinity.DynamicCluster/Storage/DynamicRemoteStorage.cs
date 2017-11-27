@@ -20,9 +20,10 @@ namespace Trinity.DynamicCluster
         public string NickName { get; private set; }
         public Guid Id { get; private set; }
 
-        internal void SetId(Guid id)
+        internal void SetId(Guid id, int partitionId)
         {
             Id = id;
+            PartitionId = partitionId;
             NickName = Utils.GenerateNickName(id);
         }
 

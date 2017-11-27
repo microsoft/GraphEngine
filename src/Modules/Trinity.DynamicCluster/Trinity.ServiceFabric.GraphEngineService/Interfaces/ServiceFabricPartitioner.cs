@@ -1,11 +1,6 @@
-﻿using Microsoft.ServiceFabric.Services.Communication.Client;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Fabric;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Trinity.Daemon;
 using Trinity.DynamicCluster.Consensus;
 using Trinity.Storage;
 using System.Threading;
@@ -35,7 +30,9 @@ namespace Trinity.ServiceFabric.Interfaces
         public bool IsMaster => GraphEngineService.Instance.Role == ReplicaRole.Primary;
 
         public event EventHandler<int> ChunkCountUpdated = delegate { };
+#pragma warning disable
         public event EventHandler<int> PartitionCountUpdated = null; // Not going to happen. SF has fixed partitioning scheme.
+#pragma warning restore
 
         public TrinityErrorCode Start(CancellationToken cancellationToken)
         {
