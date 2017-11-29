@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Trinity.DynamicCluster.Storage
 {
-    public unsafe partial class DynamicMemoryCloud : MemoryCloud
+    public partial class DynamicMemoryCloud : MemoryCloud
     {
         private Random m_rng = new Random();
 
@@ -24,7 +24,7 @@ namespace Trinity.DynamicCluster.Storage
         internal IPartitioner m_partitioner;
         internal INameService m_nameservice;
         internal ITaskQueue m_taskqueue;
-        internal Thread m_tasktrd;
+        internal Task m_taskexec;
         internal CancellationTokenSource m_cancelSrc;
         internal Partition ChunkedStorageTable(int id) => StorageTable[id] as Partition;
         private ConcurrentDictionary<int, DynamicRemoteStorage> temporaryRemoteStorageRepo = new ConcurrentDictionary<int, DynamicRemoteStorage>();
@@ -105,8 +105,7 @@ namespace Trinity.DynamicCluster.Storage
 
             m_nameservice.Start(m_cancelSrc.Token);
             m_taskqueue.Start(m_cancelSrc.Token);
-            m_tasktrd = new Thread(TaskExecutionProc);
-            m_tasktrd.Start();
+            m_taskexec = TaskExecutionProc(m_cancelSrc.Token);
 
             NickName = GenerateNickName(InstanceId);
             Log.WriteLine($"DynamicMemoryCloud: Partition {MyPartitionId}: Instance '{NickName}' {InstanceId} opened.");
@@ -162,7 +161,7 @@ namespace Trinity.DynamicCluster.Storage
             m_nameservice.Dispose();
             m_partitioner.Dispose();
             m_taskqueue.Dispose();
-            m_tasktrd.Join();
+            m_taskexec.Wait();
 
             return TrinityErrorCode.E_SUCCESS;
         }
@@ -185,28 +184,38 @@ namespace Trinity.DynamicCluster.Storage
             return MyChunks.FirstOrDefault(c => c.Covers(cellId));
         }
 
-        private void TaskExecutionProc()
+        private async Task TaskExecutionProc(CancellationToken cancel)
         {
+            ITask task;
+            Exception exception;
             while (true)
             {
                 try
                 {
+                    if (cancel.IsCancellationRequested)
+                    {
+                        break;
+                    }
                     if (!m_taskqueue.IsMaster)
                     {
-                        Thread.Sleep(1000);
+                        await Task.Delay(1000, cancel);
                         continue;
                     }
-                    var task = m_taskqueue.GetTask(m_cancelSrc.Token);
-                    if (task == null) continue;
-                    var errno = task.Execute();
-                    if (errno == TrinityErrorCode.E_SUCCESS)
+                    task = await m_taskqueue.GetTask(cancel) ?? new NopTask();
+                    try
                     {
-                        m_taskqueue.TaskCompleted(task);
+                        await task.Execute(cancel);
+                        exception = null;
+                    }
+                    catch(Exception ex) { exception = ex; }
+                    if (null == exception)
+                    {
+                        await m_taskqueue.TaskCompleted(task);
                     }
                     else
                     {
-                        Log.WriteLine(LogLevel.Error, $"TaskExecutionProc: task {task.Id} failed with code {errno}");
-                        m_taskqueue.TaskFailed(task);
+                        Log.WriteLine(LogLevel.Error, $"TaskExecutionProc: task {task.Id} failed with exception: {exception.ToString()}");
+                        await m_taskqueue.TaskFailed(task);
                     }
                 }
                 catch (TaskCanceledException)
@@ -216,7 +225,7 @@ namespace Trinity.DynamicCluster.Storage
                 catch (Exception ex)
                 {
                     Log.WriteLine(LogLevel.Error, $"TaskExecutionProc: {ex.ToString()}");
-                    Thread.Sleep(1000);
+                    await Task.Delay(1000, cancel);
                 }
             }
         }

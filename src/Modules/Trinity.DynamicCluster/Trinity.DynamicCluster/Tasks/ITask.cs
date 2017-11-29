@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Trinity.DynamicCluster.Tasks
@@ -12,6 +13,6 @@ namespace Trinity.DynamicCluster.Tasks
     public interface ITask
     {
         Guid Id { get; }
-        TrinityErrorCode Execute();
+        Task Execute(CancellationToken cancel);
     }
 }

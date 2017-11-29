@@ -59,15 +59,9 @@ namespace Trinity.ServiceFabric
             return guid;
         }
 
-        //internal static Guid GetInstanceId() => new Guid(Enumerable.Concat(
-        //                                    new BigInteger(GraphEngineService.Instance.Context.ReplicaOrInstanceId).ToByteArray(),
-        //                                    Enumerable.Repeat<byte>(0x0, 16))
-        //                                   .Take(16).ToArray());
-
         public TrinityErrorCode Start(CancellationToken token)
         {
             m_token = token;
-            ServerInfo my_si = new ServerInfo(Address, Port, Global.MyAssemblyPath, TrinityConfig.LoggingLevel);
             m_bgtask = ScanNodesProc();
 
             return TrinityErrorCode.E_SUCCESS;
@@ -117,7 +111,6 @@ namespace Trinity.ServiceFabric
         private async Task<HashSet<string>> ResolvePartition(Guid partId)
         {
             var rs = await m_fclient.QueryManager.GetReplicaListAsync(partId);
-            //rs.ForEach(r => Log.WriteLine("{0}", r.ReplicaAddress));
             var addrs = rs.Select(r => GetTrinityProtocolEndpoint(r)).Where(_ => _ != null);
             return new HashSet<string>(addrs);
         }
