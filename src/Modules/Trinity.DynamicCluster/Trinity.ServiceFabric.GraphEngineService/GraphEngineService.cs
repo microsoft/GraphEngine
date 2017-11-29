@@ -84,7 +84,7 @@ namespace Trinity.ServiceFabric
                 {
                     TrinityServer = AssemblyUtility.GetAllClassInstances(
                         t => t != typeof(TrinityServer) ?
-                        t.GetConstructor(new Type[] { }).Invoke(new object[] { }) as TrinityServer :
+                        t.GetConstructor(new Type[] { })?.Invoke(new object[] { }) as TrinityServer :
                         null)
                         .FirstOrDefault();
                 }
