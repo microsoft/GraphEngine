@@ -1,4 +1,5 @@
-﻿using System.Fabric;
+﻿using System.Diagnostics;
+using System.Fabric;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
@@ -28,7 +29,8 @@ namespace Trinity.ServiceFabric
         public Task<string> OpenAsync(CancellationToken cancellationToken)
         {
             GraphEngineService.Instance?.Start();
-            return Task.FromResult($"tcp://{GraphEngineService.Instance.Address}:{GraphEngineService.Instance.Port}");
+            Debug.Assert(GraphEngineService.Instance != null, "GraphEngineService.Instance != null");
+            return Task.FromResult($"tcp://{GraphEngineService.Instance?.Address}:{GraphEngineService.Instance.Port}");
         }
     }
 }
