@@ -48,6 +48,11 @@ namespace Trinity.DynamicCluster
             }
         }
 
+        public static IEnumerable<int> Integers(int count)
+        {
+            return Integers().Take(count);
+        }
+
         public static Guid GetMachineGuid()
         {
             var interfaces = NetworkInterface.GetAllNetworkInterfaces();

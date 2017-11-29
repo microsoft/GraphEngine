@@ -28,6 +28,8 @@ namespace Trinity.DynamicCluster.Storage
         internal CancellationTokenSource m_cancelSrc;
         internal Partition ChunkedStorageTable(int id) => StorageTable[id] as Partition;
         private ConcurrentDictionary<int, DynamicRemoteStorage> temporaryRemoteStorageRepo = new ConcurrentDictionary<int, DynamicRemoteStorage>();
+        private volatile bool disposed = false;
+
 
         internal static DynamicMemoryCloud Instance => Global.CloudStorage as DynamicMemoryCloud;
 
@@ -140,8 +142,9 @@ namespace Trinity.DynamicCluster.Storage
             m_taskqueue = AssemblyUtility.GetAllClassInstances<ITaskQueue>().First();
         }
 
-        public TrinityErrorCode Close()
+        protected override void Dispose(bool disposing)
         {
+            if (this.disposed) return;
             var module = GetCommunicationModule<DynamicClusterCommModule>();
             Enumerable
            .Range(0, PartitionCount)
@@ -163,7 +166,8 @@ namespace Trinity.DynamicCluster.Storage
             m_taskqueue.Dispose();
             m_taskexec.Wait();
 
-            return TrinityErrorCode.E_SUCCESS;
+            base.Dispose(disposing);
+            this.disposed = true;
         }
 
         protected override void OnConnected(RemoteStorageEventArgs e)

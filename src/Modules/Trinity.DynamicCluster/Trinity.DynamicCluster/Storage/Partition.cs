@@ -39,7 +39,6 @@ namespace Trinity.DynamicCluster.Storage
 
         internal TrinityErrorCode Mount(Storage storage, IEnumerable<Chunk> cc)
         {
-            //bool storage_exists = m_chunks.ContainsKey(storage);
             m_storages[storage] = cc;
             return TrinityErrorCode.E_SUCCESS;
         }

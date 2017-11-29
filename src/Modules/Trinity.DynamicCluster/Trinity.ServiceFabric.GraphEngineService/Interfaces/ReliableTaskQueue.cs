@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Trinity.DynamicCluster.Consensus;
 using Trinity.DynamicCluster.Tasks;
 using Microsoft.ServiceFabric.Data;
+using Trinity.DynamicCluster;
 
 namespace Trinity.ServiceFabric.Interfaces
 {
@@ -16,6 +17,7 @@ namespace Trinity.ServiceFabric.Interfaces
     {
         private CancellationToken m_cancel;
         private IReliableQueue<ITask> m_queue = null;
+        private IReliableQueue<ITask>[] m_allqueues = null;
         private IReliableStateManager m_statemgr = null;
         private ITransaction m_tx = null;
 
@@ -23,8 +25,11 @@ namespace Trinity.ServiceFabric.Interfaces
         {
             m_cancel = cancellationToken;
             m_statemgr = GraphEngineService.Instance.StateManager;
-            m_queue = m_statemgr.GetOrAddAsync<IReliableQueue<ITask>>($"GraphEngine.TaskQueue-P{GraphEngineService.Instance.PartitionId}").Result;
+            m_allqueues = Utils.Integers(GraphEngineService.Instance.PartitionCount).Select(CreatePartitionQueue).ToArray();
+            m_queue = m_allqueues[GraphEngineService.Instance.PartitionId];
         }
+
+        private IReliableQueue<ITask> CreatePartitionQueue(int p) => m_statemgr.GetOrAddAsync<IReliableQueue<ITask>>($"GraphEngine.TaskQueue-P{p}").Result;
 
         public void Dispose() { if (m_tx != null) ReleaseTx(); }
 
@@ -64,6 +69,21 @@ namespace Trinity.ServiceFabric.Interfaces
             if (m_tx == null) throw new NullReferenceException("ReliableTaskQueue: transaction not found");
             ReleaseTx();
             return Task.FromResult(0);
+        }
+
+        public async Task PostTask(ITask task, int partitionId)
+        {
+            using(var tx = m_statemgr.CreateTransaction())
+            {
+                retry:
+                try
+                {
+                    await m_allqueues[partitionId].EnqueueAsync(tx, task, TimeSpan.FromSeconds(10), m_cancel);
+                    await tx.CommitAsync();
+                }
+                catch (TimeoutException) { goto retry; }
+                catch (OperationCanceledException) { }
+            }
         }
     }
 }

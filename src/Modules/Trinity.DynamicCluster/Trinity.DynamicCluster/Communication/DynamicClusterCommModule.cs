@@ -35,5 +35,9 @@ namespace Trinity.DynamicCluster.Communication
             var dmc = DynamicMemoryCloud.Instance;
             dmc.OnStorageLeave(request.partition, request.id);
         }
+
+        public override void RemoteTaskHandler(RemoteTaskRequestReader request)
+        {
+        }
     }
 }

@@ -62,5 +62,13 @@ namespace Trinity.DynamicCluster.Consensus
         /// Reports failure of a task, and put it back into the queue.
         /// </summary>
         Task TaskFailed(ITask task);
+        /// <summary>
+        /// Post a new task to a partition. The behavior
+        /// is undefined when executed on a task queue slave.
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="partitionId"></param>
+        /// <returns></returns>
+        Task PostTask(ITask task, int partitionId);
     }
 }
