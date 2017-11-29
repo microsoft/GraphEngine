@@ -33,3 +33,8 @@ set TRINITY_C_SLN=%REPO_ROOT%\src\Trinity.C\Trinity.C.sln
 set TRINITY_TSL_SLN=%REPO_ROOT%\src\Trinity.TSL\Trinity.TSL.sln
 set SPARK_MODULE_ROOT=%REPO_ROOT%\src\Modules\Spark
 set LIKQ_SLN=%REPO_ROOT%\src\Modules\LIKQ\LIKQ.sln
+
+set TRINITY_OUTPUT_DIR=%REPO_ROOT%\bin
+pushd "%TRINITY_OUTPUT_DIR%"
+set TRINITY_OUTPUT_DIR=%CD%
+popd

@@ -28,7 +28,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 :: calling `nuget sources list` will create the config file if it does not exist
 "%NUGET_EXE%" sources list
 "%NUGET_EXE%" sources Remove -Name "Graph Engine OSS Local"
-"%NUGET_EXE%" sources Add -Name "Graph Engine OSS Local" -Source "%REPO_ROOT%\bin\"
+"%NUGET_EXE%" sources Add -Name "Graph Engine OSS Local" -Source "%TRINITY_OUTPUT_DIR%"
 :: Clear local nuget cache
 :: for /f %i in ('dir /a:d /s /b %REPO_ROOT%\tests\packages\GraphEngine.Core*') do rmdir /S /Q %i
 :: Ignore local nuget source errors
