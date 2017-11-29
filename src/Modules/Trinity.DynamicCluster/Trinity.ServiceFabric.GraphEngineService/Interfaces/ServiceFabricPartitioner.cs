@@ -34,13 +34,12 @@ namespace Trinity.ServiceFabric.Interfaces
         public event EventHandler<int> PartitionCountUpdated = null; // Not going to happen. SF has fixed partitioning scheme.
 #pragma warning restore
 
-        public TrinityErrorCode Start(CancellationToken cancellationToken)
+        public void Start(CancellationToken cancellationToken)
         {
             //TODO initialize partition metadata if necessary
             //TODO start task to watch the metadata
             m_canceltkn = cancellationToken;
             //TODO DHT
-            return TrinityErrorCode.E_SUCCESS;
         }
 
         public void Dispose() { }

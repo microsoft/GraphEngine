@@ -19,12 +19,11 @@ namespace Trinity.ServiceFabric.Interfaces
         private IReliableStateManager m_statemgr = null;
         private ITransaction m_tx = null;
 
-        public TrinityErrorCode Start(CancellationToken cancellationToken)
+        public void Start(CancellationToken cancellationToken)
         {
             m_cancel = cancellationToken;
             m_statemgr = GraphEngineService.Instance.StateManager;
-            m_queue = m_statemgr.GetOrAddAsync<IReliableQueue<ITask>>("GraphEngine.TaskQueue").Result;
-            return TrinityErrorCode.E_SUCCESS;
+            m_queue = m_statemgr.GetOrAddAsync<IReliableQueue<ITask>>($"GraphEngine.TaskQueue-P{GraphEngineService.Instance.PartitionId}").Result;
         }
 
         public void Dispose() { if (m_tx != null) ReleaseTx(); }

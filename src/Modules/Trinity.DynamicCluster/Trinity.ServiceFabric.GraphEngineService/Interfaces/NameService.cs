@@ -59,12 +59,10 @@ namespace Trinity.ServiceFabric
             return guid;
         }
 
-        public TrinityErrorCode Start(CancellationToken token)
+        public void Start(CancellationToken token)
         {
             m_token = token;
             m_bgtask = ScanNodesProc();
-
-            return TrinityErrorCode.E_SUCCESS;
         }
 
         public void Dispose()
