@@ -1,11 +1,11 @@
 @echo off
 
-if [%REPO_ROOT%] == [] (
+if ["%REPO_ROOT%"] == [""] (
   set REPO_ROOT=%~dp0..
 )
 
 setlocal enabledelayedexpansion
-set VSWHERE_EXE=%REPO_ROOT%\tools\vswhere.exe
+set VSWHERE_EXE="%REPO_ROOT%\tools\vswhere.exe"
 set VS_VERSION=[15.0,16.0)
 set REQUIRES=Microsoft.Component.MSBuild Microsoft.VisualStudio.Component.VC.Tools.x86.x64
 for /f "usebackq tokens=*" %%i in (`"%VSWHERE_EXE%" -version !VS_VERSION! -products * -requires %REQUIRES% -property installationPath`) do (

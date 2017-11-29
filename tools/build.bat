@@ -1,4 +1,4 @@
-if [%REPO_ROOT%] == [] (
+if ["%REPO_ROOT%"] == [""] (
   set REPO_ROOT=%~dp0..
 )
 
