@@ -6,18 +6,22 @@ using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
+using Trinity.GraphEngine.ServiceFabric.Core;
+using Trinity.GraphEngine.ServiceFabric.Listeners;
 
-namespace GE.Reference.Stateful.Service
+namespace Trinity.ServiceFabric.GraphEngineService
 {
     /// <summary>
     /// An instance of this class is created for each service replica by the Service Fabric runtime.
     /// </summary>
-    internal sealed class GEReferenceStatefulService : StatefulService
+    internal sealed class GraphEngineStatefulService : StatefulService
     {
-        public GEReferenceStatefulService(StatefulServiceContext context)
+        readonly GraphEngineStatefulServiceCore graphEngineStatefulServiceCore;
+
+        public GraphEngineStatefulService(StatefulServiceContext context)
             : base(context)
         {
-            //...
+            graphEngineStatefulServiceCore = new GraphEngineStatefulServiceCore(context);
         }
 
         /// <summary>
@@ -29,8 +33,12 @@ namespace GE.Reference.Stateful.Service
         /// <returns>A collection of listeners.</returns>
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            // Okay this is where we need to new-up TrinityServer Implementation
-            return new ServiceReplicaListener[0];
+            //  See https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-services-communication:
+            //  When creating multiple listeners for a service, each listener must be given a unique name.
+            return new[] {
+                new ServiceReplicaListener(ctx => new GraphEngineListener(ctx, graphEngineStatefulServiceCore), "GraphEngineTrinityProtocolListener", listenOnSecondary: true),
+                new ServiceReplicaListener(ctx => new GraphEngineHttpListener(ctx, graphEngineStatefulServiceCore), "GraphEngineHttpListener", listenOnSecondary: true),
+            };
         }
 
         /// <summary>
@@ -53,7 +61,7 @@ namespace GE.Reference.Stateful.Service
                 {
                     var result = await myDictionary.TryGetValueAsync(tx, "Counter");
 
-                    ServiceEventSource.Current.ServiceMessage(this.Context, "Current Counter Value: {0}",
+                    GraphEngineServiceEventSource.Current.ServiceMessage(this.Context, "Current Counter Value: {0}",
                         result.HasValue ? result.Value.ToString() : "Value does not exist.");
 
                     await myDictionary.AddOrUpdateAsync(tx, "Counter", 0, (key, value) => ++value);

@@ -1,0 +1,8 @@
+﻿TrinitySettings
+{
+RootNamespace: InKnowWorks.GraphEngine.OntologyAPI.Protocols.TSL;
+}
+
+module FanoutSearch
+{
+}

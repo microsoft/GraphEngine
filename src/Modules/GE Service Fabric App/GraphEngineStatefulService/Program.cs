@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
-using GE.Reference.StatefulService;
 using Microsoft.ServiceFabric.Services.Runtime;
 
-namespace GE.Reference.Stateful.Service
+namespace Trinity.ServiceFabric.GraphEngineService
 {
     internal static class Program
     {
@@ -20,17 +19,17 @@ namespace GE.Reference.Stateful.Service
                 // When Service Fabric creates an instance of this service type,
                 // an instance of the class is created in this host process.
 
-                ServiceRuntime.RegisterServiceAsync("GEReferenceStatefulServiceType",
-                    context => new GEReferenceStatefulService(context)).GetAwaiter().GetResult();
+                ServiceRuntime.RegisterServiceAsync("Trinity.ServiceFabric.GraphEngineServiceType",
+                    context => new Trinity.ServiceFabric.GraphEngineService.GraphEngineStatefulService(context)).GetAwaiter().GetResult();
 
-                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(GEReferenceStatefulService).Name);
+                GraphEngineServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(Trinity.ServiceFabric.GraphEngineService.GraphEngineStatefulService).Name);
 
                 // Prevents this host process from terminating so services keep running.
                 Thread.Sleep(Timeout.Infinite);
             }
             catch (Exception e)
             {
-                ServiceEventSource.Current.ServiceHostInitializationFailed(e.ToString());
+                GraphEngineServiceEventSource.Current.ServiceHostInitializationFailed(e.ToString());
                 throw;
             }
         }
