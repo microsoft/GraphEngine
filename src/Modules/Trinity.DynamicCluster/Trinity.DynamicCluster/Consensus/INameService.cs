@@ -6,6 +6,20 @@ using Trinity.Network;
 
 namespace Trinity.DynamicCluster.Consensus
 {
+    public class ReplicaInformation
+    {
+        public ReplicaInformation(string addr, int port, Guid id, int partitionId)
+        {
+            Address = addr;
+            Port = port;
+            Id = id;
+            PartitionId = partitionId;
+        }
+        public string Address { get; }
+        public int Port { get; }
+        public Guid Id { get; }
+        public int PartitionId { get; }
+    }
     public interface INameService: IService
     {
         /// <summary>
@@ -15,7 +29,7 @@ namespace Trinity.DynamicCluster.Consensus
         /// or after <see cref="Start"/> is called. Also, a name service
         /// should not report itself (no loopback connections shall be made).
         /// </summary>
-        event EventHandler<ServerInfo> NewServerInfoPublished;
+        event EventHandler<ReplicaInformation> NewReplicaInformationPublished;
         /// <summary>
         /// Obtains a unique identifier for the local instance.
         /// Note, on the platforms where multiple instances run

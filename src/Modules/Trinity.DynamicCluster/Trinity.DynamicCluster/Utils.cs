@@ -7,17 +7,36 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Trinity.Core.Lib;
+using Trinity.DynamicCluster.Consensus;
 
 namespace Trinity.DynamicCluster
 {
     public static class Utils
     {
+        public static void Deconstruct<T>(this T[] array, out T t1, out T t2)
+        {
+            t1 = array[0];
+            t2 = array[1];
+        }
+
+        public static void Deconstruct<T>(this T[] array, out T t1, out T t2, out T t3)
+        {
+            t1 = array[0];
+            t2 = array[1];
+            t3 = array[2];
+        }
+
         public static IEnumerable<T> Infinity<T>(Func<T> IO)
         {
             while (true)
             {
                 yield return IO();
             }
+        }
+
+        public static IEnumerable<T> Infinity<T>() where T: new()
+        {
+            return Infinity(New<T>);
         }
 
         public static IEnumerable<T> ForEach<T>(this IEnumerable<T> list, Action<T> action)
@@ -52,6 +71,18 @@ namespace Trinity.DynamicCluster
         {
             return Integers().Take(count);
         }
+
+        public static T New<T>() where T: new()
+        {
+            return new T();
+        }
+
+        public static T New<Tin, T>(Tin arg) where T: new()
+        {
+            return new T();
+        }
+
+        public static T Identity<T>(T _) => _;
 
         public static Guid GetMachineGuid()
         {

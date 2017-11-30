@@ -33,7 +33,7 @@ namespace Trinity.DynamicCluster.Storage
         internal TrinityErrorCode Mount(Storage storage, _QueryChunkedRemoteStorageInformationReusltReader info)
         {
             List<Chunk> chunks = new List<Chunk>();
-            info.chunks.ForEach(ci => chunks.Add(new Chunk(ci.lowKey, ci.highKey, storage, ci.id)));
+            info.chunks.ForEach(ci => chunks.Add(new Chunk(ci.lowKey, ci.highKey, ci.id)));
             return Mount(storage, chunks);
         }
 

@@ -56,7 +56,6 @@ namespace Trinity.DynamicCluster.Storage
                 var module = GetCommunicationModule<DynamicClusterCommModule>();
                 using (var rsp = module.QueryChunkedRemoteStorageInformation(id))
                 {
-                    remoteStorage.SetId(rsp.info.id, rsp.info.partition);
                     ChunkedStorageTable(rsp.info.partition).Mount(remoteStorage, rsp);
                 }
                 CheckServerProtocolSignatures(remoteStorage);
@@ -101,7 +100,7 @@ namespace Trinity.DynamicCluster.Storage
 
             m_partitioner.Start(m_cancelSrc.Token);
             this.cluster_config = config;
-            StorageTable = Infinity(() => new Partition())
+            StorageTable = Infinity<Partition>()
                           .Take(PartitionCount)
                           .ToArray();
 
@@ -121,10 +120,10 @@ namespace Trinity.DynamicCluster.Storage
             m_cancelSrc = new CancellationTokenSource();
 
             m_nameservice = AssemblyUtility.GetAllClassInstances<INameService>().First();
-            m_nameservice.NewServerInfoPublished += (o, e) =>
+            m_nameservice.NewReplicaInformationPublished += (o, e) =>
             {
-                Log.WriteLine($"DynamicCluster: New server info published: {e.HostName}:{e.Port}");
-                DynamicRemoteStorage rs = new DynamicRemoteStorage(e, TrinityConfig.ClientMaxConn, this, 0, nonblocking: true);
+                Log.WriteLine($"DynamicCluster: New server info published: {e.Address}:{e.Port}");
+                DynamicRemoteStorage rs = new DynamicRemoteStorage(e, TrinityConfig.ClientMaxConn, this, nonblocking: true);
             };
 
             m_partitioner = AssemblyUtility.GetAllClassInstances<IPartitioner>().First();

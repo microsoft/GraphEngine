@@ -3,7 +3,7 @@ using Microsoft.ServiceFabric.Services.Runtime;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Fabric;
+using System.Fabric.Query;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -24,9 +24,9 @@ namespace Trinity.ServiceFabric
         private const int c_bgtaskInterval = 10000;
         private Task m_bgtask;
         private CancellationToken m_token;
-        private Dictionary<Guid, HashSet<string>> m_replicaList;
+        private Dictionary<Guid, HashSet<ReplicaInformation>> m_replicaList;
         private List<Guid> m_partitionIds;
-        private FabricClient m_fclient;
+        private System.Fabric.FabricClient m_fclient;
         private Uri m_svcuri;
 
         public string Address => GraphEngineService.Instance.Address;
@@ -37,27 +37,28 @@ namespace Trinity.ServiceFabric
 
         public Guid InstanceId { get; private set; }
 
-        public bool IsMaster => GraphEngineService.Instance?.Role == ReplicaRole.Primary;
+        public bool IsMaster => GraphEngineService.Instance?.Role == System.Fabric.ReplicaRole.Primary;
 
 
         public NameService()
         {
-            InstanceId = GetInstanceId();
+            InstanceId = GetInstanceId(GraphEngineService.Instance.Context.ReplicaId, GraphEngineService.Instance.PartitionId);
             m_partitionIds = GraphEngineService.Instance.Partitions.Select(_ => _.PartitionInformation.Id).ToList();
-            m_replicaList = Enumerable.ToDictionary(m_partitionIds, _ => _, _ => new HashSet<string>());
+            m_replicaList = Enumerable.ToDictionary(m_partitionIds, Utils.Identity, _ => new HashSet<ReplicaInformation>());
             m_svcuri = GraphEngineService.Instance.Context.ServiceName;
-            m_fclient = new FabricClient();
+            m_fclient = new System.Fabric.FabricClient();
         }
 
-        internal static Guid GetInstanceId()
+        internal static Guid GetInstanceId(long replicaId, int partitionId)
         {
-            BigInteger low = new BigInteger(GraphEngineService.Instance.Context.ReplicaId);
-            BigInteger high = new BigInteger(GraphEngineService.Instance.PartitionId) << 64;
-            var guid = new Guid(Enumerable.Concat((low + high).ToByteArray(),
+            BigInteger low = new BigInteger(replicaId);
+            BigInteger high = new BigInteger(partitionId) << 64;
+            return new Guid(Enumerable.Concat((low + high).ToByteArray(),
                                         Enumerable.Repeat<byte>(0x0, 16))
                                        .Take(16).ToArray());
-            return guid;
         }
+
+        private int GetPartitionId(Guid partitionGuid) => m_partitionIds.FindIndex(_ => _ == partitionGuid);
 
         public void Start(CancellationToken token)
         {
@@ -90,35 +91,40 @@ namespace Trinity.ServiceFabric
             }
         }
 
-        private int UpdatePartition(Guid id, HashSet<string> newset)
+        private int UpdatePartition(Guid partitionGuid, HashSet<ReplicaInformation> newset)
         {
-            var oldset = m_replicaList[id];
-            var tmp = new HashSet<string>(newset);
-            newset.ExceptWith(oldset);
-            foreach (var addr in newset)
+            var oldset = m_replicaList[partitionGuid];
+            foreach (var r in newset.Except(oldset))
             {
-                var ents = addr.Substring("tcp://".Length).Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-                if ($"{ents[0]}:{ents[1]}" == $"{this.Address}:{this.Port}") continue;
-                Log.WriteLine("{0}", $"NameService: {addr} added to partition {m_partitionIds.FindIndex(_ => _ == id)} ({id})");
-                NewServerInfoPublished(this, new ServerInfo(ents[0], int.Parse(ents[1]), null, LogLevel.Info));
+                if (r.Address == this.Address && r.Port == this.Port) continue;
+                Log.WriteLine("{0}", $"NameService: {r} added to partition {r.PartitionId} ({partitionGuid})");
+                NewReplicaInformationPublished(this, r);
             }
-            m_replicaList[id] = tmp;
+            m_replicaList[partitionGuid] = newset;
             return 0;
         }
 
-        private async Task<HashSet<string>> ResolvePartition(Guid partId)
+
+        private async Task<HashSet<ReplicaInformation>> ResolvePartition(Guid partId)
         {
             var rs = await m_fclient.QueryManager.GetReplicaListAsync(partId);
-            var addrs = rs.Select(r => GetTrinityProtocolEndpoint(r)).Where(_ => _ != null);
-            return new HashSet<string>(addrs);
+            var ris = rs.Select(r => GetReplicaInformation(partId, r)).Where(_ => _ != null);
+            return new HashSet<ReplicaInformation>(ris);
         }
 
-        private static string GetTrinityProtocolEndpoint(System.Fabric.Query.Replica r)
+        private ReplicaInformation GetReplicaInformation(Guid partitionGuid, Replica r)
         {
-            try { return JObject.Parse(r.ReplicaAddress)["Endpoints"]["GraphEngineTrinityProtocolListener"].ToString(); }
+            try
+            {
+                var partitionId = GetPartitionId(partitionGuid);
+                var rid = GetInstanceId(r.Id, partitionId);
+                var (addr, port) = JObject.Parse(r.ReplicaAddress)["Endpoints"]["GraphEngineTrinityProtocolListener"].ToString()
+                                  .Substring("tcp://".Length).Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                return new ReplicaInformation(addr, int.Parse(port), rid, partitionId);
+            }
             catch { return null; }
         }
 
-        public event EventHandler<ServerInfo> NewServerInfoPublished = delegate { };
+        public event EventHandler<ReplicaInformation> NewReplicaInformationPublished = delegate { };
     }
 }

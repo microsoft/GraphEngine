@@ -18,8 +18,8 @@ struct ChunkInformation
 
 struct StorageInformation
 {
-	int partition;
-	Guid id;
+	int partition; // partition id
+	Guid id; // instance guid
 }
 
 protocol QueryChunkedRemoteStorageInformation
