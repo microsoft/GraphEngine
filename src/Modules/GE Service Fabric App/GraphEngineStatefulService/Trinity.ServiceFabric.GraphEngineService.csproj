@@ -8,7 +8,7 @@
     <ProjectGuid>{57365DE2-F24F-435B-81AF-BA04114C8A23}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Trinity.ServiceFabric.GraphEngineService</RootNamespace>
+    <RootNamespace>Trinity.ServiceFabric</RootNamespace>
     <AssemblyName>Trinity.ServiceFabric.GraphEngineService</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

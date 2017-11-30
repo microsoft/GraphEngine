@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Fabric;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.ServiceFabric.Services.Runtime;
-using Trinity;
 using Trinity.Diagnostics;
 using Trinity.DynamicCluster;
 using Trinity.GraphEngine.ServiceFabric.Core;
 using Trinity.GraphEngine.ServiceFabric.Core.Interfaces;
 
-namespace Trinity.ServiceFabric.GraphEngineService
+namespace Trinity.ServiceFabric
 {
     [EventSource(Name = "InKnowWorks-GraphEngineService.ServiceFabricApp-GraphEngineStatefulService")]
     internal sealed class GraphEngineServiceEventSource : EventSource

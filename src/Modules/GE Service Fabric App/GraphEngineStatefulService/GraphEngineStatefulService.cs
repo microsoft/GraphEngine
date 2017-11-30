@@ -9,7 +9,7 @@ using Microsoft.ServiceFabric.Services.Runtime;
 using Trinity.GraphEngine.ServiceFabric.Core;
 using Trinity.GraphEngine.ServiceFabric.Listeners;
 
-namespace Trinity.ServiceFabric.GraphEngineService
+namespace Trinity.ServiceFabric
 {
     /// <summary>
     /// An instance of this class is created for each service replica by the Service Fabric runtime.

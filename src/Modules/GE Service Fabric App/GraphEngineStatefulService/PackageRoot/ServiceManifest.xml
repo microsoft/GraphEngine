@@ -7,7 +7,7 @@
   <ServiceTypes>
     <!-- This is the name of your ServiceType. 
          This name must match the string used in RegisterServiceType call in Program.cs. -->
-    <StatefulServiceType ServiceTypeName="Trinity.ServiceFabric.GraphEngineServiceType" HasPersistedState="true" />
+    <StatefulServiceType ServiceTypeName="Trinity.ServiceFabric.GraphEngineStatefulServiceType" HasPersistedState="true" />
   </ServiceTypes>
 
   <!-- Code package is your service executable. -->
