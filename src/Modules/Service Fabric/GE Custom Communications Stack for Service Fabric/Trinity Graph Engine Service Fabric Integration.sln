@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GraphEngine Service Fabric 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphEgnine.ServiceFabric.Listeners", "..\..\GE Service Fabric App\GEServiceCommon\GE.Service.Common\GraphEgnine.ServiceFabric.Listeners.csproj", "{934362EF-231C-4A74-91FF-8B7E381666C4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Reference App Server", "GE Reference App Server", "{EF5D5848-1044-4ED6-BB55-9BD720ADD1B3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InKnowWorks Graph Engine Ontology API Service", "InKnowWorks Graph Engine Ontology API Service", "{EF5D5848-1044-4ED6-BB55-9BD720ADD1B3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Graph Engine Service Fabric Core", "Graph Engine Service Fabric Core", "{B1916713-BC6A-4F2B-8DAB-B40DC1CA82D7}"
 EndProject
