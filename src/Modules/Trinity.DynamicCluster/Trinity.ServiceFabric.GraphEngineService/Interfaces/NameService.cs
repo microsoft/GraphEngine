@@ -94,10 +94,10 @@ namespace Trinity.ServiceFabric
         private int UpdatePartition(Guid partitionGuid, HashSet<ReplicaInformation> newset)
         {
             var oldset = m_replicaList[partitionGuid];
-            foreach (var r in newset.Except(oldset))
+            foreach (var r in newset.Where(rs => !oldset.Any(rs_ => rs_.Id == rs.Id)))
             {
                 if (r.Address == this.Address && r.Port == this.Port) continue;
-                Log.WriteLine("{0}", $"NameService: {r} added to partition {r.PartitionId} ({partitionGuid})");
+                Log.WriteLine("{0}", $"NameService: {r.Address}:{r.Port} ({r.Id}) added to partition {r.PartitionId} ({partitionGuid})");
                 NewReplicaInformationPublished(this, r);
             }
             m_replicaList[partitionGuid] = newset;

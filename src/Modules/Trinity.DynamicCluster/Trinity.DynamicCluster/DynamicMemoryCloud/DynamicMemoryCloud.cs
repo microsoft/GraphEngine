@@ -204,7 +204,12 @@ namespace Trinity.DynamicCluster.Storage
                         await Task.Delay(1000, cancel);
                         continue;
                     }
-                    task = await m_taskqueue.GetTask(cancel) ?? new NopTask();
+                    task = await m_taskqueue.GetTask(cancel);
+                    if(task == null)
+                    {
+                        await Task.Delay(1000, cancel);
+                        continue;
+                    }
                     try
                     {
                         await task.Execute(cancel);

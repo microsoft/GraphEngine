@@ -25,10 +25,17 @@ namespace Trinity.ServiceFabric
             return Task.FromResult(0);
         }
 
-        public Task<string> OpenAsync(CancellationToken cancellationToken)
+        public async Task<string> OpenAsync(CancellationToken cancellationToken)
         {
-            GraphEngineService.Instance?.Start();
-            return Task.FromResult($"tcp://{GraphEngineService.Instance.Address}:{GraphEngineService.Instance.Port}");
+            retry:
+            var ge_svc = GraphEngineService.Instance;
+            if (ge_svc == null)
+            {
+                await Task.Delay(1000);
+                goto retry;
+            }
+            await Task.Run(() => ge_svc.Start());
+            return $"tcp://{GraphEngineService.Instance.Address}:{GraphEngineService.Instance.Port}";
         }
     }
 }

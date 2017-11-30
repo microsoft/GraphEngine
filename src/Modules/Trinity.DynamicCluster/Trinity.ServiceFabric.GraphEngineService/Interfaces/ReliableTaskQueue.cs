@@ -25,11 +25,28 @@ namespace Trinity.ServiceFabric.Interfaces
         {
             m_cancel = cancellationToken;
             m_statemgr = GraphEngineService.Instance.StateManager;
-            m_allqueues = Utils.Integers(GraphEngineService.Instance.PartitionCount).Select(CreatePartitionQueue).ToArray();
-            m_queue = m_allqueues[GraphEngineService.Instance.PartitionId];
+            EnsureQueues().Wait();
         }
 
-        private IReliableQueue<ITask> CreatePartitionQueue(int p) => m_statemgr.GetOrAddAsync<IReliableQueue<ITask>>($"GraphEngine.TaskQueue-P{p}").Result;
+        private async Task EnsureQueues()
+        {
+            if (m_queue == null)
+            {
+                var qtasks = Utils.Integers(GraphEngineService.Instance.PartitionCount).Select(CreatePartitionQueue).ToArray();
+                await Task.Factory.ContinueWhenAll(qtasks, ts => m_allqueues = ts.Select(_ => _.Result).ToArray());
+                m_queue = m_allqueues[GraphEngineService.Instance.PartitionId];
+            }
+        }
+
+
+        private async Task<IReliableQueue<ITask>> CreatePartitionQueue(int p)
+        {
+            if (!IsMaster) return null;
+            var qname = $"GraphEngine.TaskQueue-P{p}";
+            retry:
+            try { return await m_statemgr.GetOrAddAsync<IReliableQueue<ITask>>(qname); }
+            catch (TimeoutException) { goto retry; }
+        }
 
         public void Dispose() { if (m_tx != null) ReleaseTx(); }
 
@@ -37,6 +54,8 @@ namespace Trinity.ServiceFabric.Interfaces
 
         public async Task<ITask> GetTask(CancellationToken token)
         {
+            await EnsureQueues();
+
             if (m_tx != null) throw new InvalidOperationException("ReliableTaskQueue: only one task allowed in a transaction.");
             m_tx = m_statemgr.CreateTransaction();
 
@@ -73,7 +92,8 @@ namespace Trinity.ServiceFabric.Interfaces
 
         public async Task PostTask(ITask task, int partitionId)
         {
-            using(var tx = m_statemgr.CreateTransaction())
+            await EnsureQueues();
+            using (var tx = m_statemgr.CreateTransaction())
             {
                 retry:
                 try
