@@ -64,7 +64,6 @@
     <TslCodegen Include="TSL\ServiceModule.tsl">
       <SubType>Designer</SubType>
     </TslCodegen>
-    <TslCodegen Include="TSL\OntologyCoreAPI.tsl" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

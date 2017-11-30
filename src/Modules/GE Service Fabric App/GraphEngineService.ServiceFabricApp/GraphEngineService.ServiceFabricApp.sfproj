@@ -32,7 +32,7 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GraphEngineStatefulService\Trinity.ServiceFabric.GraphEngine.csproj" />
+    <ProjectReference Include="..\GraphEngineStatefulService\Trinity.ServiceFabric.GraphEngineService.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
   <PropertyGroup>
