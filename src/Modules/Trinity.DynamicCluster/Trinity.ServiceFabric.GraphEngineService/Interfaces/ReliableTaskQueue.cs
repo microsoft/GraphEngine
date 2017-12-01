@@ -20,31 +20,65 @@ namespace Trinity.ServiceFabric.Interfaces
         private IReliableQueue<ITask>[] m_allqueues = null;
         private IReliableStateManager m_statemgr = null;
         private ITransaction m_tx = null;
+        private Task m_initqueue_task = null;
 
         public void Start(CancellationToken cancellationToken)
         {
             m_cancel = cancellationToken;
             m_statemgr = GraphEngineService.Instance.StateManager;
-            EnsureQueues().Wait();
+            m_initqueue_task = CreateQueuesAsync();
         }
 
-        private async Task EnsureQueues()
+        private async Task CreateQueuesAsync()
         {
             if (m_queue == null)
             {
-                var qtasks = Utils.Integers(GraphEngineService.Instance.PartitionCount).Select(CreatePartitionQueue).ToArray();
+                var qtasks = Utils.Integers(GraphEngineService.Instance.PartitionCount).Select(CreatePartitionQueueAsync).ToArray();
                 await Task.Factory.ContinueWhenAll(qtasks, ts => m_allqueues = ts.Select(_ => _.Result).ToArray());
                 m_queue = m_allqueues[GraphEngineService.Instance.PartitionId];
             }
         }
 
-
-        private async Task<IReliableQueue<ITask>> CreatePartitionQueue(int p)
+        private async Task EnsureQueuesAsync()
         {
-            if (!IsMaster) return null;
-            var qname = $"GraphEngine.TaskQueue-P{p}";
+            var task = m_initqueue_task;
+            if(task != null)
+            {
+                await task;
+                m_initqueue_task = null;
+            }
+        }
+
+
+        private async Task<IReliableQueue<ITask>> CreatePartitionQueueAsync(int p)
+        {
             retry:
-            try { return await m_statemgr.GetOrAddAsync<IReliableQueue<ITask>>(qname); }
+
+            var qname = $"GraphEngine.TaskQueue-P{p}";
+            var current_role = GraphEngineService.Instance.Role;
+            if (current_role != ReplicaRole.ActiveSecondary && current_role != ReplicaRole.Primary)
+            {
+                await Task.Delay(1000);
+                goto retry;
+            }
+
+            try
+            {
+                if (IsMaster)
+                {
+                    return await m_statemgr.GetOrAddAsync<IReliableQueue<ITask>>(qname);
+                }
+                else
+                {
+                    var result = await m_statemgr.TryGetAsync<IReliableQueue<ITask>>(qname);
+                    if (result.HasValue) return result.Value;
+                    else
+                    {
+                        await Task.Delay(1000);
+                        goto retry;
+                    }
+                }
+            }
             catch (TimeoutException) { goto retry; }
         }
 
@@ -54,7 +88,7 @@ namespace Trinity.ServiceFabric.Interfaces
 
         public async Task<ITask> GetTask(CancellationToken token)
         {
-            await EnsureQueues();
+            await EnsureQueuesAsync();
 
             if (m_tx != null) throw new InvalidOperationException("ReliableTaskQueue: only one task allowed in a transaction.");
             m_tx = m_statemgr.CreateTransaction();
@@ -92,7 +126,7 @@ namespace Trinity.ServiceFabric.Interfaces
 
         public async Task PostTask(ITask task, int partitionId)
         {
-            await EnsureQueues();
+            await EnsureQueuesAsync();
             using (var tx = m_statemgr.CreateTransaction())
             {
                 retry:

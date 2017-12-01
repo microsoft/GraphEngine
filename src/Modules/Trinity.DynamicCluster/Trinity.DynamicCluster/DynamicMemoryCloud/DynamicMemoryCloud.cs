@@ -25,11 +25,11 @@ namespace Trinity.DynamicCluster.Storage
         internal INameService m_nameservice;
         internal ITaskQueue m_taskqueue;
         internal Executor m_taskexec;
-        private DynamicClusterCommModule m_module;
         internal CancellationTokenSource m_cancelSrc;
         internal Partition PartitionTable(int id) => StorageTable[id] as Partition;
         private ConcurrentDictionary<int, DynamicRemoteStorage> temporaryRemoteStorageRepo = new ConcurrentDictionary<int, DynamicRemoteStorage>();
         private volatile bool disposed = false;
+        private DynamicClusterCommModule m_module;
 
 
         internal static DynamicMemoryCloud Instance => Global.CloudStorage as DynamicMemoryCloud;
@@ -103,8 +103,21 @@ namespace Trinity.DynamicCluster.Storage
                           .Take(PartitionCount)
                           .ToArray();
 
+            PartitionTable(MyPartitionId).Mount(Global.LocalStorage, MyChunks);
+            var partition_proc = m_partitioner.PartitionerProc;
+            if (partition_proc != null)
+            {
+                Log.WriteLine($"Partitioner [{m_partitioner.GetType().Name}] governs partitioning scheme.");
+                SetPartitionMethod(partition_proc);
+            }
+            else
+            {
+                Log.WriteLine($"Partitioner [{m_partitioner.GetType().Name}] does not implement partitioning scheme, falling back to default.");
+            }
+
             m_nameservice.NewReplicaInformationPublished += (o, e) =>
             {
+                EnsureModule();
                 Log.WriteLine($"DynamicCluster: New server info published: {e.Address}:{e.Port}");
                 DynamicRemoteStorage rs = new DynamicRemoteStorage(e, TrinityConfig.ClientMaxConn, this);
             };
@@ -119,25 +132,21 @@ namespace Trinity.DynamicCluster.Storage
             return true;
         }
 
+        private void EnsureModule()
+        {
+            while(m_module == null)
+            {
+                Thread.Sleep(1000);
+                m_module = GetCommunicationModule<DynamicClusterCommModule>();
+            }
+        }
+
         internal void InitializeComponents()
         {
-            m_module = GetCommunicationModule<DynamicClusterCommModule>();
             m_cancelSrc = new CancellationTokenSource();
             m_nameservice = AssemblyUtility.GetAllClassInstances<INameService>().First();
             m_partitioner = AssemblyUtility.GetAllClassInstances<IPartitioner>().First();
             m_taskqueue = AssemblyUtility.GetAllClassInstances<ITaskQueue>().First();
-            PartitionTable(MyPartitionId).Mount(Global.LocalStorage, MyChunks);
-            var partition_proc = m_partitioner.PartitionerProc;
-            if (partition_proc != null)
-            {
-                Log.WriteLine($"Partitioner [{m_partitioner.GetType().Name}] governs partitioning scheme.");
-                SetPartitionMethod(partition_proc);
-            }
-            else
-            {
-                Log.WriteLine($"Partitioner [{m_partitioner.GetType().Name}] does not implement partitioning scheme, falling back to default.");
-            }
-
         }
 
         protected override void Dispose(bool disposing)
