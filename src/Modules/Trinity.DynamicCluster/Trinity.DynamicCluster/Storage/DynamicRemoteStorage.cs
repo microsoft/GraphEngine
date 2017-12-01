@@ -14,8 +14,8 @@ namespace Trinity.DynamicCluster
     class DynamicRemoteStorage : RemoteStorage
     {
 
-        public DynamicRemoteStorage(ReplicaInformation server_info, int connPerServer, MemoryCloud mc, bool nonblocking)
-            : base(new[] { new ServerInfo(server_info.Address, server_info.Port, null, LogLevel.Info) }, connPerServer, mc, server_info.PartitionId, nonblocking)
+        public DynamicRemoteStorage(ReplicaInformation server_info, int connPerServer, MemoryCloud mc)
+            : base(new[] { new ServerInfo(server_info.Address, server_info.Port, null, LogLevel.Info) }, connPerServer, mc, server_info.PartitionId, nonblocking: true)
         {
             Id = server_info.Id;
             NickName = Utils.GenerateNickName(Id);

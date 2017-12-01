@@ -24,7 +24,7 @@ namespace Trinity.DynamicCluster.Storage
         internal IPartitioner m_partitioner;
         internal INameService m_nameservice;
         internal ITaskQueue m_taskqueue;
-        internal Task m_taskexec;
+        internal Executor m_taskexec;
         internal CancellationTokenSource m_cancelSrc;
         internal Partition ChunkedStorageTable(int id) => StorageTable[id] as Partition;
         private ConcurrentDictionary<int, DynamicRemoteStorage> temporaryRemoteStorageRepo = new ConcurrentDictionary<int, DynamicRemoteStorage>();
@@ -96,37 +96,37 @@ namespace Trinity.DynamicCluster.Storage
         public override int ProxyCount => 0;
         public override bool Open(ClusterConfig config, bool nonblocking)
         {
+            this.cluster_config = config;
             InitializeComponents();
 
             m_partitioner.Start(m_cancelSrc.Token);
-            this.cluster_config = config;
             StorageTable = Infinity<Partition>()
                           .Take(PartitionCount)
                           .ToArray();
 
+            m_nameservice.NewReplicaInformationPublished += (o, e) =>
+            {
+                Log.WriteLine($"DynamicCluster: New server info published: {e.Address}:{e.Port}");
+                DynamicRemoteStorage rs = new DynamicRemoteStorage(e, TrinityConfig.ClientMaxConn, this);
+            };
             m_nameservice.Start(m_cancelSrc.Token);
-            m_taskqueue.Start(m_cancelSrc.Token);
-            m_taskexec = TaskExecutionProc(m_cancelSrc.Token);
-
             NickName = GenerateNickName(InstanceId);
+
+            m_taskqueue.Start(m_cancelSrc.Token);
+            m_taskexec = new Executor(m_taskqueue, m_cancelSrc.Token);
+
             Log.WriteLine($"DynamicMemoryCloud: Partition {MyPartitionId}: Instance '{NickName}' {InstanceId} opened.");
 
-            ChunkedStorageTable(MyPartitionId).Mount(Global.LocalStorage, MyChunks);
             return true;
         }
 
         internal void InitializeComponents()
         {
             m_cancelSrc = new CancellationTokenSource();
-
             m_nameservice = AssemblyUtility.GetAllClassInstances<INameService>().First();
-            m_nameservice.NewReplicaInformationPublished += (o, e) =>
-            {
-                Log.WriteLine($"DynamicCluster: New server info published: {e.Address}:{e.Port}");
-                DynamicRemoteStorage rs = new DynamicRemoteStorage(e, TrinityConfig.ClientMaxConn, this, nonblocking: true);
-            };
-
             m_partitioner = AssemblyUtility.GetAllClassInstances<IPartitioner>().First();
+            m_taskqueue = AssemblyUtility.GetAllClassInstances<ITaskQueue>().First();
+            ChunkedStorageTable(MyPartitionId).Mount(Global.LocalStorage, MyChunks);
             var partition_proc = m_partitioner.PartitionerProc;
             if (partition_proc != null)
             {
@@ -138,7 +138,6 @@ namespace Trinity.DynamicCluster.Storage
                 Log.WriteLine($"Partitioner [{m_partitioner.GetType().Name}] does not implement partitioning scheme, falling back to default.");
             }
 
-            m_taskqueue = AssemblyUtility.GetAllClassInstances<ITaskQueue>().First();
         }
 
         protected override void Dispose(bool disposing)
@@ -163,7 +162,7 @@ namespace Trinity.DynamicCluster.Storage
             m_nameservice.Dispose();
             m_partitioner.Dispose();
             m_taskqueue.Dispose();
-            m_taskexec.Wait();
+            m_taskexec.Dispose();
 
             base.Dispose(disposing);
             this.disposed = true;
@@ -187,55 +186,5 @@ namespace Trinity.DynamicCluster.Storage
             return MyChunks.FirstOrDefault(c => c.Covers(cellId));
         }
 
-        private async Task TaskExecutionProc(CancellationToken cancel)
-        {
-            ITask task;
-            Exception exception;
-            while (true)
-            {
-                try
-                {
-                    if (cancel.IsCancellationRequested)
-                    {
-                        break;
-                    }
-                    if (!m_taskqueue.IsMaster)
-                    {
-                        await Task.Delay(1000, cancel);
-                        continue;
-                    }
-                    task = await m_taskqueue.GetTask(cancel);
-                    if(task == null)
-                    {
-                        await Task.Delay(1000, cancel);
-                        continue;
-                    }
-                    try
-                    {
-                        await task.Execute(cancel);
-                        exception = null;
-                    }
-                    catch(Exception ex) { exception = ex; }
-                    if (null == exception)
-                    {
-                        await m_taskqueue.TaskCompleted(task);
-                    }
-                    else
-                    {
-                        Log.WriteLine(LogLevel.Error, $"TaskExecutionProc: task {task.Id} failed with exception: {exception.ToString()}");
-                        await m_taskqueue.TaskFailed(task);
-                    }
-                }
-                catch (TaskCanceledException)
-                {
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    Log.WriteLine(LogLevel.Error, $"TaskExecutionProc: {ex.ToString()}");
-                    await Task.Delay(1000, cancel);
-                }
-            }
-        }
     }
 }
