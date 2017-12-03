@@ -31,14 +31,10 @@ namespace Trinity.DynamicCluster.Tasks
         {
             ITask task;
             Exception exception;
-            while (true)
+            while (!m_cancel.IsCancellationRequested)
             {
                 try
                 {
-                    if (m_cancel.IsCancellationRequested)
-                    {
-                        break;
-                    }
                     if (!m_taskqueue.IsMaster)
                     {
                         await Task.Delay(1000, m_cancel);

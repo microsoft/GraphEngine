@@ -21,13 +21,10 @@ namespace Trinity.ServiceFabric
 {
     public class NameService : INameService
     {
-        private const int c_bgtaskInterval = 10000;
-        private Task m_bgtask;
         private CancellationToken m_token;
-        private Dictionary<Guid, HashSet<ReplicaInformation>> m_replicaList;
-        private List<Guid> m_partitionIds;
         private System.Fabric.FabricClient m_fclient;
         private Uri m_svcuri;
+        private List<Guid> m_partitionIds;
 
         public string Address => GraphEngineService.Instance.Address;
 
@@ -43,10 +40,9 @@ namespace Trinity.ServiceFabric
         public NameService()
         {
             InstanceId = GetInstanceId(GraphEngineService.Instance.Context.ReplicaId, GraphEngineService.Instance.PartitionId);
-            m_partitionIds = GraphEngineService.Instance.Partitions.Select(_ => _.PartitionInformation.Id).ToList();
-            m_replicaList = Enumerable.ToDictionary(m_partitionIds, Utils.Identity, _ => new HashSet<ReplicaInformation>());
             m_svcuri = GraphEngineService.Instance.Context.ServiceName;
             m_fclient = new System.Fabric.FabricClient();
+            m_partitionIds = GraphEngineService.Instance.Partitions.Select(_ => _.PartitionInformation.Id).ToList();
         }
 
         internal static Guid GetInstanceId(long replicaId, int partitionId)
@@ -60,56 +56,22 @@ namespace Trinity.ServiceFabric
 
         private int GetPartitionId(Guid partitionGuid) => m_partitionIds.FindIndex(_ => _ == partitionGuid);
 
+        public int PartitionCount => GraphEngineService.Instance.PartitionCount;
+
+        public int PartitionId => GraphEngineService.Instance.PartitionId;
+
         public void Start(CancellationToken token)
         {
             m_token = token;
-            m_bgtask = ScanNodesProc();
         }
 
-        public void Dispose()
+        public void Dispose() { }
+
+        public async Task<IEnumerable<ReplicaInformation>> ResolvePartition(int partId)
         {
-            m_bgtask.Wait();
-        }
-
-        private async Task ScanNodesProc()
-        {
-            while (true)
-            {
-                if (m_token.IsCancellationRequested) return;
-                try
-                {
-                    var tasks = m_partitionIds.Select(ResolvePartition);
-                    await Task.WhenAll(tasks);
-                    m_partitionIds.Zip(tasks.Select(_ => _.Result), UpdatePartition).ToList();
-                }
-                catch (Exception ex)
-                {
-                    Log.WriteLine(LogLevel.Error, $"ScanNodesProc: {ex.ToString()}");
-                }
-
-                await Task.Delay(c_bgtaskInterval);
-            }
-        }
-
-        private int UpdatePartition(Guid partitionGuid, HashSet<ReplicaInformation> newset)
-        {
-            var oldset = m_replicaList[partitionGuid];
-            foreach (var r in newset.Where(rs => !oldset.Any(rs_ => rs_.Id == rs.Id)))
-            {
-                if (r.Address == this.Address && r.Port == this.Port) continue;
-                Log.WriteLine("{0}", $"NameService: {r.Address}:{r.Port} ({r.Id}) added to partition {r.PartitionId} ({partitionGuid})");
-                NewReplicaInformationPublished(this, r);
-            }
-            m_replicaList[partitionGuid] = newset;
-            return 0;
-        }
-
-
-        private async Task<HashSet<ReplicaInformation>> ResolvePartition(Guid partId)
-        {
-            var rs = await m_fclient.QueryManager.GetReplicaListAsync(partId);
-            var ris = rs.Select(r => GetReplicaInformation(partId, r)).Where(_ => _ != null);
-            return new HashSet<ReplicaInformation>(ris);
+            var partGuid = m_partitionIds[partId];
+            var rs = await m_fclient.QueryManager.GetReplicaListAsync(partGuid);
+            return rs.Select(r => GetReplicaInformation(partGuid, r)).Where(_ => _ != null);
         }
 
         private ReplicaInformation GetReplicaInformation(Guid partitionGuid, Replica r)
@@ -124,7 +86,5 @@ namespace Trinity.ServiceFabric
             }
             catch { return null; }
         }
-
-        public event EventHandler<ReplicaInformation> NewReplicaInformationPublished = delegate { };
     }
 }

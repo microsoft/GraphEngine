@@ -77,11 +77,6 @@ namespace Trinity.DynamicCluster
             return new T();
         }
 
-        public static T New<Tin, T>(Tin arg) where T: new()
-        {
-            return new T();
-        }
-
         public static T Identity<T>(T _) => _;
 
         public static Guid GetMachineGuid()

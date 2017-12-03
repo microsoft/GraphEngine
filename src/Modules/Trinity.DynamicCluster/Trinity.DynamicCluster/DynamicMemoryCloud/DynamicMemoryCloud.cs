@@ -21,12 +21,15 @@ namespace Trinity.DynamicCluster.Storage
         private Random m_rng = new Random();
 
         internal ClusterConfig cluster_config;//TODO will be substituted
-        internal IPartitioner m_partitioner;
+        internal IChunkTable m_chunktable;
         internal INameService m_nameservice;
         internal ITaskQueue m_taskqueue;
         internal Executor m_taskexec;
+        internal Partitioner m_partitioner;
         internal CancellationTokenSource m_cancelSrc;
         internal Partition PartitionTable(int id) => StorageTable[id] as Partition;
+        // !Note can also be achieve by extending Storage[] StorageTable beyond PartitionCount,
+        // and use interlocked increment to obtain index
         private ConcurrentDictionary<int, DynamicRemoteStorage> temporaryRemoteStorageRepo = new ConcurrentDictionary<int, DynamicRemoteStorage>();
         private volatile bool disposed = false;
         private DynamicClusterCommModule m_module;
@@ -45,7 +48,7 @@ namespace Trinity.DynamicCluster.Storage
 
         private void CheckServerProtocolSignatures(DynamicRemoteStorage rs)
         {
-            Log.WriteLine(LogLevel.Debug, $"Checking protocol signatures with '{rs.NickName}' ({rs.Id})...");
+            Log.WriteLine(LogLevel.Debug, $"Checking protocol signatures with '{rs.NickName}' ({rs.ReplicaInformation})...");
 
             CheckProtocolSignatures_impl(rs, cluster_config.RunningMode, RunningMode.Server);
         }
@@ -54,12 +57,8 @@ namespace Trinity.DynamicCluster.Storage
         {
             _DoWithTempStorage(remoteStorage, id =>
             {
-                using (var rsp = m_module.QueryChunkedRemoteStorageInformation(id))
-                {
-                    PartitionTable(rsp.info.partition).Mount(remoteStorage, rsp);
-                }
                 CheckServerProtocolSignatures(remoteStorage);
-                Log.WriteLine($"DynamicCluster: Connected to '{remoteStorage.NickName}' ({remoteStorage.Id})");
+                Log.WriteLine($"DynamicCluster: Connected to '{remoteStorage.NickName}' ({remoteStorage.ReplicaInformation.Id})");
             });
             return TrinityErrorCode.E_SUCCESS;
         }
@@ -76,16 +75,15 @@ namespace Trinity.DynamicCluster.Storage
         {
             var remote_storage = PartitionTable(partition)
                                 .OfType<DynamicRemoteStorage>()
-                                .FirstOrDefault(_ => _.Id == Id);
+                                .FirstOrDefault(_ => _.ReplicaInformation.Id == Id);
             return PartitionTable(partition).Unmount(remote_storage);
         }
 
         public string NickName { get; private set; }
 
-        public override IEnumerable<Chunk> MyChunks => m_partitioner.MyChunkList;
-        public override int MyPartitionId => m_partitioner.PartitionId;
-        public override int PartitionCount => m_partitioner.PartitionCount;
-        public int ChunkCount => m_partitioner.ChunkCount;
+        public override IEnumerable<Chunk> MyChunks { get { yield break; } }//TODO
+        public override int MyPartitionId => m_nameservice.PartitionId;
+        public override int PartitionCount => m_nameservice.PartitionCount;
         public Guid InstanceId => m_nameservice.InstanceId;
         public override bool IsLocalCell(long cellId)
         {
@@ -98,55 +96,36 @@ namespace Trinity.DynamicCluster.Storage
             this.cluster_config = config;
             InitializeComponents();
 
-            m_partitioner.Start(m_cancelSrc.Token);
             StorageTable = Infinity<Partition>()
                           .Take(PartitionCount)
                           .ToArray();
-
-            PartitionTable(MyPartitionId).Mount(Global.LocalStorage, MyChunks);
-            var partition_proc = m_partitioner.PartitionerProc;
-            if (partition_proc != null)
-            {
-                Log.WriteLine($"Partitioner [{m_partitioner.GetType().Name}] governs partitioning scheme.");
-                SetPartitionMethod(partition_proc);
-            }
-            else
-            {
-                Log.WriteLine($"Partitioner [{m_partitioner.GetType().Name}] does not implement partitioning scheme, falling back to default.");
-            }
-
-            m_nameservice.NewReplicaInformationPublished += (o, e) =>
-            {
-                EnsureModule();
-                Log.WriteLine($"DynamicCluster: New server info published: {e.Address}:{e.Port}");
-                DynamicRemoteStorage rs = new DynamicRemoteStorage(e, TrinityConfig.ClientMaxConn, this);
-            };
-            m_nameservice.Start(m_cancelSrc.Token);
             NickName = GenerateNickName(InstanceId);
 
-            m_taskqueue.Start(m_cancelSrc.Token);
+            //TODO repmode is hard-coded Mirroring
+            m_partitioner = new Partitioner(m_cancelSrc.Token, m_chunktable, m_nameservice, m_taskqueue, ReplicationMode.Mirroring);
             m_taskexec = new Executor(m_taskqueue, m_cancelSrc.Token);
 
             Log.WriteLine($"DynamicMemoryCloud: Partition {MyPartitionId}: Instance '{NickName}' {InstanceId} opened.");
+            Global.CommunicationInstance.Started += InitModule;
 
             return true;
         }
 
-        private void EnsureModule()
+        private void InitModule()
         {
-            while(m_module == null)
-            {
-                Thread.Sleep(1000);
-                m_module = GetCommunicationModule<DynamicClusterCommModule>();
-            }
+            m_module = GetCommunicationModule<DynamicClusterCommModule>();
         }
 
         internal void InitializeComponents()
         {
             m_cancelSrc = new CancellationTokenSource();
             m_nameservice = AssemblyUtility.GetAllClassInstances<INameService>().First();
-            m_partitioner = AssemblyUtility.GetAllClassInstances<IPartitioner>().First();
+            m_chunktable = AssemblyUtility.GetAllClassInstances<IChunkTable>().First();
             m_taskqueue = AssemblyUtility.GetAllClassInstances<ITaskQueue>().First();
+
+            m_nameservice.Start(m_cancelSrc.Token);
+            m_taskqueue.Start(m_cancelSrc.Token);
+            m_chunktable.Start(m_cancelSrc.Token);
         }
 
         protected override void Dispose(bool disposing)
@@ -167,10 +146,13 @@ namespace Trinity.DynamicCluster.Storage
             }));
 
             m_cancelSrc.Cancel();
-            m_nameservice.Dispose();
-            m_partitioner.Dispose();
-            m_taskqueue.Dispose();
+
             m_taskexec.Dispose();
+            m_partitioner.Dispose();
+
+            m_nameservice.Dispose();
+            m_chunktable.Dispose();
+            m_taskqueue.Dispose();
 
             base.Dispose(disposing);
             this.disposed = true;
@@ -186,7 +168,7 @@ namespace Trinity.DynamicCluster.Storage
         {
             base.OnDisconnected(e);
             var rs = e.RemoteStorage as DynamicRemoteStorage;
-            OnStorageLeave(rs.PartitionId, rs.Id);
+            OnStorageLeave(rs.PartitionId, rs.ReplicaInformation.Id);
         }
 
         internal Chunk GetChunkByCellId(long cellId)

@@ -19,17 +19,6 @@ namespace Trinity.DynamicCluster.Communication
             return "DynamicClusterCommModule";
         }
 
-        public override void QueryChunkedRemoteStorageInformationHandler(_QueryChunkedRemoteStorageInformationReusltWriter response)
-        {
-            var dmc = DynamicMemoryCloud.Instance;
-            StorageInformation info = new StorageInformation
-            {
-                partition = dmc.MyPartitionId,
-                id = dmc.InstanceId
-            };
-            response.info = info;
-            dmc.MyChunks.ForEach(c => response.chunks.Add(new ChunkInformation { }));
-        }
         public override void NotifyRemoteStorageOnLeavingHandler(StorageInformationReader request)
         {
             var dmc = DynamicMemoryCloud.Instance;

@@ -17,12 +17,12 @@ namespace Trinity.DynamicCluster
         public DynamicRemoteStorage(ReplicaInformation server_info, int connPerServer, MemoryCloud mc)
             : base(new[] { new ServerInfo(server_info.Address, server_info.Port, null, LogLevel.Info) }, connPerServer, mc, server_info.PartitionId, nonblocking: true)
         {
-            Id = server_info.Id;
-            NickName = Utils.GenerateNickName(Id);
+            ReplicaInformation = server_info;
+            NickName = Utils.GenerateNickName(ReplicaInformation.Id);
         }
 
         public string NickName { get; }
-        public Guid Id { get; }
+        public ReplicaInformation ReplicaInformation { get; }
 
         public override unsafe void SendMessage(byte* buffer, int size)
         {

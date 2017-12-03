@@ -1,9 +1,3 @@
-struct _QueryChunkedRemoteStorageInformationReuslt
-{
-	StorageInformation info;
-    List<ChunkInformation> chunks;
-}
-
 struct RemoteTaskRequest
 {
 	string Task;
@@ -18,15 +12,8 @@ struct ChunkInformation
 
 struct StorageInformation
 {
-	int partition; // partition id
-	Guid id; // instance guid
-}
-
-protocol QueryChunkedRemoteStorageInformation
-{
-    Type: Syn;
-    Request: void;
-    Response: _QueryChunkedRemoteStorageInformationReuslt;	
+	int partition;
+	Guid id;
 }
 
 protocol NotifyRemoteStorageOnLeaving
@@ -44,7 +31,6 @@ protocol RemoteTask
 
 module DynamicCluster
 {
-    protocol QueryChunkedRemoteStorageInformation;
 	protocol NotifyRemoteStorageOnLeaving;
 	protocol RemoteTask;
 }
