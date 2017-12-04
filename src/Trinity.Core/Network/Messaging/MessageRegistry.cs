@@ -74,5 +74,16 @@ namespace Trinity.Network.Messaging
         {
             MessageHandlers.DefaultParser.RegisterPreservedMessageHandler(msgId, message_handler);
         }
+
+        /// <summary>
+        /// Registers an asynchronous message handler.
+        /// </summary>
+        /// <param name="msgId">A 16-bit unsigned message id.</param>
+        /// <param name="message_handler">A message hander for an asynchronous protocol with response.</param>
+        public static void RegisterMessageHandler(ushort msgId, AsyncReqRspHandler message_handler)
+        {
+            MessageHandlers.DefaultParser.RegisterMessageHandler(msgId, message_handler);
+        }
+
     }
 }

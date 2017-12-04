@@ -80,6 +80,18 @@ namespace Trinity.Storage
             response = _rsp;
         }
 
+        internal override void SendMessage(byte** message, int* sizes, int count)
+        {
+            _use_synclient(sc => sc.SendMessage(message, sizes, count));
+        }
+
+        internal override void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
+        {
+            TrinityResponse _rsp = null;
+            _use_synclient(sc => sc.SendMessage(message, sizes, count, out _rsp));
+            response = _rsp;
+        }
+
         internal void GetCommunicationSchema(out string name, out string signature)
         {
             /******************
@@ -94,7 +106,7 @@ namespace Trinity.Storage
             {
                 TrinityResponse response;
                 this.SendMessage(tm, out response);
-                SmartPointer sp     = SmartPointer.New(response.Buffer + response.Offset);
+                PointerHelper sp     = PointerHelper.New(response.Buffer + response.Offset);
                 int name_string_len = *sp.ip++;
                 name                = BitHelper.GetString(sp.bp, name_string_len * 2);
                 sp.cp              += name_string_len;
@@ -105,12 +117,12 @@ namespace Trinity.Storage
             }
         }
 
-        internal bool GetCommunicationModuleOffset(string moduleName, out ushort synReqOffset, out ushort synReqRspOffset, out ushort asynReqOffset)
+        internal bool GetCommunicationModuleOffset(string moduleName, out ushort synReqOffset, out ushort synReqRspOffset, out ushort asynReqOffset, out ushort asynReqRspOffset)
         {
             /******************
              * Comm. protocol:
              *  - REQUEST : [char_cnt, char[] moduleName]
-             *  - RESPONSE: [int synReqOffset, int synReqRspOffset, int asynReqOffset]
+             *  - RESPONSE: [int synReqOffset, int synReqRspOffset, int asynReqOffset, int asynReqRspOffset]
              * An response error code other than E_SUCCESS indicates failure of remote module lookup.
              ******************/
 
@@ -119,8 +131,8 @@ namespace Trinity.Storage
                 (ushort)RequestType.GetCommunicationModuleOffsets,
                 size: sizeof(int) + sizeof(char) * moduleName.Length))
             {
-                SmartPointer sp = SmartPointer.New(tm.Buffer + TrinityMessage.Offset);
-                *sp.ip++        = moduleName.Length;
+                PointerHelper sp = PointerHelper.New(tm.Buffer + TrinityMessage.Offset);
+                *sp.ip++         = moduleName.Length;
 
                 BitHelper.WriteString(moduleName, sp.bp);
                 TrinityResponse response;
@@ -130,10 +142,12 @@ namespace Trinity.Storage
                 int synReq_msg    = *sp.ip++;
                 int synReqRsp_msg = *sp.ip++;
                 int asynReq_msg   = *sp.ip++;
+                int asynReqRsp_msg= *sp.ip++;
 
                 synReqOffset      = (ushort)synReq_msg;
                 synReqRspOffset   = (ushort)synReqRsp_msg;
                 asynReqOffset     = (ushort)asynReq_msg;
+                asynReqRspOffset  = (ushort)asynReqRsp_msg;
 
                 return (response.ErrorCode == TrinityErrorCode.E_SUCCESS);
             }
