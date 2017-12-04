@@ -65,7 +65,7 @@ namespace Trinity
                 ssize_t bytesSent = write((int)socket, buf, len);
                 if (-1 == bytesSent)
                 {
-                    //TODO log error
+                    Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Errors occur during network send: {0} bytes to send. Error code = {1}, Thread Id = {2}", len, errno, std::this_thread::get_id());
                     close((int)socket);
                     return false;
                 }
@@ -82,7 +82,7 @@ namespace Trinity
                 ssize_t bytesRecvd = read(socket, buf, len);
                 if (-1 == bytesRecvd || 0 == bytesRecvd)
                 {
-                    //TODO log error
+                    Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Errors occur during network recv: Error code = {0}, Thread Id={1}", errno, std::this_thread::get_id());
                     close((int)socket);
                     return false;
                 }

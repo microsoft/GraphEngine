@@ -7,8 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Runtime.ConstrainedExecution;
 using System.Runtime;
+#if !CORECLR
+using System.Runtime.ConstrainedExecution;
+#endif
 
 namespace Trinity.Core.Lib
 {
@@ -17,7 +19,7 @@ namespace Trinity.Core.Lib
     {
         static SpinLockSlim()
         {
-            InternalCalls.__init();
+            TrinityC.Init();
         }
 
         internal static void GetLock(ref int spinlock)
@@ -33,7 +35,9 @@ namespace Trinity.Core.Lib
             }
         }
 
+#if !CORECLR
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
+#endif
         internal static void UnLock(ref int spinlock)
         {
             Thread.MemoryBarrier();

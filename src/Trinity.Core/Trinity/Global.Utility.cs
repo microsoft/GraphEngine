@@ -80,7 +80,7 @@ namespace Trinity
         {
             get
             {
-                return AssemblyPath.MyAssemblyPath;
+                return AssemblyUtility.MyAssemblyPath;
             }
         }
 
@@ -189,6 +189,7 @@ namespace Trinity
 
         internal unsafe static DateTime GetBuildTime()
         {
+            // TODO test CoreCLR
             byte[] PEBuffer = new byte[2048];
             using (FileStream fs = new FileStream(Assembly.GetCallingAssembly().Location, FileMode.Open, FileAccess.Read))
             {

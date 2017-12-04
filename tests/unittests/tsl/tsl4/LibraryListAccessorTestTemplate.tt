@@ -1,0 +1,149 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<#
+var cases = new List<(string, string, bool)> {
+                                               ("int", "IntList", false),
+                                               ("byte", "ByteList", false),
+                                               ("double", "DoubleList", false),
+                                               ("long", "LongList", false),
+                                               ("string", "StringList", false),
+                                               ("FixedLengthStruct", "FixedLengthStructList", false),
+                                               ("VariableLengthStruct", "VariableLengthStructList", false),
+                                               ("int[,]", "IntArrayList", true),
+                                             };
+#>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using NUnit.Framework;
+using Trinity;
+using Trinity.Storage;
+
+namespace tsl4
+{
+<# foreach (var testcase in cases)
+   {
+       var (type, listName, isArray) = testcase;
+#>
+    public class <#= listName #>AccessorTests
+    {
+        #region Util
+<# if (isArray)
+        {
+            var elementType = new string(type.TakeWhile(c => c != '[').ToArray());
+            var sizeSpecifier = new string(type.SkipWhile(c => c != '[').Where(c => !Char.IsDigit(c)).ToArray());
+#>
+        private <#= $"{elementType}[]{sizeSpecifier}" #> GetArray(int size)
+            => new <#= elementType #>[size]<#= sizeSpecifier #>;
+<#
+        }
+        else
+        {
+#>
+        private <#= type #>[] GetArray(int size) => new <#= type #>[size];
+<#
+        }
+#>
+        #endregion
+
+        #region CopyAll
+        [Test]
+        public void CopyToTest_CopyAll_Success() => Utils.WithWriter(writer =>
+        {
+            var array = GetArray(10);
+            writer.<#= listName #>.CopyTo(array);
+            Assert.That(array, Is.EqualTo(writer.<#= listName #>.Select(e => (<#= type #>)e)));
+        });
+
+        [Test]
+        public void CopyToTest_CopyAll_DstNoSpace() => Utils.WithWriter(writer =>
+        {
+            var array = GetArray(5);
+            Assert.That(() => { writer.<#= listName #>.CopyTo(array); }, Throws.ArgumentException);
+        });
+        #endregion
+
+        #region CopyAllWithDstOffset
+        [Test]
+        public void CopyToTest_CopyAllWithDstOffset_Success() => Utils.WithWriter(writer =>
+        {
+            var array = GetArray(15);
+            writer.<#= listName #>.CopyTo(array, 5);
+            Assert.That(array.Take(5), Has.Exactly(5).EqualTo(default(<#= type #>)));
+            Assert.That(array.Skip(5), Is.EqualTo(writer.<#= listName #>.Select(e => (<#= type #>)e)));
+        });
+
+        [Test]
+        public void CopyToTest_CopyAllWithDstOffset_DstNoSpace() => Utils.WithWriter(writer =>
+        {
+            var array = GetArray(5);
+            Assert.That(() => { writer.<#= listName #>.CopyTo(array, 3); }, Throws.ArgumentException);
+        });
+
+        [Test]
+        public void CopyToTest_CopyAllWithDstOffset_OffsetOutOfRange() => Utils.WithWriter(writer =>
+        {
+            var array = GetArray(100);
+            Assert.That(() => { writer.<#= listName #>.CopyTo(array, 102); }, Throws.ArgumentException);
+            Assert.That(() => { writer.<#= listName #>.CopyTo(array, -20); }, Throws.TypeOf<ArgumentOutOfRangeException>());
+        });
+        #endregion
+
+        #region CopyWithOffsetsAndCount
+        [Test]
+        public void CopyToTest_CopyWithOffsetsAndCount_Success() => Utils.WithWriter(writer =>
+        {
+            var array = GetArray(15);
+            writer.<#= listName #>.CopyTo(2, array, 3, 5);
+            Assert.That(array.Take(3), Has.Exactly(3).EqualTo(default(<#= type #>)));
+            Assert.That(array.Skip(3).Take(5), Is.EqualTo(writer.<#= listName #>.Skip(2).Take(5).Select(e => (<#= type #>)e)));
+            Assert.That(array.Skip(8), Has.Exactly(15 - 8).EqualTo(default(<#= type #>)));
+        });
+
+        [Test]
+        public void CopyToTest_CopyWithOffsetsAndCount_DstNoSpace() => Utils.WithWriter(writer =>
+        {
+            var array = GetArray(5);
+            Assert.That(() => { writer.<#= listName #>.CopyTo(2, array, 3, 5); }, Throws.ArgumentException);
+            Assert.That(() => { writer.<#= listName #>.CopyTo(0, array, 1, 5); }, Throws.ArgumentException);
+        });
+
+        [Test]
+        public void CopyToTest_CopyWithOffsetsAndCount_DstOffsetOutOfRange() => Utils.WithWriter(writer =>
+        {
+            var array = GetArray(100);
+            Assert.That(() => { writer.<#= listName #>.CopyTo(2, array, 102, 5); }, Throws.ArgumentException);
+            Assert.That(() => { writer.<#= listName #>.CopyTo(2, array, -20, 5); }, Throws.TypeOf<ArgumentOutOfRangeException>());
+        });
+
+        [Test]
+        public void CopyToTest_CopyWithOffsetsAndCount_SrcOffsetOutOfRange() => Utils.WithWriter(writer =>
+        {
+            var array = GetArray(100);
+            Assert.That(() => { writer.<#= listName #>.CopyTo(200, array, 0, 5); }, Throws.ArgumentException);
+            Assert.That(() => { writer.<#= listName #>.CopyTo(-200, array, 0, 200); }, Throws.TypeOf<ArgumentOutOfRangeException>());
+        });
+
+        [Test]
+        public void CopyToTest_CopyWithOffsetsAndCount_CountOutOfRange() => Utils.WithWriter(writer =>
+        {
+            var array = GetArray(100);
+            Assert.That(() => { writer.<#= listName #>.CopyTo(200, array, 0, -200); }, Throws.TypeOf<ArgumentOutOfRangeException>());
+            Assert.That(() => { writer.<#= listName #>.CopyTo(0, array, 0, -200); }, Throws.TypeOf<ArgumentOutOfRangeException>());
+        });
+        #endregion
+    }
+
+<#
+}
+#>
+
+}

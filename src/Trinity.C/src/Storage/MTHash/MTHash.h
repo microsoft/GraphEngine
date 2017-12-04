@@ -204,14 +204,9 @@ namespace Storage
         bool TryGetEntryLockForDefragment(int32_t index);
 
         // Cell manipulation interfaces
-        CELL_ATOMIC         TrinityErrorCode LoadCell              (IN cellid_t cellId,         OUT Array<char>& cellBuff);
-        CELL_ATOMIC         TrinityErrorCode AddCell               (IN cellid_t cellId,         IN char* cell_buffer, IN int32_t cell_length, IN uint16_t cell_type);
-        CELL_ATOMIC         TrinityErrorCode UpdateCell            (IN cellid_t cellId,         IN char* cell_buffer, IN int32_t cell_length);
-        CELL_ATOMIC         TrinityErrorCode AddOrUpdateCell       (IN cellid_t cellId,         IN char* cell_buffer, IN int32_t cell_length, IN uint16_t cell_type);
         CELL_ATOMIC         TrinityErrorCode RemoveCell            (IN cellid_t cellId);
         CELL_ATOMIC         TrinityErrorCode RemoveCell            (IN cellid_t cellId,         IN CellAccessOptions options);
-        CELL_LOCK_PROTECTED void             UpdateCellImpl        (IN int32_t  entry_index,    IN char* cell_buffer, IN int32_t cell_length);
-        CELL_LOCK_PROTECTED char*            ResizeCell            (IN int32_t  cellEntryIndex, IN int32_t offsetInCell, IN int32_t sizeDelta);
+        CELL_LOCK_PROTECTED TrinityErrorCode ResizeCell            (IN int32_t  cellEntryIndex, IN int32_t offsetInCell, IN int32_t sizeDelta, OUT char*& cell_ptr);
         /////////////////////////////////
 
         // GetLockedCellInfo interfaces
@@ -233,6 +228,9 @@ namespace Storage
 
         // Checksum
         TrinityErrorCode GetMD5Hash(OUT char* hash);
+    private:
+        CELL_LOCK_PROTECTED void _discard_locked_free_entry(IN uint32_t bucket_index, IN int32_t entry_index);
+
     };
 
 #define ENTER_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION() \

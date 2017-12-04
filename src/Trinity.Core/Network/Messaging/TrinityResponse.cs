@@ -20,7 +20,7 @@ namespace Trinity.Network.Messaging
     {
         static TrinityResponse()
         {
-            InternalCalls.__init();
+            TrinityC.Init();
         }
         /// <summary>
         /// A pointer pointing to the underlying buffer.
@@ -37,7 +37,7 @@ namespace Trinity.Network.Messaging
 
         internal TrinityResponse(int size)
         {
-            Buffer = (byte*)CMemory.malloc((ulong)size);
+            Buffer = (byte*)CMemory.C_malloc((ulong)size);
             Size = size;
             Offset = TrinityProtocol.TrinityMsgHeader;
         }

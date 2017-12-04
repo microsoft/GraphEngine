@@ -34,21 +34,25 @@ namespace Trinity
                     }
                     else if (kevt_out.flags & EVFILT_READ)
                     {
-                        if (pContext->WaitingHandshakeMessage)
+                        if (ProcessRecv(pContext))
                         {
-                            CheckHandshakeResult(pContext);
-                            continue;
+                            _pContext = pContext;
+                            break;
                         }
-                        _pContext = pContext;
-                        ProcessRecv(pContext);
-                        break;
                     }
+                }
+                else
+                {
+                    /* Assume that kqueue is destroyed, and we're shutting down the server. */
+                    _pContext = NULL;
+                    break;
                 }
             }
         }
 
-        bool RearmFD(int fd)
+        bool RearmFD(PerSocketContextObject* pContext)
         {
+            int fd = pContext->fd;
             struct kevent kevt;
             EV_SET(&kevt, fd, EVFILT_READ, EV_ENABLE, 0, 0, NULL);
             return -1 != kevent(kqueue_fd, &kevt, 1, NULL, 0, NULL);

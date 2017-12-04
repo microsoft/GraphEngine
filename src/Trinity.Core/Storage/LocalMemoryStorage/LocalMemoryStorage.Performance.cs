@@ -7,11 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Net;
 
 using Trinity;
@@ -24,7 +22,7 @@ namespace Trinity.Storage
         /// <summary>
         /// The total amount of trunk memory, in bytes.
         /// </summary>
-        internal ulong CommittedTrunkMemory
+        public ulong CommittedTrunkMemory
         {
             get
             {
@@ -41,7 +39,7 @@ namespace Trinity.Storage
         /// <summary>
         /// The total amount of memory consumed by the trunk indexes, in bytes.
         /// </summary>
-        internal ulong CommittedIndexMemory
+        public ulong CommittedIndexMemory
         {
             get
             {
@@ -85,8 +83,14 @@ namespace Trinity.Storage
         {
             get
             {
-                return CLocalMemoryStorage.CTotalCellSize();
+                return _TotalCellSizeWrapper();
             }
+        }
+
+        [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
+        private ulong _TotalCellSizeWrapper()
+        {
+            return CLocalMemoryStorage.CTotalCellSize();
         }
     }
 }

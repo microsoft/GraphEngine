@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Trinity ConfigVersion="2.0">
+  <Local>
+    <Logging LoggingLevel="Info" LogDirectory="C:\Users\yatli\.nuget\packages\nunit\3.6.1\lib\netstandard1.6\trinity-log\" LogEchoOnConsole="TRUE" LogToFile="TRUE" />
+    <Network HttpPort="80" ClientMaxConn="2" ClientSendRetry="1" ClientReconnectRetry="1" Handshake="TRUE" ClientDisableSendBuffer="False" />
+    <Storage TrunkCount="256" ReadOnly="False" StorageCapacity="Max8G" StorageRoot="C:\Users\yatli\.nuget\packages\nunit\3.6.1\lib\netstandard1.6\storage\" DefragInterval="600" />
+  </Local>
+  <Cluster />
+</Trinity>

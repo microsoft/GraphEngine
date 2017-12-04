@@ -16,65 +16,60 @@ namespace Trinity
 {
     internal unsafe static class CTrinityConfig
     {
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
+        static CTrinityConfig()
+        {
+            TrinityC.Init();
+        }
+
+        [DllImport(TrinityC.AssemblyName)]
         internal static extern int GetStorageCapacityProfile();
 
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
+        [DllImport(TrinityC.AssemblyName)]
         internal static extern void SetStorageCapacityProfile(int capacityProfile);
 
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
+        [DllImport(TrinityC.AssemblyName)]
         internal static extern void SetStorageRoot(byte* buff, int length);
-        
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
+
+        [DllImport(TrinityC.AssemblyName)]
         internal static extern bool CReadOnly();
-        
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
+
+        [DllImport(TrinityC.AssemblyName)]
         internal static extern void CSetReadOnly(bool value);
-        
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
+
+        [DllImport(TrinityC.AssemblyName)]
         internal static extern int CTrunkCount();
-        
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
+
+        [DllImport(TrinityC.AssemblyName)]
         internal static extern int CSetTrunkCount(int value);
-        
-        
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
+
+
+        [DllImport(TrinityC.AssemblyName)]
         internal static extern int CLargeObjectThreshold();
-        
 
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
+
+        [DllImport(TrinityC.AssemblyName)]
         internal static extern void CSetLargeObjectThreshold(int value);
-        
 
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
+
+        [DllImport(TrinityC.AssemblyName)]
         internal static extern void CSetGCDefragInterval(int value);
 
-        [DllImport("Trinity.C.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+        [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
         internal static extern unsafe void CLogInitializeLogger(string logDir);
 
-        [DllImport("Trinity.C.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+        [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
         internal static extern void CLogSetLogLevel(LogLevel level);
 
-        [DllImport("Trinity.C.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+        [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
         internal static extern void CLogSetEchoOnConsole(bool is_set);
 
-        [DllImport("Trinity.C.dll")]
+        [DllImport(TrinityC.AssemblyName)]
         internal static extern bool CHandshake();
-        [DllImport("Trinity.C.dll")]
+        [DllImport(TrinityC.AssemblyName)]
         internal static extern void CSetHandshake(bool handshake);
-        [DllImport("Trinity.C.dll")]
+        [DllImport(TrinityC.AssemblyName)]
         internal static extern bool CClientDisableSendBuffer();
-        [DllImport("Trinity.C.dll")]
+        [DllImport(TrinityC.AssemblyName)]
         internal static extern void CSetClientDisableSendBuffer(bool disable_sndbuffer);
     }
 }

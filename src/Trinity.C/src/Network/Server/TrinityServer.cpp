@@ -59,14 +59,17 @@ namespace Trinity
         void WorkerThreadProc(int tid)
         {
             fprintf(stderr, "%d\n", tid);
+            EnterSocketServerThreadPool();
             while (true)
             {
-                void* _pContext;
+                void* _pContext = NULL;
                 AwaitRequest(_pContext);
+                if (_pContext == NULL) { break; }
                 PerSocketContextObject* pContext = (PerSocketContextObject*)_pContext;
                 MessageHandler((MessageBuff*)pContext);
                 SendResponse(pContext);
             }
+            ExitSocketServerThreadPool();
         }
 
         void CheckHandshakeResult(PerSocketContextObject* pContext)

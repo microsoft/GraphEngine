@@ -1,0 +1,35 @@
+enum FieldType
+{
+    ft_byte,
+	ft_sbyte,
+	ft_short,
+	ft_ushort,
+	ft_int,
+	ft_uint,
+	ft_long,
+	ft_graphedge,
+	ft_ulong,
+	ft_float,
+	ft_double,
+	ft_decimal,
+    /* non-numerical types */
+    ft_bool,
+	ft_guid,
+	ft_datetime,
+    ft_char,
+	ft_string,
+}
+
+struct MetaField
+{
+    int       fieldId;
+	int       typeId;//Only for rdf scanners
+    FieldType fieldType;
+    bool      isList;
+}
+
+cell struct MetaCell
+{
+    List<MetaField> Fields;
+	int             TypeId;//Only for non-rdf scanners
+}

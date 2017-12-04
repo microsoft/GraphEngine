@@ -40,13 +40,13 @@ namespace Trinity
 				((*p == '.') || (*p < 33)));
 
 			// Display the message
-			printf("\n  WARNING: %s failed with error %d (%s)", msg, eNum, String::FromWcharArray(sysMsg));
+			printf("\n  WARNING: %s failed with error %d (%s)", msg, eNum, String::FromWcharArray(sysMsg).c_str());
 		}
 
 
 		extern List<DebuggerCommandTuple> g_cmd_list;
 
-		bool ExecuteDebuggerCommand(string& cmd, Array<string>& args)
+		bool ExecuteDebuggerCommand(String& cmd, Array<String>& args)
 		{
 			for (auto &entry : g_cmd_list)
 			{

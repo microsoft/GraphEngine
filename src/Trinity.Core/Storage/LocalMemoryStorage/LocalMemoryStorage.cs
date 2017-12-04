@@ -68,17 +68,31 @@ namespace Trinity.Storage
         #endregion
 
         #region KVStore extension facility
-        public event Action StorageLoaded  = delegate { };
-        public event Action StorageSaved    = delegate{ };
-        public event Action StorageReset   = delegate{ };
+        public event Action StorageBeforeLoad = delegate { };
+        public event Action StorageBeforeSave = delegate { };
+        public event Action StorageBeforeReset = delegate { };
+        public event Action StorageLoaded = delegate { };
+        public event Action StorageSaved = delegate{ };
+        public event Action StorageReset = delegate{ };
         #endregion
 
         internal static volatile bool initialized = false;
 
+        private object m_lock = new object();
+
+
         static LocalMemoryStorage()
         {
-            TrinityConfig.LoadTrinityConfig();
-            InternalCalls.__init();
+            TrinityC.Init();
+            try
+            {
+                TrinityConfig.LoadTrinityConfig();
+            }
+            catch
+            {
+                Log.WriteLine(LogLevel.Error, "Failure to load config file, falling back to default LocalMemoryStorage behavior");
+            }
+            CSynchronizeStorageRoot();
             //BackgroundThread.StartMemoryStorageBgThreads();
         }
 
@@ -150,9 +164,13 @@ namespace Trinity.Storage
 
         private void Dispose(bool disposing)
         {
-            CloseWriteAheadLogFile();
-            CLocalMemoryStorage.CDispose();
-            if(disposing)
+            if (initialized)
+            {
+                CloseWriteAheadLogFile();
+                CLocalMemoryStorage.CDispose();
+                initialized = false;
+            }
+            if (disposing)
             {
                 GC.SuppressFinalize(this);
             }
