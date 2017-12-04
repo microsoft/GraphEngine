@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Trinity.Diagnostics;
 using Trinity.DynamicCluster.Consensus;
+using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Storage
 {
@@ -25,6 +26,8 @@ namespace Trinity.DynamicCluster.Storage
         private Task                              m_partitionproc;
         private Task                              m_scanproc;
 
+        public IEnumerable<Chunk> MyChunks => throw new NotImplementedException();
+
         public Partitioner(CancellationToken token, IChunkTable chunktable, INameService nameservice, ITaskQueue taskqueue, ReplicationMode replicationMode)
         {
             m_dmc           = DynamicMemoryCloud.Instance;
@@ -34,8 +37,8 @@ namespace Trinity.DynamicCluster.Storage
             m_taskqueue     = taskqueue;
             m_replicaList   = Utils.Integers(m_nameservice.PartitionCount).Select(_ => Enumerable.Empty<ReplicaInformation>()).ToArray();
             m_repmode       = replicationMode;
-            m_partitionproc = PartitionerProc();
-            m_scanproc      = ScanNodesProc();
+            m_partitionproc = Utils.Daemon(m_cancel, "PartitionerProc", 10000, PartitionerProc);
+            m_scanproc      = Utils.Daemon(m_cancel, "ScanNodesProc", 10000, ScanNodesProc);
         }
 
         private void UpdatePartition(int partitionId, Task<IEnumerable<ReplicaInformation>> resolveTask)
@@ -57,21 +60,10 @@ namespace Trinity.DynamicCluster.Storage
         /// </summary>
         private async Task ScanNodesProc()
         {
-            while (!m_cancel.IsCancellationRequested)
-            {
-                try
-                {
-                    var ids = Utils.Integers(m_nameservice.PartitionCount);
-                    var tasks = ids.Select(m_nameservice.ResolvePartition);
-                    await Task.WhenAll(tasks);
-                    tasks.ForEach(UpdatePartition);
-                    await Task.Delay(10000, m_cancel);
-                }
-                catch (Exception ex)
-                {
-                    Log.WriteLine(LogLevel.Error, $"ScanNodesProc: {ex.ToString()}");
-                }
-            }
+            var ids = Utils.Integers(m_nameservice.PartitionCount);
+            var tasks = ids.Select(m_nameservice.ResolvePartition);
+            await Task.WhenAll(tasks);
+            tasks.ForEach(UpdatePartition);
         }
 
         private async Task PartitionerProc()
@@ -79,22 +71,7 @@ namespace Trinity.DynamicCluster.Storage
             // TODO mount self: PartitionTable(MyPartitionId).Mount(Global.LocalStorage, MyChunks);
             // TODO mount secondaries on replication completion
             // TODO mount interface Partitioner-->dmc
-            while (!m_cancel.IsCancellationRequested)
-            {
-                try
-                {
-                    await Task.Delay(1000, m_cancel);
-                }
-                catch (TaskCanceledException)
-                {
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    Log.WriteLine(LogLevel.Error, $"TaskExecutionProc: {ex.ToString()}");
-                    await Task.Delay(1000, m_cancel);
-                }
-            }
+            await Task.Delay(1000, m_cancel);
         }
 
         public void Dispose()

@@ -15,34 +15,31 @@ namespace Trinity.ServiceFabric.Interfaces
 {
     class ReliableTaskQueue : ITaskQueue
     {
-        private CancellationToken m_cancel;
-        private IReliableQueue<ITask> m_queue = null;
-        private IReliableQueue<ITask>[] m_allqueues = null;
-        private IReliableStateManager m_statemgr = null;
-        private ITransaction m_tx = null;
-        private Task m_initqueue_task = null;
+        private CancellationToken       m_cancel;
+        private IReliableQueue<ITask>   m_queue          = null;
+        private IReliableQueue<ITask>[] m_allqueues      = null;
+        private IReliableStateManager   m_statemgr       = null;
+        private ITransaction            m_tx             = null;
+        private Task                    m_initqueue_task = null;
 
         public void Start(CancellationToken cancellationToken)
         {
-            m_cancel = cancellationToken;
-            m_statemgr = GraphEngineService.Instance.StateManager;
-            m_initqueue_task = CreateQueuesAsync();
+            m_cancel         = cancellationToken;
+            m_statemgr       = GraphEngineService.Instance.StateManager;
+            m_initqueue_task = InitQueuesAsync();
         }
 
-        private async Task CreateQueuesAsync()
+        private async Task InitQueuesAsync()
         {
-            if (m_queue == null)
-            {
-                var qtasks = Utils.Integers(GraphEngineService.Instance.PartitionCount).Select(CreatePartitionQueueAsync).ToArray();
-                await Task.Factory.ContinueWhenAll(qtasks, ts => m_allqueues = ts.Select(_ => _.Result).ToArray());
-                m_queue = m_allqueues[GraphEngineService.Instance.PartitionId];
-            }
+            var qtasks = Utils.Integers(GraphEngineService.Instance.PartitionCount).Select(CreatePartitionQueueAsync).ToArray();
+            await Task.Factory.ContinueWhenAll(qtasks, ts => m_allqueues = ts.Select(_ => _.Result).ToArray());
+            m_queue = m_allqueues[GraphEngineService.Instance.PartitionId];
         }
 
         private async Task EnsureQueuesAsync()
         {
             var task = m_initqueue_task;
-            if(task != null)
+            if (task != null)
             {
                 await task;
                 m_initqueue_task = null;
@@ -52,15 +49,10 @@ namespace Trinity.ServiceFabric.Interfaces
 
         private async Task<IReliableQueue<ITask>> CreatePartitionQueueAsync(int p)
         {
-            retry:
-
             var qname = $"GraphEngine.TaskQueue-P{p}";
-            var current_role = GraphEngineService.Instance.Role;
-            if (current_role != ReplicaRole.ActiveSecondary && current_role != ReplicaRole.Primary)
-            {
-                await Task.Delay(1000);
-                goto retry;
-            }
+            await GraphEngineService.Instance.GetRoleAsync();
+
+            retry:
 
             try
             {

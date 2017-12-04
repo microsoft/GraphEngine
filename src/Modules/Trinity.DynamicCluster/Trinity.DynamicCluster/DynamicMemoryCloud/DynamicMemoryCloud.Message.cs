@@ -16,7 +16,7 @@ namespace Trinity.DynamicCluster.Storage
             if (serverId >= 0)
                 base.SendMessageToServer(serverId, buffer, size);
             else
-                temporaryRemoteStorageRepo[serverId].SendMessage(buffer, size);
+                m_tmp_rs_repo[serverId].SendMessage(buffer, size);
         }
 
         public override unsafe void SendMessageToServer(int serverId, byte* buffer, int size, out TrinityResponse response)
@@ -24,7 +24,7 @@ namespace Trinity.DynamicCluster.Storage
             if (serverId >= 0)
                 base.SendMessageToServer(serverId, buffer, size, out response);
             else
-                temporaryRemoteStorageRepo[serverId].SendMessage(buffer, size, out response);
+                m_tmp_rs_repo[serverId].SendMessage(buffer, size, out response);
         }
 
         #region Proxies

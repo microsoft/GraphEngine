@@ -21,10 +21,10 @@ namespace Trinity.ServiceFabric
 {
     public class NameService : INameService
     {
-        private CancellationToken m_token;
+        private CancellationToken          m_token;
         private System.Fabric.FabricClient m_fclient;
-        private Uri m_svcuri;
-        private List<Guid> m_partitionIds;
+        private Uri                        m_svcuri;
+        private List<Guid>                 m_partitionIds;
 
         public string Address => GraphEngineService.Instance.Address;
 

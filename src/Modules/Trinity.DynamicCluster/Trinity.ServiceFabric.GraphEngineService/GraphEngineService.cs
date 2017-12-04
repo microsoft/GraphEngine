@@ -21,30 +21,32 @@ namespace Trinity.ServiceFabric
     /// </summary>
     public sealed class GraphEngineService : StatefulService
     {
-        internal TrinityServer TrinityServer = null;
-        internal NodeContext NodeContext = null;
-        internal FabricClient FabricClient = null;
-
-        internal static GraphEngineService Instance = null;
         private static object s_lock = new object();
+        internal static GraphEngineService Instance = null;
+
+        private TrinityServer m_trinitysvr = null;
+        private NodeContext m_nodectx = null;
+        private FabricClient m_fclient = null;
+        private ReplicaRole m_role = ReplicaRole.Unknown;
 
         public List<System.Fabric.Query.Partition> Partitions { get; private set; }
         public int PartitionCount { get; private set; }
         public int PartitionId { get; private set; }
+
         public int Port { get; private set; }
         public int HttpPort { get; private set; }
         public string Address { get; private set; }
-        public ReplicaRole Role { get; private set; }
+        public ReplicaRole Role => GetRoleAsync().Result;
 
         //  Passive Singleton
         public GraphEngineService(StatefulServiceContext context)
             : base(context)
         {
             //  Initialize other fields and properties.
-            NodeContext = context.NodeContext;
-            FabricClient = new FabricClient();
-            Address = NodeContext.IPAddressOrFQDN;
-            Partitions = FabricClient.QueryManager
+            m_nodectx = context.NodeContext;
+            m_fclient = new FabricClient();
+            Address = m_nodectx.IPAddressOrFQDN;
+            Partitions = m_fclient.QueryManager
                         .GetPartitionListAsync(context.ServiceName)
                         .GetAwaiter().GetResult()
                         .OrderBy(p => p.PartitionInformation.Id)
@@ -80,25 +82,25 @@ namespace Trinity.ServiceFabric
             lock (s_lock)
             {
                 //  Initialize Trinity server.
-                if (TrinityServer == null)
+                if (m_trinitysvr == null)
                 {
-                    TrinityServer = AssemblyUtility.GetAllClassInstances(
+                    m_trinitysvr = AssemblyUtility.GetAllClassInstances(
                         t => t != typeof(TrinityServer) ?
                         t.GetConstructor(new Type[] { }).Invoke(new object[] { }) as TrinityServer :
                         null)
                         .FirstOrDefault();
                 }
-                if (TrinityServer == null)
+                if (m_trinitysvr == null)
                 {
-                    TrinityServer = new TrinityServer();
+                    m_trinitysvr = new TrinityServer();
                     Log.WriteLine(LogLevel.Warning, "GraphEngineService: using the default communication instance.");
                 }
                 else
                 {
-                    Log.WriteLine(LogLevel.Info, "{0}", $"GraphEngineService: using [{TrinityServer.GetType().Name}] communication instance.");
+                    Log.WriteLine(LogLevel.Info, "{0}", $"GraphEngineService: using [{m_trinitysvr.GetType().Name}] communication instance.");
                 }
 
-                TrinityServer.Start();
+                m_trinitysvr.Start();
                 return TrinityErrorCode.E_SUCCESS;
             }
         }
@@ -107,10 +109,19 @@ namespace Trinity.ServiceFabric
         {
             lock (s_lock)
             {
-                TrinityServer?.Stop();
-                TrinityServer = null;
+                m_trinitysvr?.Stop();
+                m_trinitysvr = null;
                 return TrinityErrorCode.E_SUCCESS;
             }
+        }
+
+        internal async Task<ReplicaRole> GetRoleAsync()
+        {
+            while(m_role != ReplicaRole.ActiveSecondary && m_role != ReplicaRole.Primary)
+            {
+                await Task.Delay(1000);
+            }
+            return m_role;
         }
 
         /// <summary>
@@ -132,7 +143,7 @@ namespace Trinity.ServiceFabric
 
         protected override Task OnChangeRoleAsync(ReplicaRole newRole, CancellationToken cancellationToken)
         {
-            this.Role = newRole;
+            m_role = newRole;
             Log.WriteLine("{0}", $"Replica {Context.ReplicaOrInstanceId} changed role to {newRole}");
             return base.OnChangeRoleAsync(newRole, cancellationToken);
         }

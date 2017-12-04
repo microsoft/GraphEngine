@@ -19,7 +19,7 @@ namespace Trinity.DynamicCluster.Tasks
         {
             m_taskqueue = queue;
             m_cancel = token;
-            m_taskexecproc = TaskExecutionProc();
+            m_taskexecproc = Utils.Daemon(m_cancel, "TaskExecutorProc", 1000, TaskExecutionProc);
         }
 
         public void Dispose()
@@ -31,46 +31,23 @@ namespace Trinity.DynamicCluster.Tasks
         {
             ITask task;
             Exception exception;
-            while (!m_cancel.IsCancellationRequested)
+            if (!m_taskqueue.IsMaster) return;
+            task = await m_taskqueue.GetTask(m_cancel);
+            if (task == null) return;
+            try
             {
-                try
-                {
-                    if (!m_taskqueue.IsMaster)
-                    {
-                        await Task.Delay(1000, m_cancel);
-                        continue;
-                    }
-                    task = await m_taskqueue.GetTask(m_cancel);
-                    if(task == null)
-                    {
-                        await Task.Delay(1000, m_cancel);
-                        continue;
-                    }
-                    try
-                    {
-                        await task.Execute(m_cancel);
-                        exception = null;
-                    }
-                    catch(Exception ex) { exception = ex; }
-                    if (null == exception)
-                    {
-                        await m_taskqueue.TaskCompleted(task);
-                    }
-                    else
-                    {
-                        Log.WriteLine(LogLevel.Error, $"TaskExecutionProc: task {task.Id} failed with exception: {exception.ToString()}");
-                        await m_taskqueue.TaskFailed(task);
-                    }
-                }
-                catch (TaskCanceledException)
-                {
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    Log.WriteLine(LogLevel.Error, $"TaskExecutionProc: {ex.ToString()}");
-                    await Task.Delay(1000, m_cancel);
-                }
+                await task.Execute(m_cancel);
+                exception = null;
+            }
+            catch (Exception ex) { exception = ex; }
+            if (null == exception)
+            {
+                await m_taskqueue.TaskCompleted(task);
+            }
+            else
+            {
+                Log.WriteLine(LogLevel.Error, $"TaskExecutionProc: task {task.Id} failed with exception: {exception.ToString()}");
+                await m_taskqueue.TaskFailed(task);
             }
         }
     }

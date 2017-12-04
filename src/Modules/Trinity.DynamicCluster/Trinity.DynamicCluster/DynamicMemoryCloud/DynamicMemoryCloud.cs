@@ -18,39 +18,40 @@ namespace Trinity.DynamicCluster.Storage
 {
     public partial class DynamicMemoryCloud : MemoryCloud
     {
-        private Random m_rng = new Random();
-
-        internal ClusterConfig cluster_config;//TODO will be substituted
-        internal IChunkTable m_chunktable;
-        internal INameService m_nameservice;
-        internal ITaskQueue m_taskqueue;
-        internal Executor m_taskexec;
-        internal Partitioner m_partitioner;
+        #region Fields
+        internal ClusterConfig           m_cluster_config;
+        internal IChunkTable             m_chunktable;
+        internal INameService            m_nameservice;
+        internal ITaskQueue              m_taskqueue;
+        internal Executor                m_taskexec;
+        internal Partitioner             m_partitioner;
         internal CancellationTokenSource m_cancelSrc;
-        internal Partition PartitionTable(int id) => StorageTable[id] as Partition;
+
+        private Random                   m_rng = new Random();
+        private volatile bool            m_disposed = false;
+        private DynamicClusterCommModule m_module;
         // !Note can also be achieve by extending Storage[] StorageTable beyond PartitionCount,
         // and use interlocked increment to obtain index
-        private ConcurrentDictionary<int, DynamicRemoteStorage> temporaryRemoteStorageRepo = new ConcurrentDictionary<int, DynamicRemoteStorage>();
-        private volatile bool disposed = false;
-        private DynamicClusterCommModule m_module;
+        private ConcurrentDictionary<int, DynamicRemoteStorage> m_tmp_rs_repo = new ConcurrentDictionary<int, DynamicRemoteStorage>();
+        #endregion
 
-
+        internal Partition PartitionTable(int id) => StorageTable[id] as Partition;
         internal static DynamicMemoryCloud Instance => Global.CloudStorage as DynamicMemoryCloud;
 
         private void _DoWithTempStorage(DynamicRemoteStorage remoteStorage, Action<int> action)
         {
             int temp_id = Infinity(() => m_rng.Next(-10000000, -1))
-                         .SkipWhile(_ => !temporaryRemoteStorageRepo.TryAdd(_, remoteStorage))
+                         .SkipWhile(_ => !m_tmp_rs_repo.TryAdd(_, remoteStorage))
                          .First();
             action(temp_id);
-            temporaryRemoteStorageRepo.TryRemove(temp_id, out var _);
+            m_tmp_rs_repo.TryRemove(temp_id, out var _);
         }
 
         private void CheckServerProtocolSignatures(DynamicRemoteStorage rs)
         {
             Log.WriteLine(LogLevel.Debug, $"Checking protocol signatures with '{rs.NickName}' ({rs.ReplicaInformation})...");
 
-            CheckProtocolSignatures_impl(rs, cluster_config.RunningMode, RunningMode.Server);
+            CheckProtocolSignatures_impl(rs, m_cluster_config.RunningMode, RunningMode.Server);
         }
 
         internal TrinityErrorCode OnStorageJoin(DynamicRemoteStorage remoteStorage)
@@ -80,8 +81,7 @@ namespace Trinity.DynamicCluster.Storage
         }
 
         public string NickName { get; private set; }
-
-        public override IEnumerable<Chunk> MyChunks { get { yield break; } }//TODO
+        public override IEnumerable<Chunk> MyChunks => m_partitioner.MyChunks;
         public override int MyPartitionId => m_nameservice.PartitionId;
         public override int PartitionCount => m_nameservice.PartitionCount;
         public Guid InstanceId => m_nameservice.InstanceId;
@@ -93,7 +93,7 @@ namespace Trinity.DynamicCluster.Storage
         public override int ProxyCount => 0;
         public override bool Open(ClusterConfig config, bool nonblocking)
         {
-            this.cluster_config = config;
+            this.m_cluster_config = config;
             InitializeComponents();
 
             StorageTable = Infinity<Partition>()
@@ -130,7 +130,7 @@ namespace Trinity.DynamicCluster.Storage
 
         protected override void Dispose(bool disposing)
         {
-            if (this.disposed) return;
+            if (this.m_disposed) return;
             Enumerable
            .Range(0, PartitionCount)
            .SelectMany(PartitionTable)
@@ -155,7 +155,7 @@ namespace Trinity.DynamicCluster.Storage
             m_taskqueue.Dispose();
 
             base.Dispose(disposing);
-            this.disposed = true;
+            this.m_disposed = true;
         }
 
         protected override void OnConnected(RemoteStorageEventArgs e)
