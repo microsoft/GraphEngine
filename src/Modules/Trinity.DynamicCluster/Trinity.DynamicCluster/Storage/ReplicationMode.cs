@@ -11,7 +11,7 @@ namespace Trinity.DynamicCluster.Storage
         /// <summary>
         /// Share-nothing, no replication. Maximum capacity but not fault tolerant.
         /// !Note, a partition running in <see cref="Sharding"/> mode will not reach
-        /// a health status of <see cref="PartitionHealth.Green"/>.
+        /// a health status of <see cref="HealthStatus.Healthy"/>.
         /// </summary>
         Sharding,
         /// <summary>

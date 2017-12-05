@@ -16,6 +16,7 @@ using Trinity.Diagnostics;
 
 namespace Trinity.ServiceFabric.Interfaces
 {
+    using ReplicaInformation = Trinity.DynamicCluster.Storage.ReplicaInformation;
     class ServiceFabricChunkTable : IChunkTable
     {
         private CancellationToken                               m_cancel;
@@ -23,13 +24,11 @@ namespace Trinity.ServiceFabric.Interfaces
         private IReliableDictionary<Guid, IEnumerable<Chunk>>[] m_allchunktables = null;
         private IReliableStateManager                           m_statemgr       = null;
         private Task                                            m_inittask       = null;
-        private Dictionary<Guid, int>                           m_partitionCache = null;
 
         public void Start(CancellationToken cancellationToken)
         {
             m_cancel   = cancellationToken;
             m_statemgr = GraphEngineService.Instance.StateManager;
-            m_partitionCache = new Dictionary<Guid, int>();
             m_inittask = InitChunkTablesAsync();
         }
 
@@ -91,25 +90,10 @@ retry:
 
         public void Dispose() { }
 
-        public async Task<IEnumerable<Chunk>> GetChunks(Guid replicaId)
+        public async Task<IEnumerable<Chunk>> GetChunks(ReplicaInformation replicaInfo)
         {
             await EnsureChunkTables();
-            if (m_partitionCache.TryGetValue(replicaId, out var p))
-            {
-                return await GetChunks_impl(p, replicaId);
-            }
-
-            for (int i = 0; i<m_allchunktables.Length; ++i)
-            {
-                var res = await GetChunks_impl(i, replicaId);
-                if (res != null)
-                {
-                    m_partitionCache[replicaId] = i;
-                    return res;
-                }
-            }
-
-            return Enumerable.Empty<Chunk>();
+            return await GetChunks_impl(replicaInfo.PartitionId, replicaInfo.Id) ?? Enumerable.Empty<Chunk>();
         }
 
         private async Task<IEnumerable<Chunk>> GetChunks_impl(int p, Guid replicaId)

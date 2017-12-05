@@ -99,6 +99,7 @@
     <Compile Include="Interfaces\NameService.cs" />
     <Compile Include="Interfaces\ReliableTaskQueue.cs" />
     <Compile Include="Interfaces\ServiceFabricChunkTable.cs" />
+    <Compile Include="Interfaces\ServiceFabricHealthManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GraphEngineService.cs" />
     <Compile Include="Program.cs" />

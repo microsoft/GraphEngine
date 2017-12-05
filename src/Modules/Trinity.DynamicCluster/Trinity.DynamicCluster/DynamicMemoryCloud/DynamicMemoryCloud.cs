@@ -23,6 +23,7 @@ namespace Trinity.DynamicCluster.Storage
         internal IChunkTable             m_chunktable;
         internal INameService            m_nameservice;
         internal ITaskQueue              m_taskqueue;
+        internal IHealthManager          m_healthmanager;
         internal Executor                m_taskexec;
         internal Partitioner             m_partitioner;
         internal CancellationTokenSource m_cancelSrc;
@@ -102,7 +103,8 @@ namespace Trinity.DynamicCluster.Storage
             NickName = GenerateNickName(InstanceId);
 
             //TODO repmode is hard-coded Mirroring
-            m_partitioner = new Partitioner(m_cancelSrc.Token, m_chunktable, m_nameservice, m_taskqueue, ReplicationMode.Mirroring);
+            //TODO redundancy hard-coded 2
+            m_partitioner = new Partitioner(m_cancelSrc.Token, m_chunktable, m_nameservice, m_taskqueue, m_healthmanager, ReplicationMode.Mirroring, minimalRedundancy: 2);
             m_taskexec = new Executor(m_taskqueue, m_cancelSrc.Token);
 
             Log.WriteLine($"DynamicMemoryCloud: Partition {MyPartitionId}: Instance '{NickName}' {InstanceId} opened.");
@@ -122,10 +124,12 @@ namespace Trinity.DynamicCluster.Storage
             m_nameservice = AssemblyUtility.GetAllClassInstances<INameService>().First();
             m_chunktable = AssemblyUtility.GetAllClassInstances<IChunkTable>().First();
             m_taskqueue = AssemblyUtility.GetAllClassInstances<ITaskQueue>().First();
+            m_healthmanager = AssemblyUtility.GetAllClassInstances<IHealthManager>().First();
 
             m_nameservice.Start(m_cancelSrc.Token);
             m_taskqueue.Start(m_cancelSrc.Token);
             m_chunktable.Start(m_cancelSrc.Token);
+            m_healthmanager.Start(m_cancelSrc.Token);
         }
 
         protected override void Dispose(bool disposing)
@@ -153,6 +157,7 @@ namespace Trinity.DynamicCluster.Storage
             m_nameservice.Dispose();
             m_chunktable.Dispose();
             m_taskqueue.Dispose();
+            m_healthmanager.Dispose();
 
             base.Dispose(disposing);
             this.m_disposed = true;

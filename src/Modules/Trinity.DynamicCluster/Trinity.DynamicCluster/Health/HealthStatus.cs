@@ -4,24 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Trinity.DynamicCluster.Storage
+namespace Trinity.DynamicCluster.Health
 {
     /// <summary>
-    /// Represents the health status of the partition.
+    /// Represents the health status of various components.
     /// </summary>
-    public enum PartitionHealth
+    public enum HealthStatus
     {
         /// <summary>
         /// The partition is unavailable.
         /// </summary>
-        Red,
+        Error,
         /// <summary>
         /// The partition is available, but not fault tolerant.
         /// </summary>
-        Yellow,
+        Warning,
         /// <summary>
         /// The partition is available and fault tolerant.
         /// </summary>
-        Green,
+        Healthy,
     }
 }

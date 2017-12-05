@@ -1,23 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Trinity.DynamicCluster.Storage;
 
 namespace Trinity.DynamicCluster.Consensus
 {
-    public class ReplicaInformation
-    {
-        public ReplicaInformation(string addr, int port, Guid id, int partitionId)
-        {
-            Address = addr;
-            Port = port;
-            Id = id;
-            PartitionId = partitionId;
-        }
-        public string Address { get; }
-        public int Port { get; }
-        public Guid Id { get; }
-        public int PartitionId { get; }
-    }
     public interface INameService: IService
     {
         /// <summary>

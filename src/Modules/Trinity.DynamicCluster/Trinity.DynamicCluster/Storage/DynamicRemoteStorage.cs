@@ -9,7 +9,7 @@ using Trinity.Network;
 using Trinity.Network.Messaging;
 using Trinity.Storage;
 
-namespace Trinity.DynamicCluster
+namespace Trinity.DynamicCluster.Storage
 {
     class DynamicRemoteStorage : RemoteStorage
     {

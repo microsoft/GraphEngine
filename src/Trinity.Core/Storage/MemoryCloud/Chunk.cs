@@ -9,7 +9,7 @@ namespace Trinity.Storage
     /// <summary>
     /// Represents
     /// </summary>
-    public class Chunk
+    public class Chunk : IEquatable<Chunk>
     {
         public Chunk(long lowKey, long highKey)
             : this(lowKey, highKey, Guid.NewGuid()) { }
@@ -25,6 +25,16 @@ namespace Trinity.Storage
         public long HighKey { get; }
         public Guid Id { get; }
         public bool Covers(long cellId) => LowKey <= cellId && cellId <= HighKey;
+
+        public bool Equals(Chunk other)
+        {
+            return Id == other.Id && LowKey == other.LowKey && HighKey == other.HighKey;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
 
         public static readonly Guid FullRangeChunkGuid = new Guid("5C1A0664-7257-42E8-8D02-9CB615DA680A");
         public static readonly Guid NullChunkGuid = new Guid("B0C5B39B-94FE-4A47-A947-318B4CFFDBFF");

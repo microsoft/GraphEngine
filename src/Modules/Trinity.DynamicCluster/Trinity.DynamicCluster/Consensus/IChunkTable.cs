@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Trinity.DynamicCluster.Storage;
 using Trinity.Network;
 using Trinity.Storage;
 
@@ -19,8 +20,8 @@ namespace Trinity.DynamicCluster.Consensus
         /// <summary>
         /// Gets a list of chunks held by a replica. The replica can be on any partition.
         /// </summary>
-        /// <param name="replicaId">The identifier of the replica.</param>
-        Task<IEnumerable<Chunk>> GetChunks(Guid replicaId);
+        /// <param name="replicaInfo">The identifier of the replica.</param>
+        Task<IEnumerable<Chunk>> GetChunks(ReplicaInformation replicaInfo);
         /// <summary>
         /// Updates the list of chunks held by a replica. The replica must be on the current partition.
         /// </summary>

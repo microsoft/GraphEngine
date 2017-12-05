@@ -15,6 +15,7 @@ using Trinity.Daemon;
 using Trinity.Diagnostics;
 using Trinity.DynamicCluster;
 using Trinity.DynamicCluster.Consensus;
+using Trinity.DynamicCluster.Storage;
 using Trinity.Network;
 
 namespace Trinity.ServiceFabric
