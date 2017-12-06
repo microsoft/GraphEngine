@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2009
+VisualStudioVersion = 15.0.27130.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.DynamicCluster", "Trinity.DynamicCluster\Trinity.DynamicCluster.csproj", "{26DB9C05-8B53-409F-A1C9-3FD30CFEC35C}"
 EndProject
@@ -10,6 +10,10 @@ EndProject
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "Trinity.ServiceFabric.SmokeTest", "Trinity.ServiceFabric.SmokeTest\Trinity.ServiceFabric.SmokeTest.sfproj", "{0F44632E-1A7F-463F-954C-A84A7B1A4F69}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.ServiceFabric.GraphEngineService", "Trinity.ServiceFabric.GraphEngineService\Trinity.ServiceFabric.GraphEngineService.csproj", "{3299B302-8F94-4DB7-9331-F53F41E3E2AB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Graph Engine Service Fabric Runtime", "Graph Engine Service Fabric Runtime", "{F367827B-0CF9-4249-B5F7-C39A9F93304F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.ServiceFabric.GarphEngine.Environment", "Trinity.ServiceFabric.GarphEngine.Runtime\Trinity.ServiceFabric.GarphEngine.Environment.csproj", "{3433F5A8-DD7D-44D4-A1BB-215D1693DCC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,9 +57,20 @@ Global
 		{3299B302-8F94-4DB7-9331-F53F41E3E2AB}.Release|Any CPU.Build.0 = Release|x64
 		{3299B302-8F94-4DB7-9331-F53F41E3E2AB}.Release|x64.ActiveCfg = Release|x64
 		{3299B302-8F94-4DB7-9331-F53F41E3E2AB}.Release|x64.Build.0 = Release|x64
+		{3433F5A8-DD7D-44D4-A1BB-215D1693DCC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3433F5A8-DD7D-44D4-A1BB-215D1693DCC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3433F5A8-DD7D-44D4-A1BB-215D1693DCC7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3433F5A8-DD7D-44D4-A1BB-215D1693DCC7}.Debug|x64.Build.0 = Debug|Any CPU
+		{3433F5A8-DD7D-44D4-A1BB-215D1693DCC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3433F5A8-DD7D-44D4-A1BB-215D1693DCC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3433F5A8-DD7D-44D4-A1BB-215D1693DCC7}.Release|x64.ActiveCfg = Release|Any CPU
+		{3433F5A8-DD7D-44D4-A1BB-215D1693DCC7}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3433F5A8-DD7D-44D4-A1BB-215D1693DCC7} = {F367827B-0CF9-4249-B5F7-C39A9F93304F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {38F622E3-C2CE-43F9-B997-47F33BC79742}

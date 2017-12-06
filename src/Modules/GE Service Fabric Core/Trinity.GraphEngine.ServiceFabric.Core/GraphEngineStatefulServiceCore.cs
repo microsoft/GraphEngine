@@ -23,13 +23,13 @@ namespace Trinity.GraphEngine.ServiceFabric.Core
         public static GraphEngineStatefulServiceCore Instance = null;
         private static object s_lock = new object();
 
-        public List<System.Fabric.Query.Partition> Partitions { get; private set; }
-        public int PartitionCount { get; private set; }
-        public int PartitionId { get; private set; }
-        public int Port { get; private set; }
-        public int HttpPort { get; private set; }
-        public string Address { get; private set; }
-        public ReplicaRole Role { get; private set; }
+        public List<System.Fabric.Query.Partition> Partitions { get; }
+        public int PartitionCount { get; }
+        public int PartitionId { get; }
+        public int Port { get; }
+        public int HttpPort { get; }
+        public string Address { get; }
+        public ReplicaRole Role { get; }
         public StatefulServiceContext Context { get; private set;}
 
         //  Passive Singleton

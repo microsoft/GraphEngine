@@ -92,6 +92,7 @@
   <ItemGroup>
     <Compile Include="GraphEngineHttpListener.cs" />
     <Compile Include="GraphEngineListener.cs" />
+    <Compile Include="GraphEngineListenerBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

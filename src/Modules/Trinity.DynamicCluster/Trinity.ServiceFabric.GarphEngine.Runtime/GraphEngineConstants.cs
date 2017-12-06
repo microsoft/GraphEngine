@@ -1,0 +1,9 @@
+namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
+{
+    internal static class GraphEngineConstants
+    {
+        public const string TrinityProtocolEndpoint     = @"TrinityProtocolEndpoint";
+        public const string TrinityHttpProtocolEndpoint = @"TrinityHttpEndpoint";
+        public const string TrinityWCFProtocolEndpoint  = @"TrinityWCFEndpoint";
+    }
+}

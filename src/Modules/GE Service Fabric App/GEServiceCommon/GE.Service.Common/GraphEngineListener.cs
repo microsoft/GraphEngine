@@ -7,7 +7,7 @@ using Trinity.GraphEngine.ServiceFabric.Core;
 
 namespace Trinity.GraphEngine.ServiceFabric.Listeners
 {
-    public class GraphEngineListener : ICommunicationListener
+    public class GraphEngineListener : GraphEngineListenerBase, ICommunicationListener
     {
         private StatefulServiceContext m_svcctx;
         private GraphEngineStatefulServiceCore geEngineStatefulServiceCore;
@@ -18,18 +18,19 @@ namespace Trinity.GraphEngine.ServiceFabric.Listeners
             this.geEngineStatefulServiceCore = geEngineStatefulServiceCore;
         }
 
-        public void Abort()
+        /// <inheritdoc />
+        public new void Abort()
         {
             geEngineStatefulServiceCore.Stop();
         }
 
-        public Task CloseAsync(CancellationToken cancellationToken)
+        public new Task CloseAsync(CancellationToken cancellationToken)
         {
             geEngineStatefulServiceCore?.Stop();
             return Task.FromResult(0);
         }
 
-        public Task<string> OpenAsync(CancellationToken cancellationToken)
+        public new Task<string> OpenAsync(CancellationToken cancellationToken)
         {
             geEngineStatefulServiceCore?.Start();
             Debug.Assert(geEngineStatefulServiceCore != null, "GraphEngineService.Instance != null");
