@@ -12,6 +12,9 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 {
     public abstract class TrinitySeverRuntimeMangerBase : ITrinityServerRuntimeManager
     {
+        private TrinityServer m_trinityServer;
+
+        // We manage and treat this groping of data as immutable
         private readonly (List<System.Fabric.Query.Partition> Partitions,
                           int PartitionCount,
                           int PartitionId,
@@ -25,7 +28,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
         private static readonly object m_singletonLockObject = new object();
 
 
-        private static object SingletonLockObject => m_singletonLockObject;
+        internal static object SingletonLockObject => m_singletonLockObject;
 
         public virtual TrinityErrorCode Start()
         {
@@ -53,8 +56,20 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 
         public StatefulServiceContext Context => ServiceFabricRuntimeContext.Context;
 
-        protected internal (List<Partition> Partitions, int PartitionCount, int PartitionId, int Port, int HttpPort,
-            string IPAddress, ReplicaRole Role, StatefulServiceContext Context) ServiceFabricRuntimeContext => m_serviceFabricRuntimeContext;
+        protected internal (List<Partition> Partitions, 
+                            int PartitionCount, 
+                            int PartitionId, 
+                            int Port, 
+                            int HttpPort,
+                            string IPAddress, 
+                            ReplicaRole Role, 
+                            StatefulServiceContext Context) ServiceFabricRuntimeContext => m_serviceFabricRuntimeContext;
+
+        internal TrinityServer ServiceFabricTrinityServerInstance
+        {
+            get => m_trinityServer;
+            set => m_trinityServer = value;
+        }
 
         protected TrinitySeverRuntimeMangerBase(ref (List<System.Fabric.Query.Partition> Partitions,
                                                 int PartitionCount,
@@ -91,7 +106,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 
             Log.WriteLine("{0}", $"StorageRoot={TrinityConfig.StorageRoot}");
 
-            // 
+            // Just setting up the object instance as we should only run a single instance of this class per SF Node instance
 
             lock (SingletonLockObject)
             {
