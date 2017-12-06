@@ -8,6 +8,7 @@ using System.Threading;
 using Trinity.Diagnostics;
 using Trinity.Network;
 using Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces;
+using Trinity.ServiceFabric.GarphEngine.Infrastructure;
 
 namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 {
@@ -16,8 +17,11 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
     /// </summary>
     public class GraphEngineStatefulServiceRuntime: IGraphEngineStatefulServiceRuntime
     {
-        internal NodeContext  NodeContext = null;
-        internal FabricClient FabricClient = null;
+        // We integrate ourselves with Azure Service Fabric here by gaining processing context for
+        // NodeContext and we use the FabricClient to gain deeper data and information required
+        // to setup and drive the Trinity and GraphEngine components.
+        internal NodeContext  NodeContext;
+        internal FabricClient FabricClient;
 
         public List<Partition> Partitions { get; set; }
 
@@ -35,8 +39,13 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 
         public StatefulServiceContext Context { get; private set; }
 
+        private static object SingletonLock
+        {
+            get { return m_singletonLock; }
+        }
+
         public static GraphEngineStatefulServiceRuntime Instance = null;
-        private static object s_lock = new object();
+        private static readonly object m_singletonLock = new object();
 
         /// <summary>
         /// 
@@ -55,15 +64,15 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
                            .OrderBy(p => p.PartitionInformation.Id)
                            .ToList();
 
-            PartitionId = Partitions.FindIndex(p => p.PartitionInformation.Id == context.PartitionId);
+            PartitionId    = Partitions.FindIndex(p => p.PartitionInformation.Id == context.PartitionId);
             PartitionCount = Partitions.Count;
 
-            Port = context.CodePackageActivationContext.GetEndpoint("TrinityProtocolEndpoint").Port;
-            HttpPort = context.CodePackageActivationContext.GetEndpoint("HttpEndpoint").Port;
+            Port     = context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityProtocolEndpoint).Port;
+            HttpPort = context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityHttpProtocolEndpoint).Port;
+            // TBD .. YataoL & Tavi T.
+            //WCFPort = context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityWCFProtocolEndpoint).Port;
 
-            
-
-            lock (s_lock)
+            lock (SingletonLock)
             {
                 if (Instance != null)
                 {

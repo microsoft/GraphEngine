@@ -32,6 +32,18 @@ namespace Trinity.GraphEngine.ServiceFabric.Core
         public ReplicaRole Role { get; }
         public StatefulServiceContext Context { get; private set;}
 
+        private (int PartitionCount, int Port, int HttpPort, string IPAddress, StatefulServiceContext Context)
+            ServiceFabricRuntimeContext
+        {
+            get { return m_serviceFabricRuntimeContext; }
+        }
+
+        internal (int PartitionCount,
+                  int Port,
+                  int HttpPort,
+                  string IPAddress,
+                  StatefulServiceContext Context) m_serviceFabricRuntimeContext;
+
         //  Passive Singleton
         public GraphEngineStatefulServiceCore(StatefulServiceContext context)
         {
