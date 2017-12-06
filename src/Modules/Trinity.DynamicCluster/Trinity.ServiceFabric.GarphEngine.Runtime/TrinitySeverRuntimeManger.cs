@@ -5,18 +5,18 @@ using Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces;
 
 namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 {
-    public class TrinitySeverManager : ITrinityServerManager
+    public class TrinitySeverRuntimeManger : ITrinityServerManager
     {
         private readonly int HttpPort;
         private TrinityServer m_trinityServer;
         private int m_port;
         private object m_partitionId;
 
-        public TrinitySeverManager()
+        public TrinitySeverRuntimeManger()
         {
             var ags = TrinityConfig.CurrentClusterConfig.Servers;
             ags.Clear();
-            ags.Add(new AvailabilityGroup("LOCAL", new ServerInfo("localhost", Port, null, LogLevel.Info)));
+            ags.Add(new AvailabilityGroup(LocalAvailabilityGroup, new ServerInfo(AvailabilityGroupLocalHost, Port, null, LogLevel.Info)));
 
             TrinityConfig.HttpPort = HttpPort;
 

@@ -78,7 +78,7 @@
     <Compile Include="Interfaces\IGraphEngineStatefulServiceRuntime.cs" />
     <Compile Include="Interfaces\ITrinityServerManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TrinitySeverManager.cs" />
+    <Compile Include="TrinitySeverRuntimeManger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
