@@ -84,6 +84,8 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
                                       Role: this.Role,
                                       StatefulServiceContext: context);
 
+            // Okay let's new-up the TrinityServer runtime environment ...
+
             TrinityServerRuntime = new TrinityServerRuntimeManager(ref contextDataPackage);
 
             // TBD .. YataoL & Tavi T.

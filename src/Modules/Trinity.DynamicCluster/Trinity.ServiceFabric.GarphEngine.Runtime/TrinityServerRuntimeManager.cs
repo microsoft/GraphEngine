@@ -23,7 +23,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
         }
 
         /// <summary>
-        /// 
+        /// The Start method will start the Trinity protocol stack listening ..
         /// </summary>
         /// <returns></returns>
         public override TrinityErrorCode Start()
@@ -41,11 +41,11 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
                 if (ServiceFabricTrinityServerInstance == null)
                 {
                     ServiceFabricTrinityServerInstance = new TrinityServer();
-                    Log.WriteLine(LogLevel.Warning, "GraphEngineService: using the default communication instance.");
+                    Log.WriteLine(LogLevel.Warning, "TrinityServer: using the default communication instance.");
                 }
                 else
                 {
-                    Log.WriteLine(LogLevel.Info, "{0}", $"GraphEngineService: using [{ServiceFabricTrinityServerInstance.GetType().Name}] communication instance.");
+                    Log.WriteLine(LogLevel.Info, "{0}", $"TrinityServer: using [{ServiceFabricTrinityServerInstance.GetType().Name}] communication instance.");
                 }
 
                 ServiceFabricTrinityServerInstance.Start();
