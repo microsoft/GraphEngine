@@ -1,128 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Fabric;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
-using Trinity.DynamicCluster;
-using Trinity.Utilities;
-using Trinity.Network;
 using Trinity.Diagnostics;
-using Trinity.Configuration;
-using System.IO;
+using Trinity.ServiceFabric.GarphEngine.Infrastructure;
+using Trinity.ServiceFabric.GraphEngine.Listeners;
 
 namespace Trinity.ServiceFabric
 {
+    /// <inheritdoc />
     /// <summary>
     /// An instance of this class is created for each service replica by the Service Fabric runtime.
     /// </summary>
     public sealed class GraphEngineService : StatefulService
     {
-        private static object s_lock = new object();
-        internal static GraphEngineService Instance = null;
-
-        private TrinityServer m_trinitysvr = null;
-        private NodeContext m_nodectx = null;
-        private FabricClient m_fclient = null;
-        private ReplicaRole m_role = ReplicaRole.Unknown;
-
-        public List<System.Fabric.Query.Partition> Partitions { get; private set; }
-        public int PartitionCount { get; private set; }
-        public int PartitionId { get; private set; }
-
-        public int Port { get; private set; }
-        public int HttpPort { get; private set; }
-        public string Address { get; private set; }
-        public ReplicaRole Role => GetRoleAsync().Result;
-
+        private readonly GraphEngineStatefulServiceRuntime m_graphEngineRuntime;
         //  Passive Singleton
         public GraphEngineService(StatefulServiceContext context)
             : base(context)
         {
-            //  Initialize other fields and properties.
-            m_nodectx = context.NodeContext;
-            m_fclient = new FabricClient();
-            Address = m_nodectx.IPAddressOrFQDN;
-            Partitions = m_fclient.QueryManager
-                        .GetPartitionListAsync(context.ServiceName)
-                        .GetAwaiter().GetResult()
-                        .OrderBy(p => p.PartitionInformation.Id)
-                        .ToList();
-            PartitionId = Partitions.FindIndex(p => p.PartitionInformation.Id == Context.PartitionId);
-            PartitionCount = Partitions.Count;
-            Port = Context.CodePackageActivationContext.GetEndpoint("TrinityProtocolEndpoint").Port;
-            HttpPort = Context.CodePackageActivationContext.GetEndpoint("HttpEndpoint").Port;
-
-            var ags = TrinityConfig.CurrentClusterConfig.Servers;
-            ags.Clear();
-            ags.Add(new AvailabilityGroup("LOCAL", new ServerInfo("localhost", Port, null, LogLevel.Info)));
-            TrinityConfig.HttpPort = HttpPort;
-            Log.WriteLine("{0}", $"WorkingDirectory={Context.CodePackageActivationContext.WorkDirectory}");
-            TrinityConfig.StorageRoot = Path.Combine(Context.CodePackageActivationContext.WorkDirectory, $"P{PartitionId}{Path.GetRandomFileName()}");
-            Log.WriteLine("{0}", $"StorageRoot={TrinityConfig.StorageRoot}");
-
-            lock (s_lock)
-            {
-                if (Instance != null)
-                {
-                    Log.WriteLine(LogLevel.Fatal, "Only one GraphEngineService allowed in one process.");
-                    Thread.Sleep(5000);
-                    Environment.Exit(-1);
-                    //throw new InvalidOperationException("Only one GraphEngineService allowed in one process.");
-                }
-                Instance = this;
-            }
+            m_graphEngineRuntime = new GraphEngineStatefulServiceRuntime(context, StateManager);
         }
 
-        internal TrinityErrorCode Start()
-        {
-            lock (s_lock)
-            {
-                //  Initialize Trinity server.
-                if (m_trinitysvr == null)
-                {
-                    m_trinitysvr = AssemblyUtility.GetAllClassInstances(
-                        t => t != typeof(TrinityServer) ?
-                        t.GetConstructor(new Type[] { }).Invoke(new object[] { }) as TrinityServer :
-                        null)
-                        .FirstOrDefault();
-                }
-                if (m_trinitysvr == null)
-                {
-                    m_trinitysvr = new TrinityServer();
-                    Log.WriteLine(LogLevel.Warning, "GraphEngineService: using the default communication instance.");
-                }
-                else
-                {
-                    Log.WriteLine(LogLevel.Info, "{0}", $"GraphEngineService: using [{m_trinitysvr.GetType().Name}] communication instance.");
-                }
-
-                m_trinitysvr.Start();
-                return TrinityErrorCode.E_SUCCESS;
-            }
-        }
-
-        internal TrinityErrorCode Stop()
-        {
-            lock (s_lock)
-            {
-                m_trinitysvr?.Stop();
-                m_trinitysvr = null;
-                return TrinityErrorCode.E_SUCCESS;
-            }
-        }
-
-        internal async Task<ReplicaRole> GetRoleAsync()
-        {
-            while(m_role != ReplicaRole.ActiveSecondary && m_role != ReplicaRole.Primary)
-            {
-                await Task.Delay(1000);
-            }
-            return m_role;
-        }
+        public GraphEngineStatefulServiceRuntime GraphEngineRuntime => m_graphEngineRuntime;
 
         /// <summary>
         /// Optional override to create listeners (e.g., HTTP, Service Remoting, WCF, etc.) for this service replica to handle client or user requests.
@@ -136,14 +40,15 @@ namespace Trinity.ServiceFabric
             //  See https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-services-communication:
             //  When creating multiple listeners for a service, each listener must be given a unique name.
             return new[] {
-                new ServiceReplicaListener(ctx => new GraphEngineListener(ctx), "GraphEngineTrinityProtocolListener", listenOnSecondary: true),
-                new ServiceReplicaListener(ctx => new GraphEngineHttpListener(ctx), "GraphEngineHttpListener", listenOnSecondary: true),
+                new ServiceReplicaListener(ctx => new GraphEngineListener(GraphEngineRuntime), GraphEngineConstants.TrinityProtocolEndpoint, listenOnSecondary: true),
+                new ServiceReplicaListener(ctx => new GraphEngineHttpListener(GraphEngineRuntime), GraphEngineConstants.TrinityHttpProtocolEndpoint, listenOnSecondary: true),
+                // TODO WCF
             };
         }
 
         protected override Task OnChangeRoleAsync(ReplicaRole newRole, CancellationToken cancellationToken)
         {
-            m_role = newRole;
+            GraphEngineRuntime.Role = newRole;
             Log.WriteLine("{0}", $"Replica {Context.ReplicaOrInstanceId} changed role to {newRole}");
             return base.OnChangeRoleAsync(newRole, cancellationToken);
         }

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceManifest Name="Trinity.ServiceFabric.GraphEngineServicePkg"
-                 Version="1.0.0"
+                 Version="1.0.1"
                  xmlns="http://schemas.microsoft.com/2011/01/fabric"
                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -29,7 +29,7 @@
            listen. Please note that if your service is partitioned, this port is shared with 
            replicas of different partitions that are placed in your code. -->
       <Endpoint Name="TrinityProtocolEndpoint" Protocol="tcp"/>
-      <Endpoint Name="HttpEndpoint" Protocol="tcp"/>
+      <Endpoint Name="TrinityHttpEndpoint" Protocol="tcp"/>
 
       <!-- This endpoint is used by the replicator for replicating the state of your service.
            This endpoint is configured through a ReplicatorSettings config section in the Settings.xml

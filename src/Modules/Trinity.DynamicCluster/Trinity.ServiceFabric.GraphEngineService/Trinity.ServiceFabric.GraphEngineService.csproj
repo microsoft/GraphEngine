@@ -94,12 +94,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GraphEngineHttpListener.cs" />
-    <Compile Include="GraphEngineListener.cs" />
-    <Compile Include="Interfaces\NameService.cs" />
-    <Compile Include="Interfaces\ReliableTaskQueue.cs" />
-    <Compile Include="Interfaces\ServiceFabricChunkTable.cs" />
-    <Compile Include="Interfaces\ServiceFabricHealthManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GraphEngineService.cs" />
     <Compile Include="Program.cs" />
@@ -117,6 +111,14 @@
     <ProjectReference Include="..\Trinity.DynamicCluster\Trinity.DynamicCluster.csproj">
       <Project>{26db9c05-8b53-409f-a1c9-3fd30cfec35c}</Project>
       <Name>Trinity.DynamicCluster</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trinity.ServiceFabric.GarphEngine.Runtime\Trinity.ServiceFabric.GarphEngine.Environment.csproj">
+      <Project>{3433F5A8-DD7D-44D4-A1BB-215D1693DCC7}</Project>
+      <Name>Trinity.ServiceFabric.GarphEngine.Environment</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trinity.ServiceFabric.GraphEngine.Listeners\Trinity.ServiceFabric.GraphEngine.ListenerRuntime.csproj">
+      <Project>{298FC3D1-EBEE-4EF7-A6C9-C7241EDDA8F6}</Project>
+      <Name>Trinity.ServiceFabric.GraphEngine.ListenerRuntime</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

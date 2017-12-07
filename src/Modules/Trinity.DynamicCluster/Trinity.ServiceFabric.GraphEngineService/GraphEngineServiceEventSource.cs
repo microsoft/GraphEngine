@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Fabric;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.ServiceFabric.Services.Runtime;
 using Trinity.Diagnostics;
 using Trinity.DynamicCluster;
+using Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces;
+using Trinity.ServiceFabric.GarphEngine.Infrastructure;
 
 namespace Trinity.ServiceFabric
 {
@@ -66,8 +65,9 @@ namespace Trinity.ServiceFabric
         private string EnsureLogHeader()
         {
             if (m_logheader != null) return m_logheader;
-            if (GraphEngineService.Instance == null) return "";
-            m_logheader = $"[P{GraphEngineService.Instance.PartitionId}-{Utils.GenerateNickName(NameService.GetInstanceId(GraphEngineService.Instance.Context.ReplicaId, GraphEngineService.Instance.PartitionId))}]\t";
+            if (GraphEngineStatefulServiceRuntime.Instance == null) return string.Empty;
+
+            m_logheader = $"[P{GraphEngineStatefulServiceRuntime.Instance.PartitionId}-{Utils.GenerateNickName(GraphEngineStatefulServiceRuntime.Instance.GetInstanceId())}]\t";
             return m_logheader;
         }
 

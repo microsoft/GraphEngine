@@ -1,7 +1,7 @@
 @echo off
 
-if [%REPO_ROOT%] == [] (
-  set "REPO_ROOT=%cd%\..\..\.."
+if ["%REPO_ROOT%"] == [""] (
+  set REPO_ROOT=%cd%\..\..\..
 )
 
 call "%REPO_ROOT%\tools\setenv.bat"
