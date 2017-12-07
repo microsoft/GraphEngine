@@ -12,7 +12,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
         int Port { get; }
         int HttpPort { get; }
         string Address { get; }
-        ReplicaRole Role { get; }
+        //ReplicaRole Role { get; }
         StatefulServiceContext Context { get; }
     }
 }

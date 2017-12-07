@@ -23,7 +23,7 @@ namespace Trinity.ServiceFabric
         public GraphEngineService(StatefulServiceContext context)
             : base(context)
         {
-            m_graphEngineRuntime = new GraphEngineStatefulServiceRuntime(context);
+            m_graphEngineRuntime = new GraphEngineStatefulServiceRuntime(context, StateManager);
         }
 
         public GraphEngineStatefulServiceRuntime GraphEngineRuntime => m_graphEngineRuntime;
@@ -42,6 +42,7 @@ namespace Trinity.ServiceFabric
             return new[] {
                 new ServiceReplicaListener(ctx => new GraphEngineListener(GraphEngineRuntime), GraphEngineConstants.TrinityProtocolEndpoint, listenOnSecondary: true),
                 new ServiceReplicaListener(ctx => new GraphEngineHttpListener(GraphEngineRuntime), GraphEngineConstants.TrinityHttpProtocolEndpoint, listenOnSecondary: true),
+                // TODO WCF
             };
         }
 

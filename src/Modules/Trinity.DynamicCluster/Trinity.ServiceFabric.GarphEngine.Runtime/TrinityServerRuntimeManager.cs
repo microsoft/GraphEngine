@@ -17,7 +17,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
                                                int Port, 
                                                int HttpPort, 
                                                string IPAddress, 
-                                               ReplicaRole Role, 
+                                               //ReplicaRole Role, 
                                                StatefulServiceContext Context) runtimeContext) : base(ref runtimeContext)
         {
         }

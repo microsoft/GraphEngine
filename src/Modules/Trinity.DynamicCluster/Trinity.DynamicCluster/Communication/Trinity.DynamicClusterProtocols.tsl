@@ -1,11 +1,6 @@
-enum EventType
+struct RemoteTaskRequest
 {
-}
-
-struct _QueryChunkedRemoteStorageInformationReuslt
-{
-	StorageInformation info;
-    List<ChunkInformation> chunks;
+	string Task;
 }
 
 struct ChunkInformation
@@ -21,21 +16,21 @@ struct StorageInformation
 	Guid id;
 }
 
-protocol QueryChunkedRemoteStorageInformation
-{
-    Type: Syn;
-    Request: void;
-    Response: _QueryChunkedRemoteStorageInformationReuslt;	
-}
-
 protocol NotifyRemoteStorageOnLeaving
 {
     Type: Asyn;
     Request: StorageInformation;
 }
 
+protocol RemoteTask
+{
+	Type: Syn;
+	Request: RemoteTaskRequest;
+	Response: void;
+}
+
 module DynamicCluster
 {
-    protocol QueryChunkedRemoteStorageInformation;
 	protocol NotifyRemoteStorageOnLeaving;
+	protocol RemoteTask;
 }

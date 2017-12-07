@@ -9,14 +9,14 @@ using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Storage
 {
-    public unsafe partial class DynamicMemoryCloud
+    public partial class DynamicMemoryCloud
     {
         public override unsafe void SendMessageToServer(int serverId, byte* buffer, int size)
         {
             if (serverId >= 0)
                 base.SendMessageToServer(serverId, buffer, size);
             else
-                temporaryRemoteStorageRepo[serverId].SendMessage(buffer, size);
+                m_tmp_rs_repo[serverId].SendMessage(buffer, size);
         }
 
         public override unsafe void SendMessageToServer(int serverId, byte* buffer, int size, out TrinityResponse response)
@@ -24,7 +24,7 @@ namespace Trinity.DynamicCluster.Storage
             if (serverId >= 0)
                 base.SendMessageToServer(serverId, buffer, size, out response);
             else
-                temporaryRemoteStorageRepo[serverId].SendMessage(buffer, size, out response);
+                m_tmp_rs_repo[serverId].SendMessage(buffer, size, out response);
         }
 
         #region Proxies
@@ -45,7 +45,7 @@ namespace Trinity.DynamicCluster.Storage
         /// <param name="proxyId">A 32-bit proxy id.</param>
         /// <param name="buffer">A binary message buffer.</param>
         /// <param name="size">The size of the message.</param>
-        public override void SendMessageToProxy(int proxyId, byte* buffer, int size)
+        public override unsafe void SendMessageToProxy(int proxyId, byte* buffer, int size)
         {
             throw new NotImplementedException();
         }
@@ -57,7 +57,7 @@ namespace Trinity.DynamicCluster.Storage
         /// <param name="buffer">A binary message buffer.</param>
         /// <param name="size">The size of the message.</param>
         /// <param name="response">The TrinityResponse object returned by the Trinity proxy.</param>
-        public override void SendMessageToProxy(int proxyId, byte* buffer, int size, out TrinityResponse response)
+        public override unsafe void SendMessageToProxy(int proxyId, byte* buffer, int size, out TrinityResponse response)
         {
             throw new NotImplementedException();
         }

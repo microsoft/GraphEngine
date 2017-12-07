@@ -56,9 +56,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Consensus\IHealthManager.cs" />
     <Compile Include="Consensus\ITaskQueue.cs" />
-    <Compile Include="Consensus\IPartitioner.cs" />
+    <Compile Include="Consensus\IChunkTable.cs" />
     <Compile Include="Consensus\IService.cs" />
+    <Compile Include="DynamicMemoryCloud\ReplicaInformation.cs" />
     <Compile Include="Storage\Partition.cs" />
     <Compile Include="Communication\DynamicClusterCommModule.cs" />
     <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.Cmd.cs" />
@@ -70,7 +72,12 @@
     <Compile Include="Consensus\INameService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Storage\Partition.Message.cs" />
+    <Compile Include="Storage\Partitioner.cs" />
+    <Compile Include="Health\HealthStatus.cs" />
+    <Compile Include="Storage\ReplicationMode.cs" />
+    <Compile Include="Tasks\Executor.cs" />
     <Compile Include="Tasks\ITask.cs" />
+    <Compile Include="Tasks\NopTask.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
