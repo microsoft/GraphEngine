@@ -32,11 +32,11 @@ namespace Trinity.ServiceFabric.GraphEngine.Listeners
             return Task.FromResult(0);
         }
 
-        public Task<string> OpenAsync(CancellationToken cancellationToken)
+        public async Task<string> OpenAsync(CancellationToken cancellationToken)
         {
             Debug.Assert(GraphEngineRuntime != null, nameof(GraphEngineRuntime) + " != null");
-            GraphEngineRuntime.TrinityServerRuntime.Start();
-            return Task.FromResult($"tcp://{GraphEngineRuntime.TrinityServerRuntime.Address}:{GraphEngineRuntime.TrinityServerRuntime.Port}");
+            await Task.Run(() => GraphEngineRuntime.TrinityServerRuntime.Start());
+            return $"tcp://{GraphEngineRuntime.TrinityServerRuntime.Address}:{GraphEngineRuntime.TrinityServerRuntime.Port}";
         }
     }
 }

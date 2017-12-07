@@ -5,13 +5,53 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Trinity.Core.Lib;
+using Trinity.Diagnostics;
+using Trinity.DynamicCluster.Consensus;
 
 namespace Trinity.DynamicCluster
 {
     public static class Utils
     {
+        /// <summary>
+        /// Spawns a daemon task running intervally, until the cancellation token is fired.
+        /// </summary>
+        public static async Task Daemon(CancellationToken cancel, string name, int delay, Func<Task> daemonProc)
+        {
+            while (!cancel.IsCancellationRequested)
+            {
+                try
+                {
+                    await daemonProc();
+                    await Task.Delay(delay, cancel);
+                }
+                catch (TaskCanceledException)
+                {
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, $"{name}: {ex.ToString()}");
+                    await Task.Delay(1000, cancel);
+                }
+            }
+        }
+
+        public static void Deconstruct<T>(this T[] array, out T t1, out T t2)
+        {
+            t1 = array[0];
+            t2 = array[1];
+        }
+
+        public static void Deconstruct<T>(this T[] array, out T t1, out T t2, out T t3)
+        {
+            t1 = array[0];
+            t2 = array[1];
+            t3 = array[2];
+        }
+
         public static IEnumerable<T> Infinity<T>(Func<T> IO)
         {
             while (true)
@@ -20,9 +60,14 @@ namespace Trinity.DynamicCluster
             }
         }
 
+        public static IEnumerable<T> Infinity<T>() where T : new()
+        {
+            return Infinity(New<T>);
+        }
+
         public static IEnumerable<T> ForEach<T>(this IEnumerable<T> list, Action<T> action)
         {
-            foreach(var obj in list)
+            foreach (var obj in list)
             {
                 action(obj);
             }
@@ -32,7 +77,7 @@ namespace Trinity.DynamicCluster
         public static IEnumerable<T> ForEach<T>(this IEnumerable<T> list, Action<int, T> action)
         {
             int idx = 0;
-            foreach(var obj in list)
+            foreach (var obj in list)
             {
                 action(idx++, obj);
             }
@@ -47,6 +92,18 @@ namespace Trinity.DynamicCluster
                 yield return i++;
             }
         }
+
+        public static IEnumerable<int> Integers(int count)
+        {
+            return Integers().Take(count);
+        }
+
+        public static T New<T>() where T : new()
+        {
+            return new T();
+        }
+
+        public static T Identity<T>(T _) => _;
 
         public static Guid GetMachineGuid()
         {

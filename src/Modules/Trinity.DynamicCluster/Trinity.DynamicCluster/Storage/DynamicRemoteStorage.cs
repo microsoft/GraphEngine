@@ -9,23 +9,20 @@ using Trinity.Network;
 using Trinity.Network.Messaging;
 using Trinity.Storage;
 
-namespace Trinity.DynamicCluster
+namespace Trinity.DynamicCluster.Storage
 {
     class DynamicRemoteStorage : RemoteStorage
     {
 
-        public DynamicRemoteStorage(ServerInfo server_info, int connPerServer, MemoryCloud mc, int pid, bool nonblocking) 
-            : base(new[] { server_info }, connPerServer, mc, pid, nonblocking) { }
-
-        public string NickName { get; private set; }
-        public Guid Id { get; private set; }
-
-        internal void SetId(Guid id, int partitionId)
+        public DynamicRemoteStorage(ReplicaInformation server_info, int connPerServer, MemoryCloud mc)
+            : base(new[] { new ServerInfo(server_info.Address, server_info.Port, null, LogLevel.Info) }, connPerServer, mc, server_info.PartitionId, nonblocking: true)
         {
-            Id = id;
-            PartitionId = partitionId;
-            NickName = Utils.GenerateNickName(id);
+            ReplicaInformation = server_info;
+            NickName = Utils.GenerateNickName(ReplicaInformation.Id);
         }
+
+        public string NickName { get; }
+        public ReplicaInformation ReplicaInformation { get; }
 
         public override unsafe void SendMessage(byte* buffer, int size)
         {

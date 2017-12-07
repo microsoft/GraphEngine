@@ -9,13 +9,15 @@ using Trinity.Diagnostics;
 using Trinity.Network;
 using Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces;
 using Trinity.ServiceFabric.GarphEngine.Infrastructure;
+using Microsoft.ServiceFabric.Data;
+using System.Threading.Tasks;
 
 namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 {
     /// <summary>
     /// 
     /// </summary>
-    public class GraphEngineStatefulServiceRuntime: IGraphEngineStatefulServiceRuntime
+    public class GraphEngineStatefulServiceRuntime : IGraphEngineStatefulServiceRuntime
     {
         // We integrate ourselves with Azure Service Fabric here by gaining processing context for
         // NodeContext and we use the FabricClient to gain deeper data and information required
@@ -23,7 +25,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
         internal NodeContext  NodeContext;
         internal FabricClient FabricClient;
 
-        public TrinityServerRuntimeManager m_trinityServerRuntime = null;
+        public volatile TrinityServerRuntimeManager m_trinityServerRuntime = null;
 
         public List<System.Fabric.Query.Partition> Partitions { get; set; }
 
@@ -40,26 +42,45 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
         public ReplicaRole Role { get; set; }
 
         public StatefulServiceContext Context { get; private set; }
+        public IReliableStateManager StateManager { get; }
 
         private static object SingletonLockObject => m_singletonLockObject;
 
         public TrinityServerRuntimeManager TrinityServerRuntime
         {
-            get => m_trinityServerRuntime;
+            get
+            {
+                TrinityServerRuntimeManager runtime_mgr;
+                while (null == (runtime_mgr = m_trinityServerRuntime)) Thread.Sleep(1000);
+                return runtime_mgr;
+            }
             private set => m_trinityServerRuntime = value;
         }
 
         public static GraphEngineStatefulServiceRuntime Instance = null;
+
+        internal async Task<ReplicaRole> GetRoleAsync()
+        {
+            while (true)
+            {
+                var role = this.Role;
+                if (role != ReplicaRole.None && role != ReplicaRole.Unknown && role != ReplicaRole.IdleSecondary)
+                    return role;
+                await Task.Delay(1000);
+            }
+        }
+
         private static readonly object m_singletonLockObject = new object();
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="context"></param>
-        public GraphEngineStatefulServiceRuntime(StatefulServiceContext context)
+        public GraphEngineStatefulServiceRuntime(StatefulServiceContext context, IReliableStateManager stateManager)
         {
             //  Initialize other fields and properties.
-            this.Context = context;
+            Context      = context;
+            StateManager = stateManager;
             NodeContext  = context.NodeContext;
             FabricClient = new FabricClient();
             Address      = NodeContext.IPAddressOrFQDN;
@@ -81,7 +102,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
                                       Port: this.Port,
                                       HttpPort: this.HttpPort,
                                       IPAddress: this.Address,
-                                      Role: this.Role,
+                                      //Role: this.Role,
                                       StatefulServiceContext: context);
 
             // Okay let's new-up the TrinityServer runtime environment ...
@@ -102,6 +123,13 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
                 }
                 Instance = this;
             }
+        }
+
+        public Guid GetInstanceId()
+        {
+            var replicaId = GraphEngineStatefulServiceRuntime.Instance.Context.ReplicaId;
+            var partitionId = GraphEngineStatefulServiceRuntime.Instance.PartitionId;
+            return NameService.GetInstanceId(replicaId, partitionId);
         }
     }
 }

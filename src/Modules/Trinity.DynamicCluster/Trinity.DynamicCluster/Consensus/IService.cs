@@ -14,7 +14,7 @@ namespace Trinity.DynamicCluster.Consensus
         /// of the cancellation token, which will be fired on instance
         /// shutdown.
         /// </summary>
-        TrinityErrorCode Start(CancellationToken cancellationToken);
+        void Start(CancellationToken cancellationToken);
         /// <summary>
         /// Indicates whether the service is a master replica with
         /// read/write access to the persistent states.

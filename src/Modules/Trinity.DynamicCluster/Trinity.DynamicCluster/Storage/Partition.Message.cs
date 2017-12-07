@@ -43,17 +43,14 @@ namespace Trinity.DynamicCluster.Storage
             m_storages.Keys.ForEach(s => s.SendMessage(message, size));
         }
 
-        public void Broadcast(TrinityMessage message, out TrinityResponse response)
+        public void Broadcast(TrinityMessage message, out TrinityResponse[] response)
         {
-            // TODO what does it mean to broadcast with response?
-            // See comments below for message group.
-            throw new NotImplementedException();
+            response = m_storages.Keys.Select(s => { s.SendMessage(message, out var rsp); return rsp; }).ToArray();
         }
 
-        public void Broadcast(byte* message, int size, out TrinityResponse response)
+        public void Broadcast(byte* message, int size, out TrinityResponse[] response)
         {
-            // TODO
-            throw new NotImplementedException();
+            response = m_storages.Keys.Select(s => { s.SendMessage(message, size, out var rsp); return rsp; }).ToArray();
         }
 
         // TODO Round-robin
@@ -63,7 +60,7 @@ namespace Trinity.DynamicCluster.Storage
         // TODO chunk-aware dispatch and message grouping. Some protocols (like FanoutSearch)
         // combines multiple cellIds into a single message. In this case we should provide a
         // mechanism to allocate a group of messages, each representing a chunk set. On dispatch,
-        // these messages will be sent to the 
+        // these messages will be sent to the correct replica.
 
         // TODO send message to a specific storage, identified by a GUID. This works for situations
         // where a temporary state is attached to a specific storage.

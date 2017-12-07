@@ -30,16 +30,8 @@ namespace Trinity.DynamicCluster.Storage
     {
         private ConcurrentDictionary<Storage, IEnumerable<Chunk>> m_storages = new ConcurrentDictionary<Storage, IEnumerable<Chunk>>();
 
-        internal TrinityErrorCode Mount(Storage storage, _QueryChunkedRemoteStorageInformationReusltReader info)
-        {
-            List<Chunk> chunks = new List<Chunk>();
-            info.chunks.ForEach(ci => chunks.Add(new Chunk(ci.lowKey, ci.highKey, storage, ci.id)));
-            return Mount(storage, chunks);
-        }
-
         internal TrinityErrorCode Mount(Storage storage, IEnumerable<Chunk> cc)
         {
-            //bool storage_exists = m_chunks.ContainsKey(storage);
             m_storages[storage] = cc;
             return TrinityErrorCode.E_SUCCESS;
         }

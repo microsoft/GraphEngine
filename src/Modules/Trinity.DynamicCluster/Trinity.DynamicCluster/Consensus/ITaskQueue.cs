@@ -53,14 +53,22 @@ namespace Trinity.DynamicCluster.Consensus
         /// should be able to fetch it again unless the current instance crashed without marking
         /// the task completed.
         /// </returns>
-        ITask GetTask(CancellationToken token);
+        Task<ITask> GetTask(CancellationToken token);
         /// <summary>
         /// Reports completion of a task, and removes it from the system.
         /// </summary>
-        void TaskCompleted(ITask task);
+        Task TaskCompleted(ITask task);
         /// <summary>
         /// Reports failure of a task, and put it back into the queue.
         /// </summary>
-        void TaskFailed(ITask task);
+        Task TaskFailed(ITask task);
+        /// <summary>
+        /// Post a new task to a partition. The behavior
+        /// is undefined when executed on a task queue slave.
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="partitionId"></param>
+        /// <returns></returns>
+        Task PostTask(ITask task, int partitionId);
     }
 }

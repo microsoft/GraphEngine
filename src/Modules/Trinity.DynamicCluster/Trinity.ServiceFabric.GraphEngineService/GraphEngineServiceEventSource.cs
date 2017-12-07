@@ -66,7 +66,8 @@ namespace Trinity.ServiceFabric
         {
             if (m_logheader != null) return m_logheader;
             if (GraphEngineStatefulServiceRuntime.Instance == null) return string.Empty;
-            m_logheader = $"[P{GraphEngineStatefulServiceRuntime.Instance.PartitionId}-{Utils.GenerateNickName(NameService.GetInstanceId())}]\t";
+
+            m_logheader = $"[P{GraphEngineStatefulServiceRuntime.Instance.PartitionId}-{Utils.GenerateNickName(GraphEngineStatefulServiceRuntime.Instance.GetInstanceId())}]\t";
             return m_logheader;
         }
 
