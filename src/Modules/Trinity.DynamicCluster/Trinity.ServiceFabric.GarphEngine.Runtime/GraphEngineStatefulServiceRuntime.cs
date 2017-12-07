@@ -27,33 +27,30 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 
         public List<System.Fabric.Query.Partition> Partitions { get; set; }
 
-        public int PartitionCount { get; set; }
+        public int PartitionCount { get; private set; }
 
-        public int PartitionId { get; set; }
+        public int PartitionId { get; private set; }
 
-        public int Port { get; set; }
+        public int Port { get; private set; }
 
-        public int HttpPort { get; set; }
+        public int HttpPort { get; private set; }
 
-        public string Address { get; set; }
+        public string Address { get; private set; }
 
-        public ReplicaRole Role { get; set; }
+        public ReplicaRole Role { get; private set; }
 
         public StatefulServiceContext Context { get; private set; }
 
-        private static object SingletonLock
-        {
-            get { return m_singletonLock; }
-        }
+        private static object SingletonLockObject => m_singletonLockObject;
 
         public TrinityServerRuntimeManager TrinityServerRuntime
         {
-            get { return m_trinityServerRuntime; }
-            private set { m_trinityServerRuntime = value; }
+            get => m_trinityServerRuntime;
+            private set => m_trinityServerRuntime = value;
         }
 
         public static GraphEngineStatefulServiceRuntime Instance = null;
-        private static readonly object m_singletonLock = new object();
+        private static readonly object m_singletonLockObject = new object();
 
         /// <summary>
         /// 
@@ -92,7 +89,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
             // TBD .. YataoL & Tavi T.
             //WCFPort = context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityWCFProtocolEndpoint).Port;
 
-            lock (SingletonLock)
+            lock (SingletonLockObject)
             {
                 if (Instance != null)
                 {
