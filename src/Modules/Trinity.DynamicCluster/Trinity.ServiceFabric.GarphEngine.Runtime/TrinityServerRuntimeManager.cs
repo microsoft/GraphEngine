@@ -54,7 +54,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
         }
 
         /// <summary>
-        /// 
+        /// Execute orderly shutdown of the TrinityServer
         /// </summary>
         /// <returns></returns>
         public override TrinityErrorCode Stop()
