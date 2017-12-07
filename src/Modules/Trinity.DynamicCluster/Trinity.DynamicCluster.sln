@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trinity Server Servic Fabri
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.ServiceFabric.GraphEngine.ListenerRuntime", "Trinity.ServiceFabric.GraphEngine.Listeners\Trinity.ServiceFabric.GraphEngine.ListenerRuntime.csproj", "{298FC3D1-EBEE-4EF7-A6C9-C7241EDDA8F6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GraphEngine to Service Fabric Demo", "GraphEngine to Service Fabric Demo", "{C2A6720A-EBA6-49FB-B263-99919D1D2DF1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +84,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{0F44632E-1A7F-463F-954C-A84A7B1A4F69} = {C2A6720A-EBA6-49FB-B263-99919D1D2DF1}
+		{3299B302-8F94-4DB7-9331-F53F41E3E2AB} = {C2A6720A-EBA6-49FB-B263-99919D1D2DF1}
 		{3433F5A8-DD7D-44D4-A1BB-215D1693DCC7} = {F367827B-0CF9-4249-B5F7-C39A9F93304F}
 		{298FC3D1-EBEE-4EF7-A6C9-C7241EDDA8F6} = {6AE37A73-AEE7-4936-85AB-38E7599FDE33}
 	EndGlobalSection

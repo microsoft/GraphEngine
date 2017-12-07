@@ -2,73 +2,27 @@
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Fabric;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using Trinity.Diagnostics;
-using Trinity.DynamicCluster;
-using Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces;
-using Trinity.ServiceFabric.GarphEngine.Infrastructure;
+using Microsoft.ServiceFabric.Services.Runtime;
 
-namespace Trinity.ServiceFabric
+namespace GraphEngine.Demo.StatefulService
 {
-    [EventSource(Name = "Microsoft-GraphEngineService-Trinity.ServiceFabric.GraphEngineService")]
-    internal sealed class GraphEngineServiceEventSource : EventSource
+    [EventSource(Name = "MyCompany-Trinity.ServiceFabric.GraphEngine.StatefulDemoApp-GraphEngine.Demo.StatefulService")]
+    internal sealed class ServiceEventSource : EventSource
     {
-        public static readonly GraphEngineServiceEventSource Current = new GraphEngineServiceEventSource();
+        public static readonly ServiceEventSource Current = new ServiceEventSource();
 
-        static GraphEngineServiceEventSource()
+        static ServiceEventSource()
         {
             // A workaround for the problem where ETW activities do not get tracked until Tasks infrastructure is initialized.
             // This problem will be fixed in .NET Framework 4.6.2.
             Task.Run(() => { });
         }
 
-        private Dictionary<LogLevel, Action<string>> m_logprocs = null;
-        private string m_logheader = null;
         // Instance constructor is private to enforce singleton semantics
-        private GraphEngineServiceEventSource() : base()
-        {
-            m_logprocs = new Dictionary<LogLevel, Action<string>>
-            {
-                { LogLevel.Debug, GraphEngineLogDebug },
-                { LogLevel.Error, GraphEngineLogErr },
-                { LogLevel.Fatal, GraphEngineLogFatal },
-                { LogLevel.Info, GraphEngineLogInfo },
-                { LogLevel.Verbose, GraphEngineLogVerbose },
-                { LogLevel.Warning, GraphEngineLogWarn },
-            };
-
-            TrinityConfig.LogToFile = false;
-            Log.LogsWritten += GraphEngineLogsWritten;
-            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
-        }
-
-        [NonEvent]
-        private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            Log.WriteLine(LogLevel.Fatal, "{0}", $"Unhandled exception: {e.ExceptionObject.ToString()}.");
-        }
-
-        [NonEvent]
-        private void GraphEngineLogsWritten(IList<LOG_ENTRY> logs)
-        {
-            var header = EnsureLogHeader();
-            foreach (var log in logs)
-            {
-                string msg = $"{header}{log.logMessage}";
-                Action<string> logproc = _ => { };
-                m_logprocs.TryGetValue(log.logLevel, out logproc);
-                logproc(msg);
-            }
-        }
-
-        [NonEvent]
-        private string EnsureLogHeader()
-        {
-            if (m_logheader != null) return m_logheader;
-            if (GraphEngineStatefulServiceRuntime.Instance == null) return string.Empty;
-            m_logheader = $"[P{GraphEngineStatefulServiceRuntime.Instance.PartitionId}-{Utils.GenerateNickName(NameService.GetInstanceId())}]\t";
-            return m_logheader;
-        }
+        private ServiceEventSource() : base() { }
 
         #region Keywords
         // Event keywords can be used to categorize events. 
@@ -78,7 +32,6 @@ namespace Trinity.ServiceFabric
         {
             public const EventKeywords Requests = (EventKeywords)0x1L;
             public const EventKeywords ServiceInitialization = (EventKeywords)0x2L;
-            public const EventKeywords GraphEngineLog = (EventKeywords)0x4L;
         }
         #endregion
 
@@ -198,48 +151,6 @@ namespace Trinity.ServiceFabric
         public void ServiceRequestStop(string requestTypeName, string exception = "")
         {
             WriteEvent(ServiceRequestStopEventId, requestTypeName, exception);
-        }
-
-        private const int GraphEngineLogInfoEventId = 7;
-        [Event(GraphEngineLogInfoEventId, Level = EventLevel.Informational, Message = "{0}", Keywords = Keywords.GraphEngineLog)]
-        public void GraphEngineLogInfo(string message)
-        {
-            WriteEvent(GraphEngineLogInfoEventId, message);
-        }
-
-        private const int GraphEngineLogWarnEventId = 8;
-        [Event(GraphEngineLogWarnEventId, Level = EventLevel.Warning, Message = "{0}", Keywords = Keywords.GraphEngineLog)]
-        public void GraphEngineLogWarn(string message)
-        {
-            WriteEvent(GraphEngineLogWarnEventId, message);
-        }
-
-        private const int GraphEngineLogErrEventId = 9;
-        [Event(GraphEngineLogErrEventId, Level = EventLevel.Error, Message = "{0}", Keywords = Keywords.GraphEngineLog)]
-        public void GraphEngineLogErr(string message)
-        {
-            WriteEvent(GraphEngineLogErrEventId, message);
-        }
-
-        private const int GraphEngineLogDebugEventId = 10;
-        [Event(GraphEngineLogDebugEventId, Level = EventLevel.Verbose, Message = "{0}", Keywords = Keywords.GraphEngineLog)]
-        public void GraphEngineLogDebug(string message)
-        {
-            WriteEvent(GraphEngineLogDebugEventId, message);
-        }
-
-        private const int GraphEngineLogFatalEventId = 11;
-        [Event(GraphEngineLogFatalEventId, Level = EventLevel.Critical, Message = "{0}", Keywords = Keywords.GraphEngineLog)]
-        public void GraphEngineLogFatal(string message)
-        {
-            WriteEvent(GraphEngineLogFatalEventId, message);
-        }
-
-        private const int GraphEngineLogVerboseEventId = 12;
-        [Event(GraphEngineLogVerboseEventId, Level = EventLevel.Verbose, Message = "{0}", Keywords = Keywords.GraphEngineLog)]
-        public void GraphEngineLogVerbose(string message)
-        {
-            WriteEvent(GraphEngineLogVerboseEventId, message);
         }
         #endregion
 

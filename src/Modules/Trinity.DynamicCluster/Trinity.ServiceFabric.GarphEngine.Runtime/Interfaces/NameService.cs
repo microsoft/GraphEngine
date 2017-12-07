@@ -1,23 +1,16 @@
-﻿using Microsoft.ServiceFabric.Services.Client;
-using Microsoft.ServiceFabric.Services.Runtime;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Fabric;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Numerics;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Trinity.Daemon;
+using Newtonsoft.Json.Linq;
 using Trinity.Diagnostics;
-using Trinity.DynamicCluster;
 using Trinity.DynamicCluster.Consensus;
 using Trinity.Network;
 
-namespace Trinity.ServiceFabric
+namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
 {
     public class NameService : INameService
     {
@@ -29,30 +22,30 @@ namespace Trinity.ServiceFabric
         private FabricClient m_fclient;
         private Uri m_svcuri;
 
-        public string Address => GraphEngineService.Instance.Address;
+        public string Address => GraphEngineStatefulServiceRuntime.Instance.Address;
 
-        public int Port => GraphEngineService.Instance.Port;
+        public int Port => GraphEngineStatefulServiceRuntime.Instance.Port;
 
-        public int HttpPort => GraphEngineService.Instance.HttpPort;
+        public int HttpPort => GraphEngineStatefulServiceRuntime.Instance.HttpPort;
 
         public Guid InstanceId { get; private set; }
 
-        public bool IsMaster => GraphEngineService.Instance?.Role == ReplicaRole.Primary;
+        public bool IsMaster => GraphEngineStatefulServiceRuntime.Instance?.Role == ReplicaRole.Primary;
 
 
         public NameService()
         {
             InstanceId = GetInstanceId();
-            m_partitionIds = GraphEngineService.Instance.Partitions.Select(_ => _.PartitionInformation.Id).ToList();
+            m_partitionIds = GraphEngineStatefulServiceRuntime.Instance.Partitions.Select(_ => _.PartitionInformation.Id).ToList();
             m_replicaList = Enumerable.ToDictionary(m_partitionIds, _ => _, _ => new HashSet<string>());
-            m_svcuri = GraphEngineService.Instance.Context.ServiceName;
+            m_svcuri = GraphEngineStatefulServiceRuntime.Instance.Context.ServiceName;
             m_fclient = new FabricClient();
         }
 
-        internal static Guid GetInstanceId()
+        public static Guid GetInstanceId()
         {
-            BigInteger low = new BigInteger(GraphEngineService.Instance.Context.ReplicaId);
-            BigInteger high = new BigInteger(GraphEngineService.Instance.PartitionId) << 64;
+            BigInteger low = new BigInteger(GraphEngineStatefulServiceRuntime.Instance.Context.ReplicaId);
+            BigInteger high = new BigInteger(GraphEngineStatefulServiceRuntime.Instance.PartitionId) << 64;
             var guid = new Guid(Enumerable.Concat((low + high).ToByteArray(),
                                         Enumerable.Repeat<byte>(0x0, 16))
                                        .Take(16).ToArray());
@@ -105,7 +98,7 @@ namespace Trinity.ServiceFabric
             newset.ExceptWith(oldset);
             foreach (var addr in newset)
             {
-                var ents = addr.Substring("tcp://".Length).Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                var ents = addr.Substring($"tcp://".Length).Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                 if ($"{ents[0]}:{ents[1]}" == $"{this.Address}:{this.Port}") continue;
                 Log.WriteLine("{0}", $"NameService: {addr} added to partition {m_partitionIds.FindIndex(_ => _ == id)} ({id})");
                 NewServerInfoPublished(this, new ServerInfo(ents[0], int.Parse(ents[1]), null, LogLevel.Info));
@@ -118,7 +111,10 @@ namespace Trinity.ServiceFabric
         {
             var rs = await m_fclient.QueryManager.GetReplicaListAsync(partId);
             //rs.ForEach(r => Log.WriteLine("{0}", r.ReplicaAddress));
-            var addrs = rs.Select(r => GetTrinityProtocolEndpoint(r)).Where(_ => _ != null);
+            var addrs = rs.Select(r =>
+            {
+                return GetTrinityProtocolEndpoint(r);
+            }).Where(_ => _ != null);
             return new HashSet<string>(addrs);
         }
 

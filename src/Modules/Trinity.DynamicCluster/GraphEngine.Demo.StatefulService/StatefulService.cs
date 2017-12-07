@@ -1,32 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Fabric;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
-using Trinity.Diagnostics;
-using Trinity.ServiceFabric.GarphEngine.Infrastructure;
-using Trinity.ServiceFabric.GraphEngine.Listeners;
 
-namespace Trinity.ServiceFabric
+namespace GraphEngine.Demo.StatefulService
 {
-    /// <inheritdoc />
     /// <summary>
     /// An instance of this class is created for each service replica by the Service Fabric runtime.
     /// </summary>
-    public sealed class GraphEngineService : StatefulService
+    internal sealed class StatefulService : StatefulService
     {
-        private readonly GraphEngineStatefulServiceRuntime m_graphEngineRuntime;
-        //  Passive Singleton
-        public GraphEngineService(StatefulServiceContext context)
+        public StatefulService(StatefulServiceContext context)
             : base(context)
-        {
-            m_graphEngineRuntime = new GraphEngineStatefulServiceRuntime(context);
-        }
-
-        public GraphEngineStatefulServiceRuntime GraphEngineRuntime => m_graphEngineRuntime;
+        { }
 
         /// <summary>
         /// Optional override to create listeners (e.g., HTTP, Service Remoting, WCF, etc.) for this service replica to handle client or user requests.
@@ -37,19 +28,7 @@ namespace Trinity.ServiceFabric
         /// <returns>A collection of listeners.</returns>
         protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
         {
-            //  See https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-services-communication:
-            //  When creating multiple listeners for a service, each listener must be given a unique name.
-            return new[] {
-                new ServiceReplicaListener(ctx => new GraphEngineListener(GraphEngineRuntime), GraphEngineConstants.TrinityProtocolEndpoint, listenOnSecondary: true),
-                new ServiceReplicaListener(ctx => new GraphEngineHttpListener(GraphEngineRuntime), GraphEngineConstants.TrinityHttpProtocolEndpoint, listenOnSecondary: true),
-            };
-        }
-
-        protected override Task OnChangeRoleAsync(ReplicaRole newRole, CancellationToken cancellationToken)
-        {
-            GraphEngineRuntime.Role = newRole;
-            Log.WriteLine("{0}", $"Replica {Context.ReplicaOrInstanceId} changed role to {newRole}");
-            return base.OnChangeRoleAsync(newRole, cancellationToken);
+            return new ServiceReplicaListener[0];
         }
 
         /// <summary>
@@ -72,8 +51,8 @@ namespace Trinity.ServiceFabric
                 {
                     var result = await myDictionary.TryGetValueAsync(tx, "Counter");
 
-                    //GraphEngineServiceEventSource.Current.ServiceMessage(this.Context, "Current Counter Value: {0}",
-                    //    result.HasValue ? result.Value.ToString() : "Value does not exist.");
+                    ServiceEventSource.Current.ServiceMessage(this.Context, "Current Counter Value: {0}",
+                        result.HasValue ? result.Value.ToString() : "Value does not exist.");
 
                     await myDictionary.AddOrUpdateAsync(tx, "Counter", 0, (key, value) => ++value);
 

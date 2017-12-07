@@ -37,7 +37,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 
         public string Address { get; private set; }
 
-        public ReplicaRole Role { get; private set; }
+        public ReplicaRole Role { get; set; }
 
         public StatefulServiceContext Context { get; private set; }
 

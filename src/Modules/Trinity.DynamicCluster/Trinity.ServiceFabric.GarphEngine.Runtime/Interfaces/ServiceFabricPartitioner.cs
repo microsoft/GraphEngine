@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Fabric;
-using Trinity.DynamicCluster.Consensus;
-using Trinity.Storage;
 using System.Threading;
+using Trinity.DynamicCluster.Consensus;
 using Trinity.Network;
+using Trinity.Storage;
 
-namespace Trinity.ServiceFabric.Interfaces
+namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
 {
-    class ServiceFabricPartitioner : IPartitioner
+    public class ServiceFabricPartitioner : IPartitioner
     {
         // TODO chunking scheme conforming SF availability semantics
         private List<Chunk> m_chunkList = new List<Chunk> { Chunk.FullRangeChunk };
@@ -17,9 +17,9 @@ namespace Trinity.ServiceFabric.Interfaces
         // TODO configurable chunking
         public int ChunkCount => m_chunkList.Count;
 
-        public int PartitionCount => GraphEngineService.Instance.PartitionCount;
+        public int PartitionCount => GraphEngineStatefulServiceRuntime.Instance.PartitionCount;
 
-        public int PartitionId => GraphEngineService.Instance.PartitionId;
+        public int PartitionId => GraphEngineStatefulServiceRuntime.Instance.PartitionId;
 
         public IEnumerable<Chunk> MyChunkList => m_chunkList;
         public IEnumerable<Chunk> GlobalChunkList => m_chunkList;
@@ -27,7 +27,7 @@ namespace Trinity.ServiceFabric.Interfaces
         //  Uses Trinity default partitioning method.
         public GetPartitionIdByCellIdDelegate PartitionerProc => null;
 
-        public bool IsMaster => GraphEngineService.Instance?.Role == ReplicaRole.Primary;
+        public bool IsMaster => GraphEngineStatefulServiceRuntime.Instance?.Role == ReplicaRole.Primary;
 
         public event EventHandler<int> ChunkCountUpdated = delegate { };
 #pragma warning disable

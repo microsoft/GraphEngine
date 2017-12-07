@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Fabric;
-using System.Linq;
-using System.Text;
+﻿using System.Fabric;
 using System.Threading;
-using System.Threading.Tasks;
 using Trinity.DynamicCluster.Consensus;
 using Trinity.DynamicCluster.Tasks;
 
-namespace Trinity.ServiceFabric.Interfaces
+namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
 {
-    class ReliableTaskQueue : ITaskQueue
+    internal class ReliableTaskQueue : ITaskQueue
     {
-        public bool IsMaster => GraphEngineService.Instance?.Role == ReplicaRole.Primary;
+        public bool IsMaster => GraphEngineStatefulServiceRuntime.Instance.TrinityServerRuntime.Role == ReplicaRole.Primary;
 
         public void Dispose()
         {
