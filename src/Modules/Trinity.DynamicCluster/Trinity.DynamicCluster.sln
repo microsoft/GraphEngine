@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.ServiceFabric.Garph
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trinity Server Servic Fabric GraphEngie Listeners", "Trinity Server Servic Fabric GraphEngie Listeners", "{6AE37A73-AEE7-4936-85AB-38E7599FDE33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.ServiceFabric.GraphEngine.Listeners", "Trinity.ServiceFabric.GraphEngine.Listeners\Trinity.ServiceFabric.GraphEngine.Listeners.csproj", "{298FC3D1-EBEE-4EF7-A6C9-C7241EDDA8F6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.ServiceFabric.GraphEngine.ListenerRuntime", "Trinity.ServiceFabric.GraphEngine.Listeners\Trinity.ServiceFabric.GraphEngine.ListenerRuntime.csproj", "{298FC3D1-EBEE-4EF7-A6C9-C7241EDDA8F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

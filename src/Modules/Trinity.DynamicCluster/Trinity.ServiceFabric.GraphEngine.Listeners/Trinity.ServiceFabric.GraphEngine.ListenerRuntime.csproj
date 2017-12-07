@@ -1,45 +1,36 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.props" Condition="Exists('..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
-    <ProjectGuid>{3299B302-8F94-4DB7-9331-F53F41E3E2AB}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{298FC3D1-EBEE-4EF7-A6C9-C7241EDDA8F6}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Trinity.ServiceFabric</RootNamespace>
-    <AssemblyName>Trinity.ServiceFabric.GraphEngineService</AssemblyName>
+    <RootNamespace>Trinity.ServiceFabric.GraphEngine.Listeners</RootNamespace>
+    <AssemblyName>Trinity.ServiceFabric.GraphEngine.ListenerRuntime</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\x64\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <PlatformTarget>x64</PlatformTarget>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\x64\Release\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <PlatformTarget>x64</PlatformTarget>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AdditionalFileItemNames>$(AdditionalFileItemNames);None</AdditionalFileItemNames>
-  </PropertyGroup>
-  <PropertyGroup>
-    <IsServiceFabricServiceProject>true</IsServiceFabricServiceProject>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.ServiceFabric.Data, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
@@ -83,37 +74,32 @@
       <HintPath>..\packages\Microsoft.ServiceFabric.6.0.232\lib\net45\System.Fabric.Strings.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
     <Reference Include="Trinity.Core, Version=1.0.9083.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GraphEngine.Core.1.0.9083\lib\Trinity.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interfaces\NameService.cs" />
-    <Compile Include="Interfaces\ReliableTaskQueue.cs" />
-    <Compile Include="Interfaces\ServiceFabricPartitioner.cs" />
+    <Compile Include="Class1.cs" />
+    <Compile Include="GraphEngineHttpListener.cs" />
+    <Compile Include="GraphEngineListener.cs" />
+    <Compile Include="GraphEngineWCFListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="GraphEngineService.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="GraphEngineServiceEventSource.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="PackageRoot\Config\Settings.xml" />
-    <None Include="PackageRoot\ServiceManifest.xml">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Trinity.DynamicCluster\Trinity.DynamicCluster.csproj">
-      <Project>{26db9c05-8b53-409f-a1c9-3fd30cfec35c}</Project>
-      <Name>Trinity.DynamicCluster</Name>
+    <ProjectReference Include="..\Trinity.ServiceFabric.GarphEngine.Runtime\Trinity.ServiceFabric.GarphEngine.Environment.csproj">
+      <Project>{3433f5a8-dd7d-44d4-a1bb-215d1693dcc7}</Project>
+      <Name>Trinity.ServiceFabric.GarphEngine.Environment</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -125,11 +111,4 @@
     <Error Condition="!Exists('..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.targets'))" />
   </Target>
   <Import Project="..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.targets" Condition="Exists('..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
