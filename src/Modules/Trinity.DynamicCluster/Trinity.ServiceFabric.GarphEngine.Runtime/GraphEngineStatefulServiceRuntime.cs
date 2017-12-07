@@ -23,7 +23,9 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
         internal NodeContext  NodeContext;
         internal FabricClient FabricClient;
 
-        public List<Partition> Partitions { get; set; }
+        public TrinityServerRuntimeManager m_trinityServerRuntime = null;
+
+        public List<System.Fabric.Query.Partition> Partitions { get; set; }
 
         public int PartitionCount { get; set; }
 
@@ -42,6 +44,12 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
         private static object SingletonLock
         {
             get { return m_singletonLock; }
+        }
+
+        public TrinityServerRuntimeManager TrinityServerRuntime
+        {
+            get { return m_trinityServerRuntime; }
+            private set { m_trinityServerRuntime = value; }
         }
 
         public static GraphEngineStatefulServiceRuntime Instance = null;
@@ -69,6 +77,18 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 
             Port     = context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityProtocolEndpoint).Port;
             HttpPort = context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityHttpProtocolEndpoint).Port;
+
+            var contextDataPackage = (Partitions: this.Partitions,
+                                      PartitionCount: this.PartitionCount,
+                                      PartitionId: this.PartitionId,
+                                      Port: this.Port,
+                                      HttpPort: this.HttpPort,
+                                      IPAddress: this.Address,
+                                      Role: this.Role,
+                                      StatefulServiceContext: context);
+
+            TrinityServerRuntime = new TrinityServerRuntimeManager(ref contextDataPackage);
+
             // TBD .. YataoL & Tavi T.
             //WCFPort = context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityWCFProtocolEndpoint).Port;
 
