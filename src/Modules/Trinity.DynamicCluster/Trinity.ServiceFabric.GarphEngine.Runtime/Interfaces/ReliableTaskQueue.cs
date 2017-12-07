@@ -1,18 +1,15 @@
-﻿using Microsoft.ServiceFabric.Data.Collections;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Fabric;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.ServiceFabric.Data;
+using Microsoft.ServiceFabric.Data.Collections;
+using Trinity.DynamicCluster;
 using Trinity.DynamicCluster.Consensus;
 using Trinity.DynamicCluster.Tasks;
-using Microsoft.ServiceFabric.Data;
-using Trinity.DynamicCluster;
-using Trinity.ServiceFabric.GarphEngine.Infrastructure;
 
-namespace Trinity.ServiceFabric.Interfaces
+namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
 {
     class ReliableTaskQueue : ITaskQueue
     {

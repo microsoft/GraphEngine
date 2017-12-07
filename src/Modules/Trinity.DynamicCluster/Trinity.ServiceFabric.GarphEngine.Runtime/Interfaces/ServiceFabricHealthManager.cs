@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Trinity.DynamicCluster.Consensus;
 using Trinity.DynamicCluster.Health;
 using Trinity.Network;
 
-namespace Trinity.ServiceFabric
+namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
 {
     public class ServiceFabricHealthManager : IHealthManager
     {

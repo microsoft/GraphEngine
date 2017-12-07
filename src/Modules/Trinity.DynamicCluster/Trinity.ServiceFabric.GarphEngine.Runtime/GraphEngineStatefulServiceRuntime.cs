@@ -127,8 +127,8 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 
         public Guid GetInstanceId()
         {
-            var replicaId = GraphEngineStatefulServiceRuntime.Instance.Context.ReplicaId;
-            var partitionId = GraphEngineStatefulServiceRuntime.Instance.PartitionId;
+            var replicaId   = Instance.Context.ReplicaId;
+            var partitionId = Instance.PartitionId;
             return NameService.GetInstanceId(replicaId, partitionId);
         }
     }

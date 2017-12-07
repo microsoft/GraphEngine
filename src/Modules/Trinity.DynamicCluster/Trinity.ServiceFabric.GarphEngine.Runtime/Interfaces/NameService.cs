@@ -19,7 +19,7 @@ using Trinity.DynamicCluster.Storage;
 using Trinity.Network;
 using Trinity.ServiceFabric.GarphEngine.Infrastructure;
 
-namespace Trinity.ServiceFabric
+namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
 {
     public class NameService : INameService
     {

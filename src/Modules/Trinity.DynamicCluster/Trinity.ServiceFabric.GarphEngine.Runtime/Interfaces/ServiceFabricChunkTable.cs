@@ -1,23 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Fabric;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.ServiceFabric.Data;
+using Microsoft.ServiceFabric.Data.Collections;
+using Trinity.Diagnostics;
+using Trinity.DynamicCluster;
 using Trinity.DynamicCluster.Consensus;
 using Trinity.Storage;
-using System.Threading;
-using System.Linq;
-using Trinity.Network;
-using System.Threading.Tasks;
-using Microsoft.ServiceFabric.Data.Collections;
-using Trinity.DynamicCluster.Storage;
-using Microsoft.ServiceFabric.Data;
-using Trinity.DynamicCluster;
-using System.Diagnostics;
-using Trinity.Diagnostics;
-using Trinity.ServiceFabric.GarphEngine.Infrastructure;
 
-namespace Trinity.ServiceFabric.Interfaces
+namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
 {
-    using ReplicaInformation = Trinity.DynamicCluster.Storage.ReplicaInformation;
+    using ReplicaInformation = DynamicCluster.Storage.ReplicaInformation;
     class ServiceFabricChunkTable : IChunkTable
     {
         private CancellationToken                               m_cancel;
