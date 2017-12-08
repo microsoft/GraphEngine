@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Fabric;
+using System.Fabric.Health;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -7,6 +9,7 @@ using System.Threading.Tasks;
 using Trinity.DynamicCluster.Consensus;
 using Trinity.DynamicCluster.Health;
 using Trinity.Network;
+using Trinity.ServiceFabric.GarphEngine.Infrastructure;
 
 namespace Trinity.ServiceFabric
 {
@@ -18,28 +21,29 @@ namespace Trinity.ServiceFabric
         {
         }
 
+        public void Start(CancellationToken cancellationToken)
+        {
+        }
+
         public Task ReportMemoryCloudStatus(HealthStatus health, string message)
         {
             throw new NotImplementedException();
         }
 
-        public Task ReportModuleStatus<T>(HealthStatus health, string message) where T : CommunicationModule
+        public Task ReportModuleStatus(HealthStatus health, string moduleName, string message)
         {
             throw new NotImplementedException();
         }
 
-        public Task ReportPartitionStatus(HealthStatus health, string message)
+        public Task ReportReplicaStatus(HealthStatus health, Guid id, string message)
         {
             throw new NotImplementedException();
         }
 
-        public Task ReportTrinityServerStatus<T>(HealthStatus health, string message) where T : CommunicationInstance
+        public Task ReportPartitionStatus(HealthStatus health, int id, string message)
         {
+            var guid = GraphEngineStatefulServiceRuntime.Instance.Partitions[id].PartitionInformation.Id;
             throw new NotImplementedException();
-        }
-
-        public void Start(CancellationToken cancellationToken)
-        {
         }
     }
 }
