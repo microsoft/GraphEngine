@@ -29,15 +29,9 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 
         internal static object SingletonLockObject => m_singletonLockObject;
 
-        public virtual TrinityErrorCode Start()
-        {
-            throw new System.NotImplementedException();
-        }
+        public abstract TrinityErrorCode Start();
 
-        public virtual TrinityErrorCode Stop()
-        {
-            throw new System.NotImplementedException();
-        }
+        public abstract TrinityErrorCode Stop();
 
         public List<Partition> Partitions => ServiceFabricRuntimeContext.Partitions;
 

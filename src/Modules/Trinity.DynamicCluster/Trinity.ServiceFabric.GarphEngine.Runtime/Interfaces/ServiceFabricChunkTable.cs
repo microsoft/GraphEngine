@@ -65,7 +65,8 @@ retry:
                 }
             }
             catch (TimeoutException) { goto retry; }
-            catch (FabricNotReadableException) { Debug.Assert(false, "Fabric not readable from Primary/ActiveSecondary"); throw; }
+            catch (FabricNotReadableException)
+            { Log.WriteLine("Fabric not readable from Primary/ActiveSecondary, retrying."); await Task.Delay(1000); goto retry; }
         }
 
         private async Task EnsureChunkTables()
