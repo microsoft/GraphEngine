@@ -8,5 +8,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
         public const string LocalAvailabilityGroup      = @"LOCAL";
         public const string RemostAvailabilityGroup     = @"REMOST";
         public const string AvailabilityGroupLocalHost  = @"localhost";
+        public const string GraphEngineHttpListenerName = @"GraphEngineHttpListener";
+        public const string GraphEngineListenerName     = @"GraphEngineListener";
     }
 }

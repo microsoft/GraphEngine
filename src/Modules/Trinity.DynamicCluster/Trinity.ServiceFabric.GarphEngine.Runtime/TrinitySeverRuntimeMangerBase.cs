@@ -21,7 +21,6 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
                           int Port,
                           int HttpPort,
                           string IPAddress,
-                          //ReplicaRole Role,
                           StatefulServiceContext Context) m_serviceFabricRuntimeContext;
 
         public static TrinitySeverRuntimeMangerBase Instance = null;
@@ -52,8 +51,6 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 
         public string Address => ServiceFabricRuntimeContext.IPAddress;
 
-        //public ReplicaRole Role => ServiceFabricRuntimeContext.Role;
-
         public StatefulServiceContext Context => ServiceFabricRuntimeContext.Context;
 
         protected internal (List<Partition> Partitions, 
@@ -62,7 +59,6 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
                             int Port, 
                             int HttpPort,
                             string IPAddress, 
-                            //ReplicaRole Role, 
                             StatefulServiceContext Context) ServiceFabricRuntimeContext => m_serviceFabricRuntimeContext;
 
         internal TrinityServer ServiceFabricTrinityServerInstance
@@ -77,7 +73,6 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
                                                 int Port,
                                                 int HttpPort,
                                                 string IPAddress,
-                                                //ReplicaRole Role,
                                                 StatefulServiceContext Context) runtimeContext)
         {
             // load a reference pointer so that we can get to this data from a different place in STAP

@@ -66,7 +66,7 @@ namespace Trinity.DynamicCluster.Storage
         private void UpdatePartition(int partitionId, Task<IEnumerable<ReplicaInformation>> resolveTask)
         {
             var oldset = m_replicaList[partitionId];
-            var newset = resolveTask.Result;
+            var newset = resolveTask.Result.ToList();
             foreach (var r in newset.Except(oldset))
             {
                 if (r.Address == m_nameservice.Address && r.Port == m_nameservice.Port) continue;

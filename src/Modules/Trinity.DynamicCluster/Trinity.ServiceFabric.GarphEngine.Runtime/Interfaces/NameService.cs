@@ -82,7 +82,7 @@ namespace Trinity.ServiceFabric
             {
                 var partitionId = GetPartitionId(partitionGuid);
                 var rid = GetInstanceId(r.Id, partitionId);
-                var (addr, port) = JObject.Parse(r.ReplicaAddress)["Endpoints"]["GraphEngineTrinityProtocolListener"].ToString()
+                var (addr, port) = JObject.Parse(r.ReplicaAddress)["Endpoints"][GraphEngineConstants.GraphEngineListenerName].ToString()
                                   .Substring("tcp://".Length).Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                 return new ReplicaInformation(addr, int.Parse(port), rid, partitionId);
             }

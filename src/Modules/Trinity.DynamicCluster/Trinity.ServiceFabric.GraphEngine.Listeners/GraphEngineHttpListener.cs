@@ -31,10 +31,14 @@ namespace Trinity.ServiceFabric.GraphEngine.Listeners
             return Task.FromResult(0);
         }
 
-        public Task<string> OpenAsync(CancellationToken cancellationToken)
+        public async Task<string> OpenAsync(CancellationToken cancellationToken)
         {
-            GraphEngineRuntime.TrinityServerRuntime.Stop();
-            return Task.FromResult($"http://{GraphEngineRuntime.TrinityServerRuntime.Address}:{GraphEngineRuntime.TrinityServerRuntime.HttpPort}");
+            //  !Note, although the http listener does speak the http protocol, it does
+            //  not leverage the Http infrastructure provided by SF. Hence we tell SF
+            //  that this is a tcp port and ask for complete control of the port.
+            Debug.Assert(GraphEngineRuntime != null, nameof(GraphEngineRuntime) + " != null");
+            await Task.Run(() => GraphEngineRuntime.TrinityServerRuntime.Start());
+            return $"tcp://{GraphEngineRuntime.TrinityServerRuntime.Address}:{GraphEngineRuntime.TrinityServerRuntime.HttpPort}";
         }
     }
 }
