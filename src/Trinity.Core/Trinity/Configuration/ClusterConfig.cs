@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Trinity.Configuration;
@@ -154,6 +156,8 @@ namespace Trinity
             }
         }
 
+        private int _listening_port = TrinityConfig.InvalidPort;
+
         /// <summary>
         /// Gets the listening port of the current server.
         /// </summary>
@@ -161,6 +165,9 @@ namespace Trinity
         {
             get
             {
+                if (_listening_port != TrinityConfig.InvalidPort)
+                    return _listening_port;
+
                 switch (RunningMode)
                 {
                     case RunningMode.Server:
@@ -170,6 +177,10 @@ namespace Trinity
                     default:
                         return TrinityConfig.InvalidPort;
                 }
+            }
+            set
+            {
+                _listening_port = value;
             }
         }
 
@@ -232,8 +243,12 @@ namespace Trinity
 
                 if (RunningMode == RunningMode.Server)
                 {
+                    Debug.WriteLine("Process={0}, Thread={1} MyIPEndpoint: {2}:{3}", Process.GetCurrentProcess().Id, Thread.CurrentThread.ManagedThreadId,
+                        Global.MyIPEndPoint.Address, Global.MyIPEndPoint.Port);
                     for (int i = 0; i < Servers.Count; i++)
                     {
+                        Debug.WriteLine("Process={0}, Thread={1} Server[{2}] port: {3}", Process.GetCurrentProcess().Id, Thread.CurrentThread.ManagedThreadId,
+                            i, Servers[i].Instances[0].Port);
                         if (Servers[i].Has(Global.MyIPAddresses, Global.MyIPEndPoint.Port) || Servers[i].HasLoopBackEndpoint(Global.MyIPEndPoint.Port))
                         {
                             my_server_id = i;

@@ -78,15 +78,10 @@ namespace Trinity.Storage
                     Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeSave event handler: {0}", ex.ToString());
                 }
 
-                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
-                bool ret = CLocalMemoryStorage.CSaveStorage();
+                bool ret = SaveLocalMemoryStorage();
 
                 if (ret)
                 {
-                    CreateWriteAheadLogFile();
-
-                    SaveCellTypeSignatures();
-
                     try
                     {
                         StorageSaved();
@@ -99,6 +94,21 @@ namespace Trinity.Storage
 
                 return ret;
             }
+        }
+
+        protected virtual bool SaveLocalMemoryStorage()
+        {
+            if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
+            bool ret = CLocalMemoryStorage.CSaveStorage();
+
+            if (ret)
+            {
+                CreateWriteAheadLogFile();
+
+                SaveCellTypeSignatures();
+            }
+
+            return ret;
         }
 
         /// <summary>

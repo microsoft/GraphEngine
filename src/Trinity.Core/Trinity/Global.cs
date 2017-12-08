@@ -42,6 +42,8 @@ namespace Trinity
         private static bool   s_master_init_flag = false;
         private static List<Storage.MemoryCloud> s_registered_memoryclouds = new List<MemoryCloud>();
 
+        public static Func<Storage.LocalMemoryStorage> CreateLocalMemoryStorage { get; set; } = () => new Storage.LocalMemoryStorage();
+
         static Global()
         {
             Initialize();

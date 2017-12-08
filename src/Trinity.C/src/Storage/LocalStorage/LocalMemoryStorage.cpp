@@ -110,6 +110,14 @@ namespace Storage
 			memory_trunks[trunkIndex].Defragment(/*calledByGCThread:*/true);
 		}
 
+		void DefragmentAllTrunks()
+		{
+			for (int32_t i = 0; i < trunk_count; i++)
+			{
+				memory_trunks[i].Defragment(/*calledByGCThread:*/false);
+			}
+		}
+
 		static uint64_t _CellCount_impl()
 		{
 			uint64_t total = 0;
@@ -753,6 +761,16 @@ namespace Storage
 		{
 			*pSignature = *g_ImageSignature;
 			return E_SUCCESS;
+		}
+
+		void EnterDBCritical()
+		{
+			_enter_db_critical();
+		}
+
+		void ExitDBCritical()
+		{
+			_exit_db_critical();
 		}
 	}
 

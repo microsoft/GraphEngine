@@ -157,7 +157,7 @@ namespace Trinity
                     {
                         if (!isLocalStorageInited)
                         {
-                            local_storage = new Storage.LocalMemoryStorage();
+                            local_storage = CreateLocalMemoryStorage();
                             local_storage.RegisterGenericOperationsProvider(generic_cell_ops);
 
                             Thread.MemoryBarrier();

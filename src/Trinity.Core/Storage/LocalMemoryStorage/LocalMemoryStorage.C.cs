@@ -39,6 +39,20 @@ namespace Trinity.Storage
             CLocalMemoryStorage.CWriteAheadLog(cellId, cellPtr, cellSize, cellType, options);
         }
 
+        public unsafe static void CEnterDBCritical()
+        {
+            CLocalMemoryStorage.CEnterDBCritical();
+        }
+
+        public unsafe static void CExitDBCritical()
+        {
+            CLocalMemoryStorage.CExitDBCritical();
+        }
+
+        public unsafe static void DefragmentAllTrunks()
+        {
+            CLocalMemoryStorage.CDefragmentAllTrunks();
+        }
     }
 
     /// <summary>
@@ -106,6 +120,30 @@ namespace Trinity.Storage
         [DllImport(TrinityC.AssemblyName)]
 #endif
         internal static extern bool CLoadStorage();
+
+#if !CORECLR
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern void CEnterDBCritical();
+
+#if !CORECLR
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern void CExitDBCritical();
+
+#if !CORECLR
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern void CDefragmentAllTrunks();
 
 
         #region Cell operations

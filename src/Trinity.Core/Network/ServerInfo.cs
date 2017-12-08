@@ -75,19 +75,19 @@ namespace Trinity.Network
         /// <summary>
         /// The host name of the server.
         /// </summary>
-        public string HostName { get; private set; }
+        public string HostName { get; protected set; }
         /// <summary>
         /// The port of the server.
         /// </summary>
-        public int Port { get; private set; }
+        public int Port { get; protected set; }
         /// <summary>
         /// The assembly path of the server.
         /// </summary>
-        public string AssemblyPath { get; private set; }
+        public string AssemblyPath { get; protected set; }
         /// <summary>
         /// The availability group id of the server.
         /// </summary>
-        public string Id { get; private set; }
+        public string Id { get; protected set; }
         /// <summary>
         /// The endpoint of the server.
         /// </summary>
