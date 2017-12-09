@@ -11,6 +11,7 @@ namespace Trinity.DynamicCluster.Storage
     /// (i.e. a TrinityServer, or its derivative). A partition contains one or more replicas to guarantee
     /// availability.
     /// </summary>
+    [Serializable]
     public class ReplicaInformation : IEquatable<ReplicaInformation>
     {
         public ReplicaInformation(string addr, int port, Guid id, int partitionId)

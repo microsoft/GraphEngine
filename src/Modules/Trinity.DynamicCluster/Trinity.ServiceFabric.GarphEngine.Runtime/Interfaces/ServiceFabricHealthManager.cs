@@ -15,10 +15,6 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
         private System.Fabric.FabricClient m_fclient;
         private const string sourceId = "Trinity.ServiceFabric.HealthManager";
 
-        public ServiceFabricHealthManager(string sourceId)
-        {
-        }
-
         private HealthState _hstate(HealthStatus hstatus)
         {
             switch (hstatus)
@@ -32,6 +28,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
 
         public void Dispose()
         {
+            m_fclient.Dispose();
         }
 
         public void Start(CancellationToken cancellationToken)

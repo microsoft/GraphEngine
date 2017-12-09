@@ -97,6 +97,7 @@
     <Compile Include="Interfaces\ReliableTaskQueue.cs" />
     <Compile Include="Interfaces\ServiceFabricChunkTable.cs" />
     <Compile Include="Interfaces\ServiceFabricHealthManager.cs" />
+    <Compile Include="Interfaces\ServiceFabricUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TrinityServerRuntimeManager.cs" />
     <Compile Include="TrinitySeverRuntimeMangerBase.cs" />

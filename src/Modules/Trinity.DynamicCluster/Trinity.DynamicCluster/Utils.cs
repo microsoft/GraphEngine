@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Reflection;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -133,6 +135,25 @@ namespace Trinity.DynamicCluster
             var n2 = names[r.Next(names.Length)];
 
             return n1 + " " + n2;
+        }
+
+        public static T Deserialize<T>(byte[] payload)
+        {
+            IFormatter fmt = new BinaryFormatter();
+            using (var ms = new MemoryStream(payload))
+            {
+                return (T)fmt.Deserialize(ms);
+            }
+        }
+
+        public static byte[] Serialize<T>(T payload)
+        {
+            IFormatter fmt = new BinaryFormatter();
+            using (var ms = new MemoryStream())
+            {
+                fmt.Serialize(ms, payload);
+                return ms.ToArray();
+            }
         }
     }
 }
