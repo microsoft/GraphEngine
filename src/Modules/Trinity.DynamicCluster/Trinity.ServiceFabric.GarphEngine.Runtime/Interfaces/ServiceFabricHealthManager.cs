@@ -21,7 +21,6 @@ namespace Trinity.ServiceFabric
 
         private HealthState _hstate(HealthStatus hstatus)
         {
-            if (hstatus == HealthStatus.Error) return HealthState.Error;
             switch (hstatus)
             {
                 case HealthStatus.Error: return HealthState.Error;
