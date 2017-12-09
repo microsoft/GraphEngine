@@ -29,6 +29,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
 
         private async Task InitQueuesAsync()
         {
+            await GraphEngineStatefulServiceRuntime.Instance.GetRoleAsync();
             var qtasks = Utils.Integers(GraphEngineStatefulServiceRuntime.Instance.PartitionCount).Select(CreatePartitionQueueAsync).ToArray();
             await Task.Factory.ContinueWhenAll(qtasks, ts => m_allqueues = ts.Select(_ => _.Result).ToArray());
             m_queue = m_allqueues[GraphEngineStatefulServiceRuntime.Instance.PartitionId];

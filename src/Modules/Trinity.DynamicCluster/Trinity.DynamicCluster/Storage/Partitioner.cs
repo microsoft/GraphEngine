@@ -66,7 +66,7 @@ namespace Trinity.DynamicCluster.Storage
         private void UpdatePartition(int partitionId, Task<IEnumerable<ReplicaInformation>> resolveTask)
         {
             var oldset = m_replicaList[partitionId];
-            var newset = resolveTask.Result;
+            var newset = resolveTask.Result.ToList();
             foreach (var r in newset.Except(oldset))
             {
                 if (r.Address == m_nameservice.Address && r.Port == m_nameservice.Port) continue;
@@ -184,7 +184,8 @@ namespace Trinity.DynamicCluster.Storage
                 if(prev.HighKey + 1 != cur.LowKey)
                 {
                     await m_healthmgr.ReportPartitionStatus(
-                        Health.HealthStatus.Error, 
+                        Health.HealthStatus.Error,
+                        m_nameservice.PartitionId,
                         $"Partition {m_nameservice.PartitionId} chunk table misalignment between " + 
                         $"[{prev.LowKey}-{prev.HighKey}] and [{cur.LowKey}-{cur.HighKey}]");
                     return;
@@ -193,6 +194,7 @@ namespace Trinity.DynamicCluster.Storage
                 {
                     await m_healthmgr.ReportPartitionStatus(
                         Health.HealthStatus.Error, 
+                        m_nameservice.PartitionId,
                         $"Partition {m_nameservice.PartitionId} chunk information corrupted:" + 
                         $"[{cur.LowKey}-{cur.HighKey}]");
                     return;
@@ -200,11 +202,11 @@ namespace Trinity.DynamicCluster.Storage
             }
             if(cnt_dict.Values.Min() < m_redundancy)
             {
-                await m_healthmgr.ReportPartitionStatus(Health.HealthStatus.Warning, $"Partition {m_nameservice.PartitionId} has not reached required redundancy.");
+                await m_healthmgr.ReportPartitionStatus(Health.HealthStatus.Warning, m_nameservice.PartitionId, $"Partition {m_nameservice.PartitionId} has not reached required redundancy.");
                 return;
             }
 
-            await m_healthmgr.ReportPartitionStatus(Health.HealthStatus.Healthy, $"Partition {m_nameservice.PartitionId} is healthy.");
+            await m_healthmgr.ReportPartitionStatus(Health.HealthStatus.Healthy, m_nameservice.PartitionId, $"Partition {m_nameservice.PartitionId} is healthy.");
         }
 
         public void Dispose()

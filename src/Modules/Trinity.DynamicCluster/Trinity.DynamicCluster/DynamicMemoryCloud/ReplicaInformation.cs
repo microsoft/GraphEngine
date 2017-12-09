@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace Trinity.DynamicCluster.Storage
 {
+    /// <summary>
+    /// In a dynamic Trinity memory cloud, one replica corresponds to a specific communication instance
+    /// (i.e. a TrinityServer, or its derivative). A partition contains one or more replicas to guarantee
+    /// availability.
+    /// </summary>
     public class ReplicaInformation : IEquatable<ReplicaInformation>
     {
         public ReplicaInformation(string addr, int port, Guid id, int partitionId)

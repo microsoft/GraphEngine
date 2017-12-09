@@ -11,13 +11,12 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 {
     public class TrinityServerRuntimeManager : TrinitySeverRuntimeMangerBase
     {
-        public TrinityServerRuntimeManager(ref (List<Partition> Partitions, 
-                                               int PartitionCount, 
-                                               int PartitionId, 
-                                               int Port, 
-                                               int HttpPort, 
-                                               string IPAddress, 
-                                               //ReplicaRole Role, 
+        public TrinityServerRuntimeManager(ref (List<Partition> Partitions,
+                                               int PartitionCount,
+                                               int PartitionId,
+                                               int Port,
+                                               int HttpPort,
+                                               string IPAddress,
                                                StatefulServiceContext Context) runtimeContext) : base(ref runtimeContext)
         {
         }
@@ -30,6 +29,12 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
         {
             lock (SingletonLockObject)
             {
+                //  Already started?
+                if (ServiceFabricTrinityServerInstance != null)
+                {
+                    return TrinityErrorCode.E_SUCCESS;
+                }
+
                 //  Initialize Trinity server.
                 if (ServiceFabricTrinityServerInstance == null)
                 {

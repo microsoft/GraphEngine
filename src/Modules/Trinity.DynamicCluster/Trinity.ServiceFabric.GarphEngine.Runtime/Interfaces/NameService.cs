@@ -25,7 +25,6 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
     {
         private CancellationToken          m_token;
         private System.Fabric.FabricClient m_fclient;
-        private Uri                        m_svcuri;
         private List<Guid>                 m_partitionIds;
 
         public string Address => GraphEngineStatefulServiceRuntime.Instance.Address;
@@ -37,15 +36,6 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
         public Guid InstanceId { get; private set; }
 
         public bool IsMaster => GraphEngineStatefulServiceRuntime.Instance?.Role == System.Fabric.ReplicaRole.Primary;
-
-
-        public NameService()
-        {
-            InstanceId = GetInstanceId(GraphEngineStatefulServiceRuntime.Instance.Context.ReplicaId, GraphEngineStatefulServiceRuntime.Instance.PartitionId);
-            m_svcuri = GraphEngineStatefulServiceRuntime.Instance.Context.ServiceName;
-            m_fclient = new System.Fabric.FabricClient();
-            m_partitionIds = GraphEngineStatefulServiceRuntime.Instance.Partitions.Select(_ => _.PartitionInformation.Id).ToList();
-        }
 
         internal static Guid GetInstanceId(long replicaId, int partitionId)
         {
@@ -64,7 +54,10 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
 
         public void Start(CancellationToken token)
         {
+            InstanceId = GetInstanceId(GraphEngineStatefulServiceRuntime.Instance.Context.ReplicaId, GraphEngineStatefulServiceRuntime.Instance.PartitionId);
             m_token = token;
+            m_fclient = new System.Fabric.FabricClient();
+            m_partitionIds = GraphEngineStatefulServiceRuntime.Instance.Partitions.Select(_ => _.PartitionInformation.Id).ToList();
         }
 
         public void Dispose() { }
@@ -82,7 +75,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
             {
                 var partitionId = GetPartitionId(partitionGuid);
                 var rid = GetInstanceId(r.Id, partitionId);
-                var (addr, port) = JObject.Parse(r.ReplicaAddress)["Endpoints"]["GraphEngineTrinityProtocolListener"].ToString()
+                var (addr, port) = JObject.Parse(r.ReplicaAddress)["Endpoints"][GraphEngineConstants.GraphEngineListenerName].ToString()
                                   .Substring("tcp://".Length).Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                 return new ReplicaInformation(addr, int.Parse(port), rid, partitionId);
             }

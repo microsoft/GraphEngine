@@ -40,8 +40,8 @@ namespace Trinity.ServiceFabric
             //  See https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-services-communication:
             //  When creating multiple listeners for a service, each listener must be given a unique name.
             return new[] {
-                new ServiceReplicaListener(ctx => new GraphEngineListener(GraphEngineRuntime), GraphEngineConstants.TrinityProtocolEndpoint, listenOnSecondary: true),
-                new ServiceReplicaListener(ctx => new GraphEngineHttpListener(GraphEngineRuntime), GraphEngineConstants.TrinityHttpProtocolEndpoint, listenOnSecondary: true),
+                new ServiceReplicaListener(ctx => new GraphEngineListener(m_graphEngineRuntime), GraphEngineConstants.GraphEngineListenerName, true),
+                new ServiceReplicaListener(ctx => new GraphEngineHttpListener(m_graphEngineRuntime), GraphEngineConstants.GraphEngineHttpListenerName, false),
                 // TODO WCF
             };
         }

@@ -89,6 +89,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
                            .GetAwaiter().GetResult()
                            .OrderBy(p => p.PartitionInformation.Id)
                            .ToList();
+            Role         = ReplicaRole.Unknown;
 
             PartitionId    = Partitions.FindIndex(p => p.PartitionInformation.Id == context.PartitionId);
             PartitionCount = Partitions.Count;
@@ -102,7 +103,6 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
                                       Port: this.Port,
                                       HttpPort: this.HttpPort,
                                       IPAddress: this.Address,
-                                      //Role: this.Role,
                                       StatefulServiceContext: context);
 
             // Okay let's new-up the TrinityServer runtime environment ...
@@ -127,8 +127,8 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 
         public Guid GetInstanceId()
         {
-            var replicaId   = Instance.Context.ReplicaId;
-            var partitionId = Instance.PartitionId;
+            var replicaId   = Context.ReplicaId;
+            var partitionId = PartitionId;
             return NameService.GetInstanceId(replicaId, partitionId);
         }
     }
