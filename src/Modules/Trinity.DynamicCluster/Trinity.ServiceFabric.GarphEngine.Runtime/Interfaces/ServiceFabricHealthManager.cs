@@ -6,7 +6,7 @@ using Trinity.DynamicCluster.Consensus;
 using Trinity.DynamicCluster.Health;
 using Trinity.ServiceFabric.GarphEngine.Infrastructure;
 
-namespace Trinity.ServiceFabric
+namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
 {
     public class ServiceFabricHealthManager : IHealthManager
     {

@@ -116,7 +116,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
             {
                 if (Instance != null)
                 {
-                    Log.WriteLine(LogLevel.Fatal, "Only one GraphEngineService allowed in one process.");
+                    Log.WriteLine(LogLevel.Fatal, "Only one TrinityServerRuntimeManager allowed in one process.");
                     Thread.Sleep(5000);
                     Environment.Exit(-1);
                     //throw new InvalidOperationException("Only one GraphEngineService allowed in one process.");
@@ -127,7 +127,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 
         public Guid GetInstanceId()
         {
-            var replicaId = Context.ReplicaId;
+            var replicaId   = Context.ReplicaId;
             var partitionId = PartitionId;
             return NameService.GetInstanceId(replicaId, partitionId);
         }
