@@ -42,6 +42,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -75,9 +76,12 @@
     <Compile Include="Storage\Partitioner.cs" />
     <Compile Include="Health\HealthStatus.cs" />
     <Compile Include="Storage\ReplicationMode.cs" />
+    <Compile Include="Tasks\ChunkInitTask.cs" />
     <Compile Include="Tasks\Executor.cs" />
     <Compile Include="Tasks\ITask.cs" />
     <Compile Include="Tasks\NopTask.cs" />
+    <Compile Include="Tasks\PersistencyTask.cs" />
+    <Compile Include="Tasks\ReplicatorTask.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>

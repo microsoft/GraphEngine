@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Trinity.DynamicCluster.Storage
 {
+    [Serializable]
     public enum ReplicationMode
     {
         /// <summary>

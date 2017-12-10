@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 namespace Trinity.Storage
 {
     /// <summary>
-    /// Represents
+    /// Represents a range in the cell Id address space.
     /// </summary>
+    [Serializable]
     public class Chunk : IEquatable<Chunk>
     {
         public Chunk(long lowKey, long highKey)

@@ -4,6 +4,7 @@ using System.Fabric;
 using System.Fabric.Query;
 using System.Linq;
 using Trinity.Diagnostics;
+using Trinity.DynamicCluster.Storage;
 using Trinity.Network;
 using Trinity.Utilities;
 
@@ -66,6 +67,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
         {
             lock (SingletonLockObject)
             {
+                (Global.CloudStorage as DynamicMemoryCloud)?.Close();
                 ServiceFabricTrinityServerInstance?.Stop();
                 ServiceFabricTrinityServerInstance = null;
                 return TrinityErrorCode.E_SUCCESS;

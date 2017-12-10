@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Trinity.Diagnostics;
 using Trinity.DynamicCluster.Consensus;
+using Trinity.DynamicCluster.Tasks;
 using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Storage
@@ -114,26 +114,35 @@ namespace Trinity.DynamicCluster.Storage
                 { continue; }
                 m_ctcache_set(r.Id, ct);
                 m_dmc.PartitionTable(r.PartitionId).Mount(stg, ct);
+                var nickname = (stg as DynamicRemoteStorage)?.NickName ?? m_dmc.NickName;
+                Log.WriteLine("PartitionerProc: {0}", $"Replica {nickname}: chunk table updated.");
             }
         }
 
         /// <summary>
         /// ReplicatorProc runs on the leader of each partition, and
-        /// initiates/monitors replication tasks. When replication is
+        /// initiates/monitors replication/chunk init/persistency tasks. When replication is
         /// done, it updates the chunk table.
         /// </summary>
         private async Task ReplicatorProc()
         {
             if (!m_taskqueue.IsMaster) return;
             var rpg = m_replicaList[m_nameservice.PartitionId];
+            if (rpg.Count() == 0) return;
             var cks = rpg.Select(m_chunktable.GetChunks).ToArray();
             await Task.WhenAll(cks);
             var replica_chunks = rpg.Zip(cks, (r, t) => (r, t.Result));
 
+            await Task.WhenAll(
+                m_taskqueue.Wait(ReplicatorTask.Guid),
+                m_taskqueue.Wait(ChunkInitTask.Guid),
+                m_taskqueue.Wait(PersistencyTask.Guid));
+
             // If there's nothing in the chunk table yet, an initialization is needed.
             if (!cks.SelectMany(_ => _.Result).Any())
             {
-                await InitChunkTableAsync();
+                await _InitChunkTableAsync(rpg);
+                return;
             }
 
             //foreach (var (r, cs) in replica_chunks)
@@ -145,20 +154,11 @@ namespace Trinity.DynamicCluster.Storage
             // TODO updates secondaries on replication completion
         }
 
-        private async Task InitChunkTableAsync()
+        private async Task _InitChunkTableAsync(IEnumerable<ReplicaInformation> rpg)
         {
             Log.WriteLine($"Replicator: Partition {m_nameservice.PartitionId}: Initializing chunk table.");
-            switch (m_repmode)
-            {
-                case ReplicationMode.Mirroring:
-                break;
-                case ReplicationMode.Sharding:
-                break;
-                case ReplicationMode.MirroredSharding:
-                break;
-                case ReplicationMode.DistributedHashTable:
-                break;
-            }
+            ChunkInitTask task = new ChunkInitTask(m_repmode, rpg);
+            await m_taskqueue.PostTask(task);
         }
 
         private async Task PartitionHealthMonitorProc()

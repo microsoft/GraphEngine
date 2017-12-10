@@ -8,34 +8,34 @@ using Microsoft.ServiceFabric.Data.Collections;
 using Trinity.DynamicCluster;
 using Trinity.DynamicCluster.Consensus;
 using Trinity.DynamicCluster.Tasks;
+using System.Collections.Concurrent;
 
 namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
 {
     class ReliableTaskQueue : ITaskQueue
     {
-        private CancellationToken       m_cancel;
-        private IReliableQueue<ITask>   m_queue          = null;
-        private IReliableQueue<ITask>[] m_allqueues      = null;
-        private IReliableStateManager   m_statemgr       = null;
-        private ITransaction            m_tx             = null;
-        private Task                    m_initqueue_task = null;
+        private CancellationToken              m_cancel;
+        private IReliableQueue<byte[]>         m_queue          = null;
+        private IReliableDictionary<Guid, int> m_tagCounter     = null;
+        private Task                           m_initqueue_task = null;
+        private ConcurrentDictionary<ITask, ITransaction> m_tx  = null;
 
         public void Start(CancellationToken cancellationToken)
         {
             m_cancel         = cancellationToken;
-            m_statemgr       = GraphEngineStatefulServiceRuntime.Instance.StateManager;
-            m_initqueue_task = InitQueuesAsync();
+            m_tx             = new ConcurrentDictionary<ITask, ITransaction>();
+            m_initqueue_task = InitAsync();
         }
 
-        private async Task InitQueuesAsync()
+        private async Task InitAsync()
         {
-            await GraphEngineStatefulServiceRuntime.Instance.GetRoleAsync();
-            var qtasks = Utils.Integers(GraphEngineStatefulServiceRuntime.Instance.PartitionCount).Select(CreatePartitionQueueAsync).ToArray();
-            await Task.Factory.ContinueWhenAll(qtasks, ts => m_allqueues = ts.Select(_ => _.Result).ToArray());
-            m_queue = m_allqueues[GraphEngineStatefulServiceRuntime.Instance.PartitionId];
+            m_queue      = await ServiceFabricUtils.CreateReliableStateAsync<IReliableQueue<byte[]>>
+                (this, "Trinity.ServiceFabric.GarphEngine.Infrastructure.TaskQueue", GraphEngineStatefulServiceRuntime.Instance.PartitionId);
+            m_tagCounter = await ServiceFabricUtils.CreateReliableStateAsync<IReliableDictionary<Guid, int>>
+                (this, "Trinity.ServiceFabric.GarphEngine.Infrastructure.TaskTagCounter", GraphEngineStatefulServiceRuntime.Instance.PartitionId);
         }
 
-        private async Task EnsureQueuesAsync()
+        private async Task EnsureInit()
         {
             var task = m_initqueue_task;
             if (task != null)
@@ -45,90 +45,95 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
             }
         }
 
-
-        private async Task<IReliableQueue<ITask>> CreatePartitionQueueAsync(int p)
+        public void Dispose()
         {
-            var qname = $"GraphEngine.TaskQueue-P{p}";
-            await GraphEngineStatefulServiceRuntime.Instance.GetRoleAsync();
-
-            retry:
-
-            try
+            if (m_tx != null) foreach (var tx in m_tx.Values)
             {
-                if (IsMaster)
-                {
-                    return await m_statemgr.GetOrAddAsync<IReliableQueue<ITask>>(qname);
-                }
-                else
-                {
-                    var result = await m_statemgr.TryGetAsync<IReliableQueue<ITask>>(qname);
-                    if (result.HasValue) return result.Value;
-                    else
-                    {
-                        await Task.Delay(1000);
-                        goto retry;
-                    }
-                }
+                tx.Dispose();
             }
-            catch (TimeoutException) { goto retry; }
         }
-
-        public void Dispose() { if (m_tx != null) ReleaseTx(); }
 
         public bool IsMaster => GraphEngineStatefulServiceRuntime.Instance?.Role == ReplicaRole.Primary;
 
         public async Task<ITask> GetTask(CancellationToken token)
         {
-            await EnsureQueuesAsync();
-
-            if (m_tx != null) throw new InvalidOperationException("ReliableTaskQueue: only one task allowed in a transaction.");
-            m_tx = m_statemgr.CreateTransaction();
-
+            await EnsureInit();
+            ITransaction tx = null;
+            ITask ret = null;
             try
             {
-                var result = await m_queue.TryDequeueAsync(m_tx, TimeSpan.FromSeconds(10), m_cancel);
-                if (result.HasValue) return result.Value;
+                tx = ServiceFabricUtils.CreateTransaction();
+                await ServiceFabricUtils.DoWithTimeoutRetry(async () =>
+                {
+                    var result = await m_queue.TryDequeueAsync(tx, TimeSpan.FromSeconds(10), m_cancel);
+                    if (result.HasValue) ret = Utils.Deserialize<ITask>(result.Value);
+                });
+                if(ret == null) { tx.Dispose(); return null; }
+                m_tx[ret] = tx;
+                return ret;
             }
-            catch (TimeoutException) { }
-            catch (TaskCanceledException) { }
-            finally { ReleaseTx(); }
-
-            return null;
+            catch
+            {
+                ReleaseTx(ret, tx);
+                throw;
+            }
         }
 
-        private void ReleaseTx()
+        private void ReleaseTx(ITask task, ITransaction tx)
         {
-            try { m_tx.Dispose(); }
-            finally { m_tx = null; }
+            tx?.Dispose();
+            if(task != null) m_tx?.TryRemove(task, out _);
         }
 
         public async Task TaskCompleted(ITask task)
         {
-            await m_tx.CommitAsync();
-            ReleaseTx();
+            ITransaction tx = null;
+            try
+            {
+                if (!m_tx.TryGetValue(task, out tx)) return;
+                await ServiceFabricUtils.DoWithTimeoutRetry(
+                    async () => await m_tagCounter.AddOrUpdateAsync(tx, task.Tag, _ => 0, (k, v) => v-1, TimeSpan.FromSeconds(10), m_cancel),
+                    async () => await tx.CommitAsync());
+            }
+            finally
+            {
+                ReleaseTx(task, tx);
+            }
         }
 
         public Task TaskFailed(ITask task)
         {
-            if (m_tx == null) throw new NullReferenceException("ReliableTaskQueue: transaction not found");
-            ReleaseTx();
+            m_tx.TryGetValue(task, out var tx);
+            ReleaseTx(task, tx);
             return Task.FromResult(0);
         }
 
-        public async Task PostTask(ITask task, int partitionId)
+        public async Task PostTask(ITask task)
         {
-            await EnsureQueuesAsync();
-            using (var tx = m_statemgr.CreateTransaction())
+            await EnsureInit();
+            using (var tx = ServiceFabricUtils.CreateTransaction())
             {
-                retry:
-                try
-                {
-                    await m_allqueues[partitionId].EnqueueAsync(tx, task, TimeSpan.FromSeconds(10), m_cancel);
-                    await tx.CommitAsync();
-                }
-                catch (TimeoutException) { goto retry; }
-                catch (OperationCanceledException) { }
+                await ServiceFabricUtils.DoWithTimeoutRetry(
+                    async () => await m_queue.EnqueueAsync(tx, Utils.Serialize(task), TimeSpan.FromSeconds(10), m_cancel),
+                    async () => await m_tagCounter.AddOrUpdateAsync(tx, task.Tag, 1, (k, v) => v+1),
+                    async () => await tx.CommitAsync());
             }
+        }
+
+        public async Task Wait(Guid tag)
+        {
+            await EnsureInit();
+            await ServiceFabricUtils.DoWithTimeoutRetry(
+                async () =>
+                {
+                    using (var tx = ServiceFabricUtils.CreateTransaction())
+                    {
+                        int cnt = 0;
+                        var result = await m_tagCounter.TryGetValueAsync(tx, tag, TimeSpan.FromSeconds(10), m_cancel);
+                        if (result.HasValue) cnt = result.Value;
+                        if (cnt != 0) throw new TimeoutException();
+                    }
+                });
         }
     }
 }

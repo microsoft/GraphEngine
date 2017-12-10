@@ -29,7 +29,6 @@ namespace Trinity.DynamicCluster.Storage
         internal CancellationTokenSource m_cancelSrc;
 
         private Random                   m_rng = new Random();
-        private volatile bool            m_disposed = false;
         private DynamicClusterCommModule m_module;
         // !Note can also be achieve by extending Storage[] StorageTable beyond PartitionCount,
         // and use interlocked increment to obtain index
@@ -95,7 +94,16 @@ namespace Trinity.DynamicCluster.Storage
         public override bool Open(ClusterConfig config, bool nonblocking)
         {
             this.m_cluster_config = config;
-            InitializeComponents();
+            m_cancelSrc = new CancellationTokenSource();
+            m_nameservice = AssemblyUtility.GetAllClassInstances<INameService>().First();
+            m_chunktable = AssemblyUtility.GetAllClassInstances<IChunkTable>().First();
+            m_taskqueue = AssemblyUtility.GetAllClassInstances<ITaskQueue>().First();
+            m_healthmanager = AssemblyUtility.GetAllClassInstances<IHealthManager>().First();
+
+            m_nameservice.Start(m_cancelSrc.Token);
+            m_taskqueue.Start(m_cancelSrc.Token);
+            m_chunktable.Start(m_cancelSrc.Token);
+            m_healthmanager.Start(m_cancelSrc.Token);
 
             StorageTable = Infinity<Partition>()
                           .Take(PartitionCount)
@@ -118,36 +126,21 @@ namespace Trinity.DynamicCluster.Storage
             m_module = GetCommunicationModule<DynamicClusterCommModule>();
         }
 
-        internal void InitializeComponents()
+        public void Close()
         {
-            m_cancelSrc = new CancellationTokenSource();
-            m_nameservice = AssemblyUtility.GetAllClassInstances<INameService>().First();
-            m_chunktable = AssemblyUtility.GetAllClassInstances<IChunkTable>().First();
-            m_taskqueue = AssemblyUtility.GetAllClassInstances<ITaskQueue>().First();
-            m_healthmanager = AssemblyUtility.GetAllClassInstances<IHealthManager>().First();
-
-            m_nameservice.Start(m_cancelSrc.Token);
-            m_taskqueue.Start(m_cancelSrc.Token);
-            m_chunktable.Start(m_cancelSrc.Token);
-            m_healthmanager.Start(m_cancelSrc.Token);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (this.m_disposed) return;
             Enumerable
            .Range(0, PartitionCount)
            .SelectMany(PartitionTable)
            .OfType<DynamicRemoteStorage>()
            .ForEach(s => _DoWithTempStorage(s, id =>
-            {
-                try
-                {
-                    using (var request = new StorageInformationWriter(MyPartitionId, m_nameservice.InstanceId))
-                    { m_module.NotifyRemoteStorageOnLeaving(id, request); }
-                }
-                catch { }
-            }));
+           {
+               try
+               {
+                   using (var request = new StorageInformationWriter(MyPartitionId, m_nameservice.InstanceId))
+                   { m_module.NotifyRemoteStorageOnLeaving(id, request); }
+               }
+               catch { }
+           }));
 
             m_cancelSrc.Cancel();
 
@@ -158,9 +151,6 @@ namespace Trinity.DynamicCluster.Storage
             m_chunktable.Dispose();
             m_taskqueue.Dispose();
             m_healthmanager.Dispose();
-
-            base.Dispose(disposing);
-            this.m_disposed = true;
         }
 
         protected override void OnConnected(RemoteStorageEventArgs e)

@@ -66,9 +66,12 @@ namespace Trinity.DynamicCluster.Consensus
         /// Post a new task to a partition. The behavior
         /// is undefined when executed on a task queue slave.
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="partitionId"></param>
-        /// <returns></returns>
-        Task PostTask(ITask task, int partitionId);
+        /// <param name="task">The task to be posted.</param>
+        Task PostTask(ITask task);
+        /// <summary>
+        /// Waits until tasks of the given tag to be all completed.
+        /// </summary>
+        /// <param name="tag">The tag to be waited. See <see cref="ITask.Tag"/>.</param>
+        Task Wait(Guid tag);
     }
 }
