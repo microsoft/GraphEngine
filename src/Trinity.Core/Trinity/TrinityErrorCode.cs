@@ -101,5 +101,10 @@ namespace Trinity
         /// Represents a status that an expected cell is found.
         /// </summary>
         E_CELL_FOUND = 1,
+
+        /// <summary>
+        /// Represents a status that an enumerator has finished enumerating items and reached the end.
+        /// </summary>
+        E_ENUMERATION_END = 2,
     }
 }

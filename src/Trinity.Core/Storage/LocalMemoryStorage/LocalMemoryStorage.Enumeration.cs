@@ -122,10 +122,13 @@ namespace Trinity.Storage
 
         bool System.Collections.IEnumerator.MoveNext()
         {
-            var eResult = CLocalMemoryStorage.CLocalMemoryStorageEnumeratorMoveNext(m_enumerator);
-
-            if (eResult == TrinityErrorCode.E_DEADLOCK) throw new DeadlockException();
-            else return (eResult == TrinityErrorCode.E_SUCCESS);
+            TrinityErrorCode err;
+            do { err = CLocalMemoryStorage.CLocalMemoryStorageEnumeratorMoveNext(m_enumerator); }
+            while (err != TrinityErrorCode.E_CELL_NOT_FOUND);
+            if (err == TrinityErrorCode.E_ENUMERATION_END) return false;
+            if (err == TrinityErrorCode.E_CELL_LOCK_OVERFLOW) throw new CellLockOverflowException(0);
+            if (err == TrinityErrorCode.E_DEADLOCK) throw new DeadlockException();
+            else return (err == TrinityErrorCode.E_SUCCESS);
         }
 
         void System.Collections.IEnumerator.Reset()
