@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
-using Trinity.GraphEngine.ServiceFabric.Core;
-using Trinity.GraphEngine.ServiceFabric.Listeners;
 
 namespace Trinity.ServiceFabric
 {

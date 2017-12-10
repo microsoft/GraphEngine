@@ -5,8 +5,6 @@ using System.Fabric;
 using System.Threading.Tasks;
 using Trinity.Diagnostics;
 using Trinity.DynamicCluster;
-using Trinity.GraphEngine.ServiceFabric.Core;
-using Trinity.GraphEngine.ServiceFabric.Core.Interfaces;
 
 namespace Trinity.ServiceFabric
 {
