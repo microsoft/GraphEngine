@@ -96,12 +96,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GE Service Fabric Core\Trinity.GraphEngine.ServiceFabric.Core\Trinity.GraphEngine.ServiceFabric.Core.csproj">
-      <Project>{15064422-26F8-4C91-B092-8842C0E49DE5}</Project>
-      <Name>Trinity.GraphEngine.ServiceFabric.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
