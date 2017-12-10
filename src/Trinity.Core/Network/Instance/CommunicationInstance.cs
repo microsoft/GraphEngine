@@ -19,6 +19,8 @@ using System.Runtime.CompilerServices;
 using System.Globalization;
 using Trinity.Network.Messaging;
 using System.Diagnostics;
+using Trinity.Utilities;
+using Trinity.Extension;
 
 namespace Trinity.Network
 {
@@ -282,7 +284,14 @@ namespace Trinity.Network
                 try
                 {
                     Log.WriteLine(LogLevel.Debug, "Starting communication instance.");
+
+                    _ScanForAutoRegisteredModules();
+
                     var _config = TrinityConfig.CurrentClusterConfig;
+                    var _si = _config.GetMyServerInfo() ?? _config.GetMyProxyInfo();
+                    var _my_ip = Global.MyIPAddress;
+
+                    if (_si != null) _my_ip = NetworkUtility.Hostname2IPv4Address(_si.HostName);
 
                     _config.RunningMode = this.RunningMode;
                     Global.CommunicationInstance = this;
@@ -299,7 +308,8 @@ namespace Trinity.Network
 
                     //  Initialize message passing networking
                     NativeNetwork.StartTrinityServer((UInt16)_config.ListeningPort);
-                    Log.WriteLine("My IPEndPoint: " + _config.MyBoundIP + ":" + _config.ListeningPort);
+                    //  XXX might not be accurate: NativeNetwork.StartTrinityServer listens on all servers.
+                    Log.WriteLine("My IPEndPoint: " + _my_ip + ":" + _config.ListeningPort);
 
                     //  Initialize cloud storage
                     memory_cloud = Global.CloudStorage;
@@ -322,6 +332,15 @@ namespace Trinity.Network
                 {
                     Log.WriteLine(LogLevel.Error, "CommunicationInstance: " + ex.ToString());
                 }
+            }
+        }
+
+        private void _ScanForAutoRegisteredModules()
+        {
+            Log.WriteLine("Scanning for auto-registered communication modules.");
+            foreach(var m in AssemblyUtility.GetAllClassTypes<CommunicationModule, AutoRegisteredCommunicationModuleAttribute>())
+            {
+                m_RegisteredModuleTypes.Add(m);
             }
         }
 
@@ -365,6 +384,7 @@ namespace Trinity.Network
             this._RaiseStartedEvent();
             foreach (var module in m_CommunicationModules.Values)
                 module._RaiseStartedEvent();
+            Global._RaiseCommunicationInstanceStarted();
         }
 
         internal T _GetCommunicationModule_impl<T>() where T : CommunicationModule

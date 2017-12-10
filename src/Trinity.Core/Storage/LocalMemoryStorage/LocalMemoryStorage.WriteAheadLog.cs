@@ -45,7 +45,7 @@ namespace Trinity.Storage
         /// which already calls InternalCalls.__init(), it is not necessary to
         /// make a C wrapper for this struct.
         /// </summary>
-        static LOG_RECORD_HEADER() { InternalCalls.__init(); }
+        static LOG_RECORD_HEADER() { TrinityC.Init(); }
 
         public long   CELL_ID;
         public int    CONTENT_LEN;
@@ -115,7 +115,7 @@ namespace Trinity.Storage
 
     /**
      * Note: There are a lot of stdio operations in the code in this file. 
-     *       These lines are inside LocalMemoryStorage, which calls InternalCalls.__init(),
+     *       These lines are inside LocalMemoryStorage, which calls TrinityC.Init(),
      *       so that we can call CStdio directly.
      */
 
@@ -309,7 +309,7 @@ namespace Trinity.Storage
 
                 string path = WriteAheadLogFilePath;
 
-                Log.WriteLine(LogLevel.Info, "Loading write-ahead log file {0}", path);
+                Log.WriteLine(LogLevel.Debug, "Loading write-ahead log file {0}", path);
 
                 LOG_FILE_HEADER         header              = LOG_FILE_HEADER.New();
                 TRINITY_IMAGE_SIGNATURE current_sig         = new TRINITY_IMAGE_SIGNATURE();
@@ -326,7 +326,7 @@ namespace Trinity.Storage
 
                 if (!File.Exists(path))
                 {
-                    Log.WriteLine(LogLevel.Info, "Write ahead log doesn't exist, quit loading.");
+                    Log.WriteLine(LogLevel.Debug, "Write ahead log doesn't exist, quit loading.");
                     return;
                 }
 

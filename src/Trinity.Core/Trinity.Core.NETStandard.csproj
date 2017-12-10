@@ -5,14 +5,27 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-    <RuntimeFrameworkVersion>2.0.0-beta-001509-00</RuntimeFrameworkVersion>
-    <AssemblyName>Trinity.Core</AssemblyName>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
+    <AssemblyName>GraphEngine.CoreCLR</AssemblyName>
     <RootNamespace>Trinity</RootNamespace>
     <OutputTypeEx>library</OutputTypeEx>
-    <Version>1.0.15</Version>
-    <AssemblyVersion>1.0.15.0</AssemblyVersion>
-    <FileVersion>1.0.15.0</FileVersion>
+  </PropertyGroup>
+
+  <!-- NuGet package metadata -->
+  <PropertyGroup>
+    <Version>1.0.9083</Version>
+    <AssemblyVersion>1.0.9083.0</AssemblyVersion>
+    <FileVersion>1.0.9083.0</FileVersion>
+    <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
+    <Authors>Microsoft Graph Engine Team</Authors>
+    <Description>GraphEngine runtime and codegen for CoreCLR.</Description>
+    <Copyright>Copyright 2017</Copyright>
+    <PackageTags>Graph Engine Trinity Core Runtime TSL Compiler</PackageTags>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
+    <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
+    <Company>Microsoft Corporation</Company>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -35,11 +48,40 @@
 
   <ItemGroup>
     <None Remove="GraphEngine.Core.nuspec" />
+    <None Remove="NuGet\GraphEngine.Core.props" />
+    <None Remove="NuGet\GraphEngine.Core.targets" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="..\..\lib\coreclr\libTrinity.so" Link="libTrinity.so" />
-    <EmbeddedResource Include="..\..\lib\coreclr\Trinity.dll" Link="Trinity.dll" />
+    <Content Include="NuGet\GraphEngine.CoreCLR.props">
+      <PackagePath>build</PackagePath>
+    </Content>
+    <Content Include="NuGet\GraphEngine.CoreCLR.targets">
+      <PackagePath>build</PackagePath>
+    </Content>
+    <Content Include="..\..\bin\Trinity.TSL.CodeGen.exe">
+      <PackagePath>tools</PackagePath>
+    </Content>
+    <Content Include="..\..\bin\Trinity.TSL.CodeGen">
+      <PackagePath>tools</PackagePath>
+    </Content>
   </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\bin\coreclr\libTrinity.so" Link="libTrinity.so" />
+    <EmbeddedResource Include="..\..\bin\coreclr\Trinity.dll" Link="Trinity.dll" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+    <ThreadPoolMinThreads>20</ThreadPoolMinThreads>
+    <ThreadPoolMaxThreads>300</ThreadPoolMaxThreads>
+  </PropertyGroup>
 
 </Project>

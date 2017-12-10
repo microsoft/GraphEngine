@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageId>GraphEngine.FFI.Python</PackageId>
+    <Version>1.0.9083</Version>
+    <Authors>Microsoft Graph Engine Team</Authors>
+    <Company>Microsoft Corporation</Company>
+    <Product>GraphEngine.FFI.Python</Product>
+    <Description>GraphEngine hosted Python runtime</Description>
+    <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
+    <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
+    <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
+    <Copyright>Copyright 2017</Copyright>
+    <RepositoryUrl>https://github.com/Microsoft/GraphEngine/</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\bin</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\bin</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.FFI" Version="1.0.9083" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\pythonnet\src\runtime\Python.Runtime.15.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="$(OutputPath)Python.Runtime.dll">
+      <PackagePath>lib\netcoreapp2.0</PackagePath>
+    </Content>
+  </ItemGroup>
+</Project>

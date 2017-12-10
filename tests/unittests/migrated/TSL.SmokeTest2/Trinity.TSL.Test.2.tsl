@@ -1,0 +1,43 @@
+protocol P1
+{
+    Type    :Syn;
+    Request :void;	
+    Response:void;
+}
+
+protocol P2
+{
+    Type    :Syn;
+    Request :void;
+    Response:void;	
+}
+
+struct HttpMessage
+{
+    string message;
+}
+
+// This is an HTTP protocol, accessible as a RESTful API
+protocol P3
+{
+    Type    :HTTP;
+	Request :void;
+	Response:HttpMessage;
+}
+
+server BaseServer
+{
+    protocol P1;
+}
+
+proxy BaseProxy
+{
+    protocol P2;
+}
+
+server DerivedServer
+{
+    protocol P1;
+    protocol P2;
+    protocol P3;	
+}

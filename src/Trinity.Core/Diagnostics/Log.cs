@@ -78,6 +78,11 @@ namespace Trinity.Diagnostics
         /// The log level.
         /// </summary>
         public LogLevel logLevel;
+        private static DateTime UnixEpoch = new DateTime(1970, 1, 1);
+        /// <summary>
+        /// The DateTime representation of the timestamp.
+        /// </summary>
+        public DateTime logTime => UnixEpoch.AddSeconds(logTimestamp);
     }
 
     /// <summary>
@@ -93,18 +98,14 @@ namespace Trinity.Diagnostics
 
         static Log()
         {
-            TrinityC.Ping();
-            TrinityConfig.LoadTrinityConfig(false);
-
-            string unitTestAssemblyName = "Microsoft.VisualStudio.QualityTools.UnitTestFramework";
-            bool isInUnitTest           = AppDomain.CurrentDomain.GetAssemblies()
-                .Any(a => a.FullName.StartsWith(unitTestAssemblyName, StringComparison.Ordinal));
-
-            if (isInUnitTest)
+            TrinityC.Init();
+            try
             {
-                WriteLine(LogLevel.Info, "UnitTestFramework detected. Enabling echo callback.");
-                var LogFilename = Path.Combine(TrinityConfig.LogDirectory, "trinity-[" + DateTime.Now.ToStringForFilename() + "].log");
-                new Thread(_unitTestLogEchoThread).Start(LogFilename);
+                TrinityConfig.LoadTrinityConfig();
+            }
+            catch
+            {
+                Log.WriteLine(LogLevel.Error, "Failure to load config file, falling back to default log behavior");
             }
 
             BackgroundThread.AddBackgroundTask(new BackgroundTask(CollectLogEntries, c_LogEntryCollectorIdleInterval));

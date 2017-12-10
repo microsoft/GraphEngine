@@ -17,32 +17,44 @@ namespace Trinity.Configuration
         Dictionary<string, List<XElement>> m_loadedTemplates = new Dictionary<string, List<XElement>>();
         ParseUnit m_finalUnit;
         #endregion
-
+      
         #region Properties
+        /// <summary>
+        /// Gets path of the Configuration file
+        /// </summary>
         public string RootConfigFullPath
         {
             get;
             set;
         }
-
+        /// <summary>
+        /// Gets version of the current Configuration file to ensure compatibility
+        /// </summary>
         public string RootConfigVersion
         {
             get;
             set;
         }
-
+        /// <summary>
+        /// Gets the cluster configuration section
+        /// </summary>
         public IEnumerable<XElement> ClusterSections
         {
             get { return m_finalUnit.Elements.Where(_ => _.Name == ConfigurationConstants.Tags.CLUSTER); }
         }
-
+        /// <summary>
+        /// Gets the local configuration section
+        /// </summary>
         public XElement LocalSection
         {
             get { return m_finalUnit.Elements.FirstOrDefault(_ => _.Name == ConfigurationConstants.Tags.LOCAL) ?? new XElement(ConfigurationConstants.Tags.LOCAL); }
         }
         #endregion
-
+      
         #region Data Structure
+        /// <summary>
+        /// Structure definition of a configuration file
+        /// </summary>
         private class ParseUnit
         {
             public string FullPath;
@@ -56,8 +68,12 @@ namespace Trinity.Configuration
             }
         }
         #endregion
-
+      
         #region Constructor
+        /// <summary>
+        /// Parse a configuration file with the specified file name.
+        /// </summary>
+        /// <param name="filename"></param>
         private XmlConfiguration(string filename)
         {
             RootConfigFullPath = GetFullPath(filename);
@@ -68,14 +84,23 @@ namespace Trinity.Configuration
             RootConfigVersion = loaded.Version;
             m_finalUnit = Pipeline(loaded);
         }
-
+        /// <summary>
+        /// Load configuration file with the specified file name.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
         static public XmlConfiguration Load(string fileName)
         {
             return new XmlConfiguration(fileName);
         }
         #endregion
-
+       
         #region Processing Pipeline
+        /// <summary>
+        /// In a pipelined manner manipulate configuration file and the order is import node, template node.
+        /// </summary>
+        /// <param name="elements"></param>
+        /// <returns></returns>
         ParseUnit Pipeline(ParseUnit elements)
         {
             var importProcessed = ProcessImports(elements);
@@ -83,7 +108,11 @@ namespace Trinity.Configuration
             var mergeProcessed = ProcessMerge(templateProcessed);
             return mergeProcessed;
         }
-
+        /// <summary>
+        /// Merge the multiple local configuration sections and multiple cluster configuration sections
+        /// </summary>
+        /// <param name="inputUnit"></param>
+        /// <returns></returns>
         private ParseUnit ProcessMerge(ParseUnit inputUnit)
         {
             ParseUnit mergedSections = new ParseUnit();
@@ -138,17 +167,23 @@ namespace Trinity.Configuration
 
             return mergedSections;
         }
-
-
         #endregion
 
         #region Helper Functions
+        /// <summary>
+        /// Gets the absolute path for the specified file name.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
         private string GetFullPath(string filename)
         {
-            // TODO(v-siyul): return case-sensitive/insensitive full paths according to current environment
-            return Path.GetFullPath(filename).ToLower();
+            return Path.GetFullPath(filename);
         }
-
+        /// <summary>
+        /// Load configuration file with specified file name by linq
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
         ParseUnit LoadFile(string filename)
         {
             var document = XDocument.Load(filename);
@@ -162,13 +197,16 @@ namespace Trinity.Configuration
             var version = versionAttr == null ? ConfigurationConstants.Tags.LEGACYVER : versionAttr.Value;
             return new ParseUnit(rootNode.Elements(), GetFullPath(filename), version);
         }
-
-        // Each section is represented by IEnumerable<XElement>, obtained by calling XElement.Elements()
-        // Later XElements with the same Name will overwrite earlier entries.
-        // This routine can be used for:
-        //   1. Merging configuraiton entries in a configuration section.
-        //   2. Merging local configuration sections.
-        //   3. Merging server/proxy sections in a cluster node.
+        /// <summary>
+        /// Each section is represented by IEnumerable<XElement>, obtained by calling XElement.Elements()
+        /// Later XElements with the same Name will overwrite earlier entries
+        /// This routine can be used for:
+        /// 1. Merging configuration entries in a configuration section.
+        /// 2. Merging local configuration sections.
+        /// 3. Merging server/proxy sections in a cluster node.
+        /// </summary>
+        /// <param name="sections"></param>
+        /// <returns></returns>
         IEnumerable<XElement> MergeSections(IEnumerable<IEnumerable<XElement>> sections)
         {
             // remove duplicates while preserving the order
@@ -200,7 +238,6 @@ namespace Trinity.Configuration
         #endregion
 
         #region Processing Imports
-
         ParseUnit ProcessImports(ParseUnit parentUnit)
         {
             ParseUnit result = new ParseUnit();

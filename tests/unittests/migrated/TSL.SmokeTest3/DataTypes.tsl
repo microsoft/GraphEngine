@@ -1,0 +1,369 @@
+struct S1
+{
+    byte f0;
+    sbyte f1;
+    char f2;
+	short f3;
+	ushort f4;
+	int f5;
+	uint f6;
+	long f7;
+	ulong f8;
+	decimal f9;
+	Guid f11;
+}
+
+struct S1_w_bool
+{
+    bool f00;	
+    byte f0;
+    sbyte f1;
+    char f2;
+	short f3;
+	ushort f4;
+	int f5;
+	uint f6;
+	long f7;
+	ulong f8;
+	decimal f9;
+	Guid f11;
+}
+
+struct S2
+{
+    optional bool f00;	
+    optional byte f0;
+    optional sbyte f1;
+    optional char f2;
+	optional short f3;
+	optional ushort f4;
+	int f5;
+	optional uint f6;
+	long f7;
+	optional ulong f8;
+	decimal f9;
+	optional DateTime f10;
+	Guid f11;
+    optional string f12;
+}
+
+cell struct C1
+{
+    byte f0;
+    sbyte f1;
+    char f2;
+	short f3;
+	ushort f4;
+	int f5;
+	uint f6;
+	long f7;
+	ulong f8;
+	decimal f9;
+	Guid f11;
+    [Index]
+    string f12;
+}
+
+cell struct C2
+{
+    byte f0;
+    sbyte f1;
+    char f2;
+	short f3;
+	ushort f4;
+	int f5;
+	uint f6;
+	long f7;
+	ulong f8;
+	decimal f9;
+	Guid f11;
+    List<byte> f12;
+	List<sbyte> f13;
+	List<char> f14;
+	List<short> f15;
+	List<ushort> f16;
+	List<int> f17;
+    List<uint> f18;
+    List<long> f19;
+    List<ulong> f20;
+    List<decimal> f21;
+    List<DateTime> f22;
+    List<Guid> f23;
+}
+
+cell struct C3
+{
+    byte f0;
+    sbyte f1;
+    char f2;
+	short f3;
+	ushort f4;
+	int f5;
+	uint f6;
+	long f7;
+	ulong f8;
+	decimal f9;
+	Guid f11;
+    List<byte> f12;
+	List<sbyte> f13;
+	List<char> f14;
+	List<short> f15;
+	List<ushort> f16;
+	List<int> f17;
+    List<uint> f18;
+    List<long> f19;
+    List<ulong> f20;
+    List<decimal> f21;
+    List<DateTime> f22;
+    List<Guid> f23;
+    byte     [128] f24;
+    sbyte    [128] f25;
+    char     [128] f26;
+	short    [128] f27;
+	ushort   [128] f28;
+	int      [128] f29;
+	uint     [128] f30;
+	long     [128] f31;
+	ulong    [128] f32;
+	decimal  [128] f33;
+	DateTime [128] f34;
+	Guid     [128] f35;
+    List<string> f36;
+    List<S1> f37;
+    S1[128] f38;
+}
+
+cell struct C4
+{
+    byte f0;
+    sbyte f1;
+    char f2;
+	short f3;
+	ushort f4;
+	int f5;
+	uint f6;
+	long f7;
+	ulong f8;
+	decimal f9;
+	Guid f11;
+    List<byte> f12;
+	List<sbyte> f13;
+	List<char> f14;
+	List<short> f15;
+	List<ushort> f16;
+	List<int> f17;
+    List<uint> f18;
+    List<long> f19;
+    List<ulong> f20;
+    List<decimal> f21;
+    List<DateTime> f22;
+    List<Guid> f23;
+    List<List<byte>>     f24;
+	List<List<sbyte>>    f25;
+	List<List<char>>     f26;
+	List<List<short>>    f27;
+	List<List<ushort>>   f28;
+	List<List<int>>      f29;
+    List<List<uint>>     f30;
+    List<List<long>>     f31;
+    List<List<ulong>>    f32;
+    List<List<decimal>>  f33;
+    List<List<DateTime>> f34;
+    List<List<Guid>>     f35;
+}
+
+protocol P1
+{
+    Type:Syn;
+    Request:void;
+    Response:void;
+}
+
+protocol P2
+{
+    Type:Syn;
+    Request:S1;
+    Response:void;
+}
+
+protocol P3
+{
+    Type:Syn;
+    Request:C1;
+    Response:void;
+}
+
+protocol P4
+{
+    Type:Syn;
+    Request:C2;
+    Response:void;
+}
+
+protocol P5
+{
+    Type:Syn;
+    Request:C3;
+    Response:void;
+}
+
+protocol P6
+{
+    Type:Asyn;
+    Request:void;
+    Response:void;
+}
+
+protocol P7
+{
+    Type:Asyn;
+    Request:S1;
+    Response:void;
+}
+
+protocol P8
+{
+    Type:Asyn;
+    Request:C1;
+    Response:void;
+}
+
+protocol P9
+{
+    Type:Asyn;
+    Request:C2;
+    Response:void;
+}
+
+protocol P10
+{
+    Type:Asyn;
+    Request:C3;
+    Response:void;
+}
+
+protocol P11
+{
+    Type:Syn;
+    Response:S1;
+    Request:void;
+}
+
+protocol P12
+{
+    Type:Syn;
+    Response:C1;
+    Request:void;
+}
+
+protocol P13
+{
+    Type:Syn;
+    Response:C2;
+    Request:void;
+}
+
+protocol P14
+{
+    Type:Syn;
+    Response:C3;
+    Request:void;
+}
+
+protocol P15
+{
+    Type:HTTP;
+    Request:void;
+    Response:void;
+}
+
+protocol P16
+{
+    Type:HTTP;
+    Request:S1;
+    Response:void;
+}
+
+protocol P17
+{
+    Type:HTTP;
+    Request:C1;
+    Response:void;
+}
+
+protocol P18
+{
+    Type:HTTP;
+    Request:C2;
+    Response:void;
+}
+
+protocol P19
+{
+    Type:HTTP;
+    Request:C3;
+    Response:void;
+}
+
+protocol P20
+{
+    Type:HTTP;
+    Request:void;
+    Response:stream;
+}
+
+protocol P21
+{
+    Type:HTTP;
+    Request:S1;
+    Response:stream;
+}
+
+protocol P22
+{
+    Type:HTTP;
+    Request:C1;
+    Response:stream;
+}
+
+protocol P23
+{
+    Type:HTTP;
+    Request:C2;
+    Response:stream;
+}
+
+protocol P24
+{
+    Type:HTTP;
+    Request:C3;
+    Response:stream;
+}
+
+server SERVER_1
+{
+    protocol P1;	
+    protocol P2;	
+    protocol P3;	
+    protocol P4;	
+    protocol P5;	
+    protocol P6;	
+    protocol P7;	
+    protocol P8;	
+    protocol P9;	
+    protocol P10;	
+    protocol P11;	
+    protocol P12;	
+    protocol P13;	
+    protocol P14;	
+    protocol P15;	
+    protocol P16;	
+    protocol P17;	
+    protocol P18;	
+    protocol P19;	
+    protocol P20;	
+    protocol P21;	
+    protocol P22;	
+    protocol P23;	
+    protocol P24;	
+}

@@ -74,6 +74,26 @@ namespace Trinity.Utilities
         }
 
         /// <summary>
+        /// Compares two paths.
+        /// </summary>
+        /// <param name="A">The first path.</param>
+        /// <param name="B">The second path.</param>
+        /// <returns></returns>
+        public static bool ComparePath(string A, string B)
+        {
+            A = CompletePath(A, false);
+            B = CompletePath(B, false);
+
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                A = A.ToLowerInvariant();
+                B = B.ToLowerInvariant();
+            }
+
+            return A.Equals(B);
+        }
+
+        /// <summary>
         /// Complete the given file directory path to make it end with directory separator char.
         /// </summary>
         /// <param name="path">The directory path.</param>
@@ -81,7 +101,11 @@ namespace Trinity.Utilities
         /// <returns>The completed directory path.</returns>
         public static string CompletePath(string path, bool create_nonexistent = true)
         {
+            if (path == null) throw new ArgumentNullException("path");
+            if (path == "") path = Environment.CurrentDirectory;
+
             string _path = path;
+
             if (path[path.Length - 1] != Path.DirectorySeparatorChar)
                 _path = path + Path.DirectorySeparatorChar;
             if (create_nonexistent && (!Directory.Exists(_path)))

@@ -46,7 +46,7 @@ namespace Trinity.Network
         /// Sets a global barrier synchronization point for a specified BSP task. A process participating current BSP task waits until all other processes also reach this point.
         /// </summary>
         /// <param name="taskId">A user-specified task Id used to differentiate different barrier synchronization tasks.</param>
-        public static void BarrierSync(this Trinity.Storage.MemoryCloud storage, int taskId)
+        public static void BarrierSync(this Trinity.Storage.FixedMemoryCloud storage, int taskId)
         {
             storage.P2PBarrierRequest(taskId);
         }
@@ -54,13 +54,13 @@ namespace Trinity.Network
         /// <summary>
         /// Sets a global barrier synchronization point. A process participating current BSP task waits until all other processes also reach this point.
         /// </summary>
-        public static void BarrierSync(this Trinity.Storage.MemoryCloud storage)
+        public static void BarrierSync(this Trinity.Storage.FixedMemoryCloud storage)
         {
             storage.P2PBarrierRequest(default_task_sn);
             default_task_sn++;
         }
 
-        internal static void P2PBarrierRequest(this Trinity.Storage.MemoryCloud storage, int taskId)
+        internal static void P2PBarrierRequest(this Trinity.Storage.FixedMemoryCloud storage, int taskId)
         {
             TrinityMessage msg = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC, (ushort)RequestType.P2PBarrier, sizeof(int));
             *(int*)(msg.Buffer + TrinityMessage.Offset) = taskId;
@@ -106,7 +106,7 @@ namespace Trinity.Network
             }
         }
 
-        internal static void BarrierSyncProfiling(this Trinity.Storage.MemoryCloud storage, int count)
+        internal static void BarrierSyncProfiling(this Trinity.Storage.FixedMemoryCloud storage, int count)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();

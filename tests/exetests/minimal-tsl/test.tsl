@@ -1,0 +1,9 @@
+﻿cell C1
+{
+    int f1;
+}
+
+cell C2
+{
+    string f2;
+}

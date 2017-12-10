@@ -46,7 +46,7 @@ namespace Trinity
 
 		extern List<DebuggerCommandTuple> g_cmd_list;
 
-		bool ExecuteDebuggerCommand(string& cmd, Array<string>& args)
+		bool ExecuteDebuggerCommand(String& cmd, Array<String>& args)
 		{
 			for (auto &entry : g_cmd_list)
 			{

@@ -36,7 +36,7 @@ namespace Storage
         }
         else
         {
-            string root = Path::CompletePath(Path::CompletePath(storage_root, false) + "MemoryPool\\", true);
+            String root = Path::CompletePath(Path::CompletePath(storage_root, false) + "MemoryPool\\", true);
             if (!SaveMP(root + TrunkId + ".mp"))
             {
                 Diagnostics::WriteLine(LogLevel::Debug, "Error saving MP file on trunk {0}", TrunkId);
@@ -56,7 +56,7 @@ namespace Storage
         return success;
     }
 
-    bool MemoryTrunk::Load(string storage_root)
+    bool MemoryTrunk::Load(String storage_root)
     {
         bool success = true;
         if (storage_root.Empty())
@@ -79,7 +79,7 @@ namespace Storage
         }
         else
         {
-            string root = Path::CompletePath(Path::Combine(Path::CompletePath(storage_root, false), "MemoryPool"), true);
+            String root = Path::CompletePath(Path::Combine(Path::CompletePath(storage_root, false), "MemoryPool"), true);
             if (!LoadMP(root + TrunkId + ".mp"))
             {
                 Diagnostics::WriteLine(LogLevel::Debug, "Error loading MP file on trunk {0}", TrunkId);
@@ -99,10 +99,10 @@ namespace Storage
         return success;
     }
 
-    bool MemoryTrunk::SaveMP(string mp_file)
+    bool MemoryTrunk::SaveMP(String mp_file)
     {
         /* Save to secondary slot, overwrite the older image */
-        string output_file = MPFile(false);
+        String output_file = MPFile(false);
         if (mp_file.Length() != 0)
         {
             output_file = mp_file;
@@ -127,10 +127,10 @@ namespace Storage
         return success;
     }
 
-    bool MemoryTrunk::LoadMP(string mp_file)
+    bool MemoryTrunk::LoadMP(String mp_file)
     {
         /* Load from primary slot, reading the newer image */
-        string input_file = MPFile(true);
+        String input_file = MPFile(true);
         if (mp_file.Length() != 0)
         {
             input_file = mp_file;
@@ -165,10 +165,10 @@ namespace Storage
         return success;
     }
 
-    bool MemoryTrunk::SaveIndex(string index_file)
+    bool MemoryTrunk::SaveIndex(String index_file)
     {
         /* Save to secondary slot, overwrite the older image */
-        string output_file = IndexFile(false);
+        String output_file = IndexFile(false);
         if (index_file.Length() != 0)
         {
             output_file = index_file;
@@ -177,10 +177,10 @@ namespace Storage
         return hashtable->Save(output_file);
     }
 
-    bool MemoryTrunk::LoadIndex(string index_file)
+    bool MemoryTrunk::LoadIndex(String index_file)
     {
         /* Load from primary slot, reading the newer image */
-        string input_file = IndexFile(true);
+        String input_file = IndexFile(true);
         if (index_file.Length() != 0)
         {
             input_file = index_file;
@@ -189,10 +189,10 @@ namespace Storage
         return hashtable->Initialize(input_file, this);
     }
 
-    bool MemoryTrunk::SaveLOFile(string lo_file)
+    bool MemoryTrunk::SaveLOFile(String lo_file)
     {
         /* Save to secondary slot, overwrite the older image */
-        string output_file = LO_File(false);
+        String output_file = LO_File(false);
         if (lo_file.Length() != 0)
         {
             output_file = lo_file;
@@ -239,11 +239,11 @@ namespace Storage
 #pragma warning(push)
 #pragma warning(disable:6385)
 #pragma warning(disable:6386)
-    bool MemoryTrunk::LoadLOFile(string lo_file)
+    bool MemoryTrunk::LoadLOFile(String lo_file)
     {
         DisposeLargeObjects();
         /* Load from primary slot, reading the newer image */
-        string input_file = LO_File(true);
+        String input_file = LO_File(true);
         bool read_success = true;
         if (lo_file.Length() != 0)
         {

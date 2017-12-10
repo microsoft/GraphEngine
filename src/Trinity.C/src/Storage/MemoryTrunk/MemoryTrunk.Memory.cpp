@@ -40,7 +40,15 @@ namespace Storage
         {
             if (head.append_head + cellSize <= head.committed_head)
             {
-                cell_p = trunkPtr + head.append_head;
+                /**! Note, a special case here is that the trunk is
+                 *   already full (all 2GB space are occupied), so that
+                 *   append_head == committed_head == TrunkLength. If we
+                 *   now save a cell with length 0, then the if-condition still holds but
+                 *   we get a cell_ptr out of the range of the current trunk, which could 
+                 *   make (cell_ptr - trunkPtr) negative (TrunkLength = INT_MAX + 1).
+                 */
+
+                cell_p = trunkPtr + (head.append_head % TrunkLength);
                 head.append_head += cellSize;
                 // This is the only path to ExitMemoryAllocationArena.
                 // We hold alloc_lock, check if we entered arena

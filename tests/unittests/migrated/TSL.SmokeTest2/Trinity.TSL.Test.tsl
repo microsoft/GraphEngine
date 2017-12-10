@@ -1,0 +1,142 @@
+TrinitySettings
+{
+	RootNamespace: MyTSLNamespace;
+}
+
+enum Colors
+{
+    None = 0,
+    Red = 1,
+	Green = 2,
+	Blue = 4,
+}
+
+cell TestEmptyCell
+{
+
+}
+
+cell TestListCell
+{
+    List<int> iList;	
+}
+
+cell Test64Cell
+{
+    Test64Struct _64struct;	
+}
+
+struct Test64Struct
+{
+    optional string s0;	
+    optional string s1;	
+    optional string s2;	
+    optional string s3;	
+    optional string s4;	
+    optional string s5;	
+    optional string s6;	
+    optional string s7;	
+    optional string s8;	
+    optional string s9;	
+    optional string s10;	
+    optional string s11;	
+    optional string s12;	
+    optional string s13;	
+    optional string s14;	
+    optional string s15;	
+    optional string s16;	
+    optional string s17;	
+    optional string s18;	
+    optional string s19;	
+    optional string s20;	
+    optional string s21;	
+    optional string s22;	
+    optional string s23;	
+    optional string s24;	
+    optional string s25;	
+    optional string s26;	
+    optional string s27;	
+    optional string s28;	
+    optional string s29;	
+    optional string s30;	
+    optional string s31;	
+    optional string s32;	
+    optional string s33;	
+    optional string s34;	
+    optional string s35;	
+    optional string s36;	
+    optional string s37;	
+    optional string s38;	
+    optional string s39;	
+    optional string s40;	
+    optional string s41;	
+    optional string s42;	
+    optional string s43;	
+    optional string s44;	
+    optional string s45;	
+    optional string s46;	
+    optional string s47;	
+    optional string s48;	
+    optional string s49;	
+    optional string s50;	
+    optional string s51;	
+    optional string s52;	
+    optional string s53;	
+    optional string s54;	
+    optional string s55;	
+    optional string s56;	
+    optional string s57;	
+    optional string s58;	
+    optional string s59;	
+    optional string s60;	
+    optional string s61;	
+    optional string s62;	
+    optional string s63;	
+    optional string s64;	
+    optional string s65;	
+    optional string s66;	
+}
+
+cell TestCellIDTypeCell
+{
+    CellID parent;
+    List<CellID> children;	
+}
+
+cell struct MyCell
+{
+	int A;
+	string Name;
+}
+
+struct MyMessage
+{
+    string Value;
+}
+
+cell struct GraphNode
+{
+	string value;
+	List<long> outLinks;
+	List<long> inLinks;
+}
+
+protocol HelloProtocol
+{
+    Type:HTTP;
+	Request:MyCell;
+	Response:MyMessage;
+}
+
+protocol WorldProtocol
+{
+    Type:Syn;
+    Request:MyCell;
+    Response: MyCell;
+}
+
+server MyServer
+{
+    protocol HelloProtocol;
+	protocol WorldProtocol;
+}

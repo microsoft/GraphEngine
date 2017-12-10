@@ -26,8 +26,8 @@ namespace Trinity.Network
     {
         static NativeNetwork()
         {
-            InternalCalls.__init();
-        }
+            TrinityC.Init();
+       }
 
         /// <summary>
         /// Value = 0xFFFFFFFFFFFFFFFF

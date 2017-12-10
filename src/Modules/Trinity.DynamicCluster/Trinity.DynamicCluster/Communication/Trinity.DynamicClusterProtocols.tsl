@@ -1,0 +1,36 @@
+struct RemoteTaskRequest
+{
+	string Task;
+}
+
+struct ChunkInformation
+{
+	long lowKey;
+	long highKey;
+	Guid id;
+}
+
+struct StorageInformation
+{
+	int partition;
+	Guid id;
+}
+
+protocol NotifyRemoteStorageOnLeaving
+{
+    Type: Asyn;
+    Request: StorageInformation;
+}
+
+protocol RemoteTask
+{
+	Type: Syn;
+	Request: RemoteTaskRequest;
+	Response: void;
+}
+
+module DynamicCluster
+{
+	protocol NotifyRemoteStorageOnLeaving;
+	protocol RemoteTask;
+}

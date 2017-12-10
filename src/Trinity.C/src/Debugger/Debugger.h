@@ -21,7 +21,7 @@ namespace Trinity
 
 		void printError(char* msg);
 
-		typedef bool(*DebuggerCommand)(Array<string>&);
+		typedef bool(*DebuggerCommand)(Array<String>&);
 
 		struct DebuggerCommandTuple
 		{

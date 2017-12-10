@@ -80,7 +80,7 @@ namespace Trinity
         {
             get
             {
-                return AssemblyPath.MyAssemblyPath;
+                return AssemblyUtility.MyAssemblyPath;
             }
         }
 

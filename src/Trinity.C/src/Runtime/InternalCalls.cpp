@@ -22,19 +22,6 @@ using Storage::PTHREAD_CONTEXT;
 //! See InternalCall.cs for explanation of entry names.
 ICallEntry ICallTable[] =
 {
-    //====================== TrinityConfig ==========================//
-
-    { "Trinity.CTrinityConfig::SetStorageRoot"                                      , static_cast<void(*)(const char*, int32_t)>(&TrinityConfig::SetStorageRoot) },
-    { "Trinity.CTrinityConfig::CReadOnly"                                           , &TrinityConfig::ReadOnly },
-    { "Trinity.CTrinityConfig::CSetReadOnly"                                        , &TrinityConfig::SetReadOnly },
-    { "Trinity.CTrinityConfig::CTrunkCount"                                         , &TrinityConfig::TrunkCount },
-    { "Trinity.CTrinityConfig::CSetTrunkCount"                                      , &TrinityConfig::SetTrunkCount },
-    { "Trinity.CTrinityConfig::GetStorageCapacityProfile"                           , &TrinityConfig::GetStorageCapacityProfile },
-    { "Trinity.CTrinityConfig::SetStorageCapacityProfile"                           , &TrinityConfig::SetStorageCapacityProfile },
-    { "Trinity.CTrinityConfig::CLargeObjectThreshold"                               , &TrinityConfig::LargeObjectThreshold },
-    { "Trinity.CTrinityConfig::CSetLargeObjectThreshold"                            , &TrinityConfig::SetLargeObjectThreshold },
-    { "Trinity.CTrinityConfig::CSetGCDefragInterval"                                , &TrinityConfig::SetGCDefragInterval },
-
     //====================== CStdio ==========================//
 
 #ifdef TRINITY_PLATFORM_WINDOWS
@@ -74,11 +61,6 @@ ICallEntry ICallTable[] =
     { "Trinity.Mathematics.CMathUtility::C_multiply_double_vector"                    , &multiply_double_vector },
     { "Trinity.Mathematics.CMathUtility::C_multiply_sparse_double_vector"             , &multiply_sparse_double_vector },
 
-#if defined(TRINITY_PLATFORM_WINDOWS)
-    { "Trinity.Core.Lib.CTrinityC::C_GetLastError"                                    , &GetLastError },
-#else
-    { "Trinity.Core.Lib.CTrinityC::C_GetLastError"                                    , &errno },
-#endif
     //====================== LocalMemoryStorage ==========================//
 
     { "Trinity.Storage.CLocalMemoryStorage::CInitialize"                            , &Storage::LocalMemoryStorage::Initialize },
@@ -174,32 +156,8 @@ DLL_EXPORT BOOL __stdcall RegisterInternalCall(void* _MethodDescPtr, char* Funct
     return TRUE;
 }
 
-/******************************************************************************
-Before calling this, make sure that both source and target addresses are JITted!
-******************************************************************************/
-DLL_EXPORT void __stdcall HotSwapCSharpMethod(void* TargetMethodDescPtr, void* SourceMethodDescPtr)
-{
-    MethodDesc *src = (MethodDesc*)SourceMethodDescPtr;
-    MethodDesc *dst = (MethodDesc*)TargetMethodDescPtr;
-
-    uint64_t dst_addr = (uint64_t)dst->m_MethodPointer;
-    Memory::MemoryInject(&dst->m_MethodPointer, (uint64_t)src->m_MethodPointer);
-    Memory::MemoryInject(&src->m_MethodPointer, dst_addr);
-}
-
 #else
 
-//====================== TrinityConfig ==========================//
-DLL_EXPORT void              SetStorageRoot(const char* buffer, int32_t length) { TrinityConfig::SetStorageRoot(buffer, length); }
-DLL_EXPORT BOOL              CReadOnly() { return TrinityConfig::ReadOnly() ? TRUE : FALSE; }
-DLL_EXPORT void              CSetReadOnly(bool value) { TrinityConfig::SetReadOnly(value); }
-DLL_EXPORT int32_t           CTrunkCount() { return TrinityConfig::TrunkCount(); }
-DLL_EXPORT void              CSetTrunkCount(int32_t value) { TrinityConfig::SetTrunkCount(value); }
-DLL_EXPORT int32_t           GetStorageCapacityProfile() { return TrinityConfig::GetStorageCapacityProfile(); }
-DLL_EXPORT void              SetStorageCapacityProfile(int32_t value) { TrinityConfig::SetStorageCapacityProfile(value); }
-DLL_EXPORT int32_t           CLargeObjectThreshold() { return TrinityConfig::LargeObjectThreshold(); }
-DLL_EXPORT void              CSetLargeObjectThreshold(int32_t value) { TrinityConfig::SetLargeObjectThreshold(value); }
-DLL_EXPORT void              CSetGCDefragInterval(int32_t value) { TrinityConfig::SetGCDefragInterval(value); }
 //====================== CStdio ==========================//
 DLL_EXPORT int32_t           C_wfopen_s(FILE** _File, u16char* _Filename, u16char* _Mode)
 {

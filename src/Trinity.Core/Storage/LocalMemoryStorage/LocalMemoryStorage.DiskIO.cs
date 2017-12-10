@@ -17,6 +17,7 @@ using Trinity.Daemon;
 using System.Diagnostics;
 using Trinity.Core.Lib;
 using System.Runtime.CompilerServices;
+using Trinity.Configuration;
 
 namespace Trinity.Storage
 {
@@ -33,6 +34,16 @@ namespace Trinity.Storage
         {
             lock (m_lock)
             {
+                try
+                {
+                    StorageBeforeLoad();
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeLoad event handler: {0}", ex.ToString());
+                }
+
+                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
                 TrinityErrorCode ret = CLocalMemoryStorage.CLoadStorage();
 
                 //TODO WAL and cell type signatures should migrate to KVStore extensions.
@@ -46,7 +57,7 @@ namespace Trinity.Storage
                 }
                 catch (Exception ex)
                 {
-                    Log.WriteLine(LogLevel.Error, "StorageLoaded event handler: {0}", ex.ToString());
+                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageLoaded event handler: {0}", ex.ToString());
                 }
 
                 return ret;
@@ -64,6 +75,16 @@ namespace Trinity.Storage
         {
             lock (m_lock)
             {
+                try
+                {
+                    StorageBeforeSave();
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeSave event handler: {0}", ex.ToString());
+                }
+
+                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
                 TrinityErrorCode ret = CLocalMemoryStorage.CSaveStorage();
 
                 if (ret == TrinityErrorCode.E_SUCCESS)
@@ -78,7 +99,7 @@ namespace Trinity.Storage
                     }
                     catch (Exception ex)
                     {
-                        Log.WriteLine(LogLevel.Error, "StorageSaved event handler: {0}", ex.ToString());
+                        Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageSaved event handler: {0}", ex.ToString());
                     }
                 }
 
@@ -97,6 +118,16 @@ namespace Trinity.Storage
         {
             lock (m_lock)
             {
+                try
+                {
+                    StorageBeforeReset();
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeReset event handler: {0}", ex.ToString());
+                }
+
+                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
                 string path          = WriteAheadLogFilePath;
                 TrinityErrorCode ret = CLocalMemoryStorage.CResetStorage();
 
@@ -108,11 +139,47 @@ namespace Trinity.Storage
                 }
                 catch (Exception ex)
                 {
-                    Log.WriteLine(LogLevel.Error, "StorageReset event handler: {0}", ex.ToString());
+                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageReset event handler: {0}", ex.ToString());
                 }
 
                 return ret;
             }
+        }
+
+        /// <summary>
+        /// Synchronizes storage root path with Trinity.C.
+        /// Creates the directory if it does not exist.
+        /// </summary>
+        private static TrinityErrorCode CSynchronizeStorageRoot()
+        {
+            string storage_root = StorageConfig.Instance.StorageRoot;
+            if (!Directory.Exists(storage_root))
+            {
+                try
+                {
+                    Directory.CreateDirectory(storage_root);
+                }
+                catch
+                {
+                    Log.WriteLine(LogLevel.Error, "Error occurs when creating StorageRoot: " + storage_root);
+                    return TrinityErrorCode.E_FAILURE;
+                }
+            }
+
+            try
+            {
+                byte[] buff = BitHelper.GetBytes(storage_root);
+                fixed (byte* p = buff)
+                {
+                    CTrinityConfig.SetStorageRoot(p, buff.Length);
+                }
+            }
+            catch
+            {
+                return TrinityErrorCode.E_FAILURE;
+            }
+
+            return TrinityErrorCode.E_SUCCESS;
         }
 
 

@@ -121,7 +121,4 @@
   <data name="BuildRev" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\BuildRev.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="Trinity_C_sha512" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Trinity.C.sha512.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
 </root>
