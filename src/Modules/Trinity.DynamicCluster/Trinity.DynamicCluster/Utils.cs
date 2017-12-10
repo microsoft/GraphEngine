@@ -54,6 +54,11 @@ namespace Trinity.DynamicCluster
             t3 = array[2];
         }
 
+        public static IEnumerable<(T1, T2)> ZipWith<T1, T2>(this IEnumerable<T1> i1, IEnumerable<T2> i2)
+        {
+            return i1.Zip(i2, (e1, e2) => (e1, e2));
+        }
+
         public static IEnumerable<T> Infinity<T>(Func<T> IO)
         {
             while (true)
@@ -154,6 +159,43 @@ namespace Trinity.DynamicCluster
                 fmt.Serialize(ms, payload);
                 return ms.ToArray();
             }
+        }
+
+        public static async Task WhenAll(this IEnumerable<Task> tasks)
+        {
+            await Task.WhenAll(tasks.ToArray());
+        }
+
+        public static async Task<T[]> Unwrap<T>(this IEnumerable<Task<T>> tasks)
+        {
+            var ta = tasks.ToArray();
+            await Task.WhenAll(ta);
+            return tasks.Select(_ => _.Result).ToArray();
+        }
+
+        public static IEnumerable<Task> Then(this IEnumerable<Task> tasks, Func<Task> func)
+        {
+            return tasks.Select(t => t.ContinueWith(t_ => func()).Unwrap());
+        }
+
+        public static IEnumerable<Task<T>> Then<T>(this IEnumerable<Task> tasks, Func<Task<T>> func)
+        {
+            return tasks.Select(t => t.ContinueWith(t_ => func()).Unwrap());
+        }
+
+        public static IEnumerable<Task<Tout>> Then<Tin, Tout>(this IEnumerable<Task<Tin>> tasks, Func<Tin, Task<Tout>> func)
+        {
+            return tasks.Select(t => t.ContinueWith(t_ => func(t_.Result)).Unwrap());
+        }
+
+        public static IEnumerable<Task> Then<Tin>(this IEnumerable<Task<Tin>> tasks, Action<Tin> func)
+        {
+            return tasks.Select(t => t.ContinueWith(t_ => func(t_.Result)));
+        }
+
+        public static IEnumerable<Task> Then(this IEnumerable<Task> tasks, Action func)
+        {
+            return tasks.Select(t => t.ContinueWith(t_ => func()));
         }
     }
 }

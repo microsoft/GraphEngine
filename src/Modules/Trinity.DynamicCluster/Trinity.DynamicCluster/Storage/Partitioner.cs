@@ -63,10 +63,12 @@ namespace Trinity.DynamicCluster.Storage
             m_parthealthproc = Utils.Daemon(m_cancel, "PartitionHealthMonitor", 20000, PartitionHealthMonitorProc);
         }
 
-        private void UpdatePartition(int partitionId, Task<IEnumerable<ReplicaInformation>> resolveTask)
+        private void UpdatePartition(IEnumerable<ReplicaInformation> rps)
         {
-            var oldset = m_replicaList[partitionId];
-            var newset = resolveTask.Result.ToList();
+            if (!rps.Any()) return;
+            var pid = rps.First().PartitionId;
+            var oldset = m_replicaList[pid];
+            var newset = rps.ToList();
             foreach (var r in newset.Except(oldset))
             {
                 if (r.Address == m_nameservice.Address && r.Port == m_nameservice.Port) continue;
@@ -82,7 +84,7 @@ namespace Trinity.DynamicCluster.Storage
                 if (m_chunktable.IsMaster && m_nameservice.PartitionId == r.PartitionId)
                 { m_chunktable.DeleteEntry(r.Id); }
             }
-            m_replicaList[partitionId] = newset;
+            m_replicaList[pid] = newset;
         }
 
         /// <summary>
@@ -91,10 +93,10 @@ namespace Trinity.DynamicCluster.Storage
         /// </summary>
         private async Task ScanNodesProc()
         {
-            var ids = Utils.Integers(m_nameservice.PartitionCount);
-            var tasks = ids.Select(m_nameservice.ResolvePartition);
-            await Task.WhenAll(tasks);
-            tasks.ForEach(UpdatePartition);
+            await Utils.Integers(m_nameservice.PartitionCount)
+                       .Select(m_nameservice.ResolvePartition)
+                       .Then(UpdatePartition)
+                       .WhenAll();
         }
 
         /// <summary>
@@ -129,9 +131,8 @@ namespace Trinity.DynamicCluster.Storage
             if (!m_taskqueue.IsMaster) return;
             var rpg = m_replicaList[m_nameservice.PartitionId];
             if (rpg.Count() == 0) return;
-            var cks = rpg.Select(m_chunktable.GetChunks).ToArray();
-            await Task.WhenAll(cks);
-            var replica_chunks = rpg.Zip(cks, (r, t) => (r, t.Result));
+            var cks = await rpg.Select(m_chunktable.GetChunks).Unwrap();
+            var replica_chunks = rpg.ZipWith(cks);
 
             await Task.WhenAll(
                 m_taskqueue.Wait(ReplicatorTask.Guid),
@@ -139,7 +140,7 @@ namespace Trinity.DynamicCluster.Storage
                 m_taskqueue.Wait(PersistencyTask.Guid));
 
             // If there's nothing in the chunk table yet, an initialization is needed.
-            if (!cks.SelectMany(_ => _.Result).Any())
+            if (!cks.SelectMany(Utils.Identity).Any())
             {
                 await _InitChunkTableAsync(rpg);
                 return;

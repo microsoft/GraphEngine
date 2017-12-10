@@ -60,8 +60,7 @@ namespace Trinity.DynamicCluster.Tasks
         private async Task mirror_init()
         {
             var frc = new Chunk[]{ Chunk.FullRangeChunk };
-            var tasks = m_replicas.Select(r => m_ctable.SetChunks(r.Id, frc)).ToArray();
-            await Task.WhenAll(tasks);
+            await m_replicas.Select(r => m_ctable.SetChunks(r.Id, frc)).WhenAll();
         }
 
         private async Task sharding_init()
@@ -76,8 +75,7 @@ namespace Trinity.DynamicCluster.Tasks
                 chunks.Add(new Chunk(head, tail));
                 head = tail + 1;
             }
-            var tasks = m_replicas.Select(r => m_ctable.SetChunks(r.Id, chunks)).ToArray();
-            await Task.WhenAll(tasks);
+            await m_replicas.Select(r => m_ctable.SetChunks(r.Id, chunks)).WhenAll();
         }
 
         private async Task mirrorshard_init()
