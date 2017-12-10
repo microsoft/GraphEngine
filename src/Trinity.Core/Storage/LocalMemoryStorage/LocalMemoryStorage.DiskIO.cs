@@ -43,8 +43,9 @@ namespace Trinity.Storage
                     Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeLoad event handler: {0}", ex.ToString());
                 }
 
-                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
-                TrinityErrorCode ret = CLocalMemoryStorage.CLoadStorage();
+                TrinityErrorCode ret = CSynchronizeStorageRoot();
+                if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
+                ret = CLocalMemoryStorage.CLoadStorage();
 
                 //TODO WAL and cell type signatures should migrate to KVStore extensions.
                 InitializeWriteAheadLogFile();
@@ -84,8 +85,9 @@ namespace Trinity.Storage
                     Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeSave event handler: {0}", ex.ToString());
                 }
 
-                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
-                TrinityErrorCode ret = CLocalMemoryStorage.CSaveStorage();
+                TrinityErrorCode ret = CSynchronizeStorageRoot();
+                if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
+                ret = CLocalMemoryStorage.CSaveStorage();
 
                 if (ret == TrinityErrorCode.E_SUCCESS)
                 {
@@ -126,10 +128,11 @@ namespace Trinity.Storage
                 {
                     Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeReset event handler: {0}", ex.ToString());
                 }
-
-                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
+                TrinityErrorCode ret = CSynchronizeStorageRoot();
+                if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
+                ret                  = CLocalMemoryStorage.CResetStorage();
+                if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
                 string path          = WriteAheadLogFilePath;
-                TrinityErrorCode ret = CLocalMemoryStorage.CResetStorage();
 
                 ResetWriteAheadLog(path);
 
