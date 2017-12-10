@@ -109,11 +109,9 @@ namespace Trinity.DynamicCluster.Storage
                 var stg = m_stg_get(r.Id);
                 if (null == stg) { continue; }
                 var ct = await m_chunktable.GetChunks(r);
+                ct = ct.OrderBy(_ => _.LowKey);
                 IEnumerable<Chunk> ctcache = m_ctcache_get(r.Id);
-                if (Enumerable.SequenceEqual(
-                    ctcache.OrderBy(_ => _.LowKey),
-                    ct.OrderBy(_ => _.LowKey)))
-                { continue; }
+                if (Enumerable.SequenceEqual(ctcache, ct)) { continue; }
                 m_ctcache_set(r.Id, ct);
                 m_dmc.PartitionTable(r.PartitionId).Mount(stg, ct);
                 var nickname = (stg as DynamicRemoteStorage)?.NickName ?? m_dmc.NickName;
@@ -129,20 +127,21 @@ namespace Trinity.DynamicCluster.Storage
         private async Task ReplicatorProc()
         {
             if (!m_taskqueue.IsMaster) return;
-            var rpg = m_replicaList[m_nameservice.PartitionId];
-            if (rpg.Count() == 0) return;
-            var cks = await rpg.Select(m_chunktable.GetChunks).Unwrap();
-            var replica_chunks = rpg.ZipWith(cks);
+            var rpg = m_replicaList[m_nameservice.PartitionId].ToList();
+            if (rpg.Count == 0) return;
+            var cks = rpg.Select(m_chunktable.GetChunks).Unwrap();
 
             await Task.WhenAll(
                 m_taskqueue.Wait(ReplicatorTask.Guid),
-                m_taskqueue.Wait(ChunkInitTask.Guid),
-                m_taskqueue.Wait(PersistencyTask.Guid));
+                m_taskqueue.Wait(ChunkTableInitTask.Guid),
+                m_taskqueue.Wait(PersistencyTask.Guid),
+                cks);
 
-            // If there's nothing in the chunk table yet, an initialization is needed.
-            if (!cks.SelectMany(Utils.Identity).Any())
+            var replica_chunks = rpg.ZipWith(cks.Result);
+            var unmounted_replicas = replica_chunks.Where(p => !p.Item2.Any()).Select(p => p.Item1).ToList();
+            if (unmounted_replicas.Count != 0)
             {
-                await _InitChunkTableAsync(rpg);
+                await _InitChunkTableAsync(unmounted_replicas);
                 return;
             }
 
@@ -157,8 +156,8 @@ namespace Trinity.DynamicCluster.Storage
 
         private async Task _InitChunkTableAsync(IEnumerable<ReplicaInformation> rpg)
         {
-            Log.WriteLine($"Replicator: Partition {m_nameservice.PartitionId}: Initializing chunk table.");
-            ChunkInitTask task = new ChunkInitTask(m_repmode, rpg);
+            Log.WriteLine($"Replicator: Partition {m_nameservice.PartitionId}: Submitting chunk table initialization task.");
+            ChunkTableInitTask task = new ChunkTableInitTask(m_repmode, rpg);
             await m_taskqueue.PostTask(task);
         }
 

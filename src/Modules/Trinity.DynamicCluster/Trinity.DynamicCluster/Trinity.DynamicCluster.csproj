@@ -76,7 +76,7 @@
     <Compile Include="Storage\Partitioner.cs" />
     <Compile Include="Health\HealthStatus.cs" />
     <Compile Include="Storage\ReplicationMode.cs" />
-    <Compile Include="Tasks\ChunkInitTask.cs" />
+    <Compile Include="Tasks\ChunkTableInitTask.cs" />
     <Compile Include="Tasks\Executor.cs" />
     <Compile Include="Tasks\ITask.cs" />
     <Compile Include="Tasks\NopTask.cs" />
