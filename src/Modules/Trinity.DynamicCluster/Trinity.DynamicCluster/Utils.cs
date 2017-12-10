@@ -168,9 +168,7 @@ namespace Trinity.DynamicCluster
 
         public static async Task<T[]> Unwrap<T>(this IEnumerable<Task<T>> tasks)
         {
-            var ta = tasks.ToArray();
-            await Task.WhenAll(ta);
-            return tasks.Select(_ => _.Result).ToArray();
+            return await Task.WhenAll(tasks);
         }
 
         public static IEnumerable<Task> Then(this IEnumerable<Task> tasks, Func<Task> func)
