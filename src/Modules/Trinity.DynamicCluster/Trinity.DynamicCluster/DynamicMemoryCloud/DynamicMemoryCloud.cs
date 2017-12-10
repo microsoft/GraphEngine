@@ -122,7 +122,7 @@ namespace Trinity.DynamicCluster.Storage
         }
 
         private void InitModule()
-        {
+        {  
             m_module = GetCommunicationModule<DynamicClusterCommModule>();
         }
 
