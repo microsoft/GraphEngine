@@ -59,7 +59,7 @@ namespace Trinity.DynamicCluster.Storage
             _DoWithTempStorage(remoteStorage, id =>
             {
                 CheckServerProtocolSignatures(remoteStorage);
-                Log.WriteLine($"DynamicCluster: Connected to '{remoteStorage.NickName}' ({remoteStorage.ReplicaInformation.Id})");
+                Log.WriteLine($"{nameof(DynamicCluster)}: Connected to '{remoteStorage.NickName}' ({remoteStorage.ReplicaInformation.Id})");
             });
             return TrinityErrorCode.E_SUCCESS;
         }
@@ -115,7 +115,7 @@ namespace Trinity.DynamicCluster.Storage
             m_partitioner = new Partitioner(m_cancelSrc.Token, m_chunktable, m_nameservice, m_taskqueue, m_healthmanager, ReplicationMode.Mirroring, minimalRedundancy: 2);
             m_taskexec = new Executor(m_taskqueue, m_cancelSrc.Token);
 
-            Log.WriteLine($"DynamicMemoryCloud: Partition {MyPartitionId}: Instance '{NickName}' {InstanceId} opened.");
+            Log.WriteLine($"{nameof(DynamicMemoryCloud)}: Partition {MyPartitionId}: Instance '{NickName}' {InstanceId} opened.");
             Global.CommunicationInstance.Started += InitModule;
 
             return true;
