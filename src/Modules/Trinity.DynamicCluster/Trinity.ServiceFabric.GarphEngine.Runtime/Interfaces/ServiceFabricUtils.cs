@@ -49,7 +49,7 @@ retry:
             catch (FabricNotReadableException)
             { Log.WriteLine("Fabric not readable from Primary/ActiveSecondary, retrying."); await Task.Delay(1000); goto retry; }
             catch (OperationCanceledException ex)
-            { Log.WriteLine(LogLevel.Warning, "{0}", $"ServiceFabricUtils: Operation cancelled, retry aborted: {ex.ToString()}."); throw; }
+            { Log.WriteLine(LogLevel.Warning, "{0}", $"{nameof(ServiceFabricUtils)}: Operation cancelled, retry aborted: {ex.ToString()}."); throw; }
             catch (Exception ex)
             {
                 Log.WriteLine(LogLevel.Warning, "{0}", $"ServiceFabricUtils: {ex.ToString()}.");

@@ -7,13 +7,12 @@ using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Persistency
 {
-    public interface IPersistentDataChunk : IDisposable
+    public interface IPersistentDataChunk : IEnumerable<PersistedCell>, IDisposable
     {
         /// <summary>
         /// Indicates the range of the data chunk. Also, an implementation
         /// can use the Guid tag to uniquely identify this data chunk.
         /// </summary>
         Chunk DataChunkRange { get; }
-        IEnumerable<PersistedCell> GetCells { get; }
     }
 }

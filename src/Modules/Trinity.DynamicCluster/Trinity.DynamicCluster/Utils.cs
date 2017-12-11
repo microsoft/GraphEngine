@@ -18,7 +18,7 @@ namespace Trinity.DynamicCluster
     public static class Utils
     {
         /// <summary>
-        /// Spawns a daemon task running intervally, until the cancellation token is fired.
+        /// Spawns a daemon task running periodically, until the cancellation token is fired.
         /// </summary>
         public static async Task Daemon(CancellationToken cancel, string name, int delay, Func<Task> daemonProc)
         {
