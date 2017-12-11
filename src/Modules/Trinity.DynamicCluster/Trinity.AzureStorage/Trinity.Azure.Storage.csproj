@@ -8,8 +8,8 @@
     <ProjectGuid>{7673502E-80B7-46E7-AA78-AC7E6BAB556C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Trinity.AzureStorage</RootNamespace>
-    <AssemblyName>Trinity.AzureStorage</AssemblyName>
+    <RootNamespace>Trinity.Azure.Storage</RootNamespace>
+    <AssemblyName>Trinity.Azure.Storage</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -68,6 +68,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AzureBlobStoragePersistentStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
