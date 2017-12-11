@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.0
+VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.DynamicCluster", "Trinity.DynamicCluster\Trinity.DynamicCluster.csproj", "{26DB9C05-8B53-409F-A1C9-3FD30CFEC35C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.AzureStorage", "Trinity.AzureStorage\Trinity.AzureStorage.csproj", "{7673502E-80B7-46E7-AA78-AC7E6BAB556C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.Azure.Storage", "Trinity.AzureStorage\Trinity.Azure.Storage.csproj", "{7673502E-80B7-46E7-AA78-AC7E6BAB556C}"
 EndProject
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "Trinity.ServiceFabric.SmokeTest", "Trinity.ServiceFabric.SmokeTest\Trinity.ServiceFabric.SmokeTest.sfproj", "{0F44632E-1A7F-463F-954C-A84A7B1A4F69}"
 EndProject
