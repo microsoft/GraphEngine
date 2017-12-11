@@ -5,11 +5,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{298FC3D1-EBEE-4EF7-A6C9-C7241EDDA8F6}</ProjectGuid>
+    <ProjectGuid>{1E39FF59-AF6B-40FA-A874-02C5CBD42A71}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Trinity.ServiceFabric.GraphEngine.Listeners</RootNamespace>
-    <AssemblyName>Trinity.ServiceFabric.GraphEngine.ListenerRuntime</AssemblyName>
+    <RootNamespace>Trinity.Networking.WCFService.Client</RootNamespace>
+    <AssemblyName>Trinity.Networking.WCFService.Client</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -23,7 +23,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -88,10 +87,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GraphEngineHttpListener.cs" />
-    <Compile Include="GraphEngineListener.cs" />
-    <Compile Include="GraphEngineWCFListener.cs" />
+    <Compile Include="factory_example.cs" />
+    <Compile Include="TrinityWCFAdapterClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WCFClientMemoryCloud.cs" />
+    <Compile Include="WCFRemoteStorage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -100,10 +100,6 @@
     <ProjectReference Include="..\Trinity.Networking.WCFService\Trinity.Networking.WCFService.csproj">
       <Project>{b640301b-a7fb-4b80-81ee-dca979d44d76}</Project>
       <Name>Trinity.Networking.WCFService</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Trinity.ServiceFabric.GarphEngine.Runtime\Trinity.ServiceFabric.GarphEngine.Environment.csproj">
-      <Project>{3433f5a8-dd7d-44d4-a1bb-215d1693dcc7}</Project>
-      <Name>Trinity.ServiceFabric.GarphEngine.Environment</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
