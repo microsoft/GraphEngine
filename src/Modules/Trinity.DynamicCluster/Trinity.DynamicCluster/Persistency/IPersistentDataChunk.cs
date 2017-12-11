@@ -14,5 +14,7 @@ namespace Trinity.DynamicCluster.Persistency
         /// can use the Guid tag to uniquely identify this data chunk.
         /// </summary>
         Chunk DataChunkRange { get; }
+        // TODO expose buffer with getter/setter, and thus make an abstraction and decouple serializer/deserializer
+        // from data chunk. Need a GUID identifier to resolve serializers
     }
 }

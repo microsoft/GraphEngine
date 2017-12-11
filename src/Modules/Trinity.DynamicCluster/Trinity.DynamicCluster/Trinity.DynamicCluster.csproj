@@ -62,12 +62,14 @@
     <Compile Include="Consensus\IChunkTable.cs" />
     <Compile Include="Consensus\IService.cs" />
     <Compile Include="DynamicMemoryCloud\ReplicaInformation.cs" />
+    <Compile Include="Persistency\InMemoryDataChunk.cs" />
     <Compile Include="Persistency\NoDataException.cs" />
     <Compile Include="Persistency\PersistedCell.cs" />
     <Compile Include="Persistency\IPersistentDataChunk.cs" />
     <Compile Include="Persistency\IPersistentDownloader.cs" />
     <Compile Include="Persistency\IPersistentStorage.cs" />
     <Compile Include="Persistency\IPersistentUploader.cs" />
+    <Compile Include="Persistency\PersistedCellEnumerator.cs" />
     <Compile Include="Persistency\PersistentStorageMode.cs" />
     <Compile Include="Persistency\SnapshotNotFoundException.cs" />
     <Compile Include="Persistency\SnapshotUploadUnfinishedException.cs" />

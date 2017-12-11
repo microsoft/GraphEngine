@@ -15,29 +15,29 @@ namespace Trinity.Azure.Storage
 {
     class BlobDownloader : IPersistentDownloader
     {
-        private Guid version;
-        private long lowKey;
-        private long highKey;
-        private CloudBlobContainer m_container;
-        private CloudBlobDirectory m_dir;
-        private CancellationTokenSource m_tokenSource;
-        private BufferBlock<Task<BlobDataChunk>> m_buffer;
-        private Task m_download;
+        private Guid                             m_version;
+        private long                             m_lowKey;
+        private long                             m_highKey;
+        private CloudBlobContainer               m_container;
+        private CloudBlobDirectory               m_dir;
+        private CancellationTokenSource          m_tokenSource;
+        private BufferBlock<Task<InMemoryDataChunk>> m_buffer;
+        private Task                             m_download;
 
-        public BlobDownloader(Guid version, long lowKey, long highKey, CloudBlobContainer m_container)
+        public BlobDownloader(Guid version, long lowKey, long highKey, CloudBlobContainer container)
         {
-            this.version=version;
-            this.lowKey=lowKey;
-            this.highKey=highKey;
-            this.m_container=m_container;
-            this.m_dir = m_container.GetDirectoryReference(version.ToString());
-            m_download = _Download();
+            this.m_version   = version;
+            this.m_lowKey    = lowKey;
+            this.m_highKey   = highKey;
+            this.m_container = container;
+            this.m_dir       = container.GetDirectoryReference(version.ToString());
+            m_download       = _Download();
         }
 
         private async Task _Download(Chunk skip = null)
         {
             m_tokenSource = new CancellationTokenSource();
-            m_buffer = new BufferBlock<Task<BlobDataChunk>>(new DataflowBlockOptions()
+            m_buffer = new BufferBlock<Task<InMemoryDataChunk>>(new DataflowBlockOptions()
             {
                 EnsureOrdered= true,
                 CancellationToken=m_tokenSource.Token,
@@ -55,19 +55,20 @@ namespace Trinity.Azure.Storage
             foreach(var chunk in chunks)
             {
                 m_buffer.Post(_Download_impl(chunk));
+                if (m_tokenSource.IsCancellationRequested) break;
             }
         }
 
-        private bool InRange(Chunk c) => c.LowKey <= highKey || c.HighKey >= lowKey;
+        private bool InRange(Chunk c) => c.LowKey <= m_highKey || c.HighKey >= m_lowKey;
 
-        private async Task<BlobDataChunk> _Download_impl(Chunk chunk)
+        private async Task<InMemoryDataChunk> _Download_impl(Chunk chunk)
         {
             var file = m_dir.GetBlockBlobReference(chunk.Id.ToString());
             var ms = new MemoryStream();
             await file.DownloadToStreamAsync(ms);
             var buf = ms.GetBuffer();
             ms.Dispose();
-            return new BlobDataChunk(chunk, buf, lowKey, highKey);
+            return new InMemoryDataChunk(chunk, buf, m_lowKey, m_highKey);
         }
 
         private Chunk ParseChunk(string content) => JsonConvert.DeserializeObject<Chunk>(content);
@@ -90,6 +91,7 @@ namespace Trinity.Azure.Storage
         {
             await m_download;
             try { Dispose(); } catch { }
+            m_download = _Download(progress);
         }
     }
 }

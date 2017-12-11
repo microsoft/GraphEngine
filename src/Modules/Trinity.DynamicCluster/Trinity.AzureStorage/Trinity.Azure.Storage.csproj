@@ -71,13 +71,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BlobDataChunk.cs" />
     <Compile Include="BlobStorageConfig.cs" />
     <Compile Include="BlobStoragePersistentStorage.cs" />
     <Compile Include="BlobDownloader.cs" />
     <Compile Include="BlobUploader.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="PersistedCellEnumerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
