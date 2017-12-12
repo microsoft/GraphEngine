@@ -47,7 +47,7 @@ namespace Trinity.Azure.Storage
             var idx = m_dir.GetBlockBlobReference(Constants.c_index);
             var idx_content = await idx.DownloadTextAsync();
             var chunks = idx_content.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                         .Select(ParseChunk)
+                         .Select(ChunkSerialization.Parse)
                          .OrderBy(c => c.LowKey)
                          .Where(c => skip == null || c.LowKey > skip.HighKey)
                          .Where(InRange);
@@ -71,7 +71,6 @@ namespace Trinity.Azure.Storage
             return new InMemoryDataChunk(chunk, buf, m_lowKey, m_highKey);
         }
 
-        private Chunk ParseChunk(string content) => JsonConvert.DeserializeObject<Chunk>(content);
 
         public void Dispose()
         {

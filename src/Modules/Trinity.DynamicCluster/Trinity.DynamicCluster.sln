@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.ServiceFabric.Graph
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GraphEngine to Service Fabric Demo", "GraphEngine to Service Fabric Demo", "{C2A6720A-EBA6-49FB-B263-99919D1D2DF1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.Azure.Storage.Test", "Trinity.Azure.Storage.Test\Trinity.Azure.Storage.Test.csproj", "{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,14 @@ Global
 		{298FC3D1-EBEE-4EF7-A6C9-C7241EDDA8F6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{298FC3D1-EBEE-4EF7-A6C9-C7241EDDA8F6}.Release|x64.ActiveCfg = Release|Any CPU
 		{298FC3D1-EBEE-4EF7-A6C9-C7241EDDA8F6}.Release|x64.Build.0 = Release|Any CPU
+		{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}.Debug|x64.Build.0 = Debug|Any CPU
+		{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}.Release|x64.ActiveCfg = Release|Any CPU
+		{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

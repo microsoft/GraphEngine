@@ -27,7 +27,7 @@ namespace Trinity.Azure.Storage
 
         private async Task EnsureContainer()
         {
-            await m_container.CreateIfNotExistsAsync(cancellationToken:m_cancel);
+            await m_container.CreateIfNotExistsAsync(cancellationToken: m_cancel);
         }
 
         public async Task<Guid> CreateNewVersion()
@@ -40,7 +40,7 @@ retry:
             try
             {
                 var blob = dir.GetBlockBlobReference(Constants.c_uploading);
-                await blob.UploadFromByteArrayAsync(new byte[1], 0, 1, cancellationToken:m_cancel);
+                await blob.UploadFromByteArrayAsync(new byte[1], 0, 1, cancellationToken: m_cancel);
             }
             catch
             {
@@ -73,7 +73,7 @@ retry:
             var files = m_container.ListBlobs(useFlatBlobListing: false)
                                       .OfType<CloudBlobDirectory>()
                                       .Select(dir => dir.GetBlockBlobReference(Constants.c_finished))
-                                      .ToDictionary(f => f, f => f.ExistsAsync());
+                                      .ToDictionary(f => f, f => f.ExistsAsync(m_cancel));
             await Task.WhenAll(files.Values.ToArray());
             var latest = files.Where(kvp => kvp.Value.Result)
                               .Select(kvp => kvp.Key)

@@ -62,6 +62,7 @@
     <Compile Include="Consensus\IChunkTable.cs" />
     <Compile Include="Consensus\IService.cs" />
     <Compile Include="DynamicMemoryCloud\ReplicaInformation.cs" />
+    <Compile Include="Persistency\ChunkSerialization.cs" />
     <Compile Include="Persistency\InMemoryDataChunk.cs" />
     <Compile Include="Persistency\NoDataException.cs" />
     <Compile Include="Persistency\PersistedCell.cs" />
