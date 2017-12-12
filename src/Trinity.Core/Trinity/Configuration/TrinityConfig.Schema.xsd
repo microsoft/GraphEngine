@@ -14,10 +14,11 @@
       </xs:documentation>
     </xs:annotation>
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:choice>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="Local" type="mstns:Local"/>
         <xs:element name="Cluster" type="mstns:Cluster"/>
         <xs:element name="Template" type="mstns:Template"/>
+        <xs:element name="Import" type="mstns:Import"/>
       </xs:choice>
     </xs:sequence>
     <xs:attribute name="ConfigVersion" type="xs:string" default="1.0">
@@ -29,8 +30,8 @@
     </xs:attribute>
   </xs:complexType>
   <xs:complexType name="Cluster">
-    <xs:sequence>
-      <xs:choice>
+    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+      <xs:choice minOccurs="1" maxOccurs="unbounded">
         <xs:element name="Server" type="mstns:Remote"/>
         <xs:element name="Proxy" type="mstns:Remote"/>
       </xs:choice>
@@ -44,13 +45,13 @@
     </xs:attribute>
   </xs:complexType>
   <xs:complexType name="Local">
-    <xs:sequence>
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
       <xs:any/>
       <!--<xs:element type="mstns:ConfigEntry"></xs:element>-->
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="Remote">
-    <xs:sequence>
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
       <xs:any/>
       <!--<xs:element type="mstns:ConfigEntry"></xs:element>-->
     </xs:sequence>
@@ -89,7 +90,7 @@
         A Template node can be referenced by other nodes as a configuration template. The content within a template node will be inherited by the nodes that reference it. Multiple templates with the same identifier will be merged. A Template node must specify a mandatory attribute Id.
       </xs:documentation>
     </xs:annotation>
-    <xs:sequence>
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
       <xs:any/>
       <!--<xs:element type="mstns:ConfigEntry"></xs:element>-->
     </xs:sequence>
