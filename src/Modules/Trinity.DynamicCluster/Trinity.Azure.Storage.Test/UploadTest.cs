@@ -28,7 +28,7 @@ namespace Trinity.Azure.Storage.Test
 
         [TestMethod]
         public async Task Upload()
-        {
+        {   // Equal.
             byte[] data = Encoding.UTF8.GetBytes("I am the bone of my sword.");
 
             var LowKey = 0;

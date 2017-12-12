@@ -17,17 +17,15 @@ namespace Trinity.Azure.Storage.Test
         private BlobStoragePersistentStorage m_storage;
         private CloudBlobClient m_client;
         private readonly Guid m_version = new Guid("0939a250-e41e-48b2-bce9-f3195b0388ae");
-        
-        
+        public byte[] TestItem = new byte[14];
+
 
         [TestInitialize]
         public void Init()
         {
-            
             ConfigInit.Init();
             m_storage = new BlobStoragePersistentStorage();
             m_client = m_storage._test_getclient();
-           
         }
 
         [TestMethod]
@@ -38,10 +36,12 @@ namespace Trinity.Azure.Storage.Test
             var dir = container.GetDirectoryReference(m_version.ToString());
             Chunk c1 = new Chunk(0, 10);
             Chunk c2 = new Chunk(100, 110);
-            string idx = string.Join("\n", new[] { c1, c2 }.Select(JsonConvert.SerializeObject));
+            string idx = string.Join("\n", new[] {c1, c2}.Select(JsonConvert.SerializeObject));
             dir.GetBlockBlobReference(Constants.c_index).UploadText(idx);
 
-            byte[] f1 = new byte[14];
+            
+            var f1 = TestItem.Clone() as byte[];
+
             byte[] f2 = new byte[16];
             f2[0] = 0xEB;
             f2[10] = 0x02;
@@ -52,19 +52,19 @@ namespace Trinity.Azure.Storage.Test
             dir.GetBlockBlobReference(Constants.c_finished).UploadText("");
 
             var v = await m_storage.GetLatestVersion();
-          
+
             Assert.AreEqual(m_version, v);
         }
 
         [TestMethod]
         public async Task Download()
         {
+            GetLatestVersion().Wait();
             var v = await m_storage.Download(m_version, 0, 110);
             var src = await v.DownloadAsync();
             var src_seq = src.GetEnumerator();
-            src_seq.MoveNext();
             var buffer = src_seq.Current.Buffer;
-
+            Assert.IsTrue(buffer.Take(14).SequenceEqual(TestItem.Take(14)));
         }
     }
 }
