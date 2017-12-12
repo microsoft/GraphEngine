@@ -16,5 +16,7 @@ namespace Trinity.DynamicCluster.Persistency
         Chunk DataChunkRange { get; }
         // TODO expose buffer with getter/setter, and thus make an abstraction and decouple serializer/deserializer
         // from data chunk. Need a GUID identifier to resolve serializers
+
+        byte[] GetBuffer();
     }
 }

@@ -51,7 +51,6 @@ namespace Trinity.Azure.Storage
                          .OrderBy(c => c.LowKey)
                          .Where(c => skip == null || c.LowKey > skip.HighKey)
                          .Where(InRange);
-
             foreach(var chunk in chunks)
             {
                 m_buffer.Post(_Download_impl(chunk));
@@ -67,6 +66,7 @@ namespace Trinity.Azure.Storage
             var ms = new MemoryStream();
             await file.DownloadToStreamAsync(ms);
             var buf = ms.GetBuffer();
+           
             ms.Dispose();
             return new InMemoryDataChunk(chunk, buf, m_lowKey, m_highKey);
         }
