@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="TrinityConfig"
+    targetNamespace="http://graphengine.io/TrinityConfig.xsd"
+    elementFormDefault="qualified"
+    xmlns="http://graphengine.io/TrinityConfig.xsd"
+    xmlns:mstns="http://graphengine.io/TrinityConfig.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+  <xs:element name="Trinity" type="mstns:TrinityConfig"/>
+  <xs:complexType name="TrinityConfig">
+    <xs:annotation>
+      <xs:documentation>
+        The root node is always Trinity. There must be exactly one root node. The root node has an optional attribute ConfigVersion.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:choice>
+        <xs:element name="Local" type="mstns:Local"/>
+        <xs:element name="Cluster" type="mstns:Cluster"/>
+        <xs:element name="Template" type="mstns:Template"/>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="ConfigVersion" type="xs:string" default="1.0">
+      <xs:annotation>
+        <xs:documentation>
+          Optional. Specifies the version of the configuration file. Currently, the value must be 1.0 or 2.0 if specified. The value "2.0" indicates that the configuration file conforms to the specification 2.0 given here. Note, if ConfigVersion is not specified, the configuration file will be parsed as version 1.0, which is now obsolete.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="Cluster">
+    <xs:sequence>
+      <xs:choice>
+        <xs:element name="Server" type="mstns:Remote"/>
+        <xs:element name="Proxy" type="mstns:Remote"/>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="Id" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Optional. The cluster configuration identified by an Id can be retrieved by the Id later in the program. If omitted, the current Cluster configuration is then treated as the default one. 
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="Local">
+    <xs:sequence>
+      <xs:any/>
+      <!--<xs:element type="mstns:ConfigEntry"></xs:element>-->
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Remote">
+    <xs:sequence>
+      <xs:any/>
+      <!--<xs:element type="mstns:ConfigEntry"></xs:element>-->
+    </xs:sequence>
+    <xs:attribute name="Endpoint" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Mandatory. Specifies an Hostname:Port string that describes the server endpoint.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="AvailabilityGroup" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Optional. Each server is associated with an availability group. This attribute specifies the identifier of the availability group that the current server belongs to. If not specified, each server will be in its own default availability group. Multiple Server nodes could have the same availability group. The servers within the same availability group correspond to the same server Id in MemoryCloud.SendMessage(...). The ServerId parameter in the SendMessage method is the index number of the availability group. Note, when this attribute is used, all Server nodes within a Cluster node must specify the attribute or none of them should specify.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Template" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Optional. The value is the ID of a template. If it is specified, the current node will inherit the attributes and child elements of the template.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="AssemblyPath" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Optional. Specifies the directory of the running Graph Engine instance. Useful for running multiple Graph Engine instances on the same machine (listening on different ports, or bound to different network interfaces).
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="Template">
+    <xs:annotation>
+      <xs:documentation>
+        A Template node can be referenced by other nodes as a configuration template. The content within a template node will be inherited by the nodes that reference it. Multiple templates with the same identifier will be merged. A Template node must specify a mandatory attribute Id.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:any/>
+      <!--<xs:element type="mstns:ConfigEntry"></xs:element>-->
+    </xs:sequence>
+    <xs:attribute name="Id" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+        Mandatory. Specifies the identifier of the template, which can be referenced by other nodes.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="Import">
+    <xs:annotation>
+      <xs:documentation>
+        An Import node specifies other configuration files to import. Each Import node will be replaced with the top-level elements read from the imported configuration files. Note that the imported configuration files must have the same ConfigVersion with the current configuration file. An imported configuration file can recursively import other configuration files. A configuration file cannot import itself.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="File" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Mandatory. Specifies a file to import. The file must have .xml file extension and has a Trinity root node with the same ConfigVersion. 
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  
+</xs:schema>
