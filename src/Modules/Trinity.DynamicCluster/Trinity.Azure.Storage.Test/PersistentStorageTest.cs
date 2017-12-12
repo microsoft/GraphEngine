@@ -70,11 +70,19 @@ retry2:
             await container.DeleteIfExistsAsync();
             container = client.GetContainerReference(BlobStorageConfig.Instance.ContainerName);
 
+retry2:
             try
             {
                 await storage.GetLatestVersion();
             }
-            catch { }
+            catch (StorageException ex) when (ex.Message.Contains("Conflict"))
+            {
+                await Task.Delay(1000);
+                goto retry2;
+            }
+            catch (NoDataException)
+            {
+            }
 
             var now_exists = await container.ExistsAsync();
             Assert.IsTrue(now_exists);
