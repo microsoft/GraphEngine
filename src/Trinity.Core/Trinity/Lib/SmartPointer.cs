@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 namespace Trinity
 {
     [System.Runtime.InteropServices.StructLayout(LayoutKind.Explicit)]
-    internal unsafe struct SmartPointer
+    public unsafe struct SmartPointer
     {
         static public unsafe SmartPointer New(byte* ptr)
         {

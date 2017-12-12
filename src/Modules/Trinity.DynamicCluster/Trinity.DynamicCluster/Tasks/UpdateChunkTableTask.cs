@@ -12,13 +12,18 @@ using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Tasks
 {
+    /// <summary>
+    /// An UpdateChunkTableTask receives a replication mode, and a list of (replica,chunks) tuples.
+    /// For the chunks with empty chunk list, it updates them according to the replication mode.
+    /// </summary>
     [Serializable]
-    internal class ChunkInitTask : ITask
+    internal class UpdateChunkTableTask : ITask
     {
         public static readonly Guid Guid = new Guid("143A2C01-939C-4A2B-92A6-3A26F9FCD38C");
         private Guid m_guid = Guid.NewGuid();
         private ReplicationMode m_repmode;
-        private List<ReplicaInformation> m_replicas;
+        private List<(ReplicaInformation, IEnumerable<Chunk>)> m_nonemptyreplicas;
+        private List<ReplicaInformation> m_emptyreplicas;
         [NonSerialized]
         private IChunkTable m_ctable;
         [NonSerialized]
@@ -26,10 +31,11 @@ namespace Trinity.DynamicCluster.Tasks
         [NonSerialized]
         private DynamicMemoryCloud m_dmc;
 
-        public ChunkInitTask(ReplicationMode replicationMode, IEnumerable<ReplicaInformation> replicas)
+        public UpdateChunkTableTask(ReplicationMode replicationMode, IEnumerable<(ReplicaInformation, IEnumerable<Chunk>)> replicas)
         {
-            m_repmode  = replicationMode;
-            m_replicas = replicas.ToList();
+            m_repmode          = replicationMode;
+            m_emptyreplicas    = replicas.Where(p => !p.Item2.Any()).Select(p => p.Item1).ToList();
+            m_nonemptyreplicas = replicas.Where(p => p.Item2.Any()).ToList();
         }
 
         public Guid Id => m_guid;
@@ -38,7 +44,7 @@ namespace Trinity.DynamicCluster.Tasks
 
         public Task Execute(CancellationToken cancel)
         {
-            Log.WriteLine($"ChunkInitTask: Initializing with mode {m_repmode}");
+            Log.WriteLine($"{nameof(UpdateChunkTableTask)}: Initializing with mode {m_repmode}");
             m_dmc = DynamicMemoryCloud.Instance;
             m_ctable = DynamicMemoryCloud.Instance.m_chunktable;
             m_cancel = cancel;
@@ -60,24 +66,23 @@ namespace Trinity.DynamicCluster.Tasks
         private async Task mirror_init()
         {
             var frc = new Chunk[]{ Chunk.FullRangeChunk };
-            var tasks = m_replicas.Select(r => m_ctable.SetChunks(r.Id, frc)).ToArray();
-            await Task.WhenAll(tasks);
+            await m_emptyreplicas.Select(r => m_ctable.SetChunks(r.Id, frc)).WhenAll();
         }
 
         private async Task sharding_init()
         {
             List<Chunk> chunks = new List<Chunk>();
-            long step = (long)(ulong.MaxValue / (ulong)m_replicas.Count);
+            long step = (long)(ulong.MaxValue / (ulong)m_nonemptyreplicas.Count);
             long head = long.MinValue;
-            for(int i = 1; i<=m_replicas.Count; ++i)
+            for(int i = 1; i<=m_nonemptyreplicas.Count; ++i)
             {
                 long tail = head + step;
-                if (i == m_replicas.Count) tail = long.MaxValue;
+                if (i == m_nonemptyreplicas.Count) tail = long.MaxValue;
                 chunks.Add(new Chunk(head, tail));
                 head = tail + 1;
             }
-            var tasks = m_replicas.Select(r => m_ctable.SetChunks(r.Id, chunks)).ToArray();
-            await Task.WhenAll(tasks);
+            // TODO if 
+            await m_emptyreplicas.Select(r => m_ctable.SetChunks(r.Id, chunks)).WhenAll();
         }
 
         private async Task mirrorshard_init()

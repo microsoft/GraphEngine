@@ -18,7 +18,7 @@ namespace Trinity.DynamicCluster
     public static class Utils
     {
         /// <summary>
-        /// Spawns a daemon task running intervally, until the cancellation token is fired.
+        /// Spawns a daemon task running periodically, until the cancellation token is fired.
         /// </summary>
         public static async Task Daemon(CancellationToken cancel, string name, int delay, Func<Task> daemonProc)
         {
@@ -52,6 +52,11 @@ namespace Trinity.DynamicCluster
             t1 = array[0];
             t2 = array[1];
             t3 = array[2];
+        }
+
+        public static IEnumerable<(T1, T2)> ZipWith<T1, T2>(this IEnumerable<T1> i1, IEnumerable<T2> i2)
+        {
+            return i1.Zip(i2, (e1, e2) => (e1, e2));
         }
 
         public static IEnumerable<T> Infinity<T>(Func<T> IO)
@@ -154,6 +159,41 @@ namespace Trinity.DynamicCluster
                 fmt.Serialize(ms, payload);
                 return ms.ToArray();
             }
+        }
+
+        public static async Task WhenAll(this IEnumerable<Task> tasks)
+        {
+            await Task.WhenAll(tasks.ToArray());
+        }
+
+        public static async Task<T[]> Unwrap<T>(this IEnumerable<Task<T>> tasks)
+        {
+            return await Task.WhenAll(tasks);
+        }
+
+        public static IEnumerable<Task> Then(this IEnumerable<Task> tasks, Func<Task> func)
+        {
+            return tasks.Select(t => t.ContinueWith(t_ => func()).Unwrap());
+        }
+
+        public static IEnumerable<Task<T>> Then<T>(this IEnumerable<Task> tasks, Func<Task<T>> func)
+        {
+            return tasks.Select(t => t.ContinueWith(t_ => func()).Unwrap());
+        }
+
+        public static IEnumerable<Task<Tout>> Then<Tin, Tout>(this IEnumerable<Task<Tin>> tasks, Func<Tin, Task<Tout>> func)
+        {
+            return tasks.Select(t => t.ContinueWith(t_ => func(t_.Result)).Unwrap());
+        }
+
+        public static IEnumerable<Task> Then<Tin>(this IEnumerable<Task<Tin>> tasks, Action<Tin> func)
+        {
+            return tasks.Select(t => t.ContinueWith(t_ => func(t_.Result)));
+        }
+
+        public static IEnumerable<Task> Then(this IEnumerable<Task> tasks, Action func)
+        {
+            return tasks.Select(t => t.ContinueWith(t_ => func()));
         }
     }
 }

@@ -88,12 +88,12 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 
             TrinityConfig.HttpPort = runtimeContext.HttpPort;
 
-            Log.WriteLine("{0}", $"WorkingDirectory={runtimeContext.Context.CodePackageActivationContext.WorkDirectory}");
+            Log.WriteLine("{0}: {1}", nameof(Trinity.ServiceFabric), $"WorkingDirectory={runtimeContext.Context.CodePackageActivationContext.WorkDirectory}");
 
             TrinityConfig.StorageRoot = Path.Combine(runtimeContext.Context.CodePackageActivationContext.WorkDirectory, 
                                                      $"P{runtimeContext.Context.PartitionId}{Path.GetRandomFileName()}");
 
-            Log.WriteLine("{0}", $"StorageRoot={TrinityConfig.StorageRoot}");
+            Log.WriteLine("{0}: {1}", nameof(Trinity.ServiceFabric), $"StorageRoot={TrinityConfig.StorageRoot}");
 
             // Just setting up the object instance as we should only run a single instance of this class per SF Node instance
 
@@ -101,7 +101,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
             {
                 if (Instance != null)
                 {
-                    Log.WriteLine(LogLevel.Fatal, "Only one TrinitySeverRuntimeMangerBase allowed in one process.");
+                    Log.WriteLine(LogLevel.Fatal, $"{nameof(Trinity.ServiceFabric)}: Only one {nameof(TrinitySeverRuntimeMangerBase)} allowed in one process.");
                     Thread.Sleep(5000);
                     Environment.Exit(-2);
                     //throw new InvalidOperationException("Only one GraphEngineService allowed in one process.");

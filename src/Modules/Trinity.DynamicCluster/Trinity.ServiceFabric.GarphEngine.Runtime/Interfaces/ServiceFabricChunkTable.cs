@@ -29,11 +29,10 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
 
         private async Task InitChunkTablesAsync()
         {
-            var ctasks = Utils.Integers(GraphEngineStatefulServiceRuntime.Instance.PartitionCount)
+            m_allchunktables = await Utils.Integers(GraphEngineStatefulServiceRuntime.Instance.PartitionCount)
                               .Select(p => ServiceFabricUtils.CreateReliableStateAsync<IReliableDictionary<Guid, byte[]>>
                                   (this, "Trinity.ServiceFabric.GarphEngine.Infrastructure.ChunkTable", p))
-                              .ToArray();
-            await Task.Factory.ContinueWhenAll(ctasks, ts => m_allchunktables = ts.Select(_ => _.Result).ToArray());
+                              .Unwrap();
             m_chunktable = m_allchunktables[GraphEngineStatefulServiceRuntime.Instance.PartitionId];
         }
 
