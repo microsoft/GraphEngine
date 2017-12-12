@@ -5,6 +5,8 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Trinity.DynamicCluster.Persistency;
 using System.Threading;
+using Trinity.Diagnostics;
+using LogLevel = Trinity.Diagnostics.LogLevel;
 
 namespace Trinity.Azure.Storage
 {
@@ -16,8 +18,13 @@ namespace Trinity.Azure.Storage
         private CancellationTokenSource m_cancellationTokenSource;
         private CancellationToken m_cancel;
 
+        internal CloudBlobClient _test_getclient() => m_client;
+
         public BlobStoragePersistentStorage()
         {
+            if(BlobStorageConfig.Instance.ContainerName == null) Log.WriteLine(LogLevel.Error, $"{nameof(BlobStoragePersistentStorage)}: container name is not specified");
+            if(BlobStorageConfig.Instance.ConnectionString == null) Log.WriteLine(LogLevel.Error, $"{nameof(BlobStoragePersistentStorage)}: connection string is not specified");
+            if(BlobStorageConfig.Instance.ContainerName != BlobStorageConfig.Instance.ContainerName.ToLower()) Log.WriteLine(LogLevel.Error, $"{nameof(BlobStoragePersistentStorage)}: invalid container name");
             m_storageAccount = CloudStorageAccount.Parse(BlobStorageConfig.Instance.ConnectionString);
             m_client = m_storageAccount.CreateCloudBlobClient();
             m_container = m_client.GetContainerReference(BlobStorageConfig.Instance.ContainerName);
@@ -80,7 +87,7 @@ retry:
                               .OrderByDescending(f => f.Properties.LastModified.Value)
                               .FirstOrDefault();
             if (latest == null) throw new NoDataException();
-            return new Guid(latest.Parent.Uri.Segments.Last());
+            return new Guid(latest.Parent.Uri.Segments.Last().TrimEnd('/'));
         }
 
         public Task<PersistentStorageMode> QueryPersistentStorageMode()
