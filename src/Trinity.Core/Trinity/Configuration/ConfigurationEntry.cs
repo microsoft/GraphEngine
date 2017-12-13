@@ -79,7 +79,7 @@ namespace Trinity.Configuration
         /// </summary>
         public static explicit operator XElement(ConfigurationEntry entry)
         {
-            XElement node = new XElement(entry.Name);
+            XElement node = new XElement(ConfigurationConstants.NS + entry.Name);
             foreach (var attr in entry.Settings)
             {
                 node.SetAttributeValue(attr.Key, attr.Value.Literal);

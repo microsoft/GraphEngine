@@ -122,14 +122,15 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
                 Log.WriteLine("{0}: {1}", nameof(Trinity.ServiceFabric), $"Data package version {dataPackage.Description.Version}, Config package version {configPackage.Description.Version}");
                 var filename = configPackage.Settings
                     .Sections[GraphEngineConstants.ServiceFabricConfigSection]
-                    .Parameters[GraphEngineConstants.ServiceFabricConfigSection]
+                    .Parameters[GraphEngineConstants.ServiceFabricConfigParameter]
                     .Value;
                 var config_file = Path.Combine(dataPackage.Path, filename);
                 TrinityConfig.LoadConfig(config_file);
             }
-            catch
+            catch(Exception ex)
             {
-                throw new ConfigurationNotLoadedException("Trinity Configuration settings failed to load.");
+                Log.WriteLine("{0}: {1}", nameof(Trinity.ServiceFabric), $"Trinity Configuration settings failed to load: {ex.ToString()}");
+                throw new ConfigurationNotLoadedException("Trinity Configuration settings failed to load.", ex);
             }
         }
     }

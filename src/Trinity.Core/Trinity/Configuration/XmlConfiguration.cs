@@ -179,6 +179,7 @@ namespace Trinity.Configuration
         {
             return Path.GetFullPath(filename);
         }
+
         /// <summary>
         /// Load configuration file with specified file name by linq
         /// </summary>
@@ -187,18 +188,33 @@ namespace Trinity.Configuration
         ParseUnit LoadFile(string filename)
         {
             var document = XDocument.Load(filename);
-            var rootNode = document.Element(ConfigurationConstants.Tags.ROOT_NODE);
-            if (rootNode == null)
+            var rootNode = document.Root;
+
+            if(rootNode.GetDefaultNamespace() == string.Empty && rootNode.Name.NamespaceName == string.Empty)
+            {
+                rootNode = SetDefaultNamespace(rootNode);
+            }
+
+            if (rootNode == null || ConfigurationConstants.Tags.ROOT_NODE != rootNode.Name)
             {
                 Log.WriteLine(LogLevel.Error, "File format not recognized.");
                 throw new FormatException("File format not recognized.");
             }
             var versionAttr = rootNode.Attribute(ConfigurationConstants.Attrs.CONFIG_VERSION);
-            var version = versionAttr == null ? ConfigurationConstants.Tags.LEGACYVER : versionAttr.Value;
+            var version = versionAttr == null ? ConfigurationConstants.Values.LEGACYVER : versionAttr.Value;
             return new ParseUnit(rootNode.Elements(), GetFullPath(filename), version);
         }
+
+        private XElement SetDefaultNamespace(XElement element)
+        {
+            XName name = element.Name.NamespaceName == string.Empty?
+                ConfigurationConstants.NS + element.Name.LocalName :
+                element.Name;
+            return new XElement(name, element.Elements().Select(SetDefaultNamespace));
+        }
+
         /// <summary>
-        /// Each section is represented by IEnumerable<XElement>, obtained by calling XElement.Elements()
+        /// Each section is represented by <![CDATA[IEnumerable<XElement>]]>, obtained by calling XElement.Elements()
         /// Later XElements with the same Name will overwrite earlier entries
         /// This routine can be used for:
         /// 1. Merging configuration entries in a configuration section.

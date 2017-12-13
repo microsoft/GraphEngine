@@ -275,6 +275,9 @@
     <None Include="NuGet\GraphEngine.Core.props" />
     <None Include="NuGet\GraphEngine.Core.targets" />
     <Compile Include="Storage\MemoryCloud\MemoryCloud.KVStore.cs" />
+    <None Include="Trinity\Configuration\TrinityConfig.Schema.xsd">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

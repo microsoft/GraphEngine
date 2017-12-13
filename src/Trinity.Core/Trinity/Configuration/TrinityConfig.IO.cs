@@ -20,7 +20,7 @@ namespace Trinity
     public static partial class TrinityConfig
     {
         #region Fields
-        private const string c_defaultConfigFile = ConfigurationConstants.Tags.DEFAULT_CONFIG_FILE;
+        private const string c_defaultConfigFile = ConfigurationConstants.Values.DEFAULT_CONFIG_FILE;
         internal static ConfigurationSection s_localConfigurationSection = new ConfigurationSection();
         #endregion
 
@@ -73,9 +73,9 @@ namespace Trinity
         /// <summary>
         /// Extracts config entries from the config instances.
         /// </summary>
-        internal static IEnumerable<ConfigurationEntry> ExtractConfigurationSettings()
+        internal static IEnumerable<XElement> ExtractConfigurationSettings()
         {
-            return GetConfigurationInstances().Select(ConfigurationEntry.ExtractConfigurationEntry);
+            return GetConfigurationInstances().Select(ConfigurationEntry.ExtractConfigurationEntry).OfType<XElement>();
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace Trinity
         }
 
 
-        private static XElement CreateServerSetting(ServerInfo server, string tag)
+        private static XElement CreateServerSetting(ServerInfo server, XName tag)
         {
             XElement serverNode = new XElement(tag);
             SetAttribute(serverNode, ConfigurationConstants.Attrs.ENDPOINT, String.Format("{0}:{1}", server.HostName, server.Port));
@@ -147,7 +147,7 @@ namespace Trinity
             return serverNode;
         }
 
-        private static IEnumerable<XElement> CreateServerSettingList(List<AvailabilityGroup> AGs, string tag)
+        private static IEnumerable<XElement> CreateServerSettingList(List<AvailabilityGroup> AGs, XName tag)
         {
             return AGs.SelectMany(ag => ag.Instances.Select(_ => CreateServerSetting(_, tag)));
         }
@@ -222,7 +222,7 @@ namespace Trinity
                 XDocument configXml = new XDocument();
                 configXml.Declaration = new XDeclaration("1.0", "utf-8", null);
                 XElement rootNode = new XElement(ConfigurationConstants.Tags.ROOT_NODE);
-                SetAttribute(rootNode, ConfigurationConstants.Attrs.CONFIG_VERSION, ConfigurationConstants.Tags.CURRENTVER);
+                SetAttribute(rootNode, ConfigurationConstants.Attrs.CONFIG_VERSION, ConfigurationConstants.Values.CURRENTVER);
                 configXml.Add(rootNode);
                 XElement localNode = new XElement(ConfigurationConstants.Tags.LOCAL);
                 rootNode.Add(localNode);
@@ -242,6 +242,9 @@ namespace Trinity
                     var servers = Enumerable.Concat(
                         CreateServerSettingList(cluster.Value.Servers, ConfigurationConstants.Tags.SERVER),
                         CreateServerSettingList(cluster.Value.Proxies, ConfigurationConstants.Tags.PROXY));
+
+                    foreach(var server in servers)
+                        clusterNode.Add(server);
 
                     rootNode.Add(clusterNode);
                 }
@@ -307,11 +310,11 @@ namespace Trinity
                 s_clusterConfigurations.Clear();
                 s_localConfigurationSection.Clear();
 
-                if (config.RootConfigVersion == ConfigurationConstants.Tags.LEGACYVER)
+                if (config.RootConfigVersion == ConfigurationConstants.Values.LEGACYVER)
                 {
                     LoadConfigLegacy(trinity_config_file);
                 }
-                else if (config.RootConfigVersion == ConfigurationConstants.Tags.CURRENTVER)
+                else if (config.RootConfigVersion == ConfigurationConstants.Values.CURRENTVER)
                 {
                     LoadConfigCurrrentVer(config);
                 }
@@ -339,11 +342,11 @@ namespace Trinity
             XElement loggingEntry = new XElement(ConfigurationConstants.Tags.LOGGING);
             XElement storageEntry = new XElement(ConfigurationConstants.Tags.STORAGE);
             XElement networkEntry = new XElement(ConfigurationConstants.Tags.NETWORK);
-            loggingEntry.SetAttributeValue(ConfigurationConstants.Attrs.LOGGING_DIRECTLY, xml_config.GetEntryValue(ConfigurationConstants.Tags.LOGGING, ConfigurationConstants.Attrs.LOGGING_DIRECTLY));
-            loggingEntry.SetAttributeValue(ConfigurationConstants.Attrs.LOGGING_LEVEL, xml_config.GetEntryValue(ConfigurationConstants.Tags.LOGGING, ConfigurationConstants.Attrs.LOGGING_LEVEL));
-            storageEntry.SetAttributeValue(ConfigurationConstants.Attrs.STORAGE_ROOT, xml_config.GetEntryValue(ConfigurationConstants.Tags.STORAGE, ConfigurationConstants.Attrs.STORAGE_ROOT));
-            networkEntry.SetAttributeValue(ConfigurationConstants.Attrs.HTTP_PORT, xml_config.GetEntryValue(ConfigurationConstants.Tags.NETWORK, ConfigurationConstants.Attrs.HTTP_PORT));
-            networkEntry.SetAttributeValue(ConfigurationConstants.Attrs.CLIENT_MAX_CONN, xml_config.GetEntryValue(ConfigurationConstants.Tags.NETWORK, ConfigurationConstants.Attrs.CLIENT_MAX_CONN));
+            loggingEntry.SetAttributeValue(ConfigurationConstants.Attrs.LOGGING_DIRECTORY, xml_config.GetEntryValue(ConfigurationConstants.Tags.LOGGING.LocalName, ConfigurationConstants.Attrs.LOGGING_DIRECTORY));
+            loggingEntry.SetAttributeValue(ConfigurationConstants.Attrs.LOGGING_LEVEL, xml_config.GetEntryValue(ConfigurationConstants.Tags.LOGGING.LocalName, ConfigurationConstants.Attrs.LOGGING_LEVEL));
+            storageEntry.SetAttributeValue(ConfigurationConstants.Attrs.STORAGE_ROOT, xml_config.GetEntryValue(ConfigurationConstants.Tags.STORAGE.LocalName, ConfigurationConstants.Attrs.STORAGE_ROOT));
+            networkEntry.SetAttributeValue(ConfigurationConstants.Attrs.HTTP_PORT, xml_config.GetEntryValue(ConfigurationConstants.Tags.NETWORK.LocalName, ConfigurationConstants.Attrs.HTTP_PORT));
+            networkEntry.SetAttributeValue(ConfigurationConstants.Attrs.CLIENT_MAX_CONN, xml_config.GetEntryValue(ConfigurationConstants.Tags.NETWORK.LocalName, ConfigurationConstants.Attrs.CLIENT_MAX_CONN));
             if (loggingEntry.Attributes().Count() > 0)
                 localSection.Add(loggingEntry);
             if (storageEntry.Attributes().Count() > 0)
@@ -357,7 +360,7 @@ namespace Trinity
             //construct a clusterSections
             s_current_cluster_config = ClusterConfig._LegacyLoadClusterConfig(trinity_config_file);
 
-            s_clusterConfigurations.Add(ConfigurationConstants.Tags.DEFAULT_CLUSTER, s_current_cluster_config);
+            s_clusterConfigurations.Add(ConfigurationConstants.Values.DEFAULT_CLUSTER, s_current_cluster_config);
         }
 
         private static void LoadConfigCurrrentVer(XmlConfiguration config)
@@ -378,7 +381,7 @@ namespace Trinity
                     clusterSections.FirstOrDefault(IsDefaultClusterConfiguration) ??
                     new XElement(ConfigurationConstants.Tags.CLUSTER));
 
-            s_clusterConfigurations.Add(ConfigurationConstants.Tags.DEFAULT_CLUSTER, s_current_cluster_config);
+            s_clusterConfigurations.Add(ConfigurationConstants.Values.DEFAULT_CLUSTER, s_current_cluster_config);
         }
 
     }

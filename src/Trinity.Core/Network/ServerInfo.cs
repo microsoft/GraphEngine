@@ -40,12 +40,12 @@ namespace Trinity.Network
             Id = availabilityGroup;
             Port = port;
 
-            this.Add(ConfigurationConstants.Tags.STORAGE,
-                new ConfigurationEntry(ConfigurationConstants.Tags.STORAGE,
+            this.Add(ConfigurationConstants.Tags.STORAGE.LocalName,
+                new ConfigurationEntry(ConfigurationConstants.Tags.STORAGE.LocalName,
                 new Dictionary<string, string> { { ConfigurationConstants.Attrs.STORAGE_ROOT, storageRoot } }));
 
-            this.Add(ConfigurationConstants.Tags.LOGGING,
-                new ConfigurationEntry(ConfigurationConstants.Tags.LOGGING,
+            this.Add(ConfigurationConstants.Tags.LOGGING.LocalName,
+                new ConfigurationEntry(ConfigurationConstants.Tags.LOGGING.LocalName,
                 new Dictionary<string, string> { { ConfigurationConstants.Attrs.LOGGING_LEVEL, loggingLevel } }));
         }
 
@@ -63,8 +63,8 @@ namespace Trinity.Network
             AssemblyPath = assemblyPath;
 	        Port = port;
 
-            this.Add(ConfigurationConstants.Tags.LOGGING,
-                new ConfigurationEntry(ConfigurationConstants.Tags.LOGGING,
+            this.Add(ConfigurationConstants.Tags.LOGGING.LocalName,
+                new ConfigurationEntry(ConfigurationConstants.Tags.LOGGING.LocalName,
                 new Dictionary<string, string> { { ConfigurationConstants.Attrs.LOGGING_LEVEL, logLevel.ToString() } }));
         }
         /// <summary>

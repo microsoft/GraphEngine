@@ -18,8 +18,8 @@ namespace Trinity
         #region Fields
         private RunningMode running_mode = RunningMode.Undefined;
         private string configFile;
-        private int my_server_id = ConfigurationConstants.DefaultValue.DEFAULT_INVALID_VALUE;
-        private int my_proxy_id = ConfigurationConstants.DefaultValue.DEFAULT_INVALID_VALUE;
+        private int my_server_id = ConfigurationConstants.Values.DEFAULT_INVALID_VALUE;
+        private int my_proxy_id = ConfigurationConstants.Values.DEFAULT_INVALID_VALUE;
         XMLConfig xml_config;
         #endregion
 
