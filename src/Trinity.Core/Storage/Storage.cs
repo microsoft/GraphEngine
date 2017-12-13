@@ -199,6 +199,9 @@ namespace Trinity.Storage
         /*------------------------------------------------------------------------------*/
         public abstract void SendMessage(byte* message, int size);
         public abstract void SendMessage(byte* message, int size, out TrinityResponse response);
+        /*------------------------------------------------------------------------------*/
+        public abstract void SendMessage(byte** message, int* sizes, int count);
+        public abstract void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response);
         #endregion
 
         /// <summary>

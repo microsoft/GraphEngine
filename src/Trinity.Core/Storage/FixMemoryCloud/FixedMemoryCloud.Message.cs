@@ -125,6 +125,17 @@ namespace Trinity.Storage
         {
             GetProxy(proxyId).SendMessage(buffer, size, out response);
         }
+
+
+        public override void SendMessageToProxy(int proxyId, byte** buffers, int* sizes, int count)
+        {
+            GetProxy(proxyId).SendMessage(buffers, sizes, count);
+        }
+
+        public override void SendMessageToProxy(int proxyId, byte** buffers, int* sizes, int count, out TrinityResponse response)
+        {
+            GetProxy(proxyId).SendMessage(buffers, sizes, count, out response);
+        }
         #endregion
 
     }

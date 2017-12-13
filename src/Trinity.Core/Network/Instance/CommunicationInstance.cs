@@ -35,6 +35,7 @@ namespace Trinity.Network
         private ushort m_SynReqIdOffset;
         private ushort m_SynReqRspIdOffset;
         private ushort m_AsynReqIdOffset;
+        private ushort m_AsynReqRspIdOffset;
         private MemoryCloud memory_cloud;
         private bool m_started = false;
         private object m_lock = new object();
@@ -89,6 +90,7 @@ namespace Trinity.Network
             this.SynReqIdOffset = (ushort)schema.SynReqProtocolDescriptors.Count();
             this.SynReqRspIdOffset = (ushort)schema.SynReqRspProtocolDescriptors.Count();
             this.AsynReqIdOffset = (ushort)schema.AsynReqProtocolDescriptors.Count();
+            this.AsynReqRspIdOffset = (ushort)schema.AsynReqRspProtocolDescriptors.Count();
 
             /* TODO check circular dependency */
 
@@ -416,6 +418,12 @@ namespace Trinity.Network
         {
             get { return m_AsynReqIdOffset; }
             set { m_AsynReqIdOffset = value; }
+        }
+
+        internal ushort AsynReqRspIdOffset
+        {
+            get { return m_AsynReqRspIdOffset; }
+            set { m_AsynReqRspIdOffset = value; }
         }
         #endregion
 

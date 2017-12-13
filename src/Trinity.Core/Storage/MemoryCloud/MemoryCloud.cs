@@ -294,33 +294,6 @@ namespace Trinity.Storage
         }
         #endregion//IDisposable
 
-        //  Note, HA semantics are guaranteed in the overridden methods
-        //  in Storage implementations.
-        internal void SendMessageToServer(int serverId, TrinityMessage msg)
-        {
-            StorageTable[serverId].SendMessage(msg);
-        }
-
-        internal void SendMessageToServer(int serverId, TrinityMessage msg, out TrinityResponse response)
-        {
-            StorageTable[serverId].SendMessage(msg, out response);
-        }
-
-        internal void SendMessageToServer(int serverId, byte[] message, int offset, int size)
-        {
-            fixed (byte* p = message)
-            {
-                StorageTable[serverId].SendMessage(p + offset, size);
-            }
-        }
-        internal void SendMessageToServer(int serverId, byte[] message, int offset, int size, out TrinityResponse response)
-        {
-            fixed (byte* p = message)
-            {
-                StorageTable[serverId].SendMessage(p + offset, size, out response);
-            }
-        }
-
         #region Public
         /// <summary>
         /// Send a binary message to the specified Trinity server.
@@ -347,6 +320,31 @@ namespace Trinity.Storage
         }
 
         /// <summary>
+        /// Send a binary message to the specified Trinity server.
+        /// </summary>
+        /// <param name="serverId">A 32-bit server id.</param>
+        /// <param name="buffers">A binary message buffer.</param>
+        /// <param name="sizes">The size of the message.</param>
+        /// <param name="count">The number of segments in buffers</param>
+        public virtual void SendMessageToServer(int serverId, byte** buffers, int* sizes, int count)
+        {
+            StorageTable[serverId].SendMessage(buffers, sizes, count);
+        }
+
+        /// <summary>
+        /// Send a binary message to the specified Trinity server.
+        /// </summary>
+        /// <param name="serverId">A 32-bit server id.</param>
+        /// <param name="buffers">A binary message buffer.</param>
+        /// <param name="sizes">The size of the message.</param>
+        /// <param name="count">The number of segments in buffers</param>
+        /// <param name="response">The TrinityResponse object returned by the Trinity server.</param>
+        public virtual void SendMessageToServer(int serverId, byte** buffers, int* sizes, int count, out TrinityResponse response)
+        {
+            StorageTable[serverId].SendMessage(buffers, sizes, count, out response);
+        }
+
+        /// <summary>
         /// Send a binary message to the specified Trinity proxy.
         /// </summary>
         /// <param name="proxyId">A 32-bit proxy id.</param>
@@ -362,15 +360,32 @@ namespace Trinity.Storage
         /// <param name="size">The size of the message.</param>
         /// <param name="response">The TrinityResponse object returned by the Trinity proxy.</param>
         public abstract void SendMessageToProxy(int proxyId, byte* buffer, int size, out TrinityResponse response);
+
+        /// <summary>
+        /// Send a binary message to the specified Trinity proxy.
+        /// </summary>
+        /// <param name="proxyId">A 32-bit proxy id.</param>
+        /// <param name="buffers">A binary message buffer.</param>
+        /// <param name="sizes">The size of the message.</param>
+        /// <param name="count">The number of segments in buffers</param>
+        public abstract void SendMessageToProxy(int proxyId, byte** buffers, int* sizes, int count);
+
+        /// <summary>
+        /// Send a binary message to the specified Trinity proxy.
+        /// </summary>
+        /// <param name="proxyId">A 32-bit proxy id.</param>
+        /// <param name="buffers">A binary message buffer.</param>
+        /// <param name="sizes">The size of the message.</param>
+        /// <param name="count">The number of segments in buffers</param>
+        /// <param name="response">The TrinityResponse object returned by the Trinity proxy.</param>
+        public abstract void SendMessageToProxy(int proxyId, byte** buffers, int* sizes, int count, out TrinityResponse response);
+
         #endregion
 
-        public virtual long GetTotalMemoryUsage()
-        {
-            throw new NotSupportedException();
-        }
-
-
-
+        /// <summary>
+        /// Gets the total memory usage.
+        /// </summary>
+        public abstract long GetTotalMemoryUsage();
 
         #endregion
     }

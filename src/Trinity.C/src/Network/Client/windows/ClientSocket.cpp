@@ -79,6 +79,50 @@ namespace Trinity
             return true;
         }
 
+        bool ClientSendMulti(uint64_t socket, char** bufs, int32_t* lens, int32_t cnt)
+        {
+            WSABUF* lpBuffers = (WSABUF*)_alloca(sizeof(WSABUF) * cnt);
+            int32_t total_len = 0;
+            DWORD   bytesSent;
+            for (int i=0; i < cnt; ++i)
+            {
+                lpBuffers[i].buf = bufs[i];
+                lpBuffers[i].len = lens[i];
+                total_len += lens[i];
+            }
+            do
+            {
+                int eResult = WSASend((SOCKET)socket, lpBuffers, cnt, &bytesSent,
+                    /*flags, completion object, completion routine*/0, NULL, NULL);
+
+                if (SOCKET_ERROR == eResult)
+                {
+                    int error_code = WSAGetLastError();
+                    Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Errors occur during network send: {0} bytes to send. Error code = {1}, Thread Id = {2}", total_len, error_code, std::this_thread::get_id() );
+
+                    if (INVALID_SOCKET == socket)
+                    {
+                        Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Provided socket for send is invalid.");
+                    }
+
+                    closesocket((SOCKET)socket);
+                    return false;
+                }
+                total_len -= bytesSent;
+                // skip sent lpBuffers
+                while (bytesSent >= lpBuffers->len)
+                {
+                    bytesSent -= lpBuffers->len;
+                    ++lpBuffers;
+                    --cnt;
+                }
+                // adjust current lpBuffer
+                lpBuffers->buf += bytesSent;
+                lpBuffers->len -= bytesSent;
+            } while (total_len > 0);
+            return true;
+        }
+
         bool _do_recv(SOCKET socket, char* buf, int32_t len)
         {
             while (len)

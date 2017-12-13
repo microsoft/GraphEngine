@@ -11,7 +11,7 @@ namespace Trinity.DynamicCluster.Persistency
         private int m_length;
         private long m_target_lowKey;
         private long m_target_highKey;
-        private SmartPointer m_sp;
+        private PointerHelper m_sp;
         private byte* m_bp;
         private byte* m_ep;
         private GCHandle m_handle;
@@ -24,7 +24,7 @@ namespace Trinity.DynamicCluster.Persistency
             m_target_highKey = target_highKey;
             m_handle         = GCHandle.Alloc(content, GCHandleType.Pinned);
             m_bp             = (byte*)m_handle.AddrOfPinnedObject().ToPointer();
-            m_sp             = SmartPointer.New(m_bp);
+            m_sp             = PointerHelper.New(m_bp);
             m_ep             = m_bp + m_length;
         }
 
