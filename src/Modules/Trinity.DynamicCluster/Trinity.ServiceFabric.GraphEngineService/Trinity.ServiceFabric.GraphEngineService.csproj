@@ -97,7 +97,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GraphEngineService.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="GraphEngineServiceEventSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PackageRoot\Config\Settings.xml" />
@@ -120,6 +119,9 @@
       <Project>{298FC3D1-EBEE-4EF7-A6C9-C7241EDDA8F6}</Project>
       <Name>Trinity.ServiceFabric.GraphEngine.ListenerRuntime</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="PackageRoot\Data\trinity.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xs:schema id="TrinityConfig"
-    targetNamespace="http://graphengine.io/TrinityConfig.xsd"
+    targetNamespace="https://www.graphengine.io/schema/config"
     elementFormDefault="qualified"
-    xmlns="http://graphengine.io/TrinityConfig.xsd"
-    xmlns:mstns="http://graphengine.io/TrinityConfig.xsd"
+    xmlns="https://www.graphengine.io/schema/config"
+    xmlns:mstns="https://www.graphengine.io/schema/config"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
   <xs:annotation>
@@ -30,7 +30,7 @@
         <xs:element name="Import" type="mstns:Import"/>
       </xs:choice>
     </xs:sequence>
-    <xs:attribute name="ConfigVersion" type="xs:string" default="1.0" use="optional">
+    <xs:attribute name="ConfigVersion" type="xs:string" default="2.0" use="optional">
       <xs:annotation>
         <xs:documentation>
           Specifies the version of the configuration file. Currently, the value must be 1.0 or 2.0 if specified.
@@ -380,7 +380,7 @@
             </xs:attribute>
           </xs:complexType>
         </xs:element>
-        <xs:element name="Extension">
+        <xs:element name="Extensions">
           <xs:annotation>
             <xs:documentation>
               Specifies the priorities of the extensions. When loading an extension of a specific type(interface),
@@ -449,6 +449,20 @@
                 </xs:documentation>
               </xs:annotation>
             </xs:attribute>
+            <xs:attribute name="ConcurrentDownloads" use="optional" type="xs:unsignedInt">
+              <xs:annotation>
+                <xs:documentation>
+                  The number of concurrent downloads.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="ConcurrentUploads" use="optional" type="xs:unsignedInt">
+              <xs:annotation>
+                <xs:documentation>
+                  The number of concurrent uploads.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
           </xs:complexType>
         </xs:element>
         <xs:element name="Trinity.DynamicCluster">
@@ -470,7 +484,7 @@
                 <xs:restriction base="xs:string">
                   <xs:enumeration value="Mirroring" />
                   <xs:enumeration value="Sharding" />
-                  <xs:enumeration value="MirrorSharding" />
+                  <xs:enumeration value="MirroredSharding" />
                   <xs:enumeration value="Unrestricted" />
                 </xs:restriction>
               </xs:simpleType>

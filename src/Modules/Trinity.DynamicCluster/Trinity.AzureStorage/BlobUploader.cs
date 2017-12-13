@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Trinity.DynamicCluster.Persistency;
 using Trinity.Storage;
 using System.Threading;
+using Trinity.Diagnostics;
 
 namespace Trinity.Azure.Storage
 {
@@ -20,6 +21,7 @@ namespace Trinity.Azure.Storage
         private long highKey;
         private CloudBlobContainer m_container;
         private CancellationTokenSource m_tokenSource;
+        private SemaphoreSlim m_sem;
 
         public BlobUploader(Guid version, long lowKey, long highKey, CloudBlobContainer m_container)
         {
@@ -28,12 +30,21 @@ namespace Trinity.Azure.Storage
             this.highKey = highKey;
             this.m_container = m_container;
             this.m_tokenSource = new CancellationTokenSource();
+            this.m_sem = new SemaphoreSlim(BlobStorageConfig.Instance.ConcurrentUploads);
         }
 
         public void Dispose()
         {
-            m_tokenSource.Cancel();
-            m_tokenSource.Dispose();
+            try
+            {
+                m_sem.Dispose();
+                m_tokenSource.Cancel();
+                m_tokenSource.Dispose();
+            }
+            catch(Exception ex)
+            {
+                Log.WriteLine(LogLevel.Error, "{0}: an error occured during disposal: {1}", nameof(BlobUploader), ex.ToString());
+            }
         }
 
         /// <summary>
@@ -64,15 +75,23 @@ namespace Trinity.Azure.Storage
         /// <returns></returns>
         public async Task UploadAsync(IPersistentDataChunk payload)
         {
-            //TODO make sure everything in IPersistentDataChunk are in range
-            var partial_idx = payload.DataChunkRange.ToString();
-            var dir         = m_container.GetDirectoryReference(version.ToString());
-            var buf         = payload.GetBuffer();
-            await Task.WhenAll(
-                dir.GetBlockBlobReference($"{Constants.c_index}_{payload.DataChunkRange.Id}")
-               .UploadTextAsync(partial_idx, m_tokenSource.Token),
-                dir.GetBlockBlobReference(payload.DataChunkRange.Id.ToString())
-               .UploadFromByteArrayAsync(buf, 0, buf.Length, m_tokenSource.Token));
+            try
+            {
+                await m_sem.WaitAsync();
+                //TODO make sure everything in IPersistentDataChunk are in range
+                var partial_idx = payload.DataChunkRange.ToString();
+                var dir         = m_container.GetDirectoryReference(version.ToString());
+                var buf         = payload.GetBuffer();
+                await Task.WhenAll(
+                    dir.GetBlockBlobReference($"{Constants.c_index}_{payload.DataChunkRange.Id}")
+                   .UploadTextAsync(partial_idx, m_tokenSource.Token),
+                    dir.GetBlockBlobReference(payload.DataChunkRange.Id.ToString())
+                   .UploadFromByteArrayAsync(buf, 0, buf.Length, m_tokenSource.Token));
+            }
+            finally
+            {
+                m_sem.Release();
+            }
         }
     }
 }

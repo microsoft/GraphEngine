@@ -10,5 +10,9 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
         public const string AvailabilityGroupLocalHost  = @"localhost";
         public const string GraphEngineHttpListenerName = @"GraphEngineHttpListener";
         public const string GraphEngineListenerName     = @"GraphEngineListener";
+
+        public const string ServiceFabricConfigParameter = @"TrinityConfig";
+        public const string ServiceFabricConfigSection = @"ConfigFile";
+        public const string ServiceFabricDefaultConfigFile = @"trinity.xml";
     }
 }

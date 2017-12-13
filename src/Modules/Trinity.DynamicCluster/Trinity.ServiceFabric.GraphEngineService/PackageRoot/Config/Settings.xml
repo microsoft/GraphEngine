@@ -7,6 +7,16 @@
   <!-- This is used for securing StateManager's replication traffic. -->
   <Section Name="ReplicatorSecurityConfig" />
 
+  <!-- 
+  This setting is used to identify the trinity configuration file. The configuration
+  files should be stored/retrieved from the data package (PackageRoot/Data). You can
+  specify different configuration files for different environments, e.g. trinity.cloud.xml,
+  trinity.local5node.xml etc. To achieve this, modify the configuration override settings
+  from the service fabric application package.
+  -->
+  <Section Name="TrinityConfig">
+    <Parameter Name="ConfigFile" Value="trinity.xml" />
+  </Section>
   <!-- Add your custom configuration sections and parameters here. -->
   <!--
   <Section Name="MyConfigSection">

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Trinity ConfigVersion="2.0" xmlns="https://www.graphengine.io/schema/config">
+  <Local>
+    <!-- In this demo application we use Trinity.LIKQ as our graph query language. -->
+    <Trinity.LIKQ Timeout="10000"/>
+    <!-- In this demo application we use Azure blob storage as our persistent storage. -->
+    <Trinity.Azure.Storage ConnectionString="your_connection_string" ContainerName="graphengine"/>
+    <!-- We use a simple replication scheme: 2 replicas each partition, fully mirrored. -->
+    <Trinity.DynamicCluster MinimumReplica="2" ReplicationMode="Mirroring"/>
+    <!-- 
+    The number of trunks limit the total capacity of an instance: 
+    Each trunk has max capacity of 2GB. A larger value increases capacity,
+    and a smaller value reduces storage overhead.
+    -->
+    <Storage TrunkCount="16"/>
+    <!-- We are logging via Azure ETW so we shut down the file logger. -->
+    <Logging LogToFile="false" EchoOnConsole="false"/>
+    <!-- Turn on connection handshake to prevent port scanner from breaking our service. -->
+    <Network Handshake="true"/>
+  </Local>
+</Trinity>

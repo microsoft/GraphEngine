@@ -15,13 +15,13 @@ namespace Trinity.Azure.Storage
         public static BlobStorageConfig Instance => s_instance;
         [ConfigEntryName]
         internal static string ConfigEntry => nameof(Trinity.Azure.Storage);
-        [ConfigSetting]
+        [ConfigSetting(Optional:false)]
         public string ConnectionString { get; set; }
-        [ConfigSetting]
+        [ConfigSetting(Optional:false)]
         public string ContainerName { get; set; }
-        [ConfigSetting]
+        [ConfigSetting(Optional:true)]
         public int ConcurrentDownloads { get; set; }
-        [ConfigSetting]
+        [ConfigSetting(Optional:true)]
         public int ConcurrentUploads { get; set; }
     }
 }

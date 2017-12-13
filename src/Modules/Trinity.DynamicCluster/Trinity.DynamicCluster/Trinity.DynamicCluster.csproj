@@ -57,6 +57,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\DynamicClusterConfig.cs" />
     <Compile Include="Consensus\IHealthManager.cs" />
     <Compile Include="Consensus\ITaskQueue.cs" />
     <Compile Include="Consensus\IChunkTable.cs" />

@@ -78,6 +78,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="test.runsettings" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Trinity.AzureStorage\Trinity.Azure.Storage.csproj">

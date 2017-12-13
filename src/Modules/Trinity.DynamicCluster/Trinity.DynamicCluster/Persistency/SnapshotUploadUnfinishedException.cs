@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Trinity.DynamicCluster.Persistency
 {
+    [Serializable]
     public class SnapshotUploadUnfinishedException : Exception
     {
         public SnapshotUploadUnfinishedException() : base() { }

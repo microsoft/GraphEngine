@@ -89,7 +89,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationNotLoadedException.cs" />
     <Compile Include="GraphEngineConstants.cs" />
+    <Compile Include="GraphEngineServiceEventSource.cs" />
     <Compile Include="GraphEngineStatefulServiceRuntime.cs" />
     <Compile Include="Interfaces\IGraphEngineStatefulServiceRuntime.cs" />
     <Compile Include="Interfaces\ITrinityServerRuntimeManager.cs" />

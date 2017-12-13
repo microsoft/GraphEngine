@@ -27,6 +27,6 @@ namespace Trinity.DynamicCluster.Storage
         /// Using DHT algorithms to distribute chunks. Guarantees availability
         /// given a minimal number of operational replicas.
         /// </summary>
-        DistributedHashTable,
+        Unrestricted,
     }
 }
