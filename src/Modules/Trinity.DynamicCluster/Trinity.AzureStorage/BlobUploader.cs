@@ -67,6 +67,7 @@ namespace Trinity.Azure.Storage
                              .UploadTextAsync(full_idx);
             await m_dir.GetBlockBlobReference(Constants.c_finished)
                              .UploadTextAsync("finished");
+            Log.WriteLine(LogLevel.Info, $"{nameof(BlobUploader)}: Version {version} finished uploading.");
         }
 
         /// <summary>
@@ -82,6 +83,7 @@ namespace Trinity.Azure.Storage
                 await m_sem.WaitAsync();
                 //TODO make sure everything in IPersistentDataChunk are in range
                 var partial_idx = ChunkSerialization.ToString(payload.DataChunkRange);
+                Log.WriteLine(LogLevel.Info, $"{nameof(BlobUploader)}: uploading {partial_idx}.");
 
                 var buf = payload.GetBuffer();
 
@@ -90,6 +92,7 @@ namespace Trinity.Azure.Storage
                    .UploadTextAsync(partial_idx, m_tokenSource.Token),
                     m_dir.GetBlockBlobReference(payload.DataChunkRange.Id.ToString())
                    .UploadFromByteArrayAsync(buf, 0, buf.Length, m_tokenSource.Token));
+                Log.WriteLine(LogLevel.Info, $"{nameof(BlobUploader)}: finished uploading {partial_idx}.");
             }
             finally
             {

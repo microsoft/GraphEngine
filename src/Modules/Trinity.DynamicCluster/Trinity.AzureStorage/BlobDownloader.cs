@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks.Dataflow;
 using Newtonsoft.Json;
 using System.IO;
+using Trinity.Diagnostics;
 
 namespace Trinity.Azure.Storage
 {
@@ -43,6 +44,11 @@ namespace Trinity.Azure.Storage
                 CancellationToken=m_tokenSource.Token,
                 BoundedCapacity = BlobStorageConfig.Instance.ConcurrentDownloads
             });
+            Log.WriteLine(LogLevel.Info, $"{nameof(BlobDownloader)}: Begin downloading {m_version} [{m_lowKey}-{m_highKey}].");
+            if(skip != null)
+            {
+                Log.WriteLine(LogLevel.Info, $"{nameof(BlobDownloader)}: Version {m_version}: skipping {ChunkSerialization.ToString(skip)}.");
+            }
 
             var idx = m_dir.GetBlockBlobReference(Constants.c_index);
             var idx_content = await idx.DownloadTextAsync();
@@ -64,13 +70,14 @@ namespace Trinity.Azure.Storage
         {
             var file = m_dir.GetBlockBlobReference(chunk.Id.ToString());
             var ms = new MemoryStream();
+            Log.WriteLine(LogLevel.Info, $"{nameof(BlobDownloader)}: Version {m_version}: downloading {ChunkSerialization.ToString(chunk)}.");
             await file.DownloadToStreamAsync(ms);
             var buf = ms.GetBuffer();
            
             ms.Dispose();
+            Log.WriteLine(LogLevel.Info, $"{nameof(BlobDownloader)}: Version {m_version}: finished {ChunkSerialization.ToString(chunk)}.");
             return new InMemoryDataChunk(chunk, buf, m_lowKey, m_highKey);
         }
-
 
         public void Dispose()
         {
@@ -82,8 +89,14 @@ namespace Trinity.Azure.Storage
         {
             await m_download;
             if (await m_buffer.OutputAvailableAsync(m_tokenSource.Token))
+            {
                 return await m_buffer.ReceiveAsync().Unwrap();
-            else return null;
+            }
+            else
+            {
+                Log.WriteLine(LogLevel.Info, $"{nameof(BlobDownloader)}: Finish downloading {m_version} [{m_lowKey}-{m_highKey}].");
+                return null;
+            }
         }
 
         public async Task SeekAsync(Chunk progress)

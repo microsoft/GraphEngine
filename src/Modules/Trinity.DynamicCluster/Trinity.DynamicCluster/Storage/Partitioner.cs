@@ -39,6 +39,8 @@ namespace Trinity.DynamicCluster.Storage
 
         public Partitioner(CancellationToken token, IChunkTable chunktable, INameService nameservice, ITaskQueue taskqueue, IHealthManager healthmgr, ReplicationMode replicationMode, int minimalRedundancy)
         {
+            Log.WriteLine($"{nameof(Partitioner)}: Initializing. ReplicationMode={replicationMode}, MinimumReplica={minimalRedundancy}");
+
             m_dmc            = DynamicMemoryCloud.Instance;
             m_cancel         = token;
             m_nameservice    = nameservice;

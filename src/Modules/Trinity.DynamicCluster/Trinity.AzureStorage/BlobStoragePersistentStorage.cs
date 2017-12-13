@@ -25,6 +25,7 @@ namespace Trinity.Azure.Storage
             if(BlobStorageConfig.Instance.ContainerName == null) Log.WriteLine(LogLevel.Error, $"{nameof(BlobStoragePersistentStorage)}: container name is not specified");
             if(BlobStorageConfig.Instance.ConnectionString == null) Log.WriteLine(LogLevel.Error, $"{nameof(BlobStoragePersistentStorage)}: connection string is not specified");
             if(BlobStorageConfig.Instance.ContainerName != BlobStorageConfig.Instance.ContainerName.ToLower()) Log.WriteLine(LogLevel.Error, $"{nameof(BlobStoragePersistentStorage)}: invalid container name");
+            Log.WriteLine(LogLevel.Debug, $"{nameof(BlobStoragePersistentStorage)}: Initializing.");
             m_storageAccount = CloudStorageAccount.Parse(BlobStorageConfig.Instance.ConnectionString);
             m_client = m_storageAccount.CreateCloudBlobClient();
             m_container = m_client.GetContainerReference(BlobStorageConfig.Instance.ContainerName);
@@ -55,6 +56,7 @@ retry:
                 await DeleteVersion(guid);
                 throw;
             }
+            Log.WriteLine(LogLevel.Info, $"{nameof(BlobStoragePersistentStorage)}: Created new version {guid}.");
             return guid;
         }
 
@@ -66,6 +68,7 @@ retry:
                        .OfType<CloudBlob>()
                        .Select(_ => _.DeleteIfExistsAsync(cancellationToken:m_cancel));
             await Task.WhenAll(blobs);
+            Log.WriteLine(LogLevel.Info, $"{nameof(BlobStoragePersistentStorage)}: Version {version} deleted.");
         }
 
         public void Dispose()
@@ -87,7 +90,9 @@ retry:
                               .OrderByDescending(f => f.Properties.LastModified.Value)
                               .FirstOrDefault();
             if (latest == null) throw new NoDataException();
-            return new Guid(latest.Parent.Uri.Segments.Last().TrimEnd('/'));
+            var guid = new Guid(latest.Parent.Uri.Segments.Last().TrimEnd('/'));
+            Log.WriteLine(LogLevel.Info, $"{nameof(BlobStoragePersistentStorage)}: {guid} is the latest version.");
+            return guid;
         }
 
         public Task<PersistentStorageMode> QueryPersistentStorageMode()
