@@ -21,6 +21,7 @@ namespace Trinity.Storage
             HighKey = highKey;
             Id = id;
         }
+        internal Chunk(){}
 
         public long LowKey { get; }
         public long HighKey { get; }

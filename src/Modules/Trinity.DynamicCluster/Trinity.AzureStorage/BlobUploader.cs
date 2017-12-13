@@ -21,6 +21,7 @@ namespace Trinity.Azure.Storage
         private long highKey;
         private CloudBlobContainer m_container;
         private CancellationTokenSource m_tokenSource;
+        private CloudBlobDirectory m_dir;
         private SemaphoreSlim m_sem;
 
         public BlobUploader(Guid version, long lowKey, long highKey, CloudBlobContainer m_container)
@@ -30,6 +31,7 @@ namespace Trinity.Azure.Storage
             this.highKey = highKey;
             this.m_container = m_container;
             this.m_tokenSource = new CancellationTokenSource();
+            this.m_dir = m_container.GetDirectoryReference(version.ToString());
             this.m_sem = new SemaphoreSlim(BlobStorageConfig.Instance.ConcurrentUploads);
         }
 
@@ -53,7 +55,7 @@ namespace Trinity.Azure.Storage
         /// </summary>
         public async Task FinishUploading()
         {
-            var partial_idxs = m_container.GetDirectoryReference(version.ToString())
+            var partial_idxs = m_dir
                 .ListBlobs(useFlatBlobListing: false)
                 .OfType<CloudBlockBlob>()
                 .Where(f => f.Name.Contains(Constants.c_index));
@@ -61,9 +63,9 @@ namespace Trinity.Azure.Storage
                 partial_idxs.Select(f => f.DownloadTextAsync(m_tokenSource.Token)));
             await Task.WhenAll(partial_idxs.Select(f => f.DeleteIfExistsAsync()));
             var full_idx = string.Join("\n", contents);
-            await m_container.GetBlockBlobReference(Constants.c_index)
+            await m_dir.GetBlockBlobReference(Constants.c_index)
                              .UploadTextAsync(full_idx);
-            await m_container.GetBlockBlobReference(Constants.c_finished)
+            await m_dir.GetBlockBlobReference(Constants.c_finished)
                              .UploadTextAsync("finished");
         }
 
@@ -79,13 +81,14 @@ namespace Trinity.Azure.Storage
             {
                 await m_sem.WaitAsync();
                 //TODO make sure everything in IPersistentDataChunk are in range
-                var partial_idx = payload.DataChunkRange.ToString();
-                var dir         = m_container.GetDirectoryReference(version.ToString());
-                var buf         = payload.GetBuffer();
+                var partial_idx = ChunkSerialization.ToString(payload.DataChunkRange);
+
+                var buf = payload.GetBuffer();
+
                 await Task.WhenAll(
-                    dir.GetBlockBlobReference($"{Constants.c_index}_{payload.DataChunkRange.Id}")
+                    m_dir.GetBlockBlobReference($"{Constants.c_index}_{payload.DataChunkRange.Id}") // TODO(maybe): index_<chunk id> should be _index. Append `parse(chunk)` to the tail of `_index`.
                    .UploadTextAsync(partial_idx, m_tokenSource.Token),
-                    dir.GetBlockBlobReference(payload.DataChunkRange.Id.ToString())
+                    m_dir.GetBlockBlobReference(payload.DataChunkRange.Id.ToString())
                    .UploadFromByteArrayAsync(buf, 0, buf.Length, m_tokenSource.Token));
             }
             finally
