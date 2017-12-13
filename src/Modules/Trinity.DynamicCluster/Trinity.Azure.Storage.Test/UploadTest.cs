@@ -28,27 +28,29 @@ namespace Trinity.Azure.Storage.Test
 
         [TestMethod]
         public async Task Upload()
-        {   // Equal.
+        {
             byte[] data = Encoding.UTF8.GetBytes("I am the bone of my sword.");
-
             var LowKey = 0;
             var HighKey = data.Length;
-
-            Console.WriteLine($"HighKey: {HighKey}");
+            Chunk myChunk = new Chunk(LowKey, HighKey, new Guid("68d7c5be-beac-43a6-abf8-4daa4dce9090"));
 
             var uploader = await m_storage.Upload(m_version, LowKey, HighKey);
-
-            Chunk myChunk = new Chunk(LowKey, HighKey, new Guid("68d7c5be-beac-43a6-abf8-4daa4dce9090"));
             uploader.UploadAsync(new InMemoryDataChunk(myChunk, data, LowKey, HighKey)).Wait();
+            uploader.FinishUploading().Wait();
+
             var v = await m_storage.Download(m_version, LowKey, HighKey);
             var src = await v.DownloadAsync();
-            var src_seq = src.GetEnumerator();
-            
-            var buffer = src_seq.Current.Buffer;
-            Console.WriteLine(Encoding.UTF8.GetString(buffer.Take(data.Length).ToArray()));
 
+// The following block works perfectly.  
+            var src_seq = src.GetEnumerator();
+            var buffer = src_seq.Current.Buffer;
             Assert.IsTrue(buffer.Take(data.Length).SequenceEqual(data.Take(data.Length)));
-            
+
+
+// And this commented one is wrong.
+//            var buffer = src.First().Buffer;
+//            Assert.IsTrue(buffer.Take(data.Length).SequenceEqual(data.Take(data.Length)));
+
         }
     }
 }

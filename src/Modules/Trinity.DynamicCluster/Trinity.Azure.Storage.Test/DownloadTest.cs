@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
+using Trinity.DynamicCluster;
 using Trinity.Storage;
 
 namespace Trinity.Azure.Storage.Test
@@ -17,7 +18,7 @@ namespace Trinity.Azure.Storage.Test
         private BlobStoragePersistentStorage m_storage;
         private CloudBlobClient m_client;
         private readonly Guid m_version = new Guid("0939a250-e41e-48b2-bce9-f3195b0388ae");
-        public byte[] TestItem = new byte[14];
+        public byte[][] Items = new[] {new byte[14], new byte[16]};
 
 
         [TestInitialize]
@@ -39,10 +40,10 @@ namespace Trinity.Azure.Storage.Test
             string idx = string.Join("\n", new[] {c1, c2}.Select(JsonConvert.SerializeObject));
             dir.GetBlockBlobReference(Constants.c_index).UploadText(idx);
 
-            
-            var f1 = TestItem.Clone() as byte[];
 
-            byte[] f2 = new byte[16];
+            var f1 = Items[0].Clone() as byte[];
+            var f2 = Items[1].Clone() as byte[];
+
             f2[0] = 0xEB;
             f2[10] = 0x02;
             f2[14] = 0xDE;
@@ -62,9 +63,14 @@ namespace Trinity.Azure.Storage.Test
             GetLatestVersion().Wait();
             var v = await m_storage.Download(m_version, 0, 110);
             var src = await v.DownloadAsync();
-            var src_seq = src.GetEnumerator();
-            var buffer = src_seq.Current.Buffer;
-            Assert.IsTrue(buffer.Take(14).SequenceEqual(TestItem.Take(14)));
+
+
+            Assert.IsTrue(src.Take(Items.Length)
+                .Select((it, i) =>
+                    it.Buffer
+                        .Take(Items[i].Length)
+                        .SequenceEqual(Items[i]))
+                .All(Utils.Identity));
         }
     }
 }
