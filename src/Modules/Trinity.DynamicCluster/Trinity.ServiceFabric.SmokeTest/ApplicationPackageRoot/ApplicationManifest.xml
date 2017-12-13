@@ -9,7 +9,7 @@
        should match the Name and Version attributes of the ServiceManifest element defined in the 
        ServiceManifest.xml file. -->
   <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="Trinity.ServiceFabric.GraphEngineServicePkg" ServiceManifestVersion="1.0.1" />
+    <ServiceManifestRef ServiceManifestName="Trinity.ServiceFabric.GraphEngineServicePkg" ServiceManifestVersion="1.0.2" />
     <ConfigOverrides />
   </ServiceManifestImport>
   <DefaultServices>

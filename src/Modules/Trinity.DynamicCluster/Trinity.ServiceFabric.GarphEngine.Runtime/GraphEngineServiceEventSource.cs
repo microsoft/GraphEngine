@@ -8,8 +8,8 @@ using Trinity.DynamicCluster;
 
 namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 {
-    [EventSource(Name = "Microsoft-Trinity.ServiceFabric.StatefulService.Infrastructure")]
-    internal sealed class GraphEngineStatefulServiceEventSource : EventSource
+    [EventSource(Name = "Microsoft-ServiceFabric.Trinity.StatefulService")]
+    public sealed class GraphEngineStatefulServiceEventSource : EventSource
     {
         public static readonly GraphEngineStatefulServiceEventSource Current = new GraphEngineStatefulServiceEventSource();
 
@@ -35,6 +35,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
                 { LogLevel.Warning, GraphEngineLogWarn },
             };
 
+            TrinityConfig.LogEchoOnConsole = false;
             TrinityConfig.LogToFile = false;
             Log.LogsWritten += GraphEngineLogsWritten;
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;

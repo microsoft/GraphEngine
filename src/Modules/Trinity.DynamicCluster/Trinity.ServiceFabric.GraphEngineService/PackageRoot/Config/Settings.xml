@@ -15,7 +15,7 @@
   from the service fabric application package.
   -->
   <Section Name="TrinityConfig">
-    <Parameter Name="ConfigFile" Value="trinity_large_memory.xml" />
+    <Parameter Name="ConfigFile" Value="trinity.xml" />
   </Section>
   <!-- Add your custom configuration sections and parameters here. -->
   <!--

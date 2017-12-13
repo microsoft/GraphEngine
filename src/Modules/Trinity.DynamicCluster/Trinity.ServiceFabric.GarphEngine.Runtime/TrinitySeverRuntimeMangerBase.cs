@@ -72,6 +72,9 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
             // load trinity configuration from service fabric settings
             LoadTrinityConfiguration(runtimeContext.Context);
 
+            // initialize event source
+            GraphEngineStatefulServiceEventSource.Current.GraphEngineLogInfo($"{nameof(TrinityServerRuntimeManager)}: Initializing Trinity runtime environment.");
+
             // load a reference pointer so that we can get to this data from a different place in STAP
             m_serviceFabricRuntimeContext = runtimeContext;
 

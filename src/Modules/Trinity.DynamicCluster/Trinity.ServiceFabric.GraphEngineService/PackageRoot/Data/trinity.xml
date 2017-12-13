@@ -14,7 +14,7 @@
     -->
     <Storage TrunkCount="16"/>
     <!-- We are logging via Azure ETW so we shut down the file logger. -->
-    <Logging LogToFile="false" EchoOnConsole="false"/>
+    <Logging LogToFile="false" EchoOnConsole="false" LogLevel="Info" />
     <!-- Turn on connection handshake to prevent port scanner from breaking our service. -->
     <Network Handshake="true"/>
   </Local>

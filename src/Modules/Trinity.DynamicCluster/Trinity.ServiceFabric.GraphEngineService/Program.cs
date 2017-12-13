@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Services.Runtime;
+using Trinity.ServiceFabric.GarphEngine.Infrastructure;
 
 namespace Trinity.ServiceFabric
 {
