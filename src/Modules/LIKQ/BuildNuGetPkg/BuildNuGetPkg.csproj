@@ -7,10 +7,10 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <Target Name="Build">
-    <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.3.5.0\tools\Nuget.exe pack $(ProjectDir)..\FanoutSearch\FanoutSearch.csproj -IncludeReferencedProjects -OutputDirectory $(ProjectDir)..\..\..\bin\ -NoPackageAnalysis" />
+    <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe pack $(ProjectDir)..\FanoutSearch\FanoutSearch.csproj -IncludeReferencedProjects -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis" />
   </Target>
   <Target Name="Rebuild">
-    <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.3.5.0\tools\Nuget.exe pack $(ProjectDir)..\FanoutSearch\FanoutSearch.csproj -IncludeReferencedProjects -OutputDirectory $(ProjectDir)..\..\..\bin\ -NoPackageAnalysis" />
+    <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe pack $(ProjectDir)..\FanoutSearch\FanoutSearch.csproj -IncludeReferencedProjects -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis" />
   </Target>
   <ItemGroup>
     <ProjectReference Include="..\FanoutSearch\FanoutSearch.csproj">
@@ -22,5 +22,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

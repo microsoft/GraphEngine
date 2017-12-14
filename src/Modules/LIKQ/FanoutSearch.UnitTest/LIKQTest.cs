@@ -11,6 +11,7 @@ using Trinity;
 using FanoutSearch.LIKQ;
 using System.Linq;
 using FanoutSearch.Test.TSL;
+using Trinity.Storage;
 
 namespace FanoutSearch.UnitTest
 {
@@ -40,7 +41,7 @@ namespace FanoutSearch.UnitTest
             server.RegisterCommunicationModule<FanoutSearchModule>();
             server.Start();
             Console.WriteLine("Local Server started");
-            Global.CloudStorage.BarrierSync();
+            BSP.BarrierSync((FixedMemoryCloud)Global.CloudStorage);
             Console.WriteLine("All Server started");
         }
 

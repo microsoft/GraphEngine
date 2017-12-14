@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Trinity;
 using Trinity.TSL;
 using Trinity.Core.Lib;
 using Trinity.Network;
 using Trinity.Network.Messaging;
+using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
 namespace t_Namespace

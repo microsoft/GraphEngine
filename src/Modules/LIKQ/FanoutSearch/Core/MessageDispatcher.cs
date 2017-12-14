@@ -28,7 +28,7 @@ namespace FanoutSearch
 
         static MessageDispatcher()
         {
-            s_ServerCount = Global.CloudStorage.ServerCount;
+            s_ServerCount = Global.CloudStorage.PartitionCount;
             s_Module = Global.CloudStorage.GetCommunicationModule<FanoutSearchModule>();
         }
         public MessageDispatcher(int hop, int transaction)
@@ -53,7 +53,7 @@ namespace FanoutSearch
 
         public unsafe void addAugmentedPath(long* pathptr, int current_hop, long next_cell)
         {
-            int slaveID = Global.CloudStorage.GetServerIdByCellId(next_cell);
+            int slaveID = Global.CloudStorage.GetPartitionIdByCellId(next_cell);
             int path_size = sizeof(long) * (current_hop + 2);
 
             // not lock free, but easy to read through.

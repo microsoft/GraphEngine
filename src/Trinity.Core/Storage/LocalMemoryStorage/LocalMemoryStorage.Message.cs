@@ -37,7 +37,7 @@ namespace Trinity.Storage
         public override void SendMessage(byte* message, int size)
         {
             TrinityMessageType msgType = (TrinityMessageType)message[TrinityProtocol.MsgTypeOffset];
-            int msgId = message[TrinityProtocol.MsgIdOffset];
+            ushort msgId = *(ushort*)(message + TrinityProtocol.MsgIdOffset);
             TrinityErrorCode msgProcessResult;
 
             switch (msgType)
@@ -98,7 +98,7 @@ namespace Trinity.Storage
         public override void SendMessage(byte* message, int size, out TrinityResponse response)
         {
             TrinityMessageType msgType = (TrinityMessageType)message[TrinityProtocol.MsgTypeOffset];
-            byte msgId = message[TrinityProtocol.MsgIdOffset];
+            ushort msgId = *(ushort*)(message+TrinityProtocol.MsgIdOffset);
             SynReqRspArgs sync_rsp_args;
             TrinityErrorCode msgProcessResult;
 
@@ -135,7 +135,7 @@ namespace Trinity.Storage
             _serialize(message, sizes, count, out buf, out len);
 
             TrinityMessageType msgType = (TrinityMessageType)buf[TrinityProtocol.MsgTypeOffset];
-            int msgId = buf[TrinityProtocol.MsgIdOffset];
+            ushort msgId = *(ushort*)(buf + TrinityProtocol.MsgIdOffset);
 
             // For async messages, we omit the buffer copy, use the serialized buffer directly.
             switch (msgType)
@@ -193,11 +193,12 @@ namespace Trinity.Storage
             {
                 len += sizes[i];
             }
+
             buf = (byte*)CMemory.C_malloc((ulong)len);
             byte* p = buf;
             for (int i=0; i<count; ++i)
             {
-                CMemory.C_memcpy((void*)p, (void*)message, (ulong)*sizes);
+                CMemory.C_memcpy((void*)p, (void*)*message, (ulong)*sizes);
                 p += *sizes;
                 ++message;
                 ++sizes;

@@ -51,7 +51,7 @@ namespace Trinity.Network.Messaging
         public const int MsgIdOffset = 6;
 
         /// <summary>
-        /// value = 4
+        /// value = 8
         /// </summary>
         public const int AsyncWithRspAdditionalHeaderLength = 8;
     }

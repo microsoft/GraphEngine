@@ -114,6 +114,37 @@ namespace t_Namespace
             }
         }
 
+        IEnumerable<IProtocolDescriptor> ICommunicationSchema.AsynReqRspProtocolDescriptors
+        {
+            get
+            {
+                string request_sig;
+                string response_sig;
+                FOREACH();
+                IF("$t_protocol->is_asyn_req_rsp_protocol()");
+                {
+                    IF("$t_protocol->pt_request == PT_VOID_REQUEST");
+                    request_sig = "void";
+                    ELSE();
+                    request_sig = "t_request_signature";
+                    END();
+
+                    response_sig = "t_response_signature";
+
+                    yield return new ProtocolDescriptor()
+                    {
+                        Name = "t_protocol_name",
+                        RequestSignature = request_sig,
+                        ResponseSignature = response_sig,
+                        Type = Trinity.Network.Messaging.TrinityMessageType.ASYNC_WITH_RSP
+                    };
+                }
+                END();
+                END();
+                yield break;
+            }
+        }
+
         string ICommunicationSchema.Name
         {
             get { return "t_server_name"; }
@@ -165,12 +196,24 @@ namespace t_Namespace
         /// <summary>
         /// Specifies the type of an asynchronous request (without response) message.
         /// </summary>
-        /// <remarks>Note that asynchronous message with response is not supported.</remarks>
         public enum AsynReqMessageType : ushort
         {
             [FOREACH]
             [IF("$t_protocol->is_asyn_req_protocol()")]
             t_protocol_name,
+            /*END*/
+            /*END*/
+        }
+
+        /// <summary>
+        /// Specifies the type of an asynchronous request (with response) message.
+        /// </summary>
+        public enum AsynReqRspMessageType : ushort
+        {
+            [FOREACH]
+            [IF("$t_protocol->is_asyn_req_rsp_protocol()")]
+            t_protocol_name,
+            t_protocol_name__Response,
             /*END*/
             /*END*/
         }
