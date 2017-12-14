@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2010
+VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Service Fabric Infrastructure Library", "GE Service Fabric Infrastructure Library", "{216E51C6-D32B-4280-8D68-28E1858D71A4}"
 EndProject
@@ -13,65 +13,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GraphEngie ServiceFabric Li
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GraphEngine Service Fabric Service", "GraphEngine Service Fabric Service", "{FEC17E5C-E3CB-4A35-A6C6-5EE5827B6F9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphEgnine.ServiceFabric.Listeners", "..\..\GE Service Fabric App\GEServiceCommon\GE.Service.Common\GraphEgnine.ServiceFabric.Listeners.csproj", "{934362EF-231C-4A74-91FF-8B7E381666C4}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InKnowWorks Graph Engine Ontology API Service", "InKnowWorks Graph Engine Ontology API Service", "{EF5D5848-1044-4ED6-BB55-9BD720ADD1B3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Graph Engine Service Fabric Core", "Graph Engine Service Fabric Core", "{B1916713-BC6A-4F2B-8DAB-B40DC1CA82D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GraphEngine.ServiceFabric.Core", "..\..\GE Service Fabric Core\Trinity.GraphEngine.ServiceFabric.Core\Trinity.GraphEngine.ServiceFabric.Core.csproj", "{15064422-26F8-4C91-B092-8842C0E49DE5}"
-EndProject
-Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "GraphEngineService.ServiceFabricApp", "..\..\GE Service Fabric App\GraphEngineService.ServiceFabricApp\GraphEngineService.ServiceFabricApp.sfproj", "{E46AE26C-54C5-4D23-A60C-3B920809E11D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.ServiceFabric.GraphEngineService", "..\..\GE Service Fabric App\GraphEngineStatefulService\Trinity.ServiceFabric.GraphEngineService.csproj", "{57365DE2-F24F-435B-81AF-BA04114C8A23}"
-EndProject
 Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Debug|x64 = Debug|x64
-		Release|Any CPU = Release|Any CPU
-		Release|x64 = Release|x64
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{934362EF-231C-4A74-91FF-8B7E381666C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{934362EF-231C-4A74-91FF-8B7E381666C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{934362EF-231C-4A74-91FF-8B7E381666C4}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{934362EF-231C-4A74-91FF-8B7E381666C4}.Debug|x64.Build.0 = Debug|Any CPU
-		{934362EF-231C-4A74-91FF-8B7E381666C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{934362EF-231C-4A74-91FF-8B7E381666C4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{934362EF-231C-4A74-91FF-8B7E381666C4}.Release|x64.ActiveCfg = Release|Any CPU
-		{934362EF-231C-4A74-91FF-8B7E381666C4}.Release|x64.Build.0 = Release|Any CPU
-		{15064422-26F8-4C91-B092-8842C0E49DE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{15064422-26F8-4C91-B092-8842C0E49DE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{15064422-26F8-4C91-B092-8842C0E49DE5}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{15064422-26F8-4C91-B092-8842C0E49DE5}.Debug|x64.Build.0 = Debug|Any CPU
-		{15064422-26F8-4C91-B092-8842C0E49DE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{15064422-26F8-4C91-B092-8842C0E49DE5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{15064422-26F8-4C91-B092-8842C0E49DE5}.Release|x64.ActiveCfg = Release|Any CPU
-		{15064422-26F8-4C91-B092-8842C0E49DE5}.Release|x64.Build.0 = Release|Any CPU
-		{E46AE26C-54C5-4D23-A60C-3B920809E11D}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{E46AE26C-54C5-4D23-A60C-3B920809E11D}.Debug|x64.ActiveCfg = Debug|x64
-		{E46AE26C-54C5-4D23-A60C-3B920809E11D}.Debug|x64.Build.0 = Debug|x64
-		{E46AE26C-54C5-4D23-A60C-3B920809E11D}.Debug|x64.Deploy.0 = Debug|x64
-		{E46AE26C-54C5-4D23-A60C-3B920809E11D}.Release|Any CPU.ActiveCfg = Release|x64
-		{E46AE26C-54C5-4D23-A60C-3B920809E11D}.Release|x64.ActiveCfg = Release|x64
-		{E46AE26C-54C5-4D23-A60C-3B920809E11D}.Release|x64.Build.0 = Release|x64
-		{E46AE26C-54C5-4D23-A60C-3B920809E11D}.Release|x64.Deploy.0 = Release|x64
-		{57365DE2-F24F-435B-81AF-BA04114C8A23}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{57365DE2-F24F-435B-81AF-BA04114C8A23}.Debug|x64.ActiveCfg = Debug|x64
-		{57365DE2-F24F-435B-81AF-BA04114C8A23}.Debug|x64.Build.0 = Debug|x64
-		{57365DE2-F24F-435B-81AF-BA04114C8A23}.Release|Any CPU.ActiveCfg = Release|x64
-		{57365DE2-F24F-435B-81AF-BA04114C8A23}.Release|x64.ActiveCfg = Release|x64
-		{57365DE2-F24F-435B-81AF-BA04114C8A23}.Release|x64.Build.0 = Release|x64
-	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{934362EF-231C-4A74-91FF-8B7E381666C4} = {F7FDC6BD-AF14-42DC-830D-AC5FD3A0D153}
-		{15064422-26F8-4C91-B092-8842C0E49DE5} = {B1916713-BC6A-4F2B-8DAB-B40DC1CA82D7}
-		{E46AE26C-54C5-4D23-A60C-3B920809E11D} = {FEC17E5C-E3CB-4A35-A6C6-5EE5827B6F9A}
-		{57365DE2-F24F-435B-81AF-BA04114C8A23} = {24E24355-4915-492B-BBCE-8319B16D295B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8B423481-1DBA-47A0-A201-1C6EE939CCFE}
