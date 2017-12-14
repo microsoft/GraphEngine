@@ -112,6 +112,7 @@
     <Compile Include="Network\Instance\CommunicationProtocolGroup.cs" />
     <Compile Include="Network\Instance\CommunicationInstance.cs" />
     <Compile Include="Extension\IProtocolDescriptor.cs" />
+    <Compile Include="Network\Messaging\MessageArgs\AsynReqRspArgs.cs" />
     <Compile Include="Network\Messaging\MessageArgs\UnhandledException.cs" />
     <Compile Include="Network\Messaging\PreservedMessages.cs" />
     <Compile Include="Network\Messaging\TrinityMessageType.cs" />
@@ -217,7 +218,7 @@
     <Compile Include="Trinity\Lib\Memory.C.cs" />
     <Compile Include="Trinity\Lib\Memory.cs" />
     <Compile Include="Trinity\Lib\RWULock.cs" />
-    <Compile Include="Trinity\Lib\SmartPointer.cs" />
+    <Compile Include="Trinity\Lib\PointerHelper.cs" />
     <Compile Include="Trinity\Lib\SpinLockInt32.cs" />
     <Compile Include="Trinity\Lib\ThrowHelper.cs" />
     <Compile Include="Trinity\Lib\XArray.cs" />
@@ -275,6 +276,9 @@
     <None Include="NuGet\GraphEngine.Core.props" />
     <None Include="NuGet\GraphEngine.Core.targets" />
     <Compile Include="Storage\MemoryCloud\MemoryCloud.KVStore.cs" />
+    <None Include="Trinity\Configuration\TrinityConfig.Schema.xsd">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

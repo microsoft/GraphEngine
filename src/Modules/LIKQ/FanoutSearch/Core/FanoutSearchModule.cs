@@ -249,7 +249,7 @@ namespace FanoutSearch
             int W = 1;
             for (int i = 1; i <= max_hop; ++i)
             {
-                W *= Global.CloudStorage.ServerCount;
+                W *= Global.CloudStorage.PartitionCount;
             }
             return W;
         }

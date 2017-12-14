@@ -27,6 +27,7 @@ namespace Trinity.DynamicCluster.Persistency
         }
 
         public Chunk DataChunkRange => m_data_chunk;
+        public byte[] GetBuffer() => m_content;
 
         public void Dispose() { } 
 
@@ -39,5 +40,6 @@ namespace Trinity.DynamicCluster.Persistency
         {
             return GetEnumerator();
         }
+
     }
 }

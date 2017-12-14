@@ -69,6 +69,12 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
                                                 string IPAddress,
                                                 StatefulServiceContext Context) runtimeContext)
         {
+            // load trinity configuration from service fabric settings
+            LoadTrinityConfiguration(runtimeContext.Context);
+
+            // initialize event source
+            GraphEngineStatefulServiceEventSource.Current.GraphEngineLogInfo($"{nameof(TrinityServerRuntimeManager)}: Initializing Trinity runtime environment.");
+
             // load a reference pointer so that we can get to this data from a different place in STAP
             m_serviceFabricRuntimeContext = runtimeContext;
 
@@ -110,5 +116,25 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
             }
         }
 
+        private void LoadTrinityConfiguration(StatefulServiceContext context)
+        {
+            try
+            {
+                var dataPackage = context.CodePackageActivationContext.GetDataPackageObject("Data");
+                var configPackage = context.CodePackageActivationContext.GetConfigurationPackageObject("Config");
+                Log.WriteLine("{0}: {1}", nameof(Trinity.ServiceFabric), $"Data package version {dataPackage.Description.Version}, Config package version {configPackage.Description.Version}");
+                var filename = configPackage.Settings
+                    .Sections[GraphEngineConstants.ServiceFabricConfigSection]
+                    .Parameters[GraphEngineConstants.ServiceFabricConfigParameter]
+                    .Value;
+                var config_file = Path.Combine(dataPackage.Path, filename);
+                TrinityConfig.LoadConfig(config_file);
+            }
+            catch(Exception ex)
+            {
+                Log.WriteLine("{0}: {1}", nameof(Trinity.ServiceFabric), $"Trinity Configuration settings failed to load: {ex.ToString()}");
+                throw new ConfigurationNotLoadedException("Trinity Configuration settings failed to load.", ex);
+            }
+        }
     }
 }

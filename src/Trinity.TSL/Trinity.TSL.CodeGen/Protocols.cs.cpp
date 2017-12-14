@@ -18,11 +18,16 @@ source->append(R"::(using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Trinity;
 using Trinity.TSL;
 using Trinity.Core.Lib;
 using Trinity.Network;
 using Trinity.Network.Messaging;
+using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(

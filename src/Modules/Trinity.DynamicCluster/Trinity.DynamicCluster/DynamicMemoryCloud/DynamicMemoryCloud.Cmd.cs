@@ -46,5 +46,10 @@ namespace Trinity.DynamicCluster.Storage
         {
             throw new NotImplementedException();
         }
+
+        public override long GetTotalMemoryUsage()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

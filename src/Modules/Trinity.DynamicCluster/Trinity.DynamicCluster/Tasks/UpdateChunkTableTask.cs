@@ -56,7 +56,7 @@ namespace Trinity.DynamicCluster.Tasks
                 return sharding_init();
                 case ReplicationMode.MirroredSharding:
                 return mirrorshard_init();
-                case ReplicationMode.DistributedHashTable:
+                case ReplicationMode.Unrestricted:
                 return dht_init();
                 default:
                 throw new ArgumentException("Invalid replication mode");

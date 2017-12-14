@@ -80,7 +80,7 @@ namespace Trinity.Network
                 {
                     if (i != Global.MyServerId)
                     {
-                        storage.SendMessageToServer(i, msg);
+                        storage.SendMessageToServer(i, msg.Buffer, msg.Size);
                     }
                 }
             );

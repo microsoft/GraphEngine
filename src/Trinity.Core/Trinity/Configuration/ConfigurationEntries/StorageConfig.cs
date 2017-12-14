@@ -30,10 +30,13 @@ namespace Trinity.Configuration
             StorageCapacity = c_DefaultStorageCapacityProfile;
             DefragInterval  = c_DefaultDefragInterval;
         }
+        /// <summary>
+        /// Gets the configuration entry singleton instance.
+        /// </summary>
         [ConfigInstance]
         public static StorageConfig Instance { get { return s_StorageConfig; } }
         [ConfigEntryName]
-        internal static string ConfigEntry { get { return ConfigurationConstants.Tags.STORAGE; } }
+        internal static string ConfigEntry { get { return ConfigurationConstants.Tags.STORAGE.LocalName; } }
         #endregion
 
         #region Private static helpers
@@ -51,15 +54,15 @@ namespace Trinity.Configuration
         #endregion
 
         #region Fields
-        internal const int    c_MaxTrunkCount = ConfigurationConstants.DefaultValue.MAX_TRUNK_COUNT;
-        internal const bool   c_DefaultReadOnly = ConfigurationConstants.DefaultValue.DEFAULT_VALUE_FALSE;
-        public const ushort   c_UndefinedCellType = ConfigurationConstants.DefaultValue.UNDEFINED_CELL_TYPE;
-        internal const int    c_DefaultDefragInterval = ConfigurationConstants.DefaultValue.DEFAULT_DEFRAG_INTERVAL;
+        internal const int    c_MaxTrunkCount = ConfigurationConstants.Values.MAX_TRUNK_COUNT;
+        internal const bool   c_DefaultReadOnly = ConfigurationConstants.Values.DEFAULT_VALUE_FALSE;
+        public const ushort   c_UndefinedCellType = ConfigurationConstants.Values.UNDEFINED_CELL_TYPE;
+        internal const int    c_DefaultDefragInterval = ConfigurationConstants.Values.DEFAULT_DEFRAG_INTERVAL;
         internal const StorageCapacityProfile 
                               c_DefaultStorageCapacityProfile = StorageCapacityProfile.Max8G;
-        internal int          m_GCParallelism = ConfigurationConstants.DefaultValue.DEFALUT_GC_PATRALLELISM;
+        internal int          m_GCParallelism = ConfigurationConstants.Values.DEFALUT_GC_PATRALLELISM;
         internal int          m_DefragInterval;
-        private  string       m_StorageRoot = ConfigurationConstants.DefaultValue.BLANK;
+        private  string       m_StorageRoot = ConfigurationConstants.Values.BLANK;
         #endregion
 
         #region Properties

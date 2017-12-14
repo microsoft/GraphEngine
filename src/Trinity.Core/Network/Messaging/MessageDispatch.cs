@@ -85,6 +85,11 @@ namespace Trinity.Network.Sockets
         internal AsyncReqHandler[] async_handlers = new AsyncReqHandler[ushort.MaxValue + 1];
         internal AsyncReqHandler[] preserved_async_handlers = new AsyncReqHandler[ushort.MaxValue + 1];
 
+        /// <summary>
+        /// Handler table for asynchronous message with responseBuff
+        /// </summary>
+        internal AsyncReqRspHandler[] async_rsp_handlers = new AsyncReqRspHandler[ushort.MaxValue + 1];
+
         public MessageHandlers()
         {
             for (int i = 0; i <= ushort.MaxValue; ++i)
@@ -92,6 +97,7 @@ namespace Trinity.Network.Sockets
                 sync_rsp_handlers[i] = null;
                 sync_handlers[i] = null;
                 async_handlers[i] = null;
+                async_rsp_handlers[i] = null;
 
                 preserved_sync_rsp_handlers[i] = null;
                 preserved_sync_handlers[i] = null;
@@ -216,6 +222,22 @@ namespace Trinity.Network.Sockets
             }
         }
 
+        public bool RegisterMessageHandler(ushort msgId, AsyncReqRspHandler request_handler)
+        {
+            try
+            {
+                async_rsp_handlers[msgId] = request_handler;
+                Log.WriteLine(LogLevel.Debug, "Async with response message " + msgId + " is registered.");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Trinity.Diagnostics.Log.WriteLine(ex.Message);
+                Trinity.Diagnostics.Log.WriteLine(ex.StackTrace);
+                return false;
+            }
+        }
+
         #region _SetSendRecvBuff helpers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private unsafe void _SetSendRecvBuff(TrinityErrorCode msgProcessResult, MessageBuff* sendRecvBuff, TrinityMessage response)
@@ -319,6 +341,15 @@ namespace Trinity.Network.Sockets
                             Length - TrinityProtocol.TrinityMsgHeader,
                             preserved_async_handlers[msgId]);
                         msgProcessResult = preserved_async_args.AsyncProcessMessage();
+                        _SetSendRecvBuff(msgProcessResult, sendRecvBuff);
+                        return;
+
+                    case TrinityMessageType.ASYNC_WITH_RSP:
+                        AsynReqRspArgs async_rsp_args = new AsynReqRspArgs(ByteArray,
+                            TrinityProtocol.TrinityMsgHeader,
+                            Length - TrinityProtocol.TrinityMsgHeader,
+                            async_rsp_handlers[msgId]);
+                        msgProcessResult = async_rsp_args.AsyncProcessMessage();
                         _SetSendRecvBuff(msgProcessResult, sendRecvBuff);
                         return;
 

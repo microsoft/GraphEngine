@@ -13,6 +13,7 @@ using Trinity.DynamicCluster.Communication;
 using System.Threading;
 using Trinity.DynamicCluster.Tasks;
 using System.Threading.Tasks;
+using Trinity.DynamicCluster.Config;
 
 namespace Trinity.DynamicCluster.Storage
 {
@@ -110,9 +111,7 @@ namespace Trinity.DynamicCluster.Storage
                           .ToArray();
             NickName = GenerateNickName(InstanceId);
 
-            //TODO repmode is hard-coded Mirroring
-            //TODO redundancy hard-coded 2
-            m_partitioner = new Partitioner(m_cancelSrc.Token, m_chunktable, m_nameservice, m_taskqueue, m_healthmanager, ReplicationMode.Mirroring, minimalRedundancy: 2);
+            m_partitioner = new Partitioner(m_cancelSrc.Token, m_chunktable, m_nameservice, m_taskqueue, m_healthmanager, DynamicClusterConfig.Instance.ReplicationMode, DynamicClusterConfig.Instance.MinimumReplica);
             m_taskexec = new Executor(m_taskqueue, m_cancelSrc.Token);
 
             Log.WriteLine($"{nameof(DynamicMemoryCloud)}: Partition {MyPartitionId}: Instance '{NickName}' {InstanceId} opened.");

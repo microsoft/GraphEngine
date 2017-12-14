@@ -2,6 +2,7 @@
 
 namespace Trinity.DynamicCluster.Persistency
 {
+    [Serializable]
     public class NoDataException : Exception
     {
         public NoDataException(): base() { }

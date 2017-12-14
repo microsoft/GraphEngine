@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceManifest Name="Trinity.ServiceFabric.GraphEngineServicePkg"
-                 Version="1.0.1"
+                 Version="1.0.2"
                  xmlns="http://schemas.microsoft.com/2011/01/fabric"
                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -23,6 +23,7 @@
        independently-updateable and versioned set of custom configuration settings for your service. -->
   <ConfigPackage Name="Config" Version="1.0.0"/>
 
+  <DataPackage Name="Data" Version="1.0.0"/>
   <Resources>
     <Endpoints>
       <!-- This endpoint is used by the communication listener to obtain the port on which to 

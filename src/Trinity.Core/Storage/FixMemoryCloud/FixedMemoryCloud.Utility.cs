@@ -30,7 +30,7 @@ namespace Trinity.Storage
             BitHelper.WriteString(msg, trinity_msg.Buffer + TrinityMessage.Offset);
 
             TrinityResponse response;
-            SendMessageToServer(serverId, trinity_msg, out response);
+            SendMessageToServer(serverId, trinity_msg.Buffer, trinity_msg.Size, out response);
 
             return BitHelper.GetString(response.Buffer + response.Offset, response.Size);
 
@@ -52,9 +52,9 @@ namespace Trinity.Storage
                 *(p + TrinityProtocol.MsgTypeOffset) = (byte)TrinityMessageType.PRESERVED_ASYNC;
 
                 *(p + TrinityProtocol.MsgIdOffset) = (byte)RequestType.Shutdown;
+                SendMessageToServer(serverId, byte_p, message_bytes.Length);
             }
 
-            SendMessageToServer(serverId, message_bytes, 0, message_bytes.Length);
         }
 
         internal unsafe void ShutDownProxy(RemoteStorage proxy)
@@ -105,7 +105,7 @@ namespace Trinity.Storage
             Parallel.For(0, PartitionCount, sid =>
                 {
                     TrinityResponse response;
-                    SendMessageToServer(sid, tm, out response);
+                    SendMessageToServer(sid, tm.Buffer, tm.Size, out response);
                     memUsage[sid] = *(long*)(response.Buffer + response.Offset);
                 });
             return memUsage.Sum();

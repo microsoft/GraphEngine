@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2009
+VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.DynamicCluster", "Trinity.DynamicCluster\Trinity.DynamicCluster.csproj", "{26DB9C05-8B53-409F-A1C9-3FD30CFEC35C}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.ServiceFabric.GraphEngine.ListenerRuntime", "Trinity.ServiceFabric.GraphEngine.Listeners\Trinity.ServiceFabric.GraphEngine.ListenerRuntime.csproj", "{298FC3D1-EBEE-4EF7-A6C9-C7241EDDA8F6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GraphEngine to Service Fabric Demo", "GraphEngine to Service Fabric Demo", "{C2A6720A-EBA6-49FB-B263-99919D1D2DF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.Azure.Storage.Test", "Trinity.Azure.Storage.Test\Trinity.Azure.Storage.Test.csproj", "{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CommunicationAdapters", "CommunicationAdapters", "{DE3B1754-FE18-4F11-8CD0-70EDC064BC00}"
 EndProject
@@ -53,6 +55,7 @@ Global
 		{7673502E-80B7-46E7-AA78-AC7E6BAB556C}.Release|x64.Build.0 = Release|Any CPU
 		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|Any CPU.Build.0 = Debug|x64
+		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|Any CPU.Deploy.0 = Debug|x64
 		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|x64.ActiveCfg = Debug|x64
 		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|x64.Build.0 = Debug|x64
 		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|x64.Deploy.0 = Debug|x64
@@ -85,6 +88,14 @@ Global
 		{298FC3D1-EBEE-4EF7-A6C9-C7241EDDA8F6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{298FC3D1-EBEE-4EF7-A6C9-C7241EDDA8F6}.Release|x64.ActiveCfg = Release|Any CPU
 		{298FC3D1-EBEE-4EF7-A6C9-C7241EDDA8F6}.Release|x64.Build.0 = Release|Any CPU
+		{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}.Debug|x64.Build.0 = Debug|Any CPU
+		{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}.Release|x64.ActiveCfg = Release|Any CPU
+		{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}.Release|x64.Build.0 = Release|Any CPU
 		{B640301B-A7FB-4B80-81EE-DCA979D44D76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B640301B-A7FB-4B80-81EE-DCA979D44D76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B640301B-A7FB-4B80-81EE-DCA979D44D76}.Debug|x64.ActiveCfg = Debug|Any CPU
