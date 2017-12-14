@@ -36,12 +36,11 @@ namespace t_Namespace
 
         [META_VAR("std::string", "method_name")]
         [META_VAR("std::string", "arg_extension_method_target")]
-        [META_VAR("std::string", "comm_id")]
         [META_VAR("std::string", "send_message_method")]
         [MAP_VAR("t_method_name", "%method_name")]
         [MAP_VAR("t_method_name_2", "%method_name")]
+        [MAP_VAR("t_method_name_3", "%method_name")]
         [MAP_VAR("t_send_message", "%send_message_method")]
-        [MAP_VAR("t_comm_id", "%comm_id")]
 
         [FOREACH]
         [USE_LIST("t_protocol")]
@@ -52,28 +51,25 @@ namespace t_Namespace
 
         [META("%method_name = *$t_protocol_name + \"To\" + *$t_comm_name;")]
         [META("%arg_extension_method_target = \"this Trinity.Storage.MemoryCloud storage, \";")]
-        [META("%comm_id = \"serverId\";")]
         [META("%send_message_method = \"storage.SendMessageToServer\";")]
 
         [ELIF("node->type() == PGT_PROXY")]
 
         [META("%method_name = *$t_protocol_name + \"To\" + *$t_comm_name;")]
         [META("%arg_extension_method_target = \"this Trinity.Storage.MemoryCloud storage, \";")]
-        [META("%comm_id = \"proxyId\";")]
         [META("%send_message_method = \"storage.SendMessageToProxy\";")]
 
         [ELSE]//PGT_MODULE
 
         [META("%method_name = *$t_protocol_name;")]
         [META("%arg_extension_method_target = \"\";")]
-        [META("%comm_id = \"moduleId\";")]
         [META("%send_message_method = \"this.SendMessage\";")]
 
         [END]
         #endregion
 
         [IF("!$t_protocol->has_request() && !$t_protocol->has_response()")]
-        public unsafe /*IF("node->type() != PGT_MODULE")*/ static /*END*/ void t_method_name([META_OUTPUT("%arg_extension_method_target")] int t_comm_id)
+        public unsafe /*IF("node->type() != PGT_MODULE")*/ static /*END*/ void t_method_name([META_OUTPUT("%arg_extension_method_target")] int partitionId)
         {
             byte* bufferPtr = (byte*)Memory.malloc((ulong)TrinityProtocol.MsgHeader);
             try
@@ -81,12 +77,12 @@ namespace t_Namespace
                 *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader;
                 *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
                 *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
-                t_send_message(t_comm_id, bufferPtr, TrinityProtocol.MsgHeader);
+                t_send_message(partitionId, bufferPtr, TrinityProtocol.MsgHeader);
             }
             finally { Memory.free(bufferPtr); }
         }
         [ELIF("$t_protocol->has_request() && !$t_protocol->has_response()")]
-        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ void t_method_name([META_OUTPUT("%arg_extension_method_target")] int t_comm_id, t_protocol_requestWriter msg)
+        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ void t_method_name([META_OUTPUT("%arg_extension_method_target")] int partitionId, t_protocol_requestWriter msg)
         {
             byte* bufferPtr = msg.buffer;
             try
@@ -94,27 +90,27 @@ namespace t_Namespace
                 *(int*)(bufferPtr) = msg.Length + TrinityProtocol.TrinityMsgHeader;
                 *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
                 *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
-                t_send_message(t_comm_id, bufferPtr, msg.Length + TrinityProtocol.MsgHeader);
+                t_send_message(partitionId, bufferPtr, msg.Length + TrinityProtocol.MsgHeader);
             }
             finally { }
         }
-        [ELIF("!$t_protocol->has_request() && $t_protocol->has_response()")]
-        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ t_protocol_responseReader t_method_name_2([META_OUTPUT("%arg_extension_method_target")] int t_comm_id)
+        [ELIF("!$t_protocol->has_request() && $t_protocol->is_syn_req_rsp_protocol()")]
+        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ t_protocol_responseReader t_method_name_2([META_OUTPUT("%arg_extension_method_target")] int partitionId)
         {
-            byte* bufferPtr = (byte*)Memory.malloc((ulong)TrinityProtocol.MsgHeader);
+            byte* bufferPtr = stackalloc byte[TrinityProtocol.MsgHeader];
             try
             {
                 *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader;
                 *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
                 *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
                 TrinityResponse response;
-                t_send_message(t_comm_id, bufferPtr, TrinityProtocol.MsgHeader, out response);
+                t_send_message(partitionId, bufferPtr, TrinityProtocol.MsgHeader, out response);
                 return new t_protocol_responseReader(response.Buffer, response.Offset);
             }
             finally { Memory.free(bufferPtr); }
         }
-        [ELSE]//$t_protocol->has_request() && $t_protocol->has_response()
-        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ t_protocol_responseReader t_method_name_2([META_OUTPUT("%arg_extension_method_target")] int t_comm_id, t_protocol_requestWriter msg)
+        [ELIF("$t_protocol->has_request() && $t_protocol->is_syn_req_rsp_protocol()")]
+        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ t_protocol_responseReader t_method_name_2([META_OUTPUT("%arg_extension_method_target")] int partitionId, t_protocol_requestWriter msg)
         {
             byte* bufferPtr = msg.buffer;
             try
@@ -123,8 +119,54 @@ namespace t_Namespace
                 *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
                 *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
                 TrinityResponse response;
-                t_send_message(t_comm_id, bufferPtr, msg.Length + TrinityProtocol.MsgHeader, out response);
+                t_send_message(partitionId, bufferPtr, msg.Length + TrinityProtocol.MsgHeader, out response);
                 return new t_protocol_responseReader(response.Buffer, response.Offset);
+            }
+            finally { }
+        }
+        [ELIF("!$t_protocol->has_request() && $t_protocol->is_asyn_req_rsp_protocol()")]
+        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ Task<t_protocol_responseReader> t_method_name_3([META_OUTPUT("%arg_extension_method_target")] int partitionId)
+        {
+            byte* bufferPtr = stackalloc byte[TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength];
+            try
+            {
+                int token = Interlocked.Increment(ref t_comm_nameBase.s_t_protocol_name_token_counter);
+                var task_source = new TaskCompletionSource<t_protocol_responseReader>();
+                t_comm_nameBase.s_t_protocol_name_token_sources[token] = task_source;
+                *(int*)(bufferPtr + TrinityProtocol.MsgHeader) = token;
+                *(int*)(bufferPtr + TrinityProtocol.MsgHeader + sizeof(int)) = Global.MyServerId;
+                *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
+                *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
+                *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
+                t_send_message(partitionId, bufferPtr, TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+                return task_source.Task;
+            }
+            finally { }
+        }
+        [ELSE]
+        //("$t_protocol->has_request() && $t_protocol->is_asyn_req_rsp_protocol()")
+        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ Task<t_protocol_responseReader> t_method_name_3([META_OUTPUT("%arg_extension_method_target")] int partitionId, t_protocol_requestWriter msg)
+        {
+            byte** bufferPtrs = stackalloc byte*[2];
+            int*   size       = stackalloc int[2];
+            byte*  bufferPtr  = stackalloc byte[TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength];
+            bufferPtrs[0]     = bufferPtr;
+            bufferPtrs[1]     = msg.buffer + TrinityProtocol.MsgHeader;
+            size[0]           = TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
+            size[1]           = msg.Length;
+
+            try
+            {
+                int token = Interlocked.Increment(ref t_comm_nameBase.s_t_protocol_name_token_counter);
+                var task_source = new TaskCompletionSource<t_protocol_responseReader>();
+                t_comm_nameBase.s_t_protocol_name_token_sources[token] = task_source;
+                *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader + msg.Length + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
+                *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
+                *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
+                *(int*)(bufferPtr + TrinityProtocol.MsgHeader) = token;
+                *(int*)(bufferPtr + TrinityProtocol.MsgHeader + sizeof(int)) = Global.MyServerId;
+                t_send_message(partitionId, bufferPtrs, size, 2);
+                return task_source.Task;
             }
             finally { }
         }
@@ -134,11 +176,21 @@ namespace t_Namespace
         [END]//FOREACH
 
         [MODULE_END]
-        private static unsafe void t_send_message(int t_comm_id, byte* bufferPtr, int msgHeader)
+        private static unsafe void t_send_message(int partitionId, byte* bufferPtr, int msgHeader)
         {
             throw new NotImplementedException();
         }
-        private static unsafe void t_send_message(int t_comm_id, byte* bufferPtr, int msgHeader, out TrinityResponse response)
+        private static unsafe void t_send_message(int partitionId, byte* bufferPtr, int msgHeader, out TrinityResponse response)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static unsafe void t_send_message(int partitionId, byte** bufferPtrs, int* size, int v)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static unsafe void t_send_message(int partitionId, byte** bufferPtrs, int* size, int v, out TrinityResponse response)
         {
             throw new NotImplementedException();
         }

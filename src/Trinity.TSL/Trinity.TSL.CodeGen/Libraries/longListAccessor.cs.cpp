@@ -16,14 +16,10 @@ NTSL* node)
             
 source->append(R"::(using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Trinity;
 using Trinity.Core.Lib;
 using Trinity.Storage;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
-using Trinity.Storage;
 namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(

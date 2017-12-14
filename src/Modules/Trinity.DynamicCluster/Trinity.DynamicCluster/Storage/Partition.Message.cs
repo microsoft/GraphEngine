@@ -33,6 +33,16 @@ namespace Trinity.DynamicCluster.Storage
             m_storages.First().Key.SendMessage(message, size, out response);
         }
 
+        public override unsafe void SendMessage(byte** message, int* sizes, int count)
+        {
+            m_storages.First().Key.SendMessage(message, sizes, count);
+        }
+
+        public override unsafe void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
+        {
+            m_storages.First().Key.SendMessage(message, sizes, count, out response);
+        }
+
         public void Broadcast(TrinityMessage message)
         {
             m_storages.Keys.ForEach(s => s.SendMessage(message));

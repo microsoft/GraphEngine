@@ -235,7 +235,7 @@ namespace FanoutSearch
 
             // send the first(seed) search messages out.
             var grouped_origin_path_descs = from pd in origin_path_descriptors
-                                            group pd by Global.CloudStorage.GetServerIdByCellId(pd.hop_0);
+                                            group pd by Global.CloudStorage.GetPartitionIdByCellId(pd.hop_0);
             var seed_message_cnt = grouped_origin_path_descs.Count();
             var wait_count_per_seed = GetWaitCount(request.maxHop);
 
@@ -371,7 +371,7 @@ namespace FanoutSearch
                 GetNodesInfoRequestWriter[,] node_info_writers = new GetNodesInfoRequestWriter[hop_count, Global.ServerCount];
                 GetNodesInfoResponse[,] node_info_readers = new GetNodesInfoResponse[hop_count, Global.ServerCount];
                 int[,] reader_idx = new int[hop_count, Global.ServerCount];
-                Func<long, int> hash_func = Global.CloudStorage.GetServerIdByCellId;
+                Func<long, int> hash_func = Global.CloudStorage.GetPartitionIdByCellId;
 
                 Parallel.For(0, hop_count, i =>
                 {
