@@ -75,6 +75,17 @@ namespace Trinity
             return true;
         }
 
+        bool ClientSendMulti(uint64_t socket, char** bufs, int32_t* lens, int32_t cnt)
+        {
+            for(; cnt > 0; --cnt)
+            {
+                if (!ClientSend(socket, *bufs, *lens)) return false;
+                ++bufs;
+                ++lens;
+            }
+            return true;
+        }
+
         bool _do_recv(int socket, char* buf, int32_t len)
         {
             while (len)
