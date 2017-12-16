@@ -22,6 +22,7 @@ namespace Trinity.DynamicCluster.Tasks
         /// all instances of this type.
         /// </summary>
         Guid Tag { get; }
+
         /// <summary>
         /// Execute the task asynchronously.
         /// </summary>

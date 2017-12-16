@@ -30,6 +30,27 @@ namespace Trinity.DynamicCluster.Tasks
 
         public async Task Execute(CancellationToken cancel)
         {
+            // Stub for Async/Await code block ...
+
+            using (var executeReplicatorTaskBlock = await Task.Factory.StartNew(async () =>
+            {
+                // For production change the Delay value to something other than 0
+                await Task.Delay(0, cancel).ConfigureAwait(false);
+
+                try
+                {
+                    ;
+                }
+                catch (Exception e)
+                {
+                    throw;
+                }
+
+            }, cancel))
+            {
+                await executeReplicatorTaskBlock;
+            }
+                
         }
     }
 }

@@ -77,6 +77,11 @@ namespace Trinity.Networking.WCFService.Client
             throw new NotImplementedException();
         }
 
+        public override long GetTotalMemoryUsage()
+        {
+            throw new NotImplementedException();
+        }
+
         public override TrinityErrorCode SaveCell(long cellId, byte[] buff)
         {
             throw new NotImplementedException();
@@ -113,6 +118,16 @@ namespace Trinity.Networking.WCFService.Client
         }
 
         public override unsafe void SendMessageToProxy(int proxyId, byte* buffer, int size, out TrinityResponse response)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override unsafe void SendMessageToProxy(int proxyId, byte** buffers, int* sizes, int count)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override unsafe void SendMessageToProxy(int proxyId, byte** buffers, int* sizes, int count, out TrinityResponse response)
         {
             throw new NotImplementedException();
         }
