@@ -1,9 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <Version>1.0.0</Version>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
+    <Version>8.0.30703</Version>
+    <AssemblyVersion>8.0.30703.0</AssemblyVersion>
+    <FileVersion>8.0.30703.0</FileVersion>
+    <RootNamespace>FanoutSearch</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -29,6 +30,15 @@
     <TSL_CODEGEN_PATH Condition="'$(TSL_CODEGEN_PATH)' == ''">$(TSL_PATH)tools\Trinity.TSL.CodeGen</TSL_CODEGEN_PATH>
     <TslOutputPath Condition=" '$(TslOutputPath)' == '' ">$(MSBuildProjectDirectory)</TslOutputPath>
     <TslGeneratedCodePath Condition=" '$(TslGeneratedCodePath)' == '' ">$(MSBuildProjectDirectory)GeneratedCode\</TslGeneratedCodePath>
+    <Company>Microsoft Corporation</Company>
+    <PackageId>FanoutSearch.CoreCLR</PackageId>
+    <Authors>Microsoft Graph Engine Team</Authors>
+    <Product>FanoutSearch.CoreCLR</Product>
+    <Description>GraphEngine.LIKQ for CoreCLR.</Description>
+    <AssemblyName>FanoutSearch.CoreCLR</AssemblyName>
+    <Copyright>Copyright 2017</Copyright>
+    <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
   </PropertyGroup>
   <Target Name="TslCodeGen" BeforeTargets="CoreCompile">
     <Exec Command="$(TSL_CODEGEN_PATH) --ScriptList &quot;TSL\Core.tsl;TSL\Module.tsl;TSL\Result.tsl;TSL\Web.tsl&quot; --ProjectRoot &quot;$(MSBuildProjectDirectory)&quot; --RootNamespace $(RootNamespace) --OutputPath $(TslOutputPath)" />
