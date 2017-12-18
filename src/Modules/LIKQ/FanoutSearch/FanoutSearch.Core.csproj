@@ -1,24 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <Version>1.0.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Include="..\..\..\BuildProfile\ProductInfo.cs" Link="ProductInfo.cs" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.8850" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.6.1" />
@@ -26,5 +21,16 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.0.0" />
     <PackageReference Include="Serialize.Linq" Version="1.4.0" />
   </ItemGroup>
-
+  <PropertyGroup>
+    <TSL_PATH Condition="('$(TSL_PATH)' == '') And Exists('$(MSBuildThisFileDirectory)..\..\tools')">$(MSBuildThisFileDirectory)..\..\</TSL_PATH>
+    <TSL_PATH Condition="('$(TSL_PATH)' == '') And Exists('$(MSBuildThisFileDirectory)..\tools')">$(MSBuildThisFileDirectory)..\</TSL_PATH>
+    <TSL_PATH Condition="('$(TSL_PATH)' == '')">$(MSBuildThisFileDirectory)..\..\</TSL_PATH>
+    <TSL_CODEGEN_PATH Condition="'$(OS)' == 'Windows_NT'">$(TSL_PATH)tools\Trinity.TSL.CodeGen.exe</TSL_CODEGEN_PATH>
+    <TSL_CODEGEN_PATH Condition="'$(TSL_CODEGEN_PATH)' == ''">$(TSL_PATH)tools\Trinity.TSL.CodeGen</TSL_CODEGEN_PATH>
+    <TslOutputPath Condition=" '$(TslOutputPath)' == '' ">$(MSBuildProjectDirectory)</TslOutputPath>
+    <TslGeneratedCodePath Condition=" '$(TslGeneratedCodePath)' == '' ">$(MSBuildProjectDirectory)GeneratedCode\</TslGeneratedCodePath>
+  </PropertyGroup>
+  <Target Name="TslCodeGen" BeforeTargets="CoreCompile">
+    <Exec Command="$(TSL_CODEGEN_PATH) --ScriptList &quot;TSL\Core.tsl;TSL\Module.tsl;TSL\Result.tsl;TSL\Web.tsl&quot; --ProjectRoot &quot;$(MSBuildProjectDirectory)&quot; --RootNamespace $(RootNamespace) --OutputPath $(TslOutputPath)" />
+  </Target>
 </Project>
