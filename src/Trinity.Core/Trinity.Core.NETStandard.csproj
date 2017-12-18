@@ -75,6 +75,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Serialize.Linq" Version="1.4.0" />
   </ItemGroup>
 
   <PropertyGroup>
