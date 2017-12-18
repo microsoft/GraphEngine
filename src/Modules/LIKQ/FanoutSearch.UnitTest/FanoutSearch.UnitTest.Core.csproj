@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+    <Compile Remove="Properties\GraphEngine.AssemblyInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.8851" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.1.18" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.1.18" />
+    <PackageReference Include="Serialize.Linq" Version="1.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FanoutSearch\FanoutSearch.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TSL_PATH Condition="('$(TSL_PATH)' == '') And Exists('$(MSBuildThisFileDirectory)..\..\tools')">$(MSBuildThisFileDirectory)..\..\</TSL_PATH>
+    <TSL_PATH Condition="('$(TSL_PATH)' == '') And Exists('$(MSBuildThisFileDirectory)..\tools')">$(MSBuildThisFileDirectory)..\</TSL_PATH>
+    <TSL_PATH Condition="('$(TSL_PATH)' == '')">$(MSBuildThisFileDirectory)..\..\</TSL_PATH>
+    <TSL_CODEGEN_PATH Condition="'$(OS)' == 'Windows_NT'">$(TSL_PATH)tools\Trinity.TSL.CodeGen.exe</TSL_CODEGEN_PATH>
+    <TSL_CODEGEN_PATH Condition="'$(TSL_CODEGEN_PATH)' == ''">$(TSL_PATH)tools\Trinity.TSL.CodeGen</TSL_CODEGEN_PATH>
+    <TslOutputPath Condition=" '$(TslOutputPath)' == '' ">$(MSBuildProjectDirectory)</TslOutputPath>
+    <TslGeneratedCodePath Condition=" '$(TslGeneratedCodePath)' == '' ">$(MSBuildProjectDirectory)GeneratedCode\</TslGeneratedCodePath>
+    <AssemblyName>FanoutSearch.UnitTest.Core</AssemblyName>
+  </PropertyGroup>
+  <Target Name="TslCodeGen" BeforeTargets="CoreCompile">
+    <Exec Command="$(TSL_CODEGEN_PATH) --ScriptList &quot;MyTSL.tsl&quot; --ProjectRoot &quot;$(MSBuildProjectDirectory)&quot; --RootNamespace $(RootNamespace) --OutputPath $(TslOutputPath)" />
+  </Target>
+</Project>

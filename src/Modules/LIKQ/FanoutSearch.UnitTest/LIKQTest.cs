@@ -37,11 +37,15 @@ namespace FanoutSearch.UnitTest
             TrinityConfig.HttpPort = 8080;
             TrinityConfig.ServerPort = 7304;
             TrinityConfig.LoggingLevel = Trinity.Diagnostics.LogLevel.Debug;
+            FanoutSearchModule.RegisterExpressionSerializerFactory(()=>new ExpressionSerializer());
             server.RegisterCommunicationModule<FanoutSearchModule>();
             server.Start();
+            
+
             Console.WriteLine("Local Server started");
             Global.CloudStorage.BarrierSync();
             Console.WriteLine("All Server started");
+
         }
 
         [ClassCleanup]
@@ -130,6 +134,7 @@ namespace FanoutSearch.UnitTest
         [TestMethod]
         public void Test8()
         {
+
             var paths = KnowledgeGraph
                     .StartFrom(123)
                     .VisitNode(_ => _.Let(_.count("prop"), (i) => FanoutSearch.Action.Return)).ToList();
