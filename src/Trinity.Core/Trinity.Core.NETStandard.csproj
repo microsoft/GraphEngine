@@ -14,9 +14,9 @@
 
   <!-- NuGet package metadata -->
   <PropertyGroup>
-    <Version>1.0.8850</Version>
-    <AssemblyVersion>1.0.8850.0</AssemblyVersion>
-    <FileVersion>1.0.8850.0</FileVersion>
+    <Version>1.0.8851</Version>
+    <AssemblyVersion>1.0.8851.0</AssemblyVersion>
+    <FileVersion>1.0.8851.0</FileVersion>
     <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
     <Authors>Microsoft Graph Engine Team</Authors>
     <Description>GraphEngine runtime and codegen for CoreCLR.</Description>
@@ -75,7 +75,6 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-    <PackageReference Include="Serialize.Linq" Version="1.4.0" />
   </ItemGroup>
 
   <PropertyGroup>
