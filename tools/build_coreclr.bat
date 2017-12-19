@@ -6,7 +6,7 @@ call %REPO_ROOT%\tools\setenv.bat
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 setlocal
-set TRINITY_CORE_SLN=%REPO_ROOT%\src\Trinity.Core\Trinity.Core.NETStandard.sln
+set TRINITY_CORE_SLN=%REPO_ROOT%\src\Trinity.Core\Trinity.Core.NetCore.sln
 
 :: Run msbuild to build Trinity.C
 %MSBUILD_EXE% /p:Configuration=Release-CoreCLR %TRINITY_C_SLN%
