@@ -1,0 +1,34 @@
+﻿cell MyCell
+{
+	string content;
+}
+
+struct GetOrUpdateRequest
+{
+	long cellId;
+	string content;
+}
+
+struct JsonResponse
+{
+	string json;
+}
+
+protocol GetOrUpdate
+{
+	Type: Syn;
+	Request: GetOrUpdateRequest;
+	Response: JsonResponse;
+}
+
+protocol SaveStorage
+{
+	Type: Asyn;
+	Request: void;
+}
+
+server DemoTrinityServer
+{
+	protocol GetOrUpdate;
+	protocol SaveStorage;
+}

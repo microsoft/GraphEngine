@@ -294,8 +294,15 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int GetServerIdByCellIdDefault(long cellId)
         {
-            return (*(((byte*)&cellId) + 1)) % server_count;
+            return GetPartitionIdByCellId(cellId) % server_count;
         }
+
+        /// <summary>
+        /// Gets and sets the method of getting the id of the data partition
+        /// where the cell with the specified cell id is located.
+        /// TODO: move to MemoryCloud extensions
+        /// </summary>
+        public Func<long, int> GetPartitionIdByCellId { get; set; } = (cellId) => (*(((byte*)&cellId) + 1));
 
         /// <summary>
         /// Gets the Id of the server on which the cell with the specified cell Id is located.

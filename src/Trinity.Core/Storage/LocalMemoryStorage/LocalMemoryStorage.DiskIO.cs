@@ -40,25 +40,37 @@ namespace Trinity.Storage
                     Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeLoad event handler: {0}", ex.ToString());
                 }
 
-                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
-                bool ret = CLocalMemoryStorage.CLoadStorage();
+                bool ret = LoadLocalMemoryStorage();
 
-                //TODO WAL and cell type signatures should migrate to KVStore extensions.
-                InitializeWriteAheadLogFile();
-
-                LoadCellTypeSignatures();
-
-                try
+                if (ret)
                 {
-                    StorageLoaded();
-                }
-                catch (Exception ex)
-                {
-                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageLoaded event handler: {0}", ex.ToString());
+                    try
+                    {
+                        StorageLoaded();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageLoaded event handler: {0}", ex.ToString());
+                    }
                 }
 
                 return ret;
             }
+        }
+
+        protected virtual bool LoadLocalMemoryStorage()
+        {
+            if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
+            bool ret = CLocalMemoryStorage.CLoadStorage();
+
+            if (ret)
+            {
+                //TODO WAL and cell type signatures should migrate to KVStore extensions.
+                InitializeWriteAheadLogFile();
+                LoadCellTypeSignatures();
+            }
+
+            return ret;
         }
 
         /// <summary>
@@ -104,7 +116,6 @@ namespace Trinity.Storage
             if (ret)
             {
                 CreateWriteAheadLogFile();
-
                 SaveCellTypeSignatures();
             }
 
