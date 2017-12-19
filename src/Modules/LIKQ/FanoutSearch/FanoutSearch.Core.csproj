@@ -5,6 +5,14 @@
     <AssemblyVersion>8.0.30703.0</AssemblyVersion>
     <FileVersion>8.0.30703.0</FileVersion>
     <RootNamespace>FanoutSearch</RootNamespace>
+    <AssemblyName>FanoutSearch.CoreCLR</AssemblyName>
+    <Authors>Microsoft Graph Engine Team</Authors>
+    <Company>Microsoft Corporation</Company>
+    <Copyright>Copyright 2017</Copyright>
+    <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
+    <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
