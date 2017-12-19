@@ -41,6 +41,9 @@
     <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
     <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\..\..\..\bin\coreclr\</OutputPath>
+  </PropertyGroup>
   <Target Name="TslCodeGen" BeforeTargets="CoreCompile">
     <Exec Command="$(TSL_CODEGEN_PATH) --ScriptList &quot;TSL\Core.tsl;TSL\Module.tsl;TSL\Result.tsl;TSL\Web.tsl&quot; --ProjectRoot &quot;$(MSBuildProjectDirectory)&quot; --RootNamespace $(RootNamespace) --OutputPath $(TslOutputPath)" />
   </Target>
