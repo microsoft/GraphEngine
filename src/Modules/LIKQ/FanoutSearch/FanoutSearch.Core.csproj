@@ -10,11 +10,21 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputPath>..\..\..\..\bin\coreclr\</OutputPath>
   </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <OutputPath>..\..\..\..\bin\coreclr\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\BuildProfile\ProductInfo.cs" Link="ProductInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <TslCodeGen Include="TSL\Core.tsl" />
+    <TslCodeGen Include="TSL\Module.tsl" />
+    <TslCodeGen Include="TSL\Result.tsl" />
+    <TslCodeGen Include="TSL\Web.tsl" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.8850" />
@@ -23,28 +33,4 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.0.0" />
     <PackageReference Include="Serialize.Linq" Version="1.4.0" />
   </ItemGroup>
-  <PropertyGroup>
-    <TSL_PATH Condition="('$(TSL_PATH)' == '') And Exists('$(MSBuildThisFileDirectory)..\..\tools')">$(MSBuildThisFileDirectory)..\..\</TSL_PATH>
-    <TSL_PATH Condition="('$(TSL_PATH)' == '') And Exists('$(MSBuildThisFileDirectory)..\tools')">$(MSBuildThisFileDirectory)..\</TSL_PATH>
-    <TSL_PATH Condition="('$(TSL_PATH)' == '')">$(MSBuildThisFileDirectory)..\..\</TSL_PATH>
-    <TSL_CODEGEN_PATH Condition="'$(OS)' == 'Windows_NT'">$(TSL_PATH)tools\Trinity.TSL.CodeGen.exe</TSL_CODEGEN_PATH>
-    <TSL_CODEGEN_PATH Condition="'$(TSL_CODEGEN_PATH)' == ''">$(TSL_PATH)tools\Trinity.TSL.CodeGen</TSL_CODEGEN_PATH>
-    <TslOutputPath Condition=" '$(TslOutputPath)' == '' ">$(MSBuildProjectDirectory)</TslOutputPath>
-    <TslGeneratedCodePath Condition=" '$(TslGeneratedCodePath)' == '' ">$(MSBuildProjectDirectory)GeneratedCode\</TslGeneratedCodePath>
-    <Company>Microsoft Corporation</Company>
-    <PackageId>FanoutSearch.CoreCLR</PackageId>
-    <Authors>Microsoft Graph Engine Team</Authors>
-    <Product>FanoutSearch.CoreCLR</Product>
-    <Description>GraphEngine.LIKQ for CoreCLR.</Description>
-    <AssemblyName>FanoutSearch.CoreCLR</AssemblyName>
-    <Copyright>Copyright 2017</Copyright>
-    <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
-    <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>..\..\..\..\bin\coreclr\</OutputPath>
-  </PropertyGroup>
-  <Target Name="TslCodeGen" BeforeTargets="CoreCompile">
-    <Exec Command="$(TSL_CODEGEN_PATH) --ScriptList &quot;TSL\Core.tsl;TSL\Module.tsl;TSL\Result.tsl;TSL\Web.tsl&quot; --ProjectRoot &quot;$(MSBuildProjectDirectory)&quot; --RootNamespace $(RootNamespace) --OutputPath $(TslOutputPath)" />
-  </Target>
 </Project>
