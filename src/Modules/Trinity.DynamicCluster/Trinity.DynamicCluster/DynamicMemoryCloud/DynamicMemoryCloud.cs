@@ -37,6 +37,7 @@ namespace Trinity.DynamicCluster.Storage
         #endregion
 
         internal Partition PartitionTable(int id) => StorageTable[id] as Partition;
+        internal Partition MyPartition => PartitionTable(MyPartitionId);
         internal static DynamicMemoryCloud Instance => Global.CloudStorage as DynamicMemoryCloud;
 
         private void _DoWithTempStorage(DynamicRemoteStorage remoteStorage, Action<int> action)

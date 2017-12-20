@@ -25,8 +25,36 @@ namespace Trinity.DynamicCluster.Communication
             dmc.OnStorageLeave(request.partition, request.id);
         }
 
-        public override void RemoteTaskHandler(RemoteTaskRequestReader request)
+        public override void PersistedDownloadHandler(PersistedSliceReader request, ErrnoResponseWriter response)
         {
+            throw new NotImplementedException();
+        }
+
+        public override void PersistedUploadHandler(PersistedSliceReader request, ErrnoResponseWriter response)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ReplicationHandler(ReplicationTaskInformationReader request, ErrnoResponseWriter response)
+        {
+            var chunks = request.range.Cast<ChunkInformation>().ToList();
+            using (var batch = new BatchCellsWriter(request.task_id, new List<RawCell>()))
+            {
+                chunks.Sort((x, y) => Math.Sign(x.lowKey - y.lowKey));
+                foreach (var c in chunks)
+                {
+                    //TODO
+                }
+            }
+        }
+
+        public unsafe override void BatchSaveCellsHandler(BatchCellsReader request, ThrottleResponseWriter response)
+        {
+            foreach(var cell in request.cells)
+            {
+                Global.LocalStorage.SaveCell(cell.id, cell.content.CellPtr, cell.content.length, cell.cell_type);
+            }
+            response.throttle = false;
         }
     }
 }

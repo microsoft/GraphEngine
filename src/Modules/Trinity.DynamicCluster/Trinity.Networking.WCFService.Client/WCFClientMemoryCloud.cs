@@ -150,5 +150,19 @@ namespace Trinity.Networking.WCFService.Client
             return true;
         }
 
+        public override unsafe void SendMessageToProxy(int proxyId, byte** buffers, int* sizes, int count)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override unsafe void SendMessageToProxy(int proxyId, byte** buffers, int* sizes, int count, out TrinityResponse response)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override long GetTotalMemoryUsage()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

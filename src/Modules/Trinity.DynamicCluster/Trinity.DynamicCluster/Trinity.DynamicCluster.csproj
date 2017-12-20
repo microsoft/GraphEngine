@@ -89,6 +89,9 @@
     <Compile Include="Storage\Partitioner.cs" />
     <Compile Include="Health\HealthStatus.cs" />
     <Compile Include="Storage\ReplicationMode.cs" />
+    <Compile Include="Tasks\ChainedTasks.cs" />
+    <Compile Include="Tasks\GroupedTask.cs" />
+    <Compile Include="Tasks\ReplicationTaskDescriptor.cs" />
     <Compile Include="Tasks\UpdateChunkTableTask.cs" />
     <Compile Include="Tasks\Executor.cs" />
     <Compile Include="Tasks\ITask.cs" />

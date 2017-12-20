@@ -5,6 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Trinity.DynamicCluster.Storage;
 using Trinity.Storage;
+using Trinity.Diagnostics;
+using Trinity.DynamicCluster.Persistency;
 
 namespace Trinity.DynamicCluster.Tasks
 {
@@ -16,12 +18,14 @@ namespace Trinity.DynamicCluster.Tasks
         private ReplicaInformation m_from;
         private ReplicaInformation m_to;
         private List<Chunk> m_range;
+        private DynamicMemoryCloud m_dmc;
 
-        public ReplicatorTask(ReplicaInformation from, ReplicaInformation to, IEnumerable<Chunk> range)
+        public ReplicatorTask(ReplicationTaskDescriptor taskdesc)
         {
-            m_from = from;
-            m_to = to;
-            m_range = range.ToList();
+            m_from = taskdesc.From;
+            m_to = taskdesc.To;
+            m_range = taskdesc.Range.ToList();
+            m_dmc = DynamicMemoryCloud.Instance;
         }
 
         public Guid Id => m_guid;
@@ -30,6 +34,18 @@ namespace Trinity.DynamicCluster.Tasks
 
         public async Task Execute(CancellationToken cancel)
         {
+            var from_storage = m_dmc.MyPartition.First(Is(m_from));
+            var to_storage = m_dmc.MyPartition.First(Is(m_to));
         }
+
+        public override string ToString()
+        {
+            var chunks = string.Join(",", m_range.Select(ChunkSerialization.ToString));
+            return $"{nameof(ReplicatorTask)}: {m_from.Id} -> {m_to.Id} : [{chunks}] ";
+        }
+
+        private Func<Trinity.Storage.Storage, bool> Is(ReplicaInformation replicaInfo) =>
+            storage => (storage == Global.LocalStorage && m_dmc.InstanceId == replicaInfo.Id) ||
+                       (storage is DynamicRemoteStorage rs && rs.ReplicaInformation == replicaInfo);
     }
 }

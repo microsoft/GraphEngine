@@ -19,6 +19,9 @@ namespace Trinity.DynamicCluster.Tasks
     [Serializable]
     internal class UpdateChunkTableTask : ITask
     {
+        // TODO we need to decouple this. a planner generates IEnumerable<ReplicationTaskDescriptor>, and each
+        // is then executed by a ReplicatorTask.
+        // The planner can be initialization, replication or load balancing.
         public static readonly Guid Guid = new Guid("143A2C01-939C-4A2B-92A6-3A26F9FCD38C");
         private Guid m_guid = Guid.NewGuid();
         private ReplicationMode m_repmode;
