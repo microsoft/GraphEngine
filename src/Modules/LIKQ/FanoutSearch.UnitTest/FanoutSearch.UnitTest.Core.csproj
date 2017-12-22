@@ -24,10 +24,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FanoutSearch\FanoutSearch.Core.csproj" />
+    <Folder Include="Properties\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <ProjectReference Include="..\FanoutSearch\FanoutSearch.CoreCLR.csproj" />
   </ItemGroup>
 </Project>

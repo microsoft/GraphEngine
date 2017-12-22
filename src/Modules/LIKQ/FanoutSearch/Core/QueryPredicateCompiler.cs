@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-#if NETCOREAPP2_0
+#if NETSTANDARD2_0
 using Microsoft.Extensions.Caching.Memory;
 #else
 using System.Runtime.Caching;
@@ -21,7 +21,7 @@ namespace FanoutSearch
     class QueryPredicateCompiler
     {
         private MemoryCache m_predicate_cache;
-#if NETCOREAPP2_0
+#if NETSTANDARD2_0
         private readonly MemoryCacheEntryOptions m_entry_options = new MemoryCacheEntryOptions { SlidingExpiration= TimeSpan.FromMinutes(30) };
 #else
         private readonly CacheItemPolicy m_predicate_cache_policy;
@@ -30,7 +30,7 @@ namespace FanoutSearch
 
         public QueryPredicateCompiler()
         {
-#if NETCOREAPP2_0
+#if NETSTANDARD2_0
             m_predicate_cache = new MemoryCache(new MemoryCacheOptions());
 #else
             m_predicate_cache = MemoryCache.Default;
@@ -42,7 +42,7 @@ namespace FanoutSearch
 
         internal TimeSpan GetExperationTime()
         {
-#if NETCOREAPP2_0
+#if NETSTANDARD2_0
             return m_entry_options.SlidingExpiration.Value; // it does have value here
 #else
             return m_predicate_cache_policy.SlidingExpiration;
@@ -52,7 +52,7 @@ namespace FanoutSearch
         /// <returns>returns null if predicate is not compiled and cached.</returns>
         internal Func<ICellAccessor, Action> GetCachedPredicate(string predicate)
         {
-#if NETCOREAPP2_0
+#if NETSTANDARD2_0
             return m_predicate_cache.Get<Func<ICellAccessor, Action>>(predicate);
 #else
             return (Func<ICellAccessor, Action>)m_predicate_cache[GetCachedPredicateKey(predicate)];
@@ -75,7 +75,7 @@ namespace FanoutSearch
                 if (func == null)
                 {
                     func = ExpressionSerializer.DeserializeTraverseAction(pred);
-#if NETCOREAPP2_0
+#if NETSTANDARD2_0
                     m_predicate_cache.Set(cache_key, func, m_entry_options);
 #else
                     m_predicate_cache.Set(cache_key, func, m_predicate_cache_policy);

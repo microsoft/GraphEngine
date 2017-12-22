@@ -6,6 +6,9 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
+#if NETSTANDARD2_0
+[assembly: InternalsVisibleTo("FanoutSearch.UnitTest.Core")]
+#else
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
@@ -39,3 +42,4 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion(ProductInfo.VERSION_PLACEHOLDER)]
 [assembly: AssemblyFileVersion(ProductInfo.FILEVERSION_PLACEHOLDER)]
+#endif

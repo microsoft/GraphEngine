@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FanoutSearch.Core", "FanoutSearch\FanoutSearch.Core.csproj", "{B4022990-2BC8-4919-8FA4-25CDD8EFAA65}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FanoutSearch.UnitTest.Core", "FanoutSearch.UnitTest\FanoutSearch.UnitTest.Core.csproj", "{C9384A35-2956-4B87-9295-107CC2FD8B2D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FanoutSearch.CoreCLR", "FanoutSearch\FanoutSearch.CoreCLR.csproj", "{AA6CE1EF-0D0E-400A-9046-FF1F28BF2109}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B4022990-2BC8-4919-8FA4-25CDD8EFAA65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B4022990-2BC8-4919-8FA4-25CDD8EFAA65}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B4022990-2BC8-4919-8FA4-25CDD8EFAA65}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B4022990-2BC8-4919-8FA4-25CDD8EFAA65}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C9384A35-2956-4B87-9295-107CC2FD8B2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C9384A35-2956-4B87-9295-107CC2FD8B2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9384A35-2956-4B87-9295-107CC2FD8B2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9384A35-2956-4B87-9295-107CC2FD8B2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA6CE1EF-0D0E-400A-9046-FF1F28BF2109}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA6CE1EF-0D0E-400A-9046-FF1F28BF2109}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA6CE1EF-0D0E-400A-9046-FF1F28BF2109}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA6CE1EF-0D0E-400A-9046-FF1F28BF2109}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
