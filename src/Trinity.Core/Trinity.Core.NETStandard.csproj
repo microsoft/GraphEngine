@@ -75,6 +75,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
   </ItemGroup>
 
   <PropertyGroup>
