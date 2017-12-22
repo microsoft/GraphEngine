@@ -146,7 +146,7 @@ namespace t_Namespace
         /// struct equivalent. A return value indicates whether the 
         /// operation succeeded.
         /// </summary>
-        /// <param name="input>A string to convert.</param>
+        /// <param name="input">A string to convert.</param>
         /// <param name="value">
         /// When this method returns, contains the struct equivalent of the value contained 
         /// in input, if the conversion succeeded, or default(t_cell_name) if the conversion
