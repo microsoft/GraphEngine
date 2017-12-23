@@ -27,52 +27,28 @@ namespace Trinity.Storage
         private int server_count = -1;
         private int my_partition_id = -1;
         private int my_proxy_id = -1;
+        private Storage[] m_storageTable;
         internal ClusterConfig cluster_config;
 
-        /// <summary>
-        /// Gets the ID of current server instance in the cluster.
-        /// </summary>
-        public override int MyPartitionId
-        {
-            get
-            {
-                return my_partition_id;
-            }
-        }
+        /// <inheritdoc/>
+        protected internal override IList<Storage> StorageTable => m_storageTable;
 
-        /// <summary>
-        /// Gets the ID of current proxy instance in the cluster.
-        /// </summary>
-        public override int MyProxyId
-        {
-            get
-            {
-                return my_proxy_id;
-            }
-        }
+        /// <inheritdoc/>
+        public override int MyInstanceId => my_partition_id;
 
-        /// <summary>
-        /// The number of servers in the cluster.
-        /// </summary>
-        public override int PartitionCount
-        {
-            get
-            {
-                return cluster_config.Servers.Count;
-            }
-        }
+        /// <inheritdoc/>
+        public override int MyPartitionId => my_partition_id;
 
-        /// <summary>
-        /// Gets the number of proxies in the cluster.
-        /// </summary>
-        public override int ProxyCount
-        {
-            get
-            {
-                return cluster_config.Proxies.Count;
-            }
-        }
+        /// <inheritdoc/>
+        public override int MyProxyId => my_proxy_id;
 
+        /// <inheritdoc/>
+        public override int PartitionCount => cluster_config.Servers.Count;
+
+        /// <inheritdoc/>
+        public override int ProxyCount => cluster_config.Proxies.Count;
+
+        /// <inheritdoc/>
         public override IEnumerable<Chunk> MyChunks
         {
             get
@@ -81,15 +57,16 @@ namespace Trinity.Storage
             }
         }
 
+        /// <inheritdoc/>
         public override bool Open(ClusterConfig config, bool nonblocking)
         {
             this.cluster_config = config;
             server_count = cluster_config.Servers.Count;
-            my_partition_id = cluster_config.MyServerId;
+            my_partition_id = cluster_config.MyPartitionId;
             my_proxy_id = cluster_config.MyProxyId;
 
             bool server_found = false;
-            StorageTable = new Storage[server_count];
+            m_storageTable = new Storage[server_count];
 
             if (server_count == 0)
                 goto server_not_found;

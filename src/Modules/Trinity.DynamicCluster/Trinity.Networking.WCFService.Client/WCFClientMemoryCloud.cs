@@ -10,6 +10,8 @@ namespace Trinity.Networking.WCFService.Client
 {
     class WCFClientMemoryCloud : MemoryCloud
     {
+        private Storage.Storage[] m_storagetable;
+
         public override int MyPartitionId => throw new NotImplementedException();
 
         public override int MyProxyId => throw new NotImplementedException();
@@ -21,6 +23,10 @@ namespace Trinity.Networking.WCFService.Client
         public override int ProxyCount => throw new NotImplementedException();
 
         public override IList<RemoteStorage> ProxyList => throw new NotImplementedException();
+
+        protected override IList<Storage.Storage> StorageTable => throw new NotImplementedException();
+
+        public override int MyInstanceId => throw new NotImplementedException();
 
         public override unsafe TrinityErrorCode AddCell(long cellId, byte* buff, int size)
         {
@@ -134,7 +140,7 @@ namespace Trinity.Networking.WCFService.Client
 
         public override bool Open(ClusterConfig config, bool nonblocking)
         {
-            this.StorageTable = new Storage.Storage[]
+            this.m_storagetable = new Storage.Storage[]
             {
                 new WCFRemoteStorage(this, 0, new TrinityWCFAdapterClient(
                     new WcfCommunicationClientFactory(),

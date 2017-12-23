@@ -580,7 +580,7 @@ namespace FanoutSearch
         {
             aggregation_obj.CommitAggregationResults(results);
 
-            if (aggregation_obj.aggregationServer == Global.MyServerId)
+            if (aggregation_obj.aggregationServer == Global.MyServerID)
             {
                 aggregation_obj.ReleaseLocalSignal(1);
             }

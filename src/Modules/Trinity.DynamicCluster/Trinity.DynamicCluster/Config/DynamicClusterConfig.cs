@@ -19,6 +19,8 @@ namespace Trinity.DynamicCluster.Config
         {
             ReplicationMode = ReplicationMode.Mirroring;
             MinimumReplica  = 2;
+            BatchSaveSizeThreshold = 4.MiB();
+            PersistedChunkSizeThreshold = 4.MiB();
         }
 
         [ConfigEntryName]
@@ -28,5 +30,9 @@ namespace Trinity.DynamicCluster.Config
         public ReplicationMode ReplicationMode { get; set; }
         [ConfigSetting(true)]
         public int MinimumReplica { get; set; }
+        [ConfigSetting(true)]
+        public long BatchSaveSizeThreshold { get; set; }
+        [ConfigSetting(true)]
+        public long PersistedChunkSizeThreshold { get; set; }
     }
 }

@@ -240,14 +240,14 @@ namespace Trinity
         }
 
         /// <summary>
-        /// Obsolete. Use MyServerId instead.
+        /// Obsolete. Use MyPartitionId instead.
         /// </summary>
         [Obsolete]
         public static int MyServerID
         {
             get
             {
-                return MyServerId;
+                return MyPartitionId;
             }
         }
 
@@ -266,7 +266,7 @@ namespace Trinity
         /// <summary>
         /// Gets the ID of current server instance in the cluster.
         /// </summary>
-        public static int MyServerId
+        public static int MyPartitionId
         {
             get
             {

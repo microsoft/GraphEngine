@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
@@ -195,5 +196,33 @@ namespace Trinity.DynamicCluster
         {
             return tasks.Select(t => t.ContinueWith(t_ => func()));
         }
+
+        public static IEnumerable<IEnumerable<T>> Segment<T>(this IEnumerable<T> source, long segmentThreshold, Func<T, long> weightFunc = null)
+        {
+            if (weightFunc == null) weightFunc = _ => 1;
+            using (var enumerator = source.GetEnumerator())
+            {
+                var segment = _Segment(enumerator, segmentThreshold, weightFunc);
+                // one step lookahead, and then destroy the enumerator when segment doesn't yield at least one element.
+                if (!segment.Any()) yield break;
+                yield return segment;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static IEnumerable<T> _Segment<T>(IEnumerator<T> enumerator, long segmentThreshold, Func<T, long> weightFunc)
+        {
+            // yields at least one element, if there is any in the enumerator.
+            long sum = 0;
+            while (enumerator.MoveNext())
+            {
+                sum += weightFunc(enumerator.Current);
+                yield return enumerator.Current;
+                if (sum >= segmentThreshold) yield break;
+            }
+        }
+
+        public static long MiB(this long val) => val * (1024 * 1024);
+        public static long MiB(this int val) => val * (1024L * 1024L);
     }
 }

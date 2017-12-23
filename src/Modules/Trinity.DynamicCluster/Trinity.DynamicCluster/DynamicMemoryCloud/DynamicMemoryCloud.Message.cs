@@ -13,34 +13,22 @@ namespace Trinity.DynamicCluster.Storage
     {
         public override unsafe void SendMessageToServer(int serverId, byte* buffer, int size)
         {
-            if (serverId >= 0)
-                base.SendMessageToServer(serverId, buffer, size);
-            else
-                m_tmp_rs_repo[serverId].SendMessage(buffer, size);
+            base.SendMessageToServer(serverId, buffer, size);
         }
 
         public override unsafe void SendMessageToServer(int serverId, byte* buffer, int size, out TrinityResponse response)
         {
-            if (serverId >= 0)
-                base.SendMessageToServer(serverId, buffer, size, out response);
-            else
-                m_tmp_rs_repo[serverId].SendMessage(buffer, size, out response);
+            base.SendMessageToServer(serverId, buffer, size, out response);
         }
 
         public override unsafe void SendMessageToServer(int serverId, byte** buffers, int* sizes, int count)
         {
-            if (serverId >= 0)
-                base.SendMessageToServer(serverId, buffers, sizes, count);
-            else
-                m_tmp_rs_repo[serverId].SendMessage(buffers, sizes, count);
+            base.SendMessageToServer(serverId, buffers, sizes, count);
         }
 
         public override unsafe void SendMessageToServer(int serverId, byte** buffers, int* sizes, int count, out TrinityResponse response)
         {
-            if (serverId >= 0)
-                base.SendMessageToServer(serverId, buffers, sizes, count, out response);
-            else
-                m_tmp_rs_repo[serverId].SendMessage(buffers, sizes, count, out response);
+            base.SendMessageToServer(serverId, buffers, sizes, count, out response);
         }
 
         #region Proxies

@@ -18,6 +18,11 @@ namespace Trinity.Storage
     {
         #region Abstract interfaces
         public abstract bool Open(ClusterConfig config, bool nonblocking);
+        /// <summary>
+        /// Represents a unique identifier of this communication instance, within a memory cloud.
+        /// </summary>
+        public abstract int MyInstanceId { get; }
+
         public abstract int MyPartitionId { get; }
         public abstract int MyProxyId { get; }
         public abstract IEnumerable<Chunk> MyChunks { get; }
@@ -28,10 +33,12 @@ namespace Trinity.Storage
         public abstract bool ResetStorage();
         public abstract int ProxyCount { get; }
         public abstract IList<RemoteStorage> ProxyList { get; }
+        /// <summary>
+        /// Represents the partitions in the memory cloud.
+        /// </summary>
+        protected internal abstract IList<Storage> StorageTable { get; }
         #endregion
         #region Base implementation
-        // XXX an implementation shall initialize this!
-        protected internal Storage[] StorageTable;
         private Action<MemoryCloud, ICell> m_SaveGenericCell_ICell;
         private Func<MemoryCloud, long, ICell> m_LoadGenericCell_long;
         private Func<string, ICell> m_NewGenericCell_string;
@@ -252,7 +259,7 @@ namespace Trinity.Storage
         }
 
         #region IDisposable
-        private volatile bool disposed = false;
+        private int m_disposed = 0;
 
         /// <summary>
         /// Disposes current MemoryCloud instance.
@@ -269,19 +276,13 @@ namespace Trinity.Storage
         /// <param name="disposing">This parameter is not used.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if(0 == Interlocked.CompareExchange(ref this.m_disposed, 1, 0))
             {
-                var storagetbl = Interlocked.CompareExchange(ref StorageTable, null, StorageTable);
-                if (storagetbl != null)
+                foreach (var storage in StorageTable)
                 {
-                    foreach (var storage in storagetbl)
-                    {
-                        if (storage != null && storage != Global.local_storage)
-                            storage.Dispose();
-                    }
+                    if (storage != null && storage != Global.local_storage)
+                        storage.Dispose();
                 }
-
-                this.disposed = true;
             }
         }
 

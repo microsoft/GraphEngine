@@ -34,6 +34,7 @@ namespace Trinity.DynamicCluster.Tasks
 
         public async Task Execute(CancellationToken cancel)
         {
+            //TODO
             var from_storage = m_dmc.MyPartition.First(Is(m_from));
             var to_storage = m_dmc.MyPartition.First(Is(m_to));
         }
@@ -45,7 +46,7 @@ namespace Trinity.DynamicCluster.Tasks
         }
 
         private Func<Trinity.Storage.Storage, bool> Is(ReplicaInformation replicaInfo) =>
-            storage => (storage == Global.LocalStorage && m_dmc.InstanceId == replicaInfo.Id) ||
+            storage => (storage == Global.LocalStorage && m_dmc.InstanceGuid == replicaInfo.Id) ||
                        (storage is DynamicRemoteStorage rs && rs.ReplicaInformation == replicaInfo);
     }
 }

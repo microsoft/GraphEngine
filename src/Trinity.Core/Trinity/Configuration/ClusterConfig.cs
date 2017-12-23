@@ -213,7 +213,7 @@ namespace Trinity
             get
             {
                 if (RunningMode == RunningMode.Server)
-                    return MyServerId;
+                    return MyPartitionId;
                 if (RunningMode == RunningMode.Proxy)
                     return MyProxyId;
                 return -1;
@@ -223,7 +223,7 @@ namespace Trinity
         /// <summary>
         /// Gets the ID of current server instance in the cluster.
         /// </summary>
-        public int MyServerId
+        public int MyPartitionId
         {
             get
             {

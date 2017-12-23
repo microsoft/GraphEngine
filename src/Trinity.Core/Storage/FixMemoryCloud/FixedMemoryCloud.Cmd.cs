@@ -33,8 +33,7 @@ namespace Trinity.Storage
                 Parallel.ForEach<Storage>(StorageTable, storage =>
                 {
                     storage.SendMessage(msg);
-                }
-                    );
+                });
             }
             catch (Exception)
             {

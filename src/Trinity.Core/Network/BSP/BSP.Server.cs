@@ -78,7 +78,7 @@ namespace Trinity.Network
 
             Parallel.For(0, Global.ServerCount, i =>
                 {
-                    if (i != Global.MyServerId)
+                    if (i != Global.MyPartitionId)
                     {
                         storage.SendMessageToServer(i, msg.Buffer, msg.Size);
                     }

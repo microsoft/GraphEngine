@@ -23,7 +23,7 @@ namespace Trinity.Network.Messaging
     {
         public AsyncTerminationDetector()
         {
-            if (Global.MyServerId == 0)
+            if (Global.MyPartitionId == 0)
             {
                 MyToken = new DetectionToken
                 {
@@ -101,7 +101,7 @@ namespace Trinity.Network.Messaging
             if (HoldingToken == 0)
                 return;
             Console.WriteLine("Processing token.");
-            if (Global.MyServerId == 0)
+            if (Global.MyPartitionId == 0)
             {
                 Console.WriteLine("0'storage local counter = {0},Token counter = {1}", LocalCounter, MyToken.Counter);
                 if (LocalCounter + MyToken.Counter == 0 &&
