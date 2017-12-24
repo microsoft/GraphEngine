@@ -7,11 +7,12 @@ using Trinity.DynamicCluster.Storage;
 using Trinity.Storage;
 using Trinity.Diagnostics;
 using Trinity.DynamicCluster.Persistency;
+using Trinity.DynamicCluster.Communication;
 
 namespace Trinity.DynamicCluster.Tasks
 {
     [Serializable]
-    internal class ReplicatorTask: ITask
+    internal class ReplicatorTask : ITask
     {
         public static readonly Guid Guid = new Guid("0ADA7058-AAD6-4383-95C3-3022E4DBBD50");
         private Guid m_guid = Guid.NewGuid();
@@ -34,9 +35,17 @@ namespace Trinity.DynamicCluster.Tasks
 
         public async Task Execute(CancellationToken cancel)
         {
-            //TODO
-            var from_storage = m_dmc.MyPartition.First(Is(m_from));
-            var to_storage = m_dmc.MyPartition.First(Is(m_to));
+            var from_id = m_dmc.GetInstanceId(m_from.Id);
+
+            var mod = m_dmc.GetCommunicationModule<DynamicClusterCommModule>();
+            using (var msg = new ReplicationTaskInformationWriter(
+                task_id: m_guid,
+                to: new StorageInformation { id = m_to.Id, partition = m_to.PartitionId },
+                range: m_range.Select(_ => new ChunkInformation { id = _.Id, highKey = _.HighKey, lowKey = _.LowKey }).ToList()))
+            using (var rsp = await mod.Replication(from_id, msg))
+            {
+                if (rsp.errno != Errno.E_OK) throw new Exception();
+            }
         }
 
         public override string ToString()

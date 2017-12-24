@@ -34,7 +34,21 @@ namespace Trinity.DynamicCluster.Communication
 
         public override void PersistedDownloadHandler(PersistedSliceReader request, ErrnoResponseWriter response)
         {
-            throw new NotImplementedException();
+            var dmc        = DynamicMemoryCloud.Instance;
+            var downloader = dmc.m_persistent_storage.Download(request.version, request.lowkey, request.highkey).Result;
+            Task<IPersistentDataChunk> dtask = downloader.DownloadAsync();
+            while (true)
+            {
+                var data = dtask?.Result;
+                if (data == null) break;//fetched null from a task, EOF
+                // start new download while we load it into memory storage
+                var ndtask = downloader.DownloadAsync();
+                foreach (var cell in data)
+                { Global.LocalStorage.SaveCell(cell.CellId, cell.Buffer, cell.Offset, cell.Length, cell.CellType); }
+                dtask = ndtask;
+            }
+
+            response.errno = Errno.E_OK;
         }
 
         public override void PersistedUploadHandler(PersistedSliceReader request, ErrnoResponseWriter response)
@@ -55,35 +69,7 @@ namespace Trinity.DynamicCluster.Communication
 
         private unsafe Task _Upload(IEnumerable<CellInfo> cells, IPersistentUploader uploader, long estimated_size)
         {
-            MemoryStream ms = new MemoryStream((int)estimated_size);
-            byte[] buf = new byte[sizeof(long) + sizeof(ushort) + sizeof(int)];
-            byte[] buf_cell = new byte[1024];
-            long lowkey = 0, highkey = 0;
-            int size = 0;
-            fixed (byte* p = buf)
-            {
-                foreach (var cell in cells)
-                {
-                    if (size == 0) lowkey = cell.CellId;
-                    highkey = cell.CellId;
-                    PointerHelper sp = PointerHelper.New(p);
-                    *sp.lp++ = cell.CellId;
-                    *sp.sp++ = (short)cell.CellType;
-                    *sp.ip++ = cell.CellSize;
-                    ms.Write(buf, 0, buf.Length);
-                    while(buf_cell.Length < cell.CellSize)
-                    {
-                        buf_cell = new byte[buf_cell.Length * 2];
-                    }
-                    Memory.Copy(cell.CellPtr, 0, buf_cell, 0, cell.CellSize);
-                    ms.Write(buf_cell, 0, cell.CellSize);
-                    size += cell.CellSize + buf.Length;
-                }
-            }
-            if (size == 0) return Task.CompletedTask;
-            byte[] payload = ms.GetBuffer();
-            Chunk chunk = new Chunk(lowkey, highkey);
-            InMemoryDataChunk payload_chunk = new InMemoryDataChunk(chunk, payload, lowkey, highkey);
+            var payload_chunk = InMemoryDataChunk.New(cells, (int)estimated_size);
             return uploader.UploadAsync(payload_chunk);
         }
 
@@ -119,7 +105,7 @@ namespace Trinity.DynamicCluster.Communication
                 using (batch)
                 {
                     //TODO it'd be much better if we can have message passing extension bindings directly on Storage, instead of relying on memory cloud. 
-                    var idx = DynamicMemoryCloud.Instance.GetInstanceId(storage);
+                    var idx = DynamicMemoryCloud.Instance.GetInstanceId(storage.ReplicaInformation.Id);
                     using (var reader = await this.BatchSaveCells(idx, batch))
                     {
                         if (reader.throttle)

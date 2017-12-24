@@ -51,7 +51,7 @@ namespace Trinity.DynamicCluster.Storage
         internal void OnStorageJoin(DynamicRemoteStorage remoteStorage)
         {
             CheckServerProtocolSignatures(remoteStorage);
-            m_storageTable.AddInstance(_GetInstanceId(remoteStorage.ReplicaInformation.Id), remoteStorage);
+            m_storageTable.AddInstance(GetInstanceId(remoteStorage.ReplicaInformation.Id), remoteStorage);
             Log.WriteLine($"{nameof(DynamicCluster)}: Connected to '{remoteStorage.NickName}' ({remoteStorage.ReplicaInformation.Id})");
         }
 
@@ -68,26 +68,19 @@ namespace Trinity.DynamicCluster.Storage
             var remote_storage = PartitionTable(partition)
                                 .OfType<DynamicRemoteStorage>()
                                 .FirstOrDefault(_ => _.ReplicaInformation.Id == Id);
-            m_storageTable.RemoveInstance(_GetInstanceId(Id));
+            m_storageTable.RemoveInstance(GetInstanceId(Id));
             PartitionTable(partition).Unmount(remote_storage);
         }
 
         public string NickName { get; private set; }
         public override int MyInstanceId => m_myid;
 
-        private int _GetInstanceId(Guid instanceId)
+        internal int GetInstanceId(Guid instanceId)
         {
             int id = instanceId.GetHashCode();
             if (id >= 0 && id < PartitionCount) id += PartitionCount;
             return id;
         }
-
-        internal int GetInstanceId(Trinity.Storage.Storage storage)
-        {
-            if (storage == Global.LocalStorage) return MyInstanceId;
-            throw new NotSupportedException();
-        }
-
 
         protected override IList<Trinity.Storage.Storage> StorageTable => m_storageTable;
         public override IEnumerable<Chunk> MyChunks => m_partitioner.MyChunks;
@@ -115,7 +108,7 @@ namespace Trinity.DynamicCluster.Storage
             m_chunktable.Start(m_cancelSrc.Token);
             m_healthmanager.Start(m_cancelSrc.Token);
 
-            m_myid = _GetInstanceId(InstanceGuid);
+            m_myid = GetInstanceId(InstanceGuid);
             m_storageTable = new DynamicStorageTable(PartitionCount);
             NickName = GenerateNickName(InstanceGuid);
 
@@ -143,7 +136,7 @@ namespace Trinity.DynamicCluster.Storage
            {
                try
                {
-                   int id = _GetInstanceId(s.ReplicaInformation.Id);
+                   int id = GetInstanceId(s.ReplicaInformation.Id);
                    using (var request = new StorageInformationWriter(MyPartitionId, m_nameservice.InstanceId))
                    { m_module.NotifyRemoteStorageOnLeaving(id, request); }
                }
