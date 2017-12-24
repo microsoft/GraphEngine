@@ -11,6 +11,7 @@ using Trinity.DynamicCluster.Persistency;
 using Trinity.Storage;
 using System.Threading;
 using Trinity.Diagnostics;
+using Trinity.DynamicCluster.Config;
 
 namespace Trinity.Azure.Storage
 {
@@ -32,7 +33,7 @@ namespace Trinity.Azure.Storage
             this.m_container = m_container;
             this.m_tokenSource = new CancellationTokenSource();
             this.m_dir = m_container.GetDirectoryReference(version.ToString());
-            this.m_sem = new SemaphoreSlim(BlobStorageConfig.Instance.ConcurrentUploads);
+            this.m_sem = new SemaphoreSlim(DynamicClusterConfig.Instance.ConcurrentUploads);
         }
 
         public void Dispose()

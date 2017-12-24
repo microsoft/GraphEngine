@@ -21,11 +21,17 @@ namespace Trinity.DynamicCluster.Config
             MinimumReplica  = 2;
             BatchSaveSizeThreshold = 4.MiB();
             PersistedChunkSizeThreshold = 4.MiB();
+            ConcurrentDownloads = 4 * Environment.ProcessorCount;
+            ConcurrentUploads   = 4 * Environment.ProcessorCount;
         }
 
         [ConfigEntryName]
         internal static string ConfigEntry => nameof(Trinity.DynamicCluster);
 
+        [ConfigSetting(Optional:true)]
+        public int ConcurrentDownloads { get; set; }
+        [ConfigSetting(Optional:true)]
+        public int ConcurrentUploads { get; set; }
         [ConfigSetting(true)]
         public ReplicationMode ReplicationMode { get; set; }
         [ConfigSetting(true)]

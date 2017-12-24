@@ -11,6 +11,7 @@ using System.Threading.Tasks.Dataflow;
 using Newtonsoft.Json;
 using System.IO;
 using Trinity.Diagnostics;
+using Trinity.DynamicCluster.Config;
 
 namespace Trinity.Azure.Storage
 {
@@ -42,7 +43,7 @@ namespace Trinity.Azure.Storage
             {
                 EnsureOrdered= true,
                 CancellationToken=m_tokenSource.Token,
-                BoundedCapacity = BlobStorageConfig.Instance.ConcurrentDownloads
+                BoundedCapacity = DynamicClusterConfig.Instance.ConcurrentDownloads
             });
             Log.WriteLine(LogLevel.Info, $"{nameof(BlobDownloader)}: Begin downloading {m_version} [{m_lowKey}-{m_highKey}].");
             if(skip != null)
