@@ -48,6 +48,7 @@
 
   <ItemGroup>
     <None Remove="GraphEngine.Core.nuspec" />
+    <None Remove="Network\Http\index.html" />
     <None Remove="NuGet\GraphEngine.Core.props" />
     <None Remove="NuGet\GraphEngine.Core.targets" />
   </ItemGroup>
@@ -70,11 +71,13 @@
   <ItemGroup>
     <EmbeddedResource Include="..\..\bin\coreclr\libTrinity.so" Link="libTrinity.so" />
     <EmbeddedResource Include="..\..\bin\coreclr\Trinity.dll" Link="Trinity.dll" />
+    <EmbeddedResource Include="Network\Http\index.html" />
   </ItemGroup>
 
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
   </ItemGroup>
 
   <PropertyGroup>
