@@ -106,5 +106,15 @@ namespace Trinity.Azure.Storage
             try { Dispose(); } catch { }
             m_download = _Download(progress);
         }
+
+        public async Task DownloadMetadataAsync(string key, Stream output)
+        {
+            var blob = m_dir.GetBlockBlobReference(key);
+            if (!await blob.ExistsAsync())
+            {
+                throw new NoDataException($"metadata {key} not found in snapshot {m_version}");
+            }
+            await blob.DownloadToStreamAsync(output);
+        }
     }
 }

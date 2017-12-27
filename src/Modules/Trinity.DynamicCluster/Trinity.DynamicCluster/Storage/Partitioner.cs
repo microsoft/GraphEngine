@@ -136,7 +136,7 @@ namespace Trinity.DynamicCluster.Storage
             await Task.WhenAll(
                 m_taskqueue.Wait(ReplicatorTask.Guid),
                 m_taskqueue.Wait(UpdateChunkTableTask.Guid),
-                m_taskqueue.Wait(PersistencyTask.Guid),
+                m_taskqueue.Wait(PersistedSaveTask.Guid),
                 cks);
 
             var replica_chunks = rpg.ZipWith(cks.Result);

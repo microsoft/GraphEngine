@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config\DynamicClusterConfig.cs" />
+    <Compile Include="Consensus\IBackupManager.cs" />
     <Compile Include="Consensus\IHealthManager.cs" />
     <Compile Include="Consensus\ITaskQueue.cs" />
     <Compile Include="Consensus\IChunkTable.cs" />
@@ -95,12 +96,13 @@
     <Compile Include="Storage\ReplicationMode.cs" />
     <Compile Include="Tasks\ChainedTasks.cs" />
     <Compile Include="Tasks\GroupedTask.cs" />
+    <Compile Include="Tasks\PersistedLoadTask.cs" />
     <Compile Include="Tasks\ReplicationTaskDescriptor.cs" />
     <Compile Include="Tasks\UpdateChunkTableTask.cs" />
     <Compile Include="Tasks\Executor.cs" />
     <Compile Include="Tasks\ITask.cs" />
     <Compile Include="Tasks\NopTask.cs" />
-    <Compile Include="Tasks\PersistencyTask.cs" />
+    <Compile Include="Tasks\PersistedSaveTask.cs" />
     <Compile Include="Tasks\ReplicatorTask.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>

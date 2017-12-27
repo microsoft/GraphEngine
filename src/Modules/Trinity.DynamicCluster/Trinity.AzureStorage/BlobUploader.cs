@@ -100,5 +100,11 @@ namespace Trinity.Azure.Storage
                 m_sem.Release();
             }
         }
+
+        public async Task UploadMetadataAsync(string key, Stream input)
+        {
+            var blob = m_dir.GetBlockBlobReference(key);
+            await blob.UploadFromStreamAsync(input);
+        }
     }
 }
