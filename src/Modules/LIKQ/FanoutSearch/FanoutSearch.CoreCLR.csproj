@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>1.0.8850.0</Version>
-    <FileVersion>1.0.8850.0</FileVersion>
+    <Version>1.0.9083.0</Version>
+    <FileVersion>1.0.9083.0</FileVersion>
     <Authors>Microsoft Graph Engine Team</Authors>
     <Company>Microsoft Corporation</Company>
     <Description />
@@ -12,7 +12,7 @@
     <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
     <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
     <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
-    <AssemblyVersion>1.0.8850.0</AssemblyVersion>
+    <AssemblyVersion>1.0.9083.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.8850" />
+    <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.9083" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.6.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="2.6.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.0.0" />
