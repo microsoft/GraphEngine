@@ -38,6 +38,18 @@ struct ReplicationTaskInformation
 	List<ChunkInformation> range;
 }
 
+struct ShrinkChunkInformation
+{
+	ChunkInformation from;
+	ChunkInformation to;
+}
+
+struct ShrinkDataTaskInformation
+{
+	Guid task_id;
+	List<ChunkInformation> remove_target;
+}
+
 struct ErrnoResponse
 {
 	Errno errno;
@@ -76,6 +88,14 @@ protocol Replication
 	Response: ErrnoResponse;
 }
 
+// sent from master to a worker
+protocol ShrinkData
+{
+	Type: Asyn;
+	Request: ShrinkDataTaskInformation;
+	Response: ErrnoResponse;
+}
+
 protocol PersistedDownload
 {
 	Type: Asyn;
@@ -95,6 +115,7 @@ module DynamicCluster
 	protocol NotifyRemoteStorageOnLeaving;
 	protocol BatchSaveCells;
 	protocol Replication;
+	protocol ShrinkData;
 	protocol PersistedDownload;
 	protocol PersistedUpload;
 }

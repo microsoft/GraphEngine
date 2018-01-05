@@ -19,14 +19,13 @@ namespace Trinity.DynamicCluster.Tasks
         private ReplicaInformation m_from;
         private ReplicaInformation m_to;
         private List<Chunk> m_range;
+        [NonSerialized]
         private DynamicMemoryCloud m_dmc;
-
-        public ReplicatorTask(ReplicationTaskDescriptor taskdesc)
+        public ReplicatorTask(ReplicaInformation from, ReplicaInformation to, IEnumerable<Chunk> range)
         {
-            m_from = taskdesc.From;
-            m_to = taskdesc.To;
-            m_range = taskdesc.Range.ToList();
-            m_dmc = DynamicMemoryCloud.Instance;
+            m_from = from;
+            m_to = to;
+            m_range = range.ToList();
         }
 
         public Guid Id => m_guid;
@@ -35,8 +34,23 @@ namespace Trinity.DynamicCluster.Tasks
 
         public async Task Execute(CancellationToken cancel)
         {
-            var from_id = m_dmc.GetInstanceId(m_from.Id);
+            m_dmc = DynamicMemoryCloud.Instance;
+            if (m_from != null) await DoReplication();
+            await DoUpdateChunkTable();
+            // At this stage, the data has been safely placed into target replicas.
+        }
 
+        private async Task DoUpdateChunkTable()
+        {
+            var ct  = m_dmc.m_chunktable;
+            //TODO race condition?
+            var cks = await ct.GetChunks(m_to);
+            await m_dmc.m_chunktable.SetChunks(m_to.Id, cks.Concat(m_range).Distinct());
+        }
+
+        private async Task DoReplication()
+        {
+            var from_id = m_dmc.GetInstanceId(m_from.Id);
             var mod = m_dmc.GetCommunicationModule<DynamicClusterCommModule>();
             using (var msg = new ReplicationTaskInformationWriter(
                 task_id: m_guid,
@@ -53,9 +67,5 @@ namespace Trinity.DynamicCluster.Tasks
             var chunks = string.Join(",", m_range.Select(ChunkSerialization.ToString));
             return $"{nameof(ReplicatorTask)}: {m_from.Id} -> {m_to.Id} : [{chunks}] ";
         }
-
-        private Func<Trinity.Storage.Storage, bool> Is(ReplicaInformation replicaInfo) =>
-            storage => (storage == Global.LocalStorage && m_dmc.InstanceGuid == replicaInfo.Id) ||
-                       (storage is DynamicRemoteStorage rs && rs.ReplicaInformation == replicaInfo);
     }
 }

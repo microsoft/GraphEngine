@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
 using System.Linq;
 using Trinity.Diagnostics;
-using Trinity.Network;
 using Trinity.Storage;
 using Trinity.Utilities;
 using Trinity.DynamicCluster.Consensus;
@@ -12,9 +10,10 @@ using static Trinity.DynamicCluster.Utils;
 using Trinity.DynamicCluster.Communication;
 using System.Threading;
 using Trinity.DynamicCluster.Tasks;
-using System.Threading.Tasks;
 using Trinity.DynamicCluster.Config;
 using Trinity.DynamicCluster.Persistency;
+using Trinity.DynamicCluster.Health;
+using Trinity.DynamicCluster.Replication;
 
 namespace Trinity.DynamicCluster.Storage
 {
@@ -28,6 +27,8 @@ namespace Trinity.DynamicCluster.Storage
         internal IHealthManager          m_healthmanager;
         internal IPersistentStorage      m_persistent_storage;
         internal Executor                m_taskexec;
+        internal CloudIndex              m_cloudidx;
+        internal HealthMonitor           m_healthmon;
         internal Partitioner             m_partitioner;
         internal CancellationTokenSource m_cancelSrc;
         internal DynamicStorageTable     m_storageTable;
@@ -73,6 +74,7 @@ namespace Trinity.DynamicCluster.Storage
         }
 
         public string NickName { get; private set; }
+
         public override int MyInstanceId => m_myid;
 
         internal int GetInstanceId(Guid instanceId)
@@ -83,7 +85,7 @@ namespace Trinity.DynamicCluster.Storage
         }
 
         protected override IList<Trinity.Storage.Storage> StorageTable => m_storageTable;
-        public override IEnumerable<Chunk> MyChunks => m_partitioner.MyChunks;
+        public override IEnumerable<Chunk> MyChunks => m_cloudidx.MyChunks;
         public override int MyPartitionId => m_nameservice.PartitionId;
         public override int PartitionCount => m_nameservice.PartitionCount;
         public Guid InstanceGuid => m_nameservice.InstanceId;
@@ -112,7 +114,10 @@ namespace Trinity.DynamicCluster.Storage
             m_storageTable = new DynamicStorageTable(PartitionCount);
             NickName = GenerateNickName(InstanceGuid);
 
-            m_partitioner = new Partitioner(m_cancelSrc.Token, m_chunktable, m_nameservice, m_taskqueue, m_healthmanager, DynamicClusterConfig.Instance.ReplicationMode, DynamicClusterConfig.Instance.MinimumReplica);
+            int redundancy = DynamicClusterConfig.Instance.MinimumReplica;
+            m_cloudidx = new CloudIndex(m_cancelSrc.Token, m_nameservice, m_chunktable);
+            m_healthmon= new HealthMonitor(m_cancelSrc.Token, m_cloudidx, m_healthmanager, redundancy);
+            m_partitioner = new Partitioner(m_cancelSrc.Token, m_cloudidx, m_taskqueue, DynamicClusterConfig.Instance.ReplicationMode, redundancy);
             m_taskexec = new Executor(m_taskqueue, m_cancelSrc.Token);
 
             Log.WriteLine($"{nameof(DynamicMemoryCloud)}: Partition {MyPartitionId}: Instance '{NickName}' {InstanceGuid} opened.");
@@ -147,6 +152,8 @@ namespace Trinity.DynamicCluster.Storage
 
             m_taskexec.Dispose();
             m_partitioner.Dispose();
+            m_healthmon.Dispose();
+            m_cloudidx.Dispose();
 
             m_nameservice.Dispose();
             m_chunktable.Dispose();

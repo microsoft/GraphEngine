@@ -209,6 +209,48 @@ namespace Trinity.DynamicCluster
             }
         }
 
+        public static IEnumerable<T> Schedule<T>(this IEnumerable<T> source, SchedulePolicy policy)
+        {
+            if (!source.Any()) return Infinity<T>(() => default(T));
+            switch (policy)
+            {
+                case SchedulePolicy.First: return _First(source);
+                case SchedulePolicy.RoundRobin: return _RoundRobin(source);
+                case SchedulePolicy.UniformRandom: return _UniformRandom(source);
+                default: throw new ArgumentException();
+            }
+        }
+
+        private static IEnumerable<T> _UniformRandom<T>(IEnumerable<T> source)
+        {
+            var arr = source.ToArray();
+            Random r = new Random(arr.GetHashCode());
+            while (true)
+            {
+                yield return arr[r.Next(arr.Length)];
+            }
+        }
+
+        private static IEnumerable<T> _RoundRobin<T>(IEnumerable<T> source)
+        {
+            while (true)
+            {
+                foreach(var element in source)
+                {
+                    yield return element;
+                }
+            }
+        }
+
+        private static IEnumerable<T> _First<T>(IEnumerable<T> source)
+        {
+            var fst = source.First();
+            while (true)
+            {
+                yield return fst;
+            }
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static IEnumerable<T> _Segment<T>(IEnumerator<T> enumerator, long segmentThreshold, Func<T, long> weightFunc)
         {
@@ -224,5 +266,12 @@ namespace Trinity.DynamicCluster
 
         public static long MiB(this long val) => val * (1024 * 1024);
         public static long MiB(this int val) => val * (1024L * 1024L);
+
+        public enum SchedulePolicy
+        {
+            First,
+            RoundRobin,
+            UniformRandom
+        }
     }
 }

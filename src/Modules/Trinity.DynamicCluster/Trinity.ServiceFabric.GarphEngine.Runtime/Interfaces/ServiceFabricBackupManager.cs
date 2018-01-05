@@ -99,6 +99,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
             }
             if (!(eventArgs is RestoreEventArgs rstArgs))
             {
+                // TODO implement active state restore.
                 throw new NotSupportedException();
             }
             try

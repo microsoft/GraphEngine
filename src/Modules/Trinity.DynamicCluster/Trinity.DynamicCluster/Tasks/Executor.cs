@@ -39,12 +39,13 @@ namespace Trinity.DynamicCluster.Tasks
             catch (Exception ex) { exception = ex; }
             if (null == exception)
             {
-                await m_taskqueue.TaskCompleted(task);
+                if (task is ChainedTasks ctask && !ctask.Finished) { await m_taskqueue.UpdateTask(task); }
+                else { await m_taskqueue.RemoveTask(task); }
             }
             else
             {
                 Log.WriteLine(LogLevel.Error, $"TaskExecutionProc: task {task.Id} failed with exception: {exception.ToString()}");
-                await m_taskqueue.TaskFailed(task);
+                await m_taskqueue.UpdateTask(task);
             }
         }
     }

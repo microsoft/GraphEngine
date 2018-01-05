@@ -68,6 +68,7 @@
     <Compile Include="Consensus\IService.cs" />
     <Compile Include="DynamicMemoryCloud\DynamicStorageTable.cs" />
     <Compile Include="DynamicMemoryCloud\ReplicaInformation.cs" />
+    <Compile Include="Health\HealthMonitor.cs" />
     <Compile Include="Persistency\ChunkSerialization.cs" />
     <Compile Include="Persistency\InMemoryDataChunk.cs" />
     <Compile Include="Persistency\NoDataException.cs" />
@@ -80,6 +81,12 @@
     <Compile Include="Persistency\PersistentStorageMode.cs" />
     <Compile Include="Persistency\SnapshotNotFoundException.cs" />
     <Compile Include="Persistency\SnapshotUploadUnfinishedException.cs" />
+    <Compile Include="Replication\MirroringPlanner.cs" />
+    <Compile Include="Replication\MirrorShardingPlanner.cs" />
+    <Compile Include="Replication\ShardingPlanner.cs" />
+    <Compile Include="Replication\UnrestrictedPlanner.cs" />
+    <Compile Include="Storage\CloudIndex.cs" />
+    <Compile Include="Replication\IReplicationPlanner.cs" />
     <Compile Include="Storage\Partition.cs" />
     <Compile Include="Communication\DynamicClusterCommModule.cs" />
     <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.Cmd.cs" />
@@ -91,13 +98,13 @@
     <Compile Include="Consensus\INameService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Storage\Partition.Message.cs" />
-    <Compile Include="Storage\Partitioner.cs" />
+    <Compile Include="Replication\Partitioner.cs" />
     <Compile Include="Health\HealthStatus.cs" />
-    <Compile Include="Storage\ReplicationMode.cs" />
+    <Compile Include="Replication\ReplicationMode.cs" />
     <Compile Include="Tasks\ChainedTasks.cs" />
     <Compile Include="Tasks\GroupedTask.cs" />
     <Compile Include="Tasks\PersistedLoadTask.cs" />
-    <Compile Include="Tasks\ReplicationTaskDescriptor.cs" />
+    <Compile Include="Tasks\ShrinkDataTask.cs" />
     <Compile Include="Tasks\UpdateChunkTableTask.cs" />
     <Compile Include="Tasks\Executor.cs" />
     <Compile Include="Tasks\ITask.cs" />

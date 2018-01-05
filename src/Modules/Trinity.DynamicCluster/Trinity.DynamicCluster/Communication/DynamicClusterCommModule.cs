@@ -96,6 +96,21 @@ namespace Trinity.DynamicCluster.Communication
             response.errno = Errno.E_OK;
         }
 
+        public override void ShrinkDataHandler(ShrinkDataTaskInformationReader request, ErrnoResponseWriter response)
+        {
+            var task_id        = (Guid)request.task_id;
+            var remove_tgt     = request.remove_target.Cast<ChunkInformation>().ToList();
+            var to_remove      = Global.LocalStorage
+                                .Where(cell => _Covered(remove_tgt, cell.CellId))
+                                .Select(cell => cell.CellId).ToList();
+            foreach(var cellId in to_remove)
+            {
+                Global.LocalStorage.RemoveCell(cellId);
+            }
+
+            response.errno = Errno.E_OK;
+        }
+
         private async Task _SendBatch(BatchCellsWriter batch, DynamicRemoteStorage storage, SemaphoreSlim signal_c, ManualResetEventSlim signal_t)
         {
             await signal_c.WaitAsync();
@@ -146,5 +161,6 @@ namespace Trinity.DynamicCluster.Communication
             //TODO throttle
             response.throttle = false;
         }
+
     }
 }

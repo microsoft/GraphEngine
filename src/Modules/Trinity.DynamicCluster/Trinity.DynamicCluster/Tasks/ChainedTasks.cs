@@ -7,23 +7,31 @@ using System.Threading.Tasks;
 
 namespace Trinity.DynamicCluster.Tasks
 {
+    /// <summary>
+    /// Represents stateful, multi-stage task.
+    /// </summary>
+    [Serializable]
     class ChainedTasks : ITask
     {
-        private static Guid s_tag = new Guid("56EB7016-F926-43C2-84F8-E0070B6C8B0A");
+        private Guid m_tag;
         private Guid m_guid = Guid.NewGuid();
-        private IEnumerable<ITask> m_tchain;
+        private Queue<ITask> m_tchain;
 
         public Guid Id => m_guid;
-        public Guid Tag => s_tag;
+        public Guid Tag => m_tag;
 
-        public ChainedTasks(IEnumerable<ITask> tasks)
+        public ChainedTasks(IEnumerable<ITask> tasks, Guid tag)
         {
-            m_tchain = tasks;
+            m_tchain = new Queue<ITask>(tasks);
+            m_tag    = tag;
         }
 
-        public Task Execute(CancellationToken cancel) => 
-            m_tchain.Aggregate(Task.CompletedTask, (prev, cur) => 
-            prev.ContinueWith(_ => 
-            cur.Execute(cancel)));
+        public async Task Execute(CancellationToken cancel)
+        {
+            await m_tchain.Peek().Execute(cancel);
+            m_tchain.Dequeue();
+        }
+
+        public bool Finished => m_tchain.Count == 0;
     }
 }

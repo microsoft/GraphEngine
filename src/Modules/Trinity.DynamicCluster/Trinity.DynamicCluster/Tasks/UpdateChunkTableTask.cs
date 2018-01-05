@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Trinity.Diagnostics;
 using Trinity.DynamicCluster.Consensus;
+using Trinity.DynamicCluster.Replication;
 using Trinity.DynamicCluster.Storage;
 using Trinity.Storage;
 
@@ -68,24 +69,10 @@ namespace Trinity.DynamicCluster.Tasks
 
         private async Task mirror_init()
         {
-            var frc = new Chunk[]{ Chunk.FullRangeChunk };
-            await m_emptyreplicas.Select(r => m_ctable.SetChunks(r.Id, frc)).WhenAll();
         }
 
         private async Task sharding_init()
         {
-            List<Chunk> chunks = new List<Chunk>();
-            long step = (long)(ulong.MaxValue / (ulong)m_nonemptyreplicas.Count);
-            long head = long.MinValue;
-            for(int i = 1; i<=m_nonemptyreplicas.Count; ++i)
-            {
-                long tail = head + step;
-                if (i == m_nonemptyreplicas.Count) tail = long.MaxValue;
-                chunks.Add(new Chunk(head, tail));
-                head = tail + 1;
-            }
-            // TODO if 
-            await m_emptyreplicas.Select(r => m_ctable.SetChunks(r.Id, chunks)).WhenAll();
         }
 
         private async Task mirrorshard_init()

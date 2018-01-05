@@ -57,11 +57,14 @@ namespace Trinity.DynamicCluster.Consensus
         /// <summary>
         /// Reports completion of a task, and removes it from the system.
         /// </summary>
-        Task TaskCompleted(ITask task);
+        Task RemoveTask(ITask task);
         /// <summary>
-        /// Reports failure of a task, and put it back into the queue.
+        /// Put an updated task back into the queue. It is guaranteed the
+        /// task is taken from the task queue by the executor.
+        /// Note, in a transactional reliable storage, do not
+        /// just roll back the dequeue operation as task is updated.
         /// </summary>
-        Task TaskFailed(ITask task); // XXX put back or raise exception?
+        Task UpdateTask(ITask task);
         /// <summary>
         /// Post a new task to a partition. The behavior
         /// is undefined when executed on a task queue slave.
