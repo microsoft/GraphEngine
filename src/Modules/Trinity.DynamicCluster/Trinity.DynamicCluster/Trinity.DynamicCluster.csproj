@@ -45,6 +45,7 @@
       <HintPath>..\packages\System.Collections.Immutable.1.4.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
@@ -105,7 +106,6 @@
     <Compile Include="Tasks\GroupedTask.cs" />
     <Compile Include="Tasks\PersistedLoadTask.cs" />
     <Compile Include="Tasks\ShrinkDataTask.cs" />
-    <Compile Include="Tasks\UpdateChunkTableTask.cs" />
     <Compile Include="Tasks\Executor.cs" />
     <Compile Include="Tasks\ITask.cs" />
     <Compile Include="Tasks\NopTask.cs" />

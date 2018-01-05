@@ -9,7 +9,7 @@ namespace Trinity.DynamicCluster.Replication
 {
     internal class MirroringPlanner : IReplicationPlanner
     {
-        public IEnumerable<ReplicatorTask> Plan(int min_replicas, IEnumerable<(ReplicaInformation rp, IEnumerable<Chunk> cks)> current_ct)
+        public IEnumerable<ITask> Plan(int min_replicas, IEnumerable<(ReplicaInformation rp, IEnumerable<Chunk> cks)> current_ct)
         {
             var frc = new Chunk[]{ Chunk.FullRangeChunk };
             var filled_rps = current_ct.Where(_ => _.cks.Any()).Select(_ => _.rp).Schedule(SchedulePolicy.RoundRobin);

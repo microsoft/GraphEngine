@@ -52,7 +52,7 @@ namespace Trinity.DynamicCluster.Replication
             if (!m_taskqueue.IsMaster) return;
             await Task.WhenAll(
                 m_taskqueue.Wait(ReplicatorTask.Guid),
-                m_taskqueue.Wait(UpdateChunkTableTask.Guid),
+                m_taskqueue.Wait(ShrinkDataTask.Guid),
                 m_taskqueue.Wait(PersistedSaveTask.Guid));
 
             var replica_chunks = await m_idx.GetMyPartitionReplicaChunks();
@@ -62,29 +62,20 @@ namespace Trinity.DynamicCluster.Replication
                 return;
             }
 
-            IEnumerable<ReplicatorTask> plan = s_planners[m_repmode].Plan(m_minreplicas, replica_chunks);
+            IEnumerable<ITask> plan = s_planners[m_repmode].Plan(m_minreplicas, replica_chunks);
+            // Replication tasks can be done in parallel, and shrink tasks too.
+            // However, together they form a multi-stage task -- no shrink task should happen
+            // before all rep tasks are done.
+            var rep_tasks = plan.OfType<ReplicatorTask>();
+            var shr_tasks = plan.OfType<ShrinkDataTask>();
+            var chain = new List<ITask>();
+            if(rep_tasks.Any()) chain.Add(new GroupedTask(rep_tasks, ReplicatorTask.Guid));
+            if(shr_tasks.Any()) chain.Add(new GroupedTask(shr_tasks, ShrinkDataTask.Guid));
+            if (!chain.Any()) return;
+            var ctask = new ChainedTasks(chain, ReplicatorTask.Guid);
+            await m_taskqueue.PostTask(ctask);
 
-            var exists_unmounted_replicas = replica_chunks.Where(p => !p.Item2.Any()).Select(p => p.Item1).Any();
-            if (exists_unmounted_replicas)
-            {
-                await _UpdateChunkTableAsync(replica_chunks);
-                return;
-            }
-
-            //foreach (var (r, cs) in replica_chunks)
-            //{
-
-            //}
-
-            // TODO find replication tasks based on replication mode.
-            // TODO updates secondaries on replication completion
-        }
-
-        private async Task _UpdateChunkTableAsync(IEnumerable<(ReplicaInformation, IEnumerable<Chunk>)> rpg)
-        {
-            Log.WriteLine($"{nameof(PartitionerProc)}: Partition {m_idx.MyPartitionId}: Submitting chunk table initialization task.");
-            UpdateChunkTableTask task = new UpdateChunkTableTask(m_repmode, rpg);
-            await m_taskqueue.PostTask(task);
+            //TODO load balance
         }
 
         public void Dispose()

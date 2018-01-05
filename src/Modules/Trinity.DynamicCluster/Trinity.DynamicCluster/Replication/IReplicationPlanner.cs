@@ -7,6 +7,6 @@ namespace Trinity.DynamicCluster.Replication
 {
     internal interface IReplicationPlanner
     {
-        IEnumerable<ReplicatorTask> Plan(int min_replicas, IEnumerable<(ReplicaInformation rp, IEnumerable<Chunk> cks)> current_ct);
+        IEnumerable<ITask> Plan(int min_replicas, IEnumerable<(ReplicaInformation rp, IEnumerable<Chunk> cks)> current_ct);
     }
 }
