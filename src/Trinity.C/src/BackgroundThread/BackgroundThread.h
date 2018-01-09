@@ -12,6 +12,7 @@
 #include <diagnostics>
 #include <Trinity/Diagnostics/Log.h>
 #include <Trinity/ref.h>
+#include "Storage/LocalStorage/ThreadContext.h"
 
 
 namespace BackgroundThread
@@ -81,6 +82,9 @@ namespace BackgroundThread
 
         static void BackgroundExecutionLoop()
         {
+            // Give the background thread a thread context.
+            Storage::PTHREAD_CONTEXT pctx = Storage::AllocateThreadContext();
+
             while (true)
             {
                 //TODO in the future we might want to

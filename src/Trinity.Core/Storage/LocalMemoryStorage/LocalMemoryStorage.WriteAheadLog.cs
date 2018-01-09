@@ -123,6 +123,20 @@ namespace Trinity.Storage
     {
         #region Write-ahead-log logic
         /// <summary>
+        /// Logs a cell action to the persistent storage.
+        /// </summary>
+        /// <param name="cellId">The 64-bit cell id.</param>
+        /// <param name="cellPtr">A pointer pointing to the underlying cell buffer.</param>
+        /// <param name="cellSize">The size of the cell in bytes.</param>
+        /// <param name="cellType">A 16-bit unsigned integer indicating the cell type.</param>
+        /// <param name="options">An flag indicating a cell access option.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe static void CWriteAheadLog(long cellId, byte* cellPtr, int cellSize, ushort cellType, CellAccessOptions options)
+        {
+            CLocalMemoryStorage.CWriteAheadLog(cellId, cellPtr, cellSize, cellType, options);
+        }
+
+        /// <summary>
         /// Tries to close the WAL file.
         /// Only called when the local storage is being disposed.
         /// </summary>
@@ -441,7 +455,7 @@ namespace Trinity.Storage
                 }
 
                 /* Only save storage when the log is not empty. */
-                if (record_cnt == 0 ? true : SaveStorage())
+                if (record_cnt == 0 || TrinityErrorCode.E_SUCCESS == SaveStorage())
                 {
                     /* Save storage succeded. Dropping old logs now. */
                     try

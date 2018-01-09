@@ -17,7 +17,10 @@
 #include <tchar.h>
 #include <io.h>
 #include <Psapi.h>
+#include <assert.h>
 #define TRINITY_PLATFORM_WINDOWS
 #define TRINITY_COMPILER_WARNING(msg) __pragma(message("Warning: "#msg))
 #define ALIGNED(x) __declspec(align(x))
 #define DLL_EXPORT extern "C" __declspec(dllexport)
+// note: The C++11 keyword threa_local is not available on VS2013.
+#define THREAD_LOCAL __declspec(thread)

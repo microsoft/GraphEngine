@@ -26,8 +26,11 @@ namespace Trinity.Storage
         /// <summary>
         /// Loads Trinity key-value store from disk to main memory.
         /// </summary>
-        /// <returns>true if loading succeeds; otherwise, false.</returns>
-        public bool LoadStorage()
+        /// <returns>
+        /// TrinityErrorCode.E_SUCCESS if loading succeeds; 
+        /// Other error codes indicate a failure.
+        /// </returns>
+        public TrinityErrorCode LoadStorage()
         {
             lock (m_lock)
             {
@@ -40,8 +43,9 @@ namespace Trinity.Storage
                     Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeLoad event handler: {0}", ex.ToString());
                 }
 
-                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
-                bool ret = CLocalMemoryStorage.CLoadStorage();
+                TrinityErrorCode ret = CSynchronizeStorageRoot();
+                if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
+                ret = CLocalMemoryStorage.CLoadStorage();
 
                 //TODO WAL and cell type signatures should migrate to KVStore extensions.
                 InitializeWriteAheadLogFile();
@@ -64,8 +68,11 @@ namespace Trinity.Storage
         /// <summary>
         /// Dumps the in-memory key-value store to disk files.
         /// </summary>
-        /// <returns>true if saving succeeds; otherwise, false.</returns>
-        public bool SaveStorage()
+        /// <returns>
+        /// TrinityErrorCode.E_SUCCESS if saving succeeds;
+        /// Other error codes indicate a failure.
+        /// </returns>
+        public TrinityErrorCode SaveStorage()
         {
             lock (m_lock)
             {
@@ -78,10 +85,11 @@ namespace Trinity.Storage
                     Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeSave event handler: {0}", ex.ToString());
                 }
 
-                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
-                bool ret = CLocalMemoryStorage.CSaveStorage();
+                TrinityErrorCode ret = CSynchronizeStorageRoot();
+                if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
+                ret = CLocalMemoryStorage.CSaveStorage();
 
-                if (ret)
+                if (ret == TrinityErrorCode.E_SUCCESS)
                 {
                     CreateWriteAheadLogFile();
 
@@ -104,8 +112,11 @@ namespace Trinity.Storage
         /// <summary>
         /// Resets local memory storage to the initial state. The content in the memory storage will be cleared. And the memory storage will be shrunk to the initial size.
         /// </summary>
-        /// <returns>true if resetting succeeds; otherwise, false.</returns>
-        public bool ResetStorage()
+        /// <returns>
+        /// TrinityErrorCode.E_SUCCESS if resetting succeeds; 
+        /// Other error codes indicate a failure.
+        /// </returns>
+        public TrinityErrorCode ResetStorage()
         {
             lock (m_lock)
             {
@@ -117,10 +128,11 @@ namespace Trinity.Storage
                 {
                     Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeReset event handler: {0}", ex.ToString());
                 }
-
-                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
-                string path   = WriteAheadLogFilePath;
-                bool   ret    = CLocalMemoryStorage.CResetStorage();
+                TrinityErrorCode ret = CSynchronizeStorageRoot();
+                if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
+                ret                  = CLocalMemoryStorage.CResetStorage();
+                if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
+                string path          = WriteAheadLogFilePath;
 
                 ResetWriteAheadLog(path);
 
