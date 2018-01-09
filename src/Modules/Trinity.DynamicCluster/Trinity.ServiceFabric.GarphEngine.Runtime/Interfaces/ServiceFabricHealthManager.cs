@@ -10,7 +10,6 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
 {
     public class ServiceFabricHealthManager : IHealthManager
     {
-        public bool IsMaster => GraphEngineStatefulServiceRuntime.Instance?.Role == System.Fabric.ReplicaRole.Primary;
         private CancellationToken m_token;
         private System.Fabric.FabricClient m_fclient;
         private const string sourceId = "Trinity.ServiceFabric.HealthManager";

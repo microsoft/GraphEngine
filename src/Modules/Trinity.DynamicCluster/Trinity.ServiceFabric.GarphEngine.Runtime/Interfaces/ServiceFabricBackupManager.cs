@@ -42,7 +42,6 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
     }
     class ServiceFabricBackupManager : IBackupManager
     {
-        public bool IsMaster => GraphEngineStatefulServiceRuntime.Instance?.Role == System.Fabric.ReplicaRole.Primary;
         private CancellationToken m_cancel;
         private Task m_init;
         private GraphEngineStatefulServiceRuntime m_svc;

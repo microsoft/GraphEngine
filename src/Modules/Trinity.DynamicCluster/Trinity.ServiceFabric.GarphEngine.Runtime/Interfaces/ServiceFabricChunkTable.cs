@@ -31,7 +31,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
         {
             m_allchunktables = await Utils.Integers(GraphEngineStatefulServiceRuntime.Instance.PartitionCount)
                               .Select(p => ServiceFabricUtils.CreateReliableStateAsync<IReliableDictionary<Guid, byte[]>>
-                                  (this, "Trinity.ServiceFabric.GarphEngine.Infrastructure.ChunkTable", p))
+                                  ("Trinity.ServiceFabric.GarphEngine.Infrastructure.ChunkTable", p))
                               .Unwrap();
             m_chunktable = m_allchunktables[GraphEngineStatefulServiceRuntime.Instance.PartitionId];
         }
@@ -45,8 +45,6 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
                 m_inittask = null;
             }
         }
-
-        public bool IsMaster => GraphEngineStatefulServiceRuntime.Instance?.Role == ReplicaRole.Primary;
 
         public async Task DeleteEntry(Guid replicaId)
         {
@@ -66,15 +64,35 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
             return await GetChunks_impl(replicaInfo.PartitionId, replicaInfo.Id) ?? Enumerable.Empty<Chunk>();
         }
 
-        private async Task<IEnumerable<Chunk>> GetChunks_impl(int p, Guid replicaId)
+        public async Task<IEnumerable<Chunk>> GetChunks(int partitionId)
+        {
+            await EnsureChunkTables();
+            return await GetChunks_impl(partitionId, null) ?? Enumerable.Empty<Chunk>();
+        }
+
+        private async Task<IEnumerable<Chunk>> GetChunks_impl(int p, Guid? replicaId)
         {
             using (var tx = ServiceFabricUtils.CreateTransaction())
             {
 retry:
                 try
                 {
-                    var res = await m_allchunktables[p].TryGetValueAsync(tx, replicaId);
-                    if (res.HasValue) { return Utils.Deserialize<Chunk[]>(res.Value); }
+                    if (replicaId.HasValue)
+                    {
+                        var res = await m_allchunktables[p].TryGetValueAsync(tx, replicaId.Value);
+                        if (res.HasValue) { return Utils.Deserialize<Chunk[]>(res.Value); }
+                    }
+                    else
+                    {
+                        var res = await m_allchunktables[p].CreateEnumerableAsync(tx, EnumerationMode.Unordered);
+                        var enumerator = res.GetAsyncEnumerator();
+                        List<Chunk> chunks = new List<Chunk>();
+                        while(await enumerator.MoveNextAsync(m_cancel))
+                        {
+                            chunks.AddRange(Utils.Deserialize<Chunk[]>(enumerator.Current.Value));
+                        }
+                        return chunks;
+                    }
                 }
                 catch (TimeoutException) { await Task.Delay(1000); goto retry; }
                 catch (Exception ex) { Log.WriteLine(LogLevel.Error, "{0}", $"ServiceFabricChunkTable: {ex.ToString()}"); }
