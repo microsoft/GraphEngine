@@ -72,15 +72,28 @@ namespace FanoutSearch
             }
             Log.WriteLine(LogLevel.Debug, "{0}", $"Json query: {queryString} \r\n QueryPath = {queryPath}");
 
-            FanoutSearchDescriptor fanoutSearch_desc;
-            fanoutSearch_desc = new FanoutSearchDescriptor(queryPath, queryObject);
-            return fanoutSearch_desc;
+            try
+            {
+                FanoutSearchDescriptor fanoutSearch_desc = new FanoutSearchDescriptor(queryPath, queryObject);
+                return fanoutSearch_desc;
+            }
+            catch (Exception ex)
+            {
+                throw new FanoutSearchQueryException("Error parsing the json query object", ex);
+            }
         }
 
         private static FanoutSearchDescriptor _LambdaQuery_impl(string lambda)
         {
             Log.WriteLine(LogLevel.Debug, "{0}", $"Lambda query: {lambda}");
-            return LambdaDSL.Evaluate(lambda);
+            try
+            {
+                return LambdaDSL.Evaluate(lambda);
+            }
+            catch (Exception ex)
+            {
+                throw new FanoutSearchQueryException("Error parsing the lambda query object", ex);
+            }
         }
 
         #region Handlers
