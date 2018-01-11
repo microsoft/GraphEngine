@@ -105,7 +105,7 @@ namespace Trinity.DynamicCluster.Storage
                 Log.WriteLine("{0}", $"{nameof(CloudIndex)}: {r.Address}:{r.Port} ({r.Id}) removed from partition {r.PartitionId}");
                 SetStorage(r.Id, null);
                 SetChunks(r.Id, null);
-                if (m_chunktable.IsMaster && m_nameservice.PartitionId == r.PartitionId)
+                if (m_nameservice.IsMaster && m_nameservice.PartitionId == r.PartitionId)
                 { m_chunktable.DeleteEntry(r.Id); }
             }
             m_replicaList[pid] = newset;

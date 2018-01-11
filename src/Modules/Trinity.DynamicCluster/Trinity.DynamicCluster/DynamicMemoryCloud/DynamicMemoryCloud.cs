@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Trinity.Diagnostics;
+using Trinity.DynamicCluster.Communication;
+using Trinity.DynamicCluster.Config;
+using Trinity.DynamicCluster.Consensus;
+using Trinity.DynamicCluster.Health;
+using Trinity.DynamicCluster.Persistency;
+using Trinity.DynamicCluster.Replication;
+using Trinity.DynamicCluster.Tasks;
 using Trinity.Storage;
 using Trinity.Utilities;
-using Trinity.DynamicCluster.Consensus;
-
 using static Trinity.DynamicCluster.Utils;
-using Trinity.DynamicCluster.Communication;
-using System.Threading;
-using Trinity.DynamicCluster.Tasks;
-using Trinity.DynamicCluster.Config;
-using Trinity.DynamicCluster.Persistency;
-using Trinity.DynamicCluster.Health;
-using Trinity.DynamicCluster.Replication;
 
 namespace Trinity.DynamicCluster.Storage
 {
@@ -26,6 +25,7 @@ namespace Trinity.DynamicCluster.Storage
         internal ITaskQueue              m_taskqueue;
         internal IHealthManager          m_healthmanager;
         internal IPersistentStorage      m_persistent_storage;
+        internal IBackupManager          m_backupmgr;
         internal Executor                m_taskexec;
         internal CloudIndex              m_cloudidx;
         internal HealthMonitor           m_healthmon;
@@ -103,12 +103,14 @@ namespace Trinity.DynamicCluster.Storage
             m_chunktable = AssemblyUtility.GetAllClassInstances<IChunkTable>().First();
             m_taskqueue = AssemblyUtility.GetAllClassInstances<ITaskQueue>().First();
             m_healthmanager = AssemblyUtility.GetAllClassInstances<IHealthManager>().First();
+            m_backupmgr = AssemblyUtility.GetAllClassInstances<IBackupManager>().First();
             m_persistent_storage = AssemblyUtility.GetAllClassInstances<IPersistentStorage>().First();
 
             m_nameservice.Start(m_cancelSrc.Token);
             m_taskqueue.Start(m_cancelSrc.Token);
             m_chunktable.Start(m_cancelSrc.Token);
             m_healthmanager.Start(m_cancelSrc.Token);
+            m_backupmgr.Start(m_cancelSrc.Token);
 
             m_myid = GetInstanceId(InstanceGuid);
             m_storageTable = new DynamicStorageTable(PartitionCount);
@@ -116,9 +118,9 @@ namespace Trinity.DynamicCluster.Storage
 
             int redundancy = DynamicClusterConfig.Instance.MinimumReplica;
             m_cloudidx = new CloudIndex(m_cancelSrc.Token, m_nameservice, m_chunktable);
-            m_healthmon= new HealthMonitor(m_cancelSrc.Token, m_cloudidx, m_healthmanager, redundancy);
-            m_partitioner = new Partitioner(m_cancelSrc.Token, m_cloudidx, m_taskqueue, DynamicClusterConfig.Instance.ReplicationMode, redundancy);
-            m_taskexec = new Executor(m_taskqueue, m_cancelSrc.Token);
+            m_healthmon= new HealthMonitor(m_cancelSrc.Token, m_nameservice, m_cloudidx, m_healthmanager, redundancy);
+            m_partitioner = new Partitioner(m_cancelSrc.Token, m_cloudidx, m_nameservice, m_taskqueue, DynamicClusterConfig.Instance.ReplicationMode, redundancy);
+            m_taskexec = new Executor(m_cancelSrc.Token, m_nameservice, m_taskqueue);
 
             Log.WriteLine($"{nameof(DynamicMemoryCloud)}: Partition {MyPartitionId}: Instance '{NickName}' {InstanceGuid} opened.");
             Global.CommunicationInstance.Started += InitModule;
@@ -154,11 +156,13 @@ namespace Trinity.DynamicCluster.Storage
             m_partitioner.Dispose();
             m_healthmon.Dispose();
             m_cloudidx.Dispose();
+            m_persistent_storage.Dispose();
 
             m_nameservice.Dispose();
             m_chunktable.Dispose();
             m_taskqueue.Dispose();
             m_healthmanager.Dispose();
+            m_backupmgr.Dispose();
         }
 
         protected override void OnConnected(RemoteStorageEventArgs e)

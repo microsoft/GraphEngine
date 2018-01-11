@@ -15,10 +15,5 @@ namespace Trinity.DynamicCluster.Consensus
         /// shutdown.
         /// </summary>
         void Start(CancellationToken cancellationToken);
-        /// <summary>
-        /// Indicates whether the service is a master replica with
-        /// read/write access to the persistent states.
-        /// </summary>
-        bool IsMaster { get; }
     }
 }

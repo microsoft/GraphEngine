@@ -12,14 +12,16 @@ namespace Trinity.DynamicCluster.Health
     class HealthMonitor : IDisposable
     {
         private CancellationToken m_cancel;
+        private INameService      m_namesvc;
         private IHealthManager    m_healthmgr;
         private Task              m_parthealthproc;
         private CloudIndex        m_idx;
         private int               m_redundancy;
 
-        public HealthMonitor(CancellationToken token, CloudIndex idx, IHealthManager healthmgr, int redundancy)
+        public HealthMonitor(CancellationToken token, INameService namesvc, CloudIndex idx, IHealthManager healthmgr, int redundancy)
         {
             m_cancel         = token;
+            m_namesvc        = namesvc;
             m_healthmgr      = healthmgr;
             m_idx            = idx;
             m_redundancy     = redundancy;
@@ -28,7 +30,7 @@ namespace Trinity.DynamicCluster.Health
 
         private async Task PartitionHealthMonitorProc()
         {
-            if (!m_healthmgr.IsMaster) return;
+            if (!m_namesvc.IsMaster) return;
             var rpg = m_idx.MyPartitionReplicas;
             var cached_chunks = rpg.SelectMany(r => m_idx.GetChunks(r.Id)).OrderBy(c => c.LowKey);
             var cnt_dict = cached_chunks.Aggregate(new Dictionary<Chunk, int>(), (dict, c) =>

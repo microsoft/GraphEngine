@@ -23,6 +23,11 @@ namespace Trinity.DynamicCluster.Consensus
         /// <param name="replicaInfo">The identifier of the replica.</param>
         Task<IEnumerable<Chunk>> GetChunks(ReplicaInformation replicaInfo);
         /// <summary>
+        /// Gets a list of distinct chunks held by a partition.
+        /// </summary>
+        /// <param name="partitionId">The identifier of the partition.</param>
+        Task<IEnumerable<Chunk>> GetChunks(int partitionId);
+        /// <summary>
         /// Updates the list of chunks held by a replica. The replica must be on the current partition.
         /// </summary>
         /// <param name="replicaId">The identifier of the replica.</param>

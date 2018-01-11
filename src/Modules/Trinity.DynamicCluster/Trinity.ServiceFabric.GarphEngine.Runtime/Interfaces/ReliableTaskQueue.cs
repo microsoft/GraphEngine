@@ -30,9 +30,9 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
         private async Task InitAsync()
         {
             m_queue      = await ServiceFabricUtils.CreateReliableStateAsync<IReliableQueue<byte[]>>
-                (this, "Trinity.ServiceFabric.GarphEngine.Infrastructure.TaskQueue", GraphEngineStatefulServiceRuntime.Instance.PartitionId);
+                ("Trinity.ServiceFabric.GarphEngine.Infrastructure.TaskQueue", GraphEngineStatefulServiceRuntime.Instance.PartitionId);
             m_tagCounter = await ServiceFabricUtils.CreateReliableStateAsync<IReliableDictionary<Guid, int>>
-                (this, "Trinity.ServiceFabric.GarphEngine.Infrastructure.TaskTagCounter", GraphEngineStatefulServiceRuntime.Instance.PartitionId);
+                ("Trinity.ServiceFabric.GarphEngine.Infrastructure.TaskTagCounter", GraphEngineStatefulServiceRuntime.Instance.PartitionId);
         }
 
         private async Task EnsureInit()
@@ -52,8 +52,6 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
                     tx.Dispose();
                 }
         }
-
-        public bool IsMaster => GraphEngineStatefulServiceRuntime.Instance?.Role == ReplicaRole.Primary;
 
         public async Task<ITask> GetTask(CancellationToken token)
         {

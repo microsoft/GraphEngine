@@ -28,16 +28,18 @@ namespace Trinity.DynamicCluster.Replication
         private CancellationToken m_cancel;
         private CloudIndex        m_idx;
         private ITaskQueue        m_taskqueue;
+        private INameService      m_namesvc;
         private ReplicationMode   m_repmode;
         private int               m_minreplicas;
         private Task              m_partitionerproc;
 
-        public Partitioner(CancellationToken token, CloudIndex idx, ITaskQueue taskqueue, ReplicationMode replicationMode, int minimalRedundancy)
+        public Partitioner(CancellationToken token, CloudIndex idx, INameService namesvc, ITaskQueue taskqueue, ReplicationMode replicationMode, int minimalRedundancy)
         {
             Log.WriteLine($"{nameof(Partitioner)}: Initializing. ReplicationMode={replicationMode}, MinimumReplica={minimalRedundancy}");
 
             m_cancel          = token;
             m_idx             = idx;
+            m_namesvc         = namesvc;
             m_taskqueue       = taskqueue;
             m_repmode         = replicationMode;
             m_minreplicas     = minimalRedundancy;
@@ -49,7 +51,7 @@ namespace Trinity.DynamicCluster.Replication
         /// </summary>
         private async Task PartitionerProc()
         {
-            if (!m_taskqueue.IsMaster) return;
+            if (!m_namesvc.IsMaster) return;
             await Task.WhenAll(
                 m_taskqueue.Wait(ReplicatorTask.Guid),
                 m_taskqueue.Wait(ShrinkDataTask.Guid),
