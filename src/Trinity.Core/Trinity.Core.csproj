@@ -144,6 +144,7 @@
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.Performance.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.TrunkAddressing.cs" />
     <Compile Include="Network\AvailabilityGroup.cs" />
+    <Compile Include="Storage\MessagePassingExtensionMethods.cs" />
     <Compile Include="Storage\StorageCapacityProfile.cs" />
     <Compile Include="Storage\StorageExtensionMethods.cs" />
     <Compile Include="Trinity\Configuration\ConfigurationConstants.cs" />
