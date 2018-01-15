@@ -62,7 +62,7 @@ namespace Trinity.DynamicCluster.Tasks
         {
             var ct  = m_dmc.m_chunktable;
             //TODO race condition?
-            var cks = (await ct.GetChunks(m_target)).ToList();
+            var cks = (await ct.GetChunks(m_target.Id)).ToList();
             foreach(var (from, to) in m_plan)
             {
                 cks.Remove(from);

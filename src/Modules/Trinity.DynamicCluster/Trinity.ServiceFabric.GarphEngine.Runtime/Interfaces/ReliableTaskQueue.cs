@@ -30,9 +30,9 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
         private async Task InitAsync()
         {
             m_queue      = await ServiceFabricUtils.CreateReliableStateAsync<IReliableQueue<byte[]>>
-                ("Trinity.ServiceFabric.GarphEngine.Infrastructure.TaskQueue", GraphEngineStatefulServiceRuntime.Instance.PartitionId);
+                ("Trinity.ServiceFabric.GarphEngine.Infrastructure.TaskQueue");
             m_tagCounter = await ServiceFabricUtils.CreateReliableStateAsync<IReliableDictionary<Guid, int>>
-                ("Trinity.ServiceFabric.GarphEngine.Infrastructure.TaskTagCounter", GraphEngineStatefulServiceRuntime.Instance.PartitionId);
+                ("Trinity.ServiceFabric.GarphEngine.Infrastructure.TaskTagCounter");
         }
 
         private async Task EnsureInit()

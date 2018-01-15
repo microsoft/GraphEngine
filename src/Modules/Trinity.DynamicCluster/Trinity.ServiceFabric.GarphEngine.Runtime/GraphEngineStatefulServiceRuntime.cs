@@ -26,6 +26,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
         public volatile TrinityServerRuntimeManager m_trinityServerRuntime = null;
 
         public List<Partition> Partitions { get; set; }
+        internal List<long> PartitionLowKeys { get; set; }
 
         public int PartitionCount { get; private set; }
 
@@ -88,6 +89,11 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
                            .GetAwaiter().GetResult()
                            .OrderBy(p => p.PartitionInformation.Id)
                            .ToList();
+            PartitionLowKeys = Partitions
+                           .Select(p => p.PartitionInformation)
+                           .OfType<Int64RangePartitionInformation>()
+                           .Select(pi => pi.LowKey)
+                           .ToList();
             Role         = ReplicaRole.Unknown;
 
             PartitionId    = Partitions.FindIndex(p => p.PartitionInformation.Id == Context.PartitionId);
@@ -110,6 +116,13 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 
             // TBD .. YataoL & Tavi T.
             //WCFPort = context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityWCFProtocolEndpoint).Port;
+
+            if(PartitionCount != PartitionLowKeys.Count)
+            {
+                Log.WriteLine(LogLevel.Fatal, "Graph Engine Service requires all partitions to be int64-ranged.");
+                Thread.Sleep(5000);
+                throw new InvalidOperationException("Graph Engine Service requires all partitions to be int64-ranged.");
+            }
 
             lock (SingletonLockObject)
             {

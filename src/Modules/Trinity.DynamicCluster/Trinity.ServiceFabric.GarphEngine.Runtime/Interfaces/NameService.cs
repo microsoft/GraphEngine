@@ -28,8 +28,6 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
         private System.Fabric.FabricClient m_fclient;
         private List<Guid>                 m_partitionIds;
         private Task m_init;
-        private Task m_pollmasterproc;
-        private IReliableDictionary<int, ReplicaInformation> m_masterdict;
         private long m_handle;
 
         public string Address => GraphEngineStatefulServiceRuntime.Instance.Address;
@@ -80,10 +78,6 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
             var partGuid = m_partitionIds[partId];
             var rs = await m_fclient.QueryManager.GetReplicaListAsync(partGuid);
             return rs.Select(r => GetReplicaInformation(partGuid, r)).Where(_ => _ != null);
-        }
-
-        public async Task<ReplicaInformation> ResolveMasterReplica(int partId)
-        {
         }
 
         private ReplicaInformation GetReplicaInformation(Guid partitionGuid, Replica r)

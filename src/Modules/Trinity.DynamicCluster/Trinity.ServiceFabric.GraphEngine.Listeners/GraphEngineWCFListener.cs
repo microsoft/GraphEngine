@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
-using Trinity.Networking.WCFService;
 using Trinity.Core.Lib;
+using Trinity.Networking.WCFService;
 
 namespace Trinity.ServiceFabric.GraphEngine.Listeners
 {

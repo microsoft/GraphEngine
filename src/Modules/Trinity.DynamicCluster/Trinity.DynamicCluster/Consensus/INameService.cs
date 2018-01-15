@@ -43,6 +43,5 @@ namespace Trinity.DynamicCluster.Consensus
         /// read/write access to the persistent states.
         /// </summary>
         bool IsMaster { get; }
-        Task<ReplicaInformation> ResolveMasterReplica(int partitionId);
     }
 }
