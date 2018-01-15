@@ -14,7 +14,7 @@ namespace Trinity.Storage
     /// <summary>
     /// Provides methods for interacting with the distributed memory store.
     /// </summary>
-    public unsafe abstract partial class MemoryCloud : IDisposable
+    public unsafe abstract partial class MemoryCloud : IKeyValueStore
     {
         #region Abstract interfaces
         public abstract bool Open(ClusterConfig config, bool nonblocking);
@@ -23,20 +23,114 @@ namespace Trinity.Storage
         /// </summary>
         public abstract int MyInstanceId { get; }
 
+        /// <summary>
+        /// Gets the ID of current server instance in the cluster.
+        /// </summary>
         public abstract int MyPartitionId { get; }
+        /// <summary>
+        /// Gets the ID of current proxy instance in the cluster.
+        /// </summary>
         public abstract int MyProxyId { get; }
         public abstract IEnumerable<Chunk> MyChunks { get; }
+        /// <summary>
+        /// The number of servers in the cluster.
+        /// </summary>
         public abstract int PartitionCount { get; }
         public abstract bool IsLocalCell(long cellId);
         public abstract bool LoadStorage();
         public abstract bool SaveStorage();
         public abstract bool ResetStorage();
+        /// <summary>
+        /// Gets the number of proxies in the cluster.
+        /// </summary>
         public abstract int ProxyCount { get; }
         public abstract IList<RemoteStorage> ProxyList { get; }
         /// <summary>
         /// Represents the partitions in the memory cloud.
         /// </summary>
-        protected internal abstract IList<Storage> StorageTable { get; }
+        protected internal abstract IList<IStorage> StorageTable { get; }
+        #endregion
+        #region KVStore
+        /// <summary>
+        /// Loads the type and the content of the cell with the specified cell Id.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="cellBuff">The bytes of the cell. An empty byte array is returned if the cell is not found.</param>
+        /// <param name="cellType">The type of the cell, represented with a 16-bit unsigned integer.</param>
+        /// <returns>A Trinity error code. Possible values are E_SUCCESS and E_NOT_FOUND.</returns>
+        public TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff, out ushort cellType)
+        {
+            return GetStorageByCellId(cellId).LoadCell(cellId, out cellBuff, out cellType);
+        }
+        
+        /// <summary>
+        /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="buff">A memory buffer that contains the cell content.</param>
+        /// <param name="size">The size of the cell.</param>
+        /// <param name="cellType">The type of the cell, represented with a 16-bit unsigned integer.</param>
+        /// <returns>true if saving succeeds; otherwise, false.</returns>
+        public unsafe TrinityErrorCode SaveCell(long cellId, byte* buff, int size, ushort cellType)
+        {
+            return GetStorageByCellId(cellId).SaveCell(cellId, buff, size, cellType);
+        }
+
+        /// <summary>
+        /// Adds a new cell to the Trinity key-value store.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="buff">A memory buffer that contains the cell content.</param>
+        /// <param name="size">The size of the cell.</param>
+        /// <param name="cellType">The type of the cell, represented with a 16-bit unsigned integer.</param>
+        /// <returns>true if adding succeeds; otherwise, false.</returns>
+        public unsafe TrinityErrorCode AddCell(long cellId, byte* buff, int size, ushort cellType)
+        {
+            return GetStorageByCellId(cellId).AddCell(cellId, buff, size, cellType);
+        }
+
+        /// <summary>
+        /// Removes the cell with the specified cell Id from the key-value store.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <returns>true if removing succeeds; otherwise, false.</returns>
+        public TrinityErrorCode RemoveCell(long cellId)
+        {
+            return GetStorageByCellId(cellId).RemoveCell(cellId);
+        }
+        
+        /// <summary>
+        /// Gets the type of the cell with specified cell Id.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="cellType">The type of the cell specified by cellId.</param>
+        /// <returns>A Trinity error code. Possible values are E_SUCCESS and E_NOT_FOUND.</returns>
+        public unsafe TrinityErrorCode GetCellType(long cellId, out ushort cellType)
+        {
+            return GetStorageByCellId(cellId).GetCellType(cellId, out cellType);
+        }
+
+        /// <summary>
+        /// Determines whether there is a cell with the specified cell Id in Trinity key-value store.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <returns>true if a cell whose Id is cellId is found; otherwise, false.</returns>
+        public unsafe bool Contains(long cellId)
+        {
+            return GetStorageByCellId(cellId).Contains(cellId);
+        }
+
+        /// <summary>
+        /// Updates an existing cell in the Trinity key-value store.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="buff">A memory buffer that contains the cell content.</param>
+        /// <param name="size">The size of the cell.</param>
+        /// <returns>true if updating succeeds; otherwise, false.</returns>
+        public unsafe TrinityErrorCode UpdateCell(long cellId, byte* buff, int size)
+        {
+            return GetStorageByCellId(cellId).UpdateCell(cellId, buff, size);
+        }
         #endregion
         #region Base implementation
         private Action<MemoryCloud, ICell> m_SaveGenericCell_ICell;
@@ -253,7 +347,7 @@ namespace Trinity.Storage
         }
 
 
-        protected Storage GetStorageByCellId(long cellId)
+        protected IStorage GetStorageByCellId(long cellId)
         {
             return StorageTable[GetPartitionIdByCellId(cellId)];
         }

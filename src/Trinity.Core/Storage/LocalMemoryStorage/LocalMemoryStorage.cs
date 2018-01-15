@@ -29,7 +29,7 @@ namespace Trinity.Storage
     /// <summary>
     /// Provides methods for interacting with the in-memory store.
     /// </summary>
-    public unsafe partial class LocalMemoryStorage : Storage, IDisposable, IEnumerable<CellInfo>, IEnumerable
+    public unsafe partial class LocalMemoryStorage : IStorage, IDisposable, IEnumerable<CellInfo>, IEnumerable
     {
         #region Write-Ahead-Log facility
         private string WriteAheadLogFilePath
@@ -157,12 +157,12 @@ namespace Trinity.Storage
         /// <summary>
         /// Release the unmanaged resources.
         /// </summary>
-        public override void Dispose()
+        public void Dispose()
         {
             Dispose(true);
         }
 
-        private void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (initialized)
             {

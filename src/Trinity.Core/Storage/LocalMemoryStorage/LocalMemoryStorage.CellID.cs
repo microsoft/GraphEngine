@@ -17,7 +17,7 @@ using Trinity.Core.Lib;
 
 namespace Trinity.Storage
 {
-    public partial class LocalMemoryStorage : Storage
+    public partial class LocalMemoryStorage
     {
         private long sn = 0;
         XRandom rand = new XRandom(Environment.TickCount);

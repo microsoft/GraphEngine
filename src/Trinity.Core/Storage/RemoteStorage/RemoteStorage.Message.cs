@@ -19,7 +19,7 @@ using Trinity.Core.Lib;
 
 namespace Trinity.Storage
 {
-    public unsafe partial class RemoteStorage : Storage, IDisposable
+    public unsafe partial class RemoteStorage : IStorage, IDisposable
     {
         /// <summary>
         /// Checks for possible errors that occur during message passing, 
@@ -58,25 +58,13 @@ namespace Trinity.Storage
         }
 
         /// <inheritdoc/>
-        public override void SendMessage(TrinityMessage msg)
-        {
-            SendMessage(msg.Buffer, msg.Size);
-        }
-
-        /// <inheritdoc/>
-        public override void SendMessage(TrinityMessage msg, out TrinityResponse response)
-        {
-            SendMessage(msg.Buffer, msg.Size, out response);
-        }
-
-        /// <inheritdoc/>
-        public override void SendMessage(byte* message, int size)
+        public void SendMessage(byte* message, int size)
         {
             _use_synclient(sc => sc.SendMessage(message, size));
         }
 
         /// <inheritdoc/>
-        public override void SendMessage(byte* message, int size, out TrinityResponse response)
+        public void SendMessage(byte* message, int size, out TrinityResponse response)
         {
             TrinityResponse _rsp = null;
             _use_synclient(sc => sc.SendMessage(message, size, out _rsp));
@@ -84,13 +72,13 @@ namespace Trinity.Storage
         }
 
         /// <inheritdoc/>
-        public override void SendMessage(byte** message, int* sizes, int count)
+        public void SendMessage(byte** message, int* sizes, int count)
         {
             _use_synclient(sc => sc.SendMessage(message, sizes, count));
         }
 
         /// <inheritdoc/>
-        public override void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
+        public void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
         {
             TrinityResponse _rsp = null;
             _use_synclient(sc => sc.SendMessage(message, sizes, count, out _rsp));

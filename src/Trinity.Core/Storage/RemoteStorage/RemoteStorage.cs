@@ -27,7 +27,7 @@ using Trinity.Configuration;
 namespace Trinity.Storage
 {
 #pragma warning disable 0420
-    public partial class RemoteStorage : Storage
+    public partial class RemoteStorage : IStorage
     {
         BlockingCollection<Network.Client.SynClient> ConnPool = new BlockingCollection<Network.Client.SynClient>(new ConcurrentQueue<Network.Client.SynClient>());
 
@@ -161,7 +161,7 @@ namespace Trinity.Storage
             }
         }
 
-        public override void Dispose()
+        public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
