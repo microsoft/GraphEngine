@@ -5,25 +5,25 @@ using System.Linq;
 
 namespace Trinity.DynamicCluster.Storage
 {
-    using Storage = Trinity.Storage.Storage;
     using static Utils;
     using System.Collections.Immutable;
+    using Trinity.Storage;
 
     /// <summary>
     /// An array-like storage table populated with partitions and instances.
     /// From <![CDATA[IList<Storage>]]> interface, only the partitions are exposed.
     /// The instances are to be retrieved separatedly.
     /// </summary>
-    internal class DynamicStorageTable : IList<Storage>
+    internal class DynamicStorageTable : IList<IStorage>
     {
-        private ImmutableDictionary<int, Storage> m_instances = ImmutableDictionary<int, Storage>.Empty;
-        private Storage[] m_partitions;
+        private ImmutableDictionary<int, IStorage> m_instances = ImmutableDictionary<int, IStorage>.Empty;
+        private IStorage[] m_partitions;
         private object m_lock = new object();
         private int m_pcnt;
 
         public DynamicStorageTable(int partitionCount)
         {
-            this.m_partitions   = Infinity<Partition>()
+            this.m_partitions = Infinity<Partition>()
                                    .Take(partitionCount)
                                    .ToArray();
             this.m_pcnt = partitionCount;
@@ -32,7 +32,7 @@ namespace Trinity.DynamicCluster.Storage
         /// <summary>
         /// Adds an instance
         /// </summary>
-        public void AddInstance(int id, Storage storage)
+        public void AddInstance(int id, IStorage storage)
         {
             lock (m_lock)
             {
@@ -57,7 +57,7 @@ namespace Trinity.DynamicCluster.Storage
         /// and the enumerators reflects this value, the indexer
         /// can be used to access the "hidden" instances.
         /// </summary>
-        public Storage this[int index]
+        public IStorage this[int index]
         {
             get
             {
@@ -73,22 +73,22 @@ namespace Trinity.DynamicCluster.Storage
 
         public bool IsReadOnly => true;
 
-        public bool Contains(Storage item) => m_partitions.Contains(item);
+        public bool Contains(IStorage item) => m_partitions.Contains(item);
 
-        public void CopyTo(Storage[] array, int arrayIndex)
+        public void CopyTo(IStorage[] array, int arrayIndex)
         {
             Array.Copy(m_partitions, 0, array, arrayIndex, m_pcnt);
         }
 
-        public int IndexOf(Storage item) => Array.FindIndex(m_partitions, _ => _ == item);
+        public int IndexOf(IStorage item) => Array.FindIndex(m_partitions, _ => _ == item);
 
         #region NotSupported -- readonly
-        public void Insert(int index, Storage item)
+        public void Insert(int index, IStorage item)
         {
             throw new NotSupportedException();
         }
 
-        public void Add(Storage item)
+        public void Add(IStorage item)
         {
             throw new NotSupportedException();
         }
@@ -98,7 +98,7 @@ namespace Trinity.DynamicCluster.Storage
             throw new NotSupportedException();
         }
 
-        public bool Remove(Storage item)
+        public bool Remove(IStorage item)
         {
             throw new NotSupportedException();
         }
@@ -109,7 +109,7 @@ namespace Trinity.DynamicCluster.Storage
         }
 
         #endregion
-        public IEnumerator<Storage> GetEnumerator() => m_partitions.AsEnumerable().GetEnumerator();
+        public IEnumerator<IStorage> GetEnumerator() => m_partitions.AsEnumerable().GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
         {

@@ -24,14 +24,5 @@ namespace Trinity.DynamicCluster.Storage
         public string NickName { get; }
         public ReplicaInformation ReplicaInformation { get; }
 
-        public override unsafe void SendMessage(byte* buffer, int size)
-        {
-            base.SendMessage(buffer, size);
-        }
-
-        public override unsafe void SendMessage(byte* buffer, int size, out TrinityResponse response)
-        {
-            base.SendMessage(buffer, size, out response);
-        }
     }
 }

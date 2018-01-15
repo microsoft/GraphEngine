@@ -84,7 +84,7 @@ namespace Trinity.DynamicCluster.Storage
             return id;
         }
 
-        protected override IList<Trinity.Storage.Storage> StorageTable => m_storageTable;
+        protected override IList<IStorage> StorageTable => m_storageTable;
         public override IEnumerable<Chunk> MyChunks => m_cloudidx.MyChunks;
         public override int MyPartitionId => m_nameservice.PartitionId;
         public override int PartitionCount => m_nameservice.PartitionCount;

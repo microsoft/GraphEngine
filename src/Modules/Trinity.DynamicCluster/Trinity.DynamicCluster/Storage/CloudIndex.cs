@@ -11,14 +11,13 @@ using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Storage
 {
-    using Storage = Trinity.Storage.Storage;
     /// <summary>
     /// Provides information about chunks, storages and replicas.
     /// </summary>
     internal class CloudIndex : IDisposable
     {
         private DynamicMemoryCloud                     m_dmc;
-        private Dictionary<Guid, Storage>              m_storagetab;
+        private Dictionary<Guid, IStorage>             m_storagetab;
         private Dictionary<Guid, IEnumerable<Chunk>>   m_ctcache;
         private INameService                           m_nameservice;
         private IChunkTable                            m_chunktable;
@@ -51,7 +50,7 @@ namespace Trinity.DynamicCluster.Storage
             }
         }
 
-        public Storage GetStorage(Guid id)
+        public IStorage GetStorage(Guid id)
         {
             lock (m_storagetab)
             {
@@ -60,7 +59,7 @@ namespace Trinity.DynamicCluster.Storage
             }
         }
 
-        public void SetStorage(Guid id, Storage storage)
+        public void SetStorage(Guid id, IStorage storage)
         {
             lock (m_storagetab)
             {
@@ -81,7 +80,7 @@ namespace Trinity.DynamicCluster.Storage
             m_nameservice    = namesvc;
             m_chunktable     = chunktable;
             m_cancel         = token;
-            m_storagetab     = new Dictionary<Guid, Storage>();
+            m_storagetab     = new Dictionary<Guid, IStorage>();
             m_ctcache        = new Dictionary<Guid, IEnumerable<Chunk>>();
             SetStorage(m_nameservice.InstanceId, Global.LocalStorage);
             m_replicaList    = Utils.Integers(m_nameservice.PartitionCount).Select(_ => Enumerable.Empty<ReplicaInformation>()).ToArray();

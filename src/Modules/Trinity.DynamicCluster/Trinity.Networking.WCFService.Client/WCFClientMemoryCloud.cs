@@ -10,7 +10,7 @@ namespace Trinity.Networking.WCFService.Client
 {
     class WCFClientMemoryCloud : MemoryCloud
     {
-        private Storage.Storage[] m_storagetable;
+        private IStorage[] m_storagetable;
 
         public override int MyPartitionId => throw new NotImplementedException();
 
@@ -24,46 +24,11 @@ namespace Trinity.Networking.WCFService.Client
 
         public override IList<RemoteStorage> ProxyList => throw new NotImplementedException();
 
-        protected override IList<Storage.Storage> StorageTable => throw new NotImplementedException();
+        protected override IList<IStorage> StorageTable => throw new NotImplementedException();
 
         public override int MyInstanceId => throw new NotImplementedException();
 
-        public override unsafe TrinityErrorCode AddCell(long cellId, byte* buff, int size)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override TrinityErrorCode AddCell(long cellId, byte[] buff)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override TrinityErrorCode AddCell(long cellId, byte[] buff, int offset, int size)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool Contains(long cellId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override TrinityErrorCode GetCellType(long cellId, out ushort cellType)
-        {
-            throw new NotImplementedException();
-        }
-
         public override bool IsLocalCell(long cellId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff, out ushort cellType)
         {
             throw new NotImplementedException();
         }
@@ -73,37 +38,7 @@ namespace Trinity.Networking.WCFService.Client
             throw new NotImplementedException();
         }
 
-        public override TrinityErrorCode RemoveCell(long cellId)
-        {
-            throw new NotImplementedException();
-        }
-
         public override bool ResetStorage()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override TrinityErrorCode SaveCell(long cellId, byte[] buff)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override TrinityErrorCode SaveCell(long cellId, byte[] buff, int offset, int size)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override unsafe TrinityErrorCode SaveCell(long cellId, byte* buff, int size)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override TrinityErrorCode SaveCell(long cellId, byte[] buff, int offset, int size, ushort cellType)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override TrinityErrorCode SaveCell(long cellId, byte[] buff, ushort cellType)
         {
             throw new NotImplementedException();
         }
@@ -123,24 +58,9 @@ namespace Trinity.Networking.WCFService.Client
             throw new NotImplementedException();
         }
 
-        public override unsafe TrinityErrorCode UpdateCell(long cellId, byte* buff, int size)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override TrinityErrorCode UpdateCell(long cellId, byte[] buff)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override TrinityErrorCode UpdateCell(long cellId, byte[] buff, int offset, int size)
-        {
-            throw new NotImplementedException();
-        }
-
         public override bool Open(ClusterConfig config, bool nonblocking)
         {
-            this.m_storagetable = new Storage.Storage[]
+            this.m_storagetable = new IStorage[]
             {
                 new WCFRemoteStorage(this, 0, new TrinityWCFAdapterClient(
                     new WcfCommunicationClientFactory(),
