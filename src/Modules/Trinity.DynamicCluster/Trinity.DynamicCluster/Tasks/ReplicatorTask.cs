@@ -44,7 +44,7 @@ namespace Trinity.DynamicCluster.Tasks
         {
             var ct  = m_dmc.m_chunktable;
             //TODO race condition?
-            var cks = await ct.GetChunks(m_to);
+            var cks = await ct.GetChunks(m_to.Id);
             await m_dmc.m_chunktable.SetChunks(m_to.Id, cks.Concat(m_range).Distinct());
         }
 

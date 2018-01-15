@@ -13,14 +13,13 @@ using Newtonsoft.Json;
 
 namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
 {
-    using ReplicaInformation = DynamicCluster.Storage.ReplicaInformation;
     class ServiceFabricChunkTable : IChunkTable
     {
         private CancellationToken                               m_cancel;
         private IReliableDictionary<Guid, byte[]>               m_chunktable     = null;
-        private IReliableDictionary<Guid, byte[]>[]             m_allchunktables = null;
         private Task                                            m_inittask       = null;
 
+        /// <inheritdocs/>
         public void Start(CancellationToken cancellationToken)
         {
             m_cancel   = cancellationToken;
@@ -29,11 +28,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
 
         private async Task InitChunkTablesAsync()
         {
-            m_allchunktables = await Utils.Integers(GraphEngineStatefulServiceRuntime.Instance.PartitionCount)
-                              .Select(p => ServiceFabricUtils.CreateReliableStateAsync<IReliableDictionary<Guid, byte[]>>
-                                  ("Trinity.ServiceFabric.GarphEngine.Infrastructure.ChunkTable", p))
-                              .Unwrap();
-            m_chunktable = m_allchunktables[GraphEngineStatefulServiceRuntime.Instance.PartitionId];
+            m_chunktable = await ServiceFabricUtils.CreateReliableStateAsync<IReliableDictionary<Guid, byte[]>>("Trinity.ServiceFabric.GarphEngine.Infrastructure.ChunkTable");
         }
 
         private async Task EnsureChunkTables()
@@ -46,6 +41,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
             }
         }
 
+        /// <inheritdocs/>
         public async Task DeleteEntry(Guid replicaId)
         {
             await EnsureChunkTables();
@@ -56,21 +52,24 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
             }
         }
 
+        /// <inheritdocs/>
         public void Dispose() { }
 
-        public async Task<IEnumerable<Chunk>> GetChunks(ReplicaInformation replicaInfo)
+        /// <inheritdocs/>
+        public async Task<IEnumerable<Chunk>> GetChunks(Guid replicaId)
         {
             await EnsureChunkTables();
-            return await GetChunks_impl(replicaInfo.PartitionId, replicaInfo.Id) ?? Enumerable.Empty<Chunk>();
+            return await GetChunks_impl(replicaId) ?? Enumerable.Empty<Chunk>();
         }
 
-        public async Task<IEnumerable<Chunk>> GetChunks(int partitionId)
+        /// <inheritdocs/>
+        public async Task<IEnumerable<Chunk>> GetChunks()
         {
             await EnsureChunkTables();
-            return await GetChunks_impl(partitionId, null) ?? Enumerable.Empty<Chunk>();
+            return await GetChunks_impl(null) ?? Enumerable.Empty<Chunk>();
         }
 
-        private async Task<IEnumerable<Chunk>> GetChunks_impl(int p, Guid? replicaId)
+        private async Task<IEnumerable<Chunk>> GetChunks_impl(Guid? replicaId)
         {
             using (var tx = ServiceFabricUtils.CreateTransaction())
             {
@@ -79,12 +78,12 @@ retry:
                 {
                     if (replicaId.HasValue)
                     {
-                        var res = await m_allchunktables[p].TryGetValueAsync(tx, replicaId.Value);
+                        var res = await m_chunktable.TryGetValueAsync(tx, replicaId.Value);
                         if (res.HasValue) { return Utils.Deserialize<Chunk[]>(res.Value); }
                     }
                     else
                     {
-                        var res = await m_allchunktables[p].CreateEnumerableAsync(tx, EnumerationMode.Unordered);
+                        var res = await m_chunktable.CreateEnumerableAsync(tx, EnumerationMode.Unordered);
                         var enumerator = res.GetAsyncEnumerator();
                         List<Chunk> chunks = new List<Chunk>();
                         while(await enumerator.MoveNextAsync(m_cancel))
@@ -101,6 +100,7 @@ retry:
             return null;
         }
 
+        /// <inheritdocs/>
         public async Task SetChunks(Guid replicaId, IEnumerable<Chunk> chunks)
         {
             var payload = Utils.Serialize(chunks.ToArray());

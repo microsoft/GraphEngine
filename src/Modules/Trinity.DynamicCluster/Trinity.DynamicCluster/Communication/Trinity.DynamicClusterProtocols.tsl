@@ -67,6 +67,16 @@ struct PersistedSlice
 	long highkey;
 }
 
+struct GetChunksRequest
+{
+	Guid replicaId;
+}
+
+struct GetChunksResponse
+{
+	List<ChunkInformation> chunk_info;
+}
+
 protocol NotifyRemoteStorageOnLeaving
 {
     Type: Asyn;
@@ -110,8 +120,24 @@ protocol PersistedUpload
 	Response: ErrnoResponse;
 }
 
+protocol GetChunks
+{
+	Type: Asyn;
+	Request: GetChunksRequest;
+	Response: GetChunksResponse;
+}
+
+protocol AnnounceMaster
+{
+	Type: Asyn;
+	Request: StorageInformation;
+	Response: ErrnoResponse;
+}
+
 module DynamicCluster
 {
+	protocol AnnounceMaster;
+	protocol GetChunks;
 	protocol NotifyRemoteStorageOnLeaving;
 	protocol BatchSaveCells;
 	protocol Replication;

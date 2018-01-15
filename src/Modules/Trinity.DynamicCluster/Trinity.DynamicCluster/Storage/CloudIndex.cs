@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Trinity.Diagnostics;
+using Trinity.DynamicCluster.Communication;
 using Trinity.DynamicCluster.Consensus;
 using Trinity.Storage;
 
@@ -24,6 +25,7 @@ namespace Trinity.DynamicCluster.Storage
         private CancellationToken                      m_cancel;
         private IEnumerable<ReplicaInformation>[]      m_replicaList;
         private Task                                   m_ctupdateproc;
+        private Task                                   m_masterproc;
         private Task                                   m_scanproc;
         private SemaphoreSlim                          m_ctupdate_sem = new SemaphoreSlim(0);
 
@@ -83,7 +85,8 @@ namespace Trinity.DynamicCluster.Storage
             m_ctcache        = new Dictionary<Guid, IEnumerable<Chunk>>();
             SetStorage(m_nameservice.InstanceId, Global.LocalStorage);
             m_replicaList    = Utils.Integers(m_nameservice.PartitionCount).Select(_ => Enumerable.Empty<ReplicaInformation>()).ToArray();
-            m_ctupdateproc   = Utils.Daemon(m_cancel, "ChunkTableUpdaterProc", 10000, ChunkTableUpdaterProc);
+            m_ctupdateproc   = Utils.Daemon(m_cancel, "ChunkTableUpdateProc", 10000, ChunkTableUpdateProc);
+            m_masterproc     = Utils.Daemon(m_cancel, "MasterNotifyProc", 10000, MasterNotifyProc);
             m_scanproc       = Utils.Daemon(m_cancel, "ScanNodesProc", 10000, ScanNodesProc);
         }
 
@@ -125,25 +128,36 @@ namespace Trinity.DynamicCluster.Storage
                        .WhenAll();
         }
 
+        private async Task MasterNotifyProc()
+        {
+            if (!m_nameservice.IsMaster) return;
+            var mod = m_dmc.GetCommunicationModule<DynamicClusterCommModule>();
+            using(var req = new StorageInformationWriter(MyPartitionId, m_nameservice.InstanceId))
+            {
+                var rsps = await Utils.Integers(m_nameservice.PartitionCount).Select(pid => mod.AnnounceMaster(pid, req)).Unwrap();
+                rsps.ForEach(_ => _.Dispose());
+            }
+        }
+
         /// <summary>
-        /// ChunkTableUpdaterProc periodically polls chunk tables passively.
-        /// ChunkTableUpdaterProc runs on every replica.
+        /// ChunkTableUpdateProc periodically polls states (chunk tables, is master, etc.) passively.
+        /// ChunkTableUpdateProc runs on every replica.
         /// </summary>
-        private async Task ChunkTableUpdaterProc()
+        private async Task ChunkTableUpdateProc()
         {
             bool updated = false;
             foreach (var r in m_replicaList.SelectMany(Utils.Identity))
             {
                 var stg = GetStorage(r.Id);
                 if (null == stg) { continue; }
-                var ct = await m_chunktable.GetChunks(r);
+                var ct = await _GetChunks(r);
                 ct = ct.OrderBy(_ => _.LowKey);
                 IEnumerable<Chunk> ctcache = GetChunks(r.Id);
                 if (Enumerable.SequenceEqual(ctcache, ct)) { continue; }
                 SetChunks(r.Id, ct);
                 m_dmc.PartitionTable(r.PartitionId).Mount(stg, ct);
                 var nickname = (stg as DynamicRemoteStorage)?.NickName ?? m_dmc.NickName;
-                Log.WriteLine("{0}: {1}", nameof(ChunkTableUpdaterProc), $"Replica {nickname}: chunk table updated.");
+                Log.WriteLine("{0}: {1}", nameof(ChunkTableUpdateProc), $"Replica {nickname}: chunk table updated.");
                 updated = true;
             }
             if (updated)
@@ -152,8 +166,20 @@ namespace Trinity.DynamicCluster.Storage
             }
         }
 
+        private async Task<IEnumerable<Chunk>> _GetChunks(ReplicaInformation r)
+        {
+            var mod = m_dmc.GetCommunicationModule<DynamicClusterCommModule>();
+            var id = m_dmc.GetInstanceId(r.Id);
+            using(var req = new GetChunksRequestWriter(r.Id))
+            using (var rsp = await mod.GetChunks(id, req))
+            {
+                return rsp.chunk_info.Cast<Chunk>().ToList();
+            }
+        }
+
         public void Dispose()
         {
+            m_masterproc.Wait();
             m_scanproc.Wait();
             m_ctupdateproc.Wait();
         }

@@ -33,11 +33,6 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
             });
             return ret;
         }
-        internal static async Task<T> CreateReliableStateAsync<T>(string name, int p) where T : IReliableState
-        {
-            name = $"{name}-P{p}";
-            return await CreateReliableStateAsync<T>(name);
-        }
 
         internal static ITransaction CreateTransaction()
         {

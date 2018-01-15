@@ -162,5 +162,13 @@ namespace Trinity.DynamicCluster.Communication
             response.throttle = false;
         }
 
+        public override void GetChunksHandler(GetChunksRequestReader request, GetChunksResponseWriter response)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void AnnounceMasterHandler(StorageInformationReader request, ErrnoResponseWriter response)
+        {
+        }
     }
 }

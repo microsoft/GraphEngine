@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Services.Client;
 using System.Fabric;
 using System.Threading;
+using Trinity.Networking.WCFService;
 
 namespace Trinity.Networking.WCFService.Client
 {

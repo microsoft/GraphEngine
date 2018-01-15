@@ -98,7 +98,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Trinity.Networking.WCFService\Trinity.Networking.WCFService.csproj">
-      <Project>{b640301b-a7fb-4b80-81ee-dca979d44d76}</Project>
+      <Project>{B640301B-A7FB-4B80-81EE-DCA979D44D76}</Project>
       <Name>Trinity.Networking.WCFService</Name>
     </ProjectReference>
     <ProjectReference Include="..\Trinity.ServiceFabric.GarphEngine.Runtime\Trinity.ServiceFabric.GarphEngine.Environment.csproj">
