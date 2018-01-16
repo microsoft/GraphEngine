@@ -145,5 +145,10 @@ namespace Trinity.Storage
                 return (response.ErrorCode == TrinityErrorCode.E_SUCCESS);
             }
         }
+
+        public T GetModule<T>() where T : CommunicationModule
+        {
+            return this.m_memorycloud?.GetCommunicationModule<T>();
+        }
     }
 }

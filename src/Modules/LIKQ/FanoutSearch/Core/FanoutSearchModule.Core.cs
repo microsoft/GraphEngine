@@ -18,6 +18,7 @@ using Trinity.Network;
 using Trinity.Storage;
 using System.Runtime.Serialization;
 using Trinity.Network.Messaging;
+using FanoutSearch.Protocols.TSL.FanoutSearch;
 
 namespace FanoutSearch
 {
@@ -95,7 +96,7 @@ namespace FanoutSearch
             int eresult = FanoutSearchErrorCode.OK;
 
             //obtain a transaction id atomically
-            using (var _transaction = GetTransactionId(c_master_server_id))
+            using (var _transaction = Global.CloudStorage[c_master_server_id].GetTransactionId())
             {
                 my_transaction = _transaction.transaction_id;
             }
@@ -438,8 +439,7 @@ namespace FanoutSearch
 
         internal unsafe void FanoutSearch_impl_Send(int moduleId, byte* bufferPtr, int length)
         {
-            this.SendMessage(
-                moduleId,
+            this.m_memorycloud[moduleId].SendMessage(
                 bufferPtr,
                 length);
         }

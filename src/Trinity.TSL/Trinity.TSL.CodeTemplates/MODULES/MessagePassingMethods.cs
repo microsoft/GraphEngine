@@ -14,13 +14,14 @@ using Trinity.Core.Lib;
 using Trinity.Network.Messaging;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
+using Trinity.Storage;
 
 namespace t_Namespace
 {
     /// <summary>
     /// This module generates message passing methods.
     /// </summary>
-    public static class MessagePassingExtensions
+    public static class MessagePassingMethodsModule
     {
         [MODULE_BEGIN]
         [TARGET("NProtocolGroup")]
@@ -35,7 +36,6 @@ namespace t_Namespace
         [MAP_VAR("t_protocol_response", "referencedNProtocol->response_message_struct")]
 
         [META_VAR("std::string", "method_name")]
-        [META_VAR("std::string", "arg_extension_method_target")]
         [META_VAR("std::string", "send_message_method")]
         [MAP_VAR("t_method_name", "%method_name")]
         [MAP_VAR("t_method_name_2", "%method_name")]
@@ -47,29 +47,19 @@ namespace t_Namespace
         [IF("!$t_protocol->is_http_protocol()")]
 
         #region prototype definition template variables
-        [IF("node->type() == PGT_SERVER")]
+        [META("%method_name = *$t_protocol_name;")]
+        [IF("node->type() == PGT_SERVER || node->type() == PGT_PROXY")]
 
-        [META("%method_name = *$t_protocol_name + \"To\" + *$t_comm_name;")]
-        [META("%arg_extension_method_target = \"this Trinity.Storage.MemoryCloud storage, \";")]
-        [META("%send_message_method = \"storage.SendMessageToServer\";")]
-
-        [ELIF("node->type() == PGT_PROXY")]
-
-        [META("%method_name = *$t_protocol_name + \"To\" + *$t_comm_name;")]
-        [META("%arg_extension_method_target = \"this Trinity.Storage.MemoryCloud storage, \";")]
-        [META("%send_message_method = \"storage.SendMessageToProxy\";")]
-
+        [META("%send_message_method = \"storage.SendMessage\";")]
         [ELSE]//PGT_MODULE
 
-        [META("%method_name = *$t_protocol_name;")]
-        [META("%arg_extension_method_target = \"\";")]
-        [META("%send_message_method = \"this.SendMessage\";")]
+        [META("%send_message_method = \"storage.GetModule<\" + *node->name + \"Base>().SendMessage\";")]
 
         [END]
         #endregion
 
         [IF("!$t_protocol->has_request() && !$t_protocol->has_response()")]
-        public unsafe /*IF("node->type() != PGT_MODULE")*/ static /*END*/ void t_method_name([META_OUTPUT("%arg_extension_method_target")] int partitionId)
+        public unsafe static void t_method_name(this Trinity.Storage.IMessagePassingEndpoint storage)
         {
             byte* bufferPtr = (byte*)Memory.malloc((ulong)TrinityProtocol.MsgHeader);
             try
@@ -77,12 +67,12 @@ namespace t_Namespace
                 *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader;
                 *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
                 *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
-                t_send_message(partitionId, bufferPtr, TrinityProtocol.MsgHeader);
+                t_send_message(/*IF("node->type() == PGT_MODULE")*/storage, /*END*/bufferPtr, TrinityProtocol.MsgHeader);
             }
             finally { Memory.free(bufferPtr); }
         }
         [ELIF("$t_protocol->has_request() && !$t_protocol->has_response()")]
-        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ void t_method_name([META_OUTPUT("%arg_extension_method_target")] int partitionId, t_protocol_requestWriter msg)
+        public unsafe static void t_method_name(this Trinity.Storage.IMessagePassingEndpoint storage, t_protocol_requestWriter msg)
         {
             byte* bufferPtr = msg.buffer;
             try
@@ -90,12 +80,12 @@ namespace t_Namespace
                 *(int*)(bufferPtr) = msg.Length + TrinityProtocol.TrinityMsgHeader;
                 *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
                 *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
-                t_send_message(partitionId, bufferPtr, msg.Length + TrinityProtocol.MsgHeader);
+                t_send_message(/*IF("node->type() == PGT_MODULE")*/storage, /*END*/bufferPtr, msg.Length + TrinityProtocol.MsgHeader);
             }
             finally { }
         }
         [ELIF("!$t_protocol->has_request() && $t_protocol->is_syn_req_rsp_protocol()")]
-        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ t_protocol_responseReader t_method_name_2([META_OUTPUT("%arg_extension_method_target")] int partitionId)
+        public unsafe static t_protocol_responseReader t_method_name_2(this Trinity.Storage.IMessagePassingEndpoint storage)
         {
             byte* bufferPtr = stackalloc byte[TrinityProtocol.MsgHeader];
             try
@@ -104,13 +94,13 @@ namespace t_Namespace
                 *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
                 *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
                 TrinityResponse response;
-                t_send_message(partitionId, bufferPtr, TrinityProtocol.MsgHeader, out response);
+                t_send_message(/*IF("node->type() == PGT_MODULE")*/storage, /*END*/bufferPtr, TrinityProtocol.MsgHeader, out response);
                 return new t_protocol_responseReader(response.Buffer, response.Offset);
             }
             finally { Memory.free(bufferPtr); }
         }
         [ELIF("$t_protocol->has_request() && $t_protocol->is_syn_req_rsp_protocol()")]
-        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ t_protocol_responseReader t_method_name_2([META_OUTPUT("%arg_extension_method_target")] int partitionId, t_protocol_requestWriter msg)
+        public unsafe static t_protocol_responseReader t_method_name_2(this Trinity.Storage.IMessagePassingEndpoint storage, t_protocol_requestWriter msg)
         {
             byte* bufferPtr = msg.buffer;
             try
@@ -119,13 +109,13 @@ namespace t_Namespace
                 *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
                 *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
                 TrinityResponse response;
-                t_send_message(partitionId, bufferPtr, msg.Length + TrinityProtocol.MsgHeader, out response);
+                t_send_message(/*IF("node->type() == PGT_MODULE")*/storage, /*END*/bufferPtr, msg.Length + TrinityProtocol.MsgHeader, out response);
                 return new t_protocol_responseReader(response.Buffer, response.Offset);
             }
             finally { }
         }
         [ELIF("!$t_protocol->has_request() && $t_protocol->is_asyn_req_rsp_protocol()")]
-        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ Task<t_protocol_responseReader> t_method_name_3([META_OUTPUT("%arg_extension_method_target")] int partitionId)
+        public unsafe static Task<t_protocol_responseReader> t_method_name_3(this Trinity.Storage.IMessagePassingEndpoint storage)
         {
             byte* bufferPtr = stackalloc byte[TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength];
             try
@@ -138,14 +128,14 @@ namespace t_Namespace
                 *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
                 *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
                 *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
-                t_send_message(partitionId, bufferPtr, TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+                t_send_message(/*IF("node->type() == PGT_MODULE")*/storage, /*END*/bufferPtr, TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
                 return task_source.Task;
             }
             finally { }
         }
         [ELSE]
         //("$t_protocol->has_request() && $t_protocol->is_asyn_req_rsp_protocol()")
-        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ Task<t_protocol_responseReader> t_method_name_3([META_OUTPUT("%arg_extension_method_target")] int partitionId, t_protocol_requestWriter msg)
+        public unsafe static Task<t_protocol_responseReader> t_method_name_3(this Trinity.Storage.IMessagePassingEndpoint storage, t_protocol_requestWriter msg)
         {
             byte** bufferPtrs = stackalloc byte*[2];
             int*   size       = stackalloc int[2];
@@ -165,35 +155,32 @@ namespace t_Namespace
                 *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
                 *(int*)(bufferPtr + TrinityProtocol.MsgHeader) = token;
                 *(int*)(bufferPtr + TrinityProtocol.MsgHeader + sizeof(int)) = Global.CloudStorage.MyInstanceId;
-                t_send_message(partitionId, bufferPtrs, size, 2);
+                t_send_message(/*IF("node->type() == PGT_MODULE")*/storage, /*END*/bufferPtrs, size, 2);
                 return task_source.Task;
             }
             finally { }
         }
+
+
         [END]
 
         [END]//IF not HTTP
         [END]//FOREACH
 
         [MODULE_END]
-        private static unsafe void t_send_message(int partitionId, byte* bufferPtr, int msgHeader)
+        private static unsafe void t_send_message(IMessagePassingEndpoint storage, byte** bufferPtrs, int* size, int v)
         {
             throw new NotImplementedException();
         }
-        private static unsafe void t_send_message(int partitionId, byte* bufferPtr, int msgHeader, out TrinityResponse response)
+        private static unsafe void t_send_message(IMessagePassingEndpoint storage, byte* bufferPtr, int msgHeader)
+        {
+            throw new NotImplementedException();
+        }
+        private static unsafe void t_send_message(IMessagePassingEndpoint storage, byte* bufferPtr, int msgHeader, out TrinityResponse response)
         {
             throw new NotImplementedException();
         }
 
-        private static unsafe void t_send_message(int partitionId, byte** bufferPtrs, int* size, int v)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static unsafe void t_send_message(int partitionId, byte** bufferPtrs, int* size, int v, out TrinityResponse response)
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public unsafe class t_protocol_requestWriter

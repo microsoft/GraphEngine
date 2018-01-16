@@ -186,6 +186,9 @@
     <ClCompile Include="MessageAccessors.cs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MODULES\LegacyMessagePassingMethods.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CodeGen\Trinity.TSL.CodeGen.h">

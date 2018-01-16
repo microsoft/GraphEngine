@@ -16,6 +16,7 @@ using Trinity.Network.Messaging;
 using Trinity.Network.Sockets;
 using Trinity.Core.Lib;
 using System.Runtime.CompilerServices;
+using Trinity.Network;
 
 namespace Trinity.Storage
 {
@@ -171,6 +172,12 @@ namespace Trinity.Storage
             _serialize(message, sizes, count, out buf, out len);
             SendMessage(buf, len, out response);
             CMemory.C_free(buf);
+        }
+
+        /// <inheritdoc/>
+        public T GetModule<T>() where T: CommunicationModule
+        {
+            return Global.CommunicationInstance.GetCommunicationModule<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

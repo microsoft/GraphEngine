@@ -46,9 +46,12 @@ namespace Trinity.Storage
         /// </summary>
         public int PartitionId { get; protected set; }
 
-        internal RemoteStorage(ServerInfo server_info, int connPerServer) : this(new[] { server_info }, connPerServer) { }
+        /// <summary>
+        /// Client mode ctor
+        /// </summary>
+        internal RemoteStorage(ServerInfo server_info, int connPerServer) : this(new[] { server_info }, connPerServer, mc: null, partitionId: -1, nonblocking: false) { }
 
-        protected internal RemoteStorage(IEnumerable<ServerInfo> servers, int connPerServer, MemoryCloud mc = null, int partitionId = -1, bool nonblocking = false)
+        protected internal RemoteStorage(IEnumerable<ServerInfo> servers, int connPerServer, MemoryCloud mc, int partitionId, bool nonblocking)
         {
             this.m_memorycloud = mc;
             this.PartitionId = partitionId;

@@ -135,6 +135,7 @@
     <ClCompile Include="MODULES\CommunicationSchemaModule.cs.cpp" />
     <ClCompile Include="MODULES\EnumerateFromFieldModule.cs.cpp" />
     <ClCompile Include="MODULES\HTTPModule.cs.cpp" />
+    <ClCompile Include="MODULES\LegacyMessagePassingMethods.cs.cpp" />
     <ClCompile Include="MODULES\MessagePassingMethods.cs.cpp" />
     <ClCompile Include="MODULES\OptionalFields.cs.cpp" />
     <ClCompile Include="MODULES\SerializeParametersToBuffer.cs.cpp" />

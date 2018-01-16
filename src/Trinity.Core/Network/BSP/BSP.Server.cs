@@ -76,11 +76,14 @@ namespace Trinity.Network
             }
             SpinLockInt32.ReleaseLock(ref spin_lock);
 
+            Parallel.ForEach(
+                Global.CloudStorage.Where(_ => _ != Global.LocalStorage),
+                part => part.SendMessage(msg.Buffer, msg.Size));
             Parallel.For(0, Global.ServerCount, i =>
                 {
                     if (i != Global.MyPartitionId)
                     {
-                        storage.SendMessageToServer(i, msg.Buffer, msg.Size);
+                        storage[i].SendMessage(msg.Buffer, msg.Size);
                     }
                 }
             );

@@ -13,12 +13,20 @@ namespace Trinity.Storage
     public interface IGenericCellOperations
     {
         /// <summary>
+        /// Loads the content of the cell with the specified cell Id.
+        /// </summary>
+        /// <param name="storage">A <see cref="Trinity.Storage.IKeyValueStore"/> object to load from.</param>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <returns>An generic cell instance that implements <see cref="Trinity.Storage.ICell"/> interfaces.</returns>
+        ICell LoadGenericCell(IKeyValueStore storage, long cellId);
+
+        /// <summary>
         /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
         /// Note that the generic cell will be saved as a strongly typed cell. It can then be loaded into either a strongly-typed cell or a generic cell.
         /// </summary>
-        /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> object.</param>
+        /// <param name="storage">A <see cref="Trinity.Storage.IKeyValueStore"/> object.</param>
         /// <param name="cell">The cell to be saved.</param>
-        void SaveGenericCell(LocalMemoryStorage storage, ICell cell);
+        void SaveGenericCell(IKeyValueStore storage, ICell cell);
 
         /// <summary>
         /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
@@ -26,10 +34,34 @@ namespace Trinity.Storage
         /// The <paramref name="cellId"/> overrides the cell id in <paramref name="cell"/>.
         /// </summary>
         /// <param name="cellId">A 64-bit cell id.</param>
-        /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> object.</param>
+        /// <param name="storage">A <see cref="Trinity.Storage.IKeyValueStore"/> object.</param>
         /// <param name="cell">The cell to be saved.</param>
-        void SaveGenericCell(LocalMemoryStorage storage, long cellId, ICell cell);
+        void SaveGenericCell(IKeyValueStore storage, long cellId, ICell cell);
 
+        /// <summary>
+        /// Instantiate a new generic cell with the specified type.
+        /// </summary>
+        /// <param name="cellType">The string representation of the cell type.</param>
+        /// <returns>The allocated generic cell.</returns>
+        ICell NewGenericCell(string cellType);
+
+        /// <summary>
+        /// Instantiate a new generic cell with the specified type and a cell ID.
+        /// </summary>
+        /// <param name="cellId">Cell Id.</param>
+        /// <param name="cellType">The string representation of the cell type.</param>
+        /// <returns>The allocated generic cell.</returns>
+        ICell NewGenericCell(long cellId, string cellType);
+
+        /// <summary>
+        /// Instantiate a new generic cell with the specified type and a cell ID.
+        /// </summary>
+        /// <param name="cellType">The string representation of the cell type.</param>
+        /// <param name="content">The json representation of the cell.</param>
+        /// <returns>The allocated generic cell.</returns>
+        ICell NewGenericCell(string cellType, string content);
+
+        #region LocalMemoryStorage specialized operations
         /// <summary>
         /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
         /// Note that the generic cell will be saved as a strongly typed cell. It can then be loaded into either a strongly-typed cell or a generic cell.
@@ -57,29 +89,6 @@ namespace Trinity.Storage
         /// <param name="cellId">A 64-bit cell Id.</param>
         /// <returns>An generic cell instance that implements <see cref="Trinity.Storage.ICell"/> interfaces.</returns>
         ICell LoadGenericCell(LocalMemoryStorage storage, long cellId);
-
-        /// <summary>
-        /// Instantiate a new generic cell with the specified type.
-        /// </summary>
-        /// <param name="cellType">The string representation of the cell type.</param>
-        /// <returns>The allocated generic cell.</returns>
-        ICell NewGenericCell(string cellType);
-
-        /// <summary>
-        /// Instantiate a new generic cell with the specified type and a cell ID.
-        /// </summary>
-        /// <param name="cellId">Cell Id.</param>
-        /// <param name="cellType">The string representation of the cell type.</param>
-        /// <returns>The allocated generic cell.</returns>
-        ICell NewGenericCell(long cellId, string cellType);
-
-        /// <summary>
-        /// Instantiate a new generic cell with the specified type and a cell ID.
-        /// </summary>
-        /// <param name="cellType">The string representation of the cell type.</param>
-        /// <param name="content">The json representation of the cell.</param>
-        /// <returns>The allocated generic cell.</returns>
-        ICell NewGenericCell(string cellType, string content);
 
         /// <summary>
         /// Allocate a generic cell accessor on the specified cell.
@@ -132,42 +141,23 @@ namespace Trinity.Storage
         /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> object.</param>
         /// <returns>The accessors of all the typed cells within the local memory storage.</returns>
         IEnumerable<ICellAccessor> EnumerateGenericCellAccessors(LocalMemoryStorage storage);
+        #endregion
 
-        /// <summary>
-        /// Loads the content of the cell with the specified cell Id.
-        /// </summary>
-        /// <param name="storage">The cloud storage to load from.</param>
-        /// <param name="cellId">A 64-bit cell Id.</param>
-        /// <returns>An generic cell instance that implements <see cref="Trinity.Storage.ICell"/> interfaces.</returns>
-        ICell LoadGenericCell(MemoryCloud storage, long cellId);
-
-        /// <summary>
-        /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
-        /// Note that the generic cell will be saved as a strongly typed cell. It can then be loaded into either a strongly-typed cell or a generic cell.
-        /// </summary>
-        /// <param name="storage">The cloud storage to save to.</param>
-        /// <param name="cell">The cell to be saved.</param>
-        void SaveGenericCell(MemoryCloud storage, ICell cell);
     }
 
     internal class DefaultGenericCellOperations : IGenericCellOperations
     {
-        public void SaveGenericCell(LocalMemoryStorage storage, ICell cell)
+        public IEnumerable<ICellAccessor> EnumerateGenericCellAccessors(LocalMemoryStorage storage)
         {
             throw new NotImplementedException();
         }
 
-        public void SaveGenericCell(LocalMemoryStorage storage, long cellId, ICell cell)
+        public IEnumerable<ICell> EnumerateGenericCells(LocalMemoryStorage storage)
         {
             throw new NotImplementedException();
         }
 
-        public void SaveGenericCell(LocalMemoryStorage storage, CellAccessOptions writeAheadLogOptions, ICell cell)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SaveGenericCell(LocalMemoryStorage storage, CellAccessOptions writeAheadLogOptions, long cellId, ICell cell)
+        public ICell LoadGenericCell(IKeyValueStore storage, long cellId)
         {
             throw new NotImplementedException();
         }
@@ -192,6 +182,26 @@ namespace Trinity.Storage
             throw new NotImplementedException();
         }
 
+        public void SaveGenericCell(IKeyValueStore storage, ICell cell)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SaveGenericCell(IKeyValueStore storage, long cellId, ICell cell)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SaveGenericCell(LocalMemoryStorage storage, CellAccessOptions writeAheadLogOptions, ICell cell)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SaveGenericCell(LocalMemoryStorage storage, CellAccessOptions writeAheadLogOptions, long cellId, ICell cell)
+        {
+            throw new NotImplementedException();
+        }
+
         public ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId)
         {
             throw new NotImplementedException();
@@ -203,26 +213,6 @@ namespace Trinity.Storage
         }
 
         public ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId, CellAccessOptions options, string cellType)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ICell LoadGenericCell(MemoryCloud storage, long cellId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SaveGenericCell(MemoryCloud storage, ICell cell)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<ICell> EnumerateGenericCells(LocalMemoryStorage storage)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<ICellAccessor> EnumerateGenericCellAccessors(LocalMemoryStorage storage)
         {
             throw new NotImplementedException();
         }

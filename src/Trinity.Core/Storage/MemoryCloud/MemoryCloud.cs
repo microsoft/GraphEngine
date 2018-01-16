@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -14,7 +15,7 @@ namespace Trinity.Storage
     /// <summary>
     /// Provides methods for interacting with the distributed memory store.
     /// </summary>
-    public unsafe abstract partial class MemoryCloud : IKeyValueStore
+    public unsafe abstract partial class MemoryCloud : IKeyValueStore, IEnumerable<IMessagePassingEndpoint>
     {
         #region Abstract interfaces
         public abstract bool Open(ClusterConfig config, bool nonblocking);
@@ -139,6 +140,22 @@ namespace Trinity.Storage
         private Func<long, string, ICell> m_NewGenericCell_long_string;
         private Func<string, string, ICell> m_NewGenericCell_string_string;
 
+        /// <summary>
+        /// Gets the message passing endpoint bound to a partition.
+        /// </summary>
+        /// <param name="partitionId">The id of the target partition.</param>
+        /// <returns></returns>
+        public IMessagePassingEndpoint this[int partitionId] => StorageTable[partitionId];
+        /// <inheritdoc/>
+        public IEnumerator<IMessagePassingEndpoint> GetEnumerator()
+        {
+            return StorageTable.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
 
         /// <summary>
         /// An event that is triggered when a server is connected.
@@ -388,94 +405,6 @@ namespace Trinity.Storage
             Dispose(false);
         }
         #endregion//IDisposable
-
-        #region Public
-        /// <summary>
-        /// Send a binary message to the specified Trinity server.
-        /// </summary>
-        /// <param name="serverId">A 32-bit server id.</param>
-        /// <param name="buffer">A binary message buffer.</param>
-        /// <param name="size">The size of the message.</param>
-        public virtual void SendMessageToServer(int serverId, byte* buffer, int size)
-        {
-            var storage = StorageTable[serverId];
-            storage.SendMessage(buffer, size);
-        }
-
-        /// <summary>
-        /// Send a binary message to the specified Trinity server.
-        /// </summary>
-        /// <param name="serverId">A 32-bit server id.</param>
-        /// <param name="buffer">A binary message buffer.</param>
-        /// <param name="size">The size of the message.</param>
-        /// <param name="response">The TrinityResponse object returned by the Trinity server.</param>
-        public virtual void SendMessageToServer(int serverId, byte* buffer, int size, out TrinityResponse response)
-        {
-            StorageTable[serverId].SendMessage(buffer, size, out response);
-        }
-
-        /// <summary>
-        /// Send a binary message to the specified Trinity server.
-        /// </summary>
-        /// <param name="serverId">A 32-bit server id.</param>
-        /// <param name="buffers">A binary message buffer.</param>
-        /// <param name="sizes">The size of the message.</param>
-        /// <param name="count">The number of segments in buffers</param>
-        public virtual void SendMessageToServer(int serverId, byte** buffers, int* sizes, int count)
-        {
-            StorageTable[serverId].SendMessage(buffers, sizes, count);
-        }
-
-        /// <summary>
-        /// Send a binary message to the specified Trinity server.
-        /// </summary>
-        /// <param name="serverId">A 32-bit server id.</param>
-        /// <param name="buffers">A binary message buffer.</param>
-        /// <param name="sizes">The size of the message.</param>
-        /// <param name="count">The number of segments in buffers</param>
-        /// <param name="response">The TrinityResponse object returned by the Trinity server.</param>
-        public virtual void SendMessageToServer(int serverId, byte** buffers, int* sizes, int count, out TrinityResponse response)
-        {
-            StorageTable[serverId].SendMessage(buffers, sizes, count, out response);
-        }
-
-        /// <summary>
-        /// Send a binary message to the specified Trinity proxy.
-        /// </summary>
-        /// <param name="proxyId">A 32-bit proxy id.</param>
-        /// <param name="buffer">A binary message buffer.</param>
-        /// <param name="size">The size of the message.</param>
-        public abstract void SendMessageToProxy(int proxyId, byte* buffer, int size);
-
-        /// <summary>
-        /// Send a binary message to the specified Trinity proxy.
-        /// </summary>
-        /// <param name="proxyId">A 32-bit proxy id.</param>
-        /// <param name="buffer">A binary message buffer.</param>
-        /// <param name="size">The size of the message.</param>
-        /// <param name="response">The TrinityResponse object returned by the Trinity proxy.</param>
-        public abstract void SendMessageToProxy(int proxyId, byte* buffer, int size, out TrinityResponse response);
-
-        /// <summary>
-        /// Send a binary message to the specified Trinity proxy.
-        /// </summary>
-        /// <param name="proxyId">A 32-bit proxy id.</param>
-        /// <param name="buffers">A binary message buffer.</param>
-        /// <param name="sizes">The size of the message.</param>
-        /// <param name="count">The number of segments in buffers</param>
-        public abstract void SendMessageToProxy(int proxyId, byte** buffers, int* sizes, int count);
-
-        /// <summary>
-        /// Send a binary message to the specified Trinity proxy.
-        /// </summary>
-        /// <param name="proxyId">A 32-bit proxy id.</param>
-        /// <param name="buffers">A binary message buffer.</param>
-        /// <param name="sizes">The size of the message.</param>
-        /// <param name="count">The number of segments in buffers</param>
-        /// <param name="response">The TrinityResponse object returned by the Trinity proxy.</param>
-        public abstract void SendMessageToProxy(int proxyId, byte** buffers, int* sizes, int count, out TrinityResponse response);
-
-        #endregion
 
         /// <summary>
         /// Gets the total memory usage.

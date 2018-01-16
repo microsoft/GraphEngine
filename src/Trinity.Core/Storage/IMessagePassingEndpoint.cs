@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Trinity.Network;
 using Trinity.Network.Messaging;
 
 namespace Trinity.Storage
@@ -16,5 +17,6 @@ namespace Trinity.Storage
         void SendMessage(byte* message, int size, out TrinityResponse response);
         void SendMessage(byte** message, int* sizes, int count);
         void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response);
+        T GetModule<T>() where T : CommunicationModule;
     }
 }
