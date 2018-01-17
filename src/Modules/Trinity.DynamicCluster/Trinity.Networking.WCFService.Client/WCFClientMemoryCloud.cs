@@ -48,16 +48,6 @@ namespace Trinity.Networking.WCFService.Client
             throw new NotImplementedException();
         }
 
-        public override unsafe void SendMessageToProxy(int proxyId, byte* buffer, int size)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override unsafe void SendMessageToProxy(int proxyId, byte* buffer, int size, out TrinityResponse response)
-        {
-            throw new NotImplementedException();
-        }
-
         public override bool Open(ClusterConfig config, bool nonblocking)
         {
             this.m_storagetable = new IStorage[]
@@ -74,16 +64,6 @@ namespace Trinity.Networking.WCFService.Client
             };
 
             return true;
-        }
-
-        public override unsafe void SendMessageToProxy(int proxyId, byte** buffers, int* sizes, int count)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override unsafe void SendMessageToProxy(int proxyId, byte** buffers, int* sizes, int count, out TrinityResponse response)
-        {
-            throw new NotImplementedException();
         }
 
         public override long GetTotalMemoryUsage()

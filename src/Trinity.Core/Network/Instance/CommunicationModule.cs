@@ -119,7 +119,7 @@ namespace Trinity.Network
         /// <param name="sizes">The size of the message.</param>
         /// <param name="count">The number of buffers.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte** buffers, int* sizes, int count)
+        protected internal unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte** buffers, int* sizes, int count)
         {
             byte b_msg_type = PointerHelper.GetByte(buffers, sizes, TrinityProtocol.MsgTypeOffset);
             PointerHelper.Add(buffers, sizes, TrinityProtocol.MsgIdOffset, m_MessageIdOffsets[b_msg_type]);
@@ -138,7 +138,7 @@ namespace Trinity.Network
         /// <param name="count">The number of buffers.</param>
         /// <param name="response">The TrinityResponse object returned by the remote module.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte** buffers, int* sizes, int count, out TrinityResponse response)
+        protected internal unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte** buffers, int* sizes, int count, out TrinityResponse response)
         {
             byte b_msg_type = PointerHelper.GetByte(buffers, sizes, TrinityProtocol.MsgTypeOffset);
             PointerHelper.Add(buffers, sizes, TrinityProtocol.MsgIdOffset, m_MessageIdOffsets[b_msg_type]);
@@ -155,7 +155,7 @@ namespace Trinity.Network
         /// <param name="buffer">A binary message buffer.</param>
         /// <param name="size">The size of the message.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte* buffer, int size)
+        protected internal unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte* buffer, int size)
         {
             byte b_msg_type = *(buffer + TrinityProtocol.MsgTypeOffset);
             *(ushort*)(buffer + TrinityProtocol.MsgIdOffset) += m_MessageIdOffsets[b_msg_type];
@@ -173,7 +173,7 @@ namespace Trinity.Network
         /// <param name="size">The size of the message.</param>
         /// <param name="response">The TrinityResponse object returned by the remote module.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte* buffer, int size, out TrinityResponse response)
+        protected internal unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte* buffer, int size, out TrinityResponse response)
         {
             byte b_msg_type = *(buffer + TrinityProtocol.MsgTypeOffset);
             *(ushort*)(buffer + TrinityProtocol.MsgIdOffset) += m_MessageIdOffsets[b_msg_type];

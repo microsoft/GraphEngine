@@ -32,7 +32,7 @@ send_message_method_1 = "storage.SendMessage";
 }
 else
 {
-send_message_method_1 = "storage.GetModule<" + *node->name + "Base>().SendMessage";
+send_message_method_1 = "storage.SendMessage<" + *node->name + "Base>";
 }
 source->append(R"::(
         #endregion
@@ -64,12 +64,7 @@ source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(;
                 )::");
 source->append(Codegen::GetString(send_message_method_1));
-source->append(R"::(()::");
-if (node->type() == PGT_MODULE)
-{
-source->append(R"::(storage, )::");
-}
-source->append(R"::(bufferPtr, TrinityProtocol.MsgHeader);
+source->append(R"::((bufferPtr, TrinityProtocol.MsgHeader);
             }
             finally { Memory.free(bufferPtr); }
         }
@@ -104,12 +99,7 @@ source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(;
                 )::");
 source->append(Codegen::GetString(send_message_method_1));
-source->append(R"::(()::");
-if (node->type() == PGT_MODULE)
-{
-source->append(R"::(storage, )::");
-}
-source->append(R"::(bufferPtr, msg.Length + TrinityProtocol.MsgHeader);
+source->append(R"::((bufferPtr, msg.Length + TrinityProtocol.MsgHeader);
             }
             finally { }
         }
@@ -145,12 +135,7 @@ source->append(R"::(;
                 TrinityResponse response;
                 )::");
 source->append(Codegen::GetString(send_message_method_1));
-source->append(R"::(()::");
-if (node->type() == PGT_MODULE)
-{
-source->append(R"::(storage, )::");
-}
-source->append(R"::(bufferPtr, TrinityProtocol.MsgHeader, out response);
+source->append(R"::((bufferPtr, TrinityProtocol.MsgHeader, out response);
                 return new )::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->referencedNProtocol->response_message_struct));
 source->append(R"::(Reader(response.Buffer, response.Offset);
@@ -191,12 +176,7 @@ source->append(R"::(;
                 TrinityResponse response;
                 )::");
 source->append(Codegen::GetString(send_message_method_1));
-source->append(R"::(()::");
-if (node->type() == PGT_MODULE)
-{
-source->append(R"::(storage, )::");
-}
-source->append(R"::(bufferPtr, msg.Length + TrinityProtocol.MsgHeader, out response);
+source->append(R"::((bufferPtr, msg.Length + TrinityProtocol.MsgHeader, out response);
                 return new )::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->referencedNProtocol->response_message_struct));
 source->append(R"::(Reader(response.Buffer, response.Offset);
@@ -249,12 +229,7 @@ source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(;
                 )::");
 source->append(Codegen::GetString(send_message_method_1));
-source->append(R"::(()::");
-if (node->type() == PGT_MODULE)
-{
-source->append(R"::(storage, )::");
-}
-source->append(R"::(bufferPtr, TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+source->append(R"::((bufferPtr, TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
                 return task_source.Task;
             }
             finally { }
@@ -313,12 +288,7 @@ source->append(R"::(;
                 *(int*)(bufferPtr + TrinityProtocol.MsgHeader + sizeof(int)) = Global.CloudStorage.MyInstanceId;
                 )::");
 source->append(Codegen::GetString(send_message_method_1));
-source->append(R"::(()::");
-if (node->type() == PGT_MODULE)
-{
-source->append(R"::(storage, )::");
-}
-source->append(R"::(bufferPtrs, size, 2);
+source->append(R"::((bufferPtrs, size, 2);
                 return task_source.Task;
             }
             finally { }

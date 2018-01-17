@@ -9,6 +9,7 @@ using t_Namespace.MODULES;
 using Trinity;
 using Trinity.Core.Lib;
 using Trinity.Network.Messaging;
+using Trinity.Storage;
 using Trinity.TSL;
 
 namespace t_Namespace
@@ -28,10 +29,6 @@ namespace t_Namespace
     [MAP_VAR("t_protocol_request", "referencedNProtocol->request_message_struct")]
     [MAP_VAR("t_protocol_response", "referencedNProtocol->response_message_struct")]
     [MAP_VAR("t_protocol_type", "get_comm_protocol_type_string($$->referencedNProtocol)")]
-    [META_VAR("std::string", "send_message_method")]
-    [MAP_VAR("t_send_message", "%send_message_method")]
-    [META_VAR("std::string", "method_name")]
-    [MAP_VAR("t_method_name", "%method_name")]
     public abstract partial class t_comm_nameBase : t_base_class_name
     {
         protected override void RegisterMessageHandler()
@@ -66,19 +63,6 @@ namespace t_Namespace
 
         [FOREACH]
         [META("if($t_protocol->is_http_protocol()){continue;}")]
-
-        #region prototype definition template variables
-        [IF("node->type() == PGT_SERVER")]
-        [META("%method_name = *$t_protocol_name + \"To\" + *$t_comm_name;")]
-        [META("%send_message_method = \"Global.CloudStorage.SendMessageToServer\";")]
-        [ELIF("node->type() == PGT_PROXY")]
-        [META("%method_name = *$t_protocol_name + \"To\" + *$t_comm_name;")]
-        [META("%send_message_method = \"Global.CloudStorage.SendMessageToProxy\";")]
-        [ELSE]//PGT_MODULE
-        [META("%method_name = *$t_protocol_name;")]
-        [META("%send_message_method = \"this.SendMessage\";")]
-        [END]
-        #endregion
 
         [IF("!$t_protocol->has_response()")]
         //SYNC and ASYNC, no response;
@@ -137,7 +121,11 @@ namespace t_Namespace
                 *(ushort*)(rsp.buffer + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name__Response;
                 *(int*)(rsp.CellPtr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength) = token;
                 *(int*)(rsp.CellPtr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength + sizeof(int)) = 0;
-                t_send_message(from, rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+                IF("node->type() == PGT_MODULE");
+                this.SendMessage(m_memorycloud[from], rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+                ELSE();
+                Global.CloudStorage[from].SendMessage(rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+                END();
             }
         }
 
@@ -159,7 +147,11 @@ namespace t_Namespace
                 *(ushort*)(rsp.buffer + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name__Response;
                 *(int*)(rsp.CellPtr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength) = token;
                 *(int*)(rsp.CellPtr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength + sizeof(int)) = 0;
-                t_send_message(from, rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+                IF("node->type() == PGT_MODULE");
+                this.SendMessage(m_memorycloud[from], rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+                ELSE();
+                Global.CloudStorage[from].SendMessage(rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+                END();
             }
         }
 
@@ -183,7 +175,11 @@ namespace t_Namespace
                 *(ushort*)(p + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name__Response;
                 *(int*)(p + TrinityProtocol.MsgHeader) = token;
                 *(int*)(p + TrinityProtocol.MsgHeader + sizeof(int)) = -1;
-                t_send_message(from, p, rsp.Length);
+                IF("node->type() == PGT_MODULE");
+                this.SendMessage(m_memorycloud[from], p, rsp.Length);
+                ELSE();
+                Global.CloudStorage[from].SendMessage(p, rsp.Length);
+                END();
             }
             ExceptionDispatchInfo.Capture(exception).Throw();
         }
@@ -221,7 +217,8 @@ namespace t_Namespace
         [END]//FOREACH METHOD
 
         [MUTE]
-        void commclass__placeholder() { }
+
+        private static MemoryCloud m_memorycloud = null;
         /*MUTE_END*/
     }
 
