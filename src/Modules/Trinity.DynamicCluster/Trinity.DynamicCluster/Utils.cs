@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -221,6 +222,29 @@ namespace Trinity.DynamicCluster
             }
         }
 
+        public static Func<T> ParallelGetter<T>(this IEnumerable<T> source, int readAhead = 32)
+        {
+            ConcurrentQueue<T> queue = new ConcurrentQueue<T>();
+            object syncobj = new object();
+            var iter = source.GetEnumerator();
+            return () =>
+            {
+                T result;
+                while (!queue.TryDequeue(out result))
+                {
+                    lock (syncobj)
+                    {
+                        for(int i = 0; i < readAhead; ++i)
+                        {
+                            iter.MoveNext();
+                            queue.Enqueue(iter.Current);
+                        }
+                    }
+                }
+                return result;
+            };
+        }
+
         private static IEnumerable<T> _UniformRandom<T>(IEnumerable<T> source)
         {
             var arr = source.ToArray();
@@ -235,7 +259,7 @@ namespace Trinity.DynamicCluster
         {
             while (true)
             {
-                foreach(var element in source)
+                foreach (var element in source)
                 {
                     yield return element;
                 }

@@ -10,23 +10,23 @@ namespace Trinity.DynamicCluster.Storage
 {
     internal unsafe partial class Partition
     {
-        public void RoundRobin(Action<IMessagePassingEndpoint> sendFunc)
+        public void FirstAvailable(Action<IMessagePassingEndpoint> sendFunc)
         {
-            var current = m_roundrobin_getter();
+            var current = m_firstavailable_getter();
             if (current == null) throw new NoSuitableReplicaException();
             sendFunc(current);
         }
 
-        public TResponse RoundRobin<TResponse>(Func<IMessagePassingEndpoint, TResponse> sendFunc)
+        public TResponse FirstAvailable<TResponse>(Func<IMessagePassingEndpoint, TResponse> sendFunc)
         {
-            var current = m_roundrobin_getter();
+            var current = m_firstavailable_getter();
             if (current == null) throw new NoSuitableReplicaException();
             return sendFunc(current);
         }
 
-        public Task<TResponse> RoundRobin<TResponse>(Func<IMessagePassingEndpoint, Task<TResponse>> sendFunc)
+        public Task<TResponse> FirstAvailable<TResponse>(Func<IMessagePassingEndpoint, Task<TResponse>> sendFunc)
         {
-            var current = m_roundrobin_getter();
+            var current = m_firstavailable_getter();
             if (current == null) throw new NoSuitableReplicaException();
             return sendFunc(current);
         }

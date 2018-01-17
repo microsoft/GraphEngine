@@ -17,6 +17,7 @@ using Trinity.DynamicCluster;
 using Trinity.Configuration;
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Immutable;
 
 namespace Trinity.DynamicCluster.Storage
 {
@@ -27,26 +28,51 @@ namespace Trinity.DynamicCluster.Storage
     /// </summary>
     internal unsafe partial class Partition : IStorage, IEnumerable<IStorage>
     {
-        private ConcurrentDictionary<IStorage, IEnumerable<Chunk>> m_storages = new ConcurrentDictionary<IStorage, IEnumerable<Chunk>>();
+        private ImmutableDictionary<IStorage, IEnumerable<Chunk>> m_storages = null;
+        private object m_syncroot = new object();
+        private Func<IMessagePassingEndpoint> m_firstavailable_getter = null;
+        private Func<IMessagePassingEndpoint> m_roundrobin_getter = null;
+        private Func<IMessagePassingEndpoint> m_random_getter = null;
+
+        public Partition()
+        {
+            m_storages = ImmutableDictionary<IStorage, IEnumerable<Chunk>>.Empty;
+            _UpdateIterators();
+        }
 
         internal TrinityErrorCode Mount(IStorage storage, IEnumerable<Chunk> cc)
         {
-            m_storages[storage] = cc;
-            return TrinityErrorCode.E_SUCCESS;
+            lock (m_syncroot)
+            {
+                m_storages = m_storages.SetItem(storage, cc);
+                _UpdateIterators();
+                return TrinityErrorCode.E_SUCCESS;
+            }
+        }
+
+        private void _UpdateIterators()
+        {
+            m_firstavailable_getter = Utils.Schedule(this, Utils.SchedulePolicy.First).ParallelGetter();
+            m_random_getter         = Utils.Schedule(this, Utils.SchedulePolicy.UniformRandom).ParallelGetter();
+            m_roundrobin_getter     = Utils.Schedule(this, Utils.SchedulePolicy.RoundRobin).ParallelGetter();
         }
 
         internal TrinityErrorCode Unmount(IStorage s)
         {
-            try
+            lock (m_syncroot)
             {
-                m_storages.TryRemove(s, out var _);
-                return TrinityErrorCode.E_SUCCESS;
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(LogLevel.Error, "ChunkedStorage: Errors occurred during Unmount.");
-                Log.WriteLine(LogLevel.Error, ex.ToString());
-                return TrinityErrorCode.E_FAILURE;
+                try
+                {
+                    m_storages = m_storages.Remove(s);
+                    _UpdateIterators();
+                    return TrinityErrorCode.E_SUCCESS;
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, "ChunkedStorage: Errors occurred during Unmount.");
+                    Log.WriteLine(LogLevel.Error, ex.ToString());
+                    return TrinityErrorCode.E_FAILURE;
+                }
             }
         }
 
@@ -62,7 +88,7 @@ namespace Trinity.DynamicCluster.Storage
         /// <returns></returns>
         private IEnumerable<IStorage> PickStorages(long cellId)
         {
-            return this.Where(s => m_storages[s].Any(c => c.Covers(cellId)));
+            return m_storages.Where(s => s.Value.Any(c => c.Covers(cellId))).Select(_ => _.Key);
         }
 
         #region IEnumerable

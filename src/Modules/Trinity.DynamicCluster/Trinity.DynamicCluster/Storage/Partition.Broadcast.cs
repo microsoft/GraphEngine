@@ -11,15 +11,13 @@ namespace Trinity.DynamicCluster.Storage
     internal unsafe partial class Partition
     {
         public void Broadcast(Action<IMessagePassingEndpoint> sendFunc)
-            => m_storages.Keys.ForEach(s => sendFunc(s));
+            => this.ForEach(s => sendFunc(s));
 
         public IEnumerable<TResponse> Broadcast<TResponse>(Func<IMessagePassingEndpoint, TResponse> sendFunc)
-            => m_storages.Keys.Select(sendFunc);
+            => this.Select(sendFunc);
 
         public Task<TResponse[]> Broadcast<TResponse>(Func<IMessagePassingEndpoint, Task<TResponse>> sendFunc)
-            => m_storages.Keys.Select(sendFunc).Unwrap();
-
-        // TODO First-available
+            => this.Select(sendFunc).Unwrap();
 
         // TODO chunk-aware dispatch and message grouping. Some protocols (like FanoutSearch)
         // combines multiple cellIds into a single message. In this case we should provide a

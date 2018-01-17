@@ -15,6 +15,7 @@ using System.Threading;
 using Trinity.DynamicCluster.Persistency;
 using System.IO;
 using Trinity.Core.Lib;
+using Trinity.DynamicCluster.DynamicCluster;
 
 namespace Trinity.DynamicCluster.Communication
 {
@@ -119,9 +120,7 @@ namespace Trinity.DynamicCluster.Communication
             {
                 using (batch)
                 {
-                    //TODO it'd be much better if we can have message passing extension bindings directly on Storage, instead of relying on memory cloud. 
-                    var idx = DynamicMemoryCloud.Instance.GetInstanceId(storage.ReplicaInformation.Id);
-                    using (var reader = await this.BatchSaveCells(idx, batch))
+                    using (var reader = await storage.BatchSaveCells(batch))
                     {
                         if (reader.throttle)
                         {

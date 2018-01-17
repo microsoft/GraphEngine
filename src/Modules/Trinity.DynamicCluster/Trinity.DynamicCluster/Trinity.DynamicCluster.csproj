@@ -34,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -88,6 +89,7 @@
     <Compile Include="Replication\UnrestrictedPlanner.cs" />
     <Compile Include="Storage\CloudIndex.cs" />
     <Compile Include="Replication\IReplicationPlanner.cs" />
+    <Compile Include="Storage\NoSuitableReplicaException.cs" />
     <Compile Include="Storage\Partition.Broadcast.cs" />
     <Compile Include="Storage\Partition.cs" />
     <Compile Include="Communication\DynamicClusterCommModule.cs" />
@@ -102,6 +104,9 @@
     <Compile Include="Replication\Partitioner.cs" />
     <Compile Include="Health\HealthStatus.cs" />
     <Compile Include="Replication\ReplicationMode.cs" />
+    <Compile Include="Storage\Partition.FirstAvailable.cs" />
+    <Compile Include="Storage\Partition.Vote.cs" />
+    <Compile Include="Storage\Partition.UniformRandom.cs" />
     <Compile Include="Storage\Partition.RoundRobin.cs" />
     <Compile Include="Storage\ProtocolAvailabilitySemantic.cs" />
     <Compile Include="Tasks\ChainedTasks.cs" />
