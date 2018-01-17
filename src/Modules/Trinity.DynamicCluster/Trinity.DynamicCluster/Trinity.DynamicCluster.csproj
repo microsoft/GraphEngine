@@ -88,11 +88,11 @@
     <Compile Include="Replication\UnrestrictedPlanner.cs" />
     <Compile Include="Storage\CloudIndex.cs" />
     <Compile Include="Replication\IReplicationPlanner.cs" />
+    <Compile Include="Storage\Partition.Broadcast.cs" />
     <Compile Include="Storage\Partition.cs" />
     <Compile Include="Communication\DynamicClusterCommModule.cs" />
     <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.Cmd.cs" />
     <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.cs" />
-    <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.KVStore.cs" />
     <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.Message.cs" />
     <Compile Include="Storage\Partition.KVStore.cs" />
     <Compile Include="Storage\DynamicRemoteStorage.cs" />
@@ -102,6 +102,8 @@
     <Compile Include="Replication\Partitioner.cs" />
     <Compile Include="Health\HealthStatus.cs" />
     <Compile Include="Replication\ReplicationMode.cs" />
+    <Compile Include="Storage\Partition.RoundRobin.cs" />
+    <Compile Include="Storage\ProtocolAvailabilitySemantic.cs" />
     <Compile Include="Tasks\ChainedTasks.cs" />
     <Compile Include="Tasks\GroupedTask.cs" />
     <Compile Include="Tasks\PersistedLoadTask.cs" />
@@ -117,7 +119,6 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <Compile Include="Storage\Partition.Availability.cs" />
     <TslCodegen Include="Communication\Trinity.DynamicClusterProtocols.tsl" />
   </ItemGroup>
   <ItemGroup>

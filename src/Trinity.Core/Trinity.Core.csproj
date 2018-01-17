@@ -129,10 +129,11 @@
     <Compile Include="Storage\IAccessor.cs" />
     <Compile Include="Storage\ICell.cs" />
     <Compile Include="Extension\IStorageSchema.cs" />
+    <Compile Include="Storage\IKeyValueStore.cs" />
+    <Compile Include="Storage\IMessagePassingEndpoint.cs" />
     <Compile Include="Storage\MemoryCloud\Chunk.cs" />
     <Compile Include="Storage\MemoryCloud\MemoryCloud.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.Enumeration.cs" />
-    <Compile Include="Storage\LocalMemoryStorage\Delegates.cs" />
     <Compile Include="Storage\Exceptions.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.C.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.Cell.cs" />
@@ -143,7 +144,9 @@
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.Performance.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.TrunkAddressing.cs" />
     <Compile Include="Network\AvailabilityGroup.cs" />
+    <Compile Include="Storage\MessagePassingExtensionMethods.cs" />
     <Compile Include="Storage\StorageCapacityProfile.cs" />
+    <Compile Include="Storage\StorageExtensionMethods.cs" />
     <Compile Include="Trinity\Configuration\ConfigurationConstants.cs" />
     <Compile Include="Trinity\Configuration\ConfigurationEntries\LoggingConfig.cs" />
     <Compile Include="Trinity\Configuration\ConfigurationEntries\NetworkConfig.cs" />
@@ -197,14 +200,13 @@
     <Compile Include="Storage\FixMemoryCloud\FixedMemoryCloud.Cmd.cs" />
     <Compile Include="Storage\FixMemoryCloud\FixedMemoryCloud.cs" />
     <Compile Include="Storage\FixMemoryCloud\FixedMemoryCloud.Message.cs" />
-    <Compile Include="Storage\FixMemoryCloud\FixedMemoryCloud.KVStore.cs" />
     <Compile Include="Storage\FixMemoryCloud\FixedMemoryCloud.Utility.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.cs" />
     <Compile Include="Storage\LocalMemoryStorage\LocalMemoryStorage.Message.cs" />
     <Compile Include="Storage\RemoteStorage\RemoteStorage.Message.cs" />
     <Compile Include="Storage\RemoteStorage\RemoteStorage.KVStore.cs" />
     <Compile Include="Storage\RemoteStorage\RemoteStorage.cs" />
-    <Compile Include="Storage\Storage.cs" />
+    <Compile Include="Storage\IStorage.cs" />
     <Compile Include="Trinity\Lib\BitHelper.Internal.cs" />
     <Compile Include="Trinity\Global.cs" />
     <Compile Include="Trinity\Global.Utility.cs" />
@@ -275,7 +277,6 @@
     </None>
     <None Include="NuGet\GraphEngine.Core.props" />
     <None Include="NuGet\GraphEngine.Core.targets" />
-    <Compile Include="Storage\MemoryCloud\MemoryCloud.KVStore.cs" />
     <None Include="Trinity\Configuration\TrinityConfig.Schema.xsd">
       <SubType>Designer</SubType>
     </None>

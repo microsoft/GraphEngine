@@ -20,23 +20,22 @@ using System.Collections.Concurrent;
 
 namespace Trinity.DynamicCluster.Storage
 {
-    using Storage = Trinity.Storage.Storage;
     /// <summary>
     /// A Partition represent multiple storages scattered across the cluster,
     /// which add up to a complete availability group (aka partition). Hence, it
     /// is both a storage, and a list of storages.
     /// </summary>
-    internal unsafe partial class Partition : Storage, IEnumerable<Storage>
+    internal unsafe partial class Partition : IStorage, IEnumerable<IStorage>
     {
-        private ConcurrentDictionary<Storage, IEnumerable<Chunk>> m_storages = new ConcurrentDictionary<Storage, IEnumerable<Chunk>>();
+        private ConcurrentDictionary<IStorage, IEnumerable<Chunk>> m_storages = new ConcurrentDictionary<IStorage, IEnumerable<Chunk>>();
 
-        internal TrinityErrorCode Mount(Storage storage, IEnumerable<Chunk> cc)
+        internal TrinityErrorCode Mount(IStorage storage, IEnumerable<Chunk> cc)
         {
             m_storages[storage] = cc;
             return TrinityErrorCode.E_SUCCESS;
         }
 
-        internal TrinityErrorCode Unmount(Storage s)
+        internal TrinityErrorCode Unmount(IStorage s)
         {
             try
             {
@@ -51,11 +50,6 @@ namespace Trinity.DynamicCluster.Storage
             }
         }
 
-        public override void Dispose()
-        {
-            m_storages.ForEach(kvp => kvp.Key.Dispose());
-        }
-
         internal bool IsLocal(long cellId)
         {
             return PickStorages(cellId).Any(s => s == Global.LocalStorage);
@@ -66,13 +60,13 @@ namespace Trinity.DynamicCluster.Storage
         /// </summary>
         /// <param name="cellId"></param>
         /// <returns></returns>
-        private IEnumerable<Storage> PickStorages(long cellId)
+        private IEnumerable<IStorage> PickStorages(long cellId)
         {
             return this.Where(s => m_storages[s].Any(c => c.Covers(cellId)));
         }
 
         #region IEnumerable
-        public IEnumerator<Storage> GetEnumerator()
+        public IEnumerator<IStorage> GetEnumerator()
         {
             return m_storages.Keys.GetEnumerator();
         }
@@ -80,6 +74,27 @@ namespace Trinity.DynamicCluster.Storage
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+        #endregion
+
+        #region IDisposable Support
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    m_storages.ForEach(kvp => kvp.Key.Dispose());
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
         }
         #endregion
     }

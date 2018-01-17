@@ -17,7 +17,7 @@ using System.Runtime.CompilerServices;
 
 namespace Trinity.Storage
 {
-    public partial class LocalMemoryStorage : Storage
+    public partial class LocalMemoryStorage
     {
         /// <summary>
         /// The total amount of trunk memory, in bytes.

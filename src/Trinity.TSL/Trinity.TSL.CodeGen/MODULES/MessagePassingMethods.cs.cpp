@@ -17,7 +17,6 @@ NProtocolGroup* node, ModuleContext* context)
                 string* source = new string();
                 
 std::string method_name_1;
-std::string arg_extension_method_target_1;
 std::string send_message_method_1;
 for (size_t iterator_1 = 0; iterator_1 < (node->protocolList)->size();++iterator_1)
 {
@@ -26,23 +25,14 @@ if (!(*(node->protocolList))[iterator_1]->referencedNProtocol->is_http_protocol(
 source->append(R"::(
         #region prototype definition template variables
         )::");
-if (node->type() == PGT_SERVER)
+method_name_1 = *(*(node->protocolList))[iterator_1]->name;
+if (node->type() == PGT_SERVER || node->type() == PGT_PROXY)
 {
-method_name_1 = *(*(node->protocolList))[iterator_1]->name + "To" + *node->name;
-arg_extension_method_target_1 = "this Trinity.Storage.MemoryCloud storage, ";
-send_message_method_1 = "storage.SendMessageToServer";
-}
-else if (node->type() == PGT_PROXY)
-{
-method_name_1 = *(*(node->protocolList))[iterator_1]->name + "To" + *node->name;
-arg_extension_method_target_1 = "this Trinity.Storage.MemoryCloud storage, ";
-send_message_method_1 = "storage.SendMessageToProxy";
+send_message_method_1 = "storage.SendMessage";
 }
 else
 {
-method_name_1 = *(*(node->protocolList))[iterator_1]->name;
-arg_extension_method_target_1 = "";
-send_message_method_1 = "this.SendMessage";
+send_message_method_1 = "storage.GetModule<" + *node->name + "Base>().SendMessage";
 }
 source->append(R"::(
         #endregion
@@ -50,16 +40,9 @@ source->append(R"::(
 if (!(*(node->protocolList))[iterator_1]->referencedNProtocol->has_request() && !(*(node->protocolList))[iterator_1]->referencedNProtocol->has_response())
 {
 source->append(R"::(
-        public unsafe )::");
-if (node->type() != PGT_MODULE)
-{
-source->append(R"::( static )::");
-}
-source->append(R"::( void )::");
+        public unsafe static void )::");
 source->append(Codegen::GetString(method_name_1));
-source->append(R"::(()::");
-source->append(Codegen::GetString(arg_extension_method_target_1));
-source->append(R"::( int partitionId)
+source->append(R"::((this Trinity.Storage.IMessagePassingEndpoint storage)
         {
             byte* bufferPtr = (byte*)Memory.malloc((ulong)TrinityProtocol.MsgHeader);
             try
@@ -81,7 +64,12 @@ source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(;
                 )::");
 source->append(Codegen::GetString(send_message_method_1));
-source->append(R"::((partitionId, bufferPtr, TrinityProtocol.MsgHeader);
+source->append(R"::(()::");
+if (node->type() == PGT_MODULE)
+{
+source->append(R"::(storage, )::");
+}
+source->append(R"::(bufferPtr, TrinityProtocol.MsgHeader);
             }
             finally { Memory.free(bufferPtr); }
         }
@@ -90,16 +78,9 @@ source->append(R"::((partitionId, bufferPtr, TrinityProtocol.MsgHeader);
 else if ((*(node->protocolList))[iterator_1]->referencedNProtocol->has_request() && !(*(node->protocolList))[iterator_1]->referencedNProtocol->has_response())
 {
 source->append(R"::(
-        public unsafe)::");
-if (node->type() != PGT_MODULE)
-{
-source->append(R"::( static)::");
-}
-source->append(R"::( void )::");
+        public unsafe static void )::");
 source->append(Codegen::GetString(method_name_1));
-source->append(R"::(()::");
-source->append(Codegen::GetString(arg_extension_method_target_1));
-source->append(R"::( int partitionId, )::");
+source->append(R"::((this Trinity.Storage.IMessagePassingEndpoint storage, )::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->referencedNProtocol->request_message_struct));
 source->append(R"::(Writer msg)
         {
@@ -123,7 +104,12 @@ source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(;
                 )::");
 source->append(Codegen::GetString(send_message_method_1));
-source->append(R"::((partitionId, bufferPtr, msg.Length + TrinityProtocol.MsgHeader);
+source->append(R"::(()::");
+if (node->type() == PGT_MODULE)
+{
+source->append(R"::(storage, )::");
+}
+source->append(R"::(bufferPtr, msg.Length + TrinityProtocol.MsgHeader);
             }
             finally { }
         }
@@ -132,18 +118,11 @@ source->append(R"::((partitionId, bufferPtr, msg.Length + TrinityProtocol.MsgHea
 else if (!(*(node->protocolList))[iterator_1]->referencedNProtocol->has_request() && (*(node->protocolList))[iterator_1]->referencedNProtocol->is_syn_req_rsp_protocol())
 {
 source->append(R"::(
-        public unsafe)::");
-if (node->type() != PGT_MODULE)
-{
-source->append(R"::( static)::");
-}
-source->append(R"::( )::");
+        public unsafe static )::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->referencedNProtocol->response_message_struct));
 source->append(R"::(Reader )::");
 source->append(Codegen::GetString(method_name_1));
-source->append(R"::(()::");
-source->append(Codegen::GetString(arg_extension_method_target_1));
-source->append(R"::( int partitionId)
+source->append(R"::((this Trinity.Storage.IMessagePassingEndpoint storage)
         {
             byte* bufferPtr = stackalloc byte[TrinityProtocol.MsgHeader];
             try
@@ -166,7 +145,12 @@ source->append(R"::(;
                 TrinityResponse response;
                 )::");
 source->append(Codegen::GetString(send_message_method_1));
-source->append(R"::((partitionId, bufferPtr, TrinityProtocol.MsgHeader, out response);
+source->append(R"::(()::");
+if (node->type() == PGT_MODULE)
+{
+source->append(R"::(storage, )::");
+}
+source->append(R"::(bufferPtr, TrinityProtocol.MsgHeader, out response);
                 return new )::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->referencedNProtocol->response_message_struct));
 source->append(R"::(Reader(response.Buffer, response.Offset);
@@ -178,18 +162,11 @@ source->append(R"::(Reader(response.Buffer, response.Offset);
 else if ((*(node->protocolList))[iterator_1]->referencedNProtocol->has_request() && (*(node->protocolList))[iterator_1]->referencedNProtocol->is_syn_req_rsp_protocol())
 {
 source->append(R"::(
-        public unsafe)::");
-if (node->type() != PGT_MODULE)
-{
-source->append(R"::( static)::");
-}
-source->append(R"::( )::");
+        public unsafe static )::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->referencedNProtocol->response_message_struct));
 source->append(R"::(Reader )::");
 source->append(Codegen::GetString(method_name_1));
-source->append(R"::(()::");
-source->append(Codegen::GetString(arg_extension_method_target_1));
-source->append(R"::( int partitionId, )::");
+source->append(R"::((this Trinity.Storage.IMessagePassingEndpoint storage, )::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->referencedNProtocol->request_message_struct));
 source->append(R"::(Writer msg)
         {
@@ -214,7 +191,12 @@ source->append(R"::(;
                 TrinityResponse response;
                 )::");
 source->append(Codegen::GetString(send_message_method_1));
-source->append(R"::((partitionId, bufferPtr, msg.Length + TrinityProtocol.MsgHeader, out response);
+source->append(R"::(()::");
+if (node->type() == PGT_MODULE)
+{
+source->append(R"::(storage, )::");
+}
+source->append(R"::(bufferPtr, msg.Length + TrinityProtocol.MsgHeader, out response);
                 return new )::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->referencedNProtocol->response_message_struct));
 source->append(R"::(Reader(response.Buffer, response.Offset);
@@ -226,18 +208,11 @@ source->append(R"::(Reader(response.Buffer, response.Offset);
 else if (!(*(node->protocolList))[iterator_1]->referencedNProtocol->has_request() && (*(node->protocolList))[iterator_1]->referencedNProtocol->is_asyn_req_rsp_protocol())
 {
 source->append(R"::(
-        public unsafe)::");
-if (node->type() != PGT_MODULE)
-{
-source->append(R"::( static)::");
-}
-source->append(R"::( Task<)::");
+        public unsafe static Task<)::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->referencedNProtocol->response_message_struct));
 source->append(R"::(Reader> )::");
 source->append(Codegen::GetString(method_name_1));
-source->append(R"::(()::");
-source->append(Codegen::GetString(arg_extension_method_target_1));
-source->append(R"::( int partitionId)
+source->append(R"::((this Trinity.Storage.IMessagePassingEndpoint storage)
         {
             byte* bufferPtr = stackalloc byte[TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength];
             try
@@ -274,7 +249,12 @@ source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(;
                 )::");
 source->append(Codegen::GetString(send_message_method_1));
-source->append(R"::((partitionId, bufferPtr, TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+source->append(R"::(()::");
+if (node->type() == PGT_MODULE)
+{
+source->append(R"::(storage, )::");
+}
+source->append(R"::(bufferPtr, TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
                 return task_source.Task;
             }
             finally { }
@@ -284,18 +264,11 @@ source->append(R"::((partitionId, bufferPtr, TrinityProtocol.MsgHeader + Trinity
 else
 {
 source->append(R"::(
-        public unsafe)::");
-if (node->type() != PGT_MODULE)
-{
-source->append(R"::( static)::");
-}
-source->append(R"::( Task<)::");
+        public unsafe static Task<)::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->referencedNProtocol->response_message_struct));
 source->append(R"::(Reader> )::");
 source->append(Codegen::GetString(method_name_1));
-source->append(R"::(()::");
-source->append(Codegen::GetString(arg_extension_method_target_1));
-source->append(R"::( int partitionId, )::");
+source->append(R"::((this Trinity.Storage.IMessagePassingEndpoint storage, )::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->referencedNProtocol->request_message_struct));
 source->append(R"::(Writer msg)
         {
@@ -340,7 +313,12 @@ source->append(R"::(;
                 *(int*)(bufferPtr + TrinityProtocol.MsgHeader + sizeof(int)) = Global.CloudStorage.MyInstanceId;
                 )::");
 source->append(Codegen::GetString(send_message_method_1));
-source->append(R"::((partitionId, bufferPtrs, size, 2);
+source->append(R"::(()::");
+if (node->type() == PGT_MODULE)
+{
+source->append(R"::(storage, )::");
+}
+source->append(R"::(bufferPtrs, size, 2);
                 return task_source.Task;
             }
             finally { }

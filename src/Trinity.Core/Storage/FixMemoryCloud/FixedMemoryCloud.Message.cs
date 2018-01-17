@@ -102,40 +102,6 @@ namespace Trinity.Storage
                 }
             }
         }
-
-        /// <summary>
-        /// Send a binary message to the specified Trinity proxy.
-        /// </summary>
-        /// <param name="proxyId">A 32-bit proxy id.</param>
-        /// <param name="buffer">A binary message buffer.</param>
-        /// <param name="size">The size of the message.</param>
-        public override void SendMessageToProxy(int proxyId, byte* buffer, int size)
-        {
-            GetProxy(proxyId).SendMessage(buffer, size);
-        }
-
-        /// <summary>
-        /// Send a binary message to the specified Trinity proxy.
-        /// </summary>
-        /// <param name="proxyId">A 32-bit proxy id.</param>
-        /// <param name="buffer">A binary message buffer.</param>
-        /// <param name="size">The size of the message.</param>
-        /// <param name="response">The TrinityResponse object returned by the Trinity proxy.</param>
-        public override void SendMessageToProxy(int proxyId, byte* buffer, int size, out TrinityResponse response)
-        {
-            GetProxy(proxyId).SendMessage(buffer, size, out response);
-        }
-
-
-        public override void SendMessageToProxy(int proxyId, byte** buffers, int* sizes, int count)
-        {
-            GetProxy(proxyId).SendMessage(buffers, sizes, count);
-        }
-
-        public override void SendMessageToProxy(int proxyId, byte** buffers, int* sizes, int count, out TrinityResponse response)
-        {
-            GetProxy(proxyId).SendMessage(buffers, sizes, count, out response);
-        }
         #endregion
 
     }

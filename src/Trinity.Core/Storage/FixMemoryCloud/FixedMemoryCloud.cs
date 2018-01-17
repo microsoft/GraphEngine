@@ -27,11 +27,11 @@ namespace Trinity.Storage
         private int server_count = -1;
         private int my_partition_id = -1;
         private int my_proxy_id = -1;
-        private Storage[] m_storageTable;
+        private IStorage[] m_storageTable;
         internal ClusterConfig cluster_config;
 
         /// <inheritdoc/>
-        protected internal override IList<Storage> StorageTable => m_storageTable;
+        protected internal override IList<IStorage> StorageTable => m_storageTable;
 
         /// <inheritdoc/>
         public override int MyInstanceId => my_partition_id;
@@ -66,7 +66,7 @@ namespace Trinity.Storage
             my_proxy_id = cluster_config.MyProxyId;
 
             bool server_found = false;
-            m_storageTable = new Storage[server_count];
+            m_storageTable = new IStorage[server_count];
 
             if (server_count == 0)
                 goto server_not_found;

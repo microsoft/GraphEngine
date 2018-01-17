@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -14,7 +15,7 @@ namespace Trinity.Storage
     /// <summary>
     /// Provides methods for interacting with the distributed memory store.
     /// </summary>
-    public unsafe abstract partial class MemoryCloud : IDisposable
+    public unsafe abstract partial class MemoryCloud : IKeyValueStore, IEnumerable<IMessagePassingEndpoint>
     {
         #region Abstract interfaces
         public abstract bool Open(ClusterConfig config, bool nonblocking);
@@ -23,20 +24,114 @@ namespace Trinity.Storage
         /// </summary>
         public abstract int MyInstanceId { get; }
 
+        /// <summary>
+        /// Gets the ID of current server instance in the cluster.
+        /// </summary>
         public abstract int MyPartitionId { get; }
+        /// <summary>
+        /// Gets the ID of current proxy instance in the cluster.
+        /// </summary>
         public abstract int MyProxyId { get; }
         public abstract IEnumerable<Chunk> MyChunks { get; }
+        /// <summary>
+        /// The number of servers in the cluster.
+        /// </summary>
         public abstract int PartitionCount { get; }
         public abstract bool IsLocalCell(long cellId);
         public abstract bool LoadStorage();
         public abstract bool SaveStorage();
         public abstract bool ResetStorage();
+        /// <summary>
+        /// Gets the number of proxies in the cluster.
+        /// </summary>
         public abstract int ProxyCount { get; }
         public abstract IList<RemoteStorage> ProxyList { get; }
         /// <summary>
         /// Represents the partitions in the memory cloud.
         /// </summary>
-        protected internal abstract IList<Storage> StorageTable { get; }
+        protected internal abstract IList<IStorage> StorageTable { get; }
+        #endregion
+        #region KVStore
+        /// <summary>
+        /// Loads the type and the content of the cell with the specified cell Id.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="cellBuff">The bytes of the cell. An empty byte array is returned if the cell is not found.</param>
+        /// <param name="cellType">The type of the cell, represented with a 16-bit unsigned integer.</param>
+        /// <returns>A Trinity error code. Possible values are E_SUCCESS and E_NOT_FOUND.</returns>
+        public TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff, out ushort cellType)
+        {
+            return GetStorageByCellId(cellId).LoadCell(cellId, out cellBuff, out cellType);
+        }
+        
+        /// <summary>
+        /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="buff">A memory buffer that contains the cell content.</param>
+        /// <param name="size">The size of the cell.</param>
+        /// <param name="cellType">The type of the cell, represented with a 16-bit unsigned integer.</param>
+        /// <returns>true if saving succeeds; otherwise, false.</returns>
+        public unsafe TrinityErrorCode SaveCell(long cellId, byte* buff, int size, ushort cellType)
+        {
+            return GetStorageByCellId(cellId).SaveCell(cellId, buff, size, cellType);
+        }
+
+        /// <summary>
+        /// Adds a new cell to the Trinity key-value store.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="buff">A memory buffer that contains the cell content.</param>
+        /// <param name="size">The size of the cell.</param>
+        /// <param name="cellType">The type of the cell, represented with a 16-bit unsigned integer.</param>
+        /// <returns>true if adding succeeds; otherwise, false.</returns>
+        public unsafe TrinityErrorCode AddCell(long cellId, byte* buff, int size, ushort cellType)
+        {
+            return GetStorageByCellId(cellId).AddCell(cellId, buff, size, cellType);
+        }
+
+        /// <summary>
+        /// Removes the cell with the specified cell Id from the key-value store.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <returns>true if removing succeeds; otherwise, false.</returns>
+        public TrinityErrorCode RemoveCell(long cellId)
+        {
+            return GetStorageByCellId(cellId).RemoveCell(cellId);
+        }
+        
+        /// <summary>
+        /// Gets the type of the cell with specified cell Id.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="cellType">The type of the cell specified by cellId.</param>
+        /// <returns>A Trinity error code. Possible values are E_SUCCESS and E_NOT_FOUND.</returns>
+        public unsafe TrinityErrorCode GetCellType(long cellId, out ushort cellType)
+        {
+            return GetStorageByCellId(cellId).GetCellType(cellId, out cellType);
+        }
+
+        /// <summary>
+        /// Determines whether there is a cell with the specified cell Id in Trinity key-value store.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <returns>true if a cell whose Id is cellId is found; otherwise, false.</returns>
+        public unsafe bool Contains(long cellId)
+        {
+            return GetStorageByCellId(cellId).Contains(cellId);
+        }
+
+        /// <summary>
+        /// Updates an existing cell in the Trinity key-value store.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="buff">A memory buffer that contains the cell content.</param>
+        /// <param name="size">The size of the cell.</param>
+        /// <returns>true if updating succeeds; otherwise, false.</returns>
+        public unsafe TrinityErrorCode UpdateCell(long cellId, byte* buff, int size)
+        {
+            return GetStorageByCellId(cellId).UpdateCell(cellId, buff, size);
+        }
         #endregion
         #region Base implementation
         private Action<MemoryCloud, ICell> m_SaveGenericCell_ICell;
@@ -45,6 +140,22 @@ namespace Trinity.Storage
         private Func<long, string, ICell> m_NewGenericCell_long_string;
         private Func<string, string, ICell> m_NewGenericCell_string_string;
 
+        /// <summary>
+        /// Gets the message passing endpoint bound to a partition.
+        /// </summary>
+        /// <param name="partitionId">The id of the target partition.</param>
+        /// <returns></returns>
+        public IMessagePassingEndpoint this[int partitionId] => StorageTable[partitionId];
+        /// <inheritdoc/>
+        public IEnumerator<IMessagePassingEndpoint> GetEnumerator()
+        {
+            return StorageTable.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
 
         /// <summary>
         /// An event that is triggered when a server is connected.
@@ -253,7 +364,7 @@ namespace Trinity.Storage
         }
 
 
-        protected Storage GetStorageByCellId(long cellId)
+        protected IStorage GetStorageByCellId(long cellId)
         {
             return StorageTable[GetPartitionIdByCellId(cellId)];
         }
@@ -294,94 +405,6 @@ namespace Trinity.Storage
             Dispose(false);
         }
         #endregion//IDisposable
-
-        #region Public
-        /// <summary>
-        /// Send a binary message to the specified Trinity server.
-        /// </summary>
-        /// <param name="serverId">A 32-bit server id.</param>
-        /// <param name="buffer">A binary message buffer.</param>
-        /// <param name="size">The size of the message.</param>
-        public virtual void SendMessageToServer(int serverId, byte* buffer, int size)
-        {
-            var storage = StorageTable[serverId];
-            storage.SendMessage(buffer, size);
-        }
-
-        /// <summary>
-        /// Send a binary message to the specified Trinity server.
-        /// </summary>
-        /// <param name="serverId">A 32-bit server id.</param>
-        /// <param name="buffer">A binary message buffer.</param>
-        /// <param name="size">The size of the message.</param>
-        /// <param name="response">The TrinityResponse object returned by the Trinity server.</param>
-        public virtual void SendMessageToServer(int serverId, byte* buffer, int size, out TrinityResponse response)
-        {
-            StorageTable[serverId].SendMessage(buffer, size, out response);
-        }
-
-        /// <summary>
-        /// Send a binary message to the specified Trinity server.
-        /// </summary>
-        /// <param name="serverId">A 32-bit server id.</param>
-        /// <param name="buffers">A binary message buffer.</param>
-        /// <param name="sizes">The size of the message.</param>
-        /// <param name="count">The number of segments in buffers</param>
-        public virtual void SendMessageToServer(int serverId, byte** buffers, int* sizes, int count)
-        {
-            StorageTable[serverId].SendMessage(buffers, sizes, count);
-        }
-
-        /// <summary>
-        /// Send a binary message to the specified Trinity server.
-        /// </summary>
-        /// <param name="serverId">A 32-bit server id.</param>
-        /// <param name="buffers">A binary message buffer.</param>
-        /// <param name="sizes">The size of the message.</param>
-        /// <param name="count">The number of segments in buffers</param>
-        /// <param name="response">The TrinityResponse object returned by the Trinity server.</param>
-        public virtual void SendMessageToServer(int serverId, byte** buffers, int* sizes, int count, out TrinityResponse response)
-        {
-            StorageTable[serverId].SendMessage(buffers, sizes, count, out response);
-        }
-
-        /// <summary>
-        /// Send a binary message to the specified Trinity proxy.
-        /// </summary>
-        /// <param name="proxyId">A 32-bit proxy id.</param>
-        /// <param name="buffer">A binary message buffer.</param>
-        /// <param name="size">The size of the message.</param>
-        public abstract void SendMessageToProxy(int proxyId, byte* buffer, int size);
-
-        /// <summary>
-        /// Send a binary message to the specified Trinity proxy.
-        /// </summary>
-        /// <param name="proxyId">A 32-bit proxy id.</param>
-        /// <param name="buffer">A binary message buffer.</param>
-        /// <param name="size">The size of the message.</param>
-        /// <param name="response">The TrinityResponse object returned by the Trinity proxy.</param>
-        public abstract void SendMessageToProxy(int proxyId, byte* buffer, int size, out TrinityResponse response);
-
-        /// <summary>
-        /// Send a binary message to the specified Trinity proxy.
-        /// </summary>
-        /// <param name="proxyId">A 32-bit proxy id.</param>
-        /// <param name="buffers">A binary message buffer.</param>
-        /// <param name="sizes">The size of the message.</param>
-        /// <param name="count">The number of segments in buffers</param>
-        public abstract void SendMessageToProxy(int proxyId, byte** buffers, int* sizes, int count);
-
-        /// <summary>
-        /// Send a binary message to the specified Trinity proxy.
-        /// </summary>
-        /// <param name="proxyId">A 32-bit proxy id.</param>
-        /// <param name="buffers">A binary message buffer.</param>
-        /// <param name="sizes">The size of the message.</param>
-        /// <param name="count">The number of segments in buffers</param>
-        /// <param name="response">The TrinityResponse object returned by the Trinity proxy.</param>
-        public abstract void SendMessageToProxy(int proxyId, byte** buffers, int* sizes, int count, out TrinityResponse response);
-
-        #endregion
 
         /// <summary>
         /// Gets the total memory usage.
