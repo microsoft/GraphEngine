@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Trinity.Diagnostics;
 using Trinity.DynamicCluster.Communication;
 using Trinity.DynamicCluster.Consensus;
+using Trinity.DynamicCluster.DynamicCluster;
 using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Storage
@@ -130,11 +131,13 @@ namespace Trinity.DynamicCluster.Storage
         private async Task MasterNotifyProc()
         {
             if (!m_nameservice.IsMaster) return;
-            var mod = m_dmc.GetCommunicationModule<DynamicClusterCommModule>();
             using(var req = new StorageInformationWriter(MyPartitionId, m_nameservice.InstanceId))
             {
-                var rsps = await Utils.Integers(m_nameservice.PartitionCount).Select(pid => mod.AnnounceMaster(pid, req)).Unwrap();
-                rsps.ForEach(_ => _.Dispose());
+                var rsps = await Utils.Integers(m_nameservice.PartitionCount)
+                                .Select(i => m_dmc.PartitionTable(i)
+                                .Broadcast(p => p.AnnounceMaster(req)))
+                                .Unwrap();
+                rsps.SelectMany(_ => _).ForEach(_ => _.Dispose());
             }
         }
 

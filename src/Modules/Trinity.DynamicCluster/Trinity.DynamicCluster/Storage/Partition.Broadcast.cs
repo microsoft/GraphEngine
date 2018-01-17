@@ -4,25 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Trinity.Network.Messaging;
+using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Storage
 {
     internal unsafe partial class Partition
     {
-        public void Broadcast(byte* message, int size)
-        {
-            m_storages.Keys.ForEach(s => s.SendMessage(message, size));
-        }
+        public void Broadcast(Action<IMessagePassingEndpoint> sendFunc)
+            => m_storages.Keys.ForEach(s => sendFunc(s));
 
-        // TODO we may consider add an interface: TrinityMessage -> IEnumerable<TrinityResponse>
-        // And thus in the message passing interface: IEnumerable<TrinityMessage>, IEnumerable<int> -> IEnumerable<TrinityResponse>,
-        // where IEnumerable<int> holds partition identifiers.
+        public IEnumerable<TResponse> Broadcast<TResponse>(Func<IMessagePassingEndpoint, TResponse> sendFunc)
+            => m_storages.Keys.Select(sendFunc);
 
-        public void Broadcast(byte* message, int size, out TrinityResponse[] response)
-        {
-            response = m_storages.Keys.Select(s => { s.SendMessage(message, size, out var rsp); return rsp; }).ToArray();
-        }
-        
+        public Task<TResponse[]> Broadcast<TResponse>(Func<IMessagePassingEndpoint, Task<TResponse>> sendFunc)
+            => m_storages.Keys.Select(sendFunc).Unwrap();
+
         // TODO First-available
 
         // TODO chunk-aware dispatch and message grouping. Some protocols (like FanoutSearch)
