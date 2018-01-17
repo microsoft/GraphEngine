@@ -13,11 +13,12 @@ namespace Trinity.DynamicCluster.Storage
         public void Broadcast(Action<IMessagePassingEndpoint> sendFunc)
             => this.ForEach(s => sendFunc(s));
 
+        // TODO dispose received messages on exception!
         public IEnumerable<TResponse> Broadcast<TResponse>(Func<IMessagePassingEndpoint, TResponse> sendFunc)
-            => this.Select(sendFunc);
+            where TResponse: IDisposable => this.Select(sendFunc);
 
         public Task<TResponse[]> Broadcast<TResponse>(Func<IMessagePassingEndpoint, Task<TResponse>> sendFunc)
-            => this.Select(sendFunc).Unwrap();
+            where TResponse: IDisposable => this.Select(sendFunc).Unwrap();
 
         // TODO chunk-aware dispatch and message grouping. Some protocols (like FanoutSearch)
         // combines multiple cellIds into a single message. In this case we should provide a

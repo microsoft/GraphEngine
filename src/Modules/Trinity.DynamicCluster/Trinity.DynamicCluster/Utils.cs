@@ -234,7 +234,7 @@ namespace Trinity.DynamicCluster
                 {
                     lock (syncobj)
                     {
-                        for(int i = 0; i < readAhead; ++i)
+                        for (int i = 0; i < readAhead; ++i)
                         {
                             iter.MoveNext();
                             queue.Enqueue(iter.Current);
@@ -243,6 +243,28 @@ namespace Trinity.DynamicCluster
                 }
                 return result;
             };
+        }
+
+        public static Task<T>[] SortByCompletion<T>(IEnumerable<Task<T>> tasks)
+        {
+            int completion_idx = -1;
+            TaskCompletionSource<T>[] completions = tasks.Select(_ => new TaskCompletionSource<T>()).ToArray();
+            foreach (var t in tasks)
+            {
+                t.ContinueWith(ct =>
+                {
+                    int idx = Interlocked.Increment(ref completion_idx);
+                    if (ct.IsCompleted) completions[idx].SetResult(ct.Result);
+                    else if (ct.IsFaulted) completions[idx].SetException(ct.Exception.InnerException);
+                    else if (ct.IsCanceled) completions[idx].SetCanceled();
+                });
+            }
+            return completions.Select(_ => _.Task).ToArray();
+        }
+
+        public static Task[] SortByCompletion(IEnumerable<Task> tasks)
+        {
+            return SortByCompletion(tasks.Select(t => t.ContinueWith(_ => true)));
         }
 
         private static IEnumerable<T> _UniformRandom<T>(IEnumerable<T> source)

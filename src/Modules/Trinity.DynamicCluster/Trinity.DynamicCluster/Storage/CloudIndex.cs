@@ -117,7 +117,7 @@ namespace Trinity.DynamicCluster.Storage
         /// <summary>
         /// ScanNodesProc periodically polls instances from the name service.
         /// ScanNodesProc runs on every replica.
-        /// !Note, ScanNodesProc does not reports the current instance.
+        /// !Note, ScanNodesProc does not report the current instance.
         /// Only remote instances are reported.
         /// </summary>
         private async Task ScanNodesProc()

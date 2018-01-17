@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Trinity.Core.Lib;
+using Trinity.Storage;
+using Trinity.TSL.Lib;
 
 namespace Trinity.Network.Messaging
 {
@@ -16,7 +18,7 @@ namespace Trinity.Network.Messaging
     /// Each TrinityResponse consists of an error code (4 bytes)
     /// and a payload.
     /// </summary>
-    public unsafe sealed class TrinityResponse : IDisposable
+    public unsafe sealed class TrinityResponse : IAccessor
     {
         static TrinityResponse()
         {
@@ -72,6 +74,28 @@ namespace Trinity.Network.Messaging
         public void Dispose()
         {
             Memory.free(Buffer);
+        }
+
+        public ResizeFunctionDelegate ResizeFunction { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
+
+        public byte* GetUnderlyingBufferPointer()
+        {
+            return Buffer + Offset;
+        }
+
+        public byte[] ToByteArray()
+        {
+            byte[] bytes = new byte[Size];
+            fixed(byte* p = bytes)
+            {
+                Memory.Copy(Buffer + Offset, p, Size);
+            }
+            return bytes;
+        }
+
+        public int GetBufferLength()
+        {
+            return Size;
         }
     }
 }

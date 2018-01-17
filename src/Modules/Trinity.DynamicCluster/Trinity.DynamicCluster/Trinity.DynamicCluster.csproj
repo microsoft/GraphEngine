@@ -109,6 +109,7 @@
     <Compile Include="Storage\Partition.UniformRandom.cs" />
     <Compile Include="Storage\Partition.RoundRobin.cs" />
     <Compile Include="Storage\ProtocolAvailabilitySemantic.cs" />
+    <Compile Include="Storage\VoteException.cs" />
     <Compile Include="Tasks\ChainedTasks.cs" />
     <Compile Include="Tasks\GroupedTask.cs" />
     <Compile Include="Tasks\PersistedLoadTask.cs" />
