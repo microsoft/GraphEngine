@@ -27,8 +27,6 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
         private CancellationToken          m_token;
         private System.Fabric.FabricClient m_fclient;
         private List<Guid>                 m_partitionIds;
-        private Task m_init;
-        private long m_handle;
 
         public string Address => GraphEngineStatefulServiceRuntime.Instance.Address;
 
@@ -61,14 +59,6 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
             m_token = token;
             m_fclient = new System.Fabric.FabricClient();
             m_partitionIds = GraphEngineStatefulServiceRuntime.Instance.Partitions.Select(_ => _.PartitionInformation.Id).ToList();
-            var listen_to = new System.Fabric.Description.ServiceNotificationFilterDescription();
-            m_handle = m_fclient.ServiceManager.RegisterServiceNotificationFilterAsync(listen_to).Result;
-        }
-
-        private async Task PollMaster()
-        {
-            await m_init;
-            if (!IsMaster) return;
         }
 
         public void Dispose() { }

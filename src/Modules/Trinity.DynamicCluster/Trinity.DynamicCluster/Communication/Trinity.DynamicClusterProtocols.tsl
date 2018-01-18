@@ -67,11 +67,6 @@ struct PersistedSlice
 	long highkey;
 }
 
-struct GetChunksRequest
-{
-	Guid replicaId;
-}
-
 struct GetChunksResponse
 {
 	List<ChunkInformation> chunk_info;
@@ -123,7 +118,7 @@ protocol PersistedUpload
 protocol GetChunks
 {
 	Type: Asyn;
-	Request: GetChunksRequest;
+	Request: void;
 	Response: GetChunksResponse;
 }
 

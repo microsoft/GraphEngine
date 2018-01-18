@@ -161,13 +161,15 @@ namespace Trinity.DynamicCluster.Communication
             response.throttle = false;
         }
 
-        public override void GetChunksHandler(GetChunksRequestReader request, GetChunksResponseWriter response)
+        public override void GetChunksHandler(GetChunksResponseWriter response)
         {
-            throw new NotImplementedException();
+            response.chunk_info.AddRange(m_memorycloud.MyChunks.Cast<ChunkInformation>().ToList());
         }
 
         public override void AnnounceMasterHandler(StorageInformationReader request, ErrnoResponseWriter response)
         {
+            (m_memorycloud as DynamicMemoryCloud).m_cloudidx.SetMaster(request.partition, request.id);
+            response.errno = Errno.E_OK;
         }
     }
 }

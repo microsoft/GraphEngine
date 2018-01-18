@@ -24,6 +24,7 @@ namespace Trinity.DynamicCluster.Storage
         private IChunkTable                            m_chunktable;
         private CancellationToken                      m_cancel;
         private IEnumerable<ReplicaInformation>[]      m_replicaList;
+        private IStorage[]                             m_masterIds;
         private Task                                   m_ctupdateproc;
         private Task                                   m_masterproc;
         private Task                                   m_scanproc;
@@ -84,6 +85,7 @@ namespace Trinity.DynamicCluster.Storage
             m_storagetab     = new Dictionary<Guid, IStorage>();
             m_ctcache        = new Dictionary<Guid, IEnumerable<Chunk>>();
             SetStorage(m_nameservice.InstanceId, Global.LocalStorage);
+            m_masterIds      = new IStorage[m_nameservice.PartitionCount];
             m_replicaList    = Utils.Integers(m_nameservice.PartitionCount).Select(_ => Enumerable.Empty<ReplicaInformation>()).ToArray();
             m_ctupdateproc   = Utils.Daemon(m_cancel, "ChunkTableUpdateProc", 10000, ChunkTableUpdateProc);
             m_masterproc     = Utils.Daemon(m_cancel, "MasterNotifyProc", 10000, MasterNotifyProc);
@@ -142,7 +144,7 @@ namespace Trinity.DynamicCluster.Storage
         }
 
         /// <summary>
-        /// ChunkTableUpdateProc periodically polls states (chunk tables, is master, etc.) passively.
+        /// ChunkTableUpdateProc periodically polls states (chunk tables, etc.) passively.
         /// ChunkTableUpdateProc runs on every replica.
         /// </summary>
         private async Task ChunkTableUpdateProc()
@@ -152,7 +154,7 @@ namespace Trinity.DynamicCluster.Storage
             {
                 var stg = GetStorage(r.Id);
                 if (null == stg) { continue; }
-                var ct = await _GetChunks(r);
+                var ct = await _GetChunks(stg);
                 ct = ct.OrderBy(_ => _.LowKey);
                 IEnumerable<Chunk> ctcache = GetChunks(r.Id);
                 if (Enumerable.SequenceEqual(ctcache, ct)) { continue; }
@@ -168,12 +170,20 @@ namespace Trinity.DynamicCluster.Storage
             }
         }
 
-        private async Task<IEnumerable<Chunk>> _GetChunks(ReplicaInformation r)
+        internal void SetMaster(int partition, Guid replicaId)
         {
-            var mod = m_dmc.GetCommunicationModule<DynamicClusterCommModule>();
-            var id = m_dmc.GetInstanceId(r.Id);
-            using(var req = new GetChunksRequestWriter(r.Id))
-            using (var rsp = await mod.GetChunks(id, req))
+            if (replicaId == m_nameservice.InstanceId) m_masterIds[partition] = Global.LocalStorage;
+            else m_masterIds[partition] = m_dmc.PartitionTable(partition).OfType<DynamicRemoteStorage>().FirstOrDefault(_ => _.ReplicaInformation.Id == replicaId);
+        }
+
+        internal IStorage GetMaster(int partition)
+        {
+            return m_masterIds[partition];
+        }
+
+        private async Task<IEnumerable<Chunk>> _GetChunks(IStorage storage)
+        {
+            using (var rsp = await storage.GetChunks())
             {
                 return rsp.chunk_info.Cast<Chunk>().ToList();
             }
