@@ -18,7 +18,7 @@ namespace Trinity.Network.Messaging
     /// Each TrinityResponse consists of an error code (4 bytes)
     /// and a payload.
     /// </summary>
-    public unsafe sealed class TrinityResponse : IAccessor
+    public unsafe sealed class TrinityResponse : IAccessor, IDisposable
     {
         static TrinityResponse()
         {

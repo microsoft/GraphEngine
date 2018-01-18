@@ -28,16 +28,56 @@ namespace Trinity.DynamicCluster.Storage
     /// </summary>
     internal partial class Partition : IStorage, IEnumerable<IStorage>
     {
-        private ImmutableDictionary<IStorage, IEnumerable<Chunk>> m_storages = null;
-        private object m_syncroot = new object();
-        private Func<IMessagePassingEndpoint> m_firstavailable_getter = null;
-        private Func<IMessagePassingEndpoint> m_roundrobin_getter = null;
-        private Func<IMessagePassingEndpoint> m_random_getter = null;
+        internal unsafe delegate void SendMessageFunc(byte* message, int size);
+        internal unsafe delegate void SendMessageMultiFunc(byte** message, int* sizes, int count);
+        internal unsafe delegate TrinityResponse SendMessageWithRspFunc(byte* message, int size);
+        internal unsafe delegate TrinityResponse SendMessageWithRspMultiFunc(byte** message, int* sizes, int count);
 
-        public Partition()
+        private ImmutableDictionary<IStorage, IEnumerable<Chunk>> m_storages = null;
+        private object                                            m_syncroot = new object();
+        private Func<IMessagePassingEndpoint>                     m_firstavailable_getter = null;
+        private Func<IMessagePassingEndpoint>                     m_roundrobin_getter = null;
+        private Func<IMessagePassingEndpoint>                     m_random_getter = null;
+        private SendMessageFunc[]                                 m_smfuncs = null;
+        private SendMessageMultiFunc[]                            m_smmfuncs = null;
+        private SendMessageWithRspFunc[]                          m_smrfuncs = null;
+        private SendMessageWithRspMultiFunc[]                     m_smrmfuncs = null;
+
+        public unsafe Partition()
         {
-            m_storages = ImmutableDictionary<IStorage, IEnumerable<Chunk>>.Empty;
+            m_storages  = ImmutableDictionary<IStorage, IEnumerable<Chunk>>.Empty;
             _UpdateIterators();
+
+            m_smfuncs   = new SendMessageFunc[(int)ProtocolSemantic.ProtocolSemanticEND];
+            m_smmfuncs  = new SendMessageMultiFunc[(int)ProtocolSemantic.ProtocolSemanticEND];
+            m_smrfuncs  = new SendMessageWithRspFunc[(int)ProtocolSemantic.ProtocolSemanticEND];
+            m_smrmfuncs = new SendMessageWithRspMultiFunc[(int)ProtocolSemantic.ProtocolSemanticEND];
+
+            m_smfuncs[(int)ProtocolSemantic.FirstAvailable] = (msg, size) => FirstAvailable(ep => ep.SendMessage(msg, size));
+            m_smfuncs[(int)ProtocolSemantic.RoundRobin] = (msg, size) => RoundRobin(ep => ep.SendMessage(msg, size));
+            m_smfuncs[(int)ProtocolSemantic.UniformRandom] = (msg, size) => UniformRandom(ep => ep.SendMessage(msg, size));
+            m_smfuncs[(int)ProtocolSemantic.Broadcast] = (msg, size) => Broadcast(ep => ep.SendMessage(msg, size));
+            m_smfuncs[(int)ProtocolSemantic.Vote] = (msg, size) => Vote(ep => ep.SendMessage(msg, size), m_storages.Count);
+
+            m_smrfuncs[(int)ProtocolSemantic.FirstAvailable] = (msg, size) => FirstAvailable(ep => { ep.SendMessage(msg, size, out var rsp); return rsp; });
+            m_smrfuncs[(int)ProtocolSemantic.RoundRobin] = (msg, size) => RoundRobin(ep => { ep.SendMessage(msg, size, out var rsp); return rsp; });
+            m_smrfuncs[(int)ProtocolSemantic.UniformRandom] = (msg, size) => UniformRandom(ep => { ep.SendMessage(msg, size, out var rsp); return rsp; });
+            //BROADCAST WITH RSP NOT SUPPORTED -- USE THE API METHOD INSTEAD
+            //m_smrfuncs[(int)ProtocolSemantic.Broadcast] = (msg, size) => Broadcast(ep => { ep.SendMessage(msg, size, out var rsp); return rsp; });
+            m_smrfuncs[(int)ProtocolSemantic.Vote] = (msg, size) => Vote(ep => { ep.SendMessage(msg, size, out var rsp); return rsp; }, m_storages.Count);
+
+            m_smmfuncs[(int)ProtocolSemantic.FirstAvailable] = (msg, size, count) => FirstAvailable(ep => ep.SendMessage(msg, size, count));
+            m_smmfuncs[(int)ProtocolSemantic.RoundRobin] = (msg, size, count) => RoundRobin(ep => ep.SendMessage(msg, size, count));
+            m_smmfuncs[(int)ProtocolSemantic.UniformRandom] = (msg, size, count) => UniformRandom(ep => ep.SendMessage(msg, size, count));
+            m_smmfuncs[(int)ProtocolSemantic.Broadcast] = (msg, size, count) => Broadcast(ep => ep.SendMessage(msg, size, count));
+            m_smmfuncs[(int)ProtocolSemantic.Vote] = (msg, size, count) => Vote(ep => ep.SendMessage(msg, size, count), m_storages.Count);
+
+            m_smrmfuncs[(int)ProtocolSemantic.FirstAvailable] = (msg, size, count) => FirstAvailable(ep => { ep.SendMessage(msg, size, count, out var rsp); return rsp; });
+            m_smrmfuncs[(int)ProtocolSemantic.RoundRobin] = (msg, size, count) => RoundRobin(ep => { ep.SendMessage(msg, size, count, out var rsp); return rsp; });
+            m_smrmfuncs[(int)ProtocolSemantic.UniformRandom] = (msg, size, count) => UniformRandom(ep => { ep.SendMessage(msg, size, count, out var rsp); return rsp; });
+            //BROADCAST WITH RSP NOT SUPPORTED -- USE THE API METHOD INSTEAD
+            //m_smrfuncs[(int)ProtocolSemantic.Broadcast] = (msg, size, count) => Broadcast(ep => { ep.SendMessage(msg, size, out var rsp); return rsp; });
+            m_smrmfuncs[(int)ProtocolSemantic.Vote] = (msg, size, count) => Vote(ep => { ep.SendMessage(msg, size, count, out var rsp); return rsp; }, m_storages.Count);
         }
 
         internal TrinityErrorCode Mount(IStorage storage, IEnumerable<Chunk> cc)
