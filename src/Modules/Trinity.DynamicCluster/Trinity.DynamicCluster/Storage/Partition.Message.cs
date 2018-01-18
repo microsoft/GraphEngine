@@ -14,12 +14,12 @@ namespace Trinity.DynamicCluster.Storage
         public T GetModule<T>() where T : CommunicationModule
             => Global.CommunicationInstance.GetCommunicationModule<T>();
 
-        public void SendMessage(byte* message, int size)
+        public unsafe void SendMessage(byte* message, int size)
         {
             m_storages.First().Key.SendMessage(message, size);
         }
 
-        public void SendMessage(byte* message, int size, out TrinityResponse response)
+        public unsafe void SendMessage(byte* message, int size, out TrinityResponse response)
         {
             m_storages.First().Key.SendMessage(message, size, out response);
         }

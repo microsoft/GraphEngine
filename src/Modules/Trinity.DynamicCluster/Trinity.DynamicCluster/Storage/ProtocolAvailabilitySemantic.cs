@@ -10,6 +10,7 @@ namespace Trinity.DynamicCluster.Storage
     {
         FirstAvailable,
         RoundRobin,
+        UniformRandom,
         Broadcast,
         Vote,
     }

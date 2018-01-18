@@ -9,9 +9,9 @@ using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Storage
 {
-    internal unsafe partial class Partition
+    internal partial class Partition
     {
-        public TrinityErrorCode AddCell(long cellId, byte* buff, int size, ushort cellType)
+        public unsafe TrinityErrorCode AddCell(long cellId, byte* buff, int size, ushort cellType)
         {
             foreach (IStorage s in PickStorages(cellId))
             {
@@ -81,7 +81,7 @@ namespace Trinity.DynamicCluster.Storage
             return TrinityErrorCode.E_SUCCESS;
         }
 
-        public TrinityErrorCode SaveCell(long cellId, byte* buff, int size, ushort cellType)
+        public unsafe TrinityErrorCode SaveCell(long cellId, byte* buff, int size, ushort cellType)
         {
             foreach (IStorage s in PickStorages(cellId))
             {
@@ -91,7 +91,7 @@ namespace Trinity.DynamicCluster.Storage
             return TrinityErrorCode.E_SUCCESS;
         }
 
-        public TrinityErrorCode UpdateCell(long cellId, byte* buff, int size)
+        public unsafe TrinityErrorCode UpdateCell(long cellId, byte* buff, int size)
         {
             foreach (IStorage s in PickStorages(cellId))
             {

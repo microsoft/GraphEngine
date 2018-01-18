@@ -9,7 +9,7 @@ using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Storage
 {
-    internal unsafe partial class Partition
+    internal partial class Partition
     {
         public void Vote(Action<IMessagePassingEndpoint> sendFunc, int threshold)
         {
@@ -23,17 +23,17 @@ namespace Trinity.DynamicCluster.Storage
         {
             var replicas = this.ToList();
             var tasks = replicas.Select(replica => Task.Run(() => sendFunc(replica)));
-            return CollectConsensusResults(tasks, threshold);
+            return CollectConsensusResults(tasks, threshold).Result;
         }
 
-        public TResponse Vote<TResponse>(Func<IMessagePassingEndpoint, Task<TResponse>> sendFunc, int threshold)
+        public async Task<TResponse> Vote<TResponse>(Func<IMessagePassingEndpoint, Task<TResponse>> sendFunc, int threshold)
             where TResponse : IAccessor, IDisposable
         {
             var replicas = this.ToList();
             var tasks = replicas.Select(replica => sendFunc(replica));
-            return CollectConsensusResults(tasks, threshold);
+            return await CollectConsensusResults(tasks, threshold);
         }
-        private void FreeTasksExcept<TResponse>(IEnumerable<Task<TResponse>> tasks, TResponse rsp) 
+        private void DisposeOthers<TResponse>(IEnumerable<Task<TResponse>> tasks, TResponse rsp) 
             where TResponse : IDisposable
         {
             foreach (var task in tasks)
@@ -48,21 +48,16 @@ namespace Trinity.DynamicCluster.Storage
             }
         }
 
-        private int H(IAccessor _) => HashHelper.HashBytes(_.GetUnderlyingBufferPointer(), _.GetBufferLength());
+        private unsafe int H<TResponse>(TResponse _)
+           where TResponse: IAccessor => HashHelper.HashBytes(_.GetUnderlyingBufferPointer(), _.GetBufferLength());
 
         private (int hash, int cnt) _Majority<TResponse>(IEnumerable<TResponse> responses)
-            where TResponse : IAccessor
-        {
-            Dictionary<int, int> dict = new Dictionary<int, int>();
-            foreach (var t in responses)
-            {
-                int h = H(t);
-                if (!dict.ContainsKey(h)) dict.Add(h, 0);
-                ++dict[h];
-            }
-            var pair = dict.OrderByDescending(_ => _.Value).FirstOrDefault();
-            return (pair.Key, pair.Value);
-        }
+            where TResponse : IAccessor =>
+            responses
+           .GroupBy(H)
+           .Select(_ => (_.Key, _.Count()))
+           .OrderByDescending(_ => _.Item2)
+           .FirstOrDefault();
 
         private void CollectConsensusResults(IEnumerable<Task> tasks, int threshold)
         {
@@ -77,23 +72,23 @@ namespace Trinity.DynamicCluster.Storage
             throw new VoteException(task_array, threshold);
         }
 
-        private TResponse CollectConsensusResults<TResponse>(IEnumerable<Task<TResponse>> tasks, int threshold)
+        private async Task<TResponse> CollectConsensusResults<TResponse>(IEnumerable<Task<TResponse>> tasks, int threshold)
             where TResponse : IAccessor, IDisposable
         {
             var task_array = Utils.SortByCompletion(tasks);
-            int wait_idx = threshold - 1;
-            foreach (var t in task_array.Skip(threshold - 1))
+            List<TResponse> completed = new List<TResponse>();
+            foreach (var t in task_array)
             {
-                t.Wait();
-                var completed = task_array.Take(wait_idx + 1).Where(_ => _.IsCompleted).Select(_ => _.Result);
+                try { completed.Add(await t); }
+                catch { }
+                if (completed.Count < threshold) continue;
                 var (hash, cnt) = _Majority(completed);
                 if (cnt >= threshold)
                 {
                     var rsp = completed.First(_ => H(_) == hash);
-                    FreeTasksExcept(tasks, rsp);
+                    DisposeOthers(tasks, rsp);
                     return rsp;
                 }
-                ++wait_idx;
             }
             throw new VoteException(task_array, threshold);
         }

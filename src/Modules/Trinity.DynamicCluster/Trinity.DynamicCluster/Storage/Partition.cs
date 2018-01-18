@@ -26,7 +26,7 @@ namespace Trinity.DynamicCluster.Storage
     /// which add up to a complete availability group (aka partition). Hence, it
     /// is both a storage, and a list of storages.
     /// </summary>
-    internal unsafe partial class Partition : IStorage, IEnumerable<IStorage>
+    internal partial class Partition : IStorage, IEnumerable<IStorage>
     {
         private ImmutableDictionary<IStorage, IEnumerable<Chunk>> m_storages = null;
         private object m_syncroot = new object();

@@ -8,7 +8,7 @@ using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Storage
 {
-    internal unsafe partial class Partition
+    internal partial class Partition
     {
         public void RoundRobin(Action<IMessagePassingEndpoint> sendFunc)
         {
