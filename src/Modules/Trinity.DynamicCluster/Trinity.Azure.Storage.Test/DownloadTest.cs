@@ -38,7 +38,7 @@ namespace Trinity.Azure.Storage.Test
             Chunk c1 = new Chunk(0, 10);
             Chunk c2 = new Chunk(100, 110);
             string idx = string.Join("\n", new[] {c1, c2}.Select(JsonConvert.SerializeObject));
-            dir.GetBlockBlobReference(Constants.c_index).UploadText(idx);
+            dir.GetBlockBlobReference(Constants.c_partition_index).UploadText(idx);
 
 
             var f1 = Items[0].Clone() as byte[];
@@ -61,7 +61,7 @@ namespace Trinity.Azure.Storage.Test
         public async Task Download()
         {
             GetLatestVersion().Wait();
-            var v = await m_storage.Download(m_version, 0, 110);
+            var v = await m_storage.GetDownloader(m_version, 0, 110);
             var src = await v.DownloadAsync();
 
 

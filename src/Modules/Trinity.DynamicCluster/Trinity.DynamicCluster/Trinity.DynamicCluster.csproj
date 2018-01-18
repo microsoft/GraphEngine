@@ -87,6 +87,7 @@
     <Compile Include="Replication\MirrorShardingPlanner.cs" />
     <Compile Include="Replication\ShardingPlanner.cs" />
     <Compile Include="Replication\UnrestrictedPlanner.cs" />
+    <Compile Include="Storage\BackupController.cs" />
     <Compile Include="Storage\CloudIndex.cs" />
     <Compile Include="Replication\IReplicationPlanner.cs" />
     <Compile Include="Storage\NoSuitableReplicaException.cs" />

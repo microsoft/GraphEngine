@@ -34,6 +34,22 @@ namespace Trinity.DynamicCluster.Storage
         public IEnumerable<ReplicaInformation> MyPartitionReplicas => m_replicaList[m_nameservice.PartitionId];
         public int MyPartitionId => m_nameservice.PartitionId;
 
+        public CloudIndex(CancellationToken token, INameService namesvc, IChunkTable chunktable)
+        {
+            m_dmc            = DynamicMemoryCloud.Instance;
+            m_nameservice    = namesvc;
+            m_chunktable     = chunktable;
+            m_cancel         = token;
+            m_storagetab     = new Dictionary<Guid, IStorage>();
+            m_ctcache        = new Dictionary<Guid, IEnumerable<Chunk>>();
+            SetStorage(m_nameservice.InstanceId, Global.LocalStorage);
+            m_masterIds      = new IStorage[m_nameservice.PartitionCount];
+            m_replicaList    = Utils.Integers(m_nameservice.PartitionCount).Select(_ => Enumerable.Empty<ReplicaInformation>()).ToArray();
+            m_ctupdateproc   = Utils.Daemon(m_cancel, "ChunkTableUpdateProc", 10000, ChunkTableUpdateProc);
+            m_masterproc     = Utils.Daemon(m_cancel, "MasterNotifyProc", 10000, MasterNotifyProc);
+            m_scanproc       = Utils.Daemon(m_cancel, "ScanNodesProc", 10000, ScanNodesProc);
+        }
+
         public IEnumerable<Chunk> GetChunks(Guid id)
         {
             lock (m_ctcache)
@@ -74,22 +90,6 @@ namespace Trinity.DynamicCluster.Storage
         {
             await m_ctupdate_sem.WaitAsync();
             return MyPartitionReplicas.Join(m_ctcache, r => r.Id, kvp => kvp.Key, (r, kvp) => (r, kvp.Value));
-        }
-
-        public CloudIndex(CancellationToken token, INameService namesvc, IChunkTable chunktable)
-        {
-            m_dmc            = DynamicMemoryCloud.Instance;
-            m_nameservice    = namesvc;
-            m_chunktable     = chunktable;
-            m_cancel         = token;
-            m_storagetab     = new Dictionary<Guid, IStorage>();
-            m_ctcache        = new Dictionary<Guid, IEnumerable<Chunk>>();
-            SetStorage(m_nameservice.InstanceId, Global.LocalStorage);
-            m_masterIds      = new IStorage[m_nameservice.PartitionCount];
-            m_replicaList    = Utils.Integers(m_nameservice.PartitionCount).Select(_ => Enumerable.Empty<ReplicaInformation>()).ToArray();
-            m_ctupdateproc   = Utils.Daemon(m_cancel, "ChunkTableUpdateProc", 10000, ChunkTableUpdateProc);
-            m_masterproc     = Utils.Daemon(m_cancel, "MasterNotifyProc", 10000, MasterNotifyProc);
-            m_scanproc       = Utils.Daemon(m_cancel, "ScanNodesProc", 10000, ScanNodesProc);
         }
 
         private void UpdatePartition(IEnumerable<ReplicaInformation> rps)

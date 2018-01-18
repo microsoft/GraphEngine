@@ -34,11 +34,11 @@ namespace Trinity.Azure.Storage.Test
             var HighKey = data.Length;
             Chunk myChunk = new Chunk(LowKey, HighKey, new Guid("68d7c5be-beac-43a6-abf8-4daa4dce9090"));
 
-            var uploader = await m_storage.Upload(m_version, LowKey, HighKey);
+            var uploader = await m_storage.GetUploader(m_version, LowKey, HighKey);
             uploader.UploadAsync(new InMemoryDataChunk(myChunk, data, LowKey, HighKey)).Wait();
             uploader.FinishUploading().Wait();
 
-            var v = await m_storage.Download(m_version, LowKey, HighKey);
+            var v = await m_storage.GetDownloader(m_version, LowKey, HighKey);
             var src = await v.DownloadAsync();
 
 // The following block works perfectly.  

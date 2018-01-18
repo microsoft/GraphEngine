@@ -10,6 +10,6 @@ namespace Trinity.Azure.Storage
     {
         internal const string c_uploading = "_uploading";
         internal const string c_finished = "_finished";
-        internal const string c_index = "_index";
+        internal const string c_partition_index = "_index";
     }
 }

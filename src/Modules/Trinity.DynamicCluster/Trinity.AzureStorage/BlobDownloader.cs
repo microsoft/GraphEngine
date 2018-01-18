@@ -26,19 +26,21 @@ namespace Trinity.Azure.Storage
         private BufferBlock<Task<InMemoryDataChunk>> m_buffer;
         private Task                             m_download;
 
-        public BlobDownloader(Guid version, long lowKey, long highKey, CloudBlobContainer container)
+        public BlobDownloader(Guid version, int partitionId, long lowKey, long highKey, CloudBlobContainer container)
         {
             this.m_version   = version;
             this.m_lowKey    = lowKey;
             this.m_highKey   = highKey;
             this.m_container = container;
-            this.m_dir       = container.GetDirectoryReference(version.ToString());
+            this.m_dir       = container.GetDirectoryReference(version.ToString()).GetDirectoryReference(partitionId.ToString());
             m_download       = _Download();
         }
 
         private async Task _Download(Chunk skip = null)
         {
             m_tokenSource = new CancellationTokenSource();
+            bool finished = await m_dir.GetBlockBlobReference(Constants.c_finished).ExistsAsync();
+            if (!finished) throw new SnapshotUploadUnfinishedException();
             m_buffer = new BufferBlock<Task<InMemoryDataChunk>>(new DataflowBlockOptions()
             {
                 EnsureOrdered= true,
@@ -51,7 +53,7 @@ namespace Trinity.Azure.Storage
                 Log.WriteLine(LogLevel.Info, $"{nameof(BlobDownloader)}: Version {m_version}: skipping {ChunkSerialization.ToString(skip)}.");
             }
 
-            var idx = m_dir.GetBlockBlobReference(Constants.c_index);
+            var idx = m_dir.GetBlockBlobReference(Constants.c_partition_index);
             var idx_content = await idx.DownloadTextAsync();
             var chunks = idx_content.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
                          .Select(ChunkSerialization.Parse)
