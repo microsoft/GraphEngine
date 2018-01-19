@@ -176,7 +176,7 @@ namespace Trinity.DynamicCluster.Communication
         {
             try
             {
-                (m_memorycloud as DynamicMemoryCloud).m_backupctl.RestoreCurrentPartition(EventArgs.Empty).Wait();
+                (m_memorycloud as DynamicMemoryCloud).m_backupctl.RestoreCurrentPartition(request.task_id, request.version, EventArgs.Empty).Wait();
                 response.errno = Errno.E_OK;
             }
             catch
@@ -189,7 +189,7 @@ namespace Trinity.DynamicCluster.Communication
         {
             try
             {
-                (m_memorycloud as DynamicMemoryCloud).m_backupctl.BackupCurrentPartition(EventArgs.Empty).Wait();
+                (m_memorycloud as DynamicMemoryCloud).m_backupctl.BackupCurrentPartition(request.task_id, request.version, EventArgs.Empty).Wait();
                 response.errno = Errno.E_OK;
             }
             catch
