@@ -88,9 +88,11 @@
     <Compile Include="Replication\ShardingPlanner.cs" />
     <Compile Include="Replication\UnrestrictedPlanner.cs" />
     <Compile Include="Storage\BackupController.cs" />
+    <Compile Include="Storage\BackupException.cs" />
     <Compile Include="Storage\CloudIndex.cs" />
     <Compile Include="Replication\IReplicationPlanner.cs" />
     <Compile Include="Storage\NoSuitableReplicaException.cs" />
+    <Compile Include="Storage\NotMasterException.cs" />
     <Compile Include="Storage\Partition.Broadcast.cs" />
     <Compile Include="Storage\Partition.cs" />
     <Compile Include="Communication\DynamicClusterCommModule.cs" />
@@ -111,6 +113,7 @@
     <Compile Include="Storage\Partition.RoundRobin.cs" />
     <Compile Include="Storage\ProtocolSemantic.cs" />
     <Compile Include="Storage\ProtocolSemanticRegistry.cs" />
+    <Compile Include="Storage\RestoreException.cs" />
     <Compile Include="Storage\VoteException.cs" />
     <Compile Include="Tasks\ChainedTasks.cs" />
     <Compile Include="Tasks\GroupedTask.cs" />

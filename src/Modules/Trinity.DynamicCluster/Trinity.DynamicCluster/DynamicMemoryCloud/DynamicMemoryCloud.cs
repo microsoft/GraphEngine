@@ -122,7 +122,7 @@ namespace Trinity.DynamicCluster.Storage
             m_healthmon= new HealthMonitor(m_cancelSrc.Token, m_nameservice, m_cloudidx, m_healthmanager, redundancy);
             m_partitioner = new Partitioner(m_cancelSrc.Token, m_cloudidx, m_nameservice, m_taskqueue, DynamicClusterConfig.Instance.ReplicationMode, redundancy);
             m_taskexec = new Executor(m_cancelSrc.Token, m_nameservice, m_taskqueue);
-            m_backupctl = new BackupController(m_cancelSrc.Token, m_backupmgr, m_nameservice, m_persistent_storage);
+            m_backupctl = new BackupController(m_cancelSrc.Token, m_backupmgr, m_nameservice, m_persistent_storage, m_taskqueue);
 
             Log.WriteLine($"{nameof(DynamicMemoryCloud)}: Partition {MyPartitionId}: Instance '{NickName}' {InstanceGuid} opened.");
             Global.CommunicationInstance.Started += InitModule;

@@ -50,6 +50,12 @@ struct ShrinkDataTaskInformation
 	List<ChunkInformation> remove_target;
 }
 
+struct BackupTaskInformation
+{
+	Guid task_id;
+	Guid version;
+}
+
 struct ErrnoResponse
 {
 	Errno errno;
@@ -129,6 +135,20 @@ protocol AnnounceMaster
 	Response: ErrnoResponse;
 }
 
+protocol PersistedLoadPartition
+{
+	Type: Asyn;
+	Request: BackupTaskInformation;
+	Response: ErrnoResponse;
+}
+
+protocol PersistedSavePartition
+{
+	Type: Asyn;
+	Request: BackupTaskInformation;
+	Response: ErrnoResponse;
+}
+
 module DynamicCluster
 {
 	protocol AnnounceMaster;
@@ -139,4 +159,6 @@ module DynamicCluster
 	protocol ShrinkData;
 	protocol PersistedDownload;
 	protocol PersistedUpload;
+	protocol PersistedLoadPartition;
+	protocol PersistedSavePartition;
 }

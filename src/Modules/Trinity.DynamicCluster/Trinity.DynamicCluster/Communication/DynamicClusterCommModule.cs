@@ -171,5 +171,31 @@ namespace Trinity.DynamicCluster.Communication
             (m_memorycloud as DynamicMemoryCloud).m_cloudidx.SetMaster(request.partition, request.id);
             response.errno = Errno.E_OK;
         }
+
+        public override void PersistedLoadPartitionHandler(BackupTaskInformationReader request, ErrnoResponseWriter response)
+        {
+            try
+            {
+                (m_memorycloud as DynamicMemoryCloud).m_backupctl.RestoreCurrentPartition(EventArgs.Empty).Wait();
+                response.errno = Errno.E_OK;
+            }
+            catch
+            {
+                response.errno = Errno.E_FAIL;
+            }
+        }
+
+        public override void PersistedSavePartitionHandler(BackupTaskInformationReader request, ErrnoResponseWriter response)
+        {
+            try
+            {
+                (m_memorycloud as DynamicMemoryCloud).m_backupctl.BackupCurrentPartition(EventArgs.Empty).Wait();
+                response.errno = Errno.E_OK;
+            }
+            catch
+            {
+                response.errno = Errno.E_FAIL;
+            }
+        }
     }
 }

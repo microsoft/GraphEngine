@@ -38,7 +38,6 @@ namespace Trinity.Azure.Storage.Test
             Chunk c1 = new Chunk(0, 10);
             Chunk c2 = new Chunk(100, 110);
             string idx = string.Join("\n", new[] {c1, c2}.Select(JsonConvert.SerializeObject));
-            dir.GetBlockBlobReference(Constants.c_partition_index).UploadText(idx);
 
 
             var f1 = Items[0].Clone() as byte[];
@@ -48,8 +47,9 @@ namespace Trinity.Azure.Storage.Test
             f2[10] = 0x02;
             f2[14] = 0xDE;
             f2[15] = 0xAD;
-            dir.GetBlockBlobReference(c1.Id.ToString()).UploadFromByteArray(f1, 0, f1.Length);
-            dir.GetBlockBlobReference(c2.Id.ToString()).UploadFromByteArray(f2, 0, f2.Length);
+            dir.GetDirectoryReference("0").GetBlockBlobReference(c1.Id.ToString()).UploadFromByteArray(f1, 0, f1.Length);
+            dir.GetDirectoryReference("0").GetBlockBlobReference(c2.Id.ToString()).UploadFromByteArray(f2, 0, f2.Length);
+            dir.GetDirectoryReference("0").GetBlockBlobReference(Constants.c_partition_index).UploadText(idx);
             dir.GetBlockBlobReference(Constants.c_finished).UploadText("");
 
             var v = await m_storage.GetLatestVersion();
@@ -60,8 +60,8 @@ namespace Trinity.Azure.Storage.Test
         [TestMethod]
         public async Task Download()
         {
-            GetLatestVersion().Wait();
-            var v = await m_storage.GetDownloader(m_version, 0, 110);
+            await GetLatestVersion();
+            var v = await m_storage.Download(m_version, 0, 0, 110);
             var src = await v.DownloadAsync();
 
 

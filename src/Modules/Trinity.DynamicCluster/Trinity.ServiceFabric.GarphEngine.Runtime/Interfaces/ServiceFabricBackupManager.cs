@@ -66,7 +66,12 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
             {
                 await Task.Delay(1000, m_cancel);
             }
-            m_svc.RequestRestore += (o, e) => RequestPartitionRestore(o, e);
+            m_svc.RequestRestore += OnServiceFabricRequestRestore;
+        }
+
+        private void OnServiceFabricRequestRestore(object sender, RestoreEventArgs e)
+        {
+            RequestPartitionRestore(sender, e);
         }
 
         public async Task Backup(IPersistentUploader uploader, EventArgs _)
@@ -94,9 +99,14 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
             await m_init;
             if (eventArgs == EventArgs.Empty)
             {
+                // !Note, we disable the event handler before we trigger an active restore, otherwise
+                // the active restore event will notify the backup controller, while in fact the restore
+                // command is issued from the controller, and SF backup manager should do it passively.
                 Log.WriteLine($"{nameof(ServiceFabricBackupManager)}: initiating a new restore operation.");
+                m_svc.RequestRestore -= OnServiceFabricRequestRestore;
                 await m_svc.FabricClient.TestManager.StartPartitionDataLossAsync(Guid.NewGuid(), PartitionSelector.PartitionIdOf(m_svc.Context.ServiceName, m_svc.Context.PartitionId), DataLossMode.PartialDataLoss);
                 await m_sem.WaitAsync();
+                m_svc.RequestRestore += OnServiceFabricRequestRestore;
                 return;
             }
             if (!(eventArgs is RestoreEventArgs rstArgs))
