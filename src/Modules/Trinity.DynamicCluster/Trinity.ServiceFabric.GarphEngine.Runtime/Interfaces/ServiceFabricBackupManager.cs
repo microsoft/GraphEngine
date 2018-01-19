@@ -45,15 +45,17 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
         private CancellationToken m_cancel;
         private Task m_init;
         private GraphEngineStatefulServiceRuntime m_svc;
+        private SemaphoreSlim m_sem;
 
         //SF does not request backups
-        public event EventHandler RequestBackup = delegate{ };
-        public event EventHandler RequestRestore = delegate{ };
+        public event EventHandler RequestPartitionBackup = delegate{ };
+        public event EventHandler RequestPartitionRestore = delegate{ };
 
-        public void Dispose() { }
+        public void Dispose() { m_sem.Dispose(); }
 
         public void Start(CancellationToken cancellationToken)
         {
+            m_sem = new SemaphoreSlim(0);
             m_cancel = cancellationToken;
             m_init   = InitAsync();
         }
@@ -64,7 +66,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
             {
                 await Task.Delay(1000, m_cancel);
             }
-            m_svc.RequestRestore += (o, e) => RequestRestore(o, e);
+            m_svc.RequestRestore += (o, e) => RequestPartitionRestore(o, e);
         }
 
         public async Task Backup(IPersistentUploader uploader, EventArgs _)
@@ -94,11 +96,11 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
             {
                 Log.WriteLine($"{nameof(ServiceFabricBackupManager)}: initiating a new restore operation.");
                 await m_svc.FabricClient.TestManager.StartPartitionDataLossAsync(Guid.NewGuid(), PartitionSelector.PartitionIdOf(m_svc.Context.ServiceName, m_svc.Context.PartitionId), DataLossMode.PartialDataLoss);
+                await m_sem.WaitAsync();
                 return;
             }
             if (!(eventArgs is RestoreEventArgs rstArgs))
             {
-                // TODO implement active state restore.
                 throw new NotSupportedException();
             }
             try
@@ -127,6 +129,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
                 rstArgs.Complete(ex);
                 throw;
             }
+            m_sem.Release();
         }
 
         private string MetadataKey => $"P{m_svc.PartitionId}_SFBackup.zip";

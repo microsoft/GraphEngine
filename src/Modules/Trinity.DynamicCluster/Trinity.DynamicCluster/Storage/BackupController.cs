@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Trinity.DynamicCluster.Consensus;
 using Trinity.DynamicCluster.Persistency;
+using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Storage
 {
@@ -25,38 +26,71 @@ namespace Trinity.DynamicCluster.Storage
             this.m_namesvc = namesvc;
             this.m_pstore = pstore;
 
-            m_backupmgr.RequestBackup  += OnBackupManagerRequestBackup;
-            m_backupmgr.RequestRestore += OnBackupManagerRequestRestore;
+            m_backupmgr.RequestPartitionBackup  += OnBackupManagerRequestBackup;
+            m_backupmgr.RequestPartitionRestore += OnBackupManagerRequestRestore;
         }
 
-        private async Task _RestoreImpl(Guid version, EventArgs e)
-        {
-            if (!m_namesvc.IsMaster) throw new InvalidOperationException();
-        }
-
-        private async Task _RestoreImpl(EventArgs e)
+        private async Task RestoreAllPartitions()
         {
             var version = await m_pstore.GetLatestVersion();
-            await _RestoreImpl(version, e);
+            await RestoreAllPartitions(version);
         }
 
-        private async Task _BackupImpl(EventArgs e)
+        private async Task RestoreAllPartitions(Guid version)
+        {
+            var masters = _GetMasters();
+
+            // Leader, distribute restore tasks to masters.
+            var task_id = Guid.NewGuid();
+        }
+
+        private IEnumerable<IStorage> _GetMasters()
+        {
+            if (!m_namesvc.IsMaster) throw new InvalidOperationException();
+            var masters = Utils.Integers(m_namesvc.PartitionCount).Select(m_dmc.m_cloudidx.GetMaster);
+            if (masters.Any(_ => _ == null)) throw new NoSuitableReplicaException("One or more partition masters not found.");
+            return masters;
+        }
+
+        private async Task BackupAllPartitions()
         {
             var version = await m_pstore.CreateNewVersion();
+            // Leader, distribute backup tasks to masters.
+            var task_id = Guid.NewGuid();
+            var masters = _GetMasters();
+            try
+            {
+                await m_pstore.CommitVersion(version);
+            }
+            catch
+            {
+                await m_pstore.DeleteVersion(version);
+            }
         }
 
-        public Task Backup() => _BackupImpl(EventArgs.Empty);
+        public Task Backup() => BackupAllPartitions();
 
-        public Task Restore() => _RestoreImpl(EventArgs.Empty);
+        public Task Restore() => RestoreAllPartitions();
+
+        public Task Restore(Guid version) => RestoreAllPartitions(version);
 
         private void OnBackupManagerRequestRestore(object sender, EventArgs e)
-            => _RestoreImpl(e);
+            => RestoreCurrentPartition(e);
+
+        private void RestoreCurrentPartition(EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void BackupCurrentPartition(EventArgs e)
+        {
+            // generate tasks, to slaves...
+        }
+
 
         private void OnBackupManagerRequestBackup(object sender, EventArgs e)
-            => _BackupImpl(e);
+            => BackupCurrentPartition(e);
 
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
     }
 }

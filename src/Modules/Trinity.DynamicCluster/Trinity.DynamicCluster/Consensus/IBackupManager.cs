@@ -18,7 +18,7 @@ namespace Trinity.DynamicCluster.Consensus
         /// The persistent storage uploader, which can be used to upload additional metadata in a snapshot.
         /// </param>
         /// <param name="eventArgs">
-        /// If the backup is triggered from within the backup manager with <see cref="RequestBackup"/>, the event arguments will be forwarded.
+        /// If the backup is triggered from within the backup manager with <see cref="RequestPartitionBackup"/>, the event arguments will be forwarded.
         /// Otherwise, the backup is triggered via GraphEngine management interface, and eventArgs is set to <see cref="EventArgs.Empty"/>.
         /// </param>
         /// <returns></returns>
@@ -30,7 +30,7 @@ namespace Trinity.DynamicCluster.Consensus
         /// The persistent storage downloader, which can be used to download additional metadata in a snapshot.
         /// </param>
         /// <param name="eventArgs">
-        /// If the restore is triggered from within the backup manager with <see cref="RequestRestore"/>, the event arguments will be forwarded.
+        /// If the restore is triggered from within the backup manager with <see cref="RequestPartitionRestore"/>, the event arguments will be forwarded.
         /// Otherwise, the restore is triggered via GraphEngine management interface, and eventArgs is set to <see cref="EventArgs.Empty"/>.
         /// </param>
         /// <returns></returns>
@@ -39,11 +39,11 @@ namespace Trinity.DynamicCluster.Consensus
         /// Requests Graph Engine to conduct a backup. Note,
         /// when this event is raised, the event arguments will be loopbacked to <see cref="Backup"/> .
         /// </summary>
-        event EventHandler RequestBackup;
+        event EventHandler RequestPartitionBackup;
         /// <summary>
         /// Requests Graph Engine to conduct a restoration. Note,
         /// when this event is raised, the event arguments will be loopbacked to <see cref="Restore"/> .
         /// </summary>
-        event EventHandler RequestRestore;
+        event EventHandler RequestPartitionRestore;
     }
 }

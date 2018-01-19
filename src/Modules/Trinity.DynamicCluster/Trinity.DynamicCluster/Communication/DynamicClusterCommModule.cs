@@ -36,7 +36,7 @@ namespace Trinity.DynamicCluster.Communication
         public override void PersistedDownloadHandler(PersistedSliceReader request, ErrnoResponseWriter response)
         {
             var dmc        = DynamicMemoryCloud.Instance;
-            var downloader = dmc.m_persistent_storage.GetDownloader(request.version, request.lowkey, request.highkey).Result;
+            var downloader = dmc.m_persistent_storage.Download(request.version, dmc.MyPartitionId, request.lowkey, request.highkey).Result;
             Task<IPersistentDataChunk> dtask = downloader.DownloadAsync();
             while (true)
             {
@@ -55,7 +55,7 @@ namespace Trinity.DynamicCluster.Communication
         public override void PersistedUploadHandler(PersistedSliceReader request, ErrnoResponseWriter response)
         {
             var dmc        = DynamicMemoryCloud.Instance;
-            var uploader   = dmc.m_persistent_storage.GetUploader(request.version, request.lowkey, request.highkey).Result;
+            var uploader   = dmc.m_persistent_storage.Upload(request.version, dmc.MyPartitionId, request.lowkey, request.highkey).Result;
             var chunks     = new[]{ new ChunkInformation{lowKey = request.lowkey, highKey = request.highkey, id = request.version} };
             var thres      = DynamicClusterConfig.Instance.PersistedChunkSizeThreshold;
             var tx_rsps    = Global.LocalStorage
