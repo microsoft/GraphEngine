@@ -18,10 +18,16 @@ namespace Trinity.Azure.Storage
         private CloudBlobContainer m_container;
         private CancellationTokenSource m_cancellationTokenSource;
         private CancellationToken m_cancel;
+        private Task m_init;
 
         internal CloudBlobClient _test_getclient() => m_client;
 
         public BlobStoragePersistentStorage()
+        {
+            m_init = EnsureContainer();
+        }
+
+        private async Task EnsureContainer()
         {
             if (BlobStorageConfig.Instance.ContainerName == null) Log.WriteLine(LogLevel.Error, $"{nameof(BlobStoragePersistentStorage)}: container name is not specified");
             if (BlobStorageConfig.Instance.ConnectionString == null) Log.WriteLine(LogLevel.Error, $"{nameof(BlobStoragePersistentStorage)}: connection string is not specified");
@@ -32,16 +38,12 @@ namespace Trinity.Azure.Storage
             m_container = m_client.GetContainerReference(BlobStorageConfig.Instance.ContainerName);
             m_cancellationTokenSource = new CancellationTokenSource();
             m_cancel = m_cancellationTokenSource.Token;
-        }
-
-        private async Task EnsureContainer()
-        {
             await m_container.CreateIfNotExistsAsync(cancellationToken: m_cancel);
         }
 
         public async Task<Guid> CreateNewVersion()
         {
-            await EnsureContainer();
+            await m_init;
 retry:
             var guid = Guid.NewGuid();
             var dir  = m_container.GetDirectoryReference(guid.ToString());
@@ -63,7 +65,7 @@ retry:
 
         public async Task CommitVersion(Guid version)
         {
-            await EnsureContainer();
+            await m_init;
             var dir  = m_container.GetDirectoryReference(version.ToString());
             var files = dir.ListBlobs(useFlatBlobListing: true);
             if (!files.Any()) throw new SnapshotNotFoundException();
@@ -78,7 +80,7 @@ retry:
 
         public async Task DeleteVersion(Guid version)
         {
-            await EnsureContainer();
+            await m_init;
             var blobs = m_container.GetDirectoryReference(version.ToString())
                        .ListBlobs(useFlatBlobListing:true)
                        .OfType<CloudBlob>()
@@ -89,13 +91,14 @@ retry:
 
         public void Dispose()
         {
+            m_init.Wait();
             m_cancellationTokenSource.Cancel();
             m_cancellationTokenSource.Dispose();
         }
 
         public async Task<Guid> GetLatestVersion()
         {
-            await EnsureContainer();
+            await m_init;
             var files = m_container.ListBlobs(useFlatBlobListing: false)
                                       .OfType<CloudBlobDirectory>()
                                       .Select(dir => dir.GetBlockBlobReference(Constants.c_finished))
@@ -118,13 +121,13 @@ retry:
 
         public async Task<IPersistentUploader> Upload(Guid version, int partitionId, long lowKey, long highKey)
         {
-            await EnsureContainer();
+            await m_init;
             return new BlobUploader(version, partitionId, m_container);
         }
 
         public async Task<IPersistentDownloader> Download(Guid version, int partitionId, long lowKey, long highKey)
         {
-            await EnsureContainer();
+            await m_init;
             return new BlobDownloader(version, partitionId, lowKey, highKey, m_container);
         }
 

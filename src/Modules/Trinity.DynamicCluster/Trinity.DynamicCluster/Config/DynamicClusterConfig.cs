@@ -23,7 +23,7 @@ namespace Trinity.DynamicCluster.Config
         }
 
         [ConfigEntryName]
-        internal static string ConfigEntry => nameof(Trinity.DynamicCluster);
+        internal static string ConfigEntry => "Trinity.DynamicCluster";
 
         [ConfigSetting(Optional:true)]
         public int ConcurrentDownloads { get; set; }

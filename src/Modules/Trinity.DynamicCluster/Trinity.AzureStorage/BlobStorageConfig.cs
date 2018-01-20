@@ -10,7 +10,7 @@ namespace Trinity.Azure.Storage
         [ConfigInstance]
         public static BlobStorageConfig Instance => s_instance;
         [ConfigEntryName]
-        internal static string ConfigEntry => nameof(Trinity.Azure.Storage);
+        internal static string ConfigEntry => "Trinity.Azure.Storage";
         [ConfigSetting(Optional:false)]
         public string ConnectionString { get; set; }
         [ConfigSetting(Optional:false)]

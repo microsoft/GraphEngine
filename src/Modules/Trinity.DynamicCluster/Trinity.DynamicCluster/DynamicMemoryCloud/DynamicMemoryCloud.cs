@@ -115,6 +115,7 @@ namespace Trinity.DynamicCluster.Storage
 
             m_myid = GetInstanceId(InstanceGuid);
             m_storageTable = new DynamicStorageTable(PartitionCount);
+            m_storageTable[m_myid] = Global.LocalStorage;
             NickName = GenerateNickName(InstanceGuid);
 
             int redundancy = DynamicClusterConfig.Instance.MinimumReplica;

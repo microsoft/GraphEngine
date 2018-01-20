@@ -11,6 +11,7 @@ namespace Trinity.ServiceFabric
     {
         private static void Main()
         {
+            Console.WriteLine(Trinity.Azure.Storage.BlobStorageConfig.Instance.ConnectionString);
             ServiceRuntime.RegisterServiceAsync("Trinity.ServiceFabric.GraphEngineServiceType",
                 context => new GraphEngineService(context)).GetAwaiter().GetResult();
 

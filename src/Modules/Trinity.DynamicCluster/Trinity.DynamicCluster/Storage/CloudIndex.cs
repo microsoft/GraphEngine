@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nito.AsyncEx;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -100,10 +101,17 @@ namespace Trinity.DynamicCluster.Storage
             var newset = rps.ToList();
             foreach (var r in newset.Except(oldset))
             {
-                if (r.Address == m_nameservice.Address && r.Port == m_nameservice.Port) continue;
                 Log.WriteLine("{0}", $"{nameof(CloudIndex)}: {r.Address}:{r.Port} ({r.Id}) added to partition {r.PartitionId}");
-                DynamicRemoteStorage rs = new DynamicRemoteStorage(r, TrinityConfig.ClientMaxConn, m_dmc);
-                SetStorage(r.Id, rs);
+                IStorage storage = null;
+                if (r.Address == m_nameservice.Address && r.Port == m_nameservice.Port)
+                {
+                    storage = Global.LocalStorage;
+                }
+                else
+                {
+                    storage = new DynamicRemoteStorage(r, TrinityConfig.ClientMaxConn, m_dmc);
+                }
+                SetStorage(r.Id, storage);
             }
             foreach (var r in oldset.Except(newset))
             {
@@ -150,16 +158,20 @@ namespace Trinity.DynamicCluster.Storage
         private async Task ChunkTableUpdateProc()
         {
             bool updated = false;
+            IEnumerable<Chunk> pulledct = null;
+            IStorage stg = null;
             foreach (var r in m_replicaList.SelectMany(Utils.Identity))
             {
-                var stg = GetStorage(r.Id);
+                stg = GetStorage(r.Id);
                 if (null == stg) { continue; }
-                var ct = await _GetChunks(stg);
-                ct = ct.OrderBy(_ => _.LowKey);
+                CancellationTokenSource tsrc = new CancellationTokenSource(1000);
+                try { pulledct = await _GetChunks(stg).WaitAsync(tsrc.Token); }
+                catch (OperationCanceledException) { continue; }
+                pulledct = pulledct.OrderBy(_ => _.LowKey);
                 IEnumerable<Chunk> ctcache = GetChunks(r.Id);
-                if (Enumerable.SequenceEqual(ctcache, ct)) { continue; }
-                SetChunks(r.Id, ct);
-                m_dmc.PartitionTable(r.PartitionId).Mount(stg, ct);
+                if (Enumerable.SequenceEqual(ctcache, pulledct)) { continue; }
+                SetChunks(r.Id, pulledct);
+                m_dmc.PartitionTable(r.PartitionId).Mount(stg, pulledct);
                 var nickname = (stg as DynamicRemoteStorage)?.NickName ?? m_dmc.NickName;
                 Log.WriteLine("{0}: {1}", nameof(ChunkTableUpdateProc), $"Replica {nickname}: chunk table updated.");
                 updated = true;

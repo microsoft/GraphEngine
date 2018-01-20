@@ -89,6 +89,7 @@
     </Reference>
     <Reference Include="System.Collections.Immutable, Version=1.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Collections.Immutable.1.2.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Composition.AttributedModel, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -197,6 +198,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Trinity.AzureStorage\Trinity.Azure.Storage.csproj">
+      <Project>{7673502e-80b7-46e7-aa78-ac7e6bab556c}</Project>
+      <Name>Trinity.Azure.Storage</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Trinity.DynamicCluster\Trinity.DynamicCluster.csproj">
       <Project>{26db9c05-8b53-409f-a1c9-3fd30cfec35c}</Project>
       <Name>Trinity.DynamicCluster</Name>

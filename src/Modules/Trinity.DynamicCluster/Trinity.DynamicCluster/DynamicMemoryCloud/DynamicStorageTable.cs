@@ -66,7 +66,7 @@ namespace Trinity.DynamicCluster.Storage
                 else
                     return m_instances[index];
             }
-            set => m_partitions[index] = value;
+            set => AddInstance(index, value);
         }
 
         public int Count => m_pcnt;
