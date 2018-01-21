@@ -44,7 +44,7 @@ namespace Trinity.DynamicCluster.Storage
             // chunks into replicas as per described by the chunk table.
 
             List<PersistedLoadTask> passive_tasks = new List<PersistedLoadTask>();
-            var cts = await m_dmc.m_cloudidx.GetMyPartitionReplicaChunks();
+            var cts = m_dmc.m_cloudidx.GetMyPartitionReplicaChunks();
             foreach (var (rep, cks) in cts)
             {
                 passive_tasks.Add(new PersistedLoadTask(cks
@@ -58,7 +58,7 @@ namespace Trinity.DynamicCluster.Storage
         internal async Task BackupCurrentPartition(Guid task_id, Guid version, EventArgs e)
         {
             List<PersistedSaveTask> passive_tasks = new List<PersistedSaveTask>();
-            var cts = await m_dmc.m_cloudidx.GetMyPartitionReplicaChunks();
+            var cts = m_dmc.m_cloudidx.GetMyPartitionReplicaChunks();
             // Backup strategy: back up each chunk only ONCE, by the first replica that holds it.
             // XXX this would burden the first replica if it has the most chunks.
             // TODO load balance

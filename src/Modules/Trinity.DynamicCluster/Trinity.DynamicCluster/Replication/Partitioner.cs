@@ -57,27 +57,43 @@ namespace Trinity.DynamicCluster.Replication
                 m_taskqueue.Wait(ShrinkDataTask.Guid),
                 m_taskqueue.Wait(PersistedSaveTask.Guid));
 
-            var replica_chunks = await m_idx.GetMyPartitionReplicaChunks();
-            if (replica_chunks.Count(p => p.cks.Any()) < m_minreplicas)
+            var replica_chunks = m_idx.GetMyPartitionReplicaChunks().ToList();
+            if (ClusterInitInProgress(replica_chunks))
             {
-                Log.WriteLine($"{nameof(PartitionerProc)}: waiting for {m_minreplicas} ready replicas to conduct partitioning");
+                Log.WriteLine($"{nameof(Partitioner)}: waiting for {m_minreplicas} ready replicas to conduct partitioning");
                 return;
             }
 
-            IEnumerable<ITask> plan = s_planners[m_repmode].Plan(m_minreplicas, replica_chunks);
-            // Replication tasks can be done in parallel, and shrink tasks too.
-            // However, together they form a multi-stage task -- no shrink task should happen
-            // before all rep tasks are done.
-            var rep_tasks = plan.OfType<ReplicatorTask>();
-            var shr_tasks = plan.OfType<ShrinkDataTask>();
-            var chain = new List<ITask>();
-            if(rep_tasks.Any()) chain.Add(new GroupedTask(rep_tasks, ReplicatorTask.Guid));
-            if(shr_tasks.Any()) chain.Add(new GroupedTask(shr_tasks, ShrinkDataTask.Guid));
-            if (!chain.Any()) return;
-            var ctask = new ChainedTasks(chain, ReplicatorTask.Guid);
-            await m_taskqueue.PostTask(ctask);
+            if (NeedRepartition(replica_chunks))
+            {
+                Log.WriteLine($"{nameof(Partitioner)}: Repartition initiated for partition #{m_namesvc.PartitionId}.");
+                IEnumerable<ITask> plan = s_planners[m_repmode].Plan(m_minreplicas, replica_chunks);
+                // Replication tasks can be done in parallel, and shrink tasks too.
+                // However, together they form a multi-stage task -- no shrink task should happen
+                // before all rep tasks are done.
+                var rep_tasks = plan.OfType<ReplicatorTask>();
+                var shr_tasks = plan.OfType<ShrinkDataTask>();
+                var chain = new List<ITask>();
+                if (rep_tasks.Any()) chain.Add(new GroupedTask(rep_tasks, ReplicatorTask.Guid));
+                if (shr_tasks.Any()) chain.Add(new GroupedTask(shr_tasks, ShrinkDataTask.Guid));
+                if (!chain.Any()) return;
+                var ctask = new ChainedTasks(chain, ReplicatorTask.Guid);
+                await m_taskqueue.PostTask(ctask);
+                return;
+            }
 
             //TODO load balance
+        }
+
+        private bool ClusterInitInProgress(List<(ReplicaInformation rep, IEnumerable<Chunk> cks)> replica_chunks)
+        {
+            // no rep is initialized, and the required minimum rep count is not reached.
+            return !replica_chunks.Any(tup => tup.cks.Any()) && replica_chunks.Count < m_minreplicas;
+        }
+
+        private bool NeedRepartition(IEnumerable<(ReplicaInformation rep, IEnumerable<Chunk> cks)> replica_chunks)
+        {
+            return replica_chunks.Any(tup => !tup.cks.Any());
         }
 
         public void Dispose()

@@ -25,11 +25,10 @@ namespace Trinity.DynamicCluster.Storage
         private IChunkTable                            m_chunktable;
         private CancellationToken                      m_cancel;
         private IEnumerable<ReplicaInformation>[]      m_replicaList;
-        private IStorage[]                             m_masterIds;
+        private IStorage[]                             m_masters;
         private Task                                   m_ctupdateproc;
         private Task                                   m_masterproc;
         private Task                                   m_scanproc;
-        private SemaphoreSlim                          m_ctupdate_sem = new SemaphoreSlim(0);
 
         public IEnumerable<Chunk> MyChunks => GetChunks(m_nameservice.InstanceId);
         public IEnumerable<ReplicaInformation> MyPartitionReplicas => m_replicaList[m_nameservice.PartitionId];
@@ -43,8 +42,7 @@ namespace Trinity.DynamicCluster.Storage
             m_cancel         = token;
             m_storagetab     = new Dictionary<Guid, IStorage>();
             m_ctcache        = new Dictionary<Guid, IEnumerable<Chunk>>();
-            SetStorage(m_nameservice.InstanceId, Global.LocalStorage);
-            m_masterIds      = new IStorage[m_nameservice.PartitionCount];
+            m_masters        = new IStorage[m_nameservice.PartitionCount];
             m_replicaList    = Utils.Integers(m_nameservice.PartitionCount).Select(_ => Enumerable.Empty<ReplicaInformation>()).ToArray();
             m_ctupdateproc   = Utils.Daemon(m_cancel, "ChunkTableUpdateProc", 10000, ChunkTableUpdateProc);
             m_masterproc     = Utils.Daemon(m_cancel, "MasterNotifyProc", 10000, MasterNotifyProc);
@@ -87,10 +85,13 @@ namespace Trinity.DynamicCluster.Storage
             }
         }
 
-        public async Task<IEnumerable<(ReplicaInformation rep, IEnumerable<Chunk> cks)>> GetMyPartitionReplicaChunks()
+        public IEnumerable<(ReplicaInformation rep, IEnumerable<Chunk> cks)> GetMyPartitionReplicaChunks()
         {
-            await m_ctupdate_sem.WaitAsync();
-            return MyPartitionReplicas.Join(m_ctcache, r => r.Id, kvp => kvp.Key, (r, kvp) => (r, kvp.Value));
+            return
+            from rep in MyPartitionReplicas
+            join cks in m_ctcache on rep.Id equals cks.Key into gj
+            from subcks in gj.DefaultIfEmpty()
+            select (rep, subcks.Value ?? Enumerable.Empty<Chunk>());
         }
 
         private void UpdatePartition(IEnumerable<ReplicaInformation> rps)
@@ -157,7 +158,6 @@ namespace Trinity.DynamicCluster.Storage
         /// </summary>
         private async Task ChunkTableUpdateProc()
         {
-            bool updated = false;
             IEnumerable<Chunk> pulledct = null;
             IStorage stg = null;
             foreach (var r in m_replicaList.SelectMany(Utils.Identity))
@@ -174,31 +174,31 @@ namespace Trinity.DynamicCluster.Storage
                 m_dmc.PartitionTable(r.PartitionId).Mount(stg, pulledct);
                 var nickname = (stg as DynamicRemoteStorage)?.NickName ?? m_dmc.NickName;
                 Log.WriteLine("{0}: {1}", nameof(ChunkTableUpdateProc), $"Replica {nickname}: chunk table updated.");
-                updated = true;
-            }
-            if (updated)
-            {
-                m_ctupdate_sem.Release();
             }
         }
 
         internal void SetMaster(int partition, Guid replicaId)
         {
-            if (replicaId == m_nameservice.InstanceId) m_masterIds[partition] = Global.LocalStorage;
-            else m_masterIds[partition] = m_dmc.PartitionTable(partition).OfType<DynamicRemoteStorage>().FirstOrDefault(_ => _.ReplicaInformation.Id == replicaId);
+            if (replicaId == m_nameservice.InstanceId) m_masters[partition] = Global.LocalStorage;
+            else m_masters[partition] = m_dmc.PartitionTable(partition).OfType<DynamicRemoteStorage>().FirstOrDefault(_ => _.ReplicaInformation.Id == replicaId);
         }
 
         internal IStorage GetMaster(int partition)
         {
-            return m_masterIds[partition];
+            return m_masters[partition];
         }
 
         private async Task<IEnumerable<Chunk>> _GetChunks(IStorage storage)
         {
+            List<Chunk> chunks = new List<Chunk>();
             using (var rsp = await storage.GetChunks())
             {
-                return rsp.chunk_info.Cast<Chunk>().ToList();
+                foreach(var ci in rsp.chunk_info)
+                {
+                    chunks.Add(new Chunk(ci.lowKey, ci.highKey, ci.id));
+                }
             }
+            return chunks;
         }
 
         public void Dispose()

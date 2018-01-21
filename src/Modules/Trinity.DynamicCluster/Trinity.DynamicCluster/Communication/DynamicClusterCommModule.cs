@@ -86,6 +86,7 @@ namespace Trinity.DynamicCluster.Communication
             var signal_c       = new SemaphoreSlim(4);
             var signal_t       = new ManualResetEventSlim(false);
 
+            //TODO timeout
             var batch_rsps     = Global.LocalStorage
                                 .Where(cell => _Covered(chunks, cell.CellId))
                                 .Segment(thres, cell => cell.CellSize + sizeof(long) + sizeof(int) + sizeof(ushort))
@@ -163,7 +164,12 @@ namespace Trinity.DynamicCluster.Communication
 
         public override void GetChunksHandler(GetChunksResponseWriter response)
         {
-            response.chunk_info.AddRange(m_memorycloud.MyChunks.Cast<ChunkInformation>().ToList());
+            var dmc = m_memorycloud as DynamicMemoryCloud;
+            var chunks = dmc.m_chunktable.GetChunks(dmc.InstanceGuid).Result;
+            foreach(var chunk in chunks)
+            {
+                response.chunk_info.Add(new ChunkInformation(chunk.LowKey, chunk.HighKey, chunk.Id));
+            }
         }
 
         public override void AnnounceMasterHandler(StorageInformationReader request, ErrnoResponseWriter response)
