@@ -14,16 +14,16 @@ using Trinity.Storage;
 namespace Trinity.DynamicCluster.Test
 {
     [TestClass]
-    public unsafe class PartitionTests
+    public class PartitionTests
     {
         List<Chunk> cks = new List<Chunk>{ Chunk.FullRangeChunk };
         byte[] buf = new byte[16];
-        byte* bp;
+        unsafe byte* bp;
         private TrinityMessage tm;
         private GCHandle gchandle;
 
         [TestInitialize]
-        public void Init()
+        public unsafe void Init()
         {
             gchandle = GCHandle.Alloc(buf, GCHandleType.Pinned);
             bp = (byte*)gchandle.AddrOfPinnedObject().ToPointer();
@@ -68,6 +68,246 @@ namespace Trinity.DynamicCluster.Test
                 }
             }
             Assert.IsTrue(stgs.All(_ => _.SendMessageCalledOnce));
+        }
+
+        [TestMethod]
+        public unsafe void PartitionRR2()
+        {
+            var stgs = Utils.Infinity<IStorage1>().Take(5).ToList();
+            using (var p = new Partition())
+            {
+                foreach (var s in stgs) p.Mount(s, cks);
+                for (int i = 0; i<5; ++i)
+                {
+                    p.RoundRobin(_ => { _.SendMessage(tm, out var tr); return tr; });
+                }
+            }
+            Assert.IsTrue(stgs.All(_ => _.SendMessageCalledOnce));
+        }
+
+        [TestMethod]
+        public unsafe void PartitionRR3()
+        {
+            var stgs = Utils.Infinity<IStorage1>().Take(5).ToList();
+            using (var p = new Partition())
+            {
+                foreach (var s in stgs) p.Mount(s, cks);
+                for (int i = 0; i<5; ++i)
+                {
+                    p.RoundRobin(_ => { _.SendMessage(tm, out var rsp); return Task.FromResult(rsp); });
+                }
+            }
+            Assert.IsTrue(stgs.All(_ => _.SendMessageCalledOnce));
+        }
+
+        [TestMethod]
+        public unsafe void PartitionFirstAvailable1()
+        {
+            var stgs = Utils.Infinity<IStorage1>().Take(5).ToList();
+            using (var p = new Partition())
+            {
+                foreach (var s in stgs) p.Mount(s, cks);
+                for (int i = 0; i < 5; ++i)
+                {
+                    p.FirstAvailable(_ => { _.SendMessage(tm, out var rsp); return Task.FromResult(rsp); });
+                }
+            }
+            Assert.IsTrue(stgs.Any(_ => _.cnt == 5));
+        }
+
+        [TestMethod]
+        public unsafe void PartitionFirstAvailable4()
+        {
+            var stgs = Utils.Infinity<IStorage1>().Take(5).ToList();
+            using (var p = new Partition())
+            {
+                foreach (var s in stgs) p.Mount(s, cks);
+                for (int i = 0; i < 3; ++i)
+                {
+                    p.FirstAvailable(_ => { _.SendMessage(tm, out var rsp); return Task.FromResult(rsp); });
+                }
+                int idx = stgs.FindIndex(_ => _.cnt == 3);
+                p.Unmount(stgs[idx]);
+                for (int i = 0; i < 2; ++i)
+                {
+                    p.FirstAvailable(_ => { _.SendMessage(tm, out var rsp); return Task.FromResult(rsp); });
+                }
+
+            }
+            Assert.IsTrue(stgs.Any(_ => _.cnt == 3));
+            Assert.IsTrue(stgs.Any(_ => _.cnt == 2));
+        }
+
+        [TestMethod]
+        public unsafe void PartitionFirstAvailable5()
+        {
+            var stgs = Utils.Infinity<IStorage1>().Take(5).ToList();
+            using (var p = new Partition())
+            {
+                foreach (var s in stgs) p.Mount(s, cks);
+                for (int i = 0; i < 3; ++i)
+                {
+                    p.FirstAvailable(_ => { _.SendMessage(tm, out var rsp); return Task.FromResult(rsp); });
+                }
+                int idx = stgs.FindIndex(_ => _.cnt != 3);
+                p.Unmount(stgs[idx]);
+                for (int i = 0; i < 2; ++i)
+                {
+                    p.FirstAvailable(_ => { _.SendMessage(tm, out var rsp); return Task.FromResult(rsp); });
+                }
+
+            }
+            Assert.IsTrue(stgs.Any(_ => _.cnt == 5));
+        }
+
+        [TestMethod]
+        public unsafe void PartitionFirstAvailable2()
+        {
+            var stgs = Utils.Infinity<IStorage1>().Take(5).ToList();
+            using (var p = new Partition())
+            {
+                foreach (var s in stgs) p.Mount(s, cks);
+                for (int i = 0; i < 5; ++i)
+                {
+                    p.FirstAvailable(_ => { _.SendMessage(tm, out var rsp); return rsp; });
+                }
+            }
+            Assert.IsTrue(stgs.Any(_ => _.cnt == 5));
+        }
+
+        [TestMethod]
+        public unsafe void PartitionFirstAvailable3()
+        {
+            var stgs = Utils.Infinity<IStorage1>().Take(5).ToList();
+            using (var p = new Partition())
+            {
+                foreach (var s in stgs) p.Mount(s, cks);
+                for (int i = 0; i < 5; ++i)
+                {
+                    p.FirstAvailable(_ => _.SendMessage(tm));
+                }
+            }
+            Assert.IsTrue(stgs.Any(_ => _.cnt == 5));
+        }
+
+        [TestMethod]
+        public unsafe void PartitionUniformRandom1()
+        {
+            var stgs = Utils.Infinity<IStorage1>().Take(5).ToList();
+            using (var p = new Partition())
+            {
+                foreach (var s in stgs) p.Mount(s, cks);
+                for (int i = 0; i < 1024; ++i)
+                {
+                    p.UniformRandom(_ => _.SendMessage(tm));
+                }
+            }
+            Assert.AreEqual(204.8, stgs.Average(_ => (double)_.cnt));
+        }
+
+        [TestMethod]
+        public unsafe void PartitionUniformRandom2()
+        {
+            var stgs = Utils.Infinity<IStorage1>().Take(5).ToList();
+            using (var p = new Partition())
+            {
+                foreach (var s in stgs) p.Mount(s, cks);
+                for (int i = 0; i < 1024; ++i)
+                {
+                    p.UniformRandom(_ => { _.SendMessage(tm, out var rsp); return rsp; });
+                }
+            }
+            Assert.AreEqual(204.8, stgs.Average(_ => (double)_.cnt));
+        }
+
+        [TestMethod]
+        public unsafe void PartitionUniformRandom3()
+        {
+            var stgs = Utils.Infinity<IStorage1>().Take(5).ToList();
+            using (var p = new Partition())
+            {
+                foreach (var s in stgs) p.Mount(s, cks);
+                for (int i = 0; i < 1024; ++i)
+                {
+                    p.UniformRandom(_ => { _.SendMessage(tm, out var rsp); return Task.FromResult(rsp); });
+                }
+            }
+            Assert.AreEqual(204.8, stgs.Average(_ => (double)_.cnt));
+        }
+
+        [TestMethod]
+        public unsafe void Broadcast1()
+        {
+            var stg1s = Utils.Infinity<IStorage1>().Take(5).ToList();
+            var stg2s = Utils.Infinity<IStorage2>().Take(5).ToList();
+            using (var p = new Partition())
+            {
+                foreach (var s in stg1s) p.Mount(s, cks);
+                p.Broadcast(_ => _.SendMessage(tm));
+                Assert.IsTrue(stg1s.All(_ => _.cnt == 1));
+                foreach (var s in stg2s) p.Mount(s, cks);
+                try
+                {
+                    p.Broadcast(_ => _.SendMessage(tm));
+                    Assert.Fail();
+                }
+                catch (BroadcastException ex) { }
+                Assert.IsTrue(stg1s.All(_ => _.cnt == 2));
+            }
+        }
+
+        [TestMethod]
+        public unsafe void Broadcast2()
+        {
+            var stg1s = Utils.Infinity<IStorage1>().Take(5).ToList();
+            var stg2s = Utils.Infinity<IStorage2>().Take(5).ToList();
+            using (var p = new Partition())
+            {
+                foreach (var s in stg1s) p.Mount(s, cks);
+                p.Broadcast(_ => { _.SendMessage(tm, out var rsp); return rsp; });
+                Assert.IsTrue(stg1s.All(_ => _.cnt == 1));
+                foreach (var s in stg2s) p.Mount(s, cks);
+                try
+                {
+                    p.Broadcast(_ => { _.SendMessage(tm, out var rsp); return rsp; });
+                    Assert.Fail();
+                }
+                catch (BroadcastException<TrinityResponse> bex)
+                {
+                    Assert.AreEqual(5, bex.Exceptions.Count());
+                    Assert.AreEqual(5, bex.Results.Count());
+                    bex.Dispose();
+                }
+                catch (BroadcastException ex) { throw; }
+                Assert.IsTrue(stg1s.All(_ => _.cnt == 2));
+            }
+        }
+
+        [TestMethod]
+        public async Task Broadcast3()
+        {
+            var stg1s = Utils.Infinity<IStorage1>().Take(5).ToList();
+            var stg2s = Utils.Infinity<IStorage2>().Take(5).ToList();
+            using (var p = new Partition())
+            {
+                foreach (var s in stg1s) p.Mount(s, cks);
+                await p.Broadcast(_ => { _.SendMessage(tm, out var rsp); return Task.FromResult(rsp); });
+                Assert.IsTrue(stg1s.All(_ => _.cnt == 1));
+                foreach (var s in stg2s) p.Mount(s, cks);
+                try
+                {
+                    await p.Broadcast(_ => { _.SendMessage(tm, out var rsp); return Task.FromResult(rsp); });
+                    Assert.Fail();
+                }
+                catch (BroadcastException<TrinityResponse> bex)
+                {
+                    Assert.AreEqual(5, bex.Exceptions.Count());
+                    Assert.AreEqual(5, bex.Results.Count());
+                    bex.Dispose();
+                }
+                catch (BroadcastException ex) { throw; }
+                Assert.IsTrue(stg1s.All(_ => _.cnt == 2));
+            }
         }
     }
 }

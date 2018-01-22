@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Trinity.Network;
@@ -10,12 +10,8 @@ using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Test.Mocks
 {
-    class IStorage1 : IStorage
+    class IStorage2 : IStorage
     {
-        public int cnt = 0;
-
-        public bool SendMessageCalledOnce => cnt == 1;
-
         public unsafe TrinityErrorCode AddCell(long cellId, byte* buff, int size, ushort cellType)
         {
             throw new NotImplementedException();
@@ -57,13 +53,12 @@ namespace Trinity.DynamicCluster.Test.Mocks
 
         public unsafe void SendMessage(byte* message, int size)
         {
-            ++cnt;
+            throw new IOException();
         }
 
         public unsafe void SendMessage(byte* message, int size, out TrinityResponse response)
         {
-            ++cnt;
-            response = typeof(TrinityResponse).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { typeof(int) }, new ParameterModifier[] { }).Invoke(new object[] { 1 }) as TrinityResponse;
+            throw new IOException();
         }
 
         public unsafe void SendMessage(byte** message, int* sizes, int count)

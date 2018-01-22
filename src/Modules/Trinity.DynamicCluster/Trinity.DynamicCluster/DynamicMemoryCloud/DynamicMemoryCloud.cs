@@ -119,7 +119,7 @@ namespace Trinity.DynamicCluster.Storage
             NickName = GenerateNickName(InstanceGuid);
 
             int redundancy = DynamicClusterConfig.Instance.MinimumReplica;
-            m_cloudidx = new CloudIndex(m_cancelSrc.Token, m_nameservice, m_chunktable);
+            m_cloudidx = new CloudIndex(m_cancelSrc.Token, m_nameservice, m_chunktable, this, NickName, PartitionTable);
             m_healthmon= new HealthMonitor(m_cancelSrc.Token, m_nameservice, m_cloudidx, m_healthmanager, redundancy);
             m_partitioner = new Partitioner(m_cancelSrc.Token, m_cloudidx, m_nameservice, m_taskqueue, DynamicClusterConfig.Instance.ReplicationMode, redundancy);
             m_taskexec = new Executor(m_cancelSrc.Token, m_nameservice, m_taskqueue);

@@ -8,7 +8,7 @@ using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Storage
 {
-    internal partial class Partition
+    public partial class Partition
     {
         public void FirstAvailable(Action<IMessagePassingEndpoint> sendFunc)
         {

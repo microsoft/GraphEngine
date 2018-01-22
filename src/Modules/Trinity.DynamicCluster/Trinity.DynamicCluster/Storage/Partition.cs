@@ -26,7 +26,7 @@ namespace Trinity.DynamicCluster.Storage
     /// which add up to a complete availability group (aka partition). Hence, it
     /// is both a storage, and a list of storages.
     /// </summary>
-    internal partial class Partition : IStorage, IEnumerable<IStorage>
+    public partial class Partition : IStorage, IEnumerable<IStorage>
     {
         internal unsafe delegate void SendMessageFunc(byte* message, int size);
         internal unsafe delegate void SendMessageMultiFunc(byte** message, int* sizes, int count);

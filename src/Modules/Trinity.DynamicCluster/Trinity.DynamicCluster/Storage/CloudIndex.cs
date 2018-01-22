@@ -18,7 +18,6 @@ namespace Trinity.DynamicCluster.Storage
     /// </summary>
     internal class CloudIndex : IDisposable
     {
-        private DynamicMemoryCloud                     m_dmc;
         private Dictionary<Guid, IStorage>             m_storagetab;
         private Dictionary<Guid, IEnumerable<Chunk>>   m_ctcache;
         private INameService                           m_nameservice;
@@ -29,16 +28,21 @@ namespace Trinity.DynamicCluster.Storage
         private Task                                   m_ctupdateproc;
         private Task                                   m_masterproc;
         private Task                                   m_scanproc;
+        private MemoryCloud                            m_mc;
+        private string                                 m_myname;
+        private Func<int, Partition>                   m_partitions;
 
         public IEnumerable<Chunk> MyChunks => GetChunks(m_nameservice.InstanceId);
         public IEnumerable<ReplicaInformation> MyPartitionReplicas => m_replicaList[m_nameservice.PartitionId];
         public int MyPartitionId => m_nameservice.PartitionId;
 
-        public CloudIndex(CancellationToken token, INameService namesvc, IChunkTable chunktable)
+        public CloudIndex(CancellationToken token, INameService namesvc, IChunkTable ctable, MemoryCloud mc, string nickname, Func<int, Partition> ptable)
         {
-            m_dmc            = DynamicMemoryCloud.Instance;
+            m_mc             = mc;
+            m_myname         = nickname;
+            m_partitions     = ptable;
             m_nameservice    = namesvc;
-            m_chunktable     = chunktable;
+            m_chunktable     = ctable;
             m_cancel         = token;
             m_storagetab     = new Dictionary<Guid, IStorage>();
             m_ctcache        = new Dictionary<Guid, IEnumerable<Chunk>>();
@@ -110,7 +114,7 @@ namespace Trinity.DynamicCluster.Storage
                 }
                 else
                 {
-                    storage = new DynamicRemoteStorage(r, TrinityConfig.ClientMaxConn, m_dmc);
+                    storage = new DynamicRemoteStorage(r, TrinityConfig.ClientMaxConn, m_mc);
                 }
                 SetStorage(r.Id, storage);
             }
@@ -145,7 +149,7 @@ namespace Trinity.DynamicCluster.Storage
             using(var req = new StorageInformationWriter(MyPartitionId, m_nameservice.InstanceId))
             {
                 var rsps = await Utils.Integers(m_nameservice.PartitionCount)
-                                .Select(i => m_dmc.PartitionTable(i)
+                                .Select(i => m_partitions(i)
                                 .Broadcast(p => p.AnnounceMaster(req)))
                                 .Unwrap();
                 rsps.SelectMany(_ => _).ForEach(_ => _.Dispose());
@@ -171,8 +175,8 @@ namespace Trinity.DynamicCluster.Storage
                 IEnumerable<Chunk> ctcache = GetChunks(r.Id);
                 if (Enumerable.SequenceEqual(ctcache, pulledct)) { continue; }
                 SetChunks(r.Id, pulledct);
-                m_dmc.PartitionTable(r.PartitionId).Mount(stg, pulledct);
-                var nickname = (stg as DynamicRemoteStorage)?.NickName ?? m_dmc.NickName;
+                m_partitions(r.PartitionId).Mount(stg, pulledct);
+                var nickname = (stg as DynamicRemoteStorage)?.NickName ?? m_myname;
                 Log.WriteLine("{0}: {1}", nameof(ChunkTableUpdateProc), $"Replica {nickname}: chunk table updated.");
             }
         }
@@ -180,7 +184,7 @@ namespace Trinity.DynamicCluster.Storage
         internal void SetMaster(int partition, Guid replicaId)
         {
             if (replicaId == m_nameservice.InstanceId) m_masters[partition] = Global.LocalStorage;
-            else m_masters[partition] = m_dmc.PartitionTable(partition).OfType<DynamicRemoteStorage>().FirstOrDefault(_ => _.ReplicaInformation.Id == replicaId);
+            else m_masters[partition] = m_partitions(partition).OfType<DynamicRemoteStorage>().FirstOrDefault(_ => _.ReplicaInformation.Id == replicaId);
         }
 
         internal IStorage GetMaster(int partition)

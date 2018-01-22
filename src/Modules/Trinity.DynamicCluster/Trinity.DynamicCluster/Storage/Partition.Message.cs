@@ -9,7 +9,7 @@ using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Storage
 {
-    internal unsafe partial class Partition : IStorage
+    public partial class Partition : IStorage
     {
         public T GetModule<T>() where T : CommunicationModule
             => Global.CommunicationInstance.GetCommunicationModule<T>();

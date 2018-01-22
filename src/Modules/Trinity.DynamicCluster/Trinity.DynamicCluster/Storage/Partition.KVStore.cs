@@ -9,7 +9,7 @@ using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Storage
 {
-    internal partial class Partition
+    public partial class Partition
     {
         public unsafe TrinityErrorCode AddCell(long cellId, byte* buff, int size, ushort cellType)
         {
