@@ -1,8 +1,9 @@
-﻿using Microsoft.ServiceFabric.Data.Collections;
+﻿
 // Graph Engine
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
+using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Newtonsoft.Json.Linq;
