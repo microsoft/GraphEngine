@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IKW.GratusSenseDatum.OntologyAPI", "IKW.GratusSenseDatum.OntologyAPI\IKW.GratusSenseDatum.OntologyAPI.csproj", "{03BCB5ED-0155-4F2B-9DA9-6F7880BBA78E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IKW Gratus-Sense Datum Infrastructure Library", "IKW Gratus-Sense Datum Infrastructure Library", "{F71367F4-195D-4C1B-92CA-236A6F4FC371}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IKW.GatusSenseDatum.Ontology.Infrastructure", "Ontology.Infrastructure\ikw.gratussensedatum.ontology.infrastructure\IKW.GatusSenseDatum.Ontology.Infrastructure.csproj", "{AFBB9E34-1581-43ED-9274-B3898DEC605E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gratus-Sense Datum Ontology API Base", "Gratus-Sense Datum Ontology API Base", "{25153F42-A3B5-4234-9A18-0352047B533C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Networking", "Networking", "{0E734A23-8D64-4CEF-ABA8-609E537C1D0D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain Taxonomy", "Domain Taxonomy", "{C4E76DE3-A527-477E-A3E1-A08317D57585}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ikw.ontology.domain.taxonomy", "IKW.GratusSenseDatum.OntologyAPI\Taxonomy.Models\ikw.ontology.domain.taxonomy\ikw.ontology.domain.taxonomy.csproj", "{8456B61E-E49F-4F1F-969B-E91A86FB0E24}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{03BCB5ED-0155-4F2B-9DA9-6F7880BBA78E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03BCB5ED-0155-4F2B-9DA9-6F7880BBA78E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03BCB5ED-0155-4F2B-9DA9-6F7880BBA78E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03BCB5ED-0155-4F2B-9DA9-6F7880BBA78E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFBB9E34-1581-43ED-9274-B3898DEC605E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFBB9E34-1581-43ED-9274-B3898DEC605E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFBB9E34-1581-43ED-9274-B3898DEC605E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFBB9E34-1581-43ED-9274-B3898DEC605E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8456B61E-E49F-4F1F-969B-E91A86FB0E24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8456B61E-E49F-4F1F-969B-E91A86FB0E24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8456B61E-E49F-4F1F-969B-E91A86FB0E24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8456B61E-E49F-4F1F-969B-E91A86FB0E24}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{03BCB5ED-0155-4F2B-9DA9-6F7880BBA78E} = {25153F42-A3B5-4234-9A18-0352047B533C}
+		{AFBB9E34-1581-43ED-9274-B3898DEC605E} = {F71367F4-195D-4C1B-92CA-236A6F4FC371}
+		{0E734A23-8D64-4CEF-ABA8-609E537C1D0D} = {25153F42-A3B5-4234-9A18-0352047B533C}
+		{C4E76DE3-A527-477E-A3E1-A08317D57585} = {25153F42-A3B5-4234-9A18-0352047B533C}
+		{8456B61E-E49F-4F1F-969B-E91A86FB0E24} = {C4E76DE3-A527-477E-A3E1-A08317D57585}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A1EF3900-4867-4D38-A740-6D44F0E92910}
+	EndGlobalSection
+EndGlobal
