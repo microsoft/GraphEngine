@@ -119,7 +119,7 @@ namespace Trinity.Storage
      *       so that we can call CStdio directly.
      */
 
-    public unsafe partial class LocalMemoryStorage : Storage, IDisposable, IEnumerable<CellInfo>, IEnumerable
+    public unsafe partial class LocalMemoryStorage
     {
         #region Write-ahead-log logic
         /// <summary>

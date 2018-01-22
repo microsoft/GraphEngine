@@ -27,7 +27,7 @@ namespace Trinity.Network
             string[] parts = endpoint.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
 
             HostName = parts[0].Trim();
-            Port     = int.Parse(parts[1].Trim());
+            Port = int.Parse(parts[1].Trim());
             AssemblyPath = configSection.Attribute(ConfigurationConstants.Attrs.ASSEMBLY_PATH) == null ? null : configSection.Attribute(ConfigurationConstants.Attrs.ASSEMBLY_PATH).Value;
             Id = configSection.Attribute(ConfigurationConstants.Attrs.AVAILABILITY_GROUP) == null ? null : configSection.Attribute(ConfigurationConstants.Attrs.AVAILABILITY_GROUP).Value;
         }
@@ -40,18 +40,18 @@ namespace Trinity.Network
             Id = availabilityGroup;
             Port = port;
 
-            this.Add(ConfigurationConstants.Tags.STORAGE,
-                new ConfigurationEntry(ConfigurationConstants.Tags.STORAGE,
+            this.Add(ConfigurationConstants.Tags.STORAGE.LocalName,
+                new ConfigurationEntry(ConfigurationConstants.Tags.STORAGE.LocalName,
                 new Dictionary<string, string> { { ConfigurationConstants.Attrs.STORAGE_ROOT, storageRoot } }));
 
-            this.Add(ConfigurationConstants.Tags.LOGGING,
-                new ConfigurationEntry(ConfigurationConstants.Tags.LOGGING,
+            this.Add(ConfigurationConstants.Tags.LOGGING.LocalName,
+                new ConfigurationEntry(ConfigurationConstants.Tags.LOGGING.LocalName,
                 new Dictionary<string, string> { { ConfigurationConstants.Attrs.LOGGING_LEVEL, loggingLevel } }));
         }
 
         internal static ServerInfo _LegacyCreateServerInfo(string hostName, int port, string assemblyPath, string storageRoot, string loggingLevel, string availabilityGroup)
         {
-            return new ServerInfo(hostName, port, assemblyPath, storageRoot, loggingLevel, availabilityGroup);
+            return new ServerInfo(hostName, port, assemblyPath, availabilityGroup, storageRoot, loggingLevel);
         }
 
         /// <summary>
@@ -61,9 +61,10 @@ namespace Trinity.Network
         {
             HostName = hostName;
             AssemblyPath = assemblyPath;
+	        Port = port;
 
-            this.Add(ConfigurationConstants.Tags.LOGGING,
-                new ConfigurationEntry(ConfigurationConstants.Tags.LOGGING,
+            this.Add(ConfigurationConstants.Tags.LOGGING.LocalName,
+                new ConfigurationEntry(ConfigurationConstants.Tags.LOGGING.LocalName,
                 new Dictionary<string, string> { { ConfigurationConstants.Attrs.LOGGING_LEVEL, logLevel.ToString() } }));
         }
         /// <summary>

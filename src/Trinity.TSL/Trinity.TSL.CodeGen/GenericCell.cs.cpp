@@ -29,35 +29,12 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
-    
     /// <summary>
     /// Exposes Load/Save/New operations of <see cref="Trinity.Storage.ICell"/> and Use operation on <see cref="Trinity.Storage.ICellAccessor"/> on <see cref="Trinity.Storage.LocalMemoryStorage"/> and <see cref="Trinity.Storage.MemoryCloud"/>.
     /// </summary>
     internal class GenericCellOperations : IGenericCellOperations
     {
-        #region LocalMemoryStorage Save operations
-        public void SaveGenericCell(Trinity.Storage.LocalMemoryStorage storage, ICell cell)
-        {
-            switch ((CellType)cell.CellType)
-            {
-                )::");
-for (size_t iterator_1 = 0; iterator_1 < (node->cellList)->size();++iterator_1)
-{
-source->append(R"::(
-                case CellType.)::");
-source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(:
-                    storage.Save)::");
-source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::((()::");
-source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::()cell);
-                    break;
-                )::");
-}
-source->append(R"::(
-            }
-        }
+        #region LocalMemoryStorage operations
         public void SaveGenericCell(Trinity.Storage.LocalMemoryStorage storage, CellAccessOptions writeAheadLogOptions, ICell cell)
         {
             switch ((CellType)cell.CellType)
@@ -72,28 +49,6 @@ source->append(R"::(:
                     storage.Save)::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::((writeAheadLogOptions, ()::");
-source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::()cell);
-                    break;
-                )::");
-}
-source->append(R"::(
-            }
-        }
-        public void SaveGenericCell(Trinity.Storage.LocalMemoryStorage storage, long cellId, ICell cell)
-        {
-            switch ((CellType)cell.CellType)
-            {
-                )::");
-for (size_t iterator_1 = 0; iterator_1 < (node->cellList)->size();++iterator_1)
-{
-source->append(R"::(
-                case CellType.)::");
-source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(:
-                    storage.Save)::");
-source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::((cellId, ()::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::()cell);
                     break;
@@ -124,8 +79,6 @@ source->append(R"::()cell);
 source->append(R"::(
             }
         }
-        #endregion
-        #region LocalMemoryStorage Load operations
         public unsafe ICell LoadGenericCell(Trinity.Storage.LocalMemoryStorage storage, long cellId)
         {
             ushort type;
@@ -320,8 +273,8 @@ source->append(R"::(.GenericCellAccessor"/> instance.</returns>
                         }
                         else if ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
                         {
-                            throw new ArgumentException("CellAccessOptions.CreateNewOnCellNotFound is no)::");
-source->append(R"::(t valid for this method. Cannot determine new cell type.", "options");
+                            throw new ArgumentException("CellAccessOptions.CreateNewO)::");
+source->append(R"::(nCellNotFound is not valid for this method. Cannot determine new cell type.", "options");
                         }
                         else if ((options & CellAccessOptions.ReturnNullOnCellNotFound) != 0)
                         {
@@ -472,14 +425,14 @@ source->append(R"::(
             yield break;
         }
         #endregion
-        #region MemoryCloud operations
+        #region IKeyValueStore operations
         /// <summary>
         /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
         /// Note that the generic cell will be saved as a strongly typed cell. It can then be loaded into either a strongly-typed cell or a generic cell.
         /// </summary>
-        /// <param name="storage">A <see cref="Trinity.Storage.MemoryCloud"/> instance.</param>
+        /// <param name="storage">A <see cref="IKeyValueStore"/> instance.</param>
         /// <param name="cell">The cell to be saved.</param>
-        public void SaveGenericCell(Trinity.Storage.MemoryCloud storage, ICell cell)
+        public void SaveGenericCell(IKeyValueStore storage, ICell cell)
         {
             switch ((CellType)cell.CellType)
             {
@@ -501,13 +454,35 @@ source->append(R"::()cell);
 source->append(R"::(
             }
         }
+        public void SaveGenericCell(IKeyValueStore storage, long cellId, ICell cell)
+        {
+            switch ((CellType)cell.CellType)
+            {
+                )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->cellList)->size();++iterator_1)
+{
+source->append(R"::(
+                case CellType.)::");
+source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
+source->append(R"::(:
+                    storage.Save)::");
+source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
+source->append(R"::((cellId, ()::");
+source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
+source->append(R"::()cell);
+                    break;
+                )::");
+}
+source->append(R"::(
+            }
+        }
         /// <summary>
         /// Loads the content of the cell with the specified cell Id.
         /// </summary>
-        /// <param name="storage">A <see cref="Trinity.Storage.MemoryCloud"/> instance.</param>
+        /// <param name="storage">A <see cref="IKeyValueStore"/> instance.</param>
         /// <param name="cellId">A 64-bit cell Id.</param>
         /// <returns></returns>
-        public unsafe ICell LoadGenericCell(Trinity.Storage.MemoryCloud storage, long cellId)
+        public unsafe ICell LoadGenericCell(IKeyValueStore storage, long cellId)
         {
             ushort type;
             byte[] buff;
@@ -521,8 +496,8 @@ source->append(R"::(
                     case TrinityErrorCode.E_NETWORK_SEND_FAILURE:
                         throw new System.IO.IOException("Network error while accessing the cell.");
                     default:
-                       )::");
-source->append(R"::( throw new Exception("Cannot access the cell. Error code: " + err.ToString());
+                        thr)::");
+source->append(R"::(ow new Exception("Cannot access the cell. Error code: " + err.ToString());
                 }
             }
             switch ((CellType)type)

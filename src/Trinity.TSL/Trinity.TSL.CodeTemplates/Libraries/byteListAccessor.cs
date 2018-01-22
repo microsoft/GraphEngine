@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Trinity.Core.Lib;
+using Trinity.Storage;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
 
@@ -13,11 +14,11 @@ namespace t_Namespace
     /// Represents a Trinity TSL type corresponding to List{byte}.
     /// </summary>
     [TARGET("NTSL")]
-    public unsafe class byteListAccessor : IEnumerable<byte>
+    public unsafe class byteListAccessor : IAccessor, IEnumerable<byte>
     {
         internal byte* CellPtr;
         internal long? CellID;
-        internal ResizeFunctionDelegate ResizeFunction;
+
 
         internal byteListAccessor(byte* _CellPtr, ResizeFunctionDelegate func)
         {
@@ -33,6 +34,45 @@ namespace t_Namespace
                 return *(int*)(CellPtr - 4);
             }
         }
+
+        #region IAccessor Implementation
+
+        /// <summary>
+        /// Copies the elements to a new byte array
+        /// </summary>
+        /// <returns>Elements compactly arranged in a byte array.</returns>
+        public unsafe byte[] ToByteArray()
+        {
+            byte[] ret = new byte[length];
+            fixed (byte* retptr = ret)
+            {
+                Memory.Copy(CellPtr, retptr, length);
+                return ret;
+            }
+        }
+
+        /// <summary>
+        /// Get the pointer to the underlying buffer.
+        /// </summary>
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return CellPtr - sizeof(int);
+        }
+
+        /// <summary>
+        /// Get the length of the buffer.
+        /// </summary>
+        public unsafe int GetBufferLength()
+        {
+            return length + sizeof(int);
+        }
+
+        /// <summary>
+        /// The ResizeFunctionDelegate that should be called when this accessor is trying to resize itself.
+        /// </summary>
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Gets the number of elements actually contained in the List. 
@@ -62,19 +102,6 @@ namespace t_Namespace
             }
         }
 
-        /// <summary>
-        /// Copies the elements to a new byte array
-        /// </summary>
-        /// <returns>Elements compactly arranged in a byte array.</returns>
-        public unsafe byte[] ToByteArray()
-        {
-            byte[] ret = new byte[length];
-            fixed (byte* retptr = ret)
-            {
-                Memory.Copy(CellPtr, retptr, length);
-                return ret;
-            }
-        }
 
         /// <summary>
         /// Performs the specified action on each elements

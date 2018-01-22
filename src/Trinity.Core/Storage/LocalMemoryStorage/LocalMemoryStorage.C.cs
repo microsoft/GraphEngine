@@ -38,7 +38,6 @@ namespace Trinity.Storage
         {
             CLocalMemoryStorage.CWriteAheadLog(cellId, cellPtr, cellSize, cellType, options);
         }
-
     }
 
     /// <summary>

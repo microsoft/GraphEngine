@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2003
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Service Fabric Infrastructure Library", "GE Service Fabric Infrastructure Library", "{216E51C6-D32B-4280-8D68-28E1858D71A4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GraphEngine Service Fabric Stateful App", "GraphEngine Service Fabric Stateful App", "{24E24355-4915-492B-BBCE-8319B16D295B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE Service Fabric Client", "GE Service Fabric Client", "{3CFF89C3-9777-4C55-84D4-87604405D626}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GraphEngie ServiceFabric Listeners", "GraphEngie ServiceFabric Listeners", "{F7FDC6BD-AF14-42DC-830D-AC5FD3A0D153}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GraphEngine Service Fabric Service", "GraphEngine Service Fabric Service", "{FEC17E5C-E3CB-4A35-A6C6-5EE5827B6F9A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InKnowWorks Graph Engine Ontology API Service", "InKnowWorks Graph Engine Ontology API Service", "{EF5D5848-1044-4ED6-BB55-9BD720ADD1B3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Graph Engine Service Fabric Core", "Graph Engine Service Fabric Core", "{B1916713-BC6A-4F2B-8DAB-B40DC1CA82D7}"
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8B423481-1DBA-47A0-A201-1C6EE939CCFE}
+	EndGlobalSection
+EndGlobal

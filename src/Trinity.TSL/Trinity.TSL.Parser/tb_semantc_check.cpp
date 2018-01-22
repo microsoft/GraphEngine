@@ -474,11 +474,6 @@ DEFINE_TB_SEMANTIC_CHECK(NProtocol, {
     if (!has_response())
         pt_response = PT_VOID_RESPONSE;
 
-    if (pt_type == PT_ASYN && pt_response != PT_VOID_RESPONSE)
-    {
-        error("Invalid response type: Asynchronous protocol should have 'void' response.");
-    }
-
     if (pt_type != PT_HTTP)
     {
         if (pt_request == PT_STREAM_REQUEST)

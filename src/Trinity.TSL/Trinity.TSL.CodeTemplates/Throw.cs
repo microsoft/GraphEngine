@@ -116,5 +116,10 @@ namespace t_Namespace
         {
             throw new ArgumentException("Cannot parse \""+value+"\" into " + type_str + ".");
         }
+
+        internal static unsafe byte* invalid_resize_on_fixed_struct()
+        {
+            throw new InvalidOperationException("Invalid resize operation on a fixed struct.");
+        }
     }
 }

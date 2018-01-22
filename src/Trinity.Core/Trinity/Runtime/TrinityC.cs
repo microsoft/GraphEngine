@@ -33,7 +33,7 @@ namespace Trinity
             {
                 if (s_initialized) return;
 
-                string assembly_path = AssemblyPath.TrinityCorePath;
+                string assembly_path = AssemblyUtility.TrinityCorePath;
 #if !CORECLR
                 string native_assembly_name = "Trinity.C.dll";
 #else
@@ -71,7 +71,7 @@ namespace Trinity
                 }
 
                 /* native assembly is released. initialize Trinity.C now */
-                fixed(char* pAssemblyPath = AssemblyPath.MyAssemblyPath)
+                fixed(char* pAssemblyPath = AssemblyUtility.MyAssemblyPath)
                 {
                     __INIT_TRINITY_C__(pAssemblyPath);
                 }

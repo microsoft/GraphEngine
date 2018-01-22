@@ -77,6 +77,7 @@ CleanVSProject.exe
 *.so
 slnx.sqlite
 .vs/
+/src/Modules/LIKQ/FanoutSearch/GeneratedCode
 /src/Modules/Spark/spark-trinity/build/sbt-launch-0.13.13.jar
 /src/Modules/Spark/spark-trinity/project/project/target/config-classes
 /src/Modules/Spark/spark-trinity/project/target
@@ -91,3 +92,4 @@ tests/xunit_reports
 tests/xunit_coreclr_reports
 tests/nunit*reports
 tests/new_test.exe
+/src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/build/lib.win-amd64-3.6

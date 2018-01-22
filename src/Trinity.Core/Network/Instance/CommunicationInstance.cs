@@ -20,6 +20,7 @@ using System.Globalization;
 using Trinity.Network.Messaging;
 using System.Diagnostics;
 using Trinity.Utilities;
+using Trinity.Extension;
 
 namespace Trinity.Network
 {
@@ -34,6 +35,7 @@ namespace Trinity.Network
         private ushort m_SynReqIdOffset;
         private ushort m_SynReqRspIdOffset;
         private ushort m_AsynReqIdOffset;
+        private ushort m_AsynReqRspIdOffset;
         private MemoryCloud memory_cloud;
         private bool m_started = false;
         private object m_lock = new object();
@@ -88,6 +90,7 @@ namespace Trinity.Network
             this.SynReqIdOffset = (ushort)schema.SynReqProtocolDescriptors.Count();
             this.SynReqRspIdOffset = (ushort)schema.SynReqRspProtocolDescriptors.Count();
             this.AsynReqIdOffset = (ushort)schema.AsynReqProtocolDescriptors.Count();
+            this.AsynReqRspIdOffset = (ushort)schema.AsynReqRspProtocolDescriptors.Count();
 
             /* TODO check circular dependency */
 
@@ -283,6 +286,9 @@ namespace Trinity.Network
                 try
                 {
                     Log.WriteLine(LogLevel.Debug, "Starting communication instance.");
+
+                    _ScanForAutoRegisteredModules();
+
                     var _config = TrinityConfig.CurrentClusterConfig;
                     var _si = _config.GetMyServerInfo() ?? _config.GetMyProxyInfo();
                     var _my_ip = Global.MyIPAddress;
@@ -304,6 +310,7 @@ namespace Trinity.Network
 
                     //  Initialize message passing networking
                     NativeNetwork.StartTrinityServer((UInt16)_config.ListeningPort);
+                    //  XXX might not be accurate: NativeNetwork.StartTrinityServer listens on all servers.
                     Log.WriteLine("My IPEndPoint: " + _my_ip + ":" + _config.ListeningPort);
 
                     //  Initialize cloud storage
@@ -327,6 +334,15 @@ namespace Trinity.Network
                 {
                     Log.WriteLine(LogLevel.Error, "CommunicationInstance: " + ex.ToString());
                 }
+            }
+        }
+
+        private void _ScanForAutoRegisteredModules()
+        {
+            Log.WriteLine("Scanning for auto-registered communication modules.");
+            foreach(var m in AssemblyUtility.GetAllClassTypes<CommunicationModule, AutoRegisteredCommunicationModuleAttribute>())
+            {
+                m_RegisteredModuleTypes.Add(m);
             }
         }
 
@@ -370,6 +386,7 @@ namespace Trinity.Network
             this._RaiseStartedEvent();
             foreach (var module in m_CommunicationModules.Values)
                 module._RaiseStartedEvent();
+            Global._RaiseCommunicationInstanceStarted();
         }
 
         internal T _GetCommunicationModule_impl<T>() where T : CommunicationModule
@@ -401,6 +418,12 @@ namespace Trinity.Network
         {
             get { return m_AsynReqIdOffset; }
             set { m_AsynReqIdOffset = value; }
+        }
+
+        internal ushort AsynReqRspIdOffset
+        {
+            get { return m_AsynReqRspIdOffset; }
+            set { m_AsynReqRspIdOffset = value; }
         }
         #endregion
 

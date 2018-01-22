@@ -22,15 +22,8 @@ namespace Trinity.Network
     /// </summary>
     public abstract class CommunicationModule : CommunicationProtocolGroup
     {
-        internal unsafe delegate void SendMessageDeleate(int instanceId, byte* buffer, int size);
-        internal unsafe delegate void SendMessageWithResponseDeleate(int instanceId, byte* buffer, int size, out TrinityResponse response);
-
-        private ushort[] m_MessageIdOffsets = new ushort[3];
-
-        private SendMessageDeleate m_sendMessage;
-        private SendMessageWithResponseDeleate m_sendMessageWithResponse;
-
-        private MemoryCloud m_memoryCloud;
+        private ushort[] m_MessageIdOffsets = new ushort[4];
+        protected internal MemoryCloud m_memorycloud = null;
 
         /// <summary>
         /// It is guaranteed that CloudStorage can be accessed (native server started)
@@ -38,41 +31,43 @@ namespace Trinity.Network
         /// </summary>
         internal unsafe void Initialize(CommunicationInstance instance)
         {
-            //Debug.Assert(TrinityConfig.CurrentRunningMode != RunningMode.Client);
-            //Debug.Assert(TrinityConfig.CurrentRunningMode != RunningMode.Embedded);
-            //Debug.Assert(TrinityConfig.CurrentRunningMode != RunningMode.Undefined);
-
+            m_memorycloud = Global.CloudStorage;
             ICommunicationSchema schema = this.GetCommunicationSchema();
-            m_memoryCloud = instance.CloudStorage;
 
             this.SynReqIdOffset = instance.SynReqIdOffset;
             this.SynReqRspIdOffset = instance.SynReqRspIdOffset;
             this.AsynReqIdOffset = instance.AsynReqIdOffset;
+            this.AsynReqRspIdOffset = instance.AsynReqRspIdOffset;
 
             checked
             {
                 instance.SynReqIdOffset += (ushort)schema.SynReqProtocolDescriptors.Count();
                 instance.SynReqRspIdOffset += (ushort)schema.SynReqRspProtocolDescriptors.Count();
                 instance.AsynReqIdOffset += (ushort)schema.AsynReqProtocolDescriptors.Count();
+                instance.AsynReqRspIdOffset += (ushort)schema.AsynReqRspProtocolDescriptors.Count();
+                // each ASYNC_WITH_RSP message comes with a response handler.
+                instance.AsynReqIdOffset += (ushort)schema.AsynReqRspProtocolDescriptors.Count();
             }
 
             this.RegisterMessageHandler();
-            SetupMessagePassingInterfaces(instance.RunningMode);
         }
 
         /// <summary>
         /// It is guaranteed that CloudStorage can be accessed (server started)
         /// before a client calls module ClientInitialize() method.
         /// </summary>
-        internal protected unsafe void ClientInitialize(RunningMode remoteRunningMode, MemoryCloud mc = null)
+        public unsafe void ClientInitialize(RunningMode remoteRunningMode)
         {
-            //Debug.Assert(TrinityConfig.CurrentRunningMode == RunningMode.Client);
-            //Debug.Assert(remoteRunningMode == RunningMode.Server || remoteRunningMode == RunningMode.Proxy);
+            ClientInitialize(remoteRunningMode, Global.CloudStorage);
+        }
 
-            if (mc == null)
-                mc = Global.CloudStorage;
-            m_memoryCloud = mc;
-
+        /// <summary>
+        /// It is guaranteed that CloudStorage can be accessed (server started)
+        /// before a client calls module ClientInitialize() method.
+        /// </summary>
+        public unsafe void ClientInitialize(RunningMode remoteRunningMode, MemoryCloud mc)
+        {
+            m_memorycloud = mc;
             string moduleName = GetModuleName();
             RemoteStorage rs = remoteRunningMode == RunningMode.Server ?
                mc.StorageTable.FirstOrDefault(_ => _ is RemoteStorage) as RemoteStorage :
@@ -88,8 +83,9 @@ namespace Trinity.Network
             ushort synReqOffset;
             ushort synReqRspOffset;
             ushort asynReqOffset;
+            ushort asynReqRspOffset;
 
-            if (!rs.GetCommunicationModuleOffset(moduleName, out synReqOffset, out synReqRspOffset, out asynReqOffset))
+            if (!rs.GetCommunicationModuleOffset(moduleName, out synReqOffset, out synReqRspOffset, out asynReqOffset, out asynReqRspOffset))
             {
                 string msg = "CommunicationModule " + moduleName + " not found on the remote side.";
                 Log.WriteLine(LogLevel.Error, msg);
@@ -100,9 +96,8 @@ namespace Trinity.Network
                 this.SynReqIdOffset = synReqOffset;
                 this.SynReqRspIdOffset = synReqRspOffset;
                 this.AsynReqIdOffset = asynReqOffset;
+                this.AsynReqRspIdOffset = asynReqRspOffset;
             }
-
-            SetupMessagePassingInterfaces(remoteRunningMode);
         }
 
         /// <summary>
@@ -114,20 +109,41 @@ namespace Trinity.Network
         }
 
         #region Message passing
-        private unsafe void SetupMessagePassingInterfaces(RunningMode remoteRunningMode)
+        /// <summary>
+        /// Sends multiple buffers sequentially, as a single binary message to the specified communication module.
+        /// The message should contain the original message type id defined by the modules,
+        /// and the offsets will be automatically applied.
+        /// </summary>
+        /// <param name="endpoint">A message passing endpoint.</param>
+        /// <param name="buffers">Binary message buffers.</param>
+        /// <param name="sizes">The size of the message.</param>
+        /// <param name="count">The number of buffers.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected internal unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte** buffers, int* sizes, int count)
         {
+            byte b_msg_type = PointerHelper.GetByte(buffers, sizes, TrinityProtocol.MsgTypeOffset);
+            PointerHelper.Add(buffers, sizes, TrinityProtocol.MsgIdOffset, m_MessageIdOffsets[b_msg_type]);
 
-            switch (remoteRunningMode)
-            {
-                case RunningMode.Server:
-                    m_sendMessage = m_memoryCloud.SendMessageToServer;
-                    m_sendMessageWithResponse = m_memoryCloud.SendMessageToServer;
-                    break;
-                case RunningMode.Proxy:
-                    m_sendMessage = m_memoryCloud.SendMessageToProxy;
-                    m_sendMessageWithResponse = m_memoryCloud.SendMessageToProxy;
-                    break;
-            }
+            endpoint.SendMessage(buffers, sizes, count);
+        }
+
+        /// <summary>
+        /// Sends multiple buffers sequentially, as a single binary message to the specified communication module.
+        /// The message should contain the original message type id defined by the modules,
+        /// and the offsets will be automatically applied.
+        /// </summary>
+        /// <param name="endpoint">A message passing endpoint.</param>
+        /// <param name="buffers">Binary message buffers.</param>
+        /// <param name="sizes">The size of the message.</param>
+        /// <param name="count">The number of buffers.</param>
+        /// <param name="response">The TrinityResponse object returned by the remote module.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected internal unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte** buffers, int* sizes, int count, out TrinityResponse response)
+        {
+            byte b_msg_type = PointerHelper.GetByte(buffers, sizes, TrinityProtocol.MsgTypeOffset);
+            PointerHelper.Add(buffers, sizes, TrinityProtocol.MsgIdOffset, m_MessageIdOffsets[b_msg_type]);
+
+            endpoint.SendMessage(buffers, sizes, count, out response);
         }
 
         /// <summary>
@@ -135,16 +151,16 @@ namespace Trinity.Network
         /// The message should contain the original message type id defined by the modules,
         /// and the offsets will be automatically applied.
         /// </summary>
-        /// <param name="moduleId">A 32-bit module id.</param>
+        /// <param name="endpoint">A message passing endpoint.</param>
         /// <param name="buffer">A binary message buffer.</param>
         /// <param name="size">The size of the message.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected unsafe void SendMessage(int moduleId, byte* buffer, int size)
+        protected internal unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte* buffer, int size)
         {
             byte b_msg_type = *(buffer + TrinityProtocol.MsgTypeOffset);
             *(ushort*)(buffer + TrinityProtocol.MsgIdOffset) += m_MessageIdOffsets[b_msg_type];
 
-            m_sendMessage(moduleId, buffer, size);
+            endpoint.SendMessage(buffer, size);
         }
 
         /// <summary>
@@ -152,29 +168,17 @@ namespace Trinity.Network
         /// The message should contain the original message type id defined by the modules,
         /// and the offsets will be automatically applied.
         /// </summary>
-        /// <param name="moduleId">A 32-bit module id.</param>
+        /// <param name="endpoint">A message passing endpoint.</param>
         /// <param name="buffer">A binary message buffer.</param>
         /// <param name="size">The size of the message.</param>
         /// <param name="response">The TrinityResponse object returned by the remote module.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected unsafe void SendMessage(int moduleId, byte* buffer, int size, out TrinityResponse response)
+        protected internal unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte* buffer, int size, out TrinityResponse response)
         {
             byte b_msg_type = *(buffer + TrinityProtocol.MsgTypeOffset);
             *(ushort*)(buffer + TrinityProtocol.MsgIdOffset) += m_MessageIdOffsets[b_msg_type];
 
-            m_sendMessageWithResponse(moduleId, buffer, size, out response);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected unsafe void SendMessageToInstance(int instanceId, byte* buffer, int size)
-        {
-            m_sendMessage(instanceId, buffer, size);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected unsafe void SendMessageToInstance(int instanceId, byte* buffer, int size, out TrinityResponse response)
-        {
-            m_sendMessageWithResponse(instanceId, buffer, size, out response);
+            endpoint.SendMessage(buffer, size, out response);
         }
         #endregion
 
@@ -224,6 +228,12 @@ namespace Trinity.Network
         {
             get { return m_MessageIdOffsets[2]; }
             internal set { m_MessageIdOffsets[2] = value; }
+        }
+
+        protected internal ushort AsynReqRspIdOffset
+        {
+            get { return m_MessageIdOffsets[3]; }
+            internal set { m_MessageIdOffsets[3] = value; }
         }
         #endregion
     }

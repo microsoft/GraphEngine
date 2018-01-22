@@ -21,6 +21,7 @@ using System.Text;
 using Trinity.Core.Lib;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
+using Trinity.Storage;
 namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
@@ -28,12 +29,10 @@ source->append(R"::(
     /// <summary>
     /// Represents a TSL string corresponding to a string instance.
     /// </summary>
-    
-    public unsafe class StringAccessor : IEnumerable<char>
+    public unsafe class StringAccessor : IAccessor, IEnumerable<char>
     {
         internal byte* CellPtr;
         internal long? CellID;
-        internal ResizeFunctionDelegate ResizeFunction;
         internal StringAccessor(byte* _CellPtr, ResizeFunctionDelegate func)
         {
             CellPtr = _CellPtr;
@@ -57,11 +56,45 @@ source->append(R"::(
                 return length >> 1;
             }
         }
+        #region IAccessor Implementation
         /// <summary>
-        /// Gets the Char object at a specified position in the current String object.
+        /// Copies the elements to a new byte array
         /// </summary>
-        /// <param nam)::");
-source->append(R"::(e="index">A position in the current string. </param>
+        /// <returns>Elements comp)::");
+source->append(R"::(actly arranged in a byte array.</returns>
+        public unsafe byte[] ToByteArray()
+        {
+            byte[] ret = new byte[length];
+            fixed (byte* retptr = ret)
+            {
+                Memory.Copy(CellPtr, retptr, length);
+                return ret;
+            }
+        }
+        /// <summary>
+        /// Get the pointer to the underlying buffer.
+        /// </summary>
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return CellPtr - sizeof(int);
+        }
+        /// <summary>
+        /// Get the length of the buffer.
+        /// </summary>
+        public unsafe int GetBufferLength()
+        {
+            return length + sizeof(int);
+        }
+        /// <summary>
+        /// The ResizeFunctionDelegate that should be called when this accessor is trying to resize itself.
+        /// </summary>
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+        #endregion
+        /// <summary>
+        /// Gets the Char )::");
+source->append(R"::(object at a specified position in the current String object.
+        /// </summary>
+        /// <param name="index">A position in the current string. </param>
         /// <returns>The object at position index.</returns>
         public unsafe char this[int index]
         {
@@ -79,25 +112,12 @@ source->append(R"::(e="index">A position in the current string. </param>
             return Trinity.Core.Lib.BitHelper.GetString(CellPtr, *(int*)(CellPtr - 4));
         }
         /// <summary>
-        /// Copies the elements to a new byte array
-        /// </summary>
-        /// <returns>Elements compactly arranged in a byte array.</returns>
-        public unsafe byte[] ToByteArray()
-        {
-            byte[] ret = new byte[length];
-            fixed (byte* retptr = ret)
-            {
-                Memory.Copy(CellPtr, retptr, length);
-                return ret;
-            }
-        }
-        /// <summa)::");
-source->append(R"::(ry>
         /// Returns a value indicating whether the given substring occurs within the string.
         /// </summary>
         /// <param name="substring">The string to seek.</param>
         /// <returns>true if the value parameter occurs within this string, or if value is 
-        ///          the empty string (""); otherwise, false.
+        ///          the )::");
+source->append(R"::(empty string (""); otherwise, false.
         /// </returns>
         public unsafe bool Contains(string substring)
         {
@@ -113,8 +133,7 @@ source->append(R"::(ry>
         /// Performs the specified action on each char
         /// </summary>
         /// <param name="action">A lambda expression which has one parameter indicates char in string</param>
-        public unsaf)::");
-source->append(R"::(e void ForEach(Action<char> action)
+        public unsafe void ForEach(Action<char> action)
         {
             byte* targetPtr = CellPtr;
             byte* endPtr = CellPtr + length;
@@ -123,7 +142,8 @@ source->append(R"::(e void ForEach(Action<char> action)
                 action(*(char*)targetPtr);
                 targetPtr += 2;
             }
-        }
+     )::");
+source->append(R"::(   }
         /// <summary>
         /// Performs the specified action on each char
         /// </summary>
@@ -142,8 +162,7 @@ source->append(R"::(e void ForEach(Action<char> action)
         {
             byte* targetPtr;
             byte* endPtr;
-            internal _iterator(StringAcce)::");
-source->append(R"::(ssor target)
+            internal _iterator(StringAccessor target)
             {
                 targetPtr = target.CellPtr;
                 endPtr    = target.CellPtr + target.length;
@@ -152,7 +171,8 @@ source->append(R"::(ssor target)
             {
                 return (targetPtr < endPtr);
             }
-            internal char current()
+)::");
+source->append(R"::(            internal char current()
             {
                 return *(char*)targetPtr;
             }
@@ -176,15 +196,15 @@ source->append(R"::(ssor target)
                 it.move_next();
             }
         }
-        System.Collections.IEnumerator System.Collections.)::");
-source->append(R"::(IEnumerable.GetEnumerator()
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
         /// <summary>
         /// Implicitly converts a StringAccessor instance to a string instance.
         /// </summary>
-        /// <param name="accessor">The StringAccessor instance.</param>
+        /// <par)::");
+source->append(R"::(am name="accessor">The StringAccessor instance.</param>
         /// <returns>A string instance.</returns>
         public unsafe static implicit operator string(StringAccessor accessor)
         {
@@ -201,15 +221,15 @@ source->append(R"::(IEnumerable.GetEnumerator()
             byte* targetPtr = null;
             if (value != null)
             {
-                targetPtr += (value.Length <<)::");
-source->append(R"::( 1) + sizeof(int);
+                targetPtr += (value.Length << 1) + sizeof(int);
             }
             else
             {
                 targetPtr += sizeof(int);
             }
             byte* tmpcellptr = BufferAllocator.AllocBuffer((int)targetPtr);
-            targetPtr = tmpcellptr;
+         )::");
+source->append(R"::(   targetPtr = tmpcellptr;
             if (value != null)
             {
                 *(int*)targetPtr = (value.Length << 1);
@@ -231,10 +251,10 @@ source->append(R"::( 1) + sizeof(int);
         /// Determines whether two specified StringAccessor have the same value.
         /// </summary>
         /// <param name="a">The first StringAccessor to compare, or null. </param>
-        /// <param name="b">The second StringAccessor to)::");
-source->append(R"::( compare, or null. </param>
+        /// <param name="b">The second StringAccessor to compare, or null. </param>
         /// <returns>true if the value of <paramref name="a" /> is the same as the value of <paramref name="b" />; otherwise, false.</returns>
-        public static bool operator ==(StringAccessor a, StringAccessor b)
+        public)::");
+source->append(R"::( static bool operator ==(StringAccessor a, StringAccessor b)
         {
             if (ReferenceEquals(a, b))
               return true;
@@ -249,13 +269,13 @@ source->append(R"::( compare, or null. </param>
         /// <param name="a">The StringAccessor to compare, or null. </param>
         /// <param name="b">The string to compare, or null. </param>
         /// <returns>true if the value of <paramref name="a" /> is the same as the value of <paramref name="b" />; otherwise, false.</returns>
-        public static bool operator ==(StringAccessor a, strin)::");
-source->append(R"::(g b)
+        public static bool operator ==(StringAccessor a, string b)
         {
             if (ReferenceEquals(a, b))
               return true;
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-              return false;
+              re)::");
+source->append(R"::(turn false;
             return a.ToString() == b;
         }
         /// <summary>Determines whether the specified StringAccessor and string have different values.</summary>
@@ -270,10 +290,10 @@ source->append(R"::(g b)
         }
         /// <summary>
         /// Determines whether this instance and a specified object have the same value.
-        )::");
-source->append(R"::(/// </summary>
+        /// </summary>
         /// <param name="obj">The StringAccessor to compare to this instance.</param>
-        /// <returns>true if obj is a StringAccessor and its value is the same as this instance; otherwise, false.</returns>
+        /// <returns>true if obj is a StringAccessor a)::");
+source->append(R"::(nd its value is the same as this instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
             if (obj == null)
@@ -296,12 +316,12 @@ source->append(R"::(/// </summary>
         {
             char* strPtr = (char*)CellPtr;
             int n1 = 0x15051505;
-            int n2 = n1)::");
-source->append(R"::(;
+            int n2 = n1;
             int* intPtr = (int*)strPtr;
             for (int i = (length >> 1); i > 0; i -= 4)
             {
-                n1 = (((n1 << 5) + n1) + (n1 >> 0x1b)) ^ intPtr[0];
+                n1 = )::");
+source->append(R"::((((n1 << 5) + n1) + (n1 >> 0x1b)) ^ intPtr[0];
                 if (i <= 2)
                 {
                     break;

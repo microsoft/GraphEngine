@@ -6,6 +6,7 @@ using System.Text;
 using Trinity.Core.Lib;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
+using Trinity.Storage;
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
 namespace t_Namespace
@@ -14,7 +15,7 @@ namespace t_Namespace
     /// Represents a Trinity type corresponding .Net Guid type.
     /// </summary>
     [TARGET("NTSL")]
-    public unsafe class GuidAccessor
+    public unsafe class GuidAccessor : IAccessor
     {
         internal byte* CellPtr;
         internal long? CellID;
@@ -83,6 +84,8 @@ namespace t_Namespace
             }
         }
 
+        #region IAccessor Implementation
+
         /// <summary>
         /// Returns a 16 byte array that contains the value of this instance.
         /// </summary>
@@ -96,6 +99,29 @@ namespace t_Namespace
             }
             return ret;
         }
+
+        /// <summary>
+        /// Get the pointer to the underlying buffer.
+        /// </summary>
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return CellPtr;
+        }
+
+        /// <summary>
+        /// Get the length of the buffer.
+        /// </summary>
+        public unsafe int GetBufferLength()
+        {
+            return length;
+        }
+
+        /// <summary>
+        /// The ResizeFunctionDelegate that should be called when this accessor is trying to resize itself.
+        /// </summary>
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Returns a string representation of the value of this instance in registry format. 

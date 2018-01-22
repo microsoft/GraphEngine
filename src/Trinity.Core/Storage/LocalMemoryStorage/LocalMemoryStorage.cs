@@ -29,7 +29,7 @@ namespace Trinity.Storage
     /// <summary>
     /// Provides methods for interacting with the in-memory store.
     /// </summary>
-    public unsafe partial class LocalMemoryStorage : Storage, IDisposable, IEnumerable<CellInfo>, IEnumerable
+    public unsafe partial class LocalMemoryStorage : IStorage, IDisposable, IEnumerable<CellInfo>, IEnumerable
     {
         #region Write-Ahead-Log facility
         private string WriteAheadLogFilePath
@@ -68,9 +68,12 @@ namespace Trinity.Storage
         #endregion
 
         #region KVStore extension facility
-        public event Action StorageLoaded  = delegate { };
-        public event Action StorageSaved    = delegate{ };
-        public event Action StorageReset   = delegate{ };
+        public event Action StorageBeforeLoad = delegate { };
+        public event Action StorageBeforeSave = delegate { };
+        public event Action StorageBeforeReset = delegate { };
+        public event Action StorageLoaded = delegate { };
+        public event Action StorageSaved = delegate{ };
+        public event Action StorageReset = delegate{ };
         #endregion
 
         internal static volatile bool initialized = false;
@@ -81,7 +84,15 @@ namespace Trinity.Storage
         static LocalMemoryStorage()
         {
             TrinityC.Init();
-            TrinityConfig.LoadTrinityConfig();
+            try
+            {
+                TrinityConfig.LoadTrinityConfig();
+            }
+            catch
+            {
+                Log.WriteLine(LogLevel.Error, "Failure to load config file, falling back to default LocalMemoryStorage behavior");
+            }
+            CSynchronizeStorageRoot();
             //BackgroundThread.StartMemoryStorageBgThreads();
         }
 
@@ -146,12 +157,12 @@ namespace Trinity.Storage
         /// <summary>
         /// Release the unmanaged resources.
         /// </summary>
-        public override void Dispose()
+        public void Dispose()
         {
             Dispose(true);
         }
 
-        private void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (initialized)
             {

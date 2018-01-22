@@ -227,7 +227,7 @@ namespace Trinity.Network.Messaging
                         int msg_len       = (name_str.Length + protocols_str.Length) * sizeof(char) + 2 * sizeof(int);
                         args.Response     = new TrinityMessage(TrinityErrorCode.E_SUCCESS, msg_len);
 
-                        SmartPointer sp   = SmartPointer.New(args.Response.Buffer + TrinityMessage.Offset);
+                        PointerHelper sp   = PointerHelper.New(args.Response.Buffer + TrinityMessage.Offset);
 
                         *sp.ip++          = name_str.Length;
                         BitHelper.WriteString(name_str, sp.bp);
@@ -249,7 +249,8 @@ namespace Trinity.Network.Messaging
                         int syn_req_id         = -1;
                         int syn_req_rsp_id     = -1;
                         int asyn_req_id        = -1;
-                        SmartPointer req_sp    = SmartPointer.New(args.Buffer + args.Offset);
+                        int asyn_req_rsp_id    = -1;
+                        PointerHelper req_sp    = PointerHelper.New(args.Buffer + args.Offset);
                         int moduleName_len     = *req_sp.ip++;
                         string moduleName      = BitHelper.GetString(req_sp.bp, moduleName_len * 2);
 
@@ -261,15 +262,17 @@ namespace Trinity.Network.Messaging
                                 syn_req_id     = comm_module.SynReqIdOffset;
                                 syn_req_rsp_id = comm_module.SynReqRspIdOffset;
                                 asyn_req_id    = comm_module.AsynReqIdOffset;
+                                asyn_req_rsp_id= comm_module.AsynReqRspIdOffset;
                                 errno          = TrinityErrorCode.E_SUCCESS;
                             }
                         }
 
-                        args.Response          = new TrinityMessage(errno, sizeof(int) * 3);
-                        SmartPointer rsp_sp    = SmartPointer.New(args.Response.Buffer + TrinityMessage.Offset);
+                        args.Response          = new TrinityMessage(errno, sizeof(int) * 4);
+                        PointerHelper rsp_sp    = PointerHelper.New(args.Response.Buffer + TrinityMessage.Offset);
                         *rsp_sp.ip++           = syn_req_id;
                         *rsp_sp.ip++           = syn_req_rsp_id;
                         *rsp_sp.ip++           = asyn_req_id;
+                        *rsp_sp.ip++           = asyn_req_rsp_id;
 
                     }
                 });

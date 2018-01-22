@@ -25,7 +25,6 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(.InvertedIndex
 {
-    
     [StructLayout(LayoutKind.Explicit, Size = 10)]
     struct IndexItem
     {

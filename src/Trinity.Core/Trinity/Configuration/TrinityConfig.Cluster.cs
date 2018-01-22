@@ -28,13 +28,13 @@ namespace Trinity
         private static ClusterConfig s_current_cluster_config = new ClusterConfig();
         private static Dictionary<string, ClusterConfig> s_clusterConfigurations = new Dictionary<string, ClusterConfig>();
         
-        internal static int BackgroundSendingInterval = ConfigurationConstants.DefaultValue.DEFAULT_BACKGROUND_SENDING_INTERVAL;
-        internal static int HeartbeatInterval = ConfigurationConstants.DefaultValue.DEFAULT_HEARTBEAT_INTERVAL;
-        internal static int MaxSocketReconnectNum = ConfigurationConstants.DefaultValue.DEFAULT_MAXSOCKET_RECONNECTNUM;
+        internal static int BackgroundSendingInterval = ConfigurationConstants.Values.DEFAULT_BACKGROUND_SENDING_INTERVAL;
+        internal static int HeartbeatInterval = ConfigurationConstants.Values.DEFAULT_HEARTBEAT_INTERVAL;
+        internal static int MaxSocketReconnectNum = ConfigurationConstants.Values.DEFAULT_MAXSOCKET_RECONNECTNUM;
 
-        internal const int InvalidPort = ConfigurationConstants.DefaultValue.DEFAULT_INVALID_VALUE;
-        internal static int DefaultServerPort = ConfigurationConstants.DefaultValue.DEFAULT_SERVER_PORT;
-        internal static int DefaultProxyPort = ConfigurationConstants.DefaultValue.DEFAULT_PROXY_PORT;
+        internal const int InvalidPort = ConfigurationConstants.Values.DEFAULT_INVALID_VALUE;
+        internal static int DefaultServerPort = ConfigurationConstants.Values.DEFAULT_SERVER_PORT;
+        internal static int DefaultProxyPort = ConfigurationConstants.Values.DEFAULT_PROXY_PORT;
         #endregion
 
         /// <summary>

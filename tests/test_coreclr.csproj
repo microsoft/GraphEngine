@@ -17,10 +17,6 @@
     <ExeTestResultDir>$(MSBuildProjectDirectory)/nunit_exe_coreclr_reports</ExeTestResultDir>
   </PropertyGroup>
 
-  <Target Name="Clean">
-    <Move SourceFiles="$([System.String]::Copy('%(Bak.Identity)'))" DestinationFiles="$([System.String]::Copy('%(Bak.Identity)').Replace('.csproj.bak', '.csproj'))" />
-  </Target>
-
   <Target Name="Init">
     <Exec
         Command="dotnet restore nunitlite-runner_coreclr.csproj"
@@ -56,9 +52,9 @@
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(UnitTest.Identity)))"
         ContinueOnError="true" />
     <Exec
-        Command="dotnet $(MetaRunner) -t 1800000 -r $(TestRunner) -d $(UnitTestResultDir) -a bin/Release/netcoreapp2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(UnitTest.Identity))).dll -o &quot; --workers=1&quot;"
+        Command="dotnet $(MetaRunner) -t 1800000 -r $(TestRunner) -d $(UnitTestResultDir) -a bin/Release/netstandard2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(UnitTest.Identity))).dll -o &quot; --workers=1&quot;"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(UnitTest.Identity)))"
-        ContinueOnError="true" Condition="Exists('$([System.IO.Path]::GetDirectoryName(%(UnitTest.Identity)))/bin/Release/netcoreapp2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(UnitTest.Identity))).dll')"/>
+        ContinueOnError="true" Condition="Exists('$([System.IO.Path]::GetDirectoryName(%(UnitTest.Identity)))/bin/Release/netstandard2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(UnitTest.Identity))).dll')"/>
   </Target>
 
   <Target Name="RunStressTests" DependsOnTargets="Init">
@@ -74,9 +70,9 @@
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(StressTest.Identity)))"
         ContinueOnError="true" />
     <Exec
-        Command="dotnet $(MetaRunner) -t 1800000 -r $(TestRunner) -d $(StressTestResultDir) -a bin/Release/netcoreapp2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(StressTest.Identity))).dll -o &quot; --workers=1&quot;"
+        Command="dotnet $(MetaRunner) -t 1800000 -r $(TestRunner) -d $(StressTestResultDir) -a bin/Release/netstandard2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(StressTest.Identity))).dll -o &quot; --workers=1&quot;"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(StressTest.Identity)))"
-        ContinueOnError="true" Condition="Exists('$([System.IO.Path]::GetDirectoryName(%(StressTest.Identity)))/bin/Release/netcoreapp2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(StressTest.Identity))).dll')"/>
+        ContinueOnError="true" Condition="Exists('$([System.IO.Path]::GetDirectoryName(%(StressTest.Identity)))/bin/Release/netstandard2.0/$([System.IO.Path]::GetFileNameWithoutExtension(%(StressTest.Identity))).dll')"/>
   </Target>
 
   <Target Name="RunExeTests">
@@ -84,13 +80,15 @@
     <MakeDir Directories="$(ExeTestResultDir)" ContinueOnError="true" />
 
     <Exec
-        Command="dotnet restore $([System.IO.Path]::GetFileName(%(ExeTest.Identity)))"
+        Command="dotnet restore &quot;$([System.IO.Path]::GetFileName(%(ExeTest.Identity)))&quot;"
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(ExeTest.Identity)))"
         ContinueOnError="false"/>
     <Exec
-        Command="dotnet run -c Release -p $([System.IO.Path]::GetFileName(%(ExeTest.Identity)))"
+        Command="dotnet run -c Release -p &quot;$([System.IO.Path]::GetFileName(%(ExeTest.Identity)))&quot; "
         WorkingDirectory="$([System.IO.Path]::GetDirectoryName(%(ExeTest.Identity)))"
         ContinueOnError="true" />
   </Target>
+
+  <Target Name="Restore"/>
 
 </Project>

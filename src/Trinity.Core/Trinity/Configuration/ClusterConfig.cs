@@ -18,8 +18,8 @@ namespace Trinity
         #region Fields
         private RunningMode running_mode = RunningMode.Undefined;
         private string configFile;
-        private int my_server_id = ConfigurationConstants.DefaultValue.DEFAULT_INVALID_VALUE;
-        private int my_proxy_id = ConfigurationConstants.DefaultValue.DEFAULT_INVALID_VALUE;
+        private int my_server_id = ConfigurationConstants.Values.DEFAULT_INVALID_VALUE;
+        private int my_proxy_id = ConfigurationConstants.Values.DEFAULT_INVALID_VALUE;
         XMLConfig xml_config;
         #endregion
 
@@ -213,7 +213,7 @@ namespace Trinity
             get
             {
                 if (RunningMode == RunningMode.Server)
-                    return MyServerId;
+                    return MyPartitionId;
                 if (RunningMode == RunningMode.Proxy)
                     return MyProxyId;
                 return -1;
@@ -223,7 +223,7 @@ namespace Trinity
         /// <summary>
         /// Gets the ID of current server instance in the cluster.
         /// </summary>
-        public int MyServerId
+        public int MyPartitionId
         {
             get
             {
@@ -411,8 +411,8 @@ namespace Trinity
                 LogLevel loggingLevel = LoggingConfig.c_DefaultLogLevel;
                 string storageRoot = null;
 
-                if (pvs.ContainsKey(ConfigurationConstants.Attrs.ASSEMBLY_PATH))
-                    assemblyPath = FileUtility.CompletePath(pvs[ConfigurationConstants.Attrs.ASSEMBLY_PATH], false);
+                if (pvs.ContainsKey(ConfigurationConstants.Attrs.LEGACY_ASSEMBLY_PATH))
+                    assemblyPath = FileUtility.CompletePath(pvs[ConfigurationConstants.Attrs.LEGACY_ASSEMBLY_PATH], false);
 
                 if (pvs.TryGetValue(ConfigurationConstants.Attrs.STORAGE_ROOT, out storageRoot))
                     storageRoot = storageRoot.Trim();

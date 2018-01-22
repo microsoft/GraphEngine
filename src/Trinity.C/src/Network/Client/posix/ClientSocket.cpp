@@ -55,6 +55,8 @@ namespace Trinity
                 return true;
             }
         }
+        
+        //TODO client send multi
 
         bool ClientSend(uint64_t socket, char* buf, int32_t len)
         {
@@ -70,6 +72,17 @@ namespace Trinity
                 buf += bytesSent;
                 len -= bytesSent;
             } while (len > 0);
+            return true;
+        }
+
+        bool ClientSendMulti(uint64_t socket, char** bufs, int32_t* lens, int32_t cnt)
+        {
+            for(; cnt > 0; --cnt)
+            {
+                if (!ClientSend(socket, *bufs, *lens)) return false;
+                ++bufs;
+                ++lens;
+            }
             return true;
         }
 

@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-    <RuntimeFrameworkVersion>2.0.0-preview</RuntimeFrameworkVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
     <AssemblyName>GraphEngine.CoreCLR</AssemblyName>
     <RootNamespace>Trinity</RootNamespace>
     <OutputTypeEx>library</OutputTypeEx>
@@ -14,9 +14,9 @@
 
   <!-- NuGet package metadata -->
   <PropertyGroup>
-    <Version>1.0.8850</Version>
-    <AssemblyVersion>1.0.8850.0</AssemblyVersion>
-    <FileVersion>1.0.8850.0</FileVersion>
+    <Version>1.0.9083</Version>
+    <AssemblyVersion>1.0.9083.0</AssemblyVersion>
+    <FileVersion>1.0.9083.0</FileVersion>
     <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
     <Authors>Microsoft Graph Engine Team</Authors>
     <Description>GraphEngine runtime and codegen for CoreCLR.</Description>
@@ -48,6 +48,7 @@
 
   <ItemGroup>
     <None Remove="GraphEngine.Core.nuspec" />
+    <None Remove="Network\Http\index.html" />
     <None Remove="NuGet\GraphEngine.Core.props" />
     <None Remove="NuGet\GraphEngine.Core.targets" />
   </ItemGroup>
@@ -70,10 +71,20 @@
   <ItemGroup>
     <EmbeddedResource Include="..\..\bin\coreclr\libTrinity.so" Link="libTrinity.so" />
     <EmbeddedResource Include="..\..\bin\coreclr\Trinity.dll" Link="Trinity.dll" />
+    <EmbeddedResource Include="Network\Http\index.html" />
   </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+    <ThreadPoolMinThreads>20</ThreadPoolMinThreads>
+    <ThreadPoolMaxThreads>300</ThreadPoolMaxThreads>
+  </PropertyGroup>
 
 </Project>

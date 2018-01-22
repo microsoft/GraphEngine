@@ -27,7 +27,6 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
-    
     internal class TypeSystem
     {
         #region TypeID lookup table

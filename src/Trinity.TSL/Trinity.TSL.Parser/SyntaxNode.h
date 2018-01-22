@@ -235,6 +235,7 @@ public:
     bool is_array_same_rank_same_element_type(NFieldType*);
     bool can_enumerate(NFieldType*);
     bool is_alias();
+    bool has_pointer_type();
     int enumerate_depth(NFieldType*);
     TypeConversionAction get_type_conversion_action(NFieldType*);
     NFieldType* get_container_element_type();
@@ -392,6 +393,8 @@ public:
     inline bool is_syn_req_protocol()     { return (pt_type     == PT_SYN  && pt_response == PT_VOID_RESPONSE); }
     inline bool is_syn_req_rsp_protocol() { return (pt_type     == PT_SYN  && pt_response != PT_VOID_RESPONSE); }
     inline bool is_asyn_req_protocol()    { return (pt_type     == PT_ASYN && pt_response == PT_VOID_RESPONSE); }
+    inline bool is_asyn_req_rsp_protocol(){ return (pt_type     == PT_ASYN && pt_response != PT_VOID_RESPONSE); }
+
     inline void set_property(NProtocolProperty *p)
     {
         switch (p->propertyType)

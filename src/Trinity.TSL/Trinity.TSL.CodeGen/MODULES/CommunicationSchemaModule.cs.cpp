@@ -159,6 +159,55 @@ source->append(R"::(
                 yield break;
             }
         }
+        IEnumerable<IProtocolDescriptor> ICommunicationSchema.AsynReqRspProtocolDescriptors
+        {
+            get
+            {
+                string request_sig;
+                string response_sig;
+                )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->protocolList)->size();++iterator_1)
+{
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->is_asyn_req_rsp_protocol())
+{
+source->append(R"::(
+                {
+                    )::");
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->pt_request == PT_VOID_REQUEST)
+{
+source->append(R"::(
+                    request_sig = "void";
+                    )::");
+}
+else
+{
+source->append(R"::(
+                    request_sig = ")::");
+source->append(Codegen::GetString(get_signature_string(tsl->find_struct_or_cell(tsl->find_protocol((*(node->protocolList))[iterator_1]->name)->request_message_struct))));
+source->append(R"::(";
+                    )::");
+}
+source->append(R"::(
+                    response_sig = ")::");
+source->append(Codegen::GetString(get_signature_string(tsl->find_struct_or_cell(tsl->find_protocol((*(node->protocolList))[iterator_1]->name)->response_message_struct))));
+source->append(R"::(";
+                    yield return new ProtocolDescriptor()
+                    {
+                        Name = ")::");
+source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
+source->append(R"::(",
+                        RequestSignature = request_sig,
+                        ResponseSignature = response_sig,
+                        Type = Trinity.Network.Messaging.TrinityMessageType.ASYNC_WITH_RSP
+                    };
+                }
+                )::");
+}
+}
+source->append(R"::(
+                yield break;
+            }
+        }
         string ICommunicationSchema.Name
         {
             get { return ")::");
@@ -237,7 +286,6 @@ source->append(R"::(
         /// <summary>
         /// Specifies the type of an asynchronous request (without response) message.
         /// </summary>
-        /// <remarks>Note that asynchronous message with response is not supported.</remarks>
         public enum AsynReqMessageType : ushort
         {
             )::");
@@ -247,6 +295,26 @@ if ((*(node->protocolList))[iterator_1]->referencedNProtocol->is_asyn_req_protoc
 {
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(,
+            )::");
+}
+}
+source->append(R"::(
+        }
+        /// <summary>
+        /// Specifies the type of an asynchronous request (with response) message.
+        /// </summary>
+        public enum AsynReqRspMessageType : ushort
+        {
+            )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->protocolList)->size();++iterator_1)
+{
+if ((*(node->protocolList))[iterator_1]->referencedNProtocol->is_asyn_req_rsp_protocol())
+{
+source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
+source->append(R"::(,
+            )::");
+source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
+source->append(R"::(__Response,
             )::");
 }
 }
