@@ -7,7 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+#if NETSTANDARD2_0
+using Microsoft.Extensions.Caching.Memory;
+#else
 using System.Runtime.Caching;
+#endif
+
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -32,14 +37,23 @@ namespace FanoutSearch
     {
         private QueryPredicateCompiler m_compiler;
         private MemoryCache            m_memory_cache;
+#if NETSTANDARD2_0
+        private MemoryCacheEntryOptions m_entry_option = new MemoryCacheEntryOptions();
+#else
         private CacheItemPolicy        m_cache_policy;
+#endif
 
         internal QueryResultCache(QueryPredicateCompiler compiler)
         {
             m_compiler = compiler;
+#if NETSTANDARD2_0
+            m_memory_cache = new MemoryCache(new MemoryCacheOptions());
+            m_entry_option.SlidingExpiration = compiler.GetExperationTime();
+#else
             m_memory_cache = MemoryCache.Default;
             m_cache_policy = new CacheItemPolicy();
             m_cache_policy.SlidingExpiration = compiler.GetExperationTime();
+#endif
         }
 
         internal void RegisterQueryResult(int transaction_id, FanoutQueryMessageReader request, AggregationObject aggregation_obj)
@@ -54,8 +68,13 @@ namespace FanoutSearch
             string key_query = GetQueryResultCacheRequestKey(request);
             string key_trans = GetQueryResultCacheTransactionKey(entry.transaction_id);
 
+#if NETSTANDARD2_0
+            m_memory_cache.Set(key_query, entry, m_entry_option);
+            m_memory_cache.Set(key_trans, entry, m_entry_option);
+#else
             m_memory_cache.Set(key_query, entry, m_cache_policy);
             m_memory_cache.Set(key_trans, entry, m_cache_policy);
+#endif
         }
 
         /// <returns>null if no cached query result is found.</returns>

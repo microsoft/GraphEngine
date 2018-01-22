@@ -41,6 +41,11 @@ namespace Trinity.DynamicCluster.Consensus
         /// <summary>
         /// Obtains a list of all published replicas in a partition.
         /// </summary>
-        Task<IEnumerable<ReplicaInformation>> ResolvePartition(int arg);
+        Task<IEnumerable<ReplicaInformation>> ResolvePartition(int partitionId);
+        /// <summary>
+        /// Indicates whether the service is a master replica with
+        /// read/write access to the persistent states.
+        /// </summary>
+        bool IsMaster { get; }
     }
 }

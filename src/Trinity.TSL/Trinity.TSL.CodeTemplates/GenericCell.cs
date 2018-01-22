@@ -22,19 +22,7 @@ namespace t_Namespace
     /// </summary>
     internal class GenericCellOperations : IGenericCellOperations
     {
-        #region LocalMemoryStorage Save operations
-        public void SaveGenericCell(Trinity.Storage.LocalMemoryStorage storage, ICell cell)
-        {
-            switch ((CellType)cell.CellType)
-            {
-                /*FOREACH*/
-                case CellType.t_cell_name:
-                    storage.Savet_cell_name((t_cell_name)cell);
-                    break;
-                /*END*/
-            }
-        }
-
+        #region LocalMemoryStorage operations
         public void SaveGenericCell(Trinity.Storage.LocalMemoryStorage storage, CellAccessOptions writeAheadLogOptions, ICell cell)
         {
             switch ((CellType)cell.CellType)
@@ -42,18 +30,6 @@ namespace t_Namespace
                 /*FOREACH*/
                 case CellType.t_cell_name:
                     storage.Savet_cell_name(writeAheadLogOptions, (t_cell_name)cell);
-                    break;
-                /*END*/
-            }
-        }
-
-        public void SaveGenericCell(Trinity.Storage.LocalMemoryStorage storage, long cellId, ICell cell)
-        {
-            switch ((CellType)cell.CellType)
-            {
-                /*FOREACH*/
-                case CellType.t_cell_name:
-                    storage.Savet_cell_name(cellId, (t_cell_name)cell);
                     break;
                 /*END*/
             }
@@ -70,9 +46,7 @@ namespace t_Namespace
                 /*END*/
             }
         }
-        #endregion
 
-        #region LocalMemoryStorage Load operations
         public unsafe ICell LoadGenericCell(Trinity.Storage.LocalMemoryStorage storage, long cellId)
         {
             ushort type;
@@ -314,15 +288,15 @@ namespace t_Namespace
         }
         #endregion
 
-        #region MemoryCloud operations
+        #region IKeyValueStore operations
         /// <summary>
         /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
         /// Note that the generic cell will be saved as a strongly typed cell. It can then be loaded into either a strongly-typed cell or a generic cell.
         /// </summary>
-        /// <param name="storage">A <see cref="Trinity.Storage.MemoryCloud"/> instance.</param>
+        /// <param name="storage">A <see cref="IKeyValueStore"/> instance.</param>
         /// <param name="cell">The cell to be saved.</param>
 
-        public void SaveGenericCell(Trinity.Storage.MemoryCloud storage, ICell cell)
+        public void SaveGenericCell(IKeyValueStore storage, ICell cell)
         {
             switch ((CellType)cell.CellType)
             {
@@ -334,13 +308,26 @@ namespace t_Namespace
             }
         }
 
+        public void SaveGenericCell(IKeyValueStore storage, long cellId, ICell cell)
+        {
+            switch ((CellType)cell.CellType)
+            {
+                /*FOREACH*/
+                case CellType.t_cell_name:
+                    storage.Savet_cell_name(cellId, (t_cell_name)cell);
+                    break;
+                /*END*/
+            }
+        }
+
+
         /// <summary>
         /// Loads the content of the cell with the specified cell Id.
         /// </summary>
-        /// <param name="storage">A <see cref="Trinity.Storage.MemoryCloud"/> instance.</param>
+        /// <param name="storage">A <see cref="IKeyValueStore"/> instance.</param>
         /// <param name="cellId">A 64-bit cell Id.</param>
         /// <returns></returns>
-        public unsafe ICell LoadGenericCell(Trinity.Storage.MemoryCloud storage, long cellId)
+        public unsafe ICell LoadGenericCell(IKeyValueStore storage, long cellId)
         {
             ushort type;
             byte[] buff;

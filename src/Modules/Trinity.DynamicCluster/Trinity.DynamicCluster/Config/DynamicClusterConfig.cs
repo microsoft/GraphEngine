@@ -3,12 +3,8 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Trinity.Configuration;
-using Trinity.DynamicCluster.Storage;
+using Trinity.DynamicCluster.Replication;
 
 namespace Trinity.DynamicCluster.Config
 {
@@ -23,14 +19,29 @@ namespace Trinity.DynamicCluster.Config
         {
             ReplicationMode = ReplicationMode.Mirroring;
             MinimumReplica  = 2;
+            BatchSaveSizeThreshold = 4.MiB();
+            PersistedChunkSizeThreshold = 4.MiB();
+            ConcurrentDownloads = 4 * Environment.ProcessorCount;
+            ConcurrentUploads   = 4 * Environment.ProcessorCount;
+            ConcurrentReplicationInPartition = 2;
         }
 
         [ConfigEntryName]
-        internal static string ConfigEntry => nameof(Trinity.DynamicCluster);
+        internal static string ConfigEntry => "Trinity.DynamicCluster";
 
+        [ConfigSetting(Optional:true)]
+        public int ConcurrentDownloads { get; set; }
+        [ConfigSetting(Optional:true)]
+        public int ConcurrentUploads { get; set; }
         [ConfigSetting(true)]
         public ReplicationMode ReplicationMode { get; set; }
         [ConfigSetting(true)]
         public int MinimumReplica { get; set; }
+        [ConfigSetting(true)]
+        public int ConcurrentReplicationInPartition { get; set; }
+        [ConfigSetting(true)]
+        public long BatchSaveSizeThreshold { get; set; }
+        [ConfigSetting(true)]
+        public long PersistedChunkSizeThreshold { get; set; }
     }
 }

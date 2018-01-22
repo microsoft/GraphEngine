@@ -19,7 +19,7 @@ using System.Runtime.CompilerServices;
 
 namespace Trinity.Storage
 {
-    public unsafe partial class LocalMemoryStorage : Storage, IDisposable
+    public unsafe partial class LocalMemoryStorage : IStorage, IDisposable
     {
         /// <summary>
         /// Get the Memory Trunk Id for the specified 64-bit cell Id.

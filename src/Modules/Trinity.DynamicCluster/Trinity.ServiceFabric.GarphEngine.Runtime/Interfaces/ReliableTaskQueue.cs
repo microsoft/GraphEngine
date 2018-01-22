@@ -34,9 +34,9 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
         private async Task InitAsync()
         {
             m_queue      = await ServiceFabricUtils.CreateReliableStateAsync<IReliableQueue<byte[]>>
-                (this, "Trinity.ServiceFabric.GarphEngine.Infrastructure.TaskQueue", GraphEngineStatefulServiceRuntime.Instance.PartitionId);
+                ("Trinity.ServiceFabric.GarphEngine.Infrastructure.TaskQueue");
             m_tagCounter = await ServiceFabricUtils.CreateReliableStateAsync<IReliableDictionary<Guid, int>>
-                (this, "Trinity.ServiceFabric.GarphEngine.Infrastructure.TaskTagCounter", GraphEngineStatefulServiceRuntime.Instance.PartitionId);
+                ("Trinity.ServiceFabric.GarphEngine.Infrastructure.TaskTagCounter");
         }
 
         private async Task EnsureInit()
@@ -52,12 +52,10 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
         public void Dispose()
         {
             if (m_tx != null) foreach (var tx in m_tx.Values)
-            {
-                tx.Dispose();
-            }
+                {
+                    tx.Dispose();
+                }
         }
-
-        public bool IsMaster => GraphEngineStatefulServiceRuntime.Instance?.Role == ReplicaRole.Primary;
 
         public async Task<ITask> GetTask(CancellationToken token)
         {
@@ -72,7 +70,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
                     var result = await m_queue.TryDequeueAsync(tx, TimeSpan.FromSeconds(10), m_cancel);
                     if (result.HasValue) ret = Utils.Deserialize<ITask>(result.Value);
                 });
-                if(ret == null) { tx.Dispose(); return null; }
+                if (ret == null) { tx.Dispose(); return null; }
                 m_tx[ret] = tx;
                 return ret;
             }
@@ -86,15 +84,14 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
         private void ReleaseTx(ITask task, ITransaction tx)
         {
             tx?.Dispose();
-            if(task != null) m_tx?.TryRemove(task, out _);
+            if (task != null) m_tx?.TryRemove(task, out _);
         }
 
-        public async Task TaskCompleted(ITask task)
+        public async Task RemoveTask(ITask task)
         {
-            ITransaction tx = null;
+            if (!m_tx.TryGetValue(task, out var tx)) return;
             try
             {
-                if (!m_tx.TryGetValue(task, out tx)) return;
                 await ServiceFabricUtils.DoWithTimeoutRetry(
                     async () => await m_tagCounter.AddOrUpdateAsync(tx, task.Tag, _ => 0, (k, v) => v-1, TimeSpan.FromSeconds(10), m_cancel),
                     async () => await tx.CommitAsync());
@@ -105,11 +102,19 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
             }
         }
 
-        public Task TaskFailed(ITask task)
+        public async Task UpdateTask(ITask task)
         {
-            m_tx.TryGetValue(task, out var tx);
-            ReleaseTx(task, tx);
-            return Task.FromResult(0);
+            if (!m_tx.TryGetValue(task, out var tx)) return;
+            try
+            {
+                await ServiceFabricUtils.DoWithTimeoutRetry(
+                    async () => await m_queue.EnqueueAsync(tx, Utils.Serialize(task), TimeSpan.FromSeconds(10), m_cancel),
+                    async () => await tx.CommitAsync());
+            }
+            finally
+            {
+                ReleaseTx(task, tx);
+            }
         }
 
         public async Task PostTask(ITask task)

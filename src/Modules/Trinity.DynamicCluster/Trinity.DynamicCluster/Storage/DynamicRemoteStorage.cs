@@ -13,7 +13,6 @@ namespace Trinity.DynamicCluster.Storage
 {
     class DynamicRemoteStorage : RemoteStorage
     {
-
         public DynamicRemoteStorage(ReplicaInformation server_info, int connPerServer, MemoryCloud mc)
             : base(new[] { new ServerInfo(server_info.Address, server_info.Port, null, LogLevel.Info) }, connPerServer, mc, server_info.PartitionId, nonblocking: true)
         {
@@ -24,14 +23,5 @@ namespace Trinity.DynamicCluster.Storage
         public string NickName { get; }
         public ReplicaInformation ReplicaInformation { get; }
 
-        public override unsafe void SendMessage(byte* buffer, int size)
-        {
-            base.SendMessage(buffer, size);
-        }
-
-        public override unsafe void SendMessage(byte* buffer, int size, out TrinityResponse response)
-        {
-            base.SendMessage(buffer, size, out response);
-        }
     }
 }

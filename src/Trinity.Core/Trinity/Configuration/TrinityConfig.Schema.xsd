@@ -449,20 +449,6 @@
                 </xs:documentation>
               </xs:annotation>
             </xs:attribute>
-            <xs:attribute name="ConcurrentDownloads" use="optional" type="xs:unsignedInt">
-              <xs:annotation>
-                <xs:documentation>
-                  The number of concurrent downloads.
-                </xs:documentation>
-              </xs:annotation>
-            </xs:attribute>
-            <xs:attribute name="ConcurrentUploads" use="optional" type="xs:unsignedInt">
-              <xs:annotation>
-                <xs:documentation>
-                  The number of concurrent uploads.
-                </xs:documentation>
-              </xs:annotation>
-            </xs:attribute>
           </xs:complexType>
         </xs:element>
         <xs:element name="Trinity.DynamicCluster">
@@ -488,6 +474,20 @@
                   <xs:enumeration value="Unrestricted" />
                 </xs:restriction>
               </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="ConcurrentDownloads" use="optional" type="xs:unsignedInt">
+              <xs:annotation>
+                <xs:documentation>
+                  The number of concurrent downloads on an instance, in a persistent storage load operation.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="ConcurrentUploads" use="optional" type="xs:unsignedInt">
+              <xs:annotation>
+                <xs:documentation>
+                  The number of concurrent uploads on an instance, in a persistent storage save operation.
+                </xs:documentation>
+              </xs:annotation>
             </xs:attribute>
           </xs:complexType>
         </xs:element>

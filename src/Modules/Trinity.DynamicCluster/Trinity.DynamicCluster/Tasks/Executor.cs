@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Trinity.Diagnostics;
@@ -12,12 +9,14 @@ namespace Trinity.DynamicCluster.Tasks
     internal class Executor : IDisposable
     {
         private ITaskQueue m_taskqueue;
+        private INameService m_namesvc;
         private CancellationToken m_cancel;
         private Task m_taskexecproc;
 
-        public Executor(ITaskQueue queue, CancellationToken token)
+        public Executor(CancellationToken token, INameService namesvc, ITaskQueue queue)
         {
             m_taskqueue = queue;
+            m_namesvc = namesvc;
             m_cancel = token;
             m_taskexecproc = Utils.Daemon(m_cancel, "TaskExecutorProc", 1000, TaskExecutionProc);
         }
@@ -31,7 +30,7 @@ namespace Trinity.DynamicCluster.Tasks
         {
             ITask task;
             Exception exception;
-            if (!m_taskqueue.IsMaster) return;
+            if (!m_namesvc.IsMaster) return;
             task = await m_taskqueue.GetTask(m_cancel);
             if (task == null) return;
             try
@@ -42,12 +41,13 @@ namespace Trinity.DynamicCluster.Tasks
             catch (Exception ex) { exception = ex; }
             if (null == exception)
             {
-                await m_taskqueue.TaskCompleted(task);
+                if (task is ChainedTasks ctask && !ctask.Finished) { await m_taskqueue.UpdateTask(task); }
+                else { await m_taskqueue.RemoveTask(task); }
             }
             else
             {
                 Log.WriteLine(LogLevel.Error, $"TaskExecutionProc: task {task.Id} failed with exception: {exception.ToString()}");
-                await m_taskqueue.TaskFailed(task);
+                await m_taskqueue.UpdateTask(task);
             }
         }
     }

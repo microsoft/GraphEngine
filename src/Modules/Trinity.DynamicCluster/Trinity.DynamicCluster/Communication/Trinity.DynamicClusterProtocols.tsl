@@ -1,6 +1,7 @@
-struct RemoteTaskRequest
+enum Errno
 {
-	string Task;
+	E_OK,
+	E_FAIL,
 }
 
 struct ChunkInformation
@@ -10,10 +11,71 @@ struct ChunkInformation
 	Guid id;
 }
 
+// identifies a replica
 struct StorageInformation
 {
 	int partition;
-	Guid id;
+	Guid id;// the id of the replica
+}
+
+struct RawCell
+{
+	long id;
+	ushort cell_type;
+	List<byte> content;
+}
+
+struct BatchCells
+{
+	Guid task_id;
+	List<RawCell> cells;
+}
+
+struct ReplicationTaskInformation
+{
+	Guid task_id;
+	StorageInformation to;
+	List<ChunkInformation> range;
+}
+
+struct ShrinkChunkInformation
+{
+	ChunkInformation from;
+	ChunkInformation to;
+}
+
+struct ShrinkDataTaskInformation
+{
+	Guid task_id;
+	List<ChunkInformation> remove_target;
+}
+
+struct BackupTaskInformation
+{
+	Guid task_id;
+	Guid version;
+}
+
+struct ErrnoResponse
+{
+	Errno errno;
+}
+
+struct ThrottleResponse
+{
+	bool throttle; // when true, sender should block until all active batches are saved successfully.
+}
+
+struct PersistedSlice
+{
+	Guid version;
+	long lowkey;
+	long highkey;
+}
+
+struct GetChunksResponse
+{
+	List<ChunkInformation> chunk_info;
 }
 
 protocol NotifyRemoteStorageOnLeaving
@@ -22,15 +84,81 @@ protocol NotifyRemoteStorageOnLeaving
     Request: StorageInformation;
 }
 
-protocol RemoteTask
+protocol BatchSaveCells
 {
-	Type: Syn;
-	Request: RemoteTaskRequest;
-	Response: void;
+	Type: Asyn;
+	Request: BatchCells;
+	Response: ThrottleResponse;
+}
+
+// sent from master to a worker
+protocol Replication
+{
+	Type: Asyn;
+	Request: ReplicationTaskInformation;
+	Response: ErrnoResponse;
+}
+
+// sent from master to a worker
+protocol ShrinkData
+{
+	Type: Asyn;
+	Request: ShrinkDataTaskInformation;
+	Response: ErrnoResponse;
+}
+
+protocol PersistedDownload
+{
+	Type: Asyn;
+	Request: PersistedSlice;
+	Response: ErrnoResponse;
+}
+
+protocol PersistedUpload
+{
+	Type: Asyn;
+	Request: PersistedSlice;
+	Response: ErrnoResponse;
+}
+
+protocol GetChunks
+{
+	Type: Asyn;
+	Request: void;
+	Response: GetChunksResponse;
+}
+
+protocol AnnounceMaster
+{
+	Type: Asyn;
+	Request: StorageInformation;
+	Response: ErrnoResponse;
+}
+
+protocol PersistedLoadPartition
+{
+	Type: Asyn;
+	Request: BackupTaskInformation;
+	Response: ErrnoResponse;
+}
+
+protocol PersistedSavePartition
+{
+	Type: Asyn;
+	Request: BackupTaskInformation;
+	Response: ErrnoResponse;
 }
 
 module DynamicCluster
 {
+	protocol AnnounceMaster;
+	protocol GetChunks;
 	protocol NotifyRemoteStorageOnLeaving;
-	protocol RemoteTask;
+	protocol BatchSaveCells;
+	protocol Replication;
+	protocol ShrinkData;
+	protocol PersistedDownload;
+	protocol PersistedUpload;
+	protocol PersistedLoadPartition;
+	protocol PersistedSavePartition;
 }

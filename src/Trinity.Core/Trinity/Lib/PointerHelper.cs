@@ -50,7 +50,7 @@ namespace Trinity
         public char* cp;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static unsafe byte GetByte(byte** buffers, int* sizes, int offset)
+        public static unsafe byte GetByte(byte** buffers, int* sizes, int offset)
         {
             while (offset >= *sizes)
             {
@@ -59,6 +59,18 @@ namespace Trinity
                 ++sizes;
             }
             return buffers[0][offset];
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe ushort GetUshort(byte** buffers, int* sizes, int offset)
+        {
+            while (offset >= *sizes)
+            {
+                offset -= *sizes;
+                ++buffers;
+                ++sizes;
+            }
+            return *(ushort*)(buffers[0] + offset);
         }
 
         /// <summary>

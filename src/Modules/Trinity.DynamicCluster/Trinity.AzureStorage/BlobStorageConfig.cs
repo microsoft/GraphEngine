@@ -6,22 +6,14 @@ namespace Trinity.Azure.Storage
     public class BlobStorageConfig
     {
         static BlobStorageConfig s_instance = new BlobStorageConfig();
-        private BlobStorageConfig()
-        {
-            ConcurrentDownloads = 4 * Environment.ProcessorCount;
-            ConcurrentUploads   = 4 * Environment.ProcessorCount;
-        }
+        private BlobStorageConfig() { }
         [ConfigInstance]
         public static BlobStorageConfig Instance => s_instance;
         [ConfigEntryName]
-        internal static string ConfigEntry => nameof(Trinity.Azure.Storage);
+        internal static string ConfigEntry => "Trinity.Azure.Storage";
         [ConfigSetting(Optional:false)]
         public string ConnectionString { get; set; }
         [ConfigSetting(Optional:false)]
         public string ContainerName { get; set; }
-        [ConfigSetting(Optional:true)]
-        public int ConcurrentDownloads { get; set; }
-        [ConfigSetting(Optional:true)]
-        public int ConcurrentUploads { get; set; }
     }
 }

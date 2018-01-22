@@ -30,11 +30,10 @@ namespace Trinity.Storage
             {
                 TrinityMessage msg = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC, (ushort)RequestType.SaveStorage, 0);
 
-                Parallel.ForEach<Storage>(StorageTable, storage =>
+                Parallel.ForEach<IStorage>(StorageTable, storage =>
                 {
                     storage.SendMessage(msg);
-                }
-                    );
+                });
             }
             catch (Exception)
             {
@@ -53,7 +52,7 @@ namespace Trinity.Storage
             {
                 TrinityMessage msg = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC, (ushort)RequestType.LoadStorage, 0);
 
-                Parallel.ForEach<Storage>(StorageTable, s =>
+                Parallel.ForEach<IStorage>(StorageTable, s =>
                 {
                     s.SendMessage(msg);
                 }
@@ -76,7 +75,7 @@ namespace Trinity.Storage
             {
                 TrinityMessage msg = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC, (ushort)RequestType.ResetStorage, 0);
 
-                Parallel.ForEach<Storage>(StorageTable, s =>
+                Parallel.ForEach<IStorage>(StorageTable, s =>
                 {
                     s.SendMessage(msg);
                 }

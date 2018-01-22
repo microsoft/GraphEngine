@@ -11,28 +11,25 @@ using Trinity.DynamicCluster.Persistency;
 using Trinity.Storage;
 using System.Threading;
 using Trinity.Diagnostics;
+using Trinity.DynamicCluster.Config;
 
 namespace Trinity.Azure.Storage
 {
     class BlobUploader : IPersistentUploader
     {
         private Guid version;
-        private long lowKey;
-        private long highKey;
         private CloudBlobContainer m_container;
         private CancellationTokenSource m_tokenSource;
         private CloudBlobDirectory m_dir;
         private SemaphoreSlim m_sem;
 
-        public BlobUploader(Guid version, long lowKey, long highKey, CloudBlobContainer m_container)
+        public BlobUploader(Guid version, int partitionId, CloudBlobContainer m_container)
         {
             this.version = version;
-            this.lowKey = lowKey;
-            this.highKey = highKey;
             this.m_container = m_container;
             this.m_tokenSource = new CancellationTokenSource();
-            this.m_dir = m_container.GetDirectoryReference(version.ToString());
-            this.m_sem = new SemaphoreSlim(BlobStorageConfig.Instance.ConcurrentUploads);
+            this.m_dir = m_container.GetDirectoryReference(version.ToString()).GetDirectoryReference(partitionId.ToString());
+            this.m_sem = new SemaphoreSlim(DynamicClusterConfig.Instance.ConcurrentUploads);
         }
 
         public void Dispose()
@@ -50,7 +47,7 @@ namespace Trinity.Azure.Storage
         }
 
         /// <summary>
-        /// UploadAsync will only be called once, when all uploaders have finished.
+        /// FinishUploading will only be called once, when all uploaders have finished.
         /// Hence we safely conclude that all partial indices are in position.
         /// </summary>
         public async Task FinishUploading()
@@ -58,15 +55,13 @@ namespace Trinity.Azure.Storage
             var partial_idxs = m_dir
                 .ListBlobs(useFlatBlobListing: false)
                 .OfType<CloudBlockBlob>()
-                .Where(f => f.Name.Contains(Constants.c_index));
+                .Where(f => f.Name.Contains(Constants.c_partition_index));
             var contents = await Task.WhenAll(
                 partial_idxs.Select(f => f.DownloadTextAsync(m_tokenSource.Token)));
             await Task.WhenAll(partial_idxs.Select(f => f.DeleteIfExistsAsync()));
             var full_idx = string.Join("\n", contents);
-            await m_dir.GetBlockBlobReference(Constants.c_index)
+            await m_dir.GetBlockBlobReference(Constants.c_partition_index)
                              .UploadTextAsync(full_idx);
-            await m_dir.GetBlockBlobReference(Constants.c_finished)
-                             .UploadTextAsync("finished");
             Log.WriteLine(LogLevel.Info, $"{nameof(BlobUploader)}: Version {version} finished uploading.");
         }
 
@@ -88,7 +83,7 @@ namespace Trinity.Azure.Storage
                 var buf = payload.GetBuffer();
 
                 await Task.WhenAll(
-                    m_dir.GetBlockBlobReference($"{Constants.c_index}_{payload.DataChunkRange.Id}") // TODO(maybe): index_<chunk id> should be _index. Append `parse(chunk)` to the tail of `_index`.
+                    m_dir.GetBlockBlobReference($"{Constants.c_partition_index}_{payload.DataChunkRange.Id}") // TODO(maybe): index_<chunk id> should be _index. Append `parse(chunk)` to the tail of `_index`.
                    .UploadTextAsync(partial_idx, m_tokenSource.Token),
                     m_dir.GetBlockBlobReference(payload.DataChunkRange.Id.ToString())
                    .UploadFromByteArrayAsync(buf, 0, buf.Length, m_tokenSource.Token));
@@ -98,6 +93,12 @@ namespace Trinity.Azure.Storage
             {
                 m_sem.Release();
             }
+        }
+
+        public async Task UploadMetadataAsync(string key, Stream input)
+        {
+            var blob = m_dir.GetBlockBlobReference(key);
+            await blob.UploadFromStreamAsync(input);
         }
     }
 }

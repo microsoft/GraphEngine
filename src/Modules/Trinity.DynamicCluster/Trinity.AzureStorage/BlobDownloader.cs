@@ -11,6 +11,7 @@ using System.Threading.Tasks.Dataflow;
 using Newtonsoft.Json;
 using System.IO;
 using Trinity.Diagnostics;
+using Trinity.DynamicCluster.Config;
 
 namespace Trinity.Azure.Storage
 {
@@ -25,24 +26,26 @@ namespace Trinity.Azure.Storage
         private BufferBlock<Task<InMemoryDataChunk>> m_buffer;
         private Task                             m_download;
 
-        public BlobDownloader(Guid version, long lowKey, long highKey, CloudBlobContainer container)
+        public BlobDownloader(Guid version, int partitionId, long lowKey, long highKey, CloudBlobContainer container)
         {
             this.m_version   = version;
             this.m_lowKey    = lowKey;
             this.m_highKey   = highKey;
             this.m_container = container;
-            this.m_dir       = container.GetDirectoryReference(version.ToString());
+            this.m_dir       = container.GetDirectoryReference(version.ToString()).GetDirectoryReference(partitionId.ToString());
             m_download       = _Download();
         }
 
         private async Task _Download(Chunk skip = null)
         {
             m_tokenSource = new CancellationTokenSource();
+            bool finished = await m_dir.GetBlockBlobReference(Constants.c_finished).ExistsAsync();
+            if (!finished) throw new SnapshotUploadUnfinishedException();
             m_buffer = new BufferBlock<Task<InMemoryDataChunk>>(new DataflowBlockOptions()
             {
                 EnsureOrdered= true,
                 CancellationToken=m_tokenSource.Token,
-                BoundedCapacity = BlobStorageConfig.Instance.ConcurrentDownloads
+                BoundedCapacity = DynamicClusterConfig.Instance.ConcurrentDownloads
             });
             Log.WriteLine(LogLevel.Info, $"{nameof(BlobDownloader)}: Begin downloading {m_version} [{m_lowKey}-{m_highKey}].");
             if(skip != null)
@@ -50,7 +53,7 @@ namespace Trinity.Azure.Storage
                 Log.WriteLine(LogLevel.Info, $"{nameof(BlobDownloader)}: Version {m_version}: skipping {ChunkSerialization.ToString(skip)}.");
             }
 
-            var idx = m_dir.GetBlockBlobReference(Constants.c_index);
+            var idx = m_dir.GetBlockBlobReference(Constants.c_partition_index);
             var idx_content = await idx.DownloadTextAsync();
             var chunks = idx_content.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
                          .Select(ChunkSerialization.Parse)
@@ -104,6 +107,16 @@ namespace Trinity.Azure.Storage
             await m_download;
             try { Dispose(); } catch { }
             m_download = _Download(progress);
+        }
+
+        public async Task DownloadMetadataAsync(string key, Stream output)
+        {
+            var blob = m_dir.GetBlockBlobReference(key);
+            if (!await blob.ExistsAsync())
+            {
+                throw new NoDataException($"metadata {key} not found in snapshot {m_version}");
+            }
+            await blob.DownloadToStreamAsync(output);
         }
     }
 }

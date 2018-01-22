@@ -95,12 +95,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Trinity.Networking.WCFService\Trinity.Networking.WCFService.csproj">
-      <Project>{b640301b-a7fb-4b80-81ee-dca979d44d76}</Project>
-      <Name>Trinity.Networking.WCFService</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

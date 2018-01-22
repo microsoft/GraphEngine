@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Fabric;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.ServiceFabric.Data;
 using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -16,17 +17,19 @@ namespace Trinity.ServiceFabric
     /// <summary>
     /// An instance of this class is created for each service replica by the Service Fabric runtime.
     /// </summary>
-    public sealed class GraphEngineService : StatefulService
+    public sealed class GraphEngineService : StatefulService, IGraphEngineStatefulService
     {
         private readonly GraphEngineStatefulServiceRuntime m_graphEngineRuntime;
         //  Passive Singleton
         public GraphEngineService(StatefulServiceContext context)
             : base(context)
         {
-            m_graphEngineRuntime = new GraphEngineStatefulServiceRuntime(context, StateManager);
+            m_graphEngineRuntime = new GraphEngineStatefulServiceRuntime(this);
         }
 
         public GraphEngineStatefulServiceRuntime GraphEngineRuntime => m_graphEngineRuntime;
+
+        public event EventHandler<RestoreEventArgs> RequestRestore = delegate{ };
 
         /// <summary>
         /// Optional override to create listeners (e.g., HTTP, Service Remoting, WCF, etc.) for this service replica to handle client or user requests.
@@ -51,6 +54,15 @@ namespace Trinity.ServiceFabric
             GraphEngineRuntime.Role = newRole;
             Log.WriteLine("{0}", $"Replica {Context.ReplicaOrInstanceId} changed role to {newRole}");
             return base.OnChangeRoleAsync(newRole, cancellationToken);
+        }
+
+        protected override async Task<bool> OnDataLossAsync(RestoreContext restoreCtx, CancellationToken cancellationToken)
+        {
+            Log.WriteLine("{0}", $"Partition {m_graphEngineRuntime.PartitionId} received OnDataLossAsync. Triggering data restore.");
+            RestoreEventArgs rstArgs = new RestoreEventArgs(restoreCtx, cancellationToken);
+            RequestRestore(this, rstArgs);
+            await rstArgs.Wait();
+            return true;
         }
 
         /// <summary>

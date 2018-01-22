@@ -90,17 +90,12 @@
   <ItemGroup>
     <Compile Include="GraphEngineHttpListener.cs" />
     <Compile Include="GraphEngineListener.cs" />
-    <Compile Include="GraphEngineWCFListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Trinity.Networking.WCFService\Trinity.Networking.WCFService.csproj">
-      <Project>{b640301b-a7fb-4b80-81ee-dca979d44d76}</Project>
-      <Name>Trinity.Networking.WCFService</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Trinity.ServiceFabric.GarphEngine.Runtime\Trinity.ServiceFabric.GarphEngine.Environment.csproj">
       <Project>{3433f5a8-dd7d-44d4-a1bb-215d1693dcc7}</Project>
       <Name>Trinity.ServiceFabric.GarphEngine.Environment</Name>

@@ -16,8 +16,6 @@ NProtocolGroup* node, ModuleContext* context)
             {
                 string* source = new string();
                 
-std::string send_message_method_1;
-std::string method_name_1;
 source->append(R"::(
     public abstract partial class )::");
 source->append(Codegen::GetString(node->name));
@@ -160,27 +158,6 @@ source->append(R"::(
 for (size_t iterator_1 = 0; iterator_1 < (node->protocolList)->size();++iterator_1)
 {
 if((*(node->protocolList))[iterator_1]->referencedNProtocol->is_http_protocol()){continue;}
-source->append(R"::(
-        #region prototype definition template variables
-        )::");
-if (node->type() == PGT_SERVER)
-{
-method_name_1 = *(*(node->protocolList))[iterator_1]->name + "To" + *node->name;
-send_message_method_1 = "Global.CloudStorage.SendMessageToServer";
-}
-else if (node->type() == PGT_PROXY)
-{
-method_name_1 = *(*(node->protocolList))[iterator_1]->name + "To" + *node->name;
-send_message_method_1 = "Global.CloudStorage.SendMessageToProxy";
-}
-else
-{
-method_name_1 = *(*(node->protocolList))[iterator_1]->name;
-send_message_method_1 = "this.SendMessage";
-}
-source->append(R"::(
-        #endregion
-        )::");
 if (!(*(node->protocolList))[iterator_1]->referencedNProtocol->has_response())
 {
 source->append(R"::(
@@ -323,8 +300,19 @@ source->append(R"::(__Response;
                 *(int*)(rsp.CellPtr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength) = token;
                 *(int*)(rsp.CellPtr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength + sizeof(int)) = 0;
                 )::");
-source->append(Codegen::GetString(send_message_method_1));
-source->append(R"::((from, rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+if (node->type() == PGT_MODULE)
+{
+source->append(R"::(
+                this.SendMessage(m_memorycloud[from], rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+                )::");
+}
+else
+{
+source->append(R"::(
+                Global.CloudStorage[from].SendMessage(rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+                )::");
+}
+source->append(R"::(
             }
         }
         public abstract void )::");
@@ -375,8 +363,19 @@ source->append(R"::(__Response;
                 *(int*)(rsp.CellPtr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength) = token;
                 *(int*)(rsp.CellPtr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength + sizeof(int)) = 0;
                 )::");
-source->append(Codegen::GetString(send_message_method_1));
-source->append(R"::((from, rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+if (node->type() == PGT_MODULE)
+{
+source->append(R"::(
+                this.SendMessage(m_memorycloud[from], rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+                )::");
+}
+else
+{
+source->append(R"::(
+                Global.CloudStorage[from].SendMessage(rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+                )::");
+}
+source->append(R"::(
             }
         }
         public abstract void )::");
@@ -425,8 +424,19 @@ source->append(R"::(__Response;
                 *(int*)(p + TrinityProtocol.MsgHeader) = token;
                 *(int*)(p + TrinityProtocol.MsgHeader + sizeof(int)) = -1;
                 )::");
-source->append(Codegen::GetString(send_message_method_1));
-source->append(R"::((from, p, rsp.Length);
+if (node->type() == PGT_MODULE)
+{
+source->append(R"::(
+                this.SendMessage(m_memorycloud[from], p, rsp.Length);
+                )::");
+}
+else
+{
+source->append(R"::(
+                Global.CloudStorage[from].SendMessage(p, rsp.Length);
+                )::");
+}
+source->append(R"::(
             }
             ExceptionDispatchInfo.Capture(exception).Throw();
         }

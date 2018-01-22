@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Trinity.DynamicCluster.Storage
+namespace Trinity.DynamicCluster.Replication
 {
     [Serializable]
     public enum ReplicationMode

@@ -4,20 +4,19 @@
 //
 using System;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading;
 using Trinity.Diagnostics;
-using Trinity.Network;
+using Trinity.DynamicCluster.Communication;
+using Trinity.DynamicCluster.Config;
+using Trinity.DynamicCluster.Consensus;
+using Trinity.DynamicCluster.Health;
+using Trinity.DynamicCluster.Persistency;
+using Trinity.DynamicCluster.Replication;
+using Trinity.DynamicCluster.Tasks;
 using Trinity.Storage;
 using Trinity.Utilities;
-using Trinity.DynamicCluster.Consensus;
-
 using static Trinity.DynamicCluster.Utils;
-using Trinity.DynamicCluster.Communication;
-using System.Threading;
-using Trinity.DynamicCluster.Tasks;
-using System.Threading.Tasks;
-using Trinity.DynamicCluster.Config;
 
 namespace Trinity.DynamicCluster.Storage
 {
@@ -29,28 +28,24 @@ namespace Trinity.DynamicCluster.Storage
         internal INameService            m_nameservice;
         internal ITaskQueue              m_taskqueue;
         internal IHealthManager          m_healthmanager;
+        internal IPersistentStorage      m_persistent_storage;
+        internal IBackupManager          m_backupmgr;
+        internal BackupController        m_backupctl;
         internal Executor                m_taskexec;
+        internal CloudIndex              m_cloudidx;
+        internal HealthMonitor           m_healthmon;
         internal Partitioner             m_partitioner;
         internal CancellationTokenSource m_cancelSrc;
+        internal DynamicStorageTable     m_storageTable;
 
         private Random                   m_rng = new Random();
         private DynamicClusterCommModule m_module;
-        // !Note can also be achieve by extending Storage[] StorageTable beyond PartitionCount,
-        // and use interlocked increment to obtain index
-        private ConcurrentDictionary<int, DynamicRemoteStorage> m_tmp_rs_repo = new ConcurrentDictionary<int, DynamicRemoteStorage>();
+        private int                      m_myid;
         #endregion
 
         internal Partition PartitionTable(int id) => StorageTable[id] as Partition;
+        internal Partition MyPartition => PartitionTable(MyPartitionId);
         internal static DynamicMemoryCloud Instance => Global.CloudStorage as DynamicMemoryCloud;
-
-        private void _DoWithTempStorage(DynamicRemoteStorage remoteStorage, Action<int> action)
-        {
-            int temp_id = Infinity(() => m_rng.Next(-10000000, -1))
-                         .SkipWhile(_ => !m_tmp_rs_repo.TryAdd(_, remoteStorage))
-                         .First();
-            action(temp_id);
-            m_tmp_rs_repo.TryRemove(temp_id, out var _);
-        }
 
         private void CheckServerProtocolSignatures(DynamicRemoteStorage rs)
         {
@@ -59,14 +54,11 @@ namespace Trinity.DynamicCluster.Storage
             CheckProtocolSignatures_impl(rs, m_cluster_config.RunningMode, RunningMode.Server);
         }
 
-        internal TrinityErrorCode OnStorageJoin(DynamicRemoteStorage remoteStorage)
+        internal void OnStorageJoin(DynamicRemoteStorage remoteStorage)
         {
-            _DoWithTempStorage(remoteStorage, id =>
-            {
-                CheckServerProtocolSignatures(remoteStorage);
-                Log.WriteLine($"{nameof(DynamicCluster)}: Connected to '{remoteStorage.NickName}' ({remoteStorage.ReplicaInformation.Id})");
-            });
-            return TrinityErrorCode.E_SUCCESS;
+            CheckServerProtocolSignatures(remoteStorage);
+            m_storageTable.AddInstance(GetInstanceId(remoteStorage.ReplicaInformation.Id), remoteStorage);
+            Log.WriteLine($"{nameof(DynamicCluster)}: Connected to '{remoteStorage.NickName}' ({remoteStorage.ReplicaInformation.Id})");
         }
 
         /// <summary>
@@ -77,19 +69,31 @@ namespace Trinity.DynamicCluster.Storage
         /// or remote <see cref="Close"/> is called).
         /// </summary>
         /// <param name="remoteStorage"></param>
-        internal TrinityErrorCode OnStorageLeave(int partition, Guid Id)
+        internal void OnStorageLeave(int partition, Guid Id)
         {
             var remote_storage = PartitionTable(partition)
                                 .OfType<DynamicRemoteStorage>()
                                 .FirstOrDefault(_ => _.ReplicaInformation.Id == Id);
-            return PartitionTable(partition).Unmount(remote_storage);
+            m_storageTable.RemoveInstance(GetInstanceId(Id));
+            PartitionTable(partition).Unmount(remote_storage);
         }
 
         public string NickName { get; private set; }
-        public override IEnumerable<Chunk> MyChunks => m_partitioner.MyChunks;
+
+        public override int MyInstanceId => m_myid;
+
+        internal int GetInstanceId(Guid instanceId)
+        {
+            int id = instanceId.GetHashCode();
+            if (id >= 0 && id < PartitionCount) id += PartitionCount;
+            return id;
+        }
+
+        protected override IList<IStorage> StorageTable => m_storageTable;
+        public override IEnumerable<Chunk> MyChunks => m_cloudidx.MyChunks;
         public override int MyPartitionId => m_nameservice.PartitionId;
         public override int PartitionCount => m_nameservice.PartitionCount;
-        public Guid InstanceId => m_nameservice.InstanceId;
+        public Guid InstanceGuid => m_nameservice.InstanceId;
         public override bool IsLocalCell(long cellId)
         {
             return (GetStorageByCellId(cellId) as Partition).IsLocal(cellId);
@@ -104,21 +108,28 @@ namespace Trinity.DynamicCluster.Storage
             m_chunktable = AssemblyUtility.GetAllClassInstances<IChunkTable>().First();
             m_taskqueue = AssemblyUtility.GetAllClassInstances<ITaskQueue>().First();
             m_healthmanager = AssemblyUtility.GetAllClassInstances<IHealthManager>().First();
+            m_backupmgr = AssemblyUtility.GetAllClassInstances<IBackupManager>().First();
+            m_persistent_storage = AssemblyUtility.GetAllClassInstances<IPersistentStorage>().First();
 
             m_nameservice.Start(m_cancelSrc.Token);
             m_taskqueue.Start(m_cancelSrc.Token);
             m_chunktable.Start(m_cancelSrc.Token);
             m_healthmanager.Start(m_cancelSrc.Token);
+            m_backupmgr.Start(m_cancelSrc.Token);
 
-            StorageTable = Infinity<Partition>()
-                          .Take(PartitionCount)
-                          .ToArray();
-            NickName = GenerateNickName(InstanceId);
+            m_myid = GetInstanceId(InstanceGuid);
+            m_storageTable = new DynamicStorageTable(PartitionCount);
+            m_storageTable[m_myid] = Global.LocalStorage;
+            NickName = GenerateNickName(InstanceGuid);
 
-            m_partitioner = new Partitioner(m_cancelSrc.Token, m_chunktable, m_nameservice, m_taskqueue, m_healthmanager, DynamicClusterConfig.Instance.ReplicationMode, DynamicClusterConfig.Instance.MinimumReplica);
-            m_taskexec = new Executor(m_taskqueue, m_cancelSrc.Token);
+            int redundancy = DynamicClusterConfig.Instance.MinimumReplica;
+            m_cloudidx = new CloudIndex(m_cancelSrc.Token, m_nameservice, m_chunktable);
+            m_healthmon= new HealthMonitor(m_cancelSrc.Token, m_nameservice, m_cloudidx, m_healthmanager, redundancy);
+            m_partitioner = new Partitioner(m_cancelSrc.Token, m_cloudidx, m_nameservice, m_taskqueue, DynamicClusterConfig.Instance.ReplicationMode, redundancy);
+            m_taskexec = new Executor(m_cancelSrc.Token, m_nameservice, m_taskqueue);
+            m_backupctl = new BackupController(m_cancelSrc.Token, m_backupmgr, m_nameservice, m_persistent_storage, m_taskqueue);
 
-            Log.WriteLine($"{nameof(DynamicMemoryCloud)}: Partition {MyPartitionId}: Instance '{NickName}' {InstanceId} opened.");
+            Log.WriteLine($"{nameof(DynamicMemoryCloud)}: Partition {MyPartitionId}: Instance '{NickName}' {InstanceGuid} opened.");
             Global.CommunicationInstance.Started += InitModule;
 
             return true;
@@ -135,25 +146,31 @@ namespace Trinity.DynamicCluster.Storage
            .Range(0, PartitionCount)
            .SelectMany(PartitionTable)
            .OfType<DynamicRemoteStorage>()
-           .ForEach(s => _DoWithTempStorage(s, id =>
+           .ForEach(s =>
            {
                try
                {
+                   int id = GetInstanceId(s.ReplicaInformation.Id);
                    using (var request = new StorageInformationWriter(MyPartitionId, m_nameservice.InstanceId))
                    { m_module.NotifyRemoteStorageOnLeaving(id, request); }
                }
                catch { }
-           }));
+           });
 
             m_cancelSrc.Cancel();
 
+            m_backupctl.Dispose();
             m_taskexec.Dispose();
             m_partitioner.Dispose();
+            m_healthmon.Dispose();
+            m_cloudidx.Dispose();
+            m_persistent_storage.Dispose();
 
             m_nameservice.Dispose();
             m_chunktable.Dispose();
             m_taskqueue.Dispose();
             m_healthmanager.Dispose();
+            m_backupmgr.Dispose();
         }
 
         protected override void OnConnected(RemoteStorageEventArgs e)

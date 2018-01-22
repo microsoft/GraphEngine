@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Trinity.DynamicCluster.Persistency
@@ -20,5 +21,10 @@ namespace Trinity.DynamicCluster.Persistency
         /// during uploading.
         /// </summary>
         Task UploadAsync(IPersistentDataChunk payload);
+        /// <summary>
+        /// Asynchronously upload metadata identified by a key. The key is unique
+        /// within the snapshot. Usually the key will be of the format PARTITIO_ID-key.
+        /// </summary>
+        Task UploadMetadataAsync(string key, Stream input);
     }
 }

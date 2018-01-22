@@ -6,15 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Fabric;
 using System.Fabric.Query;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using Trinity.Diagnostics;
-using Trinity.Network;
 using Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces;
-using Trinity.ServiceFabric.GarphEngine.Infrastructure;
 using Microsoft.ServiceFabric.Data;
 using System.Threading.Tasks;
+using Trinity.DynamicCluster.Persistency;
 
 namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 {
@@ -31,7 +29,8 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 
         public volatile TrinityServerRuntimeManager m_trinityServerRuntime = null;
 
-        public List<System.Fabric.Query.Partition> Partitions { get; set; }
+        public List<Partition> Partitions { get; set; }
+        internal List<long> PartitionLowKeys { get; set; }
 
         public int PartitionCount { get; private set; }
 
@@ -48,6 +47,8 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
         public StatefulServiceContext Context { get; private set; }
         public IReliableStateManager StateManager { get; }
 
+        internal Func<BackupDescription, Task> Backup;
+        internal event EventHandler<RestoreEventArgs> RequestRestore = delegate{ };
         private static object SingletonLockObject => m_singletonLockObject;
 
         public TrinityServerRuntimeManager TrinityServerRuntime
@@ -76,30 +77,34 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 
         private static readonly object m_singletonLockObject = new object();
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="context"></param>
-        public GraphEngineStatefulServiceRuntime(StatefulServiceContext context, IReliableStateManager stateManager)
+
+        public GraphEngineStatefulServiceRuntime(IGraphEngineStatefulService svc)
         {
             //  Initialize other fields and properties.
-            Context      = context;
-            StateManager = stateManager;
-            NodeContext  = context.NodeContext;
+            Context      = svc.Context;
+            StateManager = svc.StateManager;
+            Backup       = svc.BackupAsync;
+            svc.RequestRestore += RequestRestore;
+            NodeContext  = Context.NodeContext;
             FabricClient = new FabricClient();
             Address      = NodeContext.IPAddressOrFQDN;
             Partitions   = FabricClient.QueryManager
-                           .GetPartitionListAsync(context.ServiceName)
+                           .GetPartitionListAsync(Context.ServiceName)
                            .GetAwaiter().GetResult()
                            .OrderBy(p => p.PartitionInformation.Id)
                            .ToList();
+            PartitionLowKeys = Partitions
+                           .Select(p => p.PartitionInformation)
+                           .OfType<Int64RangePartitionInformation>()
+                           .Select(pi => pi.LowKey)
+                           .ToList();
             Role         = ReplicaRole.Unknown;
 
-            PartitionId    = Partitions.FindIndex(p => p.PartitionInformation.Id == context.PartitionId);
+            PartitionId    = Partitions.FindIndex(p => p.PartitionInformation.Id == Context.PartitionId);
             PartitionCount = Partitions.Count;
 
-            Port     = context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityProtocolEndpoint).Port;
-            HttpPort = context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityHttpProtocolEndpoint).Port;
+            Port     = Context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityProtocolEndpoint).Port;
+            HttpPort = Context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityHttpProtocolEndpoint).Port;
 
             var contextDataPackage = (Partitions: this.Partitions,
                                       PartitionCount: this.PartitionCount,
@@ -107,7 +112,7 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
                                       Port: this.Port,
                                       HttpPort: this.HttpPort,
                                       IPAddress: this.Address,
-                                      StatefulServiceContext: context);
+                                      StatefulServiceContext: Context);
 
             // Okay let's new-up the TrinityServer runtime environment ...
 
@@ -115,6 +120,13 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure
 
             // TBD .. YataoL & Tavi T.
             //WCFPort = context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityWCFProtocolEndpoint).Port;
+
+            if(PartitionCount != PartitionLowKeys.Count)
+            {
+                Log.WriteLine(LogLevel.Fatal, "Graph Engine Service requires all partitions to be int64-ranged.");
+                Thread.Sleep(5000);
+                throw new InvalidOperationException("Graph Engine Service requires all partitions to be int64-ranged.");
+            }
 
             lock (SingletonLockObject)
             {

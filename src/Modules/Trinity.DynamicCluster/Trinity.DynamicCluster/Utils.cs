@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
@@ -194,6 +196,128 @@ namespace Trinity.DynamicCluster
         public static IEnumerable<Task> Then(this IEnumerable<Task> tasks, Action func)
         {
             return tasks.Select(t => t.ContinueWith(t_ => func()));
+        }
+
+        public static IEnumerable<IEnumerable<T>> Segment<T>(this IEnumerable<T> source, long segmentThreshold, Func<T, long> weightFunc = null)
+        {
+            if (weightFunc == null) weightFunc = _ => 1;
+            using (var enumerator = source.GetEnumerator())
+            {
+                var segment = _Segment(enumerator, segmentThreshold, weightFunc);
+                // one step lookahead, and then destroy the enumerator when segment doesn't yield at least one element.
+                if (!segment.Any()) yield break;
+                yield return segment;
+            }
+        }
+
+        public static IEnumerable<T> Schedule<T>(this IEnumerable<T> source, SchedulePolicy policy)
+        {
+            if (!source.Any()) return Infinity<T>(() => default(T));
+            switch (policy)
+            {
+                case SchedulePolicy.First: return _First(source);
+                case SchedulePolicy.RoundRobin: return _RoundRobin(source);
+                case SchedulePolicy.UniformRandom: return _UniformRandom(source);
+                default: throw new ArgumentException();
+            }
+        }
+
+        public static Func<T> ParallelGetter<T>(this IEnumerable<T> source, int readAhead = 32)
+        {
+            ConcurrentQueue<T> queue = new ConcurrentQueue<T>();
+            object syncobj = new object();
+            var iter = source.GetEnumerator();
+            return () =>
+            {
+                T result;
+                while (!queue.TryDequeue(out result))
+                {
+                    lock (syncobj)
+                    {
+                        for (int i = 0; i < readAhead; ++i)
+                        {
+                            iter.MoveNext();
+                            queue.Enqueue(iter.Current);
+                        }
+                    }
+                }
+                return result;
+            };
+        }
+
+        public static Task<T>[] SortByCompletion<T>(IEnumerable<Task<T>> tasks)
+        {
+            int completion_idx = -1;
+            TaskCompletionSource<T>[] completions = tasks.Select(_ => new TaskCompletionSource<T>()).ToArray();
+            foreach (var t in tasks)
+            {
+                t.ContinueWith(ct =>
+                {
+                    int idx = Interlocked.Increment(ref completion_idx);
+                    if (ct.IsCompleted) completions[idx].SetResult(ct.Result);
+                    else if (ct.IsFaulted) completions[idx].SetException(ct.Exception.InnerException);
+                    else if (ct.IsCanceled) completions[idx].SetCanceled();
+                });
+            }
+            return completions.Select(_ => _.Task).ToArray();
+        }
+
+        public static Task[] SortByCompletion(IEnumerable<Task> tasks)
+        {
+            return SortByCompletion(tasks.Select(t => t.ContinueWith(_ => true)));
+        }
+
+        private static IEnumerable<T> _UniformRandom<T>(IEnumerable<T> source)
+        {
+            var arr = source.ToArray();
+            Random r = new Random(arr.GetHashCode());
+            while (true)
+            {
+                yield return arr[r.Next(arr.Length)];
+            }
+        }
+
+        private static IEnumerable<T> _RoundRobin<T>(IEnumerable<T> source)
+        {
+            while (true)
+            {
+                foreach (var element in source)
+                {
+                    yield return element;
+                }
+            }
+        }
+
+        private static IEnumerable<T> _First<T>(IEnumerable<T> source)
+        {
+            var fst = source.First();
+            while (true)
+            {
+                yield return fst;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static IEnumerable<T> _Segment<T>(IEnumerator<T> enumerator, long segmentThreshold, Func<T, long> weightFunc)
+        {
+            // yields at least one element, if there is any in the enumerator.
+            long sum = 0;
+            while (enumerator.MoveNext())
+            {
+                sum += weightFunc(enumerator.Current);
+                yield return enumerator.Current;
+                if (sum >= segmentThreshold) yield break;
+            }
+        }
+
+        public static long MiB(this long val) => val * (1024 * 1024);
+        public static long MiB(this int val) => val * (1024L * 1024L);
+
+        public enum SchedulePolicy
+        {
+            First,
+            RoundRobin,
+            UniformRandom
         }
     }
 }

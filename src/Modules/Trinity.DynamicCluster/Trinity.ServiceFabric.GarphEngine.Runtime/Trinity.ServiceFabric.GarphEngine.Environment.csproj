@@ -72,6 +72,10 @@
       <HintPath>..\packages\Microsoft.ServiceFabric.6.0.232\lib\net45\System.Fabric.Strings.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.IO.Compression.ZipFile, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Compression.ZipFile.4.3.0\lib\net46\System.IO.Compression.ZipFile.dll</HintPath>
+    </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -93,10 +97,12 @@
     <Compile Include="GraphEngineConstants.cs" />
     <Compile Include="GraphEngineServiceEventSource.cs" />
     <Compile Include="GraphEngineStatefulServiceRuntime.cs" />
+    <Compile Include="IGraphEngineStatefulService.cs" />
     <Compile Include="Interfaces\IGraphEngineStatefulServiceRuntime.cs" />
     <Compile Include="Interfaces\ITrinityServerRuntimeManager.cs" />
     <Compile Include="Interfaces\NameService.cs" />
     <Compile Include="Interfaces\ReliableTaskQueue.cs" />
+    <Compile Include="Interfaces\ServiceFabricBackupManager.cs" />
     <Compile Include="Interfaces\ServiceFabricChunkTable.cs" />
     <Compile Include="Interfaces\ServiceFabricHealthManager.cs" />
     <Compile Include="Interfaces\ServiceFabricUtils.cs" />

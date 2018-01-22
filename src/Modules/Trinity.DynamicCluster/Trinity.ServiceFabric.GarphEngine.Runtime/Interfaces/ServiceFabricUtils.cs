@@ -16,15 +16,15 @@ namespace Trinity.ServiceFabric.GarphEngine.Infrastructure.Interfaces
 {
     internal static class ServiceFabricUtils
     {
-        internal static async Task<T> CreateReliableStateAsync<T>(IService svc, string name, int p) where T : IReliableState
+        internal static async Task<T> CreateReliableStateAsync<T>(string name) where T : IReliableState
         {
-            name = $"{name}-P{p}";
             await GraphEngineStatefulServiceRuntime.Instance.GetRoleAsync();
             var statemgr = GraphEngineStatefulServiceRuntime.Instance.StateManager;
             T ret = default(T);
             await DoWithTimeoutRetryImpl(async () =>
             {
-                if (svc.IsMaster)
+                var role = await GraphEngineStatefulServiceRuntime.Instance.GetRoleAsync();
+                if (role == ReplicaRole.Primary)
                 {
                     ret = await statemgr.GetOrAddAsync<T>(name);
                 }

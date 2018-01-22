@@ -34,17 +34,30 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Nito.AsyncEx.Tasks, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nito.AsyncEx.Tasks.1.1.0\lib\net46\Nito.AsyncEx.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="Nito.Disposables, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nito.Disposables.1.0.0\lib\portable45-net45+win8+wp8+wpa81\Nito.Disposables.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.2.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -58,11 +71,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config\DynamicClusterConfig.cs" />
+    <Compile Include="Consensus\IBackupManager.cs" />
     <Compile Include="Consensus\IHealthManager.cs" />
     <Compile Include="Consensus\ITaskQueue.cs" />
     <Compile Include="Consensus\IChunkTable.cs" />
     <Compile Include="Consensus\IService.cs" />
+    <Compile Include="DynamicMemoryCloud\DynamicStorageTable.cs" />
     <Compile Include="DynamicMemoryCloud\ReplicaInformation.cs" />
+    <Compile Include="Health\HealthMonitor.cs" />
     <Compile Include="Persistency\ChunkSerialization.cs" />
     <Compile Include="Persistency\InMemoryDataChunk.cs" />
     <Compile Include="Persistency\NoDataException.cs" />
@@ -75,25 +91,46 @@
     <Compile Include="Persistency\PersistentStorageMode.cs" />
     <Compile Include="Persistency\SnapshotNotFoundException.cs" />
     <Compile Include="Persistency\SnapshotUploadUnfinishedException.cs" />
+    <Compile Include="Replication\MirroringPlanner.cs" />
+    <Compile Include="Replication\MirrorShardingPlanner.cs" />
+    <Compile Include="Replication\ShardingPlanner.cs" />
+    <Compile Include="Replication\UnrestrictedPlanner.cs" />
+    <Compile Include="Storage\BackupController.cs" />
+    <Compile Include="Storage\BackupException.cs" />
+    <Compile Include="Storage\CloudIndex.cs" />
+    <Compile Include="Replication\IReplicationPlanner.cs" />
+    <Compile Include="Storage\NoSuitableReplicaException.cs" />
+    <Compile Include="Storage\NotMasterException.cs" />
+    <Compile Include="Storage\Partition.Broadcast.cs" />
     <Compile Include="Storage\Partition.cs" />
     <Compile Include="Communication\DynamicClusterCommModule.cs" />
     <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.Cmd.cs" />
     <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.cs" />
-    <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.KVStore.cs" />
     <Compile Include="DynamicMemoryCloud\DynamicMemoryCloud.Message.cs" />
     <Compile Include="Storage\Partition.KVStore.cs" />
     <Compile Include="Storage\DynamicRemoteStorage.cs" />
     <Compile Include="Consensus\INameService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Storage\Partition.Message.cs" />
-    <Compile Include="Storage\Partitioner.cs" />
+    <Compile Include="Replication\Partitioner.cs" />
     <Compile Include="Health\HealthStatus.cs" />
-    <Compile Include="Storage\ReplicationMode.cs" />
-    <Compile Include="Tasks\UpdateChunkTableTask.cs" />
+    <Compile Include="Replication\ReplicationMode.cs" />
+    <Compile Include="Storage\Partition.FirstAvailable.cs" />
+    <Compile Include="Storage\Partition.Vote.cs" />
+    <Compile Include="Storage\Partition.UniformRandom.cs" />
+    <Compile Include="Storage\Partition.RoundRobin.cs" />
+    <Compile Include="Storage\ProtocolSemantic.cs" />
+    <Compile Include="Storage\ProtocolSemanticRegistry.cs" />
+    <Compile Include="Storage\RestoreException.cs" />
+    <Compile Include="Storage\VoteException.cs" />
+    <Compile Include="Tasks\ChainedTasks.cs" />
+    <Compile Include="Tasks\GroupedTask.cs" />
+    <Compile Include="Tasks\PersistedLoadTask.cs" />
+    <Compile Include="Tasks\ShrinkDataTask.cs" />
     <Compile Include="Tasks\Executor.cs" />
     <Compile Include="Tasks\ITask.cs" />
     <Compile Include="Tasks\NopTask.cs" />
-    <Compile Include="Tasks\PersistencyTask.cs" />
+    <Compile Include="Tasks\PersistedSaveTask.cs" />
     <Compile Include="Tasks\ReplicatorTask.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>

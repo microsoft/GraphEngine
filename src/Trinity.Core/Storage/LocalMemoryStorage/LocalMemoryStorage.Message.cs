@@ -16,25 +16,14 @@ using Trinity.Network.Messaging;
 using Trinity.Network.Sockets;
 using Trinity.Core.Lib;
 using System.Runtime.CompilerServices;
+using Trinity.Network;
 
 namespace Trinity.Storage
 {
-    public unsafe partial class LocalMemoryStorage : Storage
+    public unsafe partial class LocalMemoryStorage : IStorage
     {
         /// <inheritdoc/>
-        public override void SendMessage(TrinityMessage message)
-        {
-            SendMessage(message.Buffer, message.Size);
-        }
-
-        /// <inheritdoc/>
-        public override void SendMessage(TrinityMessage message, out TrinityResponse response)
-        {
-            SendMessage(message.Buffer, message.Size, out response);
-        }
-
-        /// <inheritdoc/>
-        public override void SendMessage(byte* message, int size)
+        public void SendMessage(byte* message, int size)
         {
             TrinityMessageType msgType = (TrinityMessageType)message[TrinityProtocol.MsgTypeOffset];
             ushort msgId = *(ushort*)(message + TrinityProtocol.MsgIdOffset);
@@ -95,7 +84,7 @@ namespace Trinity.Storage
         }
 
         /// <inheritdoc/>
-        public override void SendMessage(byte* message, int size, out TrinityResponse response)
+        public void SendMessage(byte* message, int size, out TrinityResponse response)
         {
             TrinityMessageType msgType = (TrinityMessageType)message[TrinityProtocol.MsgTypeOffset];
             ushort msgId = *(ushort*)(message+TrinityProtocol.MsgIdOffset);
@@ -128,7 +117,7 @@ namespace Trinity.Storage
         }
 
         /// <inheritdoc/>
-        public override void SendMessage(byte** message, int* sizes, int count)
+        public void SendMessage(byte** message, int* sizes, int count)
         {
             byte* buf;
             int len;
@@ -176,13 +165,19 @@ namespace Trinity.Storage
         }
 
         /// <inheritdoc/>
-        public override void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
+        public void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
         {
             byte* buf;
             int len;
             _serialize(message, sizes, count, out buf, out len);
             SendMessage(buf, len, out response);
             CMemory.C_free(buf);
+        }
+
+        /// <inheritdoc/>
+        public T GetModule<T>() where T: CommunicationModule
+        {
+            return Global.CommunicationInstance.GetCommunicationModule<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
