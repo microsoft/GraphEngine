@@ -85,7 +85,7 @@
     <None Include="test.runsettings" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Trinity.AzureStorage\Trinity.Azure.Storage.csproj">
+    <ProjectReference Include="..\Trinity.Azure.Storage\Trinity.Azure.Storage.csproj">
       <Project>{7673502e-80b7-46e7-aa78-ac7e6bab556c}</Project>
       <Name>Trinity.Azure.Storage</Name>
     </ProjectReference>

@@ -139,6 +139,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Trinity.DynamicCluster.nuspec" />
     <TslCodegen Include="Communication\Trinity.DynamicClusterProtocols.tsl" />
   </ItemGroup>
   <ItemGroup>

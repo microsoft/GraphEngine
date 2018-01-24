@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+    <metadata>
+        <id>GraphEngine.DynamicCluster</id>
+        <version>1.0.9083</version>
+        <title>GraphEngine DynamicCluster</title>
+        <authors>Microsoft Graph Engine Team</authors>
+        <owners>Microsoft Corporation</owners>
+		<licenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</licenseUrl>
+		<projectUrl>https://www.graphengine.io</projectUrl>
+        <iconUrl>https://www.graphengine.io/img/logo-64x64.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Dynamic cluster orchestration for Graph Engine</description>
+        <copyright>Copyright 2018</copyright>
+        <tags>Graph Engine Trinity Cluster Management</tags>
+    </metadata>
+</package>

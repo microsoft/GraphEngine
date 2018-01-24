@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{06D172A0-9B3F-4A20-8FD3-C7D86EFB9420}</ProjectGuid>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Target Name="Build">
+    <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe pack $(ProjectDir)..\Trinity.DynamicCluster\Trinity.DynamicCluster.csproj -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis -Properties Configuration=Release;Platform=AnyCPU" />
+    <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe pack $(ProjectDir)..\Trinity.Azure.Storage\Trinity.Azure.Storage.csproj -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis -Properties Configuration=Release;Platform=AnyCPU" />
+    <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe pack $(ProjectDir)..\Trinity.ServiceFabric.Infrastructure\Trinity.ServiceFabric.Infrastructure.csproj -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis -Properties Configuration=Release;Platform=x64" />
+    <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe pack $(ProjectDir)..\Trinity.ServiceFabric.Listeners\Trinity.ServiceFabric.ListenerRuntime.csproj -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis -Properties Configuration=Release;Platform=x64" />
+  </Target>
+  <Target Name="Rebuild" DependsOnTargets="Build"/>
+  <Target Name="Clean">
+    <ItemGroup>
+      <CachedPackages Include="$(ProjectDir)..\packages\GraphEngine*\**\*" />
+    </ItemGroup>
+    <ItemGroup>
+      <CachedPackageDirs Include="$(ProjectDir)..\packages\GraphEngine*" />
+    </ItemGroup>
+    <Message Importance="high" Text="Deleting cached packages" />
+    <Delete ContinueOnError="true" Files="@(CachedPackages)"/>
+    <RemoveDir Directories="@(CachedPackageDirs)" />
+  </Target>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>

@@ -198,7 +198,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Trinity.AzureStorage\Trinity.Azure.Storage.csproj">
+    <ProjectReference Include="..\Trinity.Azure.Storage\Trinity.Azure.Storage.csproj">
       <Project>{7673502e-80b7-46e7-aa78-ac7e6bab556c}</Project>
       <Name>Trinity.Azure.Storage</Name>
     </ProjectReference>
@@ -206,9 +206,9 @@
       <Project>{26db9c05-8b53-409f-a1c9-3fd30cfec35c}</Project>
       <Name>Trinity.DynamicCluster</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Trinity.ServiceFabric.Runtime\Trinity.ServiceFabric.Environment.csproj">
+    <ProjectReference Include="..\Trinity.ServiceFabric.Infrastructure\Trinity.ServiceFabric.Infrastructure.csproj">
       <Project>{3433F5A8-DD7D-44D4-A1BB-215D1693DCC7}</Project>
-      <Name>Trinity.ServiceFabric.Environment</Name>
+      <Name>Trinity.ServiceFabric.Infrastructure</Name>
     </ProjectReference>
     <ProjectReference Include="..\Trinity.ServiceFabric.Listeners\Trinity.ServiceFabric.ListenerRuntime.csproj">
       <Project>{298FC3D1-EBEE-4EF7-A6C9-C7241EDDA8F6}</Project>

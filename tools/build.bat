@@ -41,6 +41,10 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 "%MSBUILD_EXE%" /p:Configuration=Release "%LIKQ_SLN%"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
+:: Run msbuild to build Trinity.DynamicCluster
+"%MSBUILD_EXE%" /p:Configuration=Release "%TRINITY_DYNAMICCLUSTER_SLN%"
+if %errorlevel% neq 0 exit /b %errorlevel%
+
 :: Build spark module
 call "%SPARK_MODULE_ROOT%\build.bat"
 exit /b %errorlevel%
