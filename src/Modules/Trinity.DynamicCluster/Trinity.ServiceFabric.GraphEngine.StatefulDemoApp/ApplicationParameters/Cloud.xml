@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Application Name="fabric:/Trinity.ServiceFabric.GraphEngine.StatefulDemoApp" xmlns="http://schemas.microsoft.com/2011/01/fabric" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Parameters>
-    <Parameter Name="GraphEngine.Demo.StatefulService_PartitionCount" Value="1" />
-    <Parameter Name="GraphEngine.Demo.StatefulService_MinReplicaSetSize" Value="3" />
-    <Parameter Name="GraphEngine.Demo.StatefulService_TargetReplicaSetSize" Value="3" />
-  </Parameters>
-</Application>

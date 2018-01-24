@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Fabric;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Data;
@@ -8,8 +9,8 @@ using Microsoft.ServiceFabric.Data.Collections;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Trinity.Diagnostics;
-using Trinity.ServiceFabric.GarphEngine.Infrastructure;
-using Trinity.ServiceFabric.GraphEngine.Listeners;
+using Trinity.ServiceFabric.Infrastructure;
+using Trinity.ServiceFabric.Listeners;
 
 namespace Trinity.ServiceFabric
 {
@@ -42,11 +43,11 @@ namespace Trinity.ServiceFabric
         {
             //  See https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reliable-services-communication:
             //  When creating multiple listeners for a service, each listener must be given a unique name.
-            return new[] {
-                new ServiceReplicaListener(ctx => new GraphEngineListener(m_graphEngineRuntime), GraphEngineConstants.GraphEngineListenerName, true),
-                new ServiceReplicaListener(ctx => new GraphEngineHttpListener(m_graphEngineRuntime), GraphEngineConstants.GraphEngineHttpListenerName, false),
-                // TODO WCF
-            };
+            var ge_listeners = GraphEngineCommunicationListenerLoader.CreateServiceReplicaListeners();
+            //  TODO add your other Service Fabric listeners here
+            var other_listeners = new ServiceReplicaListener[]{ };
+
+            return ge_listeners.Concat(other_listeners);
         }
 
         protected override Task OnChangeRoleAsync(ReplicaRole newRole, CancellationToken cancellationToken)

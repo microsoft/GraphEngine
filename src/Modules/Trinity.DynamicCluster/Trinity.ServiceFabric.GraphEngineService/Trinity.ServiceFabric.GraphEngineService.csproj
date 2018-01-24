@@ -206,13 +206,13 @@
       <Project>{26db9c05-8b53-409f-a1c9-3fd30cfec35c}</Project>
       <Name>Trinity.DynamicCluster</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Trinity.ServiceFabric.GarphEngine.Runtime\Trinity.ServiceFabric.GarphEngine.Environment.csproj">
+    <ProjectReference Include="..\Trinity.ServiceFabric.Runtime\Trinity.ServiceFabric.Environment.csproj">
       <Project>{3433F5A8-DD7D-44D4-A1BB-215D1693DCC7}</Project>
-      <Name>Trinity.ServiceFabric.GarphEngine.Environment</Name>
+      <Name>Trinity.ServiceFabric.Environment</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Trinity.ServiceFabric.GraphEngine.Listeners\Trinity.ServiceFabric.GraphEngine.ListenerRuntime.csproj">
+    <ProjectReference Include="..\Trinity.ServiceFabric.Listeners\Trinity.ServiceFabric.ListenerRuntime.csproj">
       <Project>{298FC3D1-EBEE-4EF7-A6C9-C7241EDDA8F6}</Project>
-      <Name>Trinity.ServiceFabric.GraphEngine.ListenerRuntime</Name>
+      <Name>Trinity.ServiceFabric.ListenerRuntime</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
