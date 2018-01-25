@@ -21,7 +21,8 @@ namespace Trinity.Network
     /// </summary>
     public class TrinityProxy : CommunicationInstance
     {
-        internal sealed override RunningMode RunningMode
+        /// <inheritdoc/>
+        protected internal sealed override RunningMode RunningMode
         {
             get { return Trinity.RunningMode.Proxy; }
         }

@@ -248,25 +248,10 @@ namespace Trinity.Network
         }
         #endregion
 
-        internal abstract RunningMode RunningMode { get; }
-
-        #region private instance information
-        private IList<AvailabilityGroup> _InstanceList
-        {
-            get
-            {
-                switch (this.RunningMode)
-                {
-                    case RunningMode.Server:
-                        return TrinityConfig.Servers;
-                    case RunningMode.Proxy:
-                        return TrinityConfig.Proxies;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-        }
-        #endregion
+        /// <summary>
+        /// The running mode of the current instance.
+        /// </summary>
+        protected internal abstract RunningMode RunningMode { get; }
 
         private bool HasHttpEndpoints()
         {
@@ -286,32 +271,12 @@ namespace Trinity.Network
                 try
                 {
                     Log.WriteLine(LogLevel.Debug, "Starting communication instance.");
+                    Global.CommunicationInstance = this;
 
                     _ScanForAutoRegisteredModules();
 
-                    var _config = TrinityConfig.CurrentClusterConfig;
-                    var _si = _config.GetMyServerInfo() ?? _config.GetMyProxyInfo();
-                    var _my_ip = Global.MyIPAddress;
-
-                    if (_si != null) _my_ip = NetworkUtility.Hostname2IPv4Address(_si.HostName);
-
-                    _config.RunningMode = this.RunningMode;
-                    Global.CommunicationInstance = this;
-
-                    if (_InstanceList.Count == 0)
-                    {
-                        Log.WriteLine(LogLevel.Warning, "No distributed instances configured. Turning on local test mode.");
-                        TrinityConfig.LocalTest = true;
-                    }
-
-                    //  Initialize message handlers
-                    MessageHandlers.Initialize();
-                    RegisterMessageHandler();
-
-                    //  Initialize message passing networking
-                    NativeNetwork.StartTrinityServer((UInt16)_config.ListeningPort);
-                    //  XXX might not be accurate: NativeNetwork.StartTrinityServer listens on all servers.
-                    Log.WriteLine("My IPEndPoint: " + _my_ip + ":" + _config.ListeningPort);
+                    //  Bring up networking subsystems
+                    StartCommunicationListeners();
 
                     //  Initialize cloud storage
                     memory_cloud = Global.CloudStorage;
@@ -319,30 +284,17 @@ namespace Trinity.Network
                     //  Initialize the modules
                     _InitializeModules();
 
-                    if (HasHttpEndpoints())
-                        StartHttpServer();
-
                     Console.WriteLine("Working Directory: {0}", Global.MyAssemblyPath);
-                    Console.WriteLine(_config.OutputCurrentConfig());
                     Console.WriteLine(TrinityConfig.OutputCurrentConfig());
 
                     m_started = true;
-                    Log.WriteLine("{0} {1} is successfully started.", RunningMode, _config.MyInstanceId);
+                    Log.WriteLine("{0} {1} is successfully started.", RunningMode, memory_cloud.MyInstanceId);
                     _RaiseStartedEvents();
                 }
                 catch (Exception ex)
                 {
                     Log.WriteLine(LogLevel.Error, "CommunicationInstance: " + ex.ToString());
                 }
-            }
-        }
-
-        private void _ScanForAutoRegisteredModules()
-        {
-            Log.WriteLine("Scanning for auto-registered communication modules.");
-            foreach(var m in AssemblyUtility.GetAllClassTypes<CommunicationModule, AutoRegisteredCommunicationModuleAttribute>())
-            {
-                m_RegisteredModuleTypes.Add(m);
             }
         }
 
@@ -356,23 +308,20 @@ namespace Trinity.Network
                 if (!m_started) return;
                 try
                 {
+                    int id = memory_cloud.MyInstanceId;
                     Log.WriteLine(LogLevel.Debug, "Stopping communication instance.");
 
                     //  TODO notify the modules
-                    if (HasHttpEndpoints())
-                        StopHttpServer();
+                    StopCommunicationListeners();
 
                     //  Unregister cloud storage
                     memory_cloud = null;
 
-                    //  Shutdown message passing networking
-                    NativeNetwork.StopTrinityServer();
-
                     //  Unregister communication instance
                     Global.CommunicationInstance = null;
-                    var _config = TrinityConfig.CurrentClusterConfig;
+
                     m_started = false;
-                    Log.WriteLine("{0} {1} is successfully stopped.", RunningMode, _config.MyInstanceId);
+                    Log.WriteLine("{0} {1} is successfully stopped.", RunningMode, id);
                 }
                 catch (Exception ex)
                 {
@@ -380,6 +329,55 @@ namespace Trinity.Network
                 }
             }
         }
+
+        /// <summary>
+        /// Start listening for incoming connections.
+        /// </summary>
+        protected virtual void StartCommunicationListeners()
+        {
+            var _config = TrinityConfig.CurrentClusterConfig;
+            var _si = _config.GetMyServerInfo() ?? _config.GetMyProxyInfo();
+            var _my_ip = Global.MyIPAddress;
+
+            if (_si != null) _my_ip = NetworkUtility.Hostname2IPv4Address(_si.HostName);
+
+            _config.RunningMode = this.RunningMode;
+
+            //  Initialize message passing networking
+            NativeNetwork.StartTrinityServer((UInt16)_config.ListeningPort);
+            //  XXX might not be accurate: NativeNetwork.StartTrinityServer listens on all servers.
+            Log.WriteLine("My IPEndPoint: " + _my_ip + ":" + _config.ListeningPort);
+
+            //  Initialize message handlers
+            MessageHandlers.Initialize();
+            RegisterMessageHandler();
+
+            //  Initialize Http server
+            if (HasHttpEndpoints())
+                StartHttpServer();
+        }
+
+        /// <summary>
+        /// Stop listening for incoming connections.
+        /// </summary>
+        protected virtual void StopCommunicationListeners()
+        {
+            if (HasHttpEndpoints())
+                StopHttpServer();
+
+            //  Shutdown message passing networking
+            NativeNetwork.StopTrinityServer();
+        }
+
+        private void _ScanForAutoRegisteredModules()
+        {
+            Log.WriteLine("Scanning for auto-registered communication modules.");
+            foreach(var m in AssemblyUtility.GetAllClassTypes<CommunicationModule, AutoRegisteredCommunicationModuleAttribute>())
+            {
+                m_RegisteredModuleTypes.Add(m);
+            }
+        }
+
 
         private void _RaiseStartedEvents()
         {

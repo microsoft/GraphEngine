@@ -57,10 +57,33 @@ namespace Trinity.Storage
             }
         }
 
+        #region private instance information
+        private IList<AvailabilityGroup> _InstanceList(RunningMode mode)
+        {
+            switch (mode)
+            {
+                case RunningMode.Server:
+                return TrinityConfig.Servers;
+                case RunningMode.Proxy:
+                return TrinityConfig.Proxies;
+                default:
+                throw new ArgumentOutOfRangeException();
+            }
+        }
+        #endregion
+
         /// <inheritdoc/>
         public override bool Open(ClusterConfig config, bool nonblocking)
         {
             this.cluster_config = config;
+
+            Console.WriteLine(config.OutputCurrentConfig());
+
+            if (_InstanceList(config.RunningMode).Count == 0)
+            {
+                Log.WriteLine(LogLevel.Warning, "No distributed instances configured. Turning on local test mode.");
+                TrinityConfig.LocalTest = true;
+            }
             server_count = cluster_config.Servers.Count;
             my_partition_id = cluster_config.MyPartitionId;
             my_proxy_id = cluster_config.MyProxyId;
@@ -98,12 +121,12 @@ namespace Trinity.Storage
 
             return true;
 
-        server_not_found:
+server_not_found:
             if (cluster_config.RunningMode == RunningMode.Server || cluster_config.RunningMode == RunningMode.Client)
                 Log.WriteLine(LogLevel.Warning, "Incorrect server configuration. Message passing via CloudStorage not possible.");
             else if (cluster_config.RunningMode == RunningMode.Proxy)
                 Log.WriteLine(LogLevel.Warning, "No servers are found. Message passing to servers via CloudStorage not possible.");
-        return false;
+            return false;
         }
 
         private void CheckServerProtocolSignatures()

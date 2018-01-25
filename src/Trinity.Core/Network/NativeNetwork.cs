@@ -27,7 +27,7 @@ namespace Trinity.Network
         static NativeNetwork()
         {
             TrinityC.Init();
-       }
+        }
 
         /// <summary>
         /// Value = 0xFFFFFFFFFFFFFFFF

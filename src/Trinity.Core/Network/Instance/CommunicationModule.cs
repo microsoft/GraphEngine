@@ -31,6 +31,20 @@ namespace Trinity.Network
         /// </summary>
         internal unsafe void Initialize(CommunicationInstance instance)
         {
+            if (instance.RunningMode == RunningMode.Client)
+            {
+                ClientInitialize(RunningMode.Server);
+            }
+            else
+            {
+                ServerInitialize(instance);
+            }
+
+            RegisterMessageHandler();
+        }
+
+        private unsafe void ServerInitialize(CommunicationInstance instance)
+        {
             m_memorycloud = Global.CloudStorage;
             ICommunicationSchema schema = this.GetCommunicationSchema();
 
@@ -48,8 +62,6 @@ namespace Trinity.Network
                 // each ASYNC_WITH_RSP message comes with a response handler.
                 instance.AsynReqIdOffset += (ushort)schema.AsynReqRspProtocolDescriptors.Count();
             }
-
-            this.RegisterMessageHandler();
         }
 
         /// <summary>
@@ -69,8 +81,8 @@ namespace Trinity.Network
         {
             m_memorycloud = mc;
             string moduleName = GetModuleName();
-            RemoteStorage rs = remoteRunningMode == RunningMode.Server ?
-               mc.StorageTable.FirstOrDefault(_ => _ is RemoteStorage) as RemoteStorage :
+            IMessagePassingEndpoint rs = remoteRunningMode == RunningMode.Server ?
+               mc.StorageTable.FirstOrDefault(_ => !(_ is LocalMemoryStorage)) as IMessagePassingEndpoint :
                mc.ProxyList.FirstOrDefault();
 
             if (null == rs)
@@ -230,6 +242,11 @@ namespace Trinity.Network
             internal set { m_MessageIdOffsets[2] = value; }
         }
 
+        /// <summary>
+        /// The message type id offset of asynchronous-request-with-response messages.
+        /// This property is only valid when the hosting communication instance has started,
+        /// and initialized the communication modules.
+        /// </summary>
         protected internal ushort AsynReqRspIdOffset
         {
             get { return m_MessageIdOffsets[3]; }
