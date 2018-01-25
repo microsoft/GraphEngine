@@ -223,7 +223,11 @@ namespace Trinity.Utilities
         /// </summary>
         public static Type GetType(string name)
         {
-            throw new NotImplementedException();
+            var types     = GetAllClassTypes();
+            var match_aqn = types.Where(t => t.AssemblyQualifiedName == name);
+            var match_fn  = types.Where(t => t.FullName == name);
+            var match_n   = types.Where(t => t.Name == name);
+            return match_aqn.Concat(match_fn).Concat(match_n).FirstOrDefault();
         }
 
         /// <summary>
