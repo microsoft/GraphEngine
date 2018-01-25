@@ -120,25 +120,14 @@ namespace Trinity.Utilities
         }
 
         /// <summary>
-        /// Get non-abstract class types
-        /// </summary>
-        /// <remarks>
-        /// Exceptions are swallowed.
-        /// </remarks>
-        public static List<Type> GetAllClassTypes(Assembly assembly = null)
-        {
-            return GetAllTypes_impl(assembly, t => true);
-        }
-
-        /// <summary>
         /// Get non-abstract class types.
         /// </summary>
         /// <remarks>
         /// Exceptions are swallowed.
         /// </remarks>
-        public static List<Type> GetAllClassTypes(Func<Type, bool> typePredicate, Assembly assembly = null)
+        public static List<Type> GetAllClassTypes(Func<Type, bool> typePredicate = null, Assembly assembly = null)
         {
-            return GetAllTypes_impl(assembly, typePredicate);
+            return GetAllClassTypes_impl(assembly, typePredicate);
         }
 
         /// <summary>
@@ -147,10 +136,11 @@ namespace Trinity.Utilities
         /// <remarks>
         /// Exceptions are swallowed.
         /// </remarks>
-        public static List<Type> GetAllClassTypes<TBase>(Func<Type, bool> typePredicate, Assembly assembly = null)
+        public static List<Type> GetAllClassTypes<TBase>(Func<Type, bool> typePredicate = null, Assembly assembly = null)
             where TBase : class
         {
-            return GetAllTypes_impl(assembly, t => typePredicate(t) && typeof(TBase).IsAssignableFrom(t));
+            typePredicate = typePredicate ?? (t => true);
+            return GetAllClassTypes_impl(assembly, t => typePredicate(t) && typeof(TBase).IsAssignableFrom(t));
         }
 
         /// <summary>
@@ -163,10 +153,10 @@ namespace Trinity.Utilities
             where TBase : class
             where TAttribute: Attribute
         {
-            return GetAllTypes_impl(assembly, t => t.GetCustomAttributes<TAttribute>(inherit: true).Any());
+            return GetAllClassTypes_impl(assembly, t => t.GetCustomAttributes<TAttribute>(inherit: true).Any());
         }
 
-        private static List<Type> GetAllTypes_impl(Assembly assembly)
+        private static List<Type> _GetAllTypes(Assembly assembly)
         {
             List<Type> ret = new List<Type>();
             try
@@ -180,19 +170,22 @@ namespace Trinity.Utilities
             return ret;
         }
 
-        private static List<Type> GetAllTypes_impl(Assembly assembly, Func<Type, bool> typePredicate)
+        private static List<Type> GetAllClassTypes_impl(Assembly assembly = null, Func<Type, bool> typePredicate = null, Func<Type, int> typeRanking = null)
         {
             List<Type> satisfied_types = new List<Type>();
             List<Type> all_types;
+            typePredicate = typePredicate ?? (t => true);
+            typeRanking = typeRanking ?? (t => 0);
 
-            if (assembly == null) all_types = ForAllAssemblies(asm => GetAllTypes_impl(asm)).SelectMany(_ => _).ToList();
-            else all_types = GetAllTypes_impl(assembly);
+            if (assembly == null) all_types = ForAllAssemblies(asm => _GetAllTypes(asm)).SelectMany(_ => _).ToList();
+            else all_types = _GetAllTypes(assembly);
 
-            foreach (var type in all_types)
+            foreach (var type in all_types.OrderByDescending(typeRanking))
             {
                 try
                 {
                     if (type.IsAbstract) continue;
+                    if (type.IsInterface) continue;
 
                     if (typePredicate(type))
                     {
@@ -222,7 +215,15 @@ namespace Trinity.Utilities
             where TBase : class
         {
             typeProjector = typeProjector ?? (t => t.GetConstructor(new Type[] { }).Invoke(new object[] { }) as TBase);
-            return GetAllClassInstances_impl(typeProjector, GetAllClassTypes(assembly));
+            return GetAllClassInstances_impl(typeProjector, GetAllClassTypes<TBase>(assembly: assembly));
+        }
+
+        /// <summary>
+        /// Resolves a type by literal name
+        /// </summary>
+        public static Type GetType(string name)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -269,7 +270,7 @@ namespace Trinity.Utilities
                     Log.WriteLine(LogLevel.Verbose, "{0}", ex.ToString());
                 }
                 return null;
-            }, GetAllClassTypes(assembly));
+            }, GetAllClassTypes(assembly: assembly));
         }
 
         private static List<TBase> GetAllClassInstances_impl<TBase>(Func<Type, TBase> type_projector, List<Type> types)
@@ -293,6 +294,39 @@ namespace Trinity.Utilities
             }
 
             return satisfied_instances;
+        }
+
+        /// <summary>
+        /// Get an instance of the most suitable type, based on the ranking function,
+        /// and fallbacks to a default type instance.
+        /// </summary>
+        /// <typeparam name="TBase">The base type</typeparam>
+        /// <typeparam name="TDefault">The default fallback type</typeparam>
+        /// <param name="typeProjector">The projector. When not specified, uses the default projector (non-parametric constructor, then cast to TBase)</param>
+        /// <param name="ranking">The ranking function, higher score is better</param>
+        /// <returns>null if none of the satisfying types can be instantiated, including the default fallback type.</returns>
+        public static TBase GetBestClassInstance<TBase, TDefault>(Func<Type, TBase> typeProjector, Func<Type, int> ranking = null)
+            where TDefault: TBase
+        {
+            var base_ranking = ranking ?? (t => 0);
+            ranking = (t => t == typeof(TDefault) ? int.MinValue : base_ranking(t));
+            foreach(var type in GetAllClassTypes_impl(typeRanking: ranking))
+            {
+                try
+                {
+                    if (!typeof(TBase).IsAssignableFrom(type)) continue;
+
+                    var instance = typeProjector(type);
+
+                    if (instance != null)
+                    {
+                        return instance;
+                    }
+                }
+                catch { }
+            }
+
+            return default(TBase);
         }
 
         /// <summary>

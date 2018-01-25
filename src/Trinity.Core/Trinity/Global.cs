@@ -20,6 +20,7 @@ using Trinity.Utilities;
 using Trinity.Diagnostics;
 using System.Runtime.CompilerServices;
 using Trinity.Extension;
+using Trinity.Configuration;
 
 namespace Trinity
 {
@@ -114,7 +115,7 @@ namespace Trinity
                 _storage_schema = null;
             }
 
-            _return:
+_return:
             return Tuple.Create(_generic_cell_ops, _storage_schema);
         }
 
@@ -172,27 +173,60 @@ namespace Trinity
             Log.WriteLine(LogLevel.Info, "Scanning for MemoryCloud extensions.");
             new_memorycloud_func = () => new FixedMemoryCloud();
 
-            var memcloud_types = AssemblyUtility.GetAllClassTypes<MemoryCloud>(t => t != typeof(FixedMemoryCloud));
-
-            //TODO read memcloud type from config
-            //currently we just pick the first one
-            var mc_type = memcloud_types.FirstOrDefault();
-            do
+            Dictionary<Type, int> mc_ext_rank = new Dictionary<Type, int>
             {
-                if (mc_type == null) break;
-                try
-                {
-                    var ctor = mc_type.GetConstructor(new Type[] { });
-                    if (ctor == null) break;
-                    new_memorycloud_func = () => ctor.Invoke(new object[] { }) as MemoryCloud;
-                }
-                catch { break; }
-                Log.WriteLine(LogLevel.Info, "MemoryCloud extension '{0}' loaded.", mc_type.Name);
-                return TrinityErrorCode.E_SUCCESS;
-            } while (false);
+                { typeof(FixedMemoryCloud), int.MinValue },
+            };
 
-            Log.WriteLine(LogLevel.Info, "No MemoryCloud extension found.");
-            return TrinityErrorCode.E_FAILURE;
+            List<ExtensionPriority> priorities = ExtensionConfig.Instance.Priority;
+            foreach(var p in priorities)
+            {
+                try { mc_ext_rank.Add(AssemblyUtility.GetType(p.Name), p.Priority); }
+                catch { }
+            }
+
+            Func<Type, int> mc_rank_func = t =>
+            {
+                if(mc_ext_rank.TryGetValue(t, out var r)) return r;
+                else return 0;
+            };
+
+            var memcloud_types = AssemblyUtility.GetAllClassTypes<MemoryCloud>().OrderByDescending(mc_rank_func);
+            if (!memcloud_types.Any(t => t != typeof(FixedMemoryCloud)))
+            {
+                Log.WriteLine(LogLevel.Info, "No MemoryCloud extension found.");
+                return TrinityErrorCode.E_FAILURE;
+            }
+
+            new_memorycloud_func = () =>
+            {
+                //TODO read memcloud type from config
+                //currently we just pick the first one
+                foreach (var mc_type in memcloud_types)
+                {
+                    if (mc_type == null) continue;
+                    try
+                    {
+                        var ctor = mc_type.GetConstructor(new Type[] { });
+                        if (ctor == null)
+                        {
+                            Log.WriteLine(LogLevel.Warning, "MemoryCloud extension '{0}': no default constructor, skipping.", mc_type.Name);
+                            continue;
+                        }
+                        var mc = ctor.Invoke(new object[] { }) as MemoryCloud;
+                        Log.WriteLine(LogLevel.Info, "MemoryCloud extension '{0}' loaded.", mc_type.Name);
+                        return mc;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteLine(LogLevel.Error, "Exception thrown while loading MemoryCloud extension '{0}': {1}.", mc_type.Name, ex.ToString());
+                        continue;
+                    }
+                }
+                // should never reach here
+                throw new InvalidOperationException();
+            };
+            return TrinityErrorCode.E_SUCCESS;
         }
 
         private static void _LoadGraphEngineExtensions()

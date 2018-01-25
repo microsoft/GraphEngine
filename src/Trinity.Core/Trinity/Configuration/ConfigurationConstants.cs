@@ -25,6 +25,7 @@ namespace Trinity.Configuration
             public static readonly XName PROXY                      = NS + "Proxy";
             public static readonly XName TEMPLATE                   = NS + "Template";
             public static readonly XName LOGGING                    = NS + "Logging";
+            public static readonly XName EXTENSION                  = NS + "Extension";
             public static readonly XName STORAGE                    = NS + "Storage";
             public static readonly XName DEFAULT                    = NS + "Default";
             public static readonly XName NETWORK                    = NS + "Network";
