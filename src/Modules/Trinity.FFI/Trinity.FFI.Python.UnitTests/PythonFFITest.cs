@@ -15,6 +15,7 @@ namespace Trinity.FFI.Python.UnitTests
         [Fact]
         public void LoadPythonFFI_Success()
         {
+            // The test engine may trigger the initialization
             Global.Initialize();
             FileUtility.CompletePath(FFIConfig.Instance.ProgramDirectory, create_nonexistent: true);
 

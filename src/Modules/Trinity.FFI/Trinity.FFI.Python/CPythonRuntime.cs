@@ -5,6 +5,10 @@ using Trinity.Storage;
 using Python.Runtime;
 using Trinity.Utilities;
 using System.IO;
+using Trinity.Extension;
+using Trinity.Diagnostics;
+
+[assembly: GraphEngineExtension]
 
 namespace Trinity.FFI.Python
 {
@@ -20,6 +24,8 @@ namespace Trinity.FFI.Python
             //else path = path + ";" + AssemblyUtility.MyAssemblyPath;
             //PythonEngine.PythonPath = path;
 
+            PythonEngine.PythonPath += ";" + AssemblyUtility.MyAssemblyPath;
+            Log.WriteLine("PythonPath = {0}", PythonEngine.PythonPath);
             m_GIL = Py.GIL();
             m_scope = Py.CreateScope();
 

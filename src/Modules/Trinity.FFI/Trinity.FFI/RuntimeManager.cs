@@ -33,7 +33,7 @@ namespace Trinity.FFI
         {
             m_module = Global.CommunicationInstance.GetCommunicationModule<TrinityFFIModule>();
             Log.WriteLine("Scanning for foreign runtime providers.");
-            m_providers = AssemblyUtility.GetAllClassInstances(t => t.GetConstructor(new Type[] { }).Invoke(new object[] { }) as ILanguageRuntimeProvider);
+            m_providers = AssemblyUtility.GetAllClassInstances<ILanguageRuntimeProvider>();
             foreach (var runtime_provider in m_providers)
             {
                 try

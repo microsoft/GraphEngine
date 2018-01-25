@@ -13,7 +13,8 @@ namespace Trinity.FFI.Python.UnitTests
             return Math.Abs(a - b) < 0.00001;
         }
 
-        [Fact] void pythonToNETCallback()
+        [Fact]
+        void pythonToNETCallback()
         {
             using (Py.GIL())
             {

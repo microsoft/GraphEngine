@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>GraphEngine.FFI.Python</PackageId>
@@ -26,6 +27,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\Trinity.FFI.Native\_GraphEngine.cp36-win_amd64.pyd" Link="_GraphEngine.cp36-win_amd64.pyd">
+      <PackagePath>lib\netstandard2.0</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="GraphEngine.FFI" Version="1.0.9083" />
   </ItemGroup>
 
@@ -33,9 +40,9 @@
     <ProjectReference Include="..\pythonnet\src\runtime\Python.Runtime.15.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <Content Include="$(OutputPath)Python.Runtime.dll">
       <PackagePath>lib\netcoreapp2.0</PackagePath>
     </Content>
-  </ItemGroup>
+  </ItemGroup>-->
 </Project>
