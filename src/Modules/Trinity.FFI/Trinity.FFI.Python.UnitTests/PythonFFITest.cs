@@ -22,7 +22,7 @@ namespace Trinity.FFI.Python.UnitTests
             var fp = Path.Combine(FFIConfig.Instance.ProgramDirectory, "test.py");
             File.WriteAllText(fp, @"
 with open('MyCell.txt', 'w') as f:
-    a = trinity.cell('MyCell')
+    a = ge.NewCell('MyCell')
     print(a)
     f.write(a)
 ");

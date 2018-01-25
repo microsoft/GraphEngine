@@ -6,7 +6,7 @@ extern "C" {
     typedef struct
     {
         PyObject_HEAD
-        Cell cell_handle;
+        TCell cell_handle;
     } TrinityCell_Object;
 
     int64_t trinity_cell_init(TrinityCell_Object *self, PyObject *args, PyObject *kwds);

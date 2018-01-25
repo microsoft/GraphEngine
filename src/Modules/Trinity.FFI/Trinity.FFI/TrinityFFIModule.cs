@@ -8,7 +8,7 @@ using Trinity.Network;
 namespace Trinity.FFI
 {
     [AutoRegisteredCommunicationModule]
-    public class FFIModule : FFIModuleBase
+    public class TrinityFFIModule : FFIModuleBase
     {
         public override void AsynProtocolHandler(MessageRequestReader request)
         {

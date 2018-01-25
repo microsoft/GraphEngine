@@ -93,3 +93,4 @@ tests/xunit_coreclr_reports
 tests/nunit*reports
 tests/new_test.exe
 /src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/build/lib.win-amd64-3.6
+*.pyd

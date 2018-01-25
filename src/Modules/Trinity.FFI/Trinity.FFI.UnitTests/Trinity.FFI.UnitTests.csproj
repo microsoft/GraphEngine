@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RuntimeFrameworkVersion>2.0.0-preview</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>Trinity.FFI.UnitTests</AssemblyName>
     <RootNamespace>Trinity.FFI.UnitTests</RootNamespace>

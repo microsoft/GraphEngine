@@ -81,7 +81,7 @@ namespace Trinity.FFI.UnitTests
             TrinityServer server = new TrinityServer();
             server.Start();
 
-            Assert.NotNull(server.GetCommunicationModule<FFIModule>());
+            Assert.NotNull(server.GetCommunicationModule<TrinityFFIModule>());
 
             server.Stop();
         }

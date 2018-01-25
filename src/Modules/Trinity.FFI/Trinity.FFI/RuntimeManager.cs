@@ -17,7 +17,7 @@ namespace Trinity.FFI
         #region Fields
         private List<ILanguageRuntimeProvider> m_providers = new List<ILanguageRuntimeProvider>();
         private Dictionary<string, ProgramRunner> m_runners = new Dictionary<string, ProgramRunner>();
-        private FFIModule m_module = null;
+        private TrinityFFIModule m_module = null;
 
         #endregion
 
@@ -31,7 +31,7 @@ namespace Trinity.FFI
         [MethodImpl(MethodImplOptions.Synchronized)]
         private void _OnCommunicationInstanceStart()
         {
-            m_module = Global.CommunicationInstance.GetCommunicationModule<FFIModule>();
+            m_module = Global.CommunicationInstance.GetCommunicationModule<TrinityFFIModule>();
             Log.WriteLine("Scanning for foreign runtime providers.");
             m_providers = AssemblyUtility.GetAllClassInstances(t => t.GetConstructor(new Type[] { }).Invoke(new object[] { }) as ILanguageRuntimeProvider);
             foreach (var runtime_provider in m_providers)

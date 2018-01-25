@@ -46,6 +46,11 @@ namespace Trinity.FFI
     internal unsafe delegate void TRINITY_FFI_CELL_APPEND(IntPtr cell, string field, string content);
     internal unsafe delegate void TRINITY_FFI_CELL_DELETE(IntPtr cell, string field);
     internal unsafe delegate void TRINITY_FFI_CELL_DISPOSE(IntPtr cell);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CELL_FIELD_ENUMERATOR_GET(IntPtr cell, ref IntPtr enumerator);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CELL_FIELD_ENUMERATOR_MOVENEXT(IntPtr enumerator, IntPtr field_info);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CELL_FIELD_ENUMERATOR_CURRENT(IntPtr enumerator, ref IntPtr field_info);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CELL_FIELD_ENUMERATOR_DISPOSE(IntPtr enumerator);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CELL_FIELD_INFO_NAME(IntPtr field_info, out string value);
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode, Pack = 1)]
     struct TRINITY_INTERFACES
@@ -90,6 +95,11 @@ namespace Trinity.FFI
         public TRINITY_FFI_CELL_APPEND cell_appendfield;
         public TRINITY_FFI_CELL_DELETE cell_removefield;
         public TRINITY_FFI_CELL_DISPOSE cell_dispose;
+        public TRINITY_FFI_CELL_FIELD_ENUMERATOR_GET cell_fieldenum_get;
+        public TRINITY_FFI_CELL_FIELD_ENUMERATOR_CURRENT cell_fieldenum_current;
+        public TRINITY_FFI_CELL_FIELD_ENUMERATOR_MOVENEXT cell_fieldenum_movenext;
+        public TRINITY_FFI_CELL_FIELD_ENUMERATOR_DISPOSE cell_fieldenum_dispose;
+        public TRINITY_FFI_CELL_FIELD_INFO_NAME cell_fieldinfo_name;
 
         //ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId);
         //ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId, CellAccessOptions options);

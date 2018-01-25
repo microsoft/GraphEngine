@@ -18,11 +18,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>..\bin</OutputPath>
+    <OutputPath>..\..\..\..\bin\coreclr</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\bin</OutputPath>
+    <OutputPath>..\..\..\..\bin\coreclr</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>

@@ -91,9 +91,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Trinity.FFI.Native.h" />
+    <ClInclude Include="Trinity.FFI.SWIG.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Trinity.FFI.Native.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Trinity.FFI.SWIG.i">
+      <FileType>SWIG</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">swig.exe -c++ -python "%(FullPath)"
+python.exe setup.py build_ext --inplace</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(InputName)_wrap.cxx;%(Outputs)</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="setup.py" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

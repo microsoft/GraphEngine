@@ -24,8 +24,8 @@ namespace Trinity.FFI.Python
             m_scope = Py.CreateScope();
 
             m_scope.Exec(@"
-import trinity
-trinity.Init()
+import GraphEngine as ge
+ge.Init()
 ");
         }
 

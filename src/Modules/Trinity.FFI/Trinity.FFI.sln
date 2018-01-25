@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.0
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.FFI", "Trinity.FFI\Trinity.FFI.csproj", "{BA71DB0A-EFDF-44AF-95AE-0583CEAEBD2A}"
 EndProject
@@ -77,12 +77,12 @@ Global
 		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Debug|x64.Build.0 = DebugWinPY3|Any CPU
 		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Debug|x86.ActiveCfg = DebugWinPY3|Any CPU
 		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Debug|x86.Build.0 = DebugWinPY3|Any CPU
-		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Release|Any CPU.ActiveCfg = ReleaseWinPY3|Any CPU
-		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Release|Any CPU.Build.0 = ReleaseWinPY3|Any CPU
-		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Release|x64.ActiveCfg = ReleaseWinPY3|Any CPU
-		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Release|x64.Build.0 = ReleaseWinPY3|Any CPU
-		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Release|x86.ActiveCfg = ReleaseWinPY3|Any CPU
-		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Release|x86.Build.0 = ReleaseWinPY3|Any CPU
+		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Release|Any CPU.ActiveCfg = ReleaseMono|Any CPU
+		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Release|Any CPU.Build.0 = ReleaseMono|Any CPU
+		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Release|x64.ActiveCfg = ReleaseMono|Any CPU
+		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Release|x64.Build.0 = ReleaseMono|Any CPU
+		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Release|x86.ActiveCfg = ReleaseMono|Any CPU
+		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Release|x86.Build.0 = ReleaseMono|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

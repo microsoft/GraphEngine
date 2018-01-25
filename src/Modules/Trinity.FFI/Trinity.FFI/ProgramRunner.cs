@@ -8,7 +8,7 @@ namespace Trinity.FFI
     internal class ProgramRunner : IDisposable
     {
         #region Fields
-        private FFIModule m_module;
+        private TrinityFFIModule m_module;
         private ILanguageRuntimeProvider m_runtimeProvider;
         private BlockingCollection<ILanguageRuntime> m_runtimes;
         private bool m_singleThreaded;
@@ -24,7 +24,7 @@ namespace Trinity.FFI
         /// Each runner has a protocol address space of 24bits, and
         /// there can be at most 255 types of runners in the system.
         /// </summary>
-        public ProgramRunner(ILanguageRuntimeProvider runtime_provider, FFIModule module)
+        public ProgramRunner(ILanguageRuntimeProvider runtime_provider, TrinityFFIModule module)
         {
             if (s_runtime_cnt == c_runtime_cnt_max) throw new InvalidOperationException("Maximum number of language runtime providers reached.");
 
@@ -41,6 +41,11 @@ namespace Trinity.FFI
                 cell_getfield = TrinityWrapper.trinity_ffi_cell_get,
                 cell_getid = TrinityWrapper.trinity_ffi_cell_getid,
                 cell_dispose = TrinityWrapper.trinity_ffi_cell_dispose,
+                cell_fieldenum_get = TrinityWrapper.trinity_ffi_cellenum_get,
+                cell_fieldenum_movenext = TrinityWrapper.trinity_ffi_cellenum_movenext,
+                cell_fieldenum_current = TrinityWrapper.trinity_ffi_cellenum_current,
+                cell_fieldenum_dispose = TrinityWrapper.trinity_ffi_cellenum_dispose,
+                cell_fieldinfo_name = TrinityWrapper.trinity_ffi_fieldinfo_name,
                 cell_hasfield = TrinityWrapper.trinity_ffi_cell_has,
                 cell_removefield = TrinityWrapper.trinity_ffi_cell_delete,
                 cell_setfield = TrinityWrapper.trinity_ffi_cell_set,

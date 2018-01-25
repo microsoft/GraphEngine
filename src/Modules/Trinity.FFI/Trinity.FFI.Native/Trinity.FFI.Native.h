@@ -14,7 +14,9 @@
 #endif
 #include <TrinityErrorCode.h>
 
-typedef int64_t Cell;
+typedef int64_t TCell;
+typedef int64_t TEnumerator;
+typedef int64_t TFieldInfo;
 
 enum CellAccessOptions: int32_t
 {
@@ -42,29 +44,34 @@ typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_SAVESTORAGE)();
 typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_LOADSTORAGE)();
 typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_RESETSTORAGE)();
 
-typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_LOADCELL)(int64_t cellId, Cell* pcell);
-typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_LOADCELL)(int64_t cellId, Cell* pcell);
+typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_LOADCELL)(int64_t cellId, TCell* pcell);
+typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_LOADCELL)(int64_t cellId, TCell* pcell);
 
-typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_1)(int64_t cellId, Cell cell);
-typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_2)(int64_t cellId, CellAccessOptions options, Cell cell);
-typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_SAVECELL)(int64_t cellId, Cell cell);
+typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_1)(int64_t cellId, TCell cell);
+typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_2)(int64_t cellId, CellAccessOptions options, TCell cell);
+typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_SAVECELL)(int64_t cellId, TCell cell);
 
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_REMOVECELL)(int64_t cellId);
 typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_REMOVECELL)(int64_t cellId);
 
-typedef TrinityErrorCode (*TRINITY_FFI_NEWCELL_1)(char* cellType, Cell* pcell);
-typedef TrinityErrorCode (*TRINITY_FFI_NEWCELL_2)(int64_t cellId, char* cellType, Cell* pcell);
-typedef TrinityErrorCode (*TRINITY_FFI_NEWCELL_3)(char* cellType, char* cellContent, Cell* pcell);
+typedef TrinityErrorCode (*TRINITY_FFI_NEWCELL_1)(char* cellType, TCell* pcell);
+typedef TrinityErrorCode (*TRINITY_FFI_NEWCELL_2)(int64_t cellId, char* cellType, TCell* pcell);
+typedef TrinityErrorCode (*TRINITY_FFI_NEWCELL_3)(char* cellType, char* cellContent, TCell* pcell);
 
-typedef char*   (*TRINITY_FFI_CELL_TOSTRING)(Cell cell);
-typedef int64_t (*TRINITY_FFI_CELL_GETID)(Cell cell);
-typedef void    (*TRINITY_FFI_CELL_SETID)(Cell cell, int64_t cellId);
-typedef char*   (*TRINITY_FFI_CELL_GET)(Cell cell, char* field);
-typedef int32_t (*TRINITY_FFI_CELL_HAS)(Cell cell, char* field);//non-zero if cell has field.
-typedef void    (*TRINITY_FFI_CELL_SET)(Cell cell, char* field, char* content);
-typedef void    (*TRINITY_FFI_CELL_APPEND)(Cell cell, char* field, char* content);
-typedef void    (*TRINITY_FFI_CELL_DELETE)(Cell cell, char* field);
-typedef void    (*TRINITY_FFI_CELL_DISPOSE)(Cell cell);
+typedef char*   (*TRINITY_FFI_CELL_TOSTRING)(TCell cell);
+typedef int64_t (*TRINITY_FFI_CELL_GETID)(TCell cell);
+typedef void    (*TRINITY_FFI_CELL_SETID)(TCell cell, int64_t cellId);
+typedef char*   (*TRINITY_FFI_CELL_GET)(TCell cell, char* field);
+typedef int32_t (*TRINITY_FFI_CELL_HAS)(TCell cell, char* field);//non-zero if cell has field.
+typedef void    (*TRINITY_FFI_CELL_SET)(TCell cell, char* field, char* content);
+typedef void    (*TRINITY_FFI_CELL_APPEND)(TCell cell, char* field, char* content);
+typedef void    (*TRINITY_FFI_CELL_DELETE)(TCell cell, char* field);
+typedef void    (*TRINITY_FFI_CELL_DISPOSE)(TCell cell);
+typedef TrinityErrorCode (*TRINITY_FFI_CELL_FIELD_ENUMERATOR_GET)(TCell cell, TEnumerator* enumerator);
+typedef TrinityErrorCode (*TRINITY_FFI_CELL_FIELD_ENUMERATOR_MOVENEXT)(TEnumerator enumerator, TFieldInfo field_info);
+typedef TrinityErrorCode (*TRINITY_FFI_CELL_FIELD_ENUMERATOR_CURRENT)(TEnumerator enumerator, TFieldInfo* field_info);
+typedef TrinityErrorCode (*TRINITY_FFI_CELL_FIELD_ENUMERATOR_DISPOSE)(TEnumerator enumerator);
+typedef TrinityErrorCode (*TRINITY_FFI_CELL_FIELD_INFO_NAME)(TFieldInfo field_info, char** value);
 
 extern "C" struct TRINITY_INTERFACES
 {
@@ -107,6 +114,12 @@ extern "C" struct TRINITY_INTERFACES
     TRINITY_FFI_CELL_APPEND      cell_appendfield;
     TRINITY_FFI_CELL_DELETE      cell_removefield;
     TRINITY_FFI_CELL_DISPOSE     cell_dispose;
+
+    TRINITY_FFI_CELL_FIELD_ENUMERATOR_GET cell_fieldenum_get;
+    TRINITY_FFI_CELL_FIELD_ENUMERATOR_CURRENT cell_fieldenum_current;
+    TRINITY_FFI_CELL_FIELD_ENUMERATOR_MOVENEXT cell_fieldenum_movenext;
+    TRINITY_FFI_CELL_FIELD_ENUMERATOR_DISPOSE cell_fieldenum_dispose;
+    TRINITY_FFI_CELL_FIELD_INFO_NAME cell_fieldinfo_name;
 
     //ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId);
     //ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId, CellAccessOptions options);

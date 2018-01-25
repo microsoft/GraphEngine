@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RuntimeFrameworkVersion>2.1.0-preview1</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Trinity.FFI</AssemblyName>
     <RootNamespace>Trinity.FFI</RootNamespace>
@@ -22,11 +22,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>..\bin\</OutputPath>
+    <OutputPath>..\..\..\..\bin\coreclr</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\bin</OutputPath>
+    <OutputPath>..\..\..\..\bin\coreclr</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>

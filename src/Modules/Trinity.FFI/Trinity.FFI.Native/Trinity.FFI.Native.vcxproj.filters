@@ -18,10 +18,21 @@
     <ClInclude Include="Trinity.FFI.Native.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Trinity.FFI.SWIG.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Trinity.FFI.Native.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Trinity.FFI.SWIG.i">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="setup.py" />
   </ItemGroup>
 </Project>

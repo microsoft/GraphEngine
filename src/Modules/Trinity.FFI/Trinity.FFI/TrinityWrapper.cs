@@ -59,6 +59,79 @@ namespace Trinity.FFI
             }
         }
 
+        internal static TrinityErrorCode trinity_ffi_cellenum_movenext(IntPtr enumerator, IntPtr field_info)
+        {
+            try
+            {
+                var h = GCHandle.FromIntPtr(enumerator);
+                var desc = (IEnumerator<IFieldDescriptor>)h.Target;
+                if (field_info != IntPtr.Zero) { GCHandle.FromIntPtr(field_info).Free(); }
+                return desc.MoveNext() ? TrinityErrorCode.E_SUCCESS : TrinityErrorCode.E_FAILURE;
+            }
+            catch
+            {
+                return TrinityErrorCode.E_FAILURE;
+            }
+        }
+
+        internal static unsafe TrinityErrorCode trinity_ffi_fieldinfo_name(IntPtr field_info, out string value)
+        {
+            value = string.Empty;
+            try
+            {
+                var h = GCHandle.FromIntPtr(field_info);
+                var desc = (IFieldDescriptor)h.Target;
+                value = desc.Name;
+                return TrinityErrorCode.E_SUCCESS;
+            }
+            catch { return TrinityErrorCode.E_FAILURE; }
+        }
+
+        internal static TrinityErrorCode trinity_ffi_cellenum_current(IntPtr enumerator, ref IntPtr field_info)
+        {
+            try
+            {
+                var h = GCHandle.FromIntPtr(enumerator);
+                var desc = (IEnumerator<IFieldDescriptor>)h.Target;
+                h = GCHandle.Alloc(desc.Current, GCHandleType.Pinned);
+                field_info = h.AddrOfPinnedObject();
+                return TrinityErrorCode.E_SUCCESS;
+            }
+            catch { return TrinityErrorCode.E_FAILURE; }
+        }
+
+        internal static TrinityErrorCode trinity_ffi_cellenum_dispose(IntPtr enumerator)
+        {
+            try
+            {
+                var h = GCHandle.FromIntPtr(enumerator);
+                var desc = (IEnumerator<IFieldDescriptor>)h.Target;
+                desc.Dispose();
+                h.Free();
+                return TrinityErrorCode.E_SUCCESS;
+            }
+            catch
+            {
+                return TrinityErrorCode.E_FAILURE;
+            }
+        }
+
+        internal static TrinityErrorCode trinity_ffi_cellenum_get(IntPtr cell, ref IntPtr enumerator)
+        {
+            try
+            {
+                ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
+                IEnumerator<IFieldDescriptor> etor = c.GetFieldDescriptors().GetEnumerator();
+                GCHandle h = GCHandle.Alloc(etor, GCHandleType.Pinned);
+                enumerator = h.AddrOfPinnedObject();
+                return TrinityErrorCode.E_SUCCESS;
+            }
+            catch
+            {
+                return TrinityErrorCode.E_FAILURE;
+            }
+        }
+
         public static TrinityErrorCode trinity_ffi_local_savecell_1(long cellId, IntPtr cell)
         {
             try
