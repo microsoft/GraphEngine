@@ -149,6 +149,7 @@
     <Compile Include="Storage\StorageExtensionMethods.cs" />
     <Compile Include="Trinity\Configuration\ConfigurationConstants.cs" />
     <Compile Include="Trinity\Configuration\ConfigurationEntries\LoggingConfig.cs" />
+    <Compile Include="Trinity\Configuration\ConfigurationEntries\ExtensionConfig.cs" />
     <Compile Include="Trinity\Configuration\ConfigurationEntries\NetworkConfig.cs" />
     <Compile Include="Trinity\Configuration\ConfigurationEntries\StorageConfig.cs" />
     <Compile Include="Trinity\Configuration\ConfigurationEntry.cs" />

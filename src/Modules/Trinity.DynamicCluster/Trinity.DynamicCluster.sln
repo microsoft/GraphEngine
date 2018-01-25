@@ -40,6 +40,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildNuGetPkg", "BuildNuGet
 		{A735C1DD-874E-4D7C-BC48-A7E22DCFF65B} = {A735C1DD-874E-4D7C-BC48-A7E22DCFF65B}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.ServiceFabric.Client", "Trinity.ServiceFabric.Client\Trinity.ServiceFabric.Client.csproj", "{B38F7608-14FC-4DFD-B1CF-62B7BC3E0889}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.Client", "Trinity.Client\Trinity.Client.csproj", "{2C7E6587-91C9-4DD9-91FE-BB7B6DBFDA42}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +87,14 @@ Global
 		{06D172A0-9B3F-4A20-8FD3-C7D86EFB9420}.Debug|Any CPU.Build.0 = Debug|x86
 		{06D172A0-9B3F-4A20-8FD3-C7D86EFB9420}.Release|Any CPU.ActiveCfg = Debug|x86
 		{06D172A0-9B3F-4A20-8FD3-C7D86EFB9420}.Release|Any CPU.Build.0 = Debug|x86
+		{B38F7608-14FC-4DFD-B1CF-62B7BC3E0889}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B38F7608-14FC-4DFD-B1CF-62B7BC3E0889}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B38F7608-14FC-4DFD-B1CF-62B7BC3E0889}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B38F7608-14FC-4DFD-B1CF-62B7BC3E0889}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C7E6587-91C9-4DD9-91FE-BB7B6DBFDA42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C7E6587-91C9-4DD9-91FE-BB7B6DBFDA42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C7E6587-91C9-4DD9-91FE-BB7B6DBFDA42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C7E6587-91C9-4DD9-91FE-BB7B6DBFDA42}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
