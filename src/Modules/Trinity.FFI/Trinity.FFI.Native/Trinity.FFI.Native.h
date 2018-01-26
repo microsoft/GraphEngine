@@ -27,8 +27,8 @@ enum CellAccessOptions: int32_t
     WeakLogAhead = 16
 };
 
-typedef char* (*TRINITY_FFI_SYNC_HANDLER)(int32_t, char*);
-typedef void  (*TRINITY_FFI_ASYNC_HANDLER)(int32_t, char*);
+typedef char* (*TRINITY_FFI_SYNC_HANDLER)(char*);
+typedef void  (*TRINITY_FFI_ASYNC_HANDLER)(char*);
 
 typedef void (*TRINITY_FFI_SYNC_REGISTRY)(int32_t, TRINITY_FFI_SYNC_HANDLER);
 typedef void  (*TRINITY_FFI_ASYNC_REGISTRY)(int32_t, TRINITY_FFI_ASYNC_HANDLER);

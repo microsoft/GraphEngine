@@ -6,8 +6,8 @@ using Trinity.TSL.Lib;
 
 namespace Trinity.FFI
 {
-    internal unsafe delegate string TRINITY_FFI_SYNC_HANDLER(int methodId,  string content);
-    internal unsafe delegate void TRINITY_FFI_ASYNC_HANDLER(int methodId, string content);
+    internal unsafe delegate string TRINITY_FFI_SYNC_HANDLER(string content);
+    internal unsafe delegate void TRINITY_FFI_ASYNC_HANDLER(string content);
 
     internal unsafe delegate void TRINITY_FFI_SYNC_REGISTRY(int methodId,  TRINITY_FFI_SYNC_HANDLER handler);
     internal unsafe delegate void TRINITY_FFI_ASYNC_REGISTRY(int methodId,  TRINITY_FFI_ASYNC_HANDLER handler);
