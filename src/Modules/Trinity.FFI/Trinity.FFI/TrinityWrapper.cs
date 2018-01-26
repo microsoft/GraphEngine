@@ -233,69 +233,52 @@ namespace Trinity.FFI
 
         public static void trinity_ffi_cell_dispose(IntPtr cell)
         {
-            try
-            {
-                GCHandle.FromIntPtr(cell).Free();
-            }
-            catch
-            {
-            }
+            GCHandle.FromIntPtr(cell).Free();
         }
 
         public static string trinity_ffi_cell_tostring(IntPtr cell)
         {
-            try
-            {
-                // XXX not called
-                ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
-                return c.ToString();
-            }
-            catch
-            {
-                return null;
-            }
+            // XXX not called
+            ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
+            return c.ToString();
         }
+
         public static long trinity_ffi_cell_getid(IntPtr cell)
         {
-            try
-            {
-                ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
-                return c.CellID;
-            }
-            catch
-            {
-                return 0;
-            }
+            ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
+            return c.CellID;
         }
 
         public static void trinity_ffi_cell_setid(IntPtr cell, long cellId)
         {
-            try
-            {
-                ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
-                c.CellID = cellId;
-            }
-            catch
-            {
-            }
+            ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
+            c.CellID = cellId;
         }
 
         public static string trinity_ffi_cell_get(IntPtr cell, string field)
         {
-            return "";
+            ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
+            return c.GetField<string>(field);
         }
         public static int trinity_ffi_cell_has(IntPtr cell, string field)
         {
-            return 0;
+            ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
+            return c.ContainsField(field) ? 1 : 0;
         }
         public static void trinity_ffi_cell_set(IntPtr cell, string field, string content)
         {
+            ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
+            c.SetField(field, content);
         }
         public static void trinity_ffi_cell_append(IntPtr cell, string field, string content)
         {
+            ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
+            c.AppendToField<string>(field, content);
         }
         public static void trinity_ffi_cell_delete(IntPtr cell, string field)
         {
+            ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
+            c.SetField<string>(field, null);
         }
     }
 }

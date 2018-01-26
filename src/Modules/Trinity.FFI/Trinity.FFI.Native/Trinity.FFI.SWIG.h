@@ -10,83 +10,100 @@ void Init()
     g_TrinityInterfaces = TRINITY_FFI_GET_INTERFACES();
 }
 
-TCell LoadCell(int64_t cellId)
+class Cell
 {
-    TCell ret;
-    if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->local_loadcell(cellId, &ret))
-        return ret;
-    else
-        return NULL;
+public:
+	Cell(TCell cell) : m_cell(cell) {}
+	TCell m_cell;
+	
+	char* GetField(char* field)
+	{
+		return g_TrinityInterfaces->cell_getfield(m_cell, field);
+	}
+
+	//TODO errno
+	void SetField(char* field, char* content)
+	{
+		g_TrinityInterfaces->cell_setfield(m_cell, field, content);
+	}
+
+	void AppendField(char* field, char* content)
+	{
+		g_TrinityInterfaces->cell_appendfield(m_cell, field, content);
+	}
+
+	void RemoveField(char* field)
+	{
+		g_TrinityInterfaces->cell_removefield(m_cell, field);
+	}
+
+	int HasField(char* field)
+	{
+		return g_TrinityInterfaces->cell_hasfield(m_cell, field);
+	}
+
+	~Cell()
+	{
+		printf("hey dtor\n");
+		g_TrinityInterfaces->cell_dispose(m_cell);
+	}
+
+	std::vector<char*> GetFieldNames()
+	{
+		std::vector<char*> vec;
+		do
+		{
+			TEnumerator etor;
+			TFieldInfo fi = NULL;
+			char* val = NULL;
+			if (TrinityErrorCode::E_SUCCESS != g_TrinityInterfaces->cell_fieldenum_get(m_cell, &etor)) break;
+			while (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->cell_fieldenum_movenext(etor, fi))
+			{
+				g_TrinityInterfaces->cell_fieldenum_current(etor, &fi);
+				if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->cell_fieldinfo_name(fi, &val)) {
+					vec.push_back(val);
+				}
+			}
+			g_TrinityInterfaces->cell_fieldenum_dispose(etor);
+		} while (false);
+
+		return vec;
+	}
+};
+
+Cell* LoadCell(int64_t cellId)
+{
+	Cell* pret = new Cell(0);
+	if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->local_loadcell(cellId, &pret->m_cell))
+	{
+		return pret;
+	}
+	else
+	{
+		delete pret;
+		return nullptr;
+	}
 }
 
-bool SaveCell(int64_t cellId, TCell cell)
+bool SaveCell(int64_t cellId, Cell* pcell)
 {
-    return (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->local_savecell_1(cellId, cell));
+	return (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->local_savecell_1(cellId, pcell->m_cell));
 }
 
-bool SaveCell2(int64_t cellId, TCell cell, CellAccessOptions options)
+bool SaveCell2(int64_t cellId, Cell* pcell, CellAccessOptions options)
 {
-    return (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->local_savecell_2(cellId, options, cell));
+	return (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->local_savecell_2(cellId, options, pcell->m_cell));
 }
 
-TCell NewCell(char* cellType)
+Cell* NewCell(char* cellType)
 {
-    TCell cell;
-    if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->newcell_1(cellType, &cell))
-        return cell;
-    else
-        return NULL;
+	Cell* pcell = new Cell(0);
+	if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->newcell_1(cellType, &pcell->m_cell))
+		return pcell;
+	else
+	{
+		delete pcell;
+		return nullptr;
+	}
 }
 
-char* CellGetField(TCell cell, char* field)
-{
-    return g_TrinityInterfaces->cell_getfield(cell, field);
-}
-
-//TODO errno
-void CellSetField(TCell cell, char* field, char* content)
-{
-    g_TrinityInterfaces->cell_setfield(cell, field, content);
-}
-
-void CellAppendField(TCell cell, char* field, char* content)
-{
-    g_TrinityInterfaces->cell_appendfield(cell, field, content);
-}
-
-void CellRemoveField(TCell cell, char* field)
-{
-    g_TrinityInterfaces->cell_removefield(cell, field);
-}
-
-int32_t CellHasField(TCell cell, char* field)
-{
-    return g_TrinityInterfaces->cell_hasfield(cell, field);
-}
-
-void CellDispose(TCell cell)
-{
-    g_TrinityInterfaces->cell_dispose(cell);
-}
-
-std::vector<char*> CellGetFieldNames(TCell cell)
-{
-    std::vector<char*> vec;
-    do
-    {
-        TEnumerator etor;
-        TFieldInfo fi = NULL;
-        char* val = NULL;
-        if (TrinityErrorCode::E_SUCCESS != g_TrinityInterfaces->cell_fieldenum_get(cell, &etor)) break;
-        while (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->cell_fieldenum_movenext(etor, fi)) 
-        {
-            g_TrinityInterfaces->cell_fieldenum_current(etor, &fi);
-            if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->cell_fieldinfo_name(fi, &val)) {
-                vec.push_back(val);
-            }
-        }
-        g_TrinityInterfaces->cell_fieldenum_dispose(etor);
-    } while (false);
-
-    return vec;
-}

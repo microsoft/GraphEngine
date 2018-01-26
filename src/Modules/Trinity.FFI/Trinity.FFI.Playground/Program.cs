@@ -9,6 +9,8 @@ namespace Trinity.FFI.Playground
         static void Main(string[] args)
         {
             Console.WriteLine(typeof(PythonRuntimeProvider).Name);
+            FFIConfig.Instance.ProgramDirectory = Environment.CurrentDirectory;
+            Console.WriteLine(Environment.CurrentDirectory);
             TrinityServer server = new TrinityServer();
             server.Start();
         }

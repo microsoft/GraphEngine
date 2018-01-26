@@ -45,14 +45,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
-    <OutDir>$(SolutionDir)..\..\..\bin</OutDir>
+    <OutDir>$(ProjectDir)..\..\..\..\bin</OutDir>
     <TargetName>trinity_ffi</TargetName>
     <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
-    <OutDir>$(SolutionDir)..\..\..\bin</OutDir>
+    <OutDir>$(ProjectDir)..\..\..\..\bin</OutDir>
     <TargetName>trinity_ffi</TargetName>
     <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
   </PropertyGroup>

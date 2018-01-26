@@ -3004,11 +3004,11 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define SWIGTYPE_p_CellAccessOptions swig_types[0]
-#define SWIGTYPE_p_TCell swig_types[1]
-#define SWIGTYPE_p_TRINITY_INTERFACES swig_types[2]
-#define SWIGTYPE_p_char swig_types[3]
-#define SWIGTYPE_p_int32_t swig_types[4]
+#define SWIGTYPE_p_Cell swig_types[0]
+#define SWIGTYPE_p_CellAccessOptions swig_types[1]
+#define SWIGTYPE_p_TCell swig_types[2]
+#define SWIGTYPE_p_TRINITY_INTERFACES swig_types[3]
+#define SWIGTYPE_p_char swig_types[4]
 #define SWIGTYPE_p_int64_t swig_types[5]
 #define SWIGTYPE_p_std__vectorT_char_p_t swig_types[6]
 static swig_type_info *swig_types[8];
@@ -3122,13 +3122,6 @@ namespace swig {
 
 
 static TRINITY_INTERFACES* g_TrinityInterfaces;
-
-
-SWIGINTERNINLINE PyObject*
-  SWIG_From_bool  (bool value)
-{
-  return PyBool_FromLong(value ? 1 : 0);
-}
 
 
 SWIGINTERN swig_type_info*
@@ -3295,6 +3288,20 @@ SWIG_FromCharPtr(const char *cptr)
   return SWIG_FromCharPtrAndSize(cptr, (cptr ? strlen(cptr) : 0));
 }
 
+
+SWIGINTERNINLINE PyObject*
+  SWIG_From_int  (int value)
+{
+  return PyInt_FromLong((long) value);
+}
+
+
+SWIGINTERNINLINE PyObject*
+  SWIG_From_bool  (bool value)
+{
+  return PyBool_FromLong(value ? 1 : 0);
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -3333,13 +3340,345 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_new_Cell(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  TCell arg1 ;
+  void *argp1 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  Cell *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_Cell",&obj0)) SWIG_fail;
+  {
+    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_TCell,  0  | 0);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_Cell" "', argument " "1"" of type '" "TCell""'"); 
+    }  
+    if (!argp1) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_Cell" "', argument " "1"" of type '" "TCell""'");
+    } else {
+      TCell * temp = reinterpret_cast< TCell * >(argp1);
+      arg1 = *temp;
+      if (SWIG_IsNewObj(res1)) delete temp;
+    }
+  }
+  result = (Cell *)new Cell(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Cell, SWIG_POINTER_NEW |  0 );
+  delete result;
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Cell_m_cell_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Cell *arg1 = (Cell *) 0 ;
+  TCell arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Cell_m_cell_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Cell, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Cell_m_cell_set" "', argument " "1"" of type '" "Cell *""'"); 
+  }
+  arg1 = reinterpret_cast< Cell * >(argp1);
+  {
+    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_TCell,  0  | 0);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Cell_m_cell_set" "', argument " "2"" of type '" "TCell""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Cell_m_cell_set" "', argument " "2"" of type '" "TCell""'");
+    } else {
+      TCell * temp = reinterpret_cast< TCell * >(argp2);
+      arg2 = *temp;
+      if (SWIG_IsNewObj(res2)) delete temp;
+    }
+  }
+  if (arg1) (arg1)->m_cell = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Cell_m_cell_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Cell *arg1 = (Cell *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  TCell result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Cell_m_cell_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Cell, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Cell_m_cell_get" "', argument " "1"" of type '" "Cell *""'"); 
+  }
+  arg1 = reinterpret_cast< Cell * >(argp1);
+  result =  ((arg1)->m_cell);
+  resultobj = SWIG_NewPointerObj((new TCell(static_cast< const TCell& >(result))), SWIGTYPE_p_TCell, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Cell_GetField(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Cell *arg1 = (Cell *) 0 ;
+  char *arg2 = (char *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  char *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Cell_GetField",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Cell, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Cell_GetField" "', argument " "1"" of type '" "Cell *""'"); 
+  }
+  arg1 = reinterpret_cast< Cell * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Cell_GetField" "', argument " "2"" of type '" "char *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  result = (char *)(arg1)->GetField(arg2);
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Cell_SetField(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Cell *arg1 = (Cell *) 0 ;
+  char *arg2 = (char *) 0 ;
+  char *arg3 = (char *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  int res3 ;
+  char *buf3 = 0 ;
+  int alloc3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:Cell_SetField",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Cell, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Cell_SetField" "', argument " "1"" of type '" "Cell *""'"); 
+  }
+  arg1 = reinterpret_cast< Cell * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Cell_SetField" "', argument " "2"" of type '" "char *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  res3 = SWIG_AsCharPtrAndSize(obj2, &buf3, NULL, &alloc3);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Cell_SetField" "', argument " "3"" of type '" "char *""'");
+  }
+  arg3 = reinterpret_cast< char * >(buf3);
+  (arg1)->SetField(arg2,arg3);
+  resultobj = SWIG_Py_Void();
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Cell_AppendField(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Cell *arg1 = (Cell *) 0 ;
+  char *arg2 = (char *) 0 ;
+  char *arg3 = (char *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  int res3 ;
+  char *buf3 = 0 ;
+  int alloc3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:Cell_AppendField",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Cell, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Cell_AppendField" "', argument " "1"" of type '" "Cell *""'"); 
+  }
+  arg1 = reinterpret_cast< Cell * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Cell_AppendField" "', argument " "2"" of type '" "char *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  res3 = SWIG_AsCharPtrAndSize(obj2, &buf3, NULL, &alloc3);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Cell_AppendField" "', argument " "3"" of type '" "char *""'");
+  }
+  arg3 = reinterpret_cast< char * >(buf3);
+  (arg1)->AppendField(arg2,arg3);
+  resultobj = SWIG_Py_Void();
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Cell_RemoveField(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Cell *arg1 = (Cell *) 0 ;
+  char *arg2 = (char *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Cell_RemoveField",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Cell, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Cell_RemoveField" "', argument " "1"" of type '" "Cell *""'"); 
+  }
+  arg1 = reinterpret_cast< Cell * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Cell_RemoveField" "', argument " "2"" of type '" "char *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  (arg1)->RemoveField(arg2);
+  resultobj = SWIG_Py_Void();
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Cell_HasField(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Cell *arg1 = (Cell *) 0 ;
+  char *arg2 = (char *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Cell_HasField",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Cell, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Cell_HasField" "', argument " "1"" of type '" "Cell *""'"); 
+  }
+  arg1 = reinterpret_cast< Cell * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Cell_HasField" "', argument " "2"" of type '" "char *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  result = (int)(arg1)->HasField(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_Cell(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Cell *arg1 = (Cell *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_Cell",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Cell, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_Cell" "', argument " "1"" of type '" "Cell *""'"); 
+  }
+  arg1 = reinterpret_cast< Cell * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Cell_GetFieldNames(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Cell *arg1 = (Cell *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  std::vector< char * > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Cell_GetFieldNames",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Cell, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Cell_GetFieldNames" "', argument " "1"" of type '" "Cell *""'"); 
+  }
+  arg1 = reinterpret_cast< Cell * >(argp1);
+  result = (arg1)->GetFieldNames();
+  resultobj = SWIG_NewPointerObj((new std::vector< char * >(static_cast< const std::vector< char * >& >(result))), SWIGTYPE_p_std__vectorT_char_p_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *Cell_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Cell, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
 SWIGINTERN PyObject *_wrap_LoadCell(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   int64_t arg1 ;
   void *argp1 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
-  TCell result;
+  Cell *result = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)"O:LoadCell",&obj0)) SWIG_fail;
   {
@@ -3355,8 +3694,9 @@ SWIGINTERN PyObject *_wrap_LoadCell(PyObject *SWIGUNUSEDPARM(self), PyObject *ar
       if (SWIG_IsNewObj(res1)) delete temp;
     }
   }
-  result = LoadCell(arg1);
-  resultobj = SWIG_NewPointerObj((new TCell(static_cast< const TCell& >(result))), SWIGTYPE_p_TCell, SWIG_POINTER_OWN |  0 );
+  result = (Cell *)LoadCell(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Cell, SWIG_POINTER_OWN |  0 );
+  delete result;
   return resultobj;
 fail:
   return NULL;
@@ -3366,10 +3706,10 @@ fail:
 SWIGINTERN PyObject *_wrap_SaveCell(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   int64_t arg1 ;
-  TCell arg2 ;
+  Cell *arg2 = (Cell *) 0 ;
   void *argp1 ;
   int res1 = 0 ;
-  void *argp2 ;
+  void *argp2 = 0 ;
   int res2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
@@ -3389,19 +3729,11 @@ SWIGINTERN PyObject *_wrap_SaveCell(PyObject *SWIGUNUSEDPARM(self), PyObject *ar
       if (SWIG_IsNewObj(res1)) delete temp;
     }
   }
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_TCell,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SaveCell" "', argument " "2"" of type '" "TCell""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SaveCell" "', argument " "2"" of type '" "TCell""'");
-    } else {
-      TCell * temp = reinterpret_cast< TCell * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_Cell, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SaveCell" "', argument " "2"" of type '" "Cell *""'"); 
   }
+  arg2 = reinterpret_cast< Cell * >(argp2);
   result = (bool)SaveCell(arg1,arg2);
   resultobj = SWIG_From_bool(static_cast< bool >(result));
   return resultobj;
@@ -3413,11 +3745,11 @@ fail:
 SWIGINTERN PyObject *_wrap_SaveCell2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   int64_t arg1 ;
-  TCell arg2 ;
+  Cell *arg2 = (Cell *) 0 ;
   CellAccessOptions arg3 ;
   void *argp1 ;
   int res1 = 0 ;
-  void *argp2 ;
+  void *argp2 = 0 ;
   int res2 = 0 ;
   void *argp3 ;
   int res3 = 0 ;
@@ -3440,19 +3772,11 @@ SWIGINTERN PyObject *_wrap_SaveCell2(PyObject *SWIGUNUSEDPARM(self), PyObject *a
       if (SWIG_IsNewObj(res1)) delete temp;
     }
   }
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_TCell,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SaveCell2" "', argument " "2"" of type '" "TCell""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SaveCell2" "', argument " "2"" of type '" "TCell""'");
-    } else {
-      TCell * temp = reinterpret_cast< TCell * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_Cell, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SaveCell2" "', argument " "2"" of type '" "Cell *""'"); 
   }
+  arg2 = reinterpret_cast< Cell * >(argp2);
   {
     res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_CellAccessOptions,  0  | 0);
     if (!SWIG_IsOK(res3)) {
@@ -3481,7 +3805,7 @@ SWIGINTERN PyObject *_wrap_NewCell(PyObject *SWIGUNUSEDPARM(self), PyObject *arg
   char *buf1 = 0 ;
   int alloc1 = 0 ;
   PyObject * obj0 = 0 ;
-  TCell result;
+  Cell *result = 0 ;
   
   if (!PyArg_ParseTuple(args,(char *)"O:NewCell",&obj0)) SWIG_fail;
   res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
@@ -3489,302 +3813,13 @@ SWIGINTERN PyObject *_wrap_NewCell(PyObject *SWIGUNUSEDPARM(self), PyObject *arg
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NewCell" "', argument " "1"" of type '" "char *""'");
   }
   arg1 = reinterpret_cast< char * >(buf1);
-  result = NewCell(arg1);
-  resultobj = SWIG_NewPointerObj((new TCell(static_cast< const TCell& >(result))), SWIGTYPE_p_TCell, SWIG_POINTER_OWN |  0 );
+  result = (Cell *)NewCell(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Cell, SWIG_POINTER_OWN |  0 );
   if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  delete result;
   return resultobj;
 fail:
   if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_CellGetField(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  TCell arg1 ;
-  char *arg2 = (char *) 0 ;
-  void *argp1 ;
-  int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  char *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:CellGetField",&obj0,&obj1)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_TCell,  0  | 0);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CellGetField" "', argument " "1"" of type '" "TCell""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "CellGetField" "', argument " "1"" of type '" "TCell""'");
-    } else {
-      TCell * temp = reinterpret_cast< TCell * >(argp1);
-      arg1 = *temp;
-      if (SWIG_IsNewObj(res1)) delete temp;
-    }
-  }
-  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CellGetField" "', argument " "2"" of type '" "char *""'");
-  }
-  arg2 = reinterpret_cast< char * >(buf2);
-  result = (char *)CellGetField(arg1,arg2);
-  resultobj = SWIG_FromCharPtr((const char *)result);
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
-  return resultobj;
-fail:
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_CellSetField(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  TCell arg1 ;
-  char *arg2 = (char *) 0 ;
-  char *arg3 = (char *) 0 ;
-  void *argp1 ;
-  int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  int res3 ;
-  char *buf3 = 0 ;
-  int alloc3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:CellSetField",&obj0,&obj1,&obj2)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_TCell,  0  | 0);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CellSetField" "', argument " "1"" of type '" "TCell""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "CellSetField" "', argument " "1"" of type '" "TCell""'");
-    } else {
-      TCell * temp = reinterpret_cast< TCell * >(argp1);
-      arg1 = *temp;
-      if (SWIG_IsNewObj(res1)) delete temp;
-    }
-  }
-  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CellSetField" "', argument " "2"" of type '" "char *""'");
-  }
-  arg2 = reinterpret_cast< char * >(buf2);
-  res3 = SWIG_AsCharPtrAndSize(obj2, &buf3, NULL, &alloc3);
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CellSetField" "', argument " "3"" of type '" "char *""'");
-  }
-  arg3 = reinterpret_cast< char * >(buf3);
-  CellSetField(arg1,arg2,arg3);
-  resultobj = SWIG_Py_Void();
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
-  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
-  return resultobj;
-fail:
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
-  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_CellAppendField(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  TCell arg1 ;
-  char *arg2 = (char *) 0 ;
-  char *arg3 = (char *) 0 ;
-  void *argp1 ;
-  int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  int res3 ;
-  char *buf3 = 0 ;
-  int alloc3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:CellAppendField",&obj0,&obj1,&obj2)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_TCell,  0  | 0);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CellAppendField" "', argument " "1"" of type '" "TCell""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "CellAppendField" "', argument " "1"" of type '" "TCell""'");
-    } else {
-      TCell * temp = reinterpret_cast< TCell * >(argp1);
-      arg1 = *temp;
-      if (SWIG_IsNewObj(res1)) delete temp;
-    }
-  }
-  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CellAppendField" "', argument " "2"" of type '" "char *""'");
-  }
-  arg2 = reinterpret_cast< char * >(buf2);
-  res3 = SWIG_AsCharPtrAndSize(obj2, &buf3, NULL, &alloc3);
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "CellAppendField" "', argument " "3"" of type '" "char *""'");
-  }
-  arg3 = reinterpret_cast< char * >(buf3);
-  CellAppendField(arg1,arg2,arg3);
-  resultobj = SWIG_Py_Void();
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
-  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
-  return resultobj;
-fail:
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
-  if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_CellRemoveField(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  TCell arg1 ;
-  char *arg2 = (char *) 0 ;
-  void *argp1 ;
-  int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:CellRemoveField",&obj0,&obj1)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_TCell,  0  | 0);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CellRemoveField" "', argument " "1"" of type '" "TCell""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "CellRemoveField" "', argument " "1"" of type '" "TCell""'");
-    } else {
-      TCell * temp = reinterpret_cast< TCell * >(argp1);
-      arg1 = *temp;
-      if (SWIG_IsNewObj(res1)) delete temp;
-    }
-  }
-  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CellRemoveField" "', argument " "2"" of type '" "char *""'");
-  }
-  arg2 = reinterpret_cast< char * >(buf2);
-  CellRemoveField(arg1,arg2);
-  resultobj = SWIG_Py_Void();
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
-  return resultobj;
-fail:
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_CellHasField(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  TCell arg1 ;
-  char *arg2 = (char *) 0 ;
-  void *argp1 ;
-  int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  int32_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:CellHasField",&obj0,&obj1)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_TCell,  0  | 0);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CellHasField" "', argument " "1"" of type '" "TCell""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "CellHasField" "', argument " "1"" of type '" "TCell""'");
-    } else {
-      TCell * temp = reinterpret_cast< TCell * >(argp1);
-      arg1 = *temp;
-      if (SWIG_IsNewObj(res1)) delete temp;
-    }
-  }
-  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CellHasField" "', argument " "2"" of type '" "char *""'");
-  }
-  arg2 = reinterpret_cast< char * >(buf2);
-  result = CellHasField(arg1,arg2);
-  resultobj = SWIG_NewPointerObj((new int32_t(static_cast< const int32_t& >(result))), SWIGTYPE_p_int32_t, SWIG_POINTER_OWN |  0 );
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
-  return resultobj;
-fail:
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_CellDispose(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  TCell arg1 ;
-  void *argp1 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:CellDispose",&obj0)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_TCell,  0  | 0);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CellDispose" "', argument " "1"" of type '" "TCell""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "CellDispose" "', argument " "1"" of type '" "TCell""'");
-    } else {
-      TCell * temp = reinterpret_cast< TCell * >(argp1);
-      arg1 = *temp;
-      if (SWIG_IsNewObj(res1)) delete temp;
-    }
-  }
-  CellDispose(arg1);
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_CellGetFieldNames(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  TCell arg1 ;
-  void *argp1 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  std::vector< char * > result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:CellGetFieldNames",&obj0)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_TCell,  0  | 0);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CellGetFieldNames" "', argument " "1"" of type '" "TCell""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "CellGetFieldNames" "', argument " "1"" of type '" "TCell""'");
-    } else {
-      TCell * temp = reinterpret_cast< TCell * >(argp1);
-      arg1 = *temp;
-      if (SWIG_IsNewObj(res1)) delete temp;
-    }
-  }
-  result = CellGetFieldNames(arg1);
-  resultobj = SWIG_NewPointerObj((new std::vector< char * >(static_cast< const std::vector< char * >& >(result))), SWIGTYPE_p_std__vectorT_char_p_t, SWIG_POINTER_OWN |  0 );
-  return resultobj;
-fail:
   return NULL;
 }
 
@@ -3792,55 +3827,59 @@ fail:
 static PyMethodDef SwigMethods[] = {
 	 { (char *)"SWIG_PyInstanceMethod_New", (PyCFunction)SWIG_PyInstanceMethod_New, METH_O, NULL},
 	 { (char *)"Init", _wrap_Init, METH_VARARGS, NULL},
+	 { (char *)"new_Cell", _wrap_new_Cell, METH_VARARGS, NULL},
+	 { (char *)"Cell_m_cell_set", _wrap_Cell_m_cell_set, METH_VARARGS, NULL},
+	 { (char *)"Cell_m_cell_get", _wrap_Cell_m_cell_get, METH_VARARGS, NULL},
+	 { (char *)"Cell_GetField", _wrap_Cell_GetField, METH_VARARGS, NULL},
+	 { (char *)"Cell_SetField", _wrap_Cell_SetField, METH_VARARGS, NULL},
+	 { (char *)"Cell_AppendField", _wrap_Cell_AppendField, METH_VARARGS, NULL},
+	 { (char *)"Cell_RemoveField", _wrap_Cell_RemoveField, METH_VARARGS, NULL},
+	 { (char *)"Cell_HasField", _wrap_Cell_HasField, METH_VARARGS, NULL},
+	 { (char *)"delete_Cell", _wrap_delete_Cell, METH_VARARGS, NULL},
+	 { (char *)"Cell_GetFieldNames", _wrap_Cell_GetFieldNames, METH_VARARGS, NULL},
+	 { (char *)"Cell_swigregister", Cell_swigregister, METH_VARARGS, NULL},
 	 { (char *)"LoadCell", _wrap_LoadCell, METH_VARARGS, NULL},
 	 { (char *)"SaveCell", _wrap_SaveCell, METH_VARARGS, NULL},
 	 { (char *)"SaveCell2", _wrap_SaveCell2, METH_VARARGS, NULL},
 	 { (char *)"NewCell", _wrap_NewCell, METH_VARARGS, NULL},
-	 { (char *)"CellGetField", _wrap_CellGetField, METH_VARARGS, NULL},
-	 { (char *)"CellSetField", _wrap_CellSetField, METH_VARARGS, NULL},
-	 { (char *)"CellAppendField", _wrap_CellAppendField, METH_VARARGS, NULL},
-	 { (char *)"CellRemoveField", _wrap_CellRemoveField, METH_VARARGS, NULL},
-	 { (char *)"CellHasField", _wrap_CellHasField, METH_VARARGS, NULL},
-	 { (char *)"CellDispose", _wrap_CellDispose, METH_VARARGS, NULL},
-	 { (char *)"CellGetFieldNames", _wrap_CellGetFieldNames, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
+static swig_type_info _swigt__p_Cell = {"_p_Cell", "Cell *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_CellAccessOptions = {"_p_CellAccessOptions", "CellAccessOptions *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_TCell = {"_p_TCell", "TCell *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_TRINITY_INTERFACES = {"_p_TRINITY_INTERFACES", "TRINITY_INTERFACES *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_int32_t = {"_p_int32_t", "int32_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_int64_t = {"_p_int64_t", "int64_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_char_p_t = {"_p_std__vectorT_char_p_t", "std::vector< char * > *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
+  &_swigt__p_Cell,
   &_swigt__p_CellAccessOptions,
   &_swigt__p_TCell,
   &_swigt__p_TRINITY_INTERFACES,
   &_swigt__p_char,
-  &_swigt__p_int32_t,
   &_swigt__p_int64_t,
   &_swigt__p_std__vectorT_char_p_t,
 };
 
+static swig_cast_info _swigc__p_Cell[] = {  {&_swigt__p_Cell, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_CellAccessOptions[] = {  {&_swigt__p_CellAccessOptions, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_TCell[] = {  {&_swigt__p_TCell, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_TRINITY_INTERFACES[] = {  {&_swigt__p_TRINITY_INTERFACES, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_int32_t[] = {  {&_swigt__p_int32_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_int64_t[] = {  {&_swigt__p_int64_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_char_p_t[] = {  {&_swigt__p_std__vectorT_char_p_t, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
+  _swigc__p_Cell,
   _swigc__p_CellAccessOptions,
   _swigc__p_TCell,
   _swigc__p_TRINITY_INTERFACES,
   _swigc__p_char,
-  _swigc__p_int32_t,
   _swigc__p_int64_t,
   _swigc__p_std__vectorT_char_p_t,
 };

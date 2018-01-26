@@ -10,4 +10,8 @@
     <PackageReference Include="GraphEngine.FFI.Python" Version="1.0.9083" />
   </ItemGroup>
 
+  <ItemGroup>
+    <TslCodegen Include="my_types.tsl" />
+  </ItemGroup>
+
 </Project>
