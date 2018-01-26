@@ -38,12 +38,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\lib\trinity_ffi.dll">
+    <Content Include="..\..\..\..\bin\trinity_ffi.dll">
       <PackagePath>lib\netstandard2.0</PackagePath>
-    </Content>
-    <None Include="..\lib\trinity_ffi.dll" Link="trinity_ffi.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
 
 </Project>

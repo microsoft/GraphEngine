@@ -10,7 +10,7 @@ ge_module = Extension('_GraphEngine',
                            include_dirs = ['../Trinity.FFI.Native',
                                            '../../../Trinity.C/include'],
                            libraries = ['trinity_ffi'],
-                           library_dirs = ['../lib'],
+                           library_dirs = ['../../../../bin'],
                            )
  
 setup (name = 'GraphEngine',
@@ -18,5 +18,5 @@ setup (name = 'GraphEngine',
        author      = "Microsoft Graph Engine Team",
        description = """GraphEngine bindings for Python""",
        ext_modules = [ge_module],
-       py_modules = ["graph_engine"],
+       py_modules = ["GraphEngine"],
 )

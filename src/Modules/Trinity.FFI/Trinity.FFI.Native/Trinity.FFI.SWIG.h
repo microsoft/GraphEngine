@@ -69,7 +69,7 @@ void CellDispose(TCell cell)
     g_TrinityInterfaces->cell_dispose(cell);
 }
 
-std::vector<char*>& CellGetFieldNames(TCell cell)
+std::vector<char*> CellGetFieldNames(TCell cell)
 {
     std::vector<char*> vec;
     do

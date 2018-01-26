@@ -3765,7 +3765,7 @@ SWIGINTERN PyObject *_wrap_CellGetFieldNames(PyObject *SWIGUNUSEDPARM(self), PyO
   void *argp1 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
-  std::vector< char * > *result = 0 ;
+  std::vector< char * > result;
   
   if (!PyArg_ParseTuple(args,(char *)"O:CellGetFieldNames",&obj0)) SWIG_fail;
   {
@@ -3781,8 +3781,8 @@ SWIGINTERN PyObject *_wrap_CellGetFieldNames(PyObject *SWIGUNUSEDPARM(self), PyO
       if (SWIG_IsNewObj(res1)) delete temp;
     }
   }
-  result = (std::vector< char * > *) &CellGetFieldNames(arg1);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_char_p_t, 0 |  0 );
+  result = CellGetFieldNames(arg1);
+  resultobj = SWIG_NewPointerObj((new std::vector< char * >(static_cast< const std::vector< char * >& >(result))), SWIGTYPE_p_std__vectorT_char_p_t, SWIG_POINTER_OWN |  0 );
   return resultobj;
 fail:
   return NULL;

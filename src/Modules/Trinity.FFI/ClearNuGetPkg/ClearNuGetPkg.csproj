@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{06D172A0-9B3F-4A20-8FD3-C7D86EFB9420}</ProjectGuid>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Target Name="Build">
+  </Target>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\pythonnet\src\runtime\Python.Runtime.15.csproj">
+      <Project>{b24cabf0-12e0-4ff1-82c7-3e157ef35fbd}</Project>
+      <Name>Python.Runtime.15</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trinity.FFI.Playground\Trinity.FFI.Playground.csproj">
+      <Project>{47d38567-cde4-468e-9b93-93a998ca6749}</Project>
+      <Name>Trinity.FFI.Playground</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trinity.FFI.Python.UnitTests\Trinity.FFI.Python.UnitTests.csproj">
+      <Project>{f06891dd-5a38-481b-a676-d800baec0c88}</Project>
+      <Name>Trinity.FFI.Python.UnitTests</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trinity.FFI.Python\Trinity.FFI.Python.csproj">
+      <Project>{df46abd1-835d-4dd9-82d5-565a2263e89b}</Project>
+      <Name>Trinity.FFI.Python</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trinity.FFI.UnitTests\Trinity.FFI.UnitTests.csproj">
+      <Project>{82dbc14a-6eac-44a8-827d-41298ed29a2b}</Project>
+      <Name>Trinity.FFI.UnitTests</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trinity.FFI\Trinity.FFI.csproj">
+      <Project>{ba71db0a-efdf-44af-95ae-0583ceaebd2a}</Project>
+      <Name>Trinity.FFI</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Target Name="ClearNugetPackageCache" AfterTargets="Build">
+    <Exec Command="nuget locals global-packages -clear" ContinueOnError="true" />
+  </Target>
+</Project>
