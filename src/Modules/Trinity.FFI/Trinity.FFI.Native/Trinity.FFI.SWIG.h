@@ -85,17 +85,17 @@ Cell* LoadCell(int64_t cellId)
 	}
 }
 
-bool SaveCell(int64_t cellId, Cell* pcell)
+bool SaveCell_1(int64_t cellId, Cell* pcell)
 {
 	return (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->local_savecell_1(cellId, pcell->m_cell));
 }
 
-bool SaveCell2(int64_t cellId, Cell* pcell, CellAccessOptions options)
+bool SaveCell_2(int64_t cellId, Cell* pcell, CellAccessOptions options)
 {
 	return (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->local_savecell_2(cellId, options, pcell->m_cell));
 }
 
-Cell* NewCell(char* cellType)
+Cell* NewCell_1(char* cellType)
 {
 	Cell* pcell = new Cell(0);
 	if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->newcell_1(cellType, &pcell->m_cell))
@@ -107,3 +107,26 @@ Cell* NewCell(char* cellType)
 	}
 }
 
+Cell* NewCell_2(long long cellId, char* cellType)
+{
+	Cell* pcell = new Cell(0);
+	if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->newcell_2(cellId, cellType, &pcell->m_cell))
+		return pcell;
+	else
+	{
+		delete pcell;
+		return nullptr;
+	}
+}
+
+Cell* NewCell_3(char* cellType, char* cellContent)
+{
+	Cell* pcell = new Cell(0);
+	if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->newcell_3(cellType, cellContent, &pcell->m_cell))
+		return pcell;
+	else
+	{
+		delete pcell;
+		return nullptr;
+	}
+}
