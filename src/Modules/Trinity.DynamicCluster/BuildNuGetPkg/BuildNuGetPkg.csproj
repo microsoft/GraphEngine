@@ -6,13 +6,23 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <Target Name="Build">
+  <Target Name="BuildTrinityClient">
+    <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe pack $(ProjectDir)..\Trinity.Client\Trinity.Client.csproj -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis -Properties Configuration=Release;Platform=AnyCPU" />
+  </Target>
+  <Target Name="BuildDynamicCluster" DependsOnTargets="BuildTrinityClient">
     <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe pack $(ProjectDir)..\Trinity.DynamicCluster\Trinity.DynamicCluster.csproj -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis -Properties Configuration=Release;Platform=AnyCPU" />
-    <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe pack $(ProjectDir)..\Trinity.Azure.Storage\Trinity.Azure.Storage.csproj -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis -Properties Configuration=Release;Platform=AnyCPU" />
+  </Target>
+  <Target Name="BuildServiceFabric" DependsOnTargets="BuildDynamicCluster">
     <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe pack $(ProjectDir)..\Trinity.ServiceFabric.Infrastructure\Trinity.ServiceFabric.Infrastructure.csproj -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis -Properties Configuration=Release;Platform=x64" />
+  </Target>
+  <Target Name="BuildAzureStorage" DependsOnTargets="BuildDynamicCluster">
+    <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe pack $(ProjectDir)..\Trinity.Azure.Storage\Trinity.Azure.Storage.csproj -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis -Properties Configuration=Release;Platform=AnyCPU" />
+  </Target>
+  <Target Name="BuildServiceFabricListeners" DependsOnTargets="BuildServiceFabric">
     <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe pack $(ProjectDir)..\Trinity.ServiceFabric.Listeners\Trinity.ServiceFabric.ListenerRuntime.csproj -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis -Properties Configuration=Release;Platform=x64" />
   </Target>
-  <Target Name="Rebuild" DependsOnTargets="Build"/>
+  <Target Name="Build" DependsOnTargets="BuildTrinityClient;BuildDynamicCluster;BuildServiceFabric;BuildAzureStorage;BuildServiceFabricListeners" />
+  <Target Name="Rebuild" DependsOnTargets="Build" />
   <Target Name="Clean">
     <ItemGroup>
       <CachedPackages Include="$(ProjectDir)..\packages\GraphEngine*\**\*" />
@@ -21,7 +31,7 @@
       <CachedPackageDirs Include="$(ProjectDir)..\packages\GraphEngine*" />
     </ItemGroup>
     <Message Importance="high" Text="Deleting cached packages" />
-    <Delete ContinueOnError="true" Files="@(CachedPackages)"/>
+    <Delete ContinueOnError="true" Files="@(CachedPackages)" />
     <RemoveDir Directories="@(CachedPackageDirs)" />
   </Target>
   <ItemGroup>
@@ -29,5 +39,31 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.Azure.Storage\Trinity.Azure.Storage.csproj">
+      <Project>{7673502e-80b7-46e7-aa78-ac7e6bab556c}</Project>
+      <Name>Trinity.Azure.Storage</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trinity.Client\Trinity.Client.csproj">
+      <Project>{2c7e6587-91c9-4dd9-91fe-bb7b6dbfda42}</Project>
+      <Name>Trinity.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trinity.DynamicCluster\Trinity.DynamicCluster.csproj">
+      <Project>{26db9c05-8b53-409f-a1c9-3fd30cfec35c}</Project>
+      <Name>Trinity.DynamicCluster</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trinity.ServiceFabric.Client\Trinity.ServiceFabric.Client.csproj">
+      <Project>{b38f7608-14fc-4dfd-b1cf-62b7bc3e0889}</Project>
+      <Name>Trinity.ServiceFabric.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trinity.ServiceFabric.Infrastructure\Trinity.ServiceFabric.Infrastructure.csproj">
+      <Project>{3433f5a8-dd7d-44d4-a1bb-215d1693dcc7}</Project>
+      <Name>Trinity.ServiceFabric.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Trinity.ServiceFabric.Listeners\Trinity.ServiceFabric.ListenerRuntime.csproj">
+      <Project>{298fc3d1-ebee-4ef7-a6c9-c7241edda8f6}</Project>
+      <Name>Trinity.ServiceFabric.ListenerRuntime</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
