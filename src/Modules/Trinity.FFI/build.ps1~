@@ -14,7 +14,7 @@ $SOL_ROOT  = "$REPO_ROOT\src\Modules\Trinity.FFI"
 echo "Cleanning caches"
 if ($true) {
     Invoke-Command -ScriptBlock {
-        $package_loc = (& $env:NUGET_EXE locals global-packages -list)
+        $package_loc = ($env:NUGET_EXE locals global-packages -list)
         $package_loc = $package_loc.Substring(17)
         Get-ChildItem $package_loc -Filter "graphengine*" | Remove-Item -Recurse -Force -ErrorAction Ignore
         Remove-Item -Recurse -Force $REPO_ROOT\bin\lib.win-amd64-3.6 -ErrorAction Ignore
