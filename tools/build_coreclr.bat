@@ -4,7 +4,6 @@ if ["%REPO_ROOT%"] == [""] (
 
 call "%REPO_ROOT%\tools\setenv.bat"
 if %errorlevel% neq 0 exit /b %errorlevel%
-
 setlocal
 set TRINITY_CORE_SLN=%REPO_ROOT%\src\Trinity.Core\Trinity.Core.NETStandard.sln
 
