@@ -71,8 +71,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <CustomBuildStep>
-      <Command>python.exe setup.py build -b "$(ProjectDir)..\..\..\..\bin"</Command>
-      <Outputs>%(Outputs);$(ProjectDir)..\..\..\..\bin\lib.win-amd64-3.6\GraphEngine.py;$(ProjectDir)..\..\..\..\bin\lib.win-amd64-3.6\_GraphEngine.cp36-win_amd64.pyd</Outputs>
+      <Command>
+      </Command>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -95,8 +97,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <CustomBuildStep>
-      <Command>python.exe setup.py build -b "$(ProjectDir)..\..\..\..\bin"</Command>
-      <Outputs>%(Outputs);$(ProjectDir)..\..\..\..\bin\lib.win-amd64-3.6\GraphEngine.py;$(ProjectDir)..\..\..\..\bin\lib.win-amd64-3.6\_GraphEngine.cp36-win_amd64.pyd</Outputs>
+      <Command>
+      </Command>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -109,14 +113,15 @@
   <ItemGroup>
     <CustomBuild Include="Trinity.FFI.SWIG.i">
       <FileType>SWIG</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">swig.exe -c++ -python "%(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(InputName)_wrap.cxx;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">swig.exe -c++ -python "%(FullPath)"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(InputName)_wrap.cxx;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </Outputs>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="setup.py" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

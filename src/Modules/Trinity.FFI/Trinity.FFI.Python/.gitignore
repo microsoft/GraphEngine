@@ -1,0 +1,4 @@
+.spyproject\
+**.idea\
+**.pyc
+**__pycahce__\

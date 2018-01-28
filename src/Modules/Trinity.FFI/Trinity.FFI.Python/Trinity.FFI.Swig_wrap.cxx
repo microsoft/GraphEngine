@@ -3302,6 +3302,186 @@ SWIGINTERNINLINE PyObject*
   return PyBool_FromLong(value ? 1 : 0);
 }
 
+
+SWIGINTERN int
+SWIG_AsVal_double (PyObject *obj, double *val)
+{
+  int res = SWIG_TypeError;
+  if (PyFloat_Check(obj)) {
+    if (val) *val = PyFloat_AsDouble(obj);
+    return SWIG_OK;
+#if PY_VERSION_HEX < 0x03000000
+  } else if (PyInt_Check(obj)) {
+    if (val) *val = PyInt_AsLong(obj);
+    return SWIG_OK;
+#endif
+  } else if (PyLong_Check(obj)) {
+    double v = PyLong_AsDouble(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = v;
+      return SWIG_OK;
+    } else {
+      PyErr_Clear();
+    }
+  }
+#ifdef SWIG_PYTHON_CAST_MODE
+  {
+    int dispatch = 0;
+    double d = PyFloat_AsDouble(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = d;
+      return SWIG_AddCast(SWIG_OK);
+    } else {
+      PyErr_Clear();
+    }
+    if (!dispatch) {
+      long v = PyLong_AsLong(obj);
+      if (!PyErr_Occurred()) {
+	if (val) *val = v;
+	return SWIG_AddCast(SWIG_AddCast(SWIG_OK));
+      } else {
+	PyErr_Clear();
+      }
+    }
+  }
+#endif
+  return res;
+}
+
+
+#include <float.h>
+
+
+#include <math.h>
+
+
+SWIGINTERNINLINE int
+SWIG_CanCastAsInteger(double *d, double min, double max) {
+  double x = *d;
+  if ((min <= x && x <= max)) {
+   double fx = floor(x);
+   double cx = ceil(x);
+   double rd =  ((x - fx) < 0.5) ? fx : cx; /* simple rint */
+   if ((errno == EDOM) || (errno == ERANGE)) {
+     errno = 0;
+   } else {
+     double summ, reps, diff;
+     if (rd < x) {
+       diff = x - rd;
+     } else if (rd > x) {
+       diff = rd - x;
+     } else {
+       return 1;
+     }
+     summ = rd + x;
+     reps = diff/summ;
+     if (reps < 8*DBL_EPSILON) {
+       *d = rd;
+       return 1;
+     }
+   }
+  }
+  return 0;
+}
+
+
+SWIGINTERN int
+SWIG_AsVal_long (PyObject *obj, long* val)
+{
+#if PY_VERSION_HEX < 0x03000000
+  if (PyInt_Check(obj)) {
+    if (val) *val = PyInt_AsLong(obj);
+    return SWIG_OK;
+  } else
+#endif
+  if (PyLong_Check(obj)) {
+    long v = PyLong_AsLong(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = v;
+      return SWIG_OK;
+    } else {
+      PyErr_Clear();
+      return SWIG_OverflowError;
+    }
+  }
+#ifdef SWIG_PYTHON_CAST_MODE
+  {
+    int dispatch = 0;
+    long v = PyInt_AsLong(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = v;
+      return SWIG_AddCast(SWIG_OK);
+    } else {
+      PyErr_Clear();
+    }
+    if (!dispatch) {
+      double d;
+      int res = SWIG_AddCast(SWIG_AsVal_double (obj,&d));
+      if (SWIG_IsOK(res) && SWIG_CanCastAsInteger(&d, LONG_MIN, LONG_MAX)) {
+	if (val) *val = (long)(d);
+	return res;
+      }
+    }
+  }
+#endif
+  return SWIG_TypeError;
+}
+
+
+#include <limits.h>
+#if !defined(SWIG_NO_LLONG_MAX)
+# if !defined(LLONG_MAX) && defined(__GNUC__) && defined (__LONG_LONG_MAX__)
+#   define LLONG_MAX __LONG_LONG_MAX__
+#   define LLONG_MIN (-LLONG_MAX - 1LL)
+#   define ULLONG_MAX (LLONG_MAX * 2ULL + 1ULL)
+# endif
+#endif
+
+
+#if defined(LLONG_MAX) && !defined(SWIG_LONG_LONG_AVAILABLE)
+#  define SWIG_LONG_LONG_AVAILABLE
+#endif
+
+
+#ifdef SWIG_LONG_LONG_AVAILABLE
+SWIGINTERN int
+SWIG_AsVal_long_SS_long (PyObject *obj, long long *val)
+{
+  int res = SWIG_TypeError;
+  if (PyLong_Check(obj)) {
+    long long v = PyLong_AsLongLong(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = v;
+      return SWIG_OK;
+    } else {
+      PyErr_Clear();
+      res = SWIG_OverflowError;
+    }
+  } else {
+    long v;
+    res = SWIG_AsVal_long (obj,&v);
+    if (SWIG_IsOK(res)) {
+      if (val) *val = v;
+      return res;
+    }
+  }
+#ifdef SWIG_PYTHON_CAST_MODE
+  {
+    const double mant_max = 1LL << DBL_MANT_DIG;
+    const double mant_min = -mant_max;
+    double d;
+    res = SWIG_AsVal_double (obj,&d);
+    if (SWIG_IsOK(res) && SWIG_CanCastAsInteger(&d, mant_min, mant_max)) {
+      if (val) *val = (long long)(d);
+      return SWIG_AddCast(res);
+    }
+    res = SWIG_TypeError;
+  }
+#endif
+  return res;
+}
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -3703,7 +3883,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_SaveCell(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_SaveCell_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   int64_t arg1 ;
   Cell *arg2 = (Cell *) 0 ;
@@ -3715,14 +3895,14 @@ SWIGINTERN PyObject *_wrap_SaveCell(PyObject *SWIGUNUSEDPARM(self), PyObject *ar
   PyObject * obj1 = 0 ;
   bool result;
   
-  if (!PyArg_ParseTuple(args,(char *)"OO:SaveCell",&obj0,&obj1)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OO:SaveCell_1",&obj0,&obj1)) SWIG_fail;
   {
     res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_int64_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SaveCell" "', argument " "1"" of type '" "int64_t""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SaveCell_1" "', argument " "1"" of type '" "int64_t""'"); 
     }  
     if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SaveCell" "', argument " "1"" of type '" "int64_t""'");
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SaveCell_1" "', argument " "1"" of type '" "int64_t""'");
     } else {
       int64_t * temp = reinterpret_cast< int64_t * >(argp1);
       arg1 = *temp;
@@ -3731,10 +3911,10 @@ SWIGINTERN PyObject *_wrap_SaveCell(PyObject *SWIGUNUSEDPARM(self), PyObject *ar
   }
   res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_Cell, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SaveCell" "', argument " "2"" of type '" "Cell *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SaveCell_1" "', argument " "2"" of type '" "Cell *""'"); 
   }
   arg2 = reinterpret_cast< Cell * >(argp2);
-  result = (bool)SaveCell(arg1,arg2);
+  result = (bool)SaveCell_1(arg1,arg2);
   resultobj = SWIG_From_bool(static_cast< bool >(result));
   return resultobj;
 fail:
@@ -3742,7 +3922,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_SaveCell2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_SaveCell_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   int64_t arg1 ;
   Cell *arg2 = (Cell *) 0 ;
@@ -3758,14 +3938,14 @@ SWIGINTERN PyObject *_wrap_SaveCell2(PyObject *SWIGUNUSEDPARM(self), PyObject *a
   PyObject * obj2 = 0 ;
   bool result;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOO:SaveCell2",&obj0,&obj1,&obj2)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOO:SaveCell_2",&obj0,&obj1,&obj2)) SWIG_fail;
   {
     res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_int64_t,  0  | 0);
     if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SaveCell2" "', argument " "1"" of type '" "int64_t""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SaveCell_2" "', argument " "1"" of type '" "int64_t""'"); 
     }  
     if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SaveCell2" "', argument " "1"" of type '" "int64_t""'");
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SaveCell_2" "', argument " "1"" of type '" "int64_t""'");
     } else {
       int64_t * temp = reinterpret_cast< int64_t * >(argp1);
       arg1 = *temp;
@@ -3774,23 +3954,23 @@ SWIGINTERN PyObject *_wrap_SaveCell2(PyObject *SWIGUNUSEDPARM(self), PyObject *a
   }
   res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_Cell, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SaveCell2" "', argument " "2"" of type '" "Cell *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SaveCell_2" "', argument " "2"" of type '" "Cell *""'"); 
   }
   arg2 = reinterpret_cast< Cell * >(argp2);
   {
     res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_CellAccessOptions,  0  | 0);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "SaveCell2" "', argument " "3"" of type '" "CellAccessOptions""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "SaveCell_2" "', argument " "3"" of type '" "CellAccessOptions""'"); 
     }  
     if (!argp3) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SaveCell2" "', argument " "3"" of type '" "CellAccessOptions""'");
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SaveCell_2" "', argument " "3"" of type '" "CellAccessOptions""'");
     } else {
       CellAccessOptions * temp = reinterpret_cast< CellAccessOptions * >(argp3);
       arg3 = *temp;
       if (SWIG_IsNewObj(res3)) delete temp;
     }
   }
-  result = (bool)SaveCell2(arg1,arg2,arg3);
+  result = (bool)SaveCell_2(arg1,arg2,arg3);
   resultobj = SWIG_From_bool(static_cast< bool >(result));
   return resultobj;
 fail:
@@ -3798,7 +3978,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_NewCell(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_NewCell_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   char *arg1 = (char *) 0 ;
   int res1 ;
@@ -3807,19 +3987,89 @@ SWIGINTERN PyObject *_wrap_NewCell(PyObject *SWIGUNUSEDPARM(self), PyObject *arg
   PyObject * obj0 = 0 ;
   Cell *result = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:NewCell",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:NewCell_1",&obj0)) SWIG_fail;
   res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NewCell" "', argument " "1"" of type '" "char *""'");
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NewCell_1" "', argument " "1"" of type '" "char *""'");
   }
   arg1 = reinterpret_cast< char * >(buf1);
-  result = (Cell *)NewCell(arg1);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Cell, SWIG_POINTER_OWN |  0 );
+  result = (Cell *)NewCell_1(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Cell, 0 |  0 );
   if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
-  delete result;
   return resultobj;
 fail:
   if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_NewCell_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  long long arg1 ;
+  char *arg2 = (char *) 0 ;
+  long long val1 ;
+  int ecode1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Cell *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:NewCell_2",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_long_SS_long(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "NewCell_2" "', argument " "1"" of type '" "long long""'");
+  } 
+  arg1 = static_cast< long long >(val1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "NewCell_2" "', argument " "2"" of type '" "char *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  result = (Cell *)NewCell_2(arg1,arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Cell, 0 |  0 );
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_NewCell_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  char *arg1 = (char *) 0 ;
+  char *arg2 = (char *) 0 ;
+  int res1 ;
+  char *buf1 = 0 ;
+  int alloc1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Cell *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:NewCell_3",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "NewCell_3" "', argument " "1"" of type '" "char *""'");
+  }
+  arg1 = reinterpret_cast< char * >(buf1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "NewCell_3" "', argument " "2"" of type '" "char *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  result = (Cell *)NewCell_3(arg1,arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Cell, 0 |  0 );
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
   return NULL;
 }
 
@@ -3839,9 +4089,11 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"Cell_GetFieldNames", _wrap_Cell_GetFieldNames, METH_VARARGS, NULL},
 	 { (char *)"Cell_swigregister", Cell_swigregister, METH_VARARGS, NULL},
 	 { (char *)"LoadCell", _wrap_LoadCell, METH_VARARGS, NULL},
-	 { (char *)"SaveCell", _wrap_SaveCell, METH_VARARGS, NULL},
-	 { (char *)"SaveCell2", _wrap_SaveCell2, METH_VARARGS, NULL},
-	 { (char *)"NewCell", _wrap_NewCell, METH_VARARGS, NULL},
+	 { (char *)"SaveCell_1", _wrap_SaveCell_1, METH_VARARGS, NULL},
+	 { (char *)"SaveCell_2", _wrap_SaveCell_2, METH_VARARGS, NULL},
+	 { (char *)"NewCell_1", _wrap_NewCell_1, METH_VARARGS, NULL},
+	 { (char *)"NewCell_2", _wrap_NewCell_2, METH_VARARGS, NULL},
+	 { (char *)"NewCell_3", _wrap_NewCell_3, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 

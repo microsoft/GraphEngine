@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -14,7 +13,7 @@
     <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
     <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
-    <Copyright>Copyright 2017</Copyright>
+    <Copyright>Copyright 2018</Copyright>
     <RepositoryUrl>https://github.com/Microsoft/GraphEngine/</RepositoryUrl>
   </PropertyGroup>
 
@@ -27,6 +26,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <SwigFile Include="$(ProjectDir)..\Trinity.FFI.Native\Trinity.FFI.Swig.i" />
+  </ItemGroup>
+  
+  <Target Name="SwigGen" BeforeTargets="CoreCompile" Inputs="@(SwigFile)" Outputs="..\..\..\..\bin\lib.win-amd64-3.6\_GraphEngine.cp36-win_amd64.pyd" Condition="'@(SwigFile)' != ''">
+    <Exec Command="swig.exe -c++ -outcurrentdir -python &quot;@(SwigFile)&quot;" />
+    <Exec Command="python.exe setup.py build -b &quot;$(ProjectDir)..\..\..\..\bin&quot;" />  
+  </Target>
+
+  <ItemGroup>
     <Content Include="..\..\..\..\bin\lib.win-amd64-3.6\_GraphEngine.cp36-win_amd64.pyd" Link="_GraphEngine.cp36-win_amd64.pyd">
       <PackagePath>lib\netstandard2.0</PackagePath>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -34,20 +42,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\Trinity.FFI.Native\GraphEngine.py" Link="GraphEngine.py">
+    <Content Include="GraphEngine.py">
       <PackagePath>lib\netstandard2.0</PackagePath>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\pythonnet\src\runtime\Python.Runtime.15.csproj" />
-    <ProjectReference Include="..\Trinity.FFI\Trinity.FFI.csproj" />
+    <PackageReference Include="Python.Runtime" Version="2.4.0" />
   </ItemGroup>
 
-  <!--<ItemGroup>
-    <Content Include="$(OutputPath)Python.Runtime.dll">
-      <PackagePath>lib\netcoreapp2.0</PackagePath>
-    </Content>
-  </ItemGroup>-->
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.FFI\Trinity.FFI.csproj" />
+  </ItemGroup>
 </Project>
