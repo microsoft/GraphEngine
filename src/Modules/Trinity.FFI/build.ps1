@@ -40,6 +40,6 @@ function MSBuild($proj)
 }
 
 Build "$SOL_ROOT\pythonnet\src\runtime\Python.Runtime.15.csproj" -action pack -config ReleaseWinPY3
-Move-Item -Path "$SOL_ROOT\pythonnet\src\runtime\bin\Python.Runtime.2.4.0.nupkg" -Destination $env:REPO_ROOT\bin -Force
+Move-Item -Path "$SOL_ROOT\pythonnet\src\runtime\bin\Python.Runtime.2.4.0.nupkg" -Destination $env:REPO_ROOT\bin\coreclr -Force
 MSBuild "$SOL_ROOT\Trinity.FFI.Native\Trinity.FFI.Native.vcxproj"
 Build "$SOL_ROOT\Trinity.FFI.sln" -action pack -config Release
