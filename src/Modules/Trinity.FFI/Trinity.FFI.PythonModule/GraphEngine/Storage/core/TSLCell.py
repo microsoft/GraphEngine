@@ -5,13 +5,11 @@ Created on Sun Jan 28 20:36:19 2018
 @author: yatli/thautwarm
 """
 
-import _graph_engine as ge
-
+import GraphEngine.ffi.GraphEngine as _ge
 from .CellSymTable import CellType
 from functools import update_wrapper
 from .Serialize import Serializer, TSLJSONEncoder
 import json
-
 
 class Cell:
 
@@ -25,7 +23,7 @@ class Cell:
 
         self._has_eval = False
 
-        self._body: ge.Cell = None
+        self._body: _ge.Cell = None
 
         self.get = py_cell_getter(self)
 
@@ -36,15 +34,15 @@ class Cell:
 
         if self._attrs is None:
             if self._cell_id is None:
-                self._body = ge.NewCell_1(self._typ.name)
+                self._body = _ge.NewCell_1(self._typ.name)
             else:
-                self._body = ge.NewCell_2(self._typ.name, self._cell_id)
+                self._body = _ge.NewCell_2(self._typ.name, self._cell_id)
         else:
             # default value
             self._attrs = {k: v for k, v in self._attrs.items()}
 
-            self._body = ge.NewCell_3(self._typ.name,
-                                      json.dumps(self._attrs, cls=TSLJSONEncoder))
+            self._body = _ge.NewCell_3(self._typ.name,
+                                       json.dumps(self._attrs, cls=TSLJSONEncoder))
         self._has_eval = True
         self._cell_id = self._body.ID
         self.get = computed_cell_getter(self)
