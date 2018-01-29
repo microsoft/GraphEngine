@@ -12,16 +12,13 @@ import sys
 import GraphEngine as ge
 if len(sys.argv) == 2 and sys.argv[1] == 'run':
     clr.AddReference("Trinity.FFI")
-    clr.AddReference("Trinity.FFI.Playground")
-    ge.Init()
-    from Trinity.FFI import FFIConfig
-    from Trinity.FFI.Python import PythonRuntimeProvider
-    from Trinity.Network import TrinityServer
-    Environment = System.Environment
-    FFIConfig.Instance.ProgramDirectory = Environment.CurrentDirectory
-    server = TrinityServer()
-    server.Start()
+    clr.AddReference("TslAssembly")
 
+    import TslAssembly
+    from Trinity.FFI import FFIMethods
+
+    FFIMethods.Initialize()
+    ge.Init()
     global c
     Ignore = object()
     Succeed = []
@@ -49,8 +46,10 @@ if len(sys.argv) == 2 and sys.argv[1] == 'run':
     test('[new cell]',
         [ge.NewCell_1, "C1"], out='c')
 
-    test('[has optinal field]', 
-        [c.HasField, 'baz'], expected=1)
+    print(c.m_cell)
+
+    test('[has optional field]', 
+        [c.HasField, 'foo'], expected=1)
 
     test('[remove optional field]', 
         [c.RemoveField, 'baz'])
