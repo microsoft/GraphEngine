@@ -62,12 +62,10 @@ namespace Trinity.Storage
         {
             switch (mode)
             {
-                case RunningMode.Server:
-                return TrinityConfig.Servers;
                 case RunningMode.Proxy:
                 return TrinityConfig.Proxies;
                 default:
-                throw new ArgumentOutOfRangeException();
+                return TrinityConfig.Servers;
             }
         }
         #endregion
