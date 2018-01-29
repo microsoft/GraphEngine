@@ -6,20 +6,12 @@
 # """
 #
 #
-import clr
-import GraphEngine
+from __future__ import print_function
 import GraphEngine.ffi.GraphEngine as ge
-import TslAssembly
-from Trinity.FFI import FFIMethods
-
-FFIMethods.Initialize()
-ge.Init()
 global c
 Ignore = object()
 Succeed = []
 Failed = []
-
-
 def test(title, args, out=None, expected=Ignore):
     print(title)
     head, *tail = args

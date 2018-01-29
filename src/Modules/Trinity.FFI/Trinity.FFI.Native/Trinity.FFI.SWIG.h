@@ -15,7 +15,7 @@ class Cell
 public:
 	Cell(TCell cell) : m_cell(cell) {}
 	TCell m_cell;
-	
+
 	char* GetField(char* field)
 	{
 		return g_TrinityInterfaces->cell_getfield(m_cell, field);
@@ -41,6 +41,16 @@ public:
 	{
 		return g_TrinityInterfaces->cell_hasfield(m_cell, field);
 	}
+
+	long long GetID() {
+		return g_TrinityInterfaces->cell_getid(m_cell);
+	}
+
+	void SetID() {
+		g_TrinityInterfaces->cell_setid(m_cell, GetID());
+	}
+
+
 
 	~Cell()
 	{

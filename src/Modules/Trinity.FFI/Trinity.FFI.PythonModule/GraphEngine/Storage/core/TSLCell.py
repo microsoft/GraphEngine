@@ -11,8 +11,8 @@ from functools import update_wrapper
 from .Serialize import Serializer, TSLJSONEncoder
 import json
 
-class Cell:
 
+class Cell:
     def __init__(self, typ: CellType, cell_id=None):
 
         self._attrs = None
