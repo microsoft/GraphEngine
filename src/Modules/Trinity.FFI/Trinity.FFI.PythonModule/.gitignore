@@ -2,3 +2,4 @@
 **.idea/
 *.pyc
 __pycahce__/
+dev.py
