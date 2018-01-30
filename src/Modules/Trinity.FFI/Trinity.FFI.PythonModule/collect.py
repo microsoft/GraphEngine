@@ -1,12 +1,15 @@
 """
 Collect assembly sources from GraphEngine project here and there.
 """
+
 import os
 import linq
-import platform
-from utils import and_then
-from cytoolz.curried import curry
 import argparse
+
+from conf import and_then
+from conf import (CURRENT_DIR, CORECLR_PATH,
+                  BUILD_SCRIPT_CMD, BUILD_SCRIPT_PATH, is_windows)
+from conf import copy_to, recur_listdir, pardir_of
 
 cmdparser = argparse.ArgumentParser(description='collect binaries.')
 cmdparser.add_argument("--nocache",
@@ -14,55 +17,51 @@ cmdparser.add_argument("--nocache",
                        default=False, nargs='?',
                        const=True)
 
-Undef = None
-is_windows = platform.platform().lower().startswith('windows')
 
-# TODO: linux build scripts
-BUILD_SCRIPT_PATH = os.path.abspath('../build.ps1' if is_windows else Undef)
-BUILD_SCRIPT_CMD = 'Powershell.exe -File' if is_windows else Undef
-CURRENT_DIR = os.path.abspath('./')
-
-CORECLR_PATH = os.path.abspath('../../../../bin/coreclr')
-
-
-@curry
-def copy_to(_to, _from):
-    """shutils sucks, it failed frequently in *NIX OS.
+def dir_at(*args, create_dir=True, then_call=None):
     """
-    _to = os.path.join(_to, os.path.split(_from)[-1])
-    print(_from, '->', _to)
-    with open(_from, 'rb') as _from_file, open(_to, 'wb') as _to_file:
-        and_then(
-            _from_file.read,
-            _to_file.write
-        )(None)
+    join the path and try to create the directory.
+    """
+    path = os.path.join(*args)
+    if create_dir and not os.path.exists(path):
+        try:
+            os.mkdir(path)
+        except FileExistsError:
+            pass
+    if then_call is not None:
+        return then_call(path)
+    return path
 
 
-# build dlls
-if cmdparser.parse_args().nocache:
-    os.system('{} "{}"'.format(BUILD_SCRIPT_CMD, BUILD_SCRIPT_PATH))
+if is_windows:
+    # build dlls
+    if cmdparser.parse_args().nocache:
+        os.system('{} "{}"'.format(BUILD_SCRIPT_CMD, BUILD_SCRIPT_PATH))
 
+    to_pymodule_dir = lambda path, with_postfix, to_module: (
+        linq.Flow(path)
+            .Then(recur_listdir)
+            .Filter(lambda _: any(_.endswith(postfix) for postfix in with_postfix))
+            .Each(dir_at(CURRENT_DIR, 'GraphEngine', to_module,
+                         then_call=copy_to)))
+    # copy dlls
 
-def recur_listdir(dir):
-    filenames = os.listdir(dir)
-    for filename in map(lambda _: os.path.join(dir, _), filenames):
-        if os.path.isdir(filename):
-            yield from recur_listdir(filename)
-        else:
-            yield filename
+    to_pymodule_dir(CORECLR_PATH,
+                    with_postfix=['.py', '.dll', '.pyd'],
+                    to_module='ffi')
 
+    # build TslAssembly.csproj
+    dir_at(pardir_of(BUILD_SCRIPT_PATH), 'TslAssembly',
+           then_call=lambda _: os.system('cd {} && dotnet restore && dotnet build'.format(_)))
 
-# copy dlls
-for dll_path in (CORECLR_PATH, '../TslAssembly'):
-    (linq.Flow(dll_path)
-     .Then(
-        and_then(recur_listdir))
-     .Filter(lambda _: _.endswith('.dll') or _.endswith('.pyd') or _.endswith('.py'))
-     .Each(copy_to(os.path.join(CURRENT_DIR, 'GraphEngine', 'ffi'))))
+    to_pymodule_dir('../TslAssembly',
+                    with_postfix=['.dll'],
+                    to_module='ffi')
 
-# copy exe
-(linq.Flow(os.path.join(CORECLR_PATH, '../'))
- .Then(
-    and_then(recur_listdir))
- .Filter(lambda _: _.endswith('.exe'))
- .Each(copy_to(os.path.join(CURRENT_DIR, 'GraphEngine', 'Command'))))
+    # copy exe
+    to_pymodule_dir(CORECLR_PATH,
+                    with_postfix=['.exe'],
+                    to_module='Command')
+
+else:
+    raise NotImplemented

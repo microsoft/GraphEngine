@@ -71,7 +71,8 @@ class Cell:
         return self.get(key)
 
     def __str__(self):
-        return self._attrs if self._has_eval else {name: self._body.GetField(name) for name in self._typ.attrs}
+        return str({name: self._body.GetField(name) for name in self._typ.attrs}
+                   if self._has_eval else self._attrs)
 
     def __repr__(self):
         return self.__str__()
@@ -82,7 +83,7 @@ def py_cell_getter(cell: Cell):
         return cell._attrs[name]
 
     def callback_first_time(name):
-        cell._attrs = {k: typ() for k, typ in cell._typ.attrs.items()}
+        cell._attrs = {k: typ for k, typ in cell._typ.attrs.items()}
         cell.get = callback
         return cell._attrs[name]
 
