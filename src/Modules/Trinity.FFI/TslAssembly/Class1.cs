@@ -11,8 +11,10 @@ namespace TslAssembly
         // TODO: Dear Yatli, I need the very first information of cell types :)
         // Key-Value Pair is okay.
         static List<string> Content;
+
         /* Example:
          * 
+         * List<string>:
          * ["{"name": "C1", 
          *     "attrs":
          *          {"foo": "int", 
@@ -26,6 +28,7 @@ namespace TslAssembly
          * because it's faster to check whether a cell_type is in current symbol table(
          * the name of cell_type must be unique so it doesn't hurt.)
          * 
+         * List<string, string>
          * {"C1":[["foo", "int"], 
          *        ["baz", "optional int"],
          *        ["bar", "string"],

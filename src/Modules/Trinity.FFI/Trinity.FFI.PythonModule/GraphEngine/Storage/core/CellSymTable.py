@@ -21,10 +21,7 @@ class SymTable:
 
     def __init__(self, version_thunk):
         self.version = version_thunk()
-        self._context = {'C1': CellType('C1',
-                                        {'foo': int,
-                                         'baz': int,
-                                         'bar': str})}
+        self._context = {}
 
     def __getattr__(self, name):
         """TODO :
@@ -51,9 +48,11 @@ def sync():
     if SymTableConstructor.__inst__ is None:
         SymTableConstructor(ctime)
     else:
-        outdate = SymTableConstructor.__inst__
-        SymTableConstructor.__inst__ = SymTable(ctime)
-        SymTableConstructor.__inst__._context.update(outdate._context)
+        SymTableConstructor.__inst__.__init__(ctime)  # new
 
     from TslAssembly import SymTable as sym
-    SymTableConstructor.__inst__._context.update({k: json.loads(v) for k, v in sym.Content})
+    
+    context = SymTableConstructor.__inst__._context
+    
+    for k, v in sym.Content:
+        context[k] = json.loads(v)

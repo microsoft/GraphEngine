@@ -12,4 +12,8 @@
     <TslCodegen Include="**/*.tsl" />
   </ItemGroup>
 
+  <ItemGroup>
+    <TslCodegen Remove="def.tsl" />
+  </ItemGroup>
+
 </Project>
