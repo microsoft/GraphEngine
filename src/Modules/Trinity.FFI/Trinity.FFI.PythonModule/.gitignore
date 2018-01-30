@@ -1,8 +1,0 @@
-.spyproject/
-*.idea/
-*.dll
-*.exe
-*.pyc
-__pycahce__/
-dev.py
-*storage/
