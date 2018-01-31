@@ -5,13 +5,11 @@ Created on Sun Jan 28 20:39:38 2018
 @author: yatli/thautwarm
 """
 
-from collections import namedtuple
 from time import ctime
 from linq import Flow
 import json
 
-__all__ = ['CellType', 'SymTablePicker', 'sync']
-CellType = namedtuple('CellType', ['name', 'attrs'])
+__all__ = ['SymTablePicker', 'sync']
 
 
 # CellType.attrs : Dict[str, type]
@@ -25,9 +23,10 @@ class SymTable:
         self._context = {}
 
     def __getattr__(self, name):
-        """TODO :
-            we need extensions to do auto-completion
-            for dynamically loaded symtable.
+        """
+        TODO :
+        we need extensions to do auto-completion
+        for dynamically loaded symtable.
         """
         return self._context[name]
 
@@ -50,18 +49,13 @@ class SymTablePicker:
 
 def sync():
     """
-    syncronize the symtable of cell types from .NET Core hosting
+    TODO:
+    Syncronize the symtable of cell types from .NET Core hosting
     """
-    if SymTablePicker.__inst__ is None:
-        SymTablePicker(ctime)
-    else:
-        SymTablePicker.__inst__.__init__(ctime)  # new
 
-    import Trinity
 
-    context = SymTablePicker.__inst__._context
-
-    (Flow(Trinity.Global.get_StorageSchema().get_CellDescriptors())
-     .Map(lambda cell_type: (cell_type.TypeName,
-                             {attr.Name: attr.TypeName for attr in cell_type.GetFieldDescriptors()}))
-     .Each(lambda k, v: context.__setitem__(k, CellType(k, v))))
+def load_symbols(tsl_dir):
+    """
+    TODO:
+    Create new cell types from TSL source directory.
+    """

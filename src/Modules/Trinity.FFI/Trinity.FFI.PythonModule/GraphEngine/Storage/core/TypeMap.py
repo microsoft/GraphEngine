@@ -7,10 +7,14 @@ Created on Tue Jan 30 15:14:14 2018
 
 from Ruikowa.ObjectRegex.ASTDef import Ast
 from cytoolz.curried import curry
+from collections import namedtuple
+
+CellType = namedtuple('CellType', ['name', 'attrs'])
 
 # begin configure
 # these settings are for handling type mapping automatically.
 # TODO: do not use parser to speed up type mapping.
+
 
 curry_map = curry(map)
 
@@ -39,15 +43,15 @@ def type_register(typ):
 
 # type class
 class TSLTypeConstructor:
-
     def __new__(cls, tsl_type_ast: Ast):
 
-        is_optional = tsl_type_ast[0] == 'optional'
+        is_optional = True if len(tsl_type_ast) is 2 else False
+
         if is_optional:
-            tsl_type_ast = tsl_type_ast[1]
-            if tsl_type_ast[0] == 'optional':
+            #  Type '?'
+            tsl_type_ast = tsl_type_ast[0]
+            if len(tsl_type_ast) is 2:
                 raise SyntaxError('double `optional` prefix!')
-        tsl_type_ast = tsl_type_ast[0]
 
         if not isinstance(tsl_type_ast, Ast):
 
@@ -74,7 +78,7 @@ class TSLTypeConstructor:
             type_constructor, type_checker = constructor_and_checker(*tail)
             type_name = '{}<{}>'.format(type_class, ','.join(map(lambda typ: typ._name, tail)))
 
-        type_name if not is_optional else 'optional {}'.format(type_name)
+        type_name if not is_optional else '{}?'.format(type_name)
 
         class TSLType:
             _name = type_name

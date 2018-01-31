@@ -6,6 +6,6 @@ clr.AddReference("TslAssembly")
 from .GraphEngine import Init
 from Trinity.FFI import FFIMethods
 import TslAssembly
-
 FFIMethods.Initialize()
 Init()
+

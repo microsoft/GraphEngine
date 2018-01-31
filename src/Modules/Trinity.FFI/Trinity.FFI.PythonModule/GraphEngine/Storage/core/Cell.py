@@ -6,11 +6,11 @@ Created on Sun Jan 28 20:36:19 2018
 """
 
 import GraphEngine.ffi.GraphEngine as _ge
-from .CellSymTable import CellType
-from functools import update_wrapper
 from .Serialize import Serializer, TSLJSONEncoder
-import json
+from .TypeMap import CellType
 
+import json
+from functools import update_wrapper
 
 class Cell:
     def __init__(self, typ: CellType, cell_id=None):

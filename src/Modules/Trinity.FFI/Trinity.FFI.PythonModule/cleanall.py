@@ -15,21 +15,27 @@ from conf import copy_to, recur_listdir, pardir_of
 from cytoolz.curried import curry
 from functools import partial
 import argparse
+
 cmdparser = argparse.ArgumentParser(description='clean the generated.')
 cmdparser.add_argument("--all",
                        help='clean all the binary dependences of GraphEngine.',
                        default=False, nargs='?',
                        const=True)
 
-def log(var, operation=None, then_call = lambda x: x):
+
+def log(var, operation=None, then_call=lambda x: x):
     return print(var if operation is None else '{} {}'.format(operation, var)) or then_call(var)
+
+
 log.within = lambda **kwargs: partial(log, **kwargs)
+
 
 @curry
 def endswith(postfix, filename):
     if isinstance(postfix, str):
         return filename.endswith(postfix)
     return any(filename.endswith(e) for e in postfix)
+
 
 if cmdparser.parse_args().all:
     for clean_path in [CORECLR_PATH, pardir_of(BUILD_SCRIPT_PATH)]:
@@ -44,4 +50,3 @@ if cmdparser.parse_args().all:
             "./dist",
             "./GraphEngine/ffi/storage"])
  .Each(lambda _: log.within(then_call=os.system)('rm -rf {}'.format(_))))
-    
