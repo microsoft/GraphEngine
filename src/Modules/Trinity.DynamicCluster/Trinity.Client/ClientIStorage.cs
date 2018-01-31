@@ -7,7 +7,10 @@ using Trinity.Storage;
 
 namespace Trinity.Client
 {
-    public class ClientIStorage : IStorage
+    /// <summary>
+    /// Installed in server-side storage tables.
+    /// </summary>
+    internal class ClientIStorage : IStorage
     {
         private unsafe Queue<(long ptr, int size)> m_messages;
         private MemoryCloud m_mc;
@@ -32,7 +35,7 @@ namespace Trinity.Client
             m_messages = null;
         }
 
-        public T GetModule<T>() where T : CommunicationModule
+        public T GetCommunicationModule<T>() where T : CommunicationModule
             => m_mc.GetCommunicationModule<T>();
 
         private unsafe void QueueMessage(void* p, int size)
@@ -42,6 +45,12 @@ namespace Trinity.Client
                 m_messages.Enqueue(((long)p, size));
             }
         }
+
+        private unsafe TrinityResponse GetResponse(void* p)
+        {
+            throw new NotImplementedException();
+        }
+
 
         public unsafe void SendMessage(byte* message, int size)
         {
@@ -55,16 +64,50 @@ namespace Trinity.Client
             void* p = Memory.malloc((ulong)size);
             Memory.memcpy(p, message, (ulong)size);
             QueueMessage(p, size);
+            response = GetResponse(p);
         }
 
         public unsafe void SendMessage(byte** message, int* sizes, int count)
         {
-            throw new System.NotSupportedException();
+            int size = _sum(sizes, count);
+            void* p = Memory.malloc((ulong)size);
+            _copy((byte*)p, message, sizes, count);
+            QueueMessage(p, size);
         }
 
         public unsafe void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
         {
-            throw new System.NotSupportedException();
+            int size = _sum(sizes, count);
+            void* p = Memory.malloc((ulong)size);
+            _copy((byte*)p, message, sizes, count);
+            QueueMessage(p, size);
+            response = GetResponse(p);
+        }
+
+        private unsafe void _copy(byte* p, byte** message, int* sizes, int count)
+        {
+            int* pend = sizes + count;
+            int size;
+            while(sizes != pend)
+            {
+                size = *sizes;
+                Memory.memcpy(p, *message, (ulong)size);
+                ++sizes;
+                ++message;
+                p += size;
+            }
+        }
+
+        private unsafe int _sum(int* sizes, int count)
+        {
+            int size = 0;
+            int* pend = sizes + count;
+            while(sizes != pend)
+            {
+                size += *sizes;
+                ++sizes;
+            }
+            return size;
         }
 
         #region Unsupported storage interfaces

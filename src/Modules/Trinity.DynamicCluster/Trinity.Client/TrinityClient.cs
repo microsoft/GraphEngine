@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Trinity.Configuration;
+using Trinity.Daemon;
 using Trinity.Diagnostics;
 using Trinity.Network;
 using Trinity.Network.Messaging;
@@ -17,10 +19,12 @@ namespace Trinity.Client
     {
         private IClientConnectionFactory m_clientfactory = null;
         private IMessagePassingEndpoint m_client;
+        private CancellationTokenSource m_tokensrc;
+        private Task m_polltask;
         private readonly string m_endpoint;
 
         public TrinityClient(string endpoint)
-            :this(endpoint, null) { }
+            : this(endpoint, null) { }
 
         public TrinityClient(string endpoint, IClientConnectionFactory clientConnectionFactory)
         {
@@ -54,7 +58,35 @@ namespace Trinity.Client
         {
             if (m_clientfactory == null) { ScanClientConnectionFactory(); }
             m_client = m_clientfactory.ConnectAsync(m_endpoint).Result;
-            ClientMemoryCloud.Initialize(m_client, this);
+            ClientMemoryCloud.BeginInitialize(m_client, this);
+            this.Started += OnStarted;
+        }
+
+        private void OnStarted()
+        {
+            ClientMemoryCloud.EndInitialize();
+            m_tokensrc = new CancellationTokenSource();
+            m_polltask = PollProc(m_tokensrc.Token);
+        }
+
+        private async Task PollProc(CancellationToken token)
+        {
+            var module = GetCommunicationModule<TrinityClientModule.TrinityClientModule>();
+            var mc = Global.CloudStorage;
+            var poll_msg = new PollEventsRequestWriter(mc.MyInstanceId, module.MyCookie);
+            while (!token.IsCancellationRequested)
+            {
+                try
+                {
+                    //TODO implement Poll event loop here.
+                    await Task.Delay(100);
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, $"{nameof(TrinityClient)}: error occured during polling: {0}", ex.ToString());
+                }
+            }
+            poll_msg.Dispose();
         }
 
         private void ScanClientConnectionFactory()
@@ -71,6 +103,9 @@ namespace Trinity.Client
 
         protected override void StopCommunicationListeners()
         {
+            m_tokensrc.Cancel();
+            m_polltask.Wait();
+            m_polltask = null;
             m_clientfactory.DisconnectAsync(m_client).Wait();
         }
     }

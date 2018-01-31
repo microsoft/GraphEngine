@@ -16,7 +16,6 @@ namespace Trinity
     public class ClusterConfig
     {
         #region Fields
-        private RunningMode running_mode = RunningMode.Undefined;
         private string configFile;
         XMLConfig xml_config;
         #endregion

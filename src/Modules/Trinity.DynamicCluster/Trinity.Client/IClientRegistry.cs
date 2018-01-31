@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Trinity.Storage;
 
 namespace Trinity.Client
 {
@@ -11,7 +12,7 @@ namespace Trinity.Client
     /// </summary>
     public interface IClientRegistry
     {
-        int RegisterClient(ClientIStorage client);
+        int RegisterClient(IStorage client);
         void UnregisterClient(int instanceId);
     }
 }

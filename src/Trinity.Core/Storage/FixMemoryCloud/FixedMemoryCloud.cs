@@ -110,7 +110,12 @@ namespace Trinity.Storage
 
             Console.WriteLine(config.OutputCurrentConfig());
 
-            if (_InstanceList(config.RunningMode).Count == 0)
+            if (config.RunningMode == RunningMode.Embedded)
+            {
+                return SetupEmbeddedMemoryCloud();
+            }
+
+            if (_InstanceList(config.RunningMode).Count == 0 && config.RunningMode != RunningMode.Client)
             {
                 Log.WriteLine(LogLevel.Warning, "No distributed instances configured. Turning on local test mode.");
                 TrinityConfig.LocalTest = true;
@@ -119,11 +124,13 @@ namespace Trinity.Storage
             my_partition_id = _GetPartitionId(config);
             my_proxy_id = _GetProxyId(config);
 
-            bool server_found = false;
             m_storageTable = new IStorage[server_count];
 
-            if (server_count == 0)
-                goto server_not_found;
+            if (server_count == 0 && config.RunningMode != RunningMode.Proxy)
+            {
+                Log.WriteLine(LogLevel.Error, $"{nameof(MemoryCloud)}: Failed to open cloud storage: No servers found.");
+                return false;
+            }
 
             for (int i = 0; i < server_count; i++)
             {
@@ -132,17 +139,11 @@ namespace Trinity.Storage
                     )
                 {
                     StorageTable[i] = Global.LocalStorage;
-                    server_found = true;
                 }
                 else
                 {
                     StorageTable[i] = new RemoteStorage(cluster_config.Servers[i].Instances, TrinityConfig.ClientMaxConn, this, i, nonblocking);
                 }
-            }
-
-            if (cluster_config.RunningMode == RunningMode.Server && !server_found)
-            {
-                goto server_not_found;
             }
 
             StaticGetPartitionByCellId = this.GetServerIdByCellIdDefault;
@@ -151,13 +152,14 @@ namespace Trinity.Storage
             // else this.ServerConnected += (_, __) => {};
 
             return true;
+        }
 
-server_not_found:
-            if (cluster_config.RunningMode == RunningMode.Server || cluster_config.RunningMode == RunningMode.Client)
-                Log.WriteLine(LogLevel.Warning, "Incorrect server configuration. Message passing via CloudStorage not possible.");
-            else if (cluster_config.RunningMode == RunningMode.Proxy)
-                Log.WriteLine(LogLevel.Warning, "No servers are found. Message passing to servers via CloudStorage not possible.");
-            return false;
+        private bool SetupEmbeddedMemoryCloud()
+        {
+            m_storageTable = new IStorage[] { Global.LocalStorage };
+            my_partition_id = 0;
+            my_proxy_id = Values.DEFAULT_INVALID_VALUE;
+            return true;
         }
 
         private void CheckServerProtocolSignatures()

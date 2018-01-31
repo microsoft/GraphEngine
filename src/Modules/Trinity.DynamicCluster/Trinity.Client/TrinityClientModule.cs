@@ -9,8 +9,12 @@ namespace Trinity.Client.TrinityClientModule
     {
         public override string GetModuleName() => "TrinityClient";
 
+        // ===== Server-side members =====
         private IClientRegistry Registry => m_memorycloud as IClientRegistry;
         private ConcurrentDictionary<int, int> m_cookie_id = new ConcurrentDictionary<int, int>();
+        // ===== Client-side members =====
+        private Lazy<int> m_client_cookie = new Lazy<int>(() => new Random().Next(int.MinValue, int.MaxValue));
+        internal int MyCookie => m_client_cookie.Value;
 
         public override void PollAsyncEventsHandler(PollEventsRequestReader request, PollEventsResponseWriter response)
         {
@@ -21,10 +25,18 @@ namespace Trinity.Client.TrinityClientModule
         public override void PollSyncEventsHandler(PollEventsRequestReader request, PollEventsResponseWriter response)
         {
             CheckInstanceCookie(request.Cookie, request.InstanceId);
+            //TODO
+        }
+
+        public override void PostSyncResponseHandler(PostSyncResponseRequestReader request)
+        {
+            CheckInstanceCookie(request.Cookie, request.InstanceId);
+            //TODO
         }
 
         public override void RegisterClientHandler(RegisterClientRequestReader request, RegisterClientResponseWriter response)
         {
+            response.PartitionCount = m_memorycloud.PartitionCount;
             if (m_cookie_id.TryGetValue(request.Cookie, out var existing_id))
             {
                 response.InstanceId = existing_id;
@@ -45,15 +57,9 @@ namespace Trinity.Client.TrinityClientModule
 
         private void CheckInstanceCookie(int cookie, int instanceId)
         {
-            if (m_cookie_id.TryGetValue(cookie, out var existing_id))
-            {
-                if (instanceId != existing_id)
-                    throw new ClientCookieMismatchException();
-            }
-            else
-            {
-                throw new ClientInstanceNotFoundException();
-            }
+            if (m_cookie_id.TryGetValue(cookie, out var existing_id) && instanceId == existing_id) return;
+            throw new ClientInstanceNotFoundException();
         }
+
     }
 }

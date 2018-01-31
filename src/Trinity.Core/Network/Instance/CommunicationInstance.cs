@@ -272,6 +272,7 @@ namespace Trinity.Network
                 {
                     Log.WriteLine(LogLevel.Debug, "Starting communication instance.");
                     Global.CommunicationInstance = this;
+                    TrinityConfig.CurrentRunningMode = this.RunningMode;
 
                     _ScanForAutoRegisteredModules();
 
@@ -340,8 +341,6 @@ namespace Trinity.Network
             var _my_ip = Global.MyIPAddress;
 
             if (_si != null) _my_ip = NetworkUtility.Hostname2IPv4Address(_si.HostName);
-
-            _config.RunningMode = this.RunningMode;
 
             //  Initialize message passing networking
             NativeNetwork.StartTrinityServer((UInt16)_config.ListeningPort);

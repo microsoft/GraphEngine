@@ -8,12 +8,20 @@ struct RegisterClientResponse
 {
 	// The instance id, produced by the server-side memory cloud.
 	int InstanceId;
+	int PartitionCount;
 }
 
 struct PollEventsRequest
 {
 	int InstanceId;
 	int Cookie;
+}
+
+struct PostSyncResponseRequest
+{
+	int InstanceId;
+	int Cookie;
+	List<byte> Result;
 }
 
 struct PollEventsResponse

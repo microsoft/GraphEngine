@@ -9,19 +9,10 @@ using Trinity.Storage;
 
 namespace Trinity.Client
 {
-    internal class RedirectedIStorage : IStorage
+    internal class PassThroughIStorage : IStorage
     {
         private IMessagePassingEndpoint m_ep;
-        private CommunicationInstance m_comminst;
-        private int partitionId;
-
-        public RedirectedIStorage(IMessagePassingEndpoint ep, TrinityClient tc, int p)
-        {
-            m_ep = ep;
-            m_comminst = tc;
-            partitionId = p;
-        }
-
+        #region Unsupported
         public unsafe TrinityErrorCode AddCell(long cellId, byte* buff, int size, ushort cellType)
         {
             throw new NotImplementedException();
@@ -32,9 +23,7 @@ namespace Trinity.Client
             throw new NotImplementedException();
         }
 
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
 
         public TrinityErrorCode GetCellType(long cellId, out ushort cellType)
         {
@@ -42,7 +31,9 @@ namespace Trinity.Client
         }
 
         public T GetCommunicationModule<T>() where T : CommunicationModule
-            => m_comminst.GetCommunicationModule<T>();
+        {
+            throw new NotImplementedException();
+        }
 
         public TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff, out ushort cellType)
         {
@@ -59,29 +50,27 @@ namespace Trinity.Client
             throw new NotImplementedException();
         }
 
-        public unsafe void SendMessage(byte* message, int size)
-        {
-            throw new NotImplementedException();
-        }
-
-        public unsafe void SendMessage(byte* message, int size, out TrinityResponse response)
-        {
-            throw new NotImplementedException();
-        }
-
-        public unsafe void SendMessage(byte** message, int* sizes, int count)
-        {
-            throw new NotImplementedException();
-        }
-
-        public unsafe void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
-        {
-            throw new NotImplementedException();
-        }
-
         public unsafe TrinityErrorCode UpdateCell(long cellId, byte* buff, int size)
         {
             throw new NotImplementedException();
         }
+        #endregion
+
+        public PassThroughIStorage(IMessagePassingEndpoint ep)
+        {
+            this.m_ep = ep;
+        }
+
+        public unsafe void SendMessage(byte* message, int size)
+            => m_ep.SendMessage(message, size);
+
+        public unsafe void SendMessage(byte* message, int size, out TrinityResponse response)
+            => m_ep.SendMessage(message, size, out response);
+
+        public unsafe void SendMessage(byte** message, int* sizes, int count)
+            => m_ep.SendMessage(message, sizes, count);
+
+        public unsafe void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
+            => m_ep.SendMessage(message, sizes, count, out response);
     }
 }
