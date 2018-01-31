@@ -46,11 +46,11 @@ class TSLTypeConstructor:
     def __new__(cls, tsl_type_ast: Ast):
         # current : Type ::=  Generic ['?'] | Identifier ['?'];
 
-        is_optional = True if len(tsl_type_ast) is 2 else False
-
+        is_optional = len(tsl_type_ast) is 2
+        tsl_type_ast = tsl_type_ast[0]
+        
         if is_optional:
-            tsl_type_ast = tsl_type_ast[0]
-            if len(tsl_type_ast) is 2:
+            if len(tsl_type_ast) is 2 and tsl_type_ast[-1] is '?':
                 raise SyntaxError('double `optional` prefix!')
 
         if not isinstance(tsl_type_ast, Ast):
@@ -81,7 +81,7 @@ class TSLTypeConstructor:
             type_constructor, type_checker = constructor_and_checker(*tail)
             type_name = '{}<{}>'.format(type_class, ','.join(map(lambda typ: typ._name, tail)))
 
-        type_name if not is_optional else '{}?'.format(type_name)
+        type_name = type_name if not is_optional else '{}?'.format(type_name)
 
         class TSLType:
             _name = type_name

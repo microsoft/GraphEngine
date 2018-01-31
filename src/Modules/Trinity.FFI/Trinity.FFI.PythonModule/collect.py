@@ -51,15 +51,15 @@ if is_windows:
                     to_module='ffi')
 
     # build Trinity.StorageVersionController.csproj
-    dir_at(pardir_of(pardir_of(BUILD_SCRIPT_PATH)), 'Trinity.StorageVersionController',
+    dir_at(pardir_of(pardir_of(BUILD_SCRIPT_PATH)), 'DynamicLoading',
            then_call=lambda _: os.system('cd {} && dotnet restore && dotnet build'.format(_)))
 
-    to_pymodule_dir('../../Trinity.StorageVersionController',
+    to_pymodule_dir('../../DynamicLoading',
                     with_postfix=['.dll'],
                     to_module='ffi')
 
     # copy exe
-    to_pymodule_dir(CORECLR_PATH,
+    to_pymodule_dir(pardir_of(CORECLR_PATH),
                     with_postfix=['.exe'],
                     to_module='Command')
 

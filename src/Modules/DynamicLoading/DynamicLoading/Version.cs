@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Trinity.StorageVersionController
+namespace DynamicLoading
 {
     public class AsmVersion
     {

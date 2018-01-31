@@ -37,12 +37,15 @@ def endswith(postfix, filename):
     return any(filename.endswith(e) for e in postfix)
 
 
+clean_paths = ["./GraphEngine/ffi"]
 if cmdparser.parse_args().all:
-    for clean_path in [CORECLR_PATH, pardir_of(BUILD_SCRIPT_PATH)]:
-        (linq.Flow(recur_listdir(
-            pardir_of(clean_path)))
-         .Filter(endswith(['dll', 'pyd', 'lib', 'obj', 'iobj', 'ilib']))
-         .Each(log.within(operation='remove', then_call=os.remove)))
+    clean_paths += [CORECLR_PATH, pardir_of(BUILD_SCRIPT_PATH)]
+    
+for clean_path in clean_paths:
+    (linq.Flow(recur_listdir(
+        pardir_of(clean_path)))
+     .Filter(endswith(['dll', 'pyd', 'lib', 'obj', 'iobj', 'ilib', 'pdb']))
+     .Each(log.within(operation='remove', then_call=os.remove)))
 
 (linq.Flow(["./GraphEngine.egg-info",
             "./__pycache__",

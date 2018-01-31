@@ -6,7 +6,8 @@ TODO:
     TSL generation and sending msg to Graph Machine to compile TSL. 
 """
 
-from .CellSymTable import sync, SymTablePicker, CellType
+from .SymTable import sync, SymTablePicker
+from .Cell import CellType
 from .Serialize import mark_as_serializable, Serializer, TSLJSONEncoder
 
 
