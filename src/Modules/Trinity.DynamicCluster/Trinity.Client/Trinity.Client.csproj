@@ -49,8 +49,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DefaultClientConnection.cs" />
     <Compile Include="DefaultClientConnectionFactory.cs" />
-    <Compile Include="IClientConnection.cs" />
+    <Compile Include="ClientMemoryCloud.cs" />
+    <Compile Include="IClientConnectionFactory.cs" />
+    <Compile Include="RedirectedIStorage.cs" />
     <Compile Include="TrinityClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
