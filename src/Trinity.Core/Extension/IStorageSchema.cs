@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Trinity.Extension;
 
 namespace Trinity.Storage
 {
@@ -31,6 +32,7 @@ namespace Trinity.Storage
         IEnumerable<string> CellTypeSignatures { get; }
     }
 
+    [ExtensionPriority(-100)]
     internal class DefaultStorageSchema : IStorageSchema
     {
         public IEnumerable<ICellDescriptor> CellDescriptors

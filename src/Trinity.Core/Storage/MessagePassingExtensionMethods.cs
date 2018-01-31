@@ -22,27 +22,27 @@ namespace Trinity.Storage
         }
 
         public static void SendMessage<T>(this IMessagePassingEndpoint storage, byte* message, int size)
-            where T: CommunicationModule
+            where T : CommunicationModule
         {
-            storage.GetModule<T>().SendMessage(storage, message, size);
+            storage.GetCommunicationModule<T>().SendMessage(storage, message, size);
         }
 
         public static void SendMessage<T>(this IMessagePassingEndpoint storage, byte* message, int size, out TrinityResponse response)
-            where T: CommunicationModule
+            where T : CommunicationModule
         {
-            storage.GetModule<T>().SendMessage(storage, message, size, out response);
+            storage.GetCommunicationModule<T>().SendMessage(storage, message, size, out response);
         }
 
         public static void SendMessage<T>(this IMessagePassingEndpoint storage, byte** message, int* sizes, int count)
-            where T: CommunicationModule
+            where T : CommunicationModule
         {
-            storage.GetModule<T>().SendMessage(storage, message, sizes, count);
+            storage.GetCommunicationModule<T>().SendMessage(storage, message, sizes, count);
         }
 
         public static void SendMessage<T>(this IMessagePassingEndpoint storage, byte** message, int* sizes, int count, out TrinityResponse response)
-            where T: CommunicationModule
+            where T : CommunicationModule
         {
-            storage.GetModule<T>().SendMessage(storage, message, sizes, count, out response);
+            storage.GetCommunicationModule<T>().SendMessage(storage, message, sizes, count, out response);
         }
 
         internal static void GetCommunicationSchema(this IMessagePassingEndpoint storage, out string name, out string signature)
@@ -90,19 +90,31 @@ namespace Trinity.Storage
                 BitHelper.WriteString(moduleName, sp.bp);
                 TrinityResponse response;
                 storage.SendMessage(tm, out response);
+                bool ret = (response.ErrorCode == TrinityErrorCode.E_SUCCESS);
+                if (ret)
+                {
+                    sp.bp             = response.Buffer + response.Offset;
+                    int synReq_msg    = *sp.ip++;
+                    int synReqRsp_msg = *sp.ip++;
+                    int asynReq_msg   = *sp.ip++;
+                    int asynReqRsp_msg= *sp.ip++;
 
-                sp.bp             = response.Buffer + response.Offset;
-                int synReq_msg    = *sp.ip++;
-                int synReqRsp_msg = *sp.ip++;
-                int asynReq_msg   = *sp.ip++;
-                int asynReqRsp_msg= *sp.ip++;
+                    synReqOffset      = (ushort)synReq_msg;
+                    synReqRspOffset   = (ushort)synReqRsp_msg;
+                    asynReqOffset     = (ushort)asynReq_msg;
+                    asynReqRspOffset  = (ushort)asynReqRsp_msg;
+                }
+                else
+                {
+                    synReqOffset      = 0;
+                    synReqRspOffset   = 0;
+                    asynReqOffset     = 0;
+                    asynReqRspOffset  = 0;
+                }
 
-                synReqOffset      = (ushort)synReq_msg;
-                synReqRspOffset   = (ushort)synReqRsp_msg;
-                asynReqOffset     = (ushort)asynReq_msg;
-                asynReqRspOffset  = (ushort)asynReqRsp_msg;
 
-                return (response.ErrorCode == TrinityErrorCode.E_SUCCESS);
+                response.Dispose();
+                return ret;
             }
         }
     }

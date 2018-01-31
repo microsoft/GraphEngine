@@ -15,7 +15,7 @@ namespace Trinity.Storage
     /// <summary>
     /// Provides methods for interacting with the distributed memory store.
     /// </summary>
-    public unsafe abstract partial class MemoryCloud : IKeyValueStore, IEnumerable<IMessagePassingEndpoint>
+    public unsafe abstract partial class MemoryCloud : IKeyValueStore, IEnumerable<IMessagePassingEndpoint>, ICommunicationModuleRegistry
     {
         #region Abstract interfaces
         public abstract bool Open(ClusterConfig config, bool nonblocking);
@@ -324,7 +324,7 @@ namespace Trinity.Storage
         /// </summary>
         /// <typeparam name="T">The type of the communication module.</typeparam>
         /// <returns>A communication module object if a communication instance is started, and the module type is registered. Otherwise returns null.</returns>
-        public T GetCommunicationModule<T>() where T : CommunicationModule
+        public virtual T GetCommunicationModule<T>() where T : CommunicationModule
         {
             var comm_instance = Global.CommunicationInstance;
 

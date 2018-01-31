@@ -16,10 +16,7 @@ namespace Trinity
     public class ClusterConfig
     {
         #region Fields
-        private RunningMode running_mode = RunningMode.Undefined;
         private string configFile;
-        private int my_server_id = ConfigurationConstants.Values.DEFAULT_INVALID_VALUE;
-        private int my_proxy_id = ConfigurationConstants.Values.DEFAULT_INVALID_VALUE;
         XMLConfig xml_config;
         #endregion
 
@@ -115,20 +112,6 @@ namespace Trinity
             get { return Proxies.SelectMany(_ => _.Instances).ToList(); }
         }
         /// <summary>
-        /// Gets or sets the running mode of current Trinity process.
-        /// </summary>
-        public RunningMode RunningMode
-        {
-            get
-            {
-                return running_mode;
-            }
-            set
-            {
-                running_mode = value;
-            }
-        }
-        /// <summary>
         /// Gets a list of IPEndPoints corresponding to all the server instances.
         /// </summary>
         public List<IPEndPoint> AllServerIPEndPoints
@@ -206,71 +189,9 @@ namespace Trinity
         }
 
         /// <summary>
-        /// Gets the id of current host in a cluster according to running mode of the host.
+        /// Represents the running mode of the current cluster configuration.
         /// </summary>
-        public int MyInstanceId
-        {
-            get
-            {
-                if (RunningMode == RunningMode.Server)
-                    return MyPartitionId;
-                if (RunningMode == RunningMode.Proxy)
-                    return MyProxyId;
-                return -1;
-            }
-        }
-
-        /// <summary>
-        /// Gets the ID of current server instance in the cluster.
-        /// </summary>
-        public int MyPartitionId
-        {
-            get
-            {
-                if (my_server_id != -1)
-                    return my_server_id;
-
-                if (RunningMode == RunningMode.Server)
-                {
-                    for (int i = 0; i < Servers.Count; i++)
-                    {
-                        if (Servers[i].Has(Global.MyIPAddresses, Global.MyIPEndPoint.Port) || Servers[i].HasLoopBackEndpoint(Global.MyIPEndPoint.Port))
-                        {
-                            my_server_id = i;
-                            return i;
-                        }
-                    }
-                }
-                return -1;
-            }
-        }
-
-        /// <summary>
-        /// Gets the ID of current proxy instance in the cluster.
-        /// </summary>
-        public int MyProxyId
-        {
-            get
-            {
-                if (my_proxy_id != -1)
-                    return my_proxy_id;
-
-                if (RunningMode == RunningMode.Proxy)
-                {
-                    IPEndPoint myProxyIPE = new IPEndPoint(Global.MyIPAddress, ProxyPort);
-
-                    for (int i = 0; i < Proxies.Count; i++)
-                    {
-                        if (Proxies[i].Has(Global.MyIPAddresses, ProxyPort) || Proxies[i].HasLoopBackEndpoint(myProxyIPE.Port))
-                        {
-                            my_proxy_id = i;
-                            return i;
-                        }
-                    }
-                }
-                return -1;
-            }
-        }
+        public RunningMode RunningMode { get; internal set; }
         #endregion
 
         /// <summary>

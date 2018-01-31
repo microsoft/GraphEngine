@@ -155,47 +155,6 @@ namespace Trinity.Utilities
     internal class NetworkUtility
     {
         /// <summary>
-        /// MiniDNS : Resolve host name to IP address
-        /// To setup dns entries, define them in TrinityConfig
-        /// </summary>
-        public static Dictionary<string, string> MiniDNS_Client = new Dictionary<string, string>();
-        public static Dictionary<string, string> MiniDNS_Server = new Dictionary<string, string>();
-        /// <summary>
-        /// MiniRDNS : Resolve IP address back to host names
-        /// To setup rdns entries, define them in TrinityConfig
-        /// </summary>
-        public static Dictionary<string, string> MiniRDNS_Client = new Dictionary<string, string>();
-        public static Dictionary<string, string> MiniRDNS_Server = new Dictionary<string, string>();
-
-        public static string PreferedNetworkMask
-        {
-            get { return _preferedNetworkMask; }
-            set
-            {
-                if (value == "")
-                    return;
-                string[] items = value.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                if (items.Length != 4)
-                {
-                    goto fail;
-                }
-                for (int i = 0; i < 4; ++i)
-                {
-                    if (!byte.TryParse(items[i], out maskBytes[i]))
-                        goto fail;
-                }
-                _preferedNetworkMask = value;
-                return;
-            fail:
-                Log.WriteLine(LogLevel.Info, "[WARNING]  Invalid value of Network.PreferedNetworkMask, ignoring");
-                return;
-            }
-        }
-
-        private static string _preferedNetworkMask = "";
-        private static byte[] maskBytes = new byte[4];
-
-        /// <summary>
         /// Checks whether the specified IPAddress belongs to the current machine.
         /// </summary>
         /// <param name="ipa">An IPAddress.</param>
@@ -235,58 +194,24 @@ namespace Trinity.Utilities
                 return _ip;
             }
 
-            string addrString = "";
-            bool in_DNS_Table = false;
-            if (TrinityConfig.CurrentRunningMode == RunningMode.Client)
+            IPAddress[] ips = Dns.GetHostAddresses(host);
+            IPAddress selectedIP = null;
+            foreach (IPAddress ip in ips)
             {
-                in_DNS_Table = MiniDNS_Client.TryGetValue(host, out addrString);
-            }
-            else
-            {
-                in_DNS_Table = MiniDNS_Server.TryGetValue(host, out addrString);
-            }
-            if (in_DNS_Table)
-            {
-                return IPAddress.Parse(addrString);
-            }
-            else
-            {
-                IPAddress[] ips = Dns.GetHostAddresses(host);
-                IPAddress selectedIP = null;
-                foreach (IPAddress ip in ips)
+                if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                 {
-                    if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+
+                    if (selectedIP == null)
                     {
-                        if (PreferedNetworkMask == "")
-                        {
-                            return ip;
-                        }
-                        else
-                        {
-                            if (selectedIP == null)
-                            {
-                                selectedIP = ip;
-                            }
-                            else
-                            {
-                                byte[] ipBytes = ip.GetAddressBytes();
-                                bool match = true;
-                                for (int i = 0; i < 4; ++i)
-                                {
-                                    if (maskBytes[i] != 0 && ipBytes[i] != maskBytes[i])
-                                    {
-                                        match = false;
-                                        break;
-                                    }
-                                }
-                                if (match)
-                                    selectedIP = ip;
-                            }
-                        }
+                        selectedIP = ip;
+                    }
+                    else
+                    {
+                        selectedIP = ip;
                     }
                 }
-                return selectedIP;
             }
+            return selectedIP;
         }
 
         /// <summary>
@@ -334,53 +259,38 @@ namespace Trinity.Utilities
         public static string IPAddress2HostName(IPAddress ip)
         {
             string hostName = "";
-            bool in_rDNS_Table = false;
-            if (TrinityConfig.CurrentRunningMode == RunningMode.Client)
+
+            try
             {
-                in_rDNS_Table = MiniRDNS_Client.TryGetValue(ip.ToString(), out hostName);
-            }
-            else
-            {
-                in_rDNS_Table = MiniRDNS_Server.TryGetValue(ip.ToString(), out hostName);
-            }
-            if (in_rDNS_Table)
-            {
-                return hostName.ToLowerInvariant();
-            }
-            else
-            {
+                hostName = Dns.GetHostEntry(ip).HostName.ToLowerInvariant();
+                string[] parts = hostName.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                IPAddress[] ips = null;
                 try
                 {
-                    hostName = Dns.GetHostEntry(ip).HostName.ToLowerInvariant();
-                    string[] parts = hostName.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                    IPAddress[] ips = null;
-                    try
-                    {
-                        ips = Dns.GetHostAddresses(parts[0]);
-                    }
-                    catch (Exception)
-                    {
-                    }
-                    if (ips != null)
-                    {
-                        bool match = false;
-                        foreach (IPAddress sip in ips)
-                        {
-                            if (sip.Equals(ip))
-                            {
-                                match = true;
-                                break;
-                            }
-                        }
-                        if (match)
-                            return parts[0];
-                    }
-                    return hostName;
+                    ips = Dns.GetHostAddresses(parts[0]);
                 }
                 catch (Exception)
                 {
-                    return ip.ToString().ToLowerInvariant();
                 }
+                if (ips != null)
+                {
+                    bool match = false;
+                    foreach (IPAddress sip in ips)
+                    {
+                        if (sip.Equals(ip))
+                        {
+                            match = true;
+                            break;
+                        }
+                    }
+                    if (match)
+                        return parts[0];
+                }
+                return hostName;
+            }
+            catch (Exception)
+            {
+                return ip.ToString().ToLowerInvariant();
             }
         }
 

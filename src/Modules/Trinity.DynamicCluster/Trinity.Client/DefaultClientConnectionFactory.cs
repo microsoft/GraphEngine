@@ -1,22 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Trinity.Extension;
 using Trinity.Storage;
 
 namespace Trinity.Client
 {
+    [ExtensionPriority(-100)]
     class DefaultClientConnectionFactory : IClientConnectionFactory
     {
-        public Task<IMessagePassingEndpoint> ConnectAsync(string endpoing)
+        public Task<IMessagePassingEndpoint> ConnectAsync(string endpoint)
         {
-            throw new NotImplementedException();
+            string[] ep = endpoint.Split(new[]{':' }, StringSplitOptions.RemoveEmptyEntries);
+            int port = int.Parse(ep[1]);
+            return Task.FromResult(DefaultClientConnection.New(ep[0], port));
         }
 
         public Task DisconnectAsync(IMessagePassingEndpoint endpoint)
         {
-            throw new NotImplementedException();
+            var cc = endpoint as DefaultClientConnection;
+            return Task.Run(() => cc.Dispose());
         }
     }
 }

@@ -1,20 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Trinity.Network;
 using Trinity.Network.Messaging;
 using Trinity.Storage;
 
-namespace Trinity.DynamicCluster.Test.Mocks
+namespace Trinity.Client
 {
-    class IStorage1 : IStorage
+    internal class RedirectedIStorage : IStorage
     {
-        public int cnt = 0;
+        private IMessagePassingEndpoint m_ep;
+        private CommunicationInstance m_comminst;
+        private int partitionId;
 
-        public bool SendMessageCalledOnce => cnt == 1;
+        public RedirectedIStorage(IMessagePassingEndpoint ep, TrinityClient tc, int p)
+        {
+            m_ep = ep;
+            m_comminst = tc;
+            partitionId = p;
+        }
 
         public unsafe TrinityErrorCode AddCell(long cellId, byte* buff, int size, ushort cellType)
         {
@@ -36,9 +42,7 @@ namespace Trinity.DynamicCluster.Test.Mocks
         }
 
         public T GetCommunicationModule<T>() where T : CommunicationModule
-        {
-            throw new NotImplementedException();
-        }
+            => m_comminst.GetCommunicationModule<T>();
 
         public TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff, out ushort cellType)
         {
@@ -57,13 +61,12 @@ namespace Trinity.DynamicCluster.Test.Mocks
 
         public unsafe void SendMessage(byte* message, int size)
         {
-            ++cnt;
+            throw new NotImplementedException();
         }
 
         public unsafe void SendMessage(byte* message, int size, out TrinityResponse response)
         {
-            ++cnt;
-            response = typeof(TrinityResponse).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { typeof(int) }, new ParameterModifier[] { }).Invoke(new object[] { 1 }) as TrinityResponse;
+            throw new NotImplementedException();
         }
 
         public unsafe void SendMessage(byte** message, int* sizes, int count)

@@ -11,7 +11,7 @@ namespace Trinity.DynamicCluster.Storage
 {
     public partial class Partition : IStorage
     {
-        public T GetModule<T>() where T : CommunicationModule
+        public T GetCommunicationModule<T>() where T : CommunicationModule
             => Global.CommunicationInstance.GetCommunicationModule<T>();
 
         public unsafe void SendMessage(byte* message, int size)
