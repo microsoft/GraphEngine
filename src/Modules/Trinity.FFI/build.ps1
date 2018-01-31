@@ -28,6 +28,7 @@ function Build($proj, $action, $config)
     $cmd = @'
  & dotnet.exe $action /p:Configuration=$config "$proj"
 '@
+    echo "Building $proj with action $action, config=$config..."
     Invoke-Expression $cmd
 }
 
@@ -39,11 +40,26 @@ function MSBuild($proj)
     Invoke-Expression $cmd
 }
 
+Build "$SOL_ROOT\pythonnet\src\runtime\Python.Runtime.15.csproj" -action restore -config ReleaseWinPY3
+Build "$SOL_ROOT\pythonnet\src\runtime\Python.Runtime.15.csproj" -action build -config ReleaseWinPY3
 Build "$SOL_ROOT\pythonnet\src\runtime\Python.Runtime.15.csproj" -action pack -config ReleaseWinPY3
 Move-Item -Path "$SOL_ROOT\pythonnet\src\runtime\bin\Python.Runtime.2.4.0.nupkg" -Destination $env:REPO_ROOT\bin\coreclr -Force
+
 MSBuild "$SOL_ROOT\Trinity.FFI.Native\Trinity.FFI.Native.vcxproj"
+
+Build "$SOL_ROOT\Trinity.FFI\Trinity.FFI.csproj" -action restore -config Release
+Build "$SOL_ROOT\Trinity.FFI\Trinity.FFI.csproj" -action build -config Release
 Build "$SOL_ROOT\Trinity.FFI\Trinity.FFI.csproj" -action pack -config Release
-#Build "$SOL_ROOT\Trinity.FFI.UnitTests\Trinity.FFI.UnitTests.csproj" -action build -config Release
+
+Build "$SOL_ROOT\Trinity.FFI.UnitTests\Trinity.FFI.UnitTests.csproj" -action restore -config Release
+Build "$SOL_ROOT\Trinity.FFI.UnitTests\Trinity.FFI.UnitTests.csproj" -action build -config Release
+
+Build "$SOL_ROOT\Trinity.FFI.Python\Trinity.FFI.Python.csproj" -action restore -config Release
+Build "$SOL_ROOT\Trinity.FFI.Python\Trinity.FFI.Python.csproj" -action build -config Release
 Build "$SOL_ROOT\Trinity.FFI.Python\Trinity.FFI.Python.csproj" -action pack -config Release
-#Build "$SOL_ROOT\Trinity.FFI.Python.UnitTests\Trinity.FFI.Python.UnitTests.csproj" -action build -config Release
+
+Build "$SOL_ROOT\Trinity.FFI.Python.UnitTests\Trinity.FFI.Python.UnitTests.csproj" -action restore -config Release
+Build "$SOL_ROOT\Trinity.FFI.Python.UnitTests\Trinity.FFI.Python.UnitTests.csproj" -action build -config Release
+
+Build "$SOL_ROOT\Trinity.FFI.Playground\Trinity.FFI.Playground.csproj" -action restore -config Release
 Build "$SOL_ROOT\Trinity.FFI.Playground\Trinity.FFI.Playground.csproj" -action build -config Release

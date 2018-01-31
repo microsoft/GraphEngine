@@ -85,7 +85,8 @@ namespace Trinity.Storage
             response = _rsp;
         }
 
-        public T GetModule<T>() where T : CommunicationModule
+        /// <inheritdoc />
+        public T GetCommunicationModule<T>() where T : CommunicationModule
         {
             return this.m_memorycloud?.GetCommunicationModule<T>();
         }

@@ -1,0 +1,6 @@
+.spyproject/
+**.idea/
+*.pyc
+__pycahce__/
+dev.py
+bin/Trinity.TSL.CodeGen.exe

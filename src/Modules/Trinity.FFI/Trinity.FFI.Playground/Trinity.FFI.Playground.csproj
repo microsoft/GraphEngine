@@ -7,7 +7,10 @@
 
   <ItemGroup>
     <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.9083" />
-    <PackageReference Include="GraphEngine.FFI.Python" Version="1.0.9083" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.FFI.Python\Trinity.FFI.Python.csproj" />
   </ItemGroup>
 
   <ItemGroup>

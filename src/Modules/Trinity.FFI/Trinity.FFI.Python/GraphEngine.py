@@ -145,17 +145,25 @@ def LoadCell(cellId):
     return _GraphEngine.LoadCell(cellId)
 LoadCell = _GraphEngine.LoadCell
 
-def SaveCell(cellId, pcell):
-    return _GraphEngine.SaveCell(cellId, pcell)
-SaveCell = _GraphEngine.SaveCell
+def SaveCell_1(cellId, pcell):
+    return _GraphEngine.SaveCell_1(cellId, pcell)
+SaveCell_1 = _GraphEngine.SaveCell_1
 
-def SaveCell2(cellId, pcell, options):
-    return _GraphEngine.SaveCell2(cellId, pcell, options)
-SaveCell2 = _GraphEngine.SaveCell2
+def SaveCell_2(cellId, pcell, options):
+    return _GraphEngine.SaveCell_2(cellId, pcell, options)
+SaveCell_2 = _GraphEngine.SaveCell_2
 
-def NewCell(cellType):
-    return _GraphEngine.NewCell(cellType)
-NewCell = _GraphEngine.NewCell
+def NewCell_1(cellType):
+    return _GraphEngine.NewCell_1(cellType)
+NewCell_1 = _GraphEngine.NewCell_1
+
+def NewCell_2(cellId, cellType):
+    return _GraphEngine.NewCell_2(cellId, cellType)
+NewCell_2 = _GraphEngine.NewCell_2
+
+def NewCell_3(cellType, cellContent):
+    return _GraphEngine.NewCell_3(cellType, cellContent)
+NewCell_3 = _GraphEngine.NewCell_3
 # This file is compatible with both classic and new-style classes.
 
 

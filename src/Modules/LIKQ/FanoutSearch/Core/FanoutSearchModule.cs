@@ -145,6 +145,11 @@ namespace FanoutSearch
             ExpressionSerializer.SetSerializerFactory(func);
         }
 
+        public static void RegisterQueryWhilelistType(Type t)
+        {
+            TraverseActionSecurityChecker.RegisterQueryWhitelistType(t);
+        }
+
         public static void EnableExternalQuery(bool enabled)
         {
             s_enable_external_query = enabled;

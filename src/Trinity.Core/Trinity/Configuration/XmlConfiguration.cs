@@ -210,7 +210,15 @@ namespace Trinity.Configuration
             XName name = element.Name.NamespaceName == string.Empty?
                 ConfigurationConstants.NS + element.Name.LocalName :
                 element.Name;
-            return new XElement(name, element.Elements().Select(SetDefaultNamespace));
+            return new XElement(name, element.Elements().Select(SetDefaultNamespace), element.Attributes());
+        }
+
+        private XAttribute SetAttrDefaultNamespace(XAttribute arg)
+        {
+            XName name = arg.Name.Namespace == string.Empty ?
+                ConfigurationConstants.NS + arg.Name.LocalName :
+                arg.Name;
+            return new XAttribute(name, arg.Value);
         }
 
         /// <summary>

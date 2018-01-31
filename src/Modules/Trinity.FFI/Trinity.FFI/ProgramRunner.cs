@@ -13,7 +13,6 @@ namespace Trinity.FFI
         private BlockingCollection<ILanguageRuntime> m_runtimes;
         private bool m_singleThreaded;
         private int m_runtime_type_id = 0;
-        private TRINITY_INTERFACES m_interfaces;
 
         private static int s_runtime_cnt = 0;
         private const int c_runtime_cnt_max = 255;
@@ -33,39 +32,6 @@ namespace Trinity.FFI
             m_module          = module;
             m_runtime_type_id = s_runtime_cnt++;
 
-            m_interfaces = new TRINITY_INTERFACES
-            {
-                async_registry = TrinityWrapper.trinity_ffi_async_registry,
-                async_send = TrinityWrapper.trinity_ffi_async_send,
-                cell_appendfield = TrinityWrapper.trinity_ffi_cell_append,
-                cell_getfield = TrinityWrapper.trinity_ffi_cell_get,
-                cell_getid = TrinityWrapper.trinity_ffi_cell_getid,
-                cell_dispose = TrinityWrapper.trinity_ffi_cell_dispose,
-                cell_fieldenum_get = TrinityWrapper.trinity_ffi_cellenum_get,
-                cell_fieldenum_movenext = TrinityWrapper.trinity_ffi_cellenum_movenext,
-                cell_fieldenum_current = TrinityWrapper.trinity_ffi_cellenum_current,
-                cell_fieldenum_dispose = TrinityWrapper.trinity_ffi_cellenum_dispose,
-                cell_fieldinfo_name = TrinityWrapper.trinity_ffi_fieldinfo_name,
-                cell_hasfield = TrinityWrapper.trinity_ffi_cell_has,
-                cell_removefield = TrinityWrapper.trinity_ffi_cell_delete,
-                cell_setfield = TrinityWrapper.trinity_ffi_cell_set,
-                cell_setid = TrinityWrapper.trinity_ffi_cell_setid,
-                cell_tostring = TrinityWrapper.trinity_ffi_cell_tostring,
-                cloud_loadcell = TrinityWrapper.trinity_ffi_cloud_loadcell,
-                cloud_removecell = TrinityWrapper.trinity_ffi_cloud_removecell,
-                cloud_savecell = TrinityWrapper.trinity_ffi_cloud_savecell,
-                local_loadcell = TrinityWrapper.trinity_ffi_local_loadcell,
-                local_removecell = TrinityWrapper.trinity_ffi_local_removecell,
-                local_savecell_1 = TrinityWrapper.trinity_ffi_local_savecell_1,
-                local_savecell_2 = TrinityWrapper.trinity_ffi_local_savecell_2,
-                newcell_1 = TrinityWrapper.trinity_ffi_newcell_1,
-                newcell_2 = TrinityWrapper.trinity_ffi_newcell_2,
-                newcell_3 = TrinityWrapper.trinity_ffi_newcell_3,
-                sync_registry = TrinityWrapper.trinity_ffi_sync_registry,
-                sync_send = TrinityWrapper.trinity_ffi_sync_send,
-            };
-
-            Native.TRINITY_FFI_SET_INTERFACES(ref m_interfaces);
 
             //  Two situations where we just allocate a single runtime:
             //  1. The provider specified that only one runtime can be created.

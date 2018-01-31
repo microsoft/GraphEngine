@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Trinity.Extension;
 using Trinity.TSL.Lib;
 
 namespace Trinity.Storage
@@ -145,6 +146,7 @@ namespace Trinity.Storage
 
     }
 
+    [ExtensionPriority(-100)]
     internal class DefaultGenericCellOperations : IGenericCellOperations
     {
         public IEnumerable<ICellAccessor> EnumerateGenericCellAccessors(LocalMemoryStorage storage)

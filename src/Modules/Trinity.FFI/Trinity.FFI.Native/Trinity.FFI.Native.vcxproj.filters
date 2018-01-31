@@ -32,7 +32,4 @@
       <Filter>Source Files</Filter>
     </CustomBuild>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="setup.py" />
-  </ItemGroup>
 </Project>

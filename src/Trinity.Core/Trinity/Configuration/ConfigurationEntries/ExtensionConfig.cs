@@ -6,9 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Trinity.Diagnostics;
+using Trinity.Extension;
 using Trinity.Utilities;
 
 namespace Trinity.Configuration
@@ -30,11 +32,47 @@ namespace Trinity.Configuration
         internal static string ConfigEntry { get { return ConfigurationConstants.Tags.EXTENSION.LocalName; } }
         #endregion
 
+        #region Fields
+        private bool m_priority_updated = false;
+        private Dictionary<Type, int> m_priority_dict = new Dictionary<Type, int>();
+        private List<ExtensionPriority> m_priority_list = new List<ExtensionPriority>();
+        #endregion
+
         /// <summary>
         /// Specifies the loading priority of extension classes
         /// </summary>
         [ConfigSetting(Optional: true)]
-        public List<ExtensionPriority> Priority {get; set;}
+        public List<ExtensionPriority> Priority { get => m_priority_list; set { m_priority_list = value; m_priority_updated = true; } }
+
+        /// <summary>
+        /// Resolve priorities of types specified by this configuration entry.
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<Type, int> ResolveTypePriorities()
+        {
+            if (!m_priority_updated) return m_priority_dict;
+
+            Dictionary<Type, int> rank = new Dictionary<Type, int>();
+            var defaults = AssemblyUtility.GetAllClassTypes()
+                .Select(t => new { Type = t, PriorityAttr = t.GetCustomAttribute<ExtensionPriorityAttribute>(inherit: false) })
+                .Where(t => t.PriorityAttr != null);
+
+            foreach(var d in defaults)
+            {
+                rank.Add(d.Type, d.PriorityAttr.Priority);
+            }
+
+            List<ExtensionPriority> priorities = Priority;
+            foreach(var p in priorities)
+            {
+                try { rank.Add(AssemblyUtility.GetType(p.Name), p.Priority); }
+                catch { }
+            }
+
+            m_priority_dict = rank;
+            m_priority_updated = false;
+            return rank;
+        }
     }
 
     /// <summary>

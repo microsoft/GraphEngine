@@ -1,0 +1,2 @@
+recursive-include GraphEngine *.py *.dll *.pyd *.exe
+include GraphEngine

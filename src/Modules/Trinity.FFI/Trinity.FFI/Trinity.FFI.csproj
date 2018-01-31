@@ -16,7 +16,7 @@
     <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
     <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
-    <Copyright>Copyright 2017</Copyright>
+    <Copyright>Copyright 2018</Copyright>
     <Version>1.0.9083</Version>
     <RepositoryUrl>https://github.com/Microsoft/GraphEngine/</RepositoryUrl>
   </PropertyGroup>

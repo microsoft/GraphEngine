@@ -16,12 +16,14 @@ using Trinity.Diagnostics;
 using System.Runtime.CompilerServices;
 using Trinity.Network;
 using Trinity.Utilities;
+using Trinity.Extension;
 
 namespace Trinity.Storage
 {
     /// <summary>
     /// Provides methods for interacting with the distributed memory store.
     /// </summary>
+    [ExtensionPriority(-100)]
     public unsafe partial class FixedMemoryCloud : MemoryCloud
     {
         private int server_count = -1;
@@ -62,12 +64,10 @@ namespace Trinity.Storage
         {
             switch (mode)
             {
-                case RunningMode.Server:
-                return TrinityConfig.Servers;
                 case RunningMode.Proxy:
                 return TrinityConfig.Proxies;
                 default:
-                throw new ArgumentOutOfRangeException();
+                return TrinityConfig.Servers;
             }
         }
         #endregion

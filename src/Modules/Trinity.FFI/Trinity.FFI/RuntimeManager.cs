@@ -23,6 +23,7 @@ namespace Trinity.FFI
 
         public void Run()
         {
+            FFIMethods.Initialize();
             Global.Uninitialized += _OnGlobalUninitialized;
             Global.CommunicationInstanceStarted += _OnCommunicationInstanceStart;
             Log.WriteLine("Trinity.FFI loaded.");

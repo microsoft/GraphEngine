@@ -24,25 +24,25 @@ namespace Trinity.Storage
         public static void SendMessage<T>(this IMessagePassingEndpoint storage, byte* message, int size)
             where T: CommunicationModule
         {
-            storage.GetModule<T>().SendMessage(storage, message, size);
+            storage.GetCommunicationModule<T>().SendMessage(storage, message, size);
         }
 
         public static void SendMessage<T>(this IMessagePassingEndpoint storage, byte* message, int size, out TrinityResponse response)
             where T: CommunicationModule
         {
-            storage.GetModule<T>().SendMessage(storage, message, size, out response);
+            storage.GetCommunicationModule<T>().SendMessage(storage, message, size, out response);
         }
 
         public static void SendMessage<T>(this IMessagePassingEndpoint storage, byte** message, int* sizes, int count)
             where T: CommunicationModule
         {
-            storage.GetModule<T>().SendMessage(storage, message, sizes, count);
+            storage.GetCommunicationModule<T>().SendMessage(storage, message, sizes, count);
         }
 
         public static void SendMessage<T>(this IMessagePassingEndpoint storage, byte** message, int* sizes, int count, out TrinityResponse response)
             where T: CommunicationModule
         {
-            storage.GetModule<T>().SendMessage(storage, message, sizes, count, out response);
+            storage.GetCommunicationModule<T>().SendMessage(storage, message, sizes, count, out response);
         }
 
         internal static void GetCommunicationSchema(this IMessagePassingEndpoint storage, out string name, out string signature)
