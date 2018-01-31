@@ -32,8 +32,6 @@ namespace Trinity.Client
 
         protected override sealed RunningMode RunningMode => RunningMode.Client;
 
-        public T GetModule<T>() where T : CommunicationModule => GetCommunicationModule<T>();
-
         public unsafe void SendMessage(byte* message, int size)
             => m_client.SendMessage(message, size);
 

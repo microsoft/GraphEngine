@@ -46,6 +46,7 @@ namespace Trinity.Network.Messaging
         FailureNotification,
         GetCommunicationSchema,
         GetCommunicationModuleOffsets,
+        GetClusterInformation,
         #endregion
     }
 }

@@ -16,6 +16,7 @@ using Trinity.Core.Lib;
 using Trinity.Network.Messaging;
 using Trinity.Network;
 using System.Globalization;
+using static Trinity.Configuration.ConfigurationConstants;
 
 namespace Trinity.Storage
 {
@@ -27,7 +28,7 @@ namespace Trinity.Storage
             // condition: 
             // 1. I am a server within this memory cloud
             // 2. I am a proxy within this memory cloud
-            return (my_partition_id != -1 || my_proxy_id != -1);
+            return (my_partition_id != Values.DEFAULT_INVALID_VALUE || my_proxy_id != Values.DEFAULT_INVALID_VALUE);
         }
 
         #endregion

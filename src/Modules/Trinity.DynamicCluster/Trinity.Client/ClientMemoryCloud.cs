@@ -19,6 +19,7 @@ namespace Trinity.Client
         internal static void Initialize(IMessagePassingEndpoint ep, TrinityClient tc)
         {
             s_ep = ep;
+            s_client = tc;
             s_redir_storages.Clear();
             s_redir_storages.Add(new RedirectedIStorage(ep, tc));
         }
@@ -27,7 +28,7 @@ namespace Trinity.Client
 
         public override int MyPartitionId => -1;
 
-        public override int MyProxyId => throw new NotSupportedException();
+        public override int MyProxyId => -1;
 
         public override IEnumerable<Chunk> MyChunks => Enumerable.Empty<Chunk>();
 

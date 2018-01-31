@@ -31,7 +31,7 @@ namespace Trinity.DynamicCluster.Test.Mocks
             throw new NotImplementedException();
         }
 
-        public T GetModule<T>() where T : CommunicationModule
+        public T GetCommunicationModule<T>() where T : CommunicationModule
         {
             throw new NotImplementedException();
         }
