@@ -38,6 +38,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -49,19 +52,26 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientCookieMismatchException.cs" />
+    <Compile Include="ClientInstanceNotFoundException.cs" />
+    <Compile Include="ClientIStorage.cs" />
     <Compile Include="DefaultClientConnection.cs" />
     <Compile Include="DefaultClientConnectionFactory.cs" />
+    <Compile Include="IClientConnection.cs" />
+    <Compile Include="IClientRegistry.cs" />
     <Compile Include="ClientMemoryCloud.cs" />
     <Compile Include="IClientConnectionFactory.cs" />
     <Compile Include="RedirectedIStorage.cs" />
     <Compile Include="TrinityClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TrinityClientModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Trinity.Client.nuspec">
       <SubType>Designer</SubType>
     </None>
+    <TslCodegen Include="Trinity.Client.tsl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

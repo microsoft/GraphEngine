@@ -65,6 +65,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Trinity.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GraphEngine.Client.1.0.9083\lib\net461\Trinity.Client.dll</HintPath>
+    </Reference>
     <Reference Include="Trinity.Core, Version=1.0.9083.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GraphEngine.Core.1.0.9083\lib\Trinity.Core.dll</HintPath>
     </Reference>
