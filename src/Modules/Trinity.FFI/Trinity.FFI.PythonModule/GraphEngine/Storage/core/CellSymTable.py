@@ -10,14 +10,16 @@ from time import ctime
 from linq import Flow
 import json
 
-__all__ = ['CellType', 'SymTableConstructor', 'sync']
+__all__ = ['CellType', 'SymTablePicker', 'sync']
 CellType = namedtuple('CellType', ['name', 'attrs'])
-    
+
+
 # CellType.attrs : Dict[str, type]
 
 class SymTable:
     __slots__ = ['_context', 'version']
     format_indent = 4
+
     def __init__(self, version_thunk):
         self.version = version_thunk()
         self._context = {}
@@ -28,15 +30,15 @@ class SymTable:
             for dynamically loaded symtable.
         """
         return self._context[name]
-    
+
     def __str__(self):
         return "VERSION[{}]:\n{}".format(self.version, json.dumps(self._context, indent=SymTable.format_indent))
 
     def __repr__(self):
         return self.__str__()
-    
 
-class SymTableConstructor:
+
+class SymTablePicker:
     __inst__ = None
 
     def __new__(cls, version_thunk=ctime):
@@ -45,23 +47,21 @@ class SymTableConstructor:
         cls.__inst__ = SymTable(version_thunk)
         return cls.__inst__
 
+
 def sync():
     """
     syncronize the symtable of cell types from .NET Core hosting
     """
-    if SymTableConstructor.__inst__ is None:
-        SymTableConstructor(ctime)
+    if SymTablePicker.__inst__ is None:
+        SymTablePicker(ctime)
     else:
-        SymTableConstructor.__inst__.__init__(ctime)  # new
+        SymTablePicker.__inst__.__init__(ctime)  # new
 
     import Trinity
-    
-    
-    context = SymTableConstructor.__inst__._context
-    
-    
+
+    context = SymTablePicker.__inst__._context
+
     (Flow(Trinity.Global.get_StorageSchema().get_CellDescriptors())
-        .Map(lambda cell_type: (cell_type.TypeName, 
-                                {attr.Name: attr.TypeName for attr in cell_type.GetFieldDescriptors()}))
-        .Each(lambda k, v: context.__setitem__(k, CellType(k, v))))
-    
+     .Map(lambda cell_type: (cell_type.TypeName,
+                             {attr.Name: attr.TypeName for attr in cell_type.GetFieldDescriptors()}))
+     .Each(lambda k, v: context.__setitem__(k, CellType(k, v))))

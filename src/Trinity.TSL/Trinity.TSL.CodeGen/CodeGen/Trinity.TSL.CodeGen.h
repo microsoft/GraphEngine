@@ -2,11 +2,13 @@
 #include <string>
 #include <vector>
 #include "SyntaxNode.h"
-
 namespace Trinity
 {
+	
     namespace Codegen
     {
+		
+
         struct ModuleContext
         {
             int                      m_stack_depth;
@@ -19,13 +21,13 @@ namespace Trinity
          * @param   target_path      Target path to store generated source files
          * @returns                  A std::vector of the filenames of the generated source files.
          */
-        std::vector<std::string*>* codegen_entry(NTSL* tsl, const std::string& target_path, const std::string& target_namespace);
+        std::vector<std::string*>* codegen_entry(NTSL* tsl, const std::string& target_path, const std::string& target_namespace, const int c_offset);
 
 #pragma region Codegen routines
 
         std::string* GenericCell(NTSL* node);
         std::string* Enum(NTSL* node);
-        std::string* CellTypeEnum(NTSL* node);
+        std::string* CellTypeEnum(NTSL* node, const int cell_type_offset);
         std::string* CellTypeExtension(NTSL* node);
         std::string* Cell(NCell* node);
         std::string* Struct(NStruct* node);

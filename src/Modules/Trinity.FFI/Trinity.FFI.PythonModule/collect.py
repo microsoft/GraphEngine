@@ -63,5 +63,12 @@ if is_windows:
                     with_postfix=['.exe'],
                     to_module='Command')
 
+    # add newtonsoft.json.dll
+    # TODO: a robust way to find out newtonsoft.json.dll.
+    to_pymodule_dir(r'C:\Program Files\dotnet\sdk\NuGetFallbackFolder\newtonsoft.json\9.0.1\lib\netstandard1.0',
+                    with_postfix=['.dll'],
+                    to_module='ffi')
+    
+
 else:
     raise NotImplemented

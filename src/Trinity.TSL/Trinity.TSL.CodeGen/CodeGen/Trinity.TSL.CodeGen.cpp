@@ -6,6 +6,7 @@
 #include "parser.tab.h"
 
 #define NF(x) #x, x
+#define NAME(x) #x
 
 template<typename Func, typename N>
 static void write_file(const String& target_path, const String& name, Func gen, N* node, std::vector<std::string*>* files)
@@ -84,7 +85,7 @@ namespace Trinity
 
 #pragma region Helper functions
         NFieldType* _get_raw_ptr(NFieldType* ptr)
-        {
+        {	
             return ptr;
         }
 
@@ -432,8 +433,10 @@ namespace Trinity
             //TODO delete vectors in maps?
         }
 
-        std::vector<std::string*>* codegen_entry(NTSL* tsl, const std::string& target_path, const std::string& target_namespace)
+        std::vector<std::string*>* codegen_entry(NTSL* tsl, const std::string& target_path, const std::string& target_namespace, const int cell_type_offset)
         {
+
+			Console::WriteLine(cell_type_offset);
             initialize(tsl);
             auto *files = new std::vector<std::string*>();
             if (Trinity::Codegen::target_namespace.empty())
@@ -449,7 +452,7 @@ namespace Trinity
             {
                 write_file(lib_path, NF(GenericCell), tsl, files);
                 write_file(lib_path, NF(StorageSchema), tsl, files);
-                write_file(lib_path, NF(CellTypeEnum), tsl, files);
+				write_file(lib_path, NAME(CellTypeEnum), [=](NTSL* node) {return CellTypeEnum(node, cell_type_offset);}, tsl, files);
                 write_file(lib_path, NF(CellTypeExtension), tsl, files);
             }
 
