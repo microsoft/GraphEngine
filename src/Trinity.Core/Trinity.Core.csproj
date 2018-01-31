@@ -95,6 +95,7 @@
     <Compile Include="Daemon\NamespaceDoc.cs" />
     <Compile Include="Diagnostics\SystemStatus.cs" />
     <Compile Include="Extension\AutoRegisteredCommunicationModuleAttribute.cs" />
+    <Compile Include="Extension\ExtensionPriorityAttribute.cs" />
     <Compile Include="Extension\IGenericCellOperations.cs" />
     <Compile Include="Extension\GraphEngineExtensionAttribute.cs" />
     <Compile Include="Extension\IStartupTask.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="Network\Instance\CommunicationProtocolGroup.cs" />
     <Compile Include="Network\Instance\CommunicationInstance.cs" />
     <Compile Include="Extension\IProtocolDescriptor.cs" />
+    <Compile Include="Network\Instance\ICommunicationModuleRegistry.cs" />
     <Compile Include="Network\Messaging\MessageArgs\AsynReqRspArgs.cs" />
     <Compile Include="Network\Messaging\MessageArgs\UnhandledException.cs" />
     <Compile Include="Network\Messaging\PreservedMessages.cs" />

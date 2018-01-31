@@ -175,7 +175,7 @@ namespace Trinity.Storage
         }
 
         /// <inheritdoc/>
-        public T GetModule<T>() where T: CommunicationModule
+        public T GetCommunicationModule<T>() where T: CommunicationModule
         {
             return Global.CommunicationInstance.GetCommunicationModule<T>();
         }

@@ -17,7 +17,7 @@ namespace Trinity.Network
     /// <summary>
     /// Represents a group of communication protocols.
     /// </summary>
-    public abstract class CommunicationProtocolGroup
+    public abstract class CommunicationProtocolGroup : ICommunicationModuleRegistry
     {
         #region Fields
         protected HashSet<Type> m_RegisteredModuleTypes = new HashSet<Type>();
@@ -80,16 +80,6 @@ namespace Trinity.Network
         }
 
         /// <summary>
-        /// Registers a communication module type. The registered type will be instantiated when the hosting communication instance starts up.
-        /// Duplicated registrations of the same module are ignored.
-        /// </summary>
-        /// <typeparam name="T">The type of the communication module.</typeparam>
-        public void RegisterCommunicationModule<T>() where T : CommunicationModule
-        {
-            m_RegisteredModuleTypes.Add(typeof(T));
-        }
-
-        /// <summary>
         /// Retrieves all registered communication module types.
         /// </summary>
         /// <returns></returns>
@@ -98,15 +88,22 @@ namespace Trinity.Network
             return m_RegisteredModuleTypes.ToList();
         }
 
-        /// <summary>
-        /// Gets an instance of a registered communication module.
-        /// </summary>
-        /// <typeparam name="T">The type of the communication module.</typeparam>
-        /// <returns>A communication module object if the module type is registered. Otherwise returns null.</returns>
+        /// <inheritdoc />
         public T GetCommunicationModule<T>() where T : CommunicationModule
         {
             return GetCommunicationInstance()._GetCommunicationModule_impl<T>();
         }
+
+        /// <summary>
+        /// Registers a communication module type. The registered type will be instantiated when the hosting communication instance starts up.
+        /// Duplicated registrations of the same module are ignored.
+        /// </summary>
+        /// <typeparam name="T">The type of the communication module.</typeparam
+        public void RegisterCommunicationModule<T>() where T : CommunicationModule
+        {
+            m_RegisteredModuleTypes.Add(typeof(T));
+        }
+
         #endregion
     }
 }

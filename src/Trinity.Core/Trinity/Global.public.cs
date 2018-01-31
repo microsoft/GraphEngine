@@ -318,7 +318,7 @@ namespace Trinity
         }
 
         /// <summary>
-        /// Represents the running communication instance (a TrinityServer or a TrinityProxy).
+        /// Represents the running communication instance (a TrinityServer, a TrinityProxy, a TrinityClient, etc.).
         /// If no server/proxy are started, the value is null.
         /// </summary>
         public static CommunicationInstance CommunicationInstance

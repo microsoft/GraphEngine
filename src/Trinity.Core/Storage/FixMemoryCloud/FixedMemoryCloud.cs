@@ -16,12 +16,14 @@ using Trinity.Diagnostics;
 using System.Runtime.CompilerServices;
 using Trinity.Network;
 using Trinity.Utilities;
+using Trinity.Extension;
 
 namespace Trinity.Storage
 {
     /// <summary>
     /// Provides methods for interacting with the distributed memory store.
     /// </summary>
+    [ExtensionPriority(-100)]
     public unsafe partial class FixedMemoryCloud : MemoryCloud
     {
         private int server_count = -1;
