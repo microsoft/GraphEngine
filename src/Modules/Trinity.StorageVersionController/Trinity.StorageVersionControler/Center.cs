@@ -3,19 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Trinity.StorageVersionControler
+namespace Trinity.StorageVersionController
 {
-    using PathRecord = Dictionary<int, string>;
     
     public static class Center
     {
         public const string Namespace = "TSLAssembly";
 
+        public static List<AsmVersion> AsmVersions = new List<AsmVersion> { };
+
         public static AsmVersion CurrentVersion;
+
+        
         
         private static int _currentCellTypeOffset = 0;
         
         public static int CurrentCellTypeOffset { get => _currentCellTypeOffset; }
+
+
 
         private static List<Assembly> _asmSlides;
 
@@ -67,6 +72,8 @@ namespace Trinity.StorageVersionControler
 
                 /// TODO: get cell_type count by `asm`.
                 _currentCellTypeOffset += 99999;
+                AsmVersions.Add(CurrentVersion);
+                CurrentVersion = null;
             }
             catch(Exception e)
             {
