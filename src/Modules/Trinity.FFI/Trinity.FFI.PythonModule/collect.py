@@ -50,11 +50,11 @@ if is_windows:
                     with_postfix=['.py', '.dll', '.pyd'],
                     to_module='ffi')
 
-    # build TslAssembly.csproj
-    dir_at(pardir_of(BUILD_SCRIPT_PATH), 'TslAssembly',
+    # build Trinity.StorageVersionController.csproj
+    dir_at(pardir_of(pardir_of(BUILD_SCRIPT_PATH)), 'Trinity.StorageVersionController',
            then_call=lambda _: os.system('cd {} && dotnet restore && dotnet build'.format(_)))
 
-    to_pymodule_dir('../TslAssembly',
+    to_pymodule_dir('../../Trinity.StorageVersionController',
                     with_postfix=['.dll'],
                     to_module='ffi')
 
@@ -68,7 +68,16 @@ if is_windows:
     to_pymodule_dir(r'C:\Program Files\dotnet\sdk\NuGetFallbackFolder\newtonsoft.json\9.0.1\lib\netstandard1.0',
                     with_postfix=['.dll'],
                     to_module='ffi')
-    
+
+    # deprecated
+    # build TslAssembly.csproj
+    dir_at(pardir_of(BUILD_SCRIPT_PATH), 'TslAssembly',
+           then_call=lambda _: os.system('cd {} && dotnet restore && dotnet build'.format(_)))
+
+    to_pymodule_dir('../TslAssembly',
+                    with_postfix=['.dll'],
+                    to_module='ffi')
+
 
 else:
     raise NotImplemented

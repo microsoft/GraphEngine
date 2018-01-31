@@ -12,6 +12,7 @@ from .TypeMap import CellType
 import json
 from functools import update_wrapper
 
+
 class Cell:
     def __init__(self, typ: CellType, cell_id=None):
 

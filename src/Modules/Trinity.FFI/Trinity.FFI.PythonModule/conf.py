@@ -44,11 +44,14 @@ def copy_to(_to, _from):
     """
     _to = os.path.join(_to, os.path.split(_from)[-1])
     print(_from, '->', _to)
-    with open(_from, 'rb') as _from_file, open(_to, 'wb') as _to_file:
-        and_then(
-            _from_file.read,
-            _to_file.write
-        )(None)
+    try:
+        with open(_from, 'rb') as _from_file, open(_to, 'wb') as _to_file:
+            and_then(
+                _from_file.read,
+                _to_file.write
+            )(None)
+    except OSError:
+        pass
 
 
 def recur_listdir(dir):

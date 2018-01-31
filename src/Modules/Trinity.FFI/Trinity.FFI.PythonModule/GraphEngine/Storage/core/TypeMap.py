@@ -44,18 +44,19 @@ def type_register(typ):
 # type class
 class TSLTypeConstructor:
     def __new__(cls, tsl_type_ast: Ast):
+        # current : Type ::=  Generic ['?'] | Identifier ['?'];
 
         is_optional = True if len(tsl_type_ast) is 2 else False
 
         if is_optional:
-            #  Type '?'
             tsl_type_ast = tsl_type_ast[0]
             if len(tsl_type_ast) is 2:
                 raise SyntaxError('double `optional` prefix!')
 
         if not isinstance(tsl_type_ast, Ast):
+            # current = identifier
+            # Identifier := R'[a-zA-Z_][a-z0-9A-Z_]*';
 
-            # identifier
             type_name = tsl_type_ast
 
             type_constructor = Types.get(type_name)
@@ -66,6 +67,8 @@ class TSLTypeConstructor:
             type_checker = lambda v: isinstance(v, type_constructor)
 
         else:
+            #  current = Generic
+            #  Generic Throw ['<', '>', ','] ::= Identifier '<' [Type (',' Type)*] L'>';
             type_class, *type_args = tsl_type_ast
             _ = GenericManager.get(type_class)
             if _ is None:

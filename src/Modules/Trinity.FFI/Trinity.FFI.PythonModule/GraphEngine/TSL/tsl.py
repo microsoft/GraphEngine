@@ -5,11 +5,11 @@ Created on Wed Jan 31 17:54:07 2018
 @author: twshe
 """
 from collections import namedtuple
+from GraphEngine.Storage.core.TypeMap import CellType
 from GraphEngine.Storage.core.Serialize import TSLJSONEncoder
 import json
 from GraphEngine.Command import code_gen
 
-CellType = namedtuple('CellType', ['name', 'attrs'])
 _join = ''.join
 
 
