@@ -17,15 +17,18 @@ struct PollEventsRequest
 	int Cookie;
 }
 
-struct PostSyncResponseRequest
+struct PostResponseRequest
 {
 	int InstanceId;
 	int Cookie;
+	long p;
 	List<byte> Result;
 }
 
 struct PollEventsResponse
 {
+	// non-null if the response is a "request with response""
+	optional long p;
 	// null if no events
 	optional List<byte> Result;
 }
@@ -43,24 +46,17 @@ protocol RegisterClient
 	Response: RegisterClientResponse;
 }
 
-protocol PollAsyncEvents
+protocol PollEvents
 {
 	Type: Syn;
 	Request: PollEventsRequest;
 	Response: PollEventsResponse;
 }
 
-protocol PollSyncEvents
+protocol PostResponse
 {
 	Type: Syn;
-	Request: PollEventsRequest;
-	Response: PollEventsResponse;
-}
-
-protocol PostSyncResponse
-{
-	Type: Syn;
-	Request: PostSyncResponseRequest;
+	Request: PostResponseRequest;
 	Response: void;
 }
 
@@ -75,7 +71,6 @@ module TrinityClientModule
 {
 	protocol RegisterClient;
 	protocol UnregisterClient;
-	protocol PollSyncEvents;
-	protocol PollAsyncEvents;
-	protocol PostSyncResponse;
+	protocol PollEvents;
+	protocol PostResponse;
 }

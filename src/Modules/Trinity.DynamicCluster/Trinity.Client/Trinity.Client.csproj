@@ -52,17 +52,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientCookieMismatchException.cs" />
-    <Compile Include="ClientInstanceNotFoundException.cs" />
-    <Compile Include="ClientIStorage.cs" />
-    <Compile Include="DefaultClientConnection.cs" />
-    <Compile Include="DefaultClientConnectionFactory.cs" />
-    <Compile Include="ClientMemoryCloud.cs" />
-    <Compile Include="IClientConnectionFactory.cs" />
-    <Compile Include="IClientRegistry.cs" />
-    <Compile Include="PassThroughIStorage.cs" />
-    <Compile Include="RedirectedIStorage.cs" />
-    <Compile Include="TrinityClient.cs" />
+    <Compile Include="ServerSide\ClientCookieMismatchException.cs" />
+    <Compile Include="ServerSide\ClientInstanceNotFoundException.cs" />
+    <Compile Include="ServerSide\ClientIStorage.cs" />
+    <Compile Include="ClientSide\DefaultClientConnection.cs" />
+    <Compile Include="ClientSide\DefaultClientConnectionFactory.cs" />
+    <Compile Include="ClientSide\ClientMemoryCloud.cs" />
+    <Compile Include="ClientSide\IClientConnectionFactory.cs" />
+    <Compile Include="ServerSide\IClientRegistry.cs" />
+    <Compile Include="ClientSide\PassThroughIStorage.cs" />
+    <Compile Include="ClientSide\RedirectedIStorage.cs" />
+    <Compile Include="ClientSide\TrinityClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TrinityClientModule.cs" />
   </ItemGroup>
@@ -73,6 +73,7 @@
     </None>
     <TslCodegen Include="Trinity.Client.tsl" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

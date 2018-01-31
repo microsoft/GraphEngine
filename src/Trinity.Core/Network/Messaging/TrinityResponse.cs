@@ -52,8 +52,10 @@ namespace Trinity.Network.Messaging
             }
         }
 
-        // construct a TrinityResponse using a raw buffer
-        internal TrinityResponse(byte* buf, int size)
+        /// <summary>
+        /// construct a TrinityResponse using a raw buffer.
+        /// </summary>
+        public TrinityResponse(byte* buf, int size)
         {
             Buffer = buf;
             Size = size;
