@@ -10,20 +10,31 @@ namespace DynamicLoading
         public static string Version = "1.0.9083";
         public static string NetFramework = "netstandard2.0";
         public static string Include;
-        public static List<string> TemplateLine => new List<string>{
+        public static class Reference
+        {
+            public static string[] Names = new string[] {
+                "GraphEngine.CoreCLR",
+                "Trinity.FFI",
+                "Newtonsoft.Json"
+            };
+        }
+        
+
+        public static string _makeReference(string reference) => string.Join("\n",
+            $"       <Reference Include = \"{reference}\">",
+            $"           <HintPath>{Include}\\{reference}.dll</HintPath>",
+            "       </Reference>"
+        );
+
+        public static string Template => string.Join("\n",
             "<Project Sdk = \"Microsoft.NET.Sdk\">",
             "   <PropertyGroup>",
             $"       <TargetFramework>{NetFramework}</TargetFramework>",
             "        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>",
             "   </PropertyGroup>",
             "   <ItemGroup>",
-            "       <Reference Include = \"GraphEngine.CoreCLR\">",
-            $"           <HintPath>{Include}\\GraphEngine.CoreCLR.dll</HintPath>",
-            "       </Reference>",
-            "       <Reference Include = \"Newtonsoft.Json\">",
-            $"            <HintPath>{Include}\\Newtonsoft.Json.dll</HintPath>",
-            "       </Reference>",
+            string.Join("\n", Reference.Names.Select(_makeReference)),
             "   </ItemGroup>",
-            "</Project>"};
+            "</Project>");
     }
 }

@@ -99,51 +99,77 @@ except __builtin__.Exception:
 def Init():
     return _GraphEngine.Init()
 Init = _GraphEngine.Init
+class Cell(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, Cell, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, Cell, name)
+    __repr__ = _swig_repr
+
+    def __init__(self, cell):
+        this = _GraphEngine.new_Cell(cell)
+        try:
+            self.this.append(this)
+        except __builtin__.Exception:
+            self.this = this
+    __swig_setmethods__["m_cell"] = _GraphEngine.Cell_m_cell_set
+    __swig_getmethods__["m_cell"] = _GraphEngine.Cell_m_cell_get
+    if _newclass:
+        m_cell = _swig_property(_GraphEngine.Cell_m_cell_get, _GraphEngine.Cell_m_cell_set)
+
+    def GetField(self, field):
+        return _GraphEngine.Cell_GetField(self, field)
+
+    def SetField(self, field, content):
+        return _GraphEngine.Cell_SetField(self, field, content)
+
+    def AppendField(self, field, content):
+        return _GraphEngine.Cell_AppendField(self, field, content)
+
+    def RemoveField(self, field):
+        return _GraphEngine.Cell_RemoveField(self, field)
+
+    def HasField(self, field):
+        return _GraphEngine.Cell_HasField(self, field)
+
+    def GetID(self):
+        return _GraphEngine.Cell_GetID(self)
+
+    def SetID(self):
+        return _GraphEngine.Cell_SetID(self)
+    __swig_destroy__ = _GraphEngine.delete_Cell
+    __del__ = lambda self: None
+
+    def GetFieldNames(self):
+        return _GraphEngine.Cell_GetFieldNames(self)
+Cell_swigregister = _GraphEngine.Cell_swigregister
+Cell_swigregister(Cell)
+cvar = _GraphEngine.cvar
+
 
 def LoadCell(cellId):
     return _GraphEngine.LoadCell(cellId)
 LoadCell = _GraphEngine.LoadCell
 
-def SaveCell(cellId, cell):
-    return _GraphEngine.SaveCell(cellId, cell)
-SaveCell = _GraphEngine.SaveCell
+def SaveCell_1(cellId, pcell):
+    return _GraphEngine.SaveCell_1(cellId, pcell)
+SaveCell_1 = _GraphEngine.SaveCell_1
 
-def SaveCell2(cellId, cell, options):
-    return _GraphEngine.SaveCell2(cellId, cell, options)
-SaveCell2 = _GraphEngine.SaveCell2
+def SaveCell_2(cellId, pcell, options):
+    return _GraphEngine.SaveCell_2(cellId, pcell, options)
+SaveCell_2 = _GraphEngine.SaveCell_2
 
-def NewCell(cellType):
-    return _GraphEngine.NewCell(cellType)
-NewCell = _GraphEngine.NewCell
+def NewCell_1(cellType):
+    return _GraphEngine.NewCell_1(cellType)
+NewCell_1 = _GraphEngine.NewCell_1
 
-def CellGetField(cell, field):
-    return _GraphEngine.CellGetField(cell, field)
-CellGetField = _GraphEngine.CellGetField
+def NewCell_2(cellId, cellType):
+    return _GraphEngine.NewCell_2(cellId, cellType)
+NewCell_2 = _GraphEngine.NewCell_2
 
-def CellSetField(cell, field, content):
-    return _GraphEngine.CellSetField(cell, field, content)
-CellSetField = _GraphEngine.CellSetField
-
-def CellAppendField(cell, field, content):
-    return _GraphEngine.CellAppendField(cell, field, content)
-CellAppendField = _GraphEngine.CellAppendField
-
-def CellRemoveField(cell, field):
-    return _GraphEngine.CellRemoveField(cell, field)
-CellRemoveField = _GraphEngine.CellRemoveField
-
-def CellHasField(cell, field):
-    return _GraphEngine.CellHasField(cell, field)
-CellHasField = _GraphEngine.CellHasField
-
-def CellDispose(cell):
-    return _GraphEngine.CellDispose(cell)
-CellDispose = _GraphEngine.CellDispose
-
-def CellGetFieldNames(cell):
-    return _GraphEngine.CellGetFieldNames(cell)
-CellGetFieldNames = _GraphEngine.CellGetFieldNames
+def NewCell_3(cellType, cellContent):
+    return _GraphEngine.NewCell_3(cellType, cellContent)
+NewCell_3 = _GraphEngine.NewCell_3
 # This file is compatible with both classic and new-style classes.
 
-cvar = _GraphEngine.cvar
 

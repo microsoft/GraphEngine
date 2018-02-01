@@ -15,6 +15,7 @@ from conf import copy_to, recur_listdir, pardir_of
 from cytoolz.curried import curry
 from functools import partial
 import argparse
+import shutil
 
 cmdparser = argparse.ArgumentParser(description='clean the generated.')
 cmdparser.add_argument("--all",
@@ -52,4 +53,4 @@ for clean_path in clean_paths:
             "./build",
             "./dist",
             "./GraphEngine/ffi/storage"])
- .Each(lambda _: log.within(then_call=os.system)('rm -rf {}'.format(_))))
+ .Each(log.within(then_call=partial(shutil.rmtree, ignore_errors=True))))
