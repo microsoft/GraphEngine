@@ -67,7 +67,7 @@ bool get_parameters(int argc, char** argv)
     auto OutputPath                                = CommandLineTools::DefineOption<Trinity::String>("o", "OutputPath");
     auto NoWarning                                 = CommandLineTools::DefineOption<bool>("NoWarning", "NoWarning");
     auto Help                                      = CommandLineTools::DefineOption<bool>("h", "help");
-    auto Offset                                    = CommandLineTools::DefineOption<Trinity::String>("offset", "offset");
+    auto Offset                                    = CommandLineTools::DefineOption<unsigned int>("offset", "offset");
 
     CommandLineTools::GetOpt(args,
                              BuildDataModelingProjectWithDebugFeatures,
@@ -91,9 +91,7 @@ bool get_parameters(int argc, char** argv)
     c_script_list      = ScriptFileList.value.Trim().Split(";").ToList();
     c_output_path      = OutputPath.set ? OutputPath.value.Trim() : ".";
     c_no_warnings      = NoWarning.set;
-	
-
-	c_offset           = Offset.set ? std::stoi(Offset.value.Trim().c_str()) : 0;
+	c_offset           = Offset.set ? Offset.value : 0;
 
 
     /* Append any other arguments to the file list. */
@@ -142,6 +140,7 @@ bool print_parameters()
     OUTPUT_PARAMETER(ProjectRoot, c_project_root);
     //OUTPUT_PARAMETER(ScriptList, c_script_list);
     OUTPUT_PARAMETER(OutputPath, c_output_path);
+    OUTPUT_PARAMETER(CellTypeOffset, c_offset);
 
     return true;
 }

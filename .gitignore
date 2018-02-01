@@ -97,3 +97,5 @@ tests/new_test.exe
 *.pyc
 **/.idea
 **/.spyproject
+/src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/GraphEngine/**/*.exe
+/src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/GraphEngine/**/*.dll
