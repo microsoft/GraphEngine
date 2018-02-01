@@ -12,6 +12,7 @@ namespace Trinity
     {
         extern std::string target_namespace;
         extern bool        contains_substring_index;
+        extern int         celltype_offset;
 
         extern std::vector<NFieldType*>                                    *TSLDataTypeVector;
         extern std::vector<NFieldType*>									   *TSLExternalParserDataTypeVector;
@@ -29,6 +30,11 @@ namespace Trinity
         std::string GetDataTypeString(NFieldType* n_field_type);
         std::string GetDataTypeDisplayString(NFieldType* n_field_type);
         std::string GetNonNullableValueTypeString(NFieldType* n_field_type);
+
+        inline int GetCellTypeOffset()
+        {
+            return celltype_offset;
+        }
 
         inline std::string GetNamespace()
         {

@@ -6,12 +6,13 @@ namespace t_Namespace
     [TARGET("NTSL")]
     [MAP_LIST("t_cell", "node->cellList")]
     [MAP_VAR("t_cell_name", "name")]
-    [MAP_VAR("t_ushort", "GET_ITERATOR_VALUE() + 1")]
+    [MAP_VAR("t_ushort", "Trinity::Codegen::GetCellTypeOffset()")]
+    [MAP_VAR("t_ushort_2", "Trinity::Codegen::GetCellTypeOffset() + 1 + GET_ITERATOR_VALUE()")]
     public enum CellType: ushort
     {
-        Undefined = 0,
+        Undefined = __meta.t_ushort,
         /*FOREACH("")*/
-        t_cell_name = __meta.t_ushort,
+        t_cell_name = __meta.t_ushort_2,
         /*END*/
     }
 }
