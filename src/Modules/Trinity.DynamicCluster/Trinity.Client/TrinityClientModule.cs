@@ -78,6 +78,7 @@ namespace Trinity.Client.TrinityClientModule
             args.Response = new TrinityMessage(outer_buf, outer_len);
         }
 
+        #region not used
         public override void PollEventsHandler(PollEventsRequestReader request, PollEventsResponseWriter response)
         {
             throw new NotImplementedException();
@@ -87,6 +88,7 @@ namespace Trinity.Client.TrinityClientModule
         {
             throw new NotImplementedException();
         }
+        #endregion
 
         public override void RegisterClientHandler(RegisterClientRequestReader request, RegisterClientResponseWriter response)
         {

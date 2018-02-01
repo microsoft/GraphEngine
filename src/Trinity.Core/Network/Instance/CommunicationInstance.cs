@@ -25,6 +25,12 @@ using Trinity.Extension;
 namespace Trinity.Network
 {
     /// <summary>
+    /// The method signature for a message dispatching procedure.
+    /// </summary>
+    /// <param name="sendRecvBuff"></param>
+    public unsafe delegate void MessageDispatchProc(MessageBuff* sendRecvBuff);
+
+    /// <summary>
     /// Represents a Trinity instance that can be started and perform two-way communication with other instances.
     /// </summary>
     public abstract class CommunicationInstance : CommunicationProtocolGroup
@@ -263,7 +269,7 @@ namespace Trinity.Network
         /// <summary>
         /// Starts a Trinity instance.
         /// </summary>
-        public void Start()
+        public unsafe void Start()
         {
             lock (m_lock)
             {
@@ -274,7 +280,10 @@ namespace Trinity.Network
                     Global.CommunicationInstance = this;
                     TrinityConfig.CurrentRunningMode = this.RunningMode;
 
-                    _ScanForAutoRegisteredModules();
+                    //  Initialize message handlers
+                    MessageHandlers.Initialize();
+                    RegisterMessageHandler();
+                    MessageDispatcher = MessageHandlers.DefaultParser.DispatchMessage;
 
                     //  Bring up networking subsystems
                     StartCommunicationListeners();
@@ -283,6 +292,7 @@ namespace Trinity.Network
                     memory_cloud = Global.CloudStorage;
 
                     //  Initialize the modules
+                    _ScanForAutoRegisteredModules();
                     _InitializeModules();
 
                     Console.WriteLine("Working Directory: {0}", Global.MyAssemblyPath);
@@ -332,7 +342,13 @@ namespace Trinity.Network
         }
 
         /// <summary>
-        /// Start listening for incoming connections.
+        /// A delegate that points to the message dispatch and processing procedure.
+        /// </summary>
+        public MessageDispatchProc MessageDispatcher { get; internal set; }
+
+        /// <summary>
+        /// Start listening for incoming connections. When this method is called,
+        /// it is guaranteed that <see cref="MessageDispatcher"/> is available for consumption.
         /// </summary>
         protected virtual void StartCommunicationListeners()
         {
@@ -346,10 +362,6 @@ namespace Trinity.Network
             NativeNetwork.StartTrinityServer((UInt16)_config.ListeningPort);
             //  XXX might not be accurate: NativeNetwork.StartTrinityServer listens on all servers.
             Log.WriteLine("My IPEndPoint: " + _my_ip + ":" + _config.ListeningPort);
-
-            //  Initialize message handlers
-            MessageHandlers.Initialize();
-            RegisterMessageHandler();
 
             //  Initialize Http server
             if (HasHttpEndpoints())
@@ -376,7 +388,6 @@ namespace Trinity.Network
                 m_RegisteredModuleTypes.Add(m);
             }
         }
-
 
         private void _RaiseStartedEvents()
         {

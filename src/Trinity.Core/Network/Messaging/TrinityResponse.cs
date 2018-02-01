@@ -78,13 +78,16 @@ namespace Trinity.Network.Messaging
             Memory.free(Buffer);
         }
 
+        /// <inheritdocs />
         public ResizeFunctionDelegate ResizeFunction { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
 
+        /// <inheritdocs />
         public byte* GetUnderlyingBufferPointer()
         {
-            return Buffer + Offset;
+            return Buffer;
         }
 
+        /// <inheritdocs />
         public byte[] ToByteArray()
         {
             byte[] bytes = new byte[Size];
@@ -95,6 +98,7 @@ namespace Trinity.Network.Messaging
             return bytes;
         }
 
+        /// <inheritdocs />
         public int GetBufferLength()
         {
             return Size;

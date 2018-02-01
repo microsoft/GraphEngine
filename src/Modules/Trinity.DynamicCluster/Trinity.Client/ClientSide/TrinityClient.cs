@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Trinity.Configuration;
+using Trinity.Core.Lib;
 using Trinity.Daemon;
 using Trinity.Diagnostics;
 using Trinity.Network;
@@ -22,6 +24,8 @@ namespace Trinity.Client
         private CancellationTokenSource m_tokensrc;
         private Task m_polltask;
         private readonly string m_endpoint;
+        private int m_id;
+        private int m_cookie;
 
         public TrinityClient(string endpoint)
             : this(endpoint, null) { }
@@ -66,19 +70,19 @@ namespace Trinity.Client
         {
             ClientMemoryCloud.EndInitialize();
             m_tokensrc = new CancellationTokenSource();
+            m_id = Global.CloudStorage.MyInstanceId;
+            m_cookie = GetCommunicationModule<TrinityClientModule.TrinityClientModule>().MyCookie;
             m_polltask = PollProc(m_tokensrc.Token);
         }
 
         private async Task PollProc(CancellationToken token)
         {
-            var module = GetCommunicationModule<TrinityClientModule.TrinityClientModule>();
-            var mc = Global.CloudStorage;
-            var poll_msg = new PollEventsRequestWriter(mc.MyInstanceId, module.MyCookie);
+            TrinityMessage poll_req = _AllocPollMsg(m_id, m_cookie);
             while (!token.IsCancellationRequested)
             {
                 try
                 {
-                    //TODO implement Poll event loop here.
+                    _PollImpl(poll_req);
                     await Task.Delay(100);
                 }
                 catch (Exception ex)
@@ -86,7 +90,61 @@ namespace Trinity.Client
                     Log.WriteLine(LogLevel.Error, $"{nameof(TrinityClient)}: error occured during polling: {0}", ex.ToString());
                 }
             }
-            poll_msg.Dispose();
+            poll_req.Dispose();
+        }
+
+        private unsafe void _PollImpl(TrinityMessage poll_req)
+        {
+            m_client.SendMessage(poll_req, out var poll_rsp);
+            var sp = PointerHelper.New(poll_rsp.Buffer + poll_rsp.Offset);
+            var payload_len = *sp.ip - TrinityProtocol.TrinityMsgHeader;
+            if (payload_len < sizeof(long) + sizeof(int)) { throw new IOException("Poll response corrupted."); }
+            sp.bp += TrinityProtocol.MsgHeader;
+            var pctx = *sp.lp++;
+            var msg_len = *sp.ip++;
+            if (msg_len < 0) return; // no events
+            MessageBuff msg_buff = new MessageBuff{ Buffer = sp.bp, BytesReceived = (uint)msg_len };
+            MessageDispatcher(&msg_buff);
+            poll_rsp.Dispose();
+            // !Note, void-response messages are not acknowledged. 
+            // Server would not be aware of client side error in this case.
+            // This is by-design and an optimization to reduce void-response
+            // message delivery latency. In streaming use cases this will be
+            // very useful.
+            if (pctx != 0) _PostResponseImpl(pctx, &msg_buff);
+            Memory.free(msg_buff.Buffer);
+        }
+
+        private unsafe void _PostResponseImpl(long pctx, MessageBuff* messageBuff)
+        {
+            int msglen                                      = TrinityProtocol.MsgHeader + sizeof(int) + sizeof(int) + sizeof(long) + (int)messageBuff->BytesToSend;
+            byte* buf                                       = (byte*)Memory.malloc((ulong)msglen);
+            PointerHelper sp                                = PointerHelper.New(buf);
+            *sp.ip                                          = msglen - TrinityProtocol.SocketMsgHeader;
+            *(sp.bp + TrinityProtocol.MsgTypeOffset)        = (byte)TrinityMessageType.SYNC;
+            *(ushort*)(sp.bp + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqMessageType.PostResponse;
+            sp.bp                                          += TrinityProtocol.MsgHeader;
+            *sp.ip++                                        = m_id;
+            *sp.ip++                                        = m_cookie;
+            *sp.lp++                                        = pctx;
+            Memory.memcpy(sp.bp, messageBuff->Buffer, messageBuff->BytesToSend);
+            TrinityMessage post_msg = new TrinityMessage(buf, msglen);
+            try { m_client.SendMessage(post_msg); }
+            finally { post_msg.Dispose(); }
+        }
+
+        private unsafe TrinityMessage _AllocPollMsg(int myInstanceId, int myCookie)
+        {
+            int msglen                                      = sizeof(int) + sizeof(int) + TrinityProtocol.MsgHeader;
+            byte* buf                                       = (byte*)Memory.malloc((ulong)msglen);
+            PointerHelper sp                                = PointerHelper.New(buf);
+            *sp.ip                                          = msglen - TrinityProtocol.SocketMsgHeader;
+            *(sp.bp + TrinityProtocol.MsgTypeOffset)        = (byte)TrinityMessageType.SYNC_WITH_RSP;
+            *(ushort*)(sp.bp + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.PollEvents;
+            sp.bp                                          += TrinityProtocol.MsgHeader;
+            *sp.ip++                                        = myInstanceId;
+            *sp.ip++                                        = myCookie;
+            return new TrinityMessage(buf, msglen);
         }
 
         private void ScanClientConnectionFactory()
