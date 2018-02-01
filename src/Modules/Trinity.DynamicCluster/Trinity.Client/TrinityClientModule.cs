@@ -8,7 +8,7 @@ using Trinity.Network.Messaging;
 namespace Trinity.Client.TrinityClientModule
 {
     [AutoRegisteredCommunicationModule]
-    class TrinityClientModule : TrinityClientModuleBase
+    public class TrinityClientModule : TrinityClientModuleBase
     {
         public override string GetModuleName() => "TrinityClient";
 

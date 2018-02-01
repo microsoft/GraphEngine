@@ -8,12 +8,19 @@ namespace Trinity.Client
 {
     internal class DefaultClientConnection : RemoteStorage, IMessagePassingEndpoint
     {
-        protected internal DefaultClientConnection(ServerInfo server)
-            : base(new[] { server }, NetworkConfig.Instance.ClientMaxConn, null, -1, nonblocking: true) { }
+        private ICommunicationModuleRegistry m_modules;
 
-        internal static IMessagePassingEndpoint New(string host, int port)
+        protected internal DefaultClientConnection(ServerInfo server, ICommunicationModuleRegistry modules)
+            : base(new[] { server }, NetworkConfig.Instance.ClientMaxConn, null, -1, nonblocking: true)
         {
-            return new DefaultClientConnection(new ServerInfo(host, port, null, LogLevel.Info));
+            m_modules = modules;
         }
+
+        internal static IMessagePassingEndpoint New(string host, int port, ICommunicationModuleRegistry moudles)
+        {
+            return new DefaultClientConnection(new ServerInfo(host, port, null, LogLevel.Info), moudles);
+        }
+
+        public override T GetCommunicationModule<T>() => m_modules.GetCommunicationModule<T>();
     }
 }

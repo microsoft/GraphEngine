@@ -5,17 +5,18 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2C7E6587-91C9-4DD9-91FE-BB7B6DBFDA42}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Trinity.Client</RootNamespace>
-    <AssemblyName>Trinity.Client</AssemblyName>
+    <ProjectGuid>{072BD8BE-4078-4F0F-B158-6880AA7B184B}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Trinity.Client.TestServer</RootNamespace>
+    <AssemblyName>Trinity.Client.TestServer</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -25,6 +26,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -38,43 +40,33 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Trinity.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GraphEngine.Client.1.0.9083\lib\net461\Trinity.Client.dll</HintPath>
+    </Reference>
     <Reference Include="Trinity.Core, Version=1.0.9083.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GraphEngine.Core.1.0.9083\lib\Trinity.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ServerSide\ClientCookieMismatchException.cs" />
-    <Compile Include="ServerSide\ClientInstanceNotFoundException.cs" />
-    <Compile Include="ServerSide\ClientIStorage.cs" />
-    <Compile Include="ClientSide\DefaultClientConnection.cs" />
-    <Compile Include="ClientSide\DefaultClientConnectionFactory.cs" />
-    <Compile Include="ClientSide\ClientMemoryCloud.cs" />
-    <Compile Include="ClientSide\IClientConnectionFactory.cs" />
-    <Compile Include="ServerSide\HostMemoryCloud.cs" />
-    <Compile Include="ServerSide\IClientRegistry.cs" />
-    <Compile Include="ClientSide\PassThroughIStorage.cs" />
-    <Compile Include="ClientSide\RedirectedIStorage.cs" />
-    <Compile Include="ClientSide\TrinityClient.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TrinityClientModule.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
-    <None Include="Trinity.Client.nuspec">
-      <SubType>Designer</SubType>
-    </None>
-    <TslCodegen Include="Trinity.Client.tsl" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.Client.TestProtocols\Trinity.Client.TestProtocols.csproj">
+      <Project>{bf3c0f3b-7bc9-40e2-bd17-947c338eec1e}</Project>
+      <Name>Trinity.Client.TestProtocols</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

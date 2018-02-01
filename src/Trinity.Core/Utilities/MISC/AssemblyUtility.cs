@@ -308,10 +308,12 @@ namespace Trinity.Utilities
         /// <typeparam name="TDefault">The default fallback type</typeparam>
         /// <param name="typeProjector">The projector. When not specified, uses the default projector (non-parametric constructor, then cast to TBase)</param>
         /// <param name="ranking">The ranking function, higher score is better</param>
-        /// <returns>null if none of the satisfying types can be instantiated, including the default fallback type.</returns>
-        public static TBase GetBestClassInstance<TBase, TDefault>(Func<Type, TBase> typeProjector, Func<Type, int> ranking = null)
+        /// <exception cref="TypeLoadException">If none of the satisfying types can be instantiated, including the default fallback type. </exception>
+        public static TBase GetBestClassInstance<TBase, TDefault>(Func<Type, TBase> typeProjector = null, Func<Type, int> ranking = null)
             where TDefault: TBase
+            where TBase : class
         {
+            typeProjector = typeProjector ?? (t => t.GetConstructor(new Type[] { }).Invoke(new object[] { }) as TBase);
             var base_ranking = ranking ?? (t => 0);
             ranking = (t => t == typeof(TDefault) ? int.MinValue : base_ranking(t));
             foreach(var type in GetAllClassTypes_impl(typeRanking: ranking))
@@ -329,8 +331,7 @@ namespace Trinity.Utilities
                 }
                 catch { }
             }
-
-            return default(TBase);
+            throw new TypeLoadException("Could not load any class instance of " + typeof(TBase).Name);
         }
 
         /// <summary>

@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Trinity.Client.ServerSide;
 using Trinity.Configuration;
 using Trinity.Core.Lib;
 using Trinity.Daemon;
@@ -34,7 +35,9 @@ namespace Trinity.Client
         {
             m_endpoint = endpoint;
             m_clientfactory = clientConnectionFactory;
+            RegisterCommunicationModule<TrinityClientModule.TrinityClientModule>();
             ExtensionConfig.Instance.Priority.Add(new ExtensionPriority { Name = typeof(ClientMemoryCloud).AssemblyQualifiedName, Priority = int.MaxValue });
+            ExtensionConfig.Instance.Priority.Add(new ExtensionPriority { Name = typeof(HostMemoryCloud).AssemblyQualifiedName, Priority = int.MinValue });
             ExtensionConfig.Instance.Priority = ExtensionConfig.Instance.Priority; // trigger update of priority table
         }
 
@@ -61,7 +64,7 @@ namespace Trinity.Client
         protected override void StartCommunicationListeners()
         {
             if (m_clientfactory == null) { ScanClientConnectionFactory(); }
-            m_client = m_clientfactory.ConnectAsync(m_endpoint).Result;
+            m_client = m_clientfactory.ConnectAsync(m_endpoint, this).Result;
             ClientMemoryCloud.BeginInitialize(m_client, this);
             this.Started += OnStarted;
         }
@@ -87,7 +90,7 @@ namespace Trinity.Client
                 }
                 catch (Exception ex)
                 {
-                    Log.WriteLine(LogLevel.Error, $"{nameof(TrinityClient)}: error occured during polling: {0}", ex.ToString());
+                    Log.WriteLine(LogLevel.Error, $"{nameof(TrinityClient)}: error occured during polling: {{0}}", ex.ToString());
                 }
             }
             poll_req.Dispose();
@@ -97,9 +100,8 @@ namespace Trinity.Client
         {
             m_client.SendMessage(poll_req, out var poll_rsp);
             var sp = PointerHelper.New(poll_rsp.Buffer + poll_rsp.Offset);
-            var payload_len = *sp.ip - TrinityProtocol.TrinityMsgHeader;
+            var payload_len = poll_rsp.Size - TrinityProtocol.TrinityMsgHeader;
             if (payload_len < sizeof(long) + sizeof(int)) { throw new IOException("Poll response corrupted."); }
-            sp.bp += TrinityProtocol.MsgHeader;
             var pctx = *sp.lp++;
             var msg_len = *sp.ip++;
             if (msg_len < 0) return; // no events

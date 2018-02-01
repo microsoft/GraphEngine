@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Trinity.Network;
 using Trinity.Storage;
 
 namespace Trinity.Client
@@ -12,7 +13,7 @@ namespace Trinity.Client
         /// Connects to a server asynchronously
         /// </summary>
         /// <param name="connectionString">The connection string of the server.</param>
-        Task<IMessagePassingEndpoint> ConnectAsync(string connectionString);
+        Task<IMessagePassingEndpoint> ConnectAsync(string connectionString, ICommunicationModuleRegistry modules);
         /// <summary>
         /// Disconnects a client endpoint from the server.
         /// </summary>

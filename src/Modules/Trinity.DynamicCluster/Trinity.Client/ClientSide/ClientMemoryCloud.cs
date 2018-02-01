@@ -22,8 +22,7 @@ namespace Trinity.Client
         {
             s_ep = ep;
             s_client = tc;
-            s_redir_storages = new List<PassThroughIStorage> { new PassThroughIStorage(ep) } as IList<IStorage>;
-                
+            s_redir_storages = new List<IStorage> { new PassThroughIStorage(ep) };
         }
 
         internal static void EndInitialize()
