@@ -154,7 +154,7 @@ bool parse_syntax_tree(NTSL* &unmanaged_syntax_tree)
     return (unmanaged_syntax_tree != NULL);
 }
 
-bool generate_source_files(NTSL* syntax_tree, const int c_offset)
+bool generate_source_files(NTSL* syntax_tree)
 {
     Console::WriteLine("Generating source files...");
     auto source_output_dir = Path::Combine(c_output_path, "GeneratedCode");
@@ -203,7 +203,7 @@ int main(int argc, char** argv)
     QUIT_ON_ERROR(print_parameters());
 	QUIT_ON_ERROR(parse_syntax_tree(unmanaged_syntax_tree));
 
-    QUIT_ON_ERROR(generate_source_files(unmanaged_syntax_tree, c_offset));
+    QUIT_ON_ERROR(generate_source_files(unmanaged_syntax_tree));
     QUIT_ON_ERROR(reset_syntax_parser());
     return 0;
 }
