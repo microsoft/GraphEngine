@@ -74,12 +74,12 @@ namespace Trinity.Storage
 
             return true;
 
-        server_not_found:
+            server_not_found:
             if (cluster_config.RunningMode == RunningMode.Server || cluster_config.RunningMode == RunningMode.Client)
                 Log.WriteLine(LogLevel.Warning, "Incorrect server configuration. Message passing via CloudStorage not possible.");
             else if (cluster_config.RunningMode == RunningMode.Proxy)
                 Log.WriteLine(LogLevel.Warning, "No servers are found. Message passing to servers via CloudStorage not possible.");
-        return false;
+            return false;
         }
 
         /// <summary>
@@ -298,11 +298,27 @@ namespace Trinity.Storage
         }
 
         /// <summary>
+        /// Gets the count of storage partitions.
+        /// </summary>
+        public Func<int> GetTotalPartitionCount { get; set; } = () => 1 << sizeof(byte);
+
+        /// <summary>
         /// Gets and sets the method of getting the id of the data partition
         /// where the cell with the specified cell id is located.
         /// TODO: move to MemoryCloud extensions
         /// </summary>
         public Func<long, int> GetPartitionIdByCellId { get; set; } = (cellId) => (*(((byte*)&cellId) + 1));
+
+        /// <summary>
+        /// Indicates if the partition with the specified id is a local storage partition.
+        /// </summary>
+        /// <param name="partitionId"></param>
+        /// <returns></returns>
+        public bool IsLocalPartition(int partitionId)
+        {
+            return 0 <= partitionId && partitionId < GetTotalPartitionCount() &&
+                Global.ServerCount > 0 && partitionId % Global.ServerCount == Global.MyServerId;
+        }
 
         /// <summary>
         /// Gets the Id of the server on which the cell with the specified cell Id is located.

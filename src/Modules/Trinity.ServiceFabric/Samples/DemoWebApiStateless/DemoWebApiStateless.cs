@@ -75,8 +75,7 @@ namespace DemoWebApiStateless
 
             var source = new CancellationTokenSource();
             var task = Utilities.ResolveTrinityClusterConfigAsync(TrinityServiceName, trinityServicePartitionId, source.Token);
-            if (task.Wait(TimeSpan.FromSeconds(10)) == false)
-                throw new Exception("Failed to resolve trinity cluster in 10 seconds");
+            task.Wait();
         }
     }
 }

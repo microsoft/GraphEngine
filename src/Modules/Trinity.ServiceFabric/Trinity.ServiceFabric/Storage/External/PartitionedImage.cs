@@ -10,13 +10,10 @@ namespace Trinity.ServiceFabric.Storage.External
 {
     public class PartitionedImage : ITrinityStorageImage
     {
-        public const int DEFAULT_TOTAL_IMAGE_PARTITIONS = 256;
         public const int DEFAULT_IMAGE_SLOTS = 2;
 
-        public int TotalImagePartitions { get; private set; }
-        public Func<int, bool> IsLocalPartition { get; set; } = (p) => Global.ServerCount > 0 && p % Global.ServerCount == Global.MyServerId;
-        public IEnumerable<int> AllPartitions => Enumerable.Range(0, TotalImagePartitions);
-        public IEnumerable<int> LocalPartitions => AllPartitions.Where(p => IsLocalPartition(p));
+        public IEnumerable<int> AllPartitions => Enumerable.Range(0, Global.CloudStorage.GetTotalPartitionCount());
+        public IEnumerable<int> LocalPartitions => AllPartitions.Where(p => Global.CloudStorage.IsLocalPartition(p));
 
         private IPartitionedImageStorage[] ImageSlots { get; set; }
         private PartitionedImageSignature[] ImageSignatures { get; set; }
@@ -27,10 +24,8 @@ namespace Trinity.ServiceFabric.Storage.External
         private PartitionedImageSignature CurrentSignature => UseImageSignature(CurrentSlotIndex);
         private PartitionedImageSignature NextSignature => UseImageSignature(NextSlotIndex);
 
-        public PartitionedImage(Func<int, IPartitionedImageStorage> imageStorageFactory,
-            int slots = DEFAULT_IMAGE_SLOTS, int totalImagePartitions = DEFAULT_TOTAL_IMAGE_PARTITIONS)
+        public PartitionedImage(Func<int, IPartitionedImageStorage> imageStorageFactory, int slots = DEFAULT_IMAGE_SLOTS)
         {
-            this.TotalImagePartitions = totalImagePartitions;
             this.ImageSlots = Enumerable.Range(0, slots).Select(slot => imageStorageFactory(slot)).ToArray();
         }
 
