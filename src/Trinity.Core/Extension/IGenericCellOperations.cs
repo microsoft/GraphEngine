@@ -144,9 +144,33 @@ namespace Trinity.Storage
         IEnumerable<ICellAccessor> EnumerateGenericCellAccessors(LocalMemoryStorage storage);
         #endregion
 
+        /// <summary>
+        /// Allocate a generic cell accessor on the specified cell.
+        /// The cell should be already locked, with its cell id, buffer pointer type and entry index supplied.
+        /// The cell lock will be released upon ICellAccessor disposal.
+        /// </summary>
+        /// <param name="cellId">The id of the specified cell.</param>
+        /// <param name="cellPtr">Points to the content of the cell.</param>
+        /// <param name="cellEntryIndex">The entry index of the cell, obtained from cell lock-acquiring methods.</param>
+        /// <param name="cellType">The cell type Id.</param>
+        /// <returns>A <see cref="Trinity.Storage.ICellAccessor"/> instance.</returns>
+        unsafe ICellAccessor UseGenericCell(long cellId, byte* cellPtr, int cellEntryIndex, ushort cellType);
+
+        /// <summary>
+        /// Allocate a generic cell accessor on the specified cell.
+        /// The cell should be already locked, with its cell id, buffer pointer type and entry index supplied.
+        /// The cell lock will be released upon ICellAccessor disposal.
+        /// </summary>
+        /// <param name="cellId">The id of the specified cell.</param>
+        /// <param name="cellPtr">Points to the content of the cell.</param>
+        /// <param name="entryIndex">The entry index of the cell, obtained from cell lock-acquiring methods.</param>
+        /// <param name="cellType">The cell type Id.</param>
+        /// <param name="options">Cell access options.</param>
+        /// <returns>A <see cref="Trinity.Storage.ICellAccessor"/> instance.</returns>
+        unsafe ICellAccessor UseGenericCell(long cellId, byte* cellPtr, int entryIndex, ushort cellType, CellAccessOptions options);
     }
 
-    [ExtensionPriority(-100)]
+    [ExtensionPriority(int.MinValue)]
     internal class DefaultGenericCellOperations : IGenericCellOperations
     {
         public IEnumerable<ICellAccessor> EnumerateGenericCellAccessors(LocalMemoryStorage storage)
@@ -215,6 +239,16 @@ namespace Trinity.Storage
         }
 
         public ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId, CellAccessOptions options, string cellType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe ICellAccessor UseGenericCell(long cellId, byte* cellBuffer, int cellEntryIndex, ushort cellType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe ICellAccessor UseGenericCell(long cellId, byte* cellBuffer, int cellEntryIndex, ushort cellType, CellAccessOptions options)
         {
             throw new NotImplementedException();
         }
