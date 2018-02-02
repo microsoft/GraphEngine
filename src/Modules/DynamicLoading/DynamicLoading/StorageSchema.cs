@@ -9,26 +9,19 @@ namespace DynamicLoading
     [ExtensionPriority(int.MaxValue)]
     class StorageSchema : IStorageSchema
     {
-        public IEnumerable<ICellDescriptor> CellDescriptors {
-            get {
-                foreach (var storageSchema in Center.Leader.StorageSchema)
-                    foreach (var cellDesc in storageSchema.CellDescriptors)
-                        yield return cellDesc;
-                yield break;
-            }
-        }
+        public IEnumerable<ICellDescriptor> CellDescriptors
+            => Center.Leader.StorageSchema.SelectMany(_ => _.CellDescriptors);
 
         public IEnumerable<string> CellTypeSignatures => 
             Center.Leader.StorageSchema.Select(_ => _.CellTypeSignatures).Aggregate((last, next) => last.Concat(next));
 
-
         public ushort GetCellType(string cellTypeString)
         {
             if (!Center.CellTypeIDs.Keys.Contains(cellTypeString))
-                throw new Exception("Unrecognized cell type string.");
-            var id = Center.CellTypeIDs[cellTypeString];
-            int indexOfInterval = new Center.IntervalSearch(id).Call();
-            return Center.Leader.StorageSchema[indexOfInterval].GetCellType(cellTypeString);
+                throw new CellTypeNotMatchException("Unrecognized cell type string.");
+            var tid = Center.CellTypeIDs[cellTypeString];
+            int seg = Center.IDIntervals.FindLastIndex(seg_head => seg_head < tid);
+            return Center.Leader.StorageSchema[seg].GetCellType(cellTypeString);
         }
     }
 }

@@ -5,6 +5,8 @@ using System.Reflection;
 using System.Diagnostics;
 using System.IO;
 using Trinity.Storage;
+using Trinity.Utilities;
+
 namespace DynamicLoading
 {
     
@@ -40,7 +42,7 @@ namespace DynamicLoading
                                 string DotNetWhere = "dotnet.exe",
                                 string moduleName = null)
         {
-            Namespace = moduleName ?? "CellAssembly";
+            Namespace = moduleName ?? "TslAssembly";
             Cmd.TSLCodeGenWhere = TSLCodeGenWhere;
             Cmd.DotNetWhere = DotNetWhere;
             CSProj.Include = DLLInclude;
@@ -48,7 +50,7 @@ namespace DynamicLoading
                                 .Select(_ => Path.Combine(CSProj.Include, $"{_}.dll"))
                                 .Select(Assembly.LoadFrom)
                                 .ToArray();
-            IDIntervals.Add(_currentCellTypeOffset);
+            IDIntervals.Add(_currentCellTypeOffset); // <-- initialized?
         }
 
         public static string Namespace;
@@ -58,7 +60,7 @@ namespace DynamicLoading
         private static Assembly[] assemblies;
         public static Assembly[] ReferenceAssemblies { get => assemblies;}
         
-        private static int _currentCellTypeOffset = 1;
+        private static int _currentCellTypeOffset = 0;
         public static int CurrentCellTypeOffset { get => _currentCellTypeOffset; }
 
 
@@ -69,6 +71,7 @@ namespace DynamicLoading
         public static class Cmd
         {
             public static string TSLCodeGenWhere;
+            // TODO conditionals for supporting both msbuild (netfx) and dotnet (coreclr)
             public static string DotNetWhere = "dotnet";
             public static bool TSLCodeGenCmd(string arguments)
             {
@@ -97,6 +100,7 @@ namespace DynamicLoading
                 }
                 return true;
             }
+
             public static void CmdCall(string cmd, string arguments)
             {
                 Console.WriteLine("command:  " + cmd + " " + arguments);
@@ -174,21 +178,21 @@ namespace DynamicLoading
             try
             {
                 var asm = LoadFn();
-                var schema = asm.GetType($"{Namespace}.StorageSchema");
-                var cellOps = asm.GetType($"{Namespace}.GenericCellOperations");
-                var cellDescs = schema
-                                .GetMethod("get_CellDescriptors")
-                                .Invoke(null, null) 
-                                as IEnumerable<ICellDescriptor>;
+                var schema = AssemblyUtility.GetAllClassInstances<IStorageSchema>(assembly: asm).First();
+                var cellOps = AssemblyUtility.GetAllClassInstances<IGenericCellOperations>(assembly: asm).First();
+                var cellDescs = schema.CellDescriptors.ToList();
 
-                // shall we use transactions here?
-                Leader.StorageSchema.Add(schema as IStorageSchema);
-                Leader.GenericCellOperations.Add(cellOps as IGenericCellOperations);
-
+                // shall we use transactions here? <--- yes, todo, snapshot everything until we are sure there're no exceptions
+                Leader.StorageSchema.Add(schema);
+                Leader.GenericCellOperations.Add(cellOps);
+                int maxoffset = _currentCellTypeOffset;
  
                 foreach (var cellDesc in cellDescs)
                 {
-                    CellTypeIDs[cellDesc.TypeName] = _currentCellTypeOffset;
+                    CellTypeIDs[cellDesc.TypeName] = cellDesc.CellType;
+                    // Assertion 1: New cell type does not crash into existing type space
+                    Debug.Assert(_currentCellTypeOffset <= cellDesc.CellType);
+                    maxoffset = Math.Max(maxoffset, cellDesc.CellType);
 
 #if DEBUG
                     Console.WriteLine($"{cellDesc.TypeName}{{");
@@ -199,13 +203,16 @@ namespace DynamicLoading
                     }
                     Console.WriteLine("}");
 #endif
-                    ++_currentCellTypeOffset;
                 }
                 IDIntervals.Add(_currentCellTypeOffset);
+                // Assertion 2: intervals grow monotonically
+                Debug.Assert(IDIntervals.OrderBy(_ => _).SequenceEqual(IDIntervals));
+                _currentCellTypeOffset += cellDescs.Count;
+                // Assertion 3: The whole type id space is still compact
+                Debug.Assert(_currentCellTypeOffset == maxoffset + 1);
 
 
                 _asmSlides.Add(asm);
-                /// TODO: get cell_type count by `asm`.
                 CurrentVersion.Asm = asm;
                 AsmVersions.Add(CurrentVersion);
                 CurrentVersion = null;
@@ -215,21 +222,6 @@ namespace DynamicLoading
                 throw new AsmLoadError(e.Message);
             }
 
-        }
-
-        public class IntervalSearch 
-        {
-            int CellId;
-            public IntervalSearch(int cellID)
-            {
-                CellId = cellID;
-            }
-            public int Call() => Apply(0, IDIntervals.Count);
-            public int Apply(int x, int y)
-            {   // return the index of interval that the cellID lies in `IDIntervals`.
-                throw new NotImplementedException();
-               
-            }
         }
     }
 }
