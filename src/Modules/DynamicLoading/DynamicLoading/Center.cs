@@ -20,7 +20,8 @@ namespace DynamicLoading
     }
     public static class Center
     {
-        
+
+        // No generic ordered dict here, and we need to get cellType by typeID.
         public static Dictionary<string, int> CellTypeIDs 
             = new Dictionary<string, int>(ConfigConstant.AvgMaxAsmNum * ConfigConstant.AvgCellNum);
         // CellTypeName => CellTypeID
@@ -51,6 +52,7 @@ namespace DynamicLoading
                                 .Select(Assembly.LoadFrom)
                                 .ToArray();
             IDIntervals.Add(_currentCellTypeOffset);
+            
         }
 
         public static string Namespace;
@@ -207,7 +209,7 @@ namespace DynamicLoading
                 IDIntervals.Add(_currentCellTypeOffset);
                 // Assertion 2: intervals grow monotonically
                 Debug.Assert(IDIntervals.OrderBy(_ => _).SequenceEqual(IDIntervals));
-                _currentCellTypeOffset += cellDescs.Count;
+                _currentCellTypeOffset += cellDescs.Count + 1;
                 // Assertion 3: The whole type id space is still compact
                 Debug.Assert(_currentCellTypeOffset == maxoffset + 1);
 
@@ -226,15 +228,15 @@ namespace DynamicLoading
         public static class GetIntervalIndex
         {
             public static int ByCellTypeID(int cellTypeID) {
-                int seg = Center.IDIntervals.FindLastIndex(seg_head => seg_head < cellTypeID);
-                if (seg == -1 || seg == Center.IDIntervals.Count)
+                int seg = IDIntervals.FindLastIndex(seg_head => seg_head < cellTypeID);
+                if (seg == -1 || seg == IDIntervals.Count)
                     throw new CellTypeNotMatchException("Cell type id out of the valid range.");
                 return seg;
             }
 
             public static int ByCellTypeName(string cellTypeName)
             {
-                if (!Center.CellTypeIDs.Keys.Contains(cellTypeName))
+                if (!CellTypeIDs.Keys.Contains(cellTypeName))
                     throw new CellTypeNotMatchException("Unrecognized cell type string.");
                 int seg = ByCellTypeID(Center.CellTypeIDs[cellTypeName]);
                 return seg;
