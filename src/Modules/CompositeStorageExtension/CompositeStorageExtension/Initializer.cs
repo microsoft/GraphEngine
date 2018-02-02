@@ -41,6 +41,20 @@ namespace CompositeStorageExtension
         private void LocalStorage_StorageLoaded()
         {
 
+
+
+        }
+
+        private void LocalStorage_StorageSaved()
+        {
+            Utilities.Serialize(CompositeStorage.VersionRecorders, DumplingHelper.VersionRecorders);
+            Utilities.Serialize(CompositeStorage.IDIntervals, DumplingHelper.IDIntervals);
+            Utilities.Serialize(CompositeStorage.CellTypeIDs, DumplingHelper.CellTypeIDs);
+
+        }
+
+        private void LocalStorage_StorageBeforeLoad()
+        {
             Utilities.Deserialize<List<VersionRecorder>>(DumplingHelper.VersionRecorders)
                      .WhenNotDefault(_ => CompositeStorage.VersionRecorders = _);
 
@@ -60,22 +74,7 @@ namespace CompositeStorageExtension
                 CompositeStorage.GenericCellOperations
                         = asm.Select(_ => AssemblyUtility.GetAllClassInstances<IGenericCellOperations>(assembly: _).First()).ToList();
             }
-
             Controller.Init(Trinity.TrinityConfig.StorageRoot);
-
-        }
-
-        private void LocalStorage_StorageSaved()
-        {
-            Utilities.Serialize(CompositeStorage.VersionRecorders, DumplingHelper.VersionRecorders);
-            Utilities.Serialize(CompositeStorage.IDIntervals, DumplingHelper.IDIntervals);
-            Utilities.Serialize(CompositeStorage.CellTypeIDs, DumplingHelper.CellTypeIDs);
-
-        }
-
-        private void LocalStorage_StorageBeforeLoad()
-        {
-            // we can do nothing.
         }
     }
 }

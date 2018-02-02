@@ -8,7 +8,7 @@ Created on Sun Jan 28 20:39:38 2018
 from time import ctime
 from linq import Flow
 import json
-DynamicLoading = __import__('DynamicLoading')
+CompositeStorageExtension = __import__('CompositeStorageExtension')
 
 
 __all__ = ['SymTablePicker']
@@ -54,4 +54,4 @@ def load_symbols(tsl_dir):
     TODO:
     Create new cell types from TSL source directory.
     """
-    DynamicLoading.Center.LoadFrom
+    CompositeStorageExtension.Center.LoadFrom

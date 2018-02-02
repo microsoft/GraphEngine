@@ -21,10 +21,8 @@ namespace CompositeStorageExtension
             return CompositeStorage.GenericCellOperations.SelectMany(cellOps => cellOps.EnumerateGenericCells(storage));
         }
 
-        public ICell LoadGenericCell(IKeyValueStore storage, long cellId)
+        public unsafe ICell LoadGenericCell(IKeyValueStore storage, long cellId)
         {
-            // TODO: shall we add a LoadGenericCell method for `IGenericCellOperations` with arguments (storage, cellId, buff)?
-            // NOTICE: Now we have to load twice yet!!!
             var err = storage.LoadCell(cellId, out byte[] buff, out ushort type);
             if (err != Trinity.TrinityErrorCode.E_SUCCESS)
             {
@@ -39,21 +37,23 @@ namespace CompositeStorageExtension
                 }
             }
             int seg = GetIntervalIndex.ByCellTypeID(type);
-            return CompositeStorage.GenericCellOperations[seg].LoadGenericCell(storage, cellId); // load twice!!!
 
-
+            fixed (byte* p = buff)
+            {
+                return CompositeStorage.GenericCellOperations[seg].UseGenericCell(cellId, p, -1, type); 
+            }
         }
 
         public unsafe ICell LoadGenericCell(LocalMemoryStorage storage, long cellId)
         {
-            var err = storage.GetLockedCellInfo(cellId, out int size, out ushort type, out byte* cellPtr, out int entryIndex);
+            var err = storage.GetLockedCellInfo(cellId, out int size, out ushort cellType, out byte* cellPtr, out int entryIndex);
             if (err != Trinity.TrinityErrorCode.E_SUCCESS)
             {
                 throw new CellNotFoundException("Cannot access the cell.");
             }
+            int seg = GetIntervalIndex.ByCellTypeID(cellType);
 
-            int seg = GetIntervalIndex.ByCellTypeID(type);
-            return CompositeStorage.GenericCellOperations[seg].LoadGenericCell(storage, cellId);
+            return CompositeStorage.GenericCellOperations[seg].UseGenericCell(cellId, cellPtr, entryIndex, cellType);
 
         }
 
@@ -101,91 +101,82 @@ namespace CompositeStorageExtension
         
         public unsafe ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId)
         {
-                var err = storage
-                            .GetLockedCellInfo(cellId, 
-                                               out int size, 
-                                               out ushort type, 
-                                               out byte* cellPtr, 
-                                               out int entryIndex);
+            var err = storage.GetLockedCellInfo(cellId, 
+                                                out int size, 
+                                                out ushort cellType, 
+                                                out byte* cellPtr, 
+                                                out int entryIndex);
 
-                if (err != Trinity.TrinityErrorCode.E_SUCCESS)
-                {
-                    throw new CellNotFoundException("Cannot access the cell.");
-                }
+            if (err != Trinity.TrinityErrorCode.E_SUCCESS)
+            {
+                throw new CellNotFoundException("Cannot access the cell.");
+            }
 
-                int seg = GetIntervalIndex.ByCellTypeID(type);
+            int seg = GetIntervalIndex.ByCellTypeID(cellType);
 
-                var typeName = CompositeStorage
-                                     .StorageSchema[seg]
-                                     .CellDescriptors
-                                     .ElementAt(type - CompositeStorage.IDIntervals[seg])
-                                     .TypeName;
-
-            return CompositeStorage
-                         .GenericCellOperations[seg]
-                         .UseGenericCell(storage,
-                                         cellId,
-                                         CellAccessOptions.ThrowExceptionOnCellNotFound,
-                                         typeName);       
+            return CompositeStorage.GenericCellOperations[seg].UseGenericCell(cellId, cellPtr, entryIndex, cellType);
         }
 
         public unsafe ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId, CellAccessOptions options)
         {
-                var err = storage
-                            .GetLockedCellInfo(cellId,
-                                               out int size,
-                                               out ushort type,
-                                               out byte* cellPtr,
-                                               out int entryIndex);
+            var err = storage
+                        .GetLockedCellInfo(cellId,
+                                            out int size,
+                                            out ushort cellType,
+                                            out byte* cellPtr,
+                                            out int entryIndex);
 
-                switch (err)
-                {
-                    case Trinity.TrinityErrorCode.E_SUCCESS:
-                        break;
-                    case Trinity.TrinityErrorCode.E_CELL_NOT_FOUND:
+            switch (err)
+            {
+                case Trinity.TrinityErrorCode.E_SUCCESS:
+                    break;
+                case Trinity.TrinityErrorCode.E_CELL_NOT_FOUND:
+                    {
+                        if ((options & CellAccessOptions.ThrowExceptionOnCellNotFound) != 0)
                         {
-                            if ((options & CellAccessOptions.ThrowExceptionOnCellNotFound) != 0)
-                            {
-                                throw new CellNotFoundException("The cell with id = " + cellId + " not found.");
-                            }
-                            else if ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
-                            {
-                                throw new ArgumentException(
-                                    "CellAccessOptions.CreateNewOnCellNotFound is not valid for this method. Cannot determine new cell type.", "options");
-                            }
-                            else if ((options & CellAccessOptions.ReturnNullOnCellNotFound) != 0)
-                            {
-                                return null;
-                            }
-                            else
-                            {
-                                throw new CellNotFoundException("The cell with id = " + cellId + " not found.");
-                            }
+                            throw new CellNotFoundException("The cell with id = " + cellId + " not found.");
                         }
-                    default:
-                        throw new CellNotFoundException("Cannot access the cell.");
-                }
+                        else if ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
+                        {
+                            throw new ArgumentException(
+                                "CellAccessOptions.CreateNewOnCellNotFound is not valid for this method. Cannot determine new cell type.", "options");
+                        }
+                        else if ((options & CellAccessOptions.ReturnNullOnCellNotFound) != 0)
+                        {
+                            return null;
+                        }
+                        else
+                        {
+                            throw new CellNotFoundException("The cell with id = " + cellId + " not found.");
+                        }
+                    }
+                default:
+                    throw new CellNotFoundException("Cannot access the cell.");
+            }
 
-                int seg = GetIntervalIndex.ByCellTypeID(type);
+            int seg = GetIntervalIndex.ByCellTypeID(cellType);
 
-                var typeName = CompositeStorage
-                                     .StorageSchema[seg]
-                                     .CellDescriptors
-                                     .ElementAt(type - CompositeStorage.IDIntervals[seg])
-                                     .TypeName;
-
-                return CompositeStorage
-                             .GenericCellOperations[seg]
-                             .UseGenericCell(storage,
-                                             cellId,
-                                             options,
-                                             typeName);
+            return CompositeStorage.GenericCellOperations[seg].UseGenericCell(cellId, cellPtr, entryIndex, cellType, options);
         }
 
         public ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId, CellAccessOptions options, string cellType)
         {
             int seg = GetIntervalIndex.ByCellTypeName(cellType);
             return CompositeStorage.GenericCellOperations[seg].UseGenericCell(storage, cellId, options, cellType);
+        }
+
+        public unsafe ICellAccessor UseGenericCell(long cellId, byte* cellPtr, int cellEntryIndex, ushort cellType)
+        {
+            int seg = GetIntervalIndex.ByCellTypeID(cellType);
+            return CompositeStorage.GenericCellOperations[seg].UseGenericCell(cellId, cellPtr, cellEntryIndex, cellType);
+            
+        }
+
+        public unsafe ICellAccessor UseGenericCell(long cellId, byte* cellPtr, int entryIndex, ushort cellType, CellAccessOptions options)
+        {
+            int seg = GetIntervalIndex.ByCellTypeID(cellType);
+            return CompositeStorage.GenericCellOperations[seg].UseGenericCell(cellId, cellPtr, entryIndex, cellType, options);
+
         }
     }
 }
