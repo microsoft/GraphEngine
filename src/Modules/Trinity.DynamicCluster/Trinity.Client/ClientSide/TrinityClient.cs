@@ -71,11 +71,16 @@ namespace Trinity.Client
 
         private void OnStarted()
         {
+            RegisterClient();
+            m_polltask = PollProc(m_tokensrc.Token);
+        }
+
+        private void RegisterClient()
+        {
             ClientMemoryCloud.EndInitialize();
             m_tokensrc = new CancellationTokenSource();
             m_id = Global.CloudStorage.MyInstanceId;
             m_cookie = GetCommunicationModule<TrinityClientModule.TrinityClientModule>().MyCookie;
-            m_polltask = PollProc(m_tokensrc.Token);
         }
 
         private async Task PollProc(CancellationToken token)
@@ -91,6 +96,7 @@ namespace Trinity.Client
                 catch (Exception ex)
                 {
                     Log.WriteLine(LogLevel.Error, $"{nameof(TrinityClient)}: error occured during polling: {{0}}", ex.ToString());
+                    await Task.Delay(100);
                 }
             }
             poll_req.Dispose();
@@ -100,21 +106,35 @@ namespace Trinity.Client
         {
             m_client.SendMessage(poll_req, out var poll_rsp);
             var sp = PointerHelper.New(poll_rsp.Buffer + poll_rsp.Offset);
+            //HexDump.Dump(poll_rsp.ToByteArray());
+            //Console.WriteLine($"poll_rsp.Size = {poll_rsp.Size}");
+            //Console.WriteLine($"poll_rsp.Offset = {poll_rsp.Offset}");
             var payload_len = poll_rsp.Size - TrinityProtocol.TrinityMsgHeader;
             if (payload_len < sizeof(long) + sizeof(int)) { throw new IOException("Poll response corrupted."); }
-            var pctx = *sp.lp++;
-            var msg_len = *sp.ip++;
-            if (msg_len < 0) return; // no events
-            MessageBuff msg_buff = new MessageBuff{ Buffer = sp.bp, BytesReceived = (uint)msg_len };
-            MessageDispatcher(&msg_buff);
-            poll_rsp.Dispose();
-            // !Note, void-response messages are not acknowledged. 
-            // Server would not be aware of client side error in this case.
-            // This is by-design and an optimization to reduce void-response
-            // message delivery latency. In streaming use cases this will be
-            // very useful.
-            if (pctx != 0) _PostResponseImpl(pctx, &msg_buff);
-            Memory.free(msg_buff.Buffer);
+            var errno = *(sp.ip - 1);
+
+            try
+            {
+                if (errno == 2) { RegisterClient(); return; }
+                if (errno != 0) { return; }
+
+                var pctx = *sp.lp++;
+                var msg_len = *sp.ip++;
+                if (msg_len < 0) return; // no events
+                MessageBuff msg_buff = new MessageBuff{ Buffer = sp.bp, BytesReceived = (uint)msg_len };
+                MessageDispatcher(&msg_buff);
+                // !Note, void-response messages are not acknowledged. 
+                // Server would not be aware of client side error in this case.
+                // This is by-design and an optimization to reduce void-response
+                // message delivery latency. In streaming use cases this will be
+                // very useful.
+                try { if (pctx != 0) _PostResponseImpl(pctx, &msg_buff); }
+                finally { Memory.free(msg_buff.Buffer); }
+            }
+            finally
+            {
+                poll_rsp.Dispose();
+            }
         }
 
         private unsafe void _PostResponseImpl(long pctx, MessageBuff* messageBuff)

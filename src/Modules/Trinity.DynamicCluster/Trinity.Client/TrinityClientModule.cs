@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Trinity.Core.Lib;
 using Trinity.Extension;
 using Trinity.Network.Messaging;
+using Trinity.Storage;
 
 namespace Trinity.Client.TrinityClientModule
 {
@@ -15,6 +17,7 @@ namespace Trinity.Client.TrinityClientModule
         // ===== Server-side members =====
         private IClientRegistry Registry => m_memorycloud as IClientRegistry;
         private ConcurrentDictionary<int, ClientIStorage> m_client_storages = new ConcurrentDictionary<int, ClientIStorage>();
+        public IEnumerable<IStorage> Clients => m_client_storages.Values;
         // ===== Client-side members =====
         private Lazy<int> m_client_cookie = new Lazy<int>(() => new Random().Next(int.MinValue, int.MaxValue));
         internal int MyCookie => m_client_cookie.Value;
@@ -46,34 +49,55 @@ namespace Trinity.Client.TrinityClientModule
             /******************************
              * Protocol: PollEvents
              * Request: |4B InstanceId|4B Cookie|
-             * Response:|8B p| TrinityMessage |
+             * Response:[4B E_RESULT Header] - |8B p| TrinityMessage |
              * Response.p != 0 if the resposne is a "request with response"
              * Response.TrinityMessage length header < 0 if there are no events
+             * E_RESULT values:
+             * 
+             *      0 = E_SUCCESS
+             *      1 = E_NO_EVENTS
+             *      2 = E_INVALID_CLIENT
+             * 
              * !NOTE Here, response itself is a TrinityMessage and Response.TrinityMessage
              ******************************/
             PointerHelper sp = PointerHelper.New(args.Buffer + args.Offset);
             int instanceId = *sp.ip++;
             int cookie = *sp.ip++;
-            var stg = CheckInstanceCookie(cookie, instanceId);
-            (long p, TrinityMessage tm, TaskCompletionSource<bool> tsrc) = stg.PollEvents_impl();
             byte* outer_buf;
             int outer_len;
-            if(tm == null)
+            long p = 0;
+            TrinityMessage tm = null;
+            TaskCompletionSource<bool> tsrc = null;
+            bool invalid_client = false;
+
+            try
+            {
+                var stg = CheckInstanceCookie(cookie, instanceId);
+                (p, tm, tsrc) = stg.PollEvents_impl();
+            }
+            catch (ClientInstanceNotFoundException)
+            {
+                invalid_client = true;
+            }
+
+            if (tm == null)
             {
                 outer_len = TrinityProtocol.MsgHeader + sizeof(long) + sizeof(int);
                 outer_buf = (byte*)Memory.malloc((ulong)outer_len);
-                *(int*)outer_buf = outer_len - TrinityProtocol.MsgHeader;
+                *(int*)outer_buf = outer_len - TrinityProtocol.SocketMsgHeader;
                 *(long*)(outer_buf + TrinityProtocol.MsgHeader) = 0;
                 *(int*)(outer_buf + TrinityProtocol.MsgHeader + sizeof(long)) = -1;
+                *(int*)(outer_buf + TrinityProtocol.SocketMsgHeader) = invalid_client ? 2 : 1;
             }
             else
             {
                 outer_len = TrinityProtocol.MsgHeader + sizeof(long) + tm.Size;
                 outer_buf = (byte*)Memory.malloc((ulong)outer_len);
-                *(int*)outer_buf = outer_len - TrinityProtocol.MsgHeader;
+                *(int*)outer_buf = outer_len - TrinityProtocol.SocketMsgHeader;
                 *(long*)(outer_buf + TrinityProtocol.MsgHeader) = p;
-                Memory.memcpy(outer_buf + TrinityProtocol.MsgHeader, tm.Buffer, (ulong)tm.Size);
+                Memory.memcpy(outer_buf + TrinityProtocol.MsgHeader + sizeof(long), tm.Buffer, (ulong)tm.Size);
                 tsrc.SetResult(true);
+                *(int*)(outer_buf + TrinityProtocol.SocketMsgHeader) = 0;
             }
             args.Response = new TrinityMessage(outer_buf, outer_len);
         }

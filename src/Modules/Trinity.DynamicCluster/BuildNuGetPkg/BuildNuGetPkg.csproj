@@ -6,33 +6,49 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <Target Name="BuildTrinityClient">
+
+  <Target Name="RestoreTrinityClient">
+    <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe restore $(ProjectDir)..\Trinity.Client\Trinity.Client.csproj -SolutionDirectory $(ProjectDir)..\" />
+  </Target>
+  <Target Name="RestoreDynamicCluster">
+    <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe restore $(ProjectDir)..\Trinity.DynamicCluster\Trinity.DynamicCluster.csproj -SolutionDirectory $(ProjectDir)..\" />
+  </Target>
+  <Target Name="RestoreServiceFabric">
+    <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe restore $(ProjectDir)..\Trinity.ServiceFabric.Infrastructure\Trinity.ServiceFabric.Infrastructure.csproj -SolutionDirectory $(ProjectDir)..\" />
+  </Target>
+  <Target Name="RestoreAzureStorage">
+    <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe restore $(ProjectDir)..\Trinity.Azure.Storage\Trinity.Azure.Storage.csproj -SolutionDirectory $(ProjectDir)..\" />
+  </Target>
+  <Target Name="RestoreServiceFabricListeners">
+    <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe restore $(ProjectDir)..\Trinity.ServiceFabric.Listeners\Trinity.ServiceFabric.ListenerRuntime.csproj -SolutionDirectory $(ProjectDir)..\" />
+  </Target>
+
+  <Target Name="BuildTrinityClient" DependsOnTargets="RestoreTrinityClient">
     <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe pack $(ProjectDir)..\Trinity.Client\Trinity.Client.csproj -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis -Properties Configuration=Release;Platform=AnyCPU" />
   </Target>
-  <Target Name="BuildDynamicCluster" DependsOnTargets="BuildTrinityClient">
+  <Target Name="BuildDynamicCluster" DependsOnTargets="BuildTrinityClient;RestoreDynamicCluster">
     <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe pack $(ProjectDir)..\Trinity.DynamicCluster\Trinity.DynamicCluster.csproj -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis -Properties Configuration=Release;Platform=AnyCPU" />
   </Target>
-  <Target Name="BuildServiceFabric" DependsOnTargets="BuildDynamicCluster">
+  <Target Name="BuildServiceFabric" DependsOnTargets="BuildDynamicCluster;RestoreServiceFabric">
     <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe pack $(ProjectDir)..\Trinity.ServiceFabric.Infrastructure\Trinity.ServiceFabric.Infrastructure.csproj -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis -Properties Configuration=Release;Platform=x64" />
   </Target>
-  <Target Name="BuildAzureStorage" DependsOnTargets="BuildDynamicCluster">
+  <Target Name="BuildAzureStorage" DependsOnTargets="BuildDynamicCluster;RestoreAzureStorage">
     <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe pack $(ProjectDir)..\Trinity.Azure.Storage\Trinity.Azure.Storage.csproj -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis -Properties Configuration=Release;Platform=AnyCPU" />
   </Target>
-  <Target Name="BuildServiceFabricListeners" DependsOnTargets="BuildServiceFabric">
+  <Target Name="BuildServiceFabricListeners" DependsOnTargets="BuildServiceFabric;RestoreServiceFabricListeners">
     <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.4.4.1\tools\Nuget.exe pack $(ProjectDir)..\Trinity.ServiceFabric.Listeners\Trinity.ServiceFabric.ListenerRuntime.csproj -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis -Properties Configuration=Release;Platform=x64" />
   </Target>
   <Target Name="Build" DependsOnTargets="BuildTrinityClient;BuildDynamicCluster;BuildServiceFabric;BuildAzureStorage;BuildServiceFabricListeners" />
-  <Target Name="Rebuild" DependsOnTargets="Build" />
+  <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
   <Target Name="Clean">
     <ItemGroup>
-      <CachedPackages Include="$(ProjectDir)..\packages\GraphEngine*\**\*" />
+      <CachedPackageDirs Include="$([System.IO.Directory]::GetDirectories(`$(ProjectDir)..\packages`, `GraphEngine*`))" />
     </ItemGroup>
     <ItemGroup>
-      <CachedPackageDirs Include="$(ProjectDir)..\packages\GraphEngine*" />
+      <CachedPackageDirs Include="$(ProjectDir)..\packages\GraphEngine*\" />
     </ItemGroup>
-    <Message Importance="high" Text="Deleting cached packages" />
-    <Delete ContinueOnError="true" Files="@(CachedPackages)" />
-    <RemoveDir Directories="@(CachedPackageDirs)" />
+    <Message Importance="high" Text="Deleting cached packages: @(CachedPackageDirs)" />
+    <RemoveDir Directories="@(CachedPackageDirs)" ContinueOnError="true"/>
   </Target>
   <ItemGroup>
     <None Include="App.config">

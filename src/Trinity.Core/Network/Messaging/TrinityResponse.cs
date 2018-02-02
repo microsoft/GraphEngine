@@ -93,7 +93,7 @@ namespace Trinity.Network.Messaging
             byte[] bytes = new byte[Size];
             fixed(byte* p = bytes)
             {
-                Memory.Copy(Buffer + Offset, p, Size);
+                Memory.Copy(Buffer, p, Size);
             }
             return bytes;
         }
