@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using Trinity.Storage;
-using Trinity.Extension;
 using Trinity.TSL.Lib;
 
 namespace DynamicLoading
@@ -11,16 +10,17 @@ namespace DynamicLoading
     {
         public IEnumerable<ICellAccessor> EnumerateGenericCellAccessors(LocalMemoryStorage storage)
         {
-            throw new NotImplementedException();
+            return Center.Leader.GenericCellOperations.SelectMany(cellOps => cellOps.EnumerateGenericCellAccessors(storage));
         }
 
         public IEnumerable<ICell> EnumerateGenericCells(LocalMemoryStorage storage)
         {
-            throw new NotImplementedException();
+            return Center.Leader.GenericCellOperations.SelectMany(cellOps => cellOps.EnumerateGenericCells(storage));
         }
 
         public ICell LoadGenericCell(IKeyValueStore storage, long cellId)
         {
+            // TODO: Use the records in disk to lookup which `GenericCellOperations` the cell with this id belongs to.
             throw new NotImplementedException();
         }
 
@@ -31,37 +31,44 @@ namespace DynamicLoading
 
         public ICell NewGenericCell(string cellType)
         {
-            throw new NotImplementedException();
+            int seg = Center.GetIntervalIndex.ByCellTypeName(cellType);
+            return Center.Leader.GenericCellOperations[seg].NewGenericCell(cellType);
         }
 
         public ICell NewGenericCell(long cellId, string cellType)
         {
-            throw new NotImplementedException();
+            int seg = Center.GetIntervalIndex.ByCellTypeName(cellType);
+            return Center.Leader.GenericCellOperations[seg].NewGenericCell(cellId, cellType);
         }
 
         public ICell NewGenericCell(string cellType, string content)
         {
-            throw new NotImplementedException();
+            int seg = Center.GetIntervalIndex.ByCellTypeName(cellType);
+            return Center.Leader.GenericCellOperations[seg].NewGenericCell(cellType, content);
         }
 
         public void SaveGenericCell(IKeyValueStore storage, ICell cell)
         {
-            throw new NotImplementedException();
+            int seg = Center.GetIntervalIndex.ByCellTypeID(cell.CellType);
+            Center.Leader.GenericCellOperations[seg].SaveGenericCell(storage, cell);
         }
 
         public void SaveGenericCell(IKeyValueStore storage, long cellId, ICell cell)
         {
-            throw new NotImplementedException();
+            int seg = Center.GetIntervalIndex.ByCellTypeID(cell.CellType);
+            Center.Leader.GenericCellOperations[seg].SaveGenericCell(storage, cellId, cell);
         }
 
         public void SaveGenericCell(LocalMemoryStorage storage, CellAccessOptions writeAheadLogOptions, ICell cell)
         {
-            throw new NotImplementedException();
+            int seg = Center.GetIntervalIndex.ByCellTypeID(cell.CellType);
+            Center.Leader.GenericCellOperations[seg].SaveGenericCell(storage, writeAheadLogOptions, cell);
         }
 
         public void SaveGenericCell(LocalMemoryStorage storage, CellAccessOptions writeAheadLogOptions, long cellId, ICell cell)
         {
-            throw new NotImplementedException();
+            int seg = Center.GetIntervalIndex.ByCellTypeID(cell.CellType);
+            Center.Leader.GenericCellOperations[seg].SaveGenericCell(storage, writeAheadLogOptions, cellId, cell);
         }
 
         public ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId)
@@ -76,7 +83,8 @@ namespace DynamicLoading
 
         public ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId, CellAccessOptions options, string cellType)
         {
-            throw new NotImplementedException();
+            int seg = Center.GetIntervalIndex.ByCellTypeName(cellType);
+            return Center.Leader.GenericCellOperations[seg].UseGenericCell(storage, cellId, options, cellType);
         }
     }
 }

@@ -50,7 +50,7 @@ namespace DynamicLoading
                                 .Select(_ => Path.Combine(CSProj.Include, $"{_}.dll"))
                                 .Select(Assembly.LoadFrom)
                                 .ToArray();
-            IDIntervals.Add(_currentCellTypeOffset); // <-- initialized?
+            IDIntervals.Add(_currentCellTypeOffset);
         }
 
         public static string Namespace;
@@ -222,6 +222,23 @@ namespace DynamicLoading
                 throw new AsmLoadError(e.Message);
             }
 
+        }
+        public static class GetIntervalIndex
+        {
+            public static int ByCellTypeID(int cellTypeID) {
+                int seg = Center.IDIntervals.FindLastIndex(seg_head => seg_head < cellTypeID);
+                if (seg == -1 || seg == Center.IDIntervals.Count)
+                    throw new CellTypeNotMatchException("Cell type id out of the valid range.");
+                return seg;
+            }
+
+            public static int ByCellTypeName(string cellTypeName)
+            {
+                if (!Center.CellTypeIDs.Keys.Contains(cellTypeName))
+                    throw new CellTypeNotMatchException("Unrecognized cell type string.");
+                int seg = ByCellTypeID(Center.CellTypeIDs[cellTypeName]);
+                return seg;
+            }
         }
     }
 }

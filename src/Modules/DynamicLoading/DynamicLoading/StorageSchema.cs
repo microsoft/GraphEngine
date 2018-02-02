@@ -19,8 +19,8 @@ namespace DynamicLoading
         {
             if (!Center.CellTypeIDs.Keys.Contains(cellTypeString))
                 throw new CellTypeNotMatchException("Unrecognized cell type string.");
-            var tid = Center.CellTypeIDs[cellTypeString];
-            int seg = Center.IDIntervals.FindLastIndex(seg_head => seg_head < tid);
+
+            int seg = Center.GetIntervalIndex.ByCellTypeName(cellTypeString);
             return Center.Leader.StorageSchema[seg].GetCellType(cellTypeString);
         }
     }
