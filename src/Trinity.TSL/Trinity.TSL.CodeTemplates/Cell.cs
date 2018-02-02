@@ -1347,7 +1347,10 @@ namespace t_Namespace
         }
         #endregion
 
-
+        public ICell Deserialize()
+        {
+            return (t_cell_name)this;
+        }
     }
 
     ///<summary>
