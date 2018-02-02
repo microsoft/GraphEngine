@@ -8,8 +8,10 @@ Created on Sun Jan 28 20:39:38 2018
 from time import ctime
 from linq import Flow
 import json
+DynamicLoading = __import__('DynamicLoading')
 
-__all__ = ['SymTablePicker', 'sync']
+
+__all__ = ['SymTablePicker']
 
 
 # CellType.attrs : Dict[str, type]
@@ -47,15 +49,9 @@ class SymTablePicker:
         return cls.__inst__
 
 
-def sync():
-    """
-    TODO:
-    Syncronize the symtable of cell types from .NET Core hosting
-    """
-
-
 def load_symbols(tsl_dir):
     """
     TODO:
     Create new cell types from TSL source directory.
     """
+    DynamicLoading.Center.LoadFrom

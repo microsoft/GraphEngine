@@ -1,20 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
-
-namespace DynamicLoading
+﻿namespace CompositeStorageExtension
 {
-    public class AsmVersion
+    [System.Serializable]
+    public class VersionRecorder
     {
-        public Assembly Asm;
-        public AsmVersion(int cellTypeOffset, string versionName, string tslsrcDir, string tslBuildDir, string asmLoadDir)
+        public VersionRecorder
+            (int cellTypeOffset,
+            string tslSrcDir,
+            string tslBuildDir,
+            string asmLoadDir,
+            string moduleName,
+            string versionName)
         {
             _name = versionName;
-            _tslSrcDir = tslsrcDir;
+            _tslSrcDir = tslSrcDir;
             _tslBuildDir = tslBuildDir;
             _asmLoadDir = asmLoadDir;
             _cellTypeOffset = cellTypeOffset;
+            _namespace = $"Trinity.Extension.{moduleName}";
         }
 
         public string TslSrcDir { get => _tslSrcDir; }
@@ -22,7 +24,7 @@ namespace DynamicLoading
         public string AsmLoadDir { get => _asmLoadDir; }
         public string Name { get => _name; }
         public int CellTypeOffset { get => _cellTypeOffset; }
-        
+        public string Namespace { get => _namespace; }
 
         private string _name;
 
@@ -34,9 +36,7 @@ namespace DynamicLoading
 
         private int _cellTypeOffset;
 
-        // CellType => Field => FieldType 
-
-
+        private string _namespace;
     }
 
 }

@@ -71,12 +71,12 @@ if is_windows:
 
     # deprecated
     # build TslAssembly.csproj
-    dir_at(pardir_of(BUILD_SCRIPT_PATH), 'TslAssembly',
-           then_call=lambda _: os.system('cd {} && dotnet restore && dotnet build'.format(_)))
-
-    to_pymodule_dir('../TslAssembly',
-                    with_postfix=['.dll'],
-                    to_module='ffi')
+    # dir_at(pardir_of(BUILD_SCRIPT_PATH), 'TslAssembly',
+    #        then_call=lambda _: os.system('cd {} && dotnet restore && dotnet build'.format(_)))
+    #
+    # to_pymodule_dir('../TslAssembly',
+    #                 with_postfix=['.dll'],
+    #                 to_module='ffi')
 
 
 else:

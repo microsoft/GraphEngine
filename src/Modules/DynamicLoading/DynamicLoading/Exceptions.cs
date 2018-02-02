@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DynamicLoading
+namespace CompositeStorageExtension
 {
     public class TSLCodeGenError : Exception
     {
@@ -20,6 +20,13 @@ namespace DynamicLoading
     {
         public AsmLoadError() : base() { }
         public AsmLoadError(string info) : base(info) { }
+
+    }
+
+    public class NotInitializedError : Exception
+    {
+        public NotInitializedError(): base(){}
+        public NotInitializedError(string info) : base(info) { }
 
     }
 }

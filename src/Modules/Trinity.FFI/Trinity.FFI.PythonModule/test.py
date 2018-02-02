@@ -8,10 +8,13 @@
 #
 from __future__ import print_function
 import GraphEngine.ffi.GraphEngine as ge
+
 global c
 Ignore = object()
 Succeed = []
 Failed = []
+
+
 def test(title, args, out=None, expected=Ignore):
     print(title)
     head, *tail = args
@@ -56,4 +59,3 @@ print("end-test")
 
 print('succeed:\n\t', '\n\t'.join(Succeed), sep='')
 print('failed:\n\t', '\n\t'.join(Failed), sep='')
-

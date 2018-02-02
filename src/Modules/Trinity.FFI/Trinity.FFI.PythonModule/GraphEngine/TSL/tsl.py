@@ -37,6 +37,8 @@ def to_tsl(obj):
                      for attr_name, attr_type in obj['attrs'].items()])),
         ))
 
+    elif isinstance(obj, TSL):
+        return obj.codes
     else:
         raise TypeError('invalid parameters.\n',
                         '\texpected: \n',

@@ -48,5 +48,3 @@ def NewCell_3(cell_type: str, content: str):
 
 def LoadCell(cell_type: str) -> Cell:
     pass
-
-

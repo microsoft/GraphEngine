@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 
-namespace DynamicLoading
+namespace CompositeStorageExtension
 {
     public static class CSProj
     {
         public static string Version = "1.0.9083";
         public static string NetFramework = "netstandard2.0";
-        public static string Include;
+        public static string IncludeDirectory;
         public static class Reference
         {
             public static string[] Names = new string[] {
@@ -22,7 +22,7 @@ namespace DynamicLoading
 
         public static string _makeReference(string reference) => string.Join("\n",
             $"       <Reference Include = \"{reference}\">",
-            $"           <HintPath>{Include}\\{reference}.dll</HintPath>",
+            $"           <HintPath>{IncludeDirectory}\\{reference}.dll</HintPath>",
             "       </Reference>"
         );
 

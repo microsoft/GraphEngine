@@ -4,24 +4,24 @@ using System.Text;
 using System.Linq;
 using Trinity.Storage;
 using Trinity.Extension;
-namespace DynamicLoading 
+namespace CompositeStorageExtension 
 {
     [ExtensionPriority(int.MaxValue)]
     class StorageSchema : IStorageSchema
     {
         public IEnumerable<ICellDescriptor> CellDescriptors
-            => Center.Leader.StorageSchema.SelectMany(_ => _.CellDescriptors);
+            => CompositeStorage.StorageSchema.SelectMany(_ => _.CellDescriptors);
 
         public IEnumerable<string> CellTypeSignatures => 
-            Center.Leader.StorageSchema.Select(_ => _.CellTypeSignatures).Aggregate((last, next) => last.Concat(next));
+            CompositeStorage.StorageSchema.Select(_ => _.CellTypeSignatures).Aggregate((last, next) => last.Concat(next));
 
         public ushort GetCellType(string cellTypeString)
         {
-            if (!Center.CellTypeIDs.Keys.Contains(cellTypeString))
+            if (!CompositeStorage.CellTypeIDs.Keys.Contains(cellTypeString))
                 throw new CellTypeNotMatchException("Unrecognized cell type string.");
 
-            int seg = Center.GetIntervalIndex.ByCellTypeName(cellTypeString);
-            return Center.Leader.StorageSchema[seg].GetCellType(cellTypeString);
+            int seg = GetIntervalIndex.ByCellTypeName(cellTypeString);
+            return CompositeStorage.StorageSchema[seg].GetCellType(cellTypeString);
         }
     }
 }
