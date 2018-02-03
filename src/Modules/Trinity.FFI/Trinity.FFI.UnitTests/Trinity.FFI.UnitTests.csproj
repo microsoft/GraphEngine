@@ -1,23 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-    <AssemblyName>Trinity.FFI.UnitTests</AssemblyName>
-    <RootNamespace>Trinity.FFI.UnitTests</RootNamespace>
+    <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
     <AllowUnsafe>true</AllowUnsafe>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>MSB4018</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.9083" />
+    <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
     <PackageReference Include="GraphEngine.FFI" Version="1.0.9083" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.0-beta1-build3642" />

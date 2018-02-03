@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <AssemblyName>Trinity.FFI</AssemblyName>
     <RootNamespace>Trinity.FFI</RootNamespace>
     <AllowUnsafe>true</AllowUnsafe>
@@ -22,15 +21,16 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>..\..\..\..\bin\coreclr</OutputPath>
+    <OutputPath>..\..\..\..\bin</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\..\..\..\bin\coreclr</OutputPath>
+    <OutputPath>..\..\..\..\bin</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.CoreCLR" Version="1.0.9083" />
+    <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +40,10 @@
   <ItemGroup>
     <Content Include="..\..\..\..\bin\trinity_ffi.dll">
       <PackagePath>lib\netstandard2.0</PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\..\..\bin\trinity_ffi.dll">
+      <PackagePath>lib\net461</PackagePath>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <OutputType>library</OutputType>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <OutputPath>..\..\..\..\bin</OutputPath>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
+  </ItemGroup>
+
+  <!-- NuGet package metadata -->
+  <PropertyGroup>
+    <Authors>Microsoft Graph Engine Team</Authors>
+    <Description>Graph Engine composite storage extension. Provides the capabilities to compose a storage extension out of multiple storage extensions, and thus schema evolution. Provides the capabilities to dynamically compile and incrementally load extra cell types.</Description>
+    <Copyright>Copyright 2018</Copyright>
+    <Company>Microsoft Corporation</Company>
+
+    <Version>1.0.9083</Version>
+    <AssemblyVersion>1.0.9083.0</AssemblyVersion>
+    <FileVersion>1.0.9083.0</FileVersion>
+    <PackageVersion>1.0.9083</PackageVersion>
+
+    <PackageId>GraphEngine.Storage.Composite</PackageId>
+    <PackageTags>Graph Engine Trinity Storage Extension Composite Schema Evolution</PackageTags>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
+    <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/Microsoft/GraphEngine</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+</Project>
