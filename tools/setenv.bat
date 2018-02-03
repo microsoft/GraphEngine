@@ -31,7 +31,6 @@ if not exist "%MSBUILD_EXE%" (
 echo MSBUILD_EXE: %MSBUILD_EXE%
 
 set NUGET_EXE=%REPO_ROOT%\tools\NuGet.exe
-
 echo NUGET_EXE: %NUGET_EXE%
 
 if not exist "%NUGET_EXE%" (
@@ -41,23 +40,29 @@ if not exist "%NUGET_EXE%" (
   endlocal
 )
 
+set DOTNET_EXE=dotnet
+echo DOTNET_EXE: %DOTNET_EXE%
+
 set TRINITY_CORE_SLN=%REPO_ROOT%\src\Trinity.Core\Trinity.Core.sln
 set TRINITY_C_SLN=%REPO_ROOT%\src\Trinity.C\Trinity.C.sln
 set TRINITY_TSL_SLN=%REPO_ROOT%\src\Trinity.TSL\Trinity.TSL.sln
 set SPARK_MODULE_ROOT=%REPO_ROOT%\src\Modules\Spark
 set LIKQ_SLN=%REPO_ROOT%\src\Modules\LIKQ\LIKQ.sln
-set TRINITY_DYNAMICCLUSTER_SLN=%REPO_ROOT%\src\Modules\Trinity.DynamicCluster\Trinity.DynamicCluster.sln
+set TRINITY_CLIENT_SLN=%REPO_ROOT%\src\Modules\GraphEngine.Client\GraphEngine.Client.sln
+set TRINITY_DYNAMICCLUSTER_SLN=%REPO_ROOT%\src\Modules\GraphEngine.DynamicCluster\GraphEngine.DynamicCluster.sln
+set TRINITY_SERVICE_FABRIC_SLN=%REPO_ROOT%\src\Modules\GraphEngine.ServiceFabric\GraphEngine.ServiceFabric.sln
 
 echo TRINITY_CORE_SLN: %TRINITY_CORE_SLN%
 echo TRINITY_C_SLN: %TRINITY_C_SLN%
 echo TRINITY_TSL_SLN: %TRINITY_TSL_SLN%
 echo SPARK_MODULE_ROOT: %SPARK_MODULE_ROOT%
 echo LIKQ_SLN: %LIKQ_SLN%
+echo TRINITY_CLIENT_SLN: %TRINITY_CLIENT_SLN%
 echo TRINITY_DYNAMICCLUSTER_SLN: %TRINITY_DYNAMICCLUSTER_SLN%
+echo TRINITY_SERVICE_FABRIC_SLN: %TRINITY_SERVICE_FABRIC_SLN%
 
 set TRINITY_OUTPUT_DIR=%REPO_ROOT%\bin
-mkdir /p "%TRINITY_OUTPUT_DIR%"
-mkdir /p "%TRINITY_OUTPUT_DIR%\coreclr"
+mkdir "%TRINITY_OUTPUT_DIR%"
 pushd "%TRINITY_OUTPUT_DIR%"
 set TRINITY_OUTPUT_DIR=%CD%
 popd

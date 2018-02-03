@@ -52,8 +52,10 @@ namespace Trinity.Network.Messaging
             }
         }
 
-        // construct a TrinityResponse using a raw buffer
-        internal TrinityResponse(byte* buf, int size)
+        /// <summary>
+        /// construct a TrinityResponse using a raw buffer.
+        /// </summary>
+        public TrinityResponse(byte* buf, int size)
         {
             Buffer = buf;
             Size = size;
@@ -76,23 +78,27 @@ namespace Trinity.Network.Messaging
             Memory.free(Buffer);
         }
 
+        /// <inheritdocs />
         public ResizeFunctionDelegate ResizeFunction { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
 
+        /// <inheritdocs />
         public byte* GetUnderlyingBufferPointer()
         {
-            return Buffer + Offset;
+            return Buffer;
         }
 
+        /// <inheritdocs />
         public byte[] ToByteArray()
         {
             byte[] bytes = new byte[Size];
             fixed(byte* p = bytes)
             {
-                Memory.Copy(Buffer + Offset, p, Size);
+                Memory.Copy(Buffer, p, Size);
             }
             return bytes;
         }
 
+        /// <inheritdocs />
         public int GetBufferLength()
         {
             return Size;

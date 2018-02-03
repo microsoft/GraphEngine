@@ -180,15 +180,7 @@ _return:
             Log.WriteLine(LogLevel.Info, "Scanning for MemoryCloud extensions.");
             new_memorycloud_func = () => new FixedMemoryCloud();
 
-            var mc_ext_rank = ExtensionConfig.Instance.ResolveTypePriorities();
-            Func<Type, int> mc_rank_func = t =>
-            {
-                if(mc_ext_rank.TryGetValue(t, out var r)) return r;
-                else return 0;
-            };
-
-            var memcloud_types = AssemblyUtility.GetAllClassTypes<MemoryCloud>().OrderByDescending(mc_rank_func);
-            if (!memcloud_types.Any(t => t != typeof(FixedMemoryCloud)))
+            if(!AssemblyUtility.GetAllClassTypes<MemoryCloud>().Any(t => t != typeof(FixedMemoryCloud)))
             {
                 Log.WriteLine(LogLevel.Info, "No MemoryCloud extension found.");
                 return TrinityErrorCode.E_FAILURE;
@@ -196,8 +188,13 @@ _return:
 
             new_memorycloud_func = () =>
             {
-                //TODO read memcloud type from config
-                //currently we just pick the first one
+                var mc_ext_rank = ExtensionConfig.Instance.ResolveTypePriorities();
+                Func<Type, int> mc_rank_func = t =>
+                {
+                    if(mc_ext_rank.TryGetValue(t, out var r)) return r;
+                    else return 0;
+                };
+                var memcloud_types = AssemblyUtility.GetAllClassTypes<MemoryCloud>().OrderByDescending(mc_rank_func);
                 foreach (var mc_type in memcloud_types)
                 {
                     if (mc_type == null) continue;

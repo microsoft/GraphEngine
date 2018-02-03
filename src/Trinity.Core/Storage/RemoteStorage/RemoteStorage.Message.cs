@@ -86,7 +86,7 @@ namespace Trinity.Storage
         }
 
         /// <inheritdoc />
-        public T GetCommunicationModule<T>() where T : CommunicationModule
+        public virtual T GetCommunicationModule<T>() where T : CommunicationModule
         {
             return this.m_memorycloud?.GetCommunicationModule<T>();
         }

@@ -50,22 +50,27 @@ namespace Trinity.Configuration
         /// <returns></returns>
         public Dictionary<Type, int> ResolveTypePriorities()
         {
-            if (!m_priority_updated) return m_priority_dict;
-
-            Dictionary<Type, int> rank = new Dictionary<Type, int>();
-            var defaults = AssemblyUtility.GetAllClassTypes()
+            Dictionary<Type, int> rank;
+            if (m_priority_updated)
+            {
+                rank = new Dictionary<Type, int>();
+                var defaults = AssemblyUtility.GetAllClassTypes()
                 .Select(t => new { Type = t, PriorityAttr = t.GetCustomAttribute<ExtensionPriorityAttribute>(inherit: false) })
                 .Where(t => t.PriorityAttr != null);
-
-            foreach(var d in defaults)
+                foreach (var d in defaults)
+                {
+                    rank[d.Type] = d.PriorityAttr.Priority;
+                }
+            }
+            else
             {
-                rank.Add(d.Type, d.PriorityAttr.Priority);
+                rank = m_priority_dict;
             }
 
             List<ExtensionPriority> priorities = Priority;
-            foreach(var p in priorities)
+            foreach (var p in priorities)
             {
-                try { rank.Add(AssemblyUtility.GetType(p.Name), p.Priority); }
+                try { rank[AssemblyUtility.GetType(p.Name)] = p.Priority; }
                 catch { }
             }
 

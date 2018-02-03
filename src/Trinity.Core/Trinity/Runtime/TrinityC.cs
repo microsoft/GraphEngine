@@ -11,7 +11,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using Trinity.Properties;
 using Trinity.Utilities;
 
 namespace Trinity
