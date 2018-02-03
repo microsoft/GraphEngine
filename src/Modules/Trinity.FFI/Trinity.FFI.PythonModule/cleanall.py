@@ -75,6 +75,11 @@ if cmdparser.parse_args().all:
               {"./__pycache__": all},
               {"./build": all},
               {"./dist": all},
-              {"./GraphEngine/ffi/storage": all}
+              {"./GraphEngine/ffi/storage": all},
+              {'cache': all},
+              {'GraphEngine/ffi/A': all},
+              {'GraphEngine/ffi/B': all},
+              {'GraphEngine/ffi/composite-helper': all},
+              {'GraphEngine/ffi/write_ahead_log': all}
           ]))
     .Each(delete))

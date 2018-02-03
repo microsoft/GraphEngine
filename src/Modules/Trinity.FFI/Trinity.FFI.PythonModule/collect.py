@@ -5,7 +5,7 @@ Collect assembly sources from GraphEngine project here and there.
 import os
 import linq
 import argparse
-
+import subprocess
 from conf import and_then
 from conf import (CURRENT_DIR, CORECLR_PATH,
                   BUILD_SCRIPT_CMD, BUILD_SCRIPT_PATH, is_windows)
@@ -63,21 +63,14 @@ if is_windows:
                     with_suffix=['.exe'],
                     to_module='Command')
 
+    # install newtonsoft.json 9.0.1.
+    os.system('nuget install newtonsoft.json -Version 9.0.1 -OutputDirectory ./cache')
+    dotnet_package_dir = os.path.abspath('cache')
     # add newtonsoft.json.dll
     # TODO: a robust way to find out newtonsoft.json.dll.
-    to_pymodule_dir(r'C:\Program Files\dotnet\sdk\NuGetFallbackFolder\newtonsoft.json\9.0.1\lib\netstandard1.0',
+    to_pymodule_dir(os.path.join(dotnet_package_dir, r'Newtonsoft.Json.9.0.1\lib\netstandard1.0'),
                     with_suffix=['.dll'],
                     to_module='ffi')
-
-    # deprecated
-    # build TslAssembly.csproj
-    # dir_at(pardir_of(BUILD_SCRIPT_PATH), 'TslAssembly',
-    #        then_call=lambda _: os.system('cd {} && dotnet restore && dotnet build'.format(_)))
-    #
-    # to_pymodule_dir('../TslAssembly',
-    #                 with_suffix=['.dll'],
-    #                 to_module='ffi')
-
 
 else:
     raise NotImplemented
