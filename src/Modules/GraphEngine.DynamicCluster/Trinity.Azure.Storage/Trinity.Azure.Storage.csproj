@@ -1,0 +1,57 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <RootNamespace>Trinity.Azure.Storage</RootNamespace>
+    <AssemblyName>Trinity.Azure.Storage</AssemblyName>
+    <OutputTypeEx>library</OutputTypeEx>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <OutputPath>..\..\..\..\bin</OutputPath>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+    <ThreadPoolMinThreads>20</ThreadPoolMinThreads>
+    <ThreadPoolMaxThreads>300</ThreadPoolMaxThreads>
+  </PropertyGroup>
+
+  <!-- NuGet package metadata -->
+  <PropertyGroup>
+    <Authors>Microsoft Graph Engine Team</Authors>
+    <Description>Persistent storage implementation for Azure Blob Storage.</Description>
+    <Copyright>Copyright 2018</Copyright>
+    <Company>Microsoft Corporation</Company>
+
+    <Version>1.0.9083</Version>
+    <AssemblyVersion>1.0.9083.0</AssemblyVersion>
+    <FileVersion>1.0.9083.0</FileVersion>
+    <PackageVersion>1.0.9083</PackageVersion>
+
+    <PackageId>GraphEngine.Azure.BlobStorage</PackageId>
+    <PackageTags>Graph Engine Trinity Azure Blob Storage</PackageTags>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
+    <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/Microsoft/GraphEngine</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <!-- Conditional compilation flags -->
+  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+    <DefineConstants>CORECLR</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Package dependencies -->
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
+    <PackageReference Include="System.Threading.Tasks.Dataflow" Version="4.8.0" />
+    <PackageReference Include="WindowsAzure.Storage" Version="8.6.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.DynamicCluster\Trinity.DynamicCluster.csproj" />
+  </ItemGroup>
+
+</Project>

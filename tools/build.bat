@@ -4,24 +4,39 @@ if ["%REPO_ROOT%"] == [""] (
 
 call "%REPO_ROOT%\tools\setenv.bat"
 if %errorlevel% neq 0 exit /b %errorlevel%
-
 setlocal
+
+:: Clear local nuget cache
+rmdir /S /Q %USERPROFILE%\.nuget\packages\graphengine.*
 
 :: Run msbuild to build Trinity.C
 "%MSBUILD_EXE%" /p:Configuration=Release "%TRINITY_C_SLN%"
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+:: Run msbuild to build Trinity.C.CoreCLR
+"%MSBUILD_EXE%" /p:Configuration=Release-CoreCLR %TRINITY_C_SLN%
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Run msbuild to build Trinity.TSL.CodeGen
 "%MSBUILD_EXE%" /p:Configuration=Release "%TRINITY_TSL_SLN%"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
-:: Run nuget to restore nuget packages for Trinity.Core
-"%NUGET_EXE%" restore "%TRINITY_CORE_SLN%"
+:: Copy Linux native Trinity.C from lib
+copy "%REPO_ROOT%\lib\libTrinity.so" "%REPO_ROOT%\bin\"
+
+:: Copy Linux native Trinity.TSL.CodeGen from tools
+copy "%REPO_ROOT%\tools\Trinity.TSL.CodeGen" "%REPO_ROOT%\bin\"
+
+:: Run dotnet to restore nuget packages for Trinity.Core
+"%DOTNET_EXE%" restore "%TRINITY_CORE_SLN%"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
-:: Run msbuild to build Trinity.Core
-rd /S /Q "%REPO_ROOT%\src\Trinity.Core\obj"
-"%MSBUILD_EXE%" /p:Configuration=Release "%TRINITY_CORE_SLN%"
+:: Run dotnet to build Trinity.Core
+"%DOTNET_EXE%" build -c Release "%TRINITY_CORE_SLN%"
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+:: Run dotnet to pack GraphEngine.Core nuget package
+"%DOTNET_EXE%" pack -c Release "%TRINITY_CORE_SLN%"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Register local nuget source
@@ -34,15 +49,51 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 :: Ignore local nuget source errors
 
 :: Run nuget to restore nuget packages for LIKQ
-"%NUGET_EXE%" restore "%LIKQ_SLN%"
+"%DOTNET_EXE%" restore "%LIKQ_SLN%"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
-:: Run msbuild to build LIKQ
-"%MSBUILD_EXE%" /p:Configuration=Release "%LIKQ_SLN%"
+:: Run dotnet to build LIKQ
+"%DOTNET_EXE%" build -c Release "%LIKQ_SLN%"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
-:: Run msbuild to build Trinity.DynamicCluster
-"%MSBUILD_EXE%" /p:Configuration=Release "%TRINITY_DYNAMICCLUSTER_SLN%"
+:: Run dotnet to pack GraphEngine.Core nuget package
+"%DOTNET_EXE%" pack -c Release "%LIKQ_SLN%"
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+:: Run dotnet to restore Trinity.Client
+"%DOTNET_EXE%" restore "%TRINITY_CLIENT_SLN%"
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+:: Run dotnet to build Trinity.Client
+"%DOTNET_EXE%" build -c Release "%TRINITY_CLIENT_SLN%"
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+:: Run dotnet to pack Trinity.Client
+"%DOTNET_EXE%" pack -c Release "%TRINITY_CLIENT_SLN%"
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+:: Run dotnet to restore Trinity.DynamicCluster
+"%DOTNET_EXE%" restore "%TRINITY_DYNAMICCLUSTER_SLN%"
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+:: Run dotnet to build Trinity.DynamicCluster
+"%DOTNET_EXE%" build -c Release "%TRINITY_DYNAMICCLUSTER_SLN%"
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+:: Run dotnet to pack Trinity.DynamicCluster
+"%DOTNET_EXE%" pack -c Release "%TRINITY_DYNAMICCLUSTER_SLN%"
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+:: Run dotnet to restore Trinity.ServiceFabric
+"%DOTNET_EXE%" restore "%TRINITY_SERVICE_FABRIC_SLN%"
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+:: Run dotnet to build Trinity.ServiceFabric
+"%DOTNET_EXE%" build -c Release "%TRINITY_SERVICE_FABRIC_SLN%"
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+:: Run dotnet to pack Trinity.ServiceFabric
+"%DOTNET_EXE%" pack -c Release "%TRINITY_SERVICE_FABRIC_SLN%"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Build spark module
