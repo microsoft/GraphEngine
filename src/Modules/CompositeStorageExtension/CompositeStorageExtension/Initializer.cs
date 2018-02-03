@@ -5,21 +5,23 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Trinity.Storage;
+using Trinity.Diagnostics;
+
 [assembly: GraphEngineExtension]
 namespace CompositeStorageExtension
 {
+    public static class PathHelper
+    {
+        const string FolderName = "composite-helper";
+        public static string Directory => FileUtility.CompletePath(Path.Combine(Trinity.TrinityConfig.StorageRoot, FolderName));
+        public static string VersionRecorders => Path.Combine(Directory, "VersionRecorders.bin");
+        public static string CellTypeIDs => Path.Combine(Directory, "CellTypeIDs.bin");
+        public static string IDIntervals => Path.Combine(Directory, "IDIntervals.bin");
+        public static string DLL(string dllName) => Path.Combine(Directory, dllName);
+
+    }
     class Initializer : IStartupTask
     {
-        private static class DumplingHelper
-        {
-            const string FolderName = "composite-helper";
-            public static string Directory => FileUtility.CompletePath(Path.Combine(Trinity.TrinityConfig.StorageRoot, FolderName));
-            public static string VersionRecorders => Path.Combine(Directory, "VersionRecorders.bin");
-            public static string CellTypeIDs => Path.Combine(Directory, "CellTypeIDs.bin");
-            public static string IDIntervals => Path.Combine(Directory, "IDIntervals.bin");
-
-        }
-
         public void Run()
         {
             Trinity.Global.LocalStorage.StorageBeforeLoad += LocalStorage_StorageBeforeLoad;
@@ -30,43 +32,45 @@ namespace CompositeStorageExtension
 
         private void LocalStorage_StorageReset()
         {
-            CompositeStorage.CellTypeIDs = null;
-            CompositeStorage.GenericCellOperations = null;
-            CompositeStorage.IDIntervals = null;
-            CompositeStorage.StorageSchema = null;
-            CompositeStorage.VersionRecorders = null;
+            Log.WriteLine("Reset");
+            Controller.CleanAll();
             Controller.Init(Trinity.TrinityConfig.StorageRoot);
         }
 
         private void LocalStorage_StorageLoaded()
         {
-
-
+            Log.WriteLine("Loaded");
 
         }
 
         private void LocalStorage_StorageSaved()
         {
-            Utilities.Serialize(CompositeStorage.VersionRecorders, DumplingHelper.VersionRecorders);
-            Utilities.Serialize(CompositeStorage.IDIntervals, DumplingHelper.IDIntervals);
-            Utilities.Serialize(CompositeStorage.CellTypeIDs, DumplingHelper.CellTypeIDs);
+            Log.WriteLine("Saved");
+            Utilities.Serialize(CompositeStorage.VersionRecorders, PathHelper.VersionRecorders);
+            Utilities.Serialize(CompositeStorage.IDIntervals, PathHelper.IDIntervals);
+            Utilities.Serialize(CompositeStorage.CellTypeIDs, PathHelper.CellTypeIDs);
 
         }
 
         private void LocalStorage_StorageBeforeLoad()
         {
-            Utilities.Deserialize<List<VersionRecorder>>(DumplingHelper.VersionRecorders)
+            Log.WriteLine("BeforeLoad");
+            Utilities.Deserialize<List<VersionRecorder>>(PathHelper.VersionRecorders)
                      .WhenNotDefault(_ => CompositeStorage.VersionRecorders = _);
 
-            Utilities.Deserialize<Dictionary<string, int>>(DumplingHelper.CellTypeIDs)
+            Utilities.Deserialize<Dictionary<string, int>>(PathHelper.CellTypeIDs)
                      .WhenNotDefault(_ => CompositeStorage.CellTypeIDs = _);
 
-            Utilities.Deserialize<List<int>>(DumplingHelper.IDIntervals)
+            Utilities.Deserialize<List<int>>(PathHelper.IDIntervals)
                      .WhenNotDefault(_ => CompositeStorage.IDIntervals = _);
 
             if (CompositeStorage.VersionRecorders != default(List<VersionRecorder>))
             {
-                var asm = CompositeStorage.VersionRecorders.Select(each => Assembly.LoadFrom($"{each.Namespace}.dll")).ToList();
+                var asm = CompositeStorage.VersionRecorders
+                            .Select(each => $"{each.Namespace}.dll"
+                                                .Apply(PathHelper.DLL)
+                                                .Apply(Assembly.LoadFrom))
+                            .ToList();
 
                 CompositeStorage.StorageSchema
                         = asm.Select(_ => AssemblyUtility.GetAllClassInstances<IStorageSchema>(assembly: _).First()).ToList();
@@ -76,5 +80,6 @@ namespace CompositeStorageExtension
             }
             Controller.Init(Trinity.TrinityConfig.StorageRoot);
         }
+        
     }
 }

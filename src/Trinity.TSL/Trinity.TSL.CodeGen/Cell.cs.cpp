@@ -1952,6 +1952,12 @@ source->append(R"::(;
             }
         }
         #endregion
+        public ICell Deserialize()
+        {
+            return ()::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::()this;
+        }
     }
     ///<summary>
     ///Provides interfaces for accessing )::");

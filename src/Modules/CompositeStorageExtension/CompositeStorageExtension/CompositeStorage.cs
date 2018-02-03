@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using Trinity.Storage;
 using Trinity.Utilities;
+using Trinity.Diagnostics;
 
 
 namespace CompositeStorageExtension
@@ -167,12 +168,22 @@ namespace CompositeStorageExtension
                 CompositeStorage.StorageSchema = new List<IStorageSchema>(ConfigConstant.AvgMaxAsmNum);
             if (CompositeStorage.CellTypeIDs == null)
                 CompositeStorage.CellTypeIDs = new Dictionary<string, int>(ConfigConstant.AvgMaxAsmNum * ConfigConstant.AvgCellNum) { };
-            if (CompositeStorage.StorageSchema == null)
-                CompositeStorage.StorageSchema = new List<IStorageSchema>(ConfigConstant.AvgMaxAsmNum);
+            if (CompositeStorage.VersionRecorders == null)
+                CompositeStorage.VersionRecorders = new List<VersionRecorder>(ConfigConstant.AvgMaxAsmNum);
             if (CompositeStorage.GenericCellOperations == null)
                 CompositeStorage.GenericCellOperations = new List<IGenericCellOperations>(ConfigConstant.AvgMaxAsmNum);
 
             Initialized = true;
+        }
+
+        public static void CleanAll()
+        {
+            CompositeStorage.CellTypeIDs = null;
+            CompositeStorage.GenericCellOperations = null;
+            CompositeStorage.IDIntervals = null;
+            CompositeStorage.StorageSchema = null;
+            CompositeStorage.VersionRecorders = null;
+            Initialized = false;
         }
 
         public static void LoadFrom(
@@ -181,10 +192,31 @@ namespace CompositeStorageExtension
                     string moduleName,
                     string versionName = null)
         {
+
+#if DEBUG
+
+            Trinity.Global.StorageSchema
+                   .CellDescriptors
+                   .Select(cellDesc =>
+                            $"{cellDesc.TypeName}: " +
+                            $"[{cellDesc.GetFieldNames().Apply(_ => string.Join(",", _))}]")
+                   .ToList()
+                   .ForEach(_ => Log.WriteLine(_));
+
+            string.Join("\n",
+                          "Current Storage Info:",
+                          $"VersionRecorders: {CompositeStorage.VersionRecorders.Count}",
+                          $"IDIntervals: : {CompositeStorage.IDIntervals.Count}",
+                          $"CellTypeIDs:{CompositeStorage.CellTypeIDs.Count}",
+                          $"StorageSchema:{CompositeStorage.StorageSchema}",
+                          $"GenericCellOperations:{CompositeStorage.GenericCellOperations}")
+                   .Apply(_ => Log.WriteLine(_));
+
+#endif
             if (!Initialized)
                 throw new NotInitializedError();
 
-            var asmLoadDir = Trinity.TrinityConfig.StorageRoot;
+            var asmLoadDir = PathHelper.Directory;
 
             asmLoadDir = FileUtility.CompletePath(Path.Combine(asmLoadDir, ""));
             CurrentVersion = new VersionRecorder(
@@ -220,6 +252,7 @@ namespace CompositeStorageExtension
 
             try
             {
+                
                 var asm = Load();
 
                 var schema = AssemblyUtility.GetAllClassInstances<IStorageSchema>(assembly: asm).First();

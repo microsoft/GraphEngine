@@ -70,7 +70,7 @@ if cmdparser.parse_args().all:
 (Flow(map(Strategy.new,
           [
               *additional,
-              {"./GraphEngine/ffi": suffixes1 + suffixes2 + suffixes3},
+              {"./GraphEngine/ffi": suffixes1 + suffixes2 + suffixes3 + ['.sig']},
               {"./GraphEngine.egg-info": all},
               {"./__pycache__": all},
               {"./build": all},
