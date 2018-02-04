@@ -100,3 +100,6 @@ tests/new_test.exe
 **/.spyproject
 /src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/GraphEngine/**/*.exe
 /src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/GraphEngine/**/*.dll
+/src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/GraphEngine.egg-info
+/src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/build
+/src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/cache

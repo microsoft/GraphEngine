@@ -1,36 +1,37 @@
-$REPO_ROOT     = [System.IO.Path]::GetFullPath("$PSScriptRoot\..")
-$VSWHERE_EXE   = "$REPO_ROOT\tools\vswhere.exe"
-$VS_VERSION    = "[15.0,16.0)"
-$REQUIRES      = "Microsoft.Component.MSBuild Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
-$VS_INSTALLDIR = $null
-Invoke-Expression "$VSWHERE_EXE -version '$VS_VERSION' -products * -requires $REQUIRES -property installationPath" | ForEach-Object { $VS_INSTALLDIR = $_  }
+Function Init-Configuration {
+    $Global:REPO_ROOT     = [System.IO.Path]::GetFullPath("$PSScriptRoot\..")
+    $Global:VSWHERE_EXE   = "$REPO_ROOT\tools\vswhere.exe"
+    $Global:VS_VERSION    = "[15.0,16.0)"
+    $Global:REQUIRES      = "Microsoft.Component.MSBuild Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
+    $Global:VS_INSTALLDIR = $null
+    Invoke-Expression "$VSWHERE_EXE -version '$VS_VERSION' -products * -requires $REQUIRES -property installationPath" | ForEach-Object { $Global:VS_INSTALLDIR = $_  }
 
+    if ($VS_INSTALLDIR -eq $null) {
+        throw "Visual Studio 2017 or required components were not found"
+    }
+    $Global:MSBUILD_EXE   = "$VS_INSTALLDIR\MSBuild\15.0\Bin\MSBuild.exe"
+    $Global:NUGET_EXE     = "$REPO_ROOT\tools\NuGet.exe"
+    $Global:DOTNET_EXE    = "dotnet"
 
-if ($VS_INSTALLDIR -eq $null) {
-  throw "Visual Studio 2017 or required components were not found"
+    if (![System.IO.File]::Exists($NUGET_EXE)){
+        Write-Output "Downloading NuGet package manager."
+            Invoke-WebRequest https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile $NUGET_EXE
+    }
+
+    $Global:TRINITY_CORE_SLN              = "$REPO_ROOT\src\Trinity.Core\Trinity.Core.sln"
+    $Global:TRINITY_C_SLN                 = "$REPO_ROOT\src\Trinity.C\Trinity.C.sln"
+    $Global:TRINITY_TSL_SLN               = "$REPO_ROOT\src\Trinity.TSL\Trinity.TSL.sln"
+    $Global:SPARK_MODULE_ROOT             = "$REPO_ROOT\src\Modules\Spark"
+    $Global:LIKQ_SLN                      = "$REPO_ROOT\src\Modules\LIKQ\LIKQ.sln"
+    $Global:TRINITY_CLIENT_SLN            = "$REPO_ROOT\src\Modules\GraphEngine.Client\GraphEngine.Client.sln"
+    $Global:TRINITY_DYNAMICCLUSTER_SLN    = "$REPO_ROOT\src\Modules\GraphEngine.DynamicCluster\GraphEngine.DynamicCluster.sln"
+    $Global:TRINITY_SERVICE_FABRIC_SLN    = "$REPO_ROOT\src\Modules\GraphEngine.ServiceFabric\GraphEngine.ServiceFabric.sln"
+    $Global:TRINITY_STORAGE_COMPOSITE_SLN = "$REPO_ROOT\src\Modules\GraphEngine.Storage.Composite\GraphEngine.Storage.Composite.sln"
+    $Global:TRINITY_FFI_ROOT              = "$REPO_ROOT\src\Modules\Trinity.FFI"
+    $Global:TRINITY_OUTPUT_DIR            = "$REPO_ROOT\bin"
+
+    New-Item -Path "$TRINITY_OUTPUT_DIR" -ItemType Directory -ErrorAction SilentlyContinue
 }
-$MSBUILD_EXE   = "$VS_INSTALLDIR\MSBuild\15.0\Bin\MSBuild.exe"
-$NUGET_EXE     = "$REPO_ROOT\tools\NuGet.exe"
-$DOTNET_EXE    = "dotnet"
-
-if (![System.IO.File]::Exists($NUGET_EXE)){
-  Write-Output "Downloading NuGet package manager."
-  Invoke-WebRequest https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile $NUGET_EXE
-}
-
-$TRINITY_CORE_SLN              = "$REPO_ROOT\src\Trinity.Core\Trinity.Core.sln"
-$TRINITY_C_SLN                 = "$REPO_ROOT\src\Trinity.C\Trinity.C.sln"
-$TRINITY_TSL_SLN               = "$REPO_ROOT\src\Trinity.TSL\Trinity.TSL.sln"
-$SPARK_MODULE_ROOT             = "$REPO_ROOT\src\Modules\Spark"
-$LIKQ_SLN                      = "$REPO_ROOT\src\Modules\LIKQ\LIKQ.sln"
-$TRINITY_CLIENT_SLN            = "$REPO_ROOT\src\Modules\GraphEngine.Client\GraphEngine.Client.sln"
-$TRINITY_DYNAMICCLUSTER_SLN    = "$REPO_ROOT\src\Modules\GraphEngine.DynamicCluster\GraphEngine.DynamicCluster.sln"
-$TRINITY_SERVICE_FABRIC_SLN    = "$REPO_ROOT\src\Modules\GraphEngine.ServiceFabric\GraphEngine.ServiceFabric.sln"
-$TRINITY_STORAGE_COMPOSITE_SLN = "$REPO_ROOT\src\Modules\GraphEngine.Storage.Composite\GraphEngine.Storage.Composite.sln"
-$TRINITY_FFI_ROOT              = "$REPO_ROOT\src\Modules\Trinity.FFI"
-$TRINITY_OUTPUT_DIR            = "$REPO_ROOT\bin"
-
-New-Item -Path "$TRINITY_OUTPUT_DIR" -ItemType Directory -ErrorAction SilentlyContinue
 
 Function Write-Configuration {
   Write-Output "GraphEngine repo root:         $REPO_ROOT"
@@ -75,8 +76,7 @@ Function Remove-Build {
   Remove-And-Print "$REPO_ROOT\bin"
 }
 
-Function Invoke-DotNet($proj, $action, $config = $null)
-{
+Function Invoke-DotNet($proj, $action, $config = $null) {
   if ($config -eq $null){
     $cmd = @'
  & $DOTNET_EXE $action "$proj"
@@ -90,8 +90,7 @@ Function Invoke-DotNet($proj, $action, $config = $null)
     Invoke-Expression $cmd -ErrorAction Stop
 }
 
-Function Invoke-MSBuild($proj, $config = "Release", $platform = $null)
-{
+Function Invoke-MSBuild($proj, $config = "Release", $platform = $null) {
   if ($platform -eq $null) {
     $cmd = @'
  & $MSBUILD_EXE "/p:Configuration=$config" "$proj"
@@ -105,8 +104,7 @@ Function Invoke-MSBuild($proj, $config = "Release", $platform = $null)
   Invoke-Expression $cmd -ErrorAction Stop
 }
 
-Function New-Package($proj, $config = "Release")
-{
+Function New-Package($proj, $config = "Release") {
   Invoke-DotNet -proj $proj -action restore
   Invoke-DotNet -proj $proj -action build -config $config
   Invoke-DotNet -proj $proj -action pack -config $config
@@ -124,9 +122,11 @@ Function Invoke-Sub($sub) {
   $sub = Get-Item -Path $sub
   Write-Output ("========>[+] Invoke-Sub: " + $sub.FullName)
   Push-Location
-  try { & $sub.FullName }
-  finally { Pop-Location }
+  try { . $sub.FullName }
+  finally { Pop-Location; Init-Configuration }
+# Call Init-Configuration again in case the sub erased the variables, or they are somehow lost.
 }
 
+Init-Configuration
 Export-ModuleMember -Variable *
 Export-ModuleMember -Function *
