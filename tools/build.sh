@@ -77,8 +77,8 @@ build_trinity_core()
 	echo "Building Trinity.Core"
 	pushd "$REPO_ROOT/src/Trinity.Core"
 	dotnet restore Trinity.Core.sln || exit -1
-	dotnet build Trinity.Core.sln || exit -1
-	dotnet pack Trinity.Core.sln || exit -1
+	dotnet build -c Release Trinity.Core.sln || exit -1
+	dotnet pack -c Release Trinity.Core.sln || exit -1
 	popd
 }
 
@@ -88,8 +88,30 @@ build_likq()
 	echo "Building Trinity.Core"
 	pushd "$REPO_ROOT/src/Modules/LIKQ"
 	dotnet restore LIKQ.sln || exit -1
-	dotnet build LIKQ.sln || exit -1
-	dotnet pack LIKQ.sln || exit -1
+	dotnet build -c Release LIKQ.sln || exit -1
+	dotnet pack -c Release LIKQ.sln || exit -1
+	popd
+}
+
+# build Client
+build_client()
+{
+	echo "Building Trinity.Client"
+	pushd "$REPO_ROOT/src/Modules/GraphEngine.Client"
+	dotnet restore GraphEngine.Client.sln || exit -1
+	dotnet build -c Release GraphEngine.Client.sln || exit -1
+	dotnet pack -c Release GraphEngine.Client.sln || exit -1
+	popd
+}
+
+# build composite_ext
+build_composite_ext()
+{
+	echo "Building Trinity.CompositeExtension"
+	pushd "$REPO_ROOT/src/Modules/Trinity.Storage.CompositeExtension"
+	dotnet restore Trinity.Storage.CompositeExtension.sln || exit -1
+	dotnet build -c Release Trinity.Storage.CompositeExtension.sln || exit -1
+	dotnet pack -c Release Trinity.Storage.CompositeExtension.sln || exit -1
 	popd
 }
 
@@ -113,3 +135,5 @@ build_trinity_tsl
 build_trinity_core
 setup_nuget_repo
 build_likq
+build_client
+build_composite_ext

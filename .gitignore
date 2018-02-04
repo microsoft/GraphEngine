@@ -1,4 +1,5 @@
 Thumbs.db
+src\Modules\Trinity.FFI\Trinity.FFI.PythonModule\cache
 ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
@@ -95,3 +96,7 @@ tests/new_test.exe
 /src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/build/lib.win-amd64-3.6
 *.pyd
 *.pyc
+**/.idea
+**/.spyproject
+/src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/GraphEngine/**/*.exe
+/src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/GraphEngine/**/*.dll
