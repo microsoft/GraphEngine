@@ -5,11 +5,10 @@ from cytoolz.curried import curry
 Undef = None
 is_windows = platform.platform().lower().startswith('windows')
 
-# TODO: linux build scripts
 BUILD_SCRIPT_PATH = os.path.abspath('../build.ps1' if is_windows else Undef)
-BUILD_SCRIPT_CMD = 'Powershell.exe -File' if is_windows else Undef
+BUILD_SCRIPT_CMD = 'Powershell.exe -File' if is_windows else 'posh -File'
 CURRENT_DIR = os.path.abspath('./')
-CORECLR_PATH = os.path.abspath('../../../../bin/coreclr')
+CORECLR_PATH = os.path.abspath('../../../../bin')
 
 
 def postfix(a, b):

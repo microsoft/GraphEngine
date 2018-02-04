@@ -20,6 +20,9 @@ namespace Trinity.Network
     public abstract class CommunicationProtocolGroup : ICommunicationModuleRegistry
     {
         #region Fields
+        /// <summary>
+        /// Holds registered module types.
+        /// </summary>
         protected HashSet<Type> m_RegisteredModuleTypes = new HashSet<Type>();
         /// <summary>
         /// Raised when the host communication instance is started.
