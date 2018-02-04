@@ -52,7 +52,7 @@ if is_windows:
 
     # build Trinity.StorageVersionController.csproj
     dir_at(pardir_of(pardir_of(BUILD_SCRIPT_PATH)), 'GraphEngine.Storage.Composite',
-           then_call=lambda _: os.system('cd {} && dotnet restore && dotnet build'.format(_)))
+           then_call=lambda _: os.system('cd {} && dotnet restore && dotnet build --configuration Release'.format(_)))
 
     to_pymodule_dir('../../GraphEngine.Storage.Composite',
                     with_suffix=['.dll'],

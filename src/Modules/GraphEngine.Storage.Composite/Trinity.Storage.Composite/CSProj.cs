@@ -10,11 +10,11 @@ namespace Trinity.Storage.CompositeExtension
         //TODO multi-targeting
         public static string Version = "1.0.9083";
         public static string NetFramework = "netstandard2.0";
-        public static string IncludeDirectory;
+        public static string IncludeDirectory; // Need to be configured.
         public static class Reference
         {
             public static string[] Names = new string[] {
-                "GraphEngine.Core",
+                "Trinity.Core",
                 "Newtonsoft.Json"
             };
         }

@@ -9,7 +9,7 @@ using Trinity.TSL.Lib;
 namespace Trinity.Storage.CompositeExtension
 {
     [ExtensionPriority(int.MaxValue)]
-    class GenericCellOperations : IGenericCellOperations
+    public class GenericCellOperations : IGenericCellOperations
     {
         public IEnumerable<ICellAccessor> EnumerateGenericCellAccessors(LocalMemoryStorage storage)
         {

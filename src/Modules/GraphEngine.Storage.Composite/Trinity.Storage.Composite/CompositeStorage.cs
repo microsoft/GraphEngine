@@ -4,9 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Trinity.Diagnostics;
 using Trinity.Storage;
 using Trinity.Utilities;
-using Trinity.Diagnostics;
 
 
 namespace Trinity.Storage.CompositeExtension
@@ -23,76 +23,11 @@ namespace Trinity.Storage.CompositeExtension
 
         public static Dictionary<string, int> CellTypeIDs;
             
-
         public static List<VersionRecorder> VersionRecorders;
 
     }
     #endregion
-
-    // Allow to configure
-    #region Constants 
-    public static class ConfigConstant
-    {
-        private static int avgMaxAsmNum = 100;
-        private static int avgCellNum = 10;
-        private static int avgFieldNum = 3;
-
-        public static int AvgMaxAsmNum { get => avgMaxAsmNum; set => avgMaxAsmNum = value; }
-        public static int AvgCellNum { get => avgCellNum; set => avgCellNum = value; }
-        public static int AvgFieldNum { get => avgFieldNum; set => avgFieldNum = value; }
-    }
-    #endregion 
-
-    // Need to configure 
-    #region Cmd
-    public static class Cmd
-    {
-        public static string TSLCodeGenExeLocation = "Trinity.TSL.CodeGen.exe";
-        // TODO conditionals for supporting both msbuild (netfx) and dotnet (coreclr)
-        public static string DotNetExeLocation = "dotnet.exe";
-        public static bool TSLCodeGenCmd(string arguments)
-        {
-            try
-            {
-                CmdCall(TSLCodeGenExeLocation, arguments);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return false;
-            }
-            return true;
-        }
-
-        public static bool DotNetBuildCmd(string arguments)
-        {
-            try
-            {
-                CmdCall(DotNetExeLocation, arguments);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return false;
-            }
-            return true;
-        }
-
-        public static void CmdCall(string cmd, string arguments)
-        {
-            Console.WriteLine("command:  " + cmd + " " + arguments);
-            Process proc = new Process();
-            proc.StartInfo.FileName = cmd;
-            proc.StartInfo.Arguments = arguments;
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.RedirectStandardOutput = true;
-            proc.Start();
-            Console.WriteLine(proc.StandardOutput.ReadToEnd());
-            proc.WaitForExit();
-        }
-    }
-    #endregion 
-
+ 
     // Static methods
     #region IntervalLookup 
     public static class GetIntervalIndex
@@ -120,15 +55,14 @@ namespace Trinity.Storage.CompositeExtension
     public static class Controller
     {
         #region State
+        public static bool Initialized = false;
 
         private static int _currentCellTypeOffset = 0;
-        public static bool Initialized = false;
         public static int CurrentCellTypeOffset { get => _currentCellTypeOffset; }
 
         public static VersionRecorder CurrentVersion;
-
         #endregion
-        #region CodeGen-Build-Load
+        #region TSL-CodeGen-Build-Load
         public static void CreateCSProj()
         {
             var path = Path.Combine(CurrentVersion.TslBuildDir, $"{CurrentVersion.Namespace}.csproj");
@@ -158,10 +92,8 @@ namespace Trinity.Storage.CompositeExtension
         }
         #endregion
 
-        public static void Init(string IncludeDirectory)
+        public static void Initialize()
         {
-            CSProj.IncludeDirectory = IncludeDirectory;
-
             if (CompositeStorage.IDIntervals == null)
                 CompositeStorage.IDIntervals = new List<int>(ConfigConstant.AvgMaxAsmNum * ConfigConstant.AvgCellNum){ _currentCellTypeOffset };
             if (CompositeStorage.StorageSchema == null)
@@ -172,17 +104,18 @@ namespace Trinity.Storage.CompositeExtension
                 CompositeStorage.VersionRecorders = new List<VersionRecorder>(ConfigConstant.AvgMaxAsmNum);
             if (CompositeStorage.GenericCellOperations == null)
                 CompositeStorage.GenericCellOperations = new List<IGenericCellOperations>(ConfigConstant.AvgMaxAsmNum);
-
+            Global.Initialize();
             Initialized = true;
         }
 
-        public static void CleanAll()
+        public static void Uninitialize()
         {
             CompositeStorage.CellTypeIDs = null;
             CompositeStorage.GenericCellOperations = null;
             CompositeStorage.IDIntervals = null;
             CompositeStorage.StorageSchema = null;
             CompositeStorage.VersionRecorders = null;
+            Global.Uninitialize();
             Initialized = false;
         }
 
@@ -199,7 +132,7 @@ namespace Trinity.Storage.CompositeExtension
                    .CellDescriptors
                    .Select(cellDesc =>
                             $"{cellDesc.TypeName}: " +
-                            $"[{cellDesc.GetFieldNames().Apply(_ => string.Join(",", _))}]")
+                            $"[{cellDesc.GetFieldNames().By(_ => string.Join(",", _))}]")
                    .ToList()
                    .ForEach(_ => Log.WriteLine(_));
 
@@ -210,7 +143,7 @@ namespace Trinity.Storage.CompositeExtension
                           $"CellTypeIDs:{CompositeStorage.CellTypeIDs.Count}",
                           $"StorageSchema:{CompositeStorage.StorageSchema}",
                           $"GenericCellOperations:{CompositeStorage.GenericCellOperations}")
-                   .Apply(_ => Log.WriteLine(_));
+                   .By(_ => Log.WriteLine(_));
 
 #endif
             if (!Initialized)
@@ -227,7 +160,7 @@ namespace Trinity.Storage.CompositeExtension
                             moduleName,
                             versionName ?? DateTime.Now.ToString());
 #if DEBUG
-            Console.WriteLine("\n tslsrcDir: " + tslSrcDir +
+            Console.WriteLine("\n tslsrcDir: " + CurrentVersion.TslSrcDir +
                               "\n TslBuildDir : " + CurrentVersion.TslBuildDir +
                               "\n AsmLoadDir : " + CurrentVersion.AsmLoadDir);
 #endif

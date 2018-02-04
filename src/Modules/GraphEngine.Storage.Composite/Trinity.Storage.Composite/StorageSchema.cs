@@ -7,7 +7,7 @@ using Trinity.Extension;
 namespace Trinity.Storage.CompositeExtension 
 {
     [ExtensionPriority(int.MaxValue)]
-    class StorageSchema : IStorageSchema
+    public class StorageSchema : IStorageSchema
     {
         public IEnumerable<ICellDescriptor> CellDescriptors
             => CompositeStorage.StorageSchema.SelectMany(_ => _.CellDescriptors);
