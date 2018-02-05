@@ -103,3 +103,7 @@ tests/new_test.exe
 /src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/GraphEngine.egg-info
 /src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/build
 /src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/cache
+/src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/tests/tsl/GeneratedCode
+/src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/tests/tsl/bin
+/src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/tests/tsl/obj
+/src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/storage
