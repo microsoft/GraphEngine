@@ -11,7 +11,7 @@ Copy-Item -Path "$REPO_ROOT\tools\Trinity.TSL.CodeGen" -Destination "$REPO_ROOT\
 New-Package -proj $TRINITY_CORE_SLN
 Register-LocalRepo
 New-Package -proj $LIKQ_SLN
-New-Package -proj $TRINITY_CLIENT_SLN
+Invoke-Sub "$TRINITY_CLIENT_ROOT\build.ps1"
 New-Package -proj $TRINITY_STORAGE_COMPOSITE_SLN
 New-Package -proj $TRINITY_DYNAMICCLUSTER_SLN
 New-Package -proj $TRINITY_SERVICE_FABRIC_SLN
