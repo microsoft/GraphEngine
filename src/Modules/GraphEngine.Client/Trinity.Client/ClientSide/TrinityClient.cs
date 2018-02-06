@@ -66,13 +66,19 @@ namespace Trinity.Client
             if (m_clientfactory == null) { ScanClientConnectionFactory(); }
             m_client = m_clientfactory.ConnectAsync(m_endpoint, this).Result;
             ClientMemoryCloud.BeginInitialize(m_client, this);
-            this.Started += OnStarted;
+            this.Started += StartPolling;
         }
 
-        private void OnStarted()
+        private void StartPolling()
         {
             RegisterClient();
             m_polltask = PollProc(m_tokensrc.Token);
+        }
+
+        private void RestartPolling()
+        {
+            m_tokensrc.Cancel();
+            StartPolling();
         }
 
         private void RegisterClient()
@@ -115,7 +121,12 @@ namespace Trinity.Client
 
             try
             {
-                if (errno == 2) { RegisterClient(); return; }
+                if (errno == 2)
+                {
+                    Log.WriteLine(LogLevel.Warning, $"{nameof(TrinityClient)}: server drops our connection. Registering again.");
+                    RestartPolling();
+                    return;
+                }
                 if (errno != 0) { return; }
 
                 var pctx = *sp.lp++;

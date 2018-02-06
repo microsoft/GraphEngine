@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Linq.Expressions;
 using Trinity.Core.Lib;
+using Trinity.Diagnostics;
 using Trinity.Extension;
 using Trinity.Network.Messaging;
 using Trinity.Storage;
@@ -21,6 +25,38 @@ namespace Trinity.Client.TrinityClientModule
         // ===== Client-side members =====
         private Lazy<int> m_client_cookie = new Lazy<int>(() => new Random().Next(int.MinValue, int.MaxValue));
         internal int MyCookie => m_client_cookie.Value;
+        private Task m_ttl_proc = null;
+        private CancellationTokenSource m_cancel_src;
+        private static readonly TimeSpan m_client_ttl = TimeSpan.FromSeconds(30);
+
+        public TrinityClientModule()
+        {
+            m_cancel_src = new CancellationTokenSource();
+            m_ttl_proc = TTLProc(m_cancel_src.Token);
+        }
+
+        private async Task TTLProc(CancellationToken cancel)
+        {
+            while (!cancel.IsCancellationRequested)
+            {
+                Log.WriteLine(LogLevel.Verbose, $"{nameof(TTLProc)}: scanning for timed-out clients.");
+                try
+                {
+                    DateTime now = DateTime.Now;
+                    var clients = m_client_storages.ToArray();
+                    foreach(var c in clients.Where(_ => (now - _.Value.Pulse) >= m_client_ttl))
+                    {
+                        RemoveClient(c.Key, c.Value);
+                        Log.WriteLine(LogLevel.Info, $"{nameof(TTLProc)}: client [{c.Value.InstanceId}] timed-out.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Error, "{0}: {1}", nameof(TTLProc), ex.ToString());
+                }
+                await Task.Delay(10000);
+            }
+        }
 
         protected override void RegisterMessageHandler()
         {
@@ -73,6 +109,7 @@ namespace Trinity.Client.TrinityClientModule
             try
             {
                 var stg = CheckInstanceCookie(cookie, instanceId);
+                stg.Pulse = DateTime.Now;
                 (p, tm, tsrc) = stg.PollEvents_impl();
             }
             catch (ClientInstanceNotFoundException)
@@ -120,6 +157,7 @@ namespace Trinity.Client.TrinityClientModule
             var cstg = m_client_storages.AddOrUpdate(request.Cookie, _ =>
             {
                 ClientIStorage stg = new ClientIStorage(m_memorycloud);
+                stg.Pulse = DateTime.Now;
                 int new_id = Registry.RegisterClient(stg);
                 stg.InstanceId = new_id;
                 return stg;
@@ -130,7 +168,12 @@ namespace Trinity.Client.TrinityClientModule
         public override void UnregisterClientHandler(UnregisterClientRequestReader request)
         {
             var stg = CheckInstanceCookie(request.Cookie, request.InstanceId);
-            if (m_client_storages.TryRemove(request.Cookie, out _))
+            RemoveClient(request.Cookie, stg);
+        }
+
+        private void RemoveClient(int cookie, ClientIStorage stg)
+        {
+            if (m_client_storages.TryRemove(cookie, out _))
             {
                 // no responses come in from clients now
                 Registry.UnregisterClient(stg.InstanceId);

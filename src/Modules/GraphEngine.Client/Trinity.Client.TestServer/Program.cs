@@ -27,10 +27,18 @@ namespace Trinity.Client.TestServer
             while (true)
             {
                 var client = cmod.Clients.FirstOrDefault();
-                if(client != null)
+                Console.WriteLine($"{cmod.Clients.Count()} clients");
+                if (client != null)
                 {
-                    using (var msg = new P1RequestWriter("foo", i++))
-                        client.P1(msg);
+                    try
+                    {
+                        using (var msg = new P1RequestWriter("foo", i++))
+                            client.P1(msg);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                    }
                 }
                 Thread.Sleep(1000);
             }
