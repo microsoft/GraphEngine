@@ -5,12 +5,11 @@ Created on Sun Jan 28 20:36:19 2018
 @author: yatli/thautwarm
 """
 
-import GraphEngine.ffi.GraphEngine as _ge
-from .Serialize import Serializer, TSLJSONEncoder
-from .TypeMap import CellType
-
 import json
 from functools import update_wrapper
+
+from GraphEngine.TSL.TypeMap import CellType
+from .Serialize import Serializer, TSLJSONEncoder
 
 
 class Cell:

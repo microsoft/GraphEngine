@@ -24,6 +24,8 @@ def isa(typ, v):
     return isinstance(v, typ)
 
 
+# `Types` Records the types of fields.
+
 Types = {'int': int,
          'string': str,
          'float': float,
@@ -48,7 +50,7 @@ class TSLTypeConstructor:
 
         is_optional = len(tsl_type_ast) is 2
         tsl_type_ast = tsl_type_ast[0]
-        
+
         if is_optional:
             if len(tsl_type_ast) is 2 and tsl_type_ast[-1] is '?':
                 raise SyntaxError('double `optional` prefix!')

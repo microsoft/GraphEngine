@@ -22,6 +22,18 @@ if not os.path.exists(r"storage\composite-helper\Trinity.Extension.abc.dll"):
 Flow(Trinity.Global.StorageSchema.CellDescriptors).Each(
     lambda cell_desc: print(f'{cell_desc.TypeName}{list(cell_desc.GetFieldNames())}'))
 
-#C1 = Trinity.Global.LocalStorage.NewGenericCell('C1')
-#Trinity.Global.LocalStorage.SaveStorage()
-#Agent.Uninitialize()
+
+
+
+from Trinity.FFI import CacheStorageManager
+manager = CacheStorageManager(False)
+C1 = manager.NewCellByType('C1')
+x = Trinity.Global.LocalStorage.get_StorageSchema()
+x = x.get_CellDescriptors()
+
+print(list(x))
+
+
+# C1 = Trinity.Global.LocalStorage.NewGenericCell('C1')
+# Trinity.Global.LocalStorage.SaveStorage()
+# Agent.Uninitialize()

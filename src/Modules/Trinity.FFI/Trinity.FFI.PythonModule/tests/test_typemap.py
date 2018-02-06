@@ -1,7 +1,8 @@
 
-from GraphEngine.TSL.tsl_type_parser import token, TSLTypeParse
-from GraphEngine.Storage.core.TypeMap import TSLTypeConstructor
 from Ruikowa.ObjectRegex.MetaInfo import MetaInfo
+
+from GraphEngine.TSL.TypeMap import TSLTypeConstructor
+from GraphEngine.TSL.tsl_type_parser import token, TSLTypeParse
 
 
 def test():

@@ -115,7 +115,7 @@ begin:
              *****************/
 
             if (head != Interlocked.CompareExchange(ref m_head, m_array[head].next, head)) goto begin;
-            if (!m_array[head].value.Equals(default(T))) goto begin; // <- head stall backoff
+            if (m_array[head].value != null) goto begin; // <- head stall backoff
             m_array[head].value = value;
             return head;
         }

@@ -5,7 +5,6 @@ Collect assembly sources from GraphEngine project here and there.
 import os
 import linq
 import argparse
-import subprocess
 from conf import and_then
 from conf import (CURRENT_DIR, CORECLR_PATH,
                   BUILD_SCRIPT_CMD, BUILD_SCRIPT_PATH, is_windows)

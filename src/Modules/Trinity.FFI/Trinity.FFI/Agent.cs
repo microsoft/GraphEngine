@@ -56,17 +56,19 @@ namespace Trinity.FFI
         public static PathHelper PathHelper = default(PathHelper);
 
     }
+
+
+
     public class CacheStorageManager : IDisposable
     {
-        ObjectStore<ICell> CellCache;
+        static ObjectStore<ICell> CellCache = new ObjectStore<ICell> { };
         DisposableStore<ICellAccessor> CellAccessorCache;
         bool IsAccessor;
         public CacheStorageManager(bool isAccessor)
         {
             if (isAccessor)
-                CellAccessorCache = new DisposableStore<ICellAccessor> { }
-            else
-                CellCache = new ObjectStore<ICell> { };
+                CellAccessorCache = new DisposableStore<ICellAccessor> { };
+
             IsAccessor = isAccessor;
         }
         public int LoadCell(long cellId)
@@ -130,7 +132,7 @@ namespace Trinity.FFI
                 Global.LocalStorage.SaveGenericCell(cellId, c);
             }
         }
-        
+
         public void SaveCellByOpsIndex(CellAccessOptions writeAheadLogOptions, int cellIdx)
         {
             if (IsAccessor)
