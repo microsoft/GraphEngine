@@ -60,6 +60,7 @@ namespace Trinity.Storage.CompositeExtension
         public ICell NewGenericCell(string cellType)
         {
             int seg = GetIntervalIndex.ByCellTypeName(cellType);
+            Console.WriteLine($"seg: {seg}");
             return CompositeStorage.GenericCellOperations[seg].NewGenericCell(cellType);
         }
 

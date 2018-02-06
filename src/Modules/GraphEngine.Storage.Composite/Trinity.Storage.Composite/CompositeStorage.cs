@@ -217,14 +217,18 @@ namespace Trinity.Storage.CompositeExtension
                     Console.WriteLine("}");
 #endif
                 }
-                CompositeStorage.IDIntervals.Add(_currentCellTypeOffset);
-                // Assertion 2: intervals grow monotonically
-                Debug.Assert(CompositeStorage.IDIntervals.OrderBy(_ => _).SequenceEqual(CompositeStorage.IDIntervals));
+                
+                
                 _currentCellTypeOffset += cellDescs.Count + 1;
-                // Assertion 3: The whole type id space is still compact
+
+                // Assertion 2: The whole type id space is still compact
                 Debug.Assert(_currentCellTypeOffset == maxoffset + 1);
 
+                CompositeStorage.IDIntervals.Add(_currentCellTypeOffset);
                 CompositeStorage.VersionRecorders.Add(CurrentVersion);
+                // Assertion 3: intervals grow monotonically
+                Debug.Assert(CompositeStorage.IDIntervals.OrderBy(_ => _).SequenceEqual(CompositeStorage.IDIntervals));
+
                 CurrentVersion = null;
             }
             catch (Exception e)

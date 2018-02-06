@@ -8,7 +8,7 @@ namespace Trinity.FFI
     {
         public static void Configure(string IncludeDirectory, string StorageRoot,
                                      string TSLCodeGenExeLocation, string DotNetExeLocation,
-                                     int avgMaxAsmNum, int avgCellNum, int avgFieldNum) => 
+                                     int avgMaxAsmNum, int avgCellNum, int avgFieldNum) =>
             Setting.Configure(IncludeDirectory,
                               StorageRoot,
                               TSLCodeGenExeLocation,
@@ -18,7 +18,8 @@ namespace Trinity.FFI
                               avgFieldNum);
 
 
-        public static void Initialize() {
+        public static void Initialize()
+        {
             if (!Controller.Initialized)
                 Controller.Initialize();
         }
@@ -50,7 +51,7 @@ namespace Trinity.FFI
 
         public static List<VersionRecorder> VersionRecorders => CompositeStorage.VersionRecorders;
 
-        public static PathHelper PathHelper =  default(PathHelper);
+        public static PathHelper PathHelper = default(PathHelper);
 
     }
 }
