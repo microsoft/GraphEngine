@@ -41,21 +41,32 @@ namespace Trinity.FFI
         public ObjectStore()
         {
             m_lock = new object();
-            _Alloc(c_default_len);
+            _Alloc_Init(c_default_len);
+            
         }
+        public Action<int> _Alloc_Mutable;
 
-        private void _Alloc(int newlen)
+        private void _Alloc_Init(int newlen)
+        {
+            AssocT[] ret = new AssocT[newlen];
+            for (int init_from = 0; init_from < newlen; ++init_from)
+            {
+                ret[init_from].next = init_from + 1;
+                ret[init_from].value = default(T);
+            }
+            m_array = ret;
+            m_len = m_array.Length;
+            _Alloc_Mutable = _Alloc_Normal;
+        }
+        private void _Alloc_Normal(int newlen)
         {
             if (newlen < 0) throw new OutOfMemoryException();
 
             AssocT[] ret = new AssocT[newlen];
-            int init_from = 0;
-            if (m_array != null)
-            {
-                init_from = m_array.Length;
-                m_head = init_from;
-                Array.Copy(m_array, ret, init_from);
-            }
+            int init_from = m_array.Length;
+            m_head = init_from;
+            Array.Copy(m_array, ret, init_from);
+
             for (; init_from < newlen; ++init_from)
             {
                 ret[init_from].next = init_from + 1;
@@ -63,6 +74,18 @@ namespace Trinity.FFI
             }
             m_array = ret;
             m_len = m_array.Length;
+        }
+
+        private void _Alloc(int newlen)
+        {
+            _Alloc_Mutable(newlen);
+        }
+
+        public void DeAlloc()
+        {
+            m_array = null;
+            m_lock = null;
+            _Alloc_Mutable = _Alloc_Init;
         }
 
         public int Put(T value)
@@ -135,8 +158,8 @@ begin:
                     if (tuple.value != null) tuple.value.Dispose();
                 }
             }
-            m_array = null;
-            m_lock = null;
+            DeAlloc();
         }
     }
+
 }

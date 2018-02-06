@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Trinity.Storage.CompositeExtension;
 using Trinity.Storage;
+using Trinity.TSL.Lib;
+using System;
 
 namespace Trinity.FFI
 {
@@ -53,5 +55,122 @@ namespace Trinity.FFI
 
         public static PathHelper PathHelper = default(PathHelper);
 
+    }
+    public class CacheStorageManager : IDisposable
+    {
+        ObjectStore<ICell> CellCache;
+        DisposableStore<ICellAccessor> CellAccessorCache;
+        bool IsAccessor;
+        public CacheStorageManager(bool isAccessor)
+        {
+            if (isAccessor)
+                CellAccessorCache = new DisposableStore<ICellAccessor> { }
+            else
+                CellCache = new ObjectStore<ICell> { };
+            IsAccessor = isAccessor;
+        }
+        public int LoadCell(long cellId)
+        {
+            ICell c = Global.LocalStorage.LoadGenericCell(cellId);
+            return CellCache.Put(c);
+        }
+        public int NewCellByType(string cellType)
+        {
+            ICell c = Global.LocalStorage.NewGenericCell(cellType);
+            return CellCache.Put(c);
+        }
+        public int NewCellByIdType(long cellId, string cellType)
+        {
+            ICell c = Global.LocalStorage.NewGenericCell(cellId, cellType);
+            return CellCache.Put(c);
+        }
+        public int NewCellByTypeContent(string cellType, string content)
+        {
+            ICell c = Global.LocalStorage.NewGenericCell(cellType, content);
+            return CellCache.Put(c);
+        }
+        public int UseCellById(long cellId)
+        {
+            ICellAccessor c = Global.LocalStorage.UseGenericCell(cellId);
+            return CellAccessorCache.Put(c);
+        }
+        public int UseCellByIdOps(long cellId, CellAccessOptions options)
+        {
+            ICellAccessor c = Global.LocalStorage.UseGenericCell(cellId, options);
+            return CellAccessorCache.Put(c);
+        }
+        public int UseCellByIdOpsType(long cellId, CellAccessOptions options, string cellType)
+        {
+            ICellAccessor c = Global.LocalStorage.UseGenericCell(cellId, options, cellType);
+            return CellAccessorCache.Put(c);
+        }
+        public void SaveCellByIndex(int cellIdx)
+        {
+            if (IsAccessor)
+            {
+                ICellAccessor c = CellAccessorCache.Get(cellIdx);
+                Global.LocalStorage.SaveGenericCell(c);
+            }
+            else
+            {
+                ICell c = CellCache.Get(cellIdx);
+                Global.LocalStorage.SaveGenericCell(c);
+            }
+        }
+        public void SaveCellByIdIndex(long cellId, int cellIdx)
+        {
+            if (IsAccessor)
+            {
+                ICellAccessor c = CellAccessorCache.Get(cellIdx);
+                Global.LocalStorage.SaveGenericCell(cellId, c);
+            }
+            else
+            {
+                ICell c = CellCache.Get(cellIdx);
+                Global.LocalStorage.SaveGenericCell(cellId, c);
+            }
+        }
+        
+        public void SaveCellByOpsIndex(CellAccessOptions writeAheadLogOptions, int cellIdx)
+        {
+            if (IsAccessor)
+            {
+                ICellAccessor c = CellAccessorCache.Get(cellIdx);
+                Global.LocalStorage.SaveGenericCell(writeAheadLogOptions, c);
+            }
+            else
+            {
+                ICell c = CellCache.Get(cellIdx);
+                Global.LocalStorage.SaveGenericCell(writeAheadLogOptions, c);
+            }
+        }
+        public void SaveCellByOpsIdIndex(CellAccessOptions writeAheadLogOptions, long cellId, int cellIdx)
+        {
+            if (IsAccessor)
+            {
+                ICellAccessor c = CellAccessorCache.Get(cellIdx);
+                Global.LocalStorage.SaveGenericCell(writeAheadLogOptions, cellId, c);
+            }
+            else
+            {
+                ICell c = CellCache.Get(cellIdx);
+                Global.LocalStorage.SaveGenericCell(writeAheadLogOptions, cellId, c);
+            }
+        }
+        public void Del(int cellIdx)
+        {
+            if (IsAccessor)
+                CellAccessorCache.Del(cellIdx);
+            else
+                CellCache.Del(cellIdx);
+        }
+
+        public void Dispose()
+        {
+            if (IsAccessor)
+                CellAccessorCache.Dispose();
+            else
+                CellCache.DeAlloc();
+        }
     }
 }
