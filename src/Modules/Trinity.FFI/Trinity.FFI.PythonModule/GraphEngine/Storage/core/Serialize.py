@@ -13,8 +13,8 @@ Serializer = {int: None,
               str: None,
               dict: None,
               list: None,
-              tuple: None
-              }
+              tuple: None,
+              type: str}
 
 
 def mark_as_serializable(typ, serializing_method):
@@ -30,5 +30,5 @@ class TSLJSONEncoder(json.JSONEncoder):
 
     def default(self, o):
         warnings.warn(
-                'unsolved type for JSON encoder, use `{}.__str__` as default'.format(o.__class__))
+            'unsolved type for JSON encoder, use `{}.__str__` as default'.format(o.__class__))
         return str(o)

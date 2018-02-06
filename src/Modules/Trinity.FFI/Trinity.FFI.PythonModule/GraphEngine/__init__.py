@@ -1,3 +1,5 @@
+import os
+
 __all__ = ["GraphMachine"]
 
 
@@ -9,12 +11,14 @@ class CellAccessorOptions:
     WeakLogAhead = 16
 
 
-class _GraphMachine:
+class GraphMachine:
+    inst = None
+
     def __init__(self, storage_root, **configurations):
         from GraphEngine.configure import Settings
         import GraphEngine.ffi
 
-        Settings.storage_root = storage_root
+        Settings.storage_root = os.path.abspath(storage_root)
         for k, v in configurations.items():
             if k in Settings.spec:
                 setattr(Settings, k, v)
@@ -23,6 +27,7 @@ class _GraphMachine:
         self.agent = self.trinity.FFI.Agent
         self.cache_manager = self.trinity.FFI.CacheStorageManager(False)
         self.version_num = 0
+        GraphMachine.inst = self
 
     def start(self):
         self.trinity.Global.LocalStorage.LoadStorage()
@@ -78,20 +83,31 @@ class _GraphMachine:
     def save_cell_by_ops_id_idx(self, write_ahead_log_options, cell_id, cell_idx):
         self.cache_manager.SaveCellByOpsIdIndex(write_ahead_log_options, cell_id, cell_idx)
 
+    def cell_get_id_by_idx(self, cell_idx):
+        return self.cache_manager.CellGetIdByIndex(cell_idx)
+
+    def cell_get_field(self, cell_idx, field_name):
+        return self.cache_manager.CellGetField(cell_idx, field_name)
+
+    def cell_get_fields(self, cell_idx, fields):
+        return self.cache_manager.CellGetFields(cell_idx, fields)
+
+    def cell_set_field(self, cell_idx, field_name, value):
+        self.cache_manager.CellSetField(cell_idx, field_name, value)
+
+    def cell_set_fields(self, cell_idx, fields, values):
+        self.cache_manager.CellSetFields(cell_idx, fields, values)
+
+    def cell_remove_field(self, cell_idx, field_name):
+        self.cache_manager.CellRemoveField(cell_idx, field_name)
+
     def delete(self, cell_idx):
         return self.cache_manager.Del(cell_idx)
 
     def dispose(self):
         self.cache_manager.Dispose()
-
-
-class GraphMachine:
-    inst: _GraphMachine = None
-
-    @classmethod
-    def __new__(cls, storage_root, **configurations):
-        GraphMachine.inst = _GraphMachine(storage_root, **configurations)
-        return GraphMachine.inst
+        self.trinity.Global.LocalStorage.SaveStorage()
+        self.agent.Uninitialize()
 
 
 def get_machine():

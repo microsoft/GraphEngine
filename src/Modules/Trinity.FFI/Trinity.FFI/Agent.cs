@@ -3,6 +3,7 @@ using Trinity.Storage.CompositeExtension;
 using Trinity.Storage;
 using Trinity.TSL.Lib;
 using System;
+using System.Linq;
 
 namespace Trinity.FFI
 {
@@ -159,6 +160,67 @@ namespace Trinity.FFI
                 Global.LocalStorage.SaveGenericCell(writeAheadLogOptions, cellId, c);
             }
         }
+
+        public long CellGetIdByIndex(int cellIdx)
+        {
+            if (IsAccessor)
+                return CellAccessorCache.Get(cellIdx).CellID;
+            return CellCache.Get(cellIdx).CellID;
+                
+        }
+        public string CellGetField(int cellIdx, string fieldName)
+        {
+            if (IsAccessor)
+                return CellAccessorCache.Get(cellIdx).GetField<string>(fieldName);
+            return CellCache.Get(cellIdx).GetField<string>(fieldName);
+        }
+
+        public IEnumerable<string> CellGetFields(int cellIdx, string[] fields)
+        {
+            if (IsAccessor) {
+                var c = CellAccessorCache.Get(cellIdx);
+                return fields.Select(k => c.GetField<string>(k));
+            }
+            else
+            {
+                var c = CellCache.Get(cellIdx);
+                return fields.Select(k => c.GetField<string>(k));
+            }
+        }
+
+        public void CellSetField(int cellIdx, string fieldName, string value)
+        {
+            if (IsAccessor)
+                CellAccessorCache.Get(cellIdx).SetField(fieldName, value);
+            else
+                CellCache.Get(cellIdx).SetField(fieldName, value);
+        }
+
+        public void CellSetFields(int cellIdx, string[] fields, string[] values)
+        {
+            if (IsAccessor)
+            {
+                var c = CellAccessorCache.Get(cellIdx);
+                var i = 0;
+                fields.Each(k => c.SetField(k, values[i++]));
+            }
+            else
+            {
+                var c = CellCache.Get(cellIdx);
+                var i = 0;
+                fields.Each(k => c.SetField(k, values[i++]));
+            }
+                
+        }
+
+        public void CellRemoveField(int cellIdx, string fieldName)
+        {
+            if (IsAccessor)
+                CellAccessorCache.Get(cellIdx).SetField<string>(fieldName, null);
+            else
+                CellCache.Get(cellIdx).SetField<string>(fieldName, null);
+        }
+
         public void Del(int cellIdx)
         {
             if (IsAccessor)

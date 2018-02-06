@@ -50,7 +50,7 @@ class TSLTypeConstructor:
 
         if is_optional:
             if len(tsl_type_ast) is 2 and tsl_type_ast[-1] is '?':
-                raise SyntaxError('double `optional` prefix!')
+                raise SyntaxError('double `optional` postfix!')
 
         if not isinstance(tsl_type_ast, Ast):
             # current = identifier
@@ -90,6 +90,10 @@ class TSLTypeConstructor:
                 self._is_optional = is_optional
 
             @property
+            def value(self):
+                return self._v
+
+            @property
             def is_optional(self):
                 return self._is_optional
 
@@ -99,7 +103,7 @@ class TSLTypeConstructor:
 
             def mut_by(self, fn):
                 res = fn(self._v)
-                if not type_checker(res):
+                if not TSLType.type_checker(res):
                     raise TypeError('TypeError, get `{}`'.format(res.__class__))
                 self._v = res
 
@@ -107,7 +111,7 @@ class TSLTypeConstructor:
                 return fn(self._v)
 
             def check(self):
-                return type_checker(self._v)
+                return TSLType.type_checker(self._v)
 
             def set(self, v):
                 if not type_checker(v):
@@ -125,5 +129,6 @@ class TSLTypeConstructor:
 
                 return getattr(self._v, item)
 
+        TSLType.type_checker = type_checker
         type_register(TSLType)
         return TSLType

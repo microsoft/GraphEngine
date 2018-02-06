@@ -8,10 +8,10 @@ Created on Sun Jan 28 20:36:19 2018
 import json
 from functools import update_wrapper
 import GraphEngine as ge
-from ._SymTable import SymTable, CellType
+from .SymTable import SymTable, CellType
 from .Serialize import Serializer, TSLJSONEncoder
 
-gm = ge.GraphMachine.inst
+gm: ge.GraphMachine = ge.GraphMachine.inst
 if gm is None:
     raise EnvironmentError("GraphMachine wasn't initialized, "
                            "use `ge.GraphMachine(storage_root: str) to start service.`")
@@ -29,15 +29,15 @@ class Cell:
 
         self._has_eval = False
 
+        self.dated = False  # is the data needed to be updated
+
         self.cache_index = None
 
         self.get = py_cell_getter(self)
 
         self.set = py_cell_setter(self)
 
-    @property
     def compute(self):
-
         if not self.has_eval:
             if self._fields is None:
                 if self._cell_id is None:
@@ -47,26 +47,27 @@ class Cell:
             else:
                 # default value
 
-                self.cache_index = gm.new_cell_by_type_content(self._typ.name,
-                                                               json.dumps(self.fields, cls=TSLJSONEncoder))
+                self.cache_index = gm.new_cell_by_type_content(
+                    self._typ.name,
+                    json.dumps({field: tsl_value.value
+                                for field, tsl_value in self.fields.items()},
+                               cls=TSLJSONEncoder))
+
+            self._cell_id = gm.cell_get_id_by_idx(self.cache_index)
+
             self._has_eval = True
+            self._update_fields()
 
-            # TODO `get_cell_id_by_cell_idx`, `get_fields_by_cell_idx`
-            self._cell_id = get_cell_id_by_cell_idx(self.cache_index)
-
-            self._fields = dict(get_fields_by_cell_idx(self.cache_index))
-
+            # TODO: use cache here？
             self.get = computed_cell_getter(self)
             self.set = computed_cell_setter(self)
+
             return self
-        else:
-            # TODO: use caches to eval
-            pass
 
     @ReadOnly
     def cell_id(self):
         if self._cell_id is None and self.has_eval:
-            self._cell_id = get_cell_id_by_cell_idx(self.cache_index)
+            self._cell_id = gm.cell_get_fields(self.cache_index, list(self.fields.keys()))
         return self._cell_id
 
     @ReadOnly
@@ -92,50 +93,45 @@ class Cell:
     def __repr__(self):
         return self.__str__()
 
-    @property
+    @ReadOnly
     def fields(self):
         if self._fields is None:
             self._fields = {field_name: field_type()
-                            for field_name, field_type in SymTable.get(self.typ.name).fields}
+                            for field_name, field_type in SymTable.get(self.typ.name).fields.items()}
+        elif self._has_eval and self.dated:
+            self._update_fields()
         return self._fields
+
+    def _update_fields(self):
+        """
+        this method is for the computed cell.
+        :return: None
+        """
+        self._fields = dict(zip(self.fields.keys(),
+                                gm.cell_get_fields(self.cache_index, list(self.fields.keys()))))
 
 
 def py_cell_getter(cell: Cell):
     def callback(name):
-        return cell._attrs[name]
+        return cell.fields[name]
 
-    def callback_first_time(name):
-        cell._attrs = {k: typ for k, typ in cell._typ.attrs.items()}
-        cell.get = callback
-        return cell._attrs[name]
-
-    return callback_first_time
+    return callback
 
 
 def py_cell_setter(cell: Cell):
-    def callback(name, value, strict=False):
+    def callback(name, value):
         """
         Return False if attr does not exist
         Return True if succeed
         Raise TypeError if type not match.
         """
 
-        typ = cell._typ.attrs.get(name)
+        typ = cell.typ.fields.get(name)
         if typ is None:
             return False
 
-        if strict:
-
-            if isinstance(value, typ):
-                cell._attrs.__setitem__(name, value)
-                return True
-
-            raise TypeError(
-                "Invalid type of `value` to set attribute {}. Require {} here"
-                    .format(name, typ.__str__()))
-        else:
-            cell._attrs.__setitem__(name, value)
-            return True
+        cell.fields[name].set(value)
+        return True
 
     return callback
 
@@ -143,7 +139,11 @@ def py_cell_setter(cell: Cell):
 def computed_cell_getter(cell: Cell):
     """handling with interfaces of ctypes methods
     """
-    return cell._body.GetField
+
+    def callback(field_name):
+        gm.cell_get_field(cell.cache_index, field_name)
+
+    return callback
 
 
 def computed_cell_setter(cell: Cell):
@@ -157,16 +157,17 @@ def computed_cell_setter(cell: Cell):
                  TypeError if type of the value you set is not suitable.
         """
 
-        typ = cell._typ.attrs.get(name)
+        typ = cell.typ.fields.get(name)
         if typ is None:
             return False
 
-        if isinstance(value, cell._typ[name]):
-            cell._body.SetField(name, Serializer[typ](value))
+        if typ.type_checker(value):
+            gm.cell_set_field(cell.cache_index, name, json.dumps(value, cls=TSLJSONEncoder))
+            if not cell.dated:
+                cell.dated = True
             return True
 
         raise TypeError(
             "Invalid type of `value` to set attribute {}.".format(name))
 
-    update_wrapper(callback, cell._body.SetField)
     return callback
