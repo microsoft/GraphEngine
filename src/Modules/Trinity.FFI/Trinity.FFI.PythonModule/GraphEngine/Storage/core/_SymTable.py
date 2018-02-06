@@ -6,15 +6,19 @@ Created on Sun Jan 28 20:39:38 2018
 """
 
 import GraphEngine as ge
-from time import ctime
-from linq import Flow
-import json
 from GraphEngine.TSL.TypeMap import TSLTypeConstructor
 from GraphEngine.TSL.tsl_type_parser import token, TSLTypeParse, MetaInfo
+from time import ctime
+from linq import Flow
 import datetime
+from collections import namedtuple
+import json
 import warnings
+from typing import Dict
 
-__all__ = ['SymTablePicker']
+CellType = namedtuple('CellType', ['name', 'fields'])
+
+__all__ = ['SymTable']
 
 
 def parse_type(type_name):
@@ -24,7 +28,7 @@ def parse_type(type_name):
 
 # CellType.attrs : Dict[str, type]
 
-class SymTable:
+class _SymTable:
     """
     Record the types of cells
     """
@@ -33,7 +37,7 @@ class SymTable:
 
     def __init__(self, version_thunk):
         self.version = version_thunk()
-        self._context = {}
+        self._context: Dict[str, CellType] = {}
 
     def __getattr__(self, name):
         """
@@ -50,20 +54,24 @@ class SymTable:
         return self._context[item]
 
     def __str__(self):
-        return "VERSION[{}]:\n{}".format(self.version, json.dumps(self._context, indent=SymTable.format_indent))
+        return "VERSION[{}]:\n{}".format(self.version, json.dumps(self._context, indent=_SymTable.format_indent))
 
     def __repr__(self):
         return self.__str__()
 
 
-class SymTablePicker:
-    __inst__ = None
+class SymTable:
+    __inst__: _SymTable = None
 
     def __new__(cls, version_thunk=ctime):
         if cls.__inst__ is not None:
             return cls.__inst__
-        cls.__inst__ = SymTable(version_thunk)
+        cls.__inst__ = _SymTable(version_thunk)
         return cls.__inst__
+
+    @staticmethod
+    def get(item):
+        return SymTable.__inst__.__getitem__(item)
 
 
 def load_symbols(tsl_src_dir, tsl_build_dir=None, module_name=None, version_name=None, sync=True):
@@ -87,16 +95,17 @@ def load_symbols(tsl_src_dir, tsl_build_dir=None, module_name=None, version_name
         tsl_build_dir = tsl_src_dir
 
     if sync:
-        symtable = SymTablePicker()  # singleton symtable
+        symtable = SymTable()  # singleton symtable
 
         gm.agent.LoadTSL(tsl_src_dir, tsl_build_dir, module_name, version_name)
 
         schemas = gm.agent.get_StorageSchema()
         for i in range(gm.version_num, len(list(gm.agent.get_VersionRecorders()))):
             for cell_type in schemas[i].get_CellDescriptors():
-                symtable[cell_type.TypeName] = {
-                    field.Name: parse_type(field.TypeName)
-                    for field in cell_type.GetFieldDescriptors()}
+                symtable[cell_type.TypeName] = \
+                    CellType(cell_type.TypeName,
+                             {field.Name: parse_type(field.TypeName)
+                              for field in cell_type.GetFieldDescriptors()})
 
     """
     TODO:

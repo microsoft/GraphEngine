@@ -7,23 +7,29 @@ Created on Sun Jan 28 20:36:19 2018
 
 import json
 from functools import update_wrapper
-
-from GraphEngine.TSL.TypeMap import CellType
+import GraphEngine as ge
+from ._SymTable import SymTable, CellType
 from .Serialize import Serializer, TSLJSONEncoder
+
+gm = ge.GraphMachine.inst
+if gm is None:
+    raise EnvironmentError("GraphMachine wasn't initialized, "
+                           "use `ge.GraphMachine(storage_root: str) to start service.`")
+
+ReadOnly = property
 
 
 class Cell:
-    def __init__(self, typ: CellType, cell_id=None):
-
-        self._attrs = None
+    def __init__(self, typ, cell_id=None):
+        self._fields = None
 
         self._cell_id = cell_id
 
-        self._typ = typ
+        self._typ: CellType = typ
 
         self._has_eval = False
 
-        self._body: _ge.Cell = None
+        self.cache_index = None
 
         self.get = py_cell_getter(self)
 
@@ -32,32 +38,42 @@ class Cell:
     @property
     def compute(self):
 
-        if self._attrs is None:
-            if self._cell_id is None:
-                self._body = _ge.NewCell_1(self._typ.name)
+        if not self.has_eval:
+            if self._fields is None:
+                if self._cell_id is None:
+                    self.cache_index = gm.new_cell_by_type(self.typ.name)
+                else:
+                    self.cache_index = gm.new_cell_by_id_type(self.cell_id, self.typ.name)
             else:
-                self._body = _ge.NewCell_2(self._typ.name, self._cell_id)
+                # default value
+
+                self.cache_index = gm.new_cell_by_type_content(self._typ.name,
+                                                               json.dumps(self.fields, cls=TSLJSONEncoder))
+            self._has_eval = True
+
+            # TODO `get_cell_id_by_cell_idx`, `get_fields_by_cell_idx`
+            self._cell_id = get_cell_id_by_cell_idx(self.cache_index)
+
+            self._fields = dict(get_fields_by_cell_idx(self.cache_index))
+
+            self.get = computed_cell_getter(self)
+            self.set = computed_cell_setter(self)
+            return self
         else:
-            # default value
-            self._attrs = {k: v for k, v in self._attrs.items()}
+            # TODO: use caches to eval
+            pass
 
-            self._body = _ge.NewCell_3(self._typ.name,
-                                       json.dumps(self._attrs, cls=TSLJSONEncoder))
-        self._has_eval = True
-        self._cell_id = self._body.ID
-        self.get = computed_cell_getter(self)
-        self.set = computed_cell_setter(self)
-        return self
+    @ReadOnly
+    def cell_id(self):
+        if self._cell_id is None and self.has_eval:
+            self._cell_id = get_cell_id_by_cell_idx(self.cache_index)
+        return self._cell_id
 
-    @property
+    @ReadOnly
     def typ(self):
         return self._typ
 
-    @property
-    def cell_id(self):
-        return self._cell_id
-
-    @property
+    @ReadOnly
     def has_eval(self):
         return self._has_eval
 
@@ -71,11 +87,17 @@ class Cell:
         return self.get(key)
 
     def __str__(self):
-        return str({name: self._body.GetField(name) for name in self._typ.attrs}
-                   if self._has_eval else self._attrs)
+        return self.fields.__str__()
 
     def __repr__(self):
         return self.__str__()
+
+    @property
+    def fields(self):
+        if self._fields is None:
+            self._fields = {field_name: field_type()
+                            for field_name, field_type in SymTable.get(self.typ.name).fields}
+        return self._fields
 
 
 def py_cell_getter(cell: Cell):

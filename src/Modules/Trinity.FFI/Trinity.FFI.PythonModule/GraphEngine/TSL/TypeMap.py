@@ -7,9 +7,6 @@ Created on Tue Jan 30 15:14:14 2018
 
 from Ruikowa.ObjectRegex.ASTDef import Ast
 from cytoolz.curried import curry
-from collections import namedtuple
-
-CellType = namedtuple('CellType', ['name', 'attrs'])
 
 # begin configure
 # these settings are for handling type mapping automatically.
