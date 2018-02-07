@@ -1,0 +1,14 @@
+<Project Sdk = "Microsoft.NET.Sdk">
+   <PropertyGroup>
+       <TargetFramework>netstandard2.0</TargetFramework>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+   </PropertyGroup>
+   <ItemGroup>
+       <Reference Include = "Trinity.Core">
+           <HintPath>E:\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.PythonModule\GraphEngine\ffi\Trinity.Core.dll</HintPath>
+       </Reference>
+       <Reference Include = "Newtonsoft.Json">
+           <HintPath>E:\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.PythonModule\GraphEngine\ffi\Newtonsoft.Json.dll</HintPath>
+       </Reference>
+   </ItemGroup>
+</Project>

@@ -37,6 +37,8 @@ class Cell:
         self.get = py_cell_getter(self)
 
         self.set = py_cell_setter(self)
+        
+        self.save = save_when_not_eval(self)
 
         self.append_field = py_cell_append(self)
 
@@ -45,6 +47,7 @@ class Cell:
         self.get = computed_cell_getter(self)
         self.set = computed_cell_setter(self)
         self.append_field = computed_cell_append(self)
+        self.save = save_after_eval(self)
 
         if not self.has_eval:
             if self.fields == self.typ.default:
@@ -126,6 +129,29 @@ class Cell:
     def __repr__(self):
         return self.__str__()
 
+def save_when_not_eval(cell: Cell):
+    def callback():
+        warnings.warn("The cell hasn't be computed cannot be saved.")
+        pass
+    return callback
+
+def save_after_eval(cell: Cell):
+    def callback():
+        gm.save_cell_by_index(cell.cache_index)
+    
+    def callback_by_id():
+        gm.save_cell_by_id_index(cell.cell_id, cell.cache_index)
+    
+    def callback_by_ops(ops):
+        gm.save_cell_by_ops_idx(ops, cell.cache_index)
+    
+    def callback_by_ops_id(ops):
+        gm.save_cell_by_ops_id_idx(ops, cell.cell_id, cell.cache_index)
+    callback.by_id = callback_by_id
+    callback.by_ops = callback_by_ops
+    callback.by_ops_id = callback_by_ops_id
+    return callback
+
 
 def py_cell_getter(cell: Cell):
     def callback(field):
@@ -190,6 +216,7 @@ def py_cell_append(cell: Cell):
         return True
 
     return callback
+
 
 
 def computed_cell_getter(cell: Cell):
