@@ -1,15 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.Client", "Trinity.Client\Trinity.Client.csproj", "{3D6DA1D3-C437-416C-9C73-8DAC07FC472B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.Client.TestClient", "Trinity.Client.TestClient\Trinity.Client.TestClient.csproj", "{6623DF4B-D77E-4967-A0A1-1D5F44F8EDDD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.Client.TestClient", "Trinity.Client.TestClient\Trinity.Client.TestClient.csproj", "{6623DF4B-D77E-4967-A0A1-1D5F44F8EDDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.Client.TestProtocols", "Trinity.Client.TestProtocols\Trinity.Client.TestProtocols.csproj", "{BF3C0F3B-7BC9-40E2-BD17-947C338EEC1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.Client.TestProtocols", "Trinity.Client.TestProtocols\Trinity.Client.TestProtocols.csproj", "{BF3C0F3B-7BC9-40E2-BD17-947C338EEC1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.Client.TestServer", "Trinity.Client.TestServer\Trinity.Client.TestServer.csproj", "{072BD8BE-4078-4F0F-B158-6880AA7B184B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.Client.TestServer", "Trinity.Client.TestServer\Trinity.Client.TestServer.csproj", "{072BD8BE-4078-4F0F-B158-6880AA7B184B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.WPF.Test.Protocols", "Trinity.WPF.Test.Protocols\Trinity.WPF.Test.Protocols.csproj", "{F55F1870-B54C-40FE-8DBA-8DE9ED476B55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.WPF.ClientProtoType", "Trinity WPF.TestClient\Trinity.WPF.ClientProtoType\Trinity.WPF.ClientProtoType.csproj", "{F703EE19-2D1D-4C3C-B1AC-930A46F44A8C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{072BD8BE-4078-4F0F-B158-6880AA7B184B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{072BD8BE-4078-4F0F-B158-6880AA7B184B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{072BD8BE-4078-4F0F-B158-6880AA7B184B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F55F1870-B54C-40FE-8DBA-8DE9ED476B55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F55F1870-B54C-40FE-8DBA-8DE9ED476B55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F55F1870-B54C-40FE-8DBA-8DE9ED476B55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F55F1870-B54C-40FE-8DBA-8DE9ED476B55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F703EE19-2D1D-4C3C-B1AC-930A46F44A8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F703EE19-2D1D-4C3C-B1AC-930A46F44A8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F703EE19-2D1D-4C3C-B1AC-930A46F44A8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F703EE19-2D1D-4C3C-B1AC-930A46F44A8C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

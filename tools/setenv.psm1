@@ -4,7 +4,7 @@ Function Init-Configuration {
     $Global:VS_VERSION    = "[15.0,16.0)"
     $Global:REQUIRES      = "Microsoft.Component.MSBuild Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
     $Global:VS_INSTALLDIR = $null
-    Invoke-Expression "$VSWHERE_EXE -version '$VS_VERSION' -products * -requires $REQUIRES -property installationPath" | ForEach-Object { $Global:VS_INSTALLDIR = $_  }
+    Invoke-Expression "& '$VSWHERE_EXE' -version '$VS_VERSION' -products * -requires $REQUIRES -property installationPath" | ForEach-Object { $Global:VS_INSTALLDIR = $_  }
 
     if ($VS_INSTALLDIR -eq $null) {
         throw "Visual Studio 2017 or required components were not found"
@@ -113,9 +113,9 @@ Function New-Package($proj, $config = "Release") {
 # Register local nuget source
 # calling `nuget sources list` will create the config file if it does not exist
 Function Register-LocalRepo {
-  Invoke-Expression "$NUGET_EXE sources list"
-  Invoke-Expression "$NUGET_EXE sources Remove -Name 'Graph Engine OSS Local'"
-  Invoke-Expression "$NUGET_EXE sources Add -Name 'Graph Engine OSS Local' -Source '$TRINITY_OUTPUT_DIR'"
+  Invoke-Expression "& $NUGET_EXE sources list"
+  Invoke-Expression "& $NUGET_EXE sources Remove -Name 'Graph Engine OSS Local'"
+  Invoke-Expression "& $NUGET_EXE sources Add -Name 'Graph Engine OSS Local' -Source '$TRINITY_OUTPUT_DIR'"
 }
 
 Function Invoke-Sub($sub) {
