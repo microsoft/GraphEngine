@@ -10,7 +10,7 @@ import GraphEngine as ge
 
 home = os.path.expanduser("~")
 
-# For `chardet` cannot be accurate enough
+# For `charset` cannot be accurate enough
 _encodings = ('utf8', 'gb18030', 'latin1')
 
 
