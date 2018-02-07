@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using Trinity.Diagnostics;
 
 namespace Trinity.FFI

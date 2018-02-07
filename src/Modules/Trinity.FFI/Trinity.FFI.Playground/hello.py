@@ -28,7 +28,7 @@ test('[new cell]',
      [ge.NewCell_1, "C1"], out='c')
 
 test('[has optinal field]', 
-     [c.HasField, 'baz'], expected=1)
+     [c.HasField, 'baz'], expected=0)
 
 test('[remove optional field]', 
      [c.RemoveField, 'baz'])

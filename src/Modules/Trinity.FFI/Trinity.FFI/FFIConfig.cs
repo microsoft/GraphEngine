@@ -13,7 +13,7 @@ namespace Trinity.FFI
         private FFIConfig() { ProgramDirectory = Path.Combine(StorageConfig.Instance.StorageRoot, "FFI"); }
         public static FFIConfig Instance { get { return s_instance; } }
         [ConfigEntryName]
-        public static string ConfigEntry { get { return "FFI"; } }
+        public static string ConfigEntry { get { return "Trinity.FFI"; } }
         #endregion
 
         [ConfigSetting(Optional: true)]

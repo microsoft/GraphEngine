@@ -280,5 +280,36 @@ namespace Trinity.FFI
             ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
             c.SetField<string>(field, null);
         }
+        //#region storage composite
+
+        //#region start configure
+        //public static void trinity_ffi_composite_service_start(string StorageRoot)
+        //{
+        //    Controller.StartService(StorageRoot);
+        //}
+
+        //public static void trinity_ffi_composite_load_tsl(string tslSrcDir, string tslBuildDir, string moduleName, string versionName = null)
+        //{
+        //    Controller.LoadFrom(tslSrcDir, tslBuildDir, moduleName, versionName);
+        //}
+
+        //public static void trinity_ffi_composite_set_cmd_path(string TSLCodeGenExeLocation, string DotNetExeLocation)
+        //{
+        //    Cmd.TSLCodeGenExeLocation = TSLCodeGenExeLocation;
+        //    Cmd.DotNetExeLocation = DotNetExeLocation;
+        //}
+
+        //public static void trinity_ffi_composite_set_initial_params(int avgMaxAsmNum, int avgCellNum, int avgFieldNum)
+        //{
+        //    ConfigConstant.AvgMaxAsmNum = avgMaxAsmNum;
+        //    ConfigConstant.AvgCellNum = avgCellNum;
+        //    ConfigConstant.AvgFieldNum = avgFieldNum;
+        //}
+        //#endregion
+
+        //#region
+        //#endregion
+        //#endregion
+
     }
 }

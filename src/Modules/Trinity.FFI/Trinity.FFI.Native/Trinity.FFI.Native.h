@@ -15,6 +15,7 @@
 #include <TrinityErrorCode.h>
 
 typedef int64_t TCell;
+typedef int64_t TCellAccessor; // XXX
 typedef int64_t TEnumerator;
 typedef int64_t TFieldInfo;
 
@@ -36,23 +37,29 @@ typedef void  (*TRINITY_FFI_ASYNC_REGISTRY)(int32_t, TRINITY_FFI_ASYNC_HANDLER);
 typedef char* (*TRINITY_FFI_SYNC_SEND)(int32_t, int32_t, char*);
 typedef void  (*TRINITY_FFI_ASYNC_SEND)(int32_t, int32_t, char*);
 
+typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_SAVESTORAGE)();
+typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_LOADSTORAGE)();
+typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_RESETSTORAGE)();
+typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_LOADCELL)(int64_t cellId, TCell* pcell);
+typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_SAVECELL)(int64_t cellId, TCell cell);
+typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_REMOVECELL)(int64_t cellId);
+
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVESTORAGE)();
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_LOADSTORAGE)();
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_RESETSTORAGE)();
 
-typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_SAVESTORAGE)();
-typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_LOADSTORAGE)();
-typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_RESETSTORAGE)();
-
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_LOADCELL)(int64_t cellId, TCell* pcell);
-typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_LOADCELL)(int64_t cellId, TCell* pcell);
 
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_1)(int64_t cellId, TCell cell);
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_2)(int64_t cellId, CellAccessOptions options, TCell cell);
-typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_SAVECELL)(int64_t cellId, TCell cell);
+typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_3)(TCell cell);
+typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_4)(CellAccessOptions options, TCell cell);
 
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_REMOVECELL)(int64_t cellId);
-typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_REMOVECELL)(int64_t cellId);
+
+typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_USECELL_1)(int64_t cellId, TCell* cell);// TODO
+typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_USECELL_2)(int64_t cellId, CellAccessOptions options, TCell* cell);// TODO
+typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_USECELL_3)(int64_t cellId, CellAccessOptions options, char* cellType, TCell* cell);// TODO
 
 typedef TrinityErrorCode (*TRINITY_FFI_NEWCELL_1)(char* cellType, TCell* pcell);
 typedef TrinityErrorCode (*TRINITY_FFI_NEWCELL_2)(int64_t cellId, char* cellType, TCell* pcell);
@@ -96,7 +103,13 @@ extern "C" struct TRINITY_INTERFACES
 
     TRINITY_FFI_LOCAL_SAVECELL_1 local_savecell_1;
     TRINITY_FFI_LOCAL_SAVECELL_2 local_savecell_2;
+    TRINITY_FFI_LOCAL_SAVECELL_3 local_savecell_3;
+    TRINITY_FFI_LOCAL_SAVECELL_4 local_savecell_4;
     TRINITY_FFI_CLOUD_SAVECELL   cloud_savecell;
+
+    TRINITY_FFI_LOCAL_USECELL_1 local_usecell_1;
+    TRINITY_FFI_LOCAL_USECELL_2 local_usecell_2;
+    TRINITY_FFI_LOCAL_USECELL_3 local_usecell_3;
 
     TRINITY_FFI_LOCAL_REMOVECELL local_removecell;
     TRINITY_FFI_LOCAL_REMOVECELL cloud_removecell;

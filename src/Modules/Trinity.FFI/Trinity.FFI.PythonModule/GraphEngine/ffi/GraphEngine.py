@@ -131,6 +131,12 @@ class Cell(_object):
 
     def HasField(self, field):
         return _GraphEngine.Cell_HasField(self, field)
+
+    def GetID(self):
+        return _GraphEngine.Cell_GetID(self)
+
+    def SetID(self):
+        return _GraphEngine.Cell_SetID(self)
     __swig_destroy__ = _GraphEngine.delete_Cell
     __del__ = lambda self: None
 
