@@ -22,6 +22,14 @@ def isa(typ):
     return inner
 
 
+def default(constructor):
+    return {int: 0,
+            str: None,
+            list: None,
+            tuple: None,
+            float: .0}[constructor]
+
+
 class FieldType:
     sig: str
     constructor: type
@@ -32,7 +40,7 @@ class FieldType:
         self.constructor = constructor
         self.checker = checker
         self.is_optional = is_optional
-        self.default = None if is_optional else constructor()
+        self.default = None if is_optional else default(constructor)
 
     def to_optional(self):
         if self.sig.endswith('?'):
@@ -64,6 +72,8 @@ def list_constructor_and_checker(field_type: FieldType):
     def checker(inst):
         return isinstance(inst, list) and all(map(field_type.checker, inst))
 
+    checker.for_elem = field_type.checker
+
     return list, checker
 
 
@@ -71,6 +81,16 @@ def dict_constructor_and_checker(typ_from: FieldType, type_to: FieldType):
     def checker(inst):
         return isinstance(inst, dict) and all(
             [typ_from.checker(k) and type_to.checker(v) for k, v in inst.items()])
+
+    def for_elem(kv):
+        try:
+            k, v = kv
+            return typ_from.checker(k) and type_to.checker(v)
+        except Exception as e:
+            print(e)
+            return False
+
+    checker.for_elem = for_elem
 
     return dict, checker
 

@@ -52,8 +52,6 @@ class Cell:
                     self.cache_index = gm.new_cell_by_type(self.typ.name)
                 else:
                     self.cache_index = gm.new_cell_by_id_type(str(self.cell_id), self.typ.name)
-                self._update_fields()
-
             else:
                 # default value
 
@@ -185,7 +183,7 @@ def py_cell_append(cell: Cell):
         if field_type.constructor is not list:
             raise TypeError("Append method is only for type`List`.")
 
-        if not field_type.checker(content):
+        if not field_type.for_elem(content):
             raise TypeError("Type `{}` does not match {}.".format(content.__class__.__name__, field_type.sig))
 
         cell._fields[field].append(content)
@@ -252,7 +250,7 @@ def computed_cell_append(cell: Cell):
         if field_type.constructor is not list:
             raise TypeError("Append method is only for type`List`.")
 
-        if not field_type.checker(content):
+        if not field_type.checker.for_elem(content):
             raise TypeError("Type `{}` does not match {}.".format(content.__class__.__name__, field_type.sig))
 
         gm.cell_append_field(cell.cache_index, field, json.dumps(content, cls=TSLJSONEncoder))
