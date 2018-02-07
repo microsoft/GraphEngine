@@ -13,16 +13,37 @@ from time import ctime
 from collections import namedtuple
 import json
 import warnings
-from typing import Dict
+from typing import Dict, Any
+from GraphEngine.TSL.TypeMap import FieldType
+from GraphEngine.configure import PY3
 
+__all__ = ['SymTable', 'CellType']
 gm = ge.get_machine()
-CellType = namedtuple('CellType', ['name', 'fields'])
-
-__all__ = ['SymTable']
 
 
-def parse_type(type_name) -> type:
-    type_ast = TSLTypeParse(token(type_name), MetaInfo())
+class CellType:
+    __slots__ = ['name', 'fields', 'default']
+    name: str
+    fields: Dict[str, FieldType]
+    default: Dict[str, Any]
+
+    def __init__(self, name: str, fields: Dict[str, FieldType]):
+        self.name = name
+        self.fields = fields
+        self.default = {k: v.default for k, v in fields.items() if not v.is_optional}
+
+    def __str__(self):
+        return '{}{{\n{}\n}}'.format(self.name,
+                                     ' \n '.join(
+                                         "{}: {},".format(field_name, field_type.sig)
+                                         for field_name, field_type in self.fields.items()))
+
+    def __repr__(self):
+        return self.__str__()
+
+
+def parse_type(type_sig_string) -> type:
+    type_ast = TSLTypeParse(token(type_sig_string), MetaInfo())
     return TSLTypeConstructor(type_ast)
 
 
@@ -54,7 +75,7 @@ class _SymTable:
 
     def __str__(self):
         return "VERSION[{}]:\n{}".format(self.version, json.dumps(
-            {name: {field: getattr(filed_typ, '_name') for field, filed_typ in cell_typ.fields.items()}
+            {name: {field: filed_typ.sig for field, filed_typ in cell_typ.fields.items()}
              for name, cell_typ in self._context.items()}, indent=SymTable.format_indent))
 
     def __repr__(self):

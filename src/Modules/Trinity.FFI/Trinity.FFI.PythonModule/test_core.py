@@ -13,12 +13,19 @@ from GraphEngine.Storage.core.Cell import Cell
 from GraphEngine.Storage.core.SymTable import load_symbols, sync
 from GraphEngine.Storage.core.SymTable import SymTable
 
+symtable = SymTable()
 load_symbols('tests/tsl/')
-print(SymTable.inst)
+print(symtable)
 
 
 # take the Type `C1` from symtable, and use it to new a cell.
-c1 = Cell(SymTable.inst['C1'])
+c1 = Cell(symtable['C1'])
 c1.set('foo', 1)
 c1.compute()
 c1.set('foo', 2)
+
+c2 = Cell(symtable['C2'])
+#c2.compute()
+
+
+

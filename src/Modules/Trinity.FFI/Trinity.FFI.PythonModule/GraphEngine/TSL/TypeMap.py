@@ -4,40 +4,86 @@ Created on Tue Jan 30 15:14:14 2018
 
 @author: v-wazhao
 """
-
+from GraphEngine.configure import PY3
 from Ruikowa.ObjectRegex.ASTDef import Ast
-from cytoolz.curried import curry
 
 # begin configure
 # these settings are for handling type mapping automatically.
 # TODO: do not use parser to speed up type mapping.
 
 
-curry_map = curry(map)
+from typing import Callable, List, Any
 
 
-@curry
-def isa(typ, v):
-    return isinstance(v, typ)
+def isa(typ):
+    def inner(v):
+        return isinstance(v, typ)
+
+    return inner
+
+
+class FieldType:
+    sig: str
+    constructor: type
+    checker: Callable
+
+    def __init__(self, sig: str, constructor: type, checker: Callable[[Any], bool], is_optional: bool):
+        self.sig = sig
+        self.constructor = constructor
+        self.checker = checker
+        self.is_optional = is_optional
+        self.default = None if is_optional else constructor()
+
+    def to_optional(self):
+        if self.sig.endswith('?'):
+            return self
+        sig = '{}?'.format(self.sig)
+        if sig in Types:
+            return Types[sig]
+        new_spec = FieldType(sig=sig,
+                             constructor=self.constructor,
+                             checker=self.checker,
+                             is_optional=True)
+        Types[new_spec.sig] = new_spec
+        return new_spec
+
+
+def _make_spec_from_primitive(primitive_type: type, is_optional=False):
+    return FieldType(primitive_type.__name__, primitive_type, isa(primitive_type), is_optional)
+
+
+Types = {'int': _make_spec_from_primitive(int),
+         'string': _make_spec_from_primitive(str),
+         'float': _make_spec_from_primitive(float),
+         'double': _make_spec_from_primitive(float),
+         'list': _make_spec_from_primitive(list)}
 
 
 # `Types` Records the types of fields.
+def list_constructor_and_checker(field_type: FieldType):
+    def checker(inst):
+        return isinstance(inst, list) and all(map(field_type.checker, inst))
 
-Types = {'int': int,
-         'string': str,
-         'float': float,
-         'double': float,
-         'list': list}
+    return list, checker
 
-GenericManager = {'List': lambda typ: (list, lambda _: all(curry_map(isa(typ))(_))),
-                  'Dictionary': lambda typ: (dict, lambda _: all(curry_map(isa(typ))(_)))}
+
+def dict_constructor_and_checker(typ_from: FieldType, type_to: FieldType):
+    def checker(inst):
+        return isinstance(inst, dict) and all(
+            [typ_from.checker(k) and type_to.checker(v) for k, v in inst.items()])
+
+    return dict, checker
+
+
+GenericManager = {'List': list_constructor_and_checker,
+                  'Dictionary': dict_constructor_and_checker}
 
 
 # end configure
 
-def type_register(typ):
-    if typ.name not in Types:
-        Types[typ.name] = typ
+def type_register(type_spec):
+    if type_spec.sig not in Types:
+        Types[type_spec.sig] = type_spec
 
 
 # type class
@@ -58,77 +104,32 @@ class TSLTypeConstructor:
 
             type_name = tsl_type_ast
 
-            type_constructor = Types.get(type_name)
+            type_spec = Types.get(type_name)
 
-            if type_constructor is None:
+            if type_spec is None:
                 raise TypeError('Unknown type {}.'.format(type_name))
 
-            type_checker = lambda v: isinstance(v, type_constructor)
+            return type_spec.to_optional()
 
-        else:
-            #  current = Generic
-            #  Generic Throw ['<', '>', ','] ::= Identifier '<' [Type (',' Type)*] L'>';
-            type_class, *type_args = tsl_type_ast
-            _ = GenericManager.get(type_class)
-            if _ is None:
-                raise TypeError('Unknown generic type {}.'.format(type_class))
+        # current = Generic
+        #  Generic Throw ['<', '>', ','] ::= Identifier '<' [Type (',' Type)*] L'>';
+        type_class, *type_args = tsl_type_ast
+        type_spec_constructor = GenericManager.get(type_class)
 
-            constructor_and_checker = _
+        if type_spec_constructor is None:
+            raise TypeError('Unknown generic type {}.'.format(type_class))
 
-            tail = [TSLTypeConstructor(type_arg) for type_arg in type_args]
+        tail = [TSLTypeConstructor(type_arg) for type_arg in type_args]
 
-            type_constructor, type_checker = constructor_and_checker(*tail)
-            type_name = '{}<{}>'.format(type_class, ','.join(map(lambda typ: typ._name, tail)))
+        constructor, checker = type_spec_constructor(*tail)
+        signature = '{}<{}>'.format(type_class, ','.join(map(lambda typ: typ.sig, tail)))
+        if signature in Types:
+            return Types[signature]
 
-        type_name = type_name if not is_optional else '{}?'.format(type_name)
+        type_spec = FieldType(sig=signature,
+                              constructor=constructor,
+                              checker=checker,
+                              is_optional=is_optional)
 
-        class TSLType:
-            _name = type_name
-
-            def __init__(self, *args, **kwargs):
-                self._v = type_constructor(*args, **kwargs)
-                self._is_optional = is_optional
-
-            @property
-            def value(self):
-                return self._v
-
-            @property
-            def is_optional(self):
-                return self._is_optional
-
-            @property
-            def name(self):
-                return self._name
-
-            def mut_by(self, fn):
-                res = fn(self._v)
-                if not TSLType.type_checker(res):
-                    raise TypeError('TypeError, get `{}`'.format(res.__class__))
-                self._v = res
-
-            def apply(self, fn):
-                return fn(self._v)
-
-            def check(self):
-                return TSLType.type_checker(self._v)
-
-            def set(self, v):
-                if not type_checker(v):
-                    raise TypeError('TypeError, get `{}`'.format(v.__class__))
-
-                self._v = v
-
-            def __str__(self):
-                return '{}[{}]'.format(self._name, self._v)
-
-            def __repr__(self):
-                return self.__str__()
-
-            def __getattr__(self, item):
-
-                return getattr(self._v, item)
-
-        TSLType.type_checker = type_checker
-        type_register(TSLType)
-        return TSLType
+        type_register(type_spec)
+        return type_spec

@@ -7,7 +7,10 @@ Created on Tue Feb  6 20:37:52 2018
 
 import os, json
 import GraphEngine as ge
+from sys import version_info
 
+PY3 = version_info.major is 3
+MODERN_PY = version_info.major is 3 and version_info.minor > 5
 home = os.path.expanduser("~")
 
 # For `chardet` cannot be accurate enough

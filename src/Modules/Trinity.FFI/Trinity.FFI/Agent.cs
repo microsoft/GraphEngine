@@ -213,6 +213,14 @@ namespace Trinity.FFI
                 
         }
 
+        public void CellAppendField(int cellIdx, string field, string content)
+        {
+            if (IsAccessor)
+                CellAccessorCache.Get(cellIdx).AppendToField(field, content);
+            else
+                CellCache.Get(cellIdx).AppendToField(field, content);
+        }
+
         public void CellRemoveField(int cellIdx, string fieldName)
         {
             if (IsAccessor)

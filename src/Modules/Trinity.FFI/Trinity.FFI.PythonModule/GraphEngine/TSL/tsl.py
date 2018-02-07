@@ -4,7 +4,7 @@ Created on Wed Jan 31 17:54:07 2018
 
 @author: twshe
 """
-from GraphEngine.TSL.TypeMap import CellType
+from GraphEngine.Storage.core.SymTable import CellType
 
 _join = ''.join
 

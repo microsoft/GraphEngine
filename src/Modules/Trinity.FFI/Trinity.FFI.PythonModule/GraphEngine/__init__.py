@@ -98,6 +98,9 @@ class GraphMachine:
     def cell_set_fields(self, cell_idx, fields, values):
         self.cache_manager.CellSetFields(cell_idx, fields, values)
 
+    def cell_append_field(self, cell_idx, field, content):
+        self.cache_manager.CellAppendField(cell_idx, field, content)
+
     def cell_remove_field(self, cell_idx, field_name):
         self.cache_manager.CellRemoveField(cell_idx, field_name)
 
