@@ -29,6 +29,7 @@
 
   <Target Name="TslCodegenPrepare">
     <MakeDir Directories="$(TslGeneratedCodePath)" ContinueOnError="true"/>
+    <Delete Files="$(TslGeneratedCodePath)**\*.cs" ContinueOnError="true"/>
     <Exec Condition="'$(OS)' != 'Windows_NT' " Command="chmod u+x $(TSL_CODEGEN_PATH)" />
   </Target>
   
