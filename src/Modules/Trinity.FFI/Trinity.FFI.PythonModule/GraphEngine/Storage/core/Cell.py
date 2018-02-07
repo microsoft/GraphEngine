@@ -21,8 +21,8 @@ _str_concat_format = ' | '.join
 
 
 class Cell:
-    def __init__(self, typ, cell_id=None):
-        self._fields = None
+    def __init__(self, typ: CellType, cell_id=None):
+        self._fields = typ.default.copy()
 
         self._cell_id = cell_id
 
@@ -30,7 +30,7 @@ class Cell:
 
         self._has_eval = False
 
-        self.dated = False  # is the data needed to be updated
+        self.dated = set()  # is the data needed to be updated
 
         self.cache_index = None
 
@@ -41,14 +41,19 @@ class Cell:
         self.append_field = py_cell_append(self)
 
     def compute(self):
+
+        self.get = computed_cell_getter(self)
+        self.set = computed_cell_setter(self)
+        self.append_field = computed_cell_append(self)
+
         if not self.has_eval:
             if self.fields == self.typ.default:
                 if self._cell_id is None:
                     self.cache_index = gm.new_cell_by_type(self.typ.name)
                 else:
-                    self.cache_index = gm.new_cell_by_id_type(self.cell_id, self.typ.name)
-
+                    self.cache_index = gm.new_cell_by_id_type(str(self.cell_id), self.typ.name)
                 self._update_fields()
+
             else:
                 # default value
 
@@ -57,40 +62,32 @@ class Cell:
                     json.dumps({field: tsl_value
                                 for field, tsl_value in self.fields.items()},
                                cls=TSLJSONEncoder))
-
-            self._cell_id = gm.cell_get_id_by_idx(self.cache_index)
-
             self._has_eval = True
 
-            # TODO: use cache here？
-            self.get = computed_cell_getter(self)
-            self.set = computed_cell_setter(self)
-            self.append_field = computed_cell_append(self)
-
-            return self
+        return self
 
     @property
     def fields(self):
-        if self._fields is None:
-            self._fields = {field_name: field_type.constructor()
-                            for field_name, field_type in SymTable.get(self.typ.name).fields.items()}
-        elif self._has_eval and self.dated:
-            self._update_fields()
-            self.dated = False
+        if self._has_eval and self.dated:
+            self._update_fields(self.dated)
+            self.dated.clear()
+
         return self._fields
 
-    def _update_fields(self):
+    def _update_fields(self, fields=None):
         """
         this method is for the computed cell.
         :return: None
         """
-        self._fields = dict(zip(self.fields.keys(),
-                                gm.cell_get_fields(self.cache_index, list(self.fields.keys()))))
+        fields = list(fields if fields is not None else self._fields.keys())
+        for field in fields:
+            self.get(field)
 
     @property
     def cell_id(self):
         if self._cell_id is None and self.has_eval:
-            self._cell_id = gm.cell_get_fields(self.cache_index, list(self.fields.keys()))
+            self._cell_id = int(gm.cell_get_id_by_idx(self.cache_index))
+
         return self._cell_id
 
     @property
@@ -100,6 +97,16 @@ class Cell:
     @property
     def has_eval(self):
         return self._has_eval
+
+    def cache_get(self, getter):
+        def when_get(field):
+            res = getter(field)
+            if res is not None and field in self.dated:
+                self._fields[field] = res
+                self.dated.remove(field)
+            return res
+
+        return when_get
 
     def __setitem__(self, key, value):
         warnings.warn(
@@ -124,7 +131,7 @@ class Cell:
 
 def py_cell_getter(cell: Cell):
     def callback(field):
-        value = cell.fields.get(field)
+        value = cell._fields.get(field)
 
         if value is None:
             warnings.warn("No field named {}".format(field))
@@ -154,7 +161,7 @@ def py_cell_setter(cell: Cell):
         if not field_type.checker(value):
             raise TypeError("Type `{}` does not match {}.".format(value.__class__.__name__, field_type.sig))
 
-        cell.fields[field] = value
+        cell._fields[field] = value
         return True
 
     return callback
@@ -181,20 +188,20 @@ def py_cell_append(cell: Cell):
         if not field_type.checker(content):
             raise TypeError("Type `{}` does not match {}.".format(content.__class__.__name__, field_type.sig))
 
-        cell.fields[field].append(content)
+        cell._fields[field].append(content)
         return True
 
     return callback
 
 
 def computed_cell_getter(cell: Cell):
+    @cell.cache_get
     def callback(field):
         field_type = cell.typ.fields.get(field)
 
         if field_type is None:
             warnings.warn("No field named {}".format(field))
             return None
-
         return gm.cell_get_field(cell.cache_index, field)
 
     return callback
@@ -220,6 +227,7 @@ def computed_cell_setter(cell: Cell):
             raise TypeError("Type `{}` does not match {}.".format(value.__class__.__name__, field_type.sig))
 
         gm.cell_set_field(cell.cache_index, field, json.dumps(value, cls=TSLJSONEncoder))
+        cell.dated.add(field)
 
         return True
 
@@ -247,7 +255,9 @@ def computed_cell_append(cell: Cell):
         if not field_type.checker(content):
             raise TypeError("Type `{}` does not match {}.".format(content.__class__.__name__, field_type.sig))
 
-        gm.cache_manager.cell_append_field(cell.cache_index, field, json.dumps(content, cls=TSLJSONEncoder))
+        gm.cell_append_field(cell.cache_index, field, json.dumps(content, cls=TSLJSONEncoder))
+        cell.dated.add(field)
+
         return True
 
     return callback

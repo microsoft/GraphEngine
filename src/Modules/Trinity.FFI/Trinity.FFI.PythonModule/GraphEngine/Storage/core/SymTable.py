@@ -34,8 +34,8 @@ class CellType:
 
     def __str__(self):
         return '{}{{\n{}\n}}'.format(self.name,
-                                     ' \n '.join(
-                                         "{}: {},".format(field_name, field_type.sig)
+                                     '\n'.join(
+                                         "\t{}: {},".format(field_name, field_type.sig)
                                          for field_name, field_type in self.fields.items()))
 
     def __repr__(self):
@@ -148,4 +148,5 @@ def sync():
             symtable[cell_type.TypeName] = \
                 CellType(cell_type.TypeName, {field.Name: parse_type(field.TypeName)
                                               for field in cell_type.GetFieldDescriptors()})
+
     gm.version_num = new_version_num

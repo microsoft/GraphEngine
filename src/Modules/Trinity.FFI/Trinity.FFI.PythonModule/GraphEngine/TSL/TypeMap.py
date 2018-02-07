@@ -109,7 +109,7 @@ class TSLTypeConstructor:
             if type_spec is None:
                 raise TypeError('Unknown type {}.'.format(type_name))
 
-            return type_spec.to_optional()
+            return type_spec.to_optional() if is_optional else type_spec
 
         # current = Generic
         #  Generic Throw ['<', '>', ','] ::= Identifier '<' [Type (',' Type)*] L'>';

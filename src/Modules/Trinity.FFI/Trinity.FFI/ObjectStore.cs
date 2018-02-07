@@ -94,7 +94,7 @@ begin:
             int head = m_head;
             if (head >= m_len) lock (m_lock)
                 {
-                    if (m_head > m_len)
+                    if (m_head >= m_len)
                     {
                         _Alloc(CalcLen(m_len));
                     }

@@ -90,13 +90,14 @@ class GraphMachine:
         return self.cache_manager.CellGetField(cell_idx, field_name)
 
     def cell_get_fields(self, cell_idx, fields):
-        return self.cache_manager.CellGetFields(cell_idx, fields)
+        return [self.cell_get_field(cell_idx, field) for field in fields]
 
     def cell_set_field(self, cell_idx, field_name, value):
         self.cache_manager.CellSetField(cell_idx, field_name, value)
 
     def cell_set_fields(self, cell_idx, fields, values):
-        self.cache_manager.CellSetFields(cell_idx, fields, values)
+        for field, value in zip(fields, values):
+            self.cell_set_field(cell_idx, field, value)
 
     def cell_append_field(self, cell_idx, field, content):
         self.cache_manager.CellAppendField(cell_idx, field, content)

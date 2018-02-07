@@ -175,18 +175,18 @@ namespace Trinity.FFI
             return CellCache.Get(cellIdx).GetField<string>(fieldName);
         }
 
-        public IEnumerable<string> CellGetFields(int cellIdx, string[] fields)
-        {
-            if (IsAccessor) {
-                var c = CellAccessorCache.Get(cellIdx);
-                return fields.Select(k => c.GetField<string>(k));
-            }
-            else
-            {
-                var c = CellCache.Get(cellIdx);
-                return fields.Select(k => c.GetField<string>(k));
-            }
-        }
+        //public IEnumerable<string> CellGetFields(int cellIdx, string[] fields)
+        //{
+        //    if (IsAccessor) {
+        //        var c = CellAccessorCache.Get(cellIdx);
+        //        return fields.Select(k => c.GetField<string>(k));
+        //    }
+        //    else
+        //    {
+        //        var c = CellCache.Get(cellIdx);
+        //        return fields.Select(k => c.GetField<string>(k));
+        //    }
+        //}
 
         public void CellSetField(int cellIdx, string fieldName, string value)
         {
@@ -196,22 +196,22 @@ namespace Trinity.FFI
                 CellCache.Get(cellIdx).SetField(fieldName, value);
         }
 
-        public void CellSetFields(int cellIdx, string[] fields, string[] values)
-        {
-            if (IsAccessor)
-            {
-                var c = CellAccessorCache.Get(cellIdx);
-                var i = 0;
-                fields.Each(k => c.SetField(k, values[i++]));
-            }
-            else
-            {
-                var c = CellCache.Get(cellIdx);
-                var i = 0;
-                fields.Each(k => c.SetField(k, values[i++]));
-            }
+        //public void CellSetFields(int cellIdx, string[] fields, string[] values)
+        //{
+        //    if (IsAccessor)
+        //    {
+        //        var c = CellAccessorCache.Get(cellIdx);
+        //        var i = 0;
+        //        fields.Each(k => c.SetField(k, values[i++]));
+        //    }
+        //    else
+        //    {
+        //        var c = CellCache.Get(cellIdx);
+        //        var i = 0;
+        //        fields.Each(k => c.SetField(k, values[i++]));
+        //    }
                 
-        }
+        //}
 
         public void CellAppendField(int cellIdx, string field, string content)
         {
