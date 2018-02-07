@@ -1,0 +1,33 @@
+﻿// Testing with RDF Triples
+
+// model of RDF/XML Normnative syntax
+struct RDFTriple
+{
+	string Subject;
+	string Predicate;
+	string Object
+	// Metadata 
+	string UriPart;
+	string Namespace;
+}
+
+// RDF Statement ...
+
+struct RDFStatement
+{
+	List<RDFTriple> rdfStatement;
+}
+
+struct StatusCodeResponse
+{
+	string statusCode;
+	int    returnCode;
+	int    errorCode;
+}
+
+protocol PushTripleToClientAsync
+{
+	Type: Async;
+	Request RDFStatement;
+	Response: StatusCodeResponse
+}
