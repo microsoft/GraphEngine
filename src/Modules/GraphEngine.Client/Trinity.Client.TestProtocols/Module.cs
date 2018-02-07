@@ -10,7 +10,7 @@ namespace Trinity.Client.TestProtocols.Impl
     {
         public override string GetModuleName() => "TrinityClientTestModule";
 
-        public override void P1Handler(P1RequestReader request)
+        public override void P1Handler(S1Reader request, S1Writer response)
         {
             Console.WriteLine($"P1Handler reached: {request.foo}, {request.bar}");
         }

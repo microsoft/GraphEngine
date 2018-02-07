@@ -60,6 +60,20 @@ protocol PostResponse
 	Response: void;
 }
 
+protocol RedirectMessage
+{
+	Type: Syn;
+	Request: PostResponseRequest;
+	Response: void;
+}
+
+protocol RedirectMessageWithResponse
+{
+	Type: Syn;
+	Request: PostResponseRequest;
+	Response: PostResponseRequest;
+}
+
 protocol UnregisterClient
 {
 	Type: Syn;
@@ -73,4 +87,6 @@ module TrinityClientModule
 	protocol UnregisterClient;
 	protocol PollEvents;
 	protocol PostResponse;
+	protocol RedirectMessage;
+	protocol RedirectMessageWithResponse;
 }

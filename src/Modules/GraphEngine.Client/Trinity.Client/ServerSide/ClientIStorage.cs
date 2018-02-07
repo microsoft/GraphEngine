@@ -175,17 +175,17 @@ namespace Trinity.Client
 
         public unsafe void SendMessage(byte** message, int* sizes, int count)
         {
-            int size = _sum(sizes, count);
+            int size = Utils._sum(sizes, count);
             void* p = Memory.malloc((ulong)size);
-            _copy((byte*)p, message, sizes, count);
+            Utils._copy((byte*)p, message, sizes, count);
             QueueMessage(p, size).Wait();
         }
 
         public unsafe void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
         {
-            int size = _sum(sizes, count);
+            int size = Utils._sum(sizes, count);
             void* p = Memory.malloc((ulong)size);
-            _copy((byte*)p, message, sizes, count);
+            Utils._copy((byte*)p, message, sizes, count);
             var (treq, trsp) = QueueMessageWithRsp(p, size);
             treq.Wait();
             response = trsp.Result;
@@ -193,31 +193,6 @@ namespace Trinity.Client
 
         private unsafe Action<Task<bool>> _free(void* p) => _ => { Memory.free(p); };
 
-        private unsafe void _copy(byte* p, byte** message, int* sizes, int count)
-        {
-            int* pend = sizes + count;
-            int size;
-            while (sizes != pend)
-            {
-                size = *sizes;
-                Memory.memcpy(p, *message, (ulong)size);
-                ++sizes;
-                ++message;
-                p += size;
-            }
-        }
-
-        private unsafe int _sum(int* sizes, int count)
-        {
-            int size = 0;
-            int* pend = sizes + count;
-            while (sizes != pend)
-            {
-                size += *sizes;
-                ++sizes;
-            }
-            return size;
-        }
 
         #region Unsupported storage interfaces
         public bool Contains(long cellId) => false;

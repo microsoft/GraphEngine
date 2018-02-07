@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Trinity.Client.ServerSide;
+using Trinity.Client.TrinityClientModule;
 using Trinity.Configuration;
 using Trinity.Core.Lib;
 using Trinity.Daemon;
@@ -23,13 +24,15 @@ namespace Trinity.Client
         private IClientConnectionFactory m_clientfactory = null;
         private IMessagePassingEndpoint m_client;
         private CancellationTokenSource m_tokensrc;
+        private TrinityClientModule.TrinityClientModule m_mod;
         private Task m_polltask;
         private readonly string m_endpoint;
         private int m_id;
         private int m_cookie;
 
         public TrinityClient(string endpoint)
-            : this(endpoint, null) { }
+            : this(endpoint, null)
+        { }
 
         public TrinityClient(string endpoint, IClientConnectionFactory clientConnectionFactory)
         {
@@ -71,6 +74,7 @@ namespace Trinity.Client
 
         private void StartPolling()
         {
+            m_mod = GetCommunicationModule<TrinityClientModule.TrinityClientModule>();
             RegisterClient();
             m_polltask = PollProc(m_tokensrc.Token);
         }
@@ -86,7 +90,7 @@ namespace Trinity.Client
             ClientMemoryCloud.EndInitialize();
             m_tokensrc = new CancellationTokenSource();
             m_id = Global.CloudStorage.MyInstanceId;
-            m_cookie = GetCommunicationModule<TrinityClientModule.TrinityClientModule>().MyCookie;
+            m_cookie = m_mod.MyCookie;
         }
 
         private async Task PollProc(CancellationToken token)
@@ -108,9 +112,23 @@ namespace Trinity.Client
             poll_req.Dispose();
         }
 
+        private unsafe TrinityMessage _AllocPollMsg(int myInstanceId, int myCookie)
+        {
+            int msglen                                      = sizeof(int) + sizeof(int) + TrinityProtocol.MsgHeader;
+            byte* buf                                       = (byte*)Memory.malloc((ulong)msglen);
+            PointerHelper sp                                = PointerHelper.New(buf);
+            *sp.ip                                          = msglen - TrinityProtocol.SocketMsgHeader;
+            *(sp.bp + TrinityProtocol.MsgTypeOffset)        = (byte)TrinityMessageType.SYNC_WITH_RSP;
+            *(ushort*)(sp.bp + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.PollEvents;
+            sp.bp                                          += TrinityProtocol.MsgHeader;
+            *sp.ip++                                        = myInstanceId;
+            *sp.ip++                                        = myCookie;
+            return new TrinityMessage(buf, msglen);
+        }
+
         private unsafe void _PollImpl(TrinityMessage poll_req)
         {
-            m_client.SendMessage(poll_req, out var poll_rsp);
+            m_mod.SendMessage(m_client, poll_req.Buffer, poll_req.Size, out var poll_rsp);
             var sp = PointerHelper.New(poll_rsp.Buffer + poll_rsp.Offset);
             //HexDump.Dump(poll_rsp.ToByteArray());
             //Console.WriteLine($"poll_rsp.Size = {poll_rsp.Size}");
@@ -150,34 +168,27 @@ namespace Trinity.Client
 
         private unsafe void _PostResponseImpl(long pctx, MessageBuff* messageBuff)
         {
-            int msglen                                      = TrinityProtocol.MsgHeader + sizeof(int) + sizeof(int) + sizeof(long) + (int)messageBuff->BytesToSend;
-            byte* buf                                       = (byte*)Memory.malloc((ulong)msglen);
+            int header_len = TrinityProtocol.MsgHeader + sizeof(int) + sizeof(int) + sizeof(long);
+            int socket_header = header_len + (int)messageBuff->BytesToSend - TrinityProtocol.SocketMsgHeader;
+
+            byte* buf = stackalloc byte[header_len];
+            byte** bufs = stackalloc byte*[2];
+            int* sizes = stackalloc int[2];
+
+            sizes[0] = header_len;
+            sizes[1] = (int)messageBuff->BytesToSend;
+            bufs[0] = buf;
+            bufs[1] = messageBuff->Buffer;
+
             PointerHelper sp                                = PointerHelper.New(buf);
-            *sp.ip                                          = msglen - TrinityProtocol.SocketMsgHeader;
+            *sp.ip                                          = socket_header;
             *(sp.bp + TrinityProtocol.MsgTypeOffset)        = (byte)TrinityMessageType.SYNC;
             *(ushort*)(sp.bp + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqMessageType.PostResponse;
             sp.bp                                          += TrinityProtocol.MsgHeader;
             *sp.ip++                                        = m_id;
             *sp.ip++                                        = m_cookie;
             *sp.lp++                                        = pctx;
-            Memory.memcpy(sp.bp, messageBuff->Buffer, messageBuff->BytesToSend);
-            TrinityMessage post_msg = new TrinityMessage(buf, msglen);
-            try { m_client.SendMessage(post_msg); }
-            finally { post_msg.Dispose(); }
-        }
-
-        private unsafe TrinityMessage _AllocPollMsg(int myInstanceId, int myCookie)
-        {
-            int msglen                                      = sizeof(int) + sizeof(int) + TrinityProtocol.MsgHeader;
-            byte* buf                                       = (byte*)Memory.malloc((ulong)msglen);
-            PointerHelper sp                                = PointerHelper.New(buf);
-            *sp.ip                                          = msglen - TrinityProtocol.SocketMsgHeader;
-            *(sp.bp + TrinityProtocol.MsgTypeOffset)        = (byte)TrinityMessageType.SYNC_WITH_RSP;
-            *(ushort*)(sp.bp + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.PollEvents;
-            sp.bp                                          += TrinityProtocol.MsgHeader;
-            *sp.ip++                                        = myInstanceId;
-            *sp.ip++                                        = myCookie;
-            return new TrinityMessage(buf, msglen);
+            m_mod.SendMessage(m_client, bufs, sizes, 2);
         }
 
         private void ScanClientConnectionFactory()

@@ -1,4 +1,4 @@
-﻿struct P1Request
+﻿struct S1
 {
 	string foo;
 	int bar;
@@ -6,9 +6,9 @@
 
 protocol P1
 {
-	Type: syn;
-	Request: P1Request;
-	Response: void;
+	Type: asyn;
+	Request: S1;
+	Response: S1;
 }
 
 module TrinityClientTestModule

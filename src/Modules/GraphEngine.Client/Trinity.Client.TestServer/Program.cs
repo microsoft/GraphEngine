@@ -32,8 +32,14 @@ namespace Trinity.Client.TestServer
                 {
                     try
                     {
-                        using (var msg = new P1RequestWriter("foo", i++))
-                            client.P1(msg);
+                        using (var msg = new S1Writer("foo", i++))
+                            client.P1(msg).ContinueWith(t =>
+                            {
+                                using (var rsp = t.Result)
+                                {
+                                    Console.WriteLine($"Client responded: {rsp.foo}, {rsp.bar}");
+                                }
+                            }, TaskContinuationOptions.RunContinuationsAsynchronously);
                     }
                     catch (Exception ex)
                     {

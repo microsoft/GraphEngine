@@ -10,6 +10,7 @@ using Trinity.Diagnostics;
 using Trinity.Extension;
 using Trinity.Network.Messaging;
 using Trinity.Storage;
+using System.Runtime.CompilerServices;
 
 namespace Trinity.Client.TrinityClientModule
 {
@@ -44,7 +45,7 @@ namespace Trinity.Client.TrinityClientModule
                 {
                     DateTime now = DateTime.Now;
                     var clients = m_client_storages.ToArray();
-                    foreach(var c in clients.Where(_ => (now - _.Value.Pulse) >= m_client_ttl))
+                    foreach (var c in clients.Where(_ => (now - _.Value.Pulse) >= m_client_ttl))
                     {
                         RemoveClient(c.Key, c.Value);
                         Log.WriteLine(LogLevel.Info, $"{nameof(TTLProc)}: client [{c.Value.InstanceId}] timed-out.");
@@ -58,11 +59,25 @@ namespace Trinity.Client.TrinityClientModule
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected internal unsafe new void SendMessage(IMessagePassingEndpoint ep, byte** bufs, int* sizes, int cnt)
+            => base.SendMessage(ep, bufs, sizes, cnt);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected internal unsafe new void SendMessage(IMessagePassingEndpoint ep, byte** bufs, int* sizes, int cnt, out TrinityResponse rsp)
+            => base.SendMessage(ep, bufs, sizes, cnt, out rsp);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected internal unsafe new void SendMessage(IMessagePassingEndpoint ep, byte* buf, int size, out TrinityResponse rsp)
+            => base.SendMessage(ep, buf, size, out rsp);
+
         protected override void RegisterMessageHandler()
         {
             base.RegisterMessageHandler();
             MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqMessageType.PostResponse, PostResponse_impl);
             MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.PollEvents, PollEvents_impl);
+            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqMessageType.RedirectMessage, RedirectMessage_impl);
+            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.RedirectMessageWithResponse, RedirectMessageWithResponse_impl);
         }
 
         private unsafe void PostResponse_impl(SynReqArgs args)
@@ -95,6 +110,7 @@ namespace Trinity.Client.TrinityClientModule
              *      2 = E_INVALID_CLIENT
              * 
              * !NOTE Here, response itself is a TrinityMessage and Response.TrinityMessage
+             * is the inner payload.
              ******************************/
             PointerHelper sp = PointerHelper.New(args.Buffer + args.Offset);
             int instanceId = *sp.ip++;
@@ -139,6 +155,48 @@ namespace Trinity.Client.TrinityClientModule
             args.Response = new TrinityMessage(outer_buf, outer_len);
         }
 
+        private unsafe void RedirectMessage_impl(SynReqArgs args)
+        {
+            /******************************
+             * Protocol: RedirectMessage
+             * Request: |4B InstanceId| TrinityMessage |
+             * Response: VOID
+             * 
+             * Redirects the message to another instance.
+             ******************************/
+
+            PointerHelper sp = PointerHelper.New(args.Buffer + args.Offset);
+            int instanceId = *sp.ip++;
+
+            TrinityMessage tm = new TrinityMessage(sp.bp, *sp.ip + sizeof(int));
+            m_memorycloud[instanceId].SendMessage(tm);
+        }
+
+        private unsafe void RedirectMessageWithResponse_impl(SynReqRspArgs args)
+        {
+            /******************************
+             * Protocol: RedirectMessage
+             * Request: |4B InstanceId| TrinityMessage |
+             * Response: | TrinityResponse |
+             * 
+             * Redirects the message to another instance.
+             ******************************/
+
+            PointerHelper sp = PointerHelper.New(args.Buffer + args.Offset);
+            int instanceId = *sp.ip++;
+
+            TrinityMessage tm = new TrinityMessage(sp.bp, *sp.ip + sizeof(int));
+            m_memorycloud[instanceId].SendMessage(tm, out var rsp);
+
+            int rsp_size = TrinityProtocol.MsgHeader + rsp.Size;
+            byte* rsp_buf = (byte*)Memory.malloc((ulong)rsp_size);
+            *(int*)rsp_buf = rsp_size - TrinityProtocol.SocketMsgHeader;
+            Memory.Copy(rsp.Buffer, rsp.Offset, rsp_buf, TrinityProtocol.MsgHeader, rsp.Size);
+            rsp.Dispose();
+
+            args.Response = new TrinityMessage(rsp_buf, rsp_size);
+        }
+
         #region not used
         public override void PollEventsHandler(PollEventsRequestReader request, PollEventsResponseWriter response)
         {
@@ -146,6 +204,16 @@ namespace Trinity.Client.TrinityClientModule
         }
 
         public override void PostResponseHandler(PostResponseRequestReader request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void RedirectMessageHandler(PostResponseRequestReader request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void RedirectMessageWithResponseHandler(PostResponseRequestReader request, PostResponseRequestWriter response)
         {
             throw new NotImplementedException();
         }
@@ -187,6 +255,5 @@ namespace Trinity.Client.TrinityClientModule
             if (m_client_storages.TryGetValue(cookie, out var storage) && instanceId == storage.InstanceId) return storage;
             throw new ClientInstanceNotFoundException();
         }
-
     }
 }

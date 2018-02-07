@@ -5,6 +5,7 @@ using Trinity.Client;
 using Trinity.Extension;
 using Trinity.Storage;
 using Trinity.Client.TrinityClientModule;
+using System.Threading;
 
 namespace Trinity.Client
 {
@@ -30,14 +31,16 @@ namespace Trinity.Client
             s_cmod = s_client.GetCommunicationModule<TrinityClientModule.TrinityClientModule>();
             s_cookie = s_cmod.MyCookie;
             int partitionCount = 0;
-            
-            using(var req = new RegisterClientRequestWriter(s_cmod.MyCookie))
-            using(var rsp = s_ep.RegisterClient(req))
+
+            s_redir_storages = null;
+
+            using (var req = new RegisterClientRequestWriter(s_cmod.MyCookie))
+            using (var rsp = s_ep.RegisterClient(req))
             {
                 partitionCount = rsp.PartitionCount;
                 s_instanceId = rsp.InstanceId;
             }
-            s_redir_storages = Enumerable.Range(0, partitionCount).Select(p => new RedirectedIStorage(s_ep, s_client, p)).ToList() as IList<IStorage>;
+            s_redir_storages = Enumerable.Range(0, partitionCount).Select(p => new RedirectedIStorage(s_ep, s_client, p) as IStorage).ToList() as IList<IStorage>;
         }
 
         public override int MyInstanceId => s_instanceId;
@@ -48,15 +51,23 @@ namespace Trinity.Client
 
         public override IEnumerable<Chunk> MyChunks => Enumerable.Empty<Chunk>();
 
-        //TODO query server about partition count
-        public override int PartitionCount => s_redir_storages.Count;
+        public override int PartitionCount => _GetRedirStorages().Count;
+
+        private IList<IStorage> _GetRedirStorages()
+        {
+            IList<IStorage> ret = null;
+            while(null == (ret = s_redir_storages))
+            {
+                Thread.Sleep(1);
+            }
+            return ret;
+        }
 
         public override int ProxyCount => throw new NotSupportedException();
 
         public override IList<RemoteStorage> ProxyList => throw new NotSupportedException();
 
-        //TODO redirected storage
-        protected override IList<IStorage> StorageTable => s_redir_storages;
+        protected override IList<IStorage> StorageTable => _GetRedirStorages();
 
         public override long GetTotalMemoryUsage()
         {
