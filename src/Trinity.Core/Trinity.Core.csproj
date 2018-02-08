@@ -109,6 +109,7 @@
     <Compile Include="Network\Instance\CommunicationInstance.cs" />
     <Compile Include="Network\Interfaces\IProtocolDescriptor.cs" />
     <Compile Include="Network\Messaging\MessageArgs\UnhandledException.cs" />
+    <Compile Include="Network\Messaging\MessageTooLongException.cs" />
     <Compile Include="Network\Messaging\PreservedMessages.cs" />
     <Compile Include="Network\Messaging\TrinityMessageType.cs" />
     <Compile Include="Network\Messaging\TrinityResponse.cs" />

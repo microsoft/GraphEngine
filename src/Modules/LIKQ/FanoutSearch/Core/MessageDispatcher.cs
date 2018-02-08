@@ -23,7 +23,6 @@ namespace FanoutSearch
         static FanoutSearchModule s_Module;
 
         const int c_default_capacity  = 64;
-        const int c_realloc_threshold = 1 << 20;
         const int c_realloc_step_size = 1 << 20;
         private byte*[] buffer;
         private int[] buf_offset;
@@ -71,25 +70,27 @@ namespace FanoutSearch
             {
                 buffer_locks[slaveID].Enter(ref _lock);
                 long boffset = buf_offset[slaveID] + path_size;
-                int  bnewcap = buf_capacity[slaveID];
-                if (boffset >= int.MaxValue) return;
-                while (boffset > bnewcap)
+                if (boffset >= int.MaxValue) throw new MessageTooLongException();
+                int bcap = buf_capacity[slaveID];
+                while (bcap < boffset)
                 {
-                    if (bnewcap < c_realloc_threshold) bnewcap *= 2;
-                    else bnewcap += c_realloc_step_size;
-                    if (bnewcap <= 0) return;//overflow, abort path addition
+                    // first try: 1.5x growth
+                    if (int.MaxValue - bcap >= (bcap>>1)) bcap += (bcap >> 1);
+                    // second try: step size
+                    else if (int.MaxValue - bcap >= c_realloc_step_size) bcap += c_realloc_step_size;
+                    // third try: approach intmax
+                    else bcap = int.MaxValue;
                 }
-
-                buf_offset[slaveID] = (int)boffset;
-                if (bnewcap != buf_capacity[slaveID])
+                if(bcap != buf_capacity[slaveID])
                 {
-                    byte* new_buf = (byte*)Memory.malloc((uint)bnewcap);
-                    Memory.memcpy(new_buf, buffer[slaveID], (uint)buf_capacity[slaveID]);
+                    byte* new_buf = (byte*)Memory.malloc((uint)bcap);
+                    Memory.memcpy(new_buf, buffer[slaveID], (uint)buf_offset[slaveID]);
                     Memory.free(buffer[slaveID]);
 
                     buffer[slaveID] = new_buf;
-                    buf_capacity[slaveID] = bnewcap;
+                    buf_capacity[slaveID] = bcap;
                 }
+                buf_offset[slaveID] = (int)boffset;
 
                 long* add_ptr = (long*)(buffer[slaveID] + boffset - path_size);
                 Memory.memcpy(add_ptr, pathptr, (uint)(current_hop + 1) * sizeof(long));
@@ -101,6 +102,20 @@ namespace FanoutSearch
             }
         }
 
+        public void Dispose()
+        {
+            if (buffer == null)
+                return;
+
+            for(int serverId = 0; serverId < serverCount; ++serverId)
+            {
+                var bufferPtr = this.buffer[serverId];
+                Memory.free(bufferPtr);
+            }
+
+            buffer = null;
+        }
+
         public void Dispatch()
         {
             if (buffer == null)
@@ -110,12 +125,8 @@ namespace FanoutSearch
             {
                 var bufferPtr = this.buffer[serverId];
                 FillHeader(hop, transaction, buf_offset[serverId], bufferPtr);
-
                 s_Module.FanoutSearch_impl_Send(serverId, bufferPtr, buf_offset[serverId]);
-                Memory.free(bufferPtr);
             });
-
-            buffer = null;
         }
 
         public static unsafe void DispatchOriginMessage(int serverId, int transaction, IEnumerable<FanoutPathDescriptor> origins)
@@ -147,12 +158,6 @@ namespace FanoutSearch
             *(int*)(body) = hop;
             *(int*)(body + sizeof(int)) = transaction;
             return body;
-        }
-
-        public void Dispose()
-        {
-            if (buffer != null)
-                Dispatch();
         }
 
     }

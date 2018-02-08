@@ -93,6 +93,7 @@ namespace Trinity.Network.Client
         /// E_NETWORK_SEND_FAILURE: Failed to send message.
         /// E_NOMEM:                Failed to allocate memory for response message.
         /// E_RPC_EXCEPTION:        The remote handler throw an exception.
+        /// E_MSG_OVERFLOW:         The response is too long to fit in a single TrinityResponse.
         /// </returns>
         public TrinityErrorCode SendMessage(byte* message, int size, out TrinityResponse response)
         {

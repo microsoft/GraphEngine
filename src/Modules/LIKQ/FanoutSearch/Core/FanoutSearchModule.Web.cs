@@ -18,6 +18,7 @@ using Newtonsoft.Json.Linq;
 using Trinity.Diagnostics;
 using Trinity.Network.Http;
 using System.Globalization;
+using Trinity.Network.Messaging;
 
 namespace FanoutSearch
 {
@@ -31,6 +32,7 @@ namespace FanoutSearch
         /// <returns>A json string representing query results.</returns>
         /// <exception cref="FanoutSearchQueryException">Throws if the query string is invalid.</exception>
         /// <exception cref="FanoutSearchQueryTimeoutException">Throws if the query timed out, and the server is set to not respond with partial result.</exception>"
+        /// <exception cref="Trinity.Network.Messaging.MessageTooLongException">Throws if the query response is too big, and the server is set to not respond with partial result.</exception>
         public string JsonQuery(string queryString, string queryPath = "")
         {
             FanoutSearchDescriptor fanoutSearch_desc = _JsonQuery_impl(queryString, queryPath);
@@ -47,6 +49,7 @@ namespace FanoutSearch
         /// <returns>A json string representing query results.</returns>
         /// <exception cref="FanoutSearchQueryException">Throws if the query string is invalid.</exception>
         /// <exception cref="FanoutSearchQueryTimeoutException">Throws if the query timed out, and the server is set to not respond with partial result.</exception>"
+        /// <exception cref="Trinity.Network.Messaging.MessageTooLongException">Throws if the query response is too big, and the server is set to not respond with partial result.</exception>
         public string LambdaQuery(string lambda)
         {
             FanoutSearchDescriptor fanoutSearch_desc = _LambdaQuery_impl(lambda);
@@ -149,6 +152,10 @@ namespace FanoutSearch
             {
                 throw new BadRequestException("BadArgument", badRequest.Message);
             }
+            catch (MessageTooLongException msgex)
+            {
+                throw new BadRequestException("MessageTooLong", msgex.Message);
+            }
         }
 
         public override void LambdaQueryHandler(LambdaQueryInput request, HttpListenerResponse response)
@@ -172,6 +179,10 @@ namespace FanoutSearch
             catch (FanoutSearch.FanoutSearchQueryException badRequest)
             {
                 throw new BadRequestException("BadArgument", badRequest.Message);
+            }
+            catch (MessageTooLongException msgex)
+            {
+                throw new BadRequestException("MessageTooLong", msgex.Message);
             }
         }
         #endregion // Handlers
@@ -202,8 +213,12 @@ namespace FanoutSearch
             bool first = true;
             writer.Write('[');
 
+            long len = 0;
+
             foreach (var path in paths)
             {
+                len += path.Length;
+                if (len > int.MaxValue) throw new MessageTooLongException();
                 if (first) { first = false; }
                 else { writer.Write(','); }
 
