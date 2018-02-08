@@ -191,6 +191,7 @@ namespace Trinity.Storage
             m_NewGenericCell_string_string                 = operations.NewGenericCell;
             m_UseGenericCell_long                          = operations.UseGenericCell;
             m_UseGenericCell_long_CellAccessOptions        = operations.UseGenericCell;
+            m_UseGenericCell_long_CellAccessOptions_string = operations.UseGenericCell;
             m_EnumerateGenericCells                        = operations.EnumerateGenericCells;
             m_EnumerateGenericCellAccessors                = operations.EnumerateGenericCellAccessors;
         }
