@@ -218,7 +218,7 @@ namespace FanoutSearch
             foreach (var path in paths)
             {
                 len += path.Length;
-                if (len > int.MaxValue) throw new MessageTooLongException();
+                if (len > s_max_rsp_size) throw new MessageTooLongException();
                 if (first) { first = false; }
                 else { writer.Write(','); }
 
