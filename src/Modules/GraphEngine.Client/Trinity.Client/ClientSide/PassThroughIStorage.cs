@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Trinity.Network;
 using Trinity.Network.Messaging;
 using Trinity.Storage;
 
-namespace Trinity.Client
+namespace Trinity.Client.ClientSide
 {
     internal class PassThroughIStorage : IStorage
     {

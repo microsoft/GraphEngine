@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Trinity.Client.TrinityClientModule
+namespace Trinity.Client.ServerSide
 {
     [Serializable]
     public class ClientInstanceNotFoundException : Exception

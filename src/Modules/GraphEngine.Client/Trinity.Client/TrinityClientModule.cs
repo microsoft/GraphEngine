@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
-using System.Linq.Expressions;
+using Trinity.Client.ServerSide;
 using Trinity.Core.Lib;
 using Trinity.Diagnostics;
 using Trinity.Extension;
 using Trinity.Network.Messaging;
 using Trinity.Storage;
-using System.Runtime.CompilerServices;
 
-namespace Trinity.Client.TrinityClientModule
+namespace Trinity.Client
 {
     [AutoRegisteredCommunicationModule]
     public class TrinityClientModule : TrinityClientModuleBase

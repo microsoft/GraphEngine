@@ -1,23 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Trinity.Client.ServerSide;
-using Trinity.Client.TrinityClientModule;
 using Trinity.Configuration;
 using Trinity.Core.Lib;
-using Trinity.Daemon;
 using Trinity.Diagnostics;
 using Trinity.Network;
 using Trinity.Network.Messaging;
 using Trinity.Storage;
 using Trinity.Utilities;
 
-namespace Trinity.Client
+namespace Trinity.Client.ClientSide
 {
     public class TrinityClient : CommunicationInstance, IMessagePassingEndpoint
     {
@@ -129,7 +124,7 @@ namespace Trinity.Client
         private unsafe void _PollImpl(TrinityMessage poll_req)
         {
             m_mod.SendMessage(m_client, poll_req.Buffer, poll_req.Size, out var poll_rsp);
-            var sp = PointerHelper.New(poll_rsp.Buffer + poll_rsp.Offset);
+            var sp = PointerHelper.New((byte*) (poll_rsp.Buffer + poll_rsp.Offset));
             //HexDump.Dump(poll_rsp.ToByteArray());
             //Console.WriteLine($"poll_rsp.Size = {poll_rsp.Size}");
             //Console.WriteLine($"poll_rsp.Offset = {poll_rsp.Offset}");

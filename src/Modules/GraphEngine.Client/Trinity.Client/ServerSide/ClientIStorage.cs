@@ -3,14 +3,13 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Trinity.Core.Lib;
 using Trinity.Network;
 using Trinity.Network.Messaging;
 using Trinity.Storage;
 
-namespace Trinity.Client
+namespace Trinity.Client.ServerSide
 {
     /// <summary>
     /// Installed in server-side storage tables.

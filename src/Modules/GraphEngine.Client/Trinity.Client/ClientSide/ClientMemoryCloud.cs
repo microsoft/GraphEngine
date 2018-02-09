@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Trinity.Client;
+using System.Threading;
 using Trinity.Extension;
 using Trinity.Storage;
-using Trinity.Client.TrinityClientModule;
-using System.Threading;
 
-namespace Trinity.Client
+namespace Trinity.Client.ClientSide
 {
     [ExtensionPriority(-200)]
     internal partial class ClientMemoryCloud : MemoryCloud

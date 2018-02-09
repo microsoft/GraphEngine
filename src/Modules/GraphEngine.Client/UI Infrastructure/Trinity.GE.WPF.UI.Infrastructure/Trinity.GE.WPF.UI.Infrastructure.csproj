@@ -31,18 +31,122 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Castle.Core.4.2.0\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Castle.Windsor.4.1.0\lib\net45\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="InfragisticsWPF4.DockManager.v17.1, Version=17.1.20171.2108, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />
+    <Reference Include="InfragisticsWPF4.v17.1, Version=17.1.20171.2108, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="Prism">
+      <HintPath>..\..\..\..\..\..\Prism\Source\Prism\bin\Debug\Prism.dll</HintPath>
+    </Reference>
+    <Reference Include="Prism.Wpf">
+      <HintPath>..\..\..\..\..\..\Prism\Source\Wpf\Prism.Wpf\bin\Debug\Prism.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="PrismContrib.WindsorExtensions">
+      <HintPath>..\..\..\..\..\..\PrismContrib.WindsorExtensions\src\Desktop\PrismContrib.WindsorExtensions\bin\Debug\PrismContrib.WindsorExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveProperty, Version=4.0.0.0, Culture=neutral, PublicKeyToken=910d1732782c71cb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ReactiveProperty.4.2.0\lib\net46\ReactiveProperty.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveProperty.NET46, Version=4.0.6602.20616, Culture=neutral, PublicKeyToken=3d1fed915120cbde, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ReactiveProperty.4.2.0\lib\net46\ReactiveProperty.NET46.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Collections.Immutable.1.3.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Reactive.Core, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Reactive.Core.3.1.1\lib\net46\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Reactive.Interfaces.3.1.1\lib\net45\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Reactive.Linq.3.1.1\lib\net46\System.Reactive.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.PlatformServices, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Reactive.PlatformServices.3.1.1\lib\net46\System.Reactive.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Windows.Threading, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Reactive.Windows.Threading.3.1.1\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Threading.Tasks.Dataflow, Version=4.5.24.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Tpl.Dataflow.4.5.24\lib\portable-net45+win8+wpa81\System.Threading.Tasks.Dataflow.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Prism\Source\Wpf\Prism.Wpf\bin\Debug\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Base.Module\ModuleBase.cs" />
+    <Compile Include="Base.ViewModel\ViewModelBase.cs" />
+    <Compile Include="Base.Views\UserControlViewBase.cs" />
+    <Compile Include="Converters\StructToObjectConverter.cs" />
+    <Compile Include="Interfaces\IModuleBase.cs" />
+    <Compile Include="Interfaces\IPresentationHostViewModel.cs" />
+    <Compile Include="Interfaces\IPrismRegionManagerServices.cs" />
+    <Compile Include="Interfaces\IScopedRegionManager.cs" />
+    <Compile Include="Interfaces\IUIShellWindow.cs" />
+    <Compile Include="Interfaces\IView.cs" />
+    <Compile Include="Interfaces\IViewModel.cs" />
+    <Compile Include="Prism.Interfaces\IDockAware.cs" />
+    <Compile Include="Prism.Interfaces\IRegionManagerAware.cs" />
+    <Compile Include="Prism.Region.Adapters\RegionManagerAware.cs" />
+    <Compile Include="Prism.Region.Adapters\RegionManagerAwareBehavior.cs" />
+    <Compile Include="Prism.Region.Adapters\TabGroupPaneRegionActiveAwareBehavior.cs" />
+    <Compile Include="Prism.Region.Adapters\TabGroupPaneRegionAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PubSub.EventNames\PubSubEventNames.cs" />
+    <Compile Include="PubSub.Events\SemanticEvent.cs" />
+    <Compile Include="UI.DocAware.ViewModelNames\UIDocAwareViewModelNames.cs" />
+    <Compile Include="UI.ModuleNames\UIModuleNames.cs" />
+    <Compile Include="UI.RegionNames\UIRegionNames.cs" />
+    <Compile Include="UI.Shell.Services\ShellServices.cs" />
+    <Compile Include="UI.ShellServices\IContropolusScopedRegionManager.cs" />
+    <Compile Include="UI.ShellServices\IModuleBase.cs" />
+    <Compile Include="UI.ShellServices\IUIShellServices.cs" />
+    <Compile Include="UI.ShellServices\PrismRegionServices.cs" />
+    <Compile Include="UI.ShellServices\RegionControllerAwareBehavior.cs" />
+    <Compile Include="UI.ShellServices\RegionManagerAware.cs" />
+    <Compile Include="UI.ShellServices\RegionManagerAwareBehavior.cs" />
+    <Compile Include="UI.ShellServices\VisualTreeHelperExtended.cs" />
+    <Compile Include="UI.ViewModelNames\UIViewModelNames.cs" />
+    <Compile Include="UI.ViewNames\UIViewNames.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\UI WPF ServiceLocator\UI.CastleWindsorAdapter.ServiceLocator\UI.CastleWindsorAdapter.ServiceLocator.csproj">
+      <Project>{772c5f8d-266c-4daa-b7af-91a99dbde1af}</Project>
+      <Name>UI.CastleWindsorAdapter.ServiceLocator</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="External Binaries\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

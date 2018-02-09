@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Trinity.Client.TestProtocols.Impl
+namespace Trinity.Client.TestProtocols
 {
     public class TrinityClientTestModule : TrinityClientTestModuleBase
     {
