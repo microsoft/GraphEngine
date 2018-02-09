@@ -17,9 +17,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.WPF.TestFacility
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trinity GE WPF Testing Facility", "Trinity GE WPF Testing Facility", "{563F1C9C-5759-47D9-8B53-1631D8645275}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ServiceLocator for CastleWindsor Adapter", "ServiceLocator for CastleWindsor Adapter", "{61E4DAC6-F896-4D7F-94A3-AD9227D65A47}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI ServiceLocator for CastleWindsor Adapter", "UI ServiceLocator for CastleWindsor Adapter", "{61E4DAC6-F896-4D7F-94A3-AD9227D65A47}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GE WPF TestFacility Infrastructure", "GE WPF TestFacility Infrastructure", "{86BE1CBD-003E-4AAB-A531-8673F52B5229}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trinity GE WPF TestFacility Infrastructure", "Trinity GE WPF TestFacility Infrastructure", "{86BE1CBD-003E-4AAB-A531-8673F52B5229}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.WPF.UI.Infrastructure", "UI Infrastructure\Trinity.GE.WPF.UI.Infrastructure\Trinity.GE.WPF.UI.Infrastructure.csproj", "{E22B7A0B-6120-427E-94C2-955724D0178A}"
 EndProject
