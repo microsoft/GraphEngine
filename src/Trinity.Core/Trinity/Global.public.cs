@@ -27,6 +27,11 @@ namespace Trinity
     /// </summary>
     public static partial class Global
     {
+        /// <summary>
+        /// Gets or sets the function of creating LocalMemoryStorage instance for initializing Global.LocalStorage.
+        /// </summary>
+        public static Func<LocalMemoryStorage> CreateLocalMemoryStorage { get; set; } = () => new LocalMemoryStorage();
+
         public static void Initialize()
         {
             lock (s_storage_init_lock)

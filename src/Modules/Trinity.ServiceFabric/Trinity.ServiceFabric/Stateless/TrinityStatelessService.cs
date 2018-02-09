@@ -50,7 +50,12 @@ namespace Trinity.ServiceFabric.Stateless
 
         protected override async Task RunAsync(CancellationToken cancellationToken)
         {
-            await OpenMemoryCloudAsync(cancellationToken);
+            await ClusterConfig.ResolveTrinityEndpointsAsync(cancellationToken);
+
+            TrinityServer.Started += () => Log.Info("Trinity server {0}/{1} started, listening on {2}:{3}",
+                Global.MyServerId, Global.ServerCount, Global.MyIPEndPoint.Address, Global.MyIPEndPoint.Port);
+
+            TrinityServer.Start();
 
             while (true)
             {
@@ -58,22 +63,6 @@ namespace Trinity.ServiceFabric.Stateless
 
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }
-        }
-
-        protected async Task OpenMemoryCloudAsync(CancellationToken cancellationToken)
-        {
-            await ClusterConfig.ResolveTrinityEndpointsAsync(cancellationToken);
-
-            TrinityServer.InitializeCloudMemory();
-            TrinityServer.InitializeModules();
-
-            Global.CloudStorage.ServerDisconnected += (sender, e) =>
-            {
-                Log.Info("Disconnected with Server {0}", e.ServerId);
-            };
-
-            Log.Info("Memory cloud opened. ServerCount={0}, MyServerId={1}, Address={2}:{3}",
-                Global.ServerCount, Global.MyServerId, Global.MyIPEndPoint.Address, Global.MyIPEndPoint.Port);
         }
     }
 }

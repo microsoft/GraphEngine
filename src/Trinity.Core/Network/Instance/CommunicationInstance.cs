@@ -272,43 +272,6 @@ namespace Trinity.Network
                 (this.m_CommunicationModules.Values.Any(m => m.GetCommunicationSchema().HttpEndpointNames.Count() != 0));
         }
 
-        public void StartTrinityServer(int port)
-        {
-            lock (m_lock)
-            {
-                if (m_started) return;
-                Global.CommunicationInstance = this;
-
-                //  Initialize message handlers
-                MessageHandlers.Initialize();
-                RegisterMessageHandler();
-
-                //  Initialize message passing networking
-                NativeNetwork.StartTrinityServer((UInt16)port);
-
-                m_started = true;
-            }
-        }
-
-        public void InitializeCloudMemory()
-        {
-            lock (m_lock)
-            {
-                if (memory_cloud != null) return;
-                memory_cloud = Global.CloudStorage;
-            }
-        }
-
-        public void InitializeModules()
-        {
-            lock (m_lock)
-            {
-                if (!m_started || memory_cloud == null) return;
-
-                _InitializeModules();
-            }
-        }
-
         /// <summary>
         /// Starts a Trinity instance.
         /// </summary>
