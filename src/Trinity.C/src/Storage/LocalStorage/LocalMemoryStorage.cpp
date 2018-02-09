@@ -110,14 +110,6 @@ namespace Storage
 			memory_trunks[trunkIndex].Defragment(/*calledByGCThread:*/true);
 		}
 
-		void DefragmentAllTrunks()
-		{
-			for (int32_t i = 0; i < trunk_count; i++)
-			{
-				memory_trunks[i].Defragment(/*calledByGCThread:*/false);
-			}
-		}
-
 		static uint64_t _CellCount_impl()
 		{
 			uint64_t total = 0;

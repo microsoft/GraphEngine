@@ -38,6 +38,7 @@ namespace Trinity.Storage
         {
             CLocalMemoryStorage.CWriteAheadLog(cellId, cellPtr, cellSize, cellType, options);
         }
+
     }
 
     /// <summary>
@@ -105,6 +106,7 @@ namespace Trinity.Storage
         [DllImport(TrinityC.AssemblyName)]
 #endif
         internal static extern bool CLoadStorage();
+
 
         #region Cell operations
         // Non-logging cell operations
