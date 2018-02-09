@@ -70,7 +70,7 @@ namespace FanoutSearch
             {
                 buffer_locks[slaveID].Enter(ref _lock);
                 long boffset = buf_offset[slaveID] + path_size;
-                if (boffset >= int.MaxValue) throw new MessageTooLongException();
+                if (boffset >= FanoutSearchModule.s_max_fanoutmsg_size) throw new MessageTooLongException();
                 int bcap = buf_capacity[slaveID];
                 while (bcap < boffset)
                 {
