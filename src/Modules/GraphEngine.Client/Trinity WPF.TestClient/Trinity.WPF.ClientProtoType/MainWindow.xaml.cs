@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Trinity.WPF.ClientProtoType
+namespace Trinity.GE.WPF.TestFacility
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

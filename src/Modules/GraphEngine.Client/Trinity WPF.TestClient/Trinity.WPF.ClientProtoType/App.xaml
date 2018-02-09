@@ -1,7 +1,7 @@
-﻿<Application x:Class="Trinity.WPF.ClientProtoType.App"
+﻿<Application x:Class="Trinity.GE.WPF.TestFacility.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Trinity.WPF.ClientProtoType"
+             xmlns:local="clr-namespace:Trinity.GE.WPF.TestFacility"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          

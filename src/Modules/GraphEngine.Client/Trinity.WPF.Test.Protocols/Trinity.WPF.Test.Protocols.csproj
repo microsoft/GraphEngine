@@ -8,8 +8,8 @@
     <ProjectGuid>{F55F1870-B54C-40FE-8DBA-8DE9ED476B55}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Trinity.WPF.Test.Protocols</RootNamespace>
-    <AssemblyName>Trinity.WPF.Test.Protocols</AssemblyName>
+    <RootNamespace>Trinity.GE.WPF.TestFacility.ServiceProtocols</RootNamespace>
+    <AssemblyName>Trinity.GE.WPF.TestFacility.ServiceProtocols</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
