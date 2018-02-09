@@ -243,7 +243,7 @@
       <HintPath>..\packages\GraphEngine.DynamicCluster.1.0.9083\lib\net461\Trinity.DynamicCluster.dll</HintPath>
     </Reference>
     <Reference Include="Trinity.ServiceFabric.Infrastructure, Version=1.0.9083.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\GraphEngine.ServiceFabric.Infrastructure.1.0.9083\lib\net461\Trinity.ServiceFabric.Infrastructure.dll</HintPath>
+      <HintPath>..\..\..\..\bin\net461\Trinity.ServiceFabric.Infrastructure.dll</HintPath>
     </Reference>
     <Reference Include="Trinity.ServiceFabric.Listeners, Version=1.0.9083.0, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>..\packages\GraphEngine.ServiceFabric.ListenerRuntime.1.0.9083\lib\net461\Trinity.ServiceFabric.Listeners.dll</HintPath>
