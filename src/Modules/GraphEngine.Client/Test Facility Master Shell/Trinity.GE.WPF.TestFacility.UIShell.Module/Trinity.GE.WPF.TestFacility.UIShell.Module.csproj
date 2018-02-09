@@ -43,6 +43,8 @@
     <Reference Include="CommonServiceLocator, Version=2.0.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CommonServiceLocator.2.0.2\lib\net47\CommonServiceLocator.dll</HintPath>
     </Reference>
+    <Reference Include="InfragisticsWPF4.DockManager.v17.1, Version=17.1.20171.2108, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />
+    <Reference Include="InfragisticsWPF4.v17.1, Version=17.1.20171.2108, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />
     <Reference Include="Prism">
       <HintPath>..\..\..\..\..\..\Prism\Source\Prism\bin\Debug\Prism.dll</HintPath>
     </Reference>

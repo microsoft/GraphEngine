@@ -28,6 +28,7 @@ using Trinity.GE.WPF.UI.Infrastructure.UI.ViewModelNames;
 using Trinity.GE.WPF.UI.Infrastructure.UI.ViewNames;
 using UI.CastleWindsorAdapter.ServiceLocator.Extensions;
 using Component = Castle.MicroKernel.Registration.Component;
+using MainShellWindow = Trinity.GE.WPF.TestFacility.UIShell.Module.Shell.MainShellWindow;
 using RegionManagerAware = Trinity.GE.WPF.UI.Infrastructure.Prism.Region.Adapters.RegionManagerAware;
 using RegionManagerAwareBehavior = Trinity.GE.WPF.UI.Infrastructure.Prism.Region.Adapters.RegionManagerAwareBehavior;
 

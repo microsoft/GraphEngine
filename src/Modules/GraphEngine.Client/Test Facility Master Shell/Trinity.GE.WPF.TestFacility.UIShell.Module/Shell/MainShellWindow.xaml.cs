@@ -15,12 +15,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Castle.Windsor;
-using Infragistics.Windows.Controls;
 using Prism.Events;
 using Prism.Regions;
 using Trinity.GE.WPF.TestFacility.UIShell.Module.UI.ViewModels;
 
-namespace IKW.Contropolus.VKMC.UIShell.Module.Shell
+namespace Trinity.GE.WPF.TestFacility.UIShell.Module.Shell
 {
     /// <summary>
     /// Interaction logic for MainShellWindow.xaml
