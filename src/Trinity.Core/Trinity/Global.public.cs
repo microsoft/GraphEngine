@@ -73,7 +73,7 @@ namespace Trinity
         /// </summary>
         /// <param name="config">A ClusterConfig instance.</param>
         /// <returns>The newly created cloud storage instance.</returns>
-        public static MemoryCloud CreateCloudStorage(ClusterConfig config)
+        public static MemoryCloud CreateCloudStorage(IClusterConfig config)
         {
             lock (s_storage_init_lock)
             {

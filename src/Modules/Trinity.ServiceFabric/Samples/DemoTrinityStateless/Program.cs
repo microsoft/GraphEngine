@@ -26,7 +26,7 @@ namespace DemoTrinityStateless
                 // an instance of the class is created in this host process.
 
                 ServiceRuntime.RegisterServiceAsync("DemoTrinityStatelessType",
-                    context => new TrinityStatelessService(context, new DemoTrinityServer(), "TrinityServerEndpoint", CreateExternalTrinityImageInstance()))
+                    context => new TrinityStatelessService(context, new DemoTrinityServer(), "TrinityServerEndpoint", CreateTrinityStorageImage))
                     .GetAwaiter().GetResult();
 
                 ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(TrinityStatelessService).Name);
@@ -41,10 +41,10 @@ namespace DemoTrinityStateless
             }
         }
 
-        private static ITrinityStorageImage CreateExternalTrinityImageInstance()
+        private static ITrinityStorageImage CreateTrinityStorageImage(TrinityStatelessService service)
         {
             var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
-            return new PartitionedImage((slotIndex) => new AzureBlobPartitionedImageStorage(connectionString, "storage", $"slot-{slotIndex}"));
+            return new PartitionedImage(service, (slotIndex) => new AzureBlobPartitionedImageStorage(connectionString, "storage", $"slot-{slotIndex}"));
         }
     }
 }

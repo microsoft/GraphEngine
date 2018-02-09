@@ -21,7 +21,9 @@ namespace DemoWebApiStateless
     /// </summary>
     internal sealed class DemoWebApiStateless : StatelessService
     {
-        public static readonly Uri TrinityServiceName = new Uri("fabric:/DemoTrinityApp/DemoTrinityStateless");
+        private static readonly Uri TrinityServiceName = new Uri("fabric:/DemoTrinityApp/DemoTrinityStateless");
+
+        private StatelessClusterConfig ClusterConfig { get; set; }
 
         public DemoWebApiStateless(StatelessServiceContext context)
             : base(context)
@@ -38,7 +40,8 @@ namespace DemoWebApiStateless
                 new ServiceInstanceListener(serviceContext =>
                     new KestrelCommunicationListener(serviceContext, "ServiceEndpoint", (url, listener) =>
                     {
-                        ResolveTrinityCluster();
+                        ClusterConfig = StatelessClusterConfig.Resolve(TrinityServiceName, RunningMode.Client);
+                        TrinityConfig.CreateClusterConfig = () => ClusterConfig;
 
                         ServiceEventSource.Current.ServiceMessage(serviceContext, $"Resolved trinity cluster [ServerCount={Global.ServerCount}]. Starting Kestrel on {url}");
 
@@ -62,20 +65,6 @@ namespace DemoWebApiStateless
                                     .Build();
                     }))
             };
-        }
-
-        private void ResolveTrinityCluster()
-        {
-            Guid trinityServicePartitionId = Guid.Empty;
-            using (var client = new FabricClient())
-            {
-                var partitions = client.QueryManager.GetPartitionListAsync(TrinityServiceName).Result;
-                trinityServicePartitionId = partitions[0].PartitionInformation.Id;
-            }
-
-            var source = new CancellationTokenSource();
-            var task = Utilities.ResolveTrinityClusterConfigAsync(TrinityServiceName, trinityServicePartitionId, source.Token);
-            task.Wait();
         }
     }
 }

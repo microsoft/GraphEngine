@@ -26,12 +26,12 @@ namespace Trinity.Storage
     {
         internal Storage[] StorageTable;
 
-        private ClusterConfig cluster_config;
+        private IClusterConfig cluster_config;
         private int server_count = -1;
         private int my_server_id = -1;
         private int my_proxy_id = -1;
 
-        internal MemoryCloud(ClusterConfig config)
+        internal MemoryCloud(IClusterConfig config)
         {
             this.cluster_config = config;
             server_count = cluster_config.Servers.Count;
@@ -49,9 +49,7 @@ namespace Trinity.Storage
 
             for (int i = 0; i < server_count; i++)
             {
-                if (cluster_config.RunningMode == RunningMode.Server &&
-                    (cluster_config.Servers[i].Has(Global.MyIPAddresses, Global.MyIPEndPoint.Port) || cluster_config.Servers[i].HasLoopBackEndpoint(Global.MyIPEndPoint.Port))
-                    )
+                if (i == my_server_id)
                 {
                     StorageTable[i] = Global.LocalStorage;
                     server_found = true;
@@ -298,27 +296,11 @@ namespace Trinity.Storage
         }
 
         /// <summary>
-        /// Gets the count of storage partitions.
-        /// </summary>
-        public Func<int> GetTotalPartitionCount { get; set; } = () => 1 << sizeof(byte);
-
-        /// <summary>
         /// Gets and sets the method of getting the id of the data partition
         /// where the cell with the specified cell id is located.
         /// TODO: move to MemoryCloud extensions
         /// </summary>
         public Func<long, int> GetPartitionIdByCellId { get; set; } = (cellId) => (*(((byte*)&cellId) + 1));
-
-        /// <summary>
-        /// Indicates if the partition with the specified id is a local storage partition.
-        /// </summary>
-        /// <param name="partitionId"></param>
-        /// <returns></returns>
-        public bool IsLocalPartition(int partitionId)
-        {
-            return 0 <= partitionId && partitionId < GetTotalPartitionCount() &&
-                Global.ServerCount > 0 && partitionId % Global.ServerCount == Global.MyServerId;
-        }
 
         /// <summary>
         /// Gets the Id of the server on which the cell with the specified cell Id is located.

@@ -75,11 +75,11 @@ namespace Trinity.Network
         /// <summary>
         /// The host name of the server.
         /// </summary>
-        public string HostName { get; protected set; }
+        public string HostName { get; set; }
         /// <summary>
         /// The port of the server.
         /// </summary>
-        public int Port { get; protected set; }
+        public int Port { get; set; }
         /// <summary>
         /// The assembly path of the server.
         /// </summary>
@@ -87,7 +87,7 @@ namespace Trinity.Network
         /// <summary>
         /// The availability group id of the server.
         /// </summary>
-        public string Id { get; protected set; }
+        public string Id { get; set; }
         /// <summary>
         /// The endpoint of the server.
         /// </summary>

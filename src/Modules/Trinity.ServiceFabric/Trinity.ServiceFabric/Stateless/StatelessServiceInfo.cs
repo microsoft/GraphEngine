@@ -14,5 +14,8 @@ namespace Trinity.ServiceFabric.Stateless
 
             Id = instanceId.ToString();
         }
+
+        public StatelessServiceInfo(long instanceId)
+            : this(instanceId, null, -1) { }
     }
 }

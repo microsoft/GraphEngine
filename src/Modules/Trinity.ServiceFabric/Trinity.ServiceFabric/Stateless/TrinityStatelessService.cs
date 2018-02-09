@@ -1,8 +1,10 @@
 ﻿using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Fabric;
+using System.Fabric.Description;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -15,21 +17,31 @@ using Trinity.ServiceFabric.Storage.External;
 
 namespace Trinity.ServiceFabric.Stateless
 {
-    public sealed class TrinityStatelessService : StatelessService
+    public class TrinityStatelessService : StatelessService
     {
+        public StatelessClusterConfig ClusterConfig { get; private set; }
         public TrinityServer TrinityServer { get; private set; }
         public string TrinityServerEndpointName { get; private set; }
 
         public TrinityStatelessService(StatelessServiceContext serviceContext,
-            TrinityServer trinityServer, string trinityServerEndpointName, ITrinityStorageImage externalStroage) : base(serviceContext)
+            TrinityServer trinityServer, string trinityServerEndpointName,
+            Func<TrinityStatelessService, ITrinityStorageImage> externalStroageFactory) : base(serviceContext)
         {
             TrinityServer = trinityServer;
             TrinityServerEndpointName = trinityServerEndpointName;
-            Global.CreateLocalMemoryStorage = () => new LocalMemoryStorageBackedByExternal(externalStroage);
+
+            TrinityConfig.CreateClusterConfig = () => ClusterConfig;
+            Global.CreateLocalMemoryStorage = () => new LocalMemoryStorageBackedByExternal(this, externalStroageFactory(this));
         }
 
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
         {
+            ClusterConfig = StatelessClusterConfig.Resolve(Context.ServiceName, Context.PartitionId, RunningMode.Server);
+            ClusterConfig.MyServerId = Enumerable.Range(0, ClusterConfig.Servers.Count).First(idx => ClusterConfig.GetServerInfo(idx).InstanceId == Context.InstanceId);
+
+            if (Global.LocalStorage.LoadStorage() == false)
+                throw new Exception("Failed to load local storage");
+
             return new[]
             {
                 new ServiceInstanceListener(_ => new TrinityServerCommunicationListener(this), TrinityServerCommunicationListener.Name)
@@ -40,9 +52,6 @@ namespace Trinity.ServiceFabric.Stateless
         {
             await OpenMemoryCloudAsync(cancellationToken);
 
-            if (Global.LocalStorage.LoadStorage() == false)
-                throw new Exception("Failed to load local storage");
-
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -51,13 +60,9 @@ namespace Trinity.ServiceFabric.Stateless
             }
         }
 
-        private async Task OpenMemoryCloudAsync(CancellationToken cancellationToken)
+        protected async Task OpenMemoryCloudAsync(CancellationToken cancellationToken)
         {
-            var instances = (await Utilities.ResolveTrinityClusterConfigAsync(Context.ServiceName, Context.PartitionId, cancellationToken)).ToList();
-            var myServerId = Enumerable.Range(0, instances.Count).First(idx => instances[idx].InstanceId == Context.InstanceId);
-
-            TrinityConfig.CurrentRunningMode = RunningMode.Server;
-            TrinityConfig.CurrentClusterConfig.ListeningPort = instances[myServerId].Port;
+            await ClusterConfig.ResolveTrinityEndpointsAsync(cancellationToken);
 
             TrinityServer.InitializeCloudMemory();
             TrinityServer.InitializeModules();

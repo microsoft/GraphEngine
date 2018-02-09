@@ -110,8 +110,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Stateless\StatelessClusterConfig.cs" />
     <Compile Include="Stateless\StatelessServiceInfo.cs" />
-    <Compile Include="Stateless\Utilities.cs" />
     <Compile Include="Storage\External\AzureBlobPartitionedImageStorage.cs" />
     <Compile Include="Storage\External\CellStream.cs" />
     <Compile Include="Storage\External\IPartitionedImageStorage.cs" />

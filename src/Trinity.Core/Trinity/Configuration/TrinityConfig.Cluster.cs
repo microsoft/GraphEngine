@@ -25,8 +25,10 @@ namespace Trinity
     public static partial class TrinityConfig
     {
         #region Fields
-        private static ClusterConfig s_current_cluster_config = new ClusterConfig();
-        private static Dictionary<string, ClusterConfig> s_clusterConfigurations = new Dictionary<string, ClusterConfig>();
+        public static Func<IClusterConfig> CreateClusterConfig { get; set; } = () => new ClusterConfig();
+
+        private static IClusterConfig s_current_cluster_config;
+        private static Dictionary<string, IClusterConfig> s_clusterConfigurations = new Dictionary<string, IClusterConfig>();
         
         internal static int BackgroundSendingInterval = ConfigurationConstants.DefaultValue.DEFAULT_BACKGROUND_SENDING_INTERVAL;
         internal static int HeartbeatInterval = ConfigurationConstants.DefaultValue.DEFAULT_HEARTBEAT_INTERVAL;
@@ -40,10 +42,13 @@ namespace Trinity
         /// <summary>
         /// Represents the configuration settings for Global.CloudStorage.
         /// </summary>
-        public static ClusterConfig CurrentClusterConfig
+        public static IClusterConfig CurrentClusterConfig
         {
             get
             {
+                if (s_current_cluster_config == null)
+                    s_current_cluster_config = CreateClusterConfig();
+
                 return s_current_cluster_config;
             }
         }
@@ -51,7 +56,7 @@ namespace Trinity
         /// <summary>
         /// Represents the configuration settings for clusters defined in a configuration file.
         /// </summary>
-        public static IReadOnlyDictionary<string, ClusterConfig> ClusterConfigurations
+        public static IReadOnlyDictionary<string, IClusterConfig> ClusterConfigurations
         {
             get { return s_clusterConfigurations; }
         }
@@ -85,7 +90,7 @@ namespace Trinity
         {
             get
             {
-                return CurrentClusterConfig.AllServerInstances;
+                return Servers.SelectMany(_ => _.Instances).ToList();
             }
         }
 
@@ -96,7 +101,7 @@ namespace Trinity
         {
             get
             {
-                return CurrentClusterConfig.AllProxyInstances;
+                return Proxies.SelectMany(_ => _.Instances).ToList();
             }
         }
 
@@ -107,7 +112,9 @@ namespace Trinity
         {
             get
             {
-                return CurrentClusterConfig.AllServerIPEndPoints;
+                return Servers.SelectMany(_ => _.Instances
+                        .Select(instance => instance.EndPoint))
+                        .ToList();
             }
         }
 
@@ -118,7 +125,9 @@ namespace Trinity
         {
             get
             {
-                return CurrentClusterConfig.AllProxyIPEndPoints;
+                return Proxies.SelectMany(_ => _.Instances
+                        .Select(instance => instance.EndPoint))
+                        .ToList();
             }
         }
 

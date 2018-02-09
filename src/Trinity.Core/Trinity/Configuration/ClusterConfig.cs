@@ -15,7 +15,7 @@ using Trinity.Network;
 using Trinity.Utilities;
 namespace Trinity
 {
-    public class ClusterConfig
+    public class ClusterConfig : IClusterConfig
     {
         #region Fields
         private RunningMode running_mode = RunningMode.Undefined;
@@ -156,8 +156,6 @@ namespace Trinity
             }
         }
 
-        private int _listening_port = TrinityConfig.InvalidPort;
-
         /// <summary>
         /// Gets the listening port of the current server.
         /// </summary>
@@ -165,9 +163,6 @@ namespace Trinity
         {
             get
             {
-                if (_listening_port != TrinityConfig.InvalidPort)
-                    return _listening_port;
-
                 switch (RunningMode)
                 {
                     case RunningMode.Server:
@@ -177,10 +172,6 @@ namespace Trinity
                     default:
                         return TrinityConfig.InvalidPort;
                 }
-            }
-            set
-            {
-                _listening_port = value;
             }
         }
 
@@ -292,7 +283,7 @@ namespace Trinity
         /// Gets the ServerInfo object of current server and it represents the specific information on the current server.
         /// </summary>
         /// <returns></returns>
-        internal ServerInfo GetMyServerInfo()
+        public ServerInfo GetMyServerInfo()
         {
             for (int i = 0; i < Servers.Count; i++)
             {
@@ -324,7 +315,7 @@ namespace Trinity
         /// Gets the ServerInfo object of current server and it represents the specific information on the current proxy.
         /// </summary>
         /// <returns></returns>
-        internal ServerInfo GetMyProxyInfo()
+        public ServerInfo GetMyProxyInfo()
         {
             for (int i = 0; i < Proxies.Count; i++)
             {
@@ -353,7 +344,7 @@ namespace Trinity
         /// Return the current configuration information.
         /// </summary>
         /// <returns></returns>
-        internal string OutputCurrentConfig()
+        public string OutputCurrentConfig()
         {
             CodeWriter cw = new CodeWriter();
             cw.WL();

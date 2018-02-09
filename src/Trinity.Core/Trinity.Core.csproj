@@ -147,6 +147,7 @@
     <Compile Include="Trinity\Configuration\ConfigurationInstance.cs" />
     <Compile Include="Trinity\Configuration\ConfigurationSection.cs" />
     <Compile Include="Trinity\Configuration\ConfigurationSetting.cs" />
+    <Compile Include="Trinity\Configuration\IClusterConfig.cs" />
     <Compile Include="Trinity\Configuration\TrinityConfig.C.cs" />
     <Compile Include="Trinity\Configuration\TrinityConfig.Storage.cs" />
     <Compile Include="Trinity\Configuration\TrinityConfig.Cluster.cs" />
