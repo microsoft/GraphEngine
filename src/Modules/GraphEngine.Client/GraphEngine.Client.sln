@@ -31,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trinity GE WPF Test Facilit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.WPF.TestFacility.UIShell.Module", "Test Facility Master Shell\Trinity.GE.WPF.TestFacility.UIShell.Module\Trinity.GE.WPF.TestFacility.UIShell.Module.csproj", "{C51048FA-F6F5-4ED9-B0CD-1F16431AA031}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.WPF.TestFacility.UI.MainMenu.Module", "UI Modules\Trinity.GE.WPF.TestFacility.UI.MainMenu.Module\Trinity.GE.WPF.TestFacility.UI.MainMenu.Module.csproj", "{5ECBC5A5-9B0D-4DAE-AC98-13158E1862BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,10 @@ Global
 		{C51048FA-F6F5-4ED9-B0CD-1F16431AA031}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C51048FA-F6F5-4ED9-B0CD-1F16431AA031}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C51048FA-F6F5-4ED9-B0CD-1F16431AA031}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5ECBC5A5-9B0D-4DAE-AC98-13158E1862BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ECBC5A5-9B0D-4DAE-AC98-13158E1862BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ECBC5A5-9B0D-4DAE-AC98-13158E1862BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ECBC5A5-9B0D-4DAE-AC98-13158E1862BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,6 +89,7 @@ Global
 		{E22B7A0B-6120-427E-94C2-955724D0178A} = {86BE1CBD-003E-4AAB-A531-8673F52B5229}
 		{772C5F8D-266C-4DAA-B7AF-91A99DBDE1AF} = {61E4DAC6-F896-4D7F-94A3-AD9227D65A47}
 		{C51048FA-F6F5-4ED9-B0CD-1F16431AA031} = {52D8A13B-BD30-4260-BF1D-71D5AE8D27F5}
+		{5ECBC5A5-9B0D-4DAE-AC98-13158E1862BE} = {18097C4F-E453-4E6F-B621-D34D569D84C2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C53F0FFC-9BFC-4C08-975C-C5CBE5B1888E}

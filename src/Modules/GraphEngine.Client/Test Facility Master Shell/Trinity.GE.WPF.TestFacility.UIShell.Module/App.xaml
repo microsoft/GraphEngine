@@ -1,9 +1,15 @@
 ﻿<Application x:Class="Trinity.GE.WPF.TestFacility.UIShell.Module.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Trinity.GE.WPF.TestFacility.UIShell.Module"
-             StartupUri="MainWindow.xaml">
-    <Application.Resources>
-         
-    </Application.Resources>
+             xmlns:local="clr-namespace:Trinity.GE.WPF.TestFacility.UIShell.Module">
+
+    <!--<Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/IG/IG.MSControls.Core.Implicit.xaml" />
+                <ResourceDictionary Source="Themes/IG/IG.MSControls.Toolkit.Implicit.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>-->
+
 </Application>
