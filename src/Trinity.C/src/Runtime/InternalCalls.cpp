@@ -70,11 +70,6 @@ ICallEntry ICallTable[] =
     { "Trinity.Storage.CLocalMemoryStorage::CLoadStorage"                           , &Storage::LocalMemoryStorage::LoadStorage },
     { "Trinity.Storage.CLocalMemoryStorage::CGetTrinityImageSignature"              , &Storage::LocalMemoryStorage::GetTrinityImageSignature },
 
-	// TODO: Add DLLExport for CoreCLR
-    { "Trinity.Storage.CLocalMemoryStorage::CEnterDBCritical"                       , &Storage::LocalMemoryStorage::EnterDBCritical },
-    { "Trinity.Storage.CLocalMemoryStorage::CExitDBCritical"                        , &Storage::LocalMemoryStorage::ExitDBCritical },
-    { "Trinity.Storage.CLocalMemoryStorage::CDefragmentAllTrunks"                   , &Storage::LocalMemoryStorage::DefragmentAllTrunks },
-
     /* Non-logging interfaces */
     { "Trinity.Storage.CLocalMemoryStorage::CSaveCell(long,byte*,int,uint16)"       , static_cast<TrinityErrorCode(*)(cellid_t, char*, int32_t, uint16_t)>(&Storage::LocalMemoryStorage::SaveCell) },
     { "Trinity.Storage.CLocalMemoryStorage::CAddCell(long,byte*,int,uint16)"        , static_cast<TrinityErrorCode(*)(cellid_t, char*, int32_t, uint16_t)>(&Storage::LocalMemoryStorage::AddCell) },

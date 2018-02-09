@@ -83,9 +83,6 @@ namespace Trinity
             new InternalCallEntry("CLoadStorage"                            , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CGetTrinityImageSignature"               , typeof(CLocalMemoryStorage)),
 
-            new InternalCallEntry("CEnterDBCritical"                        , typeof(CLocalMemoryStorage)),
-            new InternalCallEntry("CExitDBCritical"                         , typeof(CLocalMemoryStorage)),
-
             /* Non-logging interfaces */
             new InternalCallEntry("CSaveCell"                               , typeof(CLocalMemoryStorage), new List<Type>{typeof(long), typeof(byte*), typeof(int), typeof(ushort)}),
             new InternalCallEntry("CAddCell"                                , typeof(CLocalMemoryStorage), new List<Type>{typeof(long), typeof(byte*), typeof(int), typeof(ushort)}),

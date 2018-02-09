@@ -762,16 +762,6 @@ namespace Storage
 			*pSignature = *g_ImageSignature;
 			return E_SUCCESS;
 		}
-
-		void EnterDBCritical()
-		{
-			_enter_db_critical();
-		}
-
-		void ExitDBCritical()
-		{
-			_exit_db_critical();
-		}
 	}
 
 }

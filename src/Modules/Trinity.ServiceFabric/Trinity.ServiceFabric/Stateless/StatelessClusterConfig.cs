@@ -58,7 +58,7 @@ namespace Trinity.ServiceFabric.Stateless
                 return null;
 
             var partitionId = partitions[0].PartitionInformation.Id;
-            if (partitions.Count > 0)
+            if (partitions.Count > 1)
                 Log.Warn("Multiple trinity service partitions were found. The partition {0} will be used.", partitionId);
 
             return Resolve(trinityServiceName, partitionId, runningMode);

@@ -106,10 +106,6 @@ namespace Storage
         bool SaveStorage();
         bool ResetStorage();
 
-        void EnterDBCritical();
-        void ExitDBCritical();
-        void DefragmentAllTrunks();
-
         // Write-ahead logging
 
         namespace Logging
