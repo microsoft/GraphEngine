@@ -1,0 +1,143 @@
+﻿<Window x:Name="MainShellWindowHost" 
+        x:Class="IKW.Contropolus.VKMC.UIShell.Module.Shell.MainShellWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ig="http://schemas.infragistics.com/xaml"         
+        xmlns:igDockManager="http://infragistics.com/DockManager"          
+        xmlns:prism="http://prismlibrary.com/"
+        xmlns:coreInteractivity ="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:reactiveProperty="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.NET46"
+        xmlns:uiRegionNames="clr-namespace:Trinity.GE.WPF.UI.Infrastructure.UI.RegionNames;assembly=Trinity.GE.WPF.UI.Infrastructure"
+        xmlns:regionNames="clr-namespace:Trinity.GE.WPF.UI.Infrastructure.UI.RegionNames;assembly=Trinity.GE.WPF.UI.Infrastructure"
+        mc:Ignorable="d"
+        Title="{Binding ProgramInfoTitle.Value, Mode=TwoWay, 
+            UpdateSourceTrigger=PropertyChanged}" 
+            SizeToContent="WidthAndHeight" 
+            HorizontalContentAlignment="Stretch" 
+            VerticalContentAlignment="Stretch" 
+            WindowStartupLocation="CenterScreen" 
+            ResizeMode="CanResizeWithGrip">
+
+    <!-- When the main window of the program is loaded by the WPF runtime the first thing we want to do it put up
+         a splash screen. -->
+
+    <!--<coreInteractivity:Interaction.Triggers>
+        <coreInteractivity:EventTrigger EventName="Loaded" SourceName="MainShellWindowHost">
+            <reactiveProperty:EventToReactiveProperty ReactiveProperty="{Binding MainShellLoaded, UpdateSourceTrigger=PropertyChanged}"/>
+        </coreInteractivity:EventTrigger>
+    </coreInteractivity:Interaction.Triggers>-->
+
+    <!--Initialized="MainShellWindowHost_Initialized">-->
+
+
+    <Grid x:Name="HostGrid" d:DataContext="{Binding}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="MenuBarRowDef" Height="0"/>
+            <RowDefinition x:Name="TopRowDef" Height="32"/>
+            <RowDefinition x:Name="SideBarRowDef"/>
+            <RowDefinition x:Name="BottomOfPresentationRowDef" Height="0*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="MenuBarColDefRightEdge"/>
+            <ColumnDefinition x:Name="MainAreaColDef" Width="0*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- When the main window of the program is loaded by the WPF runtime the first thing we want to do it put up
+         a splash screen. -->
+
+        <!--<coreInteractivity:Interaction.Triggers>
+            <coreInteractivity:EventTrigger EventName="Loaded" SourceName="HostGrid">
+                <reactiveProperty:EventToReactiveProperty ReactiveProperty="{Binding ShellLoaded, UpdateSourceTrigger=PropertyChanged}"/>
+            </coreInteractivity:EventTrigger>
+        </coreInteractivity:Interaction.Triggers>-->
+
+
+        <ContentControl Name="MenuBarRegion" 
+                        Grid.RowSpan="2"
+                        prism:RegionManager.RegionName="{x:Static regionNames:UIRegionNames.MainMenuControlRegion}"/>
+
+        <ContentControl Name="MainPresentationHostContentControl" 
+                        Grid.Row="2" 
+                        Grid.Column="0"
+                        prism:RegionManager.RegionName="{x:Static regionNames:UIRegionNames.MainPresentationHostRegion}" Grid.RowSpan="2">
+        </ContentControl>
+
+        <!--<igDockManager:XamDockManager x:Name="MainPresentationDocManager"
+                                      Grid.Row="2" 
+                                      Grid.Column="0" LayoutMode="FillContainer">
+
+            <igDockManager:XamDockManager.Panes>
+                <igDockManager:SplitPane SplitterOrientation="Horizontal" igDockManager:XamDockManager.InitialLocation="DockedLeft">
+
+                    <igDockManager:ContentPane AllowDockingBottom="True"
+                                               AllowDockingFloating="True"
+                                               Header="Ontology Database Control">
+                        <ContentControl 
+                            x:Name="OntologyDBControlContent" 
+                            BorderThickness="1"
+                            prism:RegionManager.RegionName="{x:Static uiRegionNames:UIRegionNames.OntologyDBControlRegion}" />
+
+                    </igDockManager:ContentPane>
+
+                    <igDockManager:ContentPane x:Name="OntologyMergeControlPane" Header="Ontology Merge Management">
+                        <ContentControl 
+                            x:Name="OntologyDBMergeContent" 
+                            BorderThickness="1"
+                            prism:RegionManager.RegionName="{x:Static uiRegionNames:UIRegionNames.OntologyDBMergeRegion}" />
+                    </igDockManager:ContentPane>
+
+                    <igDockManager:ContentPane x:Name="DataFlowControlPane" Header="Data Flow and Composition Control">
+                        <ContentControl 
+                            x:Name="DataFlowControlContent" 
+                            BorderThickness="1"
+                            prism:RegionManager.RegionName="{x:Static uiRegionNames:UIRegionNames.DataFlowControlRegion}" />
+                    </igDockManager:ContentPane>
+
+                </igDockManager:SplitPane>
+            </igDockManager:XamDockManager.Panes>
+
+            <igDockManager:DocumentContentHost x:Name="ManagementDocManager">
+
+                <igDockManager:SplitPane>
+
+                    <igDockManager:TabGroupPane x:Name="MainMenuGroupPane"
+                                                TabStripPlacement="Top"                       
+                        prism:RegionManager.RegionName="{x:Static uiRegionNames:UIRegionNames.ProgramAboutInfoRegion}">
+
+                        <igDockManager:ContentPane x:Name="OntologySemanticMapperPane" Header="Ontology Semantic Mapper" />
+                        <igDockManager:ContentPane x:Name="RealTimeFlowDocumentLoggerPane" Header="Real-time FlowDocument Logger" />
+                        <igDockManager:ContentPane x:Name="RoleBaseAccessSecurityControlPane" Header="Firmware Studio Role-Based Access Control" />
+                        <igDockManager:ContentPane x:Name="SchedulerControlPane" Header="Component Scheduler" />
+
+                        <igDockManager:ContentPane x:Name="AdHocWorkflowExecutor" Header="AdHoc Test-Case/Workflow Executor">
+                            <ContentControl x:Name="WorkflowControlContent" 
+                                            BorderThickness="1"
+                                            prism:RegionManager.RegionName="{x:Static uiRegionNames:UIRegionNames.AdHocTestWorkflowRegion}" />
+                        </igDockManager:ContentPane>
+
+                    </igDockManager:TabGroupPane>
+                    <igDockManager:SplitPane>
+                        <igDockManager:TabGroupPane x:Name="NWGPane"
+                                                    TabStripPlacement="Right"
+                                                    prism:RegionManager.RegionName="{x:Static uiRegionNames:UIRegionNames.LanguageNWGRegion}">
+                            <igDockManager:ContentPane Header="Component State Taxonomy Viewer" />
+                            <igDockManager:ContentPane Header="Command Status-Value Ontologies" />
+                            <igDockManager:ContentPane Header="Policy-Policy-Editor" />
+                        </igDockManager:TabGroupPane>
+                    </igDockManager:SplitPane>
+                </igDockManager:SplitPane>
+            </igDockManager:DocumentContentHost>
+        </igDockManager:XamDockManager>-->
+
+
+        <!--<ContentControl Name="MainDocManagerRegion" 
+                        Grid.Column="1" 
+                        Grid.Row="2"
+                        prism:RegionManager.RegionName="{x:Static uiRegionNames:UIRegionNames.MainDocManagerRegion}"/>-->
+
+    </Grid>
+
+</Window>
