@@ -64,7 +64,7 @@
 
                     <igDockManager:ContentPane AllowDockingBottom="True"
                                                AllowDockingFloating="True"
-                                               Header="Ontology Database Control">
+                                               Header="Trinity Graph Engine Control">
                         <ContentControl 
                             x:Name="OntologyDBControlContent" 
                             BorderThickness="1" 
@@ -72,14 +72,14 @@
 
                     </igDockManager:ContentPane>
 
-                    <igDockManager:ContentPane x:Name="OntologyMergeControlPane" Header="Ontology Merge Management">
+                    <igDockManager:ContentPane x:Name="OntologyMergeControlPane" Header="Graph Engine Dynamic Cluster Control">
                         <ContentControl 
                             x:Name="OntologyDBMergeContent" 
                             BorderThickness="1" 
                             prism:RegionManager.RegionName="{x:Static regionNames:UIRegionNames.OntologyDBMergeRegion}" />
                     </igDockManager:ContentPane>
 
-                    <igDockManager:ContentPane x:Name="DataFlowControlPane" Header="Data Flow and Composition Control">
+                    <igDockManager:ContentPane x:Name="DataFlowControlPane" Header="Graph Engine MemoryCloud Control">
                         <ContentControl 
                             x:Name="DataFlowControlContent" 
                             BorderThickness="1" 
@@ -93,15 +93,15 @@
             <igDockManager:DocumentContentHost x:Name="ManagementDocManager">
 
                 <igDockManager:SplitPane x:Name="OntologyGroupPane">
-                    <igDockManager:TabGroupPane x:Name="MainCapabiloitiesGroupPane"
+                    <igDockManager:TabGroupPane x:Name="MainCapabilitiesGroupPane"
                                                 TabStripPlacement="Top"
                                                 prism:RegionManager.RegionName="{x:Static uiRegionNames:UIRegionNames.ProgramAboutInfoRegion}" 
                                                 VerticalContentAlignment="Stretch" 
                                                 HorizontalContentAlignment="Stretch">
 
-                        <igDockManager:ContentPane x:Name="OntologySemanticMapperPane" Header="Ontology Semantic Mapper" HorizontalAlignment="Left" />
-                        <igDockManager:ContentPane x:Name="RealTimeFlowDocumentLoggerPane" Header="Real-time FlowDocument Logger" HorizontalAlignment="Left" />
-                        <igDockManager:ContentPane x:Name="RoleBaseAccessSecurityControlPane" Header="Firmware Studio Role-Based Access Control" HorizontalAlignment="Left" />
+                        <igDockManager:ContentPane x:Name="GENativeServerManagerPane" Header="GE Native Server Manager" HorizontalAlignment="Left" />
+                        <igDockManager:ContentPane x:Name="GENativeAPITrackandMonitorPane" Header="GE Native API Track and Monitor" HorizontalAlignment="Left" />
+                        <igDockManager:ContentPane x:Name="GENativeServerSideLoggerPane" Header="GE Native Logger" HorizontalAlignment="Left" />
                         <igDockManager:ContentPane x:Name="SchedulerControlPane" Header="Component Scheduler" HorizontalAlignment="Left" />
 
                         <igDockManager:ContentPane x:Name="AdHocWorkflowExecutor" Header="AdHoc Test-Case/Workflow Executor" HorizontalAlignment="Left">

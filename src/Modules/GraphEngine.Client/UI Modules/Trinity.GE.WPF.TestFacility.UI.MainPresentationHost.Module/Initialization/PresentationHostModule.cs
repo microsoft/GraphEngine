@@ -10,16 +10,16 @@
  * --------------------------------------------------------------------------------*/
 
 using Castle.Windsor;
-using IKW.Contropolus.WPF.UI.Infrastructure.Base.Module;
-using IKW.Contropolus.WPF.UI.Infrastructure.UI.RegionNames;
-using IKW.Contropolus.WPF.UI.Infrastructure.UI.ShellServices;
-using IKW.Contropolus.WPF.UI.Infrastructure.UI.ViewNames;
 using Prism.Events;
 using Prism.Regions;
 using Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module.ViewModels;
 using Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module.Views;
+using Trinity.GE.WPF.UI.Infrastructure.Base.Module;
+using Trinity.GE.WPF.UI.Infrastructure.UI.RegionNames;
+using Trinity.GE.WPF.UI.Infrastructure.UI.ShellServices;
+using Trinity.GE.WPF.UI.Infrastructure.UI.ViewNames;
 
-namespace IKW.Contropolus.VKMC.UI.MainPresentationHost.Module.Initialization
+namespace Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module.Initialization
 {
     public class PresentationHostModule : ModuleBase
     {

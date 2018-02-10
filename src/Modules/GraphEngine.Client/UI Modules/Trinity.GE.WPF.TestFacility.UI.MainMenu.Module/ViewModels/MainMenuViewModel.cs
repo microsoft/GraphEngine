@@ -16,6 +16,7 @@ using IKW.Contropolus.VKMC.UI.MainMenu.Module.Views;
 using Prism.Events;
 using Prism.Regions;
 using Reactive.Bindings;
+using Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module.Initialization;
 using Trinity.GE.WPF.UI.Infrastructure.Base.Module;
 using Trinity.GE.WPF.UI.Infrastructure.Base.ViewModel;
 using Trinity.GE.WPF.UI.Infrastructure.Prism.Interfaces;
@@ -40,6 +41,9 @@ namespace Trinity.GE.WPF.TestFacility.UI.MainMenu.Module.ViewModels
         public ReactiveProperty<EventArgs> CloseWorkflowDisplayMonitorClickEvent { get; private set; }
         // ReloadAboutShellMenuControlClickEvent
         public ReactiveProperty<EventArgs> ReloadAboutShellMenuControlClickEvent { get; private set; }
+        // Added Support for Trinity Graph Engine Test Facilty GE-Native Server
+        public ReactiveProperty<EventArgs> OpenGEServerControlShellClickEvent { get; private set; }
+        public ReactiveProperty<EventArgs> CloseGEServerControlShellClickEvent { get; private set; }
 
         private ReactiveProperty<int> ReturnCode { get; set; }
 
@@ -94,6 +98,9 @@ namespace Trinity.GE.WPF.TestFacility.UI.MainMenu.Module.ViewModels
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void IntializeReactiveProperties()
         {
             OpenAboutShellClickEvent              = new ReactiveProperty<EventArgs>(mode: AllMode);
@@ -104,6 +111,8 @@ namespace Trinity.GE.WPF.TestFacility.UI.MainMenu.Module.ViewModels
             OpenWorkflowDisplayMonitorEvent       = new ReactiveProperty<EventArgs>(mode: AllMode);
             CloseWorkflowDisplayMonitorClickEvent = new ReactiveProperty<EventArgs>(mode: AllMode);
             ReloadAboutShellMenuControlClickEvent = new ReactiveProperty<EventArgs>(mode: AllMode);
+            OpenGEServerControlShellClickEvent    = new ReactiveProperty<EventArgs>(mode: AllMode);
+            CloseGEServerControlShellClickEvent   = new ReactiveProperty<EventArgs>(mode: AllMode);
         }
 
         public IRegionManager RegionManagerAware { get; set; }

@@ -139,6 +139,10 @@
       <Project>{e22b7a0b-6120-427e-94c2-955724d0178a}</Project>
       <Name>Trinity.GE.WPF.UI.Infrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module\Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module.csproj">
+      <Project>{2DD674E8-E5A0-412C-9D9E-22E898BE9D63}</Project>
+      <Name>Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

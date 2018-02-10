@@ -8,7 +8,7 @@
  * Copyright (c) 2009-2015 by InKnowWorks, Corp.                                   *
  * 2143 Willester Aave, San Jose, CA 95124. All rights reserved.                   *
  * --------------------------------------------------------------------------------*/
-namespace IKW.Contropolus.VKMC.UI.MainPresentationHost.Module.Data.Models
+namespace Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module.Data.Models
 {
     public class PresentationHostDataModel
     {
