@@ -1,0 +1,97 @@
+﻿<UserControl x:Class="Trinity.GE.WPF.TestFacility.UI.MainMenu.Module.Views.MainMenuView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:coreInteractivity="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ig="http://schemas.infragistics.com/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:prism="http://www.codeplex.com/prism"
+             xmlns:reactiveProperty="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.NET46"
+             xmlns:regions="http://www.codeplex.com/CompositeWPF"
+             xmlns:uiRegionNames="clr-namespace:Trinity.GE.WPF.UI.Infrastructure.UI.RegionNames;assembly=Trinity.GE.WPF.UI.Infrastructure"
+             x:Name="MainMenuControl"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!--<ResourceDictionary Source="/IGMenu;component/Assets/Global.xaml" />
+                <ResourceDictionary Source="/Infragistics.Themes.IGTheme;component/IG.xamMenu.xaml" />
+                <ResourceDictionary Source="/IGMenu;component/Assets/MenuDataTemplate.xaml"/>-->
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid x:Name="ControlHost">
+        <ig:XamMenu x:Name="MainMenuController">
+
+            <coreInteractivity:Interaction.Triggers>
+                <!--  Interactive Event Triggers for the About Shell  -->
+
+                <coreInteractivity:EventTrigger EventName="Click" SourceName="OpenAboutShell">
+                    <!-- ReSharper disable once Xaml.BindingWithoutContextNotResolved -->
+                    <reactiveProperty:EventToReactiveProperty ReactiveProperty="{Binding OpenAboutShellClickEvent, UpdateSourceTrigger=PropertyChanged}" />
+                </coreInteractivity:EventTrigger>
+                <coreInteractivity:EventTrigger EventName="Click" SourceName="CloseAboutShell">
+                    <reactiveProperty:EventToReactiveProperty ReactiveProperty="{Binding CloseAboutShellClickEvent, UpdateSourceTrigger=PropertyChanged}" />
+                </coreInteractivity:EventTrigger>
+                <coreInteractivity:EventTrigger EventName="Click" SourceName="CloseAllAboutShells">
+                    <reactiveProperty:EventToReactiveProperty ReactiveProperty="{Binding CloseAllAboutShellClickEvent, UpdateSourceTrigger=PropertyChanged}" />
+                </coreInteractivity:EventTrigger>
+                <coreInteractivity:EventTrigger EventName="Click" SourceName="ReloadAboutShellMenuControl">
+                    <reactiveProperty:EventToReactiveProperty ReactiveProperty="{Binding ReloadAboutShellMenuControlClickEvent, UpdateSourceTrigger=PropertyChanged}" />
+                </coreInteractivity:EventTrigger>
+
+                <!--  Interactive Event Triggers for the Workflow Control Shell  -->
+
+                <coreInteractivity:EventTrigger EventName="Click" SourceName="OpenWorkflowControlShell">
+                    <reactiveProperty:EventToReactiveProperty ReactiveProperty="{Binding OpenWorkflowControlClickEvent, UpdateSourceTrigger=PropertyChanged}" />
+                </coreInteractivity:EventTrigger>
+                <coreInteractivity:EventTrigger EventName="Click" SourceName="CloseWorkflowControlShell">
+                    <reactiveProperty:EventToReactiveProperty ReactiveProperty="{Binding CloseWorkflowControlClickEvent, UpdateSourceTrigger=PropertyChanged}" />
+                </coreInteractivity:EventTrigger>
+
+                <!--  Interactive Event Triggers for the Workflow Display Monitor Shell  -->
+
+                <coreInteractivity:EventTrigger EventName="Click" SourceName="OpenWorkflowDisplayMonitorShell">
+                    <reactiveProperty:EventToReactiveProperty ReactiveProperty="{Binding OpenWorkflowDisplayMonitorEvent, UpdateSourceTrigger=PropertyChanged}" />
+                </coreInteractivity:EventTrigger>
+                <coreInteractivity:EventTrigger EventName="Click" SourceName="CloseWorkflowDisplayMonitorShell">
+                    <reactiveProperty:EventToReactiveProperty ReactiveProperty="{Binding CloseWorkflowDisplayMonitorClickEvent, UpdateSourceTrigger=PropertyChanged}" />
+                </coreInteractivity:EventTrigger>
+
+                <!--  Interactive Event Triggers for the Trinity GE Test Facility Display Monitor Shell  -->
+
+                <coreInteractivity:EventTrigger EventName="Click" SourceName="TrinityTestFacilityControlMenu">
+                    <reactiveProperty:EventToReactiveProperty ReactiveProperty="{Binding OpenGEServerControlShellClickEvent, UpdateSourceTrigger=PropertyChanged}" />
+                </coreInteractivity:EventTrigger>
+                <coreInteractivity:EventTrigger EventName="Click" SourceName="CloseWorkflowDisplayMonitorShell">
+                    <reactiveProperty:EventToReactiveProperty ReactiveProperty="{Binding CloseGEServerControlShellClickEvent, UpdateSourceTrigger=PropertyChanged}" />
+                </coreInteractivity:EventTrigger>
+            </coreInteractivity:Interaction.Triggers>
+
+            <ig:XamMenuItem x:Name="AboutShellMenu" Header="Load About Shell">
+                <ig:XamMenuItem x:Name="OpenAboutShell" Header="Open About Shell" />
+                <ig:XamMenuItem x:Name="CloseAboutShell" Header="Close About Shell" />
+                <ig:XamMenuItem x:Name="CloseAllAboutShells" Header="Close About Shell Stack" />
+                <ig:XamMenuItem x:Name="ReloadAboutShellMenuControl" Header="Reload About Shell Menu Control" />
+            </ig:XamMenuItem>
+
+            <ig:XamMenuItem x:Name="TrinityTestFacilityControlMenu" Header="GE Test Facility (Server) Control Shell">
+                <ig:XamMenuItem x:Name="OpenGEServerControlShell" Header="Open GE Server Control Shell" />
+                <ig:XamMenuItem x:Name="CloseGEServerControlShell" Header="Close GE Server Control Shell" />
+            </ig:XamMenuItem>
+
+            <ig:XamMenuItem x:Name="WorkflowControlMenu" Header="Load Workflow Control Shell">
+                <ig:XamMenuItem x:Name="OpenWorkflowControlShell" Header="Open Workflow Control Shell" />
+                <ig:XamMenuItem x:Name="CloseWorkflowControlShell" Header="Close Workflow Control Shell" />
+            </ig:XamMenuItem>
+
+            <ig:XamMenuItem x:Name="WorkflowDisplayMonitorMenu" Header="Load Workflow Display Monitor Shell">
+                <ig:XamMenuItem x:Name="OpenWorkflowDisplayMonitorShell" Header="Open Workflow Display Monitor Shell" />
+                <ig:XamMenuItem x:Name="CloseWorkflowDisplayMonitorShell" Header="Close Workflow Display Monitor Shell" />
+            </ig:XamMenuItem>
+
+        </ig:XamMenu>
+    </Grid>
+</UserControl>
