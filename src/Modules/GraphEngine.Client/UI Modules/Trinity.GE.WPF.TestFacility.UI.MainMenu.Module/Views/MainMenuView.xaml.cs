@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿// Copyright (c) 2011 rubicon IT GmbH
+using System.Windows.Controls;
 using Trinity.GE.WPF.TestFacility.UI.MainMenu.Module.ViewModels;
 
 namespace Trinity.GE.WPF.TestFacility.UI.MainMenu.Module.Views

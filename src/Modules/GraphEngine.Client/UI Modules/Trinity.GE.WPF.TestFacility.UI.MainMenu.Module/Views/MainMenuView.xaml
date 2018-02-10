@@ -59,6 +59,15 @@
                 <coreInteractivity:EventTrigger EventName="Click" SourceName="CloseWorkflowDisplayMonitorShell">
                     <reactiveProperty:EventToReactiveProperty ReactiveProperty="{Binding CloseWorkflowDisplayMonitorClickEvent, UpdateSourceTrigger=PropertyChanged}" />
                 </coreInteractivity:EventTrigger>
+
+                <!--  Interactive Event Triggers for the Trinity GE Test Facility Display Monitor Shell  -->
+
+                <coreInteractivity:EventTrigger EventName="Click" SourceName="TrinityTestFacilityControlMenu">
+                    <reactiveProperty:EventToReactiveProperty ReactiveProperty="{Binding OpenGEServerControlShellClickEvent, UpdateSourceTrigger=PropertyChanged}" />
+                </coreInteractivity:EventTrigger>
+                <coreInteractivity:EventTrigger EventName="Click" SourceName="CloseWorkflowDisplayMonitorShell">
+                    <reactiveProperty:EventToReactiveProperty ReactiveProperty="{Binding CloseGEServerControlShellClickEvent, UpdateSourceTrigger=PropertyChanged}" />
+                </coreInteractivity:EventTrigger>
             </coreInteractivity:Interaction.Triggers>
 
             <ig:XamMenuItem x:Name="AboutShellMenu" Header="Load About Shell">
@@ -66,6 +75,11 @@
                 <ig:XamMenuItem x:Name="CloseAboutShell" Header="Close About Shell" />
                 <ig:XamMenuItem x:Name="CloseAllAboutShells" Header="Close About Shell Stack" />
                 <ig:XamMenuItem x:Name="ReloadAboutShellMenuControl" Header="Reload About Shell Menu Control" />
+            </ig:XamMenuItem>
+
+            <ig:XamMenuItem x:Name="TrinityTestFacilityControlMenu" Header="GE Test Facility (Server) Control Shell">
+                <ig:XamMenuItem x:Name="OpenGEServerControlShell" Header="Open GE Server Control Shell" />
+                <ig:XamMenuItem x:Name="CloseGEServerControlShell" Header="Close GE Server Control Shell" />
             </ig:XamMenuItem>
 
             <ig:XamMenuItem x:Name="WorkflowControlMenu" Header="Load Workflow Control Shell">
