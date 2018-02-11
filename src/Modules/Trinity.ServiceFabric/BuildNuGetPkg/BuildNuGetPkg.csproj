@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{06D172A0-9B3F-4A20-8FD3-C7D86EFB9420}</ProjectGuid>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Target Name="Build">
+    <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.3.5.0\tools\NuGet.exe pack $(ProjectDir)..\GraphEngine.ServiceFabric.Stateless.nuspec -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis" />
+  </Target>
+  <Target Name="Rebuild">
+    <Exec Command="$(ProjectDir)..\packages\NuGet.CommandLine.3.5.0\tools\NuGet.exe pack $(ProjectDir)..\GraphEngine.ServiceFabric.Stateless.nuspec -OutputDirectory $(ProjectDir)..\..\..\..\bin\ -NoPackageAnalysis" />
+  </Target>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.ServiceFabric\Trinity.ServiceFabric.csproj">
+      <Project>{a20ab17d-7a49-4427-a074-7a7f44358cf4}</Project>
+      <Name>Trinity.ServiceFabric</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

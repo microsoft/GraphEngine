@@ -10,7 +10,7 @@ using Microsoft.ServiceFabric.Services.Runtime;
 namespace Trinity.ServiceFabric.Diagnostics
 {
     [EventSource(Name = "Trinity.ServiceFabric")]
-    internal sealed class Log : EventSource
+    public sealed class Log : EventSource
     {
         public static readonly Log Current = new Log();
 

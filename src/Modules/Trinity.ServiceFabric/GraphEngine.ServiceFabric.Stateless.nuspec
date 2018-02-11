@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>GraphEngine.ServiceFabric.Stateless</id>
+    <version>1.0.0</version>
+    <authors>Microsoft Graph Engine Team</authors>
+    <owners>Microsoft Corporation</owners>
+    <licenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</licenseUrl>
+    <projectUrl>https://www.graphengine.io</projectUrl>
+    <iconUrl>https://www.graphengine.io/img/logo-64x64.png</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>GraphEngine stateless services for service fabric</description>
+    <copyright>Copyright 2018</copyright>
+    <tags>GraphEngine ServiceFabric</tags>
+    <dependencies>
+      <dependency id="GraphEngine.Core" version="1.0.8850" />
+      <dependency id="Microsoft.ServiceFabric.Services" version="2.8.232" />
+      <dependency id="WindowsAzure.Storage" version="8.6.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\Trinity.ServiceFabric\Trinity.ServiceFabric\bin\Release\Trinity.StatelessService.dll" target="lib" /> 
+  </files>
+</package>
