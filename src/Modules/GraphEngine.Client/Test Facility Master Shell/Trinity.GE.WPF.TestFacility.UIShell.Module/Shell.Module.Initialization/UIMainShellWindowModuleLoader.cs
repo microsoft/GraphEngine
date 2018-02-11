@@ -11,10 +11,10 @@
 
 using System;
 using Castle.Windsor;
-using IKW.Contropolus.VKMC.UIShell.Module.Shell;
 using Prism.Events;
 using Prism.Modularity;
 using Prism.Regions;
+using Trinity.GE.WPF.TestFacility.UI.MainMenu.Module.Initialization;
 using Trinity.GE.WPF.UI.Infrastructure.Base.Module;
 using Trinity.GE.WPF.UI.Infrastructure.UI.ModuleNames;
 

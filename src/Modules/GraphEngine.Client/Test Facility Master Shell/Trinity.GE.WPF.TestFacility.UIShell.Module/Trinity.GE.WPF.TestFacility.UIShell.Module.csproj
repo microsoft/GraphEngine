@@ -178,6 +178,14 @@
       <Project>{e22b7a0b-6120-427e-94c2-955724d0178a}</Project>
       <Name>Trinity.GE.WPF.UI.Infrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\UI Modules\Trinity.GE.WPF.TestFacility.UI.MainMenu.Module\Trinity.GE.WPF.TestFacility.UI.MainMenu.Module.csproj">
+      <Project>{5ECBC5A5-9B0D-4DAE-AC98-13158E1862BE}</Project>
+      <Name>Trinity.GE.WPF.TestFacility.UI.MainMenu.Module</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\UI Modules\Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module\Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module.csproj">
+      <Project>{2DD674E8-E5A0-412C-9D9E-22E898BE9D63}</Project>
+      <Name>Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\UI WPF ServiceLocator\UI.CastleWindsorAdapter.ServiceLocator\UI.CastleWindsorAdapter.ServiceLocator.csproj">
       <Project>{772C5F8D-266C-4DAA-B7AF-91A99DBDE1AF}</Project>
       <Name>UI.CastleWindsorAdapter.ServiceLocator</Name>

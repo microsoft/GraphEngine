@@ -13,7 +13,6 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using Castle.Windsor;
-using IKW.Contropolus.VKMC.UIShell.Module.Shell;
 using Prism.Regions;
 using Trinity.GE.WPF.UI.Infrastructure.UI.RegionNames;
 using Trinity.GE.WPF.UI.Infrastructure.UI.ShellServices;

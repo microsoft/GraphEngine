@@ -9,13 +9,18 @@
  * 2143 Willester Aave, San Jose, CA 95124. All rights reserved.                   *
  * --------------------------------------------------------------------------------*/
 
-using System.ComponentModel;
 using System.Windows;
 using Castle.Core;
-using IKW.Contropolus.VKMC.UIShell.Module.Shell;
+using Infragistics.Windows.DockManager;
 using Prism.Modularity;
 using Prism.Regions;
 using PrismContrib.WindsorExtensions;
+using Trinity.GE.WPF.TestFacility.UI.MainMenu.Module.Initialization;
+using Trinity.GE.WPF.TestFacility.UI.MainMenu.Module.ViewModels;
+using Trinity.GE.WPF.TestFacility.UI.MainMenu.Module.Views;
+using Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module.Initialization;
+using Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module.ViewModels;
+using Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module.Views;
 using Trinity.GE.WPF.TestFacility.UIShell.Module.Shell.Module.Initialization;
 using Trinity.GE.WPF.TestFacility.UIShell.Module.Shell.Services;
 using Trinity.GE.WPF.TestFacility.UIShell.Module.UI.ViewModels;
@@ -52,13 +57,13 @@ namespace Trinity.GE.WPF.TestFacility.UIShell.Module.UI.Boostrapper
 
         protected override void InitializeShell()
         {
-            var regionManager = RegionManager.GetRegionManager((IKW.Contropolus.VKMC.UIShell.Module.Shell));
-            RegionManagerAware.SetRegionManagerAware(IKW.Contropolus.VKMC.UIShell.Module.Shell, regionManager);
+            var regionManager = RegionManager.GetRegionManager((Shell));
+            RegionManagerAware.SetRegionManagerAware(Shell, regionManager);
 
             base.InitializeShell();
 
-            Application.Current.MainWindow = (Window) IKW.Contropolus.VKMC.UIShell.Module.Shell;
-            Application.Current.MainWindow.Show();
+            Application.Current.MainWindow = (Window) Shell;
+            Application.Current.MainWindow?.Show();
         }
 
         /// <summary>
