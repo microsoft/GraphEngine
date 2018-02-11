@@ -75,11 +75,11 @@ namespace FanoutSearch
                 while (bcap < boffset)
                 {
                     // first try: 1.5x growth
-                    if (int.MaxValue - bcap >= (bcap>>1)) bcap += (bcap >> 1);
+                    if (FanoutSearchModule.s_max_fanoutmsg_size - bcap >= (bcap>>1)) bcap += (bcap >> 1);
                     // second try: step size
-                    else if (int.MaxValue - bcap >= c_realloc_step_size) bcap += c_realloc_step_size;
-                    // third try: approach intmax
-                    else bcap = int.MaxValue;
+                    else if (FanoutSearchModule.s_max_fanoutmsg_size - bcap >= c_realloc_step_size) bcap += c_realloc_step_size;
+                    // third try: approach maximum value
+                    else bcap = FanoutSearchModule.s_max_fanoutmsg_size;
                 }
                 if(bcap != buf_capacity[slaveID])
                 {

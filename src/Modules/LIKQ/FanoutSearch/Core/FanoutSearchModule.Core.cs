@@ -585,6 +585,12 @@ namespace FanoutSearch
                     catch (MessageTooLongException) { msg_too_big = true; }
                     catch { }
 
+                    if (msg_too_big)
+                    {
+                        loopstate.Break();
+                        return;
+                    }
+
                     if (0 == (enumerated_path_cnt & 0xFF) && _QueryTimeoutEnabled() && aggregation_obj.stopwatch.ElapsedMilliseconds > s_query_time_quota)
                     {
                         loopstate.Break();

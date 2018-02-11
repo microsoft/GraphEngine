@@ -19,6 +19,7 @@ using Trinity.Diagnostics;
 using Trinity.Network.Http;
 using System.Globalization;
 using Trinity.Network.Messaging;
+using System.Threading;
 
 namespace FanoutSearch
 {
@@ -204,29 +205,38 @@ namespace FanoutSearch
 
         private static void _SerializePaths(FanoutSearchDescriptor search, TextWriter writer)
         {
-            var paths = search.ToList().AsParallel().Select(p =>
-            {
-                StringBuilder builder = new StringBuilder();
-                p.Serialize(builder);
-                return builder.ToString();
-            });
-            bool first = true;
-            writer.Write('[');
-
             long len = 0;
-
-            foreach (var path in paths)
+            try
             {
-                len += path.Length;
-                if (len > s_max_rsp_size) throw new MessageTooLongException();
-                if (first) { first = false; }
-                else { writer.Write(','); }
+                var paths = search.ToList().AsParallel().Select(p =>
+                {
+                    StringBuilder builder = new StringBuilder();
+                    p.Serialize(builder);
+                    var newlen = Interlocked.Add(ref len, builder.Length);
+                    if (newlen > s_max_rsp_size) throw new MessageTooLongException();
+                    return builder.ToString();
+                });
+                bool first = true;
+                writer.Write('[');
 
-                writer.Write(path);
+
+                foreach (var path in paths)
+                {
+                    if (first) { first = false; }
+                    else { writer.Write(','); }
+
+                    writer.Write(path);
+                }
+                writer.Write(']');
             }
-
-            writer.Write(']');
-
+            catch (AggregateException ex) when (ex.InnerExceptions.Any(_ => _ is MessageTooLongException || _ is OutOfMemoryException))
+            {
+                throw new MessageTooLongException();
+            }
+            catch (OutOfMemoryException)
+            {
+                throw new MessageTooLongException();
+            }
         }
 
         private static bool QueryPathInvalid(string queryPath)
