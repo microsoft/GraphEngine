@@ -1,0 +1,122 @@
+﻿<UserControl x:Name="ProgramInfoUserControl" 
+             x:Class="Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module.Views.ProgramInfoView"
+             DataContext="{Binding ProgramInfoViewModel}"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:igDP="http://infragistics.com/DataPresenter" 
+             xmlns:prism="http://www.codeplex.com/prism"
+             xmlns:regions="http://www.codeplex.com/CompositeWPF"
+             xmlns:coreInteractivity ="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:reactiveProperty="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.NET46"
+             xmlns:uiRegionNames="clr-namespace:Trinity.GE.WPF.UI.Infrastructure.UI.RegionNames;assembly=Trinity.GE.WPF.UI.Infrastructure"
+             xmlns:interactivity="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.NET46"
+             d:DataContext="{d:DesignData Source=ProgramInfoView.xaml.cs }" 
+             Grid.IsSharedSizeScope="True" 
+             BorderThickness="1" 
+             ScrollViewer.HorizontalScrollBarVisibility="Auto" 
+             ScrollViewer.VerticalScrollBarVisibility="Auto" d:DesignWidth="23.449" d:DesignHeight="21.574">
+
+    <!--We are going to use this Style from C# Code at runtime by referencing this XAML by the Key attribute-->
+
+    <UserControl.Resources>
+        <Style x:Key="ProgramShortDescStyle" TargetType="{x:Type igDP:CellValuePresenter}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type igDP:CellValuePresenter}">
+                        <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                            <TextBlock Width="Auto"
+                                       Height="Auto"
+                                       Margin="{TemplateBinding Padding}"
+                                       Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Value}"
+                                       LineStackingStrategy="BlockLineHeight"
+                                       TextTrimming="None"
+                                       HorizontalAlignment="Stretch"
+                                       TextAlignment="Left"
+                                       TextWrapping="Wrap" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <!-- Here we are setting up an Interactive Trigger Behavior on the xamDataCard control instance-->
+
+    <!-- Okay, here we are setting up an EventTrigger By Name; the Event Registered on the control is "Loaded"; we also explicitly name the
+                     the control via the SourceName Attribute.-->
+
+    <!-- I'm using Declaring a ReactiveProperty that will push an Event Stream into my ViewModel; in the ViewModel is a publicly-scoped property
+                         named "ReactOnLoaded". This type of attachment and processing is call "Direct-Reactive-Binding." Also, I want the event raised when the
+                         PropertyChanged Event is Raised.-->
+
+    <Grid x:Name="UIGridLayoutRoot">
+
+        <!--We use the Infragistics xamDataCards control for Presentation.-->
+
+        <igDP:XamDataCards x:Name="UIProgramInfoData"
+                           Theme="IGTheme" 
+                           VerticalContentAlignment="Stretch" 
+                           ScrollBehaviorOnListChange="PreserveRecordsInView" 
+                           AutoFit="True" 
+                           ScrollViewer.CanContentScroll="True" 
+                           HorizontalContentAlignment="Stretch">
+            <igDP:XamDataCards.GroupByArea>
+                <igDP:GroupByArea/>
+            </igDP:XamDataCards.GroupByArea>
+
+            <igDP:XamDataCards.FieldLayoutSettings>
+                <igDP:FieldLayoutSettings FieldResizingArea="LabelsAndCells" AutoGenerateFields="True" />
+            </igDP:XamDataCards.FieldLayoutSettings>
+
+            <igDP:XamDataCards.FieldSettings>
+                <igDP:FieldSettings AllowCellVirtualization="False"
+                                    AllowEdit="False"
+                                    LabelTextAlignment="Left"
+                                    LabelTextTrimming="CharacterEllipsis"
+                                    LabelTextWrapping="WrapWithOverflow" 
+                                    DataItemUpdateTrigger="OnCellValueChange" 
+                                    AutoSizeOptions="DataCells" 
+                                    AllowResize="True" AutoSizeScope="AllRecords" />
+            </igDP:XamDataCards.FieldSettings>
+
+            <igDP:XamDataCards.ViewSettings>
+                <igDP:CardViewSettings AllowCardHeightResizing="True"
+                                       AllowCardWidthResizing="True"                                       
+                                       CollapseEmptyCellsButtonVisibility="Visible"
+                                       Orientation="Horizontal"
+                                       Padding="4,2,4,2" 
+                                       ShouldCollapseEmptyCells="True"/>
+            </igDP:XamDataCards.ViewSettings>
+        </igDP:XamDataCards>
+
+        <coreInteractivity:Interaction.Triggers>
+
+            <coreInteractivity:EventTrigger 
+                    x:Name="DataCardIsLoaded"
+                    EventName="Loaded" 
+                    SourceName="UIProgramInfoData">
+
+                <interactivity:EventToReactiveProperty
+                        x:Name="ReactOnLoaded" 
+                        ReactiveProperty="{Binding ReactOnLoaded, UpdateSourceTrigger=PropertyChanged}" />
+
+            </coreInteractivity:EventTrigger>
+
+            <coreInteractivity:EventTrigger 
+                    x:Name="FieldLayoutReactor"
+                    EventName="FieldLayoutInitialized"
+                    SourceName="UIProgramInfoData">
+
+                <reactiveProperty:EventToReactiveProperty 
+                        x:Name="ReactOnInitialized"
+                        IgnoreEventArgs="False"
+                        ReactiveProperty="{Binding ReactOnInitialized, UpdateSourceTrigger=PropertyChanged}" />
+
+            </coreInteractivity:EventTrigger>
+
+        </coreInteractivity:Interaction.Triggers>
+
+    </Grid>
+</UserControl>

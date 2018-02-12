@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ikw:ProgramInformationData xmlns:ikw="http://www.inknowworks.com/program/metadata">
+<ikw:ProgramName>InKnowWorks Contropolus:A WPF Frameworks and Ontology Reasoning Core, UI/UX and Eventing Services and Runtime</ikw:ProgramName>
+	<ikw:Version>0.0.8.1</ikw:Version>
+	<ikw:Release>0.1.7.1</ikw:Release>
+	<ikw:IPOwner>InKnowWorks, CORP.</ikw:IPOwner>
+	<ikw:ContactInfo>
+		<ikw:AddressLine1>2143 Willester Ave</ikw:AddressLine1>
+		<ikw:AddressLine2/>
+		<ikw:City>San Jose</ikw:City>
+		<ikw:State>California</ikw:State>
+		<ikw:PhoneNumber>408-398-9143</ikw:PhoneNumber>
+		<ikw:ZipCode>95124</ikw:ZipCode>
+	</ikw:ContactInfo>
+	<ikw:ShortProgramDescription>
+		<ikw:Para>Contropolus-PRIME is a Set of Advanced Technologies that make up the InKnowWorks Visual Knowledge Management Console (VKMC) Technology.</ikw:Para>
+		<ikw:Para>Contropolus-PRIME contains the foundations for what in time will become a WPF self-aware Reasoned-About and Dynamically Generated UI/UX</ikw:Para>
+		<ikw:Para>Knowledge Presentation Engine for the dynamic generation of XAML and C# code productions. These are the very early days of the technology</ikw:Para>
+    <ikw:Para>and so this version will change and evolve at a rapid and constant rate over the next two to 3 years. </ikw:Para>
+		<ikw:Para>The assemblage of component parts and is made-up of a Parallel Processing OWL-DL Ontology Reasoner outfitted to work specifically against the</ikw:Para>
+    <ikw:Para>WPF technology set; the purpose of the Reasoner is to compute agaisnt the WPF XAML Language and WPF Coded API and as well as any WPF written components.</ikw:Para>
+    <ikw:Para>Contropolus-PRIME works with the CathexusGEN Meta-programming runtime to generate Loose XAML and Native C# code at runtime; the code is</ikw:Para>
+    <ikw:Para>Dynamically Injected at runtime thus there is only a single notion of UI/UX computed happenings substantiated aginst the User's Operating Context.</ikw:Para>
+    <ikw:Para>There's a built-in Parallel-Tasking Taxomnomier, High Performance Graph-based Repository, Reactive Pub/Sub Eventing Engine, Reactive Event Streaming so much more. Take</ikw:Para>
+    <ikw:Para>Take a look at the Contropolus-PRIME Architecture Model Table hosted in this application.</ikw:Para>
+	</ikw:ShortProgramDescription>
+	<ikw:OrginialAuthorInfo>
+		<ikw:Author>Tavi Truman</ikw:Author>
+		<ikw:ProfessionalAssociation>InKnowWorks CORP.</ikw:ProfessionalAssociation>
+	</ikw:OrginialAuthorInfo>
+</ikw:ProgramInformationData>

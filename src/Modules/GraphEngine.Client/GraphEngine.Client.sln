@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.WPF.TestFacility
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module", "UI Modules\Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module\Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module.csproj", "{2DD674E8-E5A0-412C-9D9E-22E898BE9D63}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module", "UI Modules\Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module\Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module.csproj", "{89684280-8CE1-4662-9CD9-45027474B969}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,10 @@ Global
 		{2DD674E8-E5A0-412C-9D9E-22E898BE9D63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DD674E8-E5A0-412C-9D9E-22E898BE9D63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DD674E8-E5A0-412C-9D9E-22E898BE9D63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89684280-8CE1-4662-9CD9-45027474B969}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89684280-8CE1-4662-9CD9-45027474B969}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89684280-8CE1-4662-9CD9-45027474B969}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89684280-8CE1-4662-9CD9-45027474B969}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +96,7 @@ Global
 		{C51048FA-F6F5-4ED9-B0CD-1F16431AA031} = {52D8A13B-BD30-4260-BF1D-71D5AE8D27F5}
 		{5ECBC5A5-9B0D-4DAE-AC98-13158E1862BE} = {18097C4F-E453-4E6F-B621-D34D569D84C2}
 		{2DD674E8-E5A0-412C-9D9E-22E898BE9D63} = {18097C4F-E453-4E6F-B621-D34D569D84C2}
+		{89684280-8CE1-4662-9CD9-45027474B969} = {18097C4F-E453-4E6F-B621-D34D569D84C2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C53F0FFC-9BFC-4C08-975C-C5CBE5B1888E}
