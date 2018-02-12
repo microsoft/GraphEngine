@@ -186,6 +186,10 @@
       <Project>{2DD674E8-E5A0-412C-9D9E-22E898BE9D63}</Project>
       <Name>Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\UI Modules\Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module\Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module.csproj">
+      <Project>{89684280-8CE1-4662-9CD9-45027474B969}</Project>
+      <Name>Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\UI WPF ServiceLocator\UI.CastleWindsorAdapter.ServiceLocator\UI.CastleWindsorAdapter.ServiceLocator.csproj">
       <Project>{772C5F8D-266C-4DAA-B7AF-91A99DBDE1AF}</Project>
       <Name>UI.CastleWindsorAdapter.ServiceLocator</Name>
