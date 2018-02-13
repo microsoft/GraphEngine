@@ -10,35 +10,12 @@ then
 	exit -1
 fi
 
-if [ ! -e /etc/os-release ] ;
-then
-	echo "error: cannot determine distro." 1>&2
+if [ "$(command -v dotnet)" == "" ] ; 
+then 
+	echo "error: dotnet not found." 1>&2
+	echo "see: https://www.microsoft.com/net/download/linux"
 	exit -1
-else
-	source /etc/os-release
-	echo "current distro: $ID $VERSION_ID"
 fi
-
-# check if we have dotnet sdk
-if [ ! -e "$REPO_ROOT/tools/dotnet" ];
-then
-	tmp=$(tempfile)
-	echo "dotnet sdk not found, downloading."
-	case "$ID $VERSION_ID" in
-	"ubuntu 16.04")
-		dotnet_url="https://download.microsoft.com/download/D/7/2/D725E47F-A4F1-4285-8935-A91AE2FCC06A/dotnet-sdk-2.0.3-linux-x64.tar.gz"
-		;;
-	*)
-		echo "error: unsupported distro." 1>&2
-		exit -1
-		;;
-	esac
-	wget $dotnet_url -O $tmp || exit -1
-	mkdir "$REPO_ROOT/tools/dotnet"
-	tar -xzf $tmp -C "$REPO_ROOT/tools/dotnet" || exit -1
-	rm $tmp
-fi
-export PATH="$REPO_ROOT/tools/dotnet":$PATH
 
 # build Trinity.C
 build_trinity_c()
