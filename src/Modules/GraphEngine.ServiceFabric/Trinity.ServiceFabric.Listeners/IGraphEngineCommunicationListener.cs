@@ -10,7 +10,6 @@ namespace Trinity.ServiceFabric.Listeners
 {
     public interface IGraphEngineCommunicationListener : ICommunicationListener
     {
-        GraphEngineStatefulServiceRuntime Runtime { get; set; }
         string ListenerName { get; }
         /// <summary>
         /// Transports specifically designed for client-server communication

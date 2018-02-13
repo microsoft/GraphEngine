@@ -18,6 +18,14 @@
     <TslCodegen Include="**/*.tsl" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Resources\names.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\names.txt" />
+  </ItemGroup>
+
   <!-- NuGet package metadata -->
   <PropertyGroup>
     <Authors>Microsoft Graph Engine Team</Authors>

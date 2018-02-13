@@ -20,15 +20,12 @@ namespace Trinity.ServiceFabric
     /// </summary>
     public sealed class GraphEngineService : StatefulService, IGraphEngineStatefulService
     {
-        private readonly GraphEngineStatefulServiceRuntime m_graphEngineRuntime;
         //  Passive Singleton
         public GraphEngineService(StatefulServiceContext context)
             : base(context)
         {
-            m_graphEngineRuntime = new GraphEngineStatefulServiceRuntime(this);
+            GraphEngineStatefulServiceRuntime.Initialize(this);
         }
-
-        public GraphEngineStatefulServiceRuntime GraphEngineRuntime => m_graphEngineRuntime;
 
         public event EventHandler<RestoreEventArgs> RequestRestore = delegate{ };
 
@@ -52,14 +49,14 @@ namespace Trinity.ServiceFabric
 
         protected override Task OnChangeRoleAsync(ReplicaRole newRole, CancellationToken cancellationToken)
         {
-            GraphEngineRuntime.Role = newRole;
+            GraphEngineStatefulServiceRuntime.Instance.Role = newRole;
             Log.WriteLine("{0}", $"Replica {Context.ReplicaOrInstanceId} changed role to {newRole}");
             return base.OnChangeRoleAsync(newRole, cancellationToken);
         }
 
         protected override async Task<bool> OnDataLossAsync(RestoreContext restoreCtx, CancellationToken cancellationToken)
         {
-            Log.WriteLine("{0}", $"Partition {m_graphEngineRuntime.PartitionId} received OnDataLossAsync. Triggering data restore.");
+            Log.WriteLine("{0}", $"Partition {GraphEngineStatefulServiceRuntime.Instance.PartitionId} received OnDataLossAsync. Triggering data restore.");
             RestoreEventArgs rstArgs = new RestoreEventArgs(restoreCtx, cancellationToken);
             RequestRestore(this, rstArgs);
             await rstArgs.Wait();

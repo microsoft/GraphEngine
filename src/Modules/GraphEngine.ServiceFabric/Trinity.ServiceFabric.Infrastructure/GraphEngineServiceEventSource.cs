@@ -48,7 +48,7 @@ namespace Trinity.ServiceFabric.Infrastructure
         [NonEvent]
         private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Log.WriteLine(LogLevel.Fatal, "{0}", $"Unhandled exception: {e.ExceptionObject.ToString()}.");
+            GraphEngineLogFatal($"Unhandled exception: {e.ExceptionObject.ToString()}.");
         }
 
         [NonEvent]

@@ -73,17 +73,16 @@ namespace Trinity.ServiceFabric.Infrastructure
                                                 string IPAddress,
                                                 StatefulServiceContext Context) runtimeContext)
         {
-            // load trinity configuration from service fabric settings
-            LoadTrinityConfiguration(runtimeContext.Context);
-
             // initialize event source
             GraphEngineStatefulServiceEventSource.Current.GraphEngineLogInfo($"{nameof(TrinityServerRuntimeManager)}: Initializing Trinity runtime environment.");
+
+            // load trinity configuration from service fabric settings
+            LoadTrinityConfiguration(runtimeContext.Context);
 
             // load a reference pointer so that we can get to this data from a different place in STAP
             m_serviceFabricRuntimeContext = runtimeContext;
 
             // Let's configure the Trinity Server Configuration gotten from the Service Fabric Runtime Stateful-Service contexte
-
             var groupOfAvailabilityServers = TrinityConfig.CurrentClusterConfig.Servers;
 
             // Clear out any default configure in place!
