@@ -54,8 +54,8 @@ build_trinity_core()
 	echo "Building Trinity.Core"
 	pushd "$REPO_ROOT/src/Trinity.Core"
 	dotnet restore Trinity.Core.sln || exit -1
-	dotnet build -c Release Trinity.Core.sln || exit -1
-	dotnet pack -c Release Trinity.Core.sln || exit -1
+	dotnet build -c Release /p:TargetFrameworks=netstandard2.0 Trinity.Core.sln || exit -1
+	dotnet pack -c Release /p:TargetFrameworks=netstandard2.0 Trinity.Core.sln || exit -1
 	popd
 }
 
@@ -65,8 +65,8 @@ build_likq()
 	echo "Building Trinity.Core"
 	pushd "$REPO_ROOT/src/Modules/LIKQ"
 	dotnet restore LIKQ.sln || exit -1
-	dotnet build -c Release LIKQ.sln || exit -1
-	dotnet pack -c Release LIKQ.sln || exit -1
+	dotnet build -c Release /p:TargetFrameworks=netstandard2.0 LIKQ.sln || exit -1
+	dotnet pack -c Release /p:TargetFrameworks=netstandard2.0 LIKQ.sln || exit -1
 	popd
 }
 
@@ -76,19 +76,19 @@ build_client()
 	echo "Building Trinity.Client"
 	pushd "$REPO_ROOT/src/Modules/GraphEngine.Client"
 	dotnet restore GraphEngine.Client.sln || exit -1
-	dotnet build -c Release GraphEngine.Client.sln || exit -1
-	dotnet pack -c Release GraphEngine.Client.sln || exit -1
+	dotnet build -c Release /p:TargetFrameworks=netstandard2.0 GraphEngine.Client.sln || exit -1
+	dotnet pack -c Release /p:TargetFrameworks=netstandard2.0 GraphEngine.Client.sln || exit -1
 	popd
 }
 
 # build composite_ext
 build_composite_ext()
 {
-	echo "Building Trinity.CompositeExtension"
-	pushd "$REPO_ROOT/src/Modules/Trinity.Storage.CompositeExtension"
-	dotnet restore Trinity.Storage.CompositeExtension.sln || exit -1
-	dotnet build -c Release Trinity.Storage.CompositeExtension.sln || exit -1
-	dotnet pack -c Release Trinity.Storage.CompositeExtension.sln || exit -1
+	echo "Building GraphEngine.Storage.Composite"
+	pushd "$REPO_ROOT/src/Modules/GraphEngine.Storage.Composite"
+	dotnet restore GraphEngine.Storage.Composite.sln || exit -1
+	dotnet build -c Release /p:TargetFrameworks=netstandard2.0 GraphEngine.Storage.Composite.sln || exit -1
+	dotnet pack -c Release /p:TargetFrameworks=netstandard2.0 GraphEngine.Storage.Composite.sln || exit -1
 	popd
 }
 
