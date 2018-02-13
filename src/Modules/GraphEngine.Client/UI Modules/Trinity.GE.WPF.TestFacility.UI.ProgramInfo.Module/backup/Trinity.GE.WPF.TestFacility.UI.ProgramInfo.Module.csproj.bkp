@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5ECBC5A5-9B0D-4DAE-AC98-13158E1862BE}</ProjectGuid>
+    <ProjectGuid>{89684280-8CE1-4662-9CD9-45027474B969}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Trinity.GE.WPF.TestFacility.UI.MainMenu.Module</RootNamespace>
-    <AssemblyName>Trinity.GE.WPF.TestFacility.UI.MainMenu.Module</AssemblyName>
+    <RootNamespace>Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module</RootNamespace>
+    <AssemblyName>Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,13 +30,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="InfragisticsWPF4.Controls.Menus.XamMenu.v17.2, Version=17.2.20172.2029, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />
-    <Reference Include="InfragisticsWPF4.v17.2, Version=17.2.20172.2029, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Castle.Core.4.2.0\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
     <Reference Include="Castle.Windsor, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Castle.Windsor.4.1.0\lib\net45\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="InfragisticsWPF4.DataPresenter.v17.2, Version=17.2.20172.2029, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />
+    <Reference Include="InfragisticsWPF4.Editors.v17.2, Version=17.2.20172.2029, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />
+    <Reference Include="InfragisticsWPF4.v17.2, Version=17.2.20172.2029, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -59,28 +63,15 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Reactive.Core, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Reactive.Core.3.1.1\lib\net46\System.Reactive.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.Interfaces, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Reactive.Interfaces.3.1.1\lib\net45\System.Reactive.Interfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.Linq, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+    <Reference Include="System.Reactive.Linq">
       <HintPath>..\..\packages\System.Reactive.Linq.3.1.1\lib\net46\System.Reactive.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.PlatformServices, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Reactive.PlatformServices.3.1.1\lib\net46\System.Reactive.PlatformServices.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.Windows.Threading, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Reactive.Windows.Threading.3.1.1\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Windows" />
-    <Reference Include="System.Windows.Controls.Input.Toolkit">
+    <Reference Include="System.Windows.Controls.Input.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\WPFToolkit.3.5.50211.1\lib\System.Windows.Controls.Input.Toolkit.dll</HintPath>
     </Reference>
-    <Reference Include="System.Windows.Controls.Layout.Toolkit">
+    <Reference Include="System.Windows.Controls.Layout.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\WPFToolkit.3.5.50211.1\lib\System.Windows.Controls.Layout.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -95,46 +86,66 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
+    <Reference Include="WPFToolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\WPFToolkit.3.5.50211.1\lib\WPFToolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Initialization\MainMenuModule.cs" />
+    <Compile Include="Data.Models\ProgramInfoDataModel.cs" />
+    <Compile Include="Initialization\ProgramInfoModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\MainMenuViewModel.cs" />
-    <Compile Include="Views\MainMenuView.xaml.cs">
-      <DependentUpon>MainMenuView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\MessagingCmdsView.xaml.cs">
-      <DependentUpon>MessagingCmdsView.xaml</DependentUpon>
+    <Compile Include="ViewModels\ProgramInfoViewModel.cs" />
+    <Compile Include="Views\ProgramInfoView.xaml.cs">
+      <DependentUpon>ProgramInfoView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Views\MainMenuView.xaml">
+    <Content Include="ProgramInfo.Data\IKW.ProtoNexus.ProgramInformation.xml" />
+    <Content Include="Themes\IG\HowToApplyTheme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Trinity.GE.WPF.TestFacility.ProgramInfo.Module.licenseheader" />
+    <None Include="packages.config" />
+    <None Include="ProgramInfo.Data\IKW.ProtoNexus.ProgramInformation.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Themes\IG\IG.MSControls.Core.Implicit.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\MessagingCmdsView.xaml">
+    <Page Include="Themes\IG\IG.MSControls.Toolkit.Implicit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\IG\Styles.Shared.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\IG\Styles.WPF.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\IG\Theme.Colors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ProgramInfoView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\UI Infrastructure\Trinity.GE.WPF.UI.Infrastructure\Trinity.GE.WPF.UI.Infrastructure.csproj">
-      <Project>{e22b7a0b-6120-427e-94c2-955724d0178a}</Project>
+      <Project>{E22B7A0B-6120-427E-94C2-955724D0178A}</Project>
       <Name>Trinity.GE.WPF.UI.Infrastructure</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module\Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module.csproj">
-      <Project>{2DD674E8-E5A0-412C-9D9E-22E898BE9D63}</Project>
-      <Name>Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module</Name>
+    <ProjectReference Include="..\..\UI WPF ServiceLocator\UI.CastleWindsorAdapter.ServiceLocator\UI.CastleWindsorAdapter.ServiceLocator.csproj">
+      <Project>{772c5f8d-266c-4daa-b7af-91a99dbde1af}</Project>
+      <Name>UI.CastleWindsorAdapter.ServiceLocator</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module\Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module.csproj">
-      <Project>{89684280-8CE1-4662-9CD9-45027474B969}</Project>
-      <Name>Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-    <None Include="Trinity.GE.WPF.TestFacility.UI.MainMenu.Module.licenseheader" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

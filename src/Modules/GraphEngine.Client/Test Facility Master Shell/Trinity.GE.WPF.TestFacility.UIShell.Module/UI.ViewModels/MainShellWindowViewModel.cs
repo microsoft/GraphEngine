@@ -63,7 +63,7 @@ namespace Trinity.GE.WPF.TestFacility.UIShell.Module.UI.ViewModels
             const ReactivePropertyMode modeIsNone = ReactivePropertyMode.DistinctUntilChanged;
 
             this.ProgramInfoTitle =
-                new ReactiveProperty<string>($"InKnowWorks Contropolus WPF Experimental Parallel-Multi-Shell (PMS) - Testing Contropolus Concepts");
+                new ReactiveProperty<string>($"InKnowWorks Contropolus WPF Experimental Parallel-Multi-Shell: Testing Contropolus Design Facets");
 
             // Let's get the ProgramInformation Data Loaded
 

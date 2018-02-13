@@ -20,14 +20,14 @@ using Trinity.GE.WPF.UI.Infrastructure.UI.ShellServices;
 
 namespace Trinity.GE.WPF.UI.Infrastructure.UI.Shell.Services
 {
-    public class ShellService<TContropolousShellWindowType> : IUIShellService
+    public class ShellService<TContropolusShellWindowType> : IUIShellService
     {
         private IWindsorContainer GlobalContainer { get; set; }
         private IRegionManager ShellInstanceGlobalRegionManager { get; set; }
         private IRegionManager ScopedRegionInActiveShell { get; set; }
         private ImmutableDictionary<(string ShellName, DependencyObject ShellWindow), Type> _multiGenericShellWindowTypeCache;
-        private ImmutableDictionary<(string ShellName, DependencyObject ShellWindow), TContropolousShellWindowType> _multiShellwindowTypeCache;
-        private TContropolousShellWindowType _contropolousShellWindow;
+        private ImmutableDictionary<(string ShellName, DependencyObject ShellWindow), TContropolusShellWindowType> _multiShellwindowTypeCache;
+        private TContropolusShellWindowType _contropolousShellWindow;
         private DependencyObject _shellWindowDependencyObject;
 
         public ShellService(IWindsorContainer theGlobalContainer,
@@ -48,7 +48,7 @@ namespace Trinity.GE.WPF.UI.Infrastructure.UI.Shell.Services
         {
             //var s = CastleWindsorContainerExtensions.Resolve(GlobalContainer, typeof(MainShellWindow));
 
-            var shell = GlobalContainer.Resolve<TContropolousShellWindowType>() as Window;
+            var shell = GlobalContainer.Resolve<TContropolusShellWindowType>() as Window;
             //var dpShell = shell as Window;
 
             var scopedRegion = ShellInstanceGlobalRegionManager.CreateRegionManager();
@@ -68,7 +68,7 @@ namespace Trinity.GE.WPF.UI.Infrastructure.UI.Shell.Services
 
         //private Func<Type, Type, string, IRegionManager> DefaultViewViewModelViewNameFactory = (theUIView, theUIViewModel, theUIViewName) =>
         //{
-        //    var shell = GlobalContainer.Resolve<TContropolousShellWindowType>() as Window;
+        //    var shell = GlobalContainer.Resolve<TContropolusShellWindowType>() as Window;
 
         //    var scopedRegion = ShellInstanceGlobalRegionManager.CreateRegionManager();
         //    RegionManager.SetRegionManager(shell, scopedRegion);
@@ -133,7 +133,7 @@ namespace Trinity.GE.WPF.UI.Infrastructure.UI.Shell.Services
 
             //var newShell = CastleWindsorContainerExtensions.Resolve(GlobalContainer, typeof(MainShellWindow));
 
-            var shell = GlobalContainer.Resolve<TContropolousShellWindowType>() as Window;
+            var shell = GlobalContainer.Resolve<TContropolusShellWindowType>() as Window;
 
             var scopedRegion = ShellInstanceGlobalRegionManager.CreateRegionManager();
             RegionManager.SetRegionManager(shell, scopedRegion);
@@ -189,7 +189,7 @@ namespace Trinity.GE.WPF.UI.Infrastructure.UI.Shell.Services
                                                                          Type theUIView,
                                                                          string theUIViewName)
         {
-            var shell = GlobalContainer.Resolve<TContropolousShellWindowType>() as Window;
+            var shell = GlobalContainer.Resolve<TContropolusShellWindowType>() as Window;
 
             var scopedRegion = ShellInstanceGlobalRegionManager.CreateRegionManager();
             RegionManager.SetRegionManager(shell, scopedRegion);
@@ -351,13 +351,13 @@ namespace Trinity.GE.WPF.UI.Infrastructure.UI.Shell.Services
         public IRegionCollection Regions { get; }
         public IRegionManager ScopedRegionManager { get; set; }
 
-        public TContropolousShellWindowType ContropolousShellWindow
+        public TContropolusShellWindowType ContropolousShellWindow
         {
             get { return _contropolousShellWindow; }
             set { _contropolousShellWindow = value; }
         }
 
-        private ImmutableDictionary<ValueTuple<string, DependencyObject>, TContropolousShellWindowType>
+        private ImmutableDictionary<ValueTuple<string, DependencyObject>, TContropolusShellWindowType>
             MultiShellwindowTypeCache
         {
             get { return _multiShellwindowTypeCache; }

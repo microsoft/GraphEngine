@@ -77,7 +77,7 @@
                 <ig:XamMenuItem x:Name="ReloadAboutShellMenuControl" Header="Reload About Shell Menu Control" />
             </ig:XamMenuItem>
 
-            <ig:XamMenuItem x:Name="TrinityTestFacilityControlMenu" Header="GE Test Facility (Server) Control Shell">
+            <ig:XamMenuItem x:Name="TrinityTestFacilityControlMenu" Header="GE Test Facility (Server) Console Control Shell">
                 <ig:XamMenuItem x:Name="OpenGEServerControlShell" Header="Open GE Server Control Shell" />
                 <ig:XamMenuItem x:Name="CloseGEServerControlShell" Header="Close GE Server Control Shell" />
             </ig:XamMenuItem>

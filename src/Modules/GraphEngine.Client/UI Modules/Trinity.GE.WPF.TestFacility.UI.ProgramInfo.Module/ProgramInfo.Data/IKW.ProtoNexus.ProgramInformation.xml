@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ikw:ProgramInformationData xmlns:ikw="http://www.inknowworks.com/program/metadata">
 <ikw:ProgramName>InKnowWorks Contropolus:A WPF Frameworks and Ontology Reasoning Core, UI/UX and Eventing Services and Runtime</ikw:ProgramName>
-	<ikw:Version>0.0.8.1</ikw:Version>
-	<ikw:Release>0.1.7.1</ikw:Release>
+	<ikw:Version>0.1.6.2</ikw:Version>
+	<ikw:Release>0.2.0.9</ikw:Release>
 	<ikw:IPOwner>InKnowWorks, CORP.</ikw:IPOwner>
 	<ikw:ContactInfo>
-		<ikw:AddressLine1>2143 Willester Ave</ikw:AddressLine1>
+		<ikw:AddressLine1>2059 Camden Ave, Suite 261</ikw:AddressLine1>
 		<ikw:AddressLine2/>
 		<ikw:City>San Jose</ikw:City>
 		<ikw:State>California</ikw:State>
-		<ikw:PhoneNumber>408-398-9143</ikw:PhoneNumber>
+		<ikw:PhoneNumber>669-228-3785</ikw:PhoneNumber>
 		<ikw:ZipCode>95124</ikw:ZipCode>
 	</ikw:ContactInfo>
 	<ikw:ShortProgramDescription>

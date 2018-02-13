@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <RootNamespace>Trinity.Client</RootNamespace>
@@ -7,23 +8,28 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <OutputPath>..\..\..\..\bin</OutputPath>
   </PropertyGroup>
+  
   <ItemGroup>
     <TslCodegen Include="**/*.tsl" />
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
+
   <!-- NuGet package metadata -->
   <PropertyGroup>
     <Authors>Microsoft Graph Engine Team</Authors>
     <Description>Graph Engine lightweight client, interfaces and base implementation.</Description>
     <Copyright>Copyright 2018</Copyright>
     <Company>Microsoft Corporation</Company>
+
     <Version>1.0.9083</Version>
     <AssemblyVersion>1.0.9083.0</AssemblyVersion>
     <FileVersion>1.0.9083.0</FileVersion>
     <PackageVersion>1.0.9083</PackageVersion>
+
     <PackageId>GraphEngine.Client</PackageId>
     <PackageTags>Graph Engine Trinity Client</PackageTags>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
@@ -33,4 +39,5 @@
     <RepositoryUrl>https://github.com/Microsoft/GraphEngine</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
+
 </Project>

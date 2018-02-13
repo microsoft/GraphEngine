@@ -5,7 +5,7 @@
  * InKnowWorks, Corp. proprietary/confidential. Use is subject to license terms.   *
  * Redistribution of this file for of an unauthorized byte-code version            *
  * of this file is strictly forbidden.                                             *
- * Copyright (c) 2009-2015 by InKnowWorks, Corp.                                   *
+ * Copyright (c) 2009-2018 by InKnowWorks, Corp.                                   *
  * 2143 Willester Aave, San Jose, CA 95124. All rights reserved.                   *
  * --------------------------------------------------------------------------------*/
 
@@ -17,6 +17,7 @@ using Prism.Events;
 using Prism.Regions;
 using Reactive.Bindings;
 using Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module.Initialization;
+using Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module.Initialization;
 using Trinity.GE.WPF.UI.Infrastructure.Base.Module;
 using Trinity.GE.WPF.UI.Infrastructure.Base.ViewModel;
 using Trinity.GE.WPF.UI.Infrastructure.Prism.Interfaces;
