@@ -45,8 +45,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="Trinity.Core, Version=1.0.9083.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\GraphEngine.Core.1.0.9083\lib\Trinity.Core.dll</HintPath>
+    <Reference Include="Trinity.Core">
+      <HintPath>C:\Users\Tavi\.nuget\packages\graphengine.core\1.0.9083\lib\net451\Trinity.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -15,7 +15,7 @@ struct RDFTriple
 {
 	string Subject;
 	string Predicate;
-	string Object
+	string Object;
 	// Metadata 
 	string UriPart;
 	string Namespace;
@@ -26,7 +26,7 @@ struct RDFTriple
 
 struct RDFStatement
 {
-	List<RDFTriple> rdfStatement;
+	List<RDFTriple> rdfStatements;
 }
 
 struct StatusCodeResponse
@@ -36,13 +36,42 @@ struct StatusCodeResponse
 	int    errorCode;
 }
 
+struct TripleStream
+{
+	List<RDFTriple> triples;
+}
+
+struct ErrorCodeResponse
+{
+	int errno;
+}
+
+protocol StreamTriplesAsync
+{
+	Type: Asyn;
+	Request: TripleStream;
+	Response: ErrorCodeResponse;
+}
+
+protocol PostTriplesToServer
+{
+	Type: Asyn;
+	Request: TripleStream;
+	Response: ErrorCodeResponse;
+}
+
 // API Productions
 
 protocol PushTripleToClientAsync
 {
-	Type: Async;
-	Request RDFStatement;
-	Response: StatusCodeResponse
+	Type: Asyn;
+	Request: RDFStatement;
+	Response: StatusCodeResponse;
 }
 
-
+// Declare TSL Module 
+module GETestFacilityServer
+{
+	protocol PushTripleToClientAsync;
+	protocol StreamTriplesAsync;
+}
