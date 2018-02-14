@@ -204,6 +204,9 @@
     <ClInclude Include="src\Network\Network.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\TrinityErrorCode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Mathematics\TrinityMath.cpp">

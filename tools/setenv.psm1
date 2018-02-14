@@ -113,9 +113,9 @@ Function New-Package($proj, $config = "Release") {
 # Register local nuget source
 # calling `nuget sources list` will create the config file if it does not exist
 Function Register-LocalRepo {
-  Invoke-Expression "& $NUGET_EXE sources list"
-  Invoke-Expression "& $NUGET_EXE sources Remove -Name 'Graph Engine OSS Local'"
-  Invoke-Expression "& $NUGET_EXE sources Add -Name 'Graph Engine OSS Local' -Source '$TRINITY_OUTPUT_DIR'"
+  Invoke-Expression "& '$NUGET_EXE' sources list"
+  Invoke-Expression "& '$NUGET_EXE' sources Remove -Name 'Graph Engine OSS Local'"
+  Invoke-Expression "& '$NUGET_EXE' sources Add -Name 'Graph Engine OSS Local' -Source '$TRINITY_OUTPUT_DIR'"
 }
 
 Function Invoke-Sub($sub) {

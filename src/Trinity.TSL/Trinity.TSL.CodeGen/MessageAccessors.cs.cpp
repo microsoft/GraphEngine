@@ -21,6 +21,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Trinity.Core.Lib;
 using Trinity.Network.Messaging;
+using Trinity.Storage;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
 namespace )::");
@@ -226,29 +227,33 @@ if ((*(node))[iterator_1]->getLayoutType() != LT_FIXED)
 source->append(R"::(
         private byte* WriterResizeFunction(byte* ptr, int ptr_offset, int delta)
         {
+            int curlen = Length;
+            int tgtlen = curlen + delta;
             if (delta >= 0)
             {
                 byte* currentBufferPtr = buffer;
-                int required_length = (int)(this.Length + delta + (this.CellPtr - currentBufferPtr));
+                int required_length = (int)(tgtlen + (this.CellPtr - currentBufferPtr));
+                if(required_length < curlen) throw new AccessorResizeException("Accessor size overflow.");
                 if (required_length <= BufferLength)
                 {
                     Memory.memmove(
                         ptr + ptr_offset + delta,
                         ptr + ptr_offset,
-                        (ulong)(Length - (ptr + ptr_offset - this.CellPtr)));
-                    Length += delta;
+                        (ulong)(curlen - (ptr + ptr_offset - this.CellPtr)));
+                    Length = tgtlen;
                     return ptr;
                 }
                 else
                 {
-                    int target_length = BufferLength << 1;
-                    while (target_length < required_length)
+                    while (BufferLength < required_length)
                     {
-                        target_length = (target_length << 1);
+                        if (int.MaxValue - BufferLength >= (Buff)::");
+source->append(R"::(erLength>>1)) BufferLength += (BufferLength >> 1);
+                        else if (int.MaxValue - BufferLength >= (1 << 20)) BufferLength += (1 << 20);
+                        else BufferLength = int.MaxValue;
                     }
-                    byte* tmpBuffer = (byte*)Memory.malloc((ulong)target_length);
-     )::");
-source->append(R"::(               Memory.memcpy(
+                    byte* tmpBuffer = (byte*)Memory.malloc((ulong)BufferLength);
+                    Memory.memcpy(
                         tmpBuffer,
                         currentBufferPtr,
                         (ulong)(ptr + ptr_offset - currentBufferPtr));
@@ -256,23 +261,23 @@ source->append(R"::(               Memory.memcpy(
                     Memory.memcpy(
                         newCellPtr + (ptr_offset + delta),
                         ptr + ptr_offset,
-                        (ulong)(Length - (ptr + ptr_offset - this.CellPtr)));
-                    Length += delta;
+                        (ulong)(curlen - (ptr + ptr_offset - this.CellPtr)));
+                    Length = tgtlen;
                     this.CellPtr = newCellPtr;
                     Memory.free(buffer);
                     buffer = tmpBuffer;
-                    BufferLength = target_length;
-                    return tmpBuffer + (ptr - currentBufferPtr);
+                    return tmpBuffer + (ptr )::");
+source->append(R"::(- currentBufferPtr);
                 }
             }
             else
             {
+                if (curlen + delta < 0) throw new AccessorResizeException("Accessor target size underflow.");
                 Memory.memmove(
                     ptr + ptr_offset,
                     ptr + ptr_offset - delta,
-                    (ulong)(Length - (ptr + ptr_offset - delta - )::");
-source->append(R"::(this.CellPtr)));
-                Length += delta;
+                    (ulong)(Length - (ptr + ptr_offset - delta - this.CellPtr)));
+                Length = tgtlen;
                 return ptr;
             }
         }

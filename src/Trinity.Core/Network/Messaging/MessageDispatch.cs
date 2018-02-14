@@ -271,10 +271,10 @@ namespace Trinity.Network.Sockets
             else//  TrinityErrorCode.E_RPC_EXCEPTION == msgProcessResult
             {
                 //  The client is expecting an ACK package, it will be notified because
-                //  the status code would be E_RPC_EXCEPTION;
+                //  the status code would be E_RPC_EXCEPTION or E_MSG_OVERFLOW;
                 sendRecvBuff->Buffer                     = (byte*)Memory.malloc(sizeof(TrinityErrorCode));
                 sendRecvBuff->BytesToSend                = sizeof(TrinityErrorCode);
-                *(TrinityErrorCode*)sendRecvBuff->Buffer = TrinityErrorCode.E_RPC_EXCEPTION;
+                *(TrinityErrorCode*)sendRecvBuff->Buffer = msgProcessResult;
             }
         }
         #endregion
@@ -356,6 +356,16 @@ namespace Trinity.Network.Sockets
                     default:
                         throw new Exception("Not recognized message type.");
                 }
+            }
+            catch (MessageTooLongException ex)
+            {
+                Log.WriteLine("Message Type: " + msgType);
+                Log.WriteLine("Message SN: " + msgId);
+
+                Log.WriteLine(ex.Message);
+                Log.WriteLine(ex.StackTrace);
+                _SetSendRecvBuff(TrinityErrorCode.E_MSG_OVERFLOW, sendRecvBuff);
+                return;
             }
             catch (Exception ex)
             {

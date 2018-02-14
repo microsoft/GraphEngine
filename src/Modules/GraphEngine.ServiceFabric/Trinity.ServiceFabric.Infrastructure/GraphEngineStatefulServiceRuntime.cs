@@ -25,12 +25,11 @@ namespace Trinity.ServiceFabric.Infrastructure
         // We integrate ourselves with Azure Service Fabric here by gaining processing context for
         // NodeContext and we use the FabricClient to gain deeper data and information required
         // to setup and drive the Trinity and GraphEngine components.
-        internal NodeContext  NodeContext;
-        internal FabricClient FabricClient;
 
-        public volatile TrinityServerRuntimeManager m_trinityServerRuntime = null;
+        private volatile TrinityServerRuntimeManager m_trinityServerRuntime = null;
 
         public List<Partition> Partitions { get; set; }
+
         internal List<long> PartitionLowKeys { get; set; }
 
         public int PartitionCount { get; private set; }
@@ -46,11 +45,30 @@ namespace Trinity.ServiceFabric.Infrastructure
         public ReplicaRole Role { get; set; }
 
         public StatefulServiceContext Context { get; private set; }
+
         public IReliableStateManager StateManager { get; }
 
         internal Func<BackupDescription, Task> Backup;
-        internal event EventHandler<RestoreEventArgs> RequestRestore = delegate{ };
-        private static object SingletonLockObject => m_singletonLockObject;
+        internal event EventHandler<RestoreEventArgs> RequestRestore = delegate { };
+        internal NodeContext NodeContext;
+        internal FabricClient FabricClient;
+
+        private static readonly object s_singletonLock = new object();
+        private static GraphEngineStatefulServiceRuntime s_instance = null;
+
+        public static GraphEngineStatefulServiceRuntime Instance => s_instance ?? throw new InvalidOperationException($"{nameof(GraphEngineStatefulServiceRuntime)} is not initialized.");
+        public static void Initialize(IGraphEngineStatefulService svc)
+        {
+            lock (s_singletonLock)
+            {
+                if (s_instance != null)
+                {
+                    Log.WriteLine(LogLevel.Warning, "Only one TrinityServerRuntimeManager allowed in one process.");
+                    return;
+                }
+                s_instance = new GraphEngineStatefulServiceRuntime(svc);
+            }
+        }
 
         public TrinityServerRuntimeManager TrinityServerRuntime
         {
@@ -64,33 +82,17 @@ namespace Trinity.ServiceFabric.Infrastructure
         }
 
 
-        public static GraphEngineStatefulServiceRuntime Instance = null;
-
-        internal async Task<ReplicaRole> GetRoleAsync()
-        {
-            while (true)
-            {
-                var role = this.Role;
-                if (role != ReplicaRole.None && role != ReplicaRole.Unknown && role != ReplicaRole.IdleSecondary)
-                    return role;
-                await Task.Delay(1000);
-            }
-        }
-
-        private static readonly object m_singletonLockObject = new object();
-
-
-        public GraphEngineStatefulServiceRuntime(IGraphEngineStatefulService svc)
+        private GraphEngineStatefulServiceRuntime(IGraphEngineStatefulService svc)
         {
             //  Initialize other fields and properties.
-            Context      = svc.Context;
+            Context = svc.Context;
             StateManager = svc.StateManager;
-            Backup       = svc.BackupAsync;
+            Backup = svc.BackupAsync;
             svc.RequestRestore += RequestRestore;
-            NodeContext  = Context.NodeContext;
+            NodeContext = Context.NodeContext;
             FabricClient = new FabricClient();
-            Address      = NodeContext.IPAddressOrFQDN;
-            Partitions   = FabricClient.QueryManager
+            Address = NodeContext.IPAddressOrFQDN;
+            Partitions = FabricClient.QueryManager
                            .GetPartitionListAsync(Context.ServiceName)
                            .GetAwaiter().GetResult()
                            .OrderBy(p => p.PartitionInformation.Id)
@@ -100,12 +102,12 @@ namespace Trinity.ServiceFabric.Infrastructure
                            .OfType<Int64RangePartitionInformation>()
                            .Select(pi => pi.LowKey)
                            .ToList();
-            Role         = ReplicaRole.Unknown;
+            Role = ReplicaRole.Unknown;
 
-            PartitionId    = Partitions.FindIndex(p => p.PartitionInformation.Id == Context.PartitionId);
+            PartitionId = Partitions.FindIndex(p => p.PartitionInformation.Id == Context.PartitionId);
             PartitionCount = Partitions.Count;
 
-            Port     = Context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityProtocolEndpoint).Port;
+            Port = Context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityProtocolEndpoint).Port;
             HttpPort = Context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityHttpProtocolEndpoint).Port;
 
             var contextDataPackage = (Partitions: this.Partitions,
@@ -123,31 +125,32 @@ namespace Trinity.ServiceFabric.Infrastructure
             // TBD .. YataoL & Tavi T.
             //WCFPort = context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityWCFProtocolEndpoint).Port;
 
-            if(PartitionCount != PartitionLowKeys.Count)
+            if (PartitionCount != PartitionLowKeys.Count)
             {
                 Log.WriteLine(LogLevel.Fatal, "Graph Engine Service requires all partitions to be int64-ranged.");
                 Thread.Sleep(5000);
                 throw new InvalidOperationException("Graph Engine Service requires all partitions to be int64-ranged.");
             }
 
-            lock (SingletonLockObject)
-            {
-                if (Instance != null)
-                {
-                    Log.WriteLine(LogLevel.Fatal, "Only one TrinityServerRuntimeManager allowed in one process.");
-                    Thread.Sleep(5000);
-                    Environment.Exit(-1);
-                    //throw new InvalidOperationException("Only one GraphEngineService allowed in one process.");
-                }
-                Instance = this;
-            }
         }
 
         public Guid GetInstanceId()
         {
-            var replicaId   = Context.ReplicaId;
+            var replicaId = Context.ReplicaId;
             var partitionId = PartitionId;
             return NameService.GetInstanceId(replicaId, partitionId);
         }
+
+        internal async Task<ReplicaRole> GetRoleAsync()
+        {
+            while (true)
+            {
+                var role = this.Role;
+                if (role != ReplicaRole.None && role != ReplicaRole.Unknown && role != ReplicaRole.IdleSecondary)
+                    return role;
+                await Task.Delay(1000);
+            }
+        }
+
     }
 }
