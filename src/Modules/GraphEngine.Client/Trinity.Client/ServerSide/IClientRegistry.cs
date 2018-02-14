@@ -1,6 +1,11 @@
-﻿using Trinity.Storage;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Trinity.Storage;
 
-namespace Trinity.Client.ServerSide
+namespace Trinity.Client
 {
     /// <summary>
     /// Should be implemented by a hosting memory cloud.

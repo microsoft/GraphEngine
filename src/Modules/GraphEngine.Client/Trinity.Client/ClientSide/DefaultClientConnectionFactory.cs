@@ -4,7 +4,7 @@ using Trinity.Extension;
 using Trinity.Network;
 using Trinity.Storage;
 
-namespace Trinity.Client.ClientSide
+namespace Trinity.Client
 {
     [ExtensionPriority(-100)]
     public class DefaultClientConnectionFactory : IClientConnectionFactory

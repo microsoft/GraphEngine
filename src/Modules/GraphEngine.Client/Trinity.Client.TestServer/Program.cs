@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Trinity.Client.ServerSide;
 using Trinity.Client.TestProtocols;
+using Trinity.Client.TestProtocols.Impl;
 using Trinity.Client.TestProtocols.TrinityClientTestModule;
 using Trinity.Network;
 

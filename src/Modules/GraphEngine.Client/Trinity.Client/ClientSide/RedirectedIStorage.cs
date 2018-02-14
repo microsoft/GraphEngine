@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Trinity.Core.Lib;
 using Trinity.Network;
 using Trinity.Network.Messaging;
 using Trinity.Storage;
 
-namespace Trinity.Client.ClientSide
+namespace Trinity.Client
 {
     internal class RedirectedIStorage : IStorage
     {

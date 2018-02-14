@@ -2,7 +2,7 @@
 using Trinity.Network;
 using Trinity.Storage;
 
-namespace Trinity.Client.ClientSide
+namespace Trinity.Client
 {
     /// <summary>
     /// Provides methods for connecting/disconnecting client connections.

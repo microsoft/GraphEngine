@@ -12,7 +12,7 @@ namespace Trinity.ServiceFabric.Infrastructure
         public const string TrinityOdataProtocolEndpoint   = @"TrinityODataEndpoint";
         public const string TrinityWebApiProtocolEngpoint  = @"TrinityWebApiEndpoint";
         public const string LocalAvailabilityGroup         = @"LOCAL";
-        public const string RemostAvailabilityGroup        = @"REMOTE";
+        public const string RemostAvailabilityGroup        = @"REMOT";
         public const string AvailabilityGroupLocalHost     = @"localhost";
         public const string GraphEngineHttpListenerName    = @"GraphEngineHttpListener";
         public const string GraphEngineListenerName        = @"GraphEngineListener";

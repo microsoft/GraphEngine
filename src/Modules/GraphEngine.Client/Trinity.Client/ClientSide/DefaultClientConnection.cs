@@ -1,9 +1,10 @@
-﻿using Trinity.Configuration;
+﻿using System.Threading.Tasks;
+using Trinity.Configuration;
 using Trinity.Diagnostics;
 using Trinity.Network;
 using Trinity.Storage;
 
-namespace Trinity.Client.ClientSide
+namespace Trinity.Client
 {
     internal class DefaultClientConnection : RemoteStorage, IMessagePassingEndpoint
     {
