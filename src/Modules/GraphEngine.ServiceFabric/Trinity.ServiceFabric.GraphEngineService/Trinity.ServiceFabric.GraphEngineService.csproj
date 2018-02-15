@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="1.0.9083" />
     <PackageReference Include="GraphEngine.LIKQ" Version="1.0.9083" />
   </ItemGroup>
 

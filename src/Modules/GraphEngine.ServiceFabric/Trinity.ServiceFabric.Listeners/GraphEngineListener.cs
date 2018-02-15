@@ -28,7 +28,7 @@ namespace Trinity.ServiceFabric.Listeners
         {
             var Runtime = GraphEngineStatefulServiceRuntime.Instance;
             await Task.Run(() => Runtime.TrinityServerRuntime.Start());
-            return $"tcp://{Runtime.TrinityServerRuntime.Address}:{Runtime.TrinityServerRuntime.HttpPort}";
+            return $"tcp://{Runtime.TrinityServerRuntime.Address}:{Runtime.TrinityServerRuntime.Port}";
         }
     }
 }

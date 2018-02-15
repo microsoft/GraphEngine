@@ -8,7 +8,7 @@ namespace Trinity.ServiceFabric.Listeners
 {
     public class GraphEngineHttpListener : IGraphEngineCommunicationListener
     {
-        public string ListenerName => GraphEngineConstants.GraphEngineListenerName;
+        public string ListenerName => GraphEngineConstants.GraphEngineHttpListenerName;
 
         public bool ListenOnSecondaries => false;
 
