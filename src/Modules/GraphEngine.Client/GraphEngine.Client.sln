@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.Client.TestProtocol
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.Client.TestServer", "Trinity.Client.TestServer\Trinity.Client.TestServer.csproj", "{072BD8BE-4078-4F0F-B158-6880AA7B184B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.WPF.Test.Protocols", "Trinity.WPF.Test.Protocols\Trinity.WPF.Test.Protocols.csproj", "{F55F1870-B54C-40FE-8DBA-8DE9ED476B55}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.TestFacilityServer.ProtocolsDefintions", "Trinity.WPF.Test.Protocols\Trinity.GE.TestFacilityServer.ProtocolsDefintions.csproj", "{F55F1870-B54C-40FE-8DBA-8DE9ED476B55}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trinity GE WPF Testing Facility Server", "Trinity GE WPF Testing Facility Server", "{563F1C9C-5759-47D9-8B53-1631D8645275}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trinity GE Test Facility Server", "Trinity GE Test Facility Server", "{563F1C9C-5759-47D9-8B53-1631D8645275}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI ServiceLocator for CastleWindsor Adapter", "UI ServiceLocator for CastleWindsor Adapter", "{61E4DAC6-F896-4D7F-94A3-AD9227D65A47}"
 EndProject
@@ -36,6 +36,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module", "UI Modules\Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module\Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module.csproj", "{89684280-8CE1-4662-9CD9-45027474B969}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.WPF.TestFacility.ServerManagerView.Module", "UI Modules\Trinity.GE.WPF.TestFacility.ServerManagerView.Module\Trinity.GE.WPF.TestFacility.ServerManagerView.Module.csproj", "{3A2DA924-F408-432E-B951-7D95D922FB9C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.TestFacilityServer", "Test Facility Server\Trinity.GE.TestFacilityServer\Trinity.GE.TestFacilityServer.csproj", "{C4CA5B58-A165-47AB-98B6-A46BB3FA0743}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.TestFacilityServer.Infrastructure", "Test Facility Server\Trinity.GE.TestFacilityServer.Infrastructure\Trinity.GE.TestFacilityServer.Infrastructure.csproj", "{9ABB21E5-959C-4811-B855-A8C63559FBD3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +95,14 @@ Global
 		{3A2DA924-F408-432E-B951-7D95D922FB9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A2DA924-F408-432E-B951-7D95D922FB9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A2DA924-F408-432E-B951-7D95D922FB9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4CA5B58-A165-47AB-98B6-A46BB3FA0743}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4CA5B58-A165-47AB-98B6-A46BB3FA0743}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4CA5B58-A165-47AB-98B6-A46BB3FA0743}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4CA5B58-A165-47AB-98B6-A46BB3FA0743}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ABB21E5-959C-4811-B855-A8C63559FBD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ABB21E5-959C-4811-B855-A8C63559FBD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ABB21E5-959C-4811-B855-A8C63559FBD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ABB21E5-959C-4811-B855-A8C63559FBD3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,6 +116,8 @@ Global
 		{2DD674E8-E5A0-412C-9D9E-22E898BE9D63} = {18097C4F-E453-4E6F-B621-D34D569D84C2}
 		{89684280-8CE1-4662-9CD9-45027474B969} = {18097C4F-E453-4E6F-B621-D34D569D84C2}
 		{3A2DA924-F408-432E-B951-7D95D922FB9C} = {18097C4F-E453-4E6F-B621-D34D569D84C2}
+		{C4CA5B58-A165-47AB-98B6-A46BB3FA0743} = {563F1C9C-5759-47D9-8B53-1631D8645275}
+		{9ABB21E5-959C-4811-B855-A8C63559FBD3} = {563F1C9C-5759-47D9-8B53-1631D8645275}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C53F0FFC-9BFC-4C08-975C-C5CBE5B1888E}
