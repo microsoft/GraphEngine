@@ -105,11 +105,17 @@ namespace Trinity.DynamicCluster.Storage
             this.m_cluster_config = config;
             m_cancelSrc = new CancellationTokenSource();
             m_nameservice = AssemblyUtility.GetAllClassInstances<INameService>().First();
+            Log.WriteLine(LogLevel.Info, $"{nameof(DynamicMemoryCloud)}: using name service provided by '{m_nameservice.GetType().FullName}'");
             m_chunktable = AssemblyUtility.GetAllClassInstances<IChunkTable>().First();
+            Log.WriteLine(LogLevel.Info, $"{nameof(DynamicMemoryCloud)}: using chunk table provided by '{m_chunktable.GetType().FullName}'");
             m_taskqueue = AssemblyUtility.GetAllClassInstances<ITaskQueue>().First();
+            Log.WriteLine(LogLevel.Info, $"{nameof(DynamicMemoryCloud)}: using task queue provided by '{m_taskqueue.GetType().FullName}'");
             m_healthmanager = AssemblyUtility.GetAllClassInstances<IHealthManager>().First();
+            Log.WriteLine(LogLevel.Info, $"{nameof(DynamicMemoryCloud)}: using health manager provided by '{m_healthmanager.GetType().FullName}'");
             m_backupmgr = AssemblyUtility.GetAllClassInstances<IBackupManager>().First();
+            Log.WriteLine(LogLevel.Info, $"{nameof(DynamicMemoryCloud)}: using backup manager provided by '{m_backupmgr.GetType().FullName}'");
             m_persistent_storage = AssemblyUtility.GetAllClassInstances<IPersistentStorage>().First();
+            Log.WriteLine(LogLevel.Info, $"{nameof(DynamicMemoryCloud)}: using persistent storage provided by '{m_persistent_storage.GetType().FullName}'");
 
             m_nameservice.Start(m_cancelSrc.Token);
             m_taskqueue.Start(m_cancelSrc.Token);
