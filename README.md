@@ -1,10 +1,10 @@
 # Graph Engine - Open Source
 
-| - | Windows .NET Framework | Windows .NET Core | Ubuntu 16.04 .NET Core |
+| - | Windows Multi-Targeting | Ubuntu 16.04 .NET Core |
 |:------:|:------:|:------:|:------:|
-|Build|[![Build Status](http://ci.graphengine.io/buildStatus/icon?job=GraphEngine-Windows-NetFX)](http://ci.graphengine.io/job/GraphEngine-Windows-NetFX/)|[![Build Status](http://ci.graphengine.io/buildStatus/icon?job=GraphEngine-Windows-NetCore)](http://ci.graphengine.io/job/GraphEngine-Windows-NetCore/)|[![Build Status](http://ci.graphengine.io/buildStatus/icon?job=GraphEngine-Ubuntu-NetCore)](http://ci.graphengine.io/job/GraphEngine-Ubuntu-NetCore/)
-|Tests|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/GraphEngine-Windows-NetFx.svg)](http://ci.graphengine.io/job/GraphEngine-Windows-NetFx/)|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/GraphEngine-Windows-NetCore.svg)](http://ci.graphengine.io/job/GraphEngine-Windows-NetCore/)|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/GraphEngine-Ubuntu-NetCore.svg)](http://ci.graphengine.io/job/GraphEngine-Ubuntu-NetCore/)|
-|Stress|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/GraphEngine-Windows-NetFx-Stress.svg)](http://ci.graphengine.io/job/GraphEngine-Windows-NetFx-Stress/)|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/GraphEngine-Windows-NetCore-Stress.svg)](http://ci.graphengine.io/job/GraphEngine-Windows-NetCore-Stress/)|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/GraphEngine-Ubuntu1604-NetCore-Stress.svg)](http://ci.graphengine.io/job/GraphEngine-Ubuntu-NetCore-Stress/)|
+|Build|[<img src="https://trinitygraphengine.visualstudio.com/_apis/public/build/definitions/4cfbb293-cd2c-4f49-aa03-06894081c93b/3/badge"/>](https://trinitygraphengine.visualstudio.com/trinity-ci/_build/index?definitionId=3)|_|
+|Tests|_|_|
+|Stress|_|_|
 
 Microsoft [Graph Engine](http://www.graphengine.io/) is a distributed
 in-memory data processing engine, underpinned by a strongly-typed
