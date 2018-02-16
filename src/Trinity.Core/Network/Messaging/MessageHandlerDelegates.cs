@@ -27,4 +27,11 @@ namespace Trinity.Network.Messaging
     /// </summary>
     /// <param name="args">An asynchronous request object.</param>
     public delegate void AsyncReqHandler(AsynReqArgs args);
+
+    /// <summary>
+    /// Represents a message handler for a asynchronous protocol with response.
+    /// </summary>
+    /// <param name="args">A synchronous request object.</param>
+    public delegate void AsyncReqRspHandler(AsynReqRspArgs args);
+
 }

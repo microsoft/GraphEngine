@@ -20,8 +20,7 @@ namespace Trinity
     public static partial class TrinityConfig
     {
         #region Fields
-        private const string                 c_defaultConfigFile         = ConfigurationConstants.Tags.DEFAULT_CONFIG_FILE;
-        private static readonly string[]     c_builtInSectionNames       = new string[] { ConfigurationConstants.Tags.SERVER, ConfigurationConstants.Tags.PROXY };
+        private const string c_defaultConfigFile = ConfigurationConstants.Values.DEFAULT_CONFIG_FILE;
         internal static ConfigurationSection s_localConfigurationSection = new ConfigurationSection();
         #endregion
 
@@ -38,6 +37,47 @@ namespace Trinity
         }
         #endregion
 
+        #region Helpers
+        /// <summary>
+        /// null node, name or value is ignored.
+        /// </summary>
+        private static void SetAttribute(XElement node, string name, string value)
+        {
+            if (node == null || name == null || value == null) return;
+
+            try
+            {
+                if (bool.Parse(value))
+                    value = value.ToUpper();
+            }
+            catch { }
+            node.SetAttributeValue(name, value);
+        }
+
+        /// <summary>
+        /// Return the main infomation of current configuration
+        /// </summary>
+        /// <returns></returns>
+        internal static string OutputCurrentConfig()
+        {
+            CodeWriter cw = new CodeWriter();
+            cw.WL();
+            cw.WL("StorageRoot : {0}", StorageRoot);
+            cw.WL("LogDirectory: {0}", LogDirectory);
+            cw.WL("LoggingLevel: {0}", LoggingLevel);
+            cw.WL("HttpPort:     {0}", HttpPort);
+            cw.WL();
+            return cw.ToString();
+        }
+
+        /// <summary>
+        /// Extracts config entries from the config instances.
+        /// </summary>
+        internal static IEnumerable<XElement> ExtractConfigurationSettings()
+        {
+            return GetConfigurationInstances().Select(ConfigurationEntry.ExtractConfigurationEntry).OfType<XElement>();
+        }
+
         /// <summary>
         /// Applies the configuration settings from the given dictionary of setting entries, into the configuration object.
         /// </summary>
@@ -49,18 +89,7 @@ namespace Trinity
                 if (!entries.ContainsKey(config_instance.EntryName)) { continue; }
                 ConfigurationEntry config_entry = entries[config_instance.EntryName];
 
-                var config_setting_props = config_instance.Type
-                    .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                    .Where(_ => _.GetCustomAttribute<ConfigSettingAttribute>() != null);
-
-                foreach (var config_setting in config_setting_props)
-                {
-                    if (config_entry.Settings != null && config_entry.Settings.ContainsKey(config_setting.Name))
-                    {
-                        config_setting.SetValue(config_instance.Instance, config_entry.Settings[config_setting.Name].GetValue(config_setting.PropertyType));
-                    }
-                }
-
+                config_entry.Apply(config_instance.Instance);
             }
         }
 
@@ -70,11 +99,7 @@ namespace Trinity
         /// <returns></returns>
         internal static List<ConfigurationInstance> GetConfigurationInstances()
         {
-            return AssemblyUtility.GetAllTypes()
-                .Where(_ => _.IsClass && !_.IsAbstract)
-                .Select(CreateConfigurationEntryTuple)
-                .Where(_ => _ != null)
-                .ToList();
+            return Enumerable.OfType<ConfigurationInstance>(AssemblyUtility.GetAllClassInstances<object>(CreateConfigurationInstance)).ToList();
         }
 
         /// <summary>
@@ -82,7 +107,7 @@ namespace Trinity
         ///   1. It contains a static property annotated with [ConfigInstance], returning an instance of the type
         ///   2. It contains a static property annotated with [ConfigEntryName], returning a string
         /// </summary>
-        private static ConfigurationInstance CreateConfigurationEntryTuple(Type type)
+        private static ConfigurationInstance CreateConfigurationInstance(Type type)
         {
             do
             {
@@ -106,6 +131,58 @@ namespace Trinity
             return null;
         }
 
+
+        private static XElement CreateServerSetting(ServerInfo server, XName tag)
+        {
+            XElement serverNode = new XElement(tag);
+            SetAttribute(serverNode, ConfigurationConstants.Attrs.ENDPOINT, String.Format("{0}:{1}", server.HostName, server.Port));
+            SetAttribute(serverNode, ConfigurationConstants.Attrs.ASSEMBLY_PATH, server.AssemblyPath);
+            SetAttribute(serverNode, ConfigurationConstants.Attrs.AVAILABILITY_GROUP, server.Id);
+
+            foreach(var entry in Enumerable.OfType<XElement>(server.Values))
+            {
+                serverNode.Add(entry);
+            }
+
+            return serverNode;
+        }
+
+        private static IEnumerable<XElement> CreateServerSettingList(List<AvailabilityGroup> AGs, XName tag)
+        {
+            return AGs.SelectMany(ag => ag.Instances.Select(_ => CreateServerSetting(_, tag)));
+        }
+
+        private static ServerInfo GetLocalConfiguration()
+        {
+            //LOCAL override CLUSTER 
+            var entries = new Network.ServerInfo();
+            var server_entries = s_current_cluster_config.GetMyServerInfo();
+            var proxy_entries = s_current_cluster_config.GetMyProxyInfo();
+            if (proxy_entries != null)
+                entries.Merge(proxy_entries);
+            if (server_entries != null)
+                entries.Merge(server_entries);
+
+            foreach (var entry in s_localConfigurationSection)
+            {
+                entries[entry.Key] = entry.Value;
+            }
+
+            return entries;
+        }
+
+        private static bool IsDefaultClusterConfiguration(string ID)
+        {
+            return ID == null || ID == "";
+        }
+
+        private static bool IsDefaultClusterConfiguration(XElement _)
+        {
+            var attr = _.Attribute(ConfigurationConstants.Attrs.ID);
+            return IsDefaultClusterConfiguration(attr?.Value);
+        }
+        #endregion
+
         /// <summary>
         /// Save current configuration to the default config file trinity.xml. The default location of trinity.xml is the directory containing current Trinity assembly.
         /// </summary>
@@ -115,13 +192,12 @@ namespace Trinity
             {
                 SaveConfig(DefaultConfigFile);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Log.WriteLine(LogLevel.Error, e.Message);
                 throw;
             }
         }
-
 
         /// <summary>
         /// Save current configuration to the specified file.
@@ -131,89 +207,53 @@ namespace Trinity
         {
             try
             {
+                string config_dir = Path.GetDirectoryName(configFile);
+                if (config_dir == string.Empty) config_dir = Global.MyAssemblyPath;
+                FileUtility.CompletePath(config_dir, true);
+                configFile = Path.Combine(config_dir, Path.GetFileName(configFile));
+
                 if (File.Exists(configFile))
                 {
-                    try
-                    {
-                        File.Delete(configFile);
-                    }
+                    try { File.Delete(configFile); }
                     catch (Exception) { }
                 }
-                string dir = Path.GetDirectoryName(configFile);
-                if (dir == string.Empty) dir = Global.MyAssemblyPath;
 
-                FileUtility.CompletePath(Path.GetDirectoryName(configFile), true);
                 #region create basic xml info
-                XmlDocument configXml = new XmlDocument();
-                XmlDeclaration declaration = configXml.CreateXmlDeclaration("1.0", "utf-8", null);
-                XmlNode rootNode = configXml.CreateElement(ConfigurationConstants.Tags.ROOT_NODE);
-                XmlAttribute version = configXml.CreateAttribute(ConfigurationConstants.Attrs.CONFIG_VERSION);
-                version.Value = ConfigurationConstants.Tags.CURRENTVER;
-                rootNode.Attributes.Append(version);
+                XDocument configXml = new XDocument();
+                configXml.Declaration = new XDeclaration("1.0", "utf-8", null);
+                XElement rootNode = new XElement(ConfigurationConstants.Tags.ROOT_NODE);
+                SetAttribute(rootNode, ConfigurationConstants.Attrs.CONFIG_VERSION, ConfigurationConstants.Values.CURRENTVER);
+                configXml.Add(rootNode);
+                XElement localNode = new XElement(ConfigurationConstants.Tags.LOCAL);
+                rootNode.Add(localNode);
                 #endregion
-                #region Get Local Setting Info
-                XmlNode localNode = configXml.CreateElement(ConfigurationConstants.Tags.LOCAL);
-                foreach (var _ in GetConfigurationInstances())
+
+                foreach (var setting in ExtractConfigurationSettings())
                 {
-                    XmlNode entry = configXml.CreateElement(_.EntryName);
-                    foreach (var attribute in _.Instance.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
-                    {
-                        entry.Attributes.Append(SetAttribute(configXml, attribute.Name, attribute.GetValue(_.Instance).ToString()));
-                    }
-                    localNode.AppendChild(entry);
+                    localNode.Add(setting);
                 }
-                rootNode.AppendChild(localNode);
-                #endregion
-                #region Get cluster config
+
                 foreach (var cluster in s_clusterConfigurations)
                 {
-                    XmlNode clusterNode = configXml.CreateElement(ConfigurationConstants.Tags.CLUSTER);
-                    if (cluster.Key != ConfigurationConstants.Tags.DEFAULT_CLUSTER)
-                        clusterNode.Attributes.Append(SetAttribute(configXml, ConfigurationConstants.Attrs.ID, cluster.Key));
-                    var ags = new List<List<AvailabilityGroup>> { cluster.Value.Servers, cluster.Value.Proxies };
+                    XElement clusterNode = new XElement(ConfigurationConstants.Tags.CLUSTER);
+                    if (!IsDefaultClusterConfiguration(cluster.Key))
+                        SetAttribute(clusterNode, ConfigurationConstants.Attrs.ID, cluster.Key);
 
-                    for (int i = 0; i < ags.Count; ++i)
-                        foreach (var ag in ags[i])
-                        {
-                            foreach (var server in ag.Instances)
-                            {
-                                XmlNode serverNode = configXml.CreateElement(c_builtInSectionNames[i]);
-                                serverNode.Attributes.Append(SetAttribute(configXml, ConfigurationConstants.Attrs.ENDPOINT, String.Format("{0}:{1}", server.HostName, server.Port)));
-                                if (server.AssemblyPath != null)
-                                    serverNode.Attributes.Append(SetAttribute(configXml, ConfigurationConstants.Attrs.ASSEMBLY_PATH, server.AssemblyPath));
-                                if (server.Id != null)
-                                    serverNode.Attributes.Append(SetAttribute(configXml, ConfigurationConstants.Attrs.AVAILABILITY_GROUP, server.Id));
+                    var servers = Enumerable.Concat(
+                        CreateServerSettingList(cluster.Value.Servers, ConfigurationConstants.Tags.SERVER),
+                        CreateServerSettingList(cluster.Value.Proxies, ConfigurationConstants.Tags.PROXY));
 
-                                var instances = GetConfigurationInstances();
+                    foreach(var server in servers)
+                        clusterNode.Add(server);
 
-                                foreach (var entry in server)
-                                {
-                                    var currentInstance = instances.Where(_ => _.EntryName == entry.Key).FirstOrDefault();
-                                    if (currentInstance != null)
-                                    {
-                                        XmlNode entryNode = configXml.CreateElement(entry.Value.Name);
-                                        foreach (var setting in entry.Value.Settings)
-                                        {
-                                            if (setting.Value.Literal != null)
-                                                entryNode.Attributes.Append(SetAttribute(configXml, setting.Key, setting.Value.Literal));
-                                        }
-                                        if (entryNode.Attributes.Count > 0)
-                                            serverNode.AppendChild(entryNode);
-                                    }
-                                }
-                                clusterNode.AppendChild(serverNode);
-                            }
-                        }
-                    rootNode.AppendChild(clusterNode);
+                    rootNode.Add(clusterNode);
                 }
-                #endregion
-                configXml.AppendChild(rootNode);
-                configXml.InsertBefore(declaration, configXml.DocumentElement);
+
                 configXml.Save(configFile);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Log.WriteLine(LogLevel.Error, e.Message);
+                Log.WriteLine(LogLevel.Error, e.ToString());
                 throw;
             }
         }
@@ -227,7 +267,7 @@ namespace Trinity
             {
                 LoadTrinityConfig(true);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Log.WriteLine(LogLevel.Error, e.Message);
                 throw;
@@ -244,7 +284,7 @@ namespace Trinity
             {
                 LoadTrinityConfig(configFile, true);
             }
-             catch(Exception e)
+            catch (Exception e)
             {
                 Log.WriteLine(LogLevel.Error, e.Message);
                 throw;
@@ -270,48 +310,20 @@ namespace Trinity
                 s_clusterConfigurations.Clear();
                 s_localConfigurationSection.Clear();
 
-                if (config.RootConfigVersion == ConfigurationConstants.Tags.LEGACYVER)
+                if (config.RootConfigVersion == ConfigurationConstants.Values.LEGACYVER)
                 {
                     LoadConfigLegacy(trinity_config_file);
                 }
-                else if (config.RootConfigVersion == ConfigurationConstants.Tags.CURRENTVER)
+                else if (config.RootConfigVersion == ConfigurationConstants.Values.CURRENTVER)
                 {
-                    s_localConfigurationSection = new ConfigurationSection(config.LocalSection);
-                    var clusterSections = config.ClusterSections;
-                    foreach (var clusterSection in clusterSections)
-                    {
-                        if (clusterSection.Attribute(ConfigurationConstants.Attrs.ID) != null)
-                        {
-                            s_clusterConfigurations.Add(clusterSection.Attribute(ConfigurationConstants.Attrs.ID).Value, new ClusterConfig(clusterSection));
-                        }
-                    }
-
-                    // The default cluster config is the one without an Id.
-                    s_current_cluster_config = new ClusterConfig(clusterSections.FirstOrDefault(
-                        _ => _.Attribute(ConfigurationConstants.Attrs.ID) == null) ??
-                            new XElement(ConfigurationConstants.Tags.CLUSTER));
-
-                    s_clusterConfigurations.Add(ConfigurationConstants.Tags.DEFAULT_CLUSTER, s_current_cluster_config);
+                    LoadConfigCurrrentVer(config);
                 }
                 else
                 {
                     throw new TrinityConfigException("Unrecognized " + ConfigurationConstants.Attrs.CONFIG_VERSION);
                 }
-                //LOCAL override CLUSTER 
-                var entries = new Network.ServerInfo();
-                var server_entries = s_current_cluster_config.GetMyServerInfo();
-                var proxy_entries = s_current_cluster_config.GetMyProxyInfo();
-                if (proxy_entries != null)
-                    entries.Merge(proxy_entries);
-                if (server_entries != null)
-                    entries.Merge(server_entries);
 
-                foreach (var entry in s_localConfigurationSection)
-                {
-                    entries[entry.Key] = entry.Value;
-                }
-
-                ApplyConfigurationSettings(entries);
+                ApplyConfigurationSettings(GetLocalConfiguration());
 
                 is_config_loaded = true;
             }
@@ -323,18 +335,18 @@ namespace Trinity
         /// <param name="trinity_config_file"></param>
         private static void LoadConfigLegacy(string trinity_config_file)
         {
-            XMLConfig xml_config  = new XMLConfig(trinity_config_file);
+            XMLConfig xml_config = new XMLConfig(trinity_config_file);
 
             //construct local configuration section  
             XElement localSection = new XElement(ConfigurationConstants.Tags.LOCAL);
             XElement loggingEntry = new XElement(ConfigurationConstants.Tags.LOGGING);
             XElement storageEntry = new XElement(ConfigurationConstants.Tags.STORAGE);
             XElement networkEntry = new XElement(ConfigurationConstants.Tags.NETWORK);
-            loggingEntry.SetAttributeValue(ConfigurationConstants.Attrs.LOGGING_DIRECTLY, xml_config.GetEntryValue(ConfigurationConstants.Tags.LOGGING, ConfigurationConstants.Attrs.LOGGING_DIRECTLY));
-            loggingEntry.SetAttributeValue(ConfigurationConstants.Attrs.LOGGING_LEVEL, xml_config.GetEntryValue(ConfigurationConstants.Tags.LOGGING, ConfigurationConstants.Attrs.LOGGING_LEVEL));
-            storageEntry.SetAttributeValue(ConfigurationConstants.Attrs.STORAGE_ROOT, xml_config.GetEntryValue(ConfigurationConstants.Tags.STORAGE, ConfigurationConstants.Attrs.STORAGE_ROOT));
-            networkEntry.SetAttributeValue(ConfigurationConstants.Attrs.HTTP_PORT, xml_config.GetEntryValue(ConfigurationConstants.Tags.NETWORK, ConfigurationConstants.Attrs.HTTP_PORT));
-            networkEntry.SetAttributeValue(ConfigurationConstants.Attrs.CLIENT_MAX_CONN, xml_config.GetEntryValue(ConfigurationConstants.Tags.NETWORK, ConfigurationConstants.Attrs.CLIENT_MAX_CONN));
+            loggingEntry.SetAttributeValue(ConfigurationConstants.Attrs.LOGGING_DIRECTORY, xml_config.GetEntryValue(ConfigurationConstants.Tags.LOGGING.LocalName, ConfigurationConstants.Attrs.LOGGING_DIRECTORY));
+            loggingEntry.SetAttributeValue(ConfigurationConstants.Attrs.LOGGING_LEVEL, xml_config.GetEntryValue(ConfigurationConstants.Tags.LOGGING.LocalName, ConfigurationConstants.Attrs.LOGGING_LEVEL));
+            storageEntry.SetAttributeValue(ConfigurationConstants.Attrs.STORAGE_ROOT, xml_config.GetEntryValue(ConfigurationConstants.Tags.STORAGE.LocalName, ConfigurationConstants.Attrs.STORAGE_ROOT));
+            networkEntry.SetAttributeValue(ConfigurationConstants.Attrs.HTTP_PORT, xml_config.GetEntryValue(ConfigurationConstants.Tags.NETWORK.LocalName, ConfigurationConstants.Attrs.HTTP_PORT));
+            networkEntry.SetAttributeValue(ConfigurationConstants.Attrs.CLIENT_MAX_CONN, xml_config.GetEntryValue(ConfigurationConstants.Tags.NETWORK.LocalName, ConfigurationConstants.Attrs.CLIENT_MAX_CONN));
             if (loggingEntry.Attributes().Count() > 0)
                 localSection.Add(loggingEntry);
             if (storageEntry.Attributes().Count() > 0)
@@ -348,35 +360,29 @@ namespace Trinity
             //construct a clusterSections
             s_current_cluster_config = ClusterConfig._LegacyLoadClusterConfig(trinity_config_file);
 
-            s_clusterConfigurations.Add(ConfigurationConstants.Tags.DEFAULT_CLUSTER, s_current_cluster_config);
+            s_clusterConfigurations.Add(ConfigurationConstants.Values.DEFAULT_CLUSTER, s_current_cluster_config);
         }
 
-        private static XmlAttribute SetAttribute(XmlDocument configXml, string attrName, string value)
+        private static void LoadConfigCurrrentVer(XmlConfiguration config)
         {
-            XmlAttribute attribute = configXml.CreateAttribute(attrName);
-            try
+            s_localConfigurationSection = new ConfigurationSection(config.LocalSection);
+            var clusterSections = config.ClusterSections;
+            foreach (var clusterSection in clusterSections)
             {
-                if (bool.Parse(value))
-                    value = value.ToUpper();
+                if (!IsDefaultClusterConfiguration(clusterSection))
+                {
+                    s_clusterConfigurations.Add(clusterSection.Attribute(ConfigurationConstants.Attrs.ID).Value, new ClusterConfig(clusterSection));
+                }
             }
-            catch { }
-            attribute.Value = value;
-            return attribute;
+
+            // The default cluster config is the one without an Id.
+            s_current_cluster_config = 
+                new ClusterConfig(
+                    clusterSections.FirstOrDefault(IsDefaultClusterConfiguration) ??
+                    new XElement(ConfigurationConstants.Tags.CLUSTER));
+
+            s_clusterConfigurations.Add(ConfigurationConstants.Values.DEFAULT_CLUSTER, s_current_cluster_config);
         }
-        /// <summary>
-        /// Return the main infomation of current configuration
-        /// </summary>
-        /// <returns></returns>
-        internal static string OutputCurrentConfig()
-        {
-            CodeWriter cw = new CodeWriter();
-            cw.WL();
-            cw.WL("StorageRoot : {0}", StorageRoot);
-            cw.WL("LogDirectory: {0}", LogDirectory);
-            cw.WL("LoggingLevel: {0}", LoggingLevel);
-            cw.WL("HttpPort:     {0}", HttpPort);
-            cw.WL();
-            return cw.ToString();
-        }
+
     }
 }

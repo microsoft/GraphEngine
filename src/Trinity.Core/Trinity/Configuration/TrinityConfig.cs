@@ -20,11 +20,6 @@ namespace Trinity
     public enum RunningMode : int
     {
         /// <summary>
-        /// Undefined running mode.
-        /// </summary>
-        Undefined,
-
-        /// <summary>
         ///Embedded (in-process) mode.
         /// </summary>
         Embedded,

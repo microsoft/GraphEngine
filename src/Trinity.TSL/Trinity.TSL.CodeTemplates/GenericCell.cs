@@ -1,10 +1,8 @@
 ﻿#pragma warning disable 0162 // disable the "unreachable code" warning
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using Trinity;
 using Trinity.Storage;
 using Trinity.TSL;
@@ -22,58 +20,120 @@ namespace t_Namespace
     /// </summary>
     internal class GenericCellOperations : IGenericCellOperations
     {
-        #region LocalMemoryStorage Save operations
-        public void SaveGenericCell(Trinity.Storage.LocalMemoryStorage storage, ICell cell)
-        {
-            switch ((CellType)cell.CellType)
-            {
-                /*FOREACH*/
-                case CellType.t_cell_name:
-                    storage.Savet_cell_name((t_cell_name)cell);
-                    break;
-                /*END*/
-            }
-        }
-
+        #region LocalMemoryStorage operations
+        /// <inheritdoc/>
         public void SaveGenericCell(Trinity.Storage.LocalMemoryStorage storage, CellAccessOptions writeAheadLogOptions, ICell cell)
         {
             switch ((CellType)cell.CellType)
             {
                 /*FOREACH*/
                 case CellType.t_cell_name:
-                    storage.Savet_cell_name(writeAheadLogOptions, (t_cell_name)cell);
-                    break;
+                storage.Savet_cell_name(writeAheadLogOptions, (t_cell_name)cell);
+                break;
                 /*END*/
             }
         }
 
-        public void SaveGenericCell(Trinity.Storage.LocalMemoryStorage storage, long cellId, ICell cell)
-        {
-            switch ((CellType)cell.CellType)
-            {
-                /*FOREACH*/
-                case CellType.t_cell_name:
-                    storage.Savet_cell_name(cellId, (t_cell_name)cell);
-                    break;
-                /*END*/
-            }
-        }
-
+        /// <inheritdoc/>
         public void SaveGenericCell(Trinity.Storage.LocalMemoryStorage storage, CellAccessOptions writeAheadLogOptions, long cellId, ICell cell)
         {
             switch ((CellType)cell.CellType)
             {
                 /*FOREACH*/
                 case CellType.t_cell_name:
-                    storage.Savet_cell_name(writeAheadLogOptions, cellId, (t_cell_name)cell);
-                    break;
+                storage.Savet_cell_name(writeAheadLogOptions, cellId, (t_cell_name)cell);
+                break;
                 /*END*/
+            }
+        }
+
+        /// <inheritdoc/>
+        public unsafe ICell LoadGenericCell(Trinity.Storage.LocalMemoryStorage storage, long cellId)
+        {
+            ushort type;
+            int    size;
+            byte*  cellPtr;
+            int    entryIndex;
+
+            var err = storage.GetLockedCellInfo(cellId, out size, out type, out cellPtr, out entryIndex);
+            if (err != TrinityErrorCode.E_SUCCESS)
+            {
+                throw new CellNotFoundException("Cannot access the cell.");
+            }
+
+            try
+            {
+                var accessor = UseGenericCell(cellId, cellPtr, entryIndex, type);
+                var cell = accessor.Deserialize();
+                accessor.Dispose();
+                return cell;
+            }
+            catch (Exception ex)
+            {
+                storage.ReleaseCellLock(cellId, entryIndex);
+                ExceptionDispatchInfo.Capture(ex).Throw();
+                // should not reach here
+                throw;
             }
         }
         #endregion
 
-        #region LocalMemoryStorage Load operations
-        public unsafe ICell LoadGenericCell(Trinity.Storage.LocalMemoryStorage storage, long cellId)
+        #region New operations
+        /// <inheritdoc/>
+        public ICell NewGenericCell(string cellType)
+        {
+            CellType type;
+            if (!StorageSchema.cellTypeLookupTable.TryGetValue(cellType, out type))
+                Throw.invalid_cell_type();
+            switch (type)
+            {
+                /*FOREACH*/
+                case global::t_Namespace.CellType.t_cell_name:
+                return new t_cell_name();
+                break;
+                /*END*/
+            }
+            /* Should not reach here */
+            return null;
+        }
+
+        public ICell NewGenericCell(long cellId, string cellType)
+        {
+            CellType type;
+            if (!StorageSchema.cellTypeLookupTable.TryGetValue(cellType, out type))
+                Throw.invalid_cell_type();
+            switch (type)
+            {
+                /*FOREACH*/
+                case global::t_Namespace.CellType.t_cell_name:
+                return new t_cell_name(cell_id: cellId);
+                /*END*/
+            }
+            /* Should not reach here */
+            return null;
+        }
+
+        /// <inheritdoc/>
+        public ICell NewGenericCell(string cellType, string content)
+        {
+            CellType type;
+            if (!StorageSchema.cellTypeLookupTable.TryGetValue(cellType, out type))
+                Throw.invalid_cell_type();
+            switch (type)
+            {
+                /*FOREACH*/
+                case global::t_Namespace.CellType.t_cell_name:
+                return t_cell_name.Parse(content);
+                /*END*/
+            }
+            /* Should not reach here */
+            return null;
+        }
+        #endregion
+
+        #region LocalMemoryStorage Use operations
+        /// <inheritdoc/>
+        public unsafe ICellAccessor UseGenericCell(Trinity.Storage.LocalMemoryStorage storage, long cellId)
         {
             ushort type;
             int    size;
@@ -90,125 +150,32 @@ namespace t_Namespace
             {
                 /*FOREACH*/
                 case CellType.t_cell_name:
-                    var t_cell_name_accessor = new t_cell_name_Accessor(cellPtr);
-                    var t_cell_name_cell = (t_cell_name)t_cell_name_accessor;
-                    storage.ReleaseCellLock(cellId, entryIndex);
-                    t_cell_name_cell.CellID = cellId;
-                    return t_cell_name_cell;
-                    break;
+                return t_cell_name_Accessor.New(cellId, cellPtr, entryIndex, CellAccessOptions.ThrowExceptionOnCellNotFound);
                 /*END*/
                 default:
-                    throw new CellTypeNotMatchException("Cannot determine cell type.");
+                storage.ReleaseCellLock(cellId, entryIndex);
+                throw new CellTypeNotMatchException("Cannot determine cell type.");
             }
         }
-        #endregion
 
-        #region New operations
-        public ICell NewGenericCell(string cellType)
-        {
-            CellType type;
-            if (!StorageSchema.cellTypeLookupTable.TryGetValue(cellType, out type))
-                Throw.invalid_cell_type();
-            switch (type)
-            {
-                /*FOREACH*/
-                case global::t_Namespace.CellType.t_cell_name:
-                    return new t_cell_name();
-                    break;
-                /*END*/
-            }
-            /* Should not reach here */
-            return null;
-        }
-
-        public ICell NewGenericCell(long cellId, string cellType)
-        {
-            CellType type;
-            if (!StorageSchema.cellTypeLookupTable.TryGetValue(cellType, out type))
-                Throw.invalid_cell_type();
-            switch (type)
-            {
-                /*FOREACH*/
-                case global::t_Namespace.CellType.t_cell_name:
-                    return new t_cell_name(cell_id: cellId);
-                    break;
-                /*END*/
-            }
-            /* Should not reach here */
-            return null;
-        }
-
-        public ICell NewGenericCell(string cellType, string content)
-        {
-            CellType type;
-            if (!StorageSchema.cellTypeLookupTable.TryGetValue(cellType, out type))
-                Throw.invalid_cell_type();
-            switch (type)
-            {
-                /*FOREACH*/
-                case global::t_Namespace.CellType.t_cell_name:
-                    return t_cell_name.Parse(content);
-                    break;
-                /*END*/
-            }
-            /* Should not reach here */
-            return null;
-        }
-        #endregion
-
-        #region LocalMemoryStorage Use operations
-        public unsafe ICellAccessor UseGenericCell(Trinity.Storage.LocalMemoryStorage storage, long CellId)
+        /// <inheritdoc/>
+        public unsafe ICellAccessor UseGenericCell(Trinity.Storage.LocalMemoryStorage storage, long cellId, CellAccessOptions options)
         {
             ushort type;
             int    size;
             byte*  cellPtr;
             int    entryIndex;
 
-            var err = storage.GetLockedCellInfo(CellId, out size, out type, out cellPtr, out entryIndex);
-            if (err != TrinityErrorCode.E_SUCCESS)
-            {
-                throw new CellNotFoundException("Cannot access the cell.");
-            }
-
-            switch ((CellType)type)
-            {
-                /*FOREACH*/
-                case CellType.t_cell_name:
-                    return t_cell_name_Accessor.New(CellId, cellPtr, entryIndex, CellAccessOptions.ThrowExceptionOnCellNotFound);
-                /*END*/
-                default:
-                    storage.ReleaseCellLock(CellId, entryIndex);
-                    throw new CellTypeNotMatchException("Cannot determine cell type.");
-             }
-        }
-
-        /// <summary>
-        /// Allocate a generic cell accessor on the specified cell.
-        /// If <c><see cref="Trinity.TrinityConfig.ReadOnly"/> == false</c>,
-        /// on calling this method, it attempts to acquire the lock of the cell,
-        /// and blocks until it gets the lock.
-        /// </summary>
-        /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
-        /// <param name="CellId">The id of the specified cell.</param>
-        /// <param name="options">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
-        /// <returns>A <see cref="t_Namespace.GenericCellAccessor"/> instance.</returns>
-        public unsafe ICellAccessor UseGenericCell(Trinity.Storage.LocalMemoryStorage storage, long CellId, CellAccessOptions options)
-        {
-            ushort type;
-            int    size;
-            byte*  cellPtr;
-            int    entryIndex;
-
-            var err = storage.GetLockedCellInfo(CellId, out size, out type, out cellPtr, out entryIndex);
+            var err = storage.GetLockedCellInfo(cellId, out size, out type, out cellPtr, out entryIndex);
             switch (err)
             {
                 case TrinityErrorCode.E_SUCCESS:
-                    break;
+                break;
                 case TrinityErrorCode.E_CELL_NOT_FOUND:
                     {
                         if ((options & CellAccessOptions.ThrowExceptionOnCellNotFound) != 0)
                         {
-                            Throw.cell_not_found(CellId);
+                            Throw.cell_not_found(cellId);
                         }
                         else if ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
                         {
@@ -220,52 +187,45 @@ namespace t_Namespace
                         }
                         else
                         {
-                            Throw.cell_not_found(CellId);
+                            Throw.cell_not_found(cellId);
                         }
                         break;
                     }
                 default:
-                    throw new CellNotFoundException("Cannot access the cell.");
+                throw new CellNotFoundException("Cannot access the cell.");
             }
 
-            switch ((CellType)type)
+            try
             {
-                /*FOREACH*/
-                case CellType.t_cell_name:
-                    return t_cell_name_Accessor.New(CellId, cellPtr, entryIndex, options);
-                /*END*/
-                default:
-                    storage.ReleaseCellLock(CellId, entryIndex);
-                    throw new CellTypeNotMatchException("Cannot determine cell type.");
-             };
+                return UseGenericCell(cellId, cellPtr, entryIndex, type, options);
+            }
+            catch (Exception ex)
+            {
+                storage.ReleaseCellLock(cellId, entryIndex);
+                ExceptionDispatchInfo.Capture(ex).Throw();
+                // should never reach here
+                throw;
+            }
         }
-        
-        /// <summary>
-        /// Allocate a generic cell accessor on the specified cell.
-        /// If <c><see cref="Trinity.TrinityConfig.ReadOnly"/> == false</c>,
-        /// on calling this method, it attempts to acquire the lock of the cell,
-        /// and blocks until it gets the lock.
-        /// </summary>
-        /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
-        /// <param name="CellId">The id of the specified cell.</param>
-        /// <param name="options">Cell access options.</param>
-        /// <param name="cellType">Specifies the type of cell to be created.</param>
-        /// <returns>A <see cref="t_Namespace.GenericCellAccessor"/> instance.</returns>
-        public unsafe ICellAccessor UseGenericCell(Trinity.Storage.LocalMemoryStorage storage, long CellId, CellAccessOptions options, string cellType)
+
+        /// <inheritdoc/>
+        public unsafe ICellAccessor UseGenericCell(Trinity.Storage.LocalMemoryStorage storage, long cellId, CellAccessOptions options, string cellType)
         {
             switch (cellType)
             {
                 /*FOREACH*/
-                case "t_cell_name": return t_cell_name_Accessor.New(CellId, options);
+                case "t_cell_name": return t_cell_name_Accessor.New(cellId, options);
                 /*END*/
                 default:
-                    Throw.invalid_cell_type();
-                    return null;// should not reach here
+                Throw.invalid_cell_type();
+                return null;// should not reach here
             }
         }
         #endregion
 
         #region LocalMemoryStorage Enumerate operations
+
+        /// <inheritdoc/>
         public IEnumerable<ICell> EnumerateGenericCells(LocalMemoryStorage storage)
         {
             foreach (var cellInfo in Global.LocalStorage)
@@ -283,13 +243,14 @@ namespace t_Namespace
                         }
                     /*END*/
                     default:
-                        continue;
+                    continue;
                 }
             }
 
             yield break;
         }
 
+        /// <inheritdoc/>
         public IEnumerable<ICellAccessor> EnumerateGenericCellAccessors(LocalMemoryStorage storage)
         {
             foreach (var cellInfo in Global.LocalStorage)
@@ -306,7 +267,7 @@ namespace t_Namespace
                         }
                     /*END*/
                     default:
-                        continue;
+                    continue;
                 }
             }
 
@@ -314,33 +275,36 @@ namespace t_Namespace
         }
         #endregion
 
-        #region MemoryCloud operations
-        /// <summary>
-        /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
-        /// Note that the generic cell will be saved as a strongly typed cell. It can then be loaded into either a strongly-typed cell or a generic cell.
-        /// </summary>
-        /// <param name="storage">A <see cref="Trinity.Storage.MemoryCloud"/> instance.</param>
-        /// <param name="cell">The cell to be saved.</param>
+        #region IKeyValueStore operations
 
-        public void SaveGenericCell(Trinity.Storage.MemoryCloud storage, ICell cell)
+        /// <inheritdoc/>
+        public void SaveGenericCell(IKeyValueStore storage, ICell cell)
         {
             switch ((CellType)cell.CellType)
             {
                 /*FOREACH*/
                 case CellType.t_cell_name:
-                    storage.Savet_cell_name((t_cell_name)cell);
-                    break;
+                storage.Savet_cell_name((t_cell_name)cell);
+                break;
                 /*END*/
             }
         }
 
-        /// <summary>
-        /// Loads the content of the cell with the specified cell Id.
-        /// </summary>
-        /// <param name="storage">A <see cref="Trinity.Storage.MemoryCloud"/> instance.</param>
-        /// <param name="cellId">A 64-bit cell Id.</param>
-        /// <returns></returns>
-        public unsafe ICell LoadGenericCell(Trinity.Storage.MemoryCloud storage, long cellId)
+        /// <inheritdoc/>
+        public void SaveGenericCell(IKeyValueStore storage, long cellId, ICell cell)
+        {
+            switch ((CellType)cell.CellType)
+            {
+                /*FOREACH*/
+                case CellType.t_cell_name:
+                storage.Savet_cell_name(cellId, (t_cell_name)cell);
+                break;
+                /*END*/
+            }
+        }
+
+        /// <inheritdoc/>
+        public unsafe ICell LoadGenericCell(IKeyValueStore storage, long cellId)
         {
             ushort type;
             byte[] buff;
@@ -350,28 +314,39 @@ namespace t_Namespace
                 switch (err)
                 {
                     case TrinityErrorCode.E_CELL_NOT_FOUND:
-                        throw new CellNotFoundException("Cannot access the cell.");
+                    throw new CellNotFoundException("Cannot access the cell.");
                     case TrinityErrorCode.E_NETWORK_SEND_FAILURE:
-                        throw new System.IO.IOException("Network error while accessing the cell.");
+                    throw new System.IO.IOException("Network error while accessing the cell.");
                     default:
-                        throw new Exception("Cannot access the cell. Error code: " + err.ToString());
+                    throw new Exception("Cannot access the cell. Error code: " + err.ToString());
                 }
             }
 
-            switch ((CellType)type)
+            fixed (byte* p = buff)
+            {
+                var accessor = UseGenericCell(cellId, p, -1, type);
+                return accessor.Deserialize();
+            }
+        }
+
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe ICellAccessor UseGenericCell(long cellId, byte* cellPtr, int entryIndex, ushort cellType)
+         => UseGenericCell(cellId, cellPtr, entryIndex, cellType, CellAccessOptions.ThrowExceptionOnCellNotFound);
+
+
+        /// <inheritdoc/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe ICellAccessor UseGenericCell(long cellId, byte* cellBuffer, int entryIndex, ushort cellType, CellAccessOptions options)
+        {
+            switch ((CellType)cellType)
             {
                 /*FOREACH*/
                 case CellType.t_cell_name:
-                    fixed (byte* t_cell_name_ptr = buff)
-                    {
-                        t_cell_name_Accessor t_cell_name_accessor = new t_cell_name_Accessor(t_cell_name_ptr);
-                        t_cell_name_accessor.CellID = cellId;
-                        return (t_cell_name)t_cell_name_accessor;
-                    }
-                    break;
+                return t_cell_name_Accessor.New(cellId, cellBuffer, entryIndex, options);
                 /*END*/
                 default:
-                    throw new CellTypeNotMatchException("Cannot determine cell type.");
+                throw new CellTypeNotMatchException("Cannot determine cell type.");
             }
         }
 

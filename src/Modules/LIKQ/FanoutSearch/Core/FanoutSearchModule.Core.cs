@@ -18,6 +18,7 @@ using Trinity.Network;
 using Trinity.Storage;
 using System.Runtime.Serialization;
 using Trinity.Network.Messaging;
+using FanoutSearch.Protocols.TSL.FanoutSearch;
 
 namespace FanoutSearch
 {
@@ -95,7 +96,7 @@ namespace FanoutSearch
             int eresult = FanoutSearchErrorCode.OK;
 
             //obtain a transaction id atomically
-            using (var _transaction = GetTransactionId(c_master_server_id))
+            using (var _transaction = Global.CloudStorage[c_master_server_id].GetTransactionId())
             {
                 my_transaction = _transaction.transaction_id;
             }
@@ -242,7 +243,7 @@ namespace FanoutSearch
 
             // send the first(seed) search messages out.
             var grouped_origin_path_descs = from pd in origin_path_descriptors
-                                            group pd by Global.CloudStorage.GetServerIdByCellId(pd.hop_0);
+                                            group pd by Global.CloudStorage.GetPartitionIdByCellId(pd.hop_0);
             var seed_message_cnt = grouped_origin_path_descs.Count();
             var wait_count_per_seed = GetWaitCount(request.maxHop);
 
@@ -378,7 +379,7 @@ namespace FanoutSearch
                 GetNodesInfoRequestWriter[,] node_info_writers = new GetNodesInfoRequestWriter[hop_count, Global.ServerCount];
                 GetNodesInfoResponse[,] node_info_readers = new GetNodesInfoResponse[hop_count, Global.ServerCount];
                 int[,] reader_idx = new int[hop_count, Global.ServerCount];
-                Func<long, int> hash_func = Global.CloudStorage.GetServerIdByCellId;
+                Func<long, int> hash_func = Global.CloudStorage.GetPartitionIdByCellId;
 
                 try
                 {
@@ -466,8 +467,7 @@ namespace FanoutSearch
 
         internal unsafe void FanoutSearch_impl_Send(int moduleId, byte* bufferPtr, int length)
         {
-            this.SendMessage(
-                moduleId,
+            this.m_memorycloud[moduleId].SendMessage(
                 bufferPtr,
                 length);
         }
@@ -621,7 +621,7 @@ namespace FanoutSearch
         {
             aggregation_obj.CommitAggregationResults(results);
 
-            if (aggregation_obj.aggregationServer == Global.MyServerId)
+            if (aggregation_obj.aggregationServer == Global.MyServerID)
             {
                 aggregation_obj.ReleaseLocalSignal(1);
             }

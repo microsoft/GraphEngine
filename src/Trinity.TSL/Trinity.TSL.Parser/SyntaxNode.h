@@ -393,6 +393,8 @@ public:
     inline bool is_syn_req_protocol()     { return (pt_type     == PT_SYN  && pt_response == PT_VOID_RESPONSE); }
     inline bool is_syn_req_rsp_protocol() { return (pt_type     == PT_SYN  && pt_response != PT_VOID_RESPONSE); }
     inline bool is_asyn_req_protocol()    { return (pt_type     == PT_ASYN && pt_response == PT_VOID_RESPONSE); }
+    inline bool is_asyn_req_rsp_protocol(){ return (pt_type     == PT_ASYN && pt_response != PT_VOID_RESPONSE); }
+
     inline void set_property(NProtocolProperty *p)
     {
         switch (p->propertyType)

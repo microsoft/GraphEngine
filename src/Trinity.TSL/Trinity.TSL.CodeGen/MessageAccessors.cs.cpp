@@ -171,6 +171,56 @@ source->append(R"::(
 }
 source->append(R"::(
         }
+        internal unsafe )::");
+source->append(Codegen::GetString((*(node))[iterator_1]->name));
+source->append(R"::(Writer(int asyncRspHeaderLength, )::");
+for (size_t iterator_2 = 0; iterator_2 < ((*(node))[iterator_1]->fieldList)->size();++iterator_2)
+{
+source->append(R"::( )::");
+source->append(Codegen::GetString((*((*(node))[iterator_1]->fieldList))[iterator_2]->fieldType));
+source->append(R"::( )::");
+source->append(Codegen::GetString((*((*(node))[iterator_1]->fieldList))[iterator_2]->name));
+source->append(R"::( = default()::");
+source->append(Codegen::GetString((*((*(node))[iterator_1]->fieldList))[iterator_2]->fieldType));
+source->append(R"::() )::");
+if (iterator_2 < ((*(node))[iterator_1]->fieldList)->size() - 1)
+source->append(",");
+}
+source->append(R"::()
+            : base(null
+                  )::");
+if ((*(node))[iterator_1]->getLayoutType() != LT_FIXED)
+{
+source->append(R"::(
+                  , null
+                  )::");
+}
+source->append(R"::( )
+        {
+            int preservedHeaderLength = TrinityProtocol.MsgHeader + asyncRspHeaderLength;
+            )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+module_ctx.m_arguments.push_back(Codegen::GetString("message"));
+std::string* module_content = Modules::SerializeParametersToBuffer((*(node))[iterator_1], &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
+            buffer = tmpcellptr - preservedHeaderLength;
+            this.CellPtr = buffer + preservedHeaderLength;
+            Length = BufferLength - preservedHeaderLength;
+            )::");
+if ((*(node))[iterator_1]->getLayoutType() != LT_FIXED)
+{
+source->append(R"::(
+            this.ResizeFunction = WriterResizeFunction;
+            )::");
+}
+source->append(R"::(
+        }
         )::");
 if ((*(node))[iterator_1]->getLayoutType() != LT_FIXED)
 {

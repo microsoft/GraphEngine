@@ -103,10 +103,10 @@ namespace FanoutSearch
         #region Handlers
         public override void GetNodesInfoHandler(GetNodesInfoRequest request, System.Net.HttpListenerResponse response)
         {
-            var writers = Enumerable.Range(0, Global.CloudStorage.ServerCount).Select(i => new GetNodesInfoRequestWriter(fields: new List<string> {  "type_object_name" })).ToArray();
+            var writers = Enumerable.Range(0, Global.CloudStorage.PartitionCount).Select(i => new GetNodesInfoRequestWriter(fields: new List<string> {  "type_object_name" })).ToArray();
 
             foreach (var id in request.ids)
-                writers[Global.CloudStorage.GetServerIdByCellId(id)].ids.Add(id);
+                writers[Global.CloudStorage.GetPartitionIdByCellId(id)].ids.Add(id);
 
             var readers = writers.Select((writer, server) => _GetNodesInfo_impl(server, writer)).ToArray();
 

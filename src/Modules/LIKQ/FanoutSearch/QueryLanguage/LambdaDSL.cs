@@ -123,11 +123,7 @@ public static class FanoutSearchDescriptorEvaluator
         /// </summary>
         private static void CheckProlog(IdentifierNameSyntax identifierNameSyntax)
         {
-            bool prolog_valid = false;
-            if (identifierNameSyntax.Identifier.Text == s_LIKQ_Prolog)
-            {
-                prolog_valid = true;
-            }
+            bool prolog_valid = identifierNameSyntax.Identifier.Text == s_LIKQ_Prolog;
 
             ThrowIf(!prolog_valid, "Invalid prolog", identifierNameSyntax);
         }
@@ -348,9 +344,11 @@ public static class FanoutSearchDescriptorEvaluator
                     }
                     //  It is guaranteed that the lambda_expression is really a lambda.
                     //  Evaluating a lambda and expecting an expression tree to be obtained now.
-                    var eval_task = CSharpScript.EvaluateAsync<Expression<Func<ICellAccessor, Action>>>(lambda_expression.ToString(), scriptOptions, cancellationToken: cancel_token);
-                    eval_task.Wait();
-                    ret = eval_task.Result;
+                    using (var eval_task = CSharpScript.EvaluateAsync<Expression<Func<ICellAccessor, Action>>>(lambda_expression.ToString(), scriptOptions, cancellationToken: cancel_token))
+                    {
+                        eval_task.Wait(cancel_token);
+                        ret = eval_task.Result;
+                    }
                 }
                 catch (ArithmeticException) { /* that's a fault not an error */ throw; }
                 catch { /*swallow roslyn scripting engine exceptions.*/ }
