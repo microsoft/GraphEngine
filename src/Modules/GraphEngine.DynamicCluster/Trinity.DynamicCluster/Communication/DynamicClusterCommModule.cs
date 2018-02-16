@@ -207,5 +207,22 @@ namespace Trinity.DynamicCluster.Communication
                 response.errno = Errno.E_FAIL;
             }
         }
+
+        public override void QueryReplicaHealthHandler(ErrnoResponseWriter response)
+        {
+            response.errno = Errno.E_OK;
+        }
+
+        public override void QueryPartitionHealthHandler(ErrnoResponseWriter response)
+        {
+            if ((m_memorycloud as DynamicMemoryCloud).m_healthmon.IsPartitionHealthy())
+            {
+                response.errno = Errno.E_OK;
+            }
+            else
+            {
+                response.errno = Errno.E_FAIL;
+            }
+        }
     }
 }

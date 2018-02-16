@@ -22,8 +22,6 @@ namespace Trinity.ServiceFabric.Infrastructure
         private readonly (List<System.Fabric.Query.Partition> Partitions,
                           int PartitionCount,
                           int PartitionId,
-                          int Port,
-                          int HttpPort,
                           string IPAddress,
                           StatefulServiceContext Context) m_serviceFabricRuntimeContext;
 
@@ -43,10 +41,6 @@ namespace Trinity.ServiceFabric.Infrastructure
 
         public int PartitionId => ServiceFabricRuntimeContext.PartitionId;
 
-        public int Port => ServiceFabricRuntimeContext.Port;
-
-        public int HttpPort => ServiceFabricRuntimeContext.HttpPort;
-
         public string Address => ServiceFabricRuntimeContext.IPAddress;
 
         public StatefulServiceContext Context => ServiceFabricRuntimeContext.Context;
@@ -54,8 +48,6 @@ namespace Trinity.ServiceFabric.Infrastructure
         protected internal (List<Partition> Partitions, 
                             int PartitionCount, 
                             int PartitionId, 
-                            int Port, 
-                            int HttpPort,
                             string IPAddress, 
                             StatefulServiceContext Context) ServiceFabricRuntimeContext => m_serviceFabricRuntimeContext;
 
@@ -68,8 +60,6 @@ namespace Trinity.ServiceFabric.Infrastructure
         protected TrinitySeverRuntimeMangerBase(ref (List<System.Fabric.Query.Partition> Partitions,
                                                 int PartitionCount,
                                                 int PartitionId,
-                                                int Port,
-                                                int HttpPort,
                                                 string IPAddress,
                                                 StatefulServiceContext Context) runtimeContext)
         {
@@ -81,21 +71,6 @@ namespace Trinity.ServiceFabric.Infrastructure
 
             // load a reference pointer so that we can get to this data from a different place in STAP
             m_serviceFabricRuntimeContext = runtimeContext;
-
-            // Let's configure the Trinity Server Configuration gotten from the Service Fabric Runtime Stateful-Service contexte
-            var groupOfAvailabilityServers = TrinityConfig.CurrentClusterConfig.Servers;
-
-            // Clear out any default configure in place!
-            groupOfAvailabilityServers.Clear();
-            // Now load and configure TrinityServer via dynamically acquired SF Cluster information
-            groupOfAvailabilityServers.Add(new AvailabilityGroup(GraphEngineConstants.LocalAvailabilityGroup, 
-                                           new ServerInfo(GraphEngineConstants.AvailabilityGroupLocalHost,
-                                           runtimeContext.Port, null, 
-                                           LogLevel.Info)));
-
-            // Get the Http port
-
-            TrinityConfig.HttpPort = runtimeContext.HttpPort;
 
             Log.WriteLine("{0}: {1}", nameof(Trinity.ServiceFabric), $"WorkingDirectory={runtimeContext.Context.CodePackageActivationContext.WorkDirectory}");
 
@@ -132,6 +107,7 @@ namespace Trinity.ServiceFabric.Infrastructure
                     .Value;
                 var config_file = Path.Combine(dataPackage.Path, filename);
                 TrinityConfig.LoadConfig(config_file);
+                Log.WriteLine("{0}: {1}", nameof(Trinity.ServiceFabric), $"TrinityConfig loaded from {config_file}");
             }
             catch(Exception ex)
             {

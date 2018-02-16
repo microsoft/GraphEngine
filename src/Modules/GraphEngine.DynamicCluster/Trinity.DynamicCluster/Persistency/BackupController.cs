@@ -94,7 +94,7 @@ namespace Trinity.DynamicCluster.Storage
         {
             // Leader, distribute restore tasks to masters.
             var task_id = Guid.NewGuid();
-            var masters = _GetMasters();
+            var masters = m_dmc.m_cloudidx.GetMasters();
 
             using (var req = new BackupTaskInformationWriter(task_id, version))
             {
@@ -114,7 +114,7 @@ namespace Trinity.DynamicCluster.Storage
             var version = await m_pstore.CreateNewVersion();
             // Leader, distribute backup tasks to masters.
             var task_id = Guid.NewGuid();
-            var masters = _GetMasters();
+            var masters = m_dmc.m_cloudidx.GetMasters();
             try
             {
                 using (var req = new BackupTaskInformationWriter(task_id, version))
@@ -148,14 +148,6 @@ namespace Trinity.DynamicCluster.Storage
 
         private void OnBackupManagerRequestRestore(object sender, EventArgs e)
             => RestoreCurrentPartition(Guid.NewGuid(), m_pstore.GetLatestVersion().Result, e).Wait();
-
-        private IEnumerable<IStorage> _GetMasters()
-        {
-            if (!m_namesvc.IsMaster) throw new NotMasterException();
-            var masters = Utils.Integers(m_namesvc.PartitionCount).Select(m_dmc.m_cloudidx.GetMaster);
-            if (masters.Any(_ => _ == null)) throw new NoSuitableReplicaException("One or more partition masters not found.");
-            return masters;
-        }
 
         public void Dispose() { }
     }

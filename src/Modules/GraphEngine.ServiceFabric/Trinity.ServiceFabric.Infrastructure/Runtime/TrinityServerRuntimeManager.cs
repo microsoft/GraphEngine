@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Fabric;
 using System.Fabric.Query;
 using System.Linq;
+using Trinity.Configuration;
 using Trinity.Diagnostics;
 using Trinity.DynamicCluster.Storage;
 using Trinity.Network;
@@ -19,8 +20,6 @@ namespace Trinity.ServiceFabric.Infrastructure
         public TrinityServerRuntimeManager(ref (List<System.Fabric.Query.Partition> Partitions,
                                                int PartitionCount,
                                                int PartitionId,
-                                               int Port,
-                                               int HttpPort,
                                                string IPAddress,
                                                StatefulServiceContext Context) runtimeContext) : base(ref runtimeContext)
         {
@@ -35,28 +34,14 @@ namespace Trinity.ServiceFabric.Infrastructure
             lock (SingletonLockObject)
             {
                 //  Already started?
-                if (ServiceFabricTrinityServerInstance != null)
-                {
-                    return TrinityErrorCode.E_SUCCESS;
-                }
+                if (ServiceFabricTrinityServerInstance != null) { return TrinityErrorCode.E_SUCCESS; }
 
                 //  Initialize Trinity server.
-                if (ServiceFabricTrinityServerInstance == null)
-                {
-                    ServiceFabricTrinityServerInstance = AssemblyUtility.GetAllClassInstances(
-                        t => t != typeof(TrinityServer)
-                            ? t.GetConstructor(new Type[] { })?.Invoke(new object[] { }) as TrinityServer
-                            : null).FirstOrDefault();
-                }
-                if (ServiceFabricTrinityServerInstance == null)
-                {
-                    ServiceFabricTrinityServerInstance = new TrinityServer();
-                    Log.WriteLine(LogLevel.Warning, $"{nameof(TrinityServerRuntimeManager)}: using the default communication instance.");
-                }
-                else
-                {
-                    Log.WriteLine(LogLevel.Info, "{0}", $"{nameof(TrinityServerRuntimeManager)}: using [{ServiceFabricTrinityServerInstance.GetType().Name}] communication instance.");
-                }
+                var priorities = ExtensionConfig.Instance.ResolveTypePriorities();
+                ServiceFabricTrinityServerInstance = AssemblyUtility
+                    .GetBestClassInstance<TrinityServer, TrinityServer>(ranking: 
+                    t => priorities.TryGetValue(t, out int p) ? p : 0);
+                Log.WriteLine(LogLevel.Info, $"{nameof(TrinityServerRuntimeManager)}: using the communication instance type '{ServiceFabricTrinityServerInstance.GetType().FullName}'.");
 
                 ServiceFabricTrinityServerInstance.Start();
                 return TrinityErrorCode.E_SUCCESS;

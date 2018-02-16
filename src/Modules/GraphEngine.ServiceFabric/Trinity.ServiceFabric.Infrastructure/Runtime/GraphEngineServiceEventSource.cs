@@ -68,9 +68,11 @@ namespace Trinity.ServiceFabric.Infrastructure
         private string EnsureLogHeader()
         {
             if (m_logheader != null) return m_logheader;
-            if (GraphEngineStatefulServiceRuntime.Instance == null) return string.Empty;
+            GraphEngineStatefulServiceRuntime rt = null;
+            try { rt = GraphEngineStatefulServiceRuntime.Instance; } catch { }
+            if (rt == null) return string.Empty;
 
-            m_logheader = $"[P{GraphEngineStatefulServiceRuntime.Instance.PartitionId}-{Utils.GenerateNickName(GraphEngineStatefulServiceRuntime.Instance.GetInstanceId())}]\t";
+            m_logheader = $"[P{rt.PartitionId}-{Utils.GenerateNickName(rt.GetInstanceId())}]\t";
             return m_logheader;
         }
 

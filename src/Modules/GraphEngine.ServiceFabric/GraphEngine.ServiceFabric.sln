@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.Clien
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.Infrastructure", "Trinity.ServiceFabric.Infrastructure\Trinity.ServiceFabric.Infrastructure.csproj", "{1C1B605C-403D-44D7-A52C-C994F7ACAE59}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.Listeners", "Trinity.ServiceFabric.Listeners\Trinity.ServiceFabric.Listeners.csproj", "{437FAA05-3CC2-4DE3-9BF3-AFC3908AF5B5}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.GraphEngineService", "Trinity.ServiceFabric.GraphEngineService\Trinity.ServiceFabric.GraphEngineService.csproj", "{96669A46-1FB2-4E92-8583-15DBA444BEF5}"
 EndProject
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "Trinity.ServiceFabric.SampleApplication", "Trinity.ServiceFabric.SampleApplication\Trinity.ServiceFabric.SampleApplication.sfproj", "{0F44632E-1A7F-463F-954C-A84A7B1A4F69}"
@@ -27,10 +25,6 @@ Global
 		{1C1B605C-403D-44D7-A52C-C994F7ACAE59}.Debug|x64.Build.0 = Debug|x64
 		{1C1B605C-403D-44D7-A52C-C994F7ACAE59}.Release|x64.ActiveCfg = Release|x64
 		{1C1B605C-403D-44D7-A52C-C994F7ACAE59}.Release|x64.Build.0 = Release|x64
-		{437FAA05-3CC2-4DE3-9BF3-AFC3908AF5B5}.Debug|x64.ActiveCfg = Debug|x64
-		{437FAA05-3CC2-4DE3-9BF3-AFC3908AF5B5}.Debug|x64.Build.0 = Debug|x64
-		{437FAA05-3CC2-4DE3-9BF3-AFC3908AF5B5}.Release|x64.ActiveCfg = Release|x64
-		{437FAA05-3CC2-4DE3-9BF3-AFC3908AF5B5}.Release|x64.Build.0 = Release|x64
 		{96669A46-1FB2-4E92-8583-15DBA444BEF5}.Debug|x64.ActiveCfg = Debug|x64
 		{96669A46-1FB2-4E92-8583-15DBA444BEF5}.Debug|x64.Build.0 = Debug|x64
 		{96669A46-1FB2-4E92-8583-15DBA444BEF5}.Release|x64.ActiveCfg = Release|x64

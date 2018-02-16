@@ -149,6 +149,20 @@ protocol PersistedSavePartition
 	Response: ErrnoResponse;
 }
 
+protocol QueryReplicaHealth
+{
+	Type: Asyn;
+	Request: void;
+	Response: ErrnoResponse;
+}
+
+protocol QueryPartitionHealth
+{
+	Type: Asyn;
+	Request: void;
+	Response: ErrnoResponse;
+}
+
 module DynamicCluster
 {
 	protocol AnnounceMaster;
@@ -161,4 +175,6 @@ module DynamicCluster
 	protocol PersistedUpload;
 	protocol PersistedLoadPartition;
 	protocol PersistedSavePartition;
+	protocol QueryReplicaHealth;
+	protocol QueryPartitionHealth;
 }

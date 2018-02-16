@@ -23,14 +23,6 @@ namespace Trinity.DynamicCluster.Consensus
         /// </summary>
         string Address { get; }
         /// <summary>
-        /// Obtains the Tcp port for Trinity protocols on the local instance.
-        /// </summary>
-        int Port { get; }
-        /// <summary>
-        /// Obtains the Http port on the local instance.
-        /// </summary>
-        int HttpPort { get; }
-        /// <summary>
         /// Obtains the numbers of partitions.
         /// </summary>
         int PartitionCount { get; }

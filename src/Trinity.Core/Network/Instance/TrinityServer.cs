@@ -15,12 +15,14 @@ using Trinity.Diagnostics;
 using Trinity.Network.Sockets;
 using Trinity.FaultTolerance;
 using System.Diagnostics;
+using Trinity.Extension;
 
 namespace Trinity.Network
 {
     /// <summary>
     /// Represents a stock Trinity server.
     /// </summary>
+    [ExtensionPriority(-100)]
     public class TrinityServer : CommunicationInstance
     {
         /// <inheritdoc/>

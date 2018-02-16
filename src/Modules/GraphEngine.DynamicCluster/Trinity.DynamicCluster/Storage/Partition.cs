@@ -103,6 +103,7 @@ namespace Trinity.DynamicCluster.Storage
             {
                 try
                 {
+                    if (s == null) return TrinityErrorCode.E_FAILURE;
                     m_storages = m_storages.Remove(s);
                     _UpdateIterators();
                     return TrinityErrorCode.E_SUCCESS;

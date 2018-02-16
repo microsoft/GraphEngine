@@ -27,7 +27,8 @@
     <AvailableItemName Include="TslCodegen" />
   </ItemGroup>
 
-  <Target Name="TslCodegenPrepare">
+  <Target Name="TslCodegenPrepare"
+          BeforeTargets="TslCodegenCs">
     <ItemGroup>
       <OldGeneratedCode Include="$(TslGeneratedCodePath)**\*.cs" />
     </ItemGroup>
@@ -39,6 +40,7 @@
   <Target Name="TslCodegenCs"
           Inputs="@(TslCodegen)"
           Outputs="$(TslGeneratedCodePath)\**\*.cs"
+          BeforeTargets="TslCompileCs"
           DependsOnTargets="TslCodegenPrepare"
           Condition="'@(TslCodegen)' != ''">
     <Exec Command="&quot;$(TSL_CODEGEN_PATH)&quot; --ProjectRoot &quot;$(MSBuildProjectDirectory)&quot; --ScriptList &quot;@(TslCodegen)&quot; --RootNamespace $(RootNamespace) --OutputPath $(TslOutputPath) $(TslDebugArguments) $(TslAdditionalArguments)" />

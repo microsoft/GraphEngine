@@ -36,10 +36,6 @@ namespace Trinity.ServiceFabric.Infrastructure
 
         public int PartitionId { get; private set; }
 
-        public int Port { get; private set; }
-
-        public int HttpPort { get; private set; }
-
         public string Address { get; private set; }
 
         public ReplicaRole Role { get; set; }
@@ -107,14 +103,9 @@ namespace Trinity.ServiceFabric.Infrastructure
             PartitionId = Partitions.FindIndex(p => p.PartitionInformation.Id == Context.PartitionId);
             PartitionCount = Partitions.Count;
 
-            Port = Context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityProtocolEndpoint).Port;
-            HttpPort = Context.CodePackageActivationContext.GetEndpoint(GraphEngineConstants.TrinityHttpProtocolEndpoint).Port;
-
             var contextDataPackage = (Partitions: this.Partitions,
                                       PartitionCount: this.PartitionCount,
                                       PartitionId: this.PartitionId,
-                                      Port: this.Port,
-                                      HttpPort: this.HttpPort,
                                       IPAddress: this.Address,
                                       StatefulServiceContext: Context);
 

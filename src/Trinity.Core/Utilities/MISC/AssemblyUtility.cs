@@ -151,7 +151,7 @@ namespace Trinity.Utilities
         /// </remarks>
         public static List<Type> GetAllClassTypes<TBase, TAttribute>(Assembly assembly = null)
             where TBase : class
-            where TAttribute: Attribute
+            where TAttribute : Attribute
         {
             return GetAllClassTypes_impl(assembly, t => t.GetCustomAttributes<TAttribute>(inherit: true).Any());
         }
@@ -161,7 +161,7 @@ namespace Trinity.Utilities
             List<Type> ret = new List<Type>();
             try
             {
-                foreach(var type in assembly.GetTypes())
+                foreach (var type in assembly.GetTypes())
                 {
                     ret.Add(type);
                 }
@@ -223,10 +223,10 @@ namespace Trinity.Utilities
         /// </summary>
         public static Type GetType(string name)
         {
-            var types     = GetAllClassTypes();
+            var types = GetAllClassTypes();
             var match_aqn = types.Where(t => t.AssemblyQualifiedName == name);
-            var match_fn  = types.Where(t => t.FullName == name);
-            var match_n   = types.Where(t => t.Name == name);
+            var match_fn = types.Where(t => t.FullName == name);
+            var match_n = types.Where(t => t.Name == name);
             return match_aqn.Concat(match_fn).Concat(match_n).FirstOrDefault();
         }
 
@@ -300,6 +300,55 @@ namespace Trinity.Utilities
             return satisfied_instances;
         }
 
+        private class _AssemblyNameComparator : IEqualityComparer<AssemblyName>
+        {
+            public bool Equals(AssemblyName x, AssemblyName y)
+            {
+                return x.FullName == y.FullName;
+            }
+
+            public int GetHashCode(AssemblyName obj)
+            {
+                return obj.FullName.GetHashCode();
+            }
+        }
+
+        /// <summary>
+        /// Ensures that all referenced assemblies are loaded into the current AppDomain.
+        /// </summary>
+        internal static void LoadReferences()
+        {
+            var loaded = new HashSet<AssemblyName>(ForAllAssemblies(_ => _.GetName()), new _AssemblyNameComparator());
+            _LoadReferences_impl(loaded);
+        }
+
+        private static void _LoadReferences_impl(HashSet<AssemblyName> loaded)
+        {
+            bool newLoad = false;
+            var references = ForAllAssemblies(_ => _.GetReferencedAssemblies())
+                            .SelectMany(_ => _)
+                            .ToList();
+            foreach (var r in references)
+            {
+                try
+                {
+                    if (loaded.Contains(r)) continue;
+                    loaded.Add(r);
+                    newLoad = true;
+                    Assembly.Load(r);
+                    Log.WriteLine(LogLevel.Debug, $"{nameof(AssemblyUtility)}: {r.FullName} loaded.");
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteLine(LogLevel.Debug, $"{nameof(AssemblyUtility)}: failed to load {r.FullName}: {{0}}", ex.ToString());
+                }
+            }
+            if (newLoad)
+            {
+                _LoadReferences_impl(loaded);
+            }
+        }
+
         /// <summary>
         /// Get an instance of the most suitable type, based on the ranking function,
         /// and fallbacks to a default type instance.
@@ -310,13 +359,13 @@ namespace Trinity.Utilities
         /// <param name="ranking">The ranking function, higher score is better</param>
         /// <exception cref="TypeLoadException">If none of the satisfying types can be instantiated, including the default fallback type. </exception>
         public static TBase GetBestClassInstance<TBase, TDefault>(Func<Type, TBase> typeProjector = null, Func<Type, int> ranking = null)
-            where TDefault: TBase
+            where TDefault : TBase
             where TBase : class
         {
             typeProjector = typeProjector ?? (t => t.GetConstructor(new Type[] { }).Invoke(new object[] { }) as TBase);
             var base_ranking = ranking ?? (t => 0);
             ranking = (t => t == typeof(TDefault) ? int.MinValue : base_ranking(t));
-            foreach(var type in GetAllClassTypes_impl(typeRanking: ranking))
+            foreach (var type in GetAllClassTypes_impl(typeRanking: ranking))
             {
                 try
                 {
