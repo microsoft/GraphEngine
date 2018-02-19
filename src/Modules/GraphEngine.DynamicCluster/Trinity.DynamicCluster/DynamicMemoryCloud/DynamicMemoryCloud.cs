@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Trinity.Diagnostics;
 using Trinity.DynamicCluster.Communication;
 using Trinity.DynamicCluster.Config;
@@ -23,24 +24,24 @@ namespace Trinity.DynamicCluster.Storage
     public partial class DynamicMemoryCloud : MemoryCloud
     {
         #region Fields
-        internal ClusterConfig           m_cluster_config;
-        internal IChunkTable             m_chunktable;
-        internal INameService            m_nameservice;
-        internal ITaskQueue              m_taskqueue;
-        internal IHealthManager          m_healthmanager;
-        internal IPersistentStorage      m_persistent_storage;
-        internal IBackupManager          m_backupmgr;
-        internal BackupController        m_backupctl;
-        internal Executor                m_taskexec;
-        internal CloudIndex              m_cloudidx;
-        internal HealthMonitor           m_healthmon;
-        internal Partitioner             m_partitioner;
+        internal ClusterConfig m_cluster_config;
+        internal IChunkTable m_chunktable;
+        internal INameService m_nameservice;
+        internal ITaskQueue m_taskqueue;
+        internal IHealthManager m_healthmanager;
+        internal IPersistentStorage m_persistent_storage;
+        internal IBackupManager m_backupmgr;
+        internal BackupController m_backupctl;
+        internal Executor m_taskexec;
+        internal CloudIndex m_cloudidx;
+        internal HealthMonitor m_healthmon;
+        internal Partitioner m_partitioner;
         internal CancellationTokenSource m_cancelSrc;
-        internal DynamicStorageTable     m_storageTable;
+        internal DynamicStorageTable m_storageTable;
 
-        private Random                   m_rng = new Random();
+        private Random m_rng = new Random();
         private DynamicClusterCommModule m_module;
-        private int                      m_myid;
+        private int m_myid;
         #endregion
 
         internal Partition PartitionTable(int id) => StorageTable[id] as Partition;
@@ -105,11 +106,17 @@ namespace Trinity.DynamicCluster.Storage
             this.m_cluster_config = config;
             m_cancelSrc = new CancellationTokenSource();
             m_nameservice = AssemblyUtility.GetAllClassInstances<INameService>().First();
+            Log.WriteLine(LogLevel.Info, $"{nameof(DynamicMemoryCloud)}: using name service provided by '{m_nameservice.GetType().FullName}'");
             m_chunktable = AssemblyUtility.GetAllClassInstances<IChunkTable>().First();
+            Log.WriteLine(LogLevel.Info, $"{nameof(DynamicMemoryCloud)}: using chunk table provided by '{m_chunktable.GetType().FullName}'");
             m_taskqueue = AssemblyUtility.GetAllClassInstances<ITaskQueue>().First();
+            Log.WriteLine(LogLevel.Info, $"{nameof(DynamicMemoryCloud)}: using task queue provided by '{m_taskqueue.GetType().FullName}'");
             m_healthmanager = AssemblyUtility.GetAllClassInstances<IHealthManager>().First();
+            Log.WriteLine(LogLevel.Info, $"{nameof(DynamicMemoryCloud)}: using health manager provided by '{m_healthmanager.GetType().FullName}'");
             m_backupmgr = AssemblyUtility.GetAllClassInstances<IBackupManager>().First();
+            Log.WriteLine(LogLevel.Info, $"{nameof(DynamicMemoryCloud)}: using backup manager provided by '{m_backupmgr.GetType().FullName}'");
             m_persistent_storage = AssemblyUtility.GetAllClassInstances<IPersistentStorage>().First();
+            Log.WriteLine(LogLevel.Info, $"{nameof(DynamicMemoryCloud)}: using persistent storage provided by '{m_persistent_storage.GetType().FullName}'");
 
             m_nameservice.Start(m_cancelSrc.Token);
             m_taskqueue.Start(m_cancelSrc.Token);
@@ -124,7 +131,7 @@ namespace Trinity.DynamicCluster.Storage
 
             int redundancy = DynamicClusterConfig.Instance.MinimumReplica;
             m_cloudidx = new CloudIndex(m_cancelSrc.Token, m_nameservice, m_chunktable, this, NickName, PartitionTable);
-            m_healthmon= new HealthMonitor(m_cancelSrc.Token, m_nameservice, m_cloudidx, m_healthmanager, redundancy);
+            m_healthmon = new HealthMonitor(m_cancelSrc.Token, m_nameservice, m_cloudidx, m_healthmanager, redundancy);
             m_partitioner = new Partitioner(m_cancelSrc.Token, m_cloudidx, m_nameservice, m_taskqueue, DynamicClusterConfig.Instance.ReplicationMode, redundancy);
             m_taskexec = new Executor(m_cancelSrc.Token, m_nameservice, m_taskqueue);
             m_backupctl = new BackupController(m_cancelSrc.Token, m_backupmgr, m_nameservice, m_persistent_storage, m_taskqueue);
@@ -189,6 +196,16 @@ namespace Trinity.DynamicCluster.Storage
         internal Chunk GetChunkByCellId(long cellId)
         {
             return MyChunks.FirstOrDefault(c => c.Covers(cellId));
+        }
+
+        public static Task WaitReadyAsync()
+        {
+            TaskCompletionSource<bool> taskSrc = new TaskCompletionSource<bool>();
+            Global.CommunicationInstanceStarted += () =>
+            {
+                Instance.m_healthmon.WaitMemoryCloudHealthyAsync().ContinueWith(_ => taskSrc.SetResult(true));
+            };
+            return taskSrc.Task;
         }
     }
 }

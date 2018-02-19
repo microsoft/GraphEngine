@@ -4,7 +4,7 @@ Function Init-Configuration {
     $Global:VS_VERSION    = "[15.0,16.0)"
     $Global:REQUIRES      = "Microsoft.Component.MSBuild Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
     $Global:VS_INSTALLDIR = $null
-    Invoke-Expression "$VSWHERE_EXE -version '$VS_VERSION' -products * -requires $REQUIRES -property installationPath" | ForEach-Object { $Global:VS_INSTALLDIR = $_  }
+    Invoke-Expression "& '$VSWHERE_EXE' -version '$VS_VERSION' -products * -requires $REQUIRES -property installationPath" | ForEach-Object { $Global:VS_INSTALLDIR = $_  }
 
     if ($VS_INSTALLDIR -eq $null) {
         throw "Visual Studio 2017 or required components were not found"
@@ -23,7 +23,7 @@ Function Init-Configuration {
     $Global:TRINITY_TSL_SLN               = "$REPO_ROOT\src\Trinity.TSL\Trinity.TSL.sln"
     $Global:SPARK_MODULE_ROOT             = "$REPO_ROOT\src\Modules\Spark"
     $Global:LIKQ_SLN                      = "$REPO_ROOT\src\Modules\LIKQ\LIKQ.sln"
-    $Global:TRINITY_CLIENT_SLN            = "$REPO_ROOT\src\Modules\GraphEngine.Client\GraphEngine.Client.sln"
+    $Global:TRINITY_CLIENT_ROOT           = "$REPO_ROOT\src\Modules\GraphEngine.Client"
     $Global:TRINITY_DYNAMICCLUSTER_SLN    = "$REPO_ROOT\src\Modules\GraphEngine.DynamicCluster\GraphEngine.DynamicCluster.sln"
     $Global:TRINITY_SERVICE_FABRIC_SLN    = "$REPO_ROOT\src\Modules\GraphEngine.ServiceFabric\GraphEngine.ServiceFabric.sln"
     $Global:TRINITY_STORAGE_COMPOSITE_SLN = "$REPO_ROOT\src\Modules\GraphEngine.Storage.Composite\GraphEngine.Storage.Composite.sln"
@@ -48,7 +48,7 @@ Function Write-Configuration {
   Write-Output "TRINITY_TSL_SLN:               $TRINITY_TSL_SLN"
   Write-Output "SPARK_MODULE_ROOT:             $SPARK_MODULE_ROOT"
   Write-Output "LIKQ_SLN:                      $LIKQ_SLN"
-  Write-Output "TRINITY_CLIENT_SLN:            $TRINITY_CLIENT_SLN"
+  Write-Output "TRINITY_CLIENT_ROOT:           $TRINITY_CLIENT_ROOT"
   Write-Output "TRINITY_DYNAMICCLUSTER_SLN:    $TRINITY_DYNAMICCLUSTER_SLN"
   Write-Output "TRINITY_SERVICE_FABRIC_SLN:    $TRINITY_SERVICE_FABRIC_SLN"
   Write-Output "TRINITY_STORAGE_COMPOSITE_SLN: $TRINITY_STORAGE_COMPOSITE_SLN"
@@ -113,9 +113,9 @@ Function New-Package($proj, $config = "Release") {
 # Register local nuget source
 # calling `nuget sources list` will create the config file if it does not exist
 Function Register-LocalRepo {
-  Invoke-Expression "$NUGET_EXE sources list"
-  Invoke-Expression "$NUGET_EXE sources Remove -Name 'Graph Engine OSS Local'"
-  Invoke-Expression "$NUGET_EXE sources Add -Name 'Graph Engine OSS Local' -Source '$TRINITY_OUTPUT_DIR'"
+  Invoke-Expression "& '$NUGET_EXE' sources list"
+  Invoke-Expression "& '$NUGET_EXE' sources Remove -Name 'Graph Engine OSS Local'"
+  Invoke-Expression "& '$NUGET_EXE' sources Add -Name 'Graph Engine OSS Local' -Source '$TRINITY_OUTPUT_DIR'"
 }
 
 Function Invoke-Sub($sub) {

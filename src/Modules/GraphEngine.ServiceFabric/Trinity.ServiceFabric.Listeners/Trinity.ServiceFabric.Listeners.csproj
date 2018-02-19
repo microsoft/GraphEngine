@@ -18,13 +18,10 @@
     <PackageId>GraphEngine.ServiceFabric.ListenerRuntime</PackageId>
     <OutputPath>..\..\..\..\bin</OutputPath>
     <PlatformTarget>x64</PlatformTarget>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
     <PackageReference Include="GraphEngine.DynamicCluster" Version="1.0.9083" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Trinity.ServiceFabric.Infrastructure\Trinity.ServiceFabric.Infrastructure.csproj" />
   </ItemGroup></Project>

@@ -108,7 +108,7 @@ namespace Trinity.DynamicCluster.Storage
             {
                 Log.WriteLine("{0}", $"{nameof(CloudIndex)}: {r.Address}:{r.Port} ({r.Id}) added to partition {r.PartitionId}");
                 IStorage storage = null;
-                if (r.Address == m_nameservice.Address && r.Port == m_nameservice.Port)
+                if (r.Id == m_nameservice.InstanceId)
                 {
                     storage = Global.LocalStorage;
                 }
@@ -190,6 +190,14 @@ namespace Trinity.DynamicCluster.Storage
         internal IStorage GetMaster(int partition)
         {
             return m_masters[partition];
+        }
+
+        internal IEnumerable<IStorage> GetMasters()
+        {
+            if (!m_nameservice.IsMaster) throw new NotMasterException();
+            var masters = Utils.Integers(m_nameservice.PartitionCount).Select(GetMaster);
+            if (masters.Any(_ => _ == null)) throw new NoSuitableReplicaException("One or more partition masters not found.");
+            return masters;
         }
 
         private async Task<IEnumerable<Chunk>> _GetChunks(IStorage storage)

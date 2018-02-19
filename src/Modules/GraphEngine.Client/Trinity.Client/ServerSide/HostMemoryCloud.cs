@@ -105,7 +105,8 @@ namespace Trinity.Client.ServerSide
 
         public void UnregisterClient(int instanceId)
         {
-            throw new NotImplementedException();
+            while (m_hostTable == null) ;
+            m_hostTable.RemoveClient(instanceId);
         }
     }
 }

@@ -352,6 +352,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
   <ItemGroup>
     <ClInclude Include="include\os\platforms\darwin.h" />
     <ClInclude Include="include\os\platforms\posix.h" />
+    <ClInclude Include="include\TrinityErrorCode.h" />
     <ClInclude Include="include\Trinity\Array.h" />
     <ClInclude Include="include\Trinity\Collections\HashSet.h" />
     <ClInclude Include="include\Trinity\Collections\List.h" />

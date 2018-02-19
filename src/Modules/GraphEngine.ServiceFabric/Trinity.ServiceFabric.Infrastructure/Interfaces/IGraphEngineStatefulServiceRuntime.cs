@@ -13,8 +13,6 @@ namespace Trinity.ServiceFabric.Infrastructure.Interfaces
         List<Partition> Partitions { get; }
         int PartitionCount { get; }
         int PartitionId { get; }
-        int Port { get; }
-        int HttpPort { get; }
         string Address { get; }
         //ReplicaRole Role { get; }
         StatefulServiceContext Context { get; }

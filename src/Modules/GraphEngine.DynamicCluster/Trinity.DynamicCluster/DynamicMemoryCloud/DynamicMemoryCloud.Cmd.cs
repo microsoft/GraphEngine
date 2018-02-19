@@ -26,7 +26,8 @@ namespace Trinity.DynamicCluster.Storage
         /// <returns>true if saving succeeds; otherwise, false.</returns>
         public override bool SaveStorage()
         {
-            throw new NotImplementedException();
+            m_backupctl.Backup().Wait();
+            return true;
         }
 
         /// <summary>
@@ -35,7 +36,8 @@ namespace Trinity.DynamicCluster.Storage
         /// <returns>true if loading succeeds; otherwise, false.</returns>
         public override bool LoadStorage()
         {
-            throw new NotImplementedException();
+            m_backupctl.Restore().Wait();
+            return true;
         }
 
         /// <summary>

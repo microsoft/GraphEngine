@@ -609,11 +609,12 @@ namespace Trinity
             value = *this;
             return true;
         }
-        bool TryParse(size_t& value)
+
+        bool TryParse(uint64_t& value)
         {
             try
             {
-                value = std::stol(_string);
+                value = std::stoull(_string);
                 return true;
             }
             catch (...)
@@ -635,11 +636,24 @@ namespace Trinity
             }
         }
 
-        bool TryParse(int& value)
+        bool TryParse(int32_t& value)
         {
             try
             {
                 value = std::stoi(_string);
+                return true;
+            }
+            catch (...)
+            {
+                return false;
+            }
+        }
+
+        bool TryParse(uint32_t& value)
+        {
+            try
+            {
+                value = std::stoul(_string);
                 return true;
             }
             catch (...)

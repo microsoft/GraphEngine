@@ -36,6 +36,8 @@ namespace Trinity.Storage
                 case TrinityErrorCode.E_NETWORK_SEND_FAILURE:
                 case TrinityErrorCode.E_NETWORK_RECV_FAILURE:
                     throw new IOException("Network errors occur.");
+                case TrinityErrorCode.E_MSG_OVERFLOW:
+                    throw new MessageTooLongException("Response message too long.");
             }
         }
 
@@ -51,10 +53,9 @@ namespace Trinity.Storage
                 SynClient sc = GetClient();
                 err = func(sc);
                 PutBackClient(sc);
-                if (err == TrinityErrorCode.E_SUCCESS || err == TrinityErrorCode.E_RPC_EXCEPTION)
-                    break;
+                _error_check(err);
+                if (err == TrinityErrorCode.E_SUCCESS) break;
             }
-            _error_check(err);
         }
 
         /// <inheritdoc/>

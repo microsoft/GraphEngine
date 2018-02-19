@@ -139,9 +139,10 @@ namespace Trinity.DynamicCluster
             int seed = (int)HashHelper.HashString2Int64(instanceId.ToString());
             Random r = new Random(seed);
             var n1 = names[r.Next(names.Length)];
-            var n2 = names[r.Next(names.Length)];
+            //var n2 = names[r.Next(names.Length)];
 
-            return n1 + " " + n2;
+            //return n1 + " " + n2;
+            return n1;
         }
 
         public static T Deserialize<T>(byte[] payload)

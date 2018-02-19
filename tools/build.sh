@@ -10,35 +10,12 @@ then
 	exit -1
 fi
 
-if [ ! -e /etc/os-release ] ;
-then
-	echo "error: cannot determine distro." 1>&2
+if [ "$(command -v dotnet)" == "" ] ; 
+then 
+	echo "error: dotnet not found." 1>&2
+	echo "see: https://www.microsoft.com/net/download/linux"
 	exit -1
-else
-	source /etc/os-release
-	echo "current distro: $ID $VERSION_ID"
 fi
-
-# check if we have dotnet sdk
-if [ ! -e "$REPO_ROOT/tools/dotnet" ];
-then
-	tmp=$(tempfile)
-	echo "dotnet sdk not found, downloading."
-	case "$ID $VERSION_ID" in
-	"ubuntu 16.04")
-		dotnet_url="https://download.microsoft.com/download/D/7/2/D725E47F-A4F1-4285-8935-A91AE2FCC06A/dotnet-sdk-2.0.3-linux-x64.tar.gz"
-		;;
-	*)
-		echo "error: unsupported distro." 1>&2
-		exit -1
-		;;
-	esac
-	wget $dotnet_url -O $tmp || exit -1
-	mkdir "$REPO_ROOT/tools/dotnet"
-	tar -xzf $tmp -C "$REPO_ROOT/tools/dotnet" || exit -1
-	rm $tmp
-fi
-export PATH="$REPO_ROOT/tools/dotnet":$PATH
 
 # build Trinity.C
 build_trinity_c()
@@ -77,8 +54,8 @@ build_trinity_core()
 	echo "Building Trinity.Core"
 	pushd "$REPO_ROOT/src/Trinity.Core"
 	dotnet restore Trinity.Core.sln || exit -1
-	dotnet build -c Release Trinity.Core.sln || exit -1
-	dotnet pack -c Release Trinity.Core.sln || exit -1
+	dotnet build -c Release /p:TargetFrameworks=netstandard2.0 Trinity.Core.sln || exit -1
+	dotnet pack -c Release /p:TargetFrameworks=netstandard2.0 Trinity.Core.sln || exit -1
 	popd
 }
 
@@ -88,8 +65,8 @@ build_likq()
 	echo "Building Trinity.Core"
 	pushd "$REPO_ROOT/src/Modules/LIKQ"
 	dotnet restore LIKQ.sln || exit -1
-	dotnet build -c Release LIKQ.sln || exit -1
-	dotnet pack -c Release LIKQ.sln || exit -1
+	dotnet build -c Release /p:TargetFrameworks=netstandard2.0 LIKQ.sln || exit -1
+	dotnet pack -c Release /p:TargetFrameworks=netstandard2.0 LIKQ.sln || exit -1
 	popd
 }
 
@@ -99,19 +76,19 @@ build_client()
 	echo "Building Trinity.Client"
 	pushd "$REPO_ROOT/src/Modules/GraphEngine.Client"
 	dotnet restore GraphEngine.Client.sln || exit -1
-	dotnet build -c Release GraphEngine.Client.sln || exit -1
-	dotnet pack -c Release GraphEngine.Client.sln || exit -1
+	dotnet build -c Release /p:TargetFrameworks=netstandard2.0 GraphEngine.Client.sln || exit -1
+	dotnet pack -c Release /p:TargetFrameworks=netstandard2.0 GraphEngine.Client.sln || exit -1
 	popd
 }
 
 # build composite_ext
 build_composite_ext()
 {
-	echo "Building Trinity.CompositeExtension"
-	pushd "$REPO_ROOT/src/Modules/Trinity.Storage.CompositeExtension"
-	dotnet restore Trinity.Storage.CompositeExtension.sln || exit -1
-	dotnet build -c Release Trinity.Storage.CompositeExtension.sln || exit -1
-	dotnet pack -c Release Trinity.Storage.CompositeExtension.sln || exit -1
+	echo "Building GraphEngine.Storage.Composite"
+	pushd "$REPO_ROOT/src/Modules/GraphEngine.Storage.Composite"
+	dotnet restore GraphEngine.Storage.Composite.sln || exit -1
+	dotnet build -c Release /p:TargetFrameworks=netstandard2.0 GraphEngine.Storage.Composite.sln || exit -1
+	dotnet pack -c Release /p:TargetFrameworks=netstandard2.0 GraphEngine.Storage.Composite.sln || exit -1
 	popd
 }
 

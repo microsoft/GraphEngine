@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Trinity.Network.Messaging;
 using Trinity.Storage;
 
 namespace FanoutSearch
@@ -59,11 +60,11 @@ namespace FanoutSearch
                                 switch (f)
                                 {
                                     case JsonDSL.graph_outlinks:
-                                        return ToJsonArray(_GetEdgeType(cell, secondary_ids[(int)idx]));
+                                    return ToJsonArray(_GetEdgeType(cell, secondary_ids[(int)idx]));
                                     case "*":
-                                        return cell.ToString();
+                                    return cell.ToString();
                                     default:
-                                        return cell.get(f);
+                                    return cell.get(f);
                                 }
                             }).ToList(),
                         };
@@ -74,7 +75,14 @@ namespace FanoutSearch
                     infos[idx] = _CreateEmptyNodeInfo(id, field_cnt);
                 }
             });
-            response.infoList = infos.ToList();
+            try
+            {
+                response.infoList = infos.ToList();
+            }
+            catch (AccessorResizeException ex)
+            {
+                throw new MessageTooLongException($"{nameof(_GetNodesInfo_implHandler)}: Message too long", ex);
+            }
         }
 
         private NodeInfo _CreateEmptyNodeInfo(long id, int fieldCount)

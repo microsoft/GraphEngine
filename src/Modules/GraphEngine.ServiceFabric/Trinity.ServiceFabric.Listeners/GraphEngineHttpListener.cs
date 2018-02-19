@@ -8,22 +8,18 @@ namespace Trinity.ServiceFabric.Listeners
 {
     public class GraphEngineHttpListener : IGraphEngineCommunicationListener
     {
-        public GraphEngineStatefulServiceRuntime Runtime {get;set;}
-
-        public string ListenerName => GraphEngineConstants.GraphEngineListenerName;
+        public string ListenerName => GraphEngineConstants.GraphEngineHttpListenerName;
 
         public bool ListenOnSecondaries => false;
 
         public void Abort()
         {
-            Debug.Assert(Runtime != null, nameof(Runtime) + " != null");
-            Runtime.TrinityServerRuntime.Stop();
+            GraphEngineStatefulServiceRuntime.Instance.TrinityServerRuntime.Stop();
         }
 
         public Task CloseAsync(CancellationToken cancellationToken)
         {
-            Debug.Assert(Runtime != null, nameof(Runtime) + " != null");
-            Runtime.TrinityServerRuntime.Stop();
+            GraphEngineStatefulServiceRuntime.Instance.TrinityServerRuntime.Stop();
             return Task.FromResult(0);
         }
 
@@ -32,14 +28,9 @@ namespace Trinity.ServiceFabric.Listeners
             //  !Note, although the http listener does speak the http protocol, it does
             //  not leverage the Http infrastructure provided by SF. Hence we tell SF
             //  that this is a tcp port and ask for complete control of the port.
-            Debug.Assert(Runtime != null, nameof(Runtime) + " != null");
+            var Runtime = GraphEngineStatefulServiceRuntime.Instance;
             await Task.Run(() => Runtime.TrinityServerRuntime.Start());
             return $"tcp://{Runtime.TrinityServerRuntime.Address}:{Runtime.TrinityServerRuntime.HttpPort}";
-        }
-
-        public void SetGraphEngineRuntime(GraphEngineStatefulServiceRuntime runtime)
-        {
-            this.Runtime = runtime;
         }
     }
 }

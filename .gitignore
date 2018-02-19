@@ -1,5 +1,4 @@
 Thumbs.db
-src\Modules\Trinity.FFI\Trinity.FFI.PythonModule\cache
 ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
@@ -107,3 +106,5 @@ tests/new_test.exe
 /src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/tests/tsl/bin
 /src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/tests/tsl/obj
 /src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/storage
+/src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/dist
+ServiceFabricBackup

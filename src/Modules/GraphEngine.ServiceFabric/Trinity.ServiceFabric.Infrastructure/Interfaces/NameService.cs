@@ -34,10 +34,6 @@ namespace Trinity.ServiceFabric.Infrastructure.Interfaces
 
         public string Address => GraphEngineStatefulServiceRuntime.Instance.Address;
 
-        public int Port => GraphEngineStatefulServiceRuntime.Instance.Port;
-
-        public int HttpPort => GraphEngineStatefulServiceRuntime.Instance.HttpPort;
-
         public Guid InstanceId { get; private set; }
 
         public bool IsMaster => GraphEngineStatefulServiceRuntime.Instance?.Role == System.Fabric.ReplicaRole.Primary;

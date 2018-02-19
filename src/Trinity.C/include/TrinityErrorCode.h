@@ -12,6 +12,7 @@
 
 enum TrinityErrorCode : int32_t
 {
+    E_MSG_OVERFLOW          = -15,
     E_NETWORK_SHUTDOWN      = -14,
     E_RPC_EXCEPTION         = -13,
     E_NOMEM                 = -12,

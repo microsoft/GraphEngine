@@ -16,6 +16,7 @@
     <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
     <PackageId>GraphEngine.ServiceFabric.Client</PackageId>
     <OutputPath>..\..\..\..\bin</OutputPath>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

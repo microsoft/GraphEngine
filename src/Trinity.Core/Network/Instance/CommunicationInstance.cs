@@ -45,6 +45,7 @@ namespace Trinity.Network
         private MemoryCloud memory_cloud;
         private bool m_started = false;
         private object m_lock = new object();
+        private ManualResetEventSlim m_module_init_signal = new ManualResetEventSlim(initialState: false);
         // XXX ThreadStatic does not work well with async/await. Find a solution.
         [ThreadStatic]
         private static HttpListenerContext s_current_http_ctx = null;
@@ -283,7 +284,7 @@ namespace Trinity.Network
                     //  Initialize message handlers
                     MessageHandlers.Initialize();
                     RegisterMessageHandler();
-                    MessageDispatcher = MessageHandlers.DefaultParser.DispatchMessage;
+                    MessageDispatcher = _MessageInitializationTrap;
 
                     //  Bring up networking subsystems
                     StartCommunicationListeners();
@@ -294,6 +295,10 @@ namespace Trinity.Network
                     //  Initialize the modules
                     _ScanForAutoRegisteredModules();
                     _InitializeModules();
+
+                    //  Modules initialized, release pending messages from the trap
+                    m_module_init_signal.Set();
+                    MessageDispatcher = MessageHandlers.DefaultParser.DispatchMessage;
 
                     Console.WriteLine("Working Directory: {0}", Global.MyAssemblyPath);
                     Console.WriteLine(TrinityConfig.OutputCurrentConfig());
@@ -307,6 +312,12 @@ namespace Trinity.Network
                     Log.WriteLine(LogLevel.Error, "CommunicationInstance: " + ex.ToString());
                 }
             }
+        }
+
+        private unsafe void _MessageInitializationTrap(MessageBuff* sendRecvBuff)
+        {
+            m_module_init_signal.Wait();
+            MessageHandlers.DefaultParser.DispatchMessage(sendRecvBuff);
         }
 
         /// <summary>
@@ -324,6 +335,8 @@ namespace Trinity.Network
 
                     //  TODO notify the modules
                     StopCommunicationListeners();
+
+                    m_module_init_signal.Reset();
 
                     //  Unregister cloud storage
                     memory_cloud = null;
