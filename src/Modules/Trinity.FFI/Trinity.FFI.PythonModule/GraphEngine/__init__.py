@@ -20,22 +20,22 @@ class GraphMachine:
     global_cell_manager = None
     initialized = False
 
-    @classmethod
     def __new__(cls, storage_root, **configurations):
         from GraphEngine.configure import Settings
-        import GraphEngine.ffi
+        from GraphEngine.ffi import Trinity
 
         Settings.storage_root = os.path.abspath(storage_root)
         for k, v in configurations.items():
             if k in Settings.spec:
                 setattr(Settings, k, v)
         Settings.configure()
-        GraphMachine.trinity = __import__('Trinity')
+        GraphMachine.trinity = Trinity
         agent = GraphMachine.trinity.FFI.Agent
         GraphMachine.env = agent.Environment
         GraphMachine.config = agent.Config
         GraphMachine.storage = agent.Storage
         GraphMachine.version_num = 0
+        return GraphMachine
 
     @staticmethod
     def start():

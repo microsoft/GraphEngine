@@ -64,14 +64,14 @@ class Settings:
                 Settings.avg_cell_num and
                 Settings.avg_field_num):
 
-            from GraphEngine.ffi import Agent
-            Agent.Configure(Settings.include,
-                            Settings.storage_root,
-                            Settings.tsl_tool_path,
-                            Settings.dotnet_tool_path,
-                            Settings.avg_max_asm_num,
-                            Settings.avg_cell_num,
-                            Settings.avg_field_num)
+            from GraphEngine.ffi import Trinity
+            Trinity.FFI.Agent.Config.Configure(Settings.include,
+                                               Settings.storage_root,
+                                               Settings.tsl_tool_path,
+                                               Settings.dotnet_tool_path,
+                                               Settings.avg_max_asm_num,
+                                               Settings.avg_cell_num,
+                                               Settings.avg_field_num)
             Settings.configured = True
         else:
 
