@@ -11,17 +11,18 @@ from functools import update_wrapper
 import GraphEngine as ge
 from .SymTable import SymTable, CellType
 from .Serialize import Serializer, TSLJSONEncoder
+from ..cache_manager import CellManager
 
-gm: ge.GraphMachine = ge.GraphMachine.inst
-if gm is None:
-    raise EnvironmentError("GraphMachine wasn't initialized, "
-                           "use `ge.GraphMachine(storage_root: str) to start service.`")
-
+if not ge.GraphMachine.initialized:
+    print("Loading module failed because Graph Machine hasn't been initialized!")
+    raise EnvironmentError
 _str_concat_format = ' | '.join
 
 
 class Cell:
-    def __init__(self, typ: CellType, cell_id=None):
+    def __init__(self, typ: CellType, cell_id=None, cache_manager=None):
+        self.manager: CellManager = cache_manager if cache_manager else ge.GraphMachine.global_cell_manager
+
         self._fields = typ.default.copy()
 
         self._cell_id = cell_id
@@ -37,7 +38,7 @@ class Cell:
         self.get = py_cell_getter(self)
 
         self.set = py_cell_setter(self)
-        
+
         self.save = save_when_not_eval(self)
 
         self.append_field = py_cell_append(self)
@@ -52,17 +53,18 @@ class Cell:
         if not self.has_eval:
             if self.fields == self.typ.default:
                 if self._cell_id is None:
-                    self.cache_index = gm.new_cell_by_type(self.typ.name)
+                    self.cache_index = self.manager.new_cell(cell_type=self.typ.name)
                 else:
-                    self.cache_index = gm.new_cell_by_id_type(str(self.cell_id), self.typ.name)
+                    self.cache_index = self.manager.new_cell(cell_id=str(self.cell_id), cell_type=self.typ.name)
             else:
                 # default value
 
-                self.cache_index = gm.new_cell_by_type_content(
-                    self._typ.name,
-                    json.dumps({field: tsl_value
-                                for field, tsl_value in self.fields.items()},
-                               cls=TSLJSONEncoder))
+                self.cache_index = self.manager.new_cell(
+                    cell_type=self._typ.name,
+                    content=json.dumps(
+                        {field: tsl_value
+                         for field, tsl_value in self.fields.items()},
+                        cls=TSLJSONEncoder))
             self._has_eval = True
 
         return self
@@ -87,7 +89,7 @@ class Cell:
     @property
     def cell_id(self):
         if self._cell_id is None and self.has_eval:
-            self._cell_id = int(gm.cell_get_id_by_idx(self.cache_index))
+            self._cell_id = int(self.manager.get_id(self.cache_index))
 
         return self._cell_id
 
@@ -129,24 +131,28 @@ class Cell:
     def __repr__(self):
         return self.__str__()
 
+
 def save_when_not_eval(cell: Cell):
     def callback():
         warnings.warn("The cell hasn't be computed cannot be saved.")
         pass
+
     return callback
+
 
 def save_after_eval(cell: Cell):
     def callback():
-        gm.save_cell_by_index(cell.cache_index)
-    
+        cell.manager.save_cell(index=cell.cache_index)
+
     def callback_by_id():
-        gm.save_cell_by_id_index(cell.cell_id, cell.cache_index)
-    
+        cell.manager.save_cell(cell_id=cell.cell_id, index=cell.cache_index)
+
     def callback_by_ops(ops):
-        gm.save_cell_by_ops_idx(ops, cell.cache_index)
-    
+        cell.manager.save_cell(write_ahead_log_options=ops, index=cell.cache_index)
+
     def callback_by_ops_id(ops):
-        gm.save_cell_by_ops_id_idx(ops, cell.cell_id, cell.cache_index)
+        cell.manager.save_cell(write_ahead_log_options=ops, cell_id=cell.cell_id, index=cell.cache_index)
+
     callback.by_id = callback_by_id
     callback.by_ops = callback_by_ops
     callback.by_ops_id = callback_by_ops_id
@@ -218,7 +224,6 @@ def py_cell_append(cell: Cell):
     return callback
 
 
-
 def computed_cell_getter(cell: Cell):
     @cell.cache_get
     def callback(field):
@@ -227,7 +232,7 @@ def computed_cell_getter(cell: Cell):
         if field_type is None:
             warnings.warn("No field named {}".format(field))
             return None
-        return gm.cell_get_field(cell.cache_index, field)
+        return cell.manager.get_field(cell.cache_index, field)
 
     return callback
 
@@ -251,7 +256,7 @@ def computed_cell_setter(cell: Cell):
         if not field_type.checker(value):
             raise TypeError("Type `{}` does not match {}.".format(value.__class__.__name__, field_type.sig))
 
-        gm.cell_set_field(cell.cache_index, field, json.dumps(value, cls=TSLJSONEncoder))
+        cell.manager.set_field(index=cell.cache_index, field_name=field, value=json.dumps(value, cls=TSLJSONEncoder))
         cell.dated.add(field)
 
         return True
@@ -280,7 +285,8 @@ def computed_cell_append(cell: Cell):
         if not field_type.checker.for_elem(content):
             raise TypeError("Type `{}` does not match {}.".format(content.__class__.__name__, field_type.sig))
 
-        gm.cell_append_field(cell.cache_index, field, json.dumps(content, cls=TSLJSONEncoder))
+        cell.manager.append_field(index=cell.cache_index, field_name=field,
+                                  content=json.dumps(content, cls=TSLJSONEncoder))
         cell.dated.add(field)
 
         return True

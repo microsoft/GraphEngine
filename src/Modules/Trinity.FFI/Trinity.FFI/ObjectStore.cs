@@ -76,7 +76,7 @@ namespace Trinity.FFI
             m_len = m_array.Length;
         }
 
-        private void _Alloc(int newlen)
+        private void Alloc(int newlen)
         {
             _Alloc_Mutable(newlen);
         }
@@ -96,7 +96,7 @@ begin:
                 {
                     if (m_head >= m_len)
                     {
-                        _Alloc(CalcLen(m_len));
+                        Alloc(CalcLen(m_len));
                     }
                     goto begin;
                 }

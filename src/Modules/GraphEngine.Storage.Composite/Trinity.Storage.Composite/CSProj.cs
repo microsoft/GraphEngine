@@ -7,7 +7,8 @@ namespace Trinity.Storage.CompositeExtension
 {
     public static class CSProj
     {
-        //TODO multi-targeting
+        // TODO multi-targeting
+        // TODO automatically detect the version and dependencies.
         public static string Version = "1.0.9083";
         public static string NetFramework = "netstandard2.0";
         public static string IncludeDirectory; // Need to be configured.

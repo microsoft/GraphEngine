@@ -18,7 +18,7 @@ from GraphEngine.TSL.TypeMap import FieldType
 from GraphEngine.configure import PY3
 
 __all__ = ['SymTable', 'CellType']
-gm = ge.get_machine()
+gm = ge.GraphMachine
 
 
 class CellType:
@@ -121,7 +121,7 @@ def load_symbols(tsl_src_dir, tsl_build_dir=None, module_name=None, version_name
     tsl_src_dir = os.path.abspath(tsl_src_dir)
     tsl_build_dir = tsl_src_dir if tsl_build_dir is None else os.path.abspath(tsl_build_dir)
 
-    gm.agent.LoadTSL(tsl_src_dir, tsl_build_dir, module_name, version_name)
+    gm.config.LoadTSL(tsl_src_dir, tsl_build_dir, module_name, version_name)
     if do_sync:
         sync()
 
@@ -134,13 +134,13 @@ def load_symbols(tsl_src_dir, tsl_build_dir=None, module_name=None, version_name
 def sync():
     symtable = SymTable()  # singleton symtable
 
-    schemas = gm.agent.get_StorageSchema()
+    schemas = gm.env.StorageSchema()
 
-    recorders = gm.agent.get_VersionRecorders()
+    recorders = list(gm.env.VersionRecorders())
     if not recorders:
         return
 
-    new_version_num = len(list(gm.agent.get_VersionRecorders()))
+    new_version_num = len(recorders)
 
     for i in range(gm.version_num, new_version_num):
 
