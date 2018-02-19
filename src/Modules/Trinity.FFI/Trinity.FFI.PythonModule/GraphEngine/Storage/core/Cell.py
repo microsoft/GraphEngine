@@ -21,11 +21,12 @@ _str_concat_format = ' | '.join
 
 class Cell:
     def __init__(self, typ: CellType, cell_id=None, cache_manager=None):
-        self.manager: CellManager = cache_manager if cache_manager else ge.GraphMachine.global_cell_manager
+        self.manager: CellManager = cache_manager if cache_manager else ge.GraphMachine.default_module()
 
         self._fields = typ.default.copy()
 
-        self._cell_id = cell_id
+        self._cell_id = ge.GraphMachine.id_allocator.next_fn() if \
+            cell_id is None else ge.GraphMachine.id_allocator.add_exceptions(cell_id)
 
         self._typ: CellType = typ
 
@@ -58,7 +59,6 @@ class Cell:
                     self.cache_index = self.manager.new_cell(cell_id=str(self.cell_id), cell_type=self.typ.name)
             else:
                 # default value
-
                 self.cache_index = self.manager.new_cell(
                     cell_type=self._typ.name,
                     content=json.dumps(
@@ -135,7 +135,8 @@ class Cell:
 def save_when_not_eval(cell: Cell):
     def callback():
         warnings.warn("The cell hasn't be computed cannot be saved.")
-        pass
+        cell.compute()
+        cell.save()
 
     return callback
 

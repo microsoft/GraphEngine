@@ -46,7 +46,7 @@ namespace Trinity.FFI.Agent
                 ICellAccessor c = Global.LocalStorage.UseGenericCell(cellId, options, cellType);
                 return Cache.Put(c);
             }
-            public void SaveCellByIndex(int index)
+            public void SaveCell(int index)
             {
                 ICellAccessor c = Cache.Get(index);
                 Global.LocalStorage.SaveGenericCell(c);

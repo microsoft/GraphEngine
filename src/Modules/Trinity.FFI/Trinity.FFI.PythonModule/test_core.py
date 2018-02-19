@@ -60,3 +60,30 @@ def test_ge():
         c.set(field, value)
     c.compute()
     c.save()
+
+
+from GraphEngine.Storage.cache_manager import CellAccessorManager
+
+for _ in range(10):
+    c = Cell(symtable['C2'])
+    for i, (field, value) in enumerate(spec.items()):
+        c.set(field, value)
+
+    print(c)
+    c.compute()
+    c.save()
+    print(c)
+
+    cell_id = c.cell_id
+    print(cell_id, c.cache_index)
+    print()
+    ge.GraphMachine.global_cell_manager.save_cell(0)
+
+    # print(ge.GraphMachine.global_cell_manager.load_cell(cell_id))
+
+    with CellAccessorManager() as m:
+        c = m.load_cell(cell_id)
+        print(c)
+        m.delete(c)
+        c = m.use_cell(cell_id)
+        print(c)

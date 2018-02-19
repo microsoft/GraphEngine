@@ -73,7 +73,7 @@ namespace Trinity.FFI.Agent
                 Global.LocalStorage.SaveGenericCell(writeAheadLogOptions, cellId, c);
             }
 
-            public long CellGetIdByIndex(int index)
+            public long CellGetId(int index)
             {
                 return Cache.Get(index).CellID;
             }
@@ -86,7 +86,6 @@ namespace Trinity.FFI.Agent
             {
                 Cache.Get(index).SetField(fieldName, value);
             }
-
 
             public void CellAppendField(int index, string field, string content)
             {

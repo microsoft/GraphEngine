@@ -11,10 +11,10 @@ class CacheManager:
     module_id = -1
 
     def load_cell(self, cell_id):
-        self.inst.LoadCell(cell_id)
+        return self.inst.LoadCell(cell_id)
 
     def save_cell(self, index=None, cell_id=None, write_ahead_log_options=None):
-        self.inst.SaveCell(*filter_null_args((write_ahead_log_options, cell_id, index)))
+        return self.inst.SaveCell(*filter_null_args((write_ahead_log_options, cell_id, index)))
 
     def get_id(self, index):
         return self.inst.CellGetId(index)
@@ -44,29 +44,29 @@ class CacheManager:
 
 class CellAccessorManager(CacheManager):
     def __init__(self):
-        self.inst = GraphMachine.storage.CellManager()
+        self.inst = GraphMachine.storage.CellAccessorManager()
         self.module_id = self.inst.ModuleId
         self.is_accessor = False
 
     def use_cell(self, cell_id, options=None, cell_type=None):
         return self.inst.UseCell(cell_id, *filter_null_args((options, cell_type)))
 
-
-class CellManager(CacheManager):
-    def __init__(self):
-        self.inst = GraphMachine.storage.CellAccessorManager()
-        self.module_id = self.inst.ModuleId
-        self.is_accessor = True
-
-    def new_cell(self, cell_id, cell_type, content):
-        if content and cell_type and cell_id:
-            raise ValueError('When content and cell_type is not None, cell_id should be None.')
-        return self.inst.NewCell(*filter_null_args((cell_id, cell_type, content)))
-
     def __enter__(self):
         # TODO
-        pass
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         # TODO
         self.inst.Dispose()
+
+
+class CellManager(CacheManager):
+    def __init__(self):
+        self.inst = GraphMachine.storage.CellManager()
+        self.module_id = self.inst.ModuleId
+        self.is_accessor = True
+
+    def new_cell(self, cell_id=None, cell_type=None, content=None):
+        if content and cell_type and cell_id:
+            raise ValueError('When content and cell_type is not None, cell_id should be None.')
+        return self.inst.NewCell(*filter_null_args((cell_id, cell_type, content)))
