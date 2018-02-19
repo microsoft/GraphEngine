@@ -10,6 +10,8 @@ import redis
 
 # from redislite import Redis
 # redis_connection = Redis('cache/redis.db')
+from GraphEngine.Storage.cache_manager import CellAccessorManager
+
 redis_server = redis.StrictRedis()
 gm = ge.GraphMachine('storage')
 gm.start()
@@ -43,47 +45,25 @@ print(symtable)
 spec = {'lst': [1, 2, 3, 4, 5],
         'bar': '123'}
 
-
-def test_redis():
-    redis_server.append('C2', spec)
-
-
-def test_redis_embedded():
-    # Nil for windows...
-    pass
-
-
-def test_ge():
-    c = Cell(symtable['C2'])
-
-    for field, value in spec.items():
-        c.set(field, value)
-    c.compute()
-    c.save()
-
-
-from GraphEngine.Storage.cache_manager import CellAccessorManager
-
 for _ in range(10):
     c = Cell(symtable['C2'])
+    c.compute()
     for i, (field, value) in enumerate(spec.items()):
         c.set(field, value)
 
-    print(c)
-    c.compute()
-    c.save()
-    print(c)
-
     cell_id = c.cell_id
     print(cell_id, c.cache_index)
-    print()
-    ge.GraphMachine.global_cell_manager.save_cell(0)
 
+    c.save()
     # print(ge.GraphMachine.global_cell_manager.load_cell(cell_id))
 
     with CellAccessorManager() as m:
         c = m.load_cell(cell_id)
-        print(c)
+        print('cell index[loaded by accessor]: ', c)
+        print('cell id[loaded by accessor]: ', m.get_id(c))
         m.delete(c)
         c = m.use_cell(cell_id)
-        print(c)
+        print('cell index[used by accessor]: ', c)
+        print('cell id[used by accessor]: ', m.get_id(c))
+
+gm.end(save_storage=True)

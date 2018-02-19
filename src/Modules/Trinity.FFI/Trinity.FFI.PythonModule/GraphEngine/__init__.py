@@ -1,8 +1,14 @@
-import os
+import os, sys
 import functools
 from collections import deque
 import linq
 from linq.core.collections import Generator as gen
+
+version = sys.version_info.major * 10 + sys.version_info.minor
+try:
+    import dill as pickle
+except (ModuleNotFoundError if version > 35 else ImportError):
+    import pickle
 
 __all__ = ["GraphMachine"]
 
@@ -16,25 +22,27 @@ class CellAccessorOptions:
 
 
 class IDAllocator:
+    binary_name = 'py-id-allocator.bin'
+
     def __init__(self):
         self.residual_ids = set()
         self.id_exceptions = set()
-        self.next_fn = [None, next, None]
-        self.stream_inf = 0
+        self.next_events = [None, self.next_trivial, None]
+        self.current_id = 0
 
     def next_trivial(self):
-        ret = self.stream_inf
-        self.stream_inf += 1
+        ret = self.current_id
+        self.current_id += 1
         return ret
 
     def add_exceptions(self, cell_id):
         if cell_id in self.residual_ids:
             self.residual_ids.remove(cell_id)
-        elif cell_id < self.stream_inf:
+        elif cell_id < self.current_id:
             return  # no need to add the exception, it has been consumed.
         self.id_exceptions.add(cell_id)
-        if self.next_fn[2] is None:
-            self.next_fn[2] = self.end
+        if self.next_events[2] is None:
+            self.next_events[2] = self.end
 
         return cell_id
 
@@ -43,29 +51,28 @@ class IDAllocator:
             self.id_exceptions.remove(cell_id)
             ret = self.next()
             if not self.id_exceptions:
-                self.next_fn[2] = None
+                self.next_events[2] = None
             return ret
         return cell_id
 
     def dealloc(self, cell_id):
         self.residual_ids.add(cell_id)
-        if self.next_fn[0] is None:
-            self.next_fn[0] = self.before
+        if self.next_events[0] is None:
+            self.next_events[0] = self.before
 
     def before(self):
         try:
             left = self.residual_ids.pop()
             return left
         except KeyError:
-            self.next_fn[0] = None
+            self.next_events[0] = None
 
     def next(self):
-        before, main, end = self.next_fn
+        before, main, end = self.next_events
         if before:
             ret = before()
         else:
             ret = main()
-
         if end:
             ret = end(ret)
         return ret
@@ -90,14 +97,11 @@ class GraphMachine:
             if k in Settings.spec:
                 setattr(Settings, k, v)
         Settings.configure()
-        id_allocator_path = os.path.join(Settings.storage_root, 'py-id-allocator.bin')
+        id_allocator_path = os.path.join(Settings.storage_root, IDAllocator.binary_name)
         if os.path.exists(id_allocator_path):
-            try:
-                with open(id_allocator_path, 'rb') as binary_src:
-                    GraphMachine.id_allocator = __import__('dill').load(binary_src)
-            except (ModuleNotFoundError if __import__('sys').version_info.minor >= 6 else ImportError):
-                raise IOError('Error when loading id allocator binaries!')
-                # GraphMachine.id_allocator = IDAllocator()
+            with open(id_allocator_path, 'rb') as binary_src:
+                GraphMachine.id_allocator = pickle.load(binary_src)
+
         else:
             GraphMachine.id_allocator = IDAllocator()
 
@@ -123,6 +127,11 @@ class GraphMachine:
         if save_storage:
             print('Saving storage...')
             GraphMachine.trinity.Global.LocalStorage.SaveStorage()
+
+            from GraphEngine.configure import Settings
+            with open(os.path.join(Settings.storage_root, IDAllocator.binary_name), 'wb') as id_bin_stream:
+                pickle.dump(GraphMachine.id_allocator, id_bin_stream)
+
             GraphMachine.config.Uninitialize()
             GraphMachine.initialized = False
         print('GraphEngine Exited.')

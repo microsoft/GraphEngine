@@ -25,7 +25,7 @@ class Cell:
 
         self._fields = typ.default.copy()
 
-        self._cell_id = ge.GraphMachine.id_allocator.next_fn() if \
+        self._cell_id = ge.GraphMachine.id_allocator.next() if \
             cell_id is None else ge.GraphMachine.id_allocator.add_exceptions(cell_id)
 
         self._typ: CellType = typ
@@ -56,11 +56,11 @@ class Cell:
                 if self._cell_id is None:
                     self.cache_index = self.manager.new_cell(cell_type=self.typ.name)
                 else:
-                    self.cache_index = self.manager.new_cell(cell_id=str(self.cell_id), cell_type=self.typ.name)
+                    self.cache_index = self.manager.new_cell(cell_type=self.typ.name, cell_id=self.cell_id)
             else:
-                # default value
                 self.cache_index = self.manager.new_cell(
                     cell_type=self._typ.name,
+                    cell_id=self.cell_id,
                     content=json.dumps(
                         {field: tsl_value
                          for field, tsl_value in self.fields.items()},
@@ -233,7 +233,7 @@ def computed_cell_getter(cell: Cell):
         if field_type is None:
             warnings.warn("No field named {}".format(field))
             return None
-        return cell.manager.get_field(cell.cache_index, field)
+        return json.loads(cell.manager.get_field(cell.cache_index, field), cls=TSLJSONEncoder)
 
     return callback
 

@@ -39,7 +39,8 @@ class CacheManager:
 
     @staticmethod
     def remove_cell(cell_id):
-        return GraphMachine.storage.RemoveCellFromStorage(cell_id)
+        GraphMachine.storage.RemoveCellFromStorage(cell_id)
+        GraphMachine.id_allocator.dealloc(cell_id)
 
 
 class CellAccessorManager(CacheManager):
@@ -58,6 +59,7 @@ class CellAccessorManager(CacheManager):
     def __exit__(self, exc_type, exc_val, exc_tb):
         # TODO
         self.inst.Dispose()
+        del self.inst
 
 
 class CellManager(CacheManager):
@@ -66,7 +68,5 @@ class CellManager(CacheManager):
         self.module_id = self.inst.ModuleId
         self.is_accessor = True
 
-    def new_cell(self, cell_id=None, cell_type=None, content=None):
-        if content and cell_type and cell_id:
-            raise ValueError('When content and cell_type is not None, cell_id should be None.')
-        return self.inst.NewCell(*filter_null_args((cell_id, cell_type, content)))
+    def new_cell(self, cell_type, cell_id=None, content=None):
+        return self.inst.NewCell(*filter_null_args((cell_type, cell_id, content)))

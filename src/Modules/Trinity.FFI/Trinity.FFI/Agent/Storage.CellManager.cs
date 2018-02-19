@@ -40,14 +40,15 @@ namespace Trinity.FFI.Agent
                 ICell c = Global.LocalStorage.NewGenericCell(cellType);
                 return Cache.Put(c);
             }
-            public int NewCell(long cellId, string cellType)
+            public int NewCell(string cellType, long cellId)
             {
                 ICell c = Global.LocalStorage.NewGenericCell(cellId, cellType);
                 return Cache.Put(c);
             }
-            public int NewCell(string cellType, string content)
+            public int NewCell(string cellType, long cellId, string content)
             {
                 ICell c = Global.LocalStorage.NewGenericCell(cellType, content);
+                c.CellID = cellId;
                 return Cache.Put(c);
             }
 
