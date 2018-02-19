@@ -7,8 +7,8 @@ Created on Wed Feb  7 00:37:40 2018
 
 import GraphEngine as ge
 import redis
-from redislite import Redis
-redis_connection = Redis('cache/redis.db')
+#from redislite import Redis
+#redis_connection = Redis('cache/redis.db')
 redis_server = redis.StrictRedis()
 gm = ge.GraphMachine('storage')
 gm.start()
@@ -47,9 +47,8 @@ def test_redis():
     
 def test_redis_embedded():
     # Nil for windows...
-    
+    pass
 def test_ge():
-    
     c = Cell(symtable['C2'])
     
     for field, value in spec.items():
