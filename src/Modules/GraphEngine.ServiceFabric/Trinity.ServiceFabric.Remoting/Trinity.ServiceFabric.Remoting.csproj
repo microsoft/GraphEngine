@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>net461</TargetFrameworks>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Version>1.0.9083.0</Version>
     <FileVersion>1.0.9083.0</FileVersion>
@@ -14,13 +14,17 @@
     <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
     <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
     <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
-    <PackageId>GraphEngine.ServiceFabric.Client</PackageId>
+    <PackageId>GraphEngine.ServiceFabric.Remoting</PackageId>
     <OutputPath>..\..\..\..\bin</OutputPath>
     <Platforms>x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
-    <PackageReference Include="GraphEngine.Client" Version="1.0.9083" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services.Remoting" Version="2.8.232" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.ServiceFabric.Infrastructure\Trinity.ServiceFabric.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

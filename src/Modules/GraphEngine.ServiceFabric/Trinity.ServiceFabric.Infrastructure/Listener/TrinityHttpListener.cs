@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Fabric;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace Trinity.ServiceFabric.Listener
 
         public override string EndpointName => GraphEngineConstants.TrinityHttpProtocolEndpoint;
 
-        public override void Configure(int port)
+        public override void Configure(int port, StatefulServiceContext _)
         {
             // Set the Http port
             TrinityConfig.HttpPort = port;

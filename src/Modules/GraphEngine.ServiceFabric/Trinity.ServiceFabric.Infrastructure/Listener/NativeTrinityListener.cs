@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Fabric;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace Trinity.ServiceFabric.Listener
 
         public override string EndpointName => GraphEngineConstants.TrinityProtocolEndpoint;
 
-        public override void Configure(int port)
+        public override void Configure(int port, StatefulServiceContext _)
         {
             // Let's configure the Trinity Server Configuration gotten from the Service Fabric Runtime Stateful-Service contexte
             var groupOfAvailabilityServers = TrinityConfig.CurrentClusterConfig.Servers;

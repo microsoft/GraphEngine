@@ -1,10 +1,20 @@
-﻿using System.Threading;
+﻿using FanoutSearch;
+using System.Threading;
+using Trinity.Azure.Storage;
 using Trinity.Diagnostics;
 using Trinity.DynamicCluster.Storage;
 using Trinity.ServiceFabric;
+using Trinity.ServiceFabric.Remoting;
+using Trinity.ServiceFabric.SampleProtocols;
 
 namespace Trinity.SampleApplication.ServiceFabric
 {
+    // Workaround: extension assembly will be removed by the
+    // compiler if it is not explicitly used in the code.
+    [UseExtension(typeof(BlobStoragePersistentStorage))]
+    [UseExtension(typeof(ITrinityOverRemotingService))]
+    [UseExtension(typeof(FanoutSearchModule))]
+    [UseExtension(typeof(SampleModuleImpl))]
     internal static class Program
     {
         /// <summary>
@@ -12,10 +22,6 @@ namespace Trinity.SampleApplication.ServiceFabric
         /// </summary>
         private static void Main()
         {
-            // Workaround: extension assembly will be removed by the
-            // compiler if it is not explicitly used in the code.
-            Trinity.Azure.Storage.BlobStorageConfig.Instance.ToString();
-
             // The ServiceManifest.XML file defines one or more service type names.
             // Registering a service maps a service type name to a .NET type.
             // When Service Fabric creates an instance of this service type,

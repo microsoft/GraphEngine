@@ -26,28 +26,28 @@ namespace Trinity.ServiceFabric.Listener
         /// <remarks>
         /// Implementation must not throw.
         /// </remarks>
-        public abstract void Configure(int port);
+        public abstract void Configure(int port, StatefulServiceContext ctx);
 
         internal GraphEngineListenerBase _Setup(StatefulServiceContext ctx)
         {
             m_port = ctx.CodePackageActivationContext.GetEndpoint(EndpointName).Port;
-            Configure(m_port);
+            Configure(m_port, ctx);
             return this;
         }
 
         /// <inheritdoc />
-        public void Abort()
+        public virtual void Abort()
         {
             GraphEngineStatefulServiceRuntime.Instance.TrinityServerRuntime.Stop();
         }
 
-        public Task CloseAsync(CancellationToken cancellationToken)
+        public virtual Task CloseAsync(CancellationToken cancellationToken)
         {
             GraphEngineStatefulServiceRuntime.Instance.TrinityServerRuntime.Stop();
             return Task.FromResult(0);
         }
 
-        public async Task<string> OpenAsync(CancellationToken cancellationToken)
+        public virtual async Task<string> OpenAsync(CancellationToken cancellationToken)
         {
             var rt = GraphEngineStatefulServiceRuntime.Instance;
             await Task.Factory.StartNew(() => rt.TrinityServerRuntime.Start(), TaskCreationOptions.RunContinuationsAsynchronously).ConfigureAwait(false);

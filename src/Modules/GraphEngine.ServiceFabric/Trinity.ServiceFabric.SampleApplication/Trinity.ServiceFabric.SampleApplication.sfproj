@@ -29,6 +29,7 @@
     <None Include="Scripts\Deploy-FabricApplication.ps1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Trinity.ServiceFabric.GraphEngineRemotingClient\Trinity.ServiceFabric.GraphEngineRemotingClient.csproj" />
     <ProjectReference Include="..\Trinity.ServiceFabric.GraphEngineService\Trinity.ServiceFabric.GraphEngineService.csproj" />
   </ItemGroup>
   <ItemGroup>
