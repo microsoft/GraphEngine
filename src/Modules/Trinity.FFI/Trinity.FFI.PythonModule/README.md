@@ -82,25 +82,27 @@ import GraphEngine as ge
 import reisen
 from nltk.tokenize import word_tokenize
 from gensim import corpora, models
-import datetime
-gm = ge.GraphMachine('<your storage directory>')
+import datetime, time
+gm = ge.GraphMachine('<your storage directory>')  # create local node(machine)
 gm.start()
-reisen.use_machine(gm)
-
+reisen.use_machine(gm)  # set the beginning node(machine) of distributed query.
 
 @reisen.AOT
 def query_data_from_storage(field):
-    
+    """Get the related corpus about specific field from cloud servers.
+    """
     data : ge.dtype.List = []
     now = datetime.datetime.now()
     one_year = datetime.timedelta(365)
     last_year = now - one_year
 
     def filter_fn(block):
+        """conditions to filter corpus blocks.
+        """
         if block.lang == 'english' and block.time > last_year and block.tag.like(field):
             return block
         
-    for server in gm.cloud.servers.available:
+    for server in gm.cloud.servers.available:  # traverse all the available servers(in fact it'll be done in distributed/parallel ways)
         if server.create_time > last_year:
             continue
         corpus = server.storage.corpus
@@ -120,7 +122,7 @@ data = query_data_from_storage(field = 'programming language')
 
 while True:
     if not data.got:
-        continue
+        time.sleep(200)
     break
 
 data: list = data.result
