@@ -102,7 +102,8 @@ def query_data_from_storage(field):
         if block.lang == 'english' and block.time > last_year and block.tag.like(field):
             return block
         
-    for server in gm.cloud.servers.available:  # traverse all the available servers(in fact it'll be done in distributed/parallel ways)
+    for server in gm.cloud.servers.available:  
+    # traverse all the available servers(in fact it'll be done in distributed/parallel ways)
         if server.create_time > last_year:
             continue
         corpus = server.storage.corpus
