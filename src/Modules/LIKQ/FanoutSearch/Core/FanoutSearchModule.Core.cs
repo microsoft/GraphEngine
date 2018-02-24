@@ -382,7 +382,7 @@ namespace FanoutSearch
 
                 try
                 {
-                    Parallel.For(0, hop_count, i =>
+                    Parallel.For(0, hop_count, (i, state) =>
                     {
                         if (has_return_selections[i])
                         {
@@ -429,12 +429,13 @@ namespace FanoutSearch
                                         var id = rpath.nodes[i].id;
                                         var j = hash_func(id);
                                         var idx = reader_idx[i, j]++;
+
                                         rpath.nodes[i].field_selections.AddRange(node_info_readers[i, j].infoList[idx].values);
                                     }
                                 }
 
                             }
-                            catch (AggregateException ex) when (ex.InnerExceptions.Any(_ => _ is AccessorResizeException))
+                            catch (AggregateException ex) when (ex.InnerExceptions.Any(_ => _ is AccessorResizeException || _ is MessageTooLongException))
                             {
                                 throw new MessageTooLongException();
                             }
@@ -501,14 +502,16 @@ namespace FanoutSearch
             long* request_paths_ptr = (long*)(request_buffer + 2 * sizeof(int));
             int single_path_len = current_hop + 1;
 
+            bool msg_too_big = false;
+
             AggregationObject aggregation_obj;
 
             //Console.WriteLine("hop: {0}", current_hop);
             //Console.WriteLine("tx: {0}", request_transaction_id);
 
-            if (!m_aggregationObjects.TryGetValue(request_transaction_id, out aggregation_obj)
+            if (!this.m_aggregationObjects.TryGetValue(request_transaction_id, out aggregation_obj)
                 ||
-                (_QueryTimeoutEnabled() && aggregation_obj.stopwatch.ElapsedMilliseconds > s_query_time_quota))
+                _CheckTimeout(aggregation_obj))
             { /* Timeout. */ return; }
 
             var predicate = current_hop == 0 ?
@@ -519,7 +522,7 @@ namespace FanoutSearch
             {
                 System.Collections.Concurrent.ConcurrentBag<int> result_indices = new System.Collections.Concurrent.ConcurrentBag<int>();
 
-                Parallel.For(0, request_path_cnt, i =>
+                Parallel.For(0, request_path_cnt, (i, state) =>
                 {
                     long cell_id = request_paths_ptr[i * single_path_len + current_hop];
                     try
@@ -533,6 +536,11 @@ namespace FanoutSearch
                         }
                     }
                     catch { }
+
+                    if (0 == (i & 0xFF) && _CheckTimeout(aggregation_obj))
+                    {
+                        state.Break();
+                    }
                 });
 
                 var results = result_indices.Select(i => GetPathDescriptor(&request_paths_ptr[i * single_path_len], current_hop)).ToList();
@@ -546,9 +554,6 @@ namespace FanoutSearch
 
             if (negate_edge_types.Count == 0)
                 negate_edge_types = null;
-
-            int enumerated_path_cnt = 0;
-            bool msg_too_big = false;
 
             using (var dispatcher = new MessageDispatcher(current_hop + 1, request_transaction_id))
             {
@@ -591,13 +596,12 @@ namespace FanoutSearch
                         return;
                     }
 
-                    if (0 == (enumerated_path_cnt & 0xFF) && _QueryTimeoutEnabled() && aggregation_obj.stopwatch.ElapsedMilliseconds > s_query_time_quota)
+                    if (0 == (i & 0xFF) && _CheckTimeout(aggregation_obj))
                     {
                         loopstate.Break();
                         return;
                     }
 
-                    ++enumerated_path_cnt;
                 });//END Parallel.For
 
                 if (msg_too_big) throw new MessageTooLongException();
@@ -612,6 +616,12 @@ namespace FanoutSearch
 
                 dispatcher.Dispatch();
             }
+        }
+
+        private static unsafe bool _CheckTimeout(AggregationObject aggregation_obj)
+        {
+            if (_QueryTimeoutEnabled() && aggregation_obj.stopwatch.ElapsedMilliseconds > s_query_time_quota) aggregation_obj.timed_out = true;
+            return aggregation_obj.timed_out;
         }
 
         /// <summary>

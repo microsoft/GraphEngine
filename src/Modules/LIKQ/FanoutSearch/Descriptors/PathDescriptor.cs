@@ -6,6 +6,7 @@ using FanoutSearch.Protocols.TSL;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,23 +44,25 @@ namespace FanoutSearch
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            Serialize(sb);
-            return sb.ToString();
+            using (StringWriter sw = new StringWriter())
+            {
+                Serialize(sw);
+                return sw.ToString();
+            }
         }
 
-        internal void Serialize(StringBuilder sb)
+        internal void Serialize(TextWriter writer)
         {
             bool first = true;
-            sb.Append('[');
+            writer.Write('[');
             foreach (var node in m_paths)
             {
                 if (first) { first = false; }
-                else { sb.Append(','); }
+                else { writer.Write(','); }
 
-                sb.Append(node);
+                node.Serialize(writer);
             }
-            sb.Append(']');
+            writer.Write(']');
         }
     }
 }

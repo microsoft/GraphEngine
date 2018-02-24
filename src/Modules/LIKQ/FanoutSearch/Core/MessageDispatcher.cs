@@ -84,6 +84,7 @@ namespace FanoutSearch
                 if(bcap != buf_capacity[slaveID])
                 {
                     byte* new_buf = (byte*)Memory.malloc((uint)bcap);
+                    if(new_buf == null) { throw new OutOfMemoryException(); }
                     Memory.memcpy(new_buf, buffer[slaveID], (uint)buf_offset[slaveID]);
                     Memory.free(buffer[slaveID]);
 
@@ -110,7 +111,11 @@ namespace FanoutSearch
             for(int serverId = 0; serverId < serverCount; ++serverId)
             {
                 var bufferPtr = this.buffer[serverId];
-                Memory.free(bufferPtr);
+                if(bufferPtr != null)
+                {
+                    this.buffer[serverId] = null;
+                    Memory.free(bufferPtr);
+                }
             }
 
             buffer = null;
