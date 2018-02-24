@@ -8,13 +8,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Trinity.Core.Lib;
+using Trinity.Storage;
+using Trinity.TSL.Lib;
 
 namespace Trinity.Network.Messaging
 {
     /// <summary>
     /// Represents a binary network response.
+    /// Each TrinityResponse consists of an error code (4 bytes)
+    /// and a payload.
     /// </summary>
-    public unsafe sealed class TrinityResponse : IDisposable
+    public unsafe sealed class TrinityResponse : IAccessor, IDisposable
     {
         static TrinityResponse()
         {
@@ -37,7 +41,7 @@ namespace Trinity.Network.Messaging
         {
             Buffer = (byte*)CMemory.C_malloc((ulong)size);
             Size = size;
-            Offset = TrinityProtocol.SocketMsgHeader;
+            Offset = TrinityProtocol.TrinityMsgHeader;
         }
 
         internal TrinityErrorCode ErrorCode
@@ -48,16 +52,19 @@ namespace Trinity.Network.Messaging
             }
         }
 
-        // construct a TrinityResponse using a raw buffer
-        internal TrinityResponse(byte* buf, int size)
+        /// <summary>
+        /// construct a TrinityResponse using a raw buffer.
+        /// </summary>
+        public TrinityResponse(byte* buf, int size)
         {
             Buffer = buf;
             Size = size;
-            Offset = TrinityProtocol.SocketMsgHeader;
+            Offset = TrinityProtocol.TrinityMsgHeader;
         }
 
         internal TrinityResponse(TrinityMessage msg)
         {
+            // !Note, in this case ErrorCode does not work.
             Buffer = msg.Buffer;
             Offset = TrinityMessage.Offset;
             Size = msg.Size;
@@ -69,6 +76,32 @@ namespace Trinity.Network.Messaging
         public void Dispose()
         {
             Memory.free(Buffer);
+        }
+
+        /// <inheritdocs />
+        public ResizeFunctionDelegate ResizeFunction { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
+
+        /// <inheritdocs />
+        public byte* GetUnderlyingBufferPointer()
+        {
+            return Buffer;
+        }
+
+        /// <inheritdocs />
+        public byte[] ToByteArray()
+        {
+            byte[] bytes = new byte[Size];
+            fixed(byte* p = bytes)
+            {
+                Memory.Copy(Buffer, p, Size);
+            }
+            return bytes;
+        }
+
+        /// <inheritdocs />
+        public int GetBufferLength()
+        {
+            return Size;
         }
     }
 }

@@ -148,6 +148,11 @@ namespace FanoutSearch
             ExpressionSerializer.SetSerializerFactory(func);
         }
 
+        public static void RegisterQueryWhilelistType(Type t)
+        {
+            TraverseActionSecurityChecker.RegisterQueryWhitelistType(t);
+        }
+
         public static void EnableExternalQuery(bool enabled)
         {
             s_enable_external_query = enabled;
@@ -264,7 +269,7 @@ namespace FanoutSearch
             int W = 1;
             for (int i = 1; i <= max_hop; ++i)
             {
-                W *= Global.CloudStorage.ServerCount;
+                W *= Global.CloudStorage.PartitionCount;
             }
             return W;
         }

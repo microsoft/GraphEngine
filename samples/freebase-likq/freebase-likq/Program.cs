@@ -2,17 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Trinity;
 using Trinity.Network;
-using freebase_tsl;
 using Newtonsoft.Json.Linq;
 using Trinity.Core.Lib;
 using System.IO;
 using Trinity.Diagnostics;
 using System.Data.SQLite;
-using Trinity.TSL.Lib;
 using System.Net;
 using System.Diagnostics;
 using System.IO.Compression;
@@ -51,7 +47,7 @@ namespace freebase_likq
             FanoutSearchModule.SetQueryTimeout(1000000);
 
             string storage_path = Path.Combine(Global.MyAssemblyPath, "storage");
-            if (Directory.Exists(storage_path) && Directory.GetFileSystemEntries(storage_path).Count() == 0)
+            if (Directory.Exists(storage_path) && !Directory.GetFileSystemEntries(storage_path).Any())
             {
                 Directory.Delete(storage_path);
             }

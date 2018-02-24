@@ -69,6 +69,7 @@
     <Compile Include="LINQ\IndexQueryTreeNode.cs" />
     <Compile Include="LINQ\PLINQWrapper.cs" />
     <Compile Include="MessageAccessors.cs" />
+    <Compile Include="MODULES\LegacyMessagePassingMethods.cs" />
     <Compile Include="MODULES\SerializeParametersToBuffer.cs" />
     <Compile Include="MODULES\AccessorReverseImplicitOperator.cs" />
     <Compile Include="MODULES\StructAccessorEqualOperator.cs" />

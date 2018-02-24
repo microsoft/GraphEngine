@@ -18,7 +18,6 @@ using Trinity.Mathematics;
 using Trinity.Core.Lib;
 using Trinity.Storage;
 using Trinity.Daemon;
-using Trinity.Properties;
 using Trinity.TSL.Lib;
 using Trinity.Network;
 using System.Globalization;

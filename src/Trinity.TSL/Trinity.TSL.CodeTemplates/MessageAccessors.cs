@@ -109,6 +109,29 @@ namespace t_Namespace
             this.ResizeFunction = WriterResizeFunction;
             END();
         }
+
+        // internal use for ASYNC_WITH_RSP
+        internal unsafe t_accessor_nameWriter(int asyncRspHeaderLength, [FOREACH(",")] t_field_type t_field_name = default(t_field_type) /*END*/)
+            : base(null
+                  /*IF("$t_accessor->getLayoutType() != LT_FIXED")*/
+                  , null
+                  /*END*/ )
+        {
+            int preservedHeaderLength = TrinityProtocol.MsgHeader + asyncRspHeaderLength;
+            MUTE();
+            byte* tmpcellptr = null;
+            MUTE_END();
+
+            MODULE_CALL("SerializeParametersToBuffer", "$t_accessor", "\"message\"");
+
+            buffer = tmpcellptr - preservedHeaderLength;
+            this.CellPtr = buffer + preservedHeaderLength;
+            Length = BufferLength - preservedHeaderLength;
+
+            IF("$t_accessor->getLayoutType() != LT_FIXED");
+            this.ResizeFunction = WriterResizeFunction;
+            END();
+        }
         [IF("$t_accessor->getLayoutType() != LT_FIXED")]
         private byte* WriterResizeFunction(byte* ptr, int ptr_offset, int delta)
         {

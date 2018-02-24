@@ -2,11 +2,13 @@
 #include <string>
 #include <vector>
 #include "SyntaxNode.h"
-
 namespace Trinity
 {
+	
     namespace Codegen
     {
+		
+
         struct ModuleContext
         {
             int                      m_stack_depth;
@@ -19,7 +21,7 @@ namespace Trinity
          * @param   target_path      Target path to store generated source files
          * @returns                  A std::vector of the filenames of the generated source files.
          */
-        std::vector<std::string*>* codegen_entry(NTSL* tsl, const std::string& target_path, const std::string& target_namespace);
+        std::vector<std::string*>* codegen_entry(NTSL* tsl, const std::string& target_path, const std::string& target_namespace, const int c_offset);
 
 #pragma region Codegen routines
 
@@ -74,6 +76,7 @@ namespace Trinity
             std::string* CommunicationSchemaModule(NProtocolGroup* node, ModuleContext* context);
             std::string* CommunicationClass(NProtocolGroup* node, ModuleContext* context);
             std::string* MessagePassingMethods(NProtocolGroup* node, ModuleContext* context);
+            std::string* LegacyMessagePassingMethods(NProtocolGroup* node, ModuleContext* context);
             std::string* ValueToAccessorFieldAssignment(NField* node, ModuleContext* context);
             std::string* AccessorToAccessorFieldAssignment(NFieldType* node, ModuleContext* context);
             std::string* AccessorFieldsDefinition(NStructBase* node, ModuleContext* context);

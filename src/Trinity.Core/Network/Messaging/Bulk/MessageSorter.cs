@@ -28,8 +28,8 @@ namespace Trinity.Network.Messaging
             if (memory_cloud == null)
                 memory_cloud = Global.CloudStorage;
 
-            dest_cell_ids = new List<long>[memory_cloud.ServerCount];
-            for (int i = 0; i < memory_cloud.ServerCount; i++)
+            dest_cell_ids = new List<long>[memory_cloud.PartitionCount];
+            for (int i = 0; i < memory_cloud.PartitionCount; i++)
             {
                 dest_cell_ids[i] = new List<long>();
             }
@@ -43,7 +43,7 @@ namespace Trinity.Network.Messaging
         {
             for (int i = 0; i < cellIdList.Count; i++)
             {
-                dest_cell_ids[memory_cloud.StaticGetServerIdByCellId(cellIdList[i])].Add(cellIdList[i]);
+                dest_cell_ids[memory_cloud.GetPartitionIdByCellId(cellIdList[i])].Add(cellIdList[i]);
             }
         }
 
@@ -53,7 +53,7 @@ namespace Trinity.Network.Messaging
         /// <param name="cellId">A 64-bit cell Id.</param>
         public void Add(long cellId)
         {
-            dest_cell_ids[memory_cloud.StaticGetServerIdByCellId(cellId)].Add(cellId);
+            dest_cell_ids[memory_cloud.GetPartitionIdByCellId(cellId)].Add(cellId);
         }
 
         /// <summary>

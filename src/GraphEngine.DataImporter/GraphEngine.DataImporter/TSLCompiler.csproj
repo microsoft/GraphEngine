@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props" Condition="Exists('..\..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props')" />
+  <Import Project="..\..\..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.props" Condition="Exists('..\..\..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
@@ -46,9 +46,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="Trinity.Core, Version=1.0.8850.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Trinity.Core, Version=1.0.9083.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\GraphEngine.Core.1.0.8850\lib\Trinity.Core.dll</HintPath>
+      <HintPath>..\..\..\packages\GraphEngine.Core.1.0.9083\lib\Trinity.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -62,8 +62,8 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.props'))" />
-    <Error Condition="!Exists('..\..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.targets'))" />
+    <Error Condition="!Exists('..\..\..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.props'))" />
+    <Error Condition="!Exists('..\..\..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.targets'))" />
   </Target>
-  <Import Project="..\..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.targets" Condition="Exists('..\..\..\packages\GraphEngine.Core.1.0.8850\build\GraphEngine.Core.targets')" />
+  <Import Project="..\..\..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.targets" Condition="Exists('..\..\..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.targets')" />
 </Project>

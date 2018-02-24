@@ -1,0 +1,11 @@
+﻿protocol Ping
+{
+	Type: Syn;
+	Request: void;
+	Response: void;
+}
+
+module ServiceFabricSampleModule
+{
+	protocol Ping;
+}

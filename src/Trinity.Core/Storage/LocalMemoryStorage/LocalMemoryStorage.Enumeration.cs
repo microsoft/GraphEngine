@@ -72,7 +72,7 @@ namespace Trinity.Storage
 
     }
 
-    public unsafe partial class LocalMemoryStorage : Storage, IDisposable, IEnumerable<CellInfo>, IEnumerable
+    public unsafe partial class LocalMemoryStorage : IEnumerable<CellInfo>, IEnumerable
     {
         /// <summary>
         /// Returns an enumerator for all the cells stored in the local memory storage.
