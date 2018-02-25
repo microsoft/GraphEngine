@@ -1,0 +1,21 @@
+﻿struct MyProtocolRequest
+{
+	int A;
+}
+
+struct MyProtocolResponse
+{
+	string B;
+}
+
+protocol MyProtocol
+{
+	Type: Syn;
+	Request: MyProtocolRequest;
+	Response: MyProtocolResponse;
+}
+
+module MyCommModule
+{
+	protocol MyProtocol;
+}
