@@ -5,7 +5,6 @@ Collect assembly sources from GraphEngine project here and there.
 import os
 import linq
 import argparse
-import subprocess
 from conf import and_then
 from conf import (CURRENT_DIR, CORECLR_PATH,
                   BUILD_SCRIPT_CMD, BUILD_SCRIPT_PATH, is_windows)
@@ -38,10 +37,11 @@ if is_windows:
     if cmdparser.parse_args().nocache:
         os.system('{} "{}"'.format(BUILD_SCRIPT_CMD, BUILD_SCRIPT_PATH))
 
-    to_pymodule_dir = lambda path, with_suffix, to_module: (
+    to_pymodule_dir = lambda path, with_suffix, to_module, cond=(lambda _:True): (
         linq.Flow(path)
             .Then(recur_listdir)
             .Filter(lambda _: any(_.endswith(suffix) for suffix in with_suffix))
+            .Filter(cond)
             .Each(dir_at(CURRENT_DIR, 'GraphEngine', to_module,
                          then_call=copy_to)))
     # copy dlls
@@ -61,13 +61,13 @@ if is_windows:
     # copy exe
     to_pymodule_dir(pardir_of(CORECLR_PATH),
                     with_suffix=['.exe'],
-                    to_module='Command')
+                    to_module='Command',
+                    cond=lambda _: 'CodeGen' in _)
 
     # install newtonsoft.json 9.0.1.
     os.system('nuget install newtonsoft.json -Version 9.0.1 -OutputDirectory ./cache')
     dotnet_package_dir = os.path.abspath('cache')
     # add newtonsoft.json.dll
-    # TODO: a robust way to find out newtonsoft.json.dll.
     to_pymodule_dir(os.path.join(dotnet_package_dir, r'Newtonsoft.Json.9.0.1\lib\netstandard1.0'),
                     with_suffix=['.dll'],
                     to_module='ffi')

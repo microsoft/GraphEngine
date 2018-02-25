@@ -1,14 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using Trinity.Storage.CompositeExtension;
-using Trinity.Storage;
 
-namespace Trinity.FFI
+
+namespace Trinity.FFI.Agent
 {
-    public static class Agent
+    public static class Config
     {
         public static void Configure(string IncludeDirectory, string StorageRoot,
                                      string TSLCodeGenExeLocation, string DotNetExeLocation,
-                                     int avgMaxAsmNum, int avgCellNum, int avgFieldNum) => 
+                                     int avgMaxAsmNum, int avgCellNum, int avgFieldNum) =>
+
             Setting.Configure(IncludeDirectory,
                               StorageRoot,
                               TSLCodeGenExeLocation,
@@ -18,7 +21,8 @@ namespace Trinity.FFI
                               avgFieldNum);
 
 
-        public static void Initialize() {
+        public static void Initialize()
+        {
             if (!Controller.Initialized)
                 Controller.Initialize();
         }
@@ -27,7 +31,8 @@ namespace Trinity.FFI
             if (Controller.Initialized)
                 Controller.Uninitialize();
         }
-        public static void LoadTSL(string tslSrcDir, string tslBuildDir, string moduleName, string versionName) => Controller.LoadFrom(tslSrcDir, tslBuildDir, moduleName, versionName);
+        public static void LoadTSL(string tslSrcDir, string tslBuildDir, string moduleName, string versionName)
+            => Controller.LoadFrom(tslSrcDir, tslBuildDir, moduleName, versionName);
 
         public static void SetCmdPath(string TSLCodeGenExeLocation, string DotNetExeLocation)
         {
@@ -40,17 +45,5 @@ namespace Trinity.FFI
             ConfigConstant.AvgCellNum = avgCellNum;
             ConfigConstant.AvgFieldNum = avgFieldNum;
         }
-        public static List<IStorageSchema> StorageSchema => CompositeStorage.StorageSchema;
-
-        public static List<IGenericCellOperations> GenericCellOperations => CompositeStorage.GenericCellOperations;
-
-        public static List<int> IDIntervals => CompositeStorage.IDIntervals;
-
-        public static Dictionary<string, int> CellTypeIDs => CompositeStorage.CellTypeIDs;
-
-        public static List<VersionRecorder> VersionRecorders => CompositeStorage.VersionRecorders;
-
-        public static PathHelper PathHelper =  default(PathHelper);
-
     }
 }

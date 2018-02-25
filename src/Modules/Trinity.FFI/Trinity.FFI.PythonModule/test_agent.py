@@ -1,4 +1,4 @@
-import GraphEngine
+import GraphEngine.ffi
 import Trinity
 import os, clr
 from linq import Flow
@@ -21,6 +21,5 @@ if not os.path.exists(r"storage\composite-helper\Trinity.Extension.abc.dll"):
 
 Flow(Trinity.Global.StorageSchema.CellDescriptors).Each(
     lambda cell_desc: print(f'{cell_desc.TypeName}{list(cell_desc.GetFieldNames())}'))
-
 Trinity.Global.LocalStorage.SaveStorage()
 Agent.Uninitialize()

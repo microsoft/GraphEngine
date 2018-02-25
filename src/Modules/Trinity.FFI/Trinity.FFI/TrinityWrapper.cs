@@ -132,6 +132,7 @@ namespace Trinity.FFI
             }
         }
 
+        #region local save cell
         public static TrinityErrorCode trinity_ffi_local_savecell_1(long cellId, IntPtr cell)
         {
             try
@@ -159,6 +160,36 @@ namespace Trinity.FFI
                 return TrinityErrorCode.E_FAILURE;
             }
         }
+
+        public static TrinityErrorCode trinity_ffi_local_savecell_3(IntPtr cell)
+        {
+            try
+            {
+                ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
+                Global.LocalStorage.SaveGenericCell(c);
+                return TrinityErrorCode.E_SUCCESS;
+            }
+            catch
+            {
+                return TrinityErrorCode.E_FAILURE;
+            }
+        }
+
+        public static TrinityErrorCode trinity_ffi_local_savecell_4(CellAccessOptions options, IntPtr cell)
+        {
+            try
+            {
+                ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
+                Global.LocalStorage.SaveGenericCell(options, c);
+                return TrinityErrorCode.E_SUCCESS;
+            }
+            catch
+            {
+                return TrinityErrorCode.E_FAILURE;
+            }
+        }
+        #endregion
+
         public static TrinityErrorCode trinity_ffi_cloud_savecell(long cellId, IntPtr cell)
         {
             try
@@ -183,6 +214,7 @@ namespace Trinity.FFI
             return Global.CloudStorage.RemoveCell(cellId);
         }
 
+        #region new cell
         public static TrinityErrorCode trinity_ffi_newcell_1(string cellType, ref IntPtr cell)
         {
             try
@@ -230,6 +262,57 @@ namespace Trinity.FFI
                 return TrinityErrorCode.E_FAILURE;
             }
         }
+        #endregion
+
+        #region local use cell
+        public static TrinityErrorCode trinity_ffi_local_usecell_1(long cellId, ref IntPtr cell)
+        {
+            try
+            {
+                ICell c = Global.LocalStorage.UseGenericCell(cellId);
+                GCHandle handle = GCHandle.Alloc(c);
+                cell = GCHandle.ToIntPtr(handle);
+                return TrinityErrorCode.E_SUCCESS;
+            }
+            catch
+            {
+                cell = IntPtr.Zero;
+                return TrinityErrorCode.E_FAILURE;
+            }
+        }
+
+        public static TrinityErrorCode trinity_ffi_local_usecell_2(long cellId, CellAccessOptions options, ref IntPtr cell)
+        {
+            try
+            {
+                ICell c = Global.LocalStorage.UseGenericCell(cellId, options);
+                GCHandle handle = GCHandle.Alloc(c);
+                cell = GCHandle.ToIntPtr(handle);
+                return TrinityErrorCode.E_SUCCESS;
+            }
+            catch
+            {
+                cell = IntPtr.Zero;
+                return TrinityErrorCode.E_FAILURE;
+            }
+        }
+
+        public static TrinityErrorCode trinity_ffi_local_usecell_3(long cellId, CellAccessOptions options, ref IntPtr cell, string cellType)
+        {
+            try
+            {
+                ICell c = Global.LocalStorage.UseGenericCell(cellId, options, cellType);
+                GCHandle handle = GCHandle.Alloc(c);
+                cell = GCHandle.ToIntPtr(handle);
+                return TrinityErrorCode.E_SUCCESS;
+            }
+            catch
+            {
+                cell = IntPtr.Zero;
+                return TrinityErrorCode.E_FAILURE;
+            }
+        } 
+        #endregion
 
         public static void trinity_ffi_cell_dispose(IntPtr cell)
         {
@@ -280,36 +363,6 @@ namespace Trinity.FFI
             ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
             c.SetField<string>(field, null);
         }
-        //#region storage composite
-
-        //#region start configure
-        //public static void trinity_ffi_composite_service_start(string StorageRoot)
-        //{
-        //    Controller.StartService(StorageRoot);
-        //}
-
-        //public static void trinity_ffi_composite_load_tsl(string tslSrcDir, string tslBuildDir, string moduleName, string versionName = null)
-        //{
-        //    Controller.LoadFrom(tslSrcDir, tslBuildDir, moduleName, versionName);
-        //}
-
-        //public static void trinity_ffi_composite_set_cmd_path(string TSLCodeGenExeLocation, string DotNetExeLocation)
-        //{
-        //    Cmd.TSLCodeGenExeLocation = TSLCodeGenExeLocation;
-        //    Cmd.DotNetExeLocation = DotNetExeLocation;
-        //}
-
-        //public static void trinity_ffi_composite_set_initial_params(int avgMaxAsmNum, int avgCellNum, int avgFieldNum)
-        //{
-        //    ConfigConstant.AvgMaxAsmNum = avgMaxAsmNum;
-        //    ConfigConstant.AvgCellNum = avgCellNum;
-        //    ConfigConstant.AvgFieldNum = avgFieldNum;
-        //}
-        //#endregion
-
-        //#region
-        //#endregion
-        //#endregion
 
     }
 }
