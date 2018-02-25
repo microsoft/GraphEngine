@@ -40,56 +40,54 @@ namespace FanoutSearch
             }
         }
 
+        private NodeInfo _GetNodeInfo(long id, List<string> fields, long secondary_id)
+        {
+            try
+            {
+                using (var cell = s_useICellFunc(id))
+                {
+                    return new NodeInfo
+                    {
+                        id    = id,
+                        values = fields.Select(f =>
+                        {
+                            switch (f)
+                            {
+                                case JsonDSL.graph_outlinks:
+                                return ToJsonArray(_GetEdgeType(cell, secondary_id));
+                                case "*":
+                                return cell.ToString();
+                                default:
+                                return cell.get(f);
+                            }
+                        }).ToList(),
+                    };
+                }
+            }
+            catch // use cell failed. populate the list with an empty NodeInfo.
+            {
+                return _CreateEmptyNodeInfo(id, fields.Count);
+            }
+        }
+
         public override void _GetNodesInfo_implHandler(GetNodesInfoRequestReader request, GetNodesInfoResponseWriter response)
         {
-            List<string> fields            = request.fields;
-            int          field_cnt         = fields.Count;
-            List<long>   secondary_ids     = request.Contains_secondary_ids ? request.secondary_ids : null;
-            NodeInfo[]   infos             = new NodeInfo[request.ids.Count];
-            bool         msg_overflow      = false;
-            long         msg_approx_len    = 0;
-
-            Parallel.ForEach(request.ids, (id, state, idx) =>
-            {
-                try
-                {
-                    using (var cell = s_useICellFunc(id))
-                    {
-                        infos[idx] = new NodeInfo
-                        {
-                            id    = id,
-                            values = fields.Select(f =>
-                            {
-                                switch (f)
-                                {
-                                    case JsonDSL.graph_outlinks:
-                                    return ToJsonArray(_GetEdgeType(cell, secondary_ids[(int)idx]));
-                                    case "*":
-                                    return cell.ToString();
-                                    default:
-                                    return cell.get(f);
-                                }
-                            }).ToList(),
-                        };
-                    }
-
-                    if (Interlocked.Add(ref msg_approx_len, infos[idx].values.Sum(_ => _.Length)) > FanoutSearchModule.s_max_rsp_size)
-                    {
-                        msg_overflow = true;
-                        state.Break();
-                    }
-                }
-                catch // use cell failed. populate the list with an empty NodeInfo.
-                {
-                    infos[idx] = _CreateEmptyNodeInfo(id, field_cnt);
-                }
-            });
-
-            if (msg_overflow) throw new MessageTooLongException();
+            List<string> fields = request.fields;
+            IEnumerable<long> secondary_ids = request.Contains_secondary_ids ? request.secondary_ids : Enumerable.Repeat(0L, request.ids.Count);
 
             try
             {
-                response.infoList = infos.ToList();
+                long msg_approx_len = 0;
+                foreach ((long a, long b) in request.ids.Zip(secondary_ids, (a, b) => (a, b)))
+                {
+                    NodeInfo info = _GetNodeInfo(a, fields, b);
+                    msg_approx_len += info.values.Sum(_ => _.Length);
+                    if (msg_approx_len > FanoutSearchModule.s_max_rsp_size)
+                    {
+                        throw new MessageTooLongException($"{nameof(_GetNodesInfo_implHandler)}: Message too long");
+                    }
+                    response.infoList.Add(info);
+                }
             }
             catch (AccessorResizeException ex)
             {
@@ -99,7 +97,7 @@ namespace FanoutSearch
 
         private NodeInfo _CreateEmptyNodeInfo(long id, int fieldCount)
         {
-            return new NodeInfo { id = id, values = Enumerable.Range(0, fieldCount).Select(f => "").ToList() };
+            return new NodeInfo { id = id, values = Enumerable.Repeat("", fieldCount).ToList() };
         }
     }
 }
