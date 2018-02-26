@@ -27,6 +27,8 @@
         <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="TslDataModel" d:TargetPath="|TslDataModel;TemplateProjectOutputGroup|" Path="ItemTemplates" d:VsixSubPath="ItemTemplates" />
         <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="TslProtocol" d:TargetPath="|TslProtocol;TemplateProjectOutputGroup|" Path="ItemTemplates" d:VsixSubPath="ItemTemplates" />
         <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:TargetPath="|CSharpNetFxApp;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" d:ProjectName="CSharpNetFxApp" />
+        <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:TargetPath="|CSharpNetFxLib;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" d:ProjectName="CSharpNetFxLib" />
+        <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:TargetPath="|CSharpNetCoreApp;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" d:ProjectName="CSharpNetCoreApp" />
 
         <Asset Type="GraphEngine.Core.1.0.9083.nupkg" d:Source="File" Path="Packages\GraphEngine.Core.1.0.9083.nupkg" d:VsixSubPath="Packages" />
         <Asset Type="GraphEngine.Azure.BlobStorage.1.0.9083.nupkg" d:Source="File" Path="Packages\GraphEngine.Azure.BlobStorage.1.0.9083.nupkg" d:VsixSubPath="Packages" />

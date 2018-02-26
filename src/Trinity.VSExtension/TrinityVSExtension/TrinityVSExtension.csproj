@@ -251,30 +251,44 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Trinity.TSL.ManagedWrapper\Trinity.TSL.ManagedWrapper.vcxproj">
-      <Project>{22ab6cd5-f29d-4a45-a9b2-6d5229ce674e}</Project>
-      <Name>Trinity.TSL.ManagedWrapper</Name>
+    <ProjectReference Include="..\CSharpNetCoreApp\CSharpNetCoreApp.csproj">
+      <Project>{39e5f924-2af2-4203-a8da-1fc5c337f031}</Project>
+      <Name>CSharpNetCoreApp</Name>
+      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
-    <ProjectReference Include="..\Trinity.VSExtension.CSharpNetFxAppTemplate\CSharpNetFxApp.csproj">
+    <ProjectReference Include="..\CSharpNetFxLib\CSharpNetFxLib.csproj">
+      <Project>{8403b91c-817f-4313-8027-1654d538d567}</Project>
+      <Name>CSharpNetFxLib</Name>
+      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
+    <ProjectReference Include="..\CSharpNetFxApp\CSharpNetFxApp.csproj">
       <Project>{81ECA9CB-C161-40E0-B253-734C73F64169}</Project>
       <Name>CSharpNetFxApp</Name>
       <VSIXSubPath>ProjectTemplates</VSIXSubPath>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
-    <ProjectReference Include="..\Trinity.VSExtension.TslDataModelingTemplate\TslDataModel.csproj">
+    <ProjectReference Include="..\TslDataModel\TslDataModel.csproj">
       <Project>{59B8C7D5-96FC-4010-B9D0-7CA0B8FF1C6D}</Project>
       <Name>TslDataModel</Name>
       <VSIXSubPath>ItemTemplates</VSIXSubPath>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
-    <ProjectReference Include="..\Trinity.VSExtension.TslProtocolTemplate\TslProtocol.csproj">
+    <ProjectReference Include="..\TslProtocol\TslProtocol.csproj">
       <Project>{0B677CAC-FC2A-46D7-B17C-D330AFC58FE3}</Project>
       <Name>TslProtocol</Name>
       <VSIXSubPath>ItemTemplates</VSIXSubPath>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
+    <ProjectReference Include="..\Trinity.TSL.ManagedWrapper\Trinity.TSL.ManagedWrapper.vcxproj">
+      <Project>{22ab6cd5-f29d-4a45-a9b2-6d5229ce674e}</Project>
+      <Name>Trinity.TSL.ManagedWrapper</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
