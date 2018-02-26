@@ -17,7 +17,7 @@ namespace Trinity.Configuration
         Dictionary<string, List<XElement>> m_loadedTemplates = new Dictionary<string, List<XElement>>();
         ParseUnit m_finalUnit;
         #endregion
-      
+
         #region Properties
         /// <summary>
         /// Gets path of the Configuration file
@@ -50,7 +50,7 @@ namespace Trinity.Configuration
             get { return m_finalUnit.Elements.FirstOrDefault(_ => _.Name == ConfigurationConstants.Tags.LOCAL) ?? new XElement(ConfigurationConstants.Tags.LOCAL); }
         }
         #endregion
-      
+
         #region Data Structure
         /// <summary>
         /// Structure definition of a configuration file
@@ -68,7 +68,7 @@ namespace Trinity.Configuration
             }
         }
         #endregion
-      
+
         #region Constructor
         /// <summary>
         /// Parse a configuration file with the specified file name.
@@ -94,7 +94,7 @@ namespace Trinity.Configuration
             return new XmlConfiguration(fileName);
         }
         #endregion
-       
+
         #region Processing Pipeline
         /// <summary>
         /// In a pipelined manner manipulate configuration file and the order is import node, template node.
@@ -115,33 +115,24 @@ namespace Trinity.Configuration
         /// <returns></returns>
         private ParseUnit ProcessMerge(ParseUnit inputUnit)
         {
-            ParseUnit mergedSections = new ParseUnit();
-
+            // pick local sections and config entries specified directly in root
+            var localSections = inputUnit.Elements.Where(_ => _.Name != ConfigurationConstants.Tags.CLUSTER);
 
             // merge local
-            var localSections = inputUnit.Elements
-                .Where(_ => _.Name == ConfigurationConstants.Tags.LOCAL);
-            var mergedEntries = MergeSections(new List<IEnumerable<XElement>>(localSections.Select(_ => _.Elements())));
-            XElement localSection = new XElement(ConfigurationConstants.Tags.LOCAL);
-            foreach (var entry in mergedEntries)
-                localSection.Add(entry);
-            mergedSections.Elements.Add(localSection);
+            var mergedEntries = MergeSections(localSections.Select(_ => _.Name == ConfigurationConstants.Tags.LOCAL ? _.Elements() : new[]{ _ }));
+
+            XElement localSection = new XElement(ConfigurationConstants.Tags.LOCAL, mergedEntries);
 
             var clusterSections = inputUnit.Elements
                 .Where(_ => _.Name == ConfigurationConstants.Tags.CLUSTER)
-                .GroupBy(_ =>
-                {
-                    var attr = _.Attribute(ConfigurationConstants.Attrs.ID);
-                    if (attr != null) { return attr.Value; }
-                    else { return null; }
-                })
+                .GroupBy(_ => _.Attribute(ConfigurationConstants.Attrs.ID)?.Value)
                 .Select(_ =>
             {
                 foreach (var cluster in _)
                 {
                     foreach (var node in cluster.Elements())
                     {
-                        var entries = MergeSections(new List<IEnumerable<XElement>> { node.Elements() });
+                        var entries = MergeSections(new[] { node.Elements() });
                         node.RemoveNodes();
                         foreach (var entry in entries)
                             node.Add(entry);
@@ -159,13 +150,9 @@ namespace Trinity.Configuration
                                 node.Add(entry.Value);
                 }
                 return _;
-            }).Select(_ =>
-            {
-                return MergeSections(new List<IEnumerable<XElement>> { _ }).First();
-            });
-            mergedSections.Elements.AddRange(clusterSections);
+            }).Select(_ => MergeSections(new []{ _ }).First());
 
-            return mergedSections;
+            return new ParseUnit(new[]{ localSection }.Concat(clusterSections));
         }
         #endregion
 
@@ -190,7 +177,7 @@ namespace Trinity.Configuration
             var document = XDocument.Load(filename);
             var rootNode = document.Root;
 
-            if(rootNode.GetDefaultNamespace() == string.Empty && rootNode.Name.NamespaceName == string.Empty)
+            if (rootNode.GetDefaultNamespace() == string.Empty && rootNode.Name.NamespaceName == string.Empty)
             {
                 rootNode = SetDefaultNamespace(rootNode);
             }

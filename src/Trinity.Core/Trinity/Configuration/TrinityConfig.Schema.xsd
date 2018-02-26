@@ -11,6 +11,7 @@
       A Graph Engine Configuration File is an XML file with the default name trinity.xml.
       When a Graph Engine instance is initialized, it will automatically load the default configuration file, unless TrinityConfig.LoadConfig(...) is explicitly called.
       The file can contain configuration settings for a single machine and/or a cluster of machines.
+      This document defines the schema of the configuration specification version 2.0.
     </xs:documentation>
   </xs:annotation>
   <xs:element name="Trinity" type="mstns:TrinityConfig"/>
@@ -19,26 +20,31 @@
       <xs:documentation>
         The root node is always Trinity. There must be exactly one root node.
         The root node has an optional attribute ConfigVersion.
+        The root node itself is a ConfigNode. Configuration entries specified under the root node are automatically appended to the Local section.
         Note, nuget package GraphEngine.Core 1.0.8482 and below only support configuration specification 1.0.
       </xs:documentation>
     </xs:annotation>
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="Local" type="mstns:Local"/>
-        <xs:element name="Cluster" type="mstns:Cluster"/>
-        <xs:element name="Template" type="mstns:Template"/>
-        <xs:element name="Import" type="mstns:Import"/>
-      </xs:choice>
-    </xs:sequence>
-    <xs:attribute name="ConfigVersion" type="xs:string" default="2.0" use="optional">
-      <xs:annotation>
-        <xs:documentation>
-          Specifies the version of the configuration file. Currently, the value must be 1.0 or 2.0 if specified.
-          The value "2.0" indicates that the configuration file conforms to the specification 2.0 given here.
-          Note, if ConfigVersion is not specified, the configuration file will be parsed as version 1.0, which is now obsolete.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
+    <xs:complexContent>
+      <xs:extension base="mstns:ConfigNode">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="Local" type="mstns:Local"/>
+            <xs:element name="Cluster" type="mstns:Cluster"/>
+            <xs:element name="Template" type="mstns:Template"/>
+            <xs:element name="Import" type="mstns:Import"/>
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="ConfigVersion" type="xs:string" default="2.0" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies the version of the configuration file. Currently, the value must be 1.0 or 2.0 if specified.
+              The value "2.0" indicates that the configuration file conforms to the specification 2.0 given here.
+              Note, if ConfigVersion is not specified, the configuration file will be parsed as version 1.0, which is now obsolete.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="Cluster">
     <xs:annotation>
