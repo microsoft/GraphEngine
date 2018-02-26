@@ -184,6 +184,46 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\..\..\bin\GraphEngine.Azure.BlobStorage.1.0.9083.nupkg">
+      <Link>Packages\GraphEngine.Azure.BlobStorage.1.0.9083.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <VSIXSubPath>Packages</VSIXSubPath>
+    </Content>
+    <Content Include="..\..\..\bin\GraphEngine.Client.1.0.9083.nupkg">
+      <Link>Packages\GraphEngine.Client.1.0.9083.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <VSIXSubPath>Packages</VSIXSubPath>
+    </Content>
+    <Content Include="..\..\..\bin\GraphEngine.Core.1.0.9083.nupkg">
+      <Link>Packages\GraphEngine.Core.1.0.9083.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <VSIXSubPath>Packages</VSIXSubPath>
+    </Content>
+    <Content Include="..\..\..\bin\GraphEngine.DynamicCluster.1.0.9083.nupkg">
+      <Link>Packages\GraphEngine.DynamicCluster.1.0.9083.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <VSIXSubPath>Packages</VSIXSubPath>
+    </Content>
+    <Content Include="..\..\..\bin\GraphEngine.FFI.1.0.9083.nupkg">
+      <Link>Packages\GraphEngine.FFI.1.0.9083.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <VSIXSubPath>Packages</VSIXSubPath>
+    </Content>
+    <Content Include="..\..\..\bin\GraphEngine.FFI.Python.1.0.9083.nupkg">
+      <Link>Packages\GraphEngine.FFI.Python.1.0.9083.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <VSIXSubPath>Packages</VSIXSubPath>
+    </Content>
+    <Content Include="..\..\..\bin\GraphEngine.LIKQ.1.0.9083.nupkg">
+      <Link>Packages\GraphEngine.LIKQ.1.0.9083.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <VSIXSubPath>Packages</VSIXSubPath>
+    </Content>
+    <Content Include="..\..\..\bin\GraphEngine.Storage.Composite.1.0.9083.nupkg">
+      <Link>Packages\GraphEngine.Storage.Composite.1.0.9083.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <VSIXSubPath>Packages</VSIXSubPath>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>

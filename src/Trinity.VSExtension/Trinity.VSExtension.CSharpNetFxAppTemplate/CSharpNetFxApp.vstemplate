@@ -23,7 +23,7 @@
     <FullClassName>NuGet.VisualStudio.TemplateWizard</FullClassName>
   </WizardExtension>
   <WizardData>
-    <packages>
+    <packages repository="extension" repositoryId="51a02fa7-9a83-4aa0-9236-599637c597c6">
       <package id="GraphEngine.Core" version="1.0.9083" />
     </packages>
   </WizardData>
