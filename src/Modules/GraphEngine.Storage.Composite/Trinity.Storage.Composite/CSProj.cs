@@ -7,34 +7,26 @@ namespace Trinity.Storage.CompositeExtension
 {
     public static class CSProj
     {
-        // TODO multi-targeting
-        // TODO automatically detect the version and dependencies.
-        public static string Version = "1.0.9083";
-        public static string NetFramework = "netstandard2.0";
-        public static string IncludeDirectory; // Need to be configured.
-        public static class Reference
-        {
-            public static string[] Names = new string[] {
-                "Trinity.Core",
-                "Newtonsoft.Json"
-            };
-        }
+        private static string IncludeDirectory;
+        private static string _makeReference(string reference) => $@"
+    <Reference Include = ""{reference}"">
+      <HintPath>{IncludeDirectory}\{reference}.dll</HintPath>
+    </Reference>";
 
-        public static string _makeReference(string reference) => string.Join("\n",
-            $"       <Reference Include = \"{reference}\">",
-            $"           <HintPath>{IncludeDirectory}\\{reference}.dll</HintPath>",
-            "       </Reference>"
-        );
+        private static Package[] Packages = new Package[] { new Package("GraphEngine.Core", "1.0.9083"), new Package("Newtonsoft.Json", "8.0.3") };
+        public static string _makePackageDependency(Package package) => $@"<PackageReference Include=""{package.Name}"" Version=""{package.Version}"" />
+    ";
 
-        public static string Template => string.Join("\n",
-            "<Project Sdk = \"Microsoft.NET.Sdk\">",
-            "   <PropertyGroup>",
-            $"       <TargetFramework>{NetFramework}</TargetFramework>",
-            "        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>",
-            "   </PropertyGroup>",
-            "   <ItemGroup>",
-            string.Join("\n", Reference.Names.Select(_makeReference)),
-            "   </ItemGroup>",
-            "</Project>");
+        public static string TargetFramework = "netstandard2.0";
+        public static string Template => $@"
+<Project Sdk = ""Microsoft.NET.Sdk"">
+  <PropertyGroup>
+    <TargetFramework>{TargetFramework}</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    {string.Concat(Packages.Select(_makePackageDependency))}
+  </ItemGroup>
+</Project>";
     }
 }

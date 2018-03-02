@@ -23,7 +23,7 @@ namespace Trinity.Storage.CompositeExtension
 
         private void LocalStorage_StorageReset()
         {
-            Log.WriteLine("Reset");
+            Log.WriteLine($"{nameof(CompositeExtension)}: Reset");
 
             Controller.Uninitialize();
             Controller.Initialize();
@@ -31,15 +31,15 @@ namespace Trinity.Storage.CompositeExtension
 
         private void LocalStorage_StorageLoaded()
         {
-            Log.WriteLine("Loaded");
+            Log.WriteLine($"{nameof(CompositeExtension)}: Loaded");
         }
 
         private void LocalStorage_StorageSaved()
         {
             LogisticHandler.Session(
-                start: () => Log.WriteLine("Saving"),
-                err: (e) => Log.WriteLine(LogLevel.Error, e.Message),
-                end: () => Log.WriteLine("Saved"),
+                start: () => Log.WriteLine($"{nameof(CompositeExtension)}: Saving"),
+                err: (e) => Log.WriteLine(LogLevel.Error, $"{nameof(CompositeExtension)}: {{0}}", e.Message),
+                end: () => Log.WriteLine($"{nameof(CompositeExtension)}: Saved"),
                 behavior: () =>
                 {
                     Serialization.Serialize(CompositeStorage.VersionRecorders, PathHelper.VersionRecorders);
@@ -51,8 +51,8 @@ namespace Trinity.Storage.CompositeExtension
 
         private void LocalStorage_StorageBeforeLoad()
         {
-            Log.WriteLine("BeforeLoad");
-            Serialization.Deserialize<List<VersionRecorder>>(PathHelper.VersionRecorders)
+            Log.WriteLine($"{nameof(CompositeExtension)}: BeforeLoad");
+            Serialization.Deserialize<List<VersionRecord>>(PathHelper.VersionRecorders)
                      .WhenNotDefault(_ => CompositeStorage.VersionRecorders = _);
 
             Serialization.Deserialize<Dictionary<string, int>>(PathHelper.CellTypeIDs)
@@ -61,7 +61,7 @@ namespace Trinity.Storage.CompositeExtension
             Serialization.Deserialize<List<int>>(PathHelper.IDIntervals)
                      .WhenNotDefault(_ => CompositeStorage.IDIntervals = _);
 
-            if (CompositeStorage.VersionRecorders != default(List<VersionRecorder>))
+            if (CompositeStorage.VersionRecorders != null)
             {
                 var asm = CompositeStorage.VersionRecorders
                             .Select(each => $"{each.Namespace}.dll"

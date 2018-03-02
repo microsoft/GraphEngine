@@ -23,7 +23,7 @@ namespace Trinity.Storage.CompositeExtension
 
         public static Dictionary<string, int> CellTypeIDs;
             
-        public static List<VersionRecorder> VersionRecorders;
+        public static List<VersionRecord> VersionRecorders;
 
     }
     #endregion
@@ -57,17 +57,16 @@ namespace Trinity.Storage.CompositeExtension
         #region State
         public static bool Initialized = false;
 
-        private static int _currentCellTypeOffset = 0;
-        public static int CurrentCellTypeOffset { get => _currentCellTypeOffset; }
+        private static int s_currentCellTypeOffset = 0;
+        public static int CurrentCellTypeOffset => s_currentCellTypeOffset;
 
-        public static VersionRecorder CurrentVersion;
+        public static VersionRecord CurrentVersion;
         #endregion
         #region TSL-CodeGen-Build-Load
         public static void CreateCSProj()
         {
             var path = Path.Combine(CurrentVersion.TslBuildDir, $"{CurrentVersion.Namespace}.csproj");
             File.WriteAllText(path, CSProj.Template);
-
         }
         private static bool CodeGen()
         {
@@ -95,13 +94,13 @@ namespace Trinity.Storage.CompositeExtension
         public static void Initialize()
         {
             if (CompositeStorage.IDIntervals == null)
-                CompositeStorage.IDIntervals = new List<int>(ConfigConstant.AvgMaxAsmNum * ConfigConstant.AvgCellNum){ _currentCellTypeOffset };
+                CompositeStorage.IDIntervals = new List<int>(ConfigConstant.AvgMaxAsmNum * ConfigConstant.AvgCellNum){ s_currentCellTypeOffset };
             if (CompositeStorage.StorageSchema == null)
                 CompositeStorage.StorageSchema = new List<IStorageSchema>(ConfigConstant.AvgMaxAsmNum);
             if (CompositeStorage.CellTypeIDs == null)
                 CompositeStorage.CellTypeIDs = new Dictionary<string, int>(ConfigConstant.AvgMaxAsmNum * ConfigConstant.AvgCellNum) { };
             if (CompositeStorage.VersionRecorders == null)
-                CompositeStorage.VersionRecorders = new List<VersionRecorder>(ConfigConstant.AvgMaxAsmNum);
+                CompositeStorage.VersionRecorders = new List<VersionRecord>(ConfigConstant.AvgMaxAsmNum);
             if (CompositeStorage.GenericCellOperations == null)
                 CompositeStorage.GenericCellOperations = new List<IGenericCellOperations>(ConfigConstant.AvgMaxAsmNum);
             Global.Initialize();
@@ -135,25 +134,25 @@ namespace Trinity.Storage.CompositeExtension
                             $"[{cellDesc.GetFieldNames().By(_ => string.Join(",", _))}]")
                    .ToList()
                    .ForEach(_ => Log.WriteLine(_));
+#endif
 
             string.Join("\n",
                           "Current Storage Info:",
-                          $"VersionRecorders: {CompositeStorage.VersionRecorders.Count}",
-                          $"IDIntervals: : {CompositeStorage.IDIntervals.Count}",
-                          $"CellTypeIDs:{CompositeStorage.CellTypeIDs.Count}",
-                          $"StorageSchema:{CompositeStorage.StorageSchema}",
-                          $"GenericCellOperations:{CompositeStorage.GenericCellOperations}")
-                   .By(_ => Log.WriteLine(_));
+                          $"#VersionRecorders: {CompositeStorage.VersionRecorders.Count}",
+                          $"#IDIntervals: : {CompositeStorage.IDIntervals.Count}",
+                          $"#CellTypeIDs:{CompositeStorage.CellTypeIDs.Count}",
+                          $"#StorageSchema:{CompositeStorage.StorageSchema.Count}",
+                          $"#GenericCellOperations:{CompositeStorage.GenericCellOperations.Count}")
+                   .By(_ => Log.WriteLine(LogLevel.Debug, $"{nameof(CompositeStorage)}: {{0}}", _));
 
-#endif
             if (!Initialized)
-                throw new NotInitializedError();
+                throw new NotInitializedException();
 
             var asmLoadDir = PathHelper.Directory;
 
             asmLoadDir = FileUtility.CompletePath(Path.Combine(asmLoadDir, ""));
-            CurrentVersion = new VersionRecorder(
-                            _currentCellTypeOffset,
+            CurrentVersion = new VersionRecord(
+                            s_currentCellTypeOffset,
                             tslSrcDir,
                             tslBuildDir,
                             asmLoadDir,
@@ -175,12 +174,12 @@ namespace Trinity.Storage.CompositeExtension
             }
             if (!CodeGen())
             {
-                throw new TSLCodeGenError();
+                throw new TSLCodeGenException();
             }
 
             if (!Build())
             {
-                throw new TSLBuildError();
+                throw new TSLBuildException();
             }
 
             try
@@ -198,13 +197,13 @@ namespace Trinity.Storage.CompositeExtension
 
                 CompositeStorage.GenericCellOperations.Add(cellOps);
 
-                int maxoffset = _currentCellTypeOffset;
+                int maxoffset = s_currentCellTypeOffset;
 
                 foreach (var cellDesc in cellDescs)
                 {
                     CompositeStorage.CellTypeIDs[cellDesc.TypeName] = cellDesc.CellType;
                     // Assertion 1: New cell type does not crash into existing type space
-                    Debug.Assert(_currentCellTypeOffset <= cellDesc.CellType);
+                    Debug.Assert(s_currentCellTypeOffset <= cellDesc.CellType);
                     maxoffset = Math.Max(maxoffset, cellDesc.CellType);
 
 #if DEBUG
@@ -219,12 +218,12 @@ namespace Trinity.Storage.CompositeExtension
                 }
                 
                 
-                _currentCellTypeOffset += cellDescs.Count + 1;
+                s_currentCellTypeOffset += cellDescs.Count + 1;
 
                 // Assertion 2: The whole type id space is still compact
-                Debug.Assert(_currentCellTypeOffset == maxoffset + 1);
+                Debug.Assert(s_currentCellTypeOffset == maxoffset + 1);
 
-                CompositeStorage.IDIntervals.Add(_currentCellTypeOffset);
+                CompositeStorage.IDIntervals.Add(s_currentCellTypeOffset);
                 CompositeStorage.VersionRecorders.Add(CurrentVersion);
                 // Assertion 3: intervals grow monotonically
                 Debug.Assert(CompositeStorage.IDIntervals.OrderBy(_ => _).SequenceEqual(CompositeStorage.IDIntervals));
@@ -233,7 +232,7 @@ namespace Trinity.Storage.CompositeExtension
             }
             catch (Exception e)
             {
-                throw new AsmLoadError(e.Message);
+                throw new AsmLoadException(e.Message);
             }
         }
     }

@@ -1,9 +1,9 @@
 ﻿namespace Trinity.Storage.CompositeExtension
 {
     [System.Serializable]
-    public class VersionRecorder
+    public class VersionRecord
     {
-        public VersionRecorder
+        public VersionRecord
             (int cellTypeOffset,
             string tslSrcDir,
             string tslBuildDir,
