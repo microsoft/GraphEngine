@@ -9,7 +9,6 @@ using Trinity.Utilities;
 
 namespace Trinity.Storage.Composite
 {
-    // Initializing when loading from storage.
     internal static class CompositeStorage
     {
         internal static List<IStorageSchema> s_StorageSchemas;
@@ -17,7 +16,7 @@ namespace Trinity.Storage.Composite
 
         private static Dictionary<string, int> s_CellTypeIDs;
         private static List<int> s_IDIntervals;
-        private static List<VersionRecord> s_VersionRecorders;
+        private static List<VersionRecord> s_Versions;
         private static int s_currentCellTypeOffset = 0;
 
         #region State
@@ -29,44 +28,43 @@ namespace Trinity.Storage.Composite
             s_IDIntervals = new List<int> { s_currentCellTypeOffset };
             s_StorageSchemas = new List<IStorageSchema>();
             s_CellTypeIDs = new Dictionary<string, int>();
-            s_VersionRecorders = new List<VersionRecord>();
+            s_Versions = new List<VersionRecord>();
             s_GenericCellOperations = new List<IGenericCellOperations>();
         }
 
         public static void LoadMetadata()
         {
-            Log.WriteLine($"{nameof(CompositeStorage)}: Loading composite storage extension metadata.");
-            Serialization.Deserialize<List<VersionRecord>>(PathHelper.VersionRecorders)
-                     .WhenNotDefault(_ => CompositeStorage.s_VersionRecorders = _);
-            Serialization.Deserialize<Dictionary<string, int>>(PathHelper.CellTypeIDs)
-                     .WhenNotDefault(_ => CompositeStorage.s_CellTypeIDs = _);
-            Serialization.Deserialize<List<int>>(PathHelper.IDIntervals)
-                     .WhenNotDefault(_ => CompositeStorage.s_IDIntervals = _);
-
-            if (s_VersionRecorders != null)
-            {
-                var asm = s_VersionRecorders
-                          .Select(each => $"{each.Namespace}.dll"
-                                              .By(PathHelper.DLL)
-                                              .By(Assembly.LoadFrom))
-                          .ToList();
-
-                s_StorageSchemas = asm.Select(_ => AssemblyUtility.GetAllClassInstances<IStorageSchema>(assembly: _).First()).ToList();
-                s_GenericCellOperations = asm.Select(_ => AssemblyUtility.GetAllClassInstances<IGenericCellOperations>(assembly: _).First()).ToList();
-            }
+            Utils.Session(
+                path: PathHelper.Directory,
+                start: () => Log.WriteLine($"{nameof(CompositeStorage)}: Loading composite storage extension metadata."),
+                err: (e) => Log.WriteLine(LogLevel.Error, $"{nameof(CompositeStorage)}: {{0}}", e.Message),
+                end: () => Log.WriteLine($"{nameof(CompositeStorage)}: Successfully loaded composite storage extension metadata."),
+                behavior: () =>
+                {
+                    s_Versions              = Serialization.Deserialize<List<VersionRecord>>(PathHelper.VersionRecorders);
+                    s_CellTypeIDs           = Serialization.Deserialize<Dictionary<string, int>>(PathHelper.CellTypeIDs);
+                    s_IDIntervals           = Serialization.Deserialize<List<int>>(PathHelper.IDIntervals);
+                    var assemblies          = s_Versions.Select(v => $"{v.Namespace}.dll")
+                                              .Select(PathHelper.DLL)
+                                              .Select(Assembly.LoadFrom)
+                                              .ToList();
+                    s_StorageSchemas        = assemblies.Select(_ => AssemblyUtility.GetAllClassInstances<IStorageSchema>(assembly: _).First()).ToList();
+                    s_GenericCellOperations = assemblies.Select(_ => AssemblyUtility.GetAllClassInstances<IGenericCellOperations>(assembly: _).First()).ToList();
+                });
         }
 
         public static void SaveMetadata()
         {
-            LogisticHandler.Session(
+            Utils.Session(
+                path: PathHelper.Directory,
                 start: () => Log.WriteLine($"{nameof(CompositeStorage)}: Saving composite storage extension metadata."),
                 err: (e) => Log.WriteLine(LogLevel.Error, $"{nameof(CompositeStorage)}: {{0}}", e.Message),
                 end: () => Log.WriteLine($"{nameof(CompositeStorage)}: Successfully saved composite storage extension metadata."),
                 behavior: () =>
                 {
-                    Serialization.Serialize(CompositeStorage.s_VersionRecorders, PathHelper.VersionRecorders);
-                    Serialization.Serialize(CompositeStorage.s_IDIntervals, PathHelper.IDIntervals);
-                    Serialization.Serialize(CompositeStorage.s_CellTypeIDs, PathHelper.CellTypeIDs);
+                    Serialization.Serialize(s_Versions, PathHelper.VersionRecorders);
+                    Serialization.Serialize(s_IDIntervals, PathHelper.IDIntervals);
+                    Serialization.Serialize(s_CellTypeIDs, PathHelper.CellTypeIDs);
                 }
             );
         }
@@ -128,7 +126,7 @@ namespace Trinity.Storage.Composite
 
             string.Join("\n",
                           "Current Storage Info:",
-                          $"#VersionRecorders: {s_VersionRecorders.Count}",
+                          $"#VersionRecorders: {s_Versions.Count}",
                           $"#IDIntervals: : {s_IDIntervals.Count}",
                           $"#CellTypeIDs:{s_CellTypeIDs.Count}",
                           $"#StorageSchema:{s_StorageSchemas.Count}",
@@ -201,7 +199,7 @@ namespace Trinity.Storage.Composite
                 Debug.Assert(s_currentCellTypeOffset == maxoffset + 1);
 
                 s_IDIntervals.Add(s_currentCellTypeOffset);
-                s_VersionRecorders.Add(version);
+                s_Versions.Add(version);
                 // Assertion 3: intervals grow monotonically
                 Debug.Assert(s_IDIntervals.OrderBy(_ => _).SequenceEqual(s_IDIntervals));
             }

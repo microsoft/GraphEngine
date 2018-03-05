@@ -75,8 +75,8 @@ namespace Trinity.Storage.Composite
     #region Path settings 
     internal class PathHelper
     {
-        const string FolderName = "composite-helper";
-        public static string Directory => FileUtility.CompletePath(Path.Combine(Trinity.TrinityConfig.StorageRoot, FolderName));
+        private const string FolderName = "composite-helper";
+        public static string Directory => FileUtility.CompletePath(Path.Combine(TrinityConfig.StorageRoot, FolderName), create_nonexistent: true);
         public static string VersionRecorders => Path.Combine(Directory, "VersionRecorders.bin");
         public static string CellTypeIDs => Path.Combine(Directory, "CellTypeIDs.bin");
         public static string IDIntervals => Path.Combine(Directory, "IDIntervals.bin");
