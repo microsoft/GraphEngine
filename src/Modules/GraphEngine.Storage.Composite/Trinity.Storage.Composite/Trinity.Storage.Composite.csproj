@@ -11,6 +11,15 @@
     <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="$(OutputPath)Trinity.TSL.CodeGen.exe">
+      <PackagePath>runtime</PackagePath>
+    </Content>
+    <Content Include="$(OutputPath)Trinity.TSL.CodeGen">
+      <PackagePath>runtime</PackagePath>
+    </Content>
+  </ItemGroup>
+
   <!-- NuGet package metadata -->
   <PropertyGroup>
     <Authors>Microsoft Graph Engine Team</Authors>

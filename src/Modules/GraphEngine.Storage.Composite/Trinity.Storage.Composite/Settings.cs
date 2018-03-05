@@ -1,40 +1,27 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using Trinity.Diagnostics;
 using Trinity.Utilities;
 
-namespace Trinity.Storage.CompositeExtension
+namespace Trinity.Storage.Composite
 {
-    // Allow to configure
-    #region Constants 
-    public static class ConfigConstant
-    {
-        private static int avgMaxAsmNum;
-        private static int avgCellNum;
-        private static int avgFieldNum;
-
-        public static int AvgMaxAsmNum { get => avgMaxAsmNum; set => avgMaxAsmNum = value; }
-        public static int AvgCellNum { get => avgCellNum; set => avgCellNum = value; }
-        public static int AvgFieldNum { get => avgFieldNum; set => avgFieldNum = value; }
-    }
-    #endregion
-
     // Command tool configurations
     #region Cmd
-    public static class Cmd
+    internal static class Cmd
     {
-        public static string TSLCodeGenExeLocation = "Trinity.TSL.CodeGen.exe";
-        // TODO conditionals for supporting both msbuild (netfx) and dotnet (coreclr)
-        public static string DotNetExeLocation = "dotnet.exe";
+        public const string c_codegen_cmd = "Trinity.TSL.CodeGen";
+        public const string c_dotnet_cmd = "dotnet";
+
         public static bool TSLCodeGenCmd(string arguments)
         {
             try
             {
-                CmdCall(TSLCodeGenExeLocation, arguments);
+                CmdCall(c_codegen_cmd, arguments);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Log.WriteLine(LogLevel.Error, "{0}", e.Message);
                 return false;
             }
             return true;
@@ -44,7 +31,7 @@ namespace Trinity.Storage.CompositeExtension
         {
             try
             {
-                CmdCall(DotNetExeLocation, arguments);
+                CmdCall(c_dotnet_cmd, arguments);
             }
             catch (Exception e)
             {
@@ -56,22 +43,37 @@ namespace Trinity.Storage.CompositeExtension
 
         public static void CmdCall(string cmd, string arguments)
         {
-            Console.WriteLine("command:  " + cmd + " " + arguments);
+            Log.WriteLine("command:  " + cmd + " " + arguments);
             Process proc = new Process();
             proc.StartInfo.FileName = cmd;
             proc.StartInfo.Arguments = arguments;
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.RedirectStandardError = true;
             proc.Start();
-            Console.WriteLine(proc.StandardOutput.ReadToEnd());
+            proc.OutputDataReceived += OnChildStdout;
+            proc.ErrorDataReceived += OnChildStderr;
+            proc.BeginOutputReadLine();
             proc.WaitForExit();
+        }
+
+        private static void OnChildStdout(object sender, DataReceivedEventArgs e)
+            => OnChildOutputImpl(sender as Process, e.Data, LogLevel.Info);
+
+        private static void OnChildStderr(object sender, DataReceivedEventArgs e)
+            => OnChildOutputImpl(sender as Process, e.Data, LogLevel.Error);
+
+        private static void OnChildOutputImpl(Process process, string data, LogLevel logLevel)
+        {
+            string name = process?.ProcessName ?? "";
+            Log.WriteLine(logLevel, $"{name}: {{0}}", data);
         }
     }
     #endregion
 
     // Settings of storage path
     #region Path settings 
-    public class PathHelper
+    internal class PathHelper
     {
         const string FolderName = "composite-helper";
         public static string Directory => FileUtility.CompletePath(Path.Combine(Trinity.TrinityConfig.StorageRoot, FolderName));
@@ -81,23 +83,4 @@ namespace Trinity.Storage.CompositeExtension
         public static string DLL(string dllName) => Path.Combine(Directory, dllName);
     }
     #endregion
-
-    public static class Setting
-    {
-        public static void Configure(string IncludeDirectory, string StorageRoot,
-                                     string TSLCodeGenExeLocation, string DotNetExeLocation,
-                                     int avgMaxAsmNum, int avgCellNum, int avgFieldNum)
-        {
-            CSProj.IncludeDirectory = IncludeDirectory;
-            Trinity.TrinityConfig.StorageRoot = StorageRoot;
-
-            Cmd.TSLCodeGenExeLocation = TSLCodeGenExeLocation;
-            Cmd.DotNetExeLocation = DotNetExeLocation;
-
-            ConfigConstant.AvgMaxAsmNum = avgMaxAsmNum;
-            ConfigConstant.AvgCellNum = avgCellNum;
-            ConfigConstant.AvgFieldNum = avgFieldNum;
-        }
-    }
-
 }

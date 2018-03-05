@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Trinity.Storage.CompositeExtension
+namespace Trinity.Storage.Composite
 {
     public class TSLCodeGenException : Exception
     {

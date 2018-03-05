@@ -1,27 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Trinity.Storage;
 using Trinity.Extension;
-namespace Trinity.Storage.CompositeExtension 
+
+namespace Trinity.Storage.Composite
 {
     [ExtensionPriority(int.MaxValue)]
     public class AggregatedStorageSchema : IStorageSchema
     {
         public IEnumerable<ICellDescriptor> CellDescriptors
-            => CompositeStorage.StorageSchema.SelectMany(_ => _.CellDescriptors);
+            => CompositeStorage.s_StorageSchemas.SelectMany(_ => _.CellDescriptors);
 
         public IEnumerable<string> CellTypeSignatures => 
-            CompositeStorage.StorageSchema.Select(_ => _.CellTypeSignatures).Aggregate((last, next) => last.Concat(next));
+            CompositeStorage.s_StorageSchemas.SelectMany(_ => _.CellTypeSignatures);
 
         public ushort GetCellType(string cellTypeString)
         {
-            if (!CompositeStorage.CellTypeIDs.Keys.Contains(cellTypeString))
-                throw new CellTypeNotMatchException("Unrecognized cell type string.");
-
-            int seg = GetIntervalIndex.ByCellTypeName(cellTypeString);
-            return CompositeStorage.StorageSchema[seg].GetCellType(cellTypeString);
+            int seg = CompositeStorage.GetIntervalIndexByCellTypeName(cellTypeString);
+            return CompositeStorage.s_StorageSchemas[seg].GetCellType(cellTypeString);
         }
     }
 }

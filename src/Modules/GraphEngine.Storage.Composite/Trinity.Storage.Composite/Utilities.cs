@@ -6,9 +6,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using Trinity.Diagnostics;
 
-namespace Trinity.Storage.CompositeExtension
+namespace Trinity.Storage.Composite
 {
-
     public static class Infix
     {
         public static G By<T, G>(this T obj, Func<T, G> fn) => fn(obj);
@@ -83,11 +82,12 @@ namespace Trinity.Storage.CompositeExtension
         public static void Session(Action start, Action<Exception> err, Action end, Action behavior, Action final = null)
         {
             start();
-            try {
+            try
+            {
                 behavior();
                 end();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 err(e);
             }
@@ -95,46 +95,30 @@ namespace Trinity.Storage.CompositeExtension
         }
 
     }
+
     public static class Serialization
     {
         static IFormatter formatter = new BinaryFormatter();
         public static void Serialize<T>(T obj, string fileName)
         {
-            try
+            using (Stream stream = new FileStream(fileName,
+                                           FileMode.Create,
+                                           FileAccess.Write,
+                                           FileShare.None))
             {
-                using (Stream stream = new FileStream(fileName,
-                                               FileMode.Create,
-                                               FileAccess.Write,
-                                               FileShare.None))
-                {
-                    formatter.Serialize(stream, obj);
-                }
+                formatter.Serialize(stream, obj);
             }
-            catch (Exception e)
-            {
-                Log.WriteLine(e.Message);
-            }
-
         }
 
         public static T Deserialize<T>(string fileName)
         {
-            try
+            using (Stream stream = new FileStream(fileName,
+                                           FileMode.Open,
+                                           FileAccess.Read,
+                                           FileShare.Read))
             {
-                using (Stream stream = new FileStream(fileName,
-                                               FileMode.Open,
-                                               FileAccess.Read,
-                                               FileShare.Read))
-                {
-                    return (T)formatter.Deserialize(stream);
-                }
+                return (T)formatter.Deserialize(stream);
             }
-            catch (Exception e)
-            {
-                Log.WriteLine(e.Message);
-                return default(T);
-            }
-
         }
     }
 

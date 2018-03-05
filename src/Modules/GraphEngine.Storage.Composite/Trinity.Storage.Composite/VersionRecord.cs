@@ -1,4 +1,4 @@
-﻿namespace Trinity.Storage.CompositeExtension
+﻿namespace Trinity.Storage.Composite
 {
     [System.Serializable]
     public class VersionRecord
@@ -11,32 +11,19 @@
             string moduleName,
             string versionName)
         {
-            _name = versionName;
-            _tslSrcDir = tslSrcDir;
-            _tslBuildDir = tslBuildDir;
-            _asmLoadDir = asmLoadDir;
-            _cellTypeOffset = cellTypeOffset;
-            _namespace = $"Trinity.Extension.{moduleName}";
+            TslSrcDir = tslSrcDir;
+            TslBuildDir = tslBuildDir;
+            AsmLoadDir = asmLoadDir;
+            Name = versionName;
+            CellTypeOffset = cellTypeOffset;
+            Namespace = $"Trinity.Extension.{moduleName}";
         }
 
-        public string TslSrcDir { get => _tslSrcDir; }
-        public string TslBuildDir { get => _tslBuildDir; }
-        public string AsmLoadDir { get => _asmLoadDir; }
-        public string Name { get => _name; }
-        public int CellTypeOffset { get => _cellTypeOffset; }
-        public string Namespace { get => _namespace; }
-
-        private string _name;
-
-        private string _tslSrcDir;
-
-        private string _tslBuildDir;
-
-        private string _asmLoadDir;
-
-        private int _cellTypeOffset;
-
-        private string _namespace;
+        public string TslSrcDir { get; }
+        public string TslBuildDir { get; }
+        public string AsmLoadDir { get; }
+        public string Name { get; }
+        public int CellTypeOffset { get; }
+        public string Namespace { get; }
     }
-
 }

@@ -1,6 +1,6 @@
-﻿namespace Trinity.Storage.CompositeExtension
+﻿namespace Trinity.Storage.Composite
 {
-    public class Package
+    internal class Package
     {
         public string Name { get; }
         public string Version { get; }

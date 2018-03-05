@@ -3,22 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Trinity.Extension;
-using Trinity.Storage;
 using Trinity.TSL.Lib;
 
-namespace Trinity.Storage.CompositeExtension
+namespace Trinity.Storage.Composite
 {
     [ExtensionPriority(int.MaxValue)]
     public class GenericCellOperations : IGenericCellOperations
     {
         public IEnumerable<ICellAccessor> EnumerateGenericCellAccessors(LocalMemoryStorage storage)
         {
-            return CompositeStorage.GenericCellOperations.SelectMany(cellOps => cellOps.EnumerateGenericCellAccessors(storage));
+            return CompositeStorage.s_GenericCellOperations.SelectMany(cellOps => cellOps.EnumerateGenericCellAccessors(storage));
         }
 
         public IEnumerable<ICell> EnumerateGenericCells(LocalMemoryStorage storage)
         {
-            return CompositeStorage.GenericCellOperations.SelectMany(cellOps => cellOps.EnumerateGenericCells(storage));
+            return CompositeStorage.s_GenericCellOperations.SelectMany(cellOps => cellOps.EnumerateGenericCells(storage));
         }
 
         public unsafe ICell LoadGenericCell(IKeyValueStore storage, long cellId)
@@ -36,11 +35,11 @@ namespace Trinity.Storage.CompositeExtension
                         throw new Exception("Cannot access the cell. Error code: " + err.ToString());
                 }
             }
-            int seg = GetIntervalIndex.ByCellTypeID(type);
+            int seg = CompositeStorage.GetIntervalIndexByCellTypeID(type);
 
             fixed (byte* p = buff)
             {
-                return CompositeStorage.GenericCellOperations[seg].UseGenericCell(cellId, p, -1, type); 
+                return CompositeStorage.s_GenericCellOperations[seg].UseGenericCell(cellId, p, -1, type); 
             }
         }
 
@@ -51,52 +50,52 @@ namespace Trinity.Storage.CompositeExtension
             {
                 throw new CellNotFoundException("Cannot access the cell.");
             }
-            int seg = GetIntervalIndex.ByCellTypeID(cellType);
+            int seg = CompositeStorage.GetIntervalIndexByCellTypeID(cellType);
 
-            return CompositeStorage.GenericCellOperations[seg].UseGenericCell(cellId, cellPtr, entryIndex, cellType);
+            return CompositeStorage.s_GenericCellOperations[seg].UseGenericCell(cellId, cellPtr, entryIndex, cellType);
 
         }
 
         public ICell NewGenericCell(string cellType)
         {
-            int seg = GetIntervalIndex.ByCellTypeName(cellType);
-            return CompositeStorage.GenericCellOperations[seg].NewGenericCell(cellType);
+            int seg = CompositeStorage.GetIntervalIndexByCellTypeName(cellType);
+            return CompositeStorage.s_GenericCellOperations[seg].NewGenericCell(cellType);
         }
 
         public ICell NewGenericCell(long cellId, string cellType)
         {
-            int seg = GetIntervalIndex.ByCellTypeName(cellType);
-            return CompositeStorage.GenericCellOperations[seg].NewGenericCell(cellId, cellType);
+            int seg = CompositeStorage.GetIntervalIndexByCellTypeName(cellType);
+            return CompositeStorage.s_GenericCellOperations[seg].NewGenericCell(cellId, cellType);
         }
 
         public ICell NewGenericCell(string cellType, string content)
         {
-            int seg = GetIntervalIndex.ByCellTypeName(cellType);
-            return CompositeStorage.GenericCellOperations[seg].NewGenericCell(cellType, content);
+            int seg = CompositeStorage.GetIntervalIndexByCellTypeName(cellType);
+            return CompositeStorage.s_GenericCellOperations[seg].NewGenericCell(cellType, content);
         }
 
         public void SaveGenericCell(IKeyValueStore storage, ICell cell)
         {
-            int seg = GetIntervalIndex.ByCellTypeID(cell.CellType);
-            CompositeStorage.GenericCellOperations[seg].SaveGenericCell(storage, cell);
+            int seg = CompositeStorage.GetIntervalIndexByCellTypeID(cell.CellType);
+            CompositeStorage.s_GenericCellOperations[seg].SaveGenericCell(storage, cell);
         }
 
         public void SaveGenericCell(IKeyValueStore storage, long cellId, ICell cell)
         {
-            int seg = GetIntervalIndex.ByCellTypeID(cell.CellType);
-            CompositeStorage.GenericCellOperations[seg].SaveGenericCell(storage, cellId, cell);
+            int seg = CompositeStorage.GetIntervalIndexByCellTypeID(cell.CellType);
+            CompositeStorage.s_GenericCellOperations[seg].SaveGenericCell(storage, cellId, cell);
         }
 
         public void SaveGenericCell(LocalMemoryStorage storage, CellAccessOptions writeAheadLogOptions, ICell cell)
         {
-            int seg = GetIntervalIndex.ByCellTypeID(cell.CellType);
-            CompositeStorage.GenericCellOperations[seg].SaveGenericCell(storage, writeAheadLogOptions, cell);
+            int seg = CompositeStorage.GetIntervalIndexByCellTypeID(cell.CellType);
+            CompositeStorage.s_GenericCellOperations[seg].SaveGenericCell(storage, writeAheadLogOptions, cell);
         }
 
         public void SaveGenericCell(LocalMemoryStorage storage, CellAccessOptions writeAheadLogOptions, long cellId, ICell cell)
         {
-            int seg = GetIntervalIndex.ByCellTypeID(cell.CellType);
-            CompositeStorage.GenericCellOperations[seg].SaveGenericCell(storage, writeAheadLogOptions, cellId, cell);
+            int seg = CompositeStorage.GetIntervalIndexByCellTypeID(cell.CellType);
+            CompositeStorage.s_GenericCellOperations[seg].SaveGenericCell(storage, writeAheadLogOptions, cellId, cell);
         }
         
         public unsafe ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId)
@@ -112,9 +111,9 @@ namespace Trinity.Storage.CompositeExtension
                 throw new CellNotFoundException("Cannot access the cell.");
             }
 
-            int seg = GetIntervalIndex.ByCellTypeID(cellType);
+            int seg = CompositeStorage.GetIntervalIndexByCellTypeID(cellType);
 
-            return CompositeStorage.GenericCellOperations[seg].UseGenericCell(cellId, cellPtr, entryIndex, cellType);
+            return CompositeStorage.s_GenericCellOperations[seg].UseGenericCell(cellId, cellPtr, entryIndex, cellType);
         }
 
         public unsafe ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId, CellAccessOptions options)
@@ -154,28 +153,28 @@ namespace Trinity.Storage.CompositeExtension
                     throw new CellNotFoundException("Cannot access the cell.");
             }
 
-            int seg = GetIntervalIndex.ByCellTypeID(cellType);
+            int seg = CompositeStorage.GetIntervalIndexByCellTypeID(cellType);
 
-            return CompositeStorage.GenericCellOperations[seg].UseGenericCell(cellId, cellPtr, entryIndex, cellType, options);
+            return CompositeStorage.s_GenericCellOperations[seg].UseGenericCell(cellId, cellPtr, entryIndex, cellType, options);
         }
 
         public ICellAccessor UseGenericCell(LocalMemoryStorage storage, long cellId, CellAccessOptions options, string cellType)
         {
-            int seg = GetIntervalIndex.ByCellTypeName(cellType);
-            return CompositeStorage.GenericCellOperations[seg].UseGenericCell(storage, cellId, options, cellType);
+            int seg = CompositeStorage.GetIntervalIndexByCellTypeName(cellType);
+            return CompositeStorage.s_GenericCellOperations[seg].UseGenericCell(storage, cellId, options, cellType);
         }
 
         public unsafe ICellAccessor UseGenericCell(long cellId, byte* cellPtr, int cellEntryIndex, ushort cellType)
         {
-            int seg = GetIntervalIndex.ByCellTypeID(cellType);
-            return CompositeStorage.GenericCellOperations[seg].UseGenericCell(cellId, cellPtr, cellEntryIndex, cellType);
+            int seg = CompositeStorage.GetIntervalIndexByCellTypeID(cellType);
+            return CompositeStorage.s_GenericCellOperations[seg].UseGenericCell(cellId, cellPtr, cellEntryIndex, cellType);
             
         }
 
         public unsafe ICellAccessor UseGenericCell(long cellId, byte* cellPtr, int entryIndex, ushort cellType, CellAccessOptions options)
         {
-            int seg = GetIntervalIndex.ByCellTypeID(cellType);
-            return CompositeStorage.GenericCellOperations[seg].UseGenericCell(cellId, cellPtr, entryIndex, cellType, options);
+            int seg = CompositeStorage.GetIntervalIndexByCellTypeID(cellType);
+            return CompositeStorage.s_GenericCellOperations[seg].UseGenericCell(cellId, cellPtr, entryIndex, cellType, options);
 
         }
     }
