@@ -18,7 +18,7 @@
             HorizontalContentAlignment="Stretch" 
             VerticalContentAlignment="Stretch" 
             WindowStartupLocation="CenterScreen" 
-            ResizeMode="CanResizeWithGrip">
+            ResizeMode="CanResizeWithGrip" Closed="MainShellWindowHost_Closed" Closing="MainShellWindowHost_Closing">
 
     <!-- When the main window of the program is loaded by the WPF runtime the first thing we want to do it put up
          a splash screen. -->

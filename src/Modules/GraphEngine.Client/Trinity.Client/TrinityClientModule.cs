@@ -60,15 +60,15 @@ namespace Trinity.Client.TrinityClientModule
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected internal unsafe new void SendMessage(IMessagePassingEndpoint ep, byte** bufs, int* sizes, int cnt)
+        protected internal new unsafe void SendMessage(IMessagePassingEndpoint ep, byte** bufs, int* sizes, int cnt)
             => base.SendMessage(ep, bufs, sizes, cnt);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected internal unsafe new void SendMessage(IMessagePassingEndpoint ep, byte** bufs, int* sizes, int cnt, out TrinityResponse rsp)
+        protected internal new unsafe void SendMessage(IMessagePassingEndpoint ep, byte** bufs, int* sizes, int cnt, out TrinityResponse rsp)
             => base.SendMessage(ep, bufs, sizes, cnt, out rsp);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected internal unsafe new void SendMessage(IMessagePassingEndpoint ep, byte* buf, int size, out TrinityResponse rsp)
+        protected internal new unsafe void SendMessage(IMessagePassingEndpoint ep, byte* buf, int size, out TrinityResponse rsp)
             => base.SendMessage(ep, buf, size, out rsp);
 
         protected override void RegisterMessageHandler()

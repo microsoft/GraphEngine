@@ -129,5 +129,15 @@ namespace Trinity.GE.WPF.TestFacility.UIShell.Module.Shell
                 }
             }
         }
+
+        private void MainShellWindowHost_Closed(object sender, System.EventArgs e)
+        {
+            ;
+        }
+
+        private void MainShellWindowHost_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            ;
+        }
     }
 }

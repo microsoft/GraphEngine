@@ -8,6 +8,7 @@ using Trinity.Client.ServerSide;
 using Trinity.Client.TestProtocols;
 using Trinity.Client.TestProtocols.Impl;
 using Trinity.Client.TestProtocols.TrinityClientTestModule;
+using Trinity.Diagnostics;
 using Trinity.Network;
 
 namespace Trinity.Client.TestServer
@@ -16,6 +17,7 @@ namespace Trinity.Client.TestServer
     {
         static void Main(string[] args)
         {
+            Log.LogsWritten += Log_LogsWritten;
             TrinityServer server = new TrinityServer();
             server.RegisterCommunicationModule<TrinityClientModule.TrinityClientModule>();
             server.RegisterCommunicationModule<TrinityClientTestModule>();
@@ -47,6 +49,18 @@ namespace Trinity.Client.TestServer
                     }
                 }
                 Thread.Sleep(1000);
+            }
+        }
+
+        private static void Log_LogsWritten(IList<LOG_ENTRY> serverLogEntrys)
+        {
+            if (serverLogEntrys == null) throw new ArgumentNullException(nameof(serverLogEntrys));
+
+            foreach (var logEntry in serverLogEntrys)
+            {
+
+                Console.WriteLine(logEntry.logLevel);
+
             }
         }
     }
