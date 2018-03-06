@@ -135,6 +135,7 @@ _return:
             {
                 try
                 {
+                    Log.WriteLine(LogLevel.Debug, $"Executing startup task {task.GetType().FullName}");
                     task.Run();
                 }
                 catch (Exception ex)

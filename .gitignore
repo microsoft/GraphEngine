@@ -104,7 +104,7 @@ tests/new_test.exe
 /src/Modules/Trinity.FFI/Trinity.FFI.Python/tests/tsl/GeneratedCode
 /src/Modules/Trinity.FFI/Trinity.FFI.Python/tests/tsl/bin
 /src/Modules/Trinity.FFI/Trinity.FFI.Python/tests/tsl/obj
-/src/Modules/Trinity.FFI/Trinity.FFI.Python/storage
 /src/Modules/Trinity.FFI/Trinity.FFI.Python/dist
+/src/Modules/Trinity.FFI/Trinity.FFI.Python/**/storage/**
 **/.ropeproject
 ServiceFabricBackup
