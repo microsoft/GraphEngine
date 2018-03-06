@@ -1,4 +1,4 @@
-%module GraphEngine
+%module ffi
 
 %{
 #define SWIG_FILE_WITH_INIT

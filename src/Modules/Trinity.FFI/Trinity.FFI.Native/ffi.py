@@ -13,9 +13,9 @@ if version_info >= (2, 7, 0):
     def swig_import_helper():
         import importlib
         pkg = __name__.rpartition('.')[0]
-        mname = '.'.join((pkg, '_GraphEngine')).lstrip('.')
+        mname = '.'.join((pkg, '_ffi')).lstrip('.')
         return importlib.import_module(mname)
-    _GraphEngine = swig_import_helper()
+    _ffi = swig_import_helper()
     del swig_import_helper
 elif version_info >= (2, 6, 0):
     def swig_import_helper():
@@ -23,20 +23,20 @@ elif version_info >= (2, 6, 0):
         import imp
         fp = None
         try:
-            fp, pathname, description = imp.find_module('_GraphEngine', [dirname(__file__)])
+            fp, pathname, description = imp.find_module('_ffi', [dirname(__file__)])
         except ImportError:
-            import _GraphEngine
-            return _GraphEngine
+            import _ffi
+            return _ffi
         if fp is not None:
             try:
-                _mod = imp.load_module('_GraphEngine', fp, pathname, description)
+                _mod = imp.load_module('_ffi', fp, pathname, description)
             finally:
                 fp.close()
             return _mod
-    _GraphEngine = swig_import_helper()
+    _ffi = swig_import_helper()
     del swig_import_helper
 else:
-    import _GraphEngine
+    import _ffi
 del version_info
 try:
     _swig_property = property
@@ -59,10 +59,7 @@ def _swig_setattr_nondynamic(self, class_type, name, value, static=1):
     if method:
         return method(self, value)
     if (not static):
-        if _newclass:
-            object.__setattr__(self, name, value)
-        else:
-            self.__dict__[name] = value
+        object.__setattr__(self, name, value)
     else:
         raise AttributeError("You cannot add attributes to %s" % self)
 
@@ -87,89 +84,86 @@ def _swig_repr(self):
         strthis = ""
     return "<%s.%s; %s >" % (self.__class__.__module__, self.__class__.__name__, strthis,)
 
-try:
-    _object = object
-    _newclass = 1
-except __builtin__.Exception:
-    class _object:
-        pass
-    _newclass = 0
+
+def _swig_setattr_nondynamic_method(set):
+    def set_attr(self, name, value):
+        if (name == "thisown"):
+            return self.this.own(value)
+        if hasattr(self, name) or (name == "this"):
+            set(self, name, value)
+        else:
+            raise AttributeError("You cannot add attributes to %s" % self)
+    return set_attr
+
 
 
 def Init():
-    return _GraphEngine.Init()
-Init = _GraphEngine.Init
-class Cell(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, Cell, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, Cell, name)
+    return _ffi.Init()
+Init = _ffi.Init
+class Cell(object):
+    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
     __repr__ = _swig_repr
 
     def __init__(self, cell):
-        this = _GraphEngine.new_Cell(cell)
+        this = _ffi.new_Cell(cell)
         try:
             self.this.append(this)
         except __builtin__.Exception:
             self.this = this
-    __swig_setmethods__["m_cell"] = _GraphEngine.Cell_m_cell_set
-    __swig_getmethods__["m_cell"] = _GraphEngine.Cell_m_cell_get
-    if _newclass:
-        m_cell = _swig_property(_GraphEngine.Cell_m_cell_get, _GraphEngine.Cell_m_cell_set)
+    m_cell = _swig_property(_ffi.Cell_m_cell_get, _ffi.Cell_m_cell_set)
 
     def GetField(self, field):
-        return _GraphEngine.Cell_GetField(self, field)
+        return _ffi.Cell_GetField(self, field)
 
     def SetField(self, field, content):
-        return _GraphEngine.Cell_SetField(self, field, content)
+        return _ffi.Cell_SetField(self, field, content)
 
     def AppendField(self, field, content):
-        return _GraphEngine.Cell_AppendField(self, field, content)
+        return _ffi.Cell_AppendField(self, field, content)
 
     def RemoveField(self, field):
-        return _GraphEngine.Cell_RemoveField(self, field)
+        return _ffi.Cell_RemoveField(self, field)
 
     def HasField(self, field):
-        return _GraphEngine.Cell_HasField(self, field)
+        return _ffi.Cell_HasField(self, field)
 
     def GetID(self):
-        return _GraphEngine.Cell_GetID(self)
+        return _ffi.Cell_GetID(self)
 
     def SetID(self):
-        return _GraphEngine.Cell_SetID(self)
-    __swig_destroy__ = _GraphEngine.delete_Cell
+        return _ffi.Cell_SetID(self)
+    __swig_destroy__ = _ffi.delete_Cell
     __del__ = lambda self: None
 
     def GetFieldNames(self):
-        return _GraphEngine.Cell_GetFieldNames(self)
-Cell_swigregister = _GraphEngine.Cell_swigregister
+        return _ffi.Cell_GetFieldNames(self)
+Cell_swigregister = _ffi.Cell_swigregister
 Cell_swigregister(Cell)
-cvar = _GraphEngine.cvar
+cvar = _ffi.cvar
 
 
 def LoadCell(cellId):
-    return _GraphEngine.LoadCell(cellId)
-LoadCell = _GraphEngine.LoadCell
+    return _ffi.LoadCell(cellId)
+LoadCell = _ffi.LoadCell
 
 def SaveCell_1(cellId, pcell):
-    return _GraphEngine.SaveCell_1(cellId, pcell)
-SaveCell_1 = _GraphEngine.SaveCell_1
+    return _ffi.SaveCell_1(cellId, pcell)
+SaveCell_1 = _ffi.SaveCell_1
 
 def SaveCell_2(cellId, pcell, options):
-    return _GraphEngine.SaveCell_2(cellId, pcell, options)
-SaveCell_2 = _GraphEngine.SaveCell_2
+    return _ffi.SaveCell_2(cellId, pcell, options)
+SaveCell_2 = _ffi.SaveCell_2
 
 def NewCell_1(cellType):
-    return _GraphEngine.NewCell_1(cellType)
-NewCell_1 = _GraphEngine.NewCell_1
+    return _ffi.NewCell_1(cellType)
+NewCell_1 = _ffi.NewCell_1
 
 def NewCell_2(cellId, cellType):
-    return _GraphEngine.NewCell_2(cellId, cellType)
-NewCell_2 = _GraphEngine.NewCell_2
+    return _ffi.NewCell_2(cellId, cellType)
+NewCell_2 = _ffi.NewCell_2
 
 def NewCell_3(cellType, cellContent):
-    return _GraphEngine.NewCell_3(cellType, cellContent)
-NewCell_3 = _GraphEngine.NewCell_3
-# This file is compatible with both classic and new-style classes.
+    return _ffi.NewCell_3(cellType, cellContent)
+NewCell_3 = _ffi.NewCell_3
 
 

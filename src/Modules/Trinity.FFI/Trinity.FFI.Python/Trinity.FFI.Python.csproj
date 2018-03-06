@@ -17,11 +17,7 @@
     <RepositoryUrl>https://github.com/Microsoft/GraphEngine/</RepositoryUrl>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>..\..\..\..\bin</OutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <PropertyGroup>
     <OutputPath>..\..\..\..\bin</OutputPath>
   </PropertyGroup>
 
@@ -29,29 +25,17 @@
     <SwigFile Include="$(ProjectDir)..\Trinity.FFI.Native\Trinity.FFI.Swig.i" />
   </ItemGroup>
   
-  <Target Name="SwigGen" BeforeTargets="CoreCompile" Inputs="@(SwigFile)" Outputs="..\..\..\..\bin\$(TargetFramework)\lib.win-amd64-3.6\_GraphEngine.cp36-win_amd64.pyd" Condition="'@(SwigFile)' != ''">
-    <Exec Command="swig.exe -c++ -outcurrentdir -python &quot;@(SwigFile)&quot;" ContinueOnError="true" />
-    <Exec Command="python.exe setup.py build -b &quot;$(ProjectDir)..\..\..\..\bin\$(TargetFramework)&quot;" />  
+  <Target Name="SwigGen" BeforeTargets="DispatchToInnerBuilds" 
+          Inputs="@(SwigFile)" Outputs="build\lib.win-amd64-3.6\GraphEngine\_ffi.cp36-win_amd64.pyd;build\lib.win-amd64-3.6\GraphEngine\ffi.py" 
+          Condition="'@(SwigFile)' != ''">
+    <Exec Command="swig.exe -modern -c++ -outcurrentdir -python &quot;@(SwigFile)&quot;" />
+    <Move SourceFiles="ffi.py" DestinationFolder="GraphEngine" />
+    <Exec Command="python.exe setup.py build" />  
   </Target>
 
   <ItemGroup>
-    <Content Include="..\..\..\..\bin\netstandard2.0\lib.win-amd64-3.6\_GraphEngine.cp36-win_amd64.pyd" Link="_GraphEngine.cp36-win_amd64.pyd">
-      <PackagePath>lib\netstandard2.0</PackagePath>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\..\..\bin\net461\lib.win-amd64-3.6\_GraphEngine.cp36-win_amd64.pyd" Link="_GraphEngine.cp36-win_amd64.pyd">
-      <PackagePath>lib\net461</PackagePath>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="GraphEngine.py">
-      <PackagePath>lib\netstandard2.0</PackagePath>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="GraphEngine.py">
-      <PackagePath>lib\net461</PackagePath>
+    <Content Include="build\lib.win-amd64-3.6\GraphEngine\_ffi.cp36-win_amd64.pyd" Link="GraphEngine\_ffi.cp36-win_amd64.pyd">
+      <PackagePath>native\GraphEngine</PackagePath>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -63,4 +47,5 @@
   <ItemGroup>
     <ProjectReference Include="..\Trinity.FFI\Trinity.FFI.csproj" />
   </ItemGroup>
+
 </Project>

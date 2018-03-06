@@ -48,10 +48,4 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Trinity.Storage.Composite">
-      <HintPath>..\..\..\..\bin\netstandard2.0\Trinity.Storage.Composite.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

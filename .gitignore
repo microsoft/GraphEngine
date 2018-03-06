@@ -108,3 +108,4 @@ tests/new_test.exe
 /src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/storage
 /src/Modules/Trinity.FFI/Trinity.FFI.PythonModule/dist
 ServiceFabricBackup
+**/.ropeproject

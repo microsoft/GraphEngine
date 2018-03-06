@@ -50,27 +50,5 @@ if is_windows:
                     with_suffix=['.py', '.dll', '.pyd'],
                     to_module='ffi')
 
-    # build Trinity.StorageVersionController.csproj
-    dir_at(pardir_of(pardir_of(BUILD_SCRIPT_PATH)), 'GraphEngine.Storage.Composite',
-           then_call=lambda _: os.system('cd {} && dotnet restore && dotnet build --configuration Release'.format(_)))
-
-    to_pymodule_dir('../../GraphEngine.Storage.Composite',
-                    with_suffix=['.dll'],
-                    to_module='ffi')
-
-    # copy exe
-    to_pymodule_dir(pardir_of(CORECLR_PATH),
-                    with_suffix=['.exe'],
-                    to_module='Command',
-                    cond=lambda _: 'CodeGen' in _)
-
-    # install newtonsoft.json 9.0.1.
-    os.system('nuget install newtonsoft.json -Version 9.0.1 -OutputDirectory ./cache')
-    dotnet_package_dir = os.path.abspath('cache')
-    # add newtonsoft.json.dll
-    to_pymodule_dir(os.path.join(dotnet_package_dir, r'Newtonsoft.Json.9.0.1\lib\netstandard1.0'),
-                    with_suffix=['.dll'],
-                    to_module='ffi')
-
 else:
     raise NotImplemented

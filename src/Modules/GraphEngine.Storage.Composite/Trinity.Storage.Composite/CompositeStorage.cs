@@ -9,7 +9,7 @@ using Trinity.Utilities;
 
 namespace Trinity.Storage.Composite
 {
-    internal static class CompositeStorage
+    public static class CompositeStorage
     {
         internal static List<IStorageSchema> s_StorageSchemas;
         internal static List<IGenericCellOperations> s_GenericCellOperations;
@@ -86,7 +86,7 @@ namespace Trinity.Storage.Composite
         private static bool CodeGen(VersionRecord version)
         {
 #if DEBUG
-            Directory.GetFiles(CurrentVersion.TslSrcDir, "*.tsl").ToList().ForEach(Console.WriteLine);
+            Directory.GetFiles(version.TslSrcDir, "*.tsl").ToList().ForEach(Console.WriteLine);
 #endif
 
             return Cmd.TSLCodeGenCmd(
@@ -100,7 +100,7 @@ namespace Trinity.Storage.Composite
         private static Assembly Load(VersionRecord version)
         {
 #if DEBUG
-            Console.WriteLine("Loading " + Path.Combine(CurrentVersion.AsmLoadDir, $"{CurrentVersion.Namespace}.dll"));
+            Console.WriteLine("Loading " + Path.Combine(version.AsmLoadDir, $"{version.Namespace}.dll"));
 #endif 
             return Assembly.LoadFrom(Path.Combine(version.AsmLoadDir, $"{version.Namespace}.dll"));
         }

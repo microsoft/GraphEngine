@@ -1,0 +1,3 @@
+recursive-include GraphEngine *.py *.dll
+prune .ropeproject
+prune __pycache__
