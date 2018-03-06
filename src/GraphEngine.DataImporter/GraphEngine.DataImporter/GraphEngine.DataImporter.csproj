@@ -8,11 +8,6 @@
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="TSLcompiler.csproj">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="1.9.71" />
     <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
