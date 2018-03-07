@@ -32,18 +32,15 @@
   </Target>
 
   <ItemGroup>
-    <Content Include="build\lib.win-amd64-3.6\GraphEngine\_ffi.cp36-win_amd64.pyd" Link="GraphEngine\_ffi.cp36-win_amd64.pyd">
-      <PackagePath>native\GraphEngine</PackagePath>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Python.Runtime" Version="2.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Trinity.FFI\Trinity.FFI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="GraphEngine\Dependencies.csproj" />
   </ItemGroup>
 
 </Project>

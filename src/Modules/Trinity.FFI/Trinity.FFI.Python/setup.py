@@ -4,7 +4,6 @@ setup.py
  
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
-from conf import copy_to
  
 class VERSION:
     major = '0'
@@ -13,8 +12,6 @@ class VERSION:
 with open('./README.md', encoding='utf-8') as f:
     readme = f.read()
 
-copy_to('GraphEngine', '../../../../bin/trinity_ffi.dll')
- 
 ge_module = Extension('_ffi',
                            sources=['Trinity.FFI.SWIG_wrap.cxx'],
                            include_dirs = ['../Trinity.FFI.Native',

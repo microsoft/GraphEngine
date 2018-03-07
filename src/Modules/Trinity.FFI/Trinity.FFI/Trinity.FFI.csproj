@@ -39,12 +39,7 @@
 
   <ItemGroup>
     <Content Include="..\..\..\..\bin\trinity_ffi.dll">
-      <PackagePath>lib\netstandard2.0</PackagePath>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\..\..\bin\trinity_ffi.dll">
-      <PackagePath>lib\net461</PackagePath>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <PackagePath>runtimes\win-x64\native</PackagePath>
     </Content>
   </ItemGroup>
 

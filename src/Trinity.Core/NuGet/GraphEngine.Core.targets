@@ -74,20 +74,4 @@
       <FileWrites Include="@(_TslGeneratedFileNames)" />
     </ItemGroup>
   </Target>
-
-  <Target Name="BeforeBuild">
-    <!-- 
-      * Currently, `dotnet build` fails when Trinity.dll is present in the package directory.
-      * The error code is MSB4018, with message "PE image does not have metadata".
-      * Obviously it is picking up our unmanaged assembly and then crashed.
-      * As a workaround, we could delete the native assembly before we compile.
-      * This will fix the error but then introduce MSB3106.
-     -->
-  
-    <ItemGroup>
-      <Native_Assemblies Include="$(UserProfile)/.nuget/packages/graphengine.core/**/Trinity.dll" />
-    </ItemGroup>
-    <Message Text="Removing native Trinity assembly... %(Native_Assemblies.Identity)" Importance="High"/>
-    <Delete Files="%(Native_Assemblies.Identity)" ContinueOnError="true"/>
-  </Target>
 </Project>

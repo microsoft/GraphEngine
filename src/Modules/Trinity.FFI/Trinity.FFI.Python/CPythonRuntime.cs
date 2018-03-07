@@ -22,6 +22,8 @@ namespace Trinity.FFI.Python
             Log.WriteLine("PythonPath = {0}", PythonEngine.PythonPath);
             m_GIL = Py.GIL();
             m_scope = Py.CreateScope();
+            //TODO make sure the GraphEngine wheel is installed
+            m_scope.Exec(@"import GraphEngine");
         }
 
         public void Dispose()

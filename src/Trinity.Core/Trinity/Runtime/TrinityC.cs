@@ -35,19 +35,6 @@ namespace Trinity
                 string assembly_path = AssemblyUtility.TrinityCorePath;
 #if !CORECLR
                 string native_assembly_name = "Trinity.C.dll";
-#else
-                string native_assembly_name = null;
-                switch (Environment.OSVersion.Platform)
-                {
-                    case PlatformID.Win32NT:
-                        native_assembly_name = "Trinity.dll";
-                        break;
-                    case PlatformID.Unix:
-                        native_assembly_name = "libTrinity.so";
-                        break;
-                    default: throw new NotImplementedException();
-                }
-#endif
                 string trinity_c_path = Path.Combine(assembly_path, native_assembly_name);
                 bool found = false;
 
@@ -68,8 +55,8 @@ namespace Trinity
                 {
                     ReleaseNativeAssembly(native_assembly_name, trinity_c_path);
                 }
+#endif
 
-                /* native assembly is released. initialize Trinity.C now */
                 fixed(char* pAssemblyPath = AssemblyUtility.MyAssemblyPath)
                 {
                     __INIT_TRINITY_C__(pAssemblyPath);

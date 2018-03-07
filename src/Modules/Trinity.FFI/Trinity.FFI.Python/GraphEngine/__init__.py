@@ -1,13 +1,13 @@
-import clr, sys, os
+import clr, sys, os, ctypes
 from os.path import dirname, abspath, join, exists, expanduser
 
 # when we implement hosting in Trinity.FFI.Native, we can remove the dependency on pythonnet
 
 __dep_packages = [
-    'Newtonsoft.Json/9.0.1/lib/netstandard1.0/Newtonsoft.Json.dll',
     'GraphEngine.Core/1.0.9083/lib/netstandard2.0/Trinity.Core.dll',
     'GraphEngine.Storage.Composite/1.0.9083/lib/netstandard2.0/Trinity.Storage.Composite.dll',
     'GraphEngine.FFI/1.0.9083/lib/netstandard2.0/Trinity.FFI.dll',
+    'Newtonsoft.Json/9.0.1/lib/netstandard1.0/Newtonsoft.Json.dll',
 ]
 __module_dir   = dirname(abspath(__file__))
 __dep_proj     = join(__module_dir, "Dependencies.csproj")
@@ -17,7 +17,13 @@ __package_dirs = [join(__nuget_root, f) for f in __dep_packages]
 if not all([exists(f) for f in __package_dirs]):
     os.system('dotnet restore "{}"'.format(__dep_proj))
 
+#todo detect os and determine .net rid
+ge_native_lib  = join(__nuget_root, "GraphEngine.Core/1.0.9083/runtimes/win-x64/native/Trinity.dll")
+ffi_native_lib = join(__nuget_root, "GraphEngine.FFI/1.0.9083/runtimes/win-x64/native/trinity_ffi.dll")
+
 sys.path.append(__module_dir)
+ctypes.cdll.LoadLibrary(ge_native_lib)
+ctypes.cdll.LoadLibrary(ffi_native_lib)
 
 for f in __package_dirs:
     clr.AddReference(f)
