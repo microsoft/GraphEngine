@@ -47,6 +47,31 @@ namespace Trinity.FFI
     internal unsafe delegate void TRINITY_FFI_CELL_SET(IntPtr p0, String p1, String p2);
     internal unsafe delegate void TRINITY_FFI_CELL_APPEND(IntPtr p0, String p1, String p2);
     internal unsafe delegate void TRINITY_FFI_CELL_DELETE(IntPtr p0, String p1);
+    internal unsafe delegate Int32 TRINITY_FFI_CA_USE_1(Int64 p0);
+    internal unsafe delegate Int32 TRINITY_FFI_CA_USE_2(Int64 p0, [MarshalAs(UnmanagedType.I4)]CellAccessOptions p1);
+    internal unsafe delegate Int32 TRINITY_FFI_CA_USE_3(Int64 p0, [MarshalAs(UnmanagedType.I4)]CellAccessOptions p1, String p2);
+    internal unsafe delegate Int64 TRINITY_FFI_CA_GETID(Int32 p0);
+    internal unsafe delegate String TRINITY_FFI_CA_GETFIELD(Int32 p0, String p1);
+    internal unsafe delegate void TRINITY_FFI_CA_SETFIELD(Int32 p0, String p1, String p2);
+    internal unsafe delegate void TRINITY_FFI_CA_APPENDFIELD(Int32 p0, String p1, String p2);
+    internal unsafe delegate void TRINITY_FFI_CA_REMOVEFIELD(Int32 p0, String p1);
+    internal unsafe delegate void TRINITY_FFI_CA_DEL(Int32 p0);
+    internal unsafe delegate Int32 TRINITY_FFI_CO_LOAD(Int64 p0);
+    internal unsafe delegate Int32 TRINITY_FFI_CO_NEW_1(String p0);
+    internal unsafe delegate Int32 TRINITY_FFI_CO_NEW_2(String p0, Int64 p1);
+    internal unsafe delegate Int32 TRINITY_FFI_CO_NEW_3(String p0, Int64 p1, String p2);
+    internal unsafe delegate void TRINITY_FFI_CO_SAVE_1(Int32 p0);
+    internal unsafe delegate void TRINITY_FFI_CO_SAVE_2(Int64 p0, Int32 p1);
+    internal unsafe delegate void TRINITY_FFI_CO_SAVE_3([MarshalAs(UnmanagedType.I4)]CellAccessOptions p0, Int32 p1);
+    internal unsafe delegate void TRINITY_FFI_CO_SAVE_4([MarshalAs(UnmanagedType.I4)]CellAccessOptions p0, Int64 p1, Int32 p2);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CO_REMOVE(Int64 p0);
+    internal unsafe delegate Int64 TRINITY_FFI_CO_GETID(Int32 p0);
+    internal unsafe delegate void TRINITY_FFI_CO_SETID(Int32 p0, Int64 p1);
+    internal unsafe delegate String TRINITY_FFI_CO_GETFIELD(Int32 p0, String p1);
+    internal unsafe delegate void TRINITY_FFI_CO_SETFIELD(Int32 p0, String p1, String p2);
+    internal unsafe delegate void TRINITY_FFI_CO_APPENDFIELD(Int32 p0, String p1, String p2);
+    internal unsafe delegate void TRINITY_FFI_CO_REMOVEFIELD(Int32 p0, String p1);
+    internal unsafe delegate void TRINITY_FFI_CO_DEL(Int32 p0);
 
     internal struct TRINITY_INTERFACES
     {
@@ -114,6 +139,56 @@ namespace Trinity.FFI
         public TRINITY_FFI_CELL_APPEND cell_append;
         [MarshalAs(UnmanagedType.FunctionPtr)]
         public TRINITY_FFI_CELL_DELETE cell_delete;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CA_USE_1 CA_Use_1;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CA_USE_2 CA_Use_2;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CA_USE_3 CA_Use_3;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CA_GETID CA_GetId;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CA_GETFIELD CA_GetField;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CA_SETFIELD CA_SetField;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CA_APPENDFIELD CA_AppendField;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CA_REMOVEFIELD CA_RemoveField;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CA_DEL CA_Del;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CO_LOAD CO_Load;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CO_NEW_1 CO_New_1;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CO_NEW_2 CO_New_2;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CO_NEW_3 CO_New_3;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CO_SAVE_1 CO_Save_1;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CO_SAVE_2 CO_Save_2;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CO_SAVE_3 CO_Save_3;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CO_SAVE_4 CO_Save_4;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CO_REMOVE CO_Remove;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CO_GETID CO_GetId;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CO_SETID CO_SetId;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CO_GETFIELD CO_GetField;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CO_SETFIELD CO_SetField;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CO_APPENDFIELD CO_AppendField;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CO_REMOVEFIELD CO_RemoveField;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CO_DEL CO_Del;
     };
 
     internal static unsafe class Native

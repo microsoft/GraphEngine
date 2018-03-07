@@ -38,6 +38,10 @@ elif version_info >= (2, 6, 0):
 else:
     import _ffi
 del version_info
+if __name__.rpartition('.')[0] != '':
+    from _ffi import *
+else:
+    from _ffi import *
 try:
     _swig_property = property
 except NameError:
@@ -97,73 +101,5 @@ def _swig_setattr_nondynamic_method(set):
 
 
 
-def Init():
-    return _ffi.Init()
-Init = _ffi.Init
-class Cell(object):
-    thisown = _swig_property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc='The membership flag')
-    __repr__ = _swig_repr
-
-    def __init__(self, cell):
-        this = _ffi.new_Cell(cell)
-        try:
-            self.this.append(this)
-        except __builtin__.Exception:
-            self.this = this
-    m_cell = _swig_property(_ffi.Cell_m_cell_get, _ffi.Cell_m_cell_set)
-
-    def GetField(self, field):
-        return _ffi.Cell_GetField(self, field)
-
-    def SetField(self, field, content):
-        return _ffi.Cell_SetField(self, field, content)
-
-    def AppendField(self, field, content):
-        return _ffi.Cell_AppendField(self, field, content)
-
-    def RemoveField(self, field):
-        return _ffi.Cell_RemoveField(self, field)
-
-    def HasField(self, field):
-        return _ffi.Cell_HasField(self, field)
-
-    def GetID(self):
-        return _ffi.Cell_GetID(self)
-
-    def SetID(self):
-        return _ffi.Cell_SetID(self)
-    __swig_destroy__ = _ffi.delete_Cell
-    __del__ = lambda self: None
-
-    def GetFieldNames(self):
-        return _ffi.Cell_GetFieldNames(self)
-Cell_swigregister = _ffi.Cell_swigregister
-Cell_swigregister(Cell)
-cvar = _ffi.cvar
-
-
-def LoadCell(cellId):
-    return _ffi.LoadCell(cellId)
-LoadCell = _ffi.LoadCell
-
-def SaveCell_1(cellId, pcell):
-    return _ffi.SaveCell_1(cellId, pcell)
-SaveCell_1 = _ffi.SaveCell_1
-
-def SaveCell_2(cellId, pcell, options):
-    return _ffi.SaveCell_2(cellId, pcell, options)
-SaveCell_2 = _ffi.SaveCell_2
-
-def NewCell_1(cellType):
-    return _ffi.NewCell_1(cellType)
-NewCell_1 = _ffi.NewCell_1
-
-def NewCell_2(cellId, cellType):
-    return _ffi.NewCell_2(cellId, cellType)
-NewCell_2 = _ffi.NewCell_2
-
-def NewCell_3(cellType, cellContent):
-    return _ffi.NewCell_3(cellType, cellContent)
-NewCell_3 = _ffi.NewCell_3
 
 

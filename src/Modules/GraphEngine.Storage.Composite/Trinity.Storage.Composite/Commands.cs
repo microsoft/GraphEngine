@@ -7,11 +7,11 @@ using Trinity.Utilities;
 namespace Trinity.Storage.Composite
 {
     // Command tool configurations
-    #region Cmd
-    internal static class Cmd
+    public static class Commands
     {
-        public const string c_codegen_cmd = "Trinity.TSL.CodeGen";
-        public const string c_dotnet_cmd = "dotnet";
+        //private static string c_codegen_cmd => Path.Combine(AssemblyUtility.MyAssemblyPath, "..", "..", "runtime", "Trinity.TSL.CodeGen");
+        private static string c_codegen_cmd => "Trinity.TSL.CodeGen";
+        private static string c_dotnet_cmd => "dotnet";
 
         public static bool TSLCodeGenCmd(string arguments)
         {
@@ -41,7 +41,7 @@ namespace Trinity.Storage.Composite
             return true;
         }
 
-        public static void CmdCall(string cmd, string arguments)
+        private static void CmdCall(string cmd, string arguments)
         {
             Log.WriteLine("command:  " + cmd + " " + arguments);
             Process proc = new Process();
@@ -65,14 +65,13 @@ namespace Trinity.Storage.Composite
 
         private static void OnChildOutputImpl(Process process, string data, LogLevel logLevel)
         {
-            string name = process?.ProcessName ?? "";
-            Log.WriteLine(logLevel, $"{name}: {{0}}", data);
+            string name = "N/A";
+            try { name = process?.ProcessName; } catch { };
+            Log.WriteLine(logLevel, $"{nameof(Commands)}: {name}: {{0}}", data);
         }
     }
-    #endregion
 
     // Settings of storage path
-    #region Path settings 
     internal class PathHelper
     {
         private const string FolderName = "composite-helper";
@@ -82,5 +81,4 @@ namespace Trinity.Storage.Composite
         public static string IDIntervals => Path.Combine(Directory, "IDIntervals.bin");
         public static string DLL(string dllName) => Path.Combine(Directory, dllName);
     }
-    #endregion
 }

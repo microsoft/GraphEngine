@@ -26,7 +26,7 @@
   </ItemGroup>
   
   <Target Name="SwigGen" BeforeTargets="DispatchToInnerBuilds" Inputs="@(SwigFile)" Outputs="build\lib.win-amd64-3.6\GraphEngine\_ffi.cp36-win_amd64.pyd;build\lib.win-amd64-3.6\GraphEngine\ffi.py" Condition="'@(SwigFile)' != ''">
-    <Exec Command="swig.exe -modern -c++ -outcurrentdir -python &quot;@(SwigFile)&quot;" />
+    <Exec Command="swig.exe -modern -c++ -builtin -outcurrentdir -python &quot;@(SwigFile)&quot;" />
     <Move SourceFiles="ffi.py" DestinationFolder="GraphEngine" />
     <Exec Command="python.exe setup.py build" />  
   </Target>

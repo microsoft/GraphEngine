@@ -19,6 +19,7 @@
  ***********************************/
 
 using Trinity.Diagnostics;
+using Trinity.FFI.Interop;
 
 namespace Trinity.FFI
 {

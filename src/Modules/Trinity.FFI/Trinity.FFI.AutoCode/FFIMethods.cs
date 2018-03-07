@@ -49,6 +49,7 @@ namespace Trinity.FFI.AutoCode
  ***********************************/
 
 using Trinity.Diagnostics;
+using Trinity.FFI.Interop;
 
 namespace Trinity.FFI
 {
@@ -58,7 +59,7 @@ namespace Trinity.FFI
         {
 ");
             
-            #line 29 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\FFIMethods.tt"
+            #line 30 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\FFIMethods.tt"
 
 	foreach(var m in export_methods)
 	{
@@ -68,14 +69,14 @@ namespace Trinity.FFI
             #line hidden
             this.Write("\t\t\t");
             
-            #line 32 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\FFIMethods.tt"
+            #line 33 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\FFIMethods.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(m.Name + " = " + m.DeclaringType.Name + "." + m.Name + ","));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 33 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\FFIMethods.tt"
+            #line 34 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\FFIMethods.tt"
 
 	}
 

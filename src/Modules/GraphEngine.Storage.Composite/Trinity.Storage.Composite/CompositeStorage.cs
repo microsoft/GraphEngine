@@ -89,13 +89,13 @@ namespace Trinity.Storage.Composite
             Directory.GetFiles(version.TslSrcDir, "*.tsl").ToList().ForEach(Console.WriteLine);
 #endif
 
-            return Cmd.TSLCodeGenCmd(
+            return Commands.TSLCodeGenCmd(
                     string.Join(" ", Directory.GetFiles(version.TslSrcDir, "*.tsl"))
                     + $" -offset {version.CellTypeOffset} -n {version.Namespace} -o {version.TslBuildDir}");
         }
 
         private static bool Build(VersionRecord version) =>
-            Cmd.DotNetBuildCmd($"build {version.TslBuildDir} -o {version.AsmLoadDir}");
+            Commands.DotNetBuildCmd($"build {version.TslBuildDir} -o {version.AsmLoadDir}");
 
         private static Assembly Load(VersionRecord version)
         {

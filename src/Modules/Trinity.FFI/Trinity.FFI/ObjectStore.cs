@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -74,6 +75,7 @@ namespace Trinity.FFI
             m_len = m_array.Length;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int Put(T value)
         {
 begin:
@@ -108,8 +110,10 @@ begin:
 
         private int CalcLen(int m_len) => m_len + (m_len >> 1);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Get(int index) => m_array[index].value;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Del(int index)
         {
             m_array[index].value = default(T);
@@ -125,6 +129,7 @@ begin:
     {
         public DisposableStore() : base() { }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public new void Del(int index)
         {
             m_array[index].value.Dispose();

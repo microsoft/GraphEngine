@@ -5,6 +5,7 @@
  ***********************************/
 
 using Trinity.Diagnostics;
+using Trinity.FFI.Interop;
 
 namespace Trinity.FFI
 {
@@ -44,6 +45,31 @@ namespace Trinity.FFI
 			cell_set = TrinityWrapper.cell_set,
 			cell_append = TrinityWrapper.cell_append,
 			cell_delete = TrinityWrapper.cell_delete,
+			CA_Use_1 = CellAccessorOps.CA_Use_1,
+			CA_Use_2 = CellAccessorOps.CA_Use_2,
+			CA_Use_3 = CellAccessorOps.CA_Use_3,
+			CA_GetId = CellAccessorOps.CA_GetId,
+			CA_GetField = CellAccessorOps.CA_GetField,
+			CA_SetField = CellAccessorOps.CA_SetField,
+			CA_AppendField = CellAccessorOps.CA_AppendField,
+			CA_RemoveField = CellAccessorOps.CA_RemoveField,
+			CA_Del = CellAccessorOps.CA_Del,
+			CO_Load = CellOps.CO_Load,
+			CO_New_1 = CellOps.CO_New_1,
+			CO_New_2 = CellOps.CO_New_2,
+			CO_New_3 = CellOps.CO_New_3,
+			CO_Save_1 = CellOps.CO_Save_1,
+			CO_Save_2 = CellOps.CO_Save_2,
+			CO_Save_3 = CellOps.CO_Save_3,
+			CO_Save_4 = CellOps.CO_Save_4,
+			CO_Remove = CellOps.CO_Remove,
+			CO_GetId = CellOps.CO_GetId,
+			CO_SetId = CellOps.CO_SetId,
+			CO_GetField = CellOps.CO_GetField,
+			CO_SetField = CellOps.CO_SetField,
+			CO_AppendField = CellOps.CO_AppendField,
+			CO_RemoveField = CellOps.CO_RemoveField,
+			CO_Del = CellOps.CO_Del,
         };
 
         public static void Initialize()
