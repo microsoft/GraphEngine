@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Trinity.Diagnostics;
 using Trinity.Utilities;
 
@@ -9,15 +10,26 @@ namespace Trinity.Storage.Composite
     // Command tool configurations
     public static class Commands
     {
-        //private static string c_codegen_cmd => Path.Combine(AssemblyUtility.MyAssemblyPath, "..", "..", "runtime", "Trinity.TSL.CodeGen");
-        private static string c_codegen_cmd => "Trinity.TSL.CodeGen";
+        private static string c_codegen_cmd
+        {
+            get
+            {
+                var nuget_proc = _System("dotnet", "nuget locals global-packages -l");
+                var output = nuget_proc.StandardOutput.ReadToEnd();
+                var tag = "global-packages: ";
+                var package_root = output.Substring(output.IndexOf(tag) + tag.Length).Trim();
+                Console.WriteLine(package_root);
+                var codegen = Path.Combine(package_root, "GraphEngine.Core/1.0.9083/tools/Trinity.TSL.CodeGen");
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT) codegen += ".exe";
+                return codegen;
+            }
+        }
         private static string c_dotnet_cmd => "dotnet";
 
         public static bool TSLCodeGenCmd(string arguments)
         {
             try
             {
-                var nuget_proc = _System("dotnet", "nuget locals global-packages -l");
                 CmdCall(c_codegen_cmd, arguments);
             }
             catch (Exception e)
@@ -44,7 +56,7 @@ namespace Trinity.Storage.Composite
 
         private static void CmdCall(string cmd, string arguments)
         {
-            Log.WriteLine("command:  " + cmd + " " + arguments);
+            Log.WriteLine("Commands: " + cmd + " " + arguments);
             Process proc = _System(cmd, arguments);
             proc.OutputDataReceived += OnChildStdout;
             proc.ErrorDataReceived += OnChildStderr;
@@ -72,9 +84,9 @@ namespace Trinity.Storage.Composite
 
         private static void OnChildOutputImpl(Process process, string data, LogLevel logLevel)
         {
-            string name = "N/A";
-            try { name = process?.ProcessName; } catch { };
-            Log.WriteLine(logLevel, $"{nameof(Commands)}: {name}: {{0}}", data);
+            data = data?.TrimEnd();
+            if (data?.Length <= 0) return;
+            Log.WriteLine(logLevel, $"{nameof(Commands)}: {{0}}", data);
         }
     }
 
