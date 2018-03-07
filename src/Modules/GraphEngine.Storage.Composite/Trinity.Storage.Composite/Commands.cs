@@ -17,6 +17,7 @@ namespace Trinity.Storage.Composite
         {
             try
             {
+                var nuget_proc = _System("dotnet", "nuget locals global-packages -l");
                 CmdCall(c_codegen_cmd, arguments);
             }
             catch (Exception e)
@@ -44,6 +45,15 @@ namespace Trinity.Storage.Composite
         private static void CmdCall(string cmd, string arguments)
         {
             Log.WriteLine("command:  " + cmd + " " + arguments);
+            Process proc = _System(cmd, arguments);
+            proc.OutputDataReceived += OnChildStdout;
+            proc.ErrorDataReceived += OnChildStderr;
+            proc.BeginOutputReadLine();
+            proc.WaitForExit();
+        }
+
+        private static Process _System(string cmd, string arguments)
+        {
             Process proc = new Process();
             proc.StartInfo.FileName = cmd;
             proc.StartInfo.Arguments = arguments;
@@ -51,10 +61,7 @@ namespace Trinity.Storage.Composite
             proc.StartInfo.RedirectStandardOutput = true;
             proc.StartInfo.RedirectStandardError = true;
             proc.Start();
-            proc.OutputDataReceived += OnChildStdout;
-            proc.ErrorDataReceived += OnChildStderr;
-            proc.BeginOutputReadLine();
-            proc.WaitForExit();
+            return proc;
         }
 
         private static void OnChildStdout(object sender, DataReceivedEventArgs e)
