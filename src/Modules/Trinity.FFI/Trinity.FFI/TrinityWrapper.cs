@@ -10,25 +10,31 @@ namespace Trinity.FFI
 {
     internal static unsafe class TrinityWrapper
     {
-        public static void trinity_ffi_sync_registry(int methodId, TRINITY_FFI_SYNC_HANDLER handler)
-        {
-
-        }
-        public static void trinity_ffi_async_registry(int methodId, TRINITY_FFI_ASYNC_HANDLER handler)
+        [FFIExport]
+        public static void sync_registry(int methodId, TRINITY_FFI_SYNC_HANDLER handler)
         {
         }
 
-        public static string trinity_ffi_sync_send(int partitionId, int methodId, string content)
+        [FFIExport]
+        public static void async_registry(int methodId, TRINITY_FFI_ASYNC_HANDLER handler)
+        {
+        }
+
+        [FFIExport]
+        public static string sync_send(int partitionId, int methodId, string content)
         {
             return "";
         }
-        public static void trinity_ffi_async_send(int partitionId, int methodId, string content)
+
+        [FFIExport]
+        public static void async_send(int partitionId, int methodId, string content)
         {
         }
 
         //IEnumerable<ICellAccessor> EnumerateGenericCellAccessors(LocalMemoryStorage storage){ }
         //IEnumerable<ICell> EnumerateGenericCells(LocalMemoryStorage storage){ }
-        public static TrinityErrorCode trinity_ffi_local_loadcell(long cellId, ref IntPtr cell)
+        [FFIExport]
+        public static TrinityErrorCode local_loadcell(long cellId, ref IntPtr cell)
         {
             try
             {
@@ -43,7 +49,9 @@ namespace Trinity.FFI
                 return TrinityErrorCode.E_FAILURE;
             }
         }
-        public static TrinityErrorCode trinity_ffi_cloud_loadcell(long cellId, ref IntPtr cell)
+
+        [FFIExport]
+        public static TrinityErrorCode cloud_loadcell(long cellId, ref IntPtr cell)
         {
             try
             {
@@ -59,7 +67,8 @@ namespace Trinity.FFI
             }
         }
 
-        internal static TrinityErrorCode trinity_ffi_cell_fieldenum_movenext(IntPtr enumerator, IntPtr field_info)
+        [FFIExport]
+        internal static TrinityErrorCode cell_fieldenum_movenext(IntPtr enumerator, IntPtr field_info)
         {
             try
             {
@@ -74,7 +83,8 @@ namespace Trinity.FFI
             }
         }
 
-        internal static unsafe TrinityErrorCode trinity_ffi_cell_fieldinfo_name(IntPtr field_info, out string value)
+        [FFIExport]
+        internal static unsafe TrinityErrorCode cell_fieldinfo_name(IntPtr field_info, out string value)
         {
             value = string.Empty;
             try
@@ -87,7 +97,8 @@ namespace Trinity.FFI
             catch { return TrinityErrorCode.E_FAILURE; }
         }
 
-        internal static TrinityErrorCode trinity_ffi_cell_fieldenum_current(IntPtr enumerator, ref IntPtr field_info)
+        [FFIExport]
+        internal static TrinityErrorCode cell_fieldenum_current(IntPtr enumerator, ref IntPtr field_info)
         {
             try
             {
@@ -100,7 +111,8 @@ namespace Trinity.FFI
             catch { return TrinityErrorCode.E_FAILURE; }
         }
 
-        internal static TrinityErrorCode trinity_ffi_cell_fieldenum_dispose(IntPtr enumerator)
+        [FFIExport]
+        internal static TrinityErrorCode cell_fieldenum_dispose(IntPtr enumerator)
         {
             try
             {
@@ -116,7 +128,8 @@ namespace Trinity.FFI
             }
         }
 
-        internal static TrinityErrorCode trinity_ffi_cell_fieldenum_get(IntPtr cell, ref IntPtr enumerator)
+        [FFIExport]
+        internal static TrinityErrorCode cell_fieldenum_get(IntPtr cell, ref IntPtr enumerator)
         {
             try
             {
@@ -132,8 +145,9 @@ namespace Trinity.FFI
             }
         }
 
+        [FFIExport]
         #region local save cell
-        public static TrinityErrorCode trinity_ffi_local_savecell_1(long cellId, IntPtr cell)
+        public static TrinityErrorCode local_savecell_1(long cellId, IntPtr cell)
         {
             try
             {
@@ -146,7 +160,9 @@ namespace Trinity.FFI
                 return TrinityErrorCode.E_FAILURE;
             }
         }
-        public static TrinityErrorCode trinity_ffi_local_savecell_2(long cellId, CellAccessOptions options, IntPtr cell)
+
+        [FFIExport]
+        public static TrinityErrorCode local_savecell_2(long cellId, CellAccessOptions options, IntPtr cell)
         {
             try
             {
@@ -161,7 +177,8 @@ namespace Trinity.FFI
             }
         }
 
-        public static TrinityErrorCode trinity_ffi_local_savecell_3(IntPtr cell)
+        [FFIExport]
+        public static TrinityErrorCode local_savecell_3(IntPtr cell)
         {
             try
             {
@@ -175,7 +192,8 @@ namespace Trinity.FFI
             }
         }
 
-        public static TrinityErrorCode trinity_ffi_local_savecell_4(CellAccessOptions options, IntPtr cell)
+        [FFIExport]
+        public static TrinityErrorCode local_savecell_4(CellAccessOptions options, IntPtr cell)
         {
             try
             {
@@ -190,7 +208,8 @@ namespace Trinity.FFI
         }
         #endregion
 
-        public static TrinityErrorCode trinity_ffi_cloud_savecell(long cellId, IntPtr cell)
+        [FFIExport]
+        public static TrinityErrorCode cloud_savecell(long cellId, IntPtr cell)
         {
             try
             {
@@ -205,17 +224,19 @@ namespace Trinity.FFI
             }
         }
 
-        public static TrinityErrorCode trinity_ffi_local_removecell(long cellId)
+        [FFIExport]
+        public static TrinityErrorCode local_removecell(long cellId)
         {
             return Global.LocalStorage.RemoveCell(cellId);
         }
-        public static TrinityErrorCode trinity_ffi_cloud_removecell(long cellId)
+        public static TrinityErrorCode cloud_removecell(long cellId)
         {
             return Global.CloudStorage.RemoveCell(cellId);
         }
 
+        [FFIExport]
         #region new cell
-        public static TrinityErrorCode trinity_ffi_newcell_1(string cellType, ref IntPtr cell)
+        public static TrinityErrorCode newcell_1(string cellType, ref IntPtr cell)
         {
             try
             {
@@ -231,7 +252,8 @@ namespace Trinity.FFI
             }
         }
 
-        public static TrinityErrorCode trinity_ffi_newcell_2(long cellId, string cellType, ref IntPtr cell)
+        [FFIExport]
+        public static TrinityErrorCode newcell_2(long cellId, string cellType, ref IntPtr cell)
         {
             try
             {
@@ -247,7 +269,8 @@ namespace Trinity.FFI
             }
         }
 
-        public static TrinityErrorCode trinity_ffi_newcell_3(string cellType, string cellContent, ref IntPtr cell)
+        [FFIExport]
+        public static TrinityErrorCode newcell_3(string cellType, string cellContent, ref IntPtr cell)
         {
             try
             {
@@ -265,7 +288,9 @@ namespace Trinity.FFI
         #endregion
 
         #region local use cell
-        public static TrinityErrorCode trinity_ffi_local_usecell_1(long cellId, ref IntPtr cell)
+
+        [FFIExport]
+        public static TrinityErrorCode local_usecell_1(long cellId, ref IntPtr cell)
         {
             try
             {
@@ -281,7 +306,8 @@ namespace Trinity.FFI
             }
         }
 
-        public static TrinityErrorCode trinity_ffi_local_usecell_2(long cellId, CellAccessOptions options, ref IntPtr cell)
+        [FFIExport]
+        public static TrinityErrorCode local_usecell_2(long cellId, CellAccessOptions options, ref IntPtr cell)
         {
             try
             {
@@ -297,7 +323,8 @@ namespace Trinity.FFI
             }
         }
 
-        public static TrinityErrorCode trinity_ffi_local_usecell_3(long cellId, CellAccessOptions options, ref IntPtr cell, string cellType)
+        [FFIExport]
+        public static TrinityErrorCode local_usecell_3(long cellId, CellAccessOptions options, ref IntPtr cell, string cellType)
         {
             try
             {
@@ -314,55 +341,66 @@ namespace Trinity.FFI
         } 
         #endregion
 
-        public static void trinity_ffi_cell_dispose(IntPtr cell)
+        [FFIExport]
+        public static void cell_dispose(IntPtr cell)
         {
             GCHandle.FromIntPtr(cell).Free();
         }
 
-        public static string trinity_ffi_cell_tostring(IntPtr cell)
+        [FFIExport]
+        public static string cell_tostring(IntPtr cell)
         {
             // XXX not called
             ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
             return c.ToString();
         }
 
-        public static long trinity_ffi_cell_getid(IntPtr cell)
+        [FFIExport]
+        public static long cell_getid(IntPtr cell)
         {
             ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
             return c.CellID;
         }
 
-        public static void trinity_ffi_cell_setid(IntPtr cell, long cellId)
+        [FFIExport]
+        public static void cell_setid(IntPtr cell, long cellId)
         {
             ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
             c.CellID = cellId;
         }
 
-        public static string trinity_ffi_cell_get(IntPtr cell, string field)
+        [FFIExport]
+        public static string cell_get(IntPtr cell, string field)
         {
             ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
             return c.GetField<string>(field);
         }
-        public static int trinity_ffi_cell_has(IntPtr cell, string field)
+
+        [FFIExport]
+        public static int cell_has(IntPtr cell, string field)
         {
             ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
             return c.ContainsField(field) ? 1 : 0;
         }
-        public static void trinity_ffi_cell_set(IntPtr cell, string field, string content)
+        [FFIExport]
+        public static void cell_set(IntPtr cell, string field, string content)
         {
             ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
             c.SetField(field, content);
         }
-        public static void trinity_ffi_cell_append(IntPtr cell, string field, string content)
+
+        [FFIExport]
+        public static void cell_append(IntPtr cell, string field, string content)
         {
             ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
             c.AppendToField<string>(field, content);
         }
-        public static void trinity_ffi_cell_delete(IntPtr cell, string field)
+
+        [FFIExport]
+        public static void cell_delete(IntPtr cell, string field)
         {
             ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
             c.SetField<string>(field, null);
         }
-
     }
 }
