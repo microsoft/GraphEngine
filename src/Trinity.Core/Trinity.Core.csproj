@@ -77,9 +77,6 @@
     <Content Include="..\..\bin\Trinity.TSL.CodeGen">
       <PackagePath>tools</PackagePath>
     </Content>
-    <Content Include="..\..\bin\Trinity.C.dll">
-      <PackagePath>runtimes\win-x64\native</PackagePath>
-    </Content>
     <Content Include="..\..\bin\Trinity.dll">
       <PackagePath>runtimes\win-x64\native</PackagePath>
     </Content>
