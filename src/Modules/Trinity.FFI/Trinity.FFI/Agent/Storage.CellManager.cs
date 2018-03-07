@@ -105,7 +105,6 @@ namespace Trinity.FFI.Agent
 
             public void Dispose()
             {
-                Cache.DeAlloc();
                 moduleId = -1;
             }
         }

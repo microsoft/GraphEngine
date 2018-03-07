@@ -59,7 +59,7 @@ namespace Trinity.FFI
             }
         }
 
-        internal static TrinityErrorCode trinity_ffi_cellenum_movenext(IntPtr enumerator, IntPtr field_info)
+        internal static TrinityErrorCode trinity_ffi_cell_fieldenum_movenext(IntPtr enumerator, IntPtr field_info)
         {
             try
             {
@@ -74,7 +74,7 @@ namespace Trinity.FFI
             }
         }
 
-        internal static unsafe TrinityErrorCode trinity_ffi_fieldinfo_name(IntPtr field_info, out string value)
+        internal static unsafe TrinityErrorCode trinity_ffi_cell_fieldinfo_name(IntPtr field_info, out string value)
         {
             value = string.Empty;
             try
@@ -87,7 +87,7 @@ namespace Trinity.FFI
             catch { return TrinityErrorCode.E_FAILURE; }
         }
 
-        internal static TrinityErrorCode trinity_ffi_cellenum_current(IntPtr enumerator, ref IntPtr field_info)
+        internal static TrinityErrorCode trinity_ffi_cell_fieldenum_current(IntPtr enumerator, ref IntPtr field_info)
         {
             try
             {
@@ -100,7 +100,7 @@ namespace Trinity.FFI
             catch { return TrinityErrorCode.E_FAILURE; }
         }
 
-        internal static TrinityErrorCode trinity_ffi_cellenum_dispose(IntPtr enumerator)
+        internal static TrinityErrorCode trinity_ffi_cell_fieldenum_dispose(IntPtr enumerator)
         {
             try
             {
@@ -116,7 +116,7 @@ namespace Trinity.FFI
             }
         }
 
-        internal static TrinityErrorCode trinity_ffi_cellenum_get(IntPtr cell, ref IntPtr enumerator)
+        internal static TrinityErrorCode trinity_ffi_cell_fieldenum_get(IntPtr cell, ref IntPtr enumerator)
         {
             try
             {

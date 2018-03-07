@@ -44,7 +44,6 @@ namespace Trinity.FFI
             _Alloc_Init(c_default_len);
             
         }
-        public Action<int> _Alloc_Mutable;
 
         private void _Alloc_Init(int newlen)
         {
@@ -56,7 +55,6 @@ namespace Trinity.FFI
             }
             m_array = ret;
             m_len = m_array.Length;
-            _Alloc_Mutable = _Alloc_Normal;
         }
         private void _Alloc_Normal(int newlen)
         {
@@ -76,18 +74,6 @@ namespace Trinity.FFI
             m_len = m_array.Length;
         }
 
-        private void Alloc(int newlen)
-        {
-            _Alloc_Mutable(newlen);
-        }
-
-        public void DeAlloc()
-        {
-            m_array = null;
-            m_lock = null;
-            _Alloc_Mutable = _Alloc_Init;
-        }
-
         public int Put(T value)
         {
 begin:
@@ -96,7 +82,7 @@ begin:
                 {
                     if (m_head >= m_len)
                     {
-                        Alloc(CalcLen(m_len));
+                        _Alloc_Normal(CalcLen(m_len));
                     }
                     goto begin;
                 }
@@ -158,7 +144,6 @@ begin:
                     if (tuple.value != null) tuple.value.Dispose();
                 }
             }
-            DeAlloc();
         }
     }
 

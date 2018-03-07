@@ -106,6 +106,11 @@ namespace Trinity.Storage.Composite
         }
         #endregion
 
+        public static void UpdateStorageExtensionSchema(SchemaUpdate changes)
+        {
+
+        }
+
         public static void AddStorageExtension(
                     string tslSrcDir,
                     string tslBuildDir,
