@@ -39,6 +39,8 @@ namespace Trinity.ServiceFabric.Stateless
             ClusterConfig = StatelessClusterConfig.Resolve(Context.ServiceName, Context.PartitionId, RunningMode.Server);
             ClusterConfig.MyServerId = Enumerable.Range(0, ClusterConfig.Servers.Count).First(idx => ClusterConfig.GetServerInfo(idx).InstanceId == Context.InstanceId);
 
+            Global.CloudStorage.GetPartitionIdByCellId = StatelessClusterConfig.GetPartitionIdByCellId;
+
             if (Global.LocalStorage.LoadStorage() == false)
                 throw new Exception("Failed to load local storage");
 

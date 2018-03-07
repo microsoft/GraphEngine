@@ -11,7 +11,7 @@ namespace Trinity.ServiceFabric.Storage.External
 {
     public class PartitionedImage : ITrinityStorageImage
     {
-        public IEnumerable<int> AllPartitions => Enumerable.Range(0, Service.ClusterConfig.TotalStoragePartitionCount);
+        public IEnumerable<int> AllPartitions => Enumerable.Range(0, StatelessClusterConfig.TotalStoragePartitionCount);
         public IEnumerable<int> LocalPartitions => AllPartitions.Where(p => p % Service.ClusterConfig.ServerCount == Service.ClusterConfig.MyServerId);
 
         private TrinityStatelessService Service { get; set; }
@@ -27,7 +27,7 @@ namespace Trinity.ServiceFabric.Storage.External
         public PartitionedImage(TrinityStatelessService service, Func<int, IPartitionedImageStorage> imageStorageFactory)
         {
             this.Service = service;
-            this.ImageSlots = Enumerable.Range(0, service.ClusterConfig.StorageImageSlots).Select(slot => imageStorageFactory(slot)).ToArray();
+            this.ImageSlots = Enumerable.Range(0, StatelessClusterConfig.StorageImageSlots).Select(slot => imageStorageFactory(slot)).ToArray();
         }
 
         public bool LoadLocalStorage()

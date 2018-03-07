@@ -120,6 +120,10 @@ namespace Trinity.ServiceFabric.Stateless
 
     public partial class StatelessClusterConfig : IClusterConfig
     {
+        public static int TotalStoragePartitionCount { get; set; } = 256;
+        public static Func<long, int> GetPartitionIdByCellId { get; set; } = (cellId) => (int)((cellId & 0xFF00) >> 8);
+        public static int StorageImageSlots { get; set; } = 2;
+
         public RunningMode RunningMode { get; set; } = RunningMode.Server;
 
         public List<AvailabilityGroup> Servers { get; private set; }
@@ -132,9 +136,6 @@ namespace Trinity.ServiceFabric.Stateless
         public int ListeningPort => MyServerId == -1 ? -1 : GetServerInfo(MyServerId).Port;
         public int ServerPort => ListeningPort;
         public int ProxyPort => -1;
-
-        public int TotalStoragePartitionCount { get; set; } = 256;
-        public int StorageImageSlots { get; set; } = 2;
 
         internal StatelessServiceInfo GetServerInfo(int serverId) => Servers[serverId].Instances[0] as StatelessServiceInfo;
         public ServerInfo GetMyServerInfo() => MyServerId == -1 ? null : GetServerInfo(MyServerId);
