@@ -147,8 +147,11 @@ namespace Trinity.Storage.Composite
                    $"#GenericCellOperations:{gcops.Count}" }
                    .Each(_ => Log.WriteLine(LogLevel.Debug, $"{nameof(CompositeStorage)}: {{0}}", _));
 
-            var schema    = AssemblyUtility.GetAllClassInstances<IStorageSchema>(assembly: asm).First();
-            var cellOps   = AssemblyUtility.GetAllClassInstances<IGenericCellOperations>(assembly: asm).First();
+            var schema    = AssemblyUtility.GetAllClassInstances<IStorageSchema>(assembly: asm).FirstOrDefault();
+            var cellOps   = AssemblyUtility.GetAllClassInstances<IGenericCellOperations>(assembly: asm).FirstOrDefault();
+
+            if (schema == null || cellOps == null) throw new AsmLoadException("Not a TSL extension.");
+
             var cellDescs = schema.CellDescriptors.ToList();
 
             schemas.Add(schema);

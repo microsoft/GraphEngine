@@ -4,6 +4,12 @@ using System.Text;
 
 namespace Trinity.Storage.Composite
 {
+    public class CommandException : Exception
+    {
+        public CommandException() : base() { }
+        public CommandException(string info) : base(info){ }
+    }
+
     public class TSLCodeGenException : Exception
     {
         public TSLCodeGenException() : base() { }

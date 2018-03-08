@@ -18,10 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TslCodegen Include="**/*.tsl" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Trinity.Storage.Composite\Trinity.Storage.Composite.csproj" />
   </ItemGroup>
 

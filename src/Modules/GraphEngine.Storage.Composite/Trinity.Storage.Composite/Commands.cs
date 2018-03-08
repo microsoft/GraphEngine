@@ -48,7 +48,7 @@ namespace Trinity.Storage.Composite
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Log.WriteLine(LogLevel.Error, "{0}", e.Message);
                 return false;
             }
             return true;
@@ -62,6 +62,8 @@ namespace Trinity.Storage.Composite
             proc.ErrorDataReceived += OnChildStderr;
             proc.BeginOutputReadLine();
             proc.WaitForExit();
+
+            if (proc.ExitCode != 0) throw new CommandException($"{cmd} exited with code {proc.ExitCode}");
         }
 
         private static Process _System(string cmd, string arguments)
