@@ -5,16 +5,16 @@
     {
         public StorageExtensionRecord
             (int cellTypeOffset,
-            string moduleName,
+            string rootNamespace,
             string assemblyName)
         {
             AssemblyName   = assemblyName;
+            RootNamespace  = rootNamespace;
             CellTypeOffset = cellTypeOffset;
-            ModuleName     = moduleName;
         }
 
         public int CellTypeOffset { get; }
+        public string RootNamespace { get; }
         public string AssemblyName { get; }
-        public string ModuleName { get; }
     }
 }

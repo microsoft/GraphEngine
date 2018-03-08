@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -22,20 +23,22 @@ namespace Trinity.Storage.Composite.UnitTest
 
         [Theory]
         [MemberData(nameof(SingleTslContent))]
-        public void LoadSingleTslFile(string content)
+        public void LoadSingleTslFile(string content, int cellTypeCount)
         {
-            try { Directory.Delete("single_tsl", recursive: true); } catch { }
+            Global.LocalStorage.ResetStorage();
             Directory.CreateDirectory("single_tsl");
             File.WriteAllText("single_tsl/content.tsl", content);
-            CompositeStorage.AddStorageExtension("single_tsl", "single_tsl", "single_tsl");
+            CompositeStorage.AddStorageExtension("single_tsl", "SingleTsl");
+            Assert.Equal(cellTypeCount, Global.StorageSchema.CellDescriptors.Count());
             Global.LocalStorage.SaveStorage();
             //CompositeStorage.AddStorageExtension()
         }
 
         public static IEnumerable<object[]> SingleTslContent()
         {
-            yield return new[] { @" cell empty_thing { } " };
-            yield return new[] { @" cell C1 { int foo; } " };
+            yield return new object[] { @" cell empty_thing { } " , 1};
+            yield return new object[] { @" cell C1 { int foo; } " , 1};
+            yield return new object[] { @" cell C1 { int foo; } cell C2 { int bar;} " , 2};
         }
 
         public Tests()
