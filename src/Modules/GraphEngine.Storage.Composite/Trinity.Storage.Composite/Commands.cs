@@ -95,7 +95,7 @@ namespace Trinity.Storage.Composite
     {
         private const string FolderName = "composite-helper";
         public static string Directory => FileUtility.CompletePath(Path.Combine(TrinityConfig.StorageRoot, FolderName), create_nonexistent: true);
-        public static string VersionRecorders => Path.Combine(Directory, "VersionRecorders.bin");
+        public static string VersionRecords => Path.Combine(Directory, "VersionRecords.bin");
         public static string CellTypeIDs => Path.Combine(Directory, "CellTypeIDs.bin");
         public static string IDIntervals => Path.Combine(Directory, "IDIntervals.bin");
         public static string DLL(string dllName) => Path.Combine(Directory, dllName);

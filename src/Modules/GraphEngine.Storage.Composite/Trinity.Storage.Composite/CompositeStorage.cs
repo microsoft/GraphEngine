@@ -11,13 +11,13 @@ namespace Trinity.Storage.Composite
 {
     public static class CompositeStorage
     {
-        internal static List<IStorageSchema> s_StorageSchemas;
+        internal static List<IStorageSchema>         s_StorageSchemas;
         internal static List<IGenericCellOperations> s_GenericCellOperations;
 
-        private static Dictionary<string, int> s_CellTypeIDs;
-        private static List<int> s_IDIntervals;
-        private static List<VersionRecord> s_Versions;
-        private static int s_currentCellTypeOffset = 0;
+        private static Dictionary<string, int>       s_CellTypeIDs;
+        private static List<int>                     s_IDIntervals;
+        private static List<StorageExtensionRecord>  s_Extensions;
+        private static int                           s_currentCellTypeOffset = 0;
 
         #region State
         public static int CurrentCellTypeOffset => s_currentCellTypeOffset;
@@ -25,10 +25,10 @@ namespace Trinity.Storage.Composite
 
         static CompositeStorage()
         {
-            s_IDIntervals = new List<int> { s_currentCellTypeOffset };
-            s_StorageSchemas = new List<IStorageSchema>();
-            s_CellTypeIDs = new Dictionary<string, int>();
-            s_Versions = new List<VersionRecord>();
+            s_IDIntervals           = new List<int> { s_currentCellTypeOffset };
+            s_StorageSchemas        = new List<IStorageSchema>();
+            s_CellTypeIDs           = new Dictionary<string, int>();
+            s_Extensions            = new List<StorageExtensionRecord>();
             s_GenericCellOperations = new List<IGenericCellOperations>();
         }
 
@@ -41,10 +41,10 @@ namespace Trinity.Storage.Composite
                 end: () => Log.WriteLine($"{nameof(CompositeStorage)}: Successfully loaded composite storage extension metadata."),
                 behavior: () =>
                 {
-                    s_Versions              = Serialization.Deserialize<List<VersionRecord>>(PathHelper.VersionRecorders);
+                    s_Extensions              = Serialization.Deserialize<List<StorageExtensionRecord>>(PathHelper.VersionRecords);
                     s_CellTypeIDs           = Serialization.Deserialize<Dictionary<string, int>>(PathHelper.CellTypeIDs);
                     s_IDIntervals           = Serialization.Deserialize<List<int>>(PathHelper.IDIntervals);
-                    var assemblies          = s_Versions.Select(v => $"{v.Namespace}.dll")
+                    var assemblies          = s_Extensions.Select(v => $"{v.ModuleName}.dll")
                                               .Select(PathHelper.DLL)
                                               .Select(Assembly.LoadFrom)
                                               .ToList();
@@ -62,7 +62,7 @@ namespace Trinity.Storage.Composite
                 end: () => Log.WriteLine($"{nameof(CompositeStorage)}: Successfully saved composite storage extension metadata."),
                 behavior: () =>
                 {
-                    Serialization.Serialize(s_Versions, PathHelper.VersionRecorders);
+                    Serialization.Serialize(s_Extensions, PathHelper.VersionRecords);
                     Serialization.Serialize(s_IDIntervals, PathHelper.IDIntervals);
                     Serialization.Serialize(s_CellTypeIDs, PathHelper.CellTypeIDs);
                 }
@@ -77,45 +77,41 @@ namespace Trinity.Storage.Composite
 
 
         #region TSL-CodeGen-Build-Load
-        private static void CreateCSProj(VersionRecord version)
+        private static void CreateCSProj(string projDir, string assemblyName)
         {
-            var path = Path.Combine(version.TslBuildDir, $"{version.Namespace}.csproj");
+            var path = Path.Combine(projDir, $"{assemblyName}.csproj");
             File.WriteAllText(path, CSProj.Template);
         }
 
-        private static bool CodeGen(VersionRecord version)
+        private static void CodeGen(string srcDir, string moduleName, int cellTypeOffset, string projDir)
         {
-#if DEBUG
-            Directory.GetFiles(version.TslSrcDir, "*.tsl").ToList().ForEach(Console.WriteLine);
-#endif
-
-            return Commands.TSLCodeGenCmd(
-                    string.Join(" ", Directory.GetFiles(version.TslSrcDir, "*.tsl"))
-                    + $" -offset {version.CellTypeOffset} -n {version.Namespace} -o {version.TslBuildDir}");
+            if (!Commands.TSLCodeGenCmd(
+                    string.Join(" ", Directory.GetFiles(srcDir, "*.tsl"))
+                    + $" -offset {cellTypeOffset} -n {moduleName} -o {projDir}"))
+                throw new TSLCodeGenException();
         }
 
-        private static bool Build(VersionRecord version) =>
-            Commands.DotNetBuildCmd($"build {version.TslBuildDir} -o {version.AsmLoadDir}");
+        private static void Build(string projDir, string outDir)
+        {
+            if (!Commands.DotNetBuildCmd($"build {projDir} -o {outDir}"))
+                throw new TSLBuildException();
+        }
 
-        private static Assembly Load(VersionRecord version)
+        private static Assembly Load(StorageExtensionRecord version)
         {
 #if DEBUG
             Console.WriteLine("Loading " + Path.Combine(version.AsmLoadDir, $"{version.Namespace}.dll"));
 #endif 
-            return Assembly.LoadFrom(Path.Combine(version.AsmLoadDir, $"{version.Namespace}.dll"));
+            return Assembly.LoadFrom(Path.Combine(PathHelper.Directory, $"{version.AssemblyName}.dll"));
         }
         #endregion
 
         public static void UpdateStorageExtensionSchema(SchemaUpdate changes)
         {
-
+            throw new NotImplementedException();
         }
 
-        public static void AddStorageExtension(
-                    string tslSrcDir,
-                    string tslBuildDir,
-                    string moduleName,
-                    string versionName = null)
+        internal static StorageExtensionRecord AddStorageExtension(string tslSrcDir, string rootNamespace)
         {
 
 #if DEBUG
@@ -128,49 +124,34 @@ namespace Trinity.Storage.Composite
                    .ToList()
                    .ForEach(_ => Log.WriteLine(_));
 #endif
+            var assemblyName = Guid.NewGuid().ToString("N");
+            var temp         = Path.GetTempPath();
+            var projDir      = GetTempDirectory();
+            var buildDir     = GetTempDirectory();
+            var outDir       = GetTempDirectory();
 
-            string.Join("\n",
-                          "Current Storage Info:",
-                          $"#VersionRecorders: {s_Versions.Count}",
-                          $"#IDIntervals: : {s_IDIntervals.Count}",
-                          $"#CellTypeIDs:{s_CellTypeIDs.Count}",
-                          $"#StorageSchema:{s_StorageSchemas.Count}",
-                          $"#GenericCellOperations:{s_GenericCellOperations.Count}")
-                   .By(_ => Log.WriteLine(LogLevel.Debug, $"{nameof(CompositeStorage)}: {{0}}", _));
+            var ext = new StorageExtensionRecord(s_currentCellTypeOffset, rootNamespace, assemblyName);
 
-            var asmLoadDir = PathHelper.Directory;
+            CreateCSProj(projDir, assemblyName);
 
-            asmLoadDir = FileUtility.CompletePath(Path.Combine(asmLoadDir, ""));
-            var version = new VersionRecord(
-                            s_currentCellTypeOffset,
-                            tslSrcDir,
-                            tslBuildDir,
-                            asmLoadDir,
-                            moduleName,
-                            versionName ?? DateTime.Now.ToString());
+            CodeGen(tslSrcDir, rootNamespace, ext.CellTypeOffset, projDir);
 
-            string.Join("\n",
-                          "Meta data paths:",
-                          "tslsrcDir: " + version.TslSrcDir,
-                          "TslBuildDir: " + version.TslBuildDir,
-                          "AsmLoadDir: " + version.AsmLoadDir)
-                   .By(_ => Log.WriteLine(LogLevel.Debug, $"{nameof(CompositeStorage)}: {{0}}", _));
+            Build(projDir, outDir);
 
-            CreateCSProj(version);
-
-            if (!CodeGen(version))
-            {
-                throw new TSLCodeGenException();
-            }
-
-            if (!Build(version))
-            {
-                throw new TSLBuildException();
-            }
+            Load(ext);
 
             try
             {
-                var asm       = Load(version);
+                string.Join("\n",
+                              "Current Storage Info:",
+                              $"#VersionRecorders: {s_Extensions.Count}",
+                              $"#IDIntervals: : {s_IDIntervals.Count}",
+                              $"#CellTypeIDs:{s_CellTypeIDs.Count}",
+                              $"#StorageSchema:{s_StorageSchemas.Count}",
+                              $"#GenericCellOperations:{s_GenericCellOperations.Count}")
+                       .By(_ => Log.WriteLine(LogLevel.Debug, $"{nameof(CompositeStorage)}: {{0}}", _));
+
+                var asm       = Load(ext);
                 var schema    = AssemblyUtility.GetAllClassInstances<IStorageSchema>(assembly: asm).First();
                 var cellOps   = AssemblyUtility.GetAllClassInstances<IGenericCellOperations>(assembly: asm).First();
                 var cellDescs = schema.CellDescriptors.ToList();
@@ -183,8 +164,7 @@ namespace Trinity.Storage.Composite
                 foreach (var cellDesc in cellDescs)
                 {
                     s_CellTypeIDs[cellDesc.TypeName] = cellDesc.CellType;
-                    // Assertion 1: New cell type does not crash into existing type space
-                    Debug.Assert(s_currentCellTypeOffset <= cellDesc.CellType);
+                    if (s_currentCellTypeOffset > cellDesc.CellType) throw new InvalidOperationException("New cell type id conflicts existing type space");
                     maxoffset = Math.Max(maxoffset, cellDesc.CellType);
 
 #if DEBUG
@@ -197,23 +177,30 @@ namespace Trinity.Storage.Composite
 #endif
                 }
 
-
                 s_currentCellTypeOffset += cellDescs.Count + 1;
 
-                // Assertion 2: The whole type id space is still compact
-                Debug.Assert(s_currentCellTypeOffset == maxoffset + 1);
+                if (s_currentCellTypeOffset != maxoffset + 1) throw new InvalidOperationException("The whole type id space is not compact");
 
                 s_IDIntervals.Add(s_currentCellTypeOffset);
-                s_Versions.Add(version);
-                // Assertion 3: intervals grow monotonically
-                Debug.Assert(s_IDIntervals.OrderBy(_ => _).SequenceEqual(s_IDIntervals));
+                s_Extensions.Add(ext);
+                if (!s_IDIntervals.OrderBy(_ => _).SequenceEqual(s_IDIntervals)) throw new InvalidOperationException("intervals do not grow monotonically");
+
+                return ext;
             }
             catch (Exception e)
             {
+                //TODO rollback
                 throw new AsmLoadException(e.Message);
             }
         }
 
+        private static string GetTempDirectory()
+        {
+            var tmpDir = Path.GetTempFileName();
+            File.Delete(tmpDir);
+            Directory.CreateDirectory(tmpDir);
+            return tmpDir;
+        }
 
         public static int GetIntervalIndexByCellTypeID(int cellTypeID)
         {
