@@ -6,6 +6,7 @@
 #include <thread>
 #include <functional>
 #include <vector>
+#include <atomic>
 namespace Trinity
 {
     namespace Threading
@@ -51,6 +52,8 @@ namespace Trinity
                 {
                     t.join();
                 }
+
+                std::atomic_thread_fence(std::memory_order::memory_order_seq_cst);
             }
         }
     }

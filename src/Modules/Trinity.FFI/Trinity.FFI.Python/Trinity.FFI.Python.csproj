@@ -22,6 +22,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="build\**" />
+    <Compile Remove="GraphEngine.egg-info\**" />
+    <Compile Remove="GraphEngine\**" />
+    <Compile Remove="storage\**" />
+    <Compile Remove="tests\**" />
+    <Compile Remove="__pycache__\**" />
+    <EmbeddedResource Remove="build\**" />
+    <EmbeddedResource Remove="GraphEngine.egg-info\**" />
+    <EmbeddedResource Remove="GraphEngine\**" />
+    <EmbeddedResource Remove="storage\**" />
+    <EmbeddedResource Remove="tests\**" />
+    <EmbeddedResource Remove="__pycache__\**" />
+    <None Remove="build\**" />
+    <None Remove="GraphEngine.egg-info\**" />
+    <None Remove="GraphEngine\**" />
+    <None Remove="storage\**" />
+    <None Remove="tests\**" />
+    <None Remove="__pycache__\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <SwigFile Include="$(ProjectDir)..\Trinity.FFI.Native\Trinity.FFI.Swig.i" />
   </ItemGroup>
   
@@ -37,10 +58,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Trinity.FFI\Trinity.FFI.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="GraphEngine\Dependencies.csproj" />
   </ItemGroup>
 
 </Project>

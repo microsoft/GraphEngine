@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <atomic>
 
-const int32_t COUNTER_THRESHOLD = 20000;
+const int32_t COUNTER_THRESHOLD    = 20000;
 
 class TrinitySpinlock
 {
@@ -26,9 +26,10 @@ public:
                 zero = 0;
                 if ((value.load(std::memory_order_relaxed) == 0) && std::atomic_compare_exchange_strong_explicit(&value, &zero, 1, std::memory_order_acquire, std::memory_order_relaxed))
                     break;
-                ++counter;
                 if (counter < COUNTER_THRESHOLD)
-                    continue;
+                {
+                    ++counter;
+                }
                 else
                 {
                     YieldProcessor();
@@ -57,11 +58,14 @@ public:
                     pending_flag.store(0);
                     break;
                 }
-                ++counter;
                 if (counter < COUNTER_THRESHOLD)
-                    continue;
+                {
+                    ++counter;
+                }
                 else
+                {
                     YieldProcessor();
+                }
             }
         }
     }
@@ -88,6 +92,3 @@ public:
 private:
     std::atomic<int32_t> value;
 };
-
-
-

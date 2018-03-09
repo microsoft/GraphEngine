@@ -23,12 +23,17 @@ namespace Trinity.Storage
     {
         /// <summary>
         /// Releases the cell lock associated with the current cell.
+        /// Do not call this method to release a cell that is not acquired
+        /// by this thread or task.
         /// </summary>
         /// <param name="cellId">A 64-bit cell id.</param>
         /// <param name="entryIndex">The hash slot index corresponding to the current cell.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ReleaseCellLock(long cellId, int entryIndex)
         {
+            // TODO: in Trinity.C we should check whether the cell is locked by the current thread ctx.
+            // TODO: add error code. return E_CELL_NOT_FOUND when the cell is not posessed by the current
+            // thread.
             CLocalMemoryStorage.CReleaseCellLock(cellId, entryIndex);
         }
 
@@ -44,7 +49,8 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode GetLockedCellInfo(long cellId, out int size, out ushort type, out byte* cellPtr, out int entryIndex)
         {
-            return CLocalMemoryStorage.CGetLockedCellInfo4CellAccessor(cellId, out size, out type, out cellPtr, out entryIndex);
+            TrinityErrorCode eResult = CLocalMemoryStorage.CGetLockedCellInfo4CellAccessor(cellId, out size, out type, out cellPtr, out entryIndex);
+            return eResult;
         }
 
         /// <summary>
@@ -60,7 +66,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode AddOrUse(long cellId, byte[] cellBuff, ref int size, ushort cellType, out byte* cellPtr, out int cellEntryIndex)
         {
-            var eResult = CLocalMemoryStorage.CGetLockedCellInfo4AddOrUseCell(cellId, ref size, cellType, out cellPtr, out cellEntryIndex);
+            TrinityErrorCode eResult = CLocalMemoryStorage.CGetLockedCellInfo4AddOrUseCell(cellId, ref size, cellType, out cellPtr, out cellEntryIndex);
             if (eResult == TrinityErrorCode.E_CELL_NOT_FOUND)
             {
                 Memory.Copy(cellBuff, cellPtr, size);
@@ -70,6 +76,8 @@ namespace Trinity.Storage
 
         /// <summary>
         /// Resizes the cell with the specified cell id.
+        /// Do not call this method to resize a cell that is not locked
+        /// by this thread/task.
         /// </summary>
         /// <param name="cell_id">A 64-bit cell id.</param>
         /// <param name="cellEntryIndex">The hash slot index corresponding to the current cell.</param>
@@ -210,7 +218,17 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(long cellId)
         {
-            return CLocalMemoryStorage.CContains(cellId);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CContains(cellId);
+            switch (eResult)
+            {
+                case TrinityErrorCode.E_CELL_FOUND:
+                    return true;
+                case TrinityErrorCode.E_DEADLOCK:
+                    throw new DeadlockException();
+                case TrinityErrorCode.E_CELL_NOT_FOUND:
+                default:
+                    return false;
+            }
         }
 
         /// <summary>

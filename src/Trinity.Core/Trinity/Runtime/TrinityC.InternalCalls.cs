@@ -76,10 +76,10 @@ namespace Trinity
     #region Storage
             new InternalCallEntry("CInitialize"                             , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CCellCount"                              , typeof(CLocalMemoryStorage)),
-            new InternalCallEntry("CResetStorage"                           , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CDispose"                                , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CSaveStorage"                            , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CLoadStorage"                            , typeof(CLocalMemoryStorage)),
+            new InternalCallEntry("CResetStorage"                           , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CGetTrinityImageSignature"               , typeof(CLocalMemoryStorage)),
 
             /* Non-logging interfaces */
@@ -108,6 +108,10 @@ namespace Trinity
             new InternalCallEntry("CLocalMemoryStorageEnumeratorDeallocate" , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CLocalMemoryStorageEnumeratorMoveNext"   , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CLocalMemoryStorageEnumeratorReset"      , typeof(CLocalMemoryStorage)),
+
+            new InternalCallEntry("CThreadContextAllocate"                  , typeof(CLocalMemoryStorage)),
+            new InternalCallEntry("CThreadContextSet"                       , typeof(CLocalMemoryStorage)),
+            new InternalCallEntry("CThreadContextDeallocate"                , typeof(CLocalMemoryStorage)),
 
             new InternalCallEntry("SetDefragmentationPaused"                , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("StopDefragAndAwaitCeased"                , typeof(CLocalMemoryStorage)),

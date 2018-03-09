@@ -26,19 +26,24 @@ namespace Trinity.Storage
         /// <summary>
         /// Loads Trinity key-value store from disk to main memory.
         /// </summary>
-        /// <returns>true if loading succeeds; otherwise, false.</returns>
-        public bool LoadStorage()
+        /// <returns>
+        /// TrinityErrorCode.E_SUCCESS if loading succeeds; 
+        /// Other error codes indicate a failure.
+        /// </returns>
+        public TrinityErrorCode LoadStorage()
         {
             lock (m_lock)
             {
-                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
+                TrinityErrorCode ret = CSynchronizeStorageRoot();
+                if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
 
-                RaiseStorageEvent(StorageBeforeLoad, nameof(StorageBeforeLoad));
+                ret = RaiseStorageEvent(StorageBeforeLoad, nameof(StorageBeforeLoad));
+                if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
 
-                bool ret = CLocalMemoryStorage.CLoadStorage();
+                ret = CLocalMemoryStorage.CLoadStorage();
+                if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
 
-                RaiseStorageEvent(StorageLoaded, nameof(StorageLoaded));
-
+                ret = RaiseStorageEvent(StorageLoaded, nameof(StorageLoaded));
                 return ret;
             }
         }
@@ -46,22 +51,21 @@ namespace Trinity.Storage
         /// <summary>
         /// Dumps the in-memory key-value store to disk files.
         /// </summary>
-        /// <returns>true if saving succeeds; otherwise, false.</returns>
-        public bool SaveStorage()
+        /// <returns>
+        /// TrinityErrorCode.E_SUCCESS if saving succeeds;
+        /// Other error codes indicate a failure.
+        /// </returns>
+        public TrinityErrorCode SaveStorage()
         {
             lock (m_lock)
             {
-                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
+                TrinityErrorCode ret = CSynchronizeStorageRoot();
+                if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
 
-                RaiseStorageEvent(StorageBeforeSave, nameof(StorageBeforeSave));
+                ret = CLocalMemoryStorage.CSaveStorage();
+                if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
 
-                bool ret = CLocalMemoryStorage.CSaveStorage();
-
-                if (ret)
-                {
-                    RaiseStorageEvent(StorageSaved, nameof(StorageSaved));
-                }
-
+                ret = RaiseStorageEvent(StorageSaved, nameof(StorageSaved));
                 return ret;
             }
         }
@@ -69,19 +73,24 @@ namespace Trinity.Storage
         /// <summary>
         /// Resets local memory storage to the initial state. The content in the memory storage will be cleared. And the memory storage will be shrunk to the initial size.
         /// </summary>
-        /// <returns>true if resetting succeeds; otherwise, false.</returns>
-        public bool ResetStorage()
+        /// <returns>
+        /// TrinityErrorCode.E_SUCCESS if resetting succeeds; 
+        /// Other error codes indicate a failure.
+        /// </returns>
+        public TrinityErrorCode ResetStorage()
         {
             lock (m_lock)
             {
-                if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
+                TrinityErrorCode ret = CSynchronizeStorageRoot();
+                if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
 
-                RaiseStorageEvent(StorageBeforeReset, nameof(StorageBeforeReset));
+                ret = RaiseStorageEvent(StorageBeforeReset, nameof(StorageBeforeReset));
+                if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
 
-                bool ret = CLocalMemoryStorage.CResetStorage();
+                ret = CLocalMemoryStorage.CResetStorage();
+                if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
 
-                RaiseStorageEvent(StorageReset, nameof(StorageReset));
-
+                ret = RaiseStorageEvent(StorageReset, nameof(StorageReset));
                 return ret;
             }
         }

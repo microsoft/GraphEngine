@@ -7,6 +7,7 @@
 #include "Memory/Memory.h"
 #include "Mathematics/TrinityMath.h"
 #include "Storage/LocalStorage/LocalMemoryStorage.h"
+#include "Storage/LocalStorage/ThreadContext.h"
 #include "Trinity/Configuration/TrinityConfig.h"
 #include "Storage/LocalStorage/GCTask.h"
 #include "Utility/FileIO.h"
@@ -14,7 +15,8 @@
 #include "Debugger/Debugger.h"
 #include "Trinity/Configuration/TrinityConfig.h"
 
-using Storage::LocalMemoryStorage::CellAccessOptions;
+using Storage::CellAccessOptions;
+using Storage::PTHREAD_CONTEXT;
 
 #ifndef CORECLR
 //! See InternalCall.cs for explanation of entry names.
@@ -63,18 +65,18 @@ ICallEntry ICallTable[] =
 
     { "Trinity.Storage.CLocalMemoryStorage::CInitialize"                            , &Storage::LocalMemoryStorage::Initialize },
     { "Trinity.Storage.CLocalMemoryStorage::CCellCount"                             , &Storage::LocalMemoryStorage::CellCount },
-    { "Trinity.Storage.CLocalMemoryStorage::CResetStorage"                          , &Storage::LocalMemoryStorage::ResetStorage },
     { "Trinity.Storage.CLocalMemoryStorage::CDispose"                               , &Storage::LocalMemoryStorage::Dispose },
 
     { "Trinity.Storage.CLocalMemoryStorage::CSaveStorage"                           , &Storage::LocalMemoryStorage::SaveStorage },
     { "Trinity.Storage.CLocalMemoryStorage::CLoadStorage"                           , &Storage::LocalMemoryStorage::LoadStorage },
+    { "Trinity.Storage.CLocalMemoryStorage::CResetStorage"                          , &Storage::LocalMemoryStorage::ResetStorage },
     { "Trinity.Storage.CLocalMemoryStorage::CGetTrinityImageSignature"              , &Storage::LocalMemoryStorage::GetTrinityImageSignature },
 
     /* Non-logging interfaces */
-    { "Trinity.Storage.CLocalMemoryStorage::CSaveCell(long,byte*,int,uint16)"       , static_cast<TrinityErrorCode(*)(cellid_t, char*, int32_t, uint16_t)>(&Storage::LocalMemoryStorage::SaveCell) },
-    { "Trinity.Storage.CLocalMemoryStorage::CAddCell(long,byte*,int,uint16)"        , static_cast<TrinityErrorCode(*)(cellid_t, char*, int32_t, uint16_t)>(&Storage::LocalMemoryStorage::AddCell) },
-    { "Trinity.Storage.CLocalMemoryStorage::CUpdateCell(long,byte*,int)"            , static_cast<TrinityErrorCode(*)(cellid_t, char*, int32_t)>(&Storage::LocalMemoryStorage::UpdateCell) },
-    { "Trinity.Storage.CLocalMemoryStorage::CRemoveCell(long)"                      , static_cast<TrinityErrorCode(*)(cellid_t)>(&Storage::LocalMemoryStorage::RemoveCell) },
+    { "Trinity.Storage.CLocalMemoryStorage::CSaveCell(long,byte*,int,uint16)" , static_cast<TrinityErrorCode(*)(cellid_t, char*, int32_t, uint16_t)>(&Storage::LocalMemoryStorage::SaveCell) },
+    { "Trinity.Storage.CLocalMemoryStorage::CAddCell(long,byte*,int,uint16)"  , static_cast<TrinityErrorCode(*)(cellid_t, char*, int32_t, uint16_t)>(&Storage::LocalMemoryStorage::AddCell) },
+    { "Trinity.Storage.CLocalMemoryStorage::CUpdateCell(long,byte*,int)"      , static_cast<TrinityErrorCode(*)(cellid_t, char*, int32_t)>(&Storage::LocalMemoryStorage::UpdateCell) },
+    { "Trinity.Storage.CLocalMemoryStorage::CRemoveCell(long)"                , static_cast<TrinityErrorCode(*)(cellid_t)>(&Storage::LocalMemoryStorage::RemoveCell) },
 
     /* Logging interfaces */
     { "Trinity.Storage.CLocalMemoryStorage::CLoggedSaveCell(long,byte*,int,uint16,Trinity.TSL.Lib.CellAccessOptions)", static_cast<TrinityErrorCode(*)(cellid_t, char*, int32_t, uint16_t, CellAccessOptions)>(&Storage::LocalMemoryStorage::SaveCell) },
@@ -97,6 +99,10 @@ ICallEntry ICallTable[] =
     { "Trinity.Storage.CLocalMemoryStorage::CLocalMemoryStorageEnumeratorMoveNext"  , &Storage::LocalMemoryStorage::Enumeration::MoveNext },
     { "Trinity.Storage.CLocalMemoryStorage::CLocalMemoryStorageEnumeratorReset"     , &Storage::LocalMemoryStorage::Enumeration::Reset },
 
+    { "Trinity.Storage.CLocalMemoryStorage::CThreadContextAllocate"                 , &Storage::AllocateThreadContext },
+    { "Trinity.Storage.CLocalMemoryStorage::CThreadContextDeallocate"               , &Storage::DeallocateThreadContext },
+    { "Trinity.Storage.CLocalMemoryStorage::CThreadContextSet"                      , &Storage::SetCurrentThreadContext },
+
     { "Trinity.Storage.CLocalMemoryStorage::SetDefragmentationPaused"               , &Storage::GCTask::SetDefragmentationPaused },
     { "Trinity.Storage.CLocalMemoryStorage::RestartDefragmentation"                 , &Storage::GCTask::RestartDefragmentation },
 
@@ -106,9 +112,6 @@ ICallEntry ICallTable[] =
     { "Trinity.Storage.CLocalMemoryStorage::CTotalCellSize"                         , &Storage::LocalMemoryStorage::TotalCellSize },
 
     { "Trinity.Storage.CLocalMemoryStorage::CGetLockedCellInfo4CellAccessor"        , &Storage::LocalMemoryStorage::CGetLockedCellInfo4CellAccessor },
-    { "Trinity.Storage.CLocalMemoryStorage::CGetLockedCellInfo4SaveCell"            , &Storage::LocalMemoryStorage::CGetLockedCellInfo4SaveCell },
-    { "Trinity.Storage.CLocalMemoryStorage::CGetLockedCellInfo4AddCell"             , &Storage::LocalMemoryStorage::CGetLockedCellInfo4AddCell },
-    { "Trinity.Storage.CLocalMemoryStorage::CGetLockedCellInfo4UpdateCell"          , &Storage::LocalMemoryStorage::CGetLockedCellInfo4UpdateCell },
     { "Trinity.Storage.CLocalMemoryStorage::CGetLockedCellInfo4LoadCell"            , &Storage::LocalMemoryStorage::CGetLockedCellInfo4LoadCell },
     { "Trinity.Storage.CLocalMemoryStorage::CGetLockedCellInfo4AddOrUseCell"        , &Storage::LocalMemoryStorage::CGetLockedCellInfo4AddOrUseCell },
     { "Trinity.Storage.CLocalMemoryStorage::CLockedGetCellSize"                     , &Storage::LocalMemoryStorage::CLockedGetCellSize },
@@ -244,6 +247,10 @@ DLL_EXPORT TrinityErrorCode  CLocalMemoryStorageEnumeratorDeallocate(Storage::Lo
 DLL_EXPORT TrinityErrorCode  CLocalMemoryStorageEnumeratorMoveNext(Storage::LocalMemoryStorage::Enumeration::LOCAL_MEMORY_STORAGE_ENUMERATOR * p_enum) { return Storage::LocalMemoryStorage::Enumeration::MoveNext(p_enum); }
 DLL_EXPORT TrinityErrorCode  CLocalMemoryStorageEnumeratorReset(Storage::LocalMemoryStorage::Enumeration::LOCAL_MEMORY_STORAGE_ENUMERATOR * p_enum) { return Storage::LocalMemoryStorage::Enumeration::Reset(p_enum); }
 
+DLL_EXPORT PTHREAD_CONTEXT   CThreadContextAllocate() { return Storage::AllocateThreadContext(); }
+DLL_EXPORT void              CThreadContextDeallocate(PTHREAD_CONTEXT pctx) { Storage::DeallocateThreadContext(pctx); }
+DLL_EXPORT void              CThreadContextSet(PTHREAD_CONTEXT pctx) { Storage::SetCurrentThreadContext(pctx); }
+
 DLL_EXPORT void              SetDefragmentationPaused(bool value) { Storage::GCTask::SetDefragmentationPaused(value); }
 DLL_EXPORT void              RestartDefragmentation() { Storage::GCTask::RestartDefragmentation(); }
 
@@ -253,9 +260,6 @@ DLL_EXPORT uint64_t          CTotalCommittedMemorySize() { return Storage::Local
 DLL_EXPORT uint64_t          CTotalCellSize() { return Storage::LocalMemoryStorage::TotalCellSize(); }
 
 DLL_EXPORT TrinityErrorCode  CGetLockedCellInfo4CellAccessor(cellid_t cellId, int32_t &cellSize, uint16_t &type, char* &cellPtr, int32_t &entryIndex) { return Storage::LocalMemoryStorage::CGetLockedCellInfo4CellAccessor(cellId, cellSize, type, cellPtr, entryIndex); }
-DLL_EXPORT TrinityErrorCode  CGetLockedCellInfo4SaveCell(cellid_t cellId, int32_t cellSize, uint16_t type, char* &cellPtr, int32_t &entryIndex) { return Storage::LocalMemoryStorage::CGetLockedCellInfo4SaveCell(cellId, cellSize, type, cellPtr, entryIndex); }
-DLL_EXPORT TrinityErrorCode  CGetLockedCellInfo4AddCell(cellid_t cellId, int32_t cellSize, uint16_t type, char* &cellPtr, int32_t &entryIndex) { return Storage::LocalMemoryStorage::CGetLockedCellInfo4AddCell(cellId, cellSize, type, cellPtr, entryIndex); }
-DLL_EXPORT TrinityErrorCode  CGetLockedCellInfo4UpdateCell(cellid_t cellId, int32_t cellSize, char* &cellPtr, int32_t &entryIndex) { return Storage::LocalMemoryStorage::CGetLockedCellInfo4UpdateCell(cellId, cellSize, cellPtr, entryIndex); }
 DLL_EXPORT TrinityErrorCode  CGetLockedCellInfo4LoadCell(cellid_t cellId, int32_t &cellSize, char* &cellPtr, int32_t &entryIndex) { return Storage::LocalMemoryStorage::CGetLockedCellInfo4LoadCell(cellId, cellSize, cellPtr, entryIndex); }
 DLL_EXPORT TrinityErrorCode  CGetLockedCellInfo4AddOrUseCell(cellid_t cellId, int32_t &cellSize, uint16_t type, char* &cellPtr, int32_t &entryIndex) { return Storage::LocalMemoryStorage::CGetLockedCellInfo4AddOrUseCell(cellId, cellSize, type, cellPtr, entryIndex); }
 DLL_EXPORT TrinityErrorCode  CLockedGetCellSize(cellid_t cellId, int32_t entryIndex, int32_t &size) { return Storage::LocalMemoryStorage::CLockedGetCellSize(cellId, entryIndex, size); }
