@@ -197,6 +197,8 @@ namespace Trinity.Storage.Composite
                 s_StorageSchemas        = schemas;
                 s_IDIntervals           = iditv;
                 s_Extensions.Add(ext);
+
+                Log.WriteLine(LogLevel.Info, $"{nameof(CompositeStorage)}: storage extension '{ext.RootNamespace}' loaded");
             }
         }
         #endregion

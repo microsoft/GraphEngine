@@ -79,7 +79,7 @@ namespace Trinity.Storage.Composite
         }
 
         private static void OnChildStdout(object sender, DataReceivedEventArgs e)
-            => OnChildOutputImpl(sender as Process, e.Data, LogLevel.Info);
+            => OnChildOutputImpl(sender as Process, e.Data, LogLevel.Debug);
 
         private static void OnChildStderr(object sender, DataReceivedEventArgs e)
             => OnChildOutputImpl(sender as Process, e.Data, LogLevel.Error);
