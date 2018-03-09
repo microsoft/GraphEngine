@@ -56,8 +56,8 @@ ICallEntry ICallTable[] =
 
     //====================== Math ==========================//
 
-    { "Trinity.Mathematics.CMathUtility::C_multiply_double_vector"                    , &multiply_double_vector },
-    { "Trinity.Mathematics.CMathUtility::C_multiply_sparse_double_vector"             , &multiply_sparse_double_vector },
+    { "Trinity.Mathematics.CMathUtility::C_multiply_double_vector"                  , &multiply_double_vector },
+    { "Trinity.Mathematics.CMathUtility::C_multiply_sparse_double_vector"           , &multiply_sparse_double_vector },
 
     //====================== LocalMemoryStorage ==========================//
 

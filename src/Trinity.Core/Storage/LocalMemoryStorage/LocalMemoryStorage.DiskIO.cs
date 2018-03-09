@@ -31,31 +31,13 @@ namespace Trinity.Storage
         {
             lock (m_lock)
             {
-                try
-                {
-                    StorageBeforeLoad();
-                }
-                catch (Exception ex)
-                {
-                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeLoad event handler: {0}", ex.ToString());
-                }
-
                 if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
+
+                RaiseStorageEvent(StorageBeforeLoad, nameof(StorageBeforeLoad));
+
                 bool ret = CLocalMemoryStorage.CLoadStorage();
 
-                //TODO WAL and cell type signatures should migrate to KVStore extensions.
-                InitializeWriteAheadLogFile();
-
-                LoadCellTypeSignatures();
-
-                try
-                {
-                    StorageLoaded();
-                }
-                catch (Exception ex)
-                {
-                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageLoaded event handler: {0}", ex.ToString());
-                }
+                RaiseStorageEvent(StorageLoaded, nameof(StorageLoaded));
 
                 return ret;
             }
@@ -69,32 +51,15 @@ namespace Trinity.Storage
         {
             lock (m_lock)
             {
-                try
-                {
-                    StorageBeforeSave();
-                }
-                catch (Exception ex)
-                {
-                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeSave event handler: {0}", ex.ToString());
-                }
-
                 if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
+
+                RaiseStorageEvent(StorageBeforeSave, nameof(StorageBeforeSave));
+
                 bool ret = CLocalMemoryStorage.CSaveStorage();
 
                 if (ret)
                 {
-                    CreateWriteAheadLogFile();
-
-                    SaveCellTypeSignatures();
-
-                    try
-                    {
-                        StorageSaved();
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageSaved event handler: {0}", ex.ToString());
-                    }
+                    RaiseStorageEvent(StorageSaved, nameof(StorageSaved));
                 }
 
                 return ret;
@@ -109,32 +74,31 @@ namespace Trinity.Storage
         {
             lock (m_lock)
             {
-                try
-                {
-                    StorageBeforeReset();
-                }
-                catch (Exception ex)
-                {
-                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageBeforeReset event handler: {0}", ex.ToString());
-                }
-
                 if (TrinityErrorCode.E_SUCCESS != CSynchronizeStorageRoot()) { return false; }
-                string path   = WriteAheadLogFilePath;
-                bool   ret    = CLocalMemoryStorage.CResetStorage();
 
-                ResetWriteAheadLog(path);
+                RaiseStorageEvent(StorageBeforeReset, nameof(StorageBeforeReset));
 
-                try
-                {
-                    StorageReset();
-                }
-                catch (Exception ex)
-                {
-                    Log.WriteLine(LogLevel.Error, "An error oucurred in the StorageReset event handler: {0}", ex.ToString());
-                }
+                bool ret = CLocalMemoryStorage.CResetStorage();
+
+                RaiseStorageEvent(StorageReset, nameof(StorageReset));
 
                 return ret;
             }
+        }
+
+        /// <summary>
+        /// Retrieves the path of the given storage slot.
+        /// A storage slot is a subdirectory of the storage root,
+        /// containing a specific version of disk image.
+        /// </summary>
+        /// <param name="isPrimary">Whether to use primary slot or secondary slot.</param>
+        /// <returns></returns>
+        public unsafe string GetStorageSlot(bool isPrimary)
+        {
+            char* buf  = CLocalMemoryStorage.CGetStorageSlot(isPrimary ? 1 : 0);
+            string ret = new string(buf);
+            Memory.free(buf);
+            return ret;
         }
 
         /// <summary>
@@ -184,7 +148,7 @@ namespace Trinity.Storage
         {
             try
             {
-                string path = Path.Combine(TrinityConfig.StorageRoot, c_celltype_signature_file_name);
+                string path = Path.Combine(GetStorageSlot(true), c_celltype_signature_file_name);
                 if (!File.Exists(path))
                     return;
                 Log.WriteLine(LogLevel.Info, "Loading cell type signatures.");
@@ -224,7 +188,7 @@ namespace Trinity.Storage
             Log.WriteLine(LogLevel.Info, "Saving cell type signatures.");
             try
             {
-                File.WriteAllLines(Path.Combine(TrinityConfig.StorageRoot, c_celltype_signature_file_name), Global.storage_schema.CellTypeSignatures);
+                File.WriteAllLines(Path.Combine(GetStorageSlot(true), c_celltype_signature_file_name), Global.storage_schema.CellTypeSignatures);
             }
             catch
             {

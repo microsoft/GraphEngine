@@ -73,6 +73,7 @@ namespace Trinity
         operator T*() { return data(); }
         operator const T*() const{ return data(); }
         T&& move(size_t pos) { return std::move(_array[pos]); }
+		T* detach_data() { auto ret = _array; _array = nullptr; _length = 0; return ret; }
 
         //since we're just simply arrays, we don't care much about the logic of iterator..
         typedef T *iterator;
@@ -119,6 +120,7 @@ namespace Trinity
             _array = arr._array;
             arr._array = NULL;
         }
+
         inline void _copy_from(const T* source, size_t _len)
         {
             /* constructing from another array means deep copy */

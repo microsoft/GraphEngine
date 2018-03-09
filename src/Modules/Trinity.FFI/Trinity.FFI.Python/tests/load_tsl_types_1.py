@@ -6,5 +6,24 @@ import Trinity
 import Trinity.Storage
 import Trinity.Storage.Composite
 
-Trinity.Storage.Composite.CompositeStorage.AddStorageExtension("./tsl", "./tsl", "TestTslModule")
+import System
+import System.Linq
+from System.Linq import *
+
+Trinity.Storage.Composite.CompositeStorage.AddStorageExtension("./tsl", "TestTslModule")
+
+cnt = sum([1 for i in Trinity.Global.StorageSchema.CellDescriptors])
+
+print("after adding storage extension: {}".format(cnt))
+
 Trinity.Global.LocalStorage.SaveStorage()
+
+cnt = sum([1 for i in Trinity.Global.StorageSchema.CellDescriptors])
+
+print("after save: {}".format(cnt))
+
+Trinity.Global.LocalStorage.LoadStorage()
+
+cnt = sum([1 for i in Trinity.Global.StorageSchema.CellDescriptors])
+
+print("after load: {}".format(cnt))

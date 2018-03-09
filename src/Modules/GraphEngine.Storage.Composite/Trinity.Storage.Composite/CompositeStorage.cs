@@ -38,49 +38,54 @@ namespace Trinity.Storage.Composite
             s_Extensions            = new List<StorageExtensionRecord>();
         }
 
-        public static void LoadMetadata()
+        internal static void LoadMetadata()
         {
             lock (s_lock)
+            {
+                // secondary slot: to be loaded
                 Utils.Session(
-                    path: PathHelper.Directory,
+                    path: PathHelper.StorageSlot(false),
                     start: () => Log.WriteLine($"{nameof(CompositeStorage)}: Loading composite storage extension metadata."),
                     err: (e) => Log.WriteLine(LogLevel.Error, $"{nameof(CompositeStorage)}: {{0}}", e.Message),
                     end: () => Log.WriteLine($"{nameof(CompositeStorage)}: Successfully loaded composite storage extension metadata."),
                     behavior: () =>
                     {
                         Init();
-                        Serialization.Deserialize<List<StorageExtensionRecord>>(PathHelper.ExtensionRecords)
-                                     .Each(Load);
+                        Serialization.Deserialize<List<StorageExtensionRecord>>(PathHelper.ExtensionRecords(false))
+                                     .Each(e => Load(e, false));
                     });
+            }
         }
 
-        public static void SaveMetadata()
+        internal static void SaveMetadata()
         {
             lock (s_lock)
+                // primary slot: saved
                 Utils.Session(
-                    path: PathHelper.Directory,
+                    path: PathHelper.StorageSlot(true),
                     start: () => Log.WriteLine($"{nameof(CompositeStorage)}: Saving composite storage extension metadata."),
                     err: (e) => Log.WriteLine(LogLevel.Error, $"{nameof(CompositeStorage)}: {{0}}", e.Message),
                     end: () => Log.WriteLine($"{nameof(CompositeStorage)}: Successfully saved composite storage extension metadata."),
                     behavior: () =>
                     {
-                        Serialization.Serialize(s_Extensions, PathHelper.ExtensionRecords);
+                        Serialization.Serialize(s_Extensions, PathHelper.ExtensionRecords(true));
                     }
                 );
         }
 
-        public static void ResetMetadata()
+        internal static void ResetMetadata()
         {
             lock (s_lock)
                 Utils.Session(
-                    path: PathHelper.Directory,
+                    // primary slot: storage after reset
+                    path: PathHelper.StorageSlot(true),
                     start: () => Log.WriteLine($"{nameof(CompositeStorage)}: Resetting composite storage extension metadata."),
                     err: (e) => Log.WriteLine(LogLevel.Error, $"{nameof(CompositeStorage)}: {{0}}", e.Message),
                     end: () => Log.WriteLine($"{nameof(CompositeStorage)}: Successfully reset composite storage extension metadata."),
                     behavior: () =>
                     {
                         Init();
-                        Serialization.Serialize(s_Extensions, PathHelper.ExtensionRecords);
+                        Serialization.Serialize(s_Extensions, PathHelper.ExtensionRecords(true));
                     }
                 );
         }
@@ -130,10 +135,10 @@ namespace Trinity.Storage.Composite
             if (!Commands.DotNetBuildCmd($"build {projDir} -o {outDir}"))
                 throw new TSLBuildException();
 
-            ShadowCopy(outDir, Path.Combine(PathHelper.Directory, assemblyName));
+            ShadowCopy(outDir, Path.Combine(PathHelper.StorageSlot(true), assemblyName));
         }
 
-        private static void Load(StorageExtensionRecord ext)
+        private static void Load(StorageExtensionRecord ext, bool primary)
         {
             //  capture states
             var ctoffset = ext.CellTypeOffset;
@@ -142,7 +147,7 @@ namespace Trinity.Storage.Composite
             var schemas  = new List<IStorageSchema>(s_StorageSchemas);
             var iditv    = new List<int>(s_IDIntervals);
 
-            var pshadow  = ShadowCopy(Path.Combine(PathHelper.Directory, ext.AssemblyName));
+            var pshadow  = ShadowCopy(Path.Combine(PathHelper.StorageSlot(primary), ext.AssemblyName));
             var asm      = Assembly.LoadFrom(Path.Combine(pshadow, ext.AssemblyName+".dll"));
 
             new[] { "Current Storage Info:",
@@ -192,6 +197,8 @@ namespace Trinity.Storage.Composite
                 s_StorageSchemas        = schemas;
                 s_IDIntervals           = iditv;
                 s_Extensions.Add(ext);
+
+                Log.WriteLine(LogLevel.Info, $"{nameof(CompositeStorage)}: storage extension '{ext.RootNamespace}' loaded");
             }
         }
         #endregion
@@ -216,7 +223,7 @@ namespace Trinity.Storage.Composite
 
             Build(projDir, outDir, assemblyName);
 
-            Load(ext);
+            Load(ext, true);
 
             SaveMetadata();
 
