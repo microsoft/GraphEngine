@@ -6,5 +6,5 @@ Invoke-MSBuild  -proj "$SOL_ROOT\Trinity.FFI.Native\Trinity.FFI.Native.vcxproj" 
 New-Package     -proj "$SOL_ROOT\Trinity.FFI\Trinity.FFI.csproj"
 Invoke-DotNet   -proj "$SOL_ROOT\Trinity.FFI.UnitTests\Trinity.FFI.UnitTests.csproj" -action restore
 Invoke-DotNet   -proj "$SOL_ROOT\Trinity.FFI.UnitTests\Trinity.FFI.UnitTests.csproj" -action build -config Release
-# todo conditional
+
 Invoke-Sub "$SOL_ROOT\build-py.ps1"

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.FFI", "Trinity.FFI\Trinity.FFI.csproj", "{BA71DB0A-EFDF-44AF-95AE-0583CEAEBD2A}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -19,6 +19,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.FFI.Playground", "Trinity.FFI.Playground\Trinity.FFI.Playground.csproj", "{47D38567-CDE4-468E-9B93-93A998CA6749}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Trinity.FFI.Native", "Trinity.FFI.Native\Trinity.FFI.Native.vcxproj", "{1164CFDC-52CD-4628-85D1-6EFF56CD4D50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.FFI.AutoCode", "Trinity.FFI.AutoCode\Trinity.FFI.AutoCode.csproj", "{23CA7B91-B2CF-4026-8417-0120DE1651C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -110,6 +112,18 @@ Global
 		{1164CFDC-52CD-4628-85D1-6EFF56CD4D50}.Release|x64.ActiveCfg = Release|x64
 		{1164CFDC-52CD-4628-85D1-6EFF56CD4D50}.Release|x64.Build.0 = Release|x64
 		{1164CFDC-52CD-4628-85D1-6EFF56CD4D50}.Release|x86.ActiveCfg = Release|x64
+		{23CA7B91-B2CF-4026-8417-0120DE1651C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23CA7B91-B2CF-4026-8417-0120DE1651C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23CA7B91-B2CF-4026-8417-0120DE1651C2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{23CA7B91-B2CF-4026-8417-0120DE1651C2}.Debug|x64.Build.0 = Debug|Any CPU
+		{23CA7B91-B2CF-4026-8417-0120DE1651C2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{23CA7B91-B2CF-4026-8417-0120DE1651C2}.Debug|x86.Build.0 = Debug|Any CPU
+		{23CA7B91-B2CF-4026-8417-0120DE1651C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23CA7B91-B2CF-4026-8417-0120DE1651C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23CA7B91-B2CF-4026-8417-0120DE1651C2}.Release|x64.ActiveCfg = Release|Any CPU
+		{23CA7B91-B2CF-4026-8417-0120DE1651C2}.Release|x64.Build.0 = Release|Any CPU
+		{23CA7B91-B2CF-4026-8417-0120DE1651C2}.Release|x86.ActiveCfg = Release|Any CPU
+		{23CA7B91-B2CF-4026-8417-0120DE1651C2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

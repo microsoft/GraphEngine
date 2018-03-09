@@ -2,31 +2,37 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Trinity.Storage.CompositeExtension
+namespace Trinity.Storage.Composite
 {
-    public class TSLCodeGenError : Exception
+    public class CommandException : Exception
     {
-        public TSLCodeGenError() : base() { }
-        public TSLCodeGenError(string info) : base(info){ }
+        public CommandException() : base() { }
+        public CommandException(string info) : base(info){ }
     }
 
-    public class TSLBuildError : Exception
+    public class TSLCodeGenException : Exception
     {
-        public TSLBuildError() : base() { }
-        public TSLBuildError(string info) : base(info) { }
+        public TSLCodeGenException() : base() { }
+        public TSLCodeGenException(string info) : base(info){ }
     }
 
-    public class AsmLoadError : Exception
+    public class TSLBuildException : Exception
     {
-        public AsmLoadError() : base() { }
-        public AsmLoadError(string info) : base(info) { }
+        public TSLBuildException() : base() { }
+        public TSLBuildException(string info) : base(info) { }
+    }
+
+    public class AsmLoadException : Exception
+    {
+        public AsmLoadException() : base() { }
+        public AsmLoadException(string info) : base(info) { }
 
     }
 
-    public class NotInitializedError : Exception
+    public class NotInitializedException : Exception
     {
-        public NotInitializedError(): base(){}
-        public NotInitializedError(string info) : base(info) { }
+        public NotInitializedException(): base(){}
+        public NotInitializedException(string info) : base(info) { }
 
     }
 }

@@ -39,19 +39,8 @@
 
   <ItemGroup>
     <Content Include="..\..\..\..\bin\trinity_ffi.dll">
-      <PackagePath>lib\netstandard2.0</PackagePath>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <PackagePath>runtimes\win-x64\native</PackagePath>
     </Content>
-    <Content Include="..\..\..\..\bin\trinity_ffi.dll">
-      <PackagePath>lib\net461</PackagePath>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Trinity.Storage.Composite">
-      <HintPath>..\..\..\..\bin\netstandard2.0\Trinity.Storage.Composite.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

@@ -42,8 +42,8 @@ namespace Trinity
                 if (s_master_init_flag) return;
                 _LoadGraphEngineExtensions();
                 _ScanForTSLStorageExtension();
-                _ScanForStartupTasks();
                 _ScanForMemoryCloudExtension();
+                _ScanForStartupTasks();
                 s_master_init_flag = true;
                 //TODO clean up background tasks
             }

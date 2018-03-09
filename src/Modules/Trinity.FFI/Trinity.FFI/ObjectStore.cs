@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -44,7 +45,6 @@ namespace Trinity.FFI
             _Alloc_Init(c_default_len);
             
         }
-        public Action<int> _Alloc_Mutable;
 
         private void _Alloc_Init(int newlen)
         {
@@ -56,7 +56,6 @@ namespace Trinity.FFI
             }
             m_array = ret;
             m_len = m_array.Length;
-            _Alloc_Mutable = _Alloc_Normal;
         }
         private void _Alloc_Normal(int newlen)
         {
@@ -76,18 +75,7 @@ namespace Trinity.FFI
             m_len = m_array.Length;
         }
 
-        private void Alloc(int newlen)
-        {
-            _Alloc_Mutable(newlen);
-        }
-
-        public void DeAlloc()
-        {
-            m_array = null;
-            m_lock = null;
-            _Alloc_Mutable = _Alloc_Init;
-        }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int Put(T value)
         {
 begin:
@@ -96,7 +84,7 @@ begin:
                 {
                     if (m_head >= m_len)
                     {
-                        Alloc(CalcLen(m_len));
+                        _Alloc_Normal(CalcLen(m_len));
                     }
                     goto begin;
                 }
@@ -122,8 +110,10 @@ begin:
 
         private int CalcLen(int m_len) => m_len + (m_len >> 1);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Get(int index) => m_array[index].value;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Del(int index)
         {
             m_array[index].value = default(T);
@@ -139,6 +129,7 @@ begin:
     {
         public DisposableStore() : base() { }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public new void Del(int index)
         {
             m_array[index].value.Dispose();
@@ -158,7 +149,6 @@ begin:
                     if (tuple.value != null) tuple.value.Dispose();
                 }
             }
-            DeAlloc();
         }
     }
 

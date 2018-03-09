@@ -18,20 +18,12 @@ namespace Trinity.FFI.Python
 
         public CPythonRuntime()
         {
-            //string path = PythonEngine.PythonPath;
-            //if (path == "") path = AssemblyUtility.MyAssemblyPath;
-            //else path = path + ";" + AssemblyUtility.MyAssemblyPath;
-            //PythonEngine.PythonPath = path;
-
             PythonEngine.PythonPath += ";" + Path.GetDirectoryName(typeof(CPythonRuntime).Assembly.Location);
             Log.WriteLine("PythonPath = {0}", PythonEngine.PythonPath);
             m_GIL = Py.GIL();
             m_scope = Py.CreateScope();
-
-            m_scope.Exec(@"
-import GraphEngine as ge
-ge.Init()
-");
+            //TODO make sure the GraphEngine wheel is installed
+            m_scope.Exec(@"import GraphEngine");
         }
 
         public void Dispose()

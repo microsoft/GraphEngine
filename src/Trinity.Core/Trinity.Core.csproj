@@ -44,17 +44,6 @@
     <DefineConstants>CORECLR</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net451'">
-    <EmbeddedResource Include="..\..\bin\Trinity.C.dll">
-      <Link>Trinity.C.dll</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <EmbeddedResource Include="..\..\bin\libTrinity.so" Link="libTrinity.so" />
-    <EmbeddedResource Include="..\..\bin\Trinity.dll" Link="Trinity.dll" />
-  </ItemGroup>
-
   <ItemGroup>
     <Compile Remove="BuildNuGetPkg\**" />
     <EmbeddedResource Remove="BuildNuGetPkg\**" />
@@ -62,6 +51,13 @@
     <None Remove="..\..\bin\Trinity.dll" />
     <None Remove="..\..\bin\Trinity.C.dll" />
     <None Remove="..\..\bin\libTrinity.so" />
+  </ItemGroup>
+
+  <!-- NetFx does not pick up runtimes\{rid}\native, use assembly release technique. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net451'">
+    <EmbeddedResource Include="..\..\bin\Trinity.C.dll">
+      <Link>Trinity.C.dll</Link>
+    </EmbeddedResource>
   </ItemGroup>
 
   <!-- Nuget package content -->
@@ -80,6 +76,12 @@
     </Content>
     <Content Include="..\..\bin\Trinity.TSL.CodeGen">
       <PackagePath>tools</PackagePath>
+    </Content>
+    <Content Include="..\..\bin\Trinity.dll">
+      <PackagePath>runtimes\win-x64\native</PackagePath>
+    </Content>
+    <Content Include="..\..\bin\libTrinity.so">
+      <PackagePath>runtimes\linux-x64\native</PackagePath>
     </Content>
   </ItemGroup>
 

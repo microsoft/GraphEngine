@@ -12,34 +12,42 @@ void Init()
 
 class Cell
 {
+private:
+	void* m_cell;
 public:
-	Cell(TCell cell) : m_cell(cell) {}
-	TCell m_cell;
+	Cell(void* cell) : m_cell(cell) {}
+
+	friend Cell* LoadCell(long long);
+	friend bool SaveCell_1(long long, Cell*);
+	friend bool SaveCell_2(long long, Cell*, CellAccessOptions);
+	friend Cell* NewCell_1(char*);
+	friend Cell* NewCell_2(long long, char*);
+	friend Cell* NewCell_3(char*, char*);
 
 	char* GetField(char* field)
 	{
-		return g_TrinityInterfaces->cell_getfield(m_cell, field);
+		return g_TrinityInterfaces->cell_get(m_cell, field);
 	}
 
 	//TODO errno
 	void SetField(char* field, char* content)
 	{
-		g_TrinityInterfaces->cell_setfield(m_cell, field, content);
+		g_TrinityInterfaces->cell_set(m_cell, field, content);
 	}
 
 	void AppendField(char* field, char* content)
 	{
-		g_TrinityInterfaces->cell_appendfield(m_cell, field, content);
+		g_TrinityInterfaces->cell_append(m_cell, field, content);
 	}
 
 	void RemoveField(char* field)
 	{
-		g_TrinityInterfaces->cell_removefield(m_cell, field);
+		g_TrinityInterfaces->cell_delete(m_cell, field);
 	}
 
 	int HasField(char* field)
 	{
-		return g_TrinityInterfaces->cell_hasfield(m_cell, field);
+		return g_TrinityInterfaces->cell_has(m_cell, field);
 	}
 
 	long long GetID() {
@@ -50,11 +58,9 @@ public:
 		g_TrinityInterfaces->cell_setid(m_cell, GetID());
 	}
 
-
-
 	~Cell()
 	{
-		printf("hey dtor\n");
+		printf("====================== dtor\n");
 		g_TrinityInterfaces->cell_dispose(m_cell);
 	}
 
@@ -63,14 +69,15 @@ public:
 		std::vector<char*> vec;
 		do
 		{
-			TEnumerator etor;
-			TFieldInfo fi = NULL;
+			void* etor;
+			void* fi = NULL;
 			char* val = NULL;
 			if (TrinityErrorCode::E_SUCCESS != g_TrinityInterfaces->cell_fieldenum_get(m_cell, &etor)) break;
 			while (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->cell_fieldenum_movenext(etor, fi))
 			{
 				g_TrinityInterfaces->cell_fieldenum_current(etor, &fi);
-				if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->cell_fieldinfo_name(fi, &val)) {
+				if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->cell_fieldinfo_name(fi, &val)) 
+				{
 					vec.push_back(val);
 				}
 			}
@@ -81,7 +88,7 @@ public:
 	}
 };
 
-Cell* LoadCell(int64_t cellId)
+Cell* LoadCell(long long cellId)
 {
 	Cell* pret = new Cell(0);
 	if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->local_loadcell(cellId, &pret->m_cell))
@@ -95,12 +102,12 @@ Cell* LoadCell(int64_t cellId)
 	}
 }
 
-bool SaveCell_1(int64_t cellId, Cell* pcell)
+bool SaveCell_1(long long cellId, Cell* pcell)
 {
 	return (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->local_savecell_1(cellId, pcell->m_cell));
 }
 
-bool SaveCell_2(int64_t cellId, Cell* pcell, CellAccessOptions options)
+bool SaveCell_2(long long cellId, Cell* pcell, CellAccessOptions options)
 {
 	return (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->local_savecell_2(cellId, options, pcell->m_cell));
 }
