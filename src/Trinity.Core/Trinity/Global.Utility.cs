@@ -44,7 +44,10 @@ namespace Trinity
         /// <param name="exitCode">Exit code to be given to the operating system.</param>
         public static void Exit(int exitCode)
         {
-            Win32.NativeAPI.timeEndPeriod(1);
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                Win32.NativeAPI.timeEndPeriod(1);
+            }
             Diagnostics.Log.Flush();
             Environment.Exit(exitCode);
         }

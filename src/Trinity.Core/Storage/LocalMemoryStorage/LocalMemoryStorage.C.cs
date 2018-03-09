@@ -384,5 +384,7 @@ namespace Trinity.Storage
         internal static extern void RestartDefragmentation();
 
 
+        [DllImport(TrinityC.AssemblyName)]
+        internal static extern char* CGetStorageSlot(int isPrimary);
     }
 }
