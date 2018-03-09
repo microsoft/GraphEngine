@@ -82,13 +82,13 @@ namespace Trinity.Storage.Composite
             }
 
             // remove old backup, and backup current folder content
-            backups.Each(f => File.Delete(f));
+            backups.Each(File.Delete);
             var old = Directory.GetFiles(path);
             old.Each(f => File.Copy(f, f + backup_ext));
             File.WriteAllBytes(flag, new byte[] { 0x01 });
 
             // session established, erase current folder content
-            old.Each(f => File.Delete(f));
+            old.Each(File.Delete);
             bool session_complete = false;
 
             try

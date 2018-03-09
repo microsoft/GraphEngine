@@ -19,6 +19,7 @@ namespace Trinity.Storage.Composite
         private static List<int>                     s_IDIntervals;
         private static List<StorageExtensionRecord>  s_Extensions;
         private static int                           s_currentCellTypeOffset;
+        private static object                        s_lock = new object();
 
         #region State
         public static int CurrentCellTypeOffset => s_currentCellTypeOffset;
@@ -26,6 +27,7 @@ namespace Trinity.Storage.Composite
 
         static CompositeStorage() => Init();
 
+        //  !caller shall hold s_lock
         private static void Init()
         {
             s_currentCellTypeOffset = 0;
@@ -38,46 +40,49 @@ namespace Trinity.Storage.Composite
 
         public static void LoadMetadata()
         {
-            Utils.Session(
-                path: PathHelper.Directory,
-                start: () => Log.WriteLine($"{nameof(CompositeStorage)}: Loading composite storage extension metadata."),
-                err: (e) => Log.WriteLine(LogLevel.Error, $"{nameof(CompositeStorage)}: {{0}}", e.Message),
-                end: () => Log.WriteLine($"{nameof(CompositeStorage)}: Successfully loaded composite storage extension metadata."),
-                behavior: () =>
-                {
-                    Init();
-                    Serialization.Deserialize<List<StorageExtensionRecord>>(PathHelper.ExtensionRecords)
-                                 .Each(Load);
-                });
+            lock (s_lock)
+                Utils.Session(
+                    path: PathHelper.Directory,
+                    start: () => Log.WriteLine($"{nameof(CompositeStorage)}: Loading composite storage extension metadata."),
+                    err: (e) => Log.WriteLine(LogLevel.Error, $"{nameof(CompositeStorage)}: {{0}}", e.Message),
+                    end: () => Log.WriteLine($"{nameof(CompositeStorage)}: Successfully loaded composite storage extension metadata."),
+                    behavior: () =>
+                    {
+                        Init();
+                        Serialization.Deserialize<List<StorageExtensionRecord>>(PathHelper.ExtensionRecords)
+                                     .Each(Load);
+                    });
         }
 
         public static void SaveMetadata()
         {
-            Utils.Session(
-                path: PathHelper.Directory,
-                start: () => Log.WriteLine($"{nameof(CompositeStorage)}: Saving composite storage extension metadata."),
-                err: (e) => Log.WriteLine(LogLevel.Error, $"{nameof(CompositeStorage)}: {{0}}", e.Message),
-                end: () => Log.WriteLine($"{nameof(CompositeStorage)}: Successfully saved composite storage extension metadata."),
-                behavior: () =>
-                {
-                    Serialization.Serialize(s_Extensions, PathHelper.ExtensionRecords);
-                }
-            );
+            lock (s_lock)
+                Utils.Session(
+                    path: PathHelper.Directory,
+                    start: () => Log.WriteLine($"{nameof(CompositeStorage)}: Saving composite storage extension metadata."),
+                    err: (e) => Log.WriteLine(LogLevel.Error, $"{nameof(CompositeStorage)}: {{0}}", e.Message),
+                    end: () => Log.WriteLine($"{nameof(CompositeStorage)}: Successfully saved composite storage extension metadata."),
+                    behavior: () =>
+                    {
+                        Serialization.Serialize(s_Extensions, PathHelper.ExtensionRecords);
+                    }
+                );
         }
 
         public static void ResetMetadata()
         {
-            Utils.Session(
-                path: PathHelper.Directory,
-                start: () => Log.WriteLine($"{nameof(CompositeStorage)}: Resetting composite storage extension metadata."),
-                err: (e) => Log.WriteLine(LogLevel.Error, $"{nameof(CompositeStorage)}: {{0}}", e.Message),
-                end: () => Log.WriteLine($"{nameof(CompositeStorage)}: Successfully reset composite storage extension metadata."),
-                behavior: () =>
-                {
-                    Init();
-                    Serialization.Serialize(s_Extensions, PathHelper.ExtensionRecords);
-                }
-            );
+            lock (s_lock)
+                Utils.Session(
+                    path: PathHelper.Directory,
+                    start: () => Log.WriteLine($"{nameof(CompositeStorage)}: Resetting composite storage extension metadata."),
+                    err: (e) => Log.WriteLine(LogLevel.Error, $"{nameof(CompositeStorage)}: {{0}}", e.Message),
+                    end: () => Log.WriteLine($"{nameof(CompositeStorage)}: Successfully reset composite storage extension metadata."),
+                    behavior: () =>
+                    {
+                        Init();
+                        Serialization.Serialize(s_Extensions, PathHelper.ExtensionRecords);
+                    }
+                );
         }
 
 
@@ -92,7 +97,7 @@ namespace Trinity.Storage.Composite
         {
             string newNamespace = rootNamespace;
 
-            while(s_Extensions.Any(_ => _.RootNamespace == newNamespace))
+            while (s_Extensions.Any(_ => _.RootNamespace == newNamespace))
             {
                 Regex update_pattern = new Regex(@".*_rev_(\d+)");
                 Match m = update_pattern.Match(newNamespace);
@@ -108,7 +113,7 @@ namespace Trinity.Storage.Composite
                 }
             }
 
-            if(newNamespace != rootNamespace)
+            if (newNamespace != rootNamespace)
             {
                 Log.WriteLine(LogLevel.Warning, $"{nameof(CompositeStorage)}: renaming duplicated extension root namespace: {rootNamespace}->{newNamespace}");
                 rootNamespace = newNamespace;
@@ -124,7 +129,8 @@ namespace Trinity.Storage.Composite
         {
             if (!Commands.DotNetBuildCmd($"build {projDir} -o {outDir}"))
                 throw new TSLBuildException();
-            Directory.Move(outDir, Path.Combine(PathHelper.Directory, assemblyName));
+
+            ShadowCopy(outDir, Path.Combine(PathHelper.Directory, assemblyName));
         }
 
         private static void Load(StorageExtensionRecord ext)
@@ -161,7 +167,7 @@ namespace Trinity.Storage.Composite
 
             foreach (var cellDesc in cellDescs)
             {
-                if(ctmap.TryGetValue(cellDesc.TypeName, out var existing_tid))
+                if (ctmap.TryGetValue(cellDesc.TypeName, out var existing_tid))
                 {
                     Log.WriteLine(LogLevel.Info, $"{nameof(CompositeStorage)}: overriding type {cellDesc.TypeName}: TypeId {existing_tid}->{cellDesc.CellType}");
                 }
@@ -178,12 +184,15 @@ namespace Trinity.Storage.Composite
             if (!iditv.OrderBy(_ => _).SequenceEqual(iditv)) throw new AsmLoadException("intervals do not grow monotonically");
 
             //  commit states
-            s_currentCellTypeOffset = ctoffset;
-            s_CellTypeIDs           = ctmap;
-            s_GenericCellOperations = gcops;
-            s_StorageSchemas        = schemas;
-            s_IDIntervals           = iditv;
-            s_Extensions.Add(ext);
+            lock (s_lock)
+            {
+                s_currentCellTypeOffset = ctoffset;
+                s_CellTypeIDs           = ctmap;
+                s_GenericCellOperations = gcops;
+                s_StorageSchemas        = schemas;
+                s_IDIntervals           = iditv;
+                s_Extensions.Add(ext);
+            }
         }
         #endregion
 
