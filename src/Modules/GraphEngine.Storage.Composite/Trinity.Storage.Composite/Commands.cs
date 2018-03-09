@@ -96,7 +96,7 @@ namespace Trinity.Storage.Composite
     internal class PathHelper
     {
         private const string FolderName = "composite-helper";
-        public static string Directory => FileUtility.CompletePath(Path.Combine(TrinityConfig.StorageRoot, FolderName), create_nonexistent: true);
-        public static string ExtensionRecords => Path.Combine(Directory, "ExtensionRecords.bin");
+        public static string StorageSlot(bool primary) => FileUtility.CompletePath(Path.Combine(Global.LocalStorage.GetStorageSlot(primary), FolderName), create_nonexistent: true);
+        public static string ExtensionRecords(bool primary) => Path.Combine(StorageSlot(primary), "ExtensionRecords.bin");
     }
 }

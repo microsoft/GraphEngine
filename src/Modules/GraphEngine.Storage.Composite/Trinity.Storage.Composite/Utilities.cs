@@ -87,8 +87,6 @@ namespace Trinity.Storage.Composite
             old.Each(f => File.Copy(f, f + backup_ext));
             File.WriteAllBytes(flag, new byte[] { 0x01 });
 
-            // session established, erase current folder content
-            old.Each(File.Delete);
             bool session_complete = false;
 
             try

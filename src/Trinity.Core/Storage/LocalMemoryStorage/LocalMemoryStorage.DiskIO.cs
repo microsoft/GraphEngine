@@ -148,7 +148,7 @@ namespace Trinity.Storage
         {
             try
             {
-                string path = Path.Combine(TrinityConfig.StorageRoot, c_celltype_signature_file_name);
+                string path = Path.Combine(GetStorageSlot(true), c_celltype_signature_file_name);
                 if (!File.Exists(path))
                     return;
                 Log.WriteLine(LogLevel.Info, "Loading cell type signatures.");
@@ -188,7 +188,7 @@ namespace Trinity.Storage
             Log.WriteLine(LogLevel.Info, "Saving cell type signatures.");
             try
             {
-                File.WriteAllLines(Path.Combine(TrinityConfig.StorageRoot, c_celltype_signature_file_name), Global.storage_schema.CellTypeSignatures);
+                File.WriteAllLines(Path.Combine(GetStorageSlot(true), c_celltype_signature_file_name), Global.storage_schema.CellTypeSignatures);
             }
             catch
             {
