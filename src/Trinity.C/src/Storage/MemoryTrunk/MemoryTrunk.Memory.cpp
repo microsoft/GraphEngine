@@ -26,17 +26,16 @@ namespace Storage
     {
         //  !CellAlloc is the only path towards GetAllEntryLocksExceptArena --> ReadMemoryAllocationArena 
         char* cell_p         = nullptr;
-        PTHREAD_CONTEXT pctx = GetCurrentThreadContext();
-        bool entered_arena   = false;
+		PTHREAD_CONTEXT pctx = nullptr; 
 
         if (!alloc_lock.trylock(100000))
         {
+			pctx = GetCurrentThreadContext();
             EnterMemoryAllocationArena(pctx);
             alloc_lock.lock();
-            entered_arena = true;
         }
 
-        do
+		while(true)
         {
             if (head.append_head + cellSize <= head.committed_head)
             {
@@ -53,7 +52,7 @@ namespace Storage
                 // This is the only path to ExitMemoryAllocationArena.
                 // We hold alloc_lock, check if we entered arena
                 // due to long blocking lock.
-                if (entered_arena)
+                if (pctx != nullptr)
                 {
                     ExitMemoryAllocationArena(pctx);
                 }
@@ -63,10 +62,10 @@ namespace Storage
 
             // Not enough space. We have to do memory expansion.
             // Ensure that we are in the arena now.
-            if (!entered_arena)
+            if (pctx == nullptr)
             {
+				pctx = GetCurrentThreadContext();
                 EnterMemoryAllocationArena(pctx);
-                entered_arena = true;
             }
 
             if (CommittedMemoryExpand(cellSize))
@@ -76,7 +75,7 @@ namespace Storage
             alloc_lock.unlock();
             Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "CellAlloc: MemoryTrunk {0} is out of Memory.", TrunkId);
             return NULL;
-        } while (true);
+        }
     }
 
     bool MemoryTrunk::CommittedMemoryExpand(uint32_t minimum_size)

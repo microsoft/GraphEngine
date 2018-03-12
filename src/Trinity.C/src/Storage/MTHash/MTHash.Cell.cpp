@@ -13,8 +13,9 @@ namespace Storage
 {
     CELL_ATOMIC TrinityErrorCode MTHash::RemoveCell(IN cellid_t cellId)
     {
-        return _Lookup_LockEntry_Or_NotFound(cellId,
-        [this](const int32_t entry_index, const uint32_t bucket_index, const int32_t previous_entry_index)
+        return _Lookup_LockEntry_Or_NotFound(
+            cellId,
+            [this](const int32_t entry_index, const uint32_t bucket_index, const int32_t previous_entry_index)
         {
             int32_t offset = CellEntries[entry_index].offset;
             std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
@@ -46,19 +47,17 @@ namespace Storage
 
             return TrinityErrorCode::E_SUCCESS;
         },
-        [this](const uint32_t bucket_index) 
+            [this](const uint32_t bucket_index)
         {
             ReleaseBucketLock(bucket_index);
-            return TrinityErrorCode::E_CELL_NOT_FOUND; 
+            return TrinityErrorCode::E_CELL_NOT_FOUND;
         });
     }
 
     CELL_ATOMIC TrinityErrorCode MTHash::RemoveCell(IN cellid_t cellId, IN CellAccessOptions options)
     {
         return _Lookup_LockEntry_Or_NotFound(cellId,
-        [this, 
-        //OUT params
-        &cellId, &options](const int32_t entry_index, const uint32_t bucket_index, const int32_t previous_entry_index)
+            [this, /* OUT params */ &cellId, &options](const int32_t entry_index, const uint32_t bucket_index, const int32_t previous_entry_index)
         {
             int32_t  offset = CellEntries[entry_index].offset;
             std::atomic<int64_t> * CellEntryAtomicPtr = (std::atomic<int64_t>*) CellEntries;
@@ -91,32 +90,32 @@ namespace Storage
 
             return TrinityErrorCode::E_SUCCESS;
         },
-        [this](const uint32_t bucket_index) 
+            [this](const uint32_t bucket_index)
         {
             ReleaseBucketLock(bucket_index);
-            return TrinityErrorCode::E_CELL_NOT_FOUND; 
+            return TrinityErrorCode::E_CELL_NOT_FOUND;
         });
     }
 
     TrinityErrorCode MTHash::ContainsKey(IN cellid_t key)
     {
-        return _Lookup_NoLockEntry_Or_NotFound(key,
-        [this](const int32_t entry_index, const uint32_t bucket_index, const int32_t _){
+        return _Lookup_NoLockEntry_Or_NotFound(
+            key,
+            [this](const int32_t entry_index, const uint32_t bucket_index, const int32_t _) 
+        {
             ReleaseBucketLock(bucket_index);
             return TrinityErrorCode::E_CELL_FOUND;
         },
-        [this](const uint32_t bucket_index){
+            [this](const uint32_t bucket_index) {
             ReleaseBucketLock(bucket_index);
             return TrinityErrorCode::E_CELL_NOT_FOUND;
-        } );
+        });
     }
 
     CELL_ATOMIC TrinityErrorCode MTHash::GetCellType(IN cellid_t cellId, OUT uint16_t &cellType)
     {
         return _Lookup_LockEntry_Or_NotFound(cellId,
-        [this, 
-        //OUT params
-        &cellType](const int32_t entry_index, const uint32_t bucket_index, const int32_t _)
+            [this, /* OUT params */ &cellType](const int32_t entry_index, const uint32_t bucket_index, const int32_t _)
         {
             ReleaseBucketLock(bucket_index);
             // output
@@ -126,28 +125,24 @@ namespace Storage
             ReleaseEntryLock(entry_index);
             return TrinityErrorCode::E_SUCCESS;
         },
-        [this](const uint32_t bucket_index) 
+            [this](const uint32_t bucket_index)
         {
             ReleaseBucketLock(bucket_index);
-            return TrinityErrorCode::E_CELL_NOT_FOUND; 
+            return TrinityErrorCode::E_CELL_NOT_FOUND;
         });
     }
 
     TrinityErrorCode MTHash::GetCellSize(cellid_t key, OUT int32_t &size)
     {
         return _Lookup_LockEntry_Or_NotFound(key,
-        [this, 
-        //OUT params
-        &size](const int32_t entry_index, const uint32_t bucket_index, const int32_t _)
+            [this, /* OUT params */ &size](const int32_t entry_index, const uint32_t bucket_index, const int32_t _)
         {
             ReleaseBucketLock(bucket_index);
             size = CellSize(entry_index);
             ReleaseEntryLock(entry_index);
             return TrinityErrorCode::E_CELL_FOUND;
         },
-        [this,
-        //OUT params
-        &size](const uint32_t bucket_index) 
+            [this, /* OUT params */ &size](const uint32_t bucket_index)
         {
             ReleaseBucketLock(bucket_index);
             size = -1;
@@ -219,10 +214,10 @@ namespace Storage
                  *                                 until RF == 22 (in which case we may need multiple RB
                  *                                 to hold one delta).
                  */
-                int32_t sizeRecord      = CellEntries[cellEntryIndex].size;
+                int32_t sizeRecord = CellEntries[cellEntryIndex].size;
                 char reservation_factor = (char)(sizeRecord >> 24);
-                int32_t reserved_bytes  = 1 << reservation_factor;
-                int32_t occupied_bytes  = (reserved_bytes - 1) & sizeRecord;
+                int32_t reserved_bytes = 1 << reservation_factor;
+                int32_t occupied_bytes = (reserved_bytes - 1) & sizeRecord;
                 int32_t newOffset;
 
                 if (occupied_bytes + sizeDelta >= reserved_bytes) //Have to allocate new space

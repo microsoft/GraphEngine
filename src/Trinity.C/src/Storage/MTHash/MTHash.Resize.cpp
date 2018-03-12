@@ -20,6 +20,7 @@ namespace Storage
 
         if ((CurrentEntryCount + UInt32_Contants::GuardedEntryCount) >= TrinityConfig::MaxEntryCount())
         {
+			//XXX should not exit here
             Trinity::Diagnostics::FatalError(1, "Memory Trunk {0} is out of Memory::", memory_trunk->TrunkId);
         }
 
@@ -30,6 +31,7 @@ namespace Storage
         }
 
         uint64_t size_expanded = expanded_entry_count - CurrentEntryCount;
+		Trinity::Diagnostics::WriteLine(LogLevel::Verbose, "MemoryTrunk {0}: Expand: {1}->{2}", memory_trunk->TrunkId, CurrentEntryCount, expanded_entry_count);
 
         Memory::ExpandMemoryFromCurrentPosition((char*)CellEntries + ((CurrentEntryCount + UInt32_Contants::GuardedEntryCount) << 3), size_expanded << 3);
         memset((char*)CellEntries + ((CurrentEntryCount + UInt32_Contants::GuardedEntryCount) << 3), -1, size_expanded << 3);

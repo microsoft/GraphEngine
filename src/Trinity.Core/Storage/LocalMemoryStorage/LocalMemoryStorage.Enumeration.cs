@@ -34,20 +34,20 @@ namespace Trinity.Storage
         /// are employed. Improper operations on the cell buffer will cause
         /// data corruption and system crash.
         /// </summary>
-        public byte*   CellPtr { get; internal set;}
+        public byte* CellPtr { get; internal set; }
         /// <summary>
         /// Get the id of the cell.
         /// </summary>
-        public long    CellId { get; internal set;}
+        public long CellId { get; internal set; }
 
         /// <summary>
         /// The index of the underlying hash slot correspondig to the current cell.
         /// </summary>
-        public int     CellEntryIndex{ get; internal set;}
+        public int CellEntryIndex { get; internal set; }
         /// <summary>
         /// Get the type of the current cell. Not available when type system not enabled.
         /// </summary>
-        public ushort  CellType{ get; internal set;}
+        public ushort CellType { get; internal set; }
         /// <summary>
         /// Gets the size of current cell in bytes.
         /// </summary>
@@ -122,13 +122,17 @@ namespace Trinity.Storage
 
         bool System.Collections.IEnumerator.MoveNext()
         {
-            TrinityErrorCode err;
-            do { err = CLocalMemoryStorage.CLocalMemoryStorageEnumeratorMoveNext(m_enumerator); }
-            while (err != TrinityErrorCode.E_CELL_NOT_FOUND);
-            if (err == TrinityErrorCode.E_ENUMERATION_END) return false;
-            if (err == TrinityErrorCode.E_CELL_LOCK_OVERFLOW) throw new CellLockOverflowException(0);
-            if (err == TrinityErrorCode.E_DEADLOCK) throw new DeadlockException();
-            else return (err == TrinityErrorCode.E_SUCCESS);
+            while (true)
+            {
+                TrinityErrorCode err = CLocalMemoryStorage.CLocalMemoryStorageEnumeratorMoveNext(m_enumerator);
+                if (err == TrinityErrorCode.E_SUCCESS) return true;
+                else if (err == TrinityErrorCode.E_CELL_NOT_FOUND) continue;
+                else if (err == TrinityErrorCode.E_ENUMERATION_END) return false;
+                else if (err == TrinityErrorCode.E_DEADLOCK) throw new DeadlockException();
+                else if (err == TrinityErrorCode.E_CELL_LOCK_OVERFLOW) throw new CellLockOverflowException(0);
+                else if (err == TrinityErrorCode.E_INVALID_ARGUMENTS) throw new ArgumentOutOfRangeException($"{nameof(CLocalMemoryStorage.CLocalMemoryStorageEnumeratorMoveNext)}: enumerator is corrupted, range check failure");
+                else throw new InvalidOperationException($"{nameof(CLocalMemoryStorage.CLocalMemoryStorageEnumeratorMoveNext)}: Unknown failure, error code = {err}");
+            }
         }
 
         void System.Collections.IEnumerator.Reset()

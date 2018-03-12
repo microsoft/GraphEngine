@@ -157,6 +157,7 @@ namespace Memory
         //Commit the desired size, the actually allocated space will be larger(up to a whole page) than the desired size.
         return VirtualAlloc(buf, size, MEM_COMMIT, PAGE_READWRITE);
 #else
+		// XXX mprotect does not zero memory
         return mprotect(buf, size, PROT_READ | PROT_WRITE) == 0 ? buf : NULL;
 #endif
     }
