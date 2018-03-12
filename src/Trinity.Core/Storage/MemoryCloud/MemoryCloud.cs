@@ -300,7 +300,8 @@ namespace Trinity.Storage
         /// where the cell with the specified cell id is located.
         /// TODO: move to MemoryCloud extensions
         /// </summary>
-        public Func<long, int> GetPartitionIdByCellId { get; set; } = (cellId) => (*(((byte*)&cellId) + 1));
+        public static Func<long, int> StaticGetPartitionIdByCellId { get; set; } = (cellId) => (*(((byte*)&cellId) + 1));
+        public Func<long, int> GetPartitionIdByCellId => StaticGetPartitionIdByCellId;
 
         /// <summary>
         /// Gets the Id of the server on which the cell with the specified cell Id is located.
