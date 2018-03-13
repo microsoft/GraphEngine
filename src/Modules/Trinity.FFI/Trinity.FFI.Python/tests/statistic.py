@@ -45,22 +45,37 @@ singles = split_set[False]
 with open('result.json', 'w') as f:
     f.write('{}')
 
-for each in singles:
-    # TODO debug on swig mode
-    if 'swig' in each and 'load' in each:
-        continue
+for spec_script in ('test_new.py', 'test_load.py', 'test_save.py', 'test_new_by_id.py'):
 
-    for cell_type in large_data.keys():
-        cmd(['python', each, cell_type])
-        cmd(['python', each, cell_type])
+    for cell_type in ('C1', 'C2', 'C3'):
 
-for each in with_contents:
+        for backend in ('swig', 'redis', 'pynet'):
 
-    if 'swig' in each and 'load' in each:
-        continue
+            if (backend, spec_script) == ('swig', 'test_load.py'):
+                continue  # TODO debug on swig mode
 
-    for k, v in tiny_data.items():
-        cmd(['python', each, k, json.dumps(v)])
+            # cmd(['python', spec_script, backend, cell_type])
+            if cell_type != 'C2':
+                cmd(['python', spec_script, backend, cell_type, json.dumps(tiny_data[cell_type])])
+                cmd(['python', spec_script, backend, cell_type, json.dumps(large_data[cell_type])])
+            else:
+                cmd(['python', spec_script, backend, cell_type, json.dumps(tiny_data[cell_type])])
 
-    for k, v in large_data.items():
-        cmd(['python', each, k, json.dumps(v)])
+# for each in singles:
+#     # TODO debug on swig mode
+#     if 'swig' in each and 'load' in each:
+#         continue
+#
+#     for cell_type in large_data.keys():
+#         cmd(['python', each, cell_type])
+#
+# for each in with_contents:
+#
+#     if 'swig' in each and 'load' in each:
+#         continue
+#
+#     for k, v in tiny_data.items():
+#         cmd(['python', each, k, json.dumps(v)])
+#
+#     for k, v in large_data.items():
+#         cmd(['python', each, k, json.dumps(v)])

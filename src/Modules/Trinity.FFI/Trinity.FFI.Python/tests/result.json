@@ -1,10 +1,218 @@
 {
-    "test_load_cell": [
+    "test_new.py": [
+        {
+            "backend": "swig",
+            "cell_type": "C1",
+            "time_per_10000": 0.05776290223185262,
+            "data_size": 33
+        },
+        {
+            "backend": "swig",
+            "cell_type": "C1",
+            "time_per_10000": 1.7899041604545625,
+            "data_size": 2414
+        },
         {
             "backend": "pynet",
             "cell_type": "C1",
-            "time_per_10000": 0.024309720107125978,
-            "data_size": null
+            "time_per_10000": 0.09408815575561011,
+            "data_size": 33
+        },
+        {
+            "backend": "pynet",
+            "cell_type": "C1",
+            "time_per_10000": 1.851176063979734,
+            "data_size": 2414
+        },
+        {
+            "backend": "swig",
+            "cell_type": "C2",
+            "time_per_10000": 0.032005945523306815,
+            "data_size": 11
+        },
+        {
+            "backend": "pynet",
+            "cell_type": "C2",
+            "time_per_10000": 0.05895046188845213,
+            "data_size": 11
+        },
+        {
+            "backend": "swig",
+            "cell_type": "C3",
+            "time_per_10000": 0.4933105780386408,
+            "data_size": 442
+        },
+        {
+            "backend": "swig",
+            "cell_type": "C3",
+            "time_per_10000": 18.79392423016564,
+            "data_size": 26402
+        },
+        {
+            "backend": "pynet",
+            "cell_type": "C3",
+            "time_per_10000": 0.48039205251097367,
+            "data_size": 442
+        },
+        {
+            "backend": "pynet",
+            "cell_type": "C3",
+            "time_per_10000": 19.99308117616752,
+            "data_size": 26402
+        }
+    ],
+    "test_load.py": [
+        {
+            "backend": "redis",
+            "cell_type": "C1",
+            "time_per_10000": 0.33215448839154255,
+            "data_size": 33
+        },
+        {
+            "backend": "redis",
+            "cell_type": "C1",
+            "time_per_10000": 0.39432410252669314,
+            "data_size": 2414
+        },
+        {
+            "backend": "pynet",
+            "cell_type": "C1",
+            "time_per_10000": 0.02296266015217861,
+            "data_size": 33
+        },
+        {
+            "backend": "pynet",
+            "cell_type": "C1",
+            "time_per_10000": 0.04340533591204778,
+            "data_size": 2414
+        },
+        {
+            "backend": "redis",
+            "cell_type": "C2",
+            "time_per_10000": 0.31721827885869885,
+            "data_size": 11
+        },
+        {
+            "backend": "pynet",
+            "cell_type": "C2",
+            "time_per_10000": 0.020298265886709976,
+            "data_size": 11
+        },
+        {
+            "backend": "redis",
+            "cell_type": "C3",
+            "time_per_10000": 0.33406072277964266,
+            "data_size": 442
+        },
+        {
+            "backend": "redis",
+            "cell_type": "C3",
+            "time_per_10000": 0.7698446888119631,
+            "data_size": 26402
+        },
+        {
+            "backend": "pynet",
+            "cell_type": "C3",
+            "time_per_10000": 0.031197247813808938,
+            "data_size": 442
+        },
+        {
+            "backend": "pynet",
+            "cell_type": "C3",
+            "time_per_10000": 0.29383508244112033,
+            "data_size": 26402
+        }
+    ],
+    "test_save.py": [
+        {
+            "backend": "swig",
+            "cell_type": "C1",
+            "time_per_10000": 0.008432791403495132,
+            "data_size": 33
+        },
+        {
+            "backend": "swig",
+            "cell_type": "C1",
+            "time_per_10000": 0.07109044125701823,
+            "data_size": 2414
+        },
+        {
+            "backend": "redis",
+            "cell_type": "C1",
+            "time_per_10000": 0.46337162046054786,
+            "data_size": 33
+        },
+        {
+            "backend": "redis",
+            "cell_type": "C1",
+            "time_per_10000": 8.52134858282844,
+            "data_size": 2414
+        },
+        {
+            "backend": "pynet",
+            "cell_type": "C1",
+            "time_per_10000": 0.02693361874629999,
+            "data_size": 33
+        },
+        {
+            "backend": "pynet",
+            "cell_type": "C1",
+            "time_per_10000": 0.0847671005736873,
+            "data_size": 2414
+        },
+        {
+            "backend": "swig",
+            "cell_type": "C2",
+            "time_per_10000": 0.0082368749478857,
+            "data_size": 11
+        },
+        {
+            "backend": "redis",
+            "cell_type": "C2",
+            "time_per_10000": 0.38736923316850613,
+            "data_size": 11
+        },
+        {
+            "backend": "pynet",
+            "cell_type": "C2",
+            "time_per_10000": 0.025176641790892972,
+            "data_size": 11
+        },
+        {
+            "backend": "swig",
+            "cell_type": "C3",
+            "time_per_10000": 0.02754515705926277,
+            "data_size": 442
+        },
+        {
+            "backend": "swig",
+            "cell_type": "C3",
+            "time_per_10000": 0.6847438527441726,
+            "data_size": 26402
+        },
+        {
+            "backend": "redis",
+            "cell_type": "C3",
+            "time_per_10000": 1.8877956391483526,
+            "data_size": 442
+        },
+        {
+            "backend": "redis",
+            "cell_type": "C3",
+            "time_per_10000": 90.36095198513368,
+            "data_size": 26402
+        },
+        {
+            "backend": "pynet",
+            "cell_type": "C3",
+            "time_per_10000": 0.04453594914992906,
+            "data_size": 442
+        },
+        {
+            "backend": "pynet",
+            "cell_type": "C3",
+            "time_per_10000": 0.7252127372451243,
+            "data_size": 26402
         }
     ]
 }
