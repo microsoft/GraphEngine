@@ -1,15 +1,15 @@
-﻿cell Normal
+﻿cell C1
 {
 	List<int> lst;
 	string bar;
 }
 
-cell Tiny
+cell C2
 {
 	int foo;
 }
 
-cell Large
+cell C3
 {
 	List<int> bar1;
 	List<int> bar2;
