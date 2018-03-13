@@ -12,6 +12,7 @@ using System.Data.SQLite;
 using System.Net;
 using System.Diagnostics;
 using System.IO.Compression;
+using freebase_tsl;
 
 namespace freebase_likq
 {
