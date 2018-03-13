@@ -12,5 +12,5 @@ def test():
                          number=int(3e6),
                          globals=globals(),
                          setup='global i; i=0;')
-    res = {cell_type: (cell_type, time)}
+    res = {file_name: (cell_type, time)}
     return pprint(res) or res
