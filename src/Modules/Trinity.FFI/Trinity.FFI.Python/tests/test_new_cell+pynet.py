@@ -12,7 +12,7 @@ def test():
     time = timeit.timeit(f"new_cell_pynet('{cell_type}')",
                          number=number,
                          globals=globals())
-    title = file_name.replace('+pynet', '').replace('+swig', '')
+    title = file_name.replace('+pynet', '').replace('+swig', '').replace('.py', '')
     backend = 'pynet' if 'pynet' in file_name else 'swig'
 
     stats_info = dict(backend=backend,

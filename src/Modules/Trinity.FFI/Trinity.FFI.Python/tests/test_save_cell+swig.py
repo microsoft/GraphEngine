@@ -14,7 +14,7 @@ def test():
                          number=number,
                          globals={'cells': cells, 'save_cell_swig': save_cell_swig},
                          setup='global i; i=0;')
-    title = file_name.replace('+pynet', '').replace('+swig', '')
+    title = file_name.replace('+pynet', '').replace('+swig', '').replace('.py', '')
     backend = 'pynet' if 'pynet' in file_name else 'swig'
     
     stats_info = dict(backend = backend, 

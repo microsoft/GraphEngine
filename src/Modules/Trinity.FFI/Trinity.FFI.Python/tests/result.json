@@ -1,1 +1,10 @@
-{}
+{
+    "test_load_cell": [
+        {
+            "backend": "pynet",
+            "cell_type": "C1",
+            "time_per_10000": 0.024309720107125978,
+            "data_size": null
+        }
+    ]
+}

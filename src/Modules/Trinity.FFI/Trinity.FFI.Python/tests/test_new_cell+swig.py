@@ -12,7 +12,7 @@ def test_new_cell_without_id_by_pynet():
     time = timeit.timeit(f"new_cell_swig('{cell_type}')",
                          number=number,
                          globals=globals())
-    title = file_name.replace('+pynet', '').replace('+swig', '')
+    title = file_name.replace('+pynet', '').replace('+swig', '').replace('.py', '')
     backend = 'pynet' if 'pynet' in file_name else 'swig'
     
     stats_info = dict(backend = backend, 

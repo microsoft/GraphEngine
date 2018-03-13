@@ -19,7 +19,7 @@ def test():
                          globals={'load_cell_swig': load_cell_swig},
                          setup='global i; i=1;')
 
-    title = file_name.replace('+pynet', '').replace('+swig', '')
+    title = file_name.replace('+pynet', '').replace('+swig', '').replace('.py', '')
     backend = 'pynet' if 'pynet' in file_name else 'swig'
 
     stats_info = dict(backend=backend,
