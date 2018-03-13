@@ -1,0 +1,26 @@
+﻿cell Normal
+{
+	List<int> lst;
+	string bar;
+}
+
+cell Tiny
+{
+	int foo;
+}
+
+cell Large
+{
+	List<int> bar1;
+	List<int> bar2;
+	List<int> bar3;
+	List<int> bar4;
+	List<int> bar5;
+	List<int> bar6;
+	List<int> bar7;
+	List<int> bar8;
+	List<int> bar9;
+	List<int> bar10;
+	List<int> bar11;
+	List<int> bar12;
+}
