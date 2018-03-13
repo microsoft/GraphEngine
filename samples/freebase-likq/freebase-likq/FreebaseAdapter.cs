@@ -18,11 +18,11 @@ namespace freebase_likq
     public unsafe class CellGroupUtil
     {
         // Resolve MID <---> CellID Mapping
-        private static Dictionary<string, ushort> prop2Type = new Dictionary<string, ushort>();
-        private static Dictionary<ushort, string> CellTypeNames = new Dictionary<ushort, string>();
-        private static HashSet<string> singleValuedStrProps = new HashSet<string>();
+        private static Dictionary<string, ushort> prop2Type       = new Dictionary<string, ushort>();
+        private static Dictionary<ushort, string> CellTypeNames   = new Dictionary<ushort, string>();
+        private static HashSet<string> singleValuedStrProps       = new HashSet<string>();
         private static Dictionary<string, string> midResolveTable = new Dictionary<string, string>();
-        private static Dictionary<string, string> normp2Orignal = new Dictionary<string, string>();
+        private static Dictionary<string, string> normp2Orignal   = new Dictionary<string, string>();
 
         private static bool init = false;
 
@@ -620,11 +620,6 @@ namespace freebase_likq
         }
 
         public int GetBufferLength()
-        {
-            throw new NotImplementedException();
-        }
-
-        public ICell Deserialize()
         {
             throw new NotImplementedException();
         }

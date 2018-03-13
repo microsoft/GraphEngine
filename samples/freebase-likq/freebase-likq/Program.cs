@@ -12,7 +12,6 @@ using System.Data.SQLite;
 using System.Net;
 using System.Diagnostics;
 using System.IO.Compression;
-using freebase_tsl;
 
 namespace freebase_likq
 {
@@ -20,7 +19,7 @@ namespace freebase_likq
     {
         private static SQLiteConnection s_dbconn;
         private static string s_freebase_data_blobcontainer = "https://graphengine.blob.core.windows.net/public-data";
-        private static string s_freebase_dataset = "freebase-film-dataset.zip";
+        private static string s_freebase_dataset = "freebase-full-dataset-20170410.zip";
 
         static void Main(string[] args)
         {
@@ -116,7 +115,7 @@ namespace freebase_likq
         {
             Log.WriteLine($"The storage folder is not found. Downloading the data from {s_freebase_data_blobcontainer}/{s_freebase_dataset} now...");
             WebClient download_client = new WebClient();
-            Stopwatch download_timer = Stopwatch.StartNew();
+            Stopwatch download_timer  = Stopwatch.StartNew();
             download_client.DownloadProgressChanged += (sender, e) =>
             {
                 lock (download_client)
@@ -128,7 +127,7 @@ namespace freebase_likq
             download_client.DownloadFileTaskAsync($"{s_freebase_data_blobcontainer}/{s_freebase_dataset}", s_freebase_dataset).Wait();
             Console.WriteLine();
             Log.WriteLine("Download complete. Unarchiving storage folder...");
-            ZipFile.ExtractToDirectory(s_freebase_dataset, Global.MyAssemblyPath);
+            ZipFile.ExtractToDirectory("freebase-full-dataset.zip", Global.MyAssemblyPath);
             Log.WriteLine("Successfully unarchived the data files.");
         }
 
