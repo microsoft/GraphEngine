@@ -2,7 +2,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +11,13 @@ using Trinity;
 using FanoutSearch.Test.TSL;
 using FanoutSearch.Standard;
 using System.Threading;
+using Xunit;
 
 namespace FanoutSearch.UnitTest
 {
-    [TestClass]
-    public class LocalStressTest
+    public class LocalStressTest : IDisposable
     {
-        [ClassInitialize]
-        public static void Initialize(TestContext ctx)
+        public LocalStressTest()
         {
             Initializer.Initialize();
 
@@ -43,8 +41,7 @@ namespace FanoutSearch.UnitTest
             FanoutSearchModule.SetQueryTimeout(800);
         }
 
-        [ClassCleanup]
-        public static void Uninitialize()
+        public void Dispose()
         {
             Initializer.Uninitialize();
         }
@@ -68,31 +65,31 @@ namespace FanoutSearch.UnitTest
             threads.ForEach(_ => _.Join());
         }
 
-        [TestMethod]
+        [Fact]
         public void StressTest_1()
         {
             _stress_test_impl(50, 10);
         }
 
-        [TestMethod]
+        [Fact]
         public void StressTest_2()
         {
             _stress_test_impl(100, 10);
         }
 
-        [TestMethod]
+        [Fact]
         public void StressTest_3()
         {
             _stress_test_impl(200, 20);
         }
 
-        [TestMethod]
+        [Fact]
         public void StressTest_4()
         {
             _stress_test_impl(500, 20);
         }
 
-        [TestMethod]
+        [Fact]
         public void StressTest_5()
         {
             _stress_test_impl(500, 80);

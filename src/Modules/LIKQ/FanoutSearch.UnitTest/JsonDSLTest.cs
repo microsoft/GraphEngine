@@ -3,27 +3,24 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Trinity.Network;
 using Trinity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Trinity.Network.Http;
 using System.Collections.Generic;
+using Xunit;
 
 namespace FanoutSearch.UnitTest
 {
-    [TestClass]
-    public class JsonDSLTest
+    public class JsonDSLTest : IDisposable
     {
-        [ClassInitialize]
-        public static void Init(TestContext ctx)
+        public JsonDSLTest()
         {
             Initializer.Initialize();
         }
 
-        [ClassCleanup]
-        public static void Cleanup()
+        public void Dispose()
         {
             Initializer.Uninitialize();
         }
@@ -34,7 +31,7 @@ namespace FanoutSearch.UnitTest
             mod.JsonQuery(str);
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_2hop()
         {
             JsonQuery(@"
@@ -51,7 +48,7 @@ namespace FanoutSearch.UnitTest
 }");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_substring()
         {
             JsonQuery(@"
@@ -70,7 +67,7 @@ namespace FanoutSearch.UnitTest
 }");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_count_eq()
         {
             JsonQuery(@"
@@ -89,7 +86,7 @@ namespace FanoutSearch.UnitTest
 }");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_count_gt()
         {
             JsonQuery(@"
@@ -110,7 +107,7 @@ namespace FanoutSearch.UnitTest
 }");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_eq()
         {
             JsonQuery(@"
@@ -127,7 +124,7 @@ namespace FanoutSearch.UnitTest
 }");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_has()
         {
             JsonQuery(@"
@@ -144,7 +141,7 @@ namespace FanoutSearch.UnitTest
 }");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_continue()
         {
             JsonQuery(@"
@@ -162,7 +159,7 @@ namespace FanoutSearch.UnitTest
 }");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_return()
         {
             JsonQuery(@"
@@ -180,7 +177,7 @@ namespace FanoutSearch.UnitTest
 }");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_continue_return()
         {
             JsonQuery(@"
@@ -202,7 +199,7 @@ namespace FanoutSearch.UnitTest
         }
 
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_gt()
         {
             JsonQuery(@"
@@ -221,7 +218,7 @@ namespace FanoutSearch.UnitTest
 }");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_OR()
         {
             JsonQuery(@"
@@ -246,7 +243,7 @@ namespace FanoutSearch.UnitTest
 ");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_nomatchcondition()
         {
             Expect.FanoutSearchQueryException(() =>
@@ -262,7 +259,7 @@ namespace FanoutSearch.UnitTest
 }"), "No match conditions");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_count_eq_str()
         {
             Expect.FanoutSearchQueryException(() =>
@@ -283,7 +280,7 @@ namespace FanoutSearch.UnitTest
         }
 
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_count_eq_str_2()
         {
             Expect.FanoutSearchQueryException(() =>
@@ -303,7 +300,7 @@ namespace FanoutSearch.UnitTest
 }"), "Invalid count operand");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_count_eq_float()
         {
             Expect.FanoutSearchQueryException(() =>
@@ -324,7 +321,7 @@ namespace FanoutSearch.UnitTest
         }
 
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_invalid_op()
         {
             Expect.FanoutSearchQueryException(() =>
@@ -344,7 +341,7 @@ namespace FanoutSearch.UnitTest
 }"), "Unrecognized operator");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_invalid_property_integer()
         {
             Expect.FanoutSearchQueryException(() =>
@@ -362,7 +359,7 @@ namespace FanoutSearch.UnitTest
 }"), "Invalid property value");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_invalid_property_array()
         {
             Expect.FanoutSearchQueryException(() =>
@@ -382,7 +379,7 @@ namespace FanoutSearch.UnitTest
 
 
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_gt_throw()
         {
             Expect.FanoutSearchQueryException(() =>
@@ -402,7 +399,7 @@ namespace FanoutSearch.UnitTest
 }"), "Invalid comparand");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_gt_throw_2()
         {
             Expect.FanoutSearchQueryException(() =>
@@ -425,7 +422,7 @@ namespace FanoutSearch.UnitTest
         }
 
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_count_invalid()
         {
             Expect.FanoutSearchQueryException(() =>
@@ -447,7 +444,7 @@ namespace FanoutSearch.UnitTest
 }"), "Invalid count value");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_return_invalid()
         {
             Expect.FanoutSearchQueryException(() =>
@@ -467,7 +464,7 @@ namespace FanoutSearch.UnitTest
 }"), "Invalid property");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_return_invalid_value()
         {
             Expect.FanoutSearchQueryException(() =>
@@ -484,7 +481,7 @@ namespace FanoutSearch.UnitTest
 }"), "Invalid return expression");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_return_invalid_value_2()
         {
             Expect.FanoutSearchQueryException(() =>
@@ -501,7 +498,7 @@ namespace FanoutSearch.UnitTest
 }"), "Invalid return expression");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_continue_invalid_value()
         {
             Expect.FanoutSearchQueryException(() =>
@@ -518,7 +515,7 @@ namespace FanoutSearch.UnitTest
 }"), "Invalid continue expression");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_select_invalid()
         {
             Expect.FanoutSearchQueryException(() =>
@@ -533,7 +530,7 @@ namespace FanoutSearch.UnitTest
 }"), "Invalid select operand");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_has_invalid_operand_array()
         {
             Expect.FanoutSearchQueryException(()=>
@@ -551,7 +548,7 @@ namespace FanoutSearch.UnitTest
 }"), "Invalid has operand");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_field_has_invalid_operand_int()
         {
             Expect.FanoutSearchQueryException(()=>
@@ -569,7 +566,7 @@ namespace FanoutSearch.UnitTest
 }"), "Invalid has operand");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_cannot_specify_not_or_together()
         {
             Expect.FanoutSearchQueryException(()=>
@@ -590,7 +587,7 @@ namespace FanoutSearch.UnitTest
 }"), "Cannot specify not/or conditions together");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_no_predicates_found_in_or()
         {
             Expect.FanoutSearchQueryException(()=>
@@ -609,7 +606,7 @@ namespace FanoutSearch.UnitTest
 }"), "No predicates found in OR expression");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest_the_origin_descriptor_cannot_be_null()
         {
             Expect.FanoutSearchQueryException(()=>
