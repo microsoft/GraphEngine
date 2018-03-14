@@ -114,26 +114,23 @@ namespace Storage
         void Dispose()
         {
             TRINITY_INTEROP_ENTER_UNMANAGED();
+            disposal_lock.lock();
             if (!disposed)
             {
-                disposal_lock.lock();
-                if (!disposed)
-                {
-                    GCTask::StopDefragAndAwaitCeased();
-                    delete[] memory_trunks; //! This will call the MemoryTrunk deconstructor implicitly
-                    delete[] hashtables; //! This will call the MTHash deconstructor implicitly
-                    delete   g_ImageSignature;
-                    delete[] dirty_flags;
+                GCTask::StopDefragAndAwaitCeased();
+                delete[] memory_trunks; //! This will call the MemoryTrunk deconstructor implicitly
+                delete[] hashtables; //! This will call the MTHash deconstructor implicitly
+                delete   g_ImageSignature;
+                delete[] dirty_flags;
 
-					memory_trunks = nullptr;
-					hashtables = nullptr;
-					hashtables_end = nullptr;
-					g_ImageSignature = nullptr;
+                memory_trunks = nullptr;
+                hashtables = nullptr;
+                hashtables_end = nullptr;
+                g_ImageSignature = nullptr;
 
-					disposed.store(true);
-				}
-				disposal_lock.unlock();
-			}
+                disposed.store(true);
+            }
+            disposal_lock.unlock();
 			TRINITY_INTEROP_LEAVE_UNMANAGED();
 		}
 
@@ -365,7 +362,7 @@ namespace Storage
 			}
 
 			PMD5_SIGNATURE p_sig = g_ImageSignature->trunk_signatures;
-			Parallel::For(0, trunk_count, [&](int32_t trunk_idx){
+			Parallel::For(0, trunk_count, [&](int32_t trunk_idx) {
 				memory_trunks[trunk_idx].hashtable->GetMD5Hash((char*)(p_sig + trunk_idx));
 			});
 
@@ -444,7 +441,7 @@ namespace Storage
 			if (success)
 			{
 				PMD5_SIGNATURE p_sig = g_ImageSignature->trunk_signatures;
-				Parallel::For(0, trunk_count, [&](int32_t trunk_idx){
+				Parallel::For(0, trunk_count, [&](int32_t trunk_idx) {
 					memory_trunks[trunk_idx].hashtable->GetMD5Hash((char*)(p_sig + trunk_idx));
 				});
 
