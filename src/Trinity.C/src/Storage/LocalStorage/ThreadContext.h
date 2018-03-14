@@ -173,7 +173,6 @@ namespace Storage
         {
             m_pctx = p_ctx;
             m_pctx->LockingStorage = true;
-            SetCurrentThreadContext(m_pctx);
         }
 
         ~LockingStorageContext()

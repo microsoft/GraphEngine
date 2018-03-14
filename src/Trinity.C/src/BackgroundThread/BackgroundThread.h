@@ -63,7 +63,19 @@ namespace BackgroundThread
             _lock();
             if (_thread == nullptr)
             {
+                _stopped.store(false);
                 _thread = new std::thread(BackgroundExecutionLoop);
+            }
+            _unlock();
+        }
+        static void Stop()
+        {
+            _lock();
+            if (_thread != nullptr) 
+            {
+                _stopped.store(true);
+                if(_thread->joinable()) _thread->join();
+                _thread = nullptr;
             }
             _unlock();
         }
@@ -85,7 +97,7 @@ namespace BackgroundThread
             // Give the background thread a thread context.
             Storage::PTHREAD_CONTEXT pctx = Storage::AllocateThreadContext();
 
-            while (true)
+            while (!_stopped.load())
             {
                 //TODO in the future we might want to
                 //make GetTasks() to take the tasks out
@@ -143,6 +155,7 @@ namespace BackgroundThread
         static std::thread* _thread;
         static std::vector<ReferencePointer<BackgroundTask>> _taskList;
         static uint64_t _current_time;
+        static std::atomic<bool> _stopped;
         static struct _TaskSchedulerConfig
         {
         public:
