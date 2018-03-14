@@ -15,7 +15,7 @@ namespace Trinity.Storage
     /// <summary>
     /// Provides methods for interacting with the distributed memory store.
     /// </summary>
-    public unsafe abstract partial class MemoryCloud : IKeyValueStore, IEnumerable<IMessagePassingEndpoint>, ICommunicationModuleRegistry
+    public unsafe abstract partial class MemoryCloud : IKeyValueStore, IEnumerable<IMessagePassingEndpoint>, ICommunicationModuleRegistry, IDisposable
     {
         #region Abstract interfaces
         public abstract bool Open(ClusterConfig config, bool nonblocking);
