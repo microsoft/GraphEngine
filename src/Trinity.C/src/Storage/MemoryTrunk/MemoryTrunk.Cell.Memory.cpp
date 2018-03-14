@@ -9,7 +9,7 @@ namespace Storage
 {
     using namespace Trinity::Diagnostics;
 
-    TrinityErrorCode MemoryTrunk::AddMemoryCell(int32_t cell_length, int32_t cellEntryIndex, OUT int32_t& cell_offset)
+    TrinityErrorCode MemoryTrunk::AddMemoryCell(cellid_t cellid, int32_t cell_length, int32_t cellEntryIndex, OUT int32_t& cell_offset)
     {
         cell_offset = 0;
 

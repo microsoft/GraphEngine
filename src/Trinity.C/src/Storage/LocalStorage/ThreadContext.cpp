@@ -82,7 +82,7 @@ namespace Storage
         pctx->SameChecksumTimes    = 0;
 
         WriteLine(LogLevel::Verbose, "Allocated thread context {0}.", pctx);
-        t_thread_ctx = pctx;
+        SetCurrentThreadContext(pctx);
         return pctx;
     }
 
@@ -90,8 +90,9 @@ namespace Storage
     {
         if (pctx->LockedCells.size() != 0)
         {
-            WriteLine(LogLevel::Warning, "Thread context {0} still holds {1} cell locks.", pctx, pctx->LockedCells.size());
+            WriteLine(LogLevel::Error, "Thread context {0} still holds {1} cell locks.", pctx, pctx->LockedCells.size());
             //TODO release cell locks.
+            //TODO return error code
         }
         delete pctx;
         WriteLine(LogLevel::Verbose, "Deallocated thread context {0}.", pctx);
@@ -99,6 +100,8 @@ namespace Storage
 
     void SetCurrentThreadContext(PTHREAD_CONTEXT ctx)
     {
+        // TODO free t_thread_ctx if it exists
+        // TODO error if t_thread_ctx has content
         WriteLine(LogLevel::Debug, "Thread {0}: Set ThreadContext {1}.", std::this_thread::get_id(), t_thread_ctx);
         t_thread_ctx = ctx;
     }

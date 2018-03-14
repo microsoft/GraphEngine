@@ -60,19 +60,21 @@ namespace Storage
             return trunk_id_mask & cellId;
         }
 
-        // Inter-operative cell interfaces
+        // Non-TX
+
+        // === Interop cell interfaces
         CELL_ACQUIRE_LOCK   TrinityErrorCode CGetLockedCellInfo4CellAccessor(IN cellid_t cellId, OUT int32_t &size, OUT uint16_t &type, OUT char* &cellPtr, OUT int32_t &entryIndex);
         CELL_ACQUIRE_LOCK   TrinityErrorCode CGetLockedCellInfo4LoadCell(IN cellid_t cellId, OUT int32_t &size, OUT char* &cellPtr, OUT int32_t &entryIndex);
         CELL_ACQUIRE_LOCK   TrinityErrorCode CGetLockedCellInfo4AddOrUseCell(IN cellid_t cellId, IN OUT int32_t &size, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex);
         CELL_LOCK_PROTECTED void             ReleaseCellLock(IN cellid_t cellId, IN int32_t entryIndex);
         CELL_LOCK_PROTECTED TrinityErrorCode CLockedGetCellSize(IN cellid_t cellId, IN int32_t entryIndex, OUT int32_t &size);
 
-        ///////////////////////////////////
+        // === /////////////////////////////////
 
-        // cell manipulation interfaces
-        TrinityErrorCode ResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, OUT char*& cell_ptr);
+        // === cell manipulation interfaces
+        TrinityErrorCode    ResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, OUT char*& cell_ptr);
 
-        //   non-logging interfaces
+        // === non-logging interfaces
         CELL_ATOMIC         TrinityErrorCode LoadCell(cellid_t cellId, Array<char>& cellBuff);
         CELL_ATOMIC         TrinityErrorCode SaveCell(cellid_t cellId, char* buff, int32_t size, uint16_t cellType);
         CELL_ATOMIC         TrinityErrorCode AddCell(cellid_t cellId, char* buff, int32_t size, uint16_t cellType);
@@ -81,11 +83,40 @@ namespace Storage
         CELL_ATOMIC         TrinityErrorCode GetCellType(cellid_t cellId, uint16_t& cellType);
                             TrinityErrorCode Contains(cellid_t cellId);
 
-        //   logging interfaces
+        // === logging interfaces
         CELL_ATOMIC         TrinityErrorCode SaveCell(cellid_t cellId, char* buff, int32_t size, uint16_t cellType, CellAccessOptions options);
         CELL_ATOMIC         TrinityErrorCode AddCell(cellid_t cellId, char* buff, int32_t size, uint16_t cellType, CellAccessOptions options);
         CELL_ATOMIC         TrinityErrorCode UpdateCell(cellid_t cellId, char* buff, int32_t size, CellAccessOptions options);
         CELL_ATOMIC         TrinityErrorCode RemoveCell(cellid_t cellId, CellAccessOptions options);
+
+        /////////////////////////////////////
+
+        // TX
+
+        // === Interop cell interfaces
+        CELL_ACQUIRE_LOCK   TrinityErrorCode TxCGetLockedCellInfo4CellAccessor(PTHREAD_CONTEXT ctx, IN cellid_t cellId, OUT int32_t &size, OUT uint16_t &type, OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_ACQUIRE_LOCK   TrinityErrorCode TxCGetLockedCellInfo4LoadCell(PTHREAD_CONTEXT ctx, IN cellid_t cellId, OUT int32_t &size, OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_ACQUIRE_LOCK   TrinityErrorCode TxCGetLockedCellInfo4AddOrUseCell(PTHREAD_CONTEXT ctx, IN cellid_t cellId, IN OUT int32_t &size, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_LOCK_PROTECTED void             TxReleaseCellLock(PTHREAD_CONTEXT ctx, IN cellid_t cellId, IN int32_t entryIndex);
+
+        // === /////////////////////////////////
+
+        // === cell manipulation interfaces
+        TrinityErrorCode    TxResizeCell(PTHREAD_CONTEXT ctx, cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, OUT char*& cell_ptr);
+
+        // === non-logging interfaces
+        CELL_ATOMIC         TrinityErrorCode TxLoadCell(PTHREAD_CONTEXT ctx, cellid_t cellId, Array<char>& cellBuff);
+        CELL_ATOMIC         TrinityErrorCode TxSaveCell(PTHREAD_CONTEXT ctx, cellid_t cellId, char* buff, int32_t size, uint16_t cellType);
+        CELL_ATOMIC         TrinityErrorCode TxAddCell(PTHREAD_CONTEXT ctx, cellid_t cellId, char* buff, int32_t size, uint16_t cellType);
+        CELL_ATOMIC         TrinityErrorCode TxUpdateCell(PTHREAD_CONTEXT ctx, cellid_t cellId, char* buff, int32_t size);
+        CELL_ATOMIC         TrinityErrorCode TxRemoveCell(PTHREAD_CONTEXT ctx, cellid_t cellId);
+        CELL_ATOMIC         TrinityErrorCode TxGetCellType(PTHREAD_CONTEXT ctx, cellid_t cellId, uint16_t& cellType);
+
+        // === logging interfaces
+        CELL_ATOMIC         TrinityErrorCode TxSaveCell(PTHREAD_CONTEXT ctx, cellid_t cellId, char* buff, int32_t size, uint16_t cellType, CellAccessOptions options);
+        CELL_ATOMIC         TrinityErrorCode TxAddCell(PTHREAD_CONTEXT ctx, cellid_t cellId, char* buff, int32_t size, uint16_t cellType, CellAccessOptions options);
+        CELL_ATOMIC         TrinityErrorCode TxUpdateCell(PTHREAD_CONTEXT ctx, cellid_t cellId, char* buff, int32_t size, CellAccessOptions options);
+        CELL_ATOMIC         TrinityErrorCode TxRemoveCell(PTHREAD_CONTEXT ctx, cellid_t cellId, CellAccessOptions options);
 
         /////////////////////////////////////
 
@@ -101,9 +132,9 @@ namespace Storage
         String GetPrimaryStorageSlot();
         String GetSecondaryStorageSlot();
 
-        TrinityErrorCode LoadStorage();
-        TrinityErrorCode SaveStorage();
-        TrinityErrorCode ResetStorage();
+        ALLOC_THREAD_CTX TrinityErrorCode LoadStorage();
+        ALLOC_THREAD_CTX TrinityErrorCode SaveStorage();
+        ALLOC_THREAD_CTX TrinityErrorCode ResetStorage();
 
         // Write-ahead logging
 

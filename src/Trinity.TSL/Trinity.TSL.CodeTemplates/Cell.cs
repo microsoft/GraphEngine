@@ -628,7 +628,7 @@ namespace t_Namespace
             this.CellEntryIndex = -1;
         }
 
-        internal static unsafe byte[] construct(long CellID /*FOREACH*/, t_field_type t_field_name = default(t_field_type) /*END*/)
+        private static unsafe byte[] construct(long CellID /*FOREACH*/, t_field_type t_field_name = default(t_field_type) /*END*/)
         {
             MUTE();
             byte[] tmpcell = null;
@@ -824,9 +824,14 @@ namespace t_Namespace
             };
         }
 
+        // TODO as we introduce multi-cell-lock, this mechansim may need some improvement
         [ThreadStatic]
         internal static t_cell_name_Accessor s_accessor = null;
 
+        /// <summary>
+        /// Locks a cell and initialize a cell accessor.
+        /// For internal use only.
+        /// </summary>
         internal static t_cell_name_Accessor New(long CellID, CellAccessOptions options)
         {
             t_cell_name_Accessor ret = null;
@@ -854,6 +859,9 @@ namespace t_Namespace
         // Does not call initialize. Caller guarantees that entry lock is obtained.
         // Does not handle CellAccessOptions. Only copy to the accessor.
         // This method is currently only used by GenericCell.cs
+        /// <summary>
+        /// For internal use only.
+        /// </summary>
         internal static t_cell_name_Accessor New(long CellId, byte* cellPtr, int entryIndex, CellAccessOptions options)
         {
             t_cell_name_Accessor ret = null;
@@ -876,6 +884,9 @@ namespace t_Namespace
             return ret;
         }
 
+        /// <summary>
+        /// For internal use only.
+        /// </summary>
         internal static t_cell_name_Accessor AllocIterativeAccessor(CellInfo info)
         {
 
@@ -1428,13 +1439,6 @@ namespace t_Namespace
         /// <returns>A <see cref="t_Namespace.t_cell_name"/> instance.</returns>
         public unsafe static t_cell_name_Accessor Uset_cell_name(this Trinity.Storage.LocalMemoryStorage storage, long CellID, CellAccessOptions options)
         {
-            //TODO
-            //if (TSLCompiler.CompileWithDebugFeatures)
-            //{
-            //    cw += @"
-            //if (storage.GetCellType(CellID) != (ushort)CellType.t_cell_name)
-            //    throw new CellTypeNotMatchException(" + "\"Cell Type doesn't match, cell id is \" + " + @"CellID);";
-            //}
             return t_cell_name_Accessor.New(CellID, options);
         }
 
@@ -1451,12 +1455,6 @@ namespace t_Namespace
         /// <returns>A <see cref="" + script.RootNamespace + ".t_cell_name"/> instance.</returns>
         public unsafe static t_cell_name_Accessor Uset_cell_name(this Trinity.Storage.LocalMemoryStorage storage, long CellID)
         {
-            //if (TSLCompiler.CompileWithDebugFeatures)
-            //{
-            //    cw += @"
-            //if (storage.GetCellType(CellID) != (ushort)CellType.t_cell_name)
-            //    throw new CellTypeNotMatchException(" + "\"Cell Type doesn't match, cell id is \" + " + @"CellID);";
-            //}
             return t_cell_name_Accessor.New(CellID, CellAccessOptions.ThrowExceptionOnCellNotFound);
         }
 
