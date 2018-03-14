@@ -10,19 +10,19 @@ namespace FanoutSearch.UnitTest
 {
     class ExpressionSerializer : IExpressionSerializer
     {
-        private static XmlSerializer m_serializer = null;
+        private static JsonSerializer m_serializer = null;
         private static NodeFactory m_factory = null;
 
         public ExpressionSerializer()
         {
-            m_serializer = new XmlSerializer();
+            m_serializer = new JsonSerializer();
             m_serializer.AddKnownType(typeof(FanoutSearch.Action));
             m_factory = new NodeFactory();
         }
 
         public string Serialize(System.Linq.Expressions.Expression pred)
         {
-            return pred.ToXml(m_factory, m_serializer);
+            return pred.ToJson(m_factory, m_serializer);
         }
 
         public Func<ICellAccessor, FanoutSearch.Action> DeserializeTraverseAction(string pred)

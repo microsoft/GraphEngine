@@ -1,9 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0;net46</TargetFrameworks>
+    <!--<TargetFrameworks>netcoreapp2.0;net46</TargetFrameworks>-->
+    <TargetFrameworks>net46</TargetFrameworks>
     <IsPackable>false</IsPackable>
-  </PropertyGroup>
+    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
+   </PropertyGroup>
 
   <ItemGroup>
     <TslCodeGen Include="MyTSL.tsl" />
@@ -11,9 +13,11 @@
 
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
+    <PackageReference Include="Serialize.Linq" Version="1.6.0" />
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.console" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>

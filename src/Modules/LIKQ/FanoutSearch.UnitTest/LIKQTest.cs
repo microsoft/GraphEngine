@@ -32,23 +32,12 @@ namespace FanoutSearch.UnitTest
     {
         public LIKQTest()
         {
-           TrinityServer server = new TrinityServer();
-            TrinityConfig.HttpPort = 8080;
-            TrinityConfig.ServerPort = 7304;
-            TrinityConfig.LoggingLevel = Trinity.Diagnostics.LogLevel.Debug;
-            server.RegisterCommunicationModule<FanoutSearchModule>();
-            server.Start();
-            
-
-            Console.WriteLine("Local Server started");
-            BSP.BarrierSync((FixedMemoryCloud)Global.CloudStorage);
-            Console.WriteLine("All Server started");
-
+            Initializer.Initialize();
         }
 
         public void Dispose()
         {
-            Global.Uninitialize();
+            Initializer.Uninitialize();
         }
 
         IEnumerable<PathDescriptor> DoQuery(long origin, string property, int property_count_lowerbound)
