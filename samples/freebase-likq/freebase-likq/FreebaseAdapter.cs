@@ -624,6 +624,11 @@ namespace freebase_likq
             throw new NotImplementedException();
         }
 
+        public ICell Deserialize()
+        {
+            throw new NotImplementedException();
+        }
+
         public ResizeFunctionDelegate ResizeFunction
         {
             get
