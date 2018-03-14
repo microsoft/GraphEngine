@@ -22,7 +22,7 @@ namespace Storage
         committed_tail = 0;
     }
 
-    char* MemoryTrunk::CellAlloc(uint32_t cellSize, int32_t entryIndex)
+    ALLOC_THREAD_CTX char* MemoryTrunk::CellAlloc(cellid_t cellId, uint32_t cellSize, int32_t entryIndex)
     {
         //  !CellAlloc is the only path towards GetAllEntryLocksExceptArena --> ReadMemoryAllocationArena 
         char* cell_p         = nullptr;
@@ -30,7 +30,10 @@ namespace Storage
 
         if (!alloc_lock.trylock(100000))
         {
+            //  !Note, we should setup the Tx so that the arena
+            //  is aware that we are locking current cell.
 			pctx = GetCurrentThreadContext();
+            pctx->SetLockingCell(cellId);
             EnterMemoryAllocationArena(pctx);
             alloc_lock.lock();
         }
@@ -56,6 +59,10 @@ namespace Storage
                 {
                     ExitMemoryAllocationArena(pctx);
                 }
+                //  !If it happens that pctx == nullptr, it means that
+                //  we have not alerted the arena, and the memory trunk
+                //  has sufficient space. A fast path without touching
+                //  the thread context is thus achieved.
                 alloc_lock.unlock();
                 return cell_p;
             }
@@ -65,6 +72,7 @@ namespace Storage
             if (pctx == nullptr)
             {
 				pctx = GetCurrentThreadContext();
+                pctx->SetLockingCell(cellId);
                 EnterMemoryAllocationArena(pctx);
             }
 

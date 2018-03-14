@@ -56,7 +56,7 @@ namespace Storage
     {
         return _Lookup_LockEntry_Or_NotFound(
             cellId,
-            [this, type, size, /* OUT */ &cellPtr, &entryIndex](const int32_t entry_index, const uint32_t bucket_index, const int32_t _)
+            [this, type, size, cellId, /* OUT */ &cellPtr, &entryIndex](const int32_t entry_index, const uint32_t bucket_index, const int32_t _)
         {
             TrinityErrorCode eResult = TrinityErrorCode::E_SUCCESS;
             ReleaseBucketLock(bucket_index);
@@ -72,7 +72,7 @@ namespace Storage
                     eResult = memory_trunk->ExpandLargeObject(-updated_cell_offset, CellSize(entry_index), size);
                 else
                 {
-                    eResult = memory_trunk->AddMemoryCell(size, entry_index, OUT updated_cell_offset);
+                    eResult = memory_trunk->AddMemoryCell(cellId, size, entry_index, OUT updated_cell_offset);
                     if (eResult == TrinityErrorCode::E_SUCCESS) { MarkTrunkDirty(); }
                 }
             }
@@ -118,7 +118,7 @@ namespace Storage
             /// add_memory_entry_flag prologue
 
             int32_t cell_offset;
-            eResult = memory_trunk->AddMemoryCell(size, free_entry, OUT cell_offset);
+            eResult = memory_trunk->AddMemoryCell(cellId, size, free_entry, OUT cell_offset);
 
             if (eResult == TrinityErrorCode::E_SUCCESS)
             {
@@ -169,11 +169,14 @@ namespace Storage
             Buckets[bucket_index] = free_entry;
             ReleaseBucketLock(bucket_index);
 
+            PTHREAD_CONTEXT pctx = GetCurrentThreadContext();
+            pctx->SetLockingCell(cellId);
+
             /// add_memory_entry_flag prologue
             ENTER_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
             /// add_memory_entry_flag prologue
             int32_t cell_offset;
-            eResult = memory_trunk->AddMemoryCell(size, free_entry, OUT cell_offset);
+            eResult = memory_trunk->AddMemoryCell(cellId, size, free_entry, OUT cell_offset);
 
 
             if (eResult == TrinityErrorCode::E_SUCCESS)
@@ -207,7 +210,7 @@ namespace Storage
     {
         return _Lookup_LockEntry_Or_NotFound(
             cellId,
-            [this, size, /* OUT params */ &cellPtr, &entryIndex](const int32_t entry_index, const uint32_t bucket_index, const int32_t _) 
+            [this, cellId, size, /* OUT params */ &cellPtr, &entryIndex](const int32_t entry_index, const uint32_t bucket_index, const int32_t _) 
         {
             ReleaseBucketLock(bucket_index);
             int32_t updated_cell_offset = CellEntries[entry_index].offset;
@@ -222,7 +225,7 @@ namespace Storage
                     eResult = memory_trunk->ExpandLargeObject(-updated_cell_offset, CellSize(entry_index), size);
                 else
                 {
-                    eResult = memory_trunk->AddMemoryCell(size, entry_index, OUT updated_cell_offset);
+                    eResult = memory_trunk->AddMemoryCell(cellId, size, entry_index, OUT updated_cell_offset);
                     if (eResult == TrinityErrorCode::E_SUCCESS) { MarkTrunkDirty(); }
                 }
             }
@@ -321,7 +324,7 @@ namespace Storage
             ENTER_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
             /// add_memory_entry_flag prologue
             int32_t cell_offset;
-            eResult = memory_trunk->AddMemoryCell(size, free_entry, OUT cell_offset);
+            eResult = memory_trunk->AddMemoryCell(cellId, size, free_entry, OUT cell_offset);
 
             if (eResult == TrinityErrorCode::E_SUCCESS)
             {

@@ -174,7 +174,7 @@ namespace Storage
      *  It is guaranteed that, when this rountine returns, all bucket
      *  locks are obtained.
      */
-    TrinityErrorCode MTHash::Lock()
+    ALLOC_THREAD_CTX TrinityErrorCode MTHash::Lock()
     {
         if (TrinityConfig::ReadOnly())
             return TrinityErrorCode::E_SUCCESS;

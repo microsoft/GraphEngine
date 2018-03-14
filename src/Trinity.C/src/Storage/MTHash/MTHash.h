@@ -153,13 +153,13 @@ namespace Storage
         //  this bucket lock can get a chance to proceed. Thus, MTHash::Lock
         //  has the higher priority in taking all bucket locks (it will always 
         //  succeed, because others fail, and provide a time window for it).
-        void             GetAllEntryLocksExceptArena();
-        void             ReleaseAllEntryLocksExceptArena();
-        TrinityErrorCode Lock();                                      // E_SUCCESS or E_DEADLOCK.
+        ALLOC_THREAD_CTX void GetAllEntryLocksExceptArena();
+        ALLOC_THREAD_CTX void ReleaseAllEntryLocksExceptArena();
+        ALLOC_THREAD_CTX TrinityErrorCode Lock();                     // E_SUCCESS or E_DEADLOCK.
         TrinityErrorCode TryGetBucketLock(uint32_t index);            // E_SUCCESS or E_TIMEOUT.
         TrinityErrorCode TryGetEntryLock(int32_t index);              // E_SUCCESS or E_TIMEOUT.
         bool             TryGetEntryLockForDefragment(int32_t index);
-        void             Unlock();
+        ALLOC_THREAD_CTX void Unlock();
         void             ReleaseBucketLock(uint32_t index);
         uint8_t          ReleaseEntryLock(int32_t index);
 
@@ -198,12 +198,18 @@ namespace Storage
 
 
         void _GetBucketLock(uint32_t index);              // High priority. Guarantees success.
-        template<typename TLockAction, typename TLookupFound, typename TLookupNotFound>
+
+        ALLOC_THREAD_CTX template<typename TLockAction, typename TLookupFound, typename TLookupNotFound, typename TSetupTx>
         inline TrinityErrorCode _Lookup_impl
-        (const cellid_t cellId, const TLockAction& entry_lock_action, const TLookupFound& found_action, const TLookupNotFound& not_found_action)
+		(const cellid_t cellId, 
+		 const TLockAction& entry_lock_action, 
+	     const TLookupFound& found_action, 
+         const TLookupNotFound& not_found_action,
+         const TSetupTx& setup_tx)
         {
-            int32_t          backoff_attempts     = 0;
-            uint32_t         bucket_index         = GetBucketIndex(cellId);
+            int32_t          backoff_attempts = 0;
+            uint32_t         bucket_index     = GetBucketIndex(cellId);
+            bool             tx_setup         = false;
 
         start:
 
@@ -216,6 +222,12 @@ namespace Storage
 
             if (backoff_attempts > MTHASH_LOOKUP_MAX_RETRY)
             {
+                if (!tx_setup) 
+                {
+                    setup_tx();
+                    tx_setup = true;
+                }
+
                 if (TrinityErrorCode::E_DEADLOCK == Arbitrate())
                 {
                     return TrinityErrorCode::E_DEADLOCK;
@@ -264,6 +276,7 @@ namespace Storage
             }
             else
             {
+				//  !slow path = fast path + collect free entries in bucket chain
                 for (int32_t entry_index = Buckets[bucket_index]; entry_index >= 0; entry_index = MTEntries[entry_index].NextEntry)
                 {
                     if (CellEntries[entry_index].location == -1)
@@ -305,15 +318,33 @@ namespace Storage
             return not_found_action(bucket_index);
 
         }
+
         template<typename TLookupFound, typename TLookupNotFound>
-        inline TrinityErrorCode _Lookup_LockEntry_Or_NotFound(const cellid_t cellId, const TLookupFound& found_action, const TLookupNotFound& not_found_action)
+        inline TrinityErrorCode _Lookup_LockEntry_Or_NotFound
+        (const cellid_t cellId, 
+         const TLookupFound& found_action, 
+         const TLookupNotFound& not_found_action)
         {
-            return _Lookup_impl(cellId, [this](int32_t entry_idx) {return TryGetEntryLock(entry_idx); }, found_action, not_found_action);
+            return _Lookup_impl(
+                cellId, 
+                [this](int32_t entry_idx) {return TryGetEntryLock(entry_idx); }, 
+                found_action, 
+                not_found_action,
+                [=cellId] { PTHREAD_CONTEXT pctx = GetCurrentThreadContext(); pctx->SetLockingCell(cellId); });
         }
+
         template<typename TLookupFound, typename TLookupNotFound>
-        inline TrinityErrorCode _Lookup_NoLockEntry_Or_NotFound(const cellid_t cellId, const TLookupFound& found_action, const TLookupNotFound& not_found_action)
+        inline TrinityErrorCode _Lookup_NoLockEntry_Or_NotFound
+        (const cellid_t cellId, 
+         const TLookupFound& found_action, 
+         const TLookupNotFound& not_found_action)
         {
-            return _Lookup_impl(cellId, [](int32_t _) {return TrinityErrorCode::E_SUCCESS; }, found_action, not_found_action);
+            return _Lookup_impl(
+                cellId, 
+                [](int32_t _) {return TrinityErrorCode::E_SUCCESS; }, 
+                found_action, 
+                not_found_action, 
+                [] {});
         }
     };
 

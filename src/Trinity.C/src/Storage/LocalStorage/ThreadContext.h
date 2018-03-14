@@ -5,7 +5,8 @@
 
 //method annotation helpers
 
-#define REQUIRE_THREAD_CTX
+// !Annotated methods may allocate a transaction context
+#define ALLOC_THREAD_CTX
 
 namespace Storage
 {

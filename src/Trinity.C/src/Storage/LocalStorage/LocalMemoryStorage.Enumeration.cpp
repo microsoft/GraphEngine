@@ -99,14 +99,13 @@ namespace Storage
                 return TrinityErrorCode::E_SUCCESS;
             }
 
-            REQUIRE_THREAD_CTX TrinityErrorCode MoveNext(IN PLOCAL_MEMORY_STORAGE_ENUMERATOR p_enum)
+            ALLOC_THREAD_CTX TrinityErrorCode MoveNext(IN PLOCAL_MEMORY_STORAGE_ENUMERATOR p_enum)
             {
                 if (!_range_check(p_enum))
                 {
                     return TrinityErrorCode::E_INVALID_ARGUMENTS;
                 }
 
-                PTHREAD_CONTEXT p_ctx = GetCurrentThreadContext();
                 while (true)
                 {
                     TrinityErrorCode ec = TrinityErrorCode::E_SUCCESS;

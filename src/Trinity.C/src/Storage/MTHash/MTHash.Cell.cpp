@@ -56,7 +56,8 @@ namespace Storage
 
     CELL_ATOMIC TrinityErrorCode MTHash::RemoveCell(IN cellid_t cellId, IN CellAccessOptions options)
     {
-        return _Lookup_LockEntry_Or_NotFound(cellId,
+        return _Lookup_LockEntry_Or_NotFound(
+            cellId,
             [this, /* OUT params */ &cellId, &options](const int32_t entry_index, const uint32_t bucket_index, const int32_t previous_entry_index)
         {
             int32_t  offset = CellEntries[entry_index].offset;
@@ -99,6 +100,8 @@ namespace Storage
 
     TrinityErrorCode MTHash::ContainsKey(IN cellid_t key)
     {
+		//  !Note, must be _Lookup_NoLockEntry_Or_NotFound, 
+		//   because we do not require THREAD_CTX
         return _Lookup_NoLockEntry_Or_NotFound(
             key,
             [this](const int32_t entry_index, const uint32_t bucket_index, const int32_t _) 
