@@ -51,6 +51,13 @@ namespace BackgroundThread
             _taskList.push_back(refptr);
             _unlock();
         }
+        static void RemoveTask(BackgroundTask* const task)
+        {
+            _lock();
+            auto i = std::find_if(_taskList.begin(), _taskList.end(), [=](decltype(_taskList)::iterator it) { return it->Pointer() == task; });
+            if (i != _taskList.end()) _taskList.erase(i);
+            _unlock();
+        }
         static void ClearAllTasks()
         {
             _lock();
@@ -140,13 +147,16 @@ namespace BackgroundThread
                 std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
                 _current_time += sleep_time;
             }
+
+            Storage::DeallocateThreadContext(pctx);
+
+            Trinity::Diagnostics::WriteLine(LogLevel::Debug, "BackgroundThread stopped.");
         }
 
         static inline bool Overdue(BackgroundTask* task)
         {
             return (task->_lastExecution == -1 || (task->_lastExecution + task->_waitTime) <= _current_time);
         }
-
 
         static inline void _lock() { _mutex.lock(); }
         static inline void _unlock() { _mutex.unlock(); }

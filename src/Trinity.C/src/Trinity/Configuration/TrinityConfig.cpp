@@ -10,7 +10,6 @@
 namespace TrinityConfig
 {
     String storage_root           = "";
-    String log_directory          = "";
     bool read_only                = false;
     bool handshake                = true;
     bool client_disable_sndbuffer = false;
@@ -42,18 +41,6 @@ namespace TrinityConfig
     {
         storage_root = storageRoot;
         Diagnostics::WriteLine(LogLevel::Verbose, "StorageRoot set to {0}", storage_root);
-    }
-
-    String LogDirectory()
-    {
-        if (log_directory.Empty())
-            log_directory = Path::CompletePath(Path::Combine(Path::MyAssemblyPath(), "trinity-log"), true);
-        return log_directory;
-    }
-
-    void SetLogDirectory(String logDir)
-    {
-        log_directory = logDir;
     }
 
     void SetGCDefragInterval(int32_t interval)

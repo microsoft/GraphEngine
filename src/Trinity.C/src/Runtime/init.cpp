@@ -36,8 +36,4 @@ DLL_EXPORT VOID __stdcall __INIT_TRINITY_C__(u16char* pAssemblyPath)
 #endif
 
     Trinity::IO::Path::g_AssemblyPath = Trinity::String::FromWcharArray(pAssemblyPath, -1);
-
-    // TODO start bgthread in Trinity.Global.Initialize
-    // TODO stop bgthread in Trinity.Global.Uninitialize
-    BackgroundThread::TaskScheduler::Start();
 }

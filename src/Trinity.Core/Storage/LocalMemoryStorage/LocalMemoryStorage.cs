@@ -26,25 +26,16 @@ namespace Trinity.Storage
         private object m_lock = new object();
 
 
-        static LocalMemoryStorage()
-        {
-            TrinityC.Init();
-            try
-            {
-                TrinityConfig.LoadTrinityConfig();
-            }
-            catch
-            {
-                Log.WriteLine(LogLevel.Error, "Failure to load config file, falling back to default LocalMemoryStorage behavior");
-            }
-            CSynchronizeStorageRoot();
-        }
+        static LocalMemoryStorage() { TrinityC.Init(); }
 
         /// <summary>
         /// Initializes the LocalStorage instance.
         /// </summary>
         public LocalMemoryStorage()
         {
+            TrinityConfig.EnsureConfig();
+            CSynchronizeStorageRoot();
+
             if (TrinityErrorCode.E_SUCCESS != CLocalMemoryStorage.CInitialize())
             {
                 //TODO more specific exception type

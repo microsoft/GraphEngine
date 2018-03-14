@@ -144,7 +144,6 @@ namespace Trinity.Storage
         /// Gets the message passing endpoint bound to a partition.
         /// </summary>
         /// <param name="partitionId">The id of the target partition.</param>
-        /// <returns></returns>
         public IMessagePassingEndpoint this[int partitionId] => StorageTable[partitionId];
         /// <inheritdoc/>
         public IEnumerator<IMessagePassingEndpoint> GetEnumerator()

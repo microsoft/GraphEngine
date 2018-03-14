@@ -15,3 +15,6 @@ namespace BackgroundThread
 
     TaskScheduler::_TaskSchedulerConfig TaskScheduler::_config;
 }
+
+DLL_EXPORT void CStartBackgroundThread() { BackgroundThread::TaskScheduler::Start(); }
+DLL_EXPORT void CStopBackgroundThread() { BackgroundThread::TaskScheduler::Stop(); }

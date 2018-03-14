@@ -75,25 +75,6 @@ namespace Trinity.Configuration
                 if (m_LogDir == null || m_LogDir.Length == 0)
                     m_LogDir = DefaultLogDirectory;
 
-
-                if (!Directory.Exists(m_LogDir))
-                {
-                    try
-                    {
-                        Directory.CreateDirectory(m_LogDir);
-                    }
-                    catch
-                    {
-                        ThrowCreatingLogDirectoryException(m_LogDir);
-                    }
-                }
-
-                try
-                {
-                    CTrinityConfig.CLogInitializeLogger(m_LogDir);
-                }
-                catch { }
-
                 return m_LogDir;
             }
             set
@@ -105,28 +86,7 @@ namespace Trinity.Configuration
                     m_LogDir = DefaultLogDirectory;
                 }
 
-                if (m_LogDir[m_LogDir.Length - 1] != Path.DirectorySeparatorChar)
-                {
-                    m_LogDir += Path.DirectorySeparatorChar;
-                }
-
-                if (!Directory.Exists(m_LogDir))
-                {
-                    try
-                    {
-                        Directory.CreateDirectory(m_LogDir);
-                    }
-                    catch (Exception)
-                    {
-                        ThrowCreatingLogDirectoryException(m_LogDir);
-                    }
-                }
-
-                try
-                {
-                    CTrinityConfig.CLogInitializeLogger(m_LogDir);
-                }
-                catch (Exception) { }
+                Log.SetLogDirectory(m_LogDir);
             }
         }
 
