@@ -1,217 +1,277 @@
 {
-    "test_new.py": [
+    "test_load.py": [
+        {
+            "backend": "co",
+            "cell_type": "C1",
+            "time_per_10000": 0.010132378158295716,
+            "data_size": 33
+        },
+        {
+            "backend": "co",
+            "cell_type": "C1",
+            "time_per_10000": 0.048029793656102354,
+            "data_size": 2414
+        },
         {
             "backend": "swig",
             "cell_type": "C1",
-            "time_per_10000": 0.05776290223185262,
+            "time_per_10000": 0.009623064583763817,
             "data_size": 33
         },
         {
             "backend": "swig",
             "cell_type": "C1",
-            "time_per_10000": 1.7899041604545625,
+            "time_per_10000": 0.033120894598031816,
             "data_size": 2414
         },
         {
             "backend": "pynet",
             "cell_type": "C1",
-            "time_per_10000": 0.09408815575561011,
+            "time_per_10000": 0.030688583506290622,
             "data_size": 33
         },
         {
             "backend": "pynet",
             "cell_type": "C1",
-            "time_per_10000": 1.851176063979734,
+            "time_per_10000": 0.05212281387354461,
             "data_size": 2414
+        },
+        {
+            "backend": "co",
+            "cell_type": "C2",
+            "time_per_10000": 0.009218715164212707,
+            "data_size": 11
         },
         {
             "backend": "swig",
             "cell_type": "C2",
-            "time_per_10000": 0.032005945523306815,
+            "time_per_10000": 0.00941199620125526,
             "data_size": 11
         },
         {
             "backend": "pynet",
             "cell_type": "C2",
-            "time_per_10000": 0.05895046188845213,
+            "time_per_10000": 0.02188746695423811,
             "data_size": 11
+        },
+        {
+            "backend": "co",
+            "cell_type": "C3",
+            "time_per_10000": 0.01721344262404679,
+            "data_size": 442
+        },
+        {
+            "backend": "co",
+            "cell_type": "C3",
+            "time_per_10000": 0.3190230199712845,
+            "data_size": 26402
         },
         {
             "backend": "swig",
             "cell_type": "C3",
-            "time_per_10000": 0.4933105780386408,
+            "time_per_10000": 0.017485203391037114,
             "data_size": 442
         },
         {
             "backend": "swig",
             "cell_type": "C3",
-            "time_per_10000": 18.79392423016564,
+            "time_per_10000": 0.32698390256644805,
             "data_size": 26402
         },
         {
             "backend": "pynet",
             "cell_type": "C3",
-            "time_per_10000": 0.48039205251097367,
+            "time_per_10000": 0.033084093504159376,
             "data_size": 442
         },
         {
             "backend": "pynet",
             "cell_type": "C3",
-            "time_per_10000": 19.99308117616752,
+            "time_per_10000": 0.519754804602354,
             "data_size": 26402
         }
     ],
-    "test_load.py": [
+    "test_new.py": [
         {
-            "backend": "redis",
+            "backend": "co",
             "cell_type": "C1",
-            "time_per_10000": 0.33215448839154255,
+            "time_per_10000": 0.07551063530883965,
             "data_size": 33
         },
         {
-            "backend": "redis",
+            "backend": "co",
             "cell_type": "C1",
-            "time_per_10000": 0.39432410252669314,
+            "time_per_10000": 1.9689371673553981,
+            "data_size": 2414
+        },
+        {
+            "backend": "swig",
+            "cell_type": "C1",
+            "time_per_10000": 0.06009259303743672,
+            "data_size": 33
+        },
+        {
+            "backend": "swig",
+            "cell_type": "C1",
+            "time_per_10000": 1.888649318873943,
             "data_size": 2414
         },
         {
             "backend": "pynet",
             "cell_type": "C1",
-            "time_per_10000": 0.02296266015217861,
+            "time_per_10000": 0.09037563170830172,
             "data_size": 33
         },
         {
             "backend": "pynet",
             "cell_type": "C1",
-            "time_per_10000": 0.04340533591204778,
+            "time_per_10000": 2.0860062954987018,
             "data_size": 2414
         },
         {
-            "backend": "redis",
+            "backend": "co",
             "cell_type": "C2",
-            "time_per_10000": 0.31721827885869885,
+            "time_per_10000": 0.03453384897127858,
+            "data_size": 11
+        },
+        {
+            "backend": "swig",
+            "cell_type": "C2",
+            "time_per_10000": 0.033225953317915724,
             "data_size": 11
         },
         {
             "backend": "pynet",
             "cell_type": "C2",
-            "time_per_10000": 0.020298265886709976,
+            "time_per_10000": 0.06564362840601841,
             "data_size": 11
         },
         {
-            "backend": "redis",
+            "backend": "co",
             "cell_type": "C3",
-            "time_per_10000": 0.33406072277964266,
+            "time_per_10000": 0.5623046063047124,
             "data_size": 442
         },
         {
-            "backend": "redis",
+            "backend": "co",
             "cell_type": "C3",
-            "time_per_10000": 0.7698446888119631,
+            "time_per_10000": 22.083221175272367,
+            "data_size": 26402
+        },
+        {
+            "backend": "swig",
+            "cell_type": "C3",
+            "time_per_10000": 0.7609199176258725,
+            "data_size": 442
+        },
+        {
+            "backend": "swig",
+            "cell_type": "C3",
+            "time_per_10000": 20.92026445710037,
             "data_size": 26402
         },
         {
             "backend": "pynet",
             "cell_type": "C3",
-            "time_per_10000": 0.031197247813808938,
+            "time_per_10000": 0.5061831168492209,
             "data_size": 442
         },
         {
             "backend": "pynet",
             "cell_type": "C3",
-            "time_per_10000": 0.29383508244112033,
+            "time_per_10000": 21.19373947430402,
             "data_size": 26402
         }
     ],
     "test_save.py": [
         {
+            "backend": "co",
+            "cell_type": "C1",
+            "time_per_10000": 0.015817410791476933,
+            "data_size": 33
+        },
+        {
+            "backend": "co",
+            "cell_type": "C1",
+            "time_per_10000": 0.11395804389251632,
+            "data_size": 2414
+        },
+        {
             "backend": "swig",
             "cell_type": "C1",
-            "time_per_10000": 0.008432791403495132,
+            "time_per_10000": 0.012930149394583696,
             "data_size": 33
         },
         {
             "backend": "swig",
             "cell_type": "C1",
-            "time_per_10000": 0.07109044125701823,
-            "data_size": 2414
-        },
-        {
-            "backend": "redis",
-            "cell_type": "C1",
-            "time_per_10000": 0.46337162046054786,
-            "data_size": 33
-        },
-        {
-            "backend": "redis",
-            "cell_type": "C1",
-            "time_per_10000": 8.52134858282844,
+            "time_per_10000": 0.09225093963956099,
             "data_size": 2414
         },
         {
             "backend": "pynet",
             "cell_type": "C1",
-            "time_per_10000": 0.02693361874629999,
+            "time_per_10000": 0.0394860806047231,
             "data_size": 33
         },
         {
             "backend": "pynet",
             "cell_type": "C1",
-            "time_per_10000": 0.0847671005736873,
+            "time_per_10000": 0.14877545162105568,
             "data_size": 2414
+        },
+        {
+            "backend": "co",
+            "cell_type": "C2",
+            "time_per_10000": 0.012313691137966586,
+            "data_size": 11
         },
         {
             "backend": "swig",
             "cell_type": "C2",
-            "time_per_10000": 0.0082368749478857,
-            "data_size": 11
-        },
-        {
-            "backend": "redis",
-            "cell_type": "C2",
-            "time_per_10000": 0.38736923316850613,
+            "time_per_10000": 0.011069517791914125,
             "data_size": 11
         },
         {
             "backend": "pynet",
             "cell_type": "C2",
-            "time_per_10000": 0.025176641790892972,
+            "time_per_10000": 0.026687604054982956,
             "data_size": 11
         },
         {
-            "backend": "swig",
+            "backend": "co",
             "cell_type": "C3",
-            "time_per_10000": 0.02754515705926277,
+            "time_per_10000": 0.04381575272828798,
             "data_size": 442
         },
         {
-            "backend": "swig",
+            "backend": "co",
             "cell_type": "C3",
-            "time_per_10000": 0.6847438527441726,
+            "time_per_10000": 0.8991790176866074,
             "data_size": 26402
         },
         {
-            "backend": "redis",
+            "backend": "swig",
             "cell_type": "C3",
-            "time_per_10000": 1.8877956391483526,
+            "time_per_10000": 0.03588754377312832,
             "data_size": 442
         },
         {
-            "backend": "redis",
+            "backend": "swig",
             "cell_type": "C3",
-            "time_per_10000": 90.36095198513368,
+            "time_per_10000": 0.7743160470497138,
             "data_size": 26402
         },
         {
             "backend": "pynet",
             "cell_type": "C3",
-            "time_per_10000": 0.04453594914992906,
+            "time_per_10000": 0.05821106733326651,
             "data_size": 442
         },
         {
             "backend": "pynet",
             "cell_type": "C3",
-            "time_per_10000": 0.7252127372451243,
+            "time_per_10000": 0.8871308363093632,
             "data_size": 26402
         }
     ]

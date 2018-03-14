@@ -45,14 +45,11 @@ singles = split_set[False]
 with open('result.json', 'w') as f:
     f.write('{}')
 
-for spec_script in ('test_new.py', 'test_load.py', 'test_save.py', 'test_new_by_id.py'):
+for spec_script in ('test_load.py', 'test_new.py', 'test_save.py', 'test_new_by_id.py'):
 
     for cell_type in ('C1', 'C2', 'C3'):
 
-        for backend in ('swig', 'redis', 'pynet'):
-
-            if (backend, spec_script) == ('swig', 'test_load.py'):
-                continue  # TODO debug on swig mode
+        for backend in ('co', 'swig', 'redis', 'pynet'):
 
             # cmd(['python', spec_script, backend, cell_type])
             if cell_type != 'C2':

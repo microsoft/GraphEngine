@@ -15,25 +15,24 @@ new_cell, new_cell_id, new_cell_content, save_cell, load_cell = ops[backend]
 
 @test_fn
 def test():
-
     if content:
         number = int(3e6 // len(content))
-        cells = [new_cell_content(cell_type, content) for i in range(number)]
+        cells = [new_cell_content(cell_type, content) for _ in range(number)]
 
         for i in range(number):
             save_cell(i, cells[i])
 
     else:
         number = int(3e6)
-        cells = [new_cell(cell_type) for i in range(number)]
+        cells = [new_cell(cell_type) for _ in range(number)]
 
         for i in range(number):
             save_cell(i, cells[i])
 
-    time = timeit.timeit(f"load_cell(i); i+=1;",
+    time = timeit.timeit("load_cell(i); i+=1;",
                          number=number,
                          globals={'load_cell': load_cell},
-                         setup='global i; i=0;')
+                         setup='global i; i=0')
 
     title = file_name
     stats_info = dict(backend=backend,

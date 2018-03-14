@@ -2,6 +2,7 @@ from initialize import *
 import timeit
 from pprint import pprint
 import sys
+import gc
 
 file_name, cell_type = sys.argv[:2]
 
@@ -14,7 +15,7 @@ def test():
     for i in range(number):
         save_cell_swig(i + 1, cells[i])
 
-    time = timeit.timeit(f"load_cell_swig(i); i+=1;",
+    time = timeit.timeit(f"load_cell_swig(i);",
                          number=number,
                          globals={'load_cell_swig': load_cell_swig},
                          setup='global i; i=1;')

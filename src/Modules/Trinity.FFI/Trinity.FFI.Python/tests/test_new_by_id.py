@@ -20,7 +20,7 @@ def test():
 
     number = int(3e6)
 
-    time = timeit.timeit(f"new_cell_id(i); i+=1;",
+    time = timeit.timeit(f"new_cell_id(i, '{cell_type}'); i+=1;",
                          number=number,
                          globals={
                              'new_cell_id': new_cell_id
