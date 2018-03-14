@@ -15,12 +15,12 @@ def test():
     for i in range(number):
         s = save_cell_swig(i + 1, cells[i])
 
-    time = timeit.timeit(f"print(i); load_cell_swig(i); i+=1;",
+    time = timeit.timeit(f"load_cell_swig(i); i+=1;",
                          number=number,
                          globals={'load_cell_swig': load_cell_swig},
                          setup='global i; i=1;')
 
-    title = file_name.replace('+pynet', '').replace('+swig', '')
+    title = file_name.replace('+pynet', '').replace('+swig', '').replace('.py', '')
     backend = 'pynet' if 'pynet' in file_name else 'swig'
 
     stats_info = dict(backend=backend,

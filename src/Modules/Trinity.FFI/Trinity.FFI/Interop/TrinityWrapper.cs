@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using Trinity.Core.Lib;
+using Trinity.Diagnostics;
 using Trinity.Storage;
 using Trinity.TSL.Lib;
 
@@ -43,8 +44,9 @@ namespace Trinity.FFI
                 cell = GCHandle.ToIntPtr(handle);
                 return TrinityErrorCode.E_SUCCESS;
             }
-            catch
+            catch (Exception ex)
             {
+                Log.WriteLine(LogLevel.Error, ex.ToString());
                 cell = IntPtr.Zero;
                 return TrinityErrorCode.E_FAILURE;
             }
