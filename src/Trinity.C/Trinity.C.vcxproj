@@ -438,6 +438,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClCompile Include="src\Storage\LocalStorage\GCTask.cpp" />
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.cpp" />
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.Enumeration.cpp" />
+    <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.Tx.cpp" />
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.WriteAheadLog.cpp" />
     <ClCompile Include="src\Storage\LocalStorage\localstorage_exported_methods.cpp" />
     <ClCompile Include="src\Storage\LocalStorage\ThreadContext.cpp" />

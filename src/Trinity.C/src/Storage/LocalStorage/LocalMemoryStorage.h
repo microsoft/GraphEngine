@@ -72,7 +72,7 @@ namespace Storage
         // === /////////////////////////////////
 
         // === cell manipulation interfaces
-        TrinityErrorCode    ResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, OUT char*& cell_ptr);
+        CELL_LOCK_PROTECTED TrinityErrorCode ResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, OUT char*& cell_ptr);
 
         // === non-logging interfaces
         CELL_ATOMIC         TrinityErrorCode LoadCell(cellid_t cellId, Array<char>& cellBuff);
@@ -94,15 +94,15 @@ namespace Storage
         // TX
 
         // === Interop cell interfaces
-        CELL_ACQUIRE_LOCK   TrinityErrorCode TxCGetLockedCellInfo4CellAccessor(PTHREAD_CONTEXT ctx, IN cellid_t cellId, OUT int32_t &size, OUT uint16_t &type, OUT char* &cellPtr, OUT int32_t &entryIndex);
-        CELL_ACQUIRE_LOCK   TrinityErrorCode TxCGetLockedCellInfo4LoadCell(PTHREAD_CONTEXT ctx, IN cellid_t cellId, OUT int32_t &size, OUT char* &cellPtr, OUT int32_t &entryIndex);
-        CELL_ACQUIRE_LOCK   TrinityErrorCode TxCGetLockedCellInfo4AddOrUseCell(PTHREAD_CONTEXT ctx, IN cellid_t cellId, IN OUT int32_t &size, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex);
-        CELL_LOCK_PROTECTED void             TxReleaseCellLock(PTHREAD_CONTEXT ctx, IN cellid_t cellId, IN int32_t entryIndex);
+        CELL_ACQUIRE_LOCK   TrinityErrorCode TxCGetLockedCellInfo4CellAccessor(IN PTHREAD_CONTEXT ctx, IN cellid_t cellId, OUT int32_t &size, OUT uint16_t &type, OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_ACQUIRE_LOCK   TrinityErrorCode TxCGetLockedCellInfo4LoadCell(IN PTHREAD_CONTEXT ctx, IN cellid_t cellId, OUT int32_t &size, OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_ACQUIRE_LOCK   TrinityErrorCode TxCGetLockedCellInfo4AddOrUseCell(IN PTHREAD_CONTEXT ctx, IN cellid_t cellId, IN OUT int32_t &size, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_LOCK_PROTECTED void             TxReleaseCellLock(IN PTHREAD_CONTEXT ctx, IN cellid_t cellId, IN int32_t entryIndex);
 
         // === /////////////////////////////////
 
         // === cell manipulation interfaces
-        TrinityErrorCode    TxResizeCell(PTHREAD_CONTEXT ctx, cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, OUT char*& cell_ptr);
+        CELL_LOCK_PROTECTED TrinityErrorCode TxResizeCell(IN PTHREAD_CONTEXT ctx, IN cellid_t cellId, IN int32_t cellEntryIndex, IN int32_t offset, IN int32_t delta, OUT char*& cell_ptr);
 
         // === non-logging interfaces
         CELL_ATOMIC         TrinityErrorCode TxLoadCell(PTHREAD_CONTEXT ctx, cellid_t cellId, Array<char>& cellBuff);
@@ -181,10 +181,10 @@ namespace Storage
                 //////////////////////////////////
             }LOCAL_MEMORY_STORAGE_ENUMERATOR, *PLOCAL_MEMORY_STORAGE_ENUMERATOR;
 
-            TrinityErrorCode Allocate(OUT LOCAL_MEMORY_STORAGE_ENUMERATOR* &pp_enum);
-            TrinityErrorCode Deallocate(IN  LOCAL_MEMORY_STORAGE_ENUMERATOR* p_enum);
-            TrinityErrorCode Reset(IN  LOCAL_MEMORY_STORAGE_ENUMERATOR* p_enum);
-            TrinityErrorCode MoveNext(IN  LOCAL_MEMORY_STORAGE_ENUMERATOR* p_enum);
+            TrinityErrorCode Allocate(OUT PLOCAL_MEMORY_STORAGE_ENUMERATOR &pp_enum);
+            TrinityErrorCode Deallocate(IN  PLOCAL_MEMORY_STORAGE_ENUMERATOR p_enum);
+            TrinityErrorCode Reset(IN  PLOCAL_MEMORY_STORAGE_ENUMERATOR p_enum);
+            ALLOC_THREAD_CTX TrinityErrorCode MoveNext(IN  PLOCAL_MEMORY_STORAGE_ENUMERATOR p_enum);
         }
 
         void DebugDump();

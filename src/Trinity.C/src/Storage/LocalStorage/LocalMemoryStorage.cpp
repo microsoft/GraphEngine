@@ -561,12 +561,12 @@ namespace Storage
             return TrinityErrorCode::E_SUCCESS;
         }
 
-        void ReleaseCellLock(cellid_t cellId, int32_t entryIndex)
+        void ReleaseCellLock(IN cellid_t cellId, IN int32_t entryIndex)
         {
             hashtables[GetTrunkId(cellId)].ReleaseEntryLock(entryIndex);
         }
 
-        TrinityErrorCode ResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, char*& cell_ptr)
+        TrinityErrorCode ResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, OUT char*& cell_ptr)
         {
             TRINITY_INTEROP_ENTER_UNMANAGED();
             TrinityErrorCode result = hashtables[GetTrunkId(cellId)].ResizeCell(cellEntryIndex, offset, delta, cell_ptr);
