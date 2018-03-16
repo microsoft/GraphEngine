@@ -126,16 +126,7 @@
     <ClInclude Include="include\Trinity\Environment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Trinity\NonCopyable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Trinity\NonReferencable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Trinity\Random.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Trinity\ref.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Trinity\String.h">

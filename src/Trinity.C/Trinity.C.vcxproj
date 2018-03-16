@@ -370,10 +370,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClInclude Include="include\Trinity\IO\File.h" />
     <ClInclude Include="include\Trinity\IO\Path.h" />
     <ClInclude Include="include\Trinity\IO\StreamWriter.h" />
-    <ClInclude Include="include\Trinity\NonCopyable.h" />
-    <ClInclude Include="include\Trinity\NonReferencable.h" />
     <ClInclude Include="include\Trinity\Random.h" />
-    <ClInclude Include="include\Trinity\ref.h" />
     <ClInclude Include="include\Trinity\String.h" />
     <ClInclude Include="include\Trinity\Threading\Mutex.h" />
     <ClInclude Include="include\Trinity\Threading\Parallel.h" />

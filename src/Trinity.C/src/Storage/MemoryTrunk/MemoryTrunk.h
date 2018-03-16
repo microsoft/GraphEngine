@@ -148,7 +148,7 @@ namespace Storage
         /////////////////////////////////////////////////////
 
         /*********************** Memory ************************/
-        TrinityErrorCode AddMemoryCell(cellid_t cellId, int32_t cell_length, int32_t cellEntryIndex, OUT int32_t& cell_offset);
+        TrinityErrorCode AddMemoryCell(cellid_t cellId, int32_t cell_length, OUT int32_t& cell_offset);
         TrinityErrorCode ExpandLargeObject(int32_t lo_index, int32_t original_size, int32_t new_size);
         TrinityErrorCode ShrinkLargeObject(int32_t lo_index, int32_t original_size, int32_t new_size);
         ////////////////////////////////////////////////////////
@@ -166,11 +166,10 @@ namespace Storage
 
         /// Allocate a continuous memory from the committed memory region.
         /// Note after calling this function, all cell_offsets may be invalid due to a possible reload.
-        /// @param cellId The Id of the target cell.
+        /// @param cellId The target cellId.
         /// @param cellSize The bytes of memory to allocate.
-        /// @param entryIndex The entry index in MTHash.
         /// @return A memory pointer pointing to the allocated memory.
-        ALLOC_THREAD_CTX char* CellAlloc(cellid_t cellId, uint32_t cellSize, int32_t entryIndex);
+        ALLOC_THREAD_CTX char* CellAlloc(cellid_t cellId, uint32_t cellSize);
 
         /// Allocate virtual memory and move committed_head and append_head (when committed_region splits)
         /// Guarantee that after this call:

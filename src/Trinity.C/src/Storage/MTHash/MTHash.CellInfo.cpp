@@ -72,7 +72,7 @@ namespace Storage
                     eResult = memory_trunk->ExpandLargeObject(-updated_cell_offset, CellSize(entry_index), size);
                 else
                 {
-                    eResult = memory_trunk->AddMemoryCell(cellId, size, entry_index, OUT updated_cell_offset);
+                    eResult = memory_trunk->AddMemoryCell(cellId, size, OUT updated_cell_offset);
                     if (eResult == TrinityErrorCode::E_SUCCESS) { MarkTrunkDirty(); }
                 }
             }
@@ -118,7 +118,7 @@ namespace Storage
             /// add_memory_entry_flag prologue
 
             int32_t cell_offset;
-            eResult = memory_trunk->AddMemoryCell(cellId, size, free_entry, OUT cell_offset);
+            eResult = memory_trunk->AddMemoryCell(cellId, size, OUT cell_offset);
 
             if (eResult == TrinityErrorCode::E_SUCCESS)
             {
@@ -176,7 +176,7 @@ namespace Storage
             ENTER_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
             /// add_memory_entry_flag prologue
             int32_t cell_offset;
-            eResult = memory_trunk->AddMemoryCell(cellId, size, free_entry, OUT cell_offset);
+            eResult = memory_trunk->AddMemoryCell(cellId, size, OUT cell_offset);
 
 
             if (eResult == TrinityErrorCode::E_SUCCESS)
@@ -225,7 +225,7 @@ namespace Storage
                     eResult = memory_trunk->ExpandLargeObject(-updated_cell_offset, CellSize(entry_index), size);
                 else
                 {
-                    eResult = memory_trunk->AddMemoryCell(cellId, size, entry_index, OUT updated_cell_offset);
+                    eResult = memory_trunk->AddMemoryCell(cellId, size, OUT updated_cell_offset);
                     if (eResult == TrinityErrorCode::E_SUCCESS) { MarkTrunkDirty(); }
                 }
             }
@@ -324,7 +324,7 @@ namespace Storage
             ENTER_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
             /// add_memory_entry_flag prologue
             int32_t cell_offset;
-            eResult = memory_trunk->AddMemoryCell(cellId, size, free_entry, OUT cell_offset);
+            eResult = memory_trunk->AddMemoryCell(cellId, size, OUT cell_offset);
 
             if (eResult == TrinityErrorCode::E_SUCCESS)
             {

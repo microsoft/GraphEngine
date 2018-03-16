@@ -100,6 +100,10 @@ namespace Trinity.Configuration
                            on prop.Name equals setting.Key
                            select Tuple.Create(prop, setting);
 
+            // TODO should activate default setters. some of our settings still conduct IO.
+            // Alternatively, establish a convention to call a method on the instance
+            // so that it initializes the defaults, and sync to external systems (Trinity.C, etc.)
+
             var children = from prop in props
                            join child in m_children
                            on prop.Name equals child.Name

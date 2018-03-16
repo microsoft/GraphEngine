@@ -22,7 +22,7 @@ namespace Storage
         committed_tail = 0;
     }
 
-    ALLOC_THREAD_CTX char* MemoryTrunk::CellAlloc(cellid_t cellId, uint32_t cellSize, int32_t entryIndex)
+    ALLOC_THREAD_CTX char* MemoryTrunk::CellAlloc(cellid_t cellId, uint32_t cellSize)
     {
         //  !CellAlloc is the only path towards GetAllEntryLocksExceptArena --> ReadMemoryAllocationArena 
         char* cell_p         = nullptr;

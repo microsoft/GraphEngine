@@ -254,7 +254,7 @@ namespace Storage
                     ENTER_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION();
                     /// add_memory_entry_flag prologue
 
-                    eResult = memory_trunk->AddMemoryCell(size_to_alloc, cellEntryIndex, OUT newOffset);
+                    eResult = memory_trunk->AddMemoryCell(MTEntries[cellEntryIndex].Key, size_to_alloc, OUT newOffset);
                     if (eResult != TrinityErrorCode::E_SUCCESS) goto cleanup;
 
                     _cell_ptr = (newOffset >= 0) ? (memory_trunk->trunkPtr + newOffset) : (memory_trunk->LOPtrs[-newOffset]);

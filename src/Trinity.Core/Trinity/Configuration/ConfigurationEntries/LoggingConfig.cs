@@ -109,7 +109,7 @@ namespace Trinity.Configuration
         public bool LogToFile
         {
             get { return m_LogToFile; }
-            set { m_LogToFile = value;}
+            set { m_LogToFile = value; Log.SetLogToFile(value); }
         }
     }
 }

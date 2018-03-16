@@ -47,7 +47,15 @@ namespace Trinity
         static StreamWriter         s_LogStream;
         static bool                 s_EchoOnConsole = true;
         static bool                 s_initialized = false;
-        static LogAutoFlushTask*    s_bgtask = null;
+        static LogAutoFlushTask*    s_bgtask = nullptr;
+
+        void CloseFile()
+        {
+            std::lock_guard<std::mutex> lock(s_LogInitMutex);
+            std::lock_guard<std::mutex> lock2(s_LogMutex);
+
+            if (s_LogStream.Good()) s_LogStream.Close();
+        }
 
         void InitializeLogger()
         {
@@ -65,7 +73,7 @@ namespace Trinity
             std::lock_guard<std::mutex> lock2(s_LogMutex);
             if (!s_initialized) return;
 
-            if (s_LogStream.Good()) s_LogStream.Close();
+            CloseFile();
             s_LogEntries.clear();
             BackgroundThread::TaskScheduler::RemoveTask(s_bgtask);
             // !s_bgtask is wrapped in ref, no need to delete
@@ -74,13 +82,20 @@ namespace Trinity
             s_initialized = false;
         }
 
-        void OpenFile(const String& log_path)
+        void OpenFile(String log_path)
         {
             std::lock_guard<std::mutex> lock(s_LogInitMutex);
             std::lock_guard<std::mutex> lock2(s_LogMutex);
 
+            CloseFile();
+
             //If two instances are started at the same time, one of them would fail to open log file.
         DetermineLogFileName:
+            if (!Path::_CompletePath(log_path, true)) 
+            {
+                WriteLine(LogLevel::Error, "Logger: cannot create log directory '{0}', logging to file is disabled.", log_path);
+            }
+
             s_LogFileName = Path::Combine(log_path, "trinity-[" + DateTime::Now().ToStringForFilename() + "].log");
             s_LogStream.Open(s_LogFileName);
             if (!s_LogStream.Good())
@@ -93,6 +108,7 @@ namespace Trinity
                 }
                 else
                 {
+                    //  If the file is absent, it means that we cannot access the log file. abort.
                     WriteLine(LogLevel::Error, "Logger: cannot open log file {0} for write, logging to file is disabled.", s_LogFileName);
                 }
             }
@@ -258,6 +274,12 @@ DLL_EXPORT
 VOID __stdcall CLogOpenFile(const u16char* logDir)
 {
     Trinity::Diagnostics::OpenFile(logDir);
+}
+
+DLL_EXPORT
+VOID __stdcall CLogCloseFile()
+{
+    Trinity::Diagnostics::CloseFile();
 }
 
 DLL_EXPORT

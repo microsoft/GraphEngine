@@ -96,6 +96,7 @@ namespace Trinity.Diagnostics
         private const  int             c_LogEntryCollectorBusyInterval = 50;
         private static object          s_init_lock = new object();
         private static bool            s_initialized = false;
+        private static bool            s_logtofile = false;
         private static BackgroundTask  s_bgtask;
         #endregion
 
@@ -111,10 +112,12 @@ namespace Trinity.Diagnostics
             {
                 if (s_initialized) return;
                 TrinityConfig.EnsureConfig();
-                CLogInitialize(LoggingConfig.Instance.LogDirectory);
+                CLogInitialize();
                 s_bgtask = new BackgroundTask(CollectLogEntries, c_LogEntryCollectorIdleInterval);
                 BackgroundThread.AddBackgroundTask(s_bgtask);
                 s_initialized = true;
+                s_logtofile = LoggingConfig.Instance.LogToFile;
+                SetLogDirectory(LoggingConfig.Instance.LogDirectory);
             }
         }
 
@@ -224,9 +227,20 @@ namespace Trinity.Diagnostics
             lock (s_init_lock)
             {
                 if (!s_initialized) return;
+                if (!s_logtofile) return;
+                WriteLine(LogLevel.Info, $"{nameof(Log)}: changing logging directory to {dir}.");
                 // only notify c-logger when it's already initialized
                 // and we have to close the current log file
-                CLogInitialize(dir);
+                CLogOpenFile(dir);
+            }
+        }
+
+        internal static void SetLogToFile(bool value)
+        {
+            lock (s_init_lock)
+            {
+                s_logtofile = value;
+                if (!value) CLogCloseFile();
             }
         }
 
@@ -249,12 +263,17 @@ namespace Trinity.Diagnostics
         [DllImport(TrinityC.AssemblyName)]
         private static extern void CLogFlush();
 
-        [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+        [DllImport(TrinityC.AssemblyName)]
         private static extern unsafe void CLogInitialize();
+
         [DllImport(TrinityC.AssemblyName)]
         private static extern unsafe void CLogUninitialize();
-        [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-        private static extern unsafe void CLogOpenFile();
+
+        [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode)]
+        private static extern unsafe void CLogOpenFile(string logdir);
+
+        [DllImport(TrinityC.AssemblyName)]
+        private static extern unsafe void CLogCloseFile();
 
         [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode)]
         private static extern TrinityErrorCode CLogCollectEntries(
