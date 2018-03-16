@@ -37,10 +37,10 @@ namespace Trinity.ServiceFabric.Storage.External
             return JsonConvert.DeserializeObject<ImagePartitionSignature>(json);
         }
 
-        public void SavePartitionSignature(ImagePartitionSignature signature)
+        public async Task SavePartitionSignatureAsync(ImagePartitionSignature signature)
         {
             var json = JsonConvert.SerializeObject(signature);
-            UploadBlockBlob(Path.Combine(storageFolder, $"{signature.PartitionId}.sig"), Encoding.UTF8.GetBytes(json));
+            await UploadBlockBlobAsync(Path.Combine(storageFolder, $"{signature.PartitionId}.sig"), Encoding.UTF8.GetBytes(json));
         }
 
         public string LoadImagePartition(int partition)
@@ -62,7 +62,7 @@ namespace Trinity.ServiceFabric.Storage.External
             return blob.Properties.ContentMD5;
         }
 
-        public string SaveImagePartition(int partition)
+        public async Task<string> SaveImagePartitionAsync(int partition)
         {
             Container.CreateIfNotExists();
             var blob = Container.GetBlockBlobReference(Path.Combine(storageFolder, $"{partition}.image"));
@@ -82,7 +82,7 @@ namespace Trinity.ServiceFabric.Storage.External
                     ushort cellType;
 
                     Global.LocalStorage.LoadCell(id, out bytes, out cellType);
-                    writer.WriteCell(id, cellType, bytes);
+                    await writer.WriteCellAsync(id, cellType, bytes);
                 }
 
                 if (Global.MyServerId == 0)
@@ -125,12 +125,12 @@ namespace Trinity.ServiceFabric.Storage.External
             }
         }
 
-        private void UploadBlockBlob(string blobName, byte[] bytes)
+        private async Task UploadBlockBlobAsync(string blobName, byte[] bytes)
         {
             Container.CreateIfNotExists();
 
             var blob = Container.GetBlockBlobReference(blobName);
-            blob.UploadFromByteArray(bytes, 0, bytes.Length);
+            await blob.UploadFromByteArrayAsync(bytes, 0, bytes.Length);
         }
     }
 }

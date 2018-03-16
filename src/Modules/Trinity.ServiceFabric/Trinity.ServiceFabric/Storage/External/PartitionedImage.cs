@@ -74,12 +74,13 @@ namespace Trinity.ServiceFabric.Storage.External
                 // save all local partitions into the NEXT slot
                 Log.Info("Saving image into storage slot[{0}]...", NextSlotIndex);
                 var signatures = new ConcurrentDictionary<int, string>();
-                Parallel.ForEach(LocalPartitions, p => signatures.TryAdd(p, NextSlot.SaveImagePartition(p)));
+                var sigs = Task.WhenAll(LocalPartitions.Select(p => NextSlot.SaveImagePartitionAsync(p))).Result;
+                Enumerable.Range(0, LocalPartitions.Count()).ToList().ForEach(i => signatures.TryAdd(LocalPartitions.ElementAt(i), sigs[i]));
 
                 // save local image partition signatures
                 NextSignature.Update(CurrentSignature.NextVersion, signatures);
                 Log.Info("Saving image signature into storage slot[{0}]...", NextSlotIndex);
-                Parallel.ForEach(LocalPartitions, p => NextSlot.SavePartitionSignature(NextSignature.GetPartitionSignature(p)));
+                Task.WhenAll(LocalPartitions.Select(p => NextSlot.SavePartitionSignatureAsync(NextSignature.GetPartitionSignature(p)))).Wait();
 
                 // the next slot becomes the current slot
                 CurrentSlotIndex = NextSlotIndex;

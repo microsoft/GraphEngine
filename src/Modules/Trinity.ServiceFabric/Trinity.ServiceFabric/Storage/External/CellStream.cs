@@ -15,6 +15,7 @@ namespace Trinity.ServiceFabric.Storage.External
     public interface ICellStreamWriter : IDisposable
     {
         void WriteCell(long cellId, ushort cellType, byte[] content);
+        Task WriteCellAsync(long cellId, ushort cellType, byte[] content);
     }
 
     public abstract class CellStream : IDisposable
@@ -109,6 +110,20 @@ namespace Trinity.ServiceFabric.Storage.External
             stream.Write(BitConverter.GetBytes(cellType), 0, CELLTYPE_BYTES);
             stream.Write(BitConverter.GetBytes(content.Length), 0, CELLSIZE_BYTES);
             stream.Write(content, 0, content.Length);
+        }
+
+        public async Task WriteCellAsync(long cellId, ushort cellType, byte[] content)
+        {
+            using (var ms = new MemoryStream())
+            {
+                ms.Write(BitConverter.GetBytes(cellId), 0, CELLID_BYTES);
+                ms.Write(BitConverter.GetBytes(cellType), 0, CELLTYPE_BYTES);
+                ms.Write(BitConverter.GetBytes(content.Length), 0, CELLSIZE_BYTES);
+                ms.Write(content, 0, content.Length);
+
+                var bytes = ms.ToArray();
+                await stream.WriteAsync(bytes, 0, bytes.Length);
+            }
         }
     }
 }
