@@ -292,19 +292,22 @@ DLL_EXPORT TrinityErrorCode  CLockedGetCellSize(cellid_t cellId, int32_t entryIn
 // Tx
 
 /* Non-logging interfaces */
-DLL_EXPORT TrinityErrorCode  CSaveCell(PTHREAD_CONTEXT ctx, cellid_t cellid, char* buf, int32_t size, uint16_t type) { return Storage::LocalMemoryStorage::TxSaveCell(ctx, cellid, buf, size, type); }
-DLL_EXPORT TrinityErrorCode  CAddCell(PTHREAD_CONTEXT ctx, cellid_t cellid, char* buf, int32_t size, uint16_t type) { return Storage::LocalMemoryStorage::TxAddCell(ctx, cellid, buf, size, type); }
-DLL_EXPORT TrinityErrorCode  CUpdateCell(PTHREAD_CONTEXT ctx, cellid_t cellid, char* buf, int32_t size) { return Storage::LocalMemoryStorage::TxUpdateCell(ctx, cellid, buf, size); }
-DLL_EXPORT TrinityErrorCode  CRemoveCell(PTHREAD_CONTEXT ctx, cellid_t cellid) { return Storage::LocalMemoryStorage::TxRemoveCell(ctx, cellid); }
+DLL_EXPORT TrinityErrorCode  TxCSaveCell(PTHREAD_CONTEXT ctx, cellid_t cellid, char* buf, int32_t size, uint16_t type) { return Storage::LocalMemoryStorage::TxSaveCell(ctx, cellid, buf, size, type); }
+DLL_EXPORT TrinityErrorCode  TxCAddCell(PTHREAD_CONTEXT ctx, cellid_t cellid, char* buf, int32_t size, uint16_t type) { return Storage::LocalMemoryStorage::TxAddCell(ctx, cellid, buf, size, type); }
+DLL_EXPORT TrinityErrorCode  TxCUpdateCell(PTHREAD_CONTEXT ctx, cellid_t cellid, char* buf, int32_t size) { return Storage::LocalMemoryStorage::TxUpdateCell(ctx, cellid, buf, size); }
+DLL_EXPORT TrinityErrorCode  TxCRemoveCell(PTHREAD_CONTEXT ctx, cellid_t cellid) { return Storage::LocalMemoryStorage::TxRemoveCell(ctx, cellid); }
 /* Logging interfaces */
-DLL_EXPORT TrinityErrorCode  CLoggedSaveCell(PTHREAD_CONTEXT ctx, cellid_t cellid, char* buf, int32_t size, uint16_t type, CellAccessOptions options) { return Storage::LocalMemoryStorage::TxSaveCell(ctx, cellid, buf, size, type, options); }
-DLL_EXPORT TrinityErrorCode  CLoggedAddCell(PTHREAD_CONTEXT ctx, cellid_t cellid, char* buf, int32_t size, uint16_t type, CellAccessOptions options) { return Storage::LocalMemoryStorage::TxAddCell(ctx, cellid, buf, size, type, options); }
-DLL_EXPORT TrinityErrorCode  CLoggedUpdateCell(PTHREAD_CONTEXT ctx, cellid_t cellid, char* buf, int32_t size, CellAccessOptions options) { return Storage::LocalMemoryStorage::TxUpdateCell(ctx, cellid, buf, size, options); }
-DLL_EXPORT TrinityErrorCode  CLoggedRemoveCell(PTHREAD_CONTEXT ctx, cellid_t cellid, CellAccessOptions options) { return Storage::LocalMemoryStorage::TxRemoveCell(ctx, cellid, options); }
+DLL_EXPORT TrinityErrorCode  TxCLoggedSaveCell(PTHREAD_CONTEXT ctx, cellid_t cellid, char* buf, int32_t size, uint16_t type, CellAccessOptions options) { return Storage::LocalMemoryStorage::TxSaveCell(ctx, cellid, buf, size, type, options); }
+DLL_EXPORT TrinityErrorCode  TxCLoggedAddCell(PTHREAD_CONTEXT ctx, cellid_t cellid, char* buf, int32_t size, uint16_t type, CellAccessOptions options) { return Storage::LocalMemoryStorage::TxAddCell(ctx, cellid, buf, size, type, options); }
+DLL_EXPORT TrinityErrorCode  TxCLoggedUpdateCell(PTHREAD_CONTEXT ctx, cellid_t cellid, char* buf, int32_t size, CellAccessOptions options) { return Storage::LocalMemoryStorage::TxUpdateCell(ctx, cellid, buf, size, options); }
+DLL_EXPORT TrinityErrorCode  TxCLoggedRemoveCell(PTHREAD_CONTEXT ctx, cellid_t cellid, CellAccessOptions options) { return Storage::LocalMemoryStorage::TxRemoveCell(ctx, cellid, options); }
 
-DLL_EXPORT TrinityErrorCode  CResizeCell(PTHREAD_CONTEXT ctx, cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, char*& cell_ptr) { return Storage::LocalMemoryStorage::TxResizeCell(ctx, cellId, cellEntryIndex, offset, delta, cell_ptr); }
-DLL_EXPORT TrinityErrorCode  CGetCellType(PTHREAD_CONTEXT ctx, cellid_t cellId, uint16_t& cellType) { return Storage::LocalMemoryStorage::TxGetCellType(ctx, cellId, cellType); }
-DLL_EXPORT void              CReleaseCellLock(PTHREAD_CONTEXT ctx, cellid_t cellId, int32_t cellEntryIndex) { Storage::LocalMemoryStorage::TxReleaseCellLock(ctx, cellId, cellEntryIndex); }
+DLL_EXPORT TrinityErrorCode  TxCResizeCell(PTHREAD_CONTEXT ctx, cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, char*& cell_ptr) { return Storage::LocalMemoryStorage::TxResizeCell(ctx, cellId, cellEntryIndex, offset, delta, cell_ptr); }
+DLL_EXPORT TrinityErrorCode  TxCGetCellType(PTHREAD_CONTEXT ctx, cellid_t cellId, uint16_t& cellType) { return Storage::LocalMemoryStorage::TxGetCellType(ctx, cellId, cellType); }
+DLL_EXPORT void              TxCReleaseCellLock(PTHREAD_CONTEXT ctx, cellid_t cellId, int32_t cellEntryIndex) { Storage::LocalMemoryStorage::TxReleaseCellLock(ctx, cellId, cellEntryIndex); }
 
+DLL_EXPORT TrinityErrorCode  TxCGetLockedCellInfo4CellAccessor(PTHREAD_CONTEXT ctx, cellid_t cellId, int32_t &cellSize, uint16_t &type, char* &cellPtr, int32_t &entryIndex) { return Storage::LocalMemoryStorage::TxCGetLockedCellInfo4CellAccessor(ctx, cellId, cellSize, type, cellPtr, entryIndex); }
+DLL_EXPORT TrinityErrorCode  TxCGetLockedCellInfo4LoadCell(PTHREAD_CONTEXT ctx, cellid_t cellId, int32_t &cellSize, char* &cellPtr, int32_t &entryIndex) { return Storage::LocalMemoryStorage::TxCGetLockedCellInfo4LoadCell(ctx, cellId, cellSize, cellPtr, entryIndex); }
+DLL_EXPORT TrinityErrorCode  TxCGetLockedCellInfo4AddOrUseCell(PTHREAD_CONTEXT ctx, cellid_t cellId, int32_t &cellSize, uint16_t type, char* &cellPtr, int32_t &entryIndex) { return Storage::LocalMemoryStorage::TxCGetLockedCellInfo4AddOrUseCell(ctx, cellId, cellSize, type, cellPtr, entryIndex); }
 
 #endif//CORECLR

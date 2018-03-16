@@ -6,7 +6,7 @@ namespace Trinity.Storage.Transaction
 {
     public class LocalTransactionContext : IDisposable
     {
-        private unsafe void* m_pctx;
+        internal unsafe void* m_pctx;
 
         public unsafe LocalTransactionContext()
         {

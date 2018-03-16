@@ -373,5 +373,133 @@ namespace Trinity.Storage
 
         [DllImport(TrinityC.AssemblyName)]
         internal static extern char* CGetStorageSlot(int isPrimary);
+
+        #region Tx
+
+        #region Cell operations
+        // Non-logging cell operations
+#if !CORECLR
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern TrinityErrorCode TxCSaveCell(void* ctx, long cellId, byte* buff, int size, ushort cellType);
+
+#if !CORECLR
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern TrinityErrorCode TxCAddCell(void* ctx, long cellId, byte* buff, int size, ushort cellType);
+
+#if !CORECLR
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern TrinityErrorCode TxCUpdateCell(void* ctx, long cellId, byte* buff, int size);
+
+#if !CORECLR
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern TrinityErrorCode TxCRemoveCell(void* ctx, long cellId);
+
+        ////////////////////////////////////////////
+
+        // Logging cell opeartions
+#if !CORECLR
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern TrinityErrorCode TxCLoggedSaveCell(void* ctx, long cellId, byte* buff, int size, ushort cellType, CellAccessOptions options);
+
+#if !CORECLR
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern TrinityErrorCode TxCLoggedAddCell(void* ctx, long cellId, byte* buff, int size, ushort cellType, CellAccessOptions options);
+
+#if !CORECLR
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern TrinityErrorCode TxCLoggedUpdateCell(void* ctx, long cellId, byte* buff, int size, CellAccessOptions options);
+
+#if !CORECLR
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern TrinityErrorCode TxCLoggedRemoveCell(void* ctx, long cellId, CellAccessOptions options);
+
+        #endregion
+
+        #region GetLockedCellInfo
+#if !CORECLR
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern TrinityErrorCode TxCGetLockedCellInfo4LoadCell(void* ctx, long cellId, out int size, out byte* cellPtr, out int entryIndex);
+
+#if !CORECLR
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern TrinityErrorCode TxCGetLockedCellInfo4CellAccessor(void* ctx, long cellId, out int size, out ushort type, out byte* cellPtr, out int entryIndex);
+
+#if !CORECLR
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern TrinityErrorCode TxCGetLockedCellInfo4AddOrUseCell(void* ctx, long cellId, ref int size, ushort type, out byte* cellPtr, out int entryIndex);
+
+#if !CORECLR
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern TrinityErrorCode TxCResizeCell(void* ctx, long cell_id, int cellEntryIndex, int offset, int delta, out byte* cellPtr);
+
+
+#if !CORECLR
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern TrinityErrorCode TxCGetCellType(void* ctx, long cellId, out ushort cellType);
+
+
+#if !CORECLR
+        [SecurityCritical]
+        [MethodImpl(MethodImplOptions.InternalCall)]
+#else
+        [DllImport(TrinityC.AssemblyName)]
+#endif
+        internal static extern void TxCReleaseCellLock(void* ctx, long cellId, int entryIndex);
+
+        #endregion
+
+        #endregion
     }
 }

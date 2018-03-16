@@ -169,7 +169,7 @@ namespace Storage
             Buckets[bucket_index] = free_entry;
             ReleaseBucketLock(bucket_index);
 
-            PTHREAD_CONTEXT pctx = GetCurrentThreadContext();
+            PTHREAD_CONTEXT pctx = EnsureCurrentThreadContext();
             pctx->SetLockingCell(cellId);
 
             /// add_memory_entry_flag prologue

@@ -330,7 +330,7 @@ namespace Storage
                 [this](int32_t entry_idx) {return TryGetEntryLock(entry_idx); }, 
                 found_action, 
                 not_found_action,
-                [=] { PTHREAD_CONTEXT pctx = GetCurrentThreadContext(); pctx->SetLockingCell(cellId); });
+                [=] { PTHREAD_CONTEXT pctx = EnsureCurrentThreadContext(); pctx->SetLockingCell(cellId); });
         }
 
         template<typename TLookupFound, typename TLookupNotFound>

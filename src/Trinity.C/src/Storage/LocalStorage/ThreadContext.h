@@ -151,9 +151,10 @@ namespace Storage
     }THREAD_CONTEXT, *PTHREAD_CONTEXT;
 
     PTHREAD_CONTEXT              AllocateThreadContext(); // Note, AllocateThreadConatext will also set the thread context.
+    PTHREAD_CONTEXT              GetCurrentThreadContext();
     void                         DeallocateThreadContext(PTHREAD_CONTEXT ctx);
     void                         SetCurrentThreadContext(PTHREAD_CONTEXT ctx);
-    PTHREAD_CONTEXT              GetCurrentThreadContext();
+    PTHREAD_CONTEXT              EnsureCurrentThreadContext();
 
     void                         EnterMemoryAllocationArena(PTHREAD_CONTEXT ctx);
     //  !caller holds alloc_lock of the calling trunk, caller is CellAlloc

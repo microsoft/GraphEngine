@@ -158,7 +158,7 @@ namespace Storage
             s_critical_lock.lock();
             GCTask::StopDefragAndAwaitCeased();
 
-            PTHREAD_CONTEXT pctx = GetCurrentThreadContext();
+            PTHREAD_CONTEXT pctx = EnsureCurrentThreadContext();
             TrinityErrorCode err = TrinityErrorCode::E_SUCCESS;
 
             if (pctx->LockingMTHash >= 0)
@@ -185,7 +185,7 @@ namespace Storage
 
         static inline TrinityErrorCode _exit_db_critical()
         {
-            PTHREAD_CONTEXT pctx = GetCurrentThreadContext();
+            PTHREAD_CONTEXT pctx = EnsureCurrentThreadContext();
             //  If LockingMTHash >= 0, it means that we haven't
             //  cleared it in _enter_db_critical because it failed
             //  due to a locked MTHash. In that case we should not
@@ -321,7 +321,7 @@ namespace Storage
             TRINITY_INTEROP_ENTER_UNMANAGED();
 
             TrinityErrorCode err;
-            PTHREAD_CONTEXT p_ctx = GetCurrentThreadContext();
+            PTHREAD_CONTEXT p_ctx = EnsureCurrentThreadContext();
             LockingStorageContext ls_ctx(p_ctx);//RAII guard
 
             err = _enter_db_critical();
@@ -415,7 +415,7 @@ namespace Storage
 
             bool success = true;
             TrinityErrorCode err;
-            PTHREAD_CONTEXT p_ctx = GetCurrentThreadContext();
+            PTHREAD_CONTEXT p_ctx = EnsureCurrentThreadContext();
             LockingStorageContext ls_ctx(p_ctx);//RAII guard
 
             err = _enter_db_critical();
@@ -482,7 +482,7 @@ namespace Storage
             }
 
             TrinityErrorCode err;
-            PTHREAD_CONTEXT p_ctx = GetCurrentThreadContext();
+            PTHREAD_CONTEXT p_ctx = EnsureCurrentThreadContext();
             LockingStorageContext ls_ctx(p_ctx);//RAII guard
 
             err = _enter_db_critical();

@@ -82,7 +82,6 @@ namespace Storage
         pctx->SameChecksumTimes    = 0;
 
         WriteLine(LogLevel::Verbose, "Allocated thread context {0}.", pctx);
-        SetCurrentThreadContext(pctx);
         return pctx;
     }
 
@@ -98,18 +97,24 @@ namespace Storage
         WriteLine(LogLevel::Verbose, "Deallocated thread context {0}.", pctx);
     }
 
+    PTHREAD_CONTEXT GetCurrentThreadContext()
+    {
+        return t_thread_ctx;
+    }
+
     void SetCurrentThreadContext(PTHREAD_CONTEXT ctx)
     {
-        // TODO free t_thread_ctx if it exists
-        // TODO error if t_thread_ctx has content
-        WriteLine(LogLevel::Debug, "Thread {0}: Set ThreadContext {1}.", std::this_thread::get_id(), ctx);
         t_thread_ctx = ctx;
     }
 
-    PTHREAD_CONTEXT GetCurrentThreadContext()
+    PTHREAD_CONTEXT EnsureCurrentThreadContext()
     {
-        if (t_thread_ctx == nullptr) return AllocateThreadContext();
-        else return t_thread_ctx;
+        if (t_thread_ctx == nullptr) 
+        { 
+            t_thread_ctx = AllocateThreadContext(); 
+            WriteLine(LogLevel::Debug, "Thread {0}: Assign ThreadContext {1}.", std::this_thread::get_id(), t_thread_ctx);
+        }
+        return t_thread_ctx;
     }
 
     void EnterMemoryAllocationArena(PTHREAD_CONTEXT pctx)
@@ -380,7 +385,7 @@ namespace Storage
     // the time that such a thread stays in the arbitration room.
     TrinityErrorCode Arbitrate()
     {
-        PTHREAD_CONTEXT        pctx             = GetCurrentThreadContext();
+        PTHREAD_CONTEXT        pctx             = EnsureCurrentThreadContext();
         _THREAD_CONTEXT_STATUS status           = _GetThreadContextStatus(*pctx);
         uint64_t               checksum         = _CalculateThreadContextChecksum(pctx);
         TrinityErrorCode       eResult          = TrinityErrorCode::E_SUCCESS;

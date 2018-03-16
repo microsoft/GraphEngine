@@ -15,15 +15,14 @@ namespace Storage
     namespace LocalMemoryStorage 
     {
 		extern MTHash* hashtables;
-        extern THREAD_LOCAL PTHREAD_CONTEXT t_thread_ctx;
 
 #define TRINITY_ENTER_TX() \
             TRINITY_INTEROP_ENTER_UNMANAGED(); \
-            PTHREAD_CONTEXT p_tls_ctx = t_thread_ctx;\
-            t_thread_ctx = ctx;
+            PTHREAD_CONTEXT p_tls_ctx = GetCurrentThreadContext();\
+            SetCurrentThreadContext(ctx);
 
 #define TRINITY_LEAVE_TX() \
-            t_thread_ctx = p_tls_ctx; \
+            SetCurrentThreadContext(p_tls_ctx); \
             TRINITY_INTEROP_LEAVE_UNMANAGED();
 
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -238,8 +237,7 @@ namespace Storage
         TrinityErrorCode TxGetCellType(PTHREAD_CONTEXT ctx, cellid_t cellId, uint16_t& cellType)
         {
             TRINITY_ENTER_TX();
-            PTHREAD_CONTEXT p_ctx = GetCurrentThreadContext();
-            p_ctx->SetLockingCell(cellId);
+            ctx->SetLockingCell(cellId);
             TrinityErrorCode eResult = hashtables[GetTrunkId(cellId)].GetCellType(cellId, cellType);
             TRINITY_LEAVE_TX();
             return eResult;

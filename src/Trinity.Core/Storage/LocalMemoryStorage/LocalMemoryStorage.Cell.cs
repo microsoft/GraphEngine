@@ -16,6 +16,7 @@ using Trinity;
 using System.Runtime.CompilerServices;
 using Trinity.Core.Lib;
 using Trinity.Configuration;
+using Trinity.Storage.Transaction;
 
 namespace Trinity.Storage
 {
@@ -29,12 +30,12 @@ namespace Trinity.Storage
         /// <param name="cellId">A 64-bit cell id.</param>
         /// <param name="entryIndex">The hash slot index corresponding to the current cell.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void ReleaseCellLock(long cellId, int entryIndex)
+        public void ReleaseCellLock(LocalTransactionContext tx, long cellId, int entryIndex)
         {
             // TODO: in Trinity.C we should check whether the cell is locked by the current thread ctx.
             // TODO: add error code. return E_CELL_NOT_FOUND when the cell is not posessed by the current
             // thread.
-            CLocalMemoryStorage.CReleaseCellLock(cellId, entryIndex);
+            CLocalMemoryStorage.TxCReleaseCellLock(tx.m_pctx, cellId, entryIndex);
         }
 
         /// <summary>
@@ -47,9 +48,9 @@ namespace Trinity.Storage
         /// <param name="entryIndex">The hash slot index corresponding to the current cell.</param>
         /// <returns><c>TrinityErrorCode.E_SUCCESS</c> if the operation succeeds; <c>TrinityErrorCode.E_CELL_NOT_FOUND</c> if the specified cell is not found. </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode GetLockedCellInfo(long cellId, out int size, out ushort type, out byte* cellPtr, out int entryIndex)
+        public TrinityErrorCode GetLockedCellInfo(LocalTransactionContext tx, long cellId, out int size, out ushort type, out byte* cellPtr, out int entryIndex)
         {
-            TrinityErrorCode eResult = CLocalMemoryStorage.CGetLockedCellInfo4CellAccessor(cellId, out size, out type, out cellPtr, out entryIndex);
+            TrinityErrorCode eResult = CLocalMemoryStorage.TxCGetLockedCellInfo4CellAccessor(tx.m_pctx, cellId, out size, out type, out cellPtr, out entryIndex);
             return eResult;
         }
 
@@ -64,9 +65,9 @@ namespace Trinity.Storage
         /// <param name="cellEntryIndex">The hash slot index corresponding to the current cell.</param>
         /// <returns><c>TrinityErrorCode.E_CELL_FOUND</c> if the specified cell is found; <c>TrinityErrorCode.E_WRONG_CELL_TYPE</c> if the cell type of the cell with the specified cellId does not match the specified cellType; <c>TrinityErrorCode.E_CELL_NOT_FOUND</c> if the specified cell is not found.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode AddOrUse(long cellId, byte[] cellBuff, ref int size, ushort cellType, out byte* cellPtr, out int cellEntryIndex)
+        public TrinityErrorCode AddOrUse(LocalTransactionContext tx, long cellId, byte[] cellBuff, ref int size, ushort cellType, out byte* cellPtr, out int cellEntryIndex)
         {
-            TrinityErrorCode eResult = CLocalMemoryStorage.CGetLockedCellInfo4AddOrUseCell(cellId, ref size, cellType, out cellPtr, out cellEntryIndex);
+            TrinityErrorCode eResult = CLocalMemoryStorage.TxCGetLockedCellInfo4AddOrUseCell(tx.m_pctx, cellId, ref size, cellType, out cellPtr, out cellEntryIndex);
             if (eResult == TrinityErrorCode.E_CELL_NOT_FOUND)
             {
                 Memory.Copy(cellBuff, cellPtr, size);
@@ -88,10 +89,10 @@ namespace Trinity.Storage
         /// <exception cref="System.ArgumentException">Resize fails because the given parameters are not valid.</exception>
         /// <exception cref="System.Exception">Resize fails because of other errors.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public byte* ResizeCell(long cell_id, int cellEntryIndex, int offset, int delta)
+        public byte* ResizeCell(LocalTransactionContext tx, long cell_id, int cellEntryIndex, int offset, int delta)
         {
             byte* cellPtr;
-            TrinityErrorCode code = CLocalMemoryStorage.CResizeCell(cell_id, cellEntryIndex, offset, delta, out cellPtr);
+            TrinityErrorCode code = CLocalMemoryStorage.TxCResizeCell(tx.m_pctx, cell_id, cellEntryIndex, offset, delta, out cellPtr);
             if (code == TrinityErrorCode.E_SUCCESS) return cellPtr;
 
             string err_msg = "ResizeCell encountered an error.";
@@ -110,9 +111,9 @@ namespace Trinity.Storage
         /// <param name="cellPtr">The pointer pointing to the underlying cell buffer after resizing.</param>
         /// <returns>The status code, E_SUCCESS for a succeeded resize operation. When the operation does not complete successfully, the original cell pointer and the content are not affected, but the out parameter cellPtr is undefined.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode ResizeCell(long cell_id, int cellEntryIndex, int offset, int delta, out byte* cellPtr)
+        public TrinityErrorCode ResizeCell(LocalTransactionContext tx, long cell_id, int cellEntryIndex, int offset, int delta, out byte* cellPtr)
         {
-            return CLocalMemoryStorage.CResizeCell(cell_id, cellEntryIndex, offset, delta, out cellPtr);
+            return CLocalMemoryStorage.TxCResizeCell(tx.m_pctx, cell_id, cellEntryIndex, offset, delta, out cellPtr);
         }
 
         /// <summary>
@@ -124,9 +125,9 @@ namespace Trinity.Storage
         /// <param name="cellType">Indicates the cell type.</param>
         /// <returns><c>TrinityErrorCode.E_SUCCESS</c> if saving succeeds; otherwise, an error code.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode SaveCell(long cellId, byte* buff, int cellSize, ushort cellType)
+        public TrinityErrorCode SaveCell(LocalTransactionContext tx, long cellId, byte* buff, int cellSize, ushort cellType)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CSaveCell(cellId, buff, cellSize, cellType);
+            TrinityErrorCode eResult= CLocalMemoryStorage.TxCSaveCell(tx.m_pctx, cellId, buff, cellSize, cellType);
             return eResult;
         }
 
@@ -139,9 +140,9 @@ namespace Trinity.Storage
         /// <param name="cellType">Indicates the cell type.</param>
         /// <returns><c>TrinityErrorCode.E_SUCCESS</c> if adding succeeds; otherwise, an error code.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode AddCell(long cellId, byte* buff, int cellSize, ushort cellType)
+        public TrinityErrorCode AddCell(LocalTransactionContext tx, long cellId, byte* buff, int cellSize, ushort cellType)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CAddCell(cellId, buff, cellSize, cellType);
+            TrinityErrorCode eResult= CLocalMemoryStorage.TxCAddCell(tx.m_pctx, cellId, buff, cellSize, cellType);
             return eResult;
         }
 
@@ -153,9 +154,9 @@ namespace Trinity.Storage
         /// <param name="cellSize">The size of the cell.</param>
         /// <returns><c>TrinityErrorCode.E_SUCCESS</c> if updating succeeds; otherwise, an error code.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode UpdateCell(long cellId, byte* buff, int cellSize)
+        public TrinityErrorCode UpdateCell(LocalTransactionContext tx, long cellId, byte* buff, int cellSize)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CUpdateCell(cellId, buff, cellSize);
+            TrinityErrorCode eResult= CLocalMemoryStorage.TxCUpdateCell(tx.m_pctx, cellId, buff, cellSize);
             return eResult;
         }
 
@@ -168,11 +169,11 @@ namespace Trinity.Storage
         /// <param name="cellType">The type of the cell, represented with a 16-bit unsigned integer.</param>
         /// <returns>A Trinity error code. Possible values are E_SUCCESS and E_NOT_FOUND.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff, out ushort cellType)
+        public TrinityErrorCode LoadCell(LocalTransactionContext tx, long cellId, out byte[] cellBuff, out ushort cellType)
         {
             int index, cellSize;
             byte* cellPtr = null;
-            TrinityErrorCode eResult= CLocalMemoryStorage.CGetLockedCellInfo4CellAccessor(cellId, out cellSize, out cellType, out cellPtr, out index);
+            TrinityErrorCode eResult= CLocalMemoryStorage.TxCGetLockedCellInfo4CellAccessor(tx.m_pctx, cellId, out cellSize, out cellType, out cellPtr, out index);
             if (eResult == TrinityErrorCode.E_CELL_NOT_FOUND)
             {
                 cellBuff = new byte[0];
@@ -181,7 +182,7 @@ namespace Trinity.Storage
             }
             cellBuff = new byte[cellSize];
             Memory.Copy(cellPtr, 0, cellBuff, 0, cellSize);
-            CLocalMemoryStorage.CReleaseCellLock(cellId, index);
+            CLocalMemoryStorage.TxCReleaseCellLock(tx.m_pctx, cellId, index);
             return TrinityErrorCode.E_SUCCESS;
         }
 
@@ -191,9 +192,9 @@ namespace Trinity.Storage
         /// <param name="cellId">A 64-bit cell Id.</param>
         /// <returns><c>TrinityErrorCode.E_SUCCESS</c> if removing succeeds; otherwise, an error code.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode RemoveCell(long cellId)
+        public TrinityErrorCode RemoveCell(LocalTransactionContext tx, long cellId)
         {
-            TrinityErrorCode eResult = CLocalMemoryStorage.CRemoveCell(cellId);
+            TrinityErrorCode eResult = CLocalMemoryStorage.TxCRemoveCell(tx.m_pctx, cellId);
             return eResult;
         }
 
@@ -204,44 +205,10 @@ namespace Trinity.Storage
         /// <param name="cellType">The type of the cell specified by cellId.</param>
         /// <returns>A Trinity error code. Possible values are E_SUCCESS and E_NOT_FOUND.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode GetCellType(long cellId, out ushort cellType)
+        public TrinityErrorCode GetCellType(LocalTransactionContext tx, long cellId, out ushort cellType)
         {
-            TrinityErrorCode eResult = CLocalMemoryStorage.CGetCellType(cellId, out cellType);
+            TrinityErrorCode eResult = CLocalMemoryStorage.TxCGetCellType(tx.m_pctx, cellId, out cellType);
             return eResult;
-        }
-
-        /// <summary>
-        /// Determines whether there is a cell with the specified cell Id in Trinity key-value store.
-        /// </summary>
-        /// <param name="cellId">A 64-bit cell id.</param>
-        /// <returns>true if a cell whose Id is cellId is found; otherwise, false.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Contains(long cellId)
-        {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CContains(cellId);
-            switch (eResult)
-            {
-                case TrinityErrorCode.E_CELL_FOUND:
-                    return true;
-                case TrinityErrorCode.E_DEADLOCK:
-                    throw new DeadlockException();
-                case TrinityErrorCode.E_CELL_NOT_FOUND:
-                default:
-                    return false;
-            }
-        }
-
-        /// <summary>
-        /// Gets the size of the current cell. The caller must hold the cell lock before calling this function.
-        /// </summary>
-        /// <param name="cellId">A 64-bit cell id.</param>
-        /// <param name="entryIndex">The hash slot index corresponding to the current cell.</param>
-        /// <param name="size">The size of the specified cell.</param>
-        /// <returns>A Trinity error code. This function always returns E_SUCCESS.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode LockedGetCellSize(long cellId, int entryIndex, out int size)
-        {
-            return CLocalMemoryStorage.CLockedGetCellSize(cellId, entryIndex, out size);
         }
     }
 }

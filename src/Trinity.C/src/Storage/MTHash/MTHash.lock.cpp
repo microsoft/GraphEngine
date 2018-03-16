@@ -11,7 +11,7 @@ namespace Storage
 {
     void MTHash::GetAllEntryLocksExceptArena()
     {
-        PTHREAD_CONTEXT pctx = GetCurrentThreadContext();
+        PTHREAD_CONTEXT pctx = EnsureCurrentThreadContext();
         pctx->ReloadingMemoryTrunk = true;
         EntryAllocLock.lock();
         auto arena_cells = ReadMemoryAllocationArena();
@@ -47,7 +47,7 @@ namespace Storage
 
     void MTHash::ReleaseAllEntryLocksExceptArena()
     {
-        PTHREAD_CONTEXT pctx = GetCurrentThreadContext();
+        PTHREAD_CONTEXT pctx = EnsureCurrentThreadContext();
         // !Note, we only read once when we release all locks
         //  except arena. This is different from acquiring the
         //  locks, because when we have acquired all locks,
@@ -123,7 +123,7 @@ namespace Storage
         if (!std::atomic_compare_exchange_strong(&MTEntries[index].EntryLock, &cmpxchg_val, char(ENTRYLOCK_LOCK)))
         {
             int32_t         fail_counter = 0;
-            PTHREAD_CONTEXT p_ctx = GetCurrentThreadContext();
+            PTHREAD_CONTEXT p_ctx = EnsureCurrentThreadContext();
             cellid_t        cellid = MTEntries[index].Key;
             assert(p_ctx != nullptr);
             //  Am I locking the cell already?
@@ -180,7 +180,7 @@ namespace Storage
             return TrinityErrorCode::E_SUCCESS;
 
         Trinity::Diagnostics::WriteLine(LogLevel::Verbose, "MTHash {0}: Attempting to lock.", this->memory_trunk->TrunkId);
-        PTHREAD_CONTEXT p_ctx = GetCurrentThreadContext();
+        PTHREAD_CONTEXT p_ctx = EnsureCurrentThreadContext();
         assert(p_ctx != nullptr);
 
         p_ctx->LockingMTHash = this->memory_trunk->TrunkId;
@@ -275,7 +275,7 @@ namespace Storage
         }
 
 
-        PTHREAD_CONTEXT p_ctx = GetCurrentThreadContext();
+        PTHREAD_CONTEXT p_ctx = EnsureCurrentThreadContext();
         assert(p_ctx != nullptr);
         p_ctx->LockingMTHash = -1;
         Trinity::Diagnostics::WriteLine(LogLevel::Verbose, "MTHash {0}: Unlock complete.", this->memory_trunk->TrunkId);

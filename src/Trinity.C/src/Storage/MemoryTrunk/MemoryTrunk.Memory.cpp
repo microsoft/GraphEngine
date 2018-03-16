@@ -32,7 +32,7 @@ namespace Storage
         {
             //  !Note, we should setup the Tx so that the arena
             //  is aware that we are locking current cell.
-			pctx = GetCurrentThreadContext();
+			pctx = EnsureCurrentThreadContext();
             pctx->SetLockingCell(cellId);
             EnterMemoryAllocationArena(pctx);
             alloc_lock.lock();
@@ -71,7 +71,7 @@ namespace Storage
             // Ensure that we are in the arena now.
             if (pctx == nullptr)
             {
-				pctx = GetCurrentThreadContext();
+				pctx = EnsureCurrentThreadContext();
                 pctx->SetLockingCell(cellId);
                 EnterMemoryAllocationArena(pctx);
             }
