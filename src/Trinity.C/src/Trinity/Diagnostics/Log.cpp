@@ -37,8 +37,8 @@ namespace Trinity
         } LOG_ENTRY, *PLOG_ENTRY;
         // static data and methods
 
-        static std::mutex           s_LogMutex;
-        static std::mutex           s_LogInitMutex;
+        static std::recursive_mutex s_LogMutex;
+        static std::recursive_mutex s_LogInitMutex;
         static std::deque<LOG_ENTRY>s_LogEntries;
         static LogLevel             s_CurrentLogLevel = LogLevel::Info;
         static String               s_LogLevelName[7]  { "OFF", "Fatal", "Error", "Warning", "Info", "Debug", "Verbose", };
@@ -51,15 +51,15 @@ namespace Trinity
 
         void CloseFile()
         {
-            std::lock_guard<std::mutex> lock(s_LogInitMutex);
-            std::lock_guard<std::mutex> lock2(s_LogMutex);
+            std::lock_guard<std::recursive_mutex> lock(s_LogInitMutex);
+            std::lock_guard<std::recursive_mutex> lock2(s_LogMutex);
 
-            if (s_LogStream.Good()) s_LogStream.Close();
+            if (s_LogStream.Good()) try { s_LogStream.Close(); } catch (...) {}
         }
 
         void InitializeLogger()
         {
-            std::lock_guard<std::mutex> lock(s_LogInitMutex);
+            std::lock_guard<std::recursive_mutex> lock(s_LogInitMutex);
             if (s_initialized) return;
 
             s_bgtask = new LogAutoFlushTask();
@@ -69,8 +69,8 @@ namespace Trinity
 
         void UninitializeLogger()
         {
-            std::lock_guard<std::mutex> lock(s_LogInitMutex);
-            std::lock_guard<std::mutex> lock2(s_LogMutex);
+            std::lock_guard<std::recursive_mutex> lock(s_LogInitMutex);
+            std::lock_guard<std::recursive_mutex> lock2(s_LogMutex);
             if (!s_initialized) return;
 
             CloseFile();
@@ -84,8 +84,8 @@ namespace Trinity
 
         void OpenFile(String log_path)
         {
-            std::lock_guard<std::mutex> lock(s_LogInitMutex);
-            std::lock_guard<std::mutex> lock2(s_LogMutex);
+            std::lock_guard<std::recursive_mutex> lock(s_LogInitMutex);
+            std::lock_guard<std::recursive_mutex> lock2(s_LogMutex);
 
             CloseFile();
 
@@ -93,7 +93,8 @@ namespace Trinity
         DetermineLogFileName:
             if (!Path::_CompletePath(log_path, true)) 
             {
-                WriteLine(LogLevel::Error, "Logger: cannot create log directory '{0}', logging to file is disabled.", log_path);
+                WriteLine(LogLevel::Error, "Log: cannot create log directory '{0}', logging to file is disabled.", log_path);
+                return;
             }
 
             s_LogFileName = Path::Combine(log_path, "trinity-[" + DateTime::Now().ToStringForFilename() + "].log");
@@ -177,7 +178,7 @@ namespace Trinity
             symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
 
             {
-                std::lock_guard<std::mutex> lock(s_LogMutex);
+                std::lock_guard<std::recursive_mutex> lock(s_LogMutex);
                 for (i = 1 /*skip myself*/; i < frames; i++)
                 {
                     SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
@@ -200,7 +201,7 @@ namespace Trinity
         {
             if (logLevel <= s_CurrentLogLevel && logLevel != LogLevel::Off)
             {
-                std::lock_guard<std::mutex> lock(s_LogMutex);
+                std::lock_guard<std::recursive_mutex> lock(s_LogMutex);
 
                 DateTime dt     = DateTime::Now();
                 String   time   = "[" + dt.ToString() + "]";
@@ -224,7 +225,7 @@ namespace Trinity
 
         void Flush()
         {
-            std::lock_guard<std::mutex> lock(s_LogMutex);
+            std::lock_guard<std::recursive_mutex> lock(s_LogMutex);
 
             if (s_LogStream.Good())
             {
@@ -324,7 +325,7 @@ VOID __stdcall CLogSetEchoOnConsole(bool is_set)
 DLL_EXPORT
 TrinityErrorCode __stdcall CLogCollectEntries(OUT size_t& arr_size, OUT PLOG_ENTRY& entries)
 {
-    std::lock_guard<std::mutex> lock(s_LogMutex);
+    std::lock_guard<std::recursive_mutex> lock(s_LogMutex);
     arr_size   = s_LogEntries.size();
     entries    = arr_size == 0 ? nullptr : (PLOG_ENTRY)malloc(sizeof(LOG_ENTRY) * arr_size);
     std::copy(s_LogEntries.begin(), s_LogEntries.end(), entries);

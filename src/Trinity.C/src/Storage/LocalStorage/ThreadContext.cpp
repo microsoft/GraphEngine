@@ -102,7 +102,7 @@ namespace Storage
     {
         // TODO free t_thread_ctx if it exists
         // TODO error if t_thread_ctx has content
-        WriteLine(LogLevel::Debug, "Thread {0}: Set ThreadContext {1}.", std::this_thread::get_id(), t_thread_ctx);
+        WriteLine(LogLevel::Debug, "Thread {0}: Set ThreadContext {1}.", std::this_thread::get_id(), ctx);
         t_thread_ctx = ctx;
     }
 

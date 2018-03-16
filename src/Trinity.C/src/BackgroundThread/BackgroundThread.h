@@ -104,6 +104,7 @@ namespace BackgroundThread
         {
             // Give the background thread a thread context.
             Storage::PTHREAD_CONTEXT pctx = Storage::AllocateThreadContext();
+            Trinity::Diagnostics::WriteLine(LogLevel::Debug, "Unmanaged background thread started.");
 
             while (!_stopped.load())
             {
@@ -151,7 +152,7 @@ namespace BackgroundThread
 
             Storage::DeallocateThreadContext(pctx);
 
-            Trinity::Diagnostics::WriteLine(LogLevel::Debug, "BackgroundThread stopped.");
+            Trinity::Diagnostics::WriteLine(LogLevel::Debug, "Unmanaged background thread stopped.");
         }
 
         static inline bool Overdue(BackgroundTask* task)

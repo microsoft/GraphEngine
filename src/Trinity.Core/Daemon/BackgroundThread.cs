@@ -45,7 +45,7 @@ namespace Trinity.Daemon
                         CStartBackgroundThread();
                         Thread.MemoryBarrier();
                         started = true;
-                        Log.WriteLine(LogLevel.Info, $"{nameof(BackgroundThread)}: started");
+                        Log.WriteLine(LogLevel.Debug, $"Managed background thread started");
                     }
                 }
             }
@@ -61,7 +61,7 @@ namespace Trinity.Daemon
                     timer.Dispose();
                     ClearAllTasks();
                     started = false;
-                    Log.WriteLine(LogLevel.Info, $"{nameof(BackgroundThread)}: stopped");
+                    Log.WriteLine(LogLevel.Debug, $"Managed background thread stopped");
                 }
             }
         }
@@ -116,7 +116,8 @@ namespace Trinity.Daemon
                         lock (_lock)
                         {
                             TimerInterval = ret;
-                            timer.Change(0, ret);
+                            try { timer.Change(0, ret); }
+                            catch { }
                         }
                     }
                 }
