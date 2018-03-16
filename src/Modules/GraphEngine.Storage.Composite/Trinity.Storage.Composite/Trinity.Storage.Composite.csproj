@@ -8,7 +8,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
   </ItemGroup>
 
   <!-- NuGet package metadata -->
@@ -18,10 +18,10 @@
     <Copyright>Copyright 2018</Copyright>
     <Company>Microsoft Corporation</Company>
 
-    <Version>1.0.9083</Version>
-    <AssemblyVersion>1.0.9083.0</AssemblyVersion>
-    <FileVersion>1.0.9083.0</FileVersion>
-    <PackageVersion>1.0.9083</PackageVersion>
+    <Version>2.0.9328</Version>
+    <AssemblyVersion>2.0.9328.0</AssemblyVersion>
+    <FileVersion>2.0.9328.0</FileVersion>
+    <PackageVersion>2.0.9328</PackageVersion>
 
     <PackageId>GraphEngine.Storage.Composite</PackageId>
     <PackageTags>Graph Engine Trinity Storage Extension Composite Schema Evolution</PackageTags>

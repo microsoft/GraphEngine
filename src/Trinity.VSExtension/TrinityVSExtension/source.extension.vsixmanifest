@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="51a02fa7-9a83-4aa0-9236-599637c597c6" Version="1.0.9083" Language="en-US" Publisher="Microsoft Corporation" />
+        <Identity Id="51a02fa7-9a83-4aa0-9236-599637c597c6" Version="2.0.9328" Language="en-US" Publisher="Microsoft Corporation" />
         <DisplayName>Graph Engine VSExtension</DisplayName>
         <Description xml:space="preserve">Graph Engine SDK for developing and deploying Graph Engine applications.</Description>
         <MoreInfo>http://www.graphengine.io</MoreInfo>
@@ -30,14 +30,14 @@
         <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:TargetPath="|CSharpNetFxLib;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" d:ProjectName="CSharpNetFxLib" />
         <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:TargetPath="|CSharpNetCoreApp;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" d:ProjectName="CSharpNetCoreApp" />
 
-        <Asset Type="GraphEngine.Core.1.0.9083.nupkg" d:Source="File" Path="Packages\GraphEngine.Core.1.0.9083.nupkg" d:VsixSubPath="Packages" />
-        <Asset Type="GraphEngine.Azure.BlobStorage.1.0.9083.nupkg" d:Source="File" Path="Packages\GraphEngine.Azure.BlobStorage.1.0.9083.nupkg" d:VsixSubPath="Packages" />
-        <Asset Type="GraphEngine.Client.1.0.9083.nupkg" d:Source="File" Path="Packages\GraphEngine.Client.1.0.9083.nupkg" d:VsixSubPath="Packages" />
-        <Asset Type="GraphEngine.DynamicCluster.1.0.9083.nupkg" d:Source="File" Path="Packages\GraphEngine.DynamicCluster.1.0.9083.nupkg" d:VsixSubPath="Packages" />
-        <Asset Type="GraphEngine.FFI.1.0.9083.nupkg" d:Source="File" Path="Packages\GraphEngine.FFI.1.0.9083.nupkg" d:VsixSubPath="Packages" />
-        <Asset Type="GraphEngine.FFI.Python.1.0.9083.nupkg" d:Source="File" Path="Packages\GraphEngine.FFI.Python.1.0.9083.nupkg" d:VsixSubPath="Packages" />
-        <Asset Type="GraphEngine.LIKQ.1.0.9083.nupkg" d:Source="File" Path="Packages\GraphEngine.LIKQ.1.0.9083.nupkg" d:VsixSubPath="Packages" />
-        <Asset Type="GraphEngine.Storage.Composite.1.0.9083.nupkg" d:Source="File" Path="Packages\GraphEngine.Storage.Composite.1.0.9083.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="GraphEngine.Core.2.0.9328.nupkg" d:Source="File" Path="Packages\GraphEngine.Core.2.0.9328.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="GraphEngine.Azure.BlobStorage.2.0.9328.nupkg" d:Source="File" Path="Packages\GraphEngine.Azure.BlobStorage.2.0.9328.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="GraphEngine.Client.2.0.9328.nupkg" d:Source="File" Path="Packages\GraphEngine.Client.2.0.9328.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="GraphEngine.DynamicCluster.2.0.9328.nupkg" d:Source="File" Path="Packages\GraphEngine.DynamicCluster.2.0.9328.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="GraphEngine.FFI.2.0.9328.nupkg" d:Source="File" Path="Packages\GraphEngine.FFI.2.0.9328.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="GraphEngine.FFI.Python.2.0.9328.nupkg" d:Source="File" Path="Packages\GraphEngine.FFI.Python.2.0.9328.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="GraphEngine.LIKQ.2.0.9328.nupkg" d:Source="File" Path="Packages\GraphEngine.LIKQ.2.0.9328.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="GraphEngine.Storage.Composite.2.0.9328.nupkg" d:Source="File" Path="Packages\GraphEngine.Storage.Composite.2.0.9328.nupkg" d:VsixSubPath="Packages" />
     </Assets>
     <Prerequisites>
         <Prerequisite Id="Microsoft.VisualStudio.Component.Roslyn.LanguageServices" Version="[11.0,)" DisplayName="C# and Visual Basic" />

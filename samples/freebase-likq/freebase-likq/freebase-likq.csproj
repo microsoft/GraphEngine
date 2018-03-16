@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.props" Condition="Exists('..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.props')" />
+  <Import Project="..\packages\GraphEngine.Core.2.0.9328\build\GraphEngine.Core.props" Condition="Exists('..\packages\GraphEngine.Core.2.0.9328\build\GraphEngine.Core.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -45,8 +45,8 @@
       <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FanoutSearch, Version=1.0.9083.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\GraphEngine.LIKQ.1.0.9083\lib\net46\FanoutSearch.dll</HintPath>
+    <Reference Include="FanoutSearch, Version=2.0.9328.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GraphEngine.LIKQ.2.0.9328\lib\net46\FanoutSearch.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis, Version=2.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -198,8 +198,8 @@
       <HintPath>..\packages\System.Xml.XPath.XDocument.4.3.0\lib\net46\System.Xml.XPath.XDocument.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Trinity.Core, Version=1.0.9083.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\GraphEngine.Core.1.0.9083\lib\net451\Trinity.Core.dll</HintPath>
+    <Reference Include="Trinity.Core, Version=2.0.9328.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GraphEngine.Core.2.0.9328\lib\net451\Trinity.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -232,8 +232,8 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.104.0\build\net46\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.104.0\build\net46\System.Data.SQLite.Core.targets'))" />
-    <Error Condition="!Exists('..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.props'))" />
-    <Error Condition="!Exists('..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.targets'))" />
+    <Error Condition="!Exists('..\packages\GraphEngine.Core.2.0.9328\build\GraphEngine.Core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GraphEngine.Core.2.0.9328\build\GraphEngine.Core.props'))" />
+    <Error Condition="!Exists('..\packages\GraphEngine.Core.2.0.9328\build\GraphEngine.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GraphEngine.Core.2.0.9328\build\GraphEngine.Core.targets'))" />
   </Target>
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.104.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.104.0\build\net46\System.Data.SQLite.Core.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -245,5 +245,5 @@
     <!--<Exec ContinueOnError="false"-->
     <!--Command="&quot;..\packages\Brutal.Dev.StrongNameSigner.2.1.0\build\StrongNameSigner.Console.exe&quot; -a &quot;..\packages\Serialize.Linq.1.2.4\lib\net45\Serialize.Linq.dll&quot;" />-->
   </Target>
-  <Import Project="..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.targets" Condition="Exists('..\packages\GraphEngine.Core.1.0.9083\build\GraphEngine.Core.targets')" />
+  <Import Project="..\packages\GraphEngine.Core.2.0.9328\build\GraphEngine.Core.targets" Condition="Exists('..\packages\GraphEngine.Core.2.0.9328\build\GraphEngine.Core.targets')" />
 </Project>
