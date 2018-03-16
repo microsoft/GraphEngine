@@ -41,7 +41,7 @@ namespace Trinity.ServiceFabric.Storage.External
 
     public class CellStreamReader : CellStream, ICellStreamReader
     {
-        protected const int DEFAULT_BUFFER_SIZE = 1024;
+        protected const int DEFAULT_BUFFER_SIZE = 1024 * 1024;
         protected readonly byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
         private readonly MemoryStream memstream = new MemoryStream();
 
