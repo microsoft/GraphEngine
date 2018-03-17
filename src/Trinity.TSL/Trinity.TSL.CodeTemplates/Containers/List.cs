@@ -23,15 +23,15 @@ namespace t_Namespace
 
     public unsafe class t_list_accessor : __meta, IEnumerable<t_accessor_type>
     {
-        internal byte* CellPtr;
-        internal long? CellID;
+        internal byte* m_ptr;
+        internal long m_id;
         internal ResizeFunctionDelegate ResizeFunction;
 
         internal t_list_accessor(byte* _CellPtr, ResizeFunctionDelegate func)
         {
-            CellPtr = _CellPtr;
+            m_ptr = _CellPtr;
             ResizeFunction = func;
-            CellPtr += 4;
+            m_ptr += 4;
 
             MODULE_CALL("ListElementAccessorInitialization", "$t_data_type");
         }
@@ -40,7 +40,7 @@ namespace t_Namespace
         {
             get
             {
-                return *(int*)(CellPtr - 4);
+                return *(int*)(m_ptr - 4);
             }
         }
 
@@ -58,8 +58,8 @@ namespace t_Namespace
                 IF("%element_fixed");
                 return length / t_int;
                 ELSE();
-                byte* targetPtr = CellPtr;
-                byte* endPtr = CellPtr + length;
+                byte* targetPtr = m_ptr;
+                byte* endPtr = m_ptr + length;
                 int ret = 0;
                 while (targetPtr < endPtr)
                 {
@@ -81,26 +81,26 @@ namespace t_Namespace
             get
             {
                 IF("!%element_need_accessor");
-                return *(t_accessor_type*)(CellPtr + index * t_int);
+                return *(t_accessor_type*)(m_ptr + index * t_int);
                 ELSE();
                 {
                     IF("%element_fixed");
-                    elementAccessor.CellPtr = (this.CellPtr + index * t_int);
+                    elementAccessor.m_ptr = (this.m_ptr + index * t_int);
                     ELSE();
                     {
-                        byte* targetPtr = CellPtr;
+                        byte* targetPtr = m_ptr;
                         while (index-- > 0)
                         {
                             MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
                         }
                         IF("data_type_is_length_prefixed(node->listElementType)");
-                        elementAccessor.CellPtr = targetPtr + 4;
+                        elementAccessor.m_ptr = targetPtr + 4;
                         ELSE();
-                        elementAccessor.CellPtr = targetPtr;
+                        elementAccessor.m_ptr = targetPtr;
                         END();
                     }
                     END();
-                    elementAccessor.CellID = this.CellID;
+                    elementAccessor.m_id = this.m_id;
                     return elementAccessor;
                 }
                 END();
@@ -108,12 +108,12 @@ namespace t_Namespace
             set
             {
                 IF("!%element_need_accessor");
-                *(t_accessor_type*)(CellPtr + index * t_int) = value;
+                *(t_accessor_type*)(m_ptr + index * t_int) = value;
                 ELSE();
                 {
                     if ((object)value == null) throw new ArgumentNullException("The assigned variable is null.");
-                    elementAccessor.CellID = this.CellID;
-                    byte* targetPtr = CellPtr;
+                    elementAccessor.m_id = this.m_id;
+                    byte* targetPtr = m_ptr;
                     IF("%element_fixed");
                     targetPtr += (index * t_int);
                     ELSE();
@@ -137,7 +137,7 @@ namespace t_Namespace
             byte[] ret = new byte[length];
             fixed (byte* retptr = ret)
             {
-                Memory.Copy(CellPtr, retptr, length);
+                Memory.Copy(m_ptr, retptr, length);
                 return ret;
             }
         }
@@ -148,10 +148,10 @@ namespace t_Namespace
         /// <param name="action">A lambda expression which has one parameter indicates element in List</param>
         public unsafe void ForEach(Action<t_accessor_type> action)
         {
-            byte* targetPtr = CellPtr;
-            byte* endPtr = CellPtr + length;
+            byte* targetPtr = m_ptr;
+            byte* endPtr = m_ptr + length;
             IF("%element_need_accessor");
-            elementAccessor.CellID = this.CellID;
+            elementAccessor.m_id = this.m_id;
             END();
             while (targetPtr < endPtr)
             {
@@ -162,19 +162,19 @@ namespace t_Namespace
                 }
                 ELIF("%element_fixed");
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.m_ptr = targetPtr;
                     action(elementAccessor);
                     targetPtr += t_int;
                 }
                 ELIF("data_type_is_length_prefixed(node->listElementType)");
                 {
-                    elementAccessor.CellPtr = targetPtr + 4;
+                    elementAccessor.m_ptr = targetPtr + 4;
                     action(elementAccessor);
                     MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
                 }
                 ELSE();
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.m_ptr = targetPtr;
                     action(elementAccessor);
                     MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
                 }
@@ -187,8 +187,8 @@ namespace t_Namespace
         /// <param name="action">A lambda expression which has two parameters. First indicates element in the List and second the index of this element.</param>
         public unsafe void ForEach(Action<t_accessor_type, int> action)
         {
-            byte* targetPtr = CellPtr;
-            byte* endPtr = CellPtr + length;
+            byte* targetPtr = m_ptr;
+            byte* endPtr = m_ptr + length;
             for (int index = 0; targetPtr < endPtr; ++index)
             {
                 IF("!%element_need_accessor");
@@ -198,19 +198,19 @@ namespace t_Namespace
                 }
                 ELIF("%element_fixed");
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.m_ptr = targetPtr;
                     action(elementAccessor, index);
                     targetPtr += t_int;
                 }
                 ELIF("data_type_is_length_prefixed(node->listElementType)");
                 {
-                    elementAccessor.CellPtr = targetPtr + 4;
+                    elementAccessor.m_ptr = targetPtr + 4;
                     action(elementAccessor, index);
                     MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
                 }
                 ELSE();
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.m_ptr = targetPtr;
                     action(elementAccessor, index);
                     MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
                 }
@@ -225,7 +225,7 @@ namespace t_Namespace
             t_list_accessor target;
             internal _iterator(t_list_accessor target)
             {
-                targetPtr = target.CellPtr;
+                targetPtr = target.m_ptr;
                 endPtr = targetPtr + target.length;
                 this.target = target;
             }
@@ -241,17 +241,17 @@ namespace t_Namespace
                 }
                 ELIF("%element_fixed");
                 {
-                    target.elementAccessor.CellPtr = targetPtr;
+                    target.elementAccessor.m_ptr = targetPtr;
                     return (target.elementAccessor);
                 }
                 ELIF("data_type_is_length_prefixed(node->listElementType)");
                 {
-                    target.elementAccessor.CellPtr = targetPtr + 4;
+                    target.elementAccessor.m_ptr = targetPtr + 4;
                     return target.elementAccessor;
                 }
                 ELSE();
                 {
-                    target.elementAccessor.CellPtr = targetPtr;
+                    target.elementAccessor.m_ptr = targetPtr;
                     return target.elementAccessor;
                 }
                 END();
@@ -296,10 +296,10 @@ namespace t_Namespace
 
             // TODO AppendCodeForContainer IAccessor code reuse
             int size = (int)targetPtr;
-            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), *(int*)(this.CellPtr-sizeof(int))+sizeof(int), size);
-            targetPtr = this.CellPtr + (*(int*)this.CellPtr)+sizeof(int);
-            *(int*)this.CellPtr += size;
-            this.CellPtr += sizeof(int);
+            this.m_ptr = this.ResizeFunction(this.m_ptr - sizeof(int), *(int*)(this.m_ptr-sizeof(int))+sizeof(int), size);
+            targetPtr = this.m_ptr + (*(int*)this.m_ptr)+sizeof(int);
+            *(int*)this.m_ptr += size;
+            this.m_ptr += sizeof(int);
 
             MODULE_CALL("PushPointerFromVariable", "$t_data_type", "\"element\"", "\"assign\"");
         }
@@ -318,7 +318,7 @@ namespace t_Namespace
             }
             int size = (int)targetPtr;
 
-            targetPtr = CellPtr;
+            targetPtr = m_ptr;
             IF("%element_fixed");
             targetPtr += index * t_int;
             ELSE();
@@ -327,13 +327,13 @@ namespace t_Namespace
                 MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
             }
             END();
-            int offset = (int)(targetPtr - CellPtr);
+            int offset = (int)(targetPtr - m_ptr);
             // InsertAndRemoveAtCodeForContainer TODO IAccessor reuse
-            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), offset + sizeof(int), size);
-            *(int*)this.CellPtr += size;
-            this.CellPtr += sizeof(int);
+            this.m_ptr = this.ResizeFunction(this.m_ptr - sizeof(int), offset + sizeof(int), size);
+            *(int*)this.m_ptr += size;
+            this.m_ptr += sizeof(int);
 
-            targetPtr = this.CellPtr + offset;
+            targetPtr = this.m_ptr + offset;
             MODULE_CALL("PushPointerFromVariable", "$t_data_type", "\"element\"", "\"assign\"");
         }
 
@@ -349,8 +349,8 @@ namespace t_Namespace
                 MODULE_CALL("PushPointerFromVariable", "$t_data_type", "\"element\"", "\"push\"");
             }
             int size = (int)targetPtr;
-            targetPtr = CellPtr;
-            byte* endPtr = CellPtr + length;
+            targetPtr = m_ptr;
+            byte* endPtr = m_ptr + length;
             while (targetPtr<endPtr)
             {
 
@@ -367,7 +367,7 @@ namespace t_Namespace
                 }
                 ELIF("%element_fixed");
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.m_ptr = targetPtr;
                     if (comparison(elementAccessor, element)<=0)
                     {
                         targetPtr += t_int;
@@ -380,7 +380,7 @@ namespace t_Namespace
                 ELIF("data_type_is_length_prefixed(node->listElementType)");
                 ELIF("node->listElementType->is_struct()");
                 {
-                    elementAccessor.CellPtr = targetPtr + 4;
+                    elementAccessor.m_ptr = targetPtr + 4;
                     if (comparison(elementAccessor, element)<=0)
                     {
                         MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
@@ -392,7 +392,7 @@ namespace t_Namespace
                 }
                 ELSE();
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.m_ptr = targetPtr;
                     if (comparison(elementAccessor, element)<=0)
                     {
                         MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
@@ -405,13 +405,13 @@ namespace t_Namespace
                 END();
             }
 
-            int offset = (int)(targetPtr - CellPtr);
+            int offset = (int)(targetPtr - m_ptr);
             // InsertAndRemoveAtCodeForContainer TODO IAccessor reuse
-            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), offset + sizeof(int), size);
-            *(int*)this.CellPtr += size;
-            this.CellPtr += sizeof(int);
+            this.m_ptr = this.ResizeFunction(this.m_ptr - sizeof(int), offset + sizeof(int), size);
+            *(int*)this.m_ptr += size;
+            this.m_ptr += sizeof(int);
 
-            targetPtr = this.CellPtr + offset;
+            targetPtr = this.m_ptr + offset;
             MODULE_CALL("PushPointerFromVariable", "$t_data_type", "\"element\"", "\"assign\"");
         }
 
@@ -423,19 +423,19 @@ namespace t_Namespace
         {
             if (index < 0 || index >= Count) throw new IndexOutOfRangeException();
 
-            byte* targetPtr = CellPtr;
+            byte* targetPtr = m_ptr;
             for (int i = 0; i < index; i++)
             {
                 MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
             }
-            int offset = (int)(targetPtr - CellPtr);
+            int offset = (int)(targetPtr - m_ptr);
             byte* oldtargetPtr = targetPtr;
             MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
             // InsertAndRemoveAtCodeForContainer TODO IAccessor reuse
             int size = (int)(oldtargetPtr - targetPtr);
-            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), offset + sizeof(int), size);
-            *(int*)this.CellPtr += size;
-            this.CellPtr += sizeof(int);
+            this.m_ptr = this.ResizeFunction(this.m_ptr - sizeof(int), offset + sizeof(int), size);
+            *(int*)this.m_ptr += size;
+            this.m_ptr += sizeof(int);
         }
 
         /// <summary>
@@ -447,10 +447,10 @@ namespace t_Namespace
             if (collection == null) throw new ArgumentNullException("collection is null.");
             t_list_accessor tcollection = collection;
             int delta = tcollection.length;
-            CellPtr = ResizeFunction(CellPtr - 4, *(int*)(CellPtr - 4) + 4, delta);
-            Memory.Copy(tcollection.CellPtr, CellPtr + *(int*)CellPtr + 4, delta);
-            *(int*)CellPtr += delta;
-            this.CellPtr += 4;
+            m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
+            Memory.Copy(tcollection.m_ptr, m_ptr + *(int*)m_ptr + 4, delta);
+            *(int*)m_ptr += delta;
+            this.m_ptr += 4;
         }
         /// <summary>
         /// Adds the elements of the specified collection to the end of the List
@@ -460,24 +460,24 @@ namespace t_Namespace
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
             int delta = collection.length;
-            if (collection.CellID != CellID)
+            if (collection.m_id != m_id)
             {
-                CellPtr = ResizeFunction(CellPtr - 4, *(int*)(CellPtr - 4) + 4, delta);
-                Memory.Copy(collection.CellPtr, CellPtr + *(int*)CellPtr + 4, delta);
-                *(int*)CellPtr += delta;
+                m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
+                Memory.Copy(collection.m_ptr, m_ptr + *(int*)m_ptr + 4, delta);
+                *(int*)m_ptr += delta;
             }
             else
             {
                 byte[] tmpcell = new byte[delta];
                 fixed (byte* tmpcellptr = tmpcell)
                 {
-                    Memory.Copy(collection.CellPtr, tmpcellptr, delta);
-                    CellPtr = ResizeFunction(CellPtr - 4, *(int*)(CellPtr - 4) + 4, delta);
-                    Memory.Copy(tmpcellptr, CellPtr + *(int*)CellPtr + 4, delta);
-                    *(int*)CellPtr += delta;
+                    Memory.Copy(collection.m_ptr, tmpcellptr, delta);
+                    m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
+                    Memory.Copy(tmpcellptr, m_ptr + *(int*)m_ptr + 4, delta);
+                    *(int*)m_ptr += delta;
                 }
             }
-            this.CellPtr += 4;
+            this.m_ptr += 4;
         }
 
         /// <summary>
@@ -486,10 +486,10 @@ namespace t_Namespace
         public unsafe void Clear()
         {
             int delta = length;
-            Memory.memset(CellPtr, 0, (ulong)delta);
-            CellPtr = ResizeFunction(CellPtr - 4, 4, -delta);
-            *(int*)CellPtr = 0;
-            this.CellPtr += 4;
+            Memory.memset(m_ptr, 0, (ulong)delta);
+            m_ptr = ResizeFunction(m_ptr - 4, 4, -delta);
+            *(int*)m_ptr = 0;
+            this.m_ptr += 4;
         }
         /// <summary>
         /// Determines whether an element is in the List
@@ -624,16 +624,16 @@ namespace t_Namespace
             if (index < 0) throw new ArgumentOutOfRangeException("index is less than 0.");
             if (index > Count) throw new ArgumentOutOfRangeException("index is greater than Count.");
             t_list_accessor tmpAccessor = collection;
-            byte* targetPtr = CellPtr;
+            byte* targetPtr = m_ptr;
             for (int i = 0; i < index; i++)
             {
                 MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
             }
-            int offset = (int)(targetPtr - CellPtr);
-            CellPtr = ResizeFunction(CellPtr - 4, offset + 4, tmpAccessor.length);
-            Memory.Copy(tmpAccessor.CellPtr, CellPtr + offset + 4, tmpAccessor.length);
-            *(int*)CellPtr += tmpAccessor.length;
-            this.CellPtr += 4;
+            int offset = (int)(targetPtr - m_ptr);
+            m_ptr = ResizeFunction(m_ptr - 4, offset + 4, tmpAccessor.length);
+            Memory.Copy(tmpAccessor.m_ptr, m_ptr + offset + 4, tmpAccessor.length);
+            *(int*)m_ptr += tmpAccessor.length;
+            this.m_ptr += 4;
         }
 
         /// <summary>
@@ -646,21 +646,21 @@ namespace t_Namespace
             if (index < 0) throw new ArgumentOutOfRangeException("index is less than 0.");
             if (index > Count) throw new ArgumentOutOfRangeException("index is greater than Count.");
             if (index + count > Count) throw new ArgumentException("index and count do not denote a valid range of elements in the List.");
-            byte* targetPtr = CellPtr;
+            byte* targetPtr = m_ptr;
             for (int i = 0; i < index; i++)
             {
                 MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
             }
-            int offset = (int)(targetPtr - CellPtr);
+            int offset = (int)(targetPtr - m_ptr);
             byte* oldtargetPtr = targetPtr;
             for (int i = 0; i < count; i++)
             {
                 MODULE_CALL("PushPointerThroughFieldType", "$t_data_type");
             }
             int size = (int)(oldtargetPtr - targetPtr);
-            CellPtr = ResizeFunction(CellPtr - 4, offset + 4, size);
-            *(int*)CellPtr += size;
-            this.CellPtr += 4;
+            m_ptr = ResizeFunction(m_ptr - 4, offset + 4, size);
+            *(int*)m_ptr += size;
+            this.m_ptr += 4;
         }
 
         public unsafe static implicit operator t_list (t_list_accessor accessor)
@@ -679,10 +679,10 @@ namespace t_Namespace
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
                 return false;
             // If both are same instance, return true.
-            if (a.CellPtr == b.CellPtr) return true;
+            if (a.m_ptr == b.m_ptr) return true;
             // If length not equal, return false.
             if (a.length != b.length) return false;
-            return Memory.Compare(a.CellPtr, b.CellPtr, a.length);
+            return Memory.Compare(a.m_ptr, b.m_ptr, a.length);
         }
 
         public static bool operator !=(t_list_accessor a, t_list_accessor b)

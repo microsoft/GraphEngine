@@ -220,8 +220,8 @@ source->append(R"::(_Accessor : IAccessor
         ///<summary>
         ///The pointer to the content of the object.
         ///</summary>
-        internal byte* CellPtr;
-        internal long? CellID;
+        internal byte* m_ptr;
+        internal long m_id;
         internal unsafe )::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::(_Accessor(byte* _CellPtr
@@ -234,7 +234,7 @@ source->append(R"::(
 }
 source->append(R"::()
         {
-            CellPtr = _CellPtr;
+            m_ptr = _CellPtr;
             )::");
 if (!struct_fixed_1)
 {
@@ -276,7 +276,7 @@ source->append(R"::(
         ///</summary>
         public byte[] ToByteArray()
         {
-            byte* targetPtr = CellPtr;
+            byte* targetPtr = m_ptr;
             )::");
 
 {
@@ -287,19 +287,19 @@ std::string* module_content = Modules::PushPointerThroughStruct(node, &module_ct
     delete module_content;
 }
 source->append(R"::(
-            int size = (int)(targetPtr - CellPtr);
+            int size = (int)(targetPtr - m_ptr);
             byte[] ret = new byte[size];
-            Memory.Copy(CellPtr, 0, ret, 0, size);
+            Memory.Copy(m_ptr, 0, ret, 0, size);
             return ret;
         }
         #region IAccessor
         public unsafe byte* GetUnderlyingBufferPointer()
         {
-            return CellPtr;
+            return m_ptr;
         }
         public unsafe int GetBufferLength()
         {
-            byte* targetPtr = CellPtr;
+            byte* targetPtr = m_ptr;
             )::");
 
 {
@@ -310,7 +310,7 @@ std::string* module_content = Modules::PushPointerThroughStruct(node, &module_ct
     delete module_content;
 }
 source->append(R"::(
-            int size = (int)(targetPtr - CellPtr);
+            int size = (int)(targetPtr - m_ptr);
             return size;
         }
         public ResizeFunctionDelegate ResizeFunction { get; set; }

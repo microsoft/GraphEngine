@@ -31,19 +31,19 @@ source->append(R"::(
     /// </summary>
     public unsafe class doubleListAccessor : IAccessor, IEnumerable<double>
     {
-        internal byte* CellPtr;
-        internal long? CellID;
+        internal byte* m_ptr;
+        internal long m_id;
         internal doubleListAccessor(byte* _CellPtr, ResizeFunctionDelegate func)
         {
-            CellPtr = _CellPtr;
+            m_ptr = _CellPtr;
             ResizeFunction = func;
-            CellPtr += sizeof(int);
+            m_ptr += sizeof(int);
         }
         internal int length
         {
             get
             {
-                return *(int*)(CellPtr - sizeof(int));
+                return *(int*)(m_ptr - sizeof(int));
             }
         }
         #region IAccessor Implementation
@@ -56,8 +56,8 @@ source->append(R"::(
             byte[] ret = new byte[length];
             fixed (byte* retptr = ret)
             {
-                Memory.Co)::");
-source->append(R"::(py(CellPtr, retptr, length);
+                Memory.Copy(m_ptr, r)::");
+source->append(R"::(etptr, length);
                 return ret;
             }
         }
@@ -66,7 +66,7 @@ source->append(R"::(py(CellPtr, retptr, length);
         /// </summary>
         public unsafe byte* GetUnderlyingBufferPointer()
         {
-            return CellPtr - sizeof(int);
+            return m_ptr - sizeof(int);
         }
         /// <summary>
         /// Get the length of the buffer.
@@ -90,10 +90,10 @@ source->append(R"::(py(CellPtr, retptr, length);
                 return length >> 3;
             }
         }
-    )::");
-source->append(R"::(    internal double* GetUnsafePointer()
+        internal do)::");
+source->append(R"::(uble* GetUnsafePointer()
         {
-            return (double*)CellPtr;
+            return (double*)m_ptr;
         }
         /// <summary>
         /// Gets or sets the element at the specified index. 
@@ -104,11 +104,11 @@ source->append(R"::(    internal double* GetUnsafePointer()
         {
             get
             {
-                return *(double*)(CellPtr + (index << 3));
+                return *(double*)(m_ptr + (index << 3));
             }
             set
             {
-                *(double*)(CellPtr + (index << 3)) = value;
+                *(double*)(m_ptr + (index << 3)) = value;
             }
         }
         /// <summary>
@@ -120,19 +120,19 @@ source->append(R"::(    internal double* GetUnsafePointer()
             double[] ret = new double[length >> 3];
             fixed (double* retptr = ret)
             {
-                Memory.Copy(CellPtr, retptr, length);
+                Memory.Copy(m_ptr, retptr, length);
             }
-            )::");
-source->append(R"::(return ret;
-        }
+            return ret;
+        })::");
+source->append(R"::(
         /// <summary>
         /// Performs the specified action on each elements
         /// </summary>
         /// <param name="action">A lambda expression which has one parameter indicates element in List</param>
         public unsafe void ForEach(Action<double> action)
         {
-            byte* targetPtr = CellPtr;
-            byte* endPtr = CellPtr + length;
+            byte* targetPtr = m_ptr;
+            byte* endPtr = m_ptr + length;
             while (targetPtr < endPtr)
             {
                 action(*(double*)targetPtr);
@@ -145,11 +145,11 @@ source->append(R"::(return ret;
         /// <param name="action">A lambda expression which has two parameters. First indicates element in the List and second the index of this element.</param>
         public unsafe void ForEach(Action<double, int> action)
         {
-            byte* targetPtr = CellPtr;
-            byte* endPtr = CellPtr + length;
-            for (int index = 0; tar)::");
-source->append(R"::(getPtr < endPtr; ++index)
-            {
+            byte* targetPtr = m_ptr;
+            byte* endPtr = m_ptr + length;
+            for (int index = 0; targetPtr < endPtr; ++index)
+    )::");
+source->append(R"::(        {
                 action(*(double*)targetPtr, index);
                 targetPtr += 8;
             }
@@ -160,8 +160,8 @@ source->append(R"::(getPtr < endPtr; ++index)
             byte* endPtr;
             internal _iterator(doubleListAccessor target)
             {
-                targetPtr = target.CellPtr;
-                endPtr    = target.CellPtr + target.length;
+                targetPtr = target.m_ptr;
+                endPtr    = target.m_ptr + target.length;
             }
             internal bool good()
             {
@@ -181,9 +181,9 @@ source->append(R"::(getPtr < endPtr; ++index)
         /// </summary>
         /// <returns>
         /// An IEnumerator object that can be used to iterate through the collection.
- )::");
-source->append(R"::(       /// </returns>
-        public IEnumerator<double> GetEnumerator()
+        /// </returns>
+        publ)::");
+source->append(R"::(ic IEnumerator<double> GetEnumerator()
         {
             _iterator it = new _iterator(this);
             while (it.good())
@@ -203,14 +203,14 @@ source->append(R"::(       /// </returns>
         public unsafe void Add(double element)
         {
             int size = sizeof(double);
-            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), *(int*)(this.CellPtr - sizeof(int)) + sizeof(int), size);
-            byte* targetPtr = this.CellPtr + (*(int*)this.CellPtr) + sizeof(int);
-            *(int*)this.CellPtr += size;
-            this.CellPtr += sizeof(int);
-        )::");
-source->append(R"::(    *(double*)targetPtr = element;
+            this.m_ptr = this.ResizeFunction(this.m_ptr - sizeof(int), *(int*)(this.m_ptr - sizeof(int)) + sizeof(int), size);
+            byte* targetPtr = this.m_ptr + (*(int*)this.m_ptr) + sizeof(int);
+            *(int*)this.m_ptr += size;
+            this.m_ptr += sizeof(int);
+            *(double*)targetPtr = element;
         }
-        /// <summary>
+  )::");
+source->append(R"::(      /// <summary>
         /// Inserts an element into the List at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index at which item should be inserted.</param>
@@ -219,25 +219,25 @@ source->append(R"::(    *(double*)targetPtr = element;
         {
             if (index < 0 || index > Count) throw new IndexOutOfRangeException();
             int size = sizeof(double);
-            byte* targetPtr = CellPtr + (index << 3);
-            int offset = (int)(targetPtr - CellPtr);
-            this.CellPtr = this.ResizeFunction(this.CellPtr - 4, offset + 4, size);
-            *(int*)this.CellPtr += size;
-            this.CellPtr += 4;
-            targetPtr = this.CellPtr + offset;
+            byte* targetPtr = m_ptr + (index << 3);
+            int offset = (int)(targetPtr - m_ptr);
+            this.m_ptr = this.ResizeFunction(this.m_ptr - 4, offset + 4, size);
+            *(int*)this.m_ptr += size;
+            this.m_ptr += 4;
+            targetPtr = this.m_ptr + offset;
             *(double*)targetPtr = element;
         }
         /// <summary>
         /// Inserts an element into the sorted List using the specified Comparison delegate.
-        /// </s)::");
-source->append(R"::(ummary>
-        /// <param name="element">The element to insert.</param>
+        /// </summary>
+        /// <param name="element">The element to inser)::");
+source->append(R"::(t.</param>
         /// <param name="comparison">The Comparison delegate.</param>
         public unsafe void Insert(double element, Comparison<double> comparison)
         {
             int size = sizeof(double);
-            byte* targetPtr = CellPtr;
-            byte* endPtr = CellPtr + length;
+            byte* targetPtr = m_ptr;
+            byte* endPtr = m_ptr + length;
             while (targetPtr < endPtr)
             {
                 if (comparison(*(double*)targetPtr, element) <= 0)
@@ -249,27 +249,27 @@ source->append(R"::(ummary>
                     break;
                 }
             }
-            int offset = (int)(targetPtr - CellPtr);
-            this.CellPtr = this.ResizeFunction(this.CellPtr - 4, offset + 4, size);
-            *(int*)this.CellPtr += size;
-            this.CellPtr += 4;
-            targetPtr = this.CellPtr + offset;
+            int offset = (int)(targetPtr - m_ptr);
+            this.m_ptr = this.ResizeFunction(this.m_ptr - 4, offset + 4, size);
+            *(int*)this.m_ptr += size;
+            this.m_ptr += 4;
+            targetPtr = this.m_ptr + offset;
             *(double*)targetPtr = element;
         }
         /// <summary>
-      )::");
-source->append(R"::(  /// Removes the element at the specified index of the List.
-        /// </summary>
+        /// Removes the element at the specified index of the List.
+        /// </su)::");
+source->append(R"::(mmary>
         /// <param name="index">The zero-based index of the element to remove.</param>
         public unsafe void RemoveAt(int index)
         {
             if (index < 0 || index >= Count) throw new IndexOutOfRangeException();
-            byte* targetPtr = CellPtr + (index << 3);
-            int offset = (int)(targetPtr - CellPtr);
+            byte* targetPtr = m_ptr + (index << 3);
+            int offset = (int)(targetPtr - m_ptr);
             int size = -sizeof(double);
-            this.CellPtr = this.ResizeFunction(this.CellPtr - 4, offset + 4, size);
-            *(int*)this.CellPtr += size;
-            this.CellPtr += 4;
+            this.m_ptr = this.ResizeFunction(this.m_ptr - 4, offset + 4, size);
+            *(int*)this.m_ptr += size;
+            this.m_ptr += 4;
         }
         /// <summary>
         /// Adds the elements of the specified collection to the end of the List
@@ -277,14 +277,14 @@ source->append(R"::(  /// Removes the element at the specified index of the List
         /// <param name="collection">The collection whose elements should be added to the end of the List. The collection itself cannot be null.</param>
         public unsafe void AddRange(List<double> collection)
         {
-            if (collection == )::");
-source->append(R"::(null) throw new ArgumentNullException("collection is null.");
-            doubleListAccessor tcollection = collection;
+            if (collection == null) throw new ArgumentNullException("collection is null.");
+            doubleListAccess)::");
+source->append(R"::(or tcollection = collection;
             int delta = tcollection.length;
-            CellPtr = ResizeFunction(CellPtr - 4, *(int*)(CellPtr - 4) + 4, delta);
-            Memory.Copy(tcollection.CellPtr, CellPtr + *(int*)CellPtr + 4, delta);
-            *(int*)CellPtr += delta;
-            this.CellPtr += 4;
+            m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
+            Memory.Copy(tcollection.m_ptr, m_ptr + *(int*)m_ptr + 4, delta);
+            *(int*)m_ptr += delta;
+            this.m_ptr += 4;
         }
         /// <summary>
         /// Adds the array of double elements to the end of the List.
@@ -294,17 +294,17 @@ source->append(R"::(null) throw new ArgumentNullException("collection is null.")
         {
             if (collection == null) return;
             int delta = collection.Length << 3;
-            CellPtr = ResizeFunction(CellPtr - 4, *(int*)(CellPtr - 4) + 4, delta);
+            m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
             fixed (double* dp = collection)
             {
-                Memory.Copy(dp, CellPtr + *(int*)CellPtr + 4, delta);
+                Memory.Copy(dp, m_ptr + *(int*)m_ptr + 4, delta);
             }
-            *(int*)C)::");
-source->append(R"::(ellPtr += delta;
-            this.CellPtr += 4;
+            *(int*)m_ptr += delta;
+            this.m_ptr += 4;
         }
         /// <summary>
-        /// Adds the array of double elements to the end of the List starting from the specified index.
+        /// Adds the array of double )::");
+source->append(R"::(elements to the end of the List starting from the specified index.
         /// </summary>
         /// <param name="collection">The array of double elements.</param>
         /// <param name="startIndex">The start position of the double array from which we copy the elements.</param>
@@ -313,42 +313,42 @@ source->append(R"::(ellPtr += delta;
         {
             if (collection == null) return;
             int delta = count << 3;
-            CellPtr = ResizeFunction(CellPtr - 4, *(int*)(CellPtr - 4) + 4, delta);
+            m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
             fixed (double* dp = &collection[startIndex])
             {
-                Memory.Copy(dp, CellPtr + *(int*)CellPtr + 4, delta);
+                Memory.Copy(dp, m_ptr + *(int*)m_ptr + 4, delta);
             }
-            *(int*)CellPtr += delta;
-            this.CellPtr += 4;
+            *(int*)m_ptr += delta;
+            this.m_ptr += 4;
         }
         /// <summary>
-        /// Adds t)::");
-source->append(R"::(he elements of the specified collection to the end of the List
+        /// Adds the elements of the specified collection to the end of the List
         /// </summary>
-        /// <param name="collection">The collection whose elements should be added to the end of the List. The collection itself cannot be null.</param>
+        /// <param name="collection">The collec)::");
+source->append(R"::(tion whose elements should be added to the end of the List. The collection itself cannot be null.</param>
         public unsafe void AddRange(doubleListAccessor collection)
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
             int delta = collection.length;
-            if (collection.CellID != CellID)
+            if (collection.m_id != m_id)
             {
-                CellPtr = ResizeFunction(CellPtr - 4, *(int*)(CellPtr - 4) + 4, delta);
-                Memory.Copy(collection.CellPtr, CellPtr + *(int*)CellPtr + 4, delta);
-                *(int*)CellPtr += delta;
+                m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
+                Memory.Copy(collection.m_ptr, m_ptr + *(int*)m_ptr + 4, delta);
+                *(int*)m_ptr += delta;
             }
             else
             {
                 byte[] tmpcell = new byte[delta];
                 fixed (byte* tmpcellptr = tmpcell)
                 {
-                    Memory.Copy(collection.CellPtr, tmpcellptr, delta);
-                    CellPtr = ResizeFunction)::");
-source->append(R"::((CellPtr - 4, *(int*)(CellPtr - 4) + 4, delta);
-                    Memory.Copy(tmpcellptr, CellPtr + *(int*)CellPtr + 4, delta);
-                    *(int*)CellPtr += delta;
+                    Memory.Copy(collection.m_ptr, tmpcellptr, delta);
+                    m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
+                    Memory.Copy(tmpcellptr, m_ptr + *(int*)m_ptr + 4, delta);
+                    *(int*)m_ptr )::");
+source->append(R"::(+= delta;
                 }
             }
-            this.CellPtr += 4;
+            this.m_ptr += 4;
         }
         /// <summary>
         /// Removes all elements from the List
@@ -356,10 +356,10 @@ source->append(R"::((CellPtr - 4, *(int*)(CellPtr - 4) + 4, delta);
         public unsafe void Clear()
         {
             int delta = length;
-            Memory.memset(CellPtr, 0, (ulong)delta);
-            CellPtr = ResizeFunction(CellPtr - 4, 4, -delta);
-            *(int*)CellPtr = 0;
-            this.CellPtr += 4;
+            Memory.memset(m_ptr, 0, (ulong)delta);
+            m_ptr = ResizeFunction(m_ptr - 4, 4, -delta);
+            *(int*)m_ptr = 0;
+            this.m_ptr += 4;
         }
         /// <summary>
         /// Determines whether an element is in the List
@@ -369,15 +369,15 @@ source->append(R"::((CellPtr - 4, *(int*)(CellPtr - 4) + 4, delta);
         public unsafe bool Contains(double item)
         {
             bool ret = false;
-     )::");
-source->append(R"::(       ForEach(x =>
+            ForEach(x =>
             {
                 if (item == x) ret = true;
             });
             return ret;
         }
         /// <summary>
-        /// Determines whether the List contains elements that match the conditions defined by the specified predicate.
+        /// Determines )::");
+source->append(R"::(whether the List contains elements that match the conditions defined by the specified predicate.
         /// </summary>
         /// <param name="match">The Predicate delegate that defines the conditions of the elements to search for.</param>
         /// <returns>true if the List contains one or more elements that match the conditions defined by the specified predicate; otherwise, false.</returns>
@@ -393,40 +393,40 @@ source->append(R"::(       ForEach(x =>
         /// <summary>
         /// Copies the entire List to a compatible one-dimensional array, starting at the beginning of the ptr1 array.
         /// </summary>
-        /// <param name="array">The)::");
-source->append(R"::( one-dimensional Array that is the destination of the elements copied from List. The Array must have zero-based indexing.</param>
-        public unsafe void CopyTo(double[] array)
+        /// <param name="array">The one-dimensional Array that is the destination of the elements copied from List. The Array must have zero-based indexing.</param>
+        public unsafe void CopyTo(double[] array)::");
+source->append(R"::()
         {
             if (array == null) throw new ArgumentNullException("array is null.");
             if (array.Length < Count) throw new ArgumentException("The number of elements in the source List is greater than the number of elements that the destination array can contain.");
             fixed (double* dp = array)
             {
-                Memory.Copy(CellPtr, 0, dp, 0, length);
+                Memory.Copy(m_ptr, 0, dp, 0, length);
             }
         }
         /// <summary>
         /// Copies the entire List to a compatible one-dimensional array, starting at the specified index of the ptr1 array.
         /// </summary>
         /// <param name="array">The one-dimensional Array that is the destination of the elements copied from List. The Array must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based index in array at which cop)::");
-source->append(R"::(ying begins.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
         public unsafe void CopyTo(double[] array, int arrayIndex)
         {
-            if (array == null) throw new ArgumentNullException("array is null.");
+            if (array == null) throw new ArgumentNullException("array is null.");)::");
+source->append(R"::(
             if (arrayIndex < 0) throw new ArgumentOutOfRangeException("arrayIndex is less than 0.");
             if (array.Length - arrayIndex < Count) throw new ArgumentException("The number of elements in the source List is greater than the available space from arrayIndex to the end of the destination array.");
             fixed (double* dp = array)
             {
-                Memory.Copy(CellPtr, 0, dp, arrayIndex * sizeof(double), length);
+                Memory.Copy(m_ptr, 0, dp, arrayIndex * sizeof(double), length);
             }
         }
         /// <summary>
         /// Copies a range of elements from the List to a compatible one-dimensional array, starting at the specified index of the ptr1 array.
         /// </summary>
         /// <param name="index">The zero-based index in the source List at which copying begins.</param>
-        /// <param name="array">The one-dimensional Array that )::");
-source->append(R"::(is the destination of the elements copied from List. The Array must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>;
+        /// <param name="array">The one-dimensional Array that is the destination of the elements copied from List. The Array must have zero-based indexing.</param>
+        /// <param name="arrayIndex">The zero-based index in array at which copy)::");
+source->append(R"::(ing begins.</param>;
         /// <param name="count">The number of elements to copy.</param>
         public unsafe void CopyTo(int index, double[] array, int arrayIndex, int count)
         {
@@ -434,12 +434,12 @@ source->append(R"::(is the destination of the elements copied from List. The Arr
             if (arrayIndex < 0 || index < 0 || count < 0) throw new ArgumentOutOfRangeException("arrayIndex is less than 0 or index is less than 0 or count is less than 0.");
             if (array.Length - arrayIndex < Count - index) throw new ArgumentException("The number of elements from index to the end of the source List is greater than the available space from arrayIndex to the end of the destination array. ");
             if (index >= Count) throw new ArgumentException("index is equal to or greater than the Count of the source List.");
-            )::");
-source->append(R"::(fixed (double* dp = array)
+            fixed (double* dp = array)
             {
-                Memory.Copy(CellPtr, index * sizeof(double), dp, arrayIndex * sizeof(double), count * sizeof(double));
+                Memory.Copy(m_ptr, index * sizeof(double), dp, arrayIndex * sizeof(double), count * sizeof(double));
             }
-        }
+       )::");
+source->append(R"::( }
         /// <summary>
         /// Inserts the elements of a collection into the List at the specified index.
         /// </summary>
@@ -449,15 +449,15 @@ source->append(R"::(fixed (double* dp = array)
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
             if (index < 0) throw new ArgumentOutOfRangeException("index is less than 0.");
-            if (index > Count) throw new ArgumentOutOfRangeException("index is greater than Count.)::");
-source->append(R"::(");
+            if (index > Count) throw new ArgumentOutOfRangeException("index is greater than Count.");
             doubleListAccessor tmpAccessor = collection;
-            byte* targetPtr = CellPtr + (index << 3);
-            int offset = (int)(targetPtr - CellPtr);
-            CellPtr = ResizeFunction(CellPtr - 4, offset + 4, tmpAccessor.length);
-            Memory.Copy(tmpAccessor.CellPtr, CellPtr + offset + 4, tmpAccessor.length);
-            *(int*)CellPtr += tmpAccessor.length;
-            this.CellPtr += 4;
+            byte* targetPtr = m_ptr + (index << 3);
+            int offset = (int)(targetPtr - m_ptr);
+            m_ptr)::");
+source->append(R"::( = ResizeFunction(m_ptr - 4, offset + 4, tmpAccessor.length);
+            Memory.Copy(tmpAccessor.m_ptr, m_ptr + offset + 4, tmpAccessor.length);
+            *(int*)m_ptr += tmpAccessor.length;
+            this.m_ptr += 4;
         }
         /// <summary>
         /// Removes a range of elements from the List.
@@ -468,14 +468,14 @@ source->append(R"::(");
         {
             if (index < 0) throw new ArgumentOutOfRangeException("index is less than 0.");
             if (index > Count) throw new ArgumentOutOfRangeException("index is greater than Count.");
-            if (index + count > )::");
-source->append(R"::(Count) throw new ArgumentException("index and count do not denote a valid range of elements in the List.");
-            byte* targetPtr = CellPtr + (index << 3);
-            int offset = (int)(targetPtr - CellPtr);
+            if (index + count > Count) throw new ArgumentException("index and count do not denote a valid range of elements in the List.");
+            byte* targetPtr = m_ptr + (index << 3);
+            int offset = (int)(targetPt)::");
+source->append(R"::(r - m_ptr);
             int size = -(count << 3);
-            CellPtr = ResizeFunction(CellPtr - 4, offset + 4, size);
-            *(int*)CellPtr += size;
-            this.CellPtr += 4;
+            m_ptr = ResizeFunction(m_ptr - 4, offset + 4, size);
+            *(int*)m_ptr += size;
+            this.m_ptr += 4;
         }
         /// <summary>
         /// Implicitly converts a doubleList instance to a List{double} instance.
@@ -490,12 +490,12 @@ source->append(R"::(Count) throw new ArgumentException("index and count do not d
             return list;
         }
         /// <summary>
-        /// Implicitly conve)::");
-source->append(R"::(rts a List{double} instance to a doubleList instance.
+        /// Implicitly converts a List{double} instance to a doubleList instance.
         /// </summary>
         /// <param name="value">The List{double} instance.</param>
         /// <returns>The doubleList instance.</returns>
-        public unsafe static implicit operator doubleListAccessor(List<double> value)
+        p)::");
+source->append(R"::(ublic unsafe static implicit operator doubleListAccessor(List<double> value)
         {
             byte* targetPtr = null;
             if (value != null)
@@ -516,16 +516,15 @@ source->append(R"::(rts a List{double} instance to a doubleList instance.
                 {
                     *(double*)targetPtr = value[iterator_0];
                     targetPtr += 8;
-              )::");
-source->append(R"::(  }
+                }
             }
             else
             {
                 *(int*)targetPtr = 0;
                 targetPtr += sizeof(int);
             }
-            doubleListAccessor ret = new doubleListAccessor(tmpcellptr, null);
-            ret.CellID = null;
+            doubleListAccessor ret = new doubleListAccessor(tmp)::");
+source->append(R"::(cellptr, null);
             return ret;
         }
         /// <summary>
@@ -540,13 +539,13 @@ source->append(R"::(  }
               return true;
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
               return false;
-            if (a.CellPtr == b.Ce)::");
-source->append(R"::(llPtr) return true;
+            if (a.m_ptr == b.m_ptr) return true;
             if (a.length != b.length) return false;
-            return Memory.Compare(a.CellPtr, b.CellPtr, a.length);
+            return Memory.Compare(a.m_ptr, b.m_ptr, a.length);
         }
         /// <summary>Determines whether two specified doubleList have different values.</summary>
-        /// <returns>true if the value of <paramref name="a" /> is different from the value of <paramref name="b" />; otherwise, false.</returns>
+ )::");
+source->append(R"::(       /// <returns>true if the value of <paramref name="a" /> is different from the value of <paramref name="b" />; otherwise, false.</returns>
         /// <param name="a">The first doubleList to compare, or null. </param>
         /// <param name="b">The second doubleList to compare, or null. </param>
         public static bool operator !=(doubleListAccessor a, doubleListAccessor b)
@@ -557,22 +556,22 @@ source->append(R"::(llPtr) return true;
         /// Determines whether this instance and a specified object have the same value.
         /// </summary>
         /// <param name="obj">The doubleList to compare to this instance.</param>
-        /// <returns>true if <paramref name="obj" /> is a doubleList and its value is the same as this inst)::");
-source->append(R"::(ance; otherwise, false.</returns>
+        /// <returns>true if <paramref name="obj" /> is a doubleList and its value is the same as this instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
             doubleListAccessor b = obj as doubleListAccessor;
             if (b == null)
                 return false;
             return (this == b);
-        }
+   )::");
+source->append(R"::(     }
         /// <summary>
         /// Return the hash code for this doubleList.
         /// </summary>
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override int GetHashCode()
         {
-            return HashHelper.HashBytes(this.CellPtr, this.length);
+            return HashHelper.HashBytes(this.m_ptr, this.length);
         }
     }
 }

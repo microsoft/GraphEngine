@@ -17,8 +17,8 @@ namespace t_Namespace
     [TARGET("NTSL")]
     public unsafe class GuidAccessor : IAccessor
     {
-        internal byte* CellPtr;
-        internal long? CellID;
+        internal byte* m_ptr;
+        internal long m_id;
         
         ///
         /// <summary>
@@ -73,7 +73,7 @@ namespace t_Namespace
 
         internal GuidAccessor(byte* _CellPtr)
         {
-            CellPtr = _CellPtr;
+            m_ptr = _CellPtr;
         }
 
         internal int length
@@ -95,7 +95,7 @@ namespace t_Namespace
             byte[] ret = new byte[16];
             fixed (byte* ptr = ret)
             {
-                Memory.Copy(CellPtr, ptr, 16);
+                Memory.Copy(m_ptr, ptr, 16);
             }
             return ret;
         }
@@ -105,7 +105,7 @@ namespace t_Namespace
         /// </summary>
         public unsafe byte* GetUnderlyingBufferPointer()
         {
-            return CellPtr;
+            return m_ptr;
         }
 
         /// <summary>
@@ -181,7 +181,6 @@ namespace t_Namespace
             }
 
             GuidAccessor ret = new GuidAccessor(tmpcellptr);
-            ret.CellID = null;
             return ret;
         }
 
@@ -198,8 +197,8 @@ namespace t_Namespace
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
               return false;
             // If both are same instance, return true.
-            if (a.CellPtr == b.CellPtr) return true;
-            return Memory.Compare(a.CellPtr, b.CellPtr, 16);
+            if (a.m_ptr == b.m_ptr) return true;
+            return Memory.Compare(a.m_ptr, b.m_ptr, 16);
         }
 
         /// <summary>Determines whether two specified GuidAccessor have different values.</summary>
@@ -230,7 +229,7 @@ namespace t_Namespace
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override int GetHashCode()
         {
-            return HashHelper.HashBytes(this.CellPtr, this.length);
+            return HashHelper.HashBytes(this.m_ptr, this.length);
         }
     }
 }

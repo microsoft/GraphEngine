@@ -32,14 +32,14 @@ source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(.
         /// </summary>
         /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
-        /// <param name="CellID">The id of the cell.</param>
+        /// <param name="cellId">The id of the cell.</param>
         /// <returns>True if the cell is found and is of the correct type. Otherwise false.</returns>
         public unsafe static bool Is)::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, long CellID)
+source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, long cellId)
         {
             ushort cellType;
-            if (storage.GetCellType(CellID, out cellType) == TrinityErrorCode.E_SUCCESS)
+            if (storage.GetCellType(cellId, out cellType) == TrinityErrorCode.E_SUCCESS)
             {
                 return cellType == (ushort)CellType.)::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
@@ -54,12 +54,12 @@ source->append(R"::(
         /// Get the type of the cell.
         /// </summary>
         /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
-        /// <param name="CellID">The id of the cell.</param>
+        /// <param name="cellId">The id of the cell.</param>
         /// <returns>If the cell is found, returns the type of the cell. Otherwise, returns CellType.Undefined.</returns>
-        public unsafe static CellType GetCellType(this Trinity.Storage.LocalMemoryStorage storage, long CellID)
+        public unsafe static CellType GetCellType(this Trinity.Storage.LocalMemoryStorage storage, long cellId)
         {
             ushort cellType;
-            if (storage.GetCellType(CellID, out cellType) == TrinityErrorCode.E_SUCCESS)
+            if (storage.GetCellType(cellId, out cellType) == TrinityErrorCode.E_SUCCESS)
             {
                 return (CellType)cellType;
             }

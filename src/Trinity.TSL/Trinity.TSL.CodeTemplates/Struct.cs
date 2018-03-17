@@ -145,8 +145,8 @@ namespace t_Namespace
         ///<summary>
         ///The pointer to the content of the object.
         ///</summary>
-        internal byte* CellPtr;
-        internal long? CellID;
+        internal byte* m_ptr;
+        internal long m_id;
 
         [MUTE]
         internal unsafe t_struct_name_Accessor(byte* _CellPtr) { throw new NotImplementedException(); }
@@ -157,7 +157,7 @@ namespace t_Namespace
             , ResizeFunctionDelegate func
             /*END*/)
         {
-            CellPtr = _CellPtr;
+            m_ptr = _CellPtr;
             IF("!%struct_fixed");
             ResizeFunction = func;
             ELSE();
@@ -177,27 +177,27 @@ namespace t_Namespace
         ///</summary>
         public byte[] ToByteArray()
         {
-            byte* targetPtr = CellPtr;
+            byte* targetPtr = m_ptr;
             MODULE_CALL("PushPointerThroughStruct", "node");
-            int size = (int)(targetPtr - CellPtr);
+            int size = (int)(targetPtr - m_ptr);
             byte[] ret = new byte[size];
-            Memory.Copy(CellPtr, 0, ret, 0, size);
+            Memory.Copy(m_ptr, 0, ret, 0, size);
             return ret;
         }
 
         #region IAccessor
         public unsafe byte* GetUnderlyingBufferPointer()
         {
-            return CellPtr;
+            return m_ptr;
         }
 
         public unsafe int GetBufferLength()
         {
-            byte* targetPtr = CellPtr;
+            byte* targetPtr = m_ptr;
 
             MODULE_CALL("PushPointerThroughStruct", "node");
 
-            int size = (int)(targetPtr - CellPtr);
+            int size = (int)(targetPtr - m_ptr);
             return size;
         }
 

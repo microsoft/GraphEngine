@@ -16,14 +16,14 @@ namespace t_Namespace
     [TARGET("NTSL")]
     public unsafe class U8StringAccessor : IAccessor
     {
-        internal byte* CellPtr;
-        internal long? CellID;
+        internal byte* m_ptr;
+        internal long  m_id;
 
         internal U8StringAccessor(byte* _CellPtr, ResizeFunctionDelegate func)
         {
-            CellPtr = _CellPtr;
+            m_ptr = _CellPtr;
             ResizeFunction = func;
-            CellPtr += 4;
+            m_ptr += 4;
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace t_Namespace
         {
             get
             {
-                return *(int*)(CellPtr - 4);
+                return *(int*)(m_ptr - 4);
             }
         }
 
@@ -48,7 +48,7 @@ namespace t_Namespace
             byte[] ret = new byte[Length];
             fixed (byte* retptr = ret)
             {
-                Memory.Copy(CellPtr, retptr, Length);
+                Memory.Copy(m_ptr, retptr, Length);
                 return ret;
             }
         }
@@ -58,7 +58,7 @@ namespace t_Namespace
         /// </summary>
         public unsafe byte* GetUnderlyingBufferPointer()
         {
-            return CellPtr - sizeof(int);
+            return m_ptr - sizeof(int);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace t_Namespace
             byte[] content = new byte[len];
             fixed (byte* pcontent = content)
             {
-                Memory.Copy(this.CellPtr, pcontent, len);
+                Memory.Copy(this.m_ptr, pcontent, len);
             }
             return Encoding.UTF8.GetString(content);
         }
@@ -137,7 +137,6 @@ namespace t_Namespace
             Memory.Copy(content, targetPtr + sizeof(int), len);
 
             U8StringAccessor ret = new U8StringAccessor(targetPtr, null);
-            ret.CellID = null;
             return ret;
         }
 
@@ -154,7 +153,7 @@ namespace t_Namespace
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
                 return false;
             // If both are same instance, return true.
-            if (a.CellPtr == b.CellPtr) return true;
+            if (a.m_ptr == b.m_ptr) return true;
             return (a.ToString() == b.ToString());
         }
 
@@ -216,7 +215,7 @@ namespace t_Namespace
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override unsafe int GetHashCode()
         {
-            return HashHelper.HashBytes(this.CellPtr, this.Length);
+            return HashHelper.HashBytes(this.m_ptr, this.Length);
         }
 
         /// <summary>Determines whether the two specified StringAccessor have different values.</summary>

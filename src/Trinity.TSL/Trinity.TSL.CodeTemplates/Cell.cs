@@ -72,7 +72,7 @@ namespace t_Namespace
         ///<summary>
         ///The id of the cell.
         ///</summary>
-        public long CellID;
+        public long CellId;
         ///<summary>
         ///Initializes a new instance of t_cell_name with the specified parameters.
         ///</summary>
@@ -81,7 +81,7 @@ namespace t_Namespace
             FOREACH();
             this.t_field_name = t_field_name;
             END();
-            CellID = cell_id;
+            CellId = cell_id;
         }
 
         //Loop via pre-defined variables
@@ -95,7 +95,7 @@ namespace t_Namespace
             FOREACH();
             this.t_field_name = t_field_name;
             END();
-            CellID = CellIDFactory.NewCellID();
+            CellId = CellIdFactory.NewCellId();
         }
 
         [MUTE]
@@ -215,13 +215,13 @@ namespace t_Namespace
             switch (FieldLookupTable.Lookup(fieldName))
             {
                 case -1:
-                    Throw.undefined_field();
-                    break;
+                Throw.undefined_field();
+                break;
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
                 case t_int:
-                    return TypeConverter<T>.ConvertFrom_t_field_type_display(this.t_field_name);
-                    /*END*/
+                return TypeConverter<T>.ConvertFrom_t_field_type_display(this.t_field_name);
+                /*END*/
             }
 
             /* Should not reach here */
@@ -245,17 +245,17 @@ namespace t_Namespace
             switch (FieldLookupTable.Lookup(fieldName))
             {
                 case -1:
-                    Throw.undefined_field();
-                    break;
+                Throw.undefined_field();
+                break;
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
                 case t_int:
-                    this.t_field_name = TypeConverter<T>.ConvertTo_t_field_type_display(value);
-                    break;
+                this.t_field_name = TypeConverter<T>.ConvertTo_t_field_type_display(value);
+                break;
                 /*END*/
                 default:
-                    Throw.data_type_incompatible_with_field(typeof(T).ToString());
-                    break;
+                Throw.data_type_incompatible_with_field(typeof(T).ToString());
+                break;
             }
         }
 
@@ -271,14 +271,14 @@ namespace t_Namespace
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
                 case t_int:
-                    IF("$t_field_type->is_optional()");
-                    return this.t_field_name != null;
-                    ELSE();
-                    return true;
-                    END();
+                IF("$t_field_type->is_optional()");
+                return this.t_field_name != null;
+                ELSE();
+                return true;
+                END();
                 /*END*/
                 default:
-                    return false;
+                return false;
             }
         }
 
@@ -305,59 +305,59 @@ namespace t_Namespace
             switch (FieldLookupTable.Lookup(fieldName))
             {
                 case -1:
-                    Throw.undefined_field();
-                    break;
+                Throw.undefined_field();
+                break;
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
                 /*IF("$t_field_type->is_string() || $t_field_type->is_list()")*/
                 case t_int:
-                    IF("$t_field_type->is_string()");
-                    {
-                        if (this.t_field_name == null)
-                            this.t_field_name = TypeConverter<T>.ConvertTo_string(value);
-                        else
-                            this.t_field_name += TypeConverter<T>.ConvertTo_string(value);
-                    }
-                    ELIF("$t_field_type->is_list()");
-                    {
-                        if (this.t_field_name == null)
-                            this.t_field_name = new t_field_type();
+                IF("$t_field_type->is_string()");
+                {
+                    if (this.t_field_name == null)
+                        this.t_field_name = TypeConverter<T>.ConvertTo_string(value);
+                    else
+                        this.t_field_name += TypeConverter<T>.ConvertTo_string(value);
+                }
+                ELIF("$t_field_type->is_list()");
+                {
+                    if (this.t_field_name == null)
+                        this.t_field_name = new t_field_type();
 
-                        switch (TypeConverter<T>.GetConversionActionTo_t_field_type_display())
-                        {
-                            case TypeConversionAction.TC_ASSIGN:
-                                foreach (var element in value as t_field_type)
-                                    this.t_field_name.Add(element);
-                                break;
-                            case TypeConversionAction.TC_CONVERTLIST:
-                            case TypeConversionAction.TC_ARRAYTOLIST:
-                                foreach (var element in TypeConverter<T>.Enumerate_t_field_type_list_element_type_display(value))
-                                    this.t_field_name.Add(element);
-                                break;
-                            case TypeConversionAction.TC_WRAPINLIST:
-                            case TypeConversionAction.TC_PARSESTRING:
-                                // TC_PARSESTRING is a special case. It means that T is string. It is ambiguous in the sense that
-                                // a string can be converted into both element and the container.
-                                // So we make a rule that in an AppendToField call, if T is string, it always means to parse the
-                                // string as an element and then insert into the field.
-                                this.t_field_name.Add(TypeConverter<T>.ConvertTo_t_field_type_list_element_type_display(value));
-                                break;
-                            default:
-                                Throw.data_type_incompatible_with_list(typeof(T).ToString());
-                                break;
-                        }
+                    switch (TypeConverter<T>.GetConversionActionTo_t_field_type_display())
+                    {
+                        case TypeConversionAction.TC_ASSIGN:
+                        foreach (var element in value as t_field_type)
+                            this.t_field_name.Add(element);
+                        break;
+                        case TypeConversionAction.TC_CONVERTLIST:
+                        case TypeConversionAction.TC_ARRAYTOLIST:
+                        foreach (var element in TypeConverter<T>.Enumerate_t_field_type_list_element_type_display(value))
+                            this.t_field_name.Add(element);
+                        break;
+                        case TypeConversionAction.TC_WRAPINLIST:
+                        case TypeConversionAction.TC_PARSESTRING:
+                        // TC_PARSESTRING is a special case. It means that T is string. It is ambiguous in the sense that
+                        // a string can be converted into both element and the container.
+                        // So we make a rule that in an AppendToField call, if T is string, it always means to parse the
+                        // string as an element and then insert into the field.
+                        this.t_field_name.Add(TypeConverter<T>.ConvertTo_t_field_type_list_element_type_display(value));
+                        break;
+                        default:
+                        Throw.data_type_incompatible_with_list(typeof(T).ToString());
+                        break;
                     }
-                    END();
-                    break;
+                }
+                END();
+                break;
                 /*END*/
                 /*END*/
                 default:
-                    Throw.target__field_not_list();
-                    break;
+                Throw.target__field_not_list();
+                break;
             }
         }
 
-        long ICell.CellID { get { return CellID; } set { CellID = value; } }
+        long ICell.CellId { get { return CellId; } set { CellId = value; } }
 
         public IEnumerable<KeyValuePair<string, T>> SelectFields<T>(string attributeKey, string attributeValue)
         {
@@ -375,22 +375,22 @@ namespace t_Namespace
                 /*  END()*/
                 /*  IF("%compatible")*/
                 case t_uint:
-                    FOREACH();
-                    USE_LIST("t_field");
-                    IF("$t_data_type->is_convertible_from($t_field_type)");
-                    if (StorageSchema.t_cell_name_descriptor.check_attribute(StorageSchema.t_cell_name_descriptor.t_field_name, attributeKey, attributeValue))
-                        /*IF("$t_field->is_optional()")*/
-                        if (this.t_field_name != null)
-                            /*END()*/
-                            yield return new KeyValuePair<string, T>("t_field_name", TypeConverter<T>.ConvertFrom_t_field_type_display(this.t_field_name));
-                    END();
-                    END();
-                    break;
+                FOREACH();
+                USE_LIST("t_field");
+                IF("$t_data_type->is_convertible_from($t_field_type)");
+                if (StorageSchema.t_cell_name_descriptor.check_attribute(StorageSchema.t_cell_name_descriptor.t_field_name, attributeKey, attributeValue))
+                    /*IF("$t_field->is_optional()")*/
+                    if (this.t_field_name != null)
+                        /*END()*/
+                        yield return new KeyValuePair<string, T>("t_field_name", TypeConverter<T>.ConvertFrom_t_field_type_display(this.t_field_name));
+                END();
+                END();
+                break;
                 /*END()*/
                 /**/
                 default:
-                    Throw.incompatible_with_cell();
-                    break;
+                Throw.incompatible_with_cell();
+                break;
             }
             yield break;
         }
@@ -425,11 +425,11 @@ namespace t_Namespace
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
                 case t_int:
-                    return _enumerate_from_t_field_name<T>();
+                return _enumerate_from_t_field_name<T>();
                 /*END*/
                 default:
-                    Throw.undefined_field();
-                    return null;
+                Throw.undefined_field();
+                return null;
             }
         }
 
@@ -450,23 +450,23 @@ namespace t_Namespace
                     /*META_VAR("int", "iter_val", "0")*/
                     /*META("for(const std::string& attr : %field_attributes){")*/
                     case t_int_2:
-                        FOREACH();
+                    FOREACH();
+                    {
+                        USE_LIST("t_field");
+                        META_VAR("std::string*", "p_field_attr_value", "$t_field->get_attribute(attr)");
+                        IF("%p_field_attr_value != nullptr");
                         {
-                            USE_LIST("t_field");
-                            META_VAR("std::string*", "p_field_attr_value", "$t_field->get_attribute(attr)");
-                            IF("%p_field_attr_value != nullptr");
+                            if (attributeValue == null || attributeValue == "/*META_OUTPUT(%p_field_attr_value)*/")
                             {
-                                if (attributeValue == null || attributeValue == "/*META_OUTPUT(%p_field_attr_value)*/")
-                                {
-                                    foreach (var val in _enumerate_from_t_field_name<T>())
-                                        yield return val;
-                                }
+                                foreach (var val in _enumerate_from_t_field_name<T>())
+                                    yield return val;
                             }
-                            END();
                         }
                         END();
-                        break;
-                        /*META("}")*/
+                    }
+                    END();
+                    break;
+                    /*META("}")*/
                 }
             }
             yield break;
@@ -559,7 +559,7 @@ namespace t_Namespace
     {
         internal t_cell_name_Accessor(long cellId, byte[] buffer)
         {
-            this.CellID       = cellId;
+            this.CellId       = cellId;
             this.handle       = GCHandle.Alloc(buffer, GCHandleType.Pinned);
             this.CellPtr      = (byte*)handle.AddrOfPinnedObject().ToPointer();
 
@@ -568,7 +568,7 @@ namespace t_Namespace
             MODULE_CALL("CellFieldAccessorInitialization", "$t_field");
             END();//FOREACH
 
-            this.CellEntryIndex = -1;
+            this.m_cellEntryIndex = -1;
         }
 
         [MODULE_CALL("OptionalFields", "node")]
@@ -613,7 +613,7 @@ namespace t_Namespace
             MODULE_CALL("CellFieldAccessorInitialization", "$t_field");
             END();//FOREACH
 
-            this.CellID = cellId;
+            this.CellId = cellId;
         }
 
         public unsafe t_cell_name_Accessor(byte* _CellPtr)
@@ -625,10 +625,10 @@ namespace t_Namespace
             MODULE_CALL("CellFieldAccessorInitialization", "$t_field");
             END();//FOREACH
 
-            this.CellEntryIndex = -1;
+            this.m_cellEntryIndex = -1;
         }
 
-        private static unsafe byte[] construct(long CellID /*FOREACH*/, t_field_type t_field_name = default(t_field_type) /*END*/)
+        private static unsafe byte[] construct(long cellId /*FOREACH*/, t_field_type t_field_name = default(t_field_type) /*END*/)
         {
             MUTE();
             byte[] tmpcell = null;
@@ -692,31 +692,16 @@ namespace t_Namespace
             END();
             END();
 
-            if (accessor.CellID != null)
-            {
-                return new t_cell_name(accessor.CellID.Value
-                /*FOREACH*/
-                ,
-                /*IF("$t_field->is_optional()")*/
-                _t_field_name /*MUTE*/ , /*MUTE_END*/
-                                         /*ELSE*/
-                        accessor.t_field_name
-                /*END*/
-                /*END*/
-                );
-            }
-            else
-            {
-                return new t_cell_name(
-                /*FOREACH(",")*/
-                /*IF("$t_field->is_optional()")*/
-                _t_field_name /*MUTE*/ , /*MUTE_END*/
-                                         /*ELSE*/
-                        accessor.t_field_name
-                /*END*/
-                /*END*/
-                );
-            }
+            return new t_cell_name(accessor.CellId
+            /*FOREACH*/
+            ,
+            /*IF("$t_field->is_optional()")*/
+            _t_field_name /*MUTE*/ , /*MUTE_END*/
+                                     /*ELSE*/
+                    accessor.t_field_name
+            /*END*/
+            /*END*/
+            );
         }
         [MODULE_CALL("StructAccessorReverseImplicitOperator", "node")]
 
@@ -744,12 +729,12 @@ namespace t_Namespace
         /// <summary>
         /// Get the size of the cell content, in bytes.
         /// </summary>
-        public int CellSize { get { int size; Global.LocalStorage.LockedGetCellSize(this.CellID.Value, this.CellEntryIndex, out size); return size; } }
+        public int CellSize { get { int size; Global.LocalStorage.LockedGetCellSize(this.CellId, this.m_cellEntryIndex, out size); return size; } }
         /// <summary>
-        /// Get the cell id. The value can be null when the id is undefined.
+        /// Get the cell id.
         /// </summary>
-        public long? CellID { get; internal set; }
-        internal    int                     CellEntryIndex;
+        public      long                    CellId { get; internal set; }
+        internal    int                     m_cellEntryIndex;
         internal    bool                    m_IsIterator   = false;
         internal    CellAccessOptions       m_options      = 0;
         private     GCHandle                handle;
@@ -769,57 +754,57 @@ namespace t_Namespace
             switch (eResult)
             {
                 case TrinityErrorCode.E_CELL_NOT_FOUND:
+                {
+                    if ((options & CellAccessOptions.ThrowExceptionOnCellNotFound) != 0)
                     {
-                        if ((options & CellAccessOptions.ThrowExceptionOnCellNotFound) != 0)
-                        {
-                            Throw.cell_not_found(cellId);
-                        }
-                        else if ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
-                        {
-                            byte[]  defaultContent    = construct(cellId);
-                            int     size              = defaultContent.Length;
-                            eResult                   = Global.LocalStorage.AddOrUse(cellId, defaultContent, ref size, (ushort)CellType.t_cell_name, out cellPtr, out cellEntryIndex);
-
-                            if (eResult == TrinityErrorCode.E_WRONG_CELL_TYPE)
-                            {
-                                Throw.wrong_cell_type();
-                            }
-                        }
-                        else if ((options & CellAccessOptions.ReturnNullOnCellNotFound) != 0)
-                        {
-                            cellPtr        = null; /** Which indicates initialization failure. */
-                            cellEntryIndex = -1;
-                        }
-                        else
-                        {
-                            Throw.cell_not_found(cellId);
-                        }
-                        break;
+                        Throw.cell_not_found(cellId);
                     }
-                case TrinityErrorCode.E_SUCCESS:
+                    else if ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
                     {
-                        if (cellType != (ushort)CellType.t_cell_name)
+                        byte[]  defaultContent    = construct(cellId);
+                        int     size              = defaultContent.Length;
+                        eResult                   = Global.LocalStorage.AddOrUse(cellId, defaultContent, ref size, (ushort)CellType.t_cell_name, out cellPtr, out cellEntryIndex);
+
+                        if (eResult == TrinityErrorCode.E_WRONG_CELL_TYPE)
                         {
-                            Global.LocalStorage.ReleaseCellLock(cellId, cellEntryIndex);
                             Throw.wrong_cell_type();
                         }
-                        break;
                     }
+                    else if ((options & CellAccessOptions.ReturnNullOnCellNotFound) != 0)
+                    {
+                        cellPtr        = null; /** Which indicates initialization failure. */
+                        cellEntryIndex = -1;
+                    }
+                    else
+                    {
+                        Throw.cell_not_found(cellId);
+                    }
+                    break;
+                }
+                case TrinityErrorCode.E_SUCCESS:
+                {
+                    if (cellType != (ushort)CellType.t_cell_name)
+                    {
+                        Global.LocalStorage.ReleaseCellLock(cellId, cellEntryIndex);
+                        Throw.wrong_cell_type();
+                    }
+                    break;
+                }
                 default:
-                    throw new NotImplementedException();
+                throw new NotImplementedException();
             }
 
             // If it made this far without throwing exceptions, we can accept the result.
 
-            this.CellID         = cellId;
+            this.CellId         = cellId;
             this.CellPtr        = cellPtr;
-            this.CellEntryIndex = cellEntryIndex;
+            this.m_cellEntryIndex = cellEntryIndex;
             this.m_options      = options;
 
             this.ResizeFunction = (byte* ptr, int ptr_offset, int delta) =>
             {
                 int offset = (int)(ptr - CellPtr) + ptr_offset;
-                CellPtr = Global.LocalStorage.ResizeCell((long)CellID, CellEntryIndex, offset, delta);
+                CellPtr = Global.LocalStorage.ResizeCell((long)CellId, m_cellEntryIndex, offset, delta);
                 return CellPtr + (offset - ptr_offset);
             };
         }
@@ -832,19 +817,19 @@ namespace t_Namespace
         /// Locks a cell and initialize a cell accessor.
         /// For internal use only.
         /// </summary>
-        internal static t_cell_name_Accessor New(long CellID, CellAccessOptions options)
+        internal static t_cell_name_Accessor New(long cellId, CellAccessOptions options)
         {
             t_cell_name_Accessor ret = null;
 
             if (s_accessor != (t_cell_name_Accessor)null)
             {
                 ret = s_accessor;
-                ret.Initialize(CellID, options);
+                ret.Initialize(cellId, options);
                 s_accessor = null;
             }
             else
             {
-                ret = new t_cell_name_Accessor(CellID, options);
+                ret = new t_cell_name_Accessor(cellId, options);
             }
 
             if (ret.CellPtr == null)
@@ -877,8 +862,8 @@ namespace t_Namespace
                 ret = new t_cell_name_Accessor(cellPtr);
             }
 
-            ret.CellID         = CellId;
-            ret.CellEntryIndex = entryIndex;
+            ret.CellId         = CellId;
+            ret.m_cellEntryIndex = entryIndex;
             ret.m_options      = options;
 
             return ret;
@@ -902,8 +887,8 @@ namespace t_Namespace
                 ret                = new t_cell_name_Accessor(info.CellPtr);
             }
 
-            ret.CellEntryIndex = info.CellEntryIndex;
-            ret.CellID         = info.CellId;
+            ret.m_cellEntryIndex = info.CellEntryIndex;
+            ret.CellId         = info.CellId;
             ret.m_IsIterator   = true;
 
             return ret;
@@ -920,17 +905,16 @@ namespace t_Namespace
         /// </summary>
         public void Dispose()
         {
-            if (CellEntryIndex >= 0)
+            if (m_cellEntryIndex >= 0)
             {
-
                 if ((m_options & c_WALFlags) != 0)
                 {
-                    LocalMemoryStorage.CWriteAheadLog(this.CellID.Value, this.CellPtr, this.CellSize, (ushort)CellType.t_cell_name, m_options);
+                    LocalMemoryStorage.CWriteAheadLog(this.CellId, this.CellPtr, this.CellSize, (ushort)CellType.t_cell_name, m_options);
                 }
 
                 if (!m_IsIterator)
                 {
-                    Global.LocalStorage.ReleaseCellLock(CellID.Value, CellEntryIndex);
+                    Global.LocalStorage.ReleaseCellLock(CellId, m_cellEntryIndex);
                 }
 
                 if (s_accessor == (t_cell_name_Accessor)null)
@@ -951,12 +935,8 @@ namespace t_Namespace
         /// <returns>A 16-bit unsigned integer representing the cell type id.</returns>
         public ushort GetCellType()
         {
-            if (!CellID.HasValue)
-            {
-                Throw.cell_id_is_null();
-            }
             ushort cellType;
-            if (Global.LocalStorage.GetCellType(CellID.Value, out cellType) == TrinityErrorCode.E_CELL_NOT_FOUND)
+            if (Global.LocalStorage.GetCellType(CellId, out cellType) == TrinityErrorCode.E_CELL_NOT_FOUND)
             {
                 Throw.cell_not_found();
             }
@@ -999,33 +979,33 @@ namespace t_Namespace
                 switch (FieldLookupTable.Lookup(field_name_string))
                 {
                     case -1:
-                        Throw.undefined_field();
-                        break;
+                    Throw.undefined_field();
+                    break;
                     /*FOREACH*/
                     /*USE_LIST("t_field")*/
                     /*  IF("$t_field_type->is_struct()")*/
                     case t_int:
-                        return GenericFieldAccessor.GetField<T>(this.t_field_name, fieldName, field_divider_idx + 1);
+                    return GenericFieldAccessor.GetField<T>(this.t_field_name, fieldName, field_divider_idx + 1);
                     /*  END*/
                     /*END*/
                     default:
-                        // @note   We cannot go further unless it's a struct.
-                        //         Throw exception now.
-                        Throw.member_access_on_non_struct__field(field_name_string);
-                        break;
+                    // @note   We cannot go further unless it's a struct.
+                    //         Throw exception now.
+                    Throw.member_access_on_non_struct__field(field_name_string);
+                    break;
                 }
             }
 
             switch (FieldLookupTable.Lookup(fieldName))
             {
                 case -1:
-                    Throw.undefined_field();
-                    break;
+                Throw.undefined_field();
+                break;
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
                 case t_int:
-                    return TypeConverter<T>.ConvertFrom_t_field_type_display(this.t_field_name);
-                    /*END*/
+                return TypeConverter<T>.ConvertFrom_t_field_type_display(this.t_field_name);
+                /*END*/
             }
 
             /* Should not reach here */
@@ -1042,21 +1022,21 @@ namespace t_Namespace
                 switch (FieldLookupTable.Lookup(field_name_string))
                 {
                     case -1:
-                        Throw.undefined_field();
-                        break;
+                    Throw.undefined_field();
+                    break;
                     /*FOREACH*/
                     /*USE_LIST("t_field")*/
                     /*  IF("$t_field_type->is_struct()")*/
                     case t_int:
-                        GenericFieldAccessor.SetField(this.t_field_name, fieldName, field_divider_idx + 1, value);
-                        break;
+                    GenericFieldAccessor.SetField(this.t_field_name, fieldName, field_divider_idx + 1, value);
+                    break;
                     /*  END*/
                     /*END*/
                     default:
-                        // @note   We cannot go further unless it's a struct.
-                        //         Throw exception now.
-                        Throw.member_access_on_non_struct__field(field_name_string);
-                        break;
+                    // @note   We cannot go further unless it's a struct.
+                    //         Throw exception now.
+                    Throw.member_access_on_non_struct__field(field_name_string);
+                    break;
                 }
                 return;
             }
@@ -1064,17 +1044,17 @@ namespace t_Namespace
             switch (FieldLookupTable.Lookup(fieldName))
             {
                 case -1:
-                    Throw.undefined_field();
-                    break;
+                Throw.undefined_field();
+                break;
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
                 case t_int:
-                    {
-                        t_field_type conversion_result = TypeConverter<T>.ConvertTo_t_field_type_display(value);
-                        MODULE_CALL("ValueToAccessorFieldAssignment", "$t_field", "\"this\"", "\"conversion_result\"");
-                    }
-                    break;
-                    /*END*/
+                {
+                    t_field_type conversion_result = TypeConverter<T>.ConvertTo_t_field_type_display(value);
+                    MODULE_CALL("ValueToAccessorFieldAssignment", "$t_field", "\"this\"", "\"conversion_result\"");
+                }
+                break;
+                /*END*/
             }
         }
 
@@ -1091,14 +1071,14 @@ namespace t_Namespace
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
                 case t_int:
-                    IF("$t_field_type->is_optional()");
-                    return this.Contains_t_field_name;
-                    ELSE();
-                    return true;
-                    END();
+                IF("$t_field_type->is_optional()");
+                return this.Contains_t_field_name;
+                ELSE();
+                return true;
+                END();
                 /*END*/
                 default:
-                    return false;
+                return false;
             }
         }
 
@@ -1115,59 +1095,59 @@ namespace t_Namespace
             switch (FieldLookupTable.Lookup(fieldName))
             {
                 case -1:
-                    Throw.undefined_field();
-                    break;
+                Throw.undefined_field();
+                break;
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
                 /*IF("$t_field_type->is_string() || $t_field_type->is_list()")*/
                 case t_int:
-                    IF("$t_field_type->is_string()");
-                    {
-                        IF("$t_field_type->is_optional()");
-                        if (!this.Contains_t_field_name)
-                            this.t_field_name = "";
-                        END();
-
-                        this.t_field_name += TypeConverter<T>.ConvertTo_string(value);
-                    }
-                    ELIF("$t_field_type->is_list()");
-                    {
-                        IF("$t_field_type->is_optional()");
-                        if (!this.Contains_t_field_name)
-                            this.t_field_name = new t_field_type();
-                        END();
-
-                        switch (TypeConverter<T>.GetConversionActionTo_t_field_type_display())
-                        {
-                            case TypeConversionAction.TC_ASSIGN:
-                                foreach (var element in value as t_field_type)
-                                    this.t_field_name.Add(element);
-                                break;
-                            case TypeConversionAction.TC_CONVERTLIST:
-                            case TypeConversionAction.TC_ARRAYTOLIST:
-                                foreach (var element in TypeConverter<T>.Enumerate_t_field_type_list_element_type_display(value))
-                                    this.t_field_name.Add(element);
-                                break;
-                            case TypeConversionAction.TC_WRAPINLIST:
-                            case TypeConversionAction.TC_PARSESTRING:
-                                this.t_field_name.Add(TypeConverter<T>.ConvertTo_t_field_type_list_element_type_display(value));
-                                break;
-                            default:
-                                Throw.data_type_incompatible_with_list(typeof(T).ToString());
-                                break;
-                        }
-                    }
+                IF("$t_field_type->is_string()");
+                {
+                    IF("$t_field_type->is_optional()");
+                    if (!this.Contains_t_field_name)
+                        this.t_field_name = "";
                     END();
-                    break;
+
+                    this.t_field_name += TypeConverter<T>.ConvertTo_string(value);
+                }
+                ELIF("$t_field_type->is_list()");
+                {
+                    IF("$t_field_type->is_optional()");
+                    if (!this.Contains_t_field_name)
+                        this.t_field_name = new t_field_type();
+                    END();
+
+                    switch (TypeConverter<T>.GetConversionActionTo_t_field_type_display())
+                    {
+                        case TypeConversionAction.TC_ASSIGN:
+                        foreach (var element in value as t_field_type)
+                            this.t_field_name.Add(element);
+                        break;
+                        case TypeConversionAction.TC_CONVERTLIST:
+                        case TypeConversionAction.TC_ARRAYTOLIST:
+                        foreach (var element in TypeConverter<T>.Enumerate_t_field_type_list_element_type_display(value))
+                            this.t_field_name.Add(element);
+                        break;
+                        case TypeConversionAction.TC_WRAPINLIST:
+                        case TypeConversionAction.TC_PARSESTRING:
+                        this.t_field_name.Add(TypeConverter<T>.ConvertTo_t_field_type_list_element_type_display(value));
+                        break;
+                        default:
+                        Throw.data_type_incompatible_with_list(typeof(T).ToString());
+                        break;
+                    }
+                }
+                END();
+                break;
                 /*END*/
                 /*END*/
                 default:
-                    Throw.target__field_not_list();
-                    break;
+                Throw.target__field_not_list();
+                break;
             }
         }
 
-        long ICell.CellID { get { return CellID.Value; } set { CellID = value; } }
+        long ICell.CellId { get { return CellId; } set { CellId = value; } }
 
 
         IEnumerable<KeyValuePair<string, T>> ICell.SelectFields<T>(string attributeKey, string attributeValue)
@@ -1186,22 +1166,22 @@ namespace t_Namespace
                 /*  END()*/
                 /*  IF("%compatible")*/
                 case t_uint:
-                    FOREACH();
-                    USE_LIST("t_field");
-                    IF("$t_data_type->is_convertible_from($t_field_type)");
-                    if (StorageSchema.t_cell_name_descriptor.check_attribute(StorageSchema.t_cell_name_descriptor.t_field_name, attributeKey, attributeValue))
-                        /*   IF("$t_field->is_optional()")*/
-                        if (Contains_t_field_name)
-                            /*END()*/
-                            yield return new KeyValuePair<string, T>("t_field_name", TypeConverter<T>.ConvertFrom_t_field_type_display(this.t_field_name));
-                    END();
-                    END();
-                    break;
+                FOREACH();
+                USE_LIST("t_field");
+                IF("$t_data_type->is_convertible_from($t_field_type)");
+                if (StorageSchema.t_cell_name_descriptor.check_attribute(StorageSchema.t_cell_name_descriptor.t_field_name, attributeKey, attributeValue))
+                    /*   IF("$t_field->is_optional()")*/
+                    if (Contains_t_field_name)
+                        /*END()*/
+                        yield return new KeyValuePair<string, T>("t_field_name", TypeConverter<T>.ConvertFrom_t_field_type_display(this.t_field_name));
+                END();
+                END();
+                break;
                 /*  END()*/
                 /*END()*/
                 default:
-                    Throw.incompatible_with_cell();
-                    break;
+                Throw.incompatible_with_cell();
+                break;
             }
             yield break;
         }
@@ -1237,11 +1217,11 @@ namespace t_Namespace
                 /*FOREACH*/
                 /*USE_LIST("t_field")*/
                 case t_int:
-                    return _enumerate_from_t_field_name<T>();
+                return _enumerate_from_t_field_name<T>();
                 /*END*/
                 default:
-                    Throw.undefined_field();
-                    return null;
+                Throw.undefined_field();
+                return null;
             }
         }
 
@@ -1262,23 +1242,23 @@ namespace t_Namespace
                     /*META_VAR("int", "iter_val", "0")*/
                     /*META("for(const std::string& attr : %field_attributes){")*/
                     case t_int_2:
-                        FOREACH();
+                    FOREACH();
+                    {
+                        USE_LIST("t_field");
+                        META_VAR("std::string*", "p_field_attr_value", "$t_field->get_attribute(attr)");
+                        IF("%p_field_attr_value != nullptr");
                         {
-                            USE_LIST("t_field");
-                            META_VAR("std::string*", "p_field_attr_value", "$t_field->get_attribute(attr)");
-                            IF("%p_field_attr_value != nullptr");
+                            if (attributeValue == null || attributeValue == "/*META_OUTPUT(%p_field_attr_value)*/")
                             {
-                                if (attributeValue == null || attributeValue == "/*META_OUTPUT(%p_field_attr_value)*/")
-                                {
-                                    foreach (var val in _enumerate_from_t_field_name<T>())
-                                        yield return val;
-                                }
+                                foreach (var val in _enumerate_from_t_field_name<T>())
+                                    yield return val;
                             }
-                            END();
                         }
                         END();
-                        break;
-                        /*META("}")*/
+                    }
+                    END();
+                    break;
+                    /*META("}")*/
                 }
             }
             yield break;
@@ -1374,38 +1354,38 @@ namespace t_Namespace
         /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The value of the cell is specified in the method parameters.
         /// </summary>
         /// <param name="storage"/>A <see cref="Trinity.Storage.IKeyValueStore"/> instance.</param>
-        /// <param name="CellID">A 64-bit cell Id.</param>
+        /// <param name="cellId">A 64-bit cell Id.</param>
         /// <returns>true if saving succeeds; otherwise, false.</returns>
-        public unsafe static bool Savet_cell_name(this IKeyValueStore storage, long CellID/*FOREACH*/, t_field_type t_field_name = default(t_field_type)/*END*/)
+        public unsafe static bool Savet_cell_name(this IKeyValueStore storage, long cellId/*FOREACH*/, t_field_type t_field_name = default(t_field_type)/*END*/)
         {
             __meta.MUTE();
             byte[] tmpcell = null;
             __meta.MUTE_END();
             __meta.MODULE_CALL("SerializeParametersToBuffer", "node", "\"cell\"");
-            return storage.SaveCell(CellID, tmpcell, (ushort)CellType.t_cell_name) == TrinityErrorCode.E_SUCCESS;
+            return storage.SaveCell(cellId, tmpcell, (ushort)CellType.t_cell_name) == TrinityErrorCode.E_SUCCESS;
         }
 
         /// <summary>
-        /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The parameter <paramref name="CellID"/> overrides the cell id in the content object.
+        /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The parameter <paramref name="cellId"/> overrides the cell id in the content object.
         /// </summary>
         /// <param name="storage"/>A <see cref="Trinity.Storage.IKeyValueStore"/> instance.</param>
-        /// <param name="CellID">A 64-bit cell Id.</param>
-        /// <param name="CellContent">The content of the cell.</param>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="cellContent">The content of the cell.</param>
         /// <returns>true if saving succeeds; otherwise, false.</returns>
-        public unsafe static bool Savet_cell_name(this IKeyValueStore storage, long CellID, t_cell_name CellContent)
+        public unsafe static bool Savet_cell_name(this IKeyValueStore storage, long cellId, t_cell_name cellContent)
         {
-            return Savet_cell_name(storage, CellID /*FOREACH*/ , CellContent.t_field_name /*END*/);
+            return Savet_cell_name(storage, cellId /*FOREACH*/ , cellContent.t_field_name /*END*/);
         }
 
         /// <summary>
-        /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. Cell Id is specified by the CellID field in the content object.
+        /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. Cell Id is specified by the CellId field in the content object.
         /// </summary>
         /// <param name="storage"/>A <see cref="Trinity.Storage.IKeyValueStore"/> instance.</param>
-        /// <param name="CellContent">The content of the cell.</param>
+        /// <param name="cellContent">The content of the cell.</param>
         /// <returns>true if saving succeeds; otherwise, false.</returns>
-        public unsafe static bool Savet_cell_name(this IKeyValueStore storage, t_cell_name CellContent)
+        public unsafe static bool Savet_cell_name(this IKeyValueStore storage, t_cell_name cellContent)
         {
-            return Savet_cell_name(storage, CellContent.CellID /*FOREACH*/ , CellContent.t_field_name /*END*/);
+            return Savet_cell_name(storage, cellContent.CellId /*FOREACH*/ , cellContent.t_field_name /*END*/);
         }
 
         /// <summary>
@@ -1413,12 +1393,12 @@ namespace t_Namespace
         /// the content object is saved back into the storage.
         /// <param name="storage"/>A <see cref="Trinity.Storage.IKeyValueStore"/> instance.</param>
         /// </summary>
-        public unsafe static t_cell_name Loadt_cell_name(this IKeyValueStore storage, long CellID)
+        public unsafe static t_cell_name Loadt_cell_name(this IKeyValueStore storage, long cellId)
         {
-            using (var cell = new t_cell_name_Accessor(CellID, CellAccessOptions.ThrowExceptionOnCellNotFound))
+            using (var cell = new t_cell_name_Accessor(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound))
             {
                 t_cell_name ret = cell;
-                ret.CellID = CellID;
+                ret.CellId = cellId;
                 return ret;
             }
         }
@@ -1434,12 +1414,12 @@ namespace t_Namespace
         /// and blocks until it gets the lock. Otherwise this method is wait-free.
         /// </summary>
         /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
-        /// <param name="CellId">The id of the specified cell.</param>
+        /// <param name="cellId">The id of the specified cell.</param>
         /// <param name="options">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
         /// <returns>A <see cref="t_Namespace.t_cell_name"/> instance.</returns>
-        public unsafe static t_cell_name_Accessor Uset_cell_name(this Trinity.Storage.LocalMemoryStorage storage, long CellID, CellAccessOptions options)
+        public unsafe static t_cell_name_Accessor Uset_cell_name(this Trinity.Storage.LocalMemoryStorage storage, long cellId, CellAccessOptions options)
         {
-            return t_cell_name_Accessor.New(CellID, options);
+            return t_cell_name_Accessor.New(cellId, options);
         }
 
         /// <summary>
@@ -1451,11 +1431,11 @@ namespace t_Namespace
         /// and blocks until it gets the lock.
         /// </summary>
         /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
-        /// <param name="CellId">The id of the specified cell.</param>
+        /// <param name="cellId">The id of the specified cell.</param>
         /// <returns>A <see cref="" + script.RootNamespace + ".t_cell_name"/> instance.</returns>
-        public unsafe static t_cell_name_Accessor Uset_cell_name(this Trinity.Storage.LocalMemoryStorage storage, long CellID)
+        public unsafe static t_cell_name_Accessor Uset_cell_name(this Trinity.Storage.LocalMemoryStorage storage, long cellId)
         {
-            return t_cell_name_Accessor.New(CellID, CellAccessOptions.ThrowExceptionOnCellNotFound);
+            return t_cell_name_Accessor.New(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound);
         }
 
         #endregion
@@ -1465,40 +1445,40 @@ namespace t_Namespace
         /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The value of the cell is specified in the method parameters.
         /// </summary>
         /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
-        /// <param name="CellID">A 64-bit cell Id.</param>
+        /// <param name="cellId">A 64-bit cell Id.</param>
         /// <param name="options">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
         /// <returns>true if saving succeeds; otherwise, false.</returns>
-        public unsafe static bool Savet_cell_name(this Trinity.Storage.LocalMemoryStorage storage, CellAccessOptions options, long CellID/*FOREACH*/, t_field_type t_field_name = default(t_field_type)/*END*/)
+        public unsafe static bool Savet_cell_name(this Trinity.Storage.LocalMemoryStorage storage, CellAccessOptions options, long cellId/*FOREACH*/, t_field_type t_field_name = default(t_field_type)/*END*/)
         {
             __meta.MUTE();
             byte[] tmpcell = null;
             __meta.MUTE_END();
             __meta.MODULE_CALL("SerializeParametersToBuffer", "node", "\"cell\"");
-            return storage.SaveCell(options, CellID, tmpcell, (ushort)CellType.t_cell_name) == TrinityErrorCode.E_SUCCESS;
+            return storage.SaveCell(options, cellId, tmpcell, (ushort)CellType.t_cell_name) == TrinityErrorCode.E_SUCCESS;
         }
         /// <summary>
-        /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The parameter <paramref name="CellID"/> overrides the cell id in the content object.
+        /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The parameter <paramref name="cellId"/> overrides the cell id in the content object.
         /// </summary>
         /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
-        /// <param name="CellID">A 64-bit cell Id.</param>
+        /// <param name="cellId">A 64-bit cell Id.</param>
         /// <param name="options">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
-        /// <param name="CellContent">The content of the cell.</param>
+        /// <param name="cellContent">The content of the cell.</param>
         /// <returns>true if saving succeeds; otherwise, false.</returns>
-        public unsafe static bool Savet_cell_name(this Trinity.Storage.LocalMemoryStorage storage, CellAccessOptions options, long CellID, t_cell_name CellContent)
+        public unsafe static bool Savet_cell_name(this Trinity.Storage.LocalMemoryStorage storage, CellAccessOptions options, long cellId, t_cell_name cellContent)
         {
-            return Savet_cell_name(storage, options, CellID /*FOREACH*/ , CellContent.t_field_name /*END*/);
+            return Savet_cell_name(storage, options, cellId /*FOREACH*/ , cellContent.t_field_name /*END*/);
         }
 
         /// <summary>
-        /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. Cell Id is specified by the CellID field in the content object.
+        /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. Cell Id is specified by the CellId field in the content object.
         /// </summary>
         /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
         /// <param name="options">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
-        /// <param name="CellContent">The content of the cell.</param>
+        /// <param name="cellContent">The content of the cell.</param>
         /// <returns>true if saving succeeds; otherwise, false.</returns>
-        public unsafe static bool Savet_cell_name(this Trinity.Storage.LocalMemoryStorage storage, CellAccessOptions options, t_cell_name CellContent)
+        public unsafe static bool Savet_cell_name(this Trinity.Storage.LocalMemoryStorage storage, CellAccessOptions options, t_cell_name cellContent)
         {
-            return Savet_cell_name(storage, options, CellContent.CellID /*FOREACH*/ , CellContent.t_field_name /*END*/);
+            return Savet_cell_name(storage, options, cellContent.CellId /*FOREACH*/ , cellContent.t_field_name /*END*/);
         }
         #endregion
     }

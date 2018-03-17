@@ -95,18 +95,14 @@ source->append(R"::(    }
         {
             throw new DataTypeIncompatibleException("Cannot apply member access method on a non-struct field'" + field_name_string + "'.");
         }
-        internal static void cell_id_is_null()
-        {
-            throw new NullReferenceException("The cell Id is null.");
-        }
         internal static void cell_not_found()
         {
-            throw new CellNotFoundExceptio)::");
-source->append(R"::(n("The cell is not found.");
+            throw new CellNotFoundException("The cell is not found.");
         }
-        internal static void cell_not_found(long CellID)
+        internal static void cell_not_found(long cellId)
         {
-            throw new CellNotFoundException("The cell with id = " + CellID + " not found.");
+            throw new CellNotFo)::");
+source->append(R"::(undException("The cell with id = " + cellId + " not found.");
         }
         internal static void wrong_cell_type()
         {

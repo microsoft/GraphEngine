@@ -69,7 +69,7 @@ namespace t_Namespace
             s_ensure_string_builder();
 
             s_stringBuilder.Append('{');
-            s_stringBuilder.AppendFormat("\"CellID\":{0}", cell.CellID);
+            s_stringBuilder.AppendFormat("\"CellId\":{0}", cell.CellId);
 
             FOREACH();
             {

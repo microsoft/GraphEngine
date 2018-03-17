@@ -100,7 +100,7 @@ namespace Trinity.Storage
         /// <summary>
         /// The 64-bit id of the cell.
         /// </summary>
-        long CellID { get; set; }
+        long CellId { get; set; }
 
         /// <summary>
         /// Enumerate values of type T from the specified cell field.

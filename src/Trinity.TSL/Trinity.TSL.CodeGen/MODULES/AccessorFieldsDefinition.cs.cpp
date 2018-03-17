@@ -92,7 +92,7 @@ source->append(R"::( doesn't exist for current cell.");
             this.Contains_)::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::( = false;
-            byte* targetPtr = CellPtr;
+            byte* targetPtr = m_ptr;
             )::");
 
 {
@@ -147,7 +147,7 @@ source->append(R"::( doesn't exist for current cell.");
                 )::");
 }
 source->append(R"::(
-                byte* targetPtr = CellPtr;
+                byte* targetPtr = m_ptr;
                 )::");
 
 {
@@ -168,10 +168,10 @@ source->append(R"::(*)(targetPtr);
 else if (field_lenprefix_1)
 {
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::(_Accessor_Field.CellPtr = targetPtr + 4;
+source->append(R"::(_Accessor_Field.m_ptr = targetPtr + 4;
                 )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::(_Accessor_Field.CellID = this.CellID;
+source->append(R"::(_Accessor_Field.m_id = this.m_id;
                 return )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::(_Accessor_Field;
@@ -180,10 +180,10 @@ source->append(R"::(_Accessor_Field;
 else
 {
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::(_Accessor_Field.CellPtr = targetPtr;
+source->append(R"::(_Accessor_Field.m_ptr = targetPtr;
                 )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::(_Accessor_Field.CellID = this.CellID;
+source->append(R"::(_Accessor_Field.m_id = this.m_id;
                 return )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::(_Accessor_Field;
@@ -200,11 +200,11 @@ source->append(R"::(
                 if ((object)value == null) throw new ArgumentNullException("The assigned variable is null.");
                 )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::(_Accessor_Field.CellID = this.CellID;
+source->append(R"::(_Accessor_Field.m_id = this.m_id;
                 )::");
 }
 source->append(R"::(
-                byte* targetPtr = CellPtr;
+                byte* targetPtr = m_ptr;
                 )::");
 
 {

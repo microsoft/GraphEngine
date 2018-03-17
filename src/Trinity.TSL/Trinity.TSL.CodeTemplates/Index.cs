@@ -362,7 +362,7 @@ namespace t_Namespace
                                 IF("$t_index->target_field->fieldType->is_string()");
                                 {
                                     MAP_VAR("t_field_name", "target", MemberOf = "t_index");
-                                    new_index.AddItem(accessor.t_field_name, accessor.CellID.Value);
+                                    new_index.AddItem(accessor.t_field_name, accessor.CellId);
                                 }
                                 ELSE();
                                 {
@@ -383,7 +383,7 @@ namespace t_Namespace
                                     /*END*/
                                     {
                                         MAP_VAR("t_element", "std::string(\"element_\") + GetString(%final_element)");
-                                        new_index.AddItem((string)t_element, accessor.CellID.Value);
+                                        new_index.AddItem((string)t_element, accessor.CellId);
                                     }
 
                                     META("delete %container_chain;");

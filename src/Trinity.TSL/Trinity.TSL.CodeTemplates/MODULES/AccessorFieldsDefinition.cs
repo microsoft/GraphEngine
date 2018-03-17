@@ -68,7 +68,7 @@ namespace t_Namespace
                 throw new Exception("Optional field t_field_name doesn't exist for current cell.");
             }
             this.Contains_t_field_name = false;
-            byte* targetPtr = CellPtr;
+            byte* targetPtr = m_ptr;
             MODULE_CALL("PushPointerToCurrentField", "$t_field");
             byte* startPtr = targetPtr;
             MODULE_CALL("PushPointerThroughFieldType", "$t_field_type");
@@ -89,7 +89,7 @@ namespace t_Namespace
                     throw new Exception("Optional field t_field_name doesn't exist for current cell.");
                 }
                 END();
-                byte* targetPtr = CellPtr;
+                byte* targetPtr = m_ptr;
                 MODULE_CALL("PushPointerToCurrentField", "$t_field");
 
                 IF("!%field_need_accessor");
@@ -98,14 +98,14 @@ namespace t_Namespace
 
                 ELIF("%field_lenprefix");
 
-                t_field_name_Accessor_Field.CellPtr = targetPtr + 4;
-                t_field_name_Accessor_Field.CellID = this.CellID;
+                t_field_name_Accessor_Field.m_ptr = targetPtr + 4;
+                t_field_name_Accessor_Field.m_id = this.m_id;
                 return t_field_name_Accessor_Field;
 
                 ELSE();//accessor, no length prefix
 
-                t_field_name_Accessor_Field.CellPtr = targetPtr;
-                t_field_name_Accessor_Field.CellID = this.CellID;
+                t_field_name_Accessor_Field.m_ptr = targetPtr;
+                t_field_name_Accessor_Field.m_id = this.m_id;
                 return t_field_name_Accessor_Field;
 
                 END();
@@ -114,10 +114,10 @@ namespace t_Namespace
             {
                 IF("%field_need_accessor");
                 if ((object)value == null) throw new ArgumentNullException("The assigned variable is null.");
-                t_field_name_Accessor_Field.CellID = this.CellID;
+                t_field_name_Accessor_Field.m_id = this.m_id;
                 END();
 
-                byte* targetPtr = CellPtr;
+                byte* targetPtr = m_ptr;
                 MODULE_CALL("PushPointerToCurrentField", "$t_field");
 
                 IF("%field_optional");
@@ -147,8 +147,8 @@ namespace t_Namespace
 
         [MODULE_END]
 
-        public unsafe byte* CellPtr { get; private set; }
-        private long CellID;
+        public unsafe byte* m_ptr { get; private set; }
+        private long m_id;
         private unsafe byte* ResizeFunction(byte* targetPtr, int v1, int v2)
         {
             throw new NotImplementedException();

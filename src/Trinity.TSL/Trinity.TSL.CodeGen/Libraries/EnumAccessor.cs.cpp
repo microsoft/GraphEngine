@@ -30,11 +30,11 @@ source->append(R"::(
     /// </summary>
     public unsafe class EnumAccessor : IAccessor
     {
-        internal byte* CellPtr;
-        internal long? CellID;
+        internal byte* m_ptr;
+        internal long m_id;
         internal EnumAccessor(byte* _CellPtr)
         {
-            CellPtr = _CellPtr;
+            m_ptr = _CellPtr;
         }
         internal int length
         {
@@ -50,19 +50,19 @@ source->append(R"::(
         /// <returns>A byte array with size one.</returns>
         public byte[] ToByteArray()
         {
-            return new byte[] { *(byte*)CellPtr };
+            return new byte[] { *(byte*)m_ptr };
         }
         /// <summary>
         /// Get the pointer to the underlying buffer.
         /// </summary>
         public unsafe byte* GetUnderlyingBufferPointer()
         {
-            return CellPtr;
+            return m_ptr;
         }
         /// <summary>
         /// Get the length of the buffer.
-   )::");
-source->append(R"::(     /// </summary>
+        /// </)::");
+source->append(R"::(summary>
         public unsafe int GetBufferLength()
         {
             return length;
@@ -78,7 +78,7 @@ source->append(R"::(     /// </summary>
         /// <returns>A byte.</returns>
         public byte ToByte()
         {
-            return *(byte*)CellPtr;
+            return *(byte*)m_ptr;
         }
         /// <summary>
         /// Converts a EnumAccessor accessor to a byte value.
@@ -87,13 +87,13 @@ source->append(R"::(     /// </summary>
         /// <returns>A byte.</returns>
         public static implicit operator byte(EnumAccessor accessor)
         {
-            return *(byte*)accessor.CellPtr;
+            return *(byte*)accessor.m_ptr;
         }
         /// <summary>
         /// Converts a byte value to a EnumAccessor value.
-        /// </s)::");
-source->append(R"::(ummary>
-        /// <param name="value">A byte value.</param>
+        /// </summary>
+      )::");
+source->append(R"::(  /// <param name="value">A byte value.</param>
         /// <returns>A EnumAccessor value.</returns>
         public static implicit operator EnumAccessor(byte value)
         {
@@ -113,9 +113,9 @@ source->append(R"::(ummary>
               return true;
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
               return false;
-            return *a.CellPtr == *)::");
-source->append(R"::(b.CellPtr;
-        }
+            return *a.m_ptr == *b.m_ptr;
+       )::");
+source->append(R"::( }
         /// <summary>
         /// Returns a value indicating whether two given EnumAccessor instances have the same value.
         /// </summary>
@@ -133,8 +133,8 @@ source->append(R"::(b.CellPtr;
         /// <returns>true if obj is an instance of EnumAccessor and equals the value of this instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
-            return ((obj is EnumAccessor) && ()::");
-source->append(R"::((*CellPtr) == (((EnumAccessor)obj).ToByte())));
+            return ((obj is EnumAccessor) && ((*m_ptr) == (((Enum)::");
+source->append(R"::(Accessor)obj).ToByte())));
         }
         /// <summary>
         /// Returns the hash code of the underlying value.
@@ -142,7 +142,7 @@ source->append(R"::((*CellPtr) == (((EnumAccessor)obj).ToByte())));
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override int GetHashCode()
         {
-            return (*CellPtr).GetHashCode();
+            return (*m_ptr).GetHashCode();
         }
     }
 }
