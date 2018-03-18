@@ -61,8 +61,8 @@ source->append(R"::(
         }
         /// <summary>
         /// Get the length of the buffer.
-        /// </)::");
-source->append(R"::(summary>
+        /// )::");
+source->append(R"::(</summary>
         public unsafe int GetBufferLength()
         {
             return length;
@@ -92,8 +92,8 @@ source->append(R"::(summary>
         /// <summary>
         /// Converts a byte value to a EnumAccessor value.
         /// </summary>
-      )::");
-source->append(R"::(  /// <param name="value">A byte value.</param>
+    )::");
+source->append(R"::(    /// <param name="value">A byte value.</param>
         /// <returns>A EnumAccessor value.</returns>
         public static implicit operator EnumAccessor(byte value)
         {
@@ -114,8 +114,8 @@ source->append(R"::(  /// <param name="value">A byte value.</param>
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
               return false;
             return *a.m_ptr == *b.m_ptr;
-       )::");
-source->append(R"::( }
+     )::");
+source->append(R"::(   }
         /// <summary>
         /// Returns a value indicating whether two given EnumAccessor instances have the same value.
         /// </summary>
@@ -133,8 +133,8 @@ source->append(R"::( }
         /// <returns>true if obj is an instance of EnumAccessor and equals the value of this instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
-            return ((obj is EnumAccessor) && ((*m_ptr) == (((Enum)::");
-source->append(R"::(Accessor)obj).ToByte())));
+            return ((obj is EnumAccessor) && ((*m_ptr) == (((En)::");
+source->append(R"::(umAccessor)obj).ToByte())));
         }
         /// <summary>
         /// Returns the hash code of the underlying value.

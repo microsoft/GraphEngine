@@ -793,7 +793,7 @@ namespace t_Namespace
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static t_cell_name_Accessor _get()
         {
-            if (!s_accessor.Equals(null))
+            if (s_accessor != (t_cell_name_Accessor)null)
             {
                 var ret = s_accessor;
                 s_accessor = null;
@@ -822,7 +822,7 @@ namespace t_Namespace
         /// </summary>
         internal t_cell_name_Accessor _Setup(long CellId, byte* cellPtr, int entryIndex, CellAccessOptions options, LocalTransactionContext tx)
         {
-            CellId           = CellId;
+            this.CellId      = CellId;
             m_cellEntryIndex = entryIndex;
             m_options        = options;
             m_ptr            = cellPtr;

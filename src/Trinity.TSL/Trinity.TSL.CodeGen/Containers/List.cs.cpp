@@ -883,8 +883,8 @@ source->append(R"::( collection)
         }
         /// <summary>
         /// Removes all elements from the List
-    )::");
-source->append(R"::(    /// </summary>
+)::");
+source->append(R"::(        /// </summary>
         public unsafe void Clear()
         {
             int delta = length;

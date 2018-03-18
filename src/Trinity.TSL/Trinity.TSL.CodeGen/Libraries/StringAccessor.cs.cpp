@@ -60,8 +60,8 @@ source->append(R"::(
         /// <summary>
         /// Copies the elements to a new byte array
         /// </summary>
-        /// <returns>Elements compactly arran)::");
-source->append(R"::(ged in a byte array.</returns>
+        /// <returns>Elements compactly arr)::");
+source->append(R"::(anged in a byte array.</returns>
         public unsafe byte[] ToByteArray()
         {
             byte[] ret = new byte[length];
@@ -91,8 +91,8 @@ source->append(R"::(ged in a byte array.</returns>
         public ResizeFunctionDelegate ResizeFunction { get; set; }
         #endregion
         /// <summary>
-        /// Gets the Char object at a spe)::");
-source->append(R"::(cified position in the current String object.
+        /// Gets the Char object at a s)::");
+source->append(R"::(pecified position in the current String object.
         /// </summary>
         /// <param name="index">A position in the current string. </param>
         /// <returns>The object at position index.</returns>
@@ -116,8 +116,8 @@ source->append(R"::(cified position in the current String object.
         /// </summary>
         /// <param name="substring">The string to seek.</param>
         /// <returns>true if the value parameter occurs within this string, or if value is 
-        ///          the empty string (""); ot)::");
-source->append(R"::(herwise, false.
+        ///          the empty string (""); )::");
+source->append(R"::(otherwise, false.
         /// </returns>
         public unsafe bool Contains(string substring)
         {
@@ -143,8 +143,8 @@ source->append(R"::(herwise, false.
                 targetPtr += 2;
             }
         }
-        /// <summar)::");
-source->append(R"::(y>
+        /// <summ)::");
+source->append(R"::(ary>
         /// Performs the specified action on each char
         /// </summary>
         /// <param name="action">A lambda expression which has two parameters. First indicates char in the string and second the index of this char.</param>
@@ -171,8 +171,8 @@ source->append(R"::(y>
             {
                 return (targetPtr < endPtr);
             }
-            internal char current)::");
-source->append(R"::(()
+            internal char curre)::");
+source->append(R"::(nt()
             {
                 return *(char*)targetPtr;
             }
@@ -203,8 +203,8 @@ source->append(R"::(()
         /// <summary>
         /// Implicitly converts a StringAccessor instance to a string instance.
         /// </summary>
-        /// <param name="accessor">The StringAcce)::");
-source->append(R"::(ssor instance.</param>
+        /// <param name="accessor">The StringAc)::");
+source->append(R"::(cessor instance.</param>
         /// <returns>A string instance.</returns>
         public unsafe static implicit operator string(StringAccessor accessor)
         {
@@ -229,8 +229,8 @@ source->append(R"::(ssor instance.</param>
             }
             byte* tmpcellptr = BufferAllocator.AllocBuffer((int)targetPtr);
             targetPtr = tmpcellptr;
-       )::");
-source->append(R"::(     if (value != null)
+     )::");
+source->append(R"::(       if (value != null)
             {
                 *(int*)targetPtr = (value.Length << 1);
                 targetPtr += sizeof(int);
@@ -253,8 +253,8 @@ source->append(R"::(     if (value != null)
         /// <param name="b">The second StringAccessor to compare, or null. </param>
         /// <returns>true if the value of <paramref name="a" /> is the same as the value of <paramref name="b" />; otherwise, false.</returns>
         public static bool operator ==(StringAccessor a, StringAccessor b)
-     )::");
-source->append(R"::(   {
+   )::");
+source->append(R"::(     {
             if (ReferenceEquals(a, b))
               return true;
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
@@ -276,8 +276,8 @@ source->append(R"::(   {
               return false;
             return a.ToString() == b;
         }
-        )::");
-source->append(R"::(/// <summary>Determines whether the specified StringAccessor and string have different values.</summary>
+      )::");
+source->append(R"::(  /// <summary>Determines whether the specified StringAccessor and string have different values.</summary>
         /// <returns>true if the value of <paramref name="a" /> is different from the value of <paramref name="b" />; otherwise, false.</returns>
         /// <param name="a">The StringAccessor to compare, or null. </param>
         /// <param name="b">The String to compare, or null. </param>
@@ -291,9 +291,8 @@ source->append(R"::(/// <summary>Determines whether the specified StringAccessor
         /// Determines whether this instance and a specified object have the same value.
         /// </summary>
         /// <param name="obj">The StringAccessor to compare to this instance.</param>
-        /// <returns>true if obj is a StringAccessor and its value is the same as this instance; otherwise, false.</returns>
-)::");
-source->append(R"::(
+        /// <returns>true if obj is a StringAccessor and its value is the same as this instance; otherwise, false.</returns)::");
+source->append(R"::(>
         public override bool Equals(object obj)
         {
             if (obj == null)
@@ -321,8 +320,8 @@ source->append(R"::(
             for (int i = (length >> 1); i > 0; i -= 4)
             {
                 n1 = (((n1 << 5) + n1) + (n1 >> 0x1b)) ^ intPtr[0];
-                if (i <= )::");
-source->append(R"::(2)
+                if (i <)::");
+source->append(R"::(= 2)
                 {
                     break;
                 }

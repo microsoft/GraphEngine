@@ -1140,7 +1140,9 @@ source->append(R"::(_Accessor s_accessor = null;
 source->append(Codegen::GetString(node->name));
 source->append(R"::(_Accessor _get()
         {
-            if (!s_accessor.Equals(null))
+            if (s_accessor != ()::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor)null)
             {
                 var ret = s_accessor;
                 s_accessor = null;
@@ -1172,7 +1174,7 @@ source->append(R"::(_Accessor item)
 source->append(Codegen::GetString(node->name));
 source->append(R"::(_Accessor _Setup(long CellId, byte* cellPtr, int entryIndex, CellAccessOptions options, LocalTransactionContext tx)
         {
-            CellId           = CellId;
+            this.CellId      = CellId;
             m_cellEntryIndex = entryIndex;
             m_options        = options;
             m_ptr            = cellPtr;
