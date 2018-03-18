@@ -60,4 +60,14 @@
     <ProjectReference Include="..\Trinity.FFI\Trinity.FFI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="GraphEngine\Dependencies.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="tests\**" />
+    <Compile Remove="tests\**" />
+    <Content Remove="tests\**" />
+  </ItemGroup>
+
 </Project>
