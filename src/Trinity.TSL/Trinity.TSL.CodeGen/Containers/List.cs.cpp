@@ -31,7 +31,7 @@ source->append(Codegen::GetString(data_type_get_accessor_name(node->listElementT
 source->append(R"::(>
     {
         internal byte* m_ptr;
-        internal long m_id;
+        internal long CellId;
         internal ResizeFunctionDelegate ResizeFunction;
         internal )::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
@@ -179,7 +179,7 @@ source->append(R"::(
                     )::");
 }
 source->append(R"::(
-                    elementAccessor.m_id = this.m_id;
+                    elementAccessor.CellId = this.CellId;
                     return elementAccessor;
                 }
                 )::");
@@ -204,7 +204,7 @@ else
 source->append(R"::(
                 {
                     if ((object)value == null) throw new ArgumentNullException("The assigned variable is null.");
-                    elementAccessor.m_id = this.m_id;
+                    elementAccessor.CellId = this.CellId;
                     byte* targetPtr = m_ptr;
                     )::");
 if (element_fixed_1)
@@ -277,7 +277,7 @@ source->append(R"::(> action)
 if (element_need_accessor_1)
 {
 source->append(R"::(
-            elementAccessor.m_id = this.m_id;
+            elementAccessor.CellId = this.CellId;
             )::");
 }
 source->append(R"::(
@@ -862,7 +862,7 @@ source->append(R"::( collection)
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
             int delta = collection.length;
-            if (collection.m_id != m_id)
+            if (collection.CellId != CellId)
             {
                 m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
                 Memory.Copy(collection.m_ptr, m_ptr + *(int*)m_ptr + 4, delta);

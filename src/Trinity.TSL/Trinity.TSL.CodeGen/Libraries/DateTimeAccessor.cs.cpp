@@ -33,7 +33,7 @@ source->append(R"::(
     public unsafe class DateTimeAccessor : IAccessor
     {
         internal byte* m_ptr;
-        internal long m_id;
+        internal long CellId;
         /// <summary>
         ///     Converts the specified string representation of a date and time to its <see cref="Trinity.TSL.Lib.DateTimeAccessor"/>
         ///     equivalent and returns a value that indicates whether the conversion succeeded.
@@ -153,7 +153,8 @@ source->append(R"::((m_ptr, ptr, length);
         /// </summary>
         /// <returns>A string representation of the value of the current DateTime object.</returns>
         public override unsafe string ToString()
-        {)::");
+        {
+)::");
 source->append(R"::(
             return DateTime.FromBinary(this.ToBinary()).ToString("o", CultureInfo.InvariantCulture);
         }

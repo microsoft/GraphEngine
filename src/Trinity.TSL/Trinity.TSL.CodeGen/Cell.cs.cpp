@@ -36,6 +36,7 @@ using Trinity.Network.Sockets;
 using Trinity.Network.Messaging;
 using Trinity.TSL;
 using System.Runtime.CompilerServices;
+using Trinity.Storage.Transaction;
 namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
@@ -820,28 +821,19 @@ source->append(R"::( defined in TSL.
 source->append(Codegen::GetString(node->name));
 source->append(R"::(_Accessor : ICellAccessor
     {
-        internal )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor(long cellId, byte[] buffer)
-        {
-            this.CellId       = cellId;
-            this.handle       = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-            this.CellPtr      = (byte*)handle.AddrOfPinnedObject().ToPointer();
-            )::");
-for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
-{
-
-{
-    ModuleContext module_ctx;
-    module_ctx.m_stack_depth = 0;
-std::string* module_content = Modules::CellFieldAccessorInitialization((*(node->fieldList))[iterator_1], &module_ctx);
-    source->append(*module_content);
-    delete module_content;
-}
-}
-source->append(R"::(
-            this.m_cellEntryIndex = -1;
-        }
+        #region Fields
+        public   long                    CellId;
+        /// <summary>
+        /// A pointer to the underlying raw binary blob. Take caution when accessing data with
+        /// the raw pointer, as no boundary checks are employed, and improper operations will cause data corruption and/or system crash.
+        /// </summary>
+        internal byte*                   m_ptr;
+        internal LocalTransactionContext m_tx;
+        internal int                     m_cellEntryIndex;
+        internal CellAccessOptions       m_options;
+        internal bool                    m_IsIterator;
+        private  const CellAccessOptions c_WALFlags = CellAccessOptions.StrongLogAhead | CellAccessOptions.WeakLogAhead;
+        #endregion
         )::");
 
 {
@@ -855,7 +847,7 @@ source->append(R"::(
         #region IAccessor Implementation
         public byte[] ToByteArray()
         {
-            byte* targetPtr = CellPtr;
+            byte* targetPtr = m_ptr;
             )::");
 
 {
@@ -866,18 +858,18 @@ std::string* module_content = Modules::PushPointerThroughStruct(node, &module_ct
     delete module_content;
 }
 source->append(R"::(
-            int size = (int)(targetPtr - CellPtr);
+            int size = (int)(targetPtr - m_ptr);
             byte[] ret = new byte[size];
-            Memory.Copy(CellPtr, 0, ret, 0, size);
+            Memory.Copy(m_ptr, 0, ret, 0, size);
             return ret;
         }
         public unsafe byte* GetUnderlyingBufferPointer()
         {
-            return CellPtr;
+            return m_ptr;
         }
         public unsafe int GetBufferLength()
         {
-            byte* targetPtr = CellPtr;
+            byte* targetPtr = m_ptr;
             )::");
 
 {
@@ -888,64 +880,28 @@ std::string* module_content = Modules::PushPointerThroughStruct(node, &module_ct
     delete module_content;
 }
 source->append(R"::(
-            int size = (int)(targetPtr - CellPtr);
+            int size = (int)(targetPtr - m_ptr);
             return size;
         }
         public ResizeFunctionDelegate ResizeFunction { get; set; }
         #endregion
-        internal unsafe )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor(long cellId, CellAccessOptions options)
-        {
-            Initialize(cellId, options);
-            )::");
+        private static byte[] s_default_content = null;
+        private static unsafe byte[] construct()::");
 for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
 {
-
-{
-    ModuleContext module_ctx;
-    module_ctx.m_stack_depth = 0;
-std::string* module_content = Modules::CellFieldAccessorInitialization((*(node->fieldList))[iterator_1], &module_ctx);
-    source->append(*module_content);
-    delete module_content;
-}
-}
-source->append(R"::(
-            this.CellId = cellId;
-        }
-        public unsafe )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor(byte* _CellPtr)
-        {
-            CellPtr = _CellPtr;
-            )::");
-for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
-{
-
-{
-    ModuleContext module_ctx;
-    module_ctx.m_stack_depth = 0;
-std::string* module_content = Modules::CellFieldAccessorInitialization((*(node->fieldList))[iterator_1], &module_ctx);
-    source->append(*module_content);
-    delete module_content;
-}
-}
-source->append(R"::(
-            this.m_cellEntryIndex = -1;
-        }
-        private static unsafe byte[] construct(long cellId )::");
-for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
-{
-source->append(R"::(, )::");
+source->append(R"::( )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
 source->append(R"::( )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::( = default()::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
 source->append(R"::() )::");
+if (iterator_1 < (node->fieldList)->size() - 1)
+source->append(",");
 }
 source->append(R"::()
         {
+            if (s_default_content != null) return s_default_content;
             )::");
 
 {
@@ -957,6 +913,7 @@ std::string* module_content = Modules::SerializeParametersToBuffer(node, &module
     delete module_content;
 }
 source->append(R"::(
+            s_default_content = tmpcell;
             return tmpcell;
         }
         )::");
@@ -1082,36 +1039,23 @@ source->append(R"::( b)
         {
             return !(a == b);
         }
-        #region Fields
-        /// <summary>
-        /// Get a pointer to the underlying raw binary blob. Take caution when accessing data with
-        /// the raw pointer, as no boundary checks are employed, and improper operations will cause data corruption and/or system crash.
-        /// </summary>
-        internal byte* CellPtr { get; set; }
         /// <summary>
         /// Get the size of the cell content, in bytes.
         /// </summary>
         public int CellSize { get { int size; Global.LocalStorage.LockedGetCellSize(this.CellId, this.m_cellEntryIndex, out size); return size; } }
-        /// <summary>
-        /// Get the cell id.
-        /// </summary>
-        public      long                    CellId { get; internal set; }
-        internal    int                     m_cellEntryIndex;
-        internal    bool                    m_IsIterator   = false;
-        internal    CellAccessOptions       m_options      = 0;
-        p)::");
-source->append(R"::(rivate     GCHandle                handle;
-        private     const CellAccessOptions c_WALFlags     = CellAccessOptions.StrongLogAhead | CellAccessOptions.WeakLogAhead;
-        #endregion
         #region Internal
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe void Initialize(long cellId, CellAccessOptions options)
+        internal unsafe )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor _Lock(long cellId, CellAccessOptions options, LocalTransactionContext tx)
         {
             int     cellSize;
             ushort  cellType;
             byte*   cellPtr;
             int     cellEntryIndex;
-            var eResult = Global.LocalStorage.GetLockedCellInfo(cellId, out cellSize, out cellType, out cellPtr, out cellEntryIndex);
+            TrinityErrorCode eResult = tx == null ?
+                Global.LocalStorage.GetLockedCellInfo(cellId, out cellSize, out cellType, out cellPtr, out cellEntryIndex) :
+                Global.LocalStorage.GetLockedCellInfo(tx, cellId, out cellSize, out cellType, out cellPtr, out cellEntryIndex);
             switch (eResult)
             {
                 case TrinityErrorCode.E_CELL_NOT_FOUND:
@@ -1120,12 +1064,16 @@ source->append(R"::(rivate     GCHandle                handle;
                     {
                         Throw.cell_not_found(cellId);
                     }
-                    else if ((options & CellAccessOptions.CreateNewOnCellNotFo)::");
-source->append(R"::(und) != 0)
+                    else if ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
                     {
-                        byte[]  defaultContent    = construct(cellId);
-                        int     size              = defaultContent.Length;
-                        eResult                   = Global.LocalStorage.AddOrUse(cellId, defaultContent, ref size, (ushort)CellType.)::");
+                        byte[]  defaultContent = construct();
+   )::");
+source->append(R"::(                     int     size           = defaultContent.Length;
+                        eResult                = tx == null ?
+                            Global.LocalStorage.AddOrUse(cellId, defaultContent, ref size, (ushort)CellType.)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(, out cellPtr, out cellEntryIndex) :
+                            Global.LocalStorage.AddOrUse(tx, cellId, defaultContent, ref size, (ushort)CellType.)::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::(, out cellPtr, out cellEntryIndex);
                         if (eResult == TrinityErrorCode.E_WRONG_CELL_TYPE)
@@ -1137,6 +1085,8 @@ source->append(R"::(, out cellPtr, out cellEntryIndex);
                     {
                         cellPtr        = null; /** Which indicates initialization failure. */
                         cellEntryIndex = -1;
+                        _put(this);
+                        return null;
                     }
                     else
                     {
@@ -1150,7 +1100,8 @@ source->append(R"::(, out cellPtr, out cellEntryIndex);
 source->append(Codegen::GetString(node->name));
 source->append(R"::()
                     {
-                        Global.LocalStorage.ReleaseCellLock(cellId, cellEntryIndex);
+                        if (tx == null) Global.LocalStorage.ReleaseCellLock(cellId, cellEntryIndex);
+                        else Global.LocalStorage.ReleaseCellLock(tx, cellId, cellEntryIndex);
                         Throw.wrong_cell_type();
                     }
                     break;
@@ -1158,110 +1109,83 @@ source->append(R"::()
                 default:
                 throw new NotImplementedException();
             }
-            this.CellId         = cellId;
-            this.CellPtr        = cellPtr;
-            this.m_cellEntryIndex = cellEntryIndex;
-            this.m_options      = options;
-            this.ResizeFunction = (byte* ptr, int ptr_offset, int delta) =>
-            {
-                int offset = (int)(ptr - CellPtr) + ptr_offset;
-                CellPtr = Global.LocalStorage.ResizeCell((long)CellId, m_cellEntryIndex, offset, delta);
-                return CellPtr + (offset - ptr_offset);
-            };
+            return _Setup(cellId, cellPtr, cellEntryIndex, options, tx);
         }
         [ThreadStatic]
         internal static )::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::(_Accessor s_accessor = null;
-        /// <summary>
-        /// Locks a cell and initialize a cell accessor.
-        /// For internal use only.
-        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static )::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor New(long cellId, CellAccessOptions options)
+source->append(R"::(_Accessor _get()
         {
-            )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor ret = null;
-            if (s_accessor != ()::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor)null)
+            if (!s_accessor.Equals(null))
             {
-                ret = s_accessor;
-                ret.Initialize(cellId, options);
+                var ret = s_accessor;
                 s_accessor = null;
+                return ret;
             }
             else
             {
-                ret = new )::");
+                return new )::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor(cellId, options);
+source->append(R"::(_Accessor();
             }
-            if (ret.CellPtr == null)
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void _put()::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor item)
+        {
+            if (s_accessor.Equals(null))
             {
-                s_accessor = ret;
-                ret        = null;
+                s_accessor = item;
             }
-            return ret;
+        }
+        /// <summary>
+        /// For internal use only.
+        /// Caller guarantees that entry lock is obtained.
+        /// Does not handle CellAccessOptions. Only copy to the accessor.
+        /// </summary>
+        internal )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor _Setup(long CellId, byte* cellPtr, int entryIndex, CellAccessOptions options, LocalTransactionContext tx)
+        {
+            CellId           = CellId;
+            m_cellEntryIndex = entryIndex;
+            m_options        = options;
+            m_ptr            = cellPtr;
+            m_tx             = tx;
+            if (m_tx == null)
+            {
+                this.ResizeFunction = (byte* ptr, int ptr_offset, int delta) =>
+                {
+                    int offset = (int)(ptr - m_ptr) + ptr_offset;
+                    m_ptr = Global.LocalStorage.ResizeCell((long)CellId, m_cellEntryIndex, offset, delta);
+                    return m_ptr + (offset - ptr_offset);
+                };
+            }
+            else
+            {
+                this.ResizeFunction = (byte* ptr, int ptr_offset, int delta) =>
+                {
+                    int offset = (int)(ptr - m_ptr) + ptr_offset;
+                    m_ptr = Global.LocalStorage.ResizeCell(m_tx, (long)CellId, )::");
+source->append(R"::(m_cellEntryIndex, offset, delta);
+                    return m_ptr + (offset - ptr_offset);
+                };
+            }
+            return this;
         }
         /// <summary>
         /// For internal use only.
         /// </summary>
         internal static )::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor New(long CellId, byte* cellPtr, int entryIndex, CellAccessOptions options)
+source->append(R"::(_Accessor AllocIterativeAccessor(CellInfo info, LocalTransactionContext tx)
         {
-            )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor ret = null;
-            if (s_accessor != ()::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor)null)
-            {
-                ret = s_accessor;
-                s_accessor = null;
-                ret.CellPtr = cellPtr;
-            }
-            else
-            {
-                ret = new )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor(cellPtr);
-            }
-            ret.CellId         = CellId;
-            ret.m_cellEntryIndex = entryIndex;
-            ret.m_options      = options;
-            return ret;
-        }
-        /// <summary>
-        /// For internal use only.
-        /// </summary>
-        internal static )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor AllocIterativeAccessor(CellInfo info)
-        {
-            )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor ret = null;
-            if (s_accessor != ()::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor)null)
-            {
-                ret                = s_accessor;
-                ret.CellPtr        = info.CellPtr;
-                s_accessor         = null;
-            }
-            else
-            {
-                ret                = new )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor(info.CellPtr);
-            }
-            ret.m_cellEntryIndex = info.CellEntryIndex;
-            ret.CellId         = info.CellId;
-            ret.m_IsIterator   = true;
-            return ret;
+            return _get()._Setup(info.CellId, info.CellPtr, info.CellEntryIndex, 0, tx);
         }
         #endregion
         #region Public
@@ -1284,7 +1208,7 @@ source->append(R"::("/>,
             {
                 if ((m_options & c_WALFlags) != 0)
                 {
-                    LocalMemoryStorage.CWriteAheadLog(this.CellId, this.CellPtr, this.CellSize, (ushort)CellType.)::");
+                    LocalMemoryStorage.CWriteAheadLog(this.CellId, this.m_ptr, this.CellSize, (ushort)CellType.)::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::(, m_options);
                 }
@@ -1292,17 +1216,12 @@ source->append(R"::(, m_options);
                 {
                     Global.LocalStorage.ReleaseCellLock(CellId, m_cellEntryIndex);
                 }
-                if (s_accessor == ()::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor)null)
-                {
-                    CellPtr        = null;
-                    m_IsIterator   = false;
-                    s_accessor     = this;
-                }
             }
-            if (handle != null && handle.IsAllocated)
-                handle.Free();
+            m_ptr        = null;
+            m_IsIterator = false;
+            m_options    = 0;
+            m_tx         = null;
+            _put(this);
         }
         /// <summary>
         /// Get the cell type id.
@@ -2045,19 +1964,15 @@ source->append(R"::( Load)::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::((this IKeyValueStore storage, long cellId)
         {
-            using (var cell = new )::");
+            using (var cell = )::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound))
+source->append(R"::(_Accessor._get()._Lock(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound, null))
             {
-                )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::( ret = cell;
-                ret.CellId = cellId;
-                return ret;
+                return cell;
             }
         }
         #endregion
-        #region LocalMemoryStorage
+        #region LocalMemoryStorage Non-Tx accessors
         /// <summary>
         /// Allocate a cell accessor on the specified cell, which inteprets
         /// the cell as a )::");
@@ -2084,7 +1999,7 @@ source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, long cellI
         {
             return )::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor.New(cellId, options);
+source->append(R"::(_Accessor._get()._Lock(cellId, options, null);
         }
         /// <summary>
         /// Allocate a cell accessor on the specified cell, which inteprets
@@ -2109,10 +2024,10 @@ source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, long cellI
         {
             return )::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor.New(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound);
+source->append(R"::(_Accessor._get()._Lock(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound, null);
         }
         #endregion
-        #region LocalStorage logging
+        #region LocalStorage Non-Tx logging
         /// <summary>
         /// Adds a new cell of type )::");
 source->append(Codegen::GetString(node->name));
@@ -2148,7 +2063,7 @@ std::string* module_content = Modules::SerializeParametersToBuffer(node, &module
     delete module_content;
 }
 source->append(R"::(
-            return storage.SaveCell(options, cellId, tmpcell, (ushort)CellType.)::");
+            return storage.SaveCell(options, cellId, tmpcell, 0, tmpcell.Length, (ushort)CellType.)::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::() == TrinityErrorCode.E_SUCCESS;
         }
@@ -2204,6 +2119,191 @@ source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::( )::");
 }
 source->append(R"::();
+        }
+        /// <summary>
+        /// Loads the content of the specified cell. Any changes done to this object are not written to the store, unless
+        /// the content object is saved back into the storage.
+        /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// </summary>
+        public unsafe static )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::( Load)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, long cellId)
+        {
+            using (var cell = )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor._get()._Lock(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound, null))
+            {
+                return cell;
+            }
+        }
+        #endregion
+        #region LocalMemoryStorage Tx accessors
+        /// <summary>
+        /// Allocate a cell accessor on the specified cell, which inteprets
+        /// the cell as a )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(. Any changes done to the accessor
+        /// are written to the storage immediately.
+        /// If <c><see cref="Trinity.TrinityConfig.ReadOnly"/> == false</c>,
+        /// on calling this method, it attempts to acquire the lock of the cell,
+        /// and blocks until it gets the lock. Otherwise this method is wait-free.
+        /// </summary>
+        /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// <param name="cellId">The id of the specified cell.</param>
+        /// <param name="options">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
+        /// <returns>A <see cref=")::");
+source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
+source->append(R"::(.)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::("/> instance.</returns>
+        public unsafe static )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor Use)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, LocalTransactionContext tx, long cellId, CellAccessOptions options)
+        {
+            return )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor._get()._Lock(cellId, options, tx);
+        }
+        /// <summary>
+        /// Allocate a cell accessor on the specified cell, which inteprets
+        /// the cell as a )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(. Any changes done to the accessor
+        /// are written to the storage immediately.
+        /// If <c><see cref="Trinity.TrinityConfig.ReadOnly"/> == false</c>,
+        /// on calling this method, it attempts to acquire the lock of the cell,
+        /// and blocks until it gets the lock.
+        /// </summary>
+        /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// <param name="cellId">The id of the specified cell.</param>
+        /// <returns>A <see cref="" + script.RootNamespace + ".)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::("/> instance.</returns>
+        public unsafe static )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor Use)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, LocalTransactionContext tx, long cellId)
+        {
+            return )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor._get()._Lock(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound, tx);
+        }
+        #endregion
+        #region LocalStorage Tx logging
+        /// <summary>
+        /// Adds a new cell of type )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::( to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The value of the cell is specified in the method parameters.
+        /// </summary>
+        /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="options">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
+        /// <returns>true if saving succeeds; otherwise, false.</returns>
+        public unsafe static bool Save)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, LocalTransactionContext tx, CellAccessOptions options, long cellId)::");
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+source->append(R"::(, )::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
+source->append(R"::( )::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::( = default()::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
+source->append(R"::())::");
+}
+source->append(R"::()
+        {
+            )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+module_ctx.m_arguments.push_back(Codegen::GetString("cell"));
+std::string* module_content = Modules::SerializeParametersToBuffer(node, &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
+            return storage.SaveCell(tx, options, cellId, tmpcell, 0, tmpcell.Length, (ushort)CellType.)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::() == TrinityErrorCode.E_SUCCESS;
+        }
+        /// <summary>
+        /// Adds a new cell of type )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::( to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The parameter <paramref name="cellId"/> overrides the cell id in the content object.
+        /// </summary>
+        /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="options">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
+        /// <param name="cellContent">The content of the cell.</param>
+        /// <returns>true if saving succeeds; otherwise, false.</returns>
+        public unsafe static bool Save)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, LocalTransactionContext tx, CellAccessOptions options, long cellId, )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::( cellContent)
+        {
+            return Save)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::((storage, tx, options, cellId )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+source->append(R"::( , cellContent.)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::( )::");
+}
+source->append(R"::();
+        }
+        /// <summary>
+        /// Adds a new cell of type )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::( to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. Cell Id is specified by the CellId field in the content object.
+        /// </summary>
+        /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// <param name="options">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
+        /// <param name="cellContent">The content of the cell.</param>
+        /// <returns>true if saving succeeds; otherwise, false.</returns>
+        public unsafe static bool Save)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, LocalTransactionContext tx, CellAccessOptions options, )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::( cellContent)
+        {
+            return Save)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::((storage, tx, options, cellContent.CellId )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+source->append(R"::( , cellContent.)::");
+source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
+source->append(R"::( )::");
+}
+source->append(R"::();
+        }
+        /// <summary>
+        /// Loads the content of the specified cell. Any changes done to this object are not written to the store, unless
+        /// the content object is saved back into the storage.
+        /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// </summary>
+        public unsafe static )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::( Load)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, LocalTransactionContext tx, long cellId)
+        {
+            using (var cell = )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor._get()._Lock(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound, tx))
+            {
+                return cell;
+            }
         }
         #endregion
     }

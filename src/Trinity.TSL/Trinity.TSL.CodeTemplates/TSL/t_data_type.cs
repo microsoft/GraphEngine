@@ -89,7 +89,7 @@ namespace Trinity.TSL
 
         public bool HasValue { get; set; }
         public unsafe void* m_ptr { get; internal set; }
-        public long m_id { get { throw new NotImplementedException(); } internal set { throw new NotImplementedException(); } }
+        public long CellId { get { throw new NotImplementedException(); } internal set { throw new NotImplementedException(); } }
 
         internal void Set(int idx, bool p)
         {

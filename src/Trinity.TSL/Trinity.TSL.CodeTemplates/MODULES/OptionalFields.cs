@@ -55,7 +55,7 @@ namespace t_Namespace
         {
             IF("%optcalc.headerLength > 0");
             byte [] bytes = new byte[t_int];
-            Memory.Copy(CellPtr, 0, bytes, 0, t_int);
+            Memory.Copy(m_ptr, 0, bytes, 0, t_int);
             return bytes;
             ELSE();
             return new byte[0];
@@ -63,6 +63,6 @@ namespace t_Namespace
         }
 
         [MODULE_END]
-        byte* CellPtr;
+        byte* m_ptr;
     }
 }

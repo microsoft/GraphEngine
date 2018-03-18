@@ -214,7 +214,7 @@ source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(:
                 return )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_Accessor.New(cellId, cellPtr, entryIndex, CellAccessOptions.ThrowExceptionOnCellNotFound);
+source->append(R"::(_Accessor._get()._Setup(cellId, cellPtr, entryIndex, CellAccessOptions.ThrowExceptionOnCellNotFound, null);
                 )::");
 }
 source->append(R"::(
@@ -284,7 +284,7 @@ source->append(R"::(
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(": return )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_Accessor.New(cellId, options);
+source->append(R"::(_Accessor._get()._Lock(cellId, options, null);
                 )::");
 }
 source->append(R"::(
@@ -314,7 +314,7 @@ source->append(R"::(:
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(_accessor = )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_Accessor.AllocIterativeAccessor(cellInfo);
+source->append(R"::(_Accessor.AllocIterativeAccessor(cellInfo, null);
                             var )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(_cell     = ()::");
@@ -358,7 +358,7 @@ source->append(R"::(:
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(_accessor = )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_Accessor.AllocIterativeAccessor(cellInfo);
+source->append(R"::(_Accessor.AllocIterativeAccessor(cellInfo, null);
                             yield return )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(_accessor;
@@ -468,7 +468,7 @@ source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(:
                 return )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_Accessor.New(cellId, cellBuffer, entryIndex, options);
+source->append(R"::(_Accessor._get()._Setup(cellId, cellBuffer, entryIndex, options, null);
                 )::");
 }
 source->append(R"::(

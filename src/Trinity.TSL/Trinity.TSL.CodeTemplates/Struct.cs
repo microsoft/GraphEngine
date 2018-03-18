@@ -146,7 +146,7 @@ namespace t_Namespace
         ///The pointer to the content of the object.
         ///</summary>
         internal byte* m_ptr;
-        internal long m_id;
+        internal long CellId;
 
         [MUTE]
         internal unsafe t_struct_name_Accessor(byte* _CellPtr) { throw new NotImplementedException(); }

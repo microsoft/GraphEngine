@@ -17,7 +17,7 @@ namespace t_Namespace
     public unsafe class StringAccessor : IAccessor, IEnumerable<char>
     {
         internal byte* m_ptr;
-        internal long m_id;
+        internal long CellId;
 
         internal StringAccessor(byte* _CellPtr, ResizeFunctionDelegate func)
         {

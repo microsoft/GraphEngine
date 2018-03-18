@@ -32,7 +32,7 @@ source->append(R"::(
     public unsafe class doubleListAccessor : IAccessor, IEnumerable<double>
     {
         internal byte* m_ptr;
-        internal long m_id;
+        internal long CellId;
         internal doubleListAccessor(byte* _CellPtr, ResizeFunctionDelegate func)
         {
             m_ptr = _CellPtr;
@@ -123,7 +123,8 @@ source->append(R"::(uble* GetUnsafePointer()
                 Memory.Copy(m_ptr, retptr, length);
             }
             return ret;
-        })::");
+        }
+)::");
 source->append(R"::(
         /// <summary>
         /// Performs the specified action on each elements
@@ -330,7 +331,7 @@ source->append(R"::(tion whose elements should be added to the end of the List. 
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
             int delta = collection.length;
-            if (collection.m_id != m_id)
+            if (collection.CellId != CellId)
             {
                 m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
                 Memory.Copy(collection.m_ptr, m_ptr + *(int*)m_ptr + 4, delta);

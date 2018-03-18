@@ -558,83 +558,64 @@ namespace t_Namespace
     /// </summary>
     public unsafe class t_cell_name_Accessor : __meta, ICellAccessor
     {
-        internal t_cell_name_Accessor(long cellId, byte[] buffer)
-        {
-            this.CellId       = cellId;
-            this.handle       = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-            this.CellPtr      = (byte*)handle.AddrOfPinnedObject().ToPointer();
+        #region Fields
+        public   long                    CellId;
+        /// <summary>
+        /// A pointer to the underlying raw binary blob. Take caution when accessing data with
+        /// the raw pointer, as no boundary checks are employed, and improper operations will cause data corruption and/or system crash.
+        /// </summary>
+        internal byte*                   m_ptr;
+        internal LocalTransactionContext m_tx;
+        internal int                     m_cellEntryIndex;
+        internal CellAccessOptions       m_options;
+        internal bool                    m_IsIterator;
 
-            FOREACH();
-            USE_LIST("t_field");
-            MODULE_CALL("CellFieldAccessorInitialization", "$t_field");
-            END();//FOREACH
-
-            this.m_cellEntryIndex = -1;
-        }
+        private  const CellAccessOptions c_WALFlags = CellAccessOptions.StrongLogAhead | CellAccessOptions.WeakLogAhead;
+        #endregion
 
         [MODULE_CALL("OptionalFields", "node")]
 
         #region IAccessor Implementation
         public byte[] ToByteArray()
         {
-            byte* targetPtr = CellPtr;
+            byte* targetPtr = m_ptr;
 
             MODULE_CALL("PushPointerThroughStruct", "node");
 
-            int size = (int)(targetPtr - CellPtr);
+            int size = (int)(targetPtr - m_ptr);
             byte[] ret = new byte[size];
-            Memory.Copy(CellPtr, 0, ret, 0, size);
+            Memory.Copy(m_ptr, 0, ret, 0, size);
             return ret;
         }
 
         public unsafe byte* GetUnderlyingBufferPointer()
         {
-            return CellPtr;
+            return m_ptr;
         }
 
         public unsafe int GetBufferLength()
         {
-            byte* targetPtr = CellPtr;
+            byte* targetPtr = m_ptr;
 
             MODULE_CALL("PushPointerThroughStruct", "node");
 
-            int size = (int)(targetPtr - CellPtr);
+            int size = (int)(targetPtr - m_ptr);
             return size;
         }
 
         public ResizeFunctionDelegate ResizeFunction { get; set; }
         #endregion
 
-        internal unsafe t_cell_name_Accessor(long cellId, CellAccessOptions options)
+        private static byte[] s_default_content = null;
+        private static unsafe byte[] construct([FOREACH(",")] t_field_type t_field_name = default(t_field_type) /*END*/)
         {
-            Initialize(cellId, options);
+            if (s_default_content != null) return s_default_content;
 
-            FOREACH();
-            USE_LIST("t_field");
-            MODULE_CALL("CellFieldAccessorInitialization", "$t_field");
-            END();//FOREACH
-
-            this.CellId = cellId;
-        }
-
-        public unsafe t_cell_name_Accessor(byte* _CellPtr)
-        {
-            CellPtr = _CellPtr;
-
-            FOREACH();
-            USE_LIST("t_field");
-            MODULE_CALL("CellFieldAccessorInitialization", "$t_field");
-            END();//FOREACH
-
-            this.m_cellEntryIndex = -1;
-        }
-
-        private static unsafe byte[] construct(long cellId /*FOREACH*/, t_field_type t_field_name = default(t_field_type) /*END*/)
-        {
             MUTE();
             byte[] tmpcell = null;
             MUTE_END();
             MODULE_CALL("SerializeParametersToBuffer", "node", "\"cell\"");
+            s_default_content = tmpcell;
             return tmpcell;
         }
 
@@ -721,36 +702,23 @@ namespace t_Namespace
         }
 
 
-        #region Fields
-        /// <summary>
-        /// Get a pointer to the underlying raw binary blob. Take caution when accessing data with
-        /// the raw pointer, as no boundary checks are employed, and improper operations will cause data corruption and/or system crash.
-        /// </summary>
-        internal byte* CellPtr { get; set; }
         /// <summary>
         /// Get the size of the cell content, in bytes.
         /// </summary>
         public int CellSize { get { int size; Global.LocalStorage.LockedGetCellSize(this.CellId, this.m_cellEntryIndex, out size); return size; } }
-        /// <summary>
-        /// Get the cell id.
-        /// </summary>
-        public      long                    CellId { get; internal set; }
-        internal    int                     m_cellEntryIndex;
-        internal    bool                    m_IsIterator   = false;
-        internal    CellAccessOptions       m_options      = 0;
-        private     GCHandle                handle;
-        private     const CellAccessOptions c_WALFlags     = CellAccessOptions.StrongLogAhead | CellAccessOptions.WeakLogAhead;
-        #endregion
 
         #region Internal
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe void Initialize(long cellId, CellAccessOptions options)
+        internal unsafe t_cell_name_Accessor _Lock(long cellId, CellAccessOptions options, LocalTransactionContext tx)
         {
             int     cellSize;
             ushort  cellType;
             byte*   cellPtr;
             int     cellEntryIndex;
-            var eResult = Global.LocalStorage.GetLockedCellInfo(cellId, out cellSize, out cellType, out cellPtr, out cellEntryIndex);
+
+            TrinityErrorCode eResult = tx == null ?
+                Global.LocalStorage.GetLockedCellInfo(cellId, out cellSize, out cellType, out cellPtr, out cellEntryIndex) :
+                Global.LocalStorage.GetLockedCellInfo(tx, cellId, out cellSize, out cellType, out cellPtr, out cellEntryIndex);
 
             switch (eResult)
             {
@@ -762,9 +730,11 @@ namespace t_Namespace
                     }
                     else if ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
                     {
-                        byte[]  defaultContent    = construct(cellId);
-                        int     size              = defaultContent.Length;
-                        eResult                   = Global.LocalStorage.AddOrUse(cellId, defaultContent, ref size, (ushort)CellType.t_cell_name, out cellPtr, out cellEntryIndex);
+                        byte[]  defaultContent = construct();
+                        int     size           = defaultContent.Length;
+                        eResult                = tx == null ?
+                            Global.LocalStorage.AddOrUse(cellId, defaultContent, ref size, (ushort)CellType.t_cell_name, out cellPtr, out cellEntryIndex) :
+                            Global.LocalStorage.AddOrUse(tx, cellId, defaultContent, ref size, (ushort)CellType.t_cell_name, out cellPtr, out cellEntryIndex);
 
                         if (eResult == TrinityErrorCode.E_WRONG_CELL_TYPE)
                         {
@@ -775,6 +745,8 @@ namespace t_Namespace
                     {
                         cellPtr        = null; /** Which indicates initialization failure. */
                         cellEntryIndex = -1;
+                        _put(this);
+                        return null;
                     }
                     else
                     {
@@ -786,7 +758,9 @@ namespace t_Namespace
                 {
                     if (cellType != (ushort)CellType.t_cell_name)
                     {
-                        Global.LocalStorage.ReleaseCellLock(cellId, cellEntryIndex);
+                        if (tx == null) Global.LocalStorage.ReleaseCellLock(cellId, cellEntryIndex);
+                        else Global.LocalStorage.ReleaseCellLock(tx, cellId, cellEntryIndex);
+
                         Throw.wrong_cell_type();
                     }
                     break;
@@ -797,107 +771,82 @@ namespace t_Namespace
 
             // If it made this far without throwing exceptions, we can accept the result.
 
-            this.CellId         = cellId;
-            this.CellPtr        = cellPtr;
-            this.m_cellEntryIndex = cellEntryIndex;
-            this.m_options      = options;
-
-            this.ResizeFunction = (byte* ptr, int ptr_offset, int delta) =>
-            {
-                int offset = (int)(ptr - CellPtr) + ptr_offset;
-                CellPtr = Global.LocalStorage.ResizeCell((long)CellId, m_cellEntryIndex, offset, delta);
-                return CellPtr + (offset - ptr_offset);
-            };
+            return _Setup(cellId, cellPtr, cellEntryIndex, options, tx);
         }
 
         // TODO as we introduce multi-cell-lock, this mechansim may need some improvement
         [ThreadStatic]
         internal static t_cell_name_Accessor s_accessor = null;
 
-        /// <summary>
-        /// Locks a cell and initialize a cell accessor.
-        /// For internal use only.
-        /// </summary>
-        internal static t_cell_name_Accessor New(long cellId, CellAccessOptions options)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static t_cell_name_Accessor _get()
         {
-            t_cell_name_Accessor ret = null;
-
-            if (s_accessor != (t_cell_name_Accessor)null)
+            if (!s_accessor.Equals(null))
             {
-                ret = s_accessor;
-                ret.Initialize(cellId, options);
+                var ret = s_accessor;
                 s_accessor = null;
+                return ret;
             }
             else
             {
-                ret = new t_cell_name_Accessor(cellId, options);
+                return new t_cell_name_Accessor();
             }
-
-            if (ret.CellPtr == null)
-            {
-                s_accessor = ret;
-                ret        = null;
-            }
-
-            return ret;
         }
 
-        // Does not call initialize. Caller guarantees that entry lock is obtained.
-        // Does not handle CellAccessOptions. Only copy to the accessor.
-        // This method is currently only used by GenericCell.cs
-        /// <summary>
-        /// For internal use only.
-        /// </summary>
-        internal static t_cell_name_Accessor New(long CellId, byte* cellPtr, int entryIndex, CellAccessOptions options)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void _put(t_cell_name_Accessor item)
         {
-            t_cell_name_Accessor ret = null;
-
-            if (s_accessor != (t_cell_name_Accessor)null)
+            if (s_accessor.Equals(null))
             {
-                ret = s_accessor;
-                s_accessor = null;
-                ret.CellPtr = cellPtr;
+                s_accessor = item;
             }
-            else
-            {
-                ret = new t_cell_name_Accessor(cellPtr);
-            }
-
-            ret.CellId         = CellId;
-            ret.m_cellEntryIndex = entryIndex;
-            ret.m_options      = options;
-
-            return ret;
         }
 
-        internal static t_cell_name_Accessor New(LocalTransactionContext tx, long cellId, CellAccessOptions throwExceptionOnCellNotFound)
-        {
-            throw new NotImplementedException();
-        }
 
         /// <summary>
         /// For internal use only.
+        /// Caller guarantees that entry lock is obtained.
+        /// Does not handle CellAccessOptions. Only copy to the accessor.
         /// </summary>
-        internal static t_cell_name_Accessor AllocIterativeAccessor(CellInfo info)
+        internal t_cell_name_Accessor _Setup(long CellId, byte* cellPtr, int entryIndex, CellAccessOptions options, LocalTransactionContext tx)
         {
+            CellId           = CellId;
+            m_cellEntryIndex = entryIndex;
+            m_options        = options;
+            m_ptr            = cellPtr;
+            m_tx             = tx;
 
-            t_cell_name_Accessor ret = null;
-            if (s_accessor != (t_cell_name_Accessor)null)
+            if (m_tx == null)
             {
-                ret                = s_accessor;
-                ret.CellPtr        = info.CellPtr;
-                s_accessor         = null;
+                this.ResizeFunction = (byte* ptr, int ptr_offset, int delta) =>
+                {
+                    int offset = (int)(ptr - m_ptr) + ptr_offset;
+                    m_ptr = Global.LocalStorage.ResizeCell((long)CellId, m_cellEntryIndex, offset, delta);
+                    return m_ptr + (offset - ptr_offset);
+                };
             }
             else
             {
-                ret                = new t_cell_name_Accessor(info.CellPtr);
+                this.ResizeFunction = (byte* ptr, int ptr_offset, int delta) =>
+                {
+                    int offset = (int)(ptr - m_ptr) + ptr_offset;
+                    m_ptr = Global.LocalStorage.ResizeCell(m_tx, (long)CellId, m_cellEntryIndex, offset, delta);
+                    // XXX update other cells in current tx, which are in the same MT and thus possibly moved.
+                    return m_ptr + (offset - ptr_offset);
+                };
             }
 
-            ret.m_cellEntryIndex = info.CellEntryIndex;
-            ret.CellId         = info.CellId;
-            ret.m_IsIterator   = true;
+            return this;
+        }
 
-            return ret;
+        /// <summary>
+        /// For internal use only.
+        /// </summary>
+        internal static t_cell_name_Accessor AllocIterativeAccessor(CellInfo info, LocalTransactionContext tx)
+        {
+            //TODO no WAL detection
+            //TODO no tx
+            return _get()._Setup(info.CellId, info.CellPtr, info.CellEntryIndex, 0, tx);
         }
         #endregion//Internal
 
@@ -915,24 +864,20 @@ namespace t_Namespace
             {
                 if ((m_options & c_WALFlags) != 0)
                 {
-                    LocalMemoryStorage.CWriteAheadLog(this.CellId, this.CellPtr, this.CellSize, (ushort)CellType.t_cell_name, m_options);
+                    LocalMemoryStorage.CWriteAheadLog(this.CellId, this.m_ptr, this.CellSize, (ushort)CellType.t_cell_name, m_options);
                 }
 
                 if (!m_IsIterator)
                 {
                     Global.LocalStorage.ReleaseCellLock(CellId, m_cellEntryIndex);
                 }
-
-                if (s_accessor == (t_cell_name_Accessor)null)
-                {
-                    CellPtr        = null;
-                    m_IsIterator   = false;
-                    s_accessor     = this;
-                }
             }
 
-            if (handle != null && handle.IsAllocated)
-                handle.Free();
+            m_ptr        = null;
+            m_IsIterator = false;
+            m_options    = 0;
+            m_tx         = null;
+            _put(this);
         }
 
         /// <summary>
@@ -1402,11 +1347,9 @@ namespace t_Namespace
         /// </summary>
         public unsafe static t_cell_name Loadt_cell_name(this IKeyValueStore storage, long cellId)
         {
-            using (var cell = new t_cell_name_Accessor(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound))
+            using (var cell = t_cell_name_Accessor._get()._Lock(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound, null))
             {
-                t_cell_name ret = cell;
-                ret.CellId = cellId;
-                return ret;
+                return cell;
             }
         }
         #endregion
@@ -1426,7 +1369,7 @@ namespace t_Namespace
         /// <returns>A <see cref="t_Namespace.t_cell_name"/> instance.</returns>
         public unsafe static t_cell_name_Accessor Uset_cell_name(this Trinity.Storage.LocalMemoryStorage storage, long cellId, CellAccessOptions options)
         {
-            return t_cell_name_Accessor.New(cellId, options);
+            return t_cell_name_Accessor._get()._Lock(cellId, options, null);
         }
 
         /// <summary>
@@ -1442,7 +1385,7 @@ namespace t_Namespace
         /// <returns>A <see cref="" + script.RootNamespace + ".t_cell_name"/> instance.</returns>
         public unsafe static t_cell_name_Accessor Uset_cell_name(this Trinity.Storage.LocalMemoryStorage storage, long cellId)
         {
-            return t_cell_name_Accessor.New(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound);
+            return t_cell_name_Accessor._get()._Lock(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound, null);
         }
 
         #endregion
@@ -1487,6 +1430,19 @@ namespace t_Namespace
         {
             return Savet_cell_name(storage, options, cellContent.CellId /*FOREACH*/ , cellContent.t_field_name /*END*/);
         }
+
+        /// <summary>
+        /// Loads the content of the specified cell. Any changes done to this object are not written to the store, unless
+        /// the content object is saved back into the storage.
+        /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// </summary>
+        public unsafe static t_cell_name Loadt_cell_name(this Trinity.Storage.LocalMemoryStorage storage, long cellId)
+        {
+            using (var cell = t_cell_name_Accessor._get()._Lock(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound, null))
+            {
+                return cell;
+            }
+        }
         #endregion
 
         #region LocalMemoryStorage Tx accessors
@@ -1504,7 +1460,7 @@ namespace t_Namespace
         /// <returns>A <see cref="t_Namespace.t_cell_name"/> instance.</returns>
         public unsafe static t_cell_name_Accessor Uset_cell_name(this Trinity.Storage.LocalMemoryStorage storage, LocalTransactionContext tx, long cellId, CellAccessOptions options)
         {
-            return t_cell_name_Accessor.New(tx, cellId, options);
+            return t_cell_name_Accessor._get()._Lock(cellId, options, tx);
         }
 
         /// <summary>
@@ -1520,7 +1476,7 @@ namespace t_Namespace
         /// <returns>A <see cref="" + script.RootNamespace + ".t_cell_name"/> instance.</returns>
         public unsafe static t_cell_name_Accessor Uset_cell_name(this Trinity.Storage.LocalMemoryStorage storage, LocalTransactionContext tx, long cellId)
         {
-            return t_cell_name_Accessor.New(tx, cellId, CellAccessOptions.ThrowExceptionOnCellNotFound);
+            return t_cell_name_Accessor._get()._Lock(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound, tx);
         }
 
         #endregion
@@ -1564,6 +1520,19 @@ namespace t_Namespace
         public unsafe static bool Savet_cell_name(this Trinity.Storage.LocalMemoryStorage storage, LocalTransactionContext tx, CellAccessOptions options, t_cell_name cellContent)
         {
             return Savet_cell_name(storage, tx, options, cellContent.CellId /*FOREACH*/ , cellContent.t_field_name /*END*/);
+        }
+
+        /// <summary>
+        /// Loads the content of the specified cell. Any changes done to this object are not written to the store, unless
+        /// the content object is saved back into the storage.
+        /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// </summary>
+        public unsafe static t_cell_name Loadt_cell_name(this Trinity.Storage.LocalMemoryStorage storage, LocalTransactionContext tx, long cellId)
+        {
+            using (var cell = t_cell_name_Accessor._get()._Lock(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound, tx))
+            {
+                return cell;
+            }
         }
         #endregion
 

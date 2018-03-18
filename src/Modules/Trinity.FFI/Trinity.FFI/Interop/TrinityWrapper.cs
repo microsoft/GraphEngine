@@ -169,7 +169,7 @@ namespace Trinity.FFI
             try
             {
                 ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
-                c.CellID = cellId;
+                c.CellId = cellId;
                 Global.LocalStorage.SaveGenericCell(options, c);
                 return TrinityErrorCode.E_SUCCESS;
             }
@@ -216,7 +216,7 @@ namespace Trinity.FFI
             try
             {
                 ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
-                c.CellID = cellId;
+                c.CellId = cellId;
                 Global.CloudStorage.SaveGenericCell(c);
                 return TrinityErrorCode.E_SUCCESS;
             }
@@ -361,14 +361,14 @@ namespace Trinity.FFI
         public static long cell_getid(IntPtr cell)
         {
             ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
-            return c.CellID;
+            return c.CellId;
         }
 
         [FFIExport]
         public static void cell_setid(IntPtr cell, long cellId)
         {
             ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
-            c.CellID = cellId;
+            c.CellId = cellId;
         }
 
         [FFIExport]

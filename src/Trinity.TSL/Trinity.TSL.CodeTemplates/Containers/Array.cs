@@ -30,7 +30,7 @@ namespace t_Namespace
         /// </summary>
         public static readonly int Rank = t_int_2;
         internal byte* m_ptr;
-        internal long m_id;
+        internal long CellId;
         internal t_array_name(byte* _CellPtr)
         {
             this.m_ptr = _CellPtr;

@@ -32,7 +32,7 @@ source->append(R"::(
     public unsafe class StringAccessor : IAccessor, IEnumerable<char>
     {
         internal byte* m_ptr;
-        internal long m_id;
+        internal long CellId;
         internal StringAccessor(byte* _CellPtr, ResizeFunctionDelegate func)
         {
             m_ptr = _CellPtr;
@@ -291,7 +291,8 @@ source->append(R"::(/// <summary>Determines whether the specified StringAccessor
         /// Determines whether this instance and a specified object have the same value.
         /// </summary>
         /// <param name="obj">The StringAccessor to compare to this instance.</param>
-        /// <returns>true if obj is a StringAccessor and its value is the same as this instance; otherwise, false.</returns>)::");
+        /// <returns>true if obj is a StringAccessor and its value is the same as this instance; otherwise, false.</returns>
+)::");
 source->append(R"::(
         public override bool Equals(object obj)
         {

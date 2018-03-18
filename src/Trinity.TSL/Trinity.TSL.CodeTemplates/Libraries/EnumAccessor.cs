@@ -16,7 +16,7 @@ namespace t_Namespace
     public unsafe class EnumAccessor : IAccessor
     {
         internal byte* m_ptr;
-        internal long m_id;
+        internal long CellId;
 
         internal EnumAccessor(byte* _CellPtr)
         {

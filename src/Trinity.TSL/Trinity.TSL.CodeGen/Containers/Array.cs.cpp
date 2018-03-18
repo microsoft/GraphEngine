@@ -44,7 +44,7 @@ source->append(R"::(
 source->append(Codegen::GetString(node->arrayInfo.array_dimension_size->size()));
 source->append(R"::(;
         internal byte* m_ptr;
-        internal long m_id;
+        internal long CellId;
         internal )::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::((byte* _CellPtr)

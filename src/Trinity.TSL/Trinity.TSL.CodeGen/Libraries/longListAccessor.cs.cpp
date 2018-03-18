@@ -54,7 +54,7 @@ source->append(R"::(
     public unsafe class longListAccessor : IAccessor, IEnumerable<long>
     {
         internal byte* m_ptr;
-        internal long  m_id;
+        internal long  CellId;
         internal const int               c_idcache_count = 256;
         internal longListAccessor(byte* _CellPtr, )::");
 source->append(R"::(ResizeFunctionDelegate func)
@@ -303,7 +303,7 @@ source->append(R"::(w new ArgumentNullException("collection is null.");
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
             int delta = collection.length;
-            if (collection.m_id != m_id)
+            if (collection.CellId != CellId)
             {
                 m_ptr = R)::");
 source->append(R"::(esizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);

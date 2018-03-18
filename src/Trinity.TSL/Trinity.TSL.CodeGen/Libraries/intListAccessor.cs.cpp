@@ -32,7 +32,7 @@ source->append(R"::(
     public unsafe class intListAccessor : IAccessor, IEnumerable<int>
     {
         internal byte* m_ptr;
-        internal long m_id;
+        internal long CellId;
         internal intListAccessor(byte* _CellPtr, ResizeFunctionDelegate func)
         {
             m_ptr = _CellPtr;
@@ -277,7 +277,7 @@ source->append(R"::( collection)
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
             int delta = collection.length;
-            if (collection.m_id != m_id)
+            if (collection.CellId != CellId)
             {
                 m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
                 Memory.Copy(collection.m_ptr, m_ptr + *(int*)m_ptr + 4, delta);

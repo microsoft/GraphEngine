@@ -22,7 +22,7 @@ bool field_fixed_1 = ((*(node->fieldList))[iterator_1]->fieldType->layoutType ==
 bool field_optional_1 = ((*(node->fieldList))[iterator_1]->is_optional());
 bool field_need_accessor_1 = (data_type_need_accessor((*(node->fieldList))[iterator_1]->fieldType));
 bool field_lenprefix_1 = (data_type_is_length_prefixed((*(node->fieldList))[iterator_1]->fieldType));
-OptionalFieldCalculator optcalc_1 = OptionalFieldCalculator(node, "this.CellPtr");
+OptionalFieldCalculator optcalc_1 = OptionalFieldCalculator(node, "this.m_ptr");
 std::string accessor_field_name_1 = (*(*(node->fieldList))[iterator_1]->name) + "_Accessor_Field";
 if (field_need_accessor_1)
 {
@@ -171,7 +171,7 @@ source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::(_Accessor_Field.m_ptr = targetPtr + 4;
                 )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::(_Accessor_Field.m_id = this.m_id;
+source->append(R"::(_Accessor_Field.CellId = this.CellId;
                 return )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::(_Accessor_Field;
@@ -183,7 +183,7 @@ source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::(_Accessor_Field.m_ptr = targetPtr;
                 )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::(_Accessor_Field.m_id = this.m_id;
+source->append(R"::(_Accessor_Field.CellId = this.CellId;
                 return )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::(_Accessor_Field;
@@ -200,7 +200,7 @@ source->append(R"::(
                 if ((object)value == null) throw new ArgumentNullException("The assigned variable is null.");
                 )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::(_Accessor_Field.m_id = this.m_id;
+source->append(R"::(_Accessor_Field.CellId = this.CellId;
                 )::");
 }
 source->append(R"::(

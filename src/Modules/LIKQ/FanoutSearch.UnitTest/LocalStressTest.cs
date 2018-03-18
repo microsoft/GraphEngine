@@ -58,7 +58,7 @@ namespace FanoutSearch.UnitTest
                     {
                         for (int r = 0; r<round; ++r)
                         {
-                            g.v(0).outV(Action.Continue).outV(_ => Action.Return, select: new List<string> {"CellID" }).ToList();
+                            g.v(0).outV(Action.Continue).outV(_ => Action.Return, select: new List<string> {"CellId" }).ToList();
                         }
                     });
                 threads.Add(thread);

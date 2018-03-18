@@ -17,7 +17,7 @@ namespace t_Namespace
     public unsafe class U8StringAccessor : IAccessor
     {
         internal byte* m_ptr;
-        internal long  m_id;
+        internal long  CellId;
 
         internal U8StringAccessor(byte* _CellPtr, ResizeFunctionDelegate func)
         {

@@ -70,7 +70,7 @@ namespace FanoutSearch
         public void Serialize(TextWriter writer)
         {
             writer.Write('{');
-            writer.Write("\"CellID\":");
+            writer.Write("\"CellId\":");
             writer.Write(id);
             for (int i = 0, len = keys.Count; i < len; ++i)
             {

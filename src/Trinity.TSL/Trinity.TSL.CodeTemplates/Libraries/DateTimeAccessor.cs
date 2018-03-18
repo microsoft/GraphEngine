@@ -18,7 +18,7 @@ namespace t_Namespace
     public unsafe class DateTimeAccessor : IAccessor
     {
         internal byte* m_ptr;
-        internal long m_id;
+        internal long CellId;
 
         /// <summary>
         ///     Converts the specified string representation of a date and time to its <see cref="Trinity.TSL.Lib.DateTimeAccessor"/>

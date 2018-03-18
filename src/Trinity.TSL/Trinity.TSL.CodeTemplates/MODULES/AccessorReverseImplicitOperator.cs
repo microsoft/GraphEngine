@@ -35,7 +35,9 @@ namespace Trinity.TSL
             ret = new t_accessor_type(tmpcellptr);
             __meta.END();
 
-            ret.m_id = field.m_id;
+            __meta.IF("%for_cell");
+            ret.CellId = field.CellId;
+            __meta.END();
 
             return ret;
         }

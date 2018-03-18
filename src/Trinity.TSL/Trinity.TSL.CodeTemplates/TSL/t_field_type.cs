@@ -77,7 +77,7 @@ namespace Trinity.TSL
         unsafe public t_field_type() { }
 
         internal byte* m_ptr;
-        public long m_id;
+        public long CellId;
 
         internal unsafe ResizeFunctionDelegate ResizeFunction = null;
         public unsafe t_field_type t_member_name;

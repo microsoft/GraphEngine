@@ -23,7 +23,7 @@ namespace t_Namespace
         [META_VAR("bool", "field_optional", "($t_field->is_optional())")]
         [META_VAR("bool", "field_need_accessor", "(data_type_need_accessor($t_field_type))")]
         [META_VAR("bool", "field_lenprefix", "(data_type_is_length_prefixed($t_field_type))")]
-        [META_VAR("OptionalFieldCalculator", "optcalc", "OptionalFieldCalculator(node, \"this.CellPtr\")")]
+        [META_VAR("OptionalFieldCalculator", "optcalc", "OptionalFieldCalculator(node, \"this.m_ptr\")")]
         [META_VAR("std::string", "accessor_field_name", "(*$t_field_name) + \"_Accessor_Field\"")]
         [IF("%field_need_accessor")]
         t_accessor_type t_field_name_Accessor_Field;
@@ -99,13 +99,13 @@ namespace t_Namespace
                 ELIF("%field_lenprefix");
 
                 t_field_name_Accessor_Field.m_ptr = targetPtr + 4;
-                t_field_name_Accessor_Field.m_id = this.m_id;
+                t_field_name_Accessor_Field.CellId = this.CellId;
                 return t_field_name_Accessor_Field;
 
                 ELSE();//accessor, no length prefix
 
                 t_field_name_Accessor_Field.m_ptr = targetPtr;
-                t_field_name_Accessor_Field.m_id = this.m_id;
+                t_field_name_Accessor_Field.CellId = this.CellId;
                 return t_field_name_Accessor_Field;
 
                 END();
@@ -114,7 +114,7 @@ namespace t_Namespace
             {
                 IF("%field_need_accessor");
                 if ((object)value == null) throw new ArgumentNullException("The assigned variable is null.");
-                t_field_name_Accessor_Field.m_id = this.m_id;
+                t_field_name_Accessor_Field.CellId = this.CellId;
                 END();
 
                 byte* targetPtr = m_ptr;
@@ -148,7 +148,7 @@ namespace t_Namespace
         [MODULE_END]
 
         public unsafe byte* m_ptr { get; private set; }
-        private long m_id;
+        private long CellId;
         private unsafe byte* ResizeFunction(byte* targetPtr, int v1, int v2)
         {
             throw new NotImplementedException();

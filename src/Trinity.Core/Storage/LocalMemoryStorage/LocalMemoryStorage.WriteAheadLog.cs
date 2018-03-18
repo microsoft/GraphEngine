@@ -702,7 +702,7 @@ load_fail:
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode SaveCell(LocalTransactionContext tx, CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int cellSize, ushort cellType)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(tx.m_pctx, cellId, buff, cellSize, cellType, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.TxCLoggedSaveCell(tx.m_pctx, cellId, buff, cellSize, cellType, writeAheadLogOptions);
             return eResult;
         }
         #endregion

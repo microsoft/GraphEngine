@@ -71,8 +71,13 @@ source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::((tmpcellptr);
             )::");
 }
+if (for_cell_1)
+{
 source->append(R"::(
-            ret.m_id = field.m_id;
+            ret.CellId = field.CellId;
+            )::");
+}
+source->append(R"::(
             return ret;
         }
         )::");

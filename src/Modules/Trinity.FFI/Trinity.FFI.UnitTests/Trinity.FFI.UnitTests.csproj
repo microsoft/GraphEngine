@@ -4,6 +4,7 @@
     <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
     <AllowUnsafe>true</AllowUnsafe>
     <NoWarn>MSB4018</NoWarn>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

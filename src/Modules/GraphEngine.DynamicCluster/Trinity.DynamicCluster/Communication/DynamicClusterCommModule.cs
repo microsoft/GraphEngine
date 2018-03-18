@@ -160,7 +160,7 @@ namespace Trinity.DynamicCluster.Communication
         {
             foreach (var cell in request.cells)
             {
-                Global.LocalStorage.SaveCell(cell.id, cell.content.CellPtr, cell.content.length, cell.cell_type);
+                Global.LocalStorage.SaveCell(cell.id, cell.content.m_ptr, cell.content.length, cell.cell_type);
             }
             //TODO throttle
             response.throttle = false;

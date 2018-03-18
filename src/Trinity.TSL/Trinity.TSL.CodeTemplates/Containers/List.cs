@@ -24,7 +24,7 @@ namespace t_Namespace
     public unsafe class t_list_accessor : __meta, IEnumerable<t_accessor_type>
     {
         internal byte* m_ptr;
-        internal long m_id;
+        internal long CellId;
         internal ResizeFunctionDelegate ResizeFunction;
 
         internal t_list_accessor(byte* _CellPtr, ResizeFunctionDelegate func)
@@ -100,7 +100,7 @@ namespace t_Namespace
                         END();
                     }
                     END();
-                    elementAccessor.m_id = this.m_id;
+                    elementAccessor.CellId = this.CellId;
                     return elementAccessor;
                 }
                 END();
@@ -112,7 +112,7 @@ namespace t_Namespace
                 ELSE();
                 {
                     if ((object)value == null) throw new ArgumentNullException("The assigned variable is null.");
-                    elementAccessor.m_id = this.m_id;
+                    elementAccessor.CellId = this.CellId;
                     byte* targetPtr = m_ptr;
                     IF("%element_fixed");
                     targetPtr += (index * t_int);
@@ -151,7 +151,7 @@ namespace t_Namespace
             byte* targetPtr = m_ptr;
             byte* endPtr = m_ptr + length;
             IF("%element_need_accessor");
-            elementAccessor.m_id = this.m_id;
+            elementAccessor.CellId = this.CellId;
             END();
             while (targetPtr < endPtr)
             {
@@ -460,7 +460,7 @@ namespace t_Namespace
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
             int delta = collection.length;
-            if (collection.m_id != m_id)
+            if (collection.CellId != CellId)
             {
                 m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
                 Memory.Copy(collection.m_ptr, m_ptr + *(int*)m_ptr + 4, delta);

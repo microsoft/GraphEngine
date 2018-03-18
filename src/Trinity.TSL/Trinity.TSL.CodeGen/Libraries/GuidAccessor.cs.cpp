@@ -33,7 +33,7 @@ source->append(R"::(
     public unsafe class GuidAccessor : IAccessor
     {
         internal byte* m_ptr;
-        internal long m_id;
+        internal long CellId;
         ///
         /// <summary>
         ///     Converts the string representation of a GUID to the equivalent <see cref=")::");

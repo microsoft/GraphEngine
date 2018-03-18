@@ -17,7 +17,7 @@ namespace t_Namespace
     public unsafe class byteListAccessor : IAccessor, IEnumerable<byte>
     {
         internal byte* m_ptr;
-        internal long m_id;
+        internal long CellId;
 
 
         internal byteListAccessor(byte* _CellPtr, ResizeFunctionDelegate func)
@@ -287,7 +287,7 @@ namespace t_Namespace
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
             int delta = collection.length;
-            if (collection.m_id != m_id)
+            if (collection.CellId != CellId)
             {
                 m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
                 Memory.Copy(collection.m_ptr, m_ptr + *(int*)m_ptr + 4, delta);
