@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemStoreTest1_v1", "MemStoreTest1\MemStoreTest1_v1.csproj", "{CCFDED99-A2EA-4F0D-A08C-E3BB11D9774D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemStoreTest1", "MemStoreTest1\MemStoreTest1.csproj", "{CCFDED99-A2EA-4F0D-A08C-E3BB11D9774D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "memStoreTest2", "memStoreTest2\memStoreTest2.csproj", "{D017A8C1-F24E-4C7F-ACEF-004BAF4931F9}"
 EndProject
