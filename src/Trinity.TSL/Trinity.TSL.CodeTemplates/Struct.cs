@@ -148,10 +148,6 @@ namespace t_Namespace
         internal byte* m_ptr;
         internal long CellId;
 
-        [MUTE]
-        internal unsafe t_struct_name_Accessor(byte* _CellPtr) { throw new NotImplementedException(); }
-        [MUTE_END]
-
         internal unsafe t_struct_name_Accessor(byte* _CellPtr
             /*IF("!%struct_fixed")*/
             , ResizeFunctionDelegate func

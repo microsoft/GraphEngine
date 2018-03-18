@@ -573,6 +573,18 @@ namespace t_Namespace
         private  const CellAccessOptions c_WALFlags = CellAccessOptions.StrongLogAhead | CellAccessOptions.WeakLogAhead;
         #endregion
 
+        #region Constructors
+
+        private unsafe t_cell_name_Accessor()
+        {
+            FOREACH();
+            USE_LIST("t_field");
+            MODULE_CALL("CellFieldAccessorInitialization", "$t_field");
+            END();//FOREACH
+        }
+
+        #endregion
+
         [MODULE_CALL("OptionalFields", "node")]
 
         #region IAccessor Implementation

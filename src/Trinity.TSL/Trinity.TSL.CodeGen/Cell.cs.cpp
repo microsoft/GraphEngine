@@ -834,6 +834,26 @@ source->append(R"::(_Accessor : ICellAccessor
         internal bool                    m_IsIterator;
         private  const CellAccessOptions c_WALFlags = CellAccessOptions.StrongLogAhead | CellAccessOptions.WeakLogAhead;
         #endregion
+        #region Constructors
+        private unsafe )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor()
+        {
+            )::");
+for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
+{
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+std::string* module_content = Modules::CellFieldAccessorInitialization((*(node->fieldList))[iterator_1], &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+}
+source->append(R"::(
+        }
+        #endregion
         )::");
 
 {
