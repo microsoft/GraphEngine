@@ -21,6 +21,7 @@ using Trinity.Network.Sockets;
 using Trinity.Network.Messaging;
 using Trinity.TSL;
 using System.Runtime.CompilerServices;
+using Trinity.Storage.Transaction;
 #pragma warning disable
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
@@ -869,6 +870,11 @@ namespace t_Namespace
             return ret;
         }
 
+        internal static t_cell_name_Accessor New(LocalTransactionContext tx, long cellId, CellAccessOptions throwExceptionOnCellNotFound)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// For internal use only.
         /// </summary>
@@ -1342,6 +1348,7 @@ namespace t_Namespace
         {
             return (t_cell_name)this;
         }
+
     }
 
     ///<summary>
@@ -1404,7 +1411,7 @@ namespace t_Namespace
         }
         #endregion
 
-        #region LocalMemoryStorage
+        #region LocalMemoryStorage Non-Tx accessors
         /// <summary>
         /// Allocate a cell accessor on the specified cell, which inteprets
         /// the cell as a t_cell_name. Any changes done to the accessor
@@ -1440,7 +1447,7 @@ namespace t_Namespace
 
         #endregion
 
-        #region LocalStorage logging
+        #region LocalStorage Non-Tx logging
         /// <summary>
         /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The value of the cell is specified in the method parameters.
         /// </summary>
@@ -1454,7 +1461,7 @@ namespace t_Namespace
             byte[] tmpcell = null;
             __meta.MUTE_END();
             __meta.MODULE_CALL("SerializeParametersToBuffer", "node", "\"cell\"");
-            return storage.SaveCell(options, cellId, tmpcell, (ushort)CellType.t_cell_name) == TrinityErrorCode.E_SUCCESS;
+            return storage.SaveCell(options, cellId, tmpcell, 0, tmpcell.Length, (ushort)CellType.t_cell_name) == TrinityErrorCode.E_SUCCESS;
         }
         /// <summary>
         /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The parameter <paramref name="cellId"/> overrides the cell id in the content object.
@@ -1481,5 +1488,85 @@ namespace t_Namespace
             return Savet_cell_name(storage, options, cellContent.CellId /*FOREACH*/ , cellContent.t_field_name /*END*/);
         }
         #endregion
+
+        #region LocalMemoryStorage Tx accessors
+        /// <summary>
+        /// Allocate a cell accessor on the specified cell, which inteprets
+        /// the cell as a t_cell_name. Any changes done to the accessor
+        /// are written to the storage immediately.
+        /// If <c><see cref="Trinity.TrinityConfig.ReadOnly"/> == false</c>,
+        /// on calling this method, it attempts to acquire the lock of the cell,
+        /// and blocks until it gets the lock. Otherwise this method is wait-free.
+        /// </summary>
+        /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// <param name="cellId">The id of the specified cell.</param>
+        /// <param name="options">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
+        /// <returns>A <see cref="t_Namespace.t_cell_name"/> instance.</returns>
+        public unsafe static t_cell_name_Accessor Uset_cell_name(this Trinity.Storage.LocalMemoryStorage storage, LocalTransactionContext tx, long cellId, CellAccessOptions options)
+        {
+            return t_cell_name_Accessor.New(tx, cellId, options);
+        }
+
+        /// <summary>
+        /// Allocate a cell accessor on the specified cell, which inteprets
+        /// the cell as a t_cell_name. Any changes done to the accessor
+        /// are written to the storage immediately.
+        /// If <c><see cref="Trinity.TrinityConfig.ReadOnly"/> == false</c>,
+        /// on calling this method, it attempts to acquire the lock of the cell,
+        /// and blocks until it gets the lock.
+        /// </summary>
+        /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// <param name="cellId">The id of the specified cell.</param>
+        /// <returns>A <see cref="" + script.RootNamespace + ".t_cell_name"/> instance.</returns>
+        public unsafe static t_cell_name_Accessor Uset_cell_name(this Trinity.Storage.LocalMemoryStorage storage, LocalTransactionContext tx, long cellId)
+        {
+            return t_cell_name_Accessor.New(tx, cellId, CellAccessOptions.ThrowExceptionOnCellNotFound);
+        }
+
+        #endregion
+
+        #region LocalStorage Tx logging
+        /// <summary>
+        /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The value of the cell is specified in the method parameters.
+        /// </summary>
+        /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="options">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
+        /// <returns>true if saving succeeds; otherwise, false.</returns>
+        public unsafe static bool Savet_cell_name(this Trinity.Storage.LocalMemoryStorage storage, LocalTransactionContext tx, CellAccessOptions options, long cellId/*FOREACH*/, t_field_type t_field_name = default(t_field_type)/*END*/)
+        {
+            __meta.MUTE();
+            byte[] tmpcell = null;
+            __meta.MUTE_END();
+            __meta.MODULE_CALL("SerializeParametersToBuffer", "node", "\"cell\"");
+            return storage.SaveCell(tx, options, cellId, tmpcell, 0, tmpcell.Length, (ushort)CellType.t_cell_name) == TrinityErrorCode.E_SUCCESS;
+        }
+        /// <summary>
+        /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The parameter <paramref name="cellId"/> overrides the cell id in the content object.
+        /// </summary>
+        /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="options">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
+        /// <param name="cellContent">The content of the cell.</param>
+        /// <returns>true if saving succeeds; otherwise, false.</returns>
+        public unsafe static bool Savet_cell_name(this Trinity.Storage.LocalMemoryStorage storage, LocalTransactionContext tx, CellAccessOptions options, long cellId, t_cell_name cellContent)
+        {
+            return Savet_cell_name(storage, tx, options, cellId /*FOREACH*/ , cellContent.t_field_name /*END*/);
+        }
+
+        /// <summary>
+        /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. Cell Id is specified by the CellId field in the content object.
+        /// </summary>
+        /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// <param name="options">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
+        /// <param name="cellContent">The content of the cell.</param>
+        /// <returns>true if saving succeeds; otherwise, false.</returns>
+        public unsafe static bool Savet_cell_name(this Trinity.Storage.LocalMemoryStorage storage, LocalTransactionContext tx, CellAccessOptions options, t_cell_name cellContent)
+        {
+            return Savet_cell_name(storage, tx, options, cellContent.CellId /*FOREACH*/ , cellContent.t_field_name /*END*/);
+        }
+        #endregion
+
+
     }
 }
