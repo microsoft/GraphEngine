@@ -209,16 +209,39 @@ namespace Storage
             int32_t          backoff_attempts = 0;
             uint32_t         bucket_index     = GetBucketIndex(cellId);
             bool             tx_setup         = false;
+            int32_t          previous_entry_index;
 
         start:
-
-            bool slow_path = false;
-            if (++LookupLossyCounter > LookupSlowPathThreshold)
+            previous_entry_index = -1;
+            if (TryGetBucketLock(bucket_index) != TrinityErrorCode::E_SUCCESS)
             {
-                slow_path = true;
-                LookupLossyCounter = 0;
+                goto backoff;
+            }
+            
+            for (int32_t entry_index = Buckets[bucket_index]; entry_index >= 0; entry_index = MTEntries[entry_index].NextEntry)
+            {
+                if (MTEntries[entry_index].Key == cellId)
+                {
+                    switch (TrinityErrorCode err = entry_lock_action(entry_index)) 
+                    {
+                    case TrinityErrorCode::E_SUCCESS:
+                        return found_action(entry_index, bucket_index, previous_entry_index);
+                    case TrinityErrorCode::E_TIMEOUT:
+                        ReleaseBucketLock(bucket_index);
+                        goto backoff;
+                    default: /* E_CELL_LOCK_OVERFLOW or other errors */
+                        ReleaseBucketLock(bucket_index);
+                        return err;
+                    }
+                }
+                previous_entry_index = entry_index;
             }
 
+        notfound:
+            return not_found_action(bucket_index);
+
+        backoff:
+            ++backoff_attempts;
             if (backoff_attempts > MTHASH_LOOKUP_MAX_RETRY)
             {
                 if (!tx_setup) 
@@ -237,85 +260,54 @@ namespace Storage
                 }
             }
 
-            int32_t          previous_entry_index = -1;
-            TrinityErrorCode eResult;
-
-            eResult = TryGetBucketLock(bucket_index);
-            if (eResult != TrinityErrorCode::E_SUCCESS)
+            if (++LookupLossyCounter < LookupSlowPathThreshold)
             {
-                ++backoff_attempts;
                 goto start;
             }
 
-            if (!slow_path)
-            {
-                for (int32_t entry_index = Buckets[bucket_index]; entry_index >= 0; entry_index = MTEntries[entry_index].NextEntry)
-                {
-                    if (MTEntries[entry_index].Key == cellId)
-                    {
-                        eResult = entry_lock_action(entry_index);
-                        if (TrinityErrorCode::E_SUCCESS == eResult)
-                        {
-                            return found_action(entry_index, bucket_index, previous_entry_index);
-                        }
-                        else if (TrinityErrorCode::E_TIMEOUT == eResult)
-                        {
-                            ReleaseBucketLock(bucket_index);
-                            ++backoff_attempts;
-                            goto start;
-                        }
-                        else /* E_CELL_LOCK_OVERFLOW or other errors */
-                        {
-                            ReleaseBucketLock(bucket_index);
-                            return eResult;
-                        }
-                    }
-                    previous_entry_index = entry_index;
-                }
-            }
-            else
-            {
-				//  !slow path = fast path + collect free entries in bucket chain
-                for (int32_t entry_index = Buckets[bucket_index]; entry_index >= 0; entry_index = MTEntries[entry_index].NextEntry)
-                {
-                    if (CellEntries[entry_index].location == -1)
-                    {
-                        if (previous_entry_index < 0)
-                        {
-                            Buckets[bucket_index] = MTEntries[entry_index].NextEntry;
-                        }
-                        else
-                        {
-                            MTEntries[previous_entry_index].NextEntry = MTEntries[entry_index].NextEntry;
-                        }
-                        FreeEntry(entry_index);
-                    }
+            //  !slow path = fast path + collect free entries in bucket chain
+            LookupLossyCounter = 0;
 
-                    if (MTEntries[entry_index].Key == cellId)
+            previous_entry_index = -1;
+            if (TryGetBucketLock(bucket_index) != TrinityErrorCode::E_SUCCESS)
+            {
+                goto backoff;
+            }
+            
+            for (int32_t entry_index = Buckets[bucket_index]; entry_index >= 0; entry_index = MTEntries[entry_index].NextEntry)
+            {
+                if (CellEntries[entry_index].location == -1)
+                {
+                    if (previous_entry_index < 0)
                     {
-                        eResult = entry_lock_action(entry_index);
-                        if (TrinityErrorCode::E_SUCCESS == eResult)
-                        {
-                            return found_action(entry_index, bucket_index, previous_entry_index);
-                        }
-                        else if (TrinityErrorCode::E_TIMEOUT == eResult)
-                        {
-                            ReleaseBucketLock(bucket_index);
-                            ++backoff_attempts;
-                            goto start;
-                        }
-                        else /* E_CELL_LOCK_OVERFLOW or other errors */
-                        {
-                            ReleaseBucketLock(bucket_index);
-                            return eResult;
-                        }
+                        Buckets[bucket_index] = MTEntries[entry_index].NextEntry;
                     }
-                    previous_entry_index = entry_index;
+                    else
+                    {
+                        MTEntries[previous_entry_index].NextEntry = MTEntries[entry_index].NextEntry;
+                    }
+                    FreeEntry(entry_index);
+                    // roll back to previous and jump over
+                    entry_index = previous_entry_index;
+                } 
+                else if (MTEntries[entry_index].Key == cellId)
+                {
+                    switch (TrinityErrorCode err = entry_lock_action(entry_index)) 
+                    {
+                    case TrinityErrorCode::E_SUCCESS:
+                        return found_action(entry_index, bucket_index, previous_entry_index);
+                    case TrinityErrorCode::E_TIMEOUT:
+                        ReleaseBucketLock(bucket_index);
+                        goto backoff;
+                    default: /* E_CELL_LOCK_OVERFLOW or other errors */
+                        ReleaseBucketLock(bucket_index);
+                        return err;
+                    }
                 }
+                previous_entry_index = entry_index;
             }
 
-            return not_found_action(bucket_index);
-
+            goto notfound;
         }
 
         template<typename TLookupFound, typename TLookupNotFound>
