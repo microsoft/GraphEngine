@@ -156,12 +156,12 @@ namespace Storage
         ALLOC_THREAD_CTX void GetAllEntryLocksExceptArena();
         ALLOC_THREAD_CTX void ReleaseAllEntryLocksExceptArena();
         ALLOC_THREAD_CTX TrinityErrorCode Lock();                     // E_SUCCESS or E_DEADLOCK.
-        TrinityErrorCode TryGetBucketLock(uint32_t index);            // E_SUCCESS or E_TIMEOUT.
-        TrinityErrorCode TryGetEntryLock(int32_t index);              // E_SUCCESS or E_TIMEOUT.
-        bool             TryGetEntryLockForDefragment(int32_t index);
+        TrinityErrorCode TryGetBucketLock(const uint32_t index);            // E_SUCCESS or E_TIMEOUT.
+        TrinityErrorCode TryGetEntryLock(const int32_t index);              // E_SUCCESS or E_TIMEOUT.
+        bool             TryGetEntryLockForDefragment(const int32_t index);
         ALLOC_THREAD_CTX void Unlock();
-        void             ReleaseBucketLock(uint32_t index);
-        uint8_t          ReleaseEntryLock(int32_t index);
+        void             ReleaseBucketLock(const uint32_t index);
+        uint8_t          ReleaseEntryLock(const int32_t index);
 
         // Cell manipulation interfaces
         CELL_ATOMIC         TrinityErrorCode RemoveCell(IN cellid_t cellId);
@@ -175,12 +175,12 @@ namespace Storage
         /////////////////////////////////
 
         // GetLockedCellInfo interfaces
-        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4CellAccessor(IN cellid_t cellId, OUT int32_t &cellSize, OUT uint16_t &type, OUT char* &cellPtr, OUT int32_t &entryIndex);
-        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4SaveCell(IN cellid_t cellId, IN int32_t cellSize, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex);
-        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4AddCell(IN cellid_t cellId, IN int32_t cellSize, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex);
-        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4UpdateCell(IN cellid_t cellId, IN int32_t cellSize, OUT char* &cellPtr, OUT int32_t &entryIndex);
-        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4LoadCell(IN cellid_t cellId, OUT int32_t &cellSize, OUT char* &cellPtr, OUT int32_t &entryIndex);
-        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4AddOrUseCell(IN cellid_t cellId, IN OUT int32_t &cellSize, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4CellAccessor(IN const cellid_t cellId, OUT int32_t &cellSize, OUT uint16_t &type, OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4SaveCell(IN const cellid_t cellId, IN const int32_t cellSize, IN const uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4AddCell(IN const cellid_t cellId, IN const int32_t cellSize, IN const uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4UpdateCell(IN const cellid_t cellId, IN const int32_t cellSize, OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4LoadCell(IN const cellid_t cellId, OUT int32_t &cellSize, OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4AddOrUseCell(IN const cellid_t cellId, IN OUT int32_t &cellSize, IN const uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex);
         ///////////////////////////////////
 
         // DiskIO
@@ -196,11 +196,10 @@ namespace Storage
     private:
         CELL_LOCK_PROTECTED void _discard_locked_free_entry(IN uint32_t bucket_index, IN int32_t entry_index);
 
-
         void _GetBucketLock(uint32_t index);              // High priority. Guarantees success.
 
         ALLOC_THREAD_CTX template<typename TLockAction, typename TLookupFound, typename TLookupNotFound, typename TSetupTx>
-        inline TrinityErrorCode _Lookup_impl
+        TrinityErrorCode _Lookup_impl
 		(const cellid_t cellId, 
 		 const TLockAction& entry_lock_action, 
 	     const TLookupFound& found_action, 
@@ -327,7 +326,7 @@ namespace Storage
         {
             return _Lookup_impl(
                 cellId, 
-                [this](int32_t entry_idx) {return TryGetEntryLock(entry_idx); }, 
+                [this](const int32_t entry_idx) {return TryGetEntryLock(entry_idx); }, 
                 found_action, 
                 not_found_action,
                 [=] { PTHREAD_CONTEXT pctx = EnsureCurrentThreadContext(); pctx->SetLockingCell(cellId); });
@@ -341,7 +340,7 @@ namespace Storage
         {
             return _Lookup_impl(
                 cellId, 
-                [](int32_t _) {return TrinityErrorCode::E_SUCCESS; }, 
+                [](const int32_t _) {return TrinityErrorCode::E_SUCCESS; }, 
                 found_action, 
                 not_found_action, 
                 [] {});

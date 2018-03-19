@@ -1160,7 +1160,9 @@ source->append(R"::(_Accessor();
 source->append(Codegen::GetString(node->name));
 source->append(R"::(_Accessor item)
         {
-            if (s_accessor.Equals(null))
+            if (s_accessor == ()::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor)null)
             {
                 s_accessor = item;
             }
@@ -1236,7 +1238,8 @@ source->append(R"::(, m_options);
                 }
                 if (!m_IsIterator)
                 {
-                    Global.LocalStorage.ReleaseCellLock(CellId, m_cellEntryIndex);
+                    if(m_tx == null) Global.LocalStorage.ReleaseCellLock(CellId, m_cellEntryIndex);
+                    else Global.LocalStorage.ReleaseCellLock(m_tx, CellId, m_cellEntryIndex);
                 }
             }
             m_ptr        = null;

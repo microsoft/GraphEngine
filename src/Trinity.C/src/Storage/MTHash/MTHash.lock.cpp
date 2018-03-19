@@ -66,7 +66,7 @@ namespace Storage
         EntryAllocLock.unlock();
     }
 
-    TrinityErrorCode MTHash::TryGetBucketLock(uint32_t index)
+    TrinityErrorCode MTHash::TryGetBucketLock(const uint32_t index)
     {
         if (TrinityConfig::ReadOnly())
             return TrinityErrorCode::E_SUCCESS;
@@ -101,12 +101,12 @@ namespace Storage
         return TrinityErrorCode::E_SUCCESS;
     }
 
-    void MTHash::_GetBucketLock(uint32_t index)
+    void MTHash::_GetBucketLock(const uint32_t index)
     {
         while (TrinityErrorCode::E_SUCCESS != TryGetBucketLock(index));
     }
 
-    void MTHash::ReleaseBucketLock(uint32_t index)
+    void MTHash::ReleaseBucketLock(const uint32_t index)
     {
         if (TrinityConfig::ReadOnly())
             return;
@@ -114,7 +114,7 @@ namespace Storage
         BucketLockers[index].store(BUCKETLOCK_NOLOCK, std::memory_order_release);
     }
 
-    TrinityErrorCode MTHash::TryGetEntryLock(int32_t index)
+    TrinityErrorCode MTHash::TryGetEntryLock(const const int32_t index)
     {
         if (TrinityConfig::ReadOnly())
             return TrinityErrorCode::E_SUCCESS;
@@ -159,7 +159,7 @@ namespace Storage
         return TrinityErrorCode::E_SUCCESS;
     }
 
-    uint8_t MTHash::ReleaseEntryLock(int32_t index)
+    uint8_t MTHash::ReleaseEntryLock(const int32_t index)
     {
         if (TrinityConfig::ReadOnly())
             return 0;
@@ -281,7 +281,7 @@ namespace Storage
         Trinity::Diagnostics::WriteLine(LogLevel::Verbose, "MTHash {0}: Unlock complete.", this->memory_trunk->TrunkId);
     }
 
-    bool MTHash::TryGetEntryLockForDefragment(int32_t index)
+    bool MTHash::TryGetEntryLockForDefragment(const int32_t index)
     {
         char cmpxchg_val = ENTRYLOCK_NOLOCK;
         if (!std::atomic_compare_exchange_strong_explicit(&MTEntries[index].EntryLock, &cmpxchg_val, char(1), std::memory_order_acquire, std::memory_order_relaxed))

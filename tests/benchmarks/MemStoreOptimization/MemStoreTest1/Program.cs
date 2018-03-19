@@ -26,9 +26,12 @@ namespace LockOverheadTest
     {
         static void Main(string[] args)
         {
+            //new MicroTestsNoFill().Use();
+            //return;
+
             Func<RunStrategy, IConfig> cfg = strategy => ManualConfig.Create(DefaultConfig.Instance)
-                    .With(Job.Default.With(CsProjCoreToolchain.NetCoreApp21).With(strategy))
-                    .With(Job.Default.With(CsProjClassicNetToolchain.Current.Value).With(strategy))
+                    .With(Job.Default.With(CsProjCoreToolchain.NetCoreApp20).With(strategy).WithGcServer(true))
+                    .With(Job.Default.With(CsProjClassicNetToolchain.Current.Value).With(strategy).WithGcServer(true))
                     .With(DefaultExporters.Csv)
                     .With(DefaultExporters.Json)
                     .With(DefaultExporters.Html)

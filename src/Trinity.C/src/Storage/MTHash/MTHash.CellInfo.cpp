@@ -22,7 +22,7 @@ namespace Storage
         ReleaseEntryLock(free_entry);
     }
 
-    CELL_ACQUIRE_LOCK TrinityErrorCode MTHash::CGetLockedCellInfo4CellAccessor(IN cellid_t cellId, OUT int32_t &cellSize, OUT uint16_t &type, OUT char* &cellPtr, OUT int32_t &entryIndex)
+    CELL_ACQUIRE_LOCK TrinityErrorCode MTHash::CGetLockedCellInfo4CellAccessor(IN const cellid_t cellId, OUT int32_t &cellSize, OUT uint16_t &type, OUT char* &cellPtr, OUT int32_t &entryIndex)
     {
         return _Lookup_LockEntry_Or_NotFound(
             cellId,
@@ -52,7 +52,7 @@ namespace Storage
         });
     }
 
-    CELL_ACQUIRE_LOCK TrinityErrorCode MTHash::CGetLockedCellInfo4SaveCell(IN cellid_t cellId, IN int32_t size, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex)
+    CELL_ACQUIRE_LOCK TrinityErrorCode MTHash::CGetLockedCellInfo4SaveCell(IN const cellid_t cellId, IN const int32_t size, IN const uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex)
     {
         return _Lookup_LockEntry_Or_NotFound(
             cellId,
@@ -149,7 +149,7 @@ namespace Storage
         });
     }
 
-    CELL_ACQUIRE_LOCK TrinityErrorCode MTHash::CGetLockedCellInfo4AddCell(IN cellid_t cellId, IN int32_t size, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex)
+    CELL_ACQUIRE_LOCK TrinityErrorCode MTHash::CGetLockedCellInfo4AddCell(IN const cellid_t cellId, IN const int32_t size, IN const uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex)
     {
         return _Lookup_NoLockEntry_Or_NotFound(
             cellId,
@@ -206,7 +206,7 @@ namespace Storage
         });
     }
 
-    CELL_ACQUIRE_LOCK TrinityErrorCode MTHash::CGetLockedCellInfo4UpdateCell(IN cellid_t cellId, IN int32_t size, OUT char* &cellPtr, OUT int32_t &entryIndex)
+    CELL_ACQUIRE_LOCK TrinityErrorCode MTHash::CGetLockedCellInfo4UpdateCell(IN const cellid_t cellId, IN const int32_t size, OUT char* &cellPtr, OUT int32_t &entryIndex)
     {
         return _Lookup_LockEntry_Or_NotFound(
             cellId,
@@ -257,7 +257,7 @@ namespace Storage
         });
     }
 
-    CELL_ACQUIRE_LOCK TrinityErrorCode MTHash::CGetLockedCellInfo4LoadCell(IN cellid_t cellId, OUT int32_t &size, OUT char* &cellPtr, OUT int32_t &entryIndex)
+    CELL_ACQUIRE_LOCK TrinityErrorCode MTHash::CGetLockedCellInfo4LoadCell(IN const cellid_t cellId, OUT int32_t &size, OUT char* &cellPtr, OUT int32_t &entryIndex)
     {
         return _Lookup_LockEntry_Or_NotFound(
             cellId,
@@ -283,7 +283,7 @@ namespace Storage
         });
     }
 
-    CELL_ACQUIRE_LOCK TrinityErrorCode MTHash::CGetLockedCellInfo4AddOrUseCell(IN cellid_t cellId, IN OUT int32_t &size, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex)
+    CELL_ACQUIRE_LOCK TrinityErrorCode MTHash::CGetLockedCellInfo4AddOrUseCell(IN const cellid_t cellId, IN OUT int32_t &size, IN const uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex)
     {
         return _Lookup_LockEntry_Or_NotFound(
             cellId,
