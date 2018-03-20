@@ -114,7 +114,7 @@ namespace Storage
         BucketLockers[index].store(BUCKETLOCK_NOLOCK, std::memory_order_release);
     }
 
-    TrinityErrorCode MTHash::TryGetEntryLock(const const int32_t index)
+    TrinityErrorCode MTHash::TryGetEntryLock(const int32_t index)
     {
         if (TrinityConfig::ReadOnly())
             return TrinityErrorCode::E_SUCCESS;

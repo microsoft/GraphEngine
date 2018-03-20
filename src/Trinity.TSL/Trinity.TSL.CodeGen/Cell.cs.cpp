@@ -1064,72 +1064,143 @@ source->append(R"::( b)
         /// </summary>
         public int CellSize { get { int size; Global.LocalStorage.LockedGetCellSize(this.CellId, this.m_cellEntryIndex, out size); return size; } }
         #region Internal
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private unsafe byte* _Resize_NonTx(byte* ptr, int ptr_offset, int delta)
+        {
+            int offset = (int)(ptr - m_ptr) + ptr_offset;
+            m_ptr = Global.LocalStorage.ResizeCell((long)CellId, m_cellEntryIndex, offset, delta);
+            return m_ptr + (offset - ptr_offset);
+        }
+        private unsafe byte* _Resize_Tx(byte* ptr, int ptr_offset, int delta)
+        {
+            int offset = (int)(ptr - m_ptr) + ptr_offset;
+            m_ptr = Global.LocalStorage.ResizeCell(m_tx, (long)CellId, m_cellEntryIndex, offset, delta);
+            return m_ptr + (offset - ptr_offset);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)::");
+source->append(R"::()]
         internal unsafe )::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor _Lock(long cellId, CellAccessOptions options, LocalTransactionContext tx)
+source->append(R"::(_Accessor _Lock(long cellId, CellAccessOptions options)
         {
-            int     cellSize;
-            ushort  cellType;
-            byte*   cellPtr;
-            int     cellEntryIndex;
-            TrinityErrorCode eResult = tx == null ?
-                Global.LocalStorage.GetLockedCellInfo(cellId, out cellSize, out cellType, out cellPtr, out cellEntryIndex) :
-                Global.LocalStorage.GetLockedCellInfo(tx, cellId, out cellSize, out cellType, out cellPtr, out cellEntryIndex);
+            ushort cellType;
+            this.CellId = cellId;
+            this.m_options = options;
+            this.ResizeFunction = _Resize_NonTx;
+            TrinityErrorCode eResult = Global.LocalStorage.GetLockedCellInfo(cellId, out _, out cellType, out this.m_ptr, out this.m_cellEntryIndex);
             switch (eResult)
             {
-                case TrinityErrorCode.E_CELL_NOT_FOUND:
-                {
-                    if ((options & CellAccessOptions.ThrowExceptionOnCellNotFound) != 0)
-                    {
-                        Throw.cell_not_found(cellId);
-                    }
-                    else if ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
-                    {
-                        byte[]  defaultContent = construct();
-   )::");
-source->append(R"::(                     int     size           = defaultContent.Length;
-                        eResult                = tx == null ?
-                            Global.LocalStorage.AddOrUse(cellId, defaultContent, ref size, (ushort)CellType.)::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(, out cellPtr, out cellEntryIndex) :
-                            Global.LocalStorage.AddOrUse(tx, cellId, defaultContent, ref size, (ushort)CellType.)::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(, out cellPtr, out cellEntryIndex);
-                        if (eResult == TrinityErrorCode.E_WRONG_CELL_TYPE)
-                        {
-                            Throw.wrong_cell_type();
-                        }
-                    }
-                    else if ((options & CellAccessOptions.ReturnNullOnCellNotFound) != 0)
-                    {
-                        cellPtr        = null; /** Which indicates initialization failure. */
-                        cellEntryIndex = -1;
-                        _put(this);
-                        return null;
-                    }
-                    else
-                    {
-                        Throw.cell_not_found(cellId);
-                    }
-                    break;
-                }
                 case TrinityErrorCode.E_SUCCESS:
                 {
                     if (cellType != (ushort)CellType.)::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::()
                     {
-                        if (tx == null) Global.LocalStorage.ReleaseCellLock(cellId, cellEntryIndex);
-                        else Global.LocalStorage.ReleaseCellLock(tx, cellId, cellEntryIndex);
+                        Global.LocalStorage.ReleaseCellLock(cellId, this.m_cellEntryIndex);
+                        _put(this);
                         Throw.wrong_cell_type();
                     }
                     break;
                 }
+                case TrinityErrorCode.E_CELL_NOT_FOUND:
+                {
+                    if ((options & CellAccessOptions.ThrowExceptionOnCellNotFound) != 0)
+                    {
+                        _put(this);
+                        Throw.cell_not_found(cellId);
+                    }
+                    else if ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
+                    {
+                        byte[]  defaultContent = construct();
+                        int     size           = defaultContent.Length;
+                        eResult                = Global.LocalStorage.AddOrUse(cellId, defaultContent, ref size, (ushort)CellType.)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(, out this.m_ptr, out this.m_cellEntryIndex);
+                        if (eResult == TrinityErrorCode.E_WRONG_CELL_TYPE)
+                        {
+                            _put(this);
+                            Throw.wrong_cell_type();
+                        }
+                    }
+                    else if ((options & CellAccessOptions.ReturnNullOnCellNotFound) != 0)
+                    {
+                        _put(this);
+                        return null;
+                    }
+                    else
+                    {
+                        _put(this);
+                        Throw.cell_not_found(cellId);
+                    }
+                    break;
+                }
                 default:
+                _put(this);
                 throw new NotImplementedException();
             }
-            return _Setup(cellId, cellPtr, cellEntryIndex, options, tx);
+            return this;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal unsafe )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor _Lock(long cellId, CellAccessOptions options, LocalTransactionContext tx)
+        {
+            ushort cellType;
+            this.CellId = cellId;
+            this.m_options = options;
+            this.m_tx = tx;
+            this.ResizeFunction = _Resize_Tx;
+            TrinityErrorCode eResult = Global.LocalStorage.GetLockedCellInfo(tx, cellId, out _, out cellType, out this.m_ptr, out this.m_cellEntryIndex);
+            switch (eResult)
+            {
+                case TrinityErrorCode.E_SUCCESS:
+                {
+                    if (cellType != (ushort)CellType.)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::()
+                    {
+                        Global.LocalStorage.ReleaseCellLock(tx, cellId, this.m_cellEntryIndex);
+                        _put(this);
+                        Throw.wrong_cell_type();
+                    }
+                    break;
+                }
+                case TrinityErrorCode.E_CELL_NOT_FOUND:
+                {
+                    if ((options & CellAccessOptions.ThrowExceptionOnCellNotFound) != 0)
+                    {
+                        _put(this);
+                        Throw.cell_not_found(cellId);
+                    }
+                    else if ((options & CellAccessOptions.CreateNewOnCellNotFound) != 0)
+                    {
+                        byte[]  defaultContent = construct();
+                        int     size           = defaultContent.Length;
+                        eResult                = Global.LocalStorage.AddOrUse(tx, cellId, defaultContent, ref size, (ushort)CellType.)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(, out this.m_ptr, out this.m_cellEntryIndex);
+                        if (eResult == TrinityErrorCode.E_WRONG_CELL_TYPE)
+                        {
+                            _put(this);
+                            Throw.wrong_cell_type();
+                        }
+                    }
+                    else if ((options & CellAccessOptions.ReturnNullOnCellNotFound) != 0)
+                    {
+                        _put(this);
+                        return null;
+                    }
+                    else
+                    {
+                        _put(this);
+                        Throw.cell_not_found(cellId);
+                    }
+                    break;
+                }
+                default:
+                _put(this);
+                throw new NotImplementedException();
+            }
+            return this;
         }
         [ThreadStatic]
         internal static )::");
@@ -1164,7 +1235,8 @@ source->append(R"::(_Accessor item)
 source->append(Codegen::GetString(node->name));
 source->append(R"::(_Accessor)null)
             {
-                s_accessor = item;
+                item.m_IsIterator = false;
+                s_accessor        = item;
             }
         }
         /// <summary>
@@ -1172,6 +1244,25 @@ source->append(R"::(_Accessor)null)
         /// Caller guarantees that entry lock is obtained.
         /// Does not handle CellAccessOptions. Only copy to the accessor.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor _Setup(long CellId, byte* cellPtr, int entryIndex, CellAccessOptions options)
+        {
+            this.CellId      = CellId;
+            m_cellEntryIndex = entryIndex;
+            m_options        = options;
+            m_ptr            = cellPtr;
+            m_tx             = null;
+            this.ResizeFunction = _Resize_NonTx;
+            return this;
+        }
+        /// <summary>
+        /// For internal use only.
+        /// Caller guarantees that entry lock is obtained.
+        /// Does not handle CellAccessOptions. Only copy to the accessor.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal )::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::(_Accessor _Setup(long CellId, byte* cellPtr, int entryIndex, CellAccessOptions options, LocalTransactionContext tx)
@@ -1181,25 +1272,7 @@ source->append(R"::(_Accessor _Setup(long CellId, byte* cellPtr, int entryIndex,
             m_options        = options;
             m_ptr            = cellPtr;
             m_tx             = tx;
-            if (m_tx == null)
-            {
-                this.ResizeFunction = (byte* ptr, int ptr_offset, int delta) =>
-                {
-                    int offset = (int)(ptr - m_ptr) + ptr_offset;
-                    m_ptr = Global.LocalStorage.ResizeCell((long)CellId, m_cellEntryIndex, offset, delta);
-                    return m_ptr + (offset - ptr_offset);
-                };
-            }
-            else
-            {
-                this.ResizeFunction = (byte* ptr, int ptr_offset, int delta) =>
-                {
-                    int offset = (int)(ptr - m_ptr) + ptr_offset;
-                    m_ptr = Global.LocalStorage.ResizeCell(m_tx, (long)CellId, )::");
-source->append(R"::(m_cellEntryIndex, offset, delta);
-                    return m_ptr + (offset - ptr_offset);
-                };
-            }
+            this.ResizeFunction = _Resize_Tx;
             return this;
         }
         /// <summary>
@@ -1209,7 +1282,13 @@ source->append(R"::(m_cellEntryIndex, offset, delta);
 source->append(Codegen::GetString(node->name));
 source->append(R"::(_Accessor AllocIterativeAccessor(CellInfo info, LocalTransactionContext tx)
         {
-            return _get()._Setup(info.CellId, info.CellPtr, info.CellEntryIndex, 0, tx);
+            )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor accessor = _get();
+            accessor.m_IsIterator = true;
+            if (tx != null) accessor._Setup(info.CellId, info.CellPtr, info.CellEntryIndex, 0, tx);
+            else accessor._Setup(info.CellId, info.CellPtr, info.CellEntryIndex, 0);
+            return accessor;
         }
         #endregion
         #region Public
@@ -1238,14 +1317,10 @@ source->append(R"::(, m_options);
                 }
                 if (!m_IsIterator)
                 {
-                    if(m_tx == null) Global.LocalStorage.ReleaseCellLock(CellId, m_cellEntryIndex);
+                    if (m_tx == null) Global.LocalStorage.ReleaseCellLock(CellId, m_cellEntryIndex);
                     else Global.LocalStorage.ReleaseCellLock(m_tx, CellId, m_cellEntryIndex);
                 }
             }
-            m_ptr        = null;
-            m_IsIterator = false;
-            m_options    = 0;
-            m_tx         = null;
             _put(this);
         }
         /// <summary>
@@ -1989,11 +2064,19 @@ source->append(R"::( Load)::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::((this IKeyValueStore storage, long cellId)
         {
-            using (var cell = )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor._get()._Lock(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound, null))
+            if (TrinityErrorCode.E_SUCCESS == storage.LoadCell(cellId, out var buff))
             {
-                return cell;
+                fixed (byte* p = buff)
+                {
+                    return )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor._get()._Setup(cellId, p, -1, 0);
+                }
+            }
+            else
+            {
+                Throw.cell_not_found();
+                throw new Exception();
             }
         }
         #endregion
@@ -2024,7 +2107,7 @@ source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, long cellI
         {
             return )::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor._get()._Lock(cellId, options, null);
+source->append(R"::(_Accessor._get()._Lock(cellId, options);
         }
         /// <summary>
         /// Allocate a cell accessor on the specified cell, which inteprets
@@ -2049,7 +2132,7 @@ source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, long cellI
         {
             return )::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor._get()._Lock(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound, null);
+source->append(R"::(_Accessor._get()._Lock(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound);
         }
         #endregion
         #region LocalStorage Non-Tx logging
@@ -2158,7 +2241,7 @@ source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, long cellI
         {
             using (var cell = )::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor._get()._Lock(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound, null))
+source->append(R"::(_Accessor._get()._Lock(cellId, CellAccessOptions.ThrowExceptionOnCellNotFound))
             {
                 return cell;
             }

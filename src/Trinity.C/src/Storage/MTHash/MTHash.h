@@ -241,8 +241,7 @@ namespace Storage
             return not_found_action(bucket_index);
 
         backoff:
-            ++backoff_attempts;
-            if (backoff_attempts > MTHASH_LOOKUP_MAX_RETRY)
+            if (++backoff_attempts > MTHASH_LOOKUP_MAX_RETRY)
             {
                 if (!tx_setup) 
                 {

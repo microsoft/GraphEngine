@@ -150,7 +150,7 @@ namespace t_Namespace
             {
                 /*FOREACH*/
                 case CellType.t_cell_name:
-                return t_cell_name_Accessor._get()._Setup(cellId, cellPtr, entryIndex, CellAccessOptions.ThrowExceptionOnCellNotFound, null);
+                return t_cell_name_Accessor._get()._Setup(cellId, cellPtr, entryIndex, CellAccessOptions.ThrowExceptionOnCellNotFound);
                 /*END*/
                 default:
                 storage.ReleaseCellLock(cellId, entryIndex);
@@ -214,7 +214,7 @@ namespace t_Namespace
             switch (cellType)
             {
                 /*FOREACH*/
-                case "t_cell_name": return t_cell_name_Accessor._get()._Lock(cellId, options, null);
+                case "t_cell_name": return t_cell_name_Accessor._get()._Lock(cellId, options);
                 /*END*/
                 default:
                 Throw.invalid_cell_type();
@@ -344,7 +344,7 @@ namespace t_Namespace
             {
                 /*FOREACH*/
                 case CellType.t_cell_name:
-                return t_cell_name_Accessor._get()._Setup(cellId, cellBuffer, entryIndex, options, null);
+                return t_cell_name_Accessor._get()._Setup(cellId, cellBuffer, entryIndex, options);
                 /*END*/
                 default:
                 throw new CellTypeNotMatchException("Cannot determine cell type.");
