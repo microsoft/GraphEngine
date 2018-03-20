@@ -51,24 +51,12 @@ namespace FanoutSearch.UnitTest
     {
         internal static void FanoutSearchQueryException(System.Action action, string message_substring)
         {
-            try
-            {
-                action();
-            }
-            catch (FanoutSearchQueryException ex) when (ex.Message.Contains(message_substring)) { return; }
-
-            throw new Exception(String.Format("Expected BadRequestException:{0} was not met", message_substring));
+            Assert.Contains(message_substring, Assert.Throws<FanoutSearchQueryException>(action).InnerException.Message);
         }
 
         internal static void FanoutSearchQueryException(System.Action<string> action, string param, string message_substring)
         {
-            try
-            {
-                action(param);
-            }
-            catch (FanoutSearchQueryException ex) when (ex.Message.Contains(message_substring)) { return; }
-
-            throw new Exception(String.Format("Expected BadRequestException:{0} was not met", message_substring));
+            Assert.Contains(message_substring, Assert.Throws<FanoutSearchQueryException>(() => action(param)).InnerException.Message);
         }
     }
 }
