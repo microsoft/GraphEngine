@@ -45,7 +45,7 @@ namespace Trinity
                 _ScanForMemoryCloudExtension();
                 _ScanForStartupTasks();
                 s_master_init_flag = true;
-                //TODO clean up background tasks
+                BackgroundThread.Start();
             }
             try
             {

@@ -16,24 +16,8 @@ namespace Trinity.FFI
 
         protected AssocT[] m_array = null;
 
-        private long m_pad0 = 0;
-        private long m_pad1 = 0;
-        private long m_pad2 = 0;
-        private long m_pad3 = 0;
-        private long m_pad4 = 0;
-        private long m_pad5 = 0;
-        private long m_pad6 = 0;
-
         protected int m_head = 0;
         protected int m_len = 0;
-
-        private long m_pad7 = 0;
-        private long m_pad8 = 0;
-        private long m_pad9 = 0;
-        private long m_pad10 = 0;
-        private long m_pad11 = 0;
-        private long m_pad12 = 0;
-        private long m_pad13 = 0;
 
         protected object m_lock;
 
@@ -57,6 +41,7 @@ namespace Trinity.FFI
             m_array = ret;
             m_len = m_array.Length;
         }
+
         private void _Alloc_Normal(int newlen)
         {
             if (newlen < 0) throw new OutOfMemoryException();
