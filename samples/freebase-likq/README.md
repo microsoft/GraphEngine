@@ -11,8 +11,8 @@ set:
 
 For brevity, in this sample project we focus on how to serve LIKQ
 queries with a prebuilt data image.  Please refer to the
-`GraphEngine.DataImporter` sample project in the `experimental` branch
-to see how to automatically generate a schema file and import data.
+`GraphEngine.DataImporter` project to see how to automatically
+generate a schema file and import data.
 
 LIKQ module does not provide a built-in index backend. In this sample
 project, a sample index backend based on SQLite is provided.  When

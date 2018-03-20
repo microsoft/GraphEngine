@@ -7,8 +7,11 @@ extern TRINITY_INTERFACES* g_TrinityInterfaces;
 
 void Init()
 {
-    g_TrinityInterfaces = TRINITY_FFI_GET_INTERFACES();
+	g_TrinityInterfaces = TRINITY_FFI_GET_INTERFACES();
 }
+
+
+
 
 class Cell
 {
@@ -23,6 +26,7 @@ public:
 	friend Cell* NewCell_1(char*);
 	friend Cell* NewCell_2(long long, char*);
 	friend Cell* NewCell_3(char*, char*);
+
 
 	char* GetField(char* field)
 	{
@@ -60,7 +64,8 @@ public:
 
 	~Cell()
 	{
-		printf("====================== dtor\n");
+		//printf("====================== dtor %llX\n", m_cell);
+
 		g_TrinityInterfaces->cell_dispose(m_cell);
 	}
 
@@ -76,7 +81,7 @@ public:
 			while (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->cell_fieldenum_movenext(etor, fi))
 			{
 				g_TrinityInterfaces->cell_fieldenum_current(etor, &fi);
-				if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->cell_fieldinfo_name(fi, &val)) 
+				if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->cell_fieldinfo_name(fi, &val))
 				{
 					vec.push_back(val);
 				}
@@ -90,14 +95,15 @@ public:
 
 Cell* LoadCell(long long cellId)
 {
-	Cell* pret = new Cell(0);
-	if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->local_loadcell(cellId, &pret->m_cell))
+	void* pcell = nullptr;
+	if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->local_loadcell(cellId, &pcell))
 	{
-		return pret;
+		//printf("==== LoadCell: %llX \n", pcell);
+		return new Cell(pcell);
 	}
 	else
 	{
-		delete pret;
+		//printf("==== LoadCell: no banana\n");
 		return nullptr;
 	}
 }
@@ -147,3 +153,47 @@ Cell* NewCell_3(char* cellType, char* cellContent)
 		return nullptr;
 	}
 }
+
+
+static int CO_Load(long long cellId) {
+	return g_TrinityInterfaces->CO_Load(cellId);
+}
+
+static int CO_New_1(char* cellType)
+{
+	return g_TrinityInterfaces->CO_New_1(cellType);
+}
+
+static int CO_New_2(char* cellType, long long cellId) {
+	return g_TrinityInterfaces->CO_New_2(cellType, cellId);
+}
+
+static int CO_New_3(char* cellType, long long cellId, char* content) {
+	return g_TrinityInterfaces->CO_New_3(cellType, cellId, content);
+}
+
+static	void CO_Save_1(int index) {
+	return g_TrinityInterfaces->CO_Save_1(index);
+}
+
+static void CO_Save_2(long long cellId, int index)
+{
+	g_TrinityInterfaces->CO_Save_2(cellId, index);
+}
+
+static void CO_Save_3(CellAccessOptions writeAheadLogOptions, int index) {
+	
+	return g_TrinityInterfaces->CO_Save_3(writeAheadLogOptions, index);
+}
+
+static void CO_Save_4(CellAccessOptions writeAheadLogOptions, long long cellId, int index) {
+
+	return g_TrinityInterfaces->CO_Save_4(writeAheadLogOptions, cellId, index);
+
+}
+
+static void CO_Del(int index) {
+	return g_TrinityInterfaces->CO_Del(index);
+}
+
+

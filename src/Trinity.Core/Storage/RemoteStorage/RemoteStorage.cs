@@ -36,6 +36,8 @@ namespace Trinity.Storage
         private int m_send_retry = NetworkConfig.Instance.ClientSendRetry;
         private int m_client_count = 0;
         private MemoryCloud m_memorycloud = null;
+        private BackgroundTask m_bgtask = null;
+
         /// <summary>
         /// Deprecated. Use PartitionId instead.
         /// </summary>
@@ -67,7 +69,8 @@ namespace Trinity.Storage
                 }
                 if (mc != null && partitionId != -1)
                 {
-                    BackgroundThread.AddBackgroundTask(new BackgroundTask(Heartbeat, TrinityConfig.HeartbeatInterval));
+                    m_bgtask = new BackgroundTask(Heartbeat, TrinityConfig.HeartbeatInterval);
+                    BackgroundThread.AddBackgroundTask(m_bgtask);
                     mc.ReportServerConnectedEvent(this);
                 }
             });
@@ -181,6 +184,7 @@ namespace Trinity.Storage
                         client.Dispose();
                     }
                 }
+                BackgroundThread.RemoveBackgroundTask(m_bgtask);
 
                 this.disposed = true;
             }

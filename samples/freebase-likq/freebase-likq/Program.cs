@@ -12,6 +12,7 @@ using System.Data.SQLite;
 using System.Net;
 using System.Diagnostics;
 using System.IO.Compression;
+using freebase_tsl;
 
 namespace freebase_likq
 {
@@ -127,7 +128,7 @@ namespace freebase_likq
             download_client.DownloadFileTaskAsync($"{s_freebase_data_blobcontainer}/{s_freebase_dataset}", s_freebase_dataset).Wait();
             Console.WriteLine();
             Log.WriteLine("Download complete. Unarchiving storage folder...");
-            ZipFile.ExtractToDirectory("freebase-full-dataset.zip", Global.MyAssemblyPath);
+            ZipFile.ExtractToDirectory(s_freebase_dataset, Global.MyAssemblyPath);
             Log.WriteLine("Successfully unarchived the data files.");
         }
 

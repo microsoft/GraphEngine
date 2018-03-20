@@ -48,7 +48,7 @@ namespace Trinity.Azure.Storage
                 BoundedCapacity = DynamicClusterConfig.Instance.ConcurrentDownloads
             });
             Log.WriteLine(LogLevel.Info, $"{nameof(BlobDownloader)}: Begin downloading {m_version} [{m_lowKey}-{m_highKey}].");
-            if(skip != null)
+            if (skip != null)
             {
                 Log.WriteLine(LogLevel.Info, $"{nameof(BlobDownloader)}: Version {m_version}: skipping {ChunkSerialization.ToString(skip)}.");
             }
@@ -60,7 +60,7 @@ namespace Trinity.Azure.Storage
                          .OrderBy(c => c.LowKey)
                          .Where(c => skip == null || c.LowKey > skip.HighKey)
                          .Where(InRange);
-            foreach(var chunk in chunks)
+            foreach (var chunk in chunks)
             {
                 m_buffer.Post(_Download_impl(chunk));
                 if (m_tokenSource.IsCancellationRequested) break;
@@ -72,14 +72,14 @@ namespace Trinity.Azure.Storage
         private async Task<InMemoryDataChunk> _Download_impl(Chunk chunk)
         {
             var file = m_dir.GetBlockBlobReference(chunk.Id.ToString());
-            var ms = new MemoryStream();
-            Log.WriteLine(LogLevel.Info, $"{nameof(BlobDownloader)}: Version {m_version}: downloading {ChunkSerialization.ToString(chunk)}.");
-            await file.DownloadToStreamAsync(ms);
-            var buf = ms.GetBuffer();
-           
-            ms.Dispose();
-            Log.WriteLine(LogLevel.Info, $"{nameof(BlobDownloader)}: Version {m_version}: finished {ChunkSerialization.ToString(chunk)}.");
-            return new InMemoryDataChunk(chunk, buf, m_lowKey, m_highKey);
+            using (var ms = new MemoryStream())
+            {
+                Log.WriteLine(LogLevel.Info, $"{nameof(BlobDownloader)}: Version {m_version}: downloading {ChunkSerialization.ToString(chunk)}.");
+                await file.DownloadToStreamAsync(ms);
+                var buf = ms.ToArray();
+                Log.WriteLine(LogLevel.Info, $"{nameof(BlobDownloader)}: Version {m_version}: finished {ChunkSerialization.ToString(chunk)}.");
+                return new InMemoryDataChunk(chunk, buf, m_lowKey, m_highKey);
+            }
         }
 
         public void Dispose()

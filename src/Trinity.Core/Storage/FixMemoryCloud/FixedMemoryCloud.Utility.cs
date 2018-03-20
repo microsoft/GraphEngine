@@ -68,6 +68,7 @@ namespace Trinity.Storage
         /// </summary>
         public unsafe void ShutDown()
         {
+            //TODO should be IDisposable, not ShutDown
             //TODO move this to base implementation;
             if (TrinityConfig.CurrentRunningMode == RunningMode.Client)
             {
