@@ -61,77 +61,57 @@ namespace t_Namespace
         [IF("!$t_protocol->has_request() && !$t_protocol->has_response()")]
         public unsafe static void t_method_name(this Trinity.Storage.IMessagePassingEndpoint storage)
         {
-            byte* bufferPtr = (byte*)Memory.malloc((ulong)TrinityProtocol.MsgHeader);
-            try
-            {
-                *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader;
-                *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
-                *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
-                t_send_message(bufferPtr, TrinityProtocol.MsgHeader);
-            }
-            finally { Memory.free(bufferPtr); }
+            byte* bufferPtr = stackalloc byte[TrinityProtocol.MsgHeader];
+            *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader;
+            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
+            *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
+            t_send_message(bufferPtr, TrinityProtocol.MsgHeader);
         }
         [ELIF("$t_protocol->has_request() && !$t_protocol->has_response()")]
         public unsafe static void t_method_name(this Trinity.Storage.IMessagePassingEndpoint storage, t_protocol_requestWriter msg)
         {
             byte* bufferPtr = msg.buffer;
-            try
-            {
-                *(int*)(bufferPtr) = msg.Length + TrinityProtocol.TrinityMsgHeader;
-                *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
-                *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
-                t_send_message(bufferPtr, msg.Length + TrinityProtocol.MsgHeader);
-            }
-            finally { }
+            *(int*)(bufferPtr) = msg.Length + TrinityProtocol.TrinityMsgHeader;
+            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
+            *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
+            t_send_message(bufferPtr, msg.Length + TrinityProtocol.MsgHeader);
         }
         [ELIF("!$t_protocol->has_request() && $t_protocol->is_syn_req_rsp_protocol()")]
         public unsafe static t_protocol_responseReader t_method_name_2(this Trinity.Storage.IMessagePassingEndpoint storage)
         {
             byte* bufferPtr = stackalloc byte[TrinityProtocol.MsgHeader];
-            try
-            {
-                *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader;
-                *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
-                *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
-                TrinityResponse response;
-                t_send_message(bufferPtr, TrinityProtocol.MsgHeader, out response);
-                return new t_protocol_responseReader(response.Buffer, response.Offset);
-            }
-            finally { Memory.free(bufferPtr); }
+            *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader;
+            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
+            *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
+            TrinityResponse response;
+            t_send_message(bufferPtr, TrinityProtocol.MsgHeader, out response);
+            return new t_protocol_responseReader(response.Buffer, response.Offset);
         }
         [ELIF("$t_protocol->has_request() && $t_protocol->is_syn_req_rsp_protocol()")]
         public unsafe static t_protocol_responseReader t_method_name_2(this Trinity.Storage.IMessagePassingEndpoint storage, t_protocol_requestWriter msg)
         {
             byte* bufferPtr = msg.buffer;
-            try
-            {
-                *(int*)(bufferPtr) = msg.Length + TrinityProtocol.TrinityMsgHeader;
-                *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
-                *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
-                TrinityResponse response;
-                t_send_message(bufferPtr, msg.Length + TrinityProtocol.MsgHeader, out response);
-                return new t_protocol_responseReader(response.Buffer, response.Offset);
-            }
-            finally { }
+            *(int*)(bufferPtr) = msg.Length + TrinityProtocol.TrinityMsgHeader;
+            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
+            *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
+            TrinityResponse response;
+            t_send_message(bufferPtr, msg.Length + TrinityProtocol.MsgHeader, out response);
+            return new t_protocol_responseReader(response.Buffer, response.Offset);
         }
         [ELIF("!$t_protocol->has_request() && $t_protocol->is_asyn_req_rsp_protocol()")]
         public unsafe static Task<t_protocol_responseReader> t_method_name_3(this Trinity.Storage.IMessagePassingEndpoint storage)
         {
             byte* bufferPtr = stackalloc byte[TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength];
-            try
-            {
-                int token = Interlocked.Increment(ref t_comm_nameBase.s_t_protocol_name_token_counter);
-                var task_source = new TaskCompletionSource<t_protocol_responseReader>();
-                t_comm_nameBase.s_t_protocol_name_token_sources[token] = task_source;
-                *(int*)(bufferPtr + TrinityProtocol.MsgHeader) = token;
-                *(int*)(bufferPtr + TrinityProtocol.MsgHeader + sizeof(int)) = Global.CloudStorage.MyInstanceId;
-                *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
-                *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
-                *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
-                t_send_message(bufferPtr, TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
-                return task_source.Task;
-            }
-            finally { }
+            int token = Interlocked.Increment(ref t_comm_nameBase.s_t_protocol_name_token_counter);
+            var task_source = new TaskCompletionSource<t_protocol_responseReader>();
+            t_comm_nameBase.s_t_protocol_name_token_sources[token] = task_source;
+            *(int*)(bufferPtr + TrinityProtocol.MsgHeader) = token;
+            *(int*)(bufferPtr + TrinityProtocol.MsgHeader + sizeof(int)) = Global.CloudStorage.MyInstanceId;
+            *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
+            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
+            *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
+            t_send_message(bufferPtr, TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+            return task_source.Task;
         }
         [ELSE]
         //("$t_protocol->has_request() && $t_protocol->is_asyn_req_rsp_protocol()")
@@ -145,20 +125,16 @@ namespace t_Namespace
             size[0]           = TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
             size[1]           = msg.Length;
 
-            try
-            {
-                int token = Interlocked.Increment(ref t_comm_nameBase.s_t_protocol_name_token_counter);
-                var task_source = new TaskCompletionSource<t_protocol_responseReader>();
-                t_comm_nameBase.s_t_protocol_name_token_sources[token] = task_source;
-                *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader + msg.Length + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
-                *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
-                *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
-                *(int*)(bufferPtr + TrinityProtocol.MsgHeader) = token;
-                *(int*)(bufferPtr + TrinityProtocol.MsgHeader + sizeof(int)) = Global.CloudStorage.MyInstanceId;
-                t_send_message(bufferPtrs, size, 2);
-                return task_source.Task;
-            }
-            finally { }
+            int token = Interlocked.Increment(ref t_comm_nameBase.s_t_protocol_name_token_counter);
+            var task_source = new TaskCompletionSource<t_protocol_responseReader>();
+            t_comm_nameBase.s_t_protocol_name_token_sources[token] = task_source;
+            *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader + msg.Length + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
+            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
+            *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
+            *(int*)(bufferPtr + TrinityProtocol.MsgHeader) = token;
+            *(int*)(bufferPtr + TrinityProtocol.MsgHeader + sizeof(int)) = Global.CloudStorage.MyInstanceId;
+            t_send_message(bufferPtrs, size, 2);
+            return task_source.Task;
         }
 
 
