@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.0;net46</TargetFrameworks>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Version>1.0.9083.0</Version>
     <FileVersion>1.0.9083.0</FileVersion>
@@ -16,11 +16,13 @@
     <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
     <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
     <PackageId>GraphEngine.LIKQ</PackageId>
+    <AssemblyName>GraphEngine.LIKQ</AssemblyName>
+    <RootNamespace>GraphEngine.LIKQ</RootNamespace>
     <OutputPath>..\..\..\..\bin</OutputPath>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
-    <DefineConstants>NETSTANDARD2_0</DefineConstants>
+  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp2.0'">
+    <DefineConstants>NETCOREAPP2_0</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,10 +36,11 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.6.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="2.6.1" />
     <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
+    <PackageReference Include="Serialize.Linq" Version="1.7.0" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+  <ItemGroup Condition="'$(TargetFramework)'=='netcoreapp2.0'">
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.0.0" />
     <PackageReference Include="System.Runtime" Version="4.3.0" />
   </ItemGroup>

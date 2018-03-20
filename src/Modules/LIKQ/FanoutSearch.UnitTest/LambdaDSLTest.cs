@@ -11,18 +11,9 @@ using Xunit;
 
 namespace FanoutSearch.UnitTest
 {
-    public class LambdaDSLTest : IDisposable
+    [Collection("All")]
+    public class LambdaDSLTest
     {
-        public LambdaDSLTest()
-        {
-            Initializer.Initialize();
-        }
-
-        public void Dispose()
-        {
-            Initializer.Uninitialize();
-        }
-
         [Fact]
         public void LambdaDSLTest1()
         {

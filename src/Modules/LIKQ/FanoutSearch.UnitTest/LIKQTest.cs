@@ -28,18 +28,9 @@ namespace FanoutSearch.UnitTest
     /// <summary>
     /// Summary description for LIKQTest
     /// </summary>
-    public class LIKQTest : IDisposable
+    [Collection("All")]
+    public class LIKQTest
     {
-        public LIKQTest()
-        {
-            Initializer.Initialize();
-        }
-
-        public void Dispose()
-        {
-            Initializer.Uninitialize();
-        }
-
         IEnumerable<PathDescriptor> DoQuery(long origin, string property, int property_count_lowerbound)
         {
             Func<int> func = () => property_count_lowerbound;

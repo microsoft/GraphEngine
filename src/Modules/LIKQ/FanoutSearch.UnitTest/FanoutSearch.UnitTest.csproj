@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <!--<TargetFrameworks>netcoreapp2.0;net46</TargetFrameworks>-->
-    <TargetFrameworks>net46</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.0;net46</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
    </PropertyGroup>
@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
-    <PackageReference Include="Serialize.Linq" Version="1.6.0" />
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.console" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
@@ -22,5 +21,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FanoutSearch\FanoutSearch.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="xunit.runner.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

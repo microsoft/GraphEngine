@@ -8,18 +8,9 @@ using Xunit;
 
 namespace FanoutSearch.UnitTest
 {
-    public class LambdaDSLTest2 : IDisposable
+    [Collection("All")]
+    public class LambdaDSLTest2
     {
-        public LambdaDSLTest2()
-        {
-            Initializer.Initialize();
-        }
-
-        public void Dispose()
-        {
-            Initializer.Uninitialize();
-        }
-
         private void LambdaQuery(string str)
         {
             var mod = Global.CommunicationInstance.GetCommunicationModule<FanoutSearchModule>();

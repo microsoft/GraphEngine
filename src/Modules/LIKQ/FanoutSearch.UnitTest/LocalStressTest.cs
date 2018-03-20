@@ -15,12 +15,11 @@ using Xunit;
 
 namespace FanoutSearch.UnitTest
 {
-    public class LocalStressTest : IDisposable
+    [Collection("stress")]
+    public class LocalStressTest : IClassFixture<TrinityServerFixture>
     {
         public LocalStressTest()
         {
-            Initializer.Initialize();
-
             //Load some data
             Global.LocalStorage.SaveMyCell(0, new List<long> { 1, 2, 3, 4, 5, 6, 7, 8, 9 }, f2: new List<float> { 1, 2, 3, 4, 5, 6, 7, 8 });
             Global.LocalStorage.SaveMyCell(1, new List<long> { 1, 2, 3, 4, 5, 6, 7, 8, 9 }, f2: new List<float> { 1, 2, 3, 4, 5, 6, 7, 8 });
@@ -39,11 +38,6 @@ namespace FanoutSearch.UnitTest
             // Set timeout, and disable cache
             FanoutSearchModule.SetCacheEnabled(false);
             FanoutSearchModule.SetQueryTimeout(800);
-        }
-
-        public void Dispose()
-        {
-            Initializer.Uninitialize();
         }
 
         private static void _stress_test_impl(int client_count, int round)

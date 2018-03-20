@@ -9,25 +9,33 @@ using System.Text;
 using System.Threading.Tasks;
 using Trinity;
 using Trinity.Network;
+using Xunit;
+
+[assembly: CollectionBehavior(DisableTestParallelization = true, MaxParallelThreads = 1)]
 
 namespace FanoutSearch.UnitTest
 {
-    class Initializer
+    [CollectionDefinition("All")]
+    public class AllLIKQTestCollection : ICollectionFixture<TrinityServerFixture> { }
+
+    public class TrinityServerFixture : IDisposable
     {
-        internal static void Initialize()
+        private TrinityServer server;
+
+        public TrinityServerFixture()
         {
             Global.Initialize();
             LambdaDSL.SetDialect("MAG", "StartFrom", "VisitNode", "FollowEdge", "Action");
             FanoutSearchModule.SetQueryTimeout(-1);
             FanoutSearchModule.RegisterIndexService(FakeIndexService);
-            FanoutSearchModule.RegisterExpressionSerializerFactory(() => new ExpressionSerializer());
-            TrinityServer server = new TrinityServer();
+            server = new TrinityServer();
             server.RegisterCommunicationModule<FanoutSearchModule>();
             server.Start();
         }
 
-        internal static void Uninitialize()
+        public void Dispose()
         {
+            server.Stop();
             Global.Uninitialize();
         }
 

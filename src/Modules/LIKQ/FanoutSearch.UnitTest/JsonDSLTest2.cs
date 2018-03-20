@@ -12,18 +12,9 @@ using Xunit;
 
 namespace FanoutSearch.UnitTest
 {
-    public class JsonDSLTest2 : IDisposable
+    [Collection("All")]
+    public class JsonDSLTest2
     {
-        public JsonDSLTest2()
-        {
-            Initializer.Initialize();
-        }
-
-        public void Dispose()
-        {
-            Initializer.Uninitialize();
-        }
-
         private void JsonQuery(string str)
         {
             var mod = Global.CommunicationInstance.GetCommunicationModule<FanoutSearchModule>();
