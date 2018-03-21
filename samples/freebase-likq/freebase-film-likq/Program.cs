@@ -12,7 +12,7 @@ using System.Data.SQLite;
 using System.Net;
 using System.Diagnostics;
 using System.IO.Compression;
-using freebase_tsl;
+using freebase_film_tsl;
 
 namespace freebase_likq
 {
@@ -22,7 +22,7 @@ namespace freebase_likq
         private static string s_freebase_data_blobcontainer = "https://graphengine.blob.core.windows.net/public-data";
         //  !Note, different datasets are built with different TSL extensions,
         //  make sure you reference the correct TSL storage extension dll!
-        private static string s_freebase_dataset = "freebase-full-dataset-20170410.zip";
+        private static string s_freebase_dataset = "freebase-film-dataset.zip";
 
         static void Main(string[] args)
         {
