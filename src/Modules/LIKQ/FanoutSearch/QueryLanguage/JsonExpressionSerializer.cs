@@ -6,23 +6,23 @@ using Serialize.Linq.Nodes;
 using System;
 using Trinity.Storage;
 
-namespace FanoutSearch.UnitTest
+namespace FanoutSearch
 {
-    class ExpressionSerializer : IExpressionSerializer
+    class JsonExpressionSerializer : IExpressionSerializer
     {
-        private static XmlSerializer m_serializer = null;
-        private static NodeFactory m_factory = null;
+        private JsonSerializer m_serializer = null;
+        private NodeFactory m_factory = null;
 
-        public ExpressionSerializer()
+        public JsonExpressionSerializer()
         {
-            m_serializer = new XmlSerializer();
+            m_serializer = new JsonSerializer();
             m_serializer.AddKnownType(typeof(FanoutSearch.Action));
-            m_factory = new NodeFactory();
+            m_factory = new NodeFactory(new FactorySettings { });
         }
 
         public string Serialize(System.Linq.Expressions.Expression pred)
         {
-            return pred.ToXml(m_factory, m_serializer);
+            return pred.ToJson(m_factory, m_serializer);
         }
 
         public Func<ICellAccessor, FanoutSearch.Action> DeserializeTraverseAction(string pred)

@@ -60,7 +60,7 @@ namespace Trinity.Daemon
                     timer.Dispose();
                     ClearAllTasks();
                     started = false;
-                    Log.WriteLine(LogLevel.Info, $"{nameof(BackgroundThread)}: started");
+                    Log.WriteLine(LogLevel.Info, $"{nameof(BackgroundThread)}: stopped");
                 }
             }
         }

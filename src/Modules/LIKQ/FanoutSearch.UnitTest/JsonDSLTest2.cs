@@ -2,38 +2,26 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Trinity;
+using Xunit;
 
 namespace FanoutSearch.UnitTest
 {
-    [TestClass]
+    [Collection("All")]
     public class JsonDSLTest2
     {
-        [ClassInitialize]
-        public static void Init(TestContext ctx)
-        {
-            Initializer.Initialize();
-        }
-
-        [ClassCleanup]
-        public static void Uninit()
-        {
-            Initializer.Uninitialize();
-        }
-
         private void JsonQuery(string str)
         {
             var mod = Global.CommunicationInstance.GetCommunicationModule<FanoutSearchModule>();
             mod.JsonQuery(str);
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_1()
         {
             Expect.FanoutSearchQueryException(JsonQuery,
@@ -56,7 +44,7 @@ namespace FanoutSearch.UnitTest
 ", "The input is not a valid Json object");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_2()
         {
             JsonQuery(@"
@@ -78,7 +66,7 @@ namespace FanoutSearch.UnitTest
 ");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_3()
         {
             JsonQuery(@"
@@ -100,7 +88,7 @@ namespace FanoutSearch.UnitTest
 ");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_4()
         {
             JsonQuery(@"
@@ -123,7 +111,7 @@ namespace FanoutSearch.UnitTest
 ");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_5()
         {
             JsonQuery(@"{
@@ -155,7 +143,7 @@ namespace FanoutSearch.UnitTest
 ");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_6()
         {
             Expect.FanoutSearchQueryException(
@@ -176,7 +164,7 @@ namespace FanoutSearch.UnitTest
 ", "Invalid property value");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_7()
         {
             JsonQuery(@"{
@@ -198,7 +186,7 @@ namespace FanoutSearch.UnitTest
 );
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_8()
         {
             JsonQuery(@"{
@@ -225,7 +213,7 @@ namespace FanoutSearch.UnitTest
 );
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_9()
         {
             JsonQuery(@"{
@@ -250,7 +238,7 @@ namespace FanoutSearch.UnitTest
 );
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_10()
         {
             JsonQuery(@"{
@@ -272,7 +260,7 @@ namespace FanoutSearch.UnitTest
 );
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_11()
         {
             JsonQuery(@"{
@@ -295,7 +283,7 @@ namespace FanoutSearch.UnitTest
 );
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_12()
         {
             JsonQuery(@"{
@@ -314,7 +302,7 @@ namespace FanoutSearch.UnitTest
         }
 
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_13()
         {
             JsonQuery(@"{
@@ -339,7 +327,7 @@ namespace FanoutSearch.UnitTest
 );
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_14()
         {
             JsonQuery(@"{
@@ -358,7 +346,7 @@ namespace FanoutSearch.UnitTest
 
 ");
         }
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_15()
         {
             JsonQuery(@"{
@@ -378,7 +366,7 @@ namespace FanoutSearch.UnitTest
 ");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_16()
         {
             JsonQuery(@"{
@@ -403,7 +391,7 @@ namespace FanoutSearch.UnitTest
 ");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_17()
         {
             JsonQuery(@"{
@@ -424,7 +412,7 @@ namespace FanoutSearch.UnitTest
         }
 
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_18()
         {
             Expect.FanoutSearchQueryException(JsonQuery, @"{
@@ -444,7 +432,7 @@ namespace FanoutSearch.UnitTest
 ", "Unrecognized operator contains");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_19()
         {
             JsonQuery(@"{
@@ -465,7 +453,7 @@ namespace FanoutSearch.UnitTest
         }
 
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_20()
         {
             JsonQuery(@"{
@@ -490,7 +478,7 @@ namespace FanoutSearch.UnitTest
 ");
         }
 
-        [TestMethod]
+        [Fact]
         public void JsonDSLTest2_21()
         {
             JsonQuery(@"
