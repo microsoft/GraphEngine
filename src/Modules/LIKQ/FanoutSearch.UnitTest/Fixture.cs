@@ -28,6 +28,7 @@ namespace FanoutSearch.UnitTest
             LambdaDSL.SetDialect("MAG", "StartFrom", "VisitNode", "FollowEdge", "Action");
             FanoutSearchModule.SetQueryTimeout(-1);
             FanoutSearchModule.RegisterIndexService(FakeIndexService);
+            FanoutSearchModule.SetCacheEnabled(false);
             server = new TrinityServer();
             server.RegisterCommunicationModule<FanoutSearchModule>();
             server.Start();
@@ -56,7 +57,11 @@ namespace FanoutSearch.UnitTest
 
         internal static void FanoutSearchQueryException(System.Action<string> action, string param, string message_substring)
         {
-            Assert.Contains(message_substring, Assert.Throws<FanoutSearchQueryException>(() => action(param)).InnerException.Message);
+            var exception = Assert.Throws<FanoutSearchQueryException>(() => action(param));
+
+            var message = exception.InnerException !=null ? exception.InnerException.Message : exception.Message;
+
+            Assert.Contains(message_substring, message);
         }
     }
 }

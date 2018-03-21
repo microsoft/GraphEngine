@@ -63,10 +63,10 @@ build_trinity_core()
 build_likq()
 {
 	echo "Building Trinity.Core"
-	pushd "$REPO_ROOT/src/Modules/LIKQ"
-	dotnet restore LIKQ.sln || exit -1
-	dotnet build -c Release /p:TargetFrameworks=netstandard2.0 LIKQ.sln || exit -1
-	dotnet pack -c Release /p:TargetFrameworks=netstandard2.0 LIKQ.sln || exit -1
+	pushd "$REPO_ROOT/src/Modules/LIKQ/FanoutSearch"
+	dotnet restore FanoutSearch.csproj || exit -1
+	dotnet build -c Release /p:TargetFrameworks=netstandard2.0 FanoutSearch.csproj || exit -1
+	dotnet pack -c Release /p:TargetFrameworks=netstandard2.0 FanoutSearch.csproj || exit -1
 	popd
 }
 
