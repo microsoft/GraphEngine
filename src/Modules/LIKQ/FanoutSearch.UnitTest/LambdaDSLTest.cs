@@ -313,5 +313,68 @@ void as FanoutSearchDescriptor ?? KnowledgeGraph.StartFrom(0);
             var fs_desc = LambdaDSL.Evaluate(@"
 MAG.StartFrom(""{}"").VisitNode(v => v.continue_if(v.has(""a"", ""b"")) & v.return_if(true));");
         }
+
+        [Theory]
+        [InlineData(-1)]
+        [InlineData(-15)]
+        [InlineData(-6256)]
+        [InlineData(-6486119)]
+        [InlineData(-4502847529)]
+        [InlineData(-534913639468)]
+        [InlineData(1)]
+        [InlineData(15)]
+        [InlineData(6256)]
+        [InlineData(6486119)]
+        [InlineData(4502847529)]
+        [InlineData(534913639468)]
+        public void StartFrom_Id(long origin)
+        {
+            var fs_desc = LambdaDSL.Evaluate($@"MAG.StartFrom({origin})");
+        }
+
+        [Theory]
+        [InlineData(-1)]
+        [InlineData(-15)]
+        [InlineData(-6256)]
+        [InlineData(-6486119)]
+        [InlineData(-4502847529)]
+        [InlineData(-534913639468)]
+        [InlineData(1)]
+        [InlineData(15)]
+        [InlineData(6256)]
+        [InlineData(6486119)]
+        [InlineData(4502847529)]
+        [InlineData(534913639468)]
+        public void StartFrom_Id_List_Single(long origin)
+        {
+            var fs_desc = LambdaDSL.Evaluate($@"MAG.StartFrom(new List<long>{{{origin}}})");
+        }
+
+        [Theory]
+        // all negative
+        [InlineData(-1L, -54519L)]
+        [InlineData(-15L, -5845L)]
+        [InlineData(-6256L, -81L)]
+        [InlineData(-6486119L, -7451L, -157478L)]
+        [InlineData(-4502847529L, -7572457146L, -756134L)]
+        [InlineData(-534913639468L, -6496187346913L, -1L, -62456L, -464143L)]
+        // all positive
+        [InlineData(1L, 54519L)]
+        [InlineData(15L, 5845L)]
+        [InlineData(6256L, 81L)]
+        [InlineData(6486119L, 7451L, 157478L)]
+        [InlineData(4502847529L, 7572457146L, 756134L)]
+        [InlineData(534913639468L, 6496187346913L, 1L, 62456L, 464143L)]
+        // mixed
+        [InlineData(1L, -54519L)]
+        [InlineData(-15L, 5845L)]
+        [InlineData(6256L, -81L)]
+        [InlineData(-6486119L, 7451L, -157478L)]
+        [InlineData(4502847529L, -7572457146L, 756134L)]
+        [InlineData(-534913639468L, 6496187346913L, -1L, 62456L, -464143L)]
+        public void StartFrom_Id_List_Multi(params long[] origin)
+        {
+            var fs_desc = LambdaDSL.Evaluate($@"MAG.StartFrom(new List<long>{{{string.Join(",", origin)}}})");
+        }
     }
 }
