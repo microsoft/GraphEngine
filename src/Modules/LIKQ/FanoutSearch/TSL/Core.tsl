@@ -7,7 +7,7 @@
 struct FanoutQueryMessage
 {
     byte               maxHop;
-    List<CellID>       origin;
+    List<CellId>       origin;
     string             originQuery;
     List<string>       predicates;
 	List<List<string>> edge_types;
