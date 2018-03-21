@@ -3,33 +3,21 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Trinity;
+using Xunit;
 
 namespace FanoutSearch.UnitTest
 {
-    [TestClass]
+    [Collection("All")]
     public class LambdaDSLTest2
     {
-        [ClassInitialize]
-        public static void Init(TestContext ctx)
-        {
-            Initializer.Initialize();
-        }
-
-        [ClassCleanup]
-        public static void Uninit()
-        {
-            Initializer.Uninitialize();
-        }
-
         private void LambdaQuery(string str)
         {
             var mod = Global.CommunicationInstance.GetCommunicationModule<FanoutSearchModule>();
             mod.LambdaQuery(str);
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_1()
         {
             Expect.FanoutSearchQueryException(
@@ -56,7 +44,7 @@ MAG
 ", "too many statements");
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_2()
         {
             Expect.FanoutSearchQueryException(LambdaQuery, @"
@@ -67,7 +55,7 @@ MAG
 
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_3()
         {
             Expect.FanoutSearchQueryException(LambdaQuery, @"MAG
@@ -83,7 +71,7 @@ MAG
 , "Syntax error");
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_4()
         {
             LambdaQuery(@"MAG
@@ -100,7 +88,7 @@ MAG
                 );
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_5()
         {
             LambdaQuery(@"MAG
@@ -117,7 +105,7 @@ MAG
                 );
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_6()
         {
             LambdaQuery(@"// the following query almost traverse through all entities in the graph.
@@ -138,7 +126,7 @@ MAG
                 );
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_7()
         {
             LambdaQuery(@"MAG
@@ -150,7 +138,7 @@ MAG
                 );
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_8()
         {
             LambdaQuery(@"MAG
@@ -168,7 +156,7 @@ MAG
                 );
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_9()
         {
             LambdaQuery(@"MAG
@@ -186,7 +174,7 @@ MAG
                 );
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_10()
         {
             LambdaQuery(@"MAG
@@ -205,7 +193,7 @@ MAG
                 );
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_11()
         {
             LambdaQuery(@"MAG
@@ -224,7 +212,7 @@ MAG
                 );
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_12()
         {
             LambdaQuery(@"MAG
@@ -243,7 +231,7 @@ MAG
                 );
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_13()
         {
             LambdaQuery(@"MAG
@@ -264,7 +252,7 @@ MAG
                 );
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_14()
         {
             LambdaQuery(@"MAG
@@ -283,7 +271,7 @@ MAG
                 );
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_15()
         {
             LambdaQuery(@"MAG
@@ -302,7 +290,7 @@ MAG
                 );
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_16()
         {
             LambdaQuery(@"MAG
@@ -322,7 +310,7 @@ MAG
                 );
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_17()
         {
             LambdaQuery(@"MAG
@@ -341,7 +329,7 @@ MAG
                 );
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_18()
         {
             LambdaQuery(@"MAG
@@ -360,7 +348,7 @@ MAG
                 );
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_19()
         {
             LambdaQuery(@"MAG
@@ -379,7 +367,7 @@ MAG
                 );
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_20()
         {
             LambdaQuery(@"MAG
@@ -398,7 +386,7 @@ MAG
 
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_21()
         {
             LambdaQuery(@"
@@ -406,7 +394,7 @@ MAG.StartFrom(new[]{1,2,3}).VisitNode(v => v.return_if(v.has_cell_id(new long[]{
 ");
         }
 
-        [TestMethod]
+        [Fact]
         public void LambdaDSLTest2_22()
         {
             LambdaQuery(@"

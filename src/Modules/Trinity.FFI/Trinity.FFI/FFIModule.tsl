@@ -1,0 +1,35 @@
+﻿struct MessageRequest
+{
+    /* internal id for all FFI protocols */
+    int message_id;
+    /* currently paylaods are serialized as json strings. */
+    string payload;
+}
+
+struct MessageResponse
+{
+    /*  error_code 0 for success response, and payload is data;
+     *  otherwise, payload contains a error message string;
+     */
+    int error_code;
+    string payload;
+}
+
+protocol SynProtocol
+{
+    type: syn;
+    request: MessageRequest;
+    response: MessageResponse;
+}
+
+protocol AsynProtocol
+{
+    type: asyn;
+    request: MessageRequest;
+}
+
+module FFIModule
+{
+    protocol SynProtocol;
+    protocol AsynProtocol;
+}

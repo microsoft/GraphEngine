@@ -48,6 +48,9 @@ namespace FanoutSearch
         private const long   c_default_query_time_quota = 800 /*ms*/;
         private static long  s_query_time_quota         = c_default_query_time_quota /*ms*/;
         private const int    c_master_server_id         = 0;
+        internal static int s_max_fanoutmsg_size         = int.MaxValue;
+        internal static int s_max_rsp_size               = int.MaxValue;
+
 
         #endregion
 
@@ -145,6 +148,11 @@ namespace FanoutSearch
             ExpressionSerializer.SetSerializerFactory(func);
         }
 
+        public static void RegisterQueryWhilelistType(Type t)
+        {
+            TraverseActionSecurityChecker.RegisterQueryWhitelistType(t);
+        }
+
         public static void EnableExternalQuery(bool enabled)
         {
             s_enable_external_query = enabled;
@@ -170,6 +178,18 @@ namespace FanoutSearch
         public static void SetCacheEnabled(bool val)
         {
             s_cache_enabled = val;
+        }
+
+        public static void SetMaximumTraversalMessageSize(int size)
+        {
+            if (size <= TrinityProtocol.MsgHeader) throw new ArgumentException();
+            s_max_fanoutmsg_size = size;
+        }
+
+        public static void SetMaximumResponseMessageSize(int size)
+        {
+            if (size <= 0) throw new ArgumentException();
+            s_max_rsp_size = size;
         }
 
         /// <summary>
@@ -249,7 +269,7 @@ namespace FanoutSearch
             int W = 1;
             for (int i = 1; i <= max_hop; ++i)
             {
-                W *= Global.CloudStorage.ServerCount;
+                W *= Global.CloudStorage.PartitionCount;
             }
             return W;
         }

@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
+using Trinity.Network.Messaging;
 using Trinity.Storage;
 
 namespace FanoutSearch
@@ -38,48 +40,64 @@ namespace FanoutSearch
             }
         }
 
+        private NodeInfo _GetNodeInfo(long id, List<string> fields, long secondary_id)
+        {
+            try
+            {
+                using (var cell = s_useICellFunc(id))
+                {
+                    return new NodeInfo
+                    {
+                        id    = id,
+                        values = fields.Select(f =>
+                        {
+                            switch (f)
+                            {
+                                case JsonDSL.graph_outlinks:
+                                return ToJsonArray(_GetEdgeType(cell, secondary_id));
+                                case "*":
+                                return cell.ToString();
+                                default:
+                                return cell.get(f);
+                            }
+                        }).ToList(),
+                    };
+                }
+            }
+            catch // use cell failed. populate the list with an empty NodeInfo.
+            {
+                return _CreateEmptyNodeInfo(id, fields.Count);
+            }
+        }
+
         public override void _GetNodesInfo_implHandler(GetNodesInfoRequestReader request, GetNodesInfoResponseWriter response)
         {
-            List<string> fields            = request.fields;
-            int          field_cnt         = fields.Count;
-            List<long>   secondary_ids     = request.Contains_secondary_ids ? request.secondary_ids : null;
-            NodeInfo[]   infos             = new NodeInfo[request.ids.Count];
+            List<string> fields = request.fields;
+            IEnumerable<long> secondary_ids = request.Contains_secondary_ids ? request.secondary_ids : Enumerable.Repeat(0L, request.ids.Count);
 
-            Parallel.ForEach(request.ids, (id, state, idx) =>
+            try
             {
-                try
+                long msg_approx_len = 0;
+                foreach ((long a, long b) in request.ids.Zip(secondary_ids, (a, b) => (a, b)))
                 {
-                    using (var cell = s_useICellFunc(id))
+                    NodeInfo info = _GetNodeInfo(a, fields, b);
+                    msg_approx_len += info.values.Sum(_ => _.Length);
+                    if (msg_approx_len > FanoutSearchModule.s_max_rsp_size)
                     {
-                        infos[idx] = new NodeInfo
-                        {
-                            id    = id,
-                            values = fields.Select(f =>
-                            {
-                                switch (f)
-                                {
-                                    case JsonDSL.graph_outlinks:
-                                        return ToJsonArray(_GetEdgeType(cell, secondary_ids[(int)idx]));
-                                    case "*":
-                                        return cell.ToString();
-                                    default:
-                                        return cell.get(f);
-                                }
-                            }).ToList(),
-                        };
+                        throw new MessageTooLongException($"{nameof(_GetNodesInfo_implHandler)}: Message too long");
                     }
+                    response.infoList.Add(info);
                 }
-                catch // use cell failed. populate the list with an empty NodeInfo.
-                {
-                    infos[idx] = _CreateEmptyNodeInfo(id, field_cnt);
-                }
-            });
-            response.infoList = infos.ToList();
+            }
+            catch (AccessorResizeException ex)
+            {
+                throw new MessageTooLongException($"{nameof(_GetNodesInfo_implHandler)}: Message too long", ex);
+            }
         }
 
         private NodeInfo _CreateEmptyNodeInfo(long id, int fieldCount)
         {
-            return new NodeInfo { id = id, values = Enumerable.Range(0, fieldCount).Select(f => "").ToList() };
+            return new NodeInfo { id = id, values = Enumerable.Repeat("", fieldCount).ToList() };
         }
     }
 }

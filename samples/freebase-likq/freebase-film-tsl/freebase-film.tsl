@@ -1,0 +1,2000 @@
+cell type_object
+{
+    u8string mid;
+    List<ushort> types;
+    optional u8string type_object_id;
+    optional u8string type_object_name;
+    optional List<u8string> type_object_key;
+}
+cell american_football_football_coach
+{
+    [GraphEdge]
+    optional CellId american_football_football_coach_current_team_head_coached;
+}
+cell american_football_football_player
+{
+    optional u8string american_football_football_player_footballdb_id;
+}
+cell amusement_parks_ride
+{
+    optional float amusement_parks_ride_height;
+}
+cell architecture_architect
+{
+    optional byte architecture_architect_structure_count;
+    [GraphEdge]
+    optional CellId architecture_architect_structures_designed;
+}
+cell architecture_building
+{
+    [GraphEdge]
+    optional CellId architecture_building_building_complex;
+    optional float architecture_building_floor_space_square_meters;
+    optional byte architecture_building_floors;
+}
+cell architecture_lighthouse
+{
+    optional u8string architecture_lighthouse_admiralty_number;
+    optional u8string architecture_lighthouse_arlhs_number;
+}
+cell architecture_museum_director
+{
+    [GraphEdge]
+    optional CellId architecture_museum_director_museum;
+}
+cell architecture_structure
+{
+    optional float architecture_structure_height_meters;
+    [GraphEdge]
+    optional CellId architecture_structure_architect;
+}
+cell architecture_venue
+{
+    optional uint architecture_venue_capacity;
+}
+cell aviation_aircraft_model
+{
+    optional float aviation_aircraft_model_wingspan;
+    optional float aviation_aircraft_model_length_meters;
+    optional float aviation_aircraft_model_maximum_speed_km_h;
+    optional float aviation_aircraft_model_range;
+}
+cell aviation_airport
+{
+    [GraphEdge]
+    optional CellId aviation_airport_serves;
+    optional u8string aviation_airport_iata;
+    optional byte aviation_airport_number_of_runways;
+    optional u8string aviation_airport_icao;
+}
+cell award_award
+{
+    [GraphEdge]
+    optional CellId award_award_presented_by;
+}
+cell award_award_nominated_work
+{
+    [GraphEdge]
+    optional CellId award_award_nominated_work_award_nominations;
+}
+cell award_award_nomination
+{
+    [GraphEdge]
+    optional CellId award_award_nomination_award_nominee;
+    [GraphEdge]
+    optional CellId award_award_nomination_nominated_for;
+    optional u8string award_award_nomination_notes_description;
+}
+cell award_award_nominee
+{
+    [GraphEdge]
+    optional CellId award_award_nominee_award_nominations;
+}
+cell award_award_presenting_organization
+{
+    [GraphEdge]
+    optional CellId award_award_presenting_organization_awards_presented;
+}
+cell award_competition
+{
+    [GraphEdge]
+    optional CellId award_competition_type_of_competition;
+}
+cell award_hall_of_fame_inductee
+{
+    [GraphEdge]
+    optional CellId award_hall_of_fame_inductee_hall_of_fame_inductions;
+}
+cell award_hall_of_fame_induction
+{
+    [GraphEdge]
+    optional CellId award_hall_of_fame_induction_inductee;
+}
+cell baseball_baseball_manager
+{
+    [GraphEdge]
+    optional CellId baseball_baseball_manager_current_team_managed;
+}
+cell baseball_baseball_player
+{
+    optional u8string baseball_baseball_player_baseball_almanac_id;
+}
+cell baseball_baseball_team
+{
+    [GraphEdge]
+    optional CellId baseball_baseball_team_current_manager;
+}
+cell basketball_basketball_coach
+{
+    [GraphEdge]
+    optional CellId basketball_basketball_coach_team;
+    optional byte basketball_basketball_coach_season_wins;
+}
+cell basketball_basketball_team
+{
+    [GraphEdge]
+    optional CellId basketball_basketball_team_head_coach;
+}
+cell biology_deceased_organism
+{
+    [GraphEdge]
+    optional CellId biology_deceased_organism_place_of_death;
+}
+cell biology_gene_ontology_group
+{
+    optional u8string biology_gene_ontology_group_identifier;
+    optional List<u8string> biology_gene_ontology_group_synonym_term;
+    optional u8string biology_gene_ontology_group_description;
+}
+cell biology_organism
+{
+    [GraphEdge]
+    optional CellId biology_organism_children;
+    [GraphEdge]
+    optional CellId biology_organism_organism_type;
+    [GraphEdge]
+    optional CellId biology_organism_place_of_birth;
+    optional float biology_organism_weight_kg;
+    [GraphEdge]
+    optional CellId biology_organism_parents;
+    optional float biology_organism_height_meters;
+}
+cell biology_organism_classification
+{
+    [GraphEdge]
+    optional List<CellId> biology_organism_classification_organisms_of_this_type;
+    optional u8string biology_organism_classification_scientific_name;
+    optional uint biology_organism_classification_itis_tsn;
+}
+cell boats_boat_disposition
+{
+    [GraphEdge]
+    optional CellId boats_boat_disposition_location;
+}
+cell book_author
+{
+    [GraphEdge]
+    optional CellId book_author_works_written;
+    optional List<u8string> book_author_openlibrary_id;
+    [GraphEdge]
+    optional CellId book_author_school_or_movement;
+}
+cell book_book
+{
+    [GraphEdge]
+    optional List<CellId> book_book_genre;
+    [GraphEdge]
+    optional List<CellId> book_book_characters;
+}
+cell book_book_character
+{
+    [GraphEdge]
+    optional CellId book_book_character_appears_in_book;
+}
+cell book_book_edition
+{
+    optional u8string book_book_edition_openlibrary_id;
+    optional u8string book_book_edition_ISBN;
+    optional uint book_book_edition_isfdb_id;
+}
+cell book_book_subject
+{
+    [GraphEdge]
+    optional CellId book_book_subject_musical_compositions_about_this_topic;
+    [GraphEdge]
+    optional CellId book_book_subject_works;
+}
+cell book_literary_series
+{
+    [GraphEdge]
+    optional CellId book_literary_series_author_s;
+    optional ushort book_literary_series_isfdb_id;
+}
+cell book_periodical
+{
+    [GraphEdge]
+    optional CellId book_periodical_subjects;
+    optional u8string book_periodical_ISSN;
+}
+cell book_publishing_company
+{
+    optional ushort book_publishing_company_isfdb_id;
+}
+cell book_written_work
+{
+    optional uint book_written_work_isfdb_id;
+    [GraphEdge]
+    optional List<CellId> book_written_work_subjects;
+    [GraphEdge]
+    optional List<CellId> book_written_work_author;
+}
+cell broadcast_artist
+{
+    [GraphEdge]
+    optional CellId broadcast_artist_content;
+}
+cell broadcast_broadcast
+{
+    [GraphEdge]
+    optional CellId broadcast_broadcast_content;
+    [GraphEdge]
+    optional List<CellId> broadcast_broadcast_area_served;
+}
+cell broadcast_content
+{
+    [GraphEdge]
+    optional CellId broadcast_content_location;
+    [GraphEdge]
+    optional List<CellId> broadcast_content_producer;
+    [GraphEdge]
+    optional CellId broadcast_content_genre;
+    [GraphEdge]
+    optional List<CellId> broadcast_content_artist;
+}
+cell broadcast_producer
+{
+    [GraphEdge]
+    optional List<CellId> broadcast_producer_produces;
+    [GraphEdge]
+    optional CellId broadcast_producer_location;
+}
+cell broadcast_radio_station
+{
+    [GraphEdge]
+    optional CellId broadcast_radio_station_serves_area;
+    optional u8string broadcast_radio_station_slogan;
+}
+cell broadcast_tv_channel
+{
+    [GraphEdge]
+    optional CellId broadcast_tv_channel_network;
+}
+cell broadcast_tv_station
+{
+    optional List<u8string> broadcast_tv_station_callsign_meaning;
+    [GraphEdge]
+    optional List<CellId> broadcast_tv_station_owner;
+    optional uint broadcast_tv_station_facility_id;
+    optional List<u8string> broadcast_tv_station_branding;
+    optional List<u8string> broadcast_tv_station_slogan;
+}
+cell broadcast_tv_station_owner
+{
+    [GraphEdge]
+    optional CellId broadcast_tv_station_owner_tv_stations;
+}
+cell business_asset_owner
+{
+    [GraphEdge]
+    optional CellId business_asset_owner_assets_owned;
+}
+cell business_asset_ownership
+{
+    [GraphEdge]
+    optional CellId business_asset_ownership_owner;
+}
+cell business_business_operation
+{
+    [GraphEdge]
+    optional List<CellId> business_business_operation_industry;
+}
+cell business_consumer_product
+{
+    optional ulong business_consumer_product_gtin;
+}
+cell business_industry
+{
+    [GraphEdge]
+    optional CellId business_industry_parent_industry;
+    optional uint business_industry_naics_2007;
+    [GraphEdge]
+    optional List<CellId> business_industry_companies;
+}
+cell business_issue
+{
+    [GraphEdge]
+    optional CellId business_issue_issuer;
+}
+cell business_issuer
+{
+    [GraphEdge]
+    optional CellId business_issuer_issue;
+}
+cell business_product_line
+{
+    [GraphEdge]
+    optional List<CellId> business_product_line_products;
+}
+cell celebrities_supercouple
+{
+    [GraphEdge]
+    optional CellId celebrities_supercouple_partners;
+}
+cell comedy_comedian
+{
+    [GraphEdge]
+    optional CellId comedy_comedian_genres;
+}
+cell comedy_comedy_genre
+{
+    [GraphEdge]
+    optional CellId comedy_comedy_genre_comedians;
+}
+cell comic_books_comic_book_character
+{
+    [GraphEdge]
+    optional CellId comic_books_comic_book_character_regular_featured_appearances;
+    [GraphEdge]
+    optional List<CellId> comic_books_comic_book_character_created_by;
+}
+cell comic_books_comic_book_creator
+{
+    [GraphEdge]
+    optional CellId comic_books_comic_book_creator_series_created;
+    [GraphEdge]
+    optional List<CellId> comic_books_comic_book_creator_characters_created;
+}
+cell comic_books_comic_book_series
+{
+    optional byte comic_books_comic_book_series_number_of_issues;
+    [GraphEdge]
+    optional CellId comic_books_comic_book_series_featured_characters;
+    [GraphEdge]
+    optional CellId comic_books_comic_book_series_publisher;
+    [GraphEdge]
+    optional CellId comic_books_comic_book_series_created_by;
+}
+cell comic_strips_comic_strip_character
+{
+    [GraphEdge]
+    optional CellId comic_strips_comic_strip_character_comic_strips_appeared_in;
+}
+cell common_document
+{
+    optional u8string common_document_text;
+}
+cell common_identity
+{
+    optional List<ushort> common_identity_sfiff_id;
+    optional List<u8string> common_identity_clicker_tv_id;
+    optional List<u8string> common_identity_daylife_topic;
+}
+cell common_image
+{
+    [GraphEdge]
+    optional CellId common_image_appears_in_topic_gallery;
+    optional u8string common_image_rights_holder_text_attribution;
+}
+cell common_licensed_object
+{
+    optional u8string common_licensed_object_provenance;
+}
+cell common_topic
+{
+    [GraphEdge]
+    optional List<CellId> common_topic_subject_of;
+    [GraphEdge]
+    optional List<CellId> common_topic_subjects;
+    [GraphEdge]
+    optional CellId common_topic_image;
+    optional List<u8string> common_topic_description;
+    optional List<u8string> common_topic_alias;
+    [GraphEdge]
+    optional CellId common_topic_article;
+}
+cell computer_file_format
+{
+    optional u8string computer_file_format_extension;
+}
+cell computer_software
+{
+    optional u8string computer_software_latest_version;
+}
+cell conferences_conference_series
+{
+    [GraphEdge]
+    optional CellId conferences_conference_series_subject;
+}
+cell cricket_cricket_player
+{
+    optional byte cricket_cricket_player_odi_stumps;
+    optional byte cricket_cricket_player_test_stumps;
+}
+cell cvg_computer_game_rating
+{
+    [GraphEdge]
+    optional CellId cvg_computer_game_rating_rating_system;
+}
+cell cvg_computer_game_rating_system
+{
+    [GraphEdge]
+    optional List<CellId> cvg_computer_game_rating_system_ratings;
+}
+cell cvg_computer_videogame
+{
+    [GraphEdge]
+    optional CellId cvg_computer_videogame_cvg_genre;
+}
+cell dataworld_gardening_hint
+{
+    optional List<u8string> dataworld_gardening_hint_split_to;
+    [GraphEdge]
+    optional CellId dataworld_gardening_hint_replaced_by;
+    [GraphEdge]
+    optional CellId dataworld_gardening_hint_last_referenced_by;
+}
+cell education_academic
+{
+    [GraphEdge]
+    optional List<CellId> education_academic_research_areas;
+    [GraphEdge]
+    optional CellId education_academic_advisees;
+    [GraphEdge]
+    optional CellId education_academic_advisors;
+}
+cell education_educational_institution
+{
+    optional u8string education_educational_institution_motto;
+    optional u8string education_educational_institution_nickname;
+    [GraphEdge]
+    optional List<CellId> education_educational_institution_school_type;
+    [GraphEdge]
+    optional CellId education_educational_institution_campuses;
+}
+cell education_educational_institution_campus
+{
+    [GraphEdge]
+    optional CellId education_educational_institution_campus_educational_institution;
+}
+cell education_field_of_study
+{
+    [GraphEdge]
+    optional List<CellId> education_field_of_study_academics_in_this_field;
+    [GraphEdge]
+    optional CellId education_field_of_study_subdiscipline_of;
+}
+cell education_school
+{
+    optional ulong education_school_nces_school_id;
+}
+cell education_school_category
+{
+    [GraphEdge]
+    optional List<CellId> education_school_category_schools_of_this_kind;
+}
+cell event_disaster
+{
+    optional byte event_disaster_injuries;
+    optional byte event_disaster_fatalities;
+    [GraphEdge]
+    optional CellId event_disaster_type_of_disaster;
+    [GraphEdge]
+    optional List<CellId> event_disaster_survivors;
+    [GraphEdge]
+    optional List<CellId> event_disaster_victims;
+}
+cell event_disaster_survivor
+{
+    [GraphEdge]
+    optional CellId event_disaster_survivor_survived_disasters;
+}
+cell event_disaster_type
+{
+    [GraphEdge]
+    optional List<CellId> event_disaster_type_disasters_of_this_type;
+}
+cell event_disaster_victim
+{
+    [GraphEdge]
+    optional CellId event_disaster_victim_killed_in_disaster;
+}
+cell exhibitions_exhibition
+{
+    [GraphEdge]
+    optional CellId exhibitions_exhibition_subjects;
+}
+cell exhibitions_exhibition_subject
+{
+    [GraphEdge]
+    optional CellId exhibitions_exhibition_subject_exhibitions_created_about_this_subject;
+}
+cell fictional_universe_character_occupation
+{
+    [GraphEdge]
+    optional List<CellId> fictional_universe_character_occupation_characters_with_this_occupation;
+}
+cell fictional_universe_character_powers
+{
+    [GraphEdge]
+    optional List<CellId> fictional_universe_character_powers_characters_with_this_ability;
+}
+cell fictional_universe_character_species
+{
+    optional List<u8string> fictional_universe_character_species_characters_of_this_species;
+}
+cell fictional_universe_ethnicity_in_fiction
+{
+    [GraphEdge]
+    optional CellId fictional_universe_ethnicity_in_fiction_characters_of_this_ethnicity;
+}
+cell fictional_universe_fictional_character
+{
+    optional List<u8string> fictional_universe_fictional_character_based_on;
+    optional List<u8string> fictional_universe_fictional_character_parents;
+    optional List<u8string> fictional_universe_fictional_character_children;
+    [GraphEdge]
+    optional List<CellId> fictional_universe_fictional_character_occupation;
+    optional List<u8string> fictional_universe_fictional_character_character_created_by;
+    [GraphEdge]
+    optional CellId fictional_universe_fictional_character_place_of_birth;
+    [GraphEdge]
+    optional CellId fictional_universe_fictional_character_ethnicity;
+    [GraphEdge]
+    optional List<CellId> fictional_universe_fictional_character_powers_or_abilities;
+    [GraphEdge]
+    optional CellId fictional_universe_fictional_character_medical_conditions;
+    [GraphEdge]
+    optional CellId fictional_universe_fictional_character_appears_in_these_fictional_universes;
+    [GraphEdge]
+    optional CellId fictional_universe_fictional_character_education;
+    [GraphEdge]
+    optional CellId fictional_universe_fictional_character_organizations;
+    [GraphEdge]
+    optional List<CellId> fictional_universe_fictional_character_species;
+    optional float fictional_universe_fictional_character_weight;
+    [GraphEdge]
+    optional CellId fictional_universe_fictional_character_rank;
+    optional float fictional_universe_fictional_character_height;
+    [GraphEdge]
+    optional CellId fictional_universe_fictional_character_places_lived;
+}
+cell fictional_universe_fictional_character_creator
+{
+    optional List<u8string> fictional_universe_fictional_character_creator_fictional_characters_created;
+}
+cell fictional_universe_fictional_creature
+{
+    [GraphEdge]
+    optional CellId fictional_universe_fictional_creature_fictional_creature_species;
+}
+cell fictional_universe_fictional_object
+{
+    [GraphEdge]
+    optional CellId fictional_universe_fictional_object_destroyer;
+}
+cell fictional_universe_fictional_organization
+{
+    [GraphEdge]
+    optional CellId fictional_universe_fictional_organization_members;
+    [GraphEdge]
+    optional CellId fictional_universe_fictional_organization_type_of_organization;
+}
+cell fictional_universe_fictional_setting
+{
+    [GraphEdge]
+    optional CellId fictional_universe_fictional_setting_works_set_here;
+    [GraphEdge]
+    optional CellId fictional_universe_fictional_setting_fictional_characters_born_here;
+}
+cell fictional_universe_fictional_universe
+{
+    [GraphEdge]
+    optional List<CellId> fictional_universe_fictional_universe_works_set_here;
+    [GraphEdge]
+    optional CellId fictional_universe_fictional_universe_species;
+    [GraphEdge]
+    optional CellId fictional_universe_fictional_universe_created_by;
+    [GraphEdge]
+    optional List<CellId> fictional_universe_fictional_universe_characters;
+}
+cell fictional_universe_fictional_universe_creator
+{
+    [GraphEdge]
+    optional CellId fictional_universe_fictional_universe_creator_fictional_universes_created;
+}
+cell fictional_universe_medical_condition_in_fiction
+{
+    [GraphEdge]
+    optional CellId fictional_universe_medical_condition_in_fiction_characters_with_this_condition;
+}
+cell fictional_universe_person_in_fiction
+{
+    [GraphEdge]
+    optional List<CellId> fictional_universe_person_in_fiction_representations_in_fiction;
+}
+cell fictional_universe_work_of_fiction
+{
+    [GraphEdge]
+    optional CellId fictional_universe_work_of_fiction_setting;
+}
+cell film_actor
+{
+    optional List<u8string> film_actor_film;
+    [GraphEdge]
+    optional List<CellId> film_actor_dubbing_performances;
+}
+cell film_cinematographer
+{
+    optional List<u8string> film_cinematographer_film;
+}
+cell film_content_rating
+{
+    [GraphEdge]
+    optional CellId film_content_rating_film_rating_system;
+    optional byte film_content_rating_minimum_accompanied_age;
+    [GraphEdge]
+    optional CellId film_content_rating_country;
+    optional byte film_content_rating_minimum_unaccompanied_age;
+    optional List<u8string> film_content_rating_film;
+}
+cell film_content_rating_system
+{
+    [GraphEdge]
+    optional List<CellId> film_content_rating_system_film_ratings;
+    [GraphEdge]
+    optional CellId film_content_rating_system_jurisdiction;
+}
+cell film_director
+{
+    optional List<u8string> film_director_film;
+}
+cell film_dubbing_performance
+{
+    [GraphEdge]
+    optional CellId film_dubbing_performance_film;
+    optional u8string film_dubbing_performance_character;
+    optional u8string film_dubbing_performance_actor;
+}
+cell film_editor
+{
+    optional List<u8string> film_editor_film;
+}
+cell film_film
+{
+    optional List<u8string> film_film_starring;
+    optional List<u8string> film_film_costume_design_by;
+    optional List<u8string> film_film_film_casting_director;
+    optional List<u8string> film_film_film_art_direction_by;
+    optional List<u8string> film_film_film_set_decoration_by;
+    [GraphEdge]
+    optional List<CellId> film_film_personal_appearances;
+    [GraphEdge]
+    optional List<CellId> film_film_rating;
+    [GraphEdge]
+    optional List<CellId> film_film_other_crew;
+    [GraphEdge]
+    optional CellId film_film_film_collections;
+    [GraphEdge]
+    optional List<CellId> film_film_other_film_companies;
+    [GraphEdge]
+    optional List<CellId> film_film_songs;
+    optional List<u8string> film_film_directed_by;
+    optional List<u8string> film_film_written_by;
+    optional List<u8string> film_film_rottentomatoes_id;
+    [GraphEdge]
+    optional List<CellId> film_film_featured_film_locations;
+    [GraphEdge]
+    optional CellId film_film_soundtrack;
+    optional List<u8string> film_film_film_production_design_by;
+    optional List<u8string> film_film_tagline;
+    optional List<u8string> film_film_sequel;
+    [GraphEdge]
+    optional List<CellId> film_film_locations;
+    optional List<u8string> film_film_runtime;
+    [GraphEdge]
+    optional List<CellId> film_film_genre;
+    optional List<u8string> film_film_traileraddict_id;
+    optional List<u8string> film_film_edited_by;
+    optional List<u8string> film_film_film_series;
+    optional List<u8string> film_film_film_format;
+    [GraphEdge]
+    optional List<CellId> film_film_language;
+    optional List<u8string> film_film_music;
+    optional List<u8string> film_film_prequel;
+    optional u8string film_film_metacritic_id;
+    optional List<u8string> film_film_featured_song;
+    optional List<u8string> film_film_cinematography;
+    optional List<u8string> film_film_film_festivals;
+    optional List<u8string> film_film_release_date_s;
+    optional List<u8string> film_film_production_companies;
+    optional List<uint> film_film_netflix_id;
+    optional List<u8string> film_film_subjects;
+    [GraphEdge]
+    optional List<CellId> film_film_dubbing_performances;
+    optional u8string film_film_apple_movietrailer_id;
+    optional List<u8string> film_film_story_by;
+    optional List<u8string> film_film_distributors;
+    optional List<u8string> film_film_produced_by;
+    [GraphEdge]
+    optional List<CellId> film_film_country;
+    optional List<u8string> film_film_executive_produced_by;
+    optional List<u8string> film_film_fandango_id;
+}
+cell film_film_art_director
+{
+    optional List<u8string> film_film_art_director_films_art_directed;
+}
+cell film_film_casting_director
+{
+    optional List<u8string> film_film_casting_director_films_casting_directed;
+}
+cell film_film_character
+{
+    [GraphEdge]
+    optional List<CellId> film_film_character_portrayed_in_films_dubbed;
+    [GraphEdge]
+    optional List<CellId> film_film_character_portrayed_in_films;
+}
+cell film_film_collection
+{
+    [GraphEdge]
+    optional List<CellId> film_film_collection_films_in_collection;
+}
+cell film_film_company
+{
+    [GraphEdge]
+    optional List<CellId> film_film_company_films;
+}
+cell film_film_company_role_or_service
+{
+    [GraphEdge]
+    optional List<CellId> film_film_company_role_or_service_companies_performing_this_role_or_service;
+}
+cell film_film_costumer_designer
+{
+    optional List<u8string> film_film_costumer_designer_costume_design_for_film;
+}
+cell film_film_crew_gig
+{
+    optional u8string film_film_crew_gig_film;
+    optional u8string film_film_crew_gig_film_crew_role;
+    optional u8string film_film_crew_gig_crewmember;
+}
+cell film_film_crewmember
+{
+    [GraphEdge]
+    optional List<CellId> film_film_crewmember_films_crewed;
+}
+cell film_film_cut
+{
+    optional float film_film_cut_runtime;
+    optional u8string film_film_cut_note;
+    [GraphEdge]
+    optional CellId film_film_cut_type_of_film_cut;
+    [GraphEdge]
+    optional CellId film_film_cut_film_release_region;
+    optional u8string film_film_cut_film;
+}
+cell film_film_distribution_medium
+{
+    [GraphEdge]
+    optional List<CellId> film_film_distribution_medium_films_distributed_in_this_medium;
+}
+cell film_film_distributor
+{
+    optional List<u8string> film_film_distributor_films_distributed;
+}
+cell film_film_featured_song
+{
+    optional List<u8string> film_film_featured_song_featured_in_film;
+    [GraphEdge]
+    optional List<CellId> film_film_featured_song_performed_by;
+}
+cell film_film_festival
+{
+    [GraphEdge]
+    optional List<CellId> film_film_festival_sponsoring_organization;
+    optional List<u8string> film_film_festival_individual_festivals;
+    [GraphEdge]
+    optional List<CellId> film_film_festival_location;
+    [GraphEdge]
+    optional CellId film_film_festival_focus;
+}
+cell film_film_festival_event
+{
+    optional List<u8string> film_film_festival_event_films;
+    optional u8string film_film_festival_event_festival;
+}
+cell film_film_festival_focus
+{
+    [GraphEdge]
+    optional List<CellId> film_film_festival_focus_festivals_with_this_focus;
+}
+cell film_film_festival_sponsor
+{
+    [GraphEdge]
+    optional List<CellId> film_film_festival_sponsor_festivals_sponsored;
+}
+cell film_film_festival_sponsorship
+{
+    [GraphEdge]
+    optional CellId film_film_festival_sponsorship_festival;
+    [GraphEdge]
+    optional CellId film_film_festival_sponsorship_sponsor;
+}
+cell film_film_film_company_relationship
+{
+    optional u8string film_film_film_company_relationship_film_company;
+    [GraphEdge]
+    optional List<CellId> film_film_film_company_relationship_role_service;
+    [GraphEdge]
+    optional CellId film_film_film_company_relationship_film_cut;
+    optional u8string film_film_film_company_relationship_film;
+}
+cell film_film_film_distributor_relationship
+{
+    [GraphEdge]
+    optional CellId film_film_film_distributor_relationship_film_cut;
+    [GraphEdge]
+    optional CellId film_film_film_distributor_relationship_film_distribution_medium;
+    [GraphEdge]
+    optional List<CellId> film_film_film_distributor_relationship_region;
+    optional u8string film_film_film_distributor_relationship_film;
+    optional u8string film_film_film_distributor_relationship_distributor;
+}
+cell film_film_format
+{
+    optional List<u8string> film_film_format_film_format;
+}
+cell film_film_genre
+{
+    optional List<u8string> film_film_genre_films_in_this_genre;
+}
+cell film_film_job
+{
+    [GraphEdge]
+    optional List<CellId> film_film_job_films_with_this_crew_job;
+}
+cell film_film_location
+{
+    [GraphEdge]
+    optional List<CellId> film_film_location_featured_in_films;
+}
+cell film_film_production_designer
+{
+    optional List<u8string> film_film_production_designer_films_production_designed;
+}
+cell film_film_regional_release_date
+{
+    optional List<u8string> film_film_regional_release_date_film_regional_debut_venue;
+    optional u8string film_film_regional_release_date_film;
+    [GraphEdge]
+    optional List<CellId> film_film_regional_release_date_film_release_distribution_medium;
+    [GraphEdge]
+    optional List<CellId> film_film_regional_release_date_film_release_region;
+}
+cell film_film_series
+{
+    optional List<u8string> film_film_series_films_in_series;
+}
+cell film_film_set_designer
+{
+    optional List<u8string> film_film_set_designer_film_sets_designed;
+}
+cell film_film_song
+{
+    [GraphEdge]
+    optional List<CellId> film_film_song_films;
+}
+cell film_film_song_performer
+{
+    [GraphEdge]
+    optional List<CellId> film_film_song_performer_film_songs;
+}
+cell film_film_song_relationship
+{
+    [GraphEdge]
+    optional CellId film_film_song_relationship_composition;
+    [GraphEdge]
+    optional CellId film_film_song_relationship_film;
+    [GraphEdge]
+    optional List<CellId> film_film_song_relationship_performers;
+}
+cell film_film_story_contributor
+{
+    optional List<u8string> film_film_story_contributor_film_story_credits;
+}
+cell film_film_subject
+{
+    optional List<u8string> film_film_subject_films;
+}
+cell film_music_contributor
+{
+    optional List<u8string> film_music_contributor_film;
+}
+cell film_performance
+{
+    optional u8string film_performance_character_note;
+    optional u8string film_performance_character;
+    optional u8string film_performance_actor;
+    [GraphEdge]
+    optional List<CellId> film_performance_special_performance_type;
+    optional u8string film_performance_film;
+}
+cell film_person_or_entity_appearing_in_film
+{
+    [GraphEdge]
+    optional List<CellId> film_person_or_entity_appearing_in_film_films;
+}
+cell film_personal_film_appearance
+{
+    [GraphEdge]
+    optional CellId film_personal_film_appearance_type_of_appearance;
+    optional u8string film_personal_film_appearance_person;
+    optional u8string film_personal_film_appearance_film;
+}
+cell film_personal_film_appearance_type
+{
+    [GraphEdge]
+    optional List<CellId> film_personal_film_appearance_type_film_appearances;
+}
+cell film_producer
+{
+    optional List<u8string> film_producer_films_executive_produced;
+    optional List<u8string> film_producer_film;
+}
+cell film_production_company
+{
+    optional List<u8string> film_production_company_films;
+}
+cell film_special_film_performance_type
+{
+    [GraphEdge]
+    optional List<CellId> film_special_film_performance_type_film_performance_type;
+}
+cell film_writer
+{
+    optional List<u8string> film_writer_film;
+}
+cell food_food
+{
+    optional ushort food_food_usda_equivalent;
+}
+cell geography_body_of_water
+{
+    optional float geography_body_of_water_volume;
+    optional float geography_body_of_water_mean_depth;
+    optional float geography_body_of_water_surface_area;
+    optional float geography_body_of_water_depth;
+}
+cell geography_island
+{
+    [GraphEdge]
+    optional CellId geography_island_body_of_water;
+    optional float geography_island_max_length;
+}
+cell geography_lake
+{
+    optional float geography_lake_surface_elevation;
+    optional float geography_lake_shore_length;
+    [GraphEdge]
+    optional CellId geography_lake_basin_countries;
+    optional byte geography_lake_no_islands;
+    [GraphEdge]
+    optional CellId geography_lake_cities;
+    optional float geography_lake_width;
+    optional float geography_lake_length;
+}
+cell geography_mountain
+{
+    optional float geography_mountain_prominence;
+    optional float geography_mountain_elevation;
+}
+cell geography_river
+{
+    optional float geography_river_discharge;
+    optional float geography_river_basin_area;
+    [GraphEdge]
+    optional CellId geography_river_mouth;
+    optional float geography_river_length;
+    [GraphEdge]
+    optional CellId geography_river_cities;
+}
+cell geography_waterfall
+{
+    optional float geography_waterfall_height;
+}
+cell government_australian_mp
+{
+    optional u8string government_australian_mp_house_id;
+}
+cell government_canadian_mp
+{
+    optional uint government_canadian_mp_house_id;
+    optional u8string government_canadian_mp_senate_id;
+}
+cell government_election_campaign
+{
+    [GraphEdge]
+    optional CellId government_election_campaign_candidate;
+}
+cell government_government_agency
+{
+    [GraphEdge]
+    optional CellId government_government_agency_jurisdiction;
+}
+cell government_u_s_congressperson
+{
+    optional u8string government_u_s_congressperson_thomas_id;
+}
+cell government_us_vice_president
+{
+    [GraphEdge]
+    optional CellId government_us_vice_president_to_president;
+}
+cell imdb_topic
+{
+    optional List<u8string> imdb_topic_name_id;
+    optional List<u8string> imdb_topic_title_id;
+    optional List<u8string> imdb_topic_company_id;
+    optional u8string imdb_topic_character_id;
+}
+cell influence_influence_node
+{
+    [GraphEdge]
+    optional List<CellId> influence_influence_node_influenced;
+    [GraphEdge]
+    optional List<CellId> influence_influence_node_influenced_by;
+}
+cell kp_lw_philosopher
+{
+    [GraphEdge]
+    optional CellId kp_lw_philosopher_influenced_by;
+}
+cell law_inventor
+{
+    [GraphEdge]
+    optional CellId law_inventor_inventions;
+}
+cell library_public_library_system
+{
+    optional u8string library_public_library_system_nces_code;
+}
+cell location_administrative_division
+{
+    [GraphEdge]
+    optional CellId location_administrative_division_country;
+    optional u8string location_administrative_division_fips_10_4_region_code;
+    optional u8string location_administrative_division_iso_3166_2_code;
+    [GraphEdge]
+    optional CellId location_administrative_division_second_level_division_of;
+}
+cell location_country
+{
+    optional u8string location_country_fips10_4;
+    optional u8string location_country_iso_alpha_3;
+    optional u8string location_country_iso3166_1_shortname;
+    optional u8string location_country_fifa_code;
+    optional ushort location_country_iso_numeric;
+    optional ushort location_country_calling_code;
+    optional u8string location_country_iso3166_1_alpha2;
+    [GraphEdge]
+    optional CellId location_country_administrative_divisions;
+    [GraphEdge]
+    optional CellId location_country_first_level_divisions;
+    [GraphEdge]
+    optional CellId location_country_second_level_divisions;
+}
+cell location_fr_department
+{
+    optional ushort location_fr_department_code_insee;
+}
+cell location_hud_county_place
+{
+    optional ulong location_hud_county_place_countyplace_id;
+    [GraphEdge]
+    optional CellId location_hud_county_place_county;
+    [GraphEdge]
+    optional CellId location_hud_county_place_place;
+}
+cell location_location
+{
+    optional u8string location_location_adjectival_form;
+    optional float location_location_area;
+    [GraphEdge]
+    optional List<CellId> location_location_contains;
+    optional float location_location_area_land;
+    optional List<u8string> location_location_people_born_here;
+    optional u8string location_location_gns_ufi;
+    optional uint location_location_gnis_feature_id;
+    [GraphEdge]
+    optional CellId location_location_nearby_airports;
+    [GraphEdge]
+    optional CellId location_location_partially_contains;
+    [GraphEdge]
+    optional List<CellId> location_location_events;
+    [GraphEdge]
+    optional List<CellId> location_location_containedby;
+    optional u8string location_location_usbg_name;
+}
+cell location_neighborhood
+{
+    [GraphEdge]
+    optional List<CellId> location_neighborhood_neighborhood_of;
+}
+cell location_statistical_region
+{
+    optional ulong location_statistical_region_hud_id;
+}
+cell martial_arts_martial_art
+{
+    [GraphEdge]
+    optional List<CellId> martial_arts_martial_art_well_known_practitioner;
+}
+cell martial_arts_martial_artist
+{
+    [GraphEdge]
+    optional CellId martial_arts_martial_artist_martial_art;
+    [GraphEdge]
+    optional CellId martial_arts_martial_artist_instructor;
+    [GraphEdge]
+    optional CellId martial_arts_martial_artist_martial_arts_students;
+}
+cell media_common_adaptation
+{
+    [GraphEdge]
+    optional List<CellId> media_common_adaptation_adapted_from;
+}
+cell media_common_adapted_work
+{
+    [GraphEdge]
+    optional List<CellId> media_common_adapted_work_adaptations;
+}
+cell media_common_cataloged_instance
+{
+    optional List<u8string> media_common_cataloged_instance_iswc;
+    optional ulong media_common_cataloged_instance_isbn13;
+    optional List<u8string> media_common_cataloged_instance_isrc;
+    optional List<uint> media_common_cataloged_instance_opac_umich;
+    optional uint media_common_cataloged_instance_opac_cornell;
+    optional uint media_common_cataloged_instance_opac_uchicago;
+    optional uint media_common_cataloged_instance_opac_psu;
+}
+cell media_common_creative_work
+{
+    optional u8string media_common_creative_work_credit;
+}
+cell media_common_literary_genre
+{
+    [GraphEdge]
+    optional CellId media_common_literary_genre_books_in_this_genre;
+}
+cell media_common_media_genre
+{
+    [GraphEdge]
+    optional List<CellId> media_common_media_genre_child_genres;
+    [GraphEdge]
+    optional List<CellId> media_common_media_genre_parent_genre;
+    [GraphEdge]
+    optional CellId media_common_media_genre_equivalent_topic;
+}
+cell media_common_media_genre_equivalent_topic
+{
+    [GraphEdge]
+    optional CellId media_common_media_genre_equivalent_topic_media_genre_equivalent;
+}
+cell media_common_netflix_genre
+{
+    optional List<u8string> media_common_netflix_genre_titles;
+}
+cell media_common_netflix_title
+{
+    [GraphEdge]
+    optional List<CellId> media_common_netflix_title_netflix_genres;
+}
+cell media_common_quotation
+{
+    [GraphEdge]
+    optional CellId media_common_quotation_source;
+    [GraphEdge]
+    optional CellId media_common_quotation_author;
+}
+cell media_common_quotation_source
+{
+    [GraphEdge]
+    optional CellId media_common_quotation_source_quotations;
+    optional u8string media_common_quotation_source_quotationsbook_id;
+}
+cell medicine_disease
+{
+    [GraphEdge]
+    optional List<CellId> medicine_disease_notable_people_with_this_condition;
+    [GraphEdge]
+    optional CellId medicine_disease_affiliated_diseases;
+    [GraphEdge]
+    optional CellId medicine_disease_medical_specialties;
+}
+cell medicine_medical_treatment
+{
+    [GraphEdge]
+    optional List<CellId> medicine_medical_treatment_used_to_treat;
+}
+cell medicine_notable_person_with_medical_condition
+{
+    [GraphEdge]
+    optional List<CellId> medicine_notable_person_with_medical_condition_condition;
+}
+cell medicine_symptom
+{
+    [GraphEdge]
+    optional CellId medicine_symptom_symptom_of;
+}
+cell military_military_conflict
+{
+    [GraphEdge]
+    optional List<CellId> military_military_conflict_military_personnel_involved;
+}
+cell military_military_person
+{
+    [GraphEdge]
+    optional List<CellId> military_military_person_participated_in_conflicts;
+}
+cell music_album
+{
+    [GraphEdge]
+    optional List<CellId> music_album_genre;
+    [GraphEdge]
+    optional CellId music_album_compositions;
+    [GraphEdge]
+    optional List<CellId> music_album_artist;
+    [GraphEdge]
+    optional CellId music_album_album_content_type;
+}
+cell music_album_content_type
+{
+    [GraphEdge]
+    optional CellId music_album_content_type_albums;
+}
+cell music_arrangement
+{
+    [GraphEdge]
+    optional CellId music_arrangement_arrangement_of;
+}
+cell music_artist
+{
+    [GraphEdge]
+    optional List<CellId> music_artist_label;
+    [GraphEdge]
+    optional List<CellId> music_artist_genre;
+    [GraphEdge]
+    optional CellId music_artist_concert_tours;
+    [GraphEdge]
+    optional List<CellId> music_artist_album;
+    [GraphEdge]
+    optional List<CellId> music_artist_origin;
+    [GraphEdge]
+    optional List<CellId> music_artist_track;
+    [GraphEdge]
+    optional List<CellId> music_artist_supporting_artists;
+}
+cell music_composer
+{
+    optional List<u8string> music_composer_compositions;
+}
+cell music_composition
+{
+    [GraphEdge]
+    optional List<CellId> music_composition_lyricist;
+    [GraphEdge]
+    optional CellId music_composition_recordings;
+    [GraphEdge]
+    optional List<CellId> music_composition_composer;
+    [GraphEdge]
+    optional CellId music_composition_form;
+    [GraphEdge]
+    optional CellId music_composition_subjects;
+}
+cell music_concert
+{
+    [GraphEdge]
+    optional CellId music_concert_concert_video;
+    [GraphEdge]
+    optional CellId music_concert_concert_tour;
+}
+cell music_concert_film
+{
+    [GraphEdge]
+    optional CellId music_concert_film_concert;
+    [GraphEdge]
+    optional CellId music_concert_film_concert_tour;
+}
+cell music_concert_tour
+{
+    [GraphEdge]
+    optional CellId music_concert_tour_concert_films_or_videos;
+    [GraphEdge]
+    optional List<CellId> music_concert_tour_artist;
+    [GraphEdge]
+    optional CellId music_concert_tour_concerts;
+    [GraphEdge]
+    optional CellId music_concert_tour_tour_manager;
+}
+cell music_genre
+{
+    [GraphEdge]
+    optional CellId music_genre_albums;
+    [GraphEdge]
+    optional CellId music_genre_subgenre;
+    [GraphEdge]
+    optional CellId music_genre_parent_genre;
+    [GraphEdge]
+    optional List<CellId> music_genre_artists;
+}
+cell music_group_member
+{
+    [GraphEdge]
+    optional List<CellId> music_group_member_artists_supported;
+    [GraphEdge]
+    optional CellId music_group_member_instruments_played;
+}
+cell music_instrument
+{
+    [GraphEdge]
+    optional List<CellId> music_instrument_instrumentalists;
+}
+cell music_lyricist
+{
+    [GraphEdge]
+    optional List<CellId> music_lyricist_lyrics_written;
+}
+cell music_music_video
+{
+    [GraphEdge]
+    optional CellId music_music_video_music_video_genre;
+    [GraphEdge]
+    optional List<CellId> music_music_video_artist;
+    [GraphEdge]
+    optional CellId music_music_video_music_video_song;
+    [GraphEdge]
+    optional List<CellId> music_music_video_directed_by;
+    [GraphEdge]
+    optional CellId music_music_video_choreographer;
+}
+cell music_music_video_choreographer
+{
+    [GraphEdge]
+    optional CellId music_music_video_choreographer_music_videos_choreographed;
+}
+cell music_music_video_director
+{
+    [GraphEdge]
+    optional CellId music_music_video_director_music_videos_directed;
+}
+cell music_musical_tribute_act
+{
+    [GraphEdge]
+    optional CellId music_musical_tribute_act_tribute_of;
+}
+cell music_producer
+{
+    [GraphEdge]
+    optional CellId music_producer_tracks_produced;
+    [GraphEdge]
+    optional CellId music_producer_releases_produced;
+}
+cell music_record_label
+{
+    [GraphEdge]
+    optional List<CellId> music_record_label_artist;
+}
+cell music_recording
+{
+    optional float music_recording_length;
+    [GraphEdge]
+    optional CellId music_recording_canonical_version;
+    [GraphEdge]
+    optional CellId music_recording_place;
+    [GraphEdge]
+    optional List<CellId> music_recording_producer;
+    optional List<u8string> music_recording_artist;
+    [GraphEdge]
+    optional CellId music_recording_song;
+}
+cell music_release
+{
+    [GraphEdge]
+    optional CellId music_release_producers;
+    [GraphEdge]
+    optional CellId music_release_region;
+    optional float music_release_length;
+    optional float music_release_catalog_number;
+}
+cell music_release_track
+{
+    optional byte music_release_track_track_number;
+    optional byte music_release_track_disc_number;
+    optional byte music_release_track_number_on_disc;
+}
+cell music_single
+{
+    [GraphEdge]
+    optional CellId music_single_versions;
+}
+cell music_soundtrack
+{
+    [GraphEdge]
+    optional CellId music_soundtrack_film;
+}
+cell music_tour_manager
+{
+    [GraphEdge]
+    optional CellId music_tour_manager_tours_managed;
+}
+cell nytimes_topic
+{
+    optional List<u8string> nytimes_topic_uri;
+}
+cell olympics_olympic_games
+{
+    [GraphEdge]
+    optional CellId olympics_olympic_games_participating_countries;
+}
+cell olympics_olympic_participating_country
+{
+    [GraphEdge]
+    optional CellId olympics_olympic_participating_country_olympics_participated_in;
+    optional u8string olympics_olympic_participating_country_ioc_code;
+}
+cell opera_opera_production
+{
+    [GraphEdge]
+    optional CellId opera_opera_production_performed_at;
+}
+cell organization_organization
+{
+    [GraphEdge]
+    optional CellId organization_organization_partnerships;
+    optional List<u8string> organization_organization_founders;
+    [GraphEdge]
+    optional CellId organization_organization_organization_type;
+    [GraphEdge]
+    optional CellId organization_organization_place_founded;
+    [GraphEdge]
+    optional CellId organization_organization_locations;
+    [GraphEdge]
+    optional CellId organization_organization_sectors;
+    optional u8string organization_organization_slogan;
+    [GraphEdge]
+    optional CellId organization_organization_geographic_scope;
+}
+cell organization_organization_founder
+{
+    optional List<u8string> organization_organization_founder_organizations_founded;
+}
+cell organization_organization_partnership
+{
+    [GraphEdge]
+    optional List<CellId> organization_organization_partnership_members;
+}
+cell organization_organization_sector
+{
+    [GraphEdge]
+    optional List<CellId> organization_organization_sector_organizations_in_this_sector;
+}
+cell organization_organization_type
+{
+    [GraphEdge]
+    optional List<CellId> organization_organization_type_organizations_of_this_type;
+}
+cell people_cause_of_death
+{
+    optional List<u8string> people_cause_of_death_people;
+}
+cell people_deceased_person
+{
+    [GraphEdge]
+    optional List<CellId> people_deceased_person_cause_of_death;
+    [GraphEdge]
+    optional CellId people_deceased_person_place_of_death;
+    [GraphEdge]
+    optional CellId people_deceased_person_place_of_burial;
+    [GraphEdge]
+    optional CellId people_deceased_person_place_of_cremation;
+}
+cell people_ethnicity
+{
+    [GraphEdge]
+    optional List<CellId> people_ethnicity_people;
+}
+cell people_family
+{
+    [GraphEdge]
+    optional CellId people_family_members;
+}
+cell people_family_member
+{
+    [GraphEdge]
+    optional CellId people_family_member_family;
+}
+cell people_group_membership
+{
+    [GraphEdge]
+    optional CellId people_group_membership_member;
+}
+cell people_marriage
+{
+    [GraphEdge]
+    optional CellId people_marriage_type_of_union;
+    [GraphEdge]
+    optional CellId people_marriage_spouse;
+}
+cell people_person
+{
+    optional List<u8string> people_person_parents;
+    [GraphEdge]
+    optional CellId people_person_group;
+    [GraphEdge]
+    optional CellId people_person_place_of_birth;
+    [GraphEdge]
+    optional CellId people_person_religion;
+    optional List<u8string> people_person_children;
+    optional float people_person_height_meters;
+    [GraphEdge]
+    optional CellId people_person_quotations;
+    [GraphEdge]
+    optional List<CellId> people_person_nationality;
+    optional float people_person_weight_kg;
+    [GraphEdge]
+    optional CellId people_person_ethnicity;
+    [GraphEdge]
+    optional CellId people_person_spouse_s;
+    optional List<u8string> people_person_profession;
+    optional ushort people_person_quotationsbook_id;
+}
+cell people_place_of_interment
+{
+    [GraphEdge]
+    optional List<CellId> people_place_of_interment_interred_here;
+}
+cell people_profession
+{
+    [GraphEdge]
+    optional CellId people_profession_part_of_professional_field;
+    optional List<u8string> people_profession_people_with_this_profession;
+    optional List<u8string> people_profession_specialization_of;
+    [GraphEdge]
+    optional List<CellId> people_profession_specializations;
+}
+cell people_professional_field
+{
+    [GraphEdge]
+    optional CellId people_professional_field_professions_in_this_field;
+}
+cell pipeline_delete_task
+{
+    optional u8string pipeline_delete_task_delete_guid;
+}
+cell pipeline_merge_task
+{
+    optional u8string pipeline_merge_task_left_guid;
+    optional u8string pipeline_merge_task_right_guid;
+}
+cell projects_project
+{
+    [GraphEdge]
+    optional CellId projects_project_project_focus;
+}
+cell religion_religious_organization
+{
+    [GraphEdge]
+    optional CellId religion_religious_organization_member_organizations;
+}
+cell royalty_royal_line
+{
+    [GraphEdge]
+    optional CellId royalty_royal_line_monarchs_from_this_line;
+}
+cell soccer_football_player
+{
+    optional ushort soccer_football_player_total_career_appearances;
+}
+cell spaceflight_astronaut
+{
+    [GraphEdge]
+    optional CellId spaceflight_astronaut_space_agency;
+    optional float spaceflight_astronaut_space_time_minutes;
+    [GraphEdge]
+    optional CellId spaceflight_astronaut_missions;
+}
+cell sports_boxer
+{
+    optional float sports_boxer_reach;
+}
+cell sports_defunct_sports_team
+{
+    [GraphEdge]
+    optional CellId sports_defunct_sports_team_later_known_as;
+    [GraphEdge]
+    optional CellId sports_defunct_sports_team_sport;
+}
+cell sports_golf_course
+{
+    optional float sports_golf_course_length;
+    optional byte sports_golf_course_par;
+    optional byte sports_golf_course_holes;
+}
+cell sports_sport
+{
+    [GraphEdge]
+    optional List<CellId> sports_sport_teams;
+}
+cell sports_sports_championship_event
+{
+    [GraphEdge]
+    optional CellId sports_sports_championship_event_championship;
+    optional u8string sports_sports_championship_event_result;
+    [GraphEdge]
+    optional CellId sports_sports_championship_event_runner_up;
+}
+cell sports_sports_league
+{
+    [GraphEdge]
+    optional CellId sports_sports_league_sport;
+}
+cell sports_sports_official
+{
+    [GraphEdge]
+    optional List<CellId> sports_sports_official_sport;
+}
+cell sports_sports_team
+{
+    [GraphEdge]
+    optional CellId sports_sports_team_sport;
+    optional u8string sports_sports_team_abbreviation;
+    [GraphEdge]
+    optional CellId sports_sports_team_location;
+}
+cell sports_sports_team_coach
+{
+    [GraphEdge]
+    optional CellId sports_sports_team_coach_sports_coached;
+}
+cell sports_sports_team_owner
+{
+    [GraphEdge]
+    optional CellId sports_sports_team_owner_teams_owned;
+}
+cell symbols_name_source
+{
+    [GraphEdge]
+    optional List<CellId> symbols_name_source_namesakes;
+}
+cell symbols_namesake
+{
+    [GraphEdge]
+    optional CellId symbols_namesake_named_after;
+}
+cell tennis_tennis_player
+{
+    optional byte tennis_tennis_player_career_wins_doubles;
+}
+cell theater_play
+{
+    [GraphEdge]
+    optional List<CellId> theater_play_characters;
+    [GraphEdge]
+    optional CellId theater_play_composer;
+    [GraphEdge]
+    optional CellId theater_play_genre;
+    [GraphEdge]
+    optional CellId theater_play_lyricist;
+    [GraphEdge]
+    optional List<CellId> theater_play_country_of_origin;
+    [GraphEdge]
+    optional CellId theater_play_orchestrator;
+}
+cell theater_theater_character
+{
+    [GraphEdge]
+    optional CellId theater_theater_character_plays_appears_in;
+}
+cell theater_theater_company
+{
+    [GraphEdge]
+    optional CellId theater_theater_company_plays_produced;
+}
+cell theater_theater_designer_gig
+{
+    [GraphEdge]
+    optional CellId theater_theater_designer_gig_design_role;
+}
+cell theater_theater_director
+{
+    [GraphEdge]
+    optional CellId theater_theater_director_plays_directed;
+}
+cell theater_theater_producer
+{
+    [GraphEdge]
+    optional CellId theater_theater_producer_plays_produced;
+}
+cell theater_theater_production
+{
+    [GraphEdge]
+    optional CellId theater_theater_production_producing_company;
+    [GraphEdge]
+    optional List<CellId> theater_theater_production_producer;
+    [GraphEdge]
+    optional CellId theater_theater_production_director;
+}
+cell theater_theatrical_composer
+{
+    [GraphEdge]
+    optional CellId theater_theatrical_composer_plays_composed;
+}
+cell theater_theatrical_lyricist
+{
+    [GraphEdge]
+    optional CellId theater_theatrical_lyricist_play_lyrics_written;
+}
+cell theater_theatrical_orchestrator
+{
+    [GraphEdge]
+    optional CellId theater_theatrical_orchestrator_plays_orchestrated;
+}
+cell time_event
+{
+    [GraphEdge]
+    optional CellId time_event_includes_event;
+    [GraphEdge]
+    optional List<CellId> time_event_locations;
+    [GraphEdge]
+    optional CellId time_event_people_involved;
+    optional u8string time_event_instance_of_recurring_event;
+    [GraphEdge]
+    optional List<CellId> time_event_included_in_event;
+}
+cell time_holiday_period
+{
+    [GraphEdge]
+    optional CellId time_holiday_period_holidays;
+}
+cell time_recurring_event
+{
+    optional List<u8string> time_recurring_event_instances;
+}
+cell topic_server
+{
+    optional List<uint> topic_server_population_number;
+}
+cell transportation_bridge
+{
+    optional float transportation_bridge_total_length;
+    [GraphEdge]
+    optional CellId transportation_bridge_locale;
+    optional float transportation_bridge_width;
+    optional float transportation_bridge_clearance_below;
+    optional float transportation_bridge_longest_span;
+}
+cell transportation_road
+{
+    [GraphEdge]
+    optional List<CellId> transportation_road_major_cities;
+    optional float transportation_road_length;
+}
+cell travel_hotel
+{
+    optional ushort travel_hotel_number_of_guest_beds;
+}
+cell travel_tourist_attraction
+{
+    [GraphEdge]
+    optional CellId travel_tourist_attraction_near_travel_destination;
+}
+cell travel_travel_destination
+{
+    [GraphEdge]
+    optional CellId travel_travel_destination_tourist_attractions;
+}
+cell tv_multipart_tv_episode
+{
+    [GraphEdge]
+    optional CellId tv_multipart_tv_episode_episodes;
+    [GraphEdge]
+    optional CellId tv_multipart_tv_episode_tv_program;
+}
+cell tv_tv_actor
+{
+    [GraphEdge]
+    optional CellId tv_tv_actor_guest_roles;
+}
+cell tv_tv_character
+{
+    optional u8string tv_tv_character_reason_for_final_tv_appearance;
+    [GraphEdge]
+    optional CellId tv_tv_character_first_tv_appearance;
+    [GraphEdge]
+    optional CellId tv_tv_character_last_tv_appearance;
+}
+cell tv_tv_director
+{
+    [GraphEdge]
+    optional CellId tv_tv_director_tv_segments_directed;
+    [GraphEdge]
+    optional List<CellId> tv_tv_director_episodes_directed;
+}
+cell tv_tv_episode_segment
+{
+    [GraphEdge]
+    optional CellId tv_tv_episode_segment_director;
+}
+cell tv_tv_genre
+{
+    optional List<u8string> tv_tv_genre_programs;
+}
+cell tv_tv_guest_role
+{
+    [GraphEdge]
+    optional CellId tv_tv_guest_role_actor;
+}
+cell tv_tv_location
+{
+    [GraphEdge]
+    optional CellId tv_tv_location_tv_episodes_filmed_here;
+    [GraphEdge]
+    optional CellId tv_tv_location_tv_shows_filmed_here;
+}
+cell tv_tv_network
+{
+    optional u8string tv_tv_network_former_names;
+    [GraphEdge]
+    optional CellId tv_tv_network_areas_served;
+}
+cell tv_tv_producer
+{
+    [GraphEdge]
+    optional CellId tv_tv_producer_programs_produced;
+}
+cell tv_tv_producer_term
+{
+    [GraphEdge]
+    optional CellId tv_tv_producer_term_producer;
+}
+cell tv_tv_program
+{
+    optional u8string tv_tv_program_hulu_id;
+    optional List<ushort> tv_tv_program_episode_running_time;
+    optional u8string tv_tv_program_currently_in_production;
+    [GraphEdge]
+    optional List<CellId> tv_tv_program_country_of_origin;
+    [GraphEdge]
+    optional List<CellId> tv_tv_program_episodes;
+    [GraphEdge]
+    optional CellId tv_tv_program_spin_offs;
+    optional ushort tv_tv_program_number_of_episodes;
+    optional byte tv_tv_program_number_of_seasons;
+    optional ushort tv_tv_program_tvrage_id;
+    [GraphEdge]
+    optional List<CellId> tv_tv_program_filming_locations;
+    optional u8string tv_tv_program_spun_off_from;
+    [GraphEdge]
+    optional List<CellId> tv_tv_program_genre;
+    optional List<u8string> tv_tv_program_program_creator;
+    [GraphEdge]
+    optional CellId tv_tv_program_soundtrack;
+    optional uint tv_tv_program_thetvdb_id;
+    [GraphEdge]
+    optional List<CellId> tv_tv_program_subjects;
+    [GraphEdge]
+    optional List<CellId> tv_tv_program_seasons;
+    optional uint tv_tv_program_tvguide_id;
+}
+cell tv_tv_program_creator
+{
+    [GraphEdge]
+    optional List<CellId> tv_tv_program_creator_programs_created;
+}
+cell tv_tv_series_episode
+{
+    optional ushort tv_tv_series_episode_season_number;
+    [GraphEdge]
+    optional CellId tv_tv_series_episode_next_episode;
+    optional u8string tv_tv_series_episode_production_number;
+    [GraphEdge]
+    optional List<CellId> tv_tv_series_episode_subjects;
+    optional uint tv_tv_series_episode_tvrage_id;
+    [GraphEdge]
+    optional CellId tv_tv_series_episode_series;
+    optional List<u8string> tv_tv_series_episode_writer;
+    optional List<u8string> tv_tv_series_episode_director;
+    optional ushort tv_tv_series_episode_episode_number;
+    [GraphEdge]
+    optional CellId tv_tv_series_episode_season;
+    [GraphEdge]
+    optional CellId tv_tv_series_episode_previous_episode;
+    [GraphEdge]
+    optional CellId tv_tv_series_episode_part_of_multipart_episode;
+    [GraphEdge]
+    optional CellId tv_tv_series_episode_filming_locations;
+}
+cell tv_tv_series_season
+{
+    optional byte tv_tv_series_season_season_number;
+    optional uint tv_tv_series_season_thetvdb_id;
+    [GraphEdge]
+    optional CellId tv_tv_series_season_series;
+    optional byte tv_tv_series_season_number_of_episodes;
+    [GraphEdge]
+    optional List<CellId> tv_tv_series_season_episodes;
+}
+cell tv_tv_soundtrack
+{
+    [GraphEdge]
+    optional CellId tv_tv_soundtrack_tv_program;
+}
+cell tv_tv_subject
+{
+    [GraphEdge]
+    optional CellId tv_tv_subject_tv_programs;
+    [GraphEdge]
+    optional CellId tv_tv_subject_tv_episodes;
+}
+cell tv_tv_writer
+{
+    [GraphEdge]
+    optional List<CellId> tv_tv_writer_episodes_written;
+}
+cell tv_video
+{
+    optional float tv_video_duration;
+    [GraphEdge]
+    optional CellId tv_video_service;
+}
+cell type_content
+{
+    optional u8string type_content_blob_id;
+    optional uint type_content_length;
+}
+cell visual_art_art_period_movement
+{
+    [GraphEdge]
+    optional List<CellId> visual_art_art_period_movement_associated_artists;
+}
+cell visual_art_art_subject
+{
+    [GraphEdge]
+    optional CellId visual_art_art_subject_artwork_on_the_subject;
+}
+cell visual_art_artwork
+{
+    [GraphEdge]
+    optional List<CellId> visual_art_artwork_art_subject;
+    [GraphEdge]
+    optional CellId visual_art_artwork_artist;
+    [GraphEdge]
+    optional CellId visual_art_artwork_art_genre;
+}
+cell visual_art_visual_art_form
+{
+    [GraphEdge]
+    optional List<CellId> visual_art_visual_art_form_artists;
+}
+cell visual_art_visual_artist
+{
+    [GraphEdge]
+    optional CellId visual_art_visual_artist_artworks;
+    [GraphEdge]
+    optional List<CellId> visual_art_visual_artist_associated_periods_or_movements;
+    [GraphEdge]
+    optional List<CellId> visual_art_visual_artist_art_forms;
+}

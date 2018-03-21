@@ -22,72 +22,104 @@ namespace FanoutSearch
         static int s_ServerCount;
         static FanoutSearchModule s_Module;
 
-        const int c_default_capacity = 64;
-        const int c_realloc_threshold = 1 << 20;
+        const int c_default_capacity  = 64;
         const int c_realloc_step_size = 1 << 20;
+        private byte*[] buffer;
+        private int[] buf_offset;
+        private int[] buf_capacity;
+        private SpinLock[] buffer_locks;
+        private int hop;
+        private int transaction;
+        private int serverCount;
+
 
         static MessageDispatcher()
         {
-            s_ServerCount = Global.CloudStorage.ServerCount;
+            s_ServerCount = Global.CloudStorage.PartitionCount;
             s_Module = Global.CloudStorage.GetCommunicationModule<FanoutSearchModule>();
         }
+
         public MessageDispatcher(int hop, int transaction)
         {
-            this.hop           = hop;
-            this.transaction   = transaction;
-            this.serverCount   = s_ServerCount;
-            buffer             = new byte*[serverCount];
-            buffer_len         = new int[serverCount];
-            buffer_size        = new int[serverCount];
-            buffer_locks       = new object[serverCount];
-            int default_size = c_default_capacity * sizeof(long) + TrinityProtocol.MsgHeader + sizeof(int)*2;
+            this.hop = hop;
+            this.transaction = transaction;
+            this.serverCount = s_ServerCount;
+            buffer = new byte*[serverCount];
+            buf_offset = new int[serverCount];
+            buf_capacity = new int[serverCount];
+            buffer_locks = new SpinLock[serverCount];
+            int default_size   = c_default_capacity * sizeof(long) + TrinityProtocol.MsgHeader + sizeof(int)*2;
 
             for (int i = 0; i < serverCount; ++i)
             {
                 buffer[i] = (byte*)Memory.malloc((uint)default_size);
-                buffer_len[i] = sizeof(int) * 2 + TrinityProtocol.MsgHeader;
-                buffer_size[i] = default_size;
-                buffer_locks[i] = new object();
+                buf_offset[i] = sizeof(int) * 2 + TrinityProtocol.MsgHeader;
+                buf_capacity[i] = default_size;
+                buffer_locks[i] = new SpinLock();
             }
         }
 
         public unsafe void addAugmentedPath(long* pathptr, int current_hop, long next_cell)
         {
-            int slaveID = Global.CloudStorage.GetServerIdByCellId(next_cell);
+            int slaveID = Global.CloudStorage.GetPartitionIdByCellId(next_cell);
             int path_size = sizeof(long) * (current_hop + 2);
 
             // not lock free, but easy to read through.
-            lock (buffer_locks[slaveID])
+            bool _lock = false;
+            try
             {
-                buffer_len[slaveID] += path_size;
-                int buffer_offset = buffer_len[slaveID];
-                while (buffer_offset > buffer_size[slaveID])
+                buffer_locks[slaveID].Enter(ref _lock);
+                long boffset = buf_offset[slaveID] + path_size;
+                if (boffset >= FanoutSearchModule.s_max_fanoutmsg_size) throw new MessageTooLongException();
+                int bcap = buf_capacity[slaveID];
+                while (bcap < boffset)
                 {
-                    int new_size = buffer_size[slaveID];
-
-                    if (new_size < c_realloc_threshold) new_size *= 2;
-                    else new_size += c_realloc_step_size;
-
-                    byte* new_buf = (byte*)Memory.malloc((uint)new_size);
-                    Memory.memcpy(new_buf, buffer[slaveID], (uint)buffer_size[slaveID]);
+                    // first try: 1.5x growth
+                    if (FanoutSearchModule.s_max_fanoutmsg_size - bcap >= (bcap>>1)) bcap += (bcap >> 1);
+                    // second try: step size
+                    else if (FanoutSearchModule.s_max_fanoutmsg_size - bcap >= c_realloc_step_size) bcap += c_realloc_step_size;
+                    // third try: approach maximum value
+                    else bcap = FanoutSearchModule.s_max_fanoutmsg_size;
+                }
+                if(bcap != buf_capacity[slaveID])
+                {
+                    byte* new_buf = (byte*)Memory.malloc((uint)bcap);
+                    if(new_buf == null) { throw new OutOfMemoryException(); }
+                    Memory.memcpy(new_buf, buffer[slaveID], (uint)buf_offset[slaveID]);
                     Memory.free(buffer[slaveID]);
 
                     buffer[slaveID] = new_buf;
-                    buffer_size[slaveID] = new_size;
+                    buf_capacity[slaveID] = bcap;
                 }
-                long* add_ptr = (long*)(buffer[slaveID] + buffer_offset - path_size);
+                buf_offset[slaveID] = (int)boffset;
+
+                long* add_ptr = (long*)(buffer[slaveID] + boffset - path_size);
                 Memory.memcpy(add_ptr, pathptr, (uint)(current_hop + 1) * sizeof(long));
                 add_ptr[current_hop + 1] = next_cell;
             }
+            finally
+            {
+                if (_lock) buffer_locks[slaveID].Exit(useMemoryBarrier: true);
+            }
         }
 
-        private byte*[] buffer;
-        private int[] buffer_len;
-        private int[] buffer_size;
-        private object[] buffer_locks;
-        private int hop;
-        private int transaction;
-        private int serverCount;
+        public void Dispose()
+        {
+            if (buffer == null)
+                return;
+
+            for(int serverId = 0; serverId < serverCount; ++serverId)
+            {
+                var bufferPtr = this.buffer[serverId];
+                if(bufferPtr != null)
+                {
+                    this.buffer[serverId] = null;
+                    Memory.free(bufferPtr);
+                }
+            }
+
+            buffer = null;
+        }
 
         public void Dispatch()
         {
@@ -97,13 +129,9 @@ namespace FanoutSearch
             Parallel.For(0, serverCount, serverId =>
             {
                 var bufferPtr = this.buffer[serverId];
-                FillHeader(hop, transaction, buffer_len[serverId], bufferPtr);
-
-                s_Module.FanoutSearch_impl_Send(serverId, bufferPtr, buffer_len[serverId]);
-                Memory.free(bufferPtr);
+                FillHeader(hop, transaction, buf_offset[serverId], bufferPtr);
+                s_Module.FanoutSearch_impl_Send(serverId, bufferPtr, buf_offset[serverId]);
             });
-
-            buffer = null;
         }
 
         public static unsafe void DispatchOriginMessage(int serverId, int transaction, IEnumerable<FanoutPathDescriptor> origins)
@@ -127,7 +155,7 @@ namespace FanoutSearch
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static unsafe byte* FillHeader(int hop, int transaction, int msg_size, byte* bufferPtr)
         {
-            byte* body      = bufferPtr + TrinityProtocol.MsgHeader;
+            byte* body = bufferPtr + TrinityProtocol.MsgHeader;
 
             *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)TrinityMessageType.ASYNC;
             *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::FanoutSearch.Protocols.TSL.TSL.CommunicationModule.FanoutSearch.AsynReqMessageType.FanoutSearch_impl;
@@ -135,12 +163,6 @@ namespace FanoutSearch
             *(int*)(body) = hop;
             *(int*)(body + sizeof(int)) = transaction;
             return body;
-        }
-
-        public void Dispose()
-        {
-            if (buffer != null)
-                Dispatch();
         }
 
     }

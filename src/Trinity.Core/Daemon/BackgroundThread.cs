@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Trinity.Storage;
 using Trinity.Core.Lib;
 using System.Runtime.CompilerServices;
+using Trinity.Diagnostics;
 
 namespace Trinity.Daemon
 {
@@ -24,11 +25,6 @@ namespace Trinity.Daemon
     {
         private static bool started = false;
         private static object _lock = new object();
-
-        static BackgroundThread()
-        {
-            Start();
-        }
 
         static int TimerInterval = 100; //Default frequency = 10HZ
         static long CurrentTime;
@@ -49,6 +45,7 @@ namespace Trinity.Daemon
 
                         Thread.MemoryBarrier();
                         started = true;
+                        Log.WriteLine(LogLevel.Info, $"{nameof(BackgroundThread)}: started");
                     }
                 }
             }
@@ -63,6 +60,7 @@ namespace Trinity.Daemon
                     timer.Dispose();
                     ClearAllTasks();
                     started = false;
+                    Log.WriteLine(LogLevel.Info, $"{nameof(BackgroundThread)}: stopped");
                 }
             }
         }
@@ -83,6 +81,18 @@ namespace Trinity.Daemon
             lock (s_tasklist)
             {
                 s_tasklist.Add(task);
+            }
+        }
+
+        /// <summary>
+        /// Removes a background task.
+        /// </summary>
+        /// <param name="task">A background task previously added to the background thread.</param>
+        public static void RemoveBackgroundTask(BackgroundTask task)
+        {
+            lock (s_tasklist)
+            {
+                s_tasklist.Remove(task);
             }
         }
 

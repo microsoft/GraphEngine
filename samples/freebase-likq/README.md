@@ -11,8 +11,8 @@ set:
 
 For brevity, in this sample project we focus on how to serve LIKQ
 queries with a prebuilt data image.  Please refer to the
-`GraphEngine.DataImporter` sample project in the `experimental` branch
-to see how to automatically generate a schema file and import data.
+`GraphEngine.DataImporter` project to see how to automatically
+generate a schema file and import data.
 
 LIKQ module does not provide a built-in index backend. In this sample
 project, a sample index backend based on SQLite is provided.  When
@@ -25,16 +25,19 @@ backend to interpret the constraints specified by the _match_ object.
 
 ## Building and running the demo
 
-After the freebase-likq solution is built successfully, run
-`freebase-likq.exe`. It will automatically download Freebase graph
-image, build SQLite index and start serving LIKQ.  To enable the LIKQ
-HTTP endpoint, either run the program as administrator, or grant the
-current user the permission to listen to port 80: `netsh http add
-urlacl url=http://+:80/ user=Domain\username`.
-
 Note that the full Freebase image is ~`32GB` so make sure that you run the demo on a beefy server!
-We also have prepared a smaller dataset `freebase-film-dataset.zip`. Please modify `Program.cs` to
-direct the program to download the small dataset if you want to.
+We also have prepared a smaller dataset `freebase-film-dataset.zip`. Both datasets are supported,
+and we have prepared two separate executables.
+
+After the freebase-likq solution is built successfully, run
+`freebase-likq.exe` or `freebase-film-likq.exe`. 
+It will automatically download Freebase graph image, 
+build SQLite index and start serving LIKQ.  
+
+To enable the LIKQ HTTP endpoint, either run the program 
+as administrator, or grant the current user the permission 
+to listen to port 80: 
+`netsh http add urlacl url=http://+:80/ user=Domain\username`.
 
 Now you can query Freebase via LIKQ. Here is a quick example:
 

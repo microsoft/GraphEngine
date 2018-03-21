@@ -15,25 +15,18 @@ using Trinity;
 using Trinity.Network.Messaging;
 using Trinity.Network.Sockets;
 using Trinity.Core.Lib;
+using System.Runtime.CompilerServices;
+using Trinity.Network;
 
 namespace Trinity.Storage
 {
-    public unsafe partial class LocalMemoryStorage : Storage
+    public unsafe partial class LocalMemoryStorage : IStorage
     {
-        internal override void SendMessage(TrinityMessage message)
-        {
-            SendMessage(message.Buffer, message.Size);
-        }
-
-        internal override void SendMessage(TrinityMessage message, out TrinityResponse response)
-        {
-            SendMessage(message.Buffer, message.Size, out response);
-        }
-
-        internal override void SendMessage(byte* message, int size)
+        /// <inheritdoc/>
+        public void SendMessage(byte* message, int size)
         {
             TrinityMessageType msgType = (TrinityMessageType)message[TrinityProtocol.MsgTypeOffset];
-            int msgId = message[TrinityProtocol.MsgIdOffset];
+            ushort msgId = *(ushort*)(message + TrinityProtocol.MsgIdOffset);
             TrinityErrorCode msgProcessResult;
 
             switch (msgType)
@@ -65,26 +58,36 @@ namespace Trinity.Storage
                 case TrinityMessageType.ASYNC:
                     {
                         AsynReqArgs aut_request = new AsynReqArgs(message,
-                            TrinityProtocol.MsgHeader, 
-                            size - TrinityProtocol.MsgHeader, 
+                            TrinityProtocol.MsgHeader,
+                            size - TrinityProtocol.MsgHeader,
                             MessageHandlers.DefaultParser.async_handlers[msgId]);
                         msgProcessResult = aut_request.AsyncProcessMessage();
+                    }
+                    break;
+                case TrinityMessageType.ASYNC_WITH_RSP:
+                    {
+                        AsynReqRspArgs async_rsp_args = new AsynReqRspArgs(message,
+                            TrinityProtocol.MsgHeader,
+                            size - TrinityProtocol.MsgHeader,
+                            MessageHandlers.DefaultParser.async_rsp_handlers[msgId]);
+                        msgProcessResult = async_rsp_args.AsyncProcessMessage();
                     }
                     break;
                 default:
                     throw new IOException("Wrong message type.");
             }
 
-            if(msgProcessResult == TrinityErrorCode.E_RPC_EXCEPTION)
+            if (msgProcessResult == TrinityErrorCode.E_RPC_EXCEPTION)
             {
                 throw new IOException("Local message handler throws an exception.");
             }
         }
 
-        internal override void SendMessage(byte* message, int size, out TrinityResponse response)
+        /// <inheritdoc/>
+        public void SendMessage(byte* message, int size, out TrinityResponse response)
         {
             TrinityMessageType msgType = (TrinityMessageType)message[TrinityProtocol.MsgTypeOffset];
-            byte msgId = message[TrinityProtocol.MsgIdOffset];
+            ushort msgId = *(ushort*)(message+TrinityProtocol.MsgIdOffset);
             SynReqRspArgs sync_rsp_args;
             TrinityErrorCode msgProcessResult;
 
@@ -111,6 +114,90 @@ namespace Trinity.Storage
             {
                 throw new IOException("Local message handler throws an exception.");
             }
-       }
+        }
+
+        /// <inheritdoc/>
+        public void SendMessage(byte** message, int* sizes, int count)
+        {
+            byte* buf;
+            int len;
+            _serialize(message, sizes, count, out buf, out len);
+
+            TrinityMessageType msgType = (TrinityMessageType)buf[TrinityProtocol.MsgTypeOffset];
+            ushort msgId = *(ushort*)(buf + TrinityProtocol.MsgIdOffset);
+
+            // For async messages, we omit the buffer copy, use the serialized buffer directly.
+            switch (msgType)
+            {
+                case TrinityMessageType.ASYNC:
+                    {
+                        AsynReqArgs aut_request = new AsynReqArgs(
+                            MessageHandlers.DefaultParser.async_handlers[msgId],
+                            buf,
+                            TrinityProtocol.MsgHeader,
+                            len - TrinityProtocol.MsgHeader);
+                        if (aut_request.AsyncProcessMessage() == TrinityErrorCode.E_RPC_EXCEPTION)
+                        {
+                            throw new IOException("Local message handler throws an exception.");
+                        }
+                    }
+                    break;
+                case TrinityMessageType.ASYNC_WITH_RSP:
+                    {
+                        AsynReqRspArgs async_rsp_args = new AsynReqRspArgs(
+                            MessageHandlers.DefaultParser.async_rsp_handlers[msgId],
+                            buf,
+                            TrinityProtocol.MsgHeader,
+                            len - TrinityProtocol.MsgHeader);
+                        if (async_rsp_args.AsyncProcessMessage() == TrinityErrorCode.E_RPC_EXCEPTION)
+                        {
+                            throw new IOException("Local message handler throws an exception.");
+                        }
+                    }
+                    break;
+                default:
+                    {
+                        SendMessage(buf, len);
+                        CMemory.C_free(buf);
+                    }
+                    break;
+            }
+        }
+
+        /// <inheritdoc/>
+        public void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
+        {
+            byte* buf;
+            int len;
+            _serialize(message, sizes, count, out buf, out len);
+            SendMessage(buf, len, out response);
+            CMemory.C_free(buf);
+        }
+
+        /// <inheritdoc/>
+        public T GetCommunicationModule<T>() where T: CommunicationModule
+        {
+            return Global.CommunicationInstance.GetCommunicationModule<T>();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void _serialize(byte** message, int* sizes, int count, out byte* buf, out int len)
+        {
+            len = 0;
+            for (int i=0; i<count; ++i)
+            {
+                len += sizes[i];
+            }
+
+            buf = (byte*)CMemory.C_malloc((ulong)len);
+            byte* p = buf;
+            for (int i=0; i<count; ++i)
+            {
+                CMemory.C_memcpy((void*)p, (void*)*message, (ulong)*sizes);
+                p += *sizes;
+                ++message;
+                ++sizes;
+            }
+        }
     }
 }

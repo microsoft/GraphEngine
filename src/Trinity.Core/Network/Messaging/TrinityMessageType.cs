@@ -13,20 +13,27 @@ namespace Trinity.Network.Messaging
     /// <summary>
     /// Represents a collection of network message types. 
     /// </summary>
+    /**! Note, we assign SYNC, SYNC_WITH_RSP, ASYNC, ASYNC_WITH_RSP to first four values,
+     *   So that in a comm module we use the type as an offset to locate the offset slot.
+     */
     public enum TrinityMessageType : byte
     {
         /// <summary>
         /// Synchronous message.
         /// </summary>
-        SYNC,
+        SYNC = 0,
         /// <summary>
         /// Synchronous message with response.
         /// </summary>
-        SYNC_WITH_RSP,
+        SYNC_WITH_RSP = 1,
         /// <summary>
         /// Asynchronous message.
         /// </summary>
-        ASYNC,
+        ASYNC = 2,
+        /// <summary>
+        /// Asynchronous message with response.
+        /// </summary>
+        ASYNC_WITH_RSP = 3,
         /// <summary>
         /// Preserved synchronous message.
         /// </summary>

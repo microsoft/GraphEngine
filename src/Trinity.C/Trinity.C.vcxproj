@@ -98,7 +98,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-CoreCLR|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\..\bin\coreclr\</OutDir>
+    <OutDir>..\..\bin\</OutDir>
     <CustomBuildBeforeTargets />
     <TargetName>Trinity</TargetName>
   </PropertyGroup>
@@ -352,6 +352,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
   <ItemGroup>
     <ClInclude Include="include\os\platforms\darwin.h" />
     <ClInclude Include="include\os\platforms\posix.h" />
+    <ClInclude Include="include\TrinityErrorCode.h" />
     <ClInclude Include="include\Trinity\Array.h" />
     <ClInclude Include="include\Trinity\Collections\HashSet.h" />
     <ClInclude Include="include\Trinity\Collections\List.h" />
@@ -439,6 +440,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.cpp" />
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.Enumeration.cpp" />
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.WriteAheadLog.cpp" />
+    <ClCompile Include="src\Storage\LocalStorage\localstorage_exported_methods.cpp" />
     <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.AddressTable.cpp" />
     <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.Cell.Memory.cpp" />
     <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.Defragmentation.cpp" />

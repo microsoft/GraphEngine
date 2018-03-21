@@ -16,6 +16,10 @@ namespace Trinity
     public enum TrinityErrorCode : int
     {
         /// <summary>
+        /// Indicates that a response message is too long.
+        /// </summary>
+        E_MSG_OVERFLOW          = -15,
+        /// <summary>
         /// Indicates that the network subsystem has shut down.
         /// </summary>
         E_NETWORK_SHUTDOWN      = -14,

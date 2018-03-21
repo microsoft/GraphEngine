@@ -2,20 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Trinity;
 using Trinity.Network;
-using freebase_tsl;
 using Newtonsoft.Json.Linq;
 using Trinity.Core.Lib;
 using System.IO;
 using Trinity.Diagnostics;
 using System.Data.SQLite;
-using Trinity.TSL.Lib;
 using System.Net;
 using System.Diagnostics;
 using System.IO.Compression;
+using freebase_tsl;
 
 namespace freebase_likq
 {
@@ -23,6 +20,8 @@ namespace freebase_likq
     {
         private static SQLiteConnection s_dbconn;
         private static string s_freebase_data_blobcontainer = "https://graphengine.blob.core.windows.net/public-data";
+        //  !Note, different datasets are built with different TSL extensions,
+        //  make sure you reference the correct TSL storage extension dll!
         private static string s_freebase_dataset = "freebase-full-dataset-20170410.zip";
 
         static void Main(string[] args)
@@ -45,13 +44,11 @@ namespace freebase_likq
             LambdaDSL.SetDialect("Freebase", "StartFrom", "VisitNode", "FollowEdge", "Action");
             //  Plug-in Freebase ICell adapter
             FanoutSearchModule.RegisterUseICellOperationMethod(CellGroupAccessor.New);
-            //  Plug-in Serialize.Linq expression serializer
-            FanoutSearchModule.RegisterExpressionSerializerFactory(ExpressionSerializerFactory);
             //  Configure LIKQ timeout
             FanoutSearchModule.SetQueryTimeout(1000000);
 
             string storage_path = Path.Combine(Global.MyAssemblyPath, "storage");
-            if (Directory.Exists(storage_path) && Directory.GetFileSystemEntries(storage_path).Count() == 0)
+            if (Directory.Exists(storage_path) && !Directory.GetFileSystemEntries(storage_path).Any())
             {
                 Directory.Delete(storage_path);
             }
@@ -72,11 +69,6 @@ namespace freebase_likq
             s_dbconn.Open();
 
             return;
-        }
-
-        private static IExpressionSerializer ExpressionSerializerFactory()
-        {
-            return new ExpressionSerializer();
         }
 
         private static void BuildIndex(string sqlite_db_path)
@@ -131,7 +123,7 @@ namespace freebase_likq
             download_client.DownloadFileTaskAsync($"{s_freebase_data_blobcontainer}/{s_freebase_dataset}", s_freebase_dataset).Wait();
             Console.WriteLine();
             Log.WriteLine("Download complete. Unarchiving storage folder...");
-            ZipFile.ExtractToDirectory("freebase-full-dataset.zip", Global.MyAssemblyPath);
+            ZipFile.ExtractToDirectory(s_freebase_dataset, Global.MyAssemblyPath);
             Log.WriteLine("Successfully unarchived the data files.");
         }
 

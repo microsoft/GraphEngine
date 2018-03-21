@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+    <Metadata>
+        <Identity Id="51a02fa7-9a83-4aa0-9236-599637c597c6" Version="1.0.9083" Language="en-US" Publisher="Microsoft Corporation" />
+        <DisplayName>Graph Engine VSExtension</DisplayName>
+        <Description xml:space="preserve">Graph Engine SDK for developing and deploying Graph Engine applications.</Description>
+        <MoreInfo>http://www.graphengine.io</MoreInfo>
+        <Icon>logo_small.png</Icon>
+        <PreviewImage>logo.png</PreviewImage>
+        <Tags>Graph Engine, Trinity, Azure, GraphEngine</Tags>
+    </Metadata>
+    <Installation>
+        <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[11.0,)" />
+        <InstallationTarget Version="[11.0,)" Id="Microsoft.VisualStudio.Premium" />
+        <InstallationTarget Version="[11.0,)" Id="Microsoft.VisualStudio.Ultimate" />
+        <InstallationTarget Version="[11.0,)" Id="Microsoft.VisualStudio.VSLS" />
+        <InstallationTarget Version="[11.0,)" Id="Microsoft.VisualStudio.Enterprise" />
+        <InstallationTarget Version="[11.0,)" Id="Microsoft.VisualStudio.Community" />
+    </Installation>
+    <Dependencies>
+        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+        <Dependency d:Source="Manual" DisplayName="Visual Studio MPF" Id="Microsoft.VisualStudio.MPF" Version="[10.0,)" />
+    </Dependencies>
+    <Assets>
+        <Asset Type="Microsoft.VisualStudio.VsPackage"       d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+        <Asset Type="Microsoft.VisualStudio.MefComponent"    d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%|" />
+        <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="TslDataModel" d:TargetPath="|TslDataModel;TemplateProjectOutputGroup|" Path="ItemTemplates" d:VsixSubPath="ItemTemplates" />
+        <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="TslProtocol" d:TargetPath="|TslProtocol;TemplateProjectOutputGroup|" Path="ItemTemplates" d:VsixSubPath="ItemTemplates" />
+        <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:TargetPath="|CSharpNetFxApp;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" d:ProjectName="CSharpNetFxApp" />
+        <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:TargetPath="|CSharpNetFxLib;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" d:ProjectName="CSharpNetFxLib" />
+        <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:TargetPath="|CSharpNetCoreApp;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" d:ProjectName="CSharpNetCoreApp" />
+
+        <Asset Type="GraphEngine.Core.1.0.9083.nupkg" d:Source="File" Path="Packages\GraphEngine.Core.1.0.9083.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="GraphEngine.Azure.BlobStorage.1.0.9083.nupkg" d:Source="File" Path="Packages\GraphEngine.Azure.BlobStorage.1.0.9083.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="GraphEngine.Client.1.0.9083.nupkg" d:Source="File" Path="Packages\GraphEngine.Client.1.0.9083.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="GraphEngine.DynamicCluster.1.0.9083.nupkg" d:Source="File" Path="Packages\GraphEngine.DynamicCluster.1.0.9083.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="GraphEngine.FFI.1.0.9083.nupkg" d:Source="File" Path="Packages\GraphEngine.FFI.1.0.9083.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="GraphEngine.FFI.Python.1.0.9083.nupkg" d:Source="File" Path="Packages\GraphEngine.FFI.Python.1.0.9083.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="GraphEngine.LIKQ.1.0.9083.nupkg" d:Source="File" Path="Packages\GraphEngine.LIKQ.1.0.9083.nupkg" d:VsixSubPath="Packages" />
+        <Asset Type="GraphEngine.Storage.Composite.1.0.9083.nupkg" d:Source="File" Path="Packages\GraphEngine.Storage.Composite.1.0.9083.nupkg" d:VsixSubPath="Packages" />
+    </Assets>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.VisualStudio.Component.Roslyn.LanguageServices" Version="[11.0,)" DisplayName="C# and Visual Basic" />
+    </Prerequisites>
+</PackageManifest>

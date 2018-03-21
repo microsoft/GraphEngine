@@ -523,7 +523,7 @@ namespace freebase_likq
                     {
                         sb.Append(',');
                     }
-                    sb.Append(String.Format(@"""CellID"":{0}", sub_cell.CellID));
+                    sb.Append(String.Format("\"CellID\":{0}", sub_cell.CellID));
                 }
             }
         }
@@ -620,6 +620,11 @@ namespace freebase_likq
         }
 
         public int GetBufferLength()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICell Deserialize()
         {
             throw new NotImplementedException();
         }

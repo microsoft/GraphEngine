@@ -1,0 +1,45 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Reflection" #>
+<#
+    Assembly ffi_asm   = typeof(FFIExportAttribute).Assembly;
+    var export_methods = from type in ffi_asm.GetTypes()
+                         select type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic) into method
+                         from m in method
+                         where m.GetCustomAttribute<FFIExportAttribute>() != null
+                         select m;
+#>
+/***********************************
+
+  Auto-generated from FFIMethods.tt
+
+ ***********************************/
+
+using Trinity.Diagnostics;
+using Trinity.FFI.Interop;
+
+namespace Trinity.FFI
+{
+    public static class FFIMethods
+    {
+        private static TRINITY_INTERFACES s_interfaces = new TRINITY_INTERFACES
+        {
+<#
+	foreach(var m in export_methods)
+	{
+#>			<#= m.Name + " = " + m.DeclaringType.Name + "." + m.Name + ","  #>
+<#
+	}
+#>
+        };
+
+        public static void Initialize()
+        {
+            Log.WriteLine(LogLevel.Info, $"{nameof(FFIMethods)}: Initializing FFI methods");
+            Native.TRINITY_FFI_SET_INTERFACES(ref s_interfaces);
+        }
+    }
+}

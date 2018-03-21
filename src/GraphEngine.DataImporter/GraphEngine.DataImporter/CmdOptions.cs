@@ -29,10 +29,11 @@ namespace GraphEngine.DataImporter
 
         [Option("delimiter", HelpText = "Specifies the delimiter of CSV or TSV file", Required = false)]
         public char Delimiter { get; set; }
+
         [Option("dtr_threshold", HelpText = "Specifies the threshold of dominating type ratio (between 0 and 1.0)", Required = false, DefaultValue = 1.0)]
         public double DominatingTypeThreshold { get; set; }
 
-        [Option('f', "fileFormat", HelpText = "Specifies the file format", Required = false)]
+        [Option('f', "fileFormat", HelpText = "Specifies the default file format for the input parser, when file format cannot be determined from the file extension", Required = false)]
         public string FileFormat { get; set; }
 
         [Option("notrim", HelpText = "Specifies that the data fields in CSV/TSV files are not trimmed", Required = false)]
@@ -57,6 +58,7 @@ namespace GraphEngine.DataImporter
             help.AddPreOptionsLine(string.Format("Usage: {0} [-t tsl] [-d directory] [-o output_dir] [--delimiter delimiter] [-f file_format] [--notrim] [-a tsl_assembly|-g] [explicit files]", Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
 
             help.AddOptions(this);
+            // todo scan for supported file types
             help.AddPostOptionsLine("Only files with .json, .csv, .tsv and .ntriples suffix are recognized.");
             help.AddPostOptionsLine("The file name of a data file will be used as the type for deserialization (except for RDF files).");
             help.AddPostOptionsLine("The type must be defined as a Graph Engine cell in the TSL.\n");

@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,8 +16,6 @@ namespace FanoutSearch
 {
     public class NodeDescriptor : IEnumerable<KeyValuePair<string, string>>
     {
-        [ThreadStatic]
-        private static StringBuilder s_builder = null;
         internal NodeDescriptor(List<string> keys, List<string> values, long id)
         {
             this.id     = id;
@@ -61,24 +60,26 @@ namespace FanoutSearch
 
         public override string ToString()
         {
-            if (s_builder == null)
-                s_builder = new StringBuilder();
-            else
-                s_builder.Clear();
+            using (StringWriter sw = new StringWriter())
+            {
+                Serialize(sw);
+                return sw.ToString();
+            }
+        }
 
-            s_builder.Append('{');
-            s_builder.Append("\"CellID\":");
-            s_builder.Append(id);
+        public void Serialize(TextWriter writer)
+        {
+            writer.Write('{');
+            writer.Write("\"CellID\":");
+            writer.Write(id);
             for (int i = 0, len = keys.Count; i < len; ++i)
             {
-                s_builder.Append(',');
-                s_builder.Append(JsonStringProcessor.escape(keys[i]));
-                s_builder.Append(':');
-                s_builder.Append(EncodeValue(values[i]));
+                writer.Write(',');
+                writer.Write(JsonStringProcessor.escape(keys[i]));
+                writer.Write(':');
+                writer.Write(EncodeValue(values[i]));
             }
-            s_builder.Append('}');
-
-            return s_builder.ToString();
+            writer.Write('}');
         }
 
         private string EncodeValue(string v)
@@ -101,7 +102,7 @@ namespace FanoutSearch
                 goto return_string;
             }
 
-            return_string:
+return_string:
             return JsonStringProcessor.escape(v);
         }
     }

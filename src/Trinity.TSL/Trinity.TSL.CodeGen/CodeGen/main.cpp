@@ -22,6 +22,7 @@ List<String>    c_script_list;
 String 			c_output_path;
 bool            c_delay_sign;
 bool            c_no_warnings;
+int             c_offset;
 #pragma endregion
 
 void help()
@@ -48,6 +49,8 @@ void help()
     Console::WriteLine("                        together with other files given in the ");
     Console::WriteLine("                        arguments.                             ");
     Console::WriteLine("    --NoWarning         Suppresses TSL transpiler warnings.    ");
+	Console::WriteLine("    --offset            Set TSL CellType offset use an integer.");
+	
 }
 
 #ifdef TRINITY_PLATFORM_WINDOWS
@@ -64,6 +67,7 @@ bool get_parameters(int argc, char** argv)
     auto OutputPath                                = CommandLineTools::DefineOption<Trinity::String>("o", "OutputPath");
     auto NoWarning                                 = CommandLineTools::DefineOption<bool>("NoWarning", "NoWarning");
     auto Help                                      = CommandLineTools::DefineOption<bool>("h", "help");
+    auto Offset                                    = CommandLineTools::DefineOption<unsigned int>("offset", "offset");
 
     CommandLineTools::GetOpt(args,
                              BuildDataModelingProjectWithDebugFeatures,
@@ -72,7 +76,8 @@ bool get_parameters(int argc, char** argv)
                              ScriptFileList,
                              OutputPath,
                              NoWarning,
-                             Help);
+                             Help,
+							 Offset);
 
     if (Help.value)
     {
@@ -86,6 +91,8 @@ bool get_parameters(int argc, char** argv)
     c_script_list      = ScriptFileList.value.Trim().Split(";").ToList();
     c_output_path      = OutputPath.set ? OutputPath.value.Trim() : ".";
     c_no_warnings      = NoWarning.set;
+	c_offset           = Offset.set ? Offset.value : 0;
+
 
     /* Append any other arguments to the file list. */
     for (auto &arg : args)
@@ -133,6 +140,7 @@ bool print_parameters()
     OUTPUT_PARAMETER(ProjectRoot, c_project_root);
     //OUTPUT_PARAMETER(ScriptList, c_script_list);
     OUTPUT_PARAMETER(OutputPath, c_output_path);
+    OUTPUT_PARAMETER(CellTypeOffset, c_offset);
 
     return true;
 }
@@ -140,7 +148,6 @@ bool print_parameters()
 bool parse_syntax_tree(NTSL* &unmanaged_syntax_tree)
 {
     Console::WriteLine("Parsing TSL files...");
-
     if (c_no_warnings) { parser_disable_warnings(); }
     unmanaged_syntax_tree = start_parser(c_script_list);
 
@@ -150,9 +157,8 @@ bool parse_syntax_tree(NTSL* &unmanaged_syntax_tree)
 bool generate_source_files(NTSL* syntax_tree)
 {
     Console::WriteLine("Generating source files...");
-
     auto source_output_dir = Path::Combine(c_output_path, "GeneratedCode");
-    auto *unmanaged_filelist = Trinity::Codegen::codegen_entry(syntax_tree, source_output_dir, c_namespace);
+    auto *unmanaged_filelist = Trinity::Codegen::codegen_entry(syntax_tree, source_output_dir, c_namespace, c_offset);
     if (unmanaged_filelist == NULL)
         return false;
 
@@ -195,9 +201,9 @@ int main(int argc, char** argv)
 
     QUIT_ON_ERROR(get_parameters(argc, argv));
     QUIT_ON_ERROR(print_parameters());
-    QUIT_ON_ERROR(parse_syntax_tree(unmanaged_syntax_tree));
+	QUIT_ON_ERROR(parse_syntax_tree(unmanaged_syntax_tree));
+
     QUIT_ON_ERROR(generate_source_files(unmanaged_syntax_tree));
     QUIT_ON_ERROR(reset_syntax_parser());
-
     return 0;
 }

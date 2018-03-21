@@ -21,7 +21,11 @@
     <OutputPath>..\..\..\..\bin</OutputPath>
   </PropertyGroup>
 
+<<<<<<< HEAD
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0' OR '$(TargetFramework)'=='netcoreapp2.0'">
+=======
+  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp2.0'">
+>>>>>>> upstream/master
     <DefineConstants>NETCOREAPP2_0</DefineConstants>
   </PropertyGroup>
 
@@ -40,7 +44,11 @@
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
 
+<<<<<<< HEAD
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0' OR '$(TargetFramework)'=='netcoreapp2.0'">
+=======
+  <ItemGroup Condition="'$(TargetFramework)'=='netcoreapp2.0'">
+>>>>>>> upstream/master
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.0.0" />
     <PackageReference Include="System.Runtime" Version="4.3.0" />
   </ItemGroup>

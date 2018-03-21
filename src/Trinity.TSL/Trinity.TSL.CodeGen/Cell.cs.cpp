@@ -1952,6 +1952,12 @@ source->append(R"::(;
             }
         }
         #endregion
+        public ICell Deserialize()
+        {
+            return ()::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::()this;
+        }
     }
     ///<summary>
     ///Provides interfaces for accessing )::");
@@ -1962,18 +1968,18 @@ source->append(R"::( cells
 source->append(Codegen::GetString(node->name));
 source->append(R"::(
     {
-        #region LocalStorage non logging
+        #region IKeyValueStore non logging
         /// <summary>
         /// Adds a new cell of type )::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::( to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The value of the cell is specified in the method parameters.
         /// </summary>
-        /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// <param name="storage"/>A <see cref="Trinity.Storage.IKeyValueStore"/> instance.</param>
         /// <param name="CellID">A 64-bit cell Id.</param>
         /// <returns>true if saving succeeds; otherwise, false.</returns>
         public unsafe static bool Save)::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, long CellID)::");
+source->append(R"::((this IKeyValueStore storage, long CellID)::");
 for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
 {
 source->append(R"::(, )::");
@@ -2006,13 +2012,13 @@ source->append(R"::() == TrinityErrorCode.E_SUCCESS;
 source->append(Codegen::GetString(node->name));
 source->append(R"::( to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The parameter <paramref name="CellID"/> overrides the cell id in the content object.
         /// </summary>
-        /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// <param name="storage"/>A <see cref="Trinity.Storage.IKeyValueStore"/> instance.</param>
         /// <param name="CellID">A 64-bit cell Id.</param>
         /// <param name="CellContent">The content of the cell.</param>
         /// <returns>true if saving succeeds; otherwise, false.</returns>
         public unsafe static bool Save)::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, long CellID, )::");
+source->append(R"::((this IKeyValueStore storage, long CellID, )::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::( CellContent)
         {
@@ -2032,12 +2038,12 @@ source->append(R"::();
 source->append(Codegen::GetString(node->name));
 source->append(R"::( to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. Cell Id is specified by the CellID field in the content object.
         /// </summary>
-        /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// <param name="storage"/>A <see cref="Trinity.Storage.IKeyValueStore"/> instance.</param>
         /// <param name="CellContent">The content of the cell.</param>
         /// <returns>true if saving succeeds; otherwise, false.</returns>
         public unsafe static bool Save)::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, )::");
+source->append(R"::((this IKeyValueStore storage, )::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::( CellContent)
         {
@@ -2052,6 +2058,30 @@ source->append(R"::( )::");
 }
 source->append(R"::();
         }
+        /// <summary>
+        /// Loads the content of the specified cell. Any changes done to this object are not written to the store, unless
+        /// the content object is saved back into the storage.
+        /// <param name="storage"/>A <see cref="Trinity.Storage.IKeyValueStore"/> instance.</param>
+        /// </summary>
+        public unsafe static )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::( Load)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::((this IKeyValueStore storage, long CellID)
+        {
+            using (var cell = new )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor(CellID, CellAccessOptions.ThrowExceptionOnCellNotFound))
+            {
+                )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::( ret = cell;
+                ret.CellID = CellID;
+                return ret;
+            }
+        }
+        #endregion
+        #region LocalMemoryStorage
         /// <summary>
         /// Allocate a cell accessor on the specified cell, which inteprets
         /// the cell as a )::");
@@ -2104,27 +2134,6 @@ source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, long CellI
             return )::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::(_Accessor.New(CellID, CellAccessOptions.ThrowExceptionOnCellNotFound);
-        }
-        /// <summary>
-        /// Loads the content of the specified cell. Any changes done to this object are not written to the store, unless
-        /// the content object is saved back into the storage.
-        /// </summary>
-        public unsafe static )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::( Load)::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::((this Trinity.Storage.LocalMemoryStorage storage, long CellID)
-        {
-            using (var cell = new )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor(CellID, CellAccessOptions.ThrowExceptionOnCellNotFound))
-            {
-                )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::( ret = cell;
-                ret.CellID = CellID;
-                return ret;
-            }
         }
         #endregion
         #region LocalStorage logging
@@ -2221,128 +2230,7 @@ source->append(R"::( )::");
 source->append(R"::();
         }
         #endregion
-        #region CloudStorage
-        /// <summary>
-        /// Adds a new cell of type )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::( to the cloud storage if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The value of the cell is specified in the method parameters. 
-        /// </summary>
-        /// <param name="storage"/>A <see cref="Trinity.Storage.MemoryCloud"/> instance.</param>
-        /// <param name="CellID">A 64-bit cell Id.</param>
-        /// <returns>true if saving succeeds; otherwise, false.</returns>
-        public unsafe static bool Save)::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::((this Trinity.Storage.MemoryCloud storage, long CellID)::");
-for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
-{
-source->append(R"::(, )::");
-source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
-source->append(R"::( )::");
-source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::( = default()::");
-source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType));
-source->append(R"::())::");
-}
-source->append(R"::()
-        {
-            )::");
-
-{
-    ModuleContext module_ctx;
-    module_ctx.m_stack_depth = 0;
-module_ctx.m_arguments.push_back(Codegen::GetString("cell"));
-std::string* module_content = Modules::SerializeParametersToBuffer(node, &module_ctx);
-    source->append(*module_content);
-    delete module_content;
-}
-source->append(R"::(
-            return storage.SaveCell(CellID, tmpcell, (ushort)CellType.)::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::() == TrinityErrorCode.E_SUCCESS;
-        }
-        /// <summary>
-        /// Adds a new cell of type )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::( to the cloud storage if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The parameter <paramref name="CellID"/> overrides the cell id in the content object.
-        /// </summary>
-        /// <param name="storage"/>A <see cref="Trinity.Storage.MemoryCloud"/> instance.</param>
-        /// <param name="CellID">A 64-bit cell Id.</param>
-        /// <param name="CellContent">The content of the cell.</param>
-        /// <returns>true if saving succeeds; otherwise, false.</returns>
-        public unsafe static bool Save)::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::((this Trinity.Storage.MemoryCloud storage, long CellID, )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::( CellContent)
-        {
-            return Save)::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::((storage, CellID )::");
-for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
-{
-source->append(R"::( , CellContent.)::");
-source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::( )::");
-}
-source->append(R"::();
-        }
-        /// <summary>
-        /// Adds a new cell of type )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::( to the cloud storage if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. Cell Id is specified by the CellID field in the content object.
-        /// </summary>
-        /// <param name="storage"/>A <see cref="Trinity.Storage.MemoryCloud"/> instance.</param>
-        /// <param name="CellContent">The content of the cell.</param>
-        /// <returns>true if saving succeeds; otherwise, false.</returns>
-        public unsafe static bool Save)::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::((this Trinity.Storage.MemoryCloud storage, )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::( CellContent)
-        {
-            return Save)::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::((storage, CellContent.CellID )::");
-for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
-{
-source->append(R"::( , CellContent.)::");
-source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::( )::");
-}
-source->append(R"::();
-        }
-        /// <summary>
-        /// Loads the content of the specified cell. Any changes done to this object are not written to the store, unless
-        /// the content object is saved back into the storage.
-        /// </summary>
-        public unsafe static )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::( Load)::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::((this Trinity.Storage.MemoryCloud storage, long CellID)
-        {
-            byte[] cellBuff;
-            var eResult = storage.LoadCell(CellID, out cellBuff);
-            if (eResult == TrinityErrorCode.E_CELL_NOT_FOUND)
-            { throw new CellNotFoundException("Cell with ID=" + CellID + " not found!"); }
-            else if (eResult == TrinityErrorCode.E_NETWORK_SEND_FAILURE)
-            { throw new IOException("Network error when loading cell with ID=" + CellID); }
-            fixed (byte* ptr = cellBuff)
-            {
-                using (var cell = new )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor(ptr))
-                {
-                    )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::( ret = cell;
-                    ret.CellID = CellID;
-                    return ret;
-                }
-            }
-        }
     }
-    #endregion
 }
 )::");
 

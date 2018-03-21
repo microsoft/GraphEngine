@@ -18,6 +18,8 @@ namespace Trinity.Storage
     {
         /// <summary>
         /// Get the pointer to the underlying buffer.
+        /// Note, the pointer always point to the beginning of the buffer,
+        /// and there may be metadata instead of actual data.
         /// </summary>
         unsafe byte* GetUnderlyingBufferPointer();
 

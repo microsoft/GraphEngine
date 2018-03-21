@@ -451,6 +451,8 @@ namespace Trinity
                 return "SynReqRsp";
             if (protocol->is_asyn_req_protocol())
                 return "AsynReq";
+            if (protocol->is_asyn_req_rsp_protocol())
+                return "AsynReqRsp";
             error(protocol, "get_comm_protocol_type_string");
             return "";
         }
@@ -464,6 +466,8 @@ namespace Trinity
                 return "TrinityMessageType.SYNC_WITH_RSP";
             if (protocol->is_asyn_req_protocol())
                 return "TrinityMessageType.ASYNC";
+            if (protocol->is_asyn_req_rsp_protocol())
+                return "TrinityMessageType.ASYNC_WITH_RSP";
             error(protocol, "get_comm_protocol_type_string");
             return "";
         }

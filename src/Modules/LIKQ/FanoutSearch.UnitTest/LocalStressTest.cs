@@ -2,7 +2,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,17 +11,15 @@ using Trinity;
 using FanoutSearch.Test.TSL;
 using FanoutSearch.Standard;
 using System.Threading;
+using Xunit;
 
 namespace FanoutSearch.UnitTest
 {
-    [TestClass]
-    public class LocalStressTest
+    [Collection("stress")]
+    public class LocalStressTest : IClassFixture<TrinityServerFixture>
     {
-        [ClassInitialize]
-        public static void Initialize(TestContext ctx)
+        public LocalStressTest()
         {
-            Initializer.Initialize();
-
             //Load some data
             Global.LocalStorage.SaveMyCell(0, new List<long> { 1, 2, 3, 4, 5, 6, 7, 8, 9 }, f2: new List<float> { 1, 2, 3, 4, 5, 6, 7, 8 });
             Global.LocalStorage.SaveMyCell(1, new List<long> { 1, 2, 3, 4, 5, 6, 7, 8, 9 }, f2: new List<float> { 1, 2, 3, 4, 5, 6, 7, 8 });
@@ -41,12 +38,6 @@ namespace FanoutSearch.UnitTest
             // Set timeout, and disable cache
             FanoutSearchModule.SetCacheEnabled(false);
             FanoutSearchModule.SetQueryTimeout(800);
-        }
-
-        [ClassCleanup]
-        public static void Uninitialize()
-        {
-            Initializer.Uninitialize();
         }
 
         private static void _stress_test_impl(int client_count, int round)
@@ -68,31 +59,31 @@ namespace FanoutSearch.UnitTest
             threads.ForEach(_ => _.Join());
         }
 
-        [TestMethod]
+        [Fact]
         public void StressTest_1()
         {
             _stress_test_impl(50, 10);
         }
 
-        [TestMethod]
+        [Fact]
         public void StressTest_2()
         {
             _stress_test_impl(100, 10);
         }
 
-        [TestMethod]
+        [Fact]
         public void StressTest_3()
         {
             _stress_test_impl(200, 20);
         }
 
-        [TestMethod]
+        [Fact]
         public void StressTest_4()
         {
             _stress_test_impl(500, 20);
         }
 
-        [TestMethod]
+        [Fact]
         public void StressTest_5()
         {
             _stress_test_impl(500, 80);

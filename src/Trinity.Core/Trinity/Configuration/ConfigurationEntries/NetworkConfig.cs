@@ -23,17 +23,20 @@ namespace Trinity.Configuration
             Handshake = true;
         }
 
+        /// <summary>
+        /// Gets the configuration entry singleton instance.
+        /// </summary>
         [ConfigInstance]
-        internal static NetworkConfig Instance { get { return s_NetworkConfig; } }
+        public static NetworkConfig Instance { get { return s_NetworkConfig; } }
         [ConfigEntryName]
-        internal static string ConfigEntry { get { return ConfigurationConstants.Tags.NETWORK; } }
+        internal static string ConfigEntry { get { return ConfigurationConstants.Tags.NETWORK.LocalName; } }
         #endregion
 
         #region Fields
-        private const int c_DefaultHttpPort = ConfigurationConstants.DefaultValue.DEFAULT_HTTP_PORT;
-        private const int c_DefaultClientMaxConn = ConfigurationConstants.DefaultValue.DEFAULT_CLIENT_MAX_CONN;
-        private const int c_DefaultClientSendRetry = ConfigurationConstants.DefaultValue.DEFAULT_CLIENT_SEND_RETRY;
-        private const int c_DefaultClientReconnectRetry = ConfigurationConstants.DefaultValue.DEFAULT_CLIENT_RECONNECT_RETRY;
+        private const int c_DefaultHttpPort = ConfigurationConstants.Values.DEFAULT_HTTP_PORT;
+        private const int c_DefaultClientMaxConn = ConfigurationConstants.Values.DEFAULT_CLIENT_MAX_CONN;
+        private const int c_DefaultClientSendRetry = ConfigurationConstants.Values.DEFAULT_CLIENT_SEND_RETRY;
+        private const int c_DefaultClientReconnectRetry = ConfigurationConstants.Values.DEFAULT_CLIENT_RECONNECT_RETRY;
         #endregion
 
         #region Properties

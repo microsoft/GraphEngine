@@ -18,6 +18,7 @@ using Trinity.Network;
 using Trinity.Storage;
 using System.Runtime.Serialization;
 using Trinity.Network.Messaging;
+using FanoutSearch.Protocols.TSL.FanoutSearch;
 
 namespace FanoutSearch
 {
@@ -95,7 +96,7 @@ namespace FanoutSearch
             int eresult = FanoutSearchErrorCode.OK;
 
             //obtain a transaction id atomically
-            using (var _transaction = GetTransactionId(c_master_server_id))
+            using (var _transaction = Global.CloudStorage[c_master_server_id].GetTransactionId())
             {
                 my_transaction = _transaction.transaction_id;
             }
@@ -114,14 +115,21 @@ namespace FanoutSearch
             if (aggregation_obj != null) { rpaths = _PullSelectionsAndAssembleResults(my_transaction, request, aggregation_obj); }
             else { rpaths = new List<ResultPathDescriptor>(); }
 
-            response.transaction_id = (aggregation_obj != null) ? my_transaction : eresult;
-            response.paths = rpaths;
+            try
+            {
+                response.transaction_id = (aggregation_obj != null) ? my_transaction : eresult;
+                response.paths = rpaths;
 
-            if (aggregation_obj != null && s_cache_enabled && !aggregation_obj.timed_out) { m_cache.RegisterQueryResult(my_transaction, request, aggregation_obj); }
+                if (aggregation_obj != null && s_cache_enabled && !aggregation_obj.timed_out) { m_cache.RegisterQueryResult(my_transaction, request, aggregation_obj); }
 
-            response.metadata_keys.Add("results_pulled_from_cache");
-            response.metadata_values.Add(cached.ToString());
-            s_metadataUpdateFunc(request, response);
+                response.metadata_keys.Add("results_pulled_from_cache");
+                response.metadata_values.Add(cached.ToString());
+                s_metadataUpdateFunc(request, response);
+            }
+            catch (AccessorResizeException)
+            {
+                throw new MessageTooLongException();
+            }
 
             query_timer.Stop();
             Log.WriteLine("Transaction #{0} finished. Time = {1}ms.", my_transaction, query_timer.ElapsedMilliseconds);
@@ -235,7 +243,7 @@ namespace FanoutSearch
 
             // send the first(seed) search messages out.
             var grouped_origin_path_descs = from pd in origin_path_descriptors
-                                            group pd by Global.CloudStorage.GetServerIdByCellId(pd.hop_0);
+                                            group pd by Global.CloudStorage.GetPartitionIdByCellId(pd.hop_0);
             var seed_message_cnt = grouped_origin_path_descs.Count();
             var wait_count_per_seed = GetWaitCount(request.maxHop);
 
@@ -371,64 +379,86 @@ namespace FanoutSearch
                 GetNodesInfoRequestWriter[,] node_info_writers = new GetNodesInfoRequestWriter[hop_count, Global.ServerCount];
                 GetNodesInfoResponse[,] node_info_readers = new GetNodesInfoResponse[hop_count, Global.ServerCount];
                 int[,] reader_idx = new int[hop_count, Global.ServerCount];
-                Func<long, int> hash_func = Global.CloudStorage.GetServerIdByCellId;
+                Func<long, int> hash_func = Global.CloudStorage.GetPartitionIdByCellId;
 
-                Parallel.For(0, hop_count, i =>
+                try
                 {
-                    if (has_return_selections[i])
+                    Parallel.For(0, hop_count, (i, state) =>
                     {
-                        //  create msg
-                        for (int j = 0; j < Global.ServerCount; ++j)
+                        if (has_return_selections[i])
                         {
-                            node_info_writers[i, j] = new GetNodesInfoRequestWriter(fields: return_selections[i]);
-                            if (has_outlink_selections[i])
+                            //  create msg
+                            for (int j = 0; j < Global.ServerCount; ++j)
                             {
-                                node_info_writers[i, j].secondary_ids = new List<long>();
-                            }
-                        }
-
-                        //  populate msg
-                        foreach (var rpath in rpaths)
-                        {
-                            if (i < rpath.nodes.Count)
-                            {
-                                var id = rpath.nodes[i].id;
-                                node_info_writers[i, hash_func(id)].ids.Add(id);
+                                node_info_writers[i, j] = new GetNodesInfoRequestWriter(fields: return_selections[i]);
                                 if (has_outlink_selections[i])
                                 {
-                                    long edge_dest_id = (i < rpath.nodes.Count - 1) ? rpath.nodes[i + 1].id : -1;
-                                    node_info_writers[i, hash_func(id)].secondary_ids.Add(edge_dest_id);
+                                    node_info_writers[i, j].secondary_ids = new List<long>();
+                                }
+                            }
+
+                            try
+                            {
+                                //  populate msg
+                                foreach (var rpath in rpaths)
+                                {
+                                    if (i < rpath.nodes.Count)
+                                    {
+                                        var id = rpath.nodes[i].id;
+                                        node_info_writers[i, hash_func(id)].ids.Add(id);
+                                        if (has_outlink_selections[i])
+                                        {
+                                            long edge_dest_id = (i < rpath.nodes.Count - 1) ? rpath.nodes[i + 1].id : -1;
+                                            node_info_writers[i, hash_func(id)].secondary_ids.Add(edge_dest_id);
+                                        }
+                                    }
+                                }
+
+                                //  dispatch msg
+                                Parallel.For(0, Global.ServerCount, j =>
+                                    {
+                                        var reader = _GetNodesInfo_impl(j, node_info_writers[i, j]);
+                                        node_info_readers[i, j] = reader;
+                                        reader.Dispose();
+                                    });
+
+                                //  consume msg
+                                foreach (var rpath in rpaths)
+                                {
+                                    if (i < rpath.nodes.Count)
+                                    {
+                                        var id = rpath.nodes[i].id;
+                                        var j = hash_func(id);
+                                        var idx = reader_idx[i, j]++;
+
+                                        rpath.nodes[i].field_selections.AddRange(node_info_readers[i, j].infoList[idx].values);
+                                    }
+                                }
+
+                            }
+                            catch (AggregateException ex) when (ex.InnerExceptions.Any(_ => _ is AccessorResizeException || _ is MessageTooLongException))
+                            {
+                                throw new MessageTooLongException();
+                            }
+                            catch (AccessorResizeException)
+                            {
+                                throw new MessageTooLongException();
+                            }
+                            finally
+                            {
+                                //  destruct msg
+                                for (int j = 0; j < Global.ServerCount; ++j)
+                                {
+                                    node_info_writers[i, j].Dispose();
                                 }
                             }
                         }
-
-                        //  dispatch msg
-                        Parallel.For(0, Global.ServerCount, j =>
-                        {
-                            var reader = _GetNodesInfo_impl(j, node_info_writers[i, j]);
-                            node_info_readers[i, j] = reader;
-                            reader.Dispose();
-                        });
-
-                        //  consume msg
-                        foreach (var rpath in rpaths)
-                        {
-                            if (i < rpath.nodes.Count)
-                            {
-                                var id = rpath.nodes[i].id;
-                                var j = hash_func(id);
-                                var idx = reader_idx[i, j]++;
-                                rpath.nodes[i].field_selections.AddRange(node_info_readers[i, j].infoList[idx].values);
-                            }
-                        }
-
-                        //  destruct msg
-                        for (int j = 0; j < Global.ServerCount; ++j)
-                        {
-                            node_info_writers[i, j].Dispose();
-                        }
-                    }
-                });
+                    });
+                }
+                catch (AggregateException ex) when (ex.InnerExceptions.Any(_ => _ is MessageTooLongException || _ is AccessorResizeException))
+                {
+                    throw new MessageTooLongException();
+                }
 
                 pull_selection_timer.Stop();
                 Log.WriteLine("Transaction #{0}: pulling selections complete. Time = {1}ms.", transaction_id, pull_selection_timer.ElapsedMilliseconds);
@@ -438,8 +468,7 @@ namespace FanoutSearch
 
         internal unsafe void FanoutSearch_impl_Send(int moduleId, byte* bufferPtr, int length)
         {
-            this.SendMessage(
-                moduleId,
+            this.m_memorycloud[moduleId].SendMessage(
                 bufferPtr,
                 length);
         }
@@ -473,14 +502,16 @@ namespace FanoutSearch
             long* request_paths_ptr = (long*)(request_buffer + 2 * sizeof(int));
             int single_path_len = current_hop + 1;
 
+            bool msg_too_big = false;
+
             AggregationObject aggregation_obj;
 
             //Console.WriteLine("hop: {0}", current_hop);
             //Console.WriteLine("tx: {0}", request_transaction_id);
 
-            if (!m_aggregationObjects.TryGetValue(request_transaction_id, out aggregation_obj)
+            if (!this.m_aggregationObjects.TryGetValue(request_transaction_id, out aggregation_obj)
                 ||
-                (_QueryTimeoutEnabled() && aggregation_obj.stopwatch.ElapsedMilliseconds > s_query_time_quota))
+                _CheckTimeout(aggregation_obj))
             { /* Timeout. */ return; }
 
             var predicate = current_hop == 0 ?
@@ -491,7 +522,7 @@ namespace FanoutSearch
             {
                 System.Collections.Concurrent.ConcurrentBag<int> result_indices = new System.Collections.Concurrent.ConcurrentBag<int>();
 
-                Parallel.For(0, request_path_cnt, i =>
+                Parallel.For(0, request_path_cnt, (i, state) =>
                 {
                     long cell_id = request_paths_ptr[i * single_path_len + current_hop];
                     try
@@ -505,6 +536,11 @@ namespace FanoutSearch
                         }
                     }
                     catch { }
+
+                    if (0 == (i & 0xFF) && _CheckTimeout(aggregation_obj))
+                    {
+                        state.Break();
+                    }
                 });
 
                 var results = result_indices.Select(i => GetPathDescriptor(&request_paths_ptr[i * single_path_len], current_hop)).ToList();
@@ -518,8 +554,6 @@ namespace FanoutSearch
 
             if (negate_edge_types.Count == 0)
                 negate_edge_types = null;
-
-            int enumerated_path_cnt = 0;
 
             using (var dispatcher = new MessageDispatcher(current_hop + 1, request_transaction_id))
             {
@@ -553,16 +587,25 @@ namespace FanoutSearch
                             }
                         }
                     }
+                    catch (MessageTooLongException) { msg_too_big = true; }
                     catch { }
 
-                    if (0 == (enumerated_path_cnt & 0xFF) && _QueryTimeoutEnabled() && aggregation_obj.stopwatch.ElapsedMilliseconds > s_query_time_quota)
+                    if (msg_too_big)
                     {
                         loopstate.Break();
                         return;
                     }
 
-                    ++enumerated_path_cnt;
+                    if (0 == (i & 0xFF) && _CheckTimeout(aggregation_obj))
+                    {
+                        loopstate.Break();
+                        return;
+                    }
+
                 });//END Parallel.For
+
+                if (msg_too_big) throw new MessageTooLongException();
+
                 if (intermediate_result_paths.IsValueCreated)
                 {
                     using (var intermediate_results = new FanoutAggregationMessageWriter(intermediate_result_paths.Value, request_transaction_id))
@@ -570,7 +613,15 @@ namespace FanoutSearch
                         IntermediateResult(aggregation_obj.aggregationServer, intermediate_results);
                     }
                 }
+
+                dispatcher.Dispatch();
             }
+        }
+
+        private static unsafe bool _CheckTimeout(AggregationObject aggregation_obj)
+        {
+            if (_QueryTimeoutEnabled() && aggregation_obj.stopwatch.ElapsedMilliseconds > s_query_time_quota) aggregation_obj.timed_out = true;
+            return aggregation_obj.timed_out;
         }
 
         /// <summary>
@@ -580,7 +631,7 @@ namespace FanoutSearch
         {
             aggregation_obj.CommitAggregationResults(results);
 
-            if (aggregation_obj.aggregationServer == Global.MyServerId)
+            if (aggregation_obj.aggregationServer == Global.MyServerID)
             {
                 aggregation_obj.ReleaseLocalSignal(1);
             }
@@ -594,7 +645,7 @@ namespace FanoutSearch
                         {
                             AggregateResult(aggregation_obj.aggregationServer, result_msg);
                         }
-                        Console.WriteLine("Sending {0} packed messages", aggregation_obj.remote_packedMessageCount);
+                        Log.WriteLine(LogLevel.Debug, "Sending {0} packed messages", aggregation_obj.remote_packedMessageCount);
                         aggregation_obj.results.Clear();
                         aggregation_obj.remote_packedMessageCount = 0;
                     }

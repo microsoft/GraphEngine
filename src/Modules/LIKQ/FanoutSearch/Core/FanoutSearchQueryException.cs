@@ -13,5 +13,6 @@ namespace FanoutSearch
     public class FanoutSearchQueryException : Exception
     {
         public FanoutSearchQueryException(string message) : base(message) { }
+        public FanoutSearchQueryException(string message, Exception inner) : base(message, inner) { }
     }
 }

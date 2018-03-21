@@ -19,7 +19,7 @@ using Trinity.Core.Lib;
 
 namespace Trinity.Storage
 {
-    internal unsafe partial class RemoteStorage : Storage, IDisposable
+    public unsafe partial class RemoteStorage : IStorage, IDisposable
     {
         /// <summary>
         /// Checks for possible errors that occur during message passing, 
@@ -36,6 +36,8 @@ namespace Trinity.Storage
                 case TrinityErrorCode.E_NETWORK_SEND_FAILURE:
                 case TrinityErrorCode.E_NETWORK_RECV_FAILURE:
                     throw new IOException("Network errors occur.");
+                case TrinityErrorCode.E_MSG_OVERFLOW:
+                    throw new MessageTooLongException("Response message too long.");
             }
         }
 
@@ -51,92 +53,43 @@ namespace Trinity.Storage
                 SynClient sc = GetClient();
                 err = func(sc);
                 PutBackClient(sc);
-                if (err == TrinityErrorCode.E_SUCCESS || err == TrinityErrorCode.E_RPC_EXCEPTION)
-                    break;
+                _error_check(err);
+                if (err == TrinityErrorCode.E_SUCCESS) break;
             }
-            _error_check(err);
         }
 
-        internal override void SendMessage(TrinityMessage msg)
-        {
-            SendMessage(msg.Buffer, msg.Size);
-        }
-
-
-        internal override void SendMessage(TrinityMessage msg, out TrinityResponse response)
-        {
-            SendMessage(msg.Buffer, msg.Size, out response);
-        }
-
-        internal override void SendMessage(byte* message, int size)
+        /// <inheritdoc/>
+        public void SendMessage(byte* message, int size)
         {
             _use_synclient(sc => sc.SendMessage(message, size));
         }
 
-        internal override void SendMessage(byte* message, int size, out TrinityResponse response)
+        /// <inheritdoc/>
+        public void SendMessage(byte* message, int size, out TrinityResponse response)
         {
             TrinityResponse _rsp = null;
             _use_synclient(sc => sc.SendMessage(message, size, out _rsp));
             response = _rsp;
         }
 
-        internal void GetCommunicationSchema(out string name, out string signature)
+        /// <inheritdoc/>
+        public void SendMessage(byte** message, int* sizes, int count)
         {
-            /******************
-             * Comm. protocol:
-             *  - REQUEST : VOID
-             *  - RESPONSE: [char_cnt, char[] name, char_cnt, char[] sig]
-             ******************/
-            using (TrinityMessage tm = new TrinityMessage(
-                TrinityMessageType.PRESERVED_SYNC_WITH_RSP,
-                (ushort)RequestType.GetCommunicationSchema,
-                size: 0))
-            {
-                TrinityResponse response;
-                this.SendMessage(tm, out response);
-                SmartPointer sp     = SmartPointer.New(response.Buffer + response.Offset);
-                int name_string_len = *sp.ip++;
-                name                = BitHelper.GetString(sp.bp, name_string_len * 2);
-                sp.cp              += name_string_len;
-                int sig_string_len  = *sp.ip++;
-                signature           = BitHelper.GetString(sp.bp, sig_string_len * 2);
-
-                response.Dispose();
-            }
+            _use_synclient(sc => sc.SendMessage(message, sizes, count));
         }
 
-        internal bool GetCommunicationModuleOffset(string moduleName, out ushort synReqOffset, out ushort synReqRspOffset, out ushort asynReqOffset)
+        /// <inheritdoc/>
+        public void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
         {
-            /******************
-             * Comm. protocol:
-             *  - REQUEST : [char_cnt, char[] moduleName]
-             *  - RESPONSE: [int synReqOffset, int synReqRspOffset, int asynReqOffset]
-             * An response error code other than E_SUCCESS indicates failure of remote module lookup.
-             ******************/
+            TrinityResponse _rsp = null;
+            _use_synclient(sc => sc.SendMessage(message, sizes, count, out _rsp));
+            response = _rsp;
+        }
 
-            using (TrinityMessage tm = new TrinityMessage(
-                TrinityMessageType.PRESERVED_SYNC_WITH_RSP,
-                (ushort)RequestType.GetCommunicationModuleOffsets,
-                size: sizeof(int) + sizeof(char) * moduleName.Length))
-            {
-                SmartPointer sp = SmartPointer.New(tm.Buffer + TrinityMessage.Offset);
-                *sp.ip++        = moduleName.Length;
-
-                BitHelper.WriteString(moduleName, sp.bp);
-                TrinityResponse response;
-                this.SendMessage(tm, out response);
-
-                sp.bp             = response.Buffer + response.Offset;
-                int synReq_msg    = *sp.ip++;
-                int synReqRsp_msg = *sp.ip++;
-                int asynReq_msg   = *sp.ip++;
-
-                synReqOffset      = (ushort)synReq_msg;
-                synReqRspOffset   = (ushort)synReqRsp_msg;
-                asynReqOffset     = (ushort)asynReq_msg;
-
-                return (response.ErrorCode == TrinityErrorCode.E_SUCCESS);
-            }
+        /// <inheritdoc />
+        public virtual T GetCommunicationModule<T>() where T : CommunicationModule
+        {
+            return this.m_memorycloud?.GetCommunicationModule<T>();
         }
     }
 }

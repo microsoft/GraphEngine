@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
+    <PackageReference Include="GraphEngine.FFI.Python" Version="1.0.9083" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.FFI.Python\Trinity.FFI.Python.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TslCodegen Include="my_types.tsl" />
+  </ItemGroup>
+
+</Project>

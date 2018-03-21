@@ -156,5 +156,10 @@ namespace FanoutSearch
             Console.WriteLine(node.ToString());
             return base.VisitExtension(node);
         }
+
+        internal static void RegisterQueryWhitelistType(Type t)
+        {
+            s_WhitelistTypes.Add(t);
+        }
     }
 }

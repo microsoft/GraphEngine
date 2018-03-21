@@ -144,7 +144,15 @@ namespace Trinity.Storage
     /// <summary>
     /// Exposes a group of generic methods to manipulate a cell via its accessor. All cell accessors generated from TSL implements <c>ICellAccessor</c>.
     /// </summary>
-    public interface ICellAccessor : IAccessor, ICell, IDisposable { }
+    public interface ICellAccessor : IAccessor, ICell, IDisposable
+    {
+        /// <summary>
+        /// Converts the serialized buffer representation in the accessor,
+        /// to a deserialized runtime object, backed by the cell type class.
+        /// </summary>
+        /// <returns></returns>
+        ICell Deserialize();
+    }
 
     /// <summary>
     /// Provides the type information for the data types.

@@ -11,7 +11,7 @@ namespace FanoutSearch
     {
         [ThreadStatic]
         private static IExpressionSerializer s_serializer;
-        private static Func<IExpressionSerializer> s_serializer_factory;
+        private static Func<IExpressionSerializer> s_serializer_factory = () => new JsonExpressionSerializer();
 
         private static void EnsureSerializer()
         {

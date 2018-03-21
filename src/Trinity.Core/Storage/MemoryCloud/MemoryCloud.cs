@@ -1,128 +1,264 @@
-// Graph Engine
-// Copyright (c) Microsoft. All rights reserved.
-// Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
-//
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-
-using Trinity;
-using Trinity.Network.Messaging;
 using Trinity.Diagnostics;
-using System.Runtime.CompilerServices;
 using Trinity.Network;
-using Trinity.Utilities;
+using Trinity.Network.Messaging;
 
 namespace Trinity.Storage
 {
     /// <summary>
     /// Provides methods for interacting with the distributed memory store.
     /// </summary>
-    public unsafe partial class MemoryCloud
+    public unsafe abstract partial class MemoryCloud : IKeyValueStore, IEnumerable<IMessagePassingEndpoint>, ICommunicationModuleRegistry, IDisposable
     {
-        internal Storage[] StorageTable;
-
-        private ClusterConfig cluster_config;
-        private int server_count = -1;
-        private int my_server_id = -1;
-        private int my_proxy_id = -1;
-
-        internal MemoryCloud(ClusterConfig config)
-        {
-            this.cluster_config = config;
-            server_count = cluster_config.Servers.Count;
-            my_server_id = cluster_config.MyServerId;
-            my_proxy_id = cluster_config.MyProxyId;
-        }
-
-        public bool Open(bool nonblocking)
-        {
-            bool server_found = false;
-            StorageTable = new Storage[server_count];
-
-            if (server_count == 0)
-                goto server_not_found;
-
-            for (int i = 0; i < server_count; i++)
-            {
-                if (cluster_config.RunningMode == RunningMode.Server &&
-                    (cluster_config.Servers[i].Has(Global.MyIPAddresses, Global.MyIPEndPoint.Port) || cluster_config.Servers[i].HasLoopBackEndpoint(Global.MyIPEndPoint.Port))
-                    )
-                {
-                    StorageTable[i] = Global.LocalStorage;
-                    server_found = true;
-                }
-                else
-                {
-                    StorageTable[i] = new RemoteStorage(cluster_config.Servers[i], TrinityConfig.ClientMaxConn, this, i, nonblocking);
-                }
-            }
-
-            if (cluster_config.RunningMode == RunningMode.Server && !server_found)
-            {
-                goto server_not_found;
-            }
-
-            StaticGetServerIdByCellId = this.GetServerIdByCellIdDefault;
-
-            if (!nonblocking) { CheckServerProtocolSignatures(); } // TODO should also check in nonblocking setup when any remote storage is connected
-            // else this.ServerConnected += (_, __) => {};
-
-            return true;
-
-        server_not_found:
-            if (cluster_config.RunningMode == RunningMode.Server || cluster_config.RunningMode == RunningMode.Client)
-                Log.WriteLine(LogLevel.Warning, "Incorrect server configuration. Message passing via CloudStorage not possible.");
-            else if (cluster_config.RunningMode == RunningMode.Proxy)
-                Log.WriteLine(LogLevel.Warning, "No servers are found. Message passing to servers via CloudStorage not possible.");
-        return false;
-        }
+        #region Abstract interfaces
+        public abstract bool Open(ClusterConfig config, bool nonblocking);
+        /// <summary>
+        /// Represents a unique identifier of this communication instance, within a memory cloud.
+        /// </summary>
+        public abstract int MyInstanceId { get; }
 
         /// <summary>
         /// Gets the ID of current server instance in the cluster.
         /// </summary>
-        public int MyServerId
-        {
-            get
-            {
-                return my_server_id;
-            }
-        }
-
+        public abstract int MyPartitionId { get; }
         /// <summary>
         /// Gets the ID of current proxy instance in the cluster.
         /// </summary>
-        public int MyProxyId
+        public abstract int MyProxyId { get; }
+        public abstract IEnumerable<Chunk> MyChunks { get; }
+        /// <summary>
+        /// The number of servers in the cluster.
+        /// </summary>
+        public abstract int PartitionCount { get; }
+        public abstract bool IsLocalCell(long cellId);
+        public abstract bool LoadStorage();
+        public abstract bool SaveStorage();
+        public abstract bool ResetStorage();
+        /// <summary>
+        /// Gets the number of proxies in the cluster.
+        /// </summary>
+        public abstract int ProxyCount { get; }
+        public abstract IList<RemoteStorage> ProxyList { get; }
+        /// <summary>
+        /// Represents the partitions in the memory cloud.
+        /// </summary>
+        protected internal abstract IList<IStorage> StorageTable { get; }
+        #endregion
+        #region KVStore
+        /// <summary>
+        /// Loads the type and the content of the cell with the specified cell Id.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="cellBuff">The bytes of the cell. An empty byte array is returned if the cell is not found.</param>
+        /// <param name="cellType">The type of the cell, represented with a 16-bit unsigned integer.</param>
+        /// <returns>A Trinity error code. Possible values are E_SUCCESS and E_NOT_FOUND.</returns>
+        public TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff, out ushort cellType)
         {
-            get
-            {
-                return my_proxy_id;
-            }
+            return GetStorageByCellId(cellId).LoadCell(cellId, out cellBuff, out cellType);
+        }
+        
+        /// <summary>
+        /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="buff">A memory buffer that contains the cell content.</param>
+        /// <param name="size">The size of the cell.</param>
+        /// <param name="cellType">The type of the cell, represented with a 16-bit unsigned integer.</param>
+        /// <returns>true if saving succeeds; otherwise, false.</returns>
+        public unsafe TrinityErrorCode SaveCell(long cellId, byte* buff, int size, ushort cellType)
+        {
+            return GetStorageByCellId(cellId).SaveCell(cellId, buff, size, cellType);
         }
 
-        private void CheckServerProtocolSignatures()
+        /// <summary>
+        /// Adds a new cell to the Trinity key-value store.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="buff">A memory buffer that contains the cell content.</param>
+        /// <param name="size">The size of the cell.</param>
+        /// <param name="cellType">The type of the cell, represented with a 16-bit unsigned integer.</param>
+        /// <returns>true if adding succeeds; otherwise, false.</returns>
+        public unsafe TrinityErrorCode AddCell(long cellId, byte* buff, int size, ushort cellType)
         {
-            Log.WriteLine("Checking {0}-Server protocol signatures...", cluster_config.RunningMode);
-            int my_server_id = (cluster_config.RunningMode == RunningMode.Server) ? MyServerId : -1;
-            var storage = StorageTable.Where((_, idx) => idx != my_server_id).FirstOrDefault() as RemoteStorage;
-
-            CheckProtocolSignatures_impl(storage, cluster_config.RunningMode, RunningMode.Server);
+            return GetStorageByCellId(cellId).AddCell(cellId, buff, size, cellType);
         }
 
-        private void CheckProxySignatures(IEnumerable<RemoteStorage> proxy_list)
+        /// <summary>
+        /// Removes the cell with the specified cell Id from the key-value store.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <returns>true if removing succeeds; otherwise, false.</returns>
+        public TrinityErrorCode RemoveCell(long cellId)
         {
-            Log.WriteLine("Checking {0}-Proxy protocol signatures...", cluster_config.RunningMode);
-            int my_proxy_id = (cluster_config.RunningMode == RunningMode.Proxy) ? MyProxyId : -1;
-            var storage = proxy_list.Where((_, idx) => idx != my_proxy_id).FirstOrDefault();
-
-            CheckProtocolSignatures_impl(storage, cluster_config.RunningMode, RunningMode.Proxy);
+            return GetStorageByCellId(cellId).RemoveCell(cellId);
+        }
+        
+        /// <summary>
+        /// Gets the type of the cell with specified cell Id.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="cellType">The type of the cell specified by cellId.</param>
+        /// <returns>A Trinity error code. Possible values are E_SUCCESS and E_NOT_FOUND.</returns>
+        public unsafe TrinityErrorCode GetCellType(long cellId, out ushort cellType)
+        {
+            return GetStorageByCellId(cellId).GetCellType(cellId, out cellType);
         }
 
-        private unsafe void CheckProtocolSignatures_impl(RemoteStorage storage, RunningMode from, RunningMode to)
+        /// <summary>
+        /// Determines whether there is a cell with the specified cell Id in Trinity key-value store.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <returns>true if a cell whose Id is cellId is found; otherwise, false.</returns>
+        public unsafe bool Contains(long cellId)
+        {
+            return GetStorageByCellId(cellId).Contains(cellId);
+        }
+
+        /// <summary>
+        /// Updates an existing cell in the Trinity key-value store.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="buff">A memory buffer that contains the cell content.</param>
+        /// <param name="size">The size of the cell.</param>
+        /// <returns>true if updating succeeds; otherwise, false.</returns>
+        public unsafe TrinityErrorCode UpdateCell(long cellId, byte* buff, int size)
+        {
+            return GetStorageByCellId(cellId).UpdateCell(cellId, buff, size);
+        }
+        #endregion
+        #region Base implementation
+        private Action<MemoryCloud, ICell> m_SaveGenericCell_ICell;
+        private Func<MemoryCloud, long, ICell> m_LoadGenericCell_long;
+        private Func<string, ICell> m_NewGenericCell_string;
+        private Func<long, string, ICell> m_NewGenericCell_long_string;
+        private Func<string, string, ICell> m_NewGenericCell_string_string;
+
+        /// <summary>
+        /// Gets the message passing endpoint bound to a partition.
+        /// </summary>
+        /// <param name="partitionId">The id of the target partition.</param>
+        /// <returns></returns>
+        public IMessagePassingEndpoint this[int partitionId] => StorageTable[partitionId];
+        /// <inheritdoc/>
+        public IEnumerator<IMessagePassingEndpoint> GetEnumerator()
+        {
+            return StorageTable.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        /// <summary>
+        /// An event that is triggered when a server is connected.
+        /// </summary>
+        public event ServerStatusEventHandler ServerConnected = delegate { };
+
+        /// <summary>
+        /// An event that is triggered when a server is disconnected.
+        /// </summary>
+        public event ServerStatusEventHandler ServerDisconnected = delegate { };
+
+        /// <summary>
+        /// Invokes a ServerConnected event.
+        /// </summary>
+        /// <param name="e">A event that indicates the server status is changed.</param>
+        protected virtual void OnConnected(RemoteStorageEventArgs e)
+        {
+            ServerConnected(this, e);
+        }
+
+        /// <summary>
+        /// Invoked a ServerDisconnected event.
+        /// </summary>
+        /// <param name="e">A event that indicates the server status is changed.</param>
+        protected virtual void OnDisconnected(RemoteStorageEventArgs e)
+        {
+            ServerDisconnected(this, e);
+        }
+
+        internal void ReportServerConnectedEvent(RemoteStorage rs)
+        {
+            RemoteStorageEventArgs e = new RemoteStorageEventArgs(rs);
+            OnConnected(e);
+        }
+
+        internal void ReportServerDisconnectedEvent(RemoteStorage rs)
+        {
+            RemoteStorageEventArgs e = new RemoteStorageEventArgs(rs);
+            OnDisconnected(e);
+        }
+
+        /// <summary>
+        /// Loads the content of the cell with the specified cell Id.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <returns>An generic cell instance that implements <see cref="Trinity.Storage.ICell"/> interfaces.</returns>
+        public ICell LoadGenericCell(long cellId)
+        {
+            return m_LoadGenericCell_long(this, cellId);
+        }
+
+        /// <summary>
+        /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
+        /// Note that the generic cell will be saved as a strongly typed cell. It can then be loaded into either a strongly-typed cell or a generic cell.
+        /// </summary>
+        /// <param name="cell">The cell to be saved.</param>
+        public void SaveGenericCell(ICell cell)
+        {
+            m_SaveGenericCell_ICell(this, cell);
+        }
+
+        /// <summary>
+        /// Instantiate a new generic cell with the specified type.
+        /// </summary>
+        /// <param name="cellType">The string representation of the cell type.</param>
+        /// <returns>The allocated generic cell.</returns>
+        public ICell NewGenericCell(string cellType)
+        {
+            return m_NewGenericCell_string(cellType);
+        }
+
+        /// <summary>
+        /// Instantiate a new generic cell with the specified type and a cell ID.
+        /// </summary>
+        /// <param name="cellId">Cell Id.</param>
+        /// <param name="cellType">The string representation of the cell type.</param>
+        /// <returns>The allocated generic cell.</returns>
+        public ICell NewGenericCell(long cellId, string cellType)
+        {
+            return m_NewGenericCell_long_string(cellId, cellType);
+        }
+
+        /// <summary>
+        /// Instantiate a new generic cell with the specified type and a cell ID.
+        /// </summary>
+        /// <param name="cellType">The string representation of the cell type.</param>
+        /// <param name="content">The json representation of the cell.</param>
+        /// <returns>The allocated generic cell.</returns>
+        public ICell NewGenericCell(string cellType, string content)
+        {
+            return m_NewGenericCell_string_string(cellType, content);
+        }
+
+        internal void RegisterGenericOperationsProvider(IGenericCellOperations cloud_operations)
+        {
+            m_SaveGenericCell_ICell = cloud_operations.SaveGenericCell;
+            m_LoadGenericCell_long = cloud_operations.LoadGenericCell;
+            m_NewGenericCell_string = cloud_operations.NewGenericCell;
+            m_NewGenericCell_long_string = cloud_operations.NewGenericCell;
+            m_NewGenericCell_string_string = cloud_operations.NewGenericCell;
+        }
+
+        protected unsafe void CheckProtocolSignatures_impl(RemoteStorage storage, RunningMode from, RunningMode to)
         {
             if (storage == null)
                 return;
@@ -179,7 +315,7 @@ namespace Trinity.Storage
             if (my_schema_signature != remote_schema_signature)
             {
                 Log.WriteLine(LogLevel.Fatal, "Local communication schema signature not matching the remote one.\r\n\tLocal: {0}\r\n\tRemote: {1}", my_schema_signature, remote_schema_signature);
-                Global.Exit(-1);
+                throw new InvalidOperationException();
             }
         }
 
@@ -188,7 +324,7 @@ namespace Trinity.Storage
         /// </summary>
         /// <typeparam name="T">The type of the communication module.</typeparam>
         /// <returns>A communication module object if a communication instance is started, and the module type is registered. Otherwise returns null.</returns>
-        public T GetCommunicationModule<T>() where T : CommunicationModule
+        public virtual T GetCommunicationModule<T>() where T : CommunicationModule
         {
             var comm_instance = Global.CommunicationInstance;
 
@@ -203,38 +339,38 @@ namespace Trinity.Storage
         }
 
         /// <summary>
-        /// The number of servers in the cluster.
+        /// Gets the Id of the server on which the cell with the specified cell Id is located.
         /// </summary>
-        public int ServerCount
+        protected GetPartitionIdByCellIdDelegate StaticGetPartitionByCellId;
+
+
+        /// <summary>
+        /// Sets a user-defined data partitioning method.
+        /// </summary>
+        /// <param name="getPartitionIdByCellIdMethod">A method that transforms a 64-bit cell Id to a Trinity server Id.</param>
+        public void SetPartitionMethod(GetPartitionIdByCellIdDelegate getPartitionIdByCellIdMethod)
         {
-            get
-            {
-                return cluster_config.Servers.Count;
-            }
+            StaticGetPartitionByCellId = getPartitionIdByCellIdMethod;
         }
 
         /// <summary>
-        /// Gets the number of proxies in the cluster.
+        /// Gets the Id of the server on which the cell with the specified cell Id is located.
         /// </summary>
-        public int ProxyCount
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <returns>A Trinity server Id.</returns>
+        public int GetPartitionIdByCellId(long cellId)
         {
-            get
-            {
-                return cluster_config.Proxies.Count;
-            }
+            return StaticGetPartitionByCellId(cellId);
         }
 
-        internal int GetServerIdByIPE(IPEndPoint ipe)
+
+        protected IStorage GetStorageByCellId(long cellId)
         {
-            for (int i = 0; i < cluster_config.Servers.Count; i++)
-            {
-                if (cluster_config.Servers[i].Has(ipe))
-                    return i;
-            }
-            return -1;
+            return StorageTable[GetPartitionIdByCellId(cellId)];
         }
 
-        private volatile bool disposed = false;
+        #region IDisposable
+        private int m_disposed = 0;
 
         /// <summary>
         /// Disposes current MemoryCloud instance.
@@ -251,15 +387,13 @@ namespace Trinity.Storage
         /// <param name="disposing">This parameter is not used.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if(0 == Interlocked.CompareExchange(ref this.m_disposed, 1, 0))
             {
                 foreach (var storage in StorageTable)
                 {
                     if (storage != null && storage != Global.local_storage)
                         storage.Dispose();
                 }
-
-                this.disposed = true;
             }
         }
 
@@ -270,55 +404,42 @@ namespace Trinity.Storage
         {
             Dispose(false);
         }
-
-        private Storage GetStorageByCellId(long cellId)
-        {
-            return StorageTable[GetServerIdByCellId(cellId)];
-        }
+        #endregion//IDisposable
 
         /// <summary>
-        /// Indicates whether the cell with the specified Id is a local cell.
+        /// Gets the total memory usage.
         /// </summary>
-        /// <param name="cellId">A 64-bit cell Id.</param>
-        /// <returns>true if the cell is in local storage; otherwise, false.</returns>
-        public bool IsLocalCell(long cellId)
-        {
-            return (StaticGetServerIdByCellId(cellId) == my_server_id);
-        }
+        public abstract long GetTotalMemoryUsage();
 
-        /// <summary>
-        /// Gets the Id of the server on which the cell with the specified cell Id is located.
-        /// </summary>
-        /// <param name="cellId">A 64-bit cell Id.</param>
-        /// <returns>The Id of the server containing the specified cell.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int GetServerIdByCellIdDefault(long cellId)
-        {
-            return (*(((byte*)&cellId) + 1)) % server_count;
-        }
-
-        /// <summary>
-        /// Gets the Id of the server on which the cell with the specified cell Id is located.
-        /// </summary>
-        public GetServerIdByCellIdDelegate StaticGetServerIdByCellId;
-
-        /// <summary>
-        /// Gets the Id of the server on which the cell with the specified cell Id is located.
-        /// </summary>
-        /// <param name="cellId">A 64-bit cell Id.</param>
-        /// <returns>A Trinity server Id.</returns>
-        public int GetServerIdByCellId(long cellId)
-        {
-            return StaticGetServerIdByCellId(cellId);
-        }
-
-        /// <summary>
-        /// Sets a user-defined data partitioning method.
-        /// </summary>
-        /// <param name="getServerIdByCellIdMethod">A method that transforms a 64-bit cell Id to a Trinity server Id.</param>
-        public void SetPartitionMethod(GetServerIdByCellIdDelegate getServerIdByCellIdMethod)
-        {
-            StaticGetServerIdByCellId = getServerIdByCellIdMethod;
-        }
+        #endregion
     }
+
+    /// <summary>
+    /// Represents an event class that is triggered when the status of a <see cref="RemoteStorage"/> is changed.
+    /// </summary>
+    public class RemoteStorageEventArgs : EventArgs
+    {
+
+        /// <summary>
+        /// Constructs an instance of ServerStatusEventArgs.
+        /// </summary>
+        /// <param name="rs">The RemoteStorage whose status is changed.</param>
+        public RemoteStorageEventArgs(RemoteStorage rs)
+        {
+            this.RemoteStorage = rs;
+        }
+
+        /// <summary>
+        /// The target remote storage
+        /// </summary>
+        public RemoteStorage RemoteStorage { get; private set; }
+    }
+
+    /// <summary>
+    /// A delegates that represents a handler for ServerStatusEventArgs.
+    /// </summary>
+    /// <param name="sender">The object that triggers the current event.</param>
+    /// <param name="e">An instance of ServerStatusEventArgs.</param>
+    public delegate void ServerStatusEventHandler(object sender, RemoteStorageEventArgs e);
+
 }
