@@ -19,6 +19,7 @@ using BenchmarkDotNet.Engines;
 using BenchmarkDotNet.Loggers;
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Exporters;
+using System.Reflection;
 
 namespace LockOverheadTest
 {
@@ -29,15 +30,18 @@ namespace LockOverheadTest
             Func<RunStrategy, IConfig> cfg = strategy => ManualConfig.Create(DefaultConfig.Instance)
                     .With(Job.Default.With(CsProjCoreToolchain.NetCoreApp20).With(strategy).WithGcServer(true))
                     .With(Job.Default.With(CsProjClassicNetToolchain.Current.Value).With(strategy).WithGcServer(true))
-                    .With(DefaultExporters.Csv)
-                    .With(DefaultExporters.Json)
                     .With(DefaultExporters.Html)
                     .With(DefaultExporters.RPlot);
 
-            BenchmarkRunner.Run<MicroTestsNoFill>(cfg(RunStrategy.Throughput));
-            BenchmarkRunner.Run<MicroTestsFill>(cfg(RunStrategy.Throughput));
-            BenchmarkRunner.Run<MacroTestsNoFill>(cfg(RunStrategy.Monitoring));
-            BenchmarkRunner.Run<MacroTestsFill>(cfg(RunStrategy.Monitoring));
+            if (!args.Any())
+            {
+                args = new[] { "-micro_nofill", "-micro_fill", "-macro_nofill", "-macro_fill" };
+            }
+
+            if(args.Contains("-micro_nofill")) BenchmarkRunner.Run<MicroTestsNoFill>(cfg(RunStrategy.Throughput));
+            if(args.Contains("-micro_fill")) BenchmarkRunner.Run<MicroTestsFill>(cfg(RunStrategy.Throughput));
+            if(args.Contains("-macro_nofill")) BenchmarkRunner.Run<MacroTestsNoFill>(cfg(RunStrategy.Monitoring));
+            if(args.Contains("-macro_fill")) BenchmarkRunner.Run<MacroTestsFill>(cfg(RunStrategy.Monitoring));
         }
     }
 }

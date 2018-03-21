@@ -21,16 +21,6 @@ namespace MemStoreTest1
 
 
         [Benchmark]
-        public void LoadMyCell()
-        {
-            for (int i = 0; i<TestSize; ++i)
-            {
-                Global.LocalStorage.LoadMyCell(i);
-            }
-        }
-
-
-        [Benchmark]
         public void CreateMyCell()
         {
             for (int i = 0; i<TestSize; ++i)
@@ -100,6 +90,15 @@ namespace MemStoreTest1
                 Global.LocalStorage.SaveMyCell(i, new MyCell());
             });
 
+        }
+
+        [Benchmark]
+        public void LoadMyCell()
+        {
+            for (int i = 0; i<TestSize; ++i)
+            {
+                Global.LocalStorage.LoadMyCell(i);
+            }
         }
     }
 }
