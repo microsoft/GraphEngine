@@ -28,6 +28,7 @@ namespace FanoutSearch.UnitTest
             LambdaDSL.SetDialect("MAG", "StartFrom", "VisitNode", "FollowEdge", "Action");
             FanoutSearchModule.SetQueryTimeout(-1);
             FanoutSearchModule.RegisterIndexService(FakeIndexService);
+            FanoutSearchModule.SetCacheEnabled(false);
             server = new TrinityServer();
             server.RegisterCommunicationModule<FanoutSearchModule>();
             server.Start();

@@ -17,7 +17,7 @@ namespace FanoutSearch
     internal static class ExpressionBuilder
     {
         #region Method info objects
-        private static readonly MemberInfo         s_icell_accessor_cell_id_member = typeof(ICell).GetMember("CellId").First();
+        private static readonly MemberInfo         s_icell_accessor_cell_id_member = typeof(ICell).GetMember("CellID").First();
         private static readonly MethodInfo         s_long_ienumerable_contains     = typeof(Enumerable).GetMethods(BindingFlags.Public | BindingFlags.Static).First(_ => _.Name == "Contains" && _.GetParameters().Count() == 2).MakeGenericMethod(typeof(long));
         private static readonly MethodInfo         s_string_contains               = typeof(string).GetMethod("Contains");
         private static readonly MethodInfo         s_icell_has                     = typeof(Verbs).GetMethod("has", new Type[] { typeof(ICell), typeof(string) });
@@ -64,9 +64,9 @@ namespace FanoutSearch
              *
              * cell_id_predicate:
              *   single cell id:
-             *     input_icell_param.CellId == cell_id_const
+             *     input_icell_param.CellID == cell_id_const
              *   multiple cell ids:
-             *     cell_id_const.Contains(input_icell_param.CellId)
+             *     cell_id_const.Contains(input_icell_param.CellID)
              *
              ***********************************************/
 

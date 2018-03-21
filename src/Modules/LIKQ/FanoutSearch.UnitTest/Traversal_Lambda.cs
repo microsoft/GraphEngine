@@ -1,5 +1,7 @@
 ﻿using FanoutSearch.Standard;
 using FanoutSearch.Test.TSL;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +12,14 @@ using Xunit;
 namespace FanoutSearch.UnitTest
 {
     [Collection("All")]
-    public class Traversal : IDisposable
+    public class LambdaTraversal : IDisposable
     {
-        public Traversal()
+        private FanoutSearchModule mod;
+
+        public LambdaTraversal()
         {
             Global.LocalStorage.ResetStorage();
+            mod = Global.CommunicationInstance.GetCommunicationModule<FanoutSearchModule>();
         }
 
         public void Dispose() { }
@@ -28,10 +33,9 @@ namespace FanoutSearch.UnitTest
             Global.LocalStorage.SaveMyCell(1);
             Global.LocalStorage.SaveMyCell(2);
 
-            var rsp = g.v(0).outE("edges").outV(Action.Continue).outV(Action.Return);
-            Assert.Equal(2, rsp.Count());
-            Assert.Contains(rsp, p => p[1].id == 11 && p[2].id == 1);
-            Assert.Contains(rsp, p => p[1].id == 22 && p[2].id == 2);
+            var rsp = JArray.Parse(mod.LambdaQuery($@"MAG.StartFrom(0).FollowEdge(""edges"").VisitNode(Action.Continue).VisitNode(Action.Return);"));
+            Assert.Contains(rsp, p => p[1].Value<long>("CellID") == 11 && p[2].Value<long>("CellID") == 1);
+            Assert.Contains(rsp, p => p[1].Value<long>("CellID") == 22 && p[2].Value<long>("CellID") == 2);
         }
 
         [Fact]
@@ -43,10 +47,9 @@ namespace FanoutSearch.UnitTest
             Global.LocalStorage.SaveMyCell(1);
             Global.LocalStorage.SaveMyCell(2);
 
-            var rsp = g.v(0).outV(Action.Continue).outV(Action.Return);
-            Assert.Equal(2, rsp.Count());
-            Assert.Contains(rsp, p => p[1].id == 11 && p[2].id == 1);
-            Assert.Contains(rsp, p => p[1].id == 22 && p[2].id == 2);
+            var rsp = JArray.Parse(mod.LambdaQuery($@"MAG.StartFrom(0).VisitNode(Action.Continue).VisitNode(Action.Return);"));
+            Assert.Contains(rsp, p => p[1].Value<long>("CellID") == 11 && p[2].Value<long>("CellID") == 1);
+            Assert.Contains(rsp, p => p[1].Value<long>("CellID") == 22 && p[2].Value<long>("CellID") == 2);
         }
 
         [Fact]
@@ -58,10 +61,9 @@ namespace FanoutSearch.UnitTest
             Global.LocalStorage.SaveMyCell(1);
             Global.LocalStorage.SaveMyCell(2);
 
-            var rsp = g.v(0).outE("edges").outV(Action.Continue).outV(Action.Return);
-            Assert.Equal(2, rsp.Count());
-            Assert.Contains(rsp, p => p[1].id == -11 && p[2].id == 1);
-            Assert.Contains(rsp, p => p[1].id == -22 && p[2].id == 2);
+            var rsp = JArray.Parse(mod.LambdaQuery($@"MAG.StartFrom(0).FollowEdge(""edges"").VisitNode(Action.Continue).VisitNode(Action.Return);"));
+            Assert.Contains(rsp, p => p[1].Value<long>("CellID") == -11 && p[2].Value<long>("CellID") == 1);
+            Assert.Contains(rsp, p => p[1].Value<long>("CellID") == -22 && p[2].Value<long>("CellID") == 2);
         }
 
         [Fact]
@@ -73,10 +75,9 @@ namespace FanoutSearch.UnitTest
             Global.LocalStorage.SaveMyCell(1);
             Global.LocalStorage.SaveMyCell(2);
 
-            var rsp = g.v(0).outV(Action.Continue).outV(Action.Return);
-            Assert.Equal(2, rsp.Count());
-            Assert.Contains(rsp, p => p[1].id == -11 && p[2].id == 1);
-            Assert.Contains(rsp, p => p[1].id == -22 && p[2].id == 2);
+            var rsp = JArray.Parse(mod.LambdaQuery($@"MAG.StartFrom(0).VisitNode(Action.Continue).VisitNode(Action.Return);"));
+            Assert.Contains(rsp, p => p[1].Value<long>("CellID") == -11 && p[2].Value<long>("CellID") == 1);
+            Assert.Contains(rsp, p => p[1].Value<long>("CellID") == -22 && p[2].Value<long>("CellID") == 2);
         }
     }
 }
