@@ -120,7 +120,7 @@ namespace FanoutSearch
                     Enumerable.Concat(_, reader.infoList.Select(infoAccessor => (NodeInfo)infoAccessor)));
 
             string result_string = "[" + string.Join(",", results.Select(_ =>
-                                            string.Format(CultureInfo.InvariantCulture, @"{{""CellID"": {0}, ""type_object_name"": {1}}}",
+                                            string.Format(CultureInfo.InvariantCulture, @"{{""CellId"": {0}, ""type_object_name"": {1}}}",
                                                 _.id,
                                                 JsonStringProcessor.escape(_.values.First())))) + "]";
 

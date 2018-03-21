@@ -398,7 +398,7 @@ MAG.StartFrom(new[]{1,2,3}).VisitNode(v => v.return_if(v.has_cell_id(new long[]{
         public void LambdaDSLTest2_22()
         {
             LambdaQuery(@"
-MAG.StartFrom(new[]{1,2,3}).VisitNode(v => v.return_if(new List<long>(){1,2,3}.Contains(v.CellID)));
+MAG.StartFrom(new[]{1,2,3}).VisitNode(v => v.return_if(new List<long>(){1,2,3}.Contains(v.CellId)));
 ");
         }
     }
