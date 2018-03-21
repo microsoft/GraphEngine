@@ -37,6 +37,7 @@ using Trinity.Network.Messaging;
 using Trinity.TSL;
 using System.Runtime.CompilerServices;
 using Trinity.Storage.Transaction;
+using Microsoft.Extensions.ObjectPool;
 namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
@@ -1202,43 +1203,38 @@ source->append(R"::(, out this.m_ptr, out this.m_cellEntryIndex);
             }
             return this;
         }
-        [ThreadStatic]
-        internal static )::");
+        private class PoolPolicy : IPooledObjectPolicy<)::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor s_accessor = null;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static )::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor _get()
+source->append(R"::(_Accessor>
         {
-            if (s_accessor != ()::");
+            public )::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor)null)
-            {
-                var ret = s_accessor;
-                s_accessor = null;
-                return ret;
-            }
-            else
+source->append(R"::(_Accessor Create()
             {
                 return new )::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::(_Accessor();
             }
+            public bool Return()::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor obj)
+            {
+                return !obj.m_IsIterator;
+            }
         }
+        private static DefaultObjectPool<)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor> s_accessor_pool = new DefaultObjectPool<)::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor>(new PoolPolicy());
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor _get() => s_accessor_pool.Get();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void _put()::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor item)
-        {
-            if (s_accessor == ()::");
-source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor)null)
-            {
-                item.m_IsIterator = false;
-                s_accessor        = item;
-            }
-        }
+source->append(R"::(_Accessor item) => s_accessor_pool.Return(item);
         /// <summary>
         /// For internal use only.
         /// Caller guarantees that entry lock is obtained.
@@ -1284,7 +1280,9 @@ source->append(R"::(_Accessor AllocIterativeAccessor(CellInfo info, LocalTransac
         {
             )::");
 source->append(Codegen::GetString(node->name));
-source->append(R"::(_Accessor accessor = _get();
+source->append(R"::(_Accessor accessor = new )::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor();
             accessor.m_IsIterator = true;
             if (tx != null) accessor._Setup(info.CellId, info.CellPtr, info.CellEntryIndex, 0, tx);
             else accessor._Setup(info.CellId, info.CellPtr, info.CellEntryIndex, 0);

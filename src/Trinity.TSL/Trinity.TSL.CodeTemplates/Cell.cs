@@ -22,6 +22,7 @@ using Trinity.Network.Messaging;
 using Trinity.TSL;
 using System.Runtime.CompilerServices;
 using Trinity.Storage.Transaction;
+using Microsoft.Extensions.ObjectPool;
 #pragma warning disable
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
@@ -809,7 +810,7 @@ namespace t_Namespace
             this.CellId = cellId;
             this.m_options = options;
             this.m_tx = tx;
-            // this.m_IsIterator = false;   already nulled
+            // this.m_IsIterator = false;   never set to true for pool objects
             this.ResizeFunction = _Resize_Tx;
             TrinityErrorCode eResult = Global.LocalStorage.GetLockedCellInfo(tx, cellId, out _, out cellType, out this.m_ptr, out this.m_cellEntryIndex);
 
@@ -866,35 +867,26 @@ namespace t_Namespace
             return this;
         }
 
-        // TODO as we introduce multi-cell-lock, this mechansim may need some improvement
-        [ThreadStatic]
-        internal static t_cell_name_Accessor s_accessor = null;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static t_cell_name_Accessor _get()
+        private class PoolPolicy : IPooledObjectPolicy<t_cell_name_Accessor>
         {
-            //return new t_cell_name_Accessor();
-            if (s_accessor != (t_cell_name_Accessor)null)
-            {
-                var ret = s_accessor;
-                s_accessor = null;
-                return ret;
-            }
-            else
+            public t_cell_name_Accessor Create()
             {
                 return new t_cell_name_Accessor();
             }
-        }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void _put(t_cell_name_Accessor item)
-        {
-            if (s_accessor == (t_cell_name_Accessor)null)
+            public bool Return(t_cell_name_Accessor obj)
             {
-                item.m_IsIterator = false;
-                s_accessor        = item;
+                return !obj.m_IsIterator;
             }
         }
+
+        private static DefaultObjectPool<t_cell_name_Accessor> s_accessor_pool = new DefaultObjectPool<t_cell_name_Accessor>(new PoolPolicy());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static t_cell_name_Accessor _get() => s_accessor_pool.Get();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void _put(t_cell_name_Accessor item) => s_accessor_pool.Return(item);
 
         /// <summary>
         /// For internal use only.
@@ -938,7 +930,7 @@ namespace t_Namespace
         internal static t_cell_name_Accessor AllocIterativeAccessor(CellInfo info, LocalTransactionContext tx)
         {
             //TODO no WAL detection
-            t_cell_name_Accessor accessor = _get();
+            t_cell_name_Accessor accessor = new t_cell_name_Accessor();
             accessor.m_IsIterator = true;
             if (tx != null) accessor._Setup(info.CellId, info.CellPtr, info.CellEntryIndex, 0, tx);
             else accessor._Setup(info.CellId, info.CellPtr, info.CellEntryIndex, 0);
