@@ -5,12 +5,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{13334873-1E72-47C0-B207-623F0CA8F48C}</ProjectGuid>
+    <ProjectGuid>{23334873-1E72-47C0-B207-623F0CA8F48C}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>freebase_likq</RootNamespace>
-    <AssemblyName>freebase-likq</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <AssemblyName>freebase-likq-film</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NuGetPackageImportStamp>
@@ -219,9 +219,9 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\freebase-tsl\freebase-tsl.csproj">
-      <Project>{e6de0304-954a-411e-b35a-d299e5d88c51}</Project>
-      <Name>freebase-tsl</Name>
+    <ProjectReference Include="..\freebase-film-tsl\freebase-film-tsl.csproj">
+      <Project>{9027fdf6-7a4c-4eff-9c3c-2b17d83f9f0b}</Project>
+      <Name>freebase-film-tsl</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

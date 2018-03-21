@@ -44,14 +44,12 @@ source->append(R"::(
 source->append(Codegen::GetString(method_name_1));
 source->append(R"::((this Trinity.Storage.IMessagePassingEndpoint storage)
         {
-            byte* bufferPtr = (byte*)Memory.malloc((ulong)TrinityProtocol.MsgHeader);
-            try
-            {
-                *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader;
-                *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte))::");
+            byte* bufferPtr = stackalloc byte[TrinityProtocol.MsgHeader];
+            *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader;
+            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte))::");
 source->append(Codegen::GetString(get_comm_protocol_trinitymessagetype((*(node->protocolList))[iterator_1]->referencedNProtocol)));
 source->append(R"::( ;
-                *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::)::");
+            *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::)::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(.TSL.)::");
 source->append(Codegen::GetString(get_comm_class_basename(node)));
@@ -62,11 +60,9 @@ source->append(Codegen::GetString(get_comm_protocol_type_string((*(node->protoco
 source->append(R"::(MessageType.)::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(;
-                )::");
+            )::");
 source->append(Codegen::GetString(send_message_method_1));
 source->append(R"::((bufferPtr, TrinityProtocol.MsgHeader);
-            }
-            finally { Memory.free(bufferPtr); }
         }
         )::");
 }
@@ -80,13 +76,11 @@ source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->reference
 source->append(R"::(Writer msg)
         {
             byte* bufferPtr = msg.buffer;
-            try
-            {
-                *(int*)(bufferPtr) = msg.Length + TrinityProtocol.TrinityMsgHeader;
-                *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte))::");
+            *(int*)(bufferPtr) = msg.Length + TrinityProtocol.TrinityMsgHeader;
+            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte))::");
 source->append(Codegen::GetString(get_comm_protocol_trinitymessagetype((*(node->protocolList))[iterator_1]->referencedNProtocol)));
 source->append(R"::( ;
-                *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::)::");
+            *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::)::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(.TSL.)::");
 source->append(Codegen::GetString(get_comm_class_basename(node)));
@@ -97,11 +91,9 @@ source->append(Codegen::GetString(get_comm_protocol_type_string((*(node->protoco
 source->append(R"::(MessageType.)::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(;
-                )::");
+            )::");
 source->append(Codegen::GetString(send_message_method_1));
 source->append(R"::((bufferPtr, msg.Length + TrinityProtocol.MsgHeader);
-            }
-            finally { }
         }
         )::");
 }
@@ -115,13 +107,11 @@ source->append(Codegen::GetString(method_name_1));
 source->append(R"::((this Trinity.Storage.IMessagePassingEndpoint storage)
         {
             byte* bufferPtr = stackalloc byte[TrinityProtocol.MsgHeader];
-            try
-            {
-                *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader;
-                *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte))::");
+            *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader;
+            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte))::");
 source->append(Codegen::GetString(get_comm_protocol_trinitymessagetype((*(node->protocolList))[iterator_1]->referencedNProtocol)));
 source->append(R"::( ;
-                *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::)::");
+            *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::)::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(.TSL.)::");
 source->append(Codegen::GetString(get_comm_class_basename(node)));
@@ -132,15 +122,13 @@ source->append(Codegen::GetString(get_comm_protocol_type_string((*(node->protoco
 source->append(R"::(MessageType.)::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(;
-                TrinityResponse response;
-                )::");
+            TrinityResponse response;
+            )::");
 source->append(Codegen::GetString(send_message_method_1));
 source->append(R"::((bufferPtr, TrinityProtocol.MsgHeader, out response);
-                return new )::");
+            return new )::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->referencedNProtocol->response_message_struct));
 source->append(R"::(Reader(response.Buffer, response.Offset);
-            }
-            finally { Memory.free(bufferPtr); }
         }
         )::");
 }
@@ -156,13 +144,11 @@ source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->reference
 source->append(R"::(Writer msg)
         {
             byte* bufferPtr = msg.buffer;
-            try
-            {
-                *(int*)(bufferPtr) = msg.Length + TrinityProtocol.TrinityMsgHeader;
-                *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte))::");
+            *(int*)(bufferPtr) = msg.Length + TrinityProtocol.TrinityMsgHeader;
+            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte))::");
 source->append(Codegen::GetString(get_comm_protocol_trinitymessagetype((*(node->protocolList))[iterator_1]->referencedNProtocol)));
 source->append(R"::( ;
-                *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::)::");
+            *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::)::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(.TSL.)::");
 source->append(Codegen::GetString(get_comm_class_basename(node)));
@@ -173,15 +159,13 @@ source->append(Codegen::GetString(get_comm_protocol_type_string((*(node->protoco
 source->append(R"::(MessageType.)::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(;
-                TrinityResponse response;
-                )::");
+            TrinityResponse response;
+            )::");
 source->append(Codegen::GetString(send_message_method_1));
 source->append(R"::((bufferPtr, msg.Length + TrinityProtocol.MsgHeader, out response);
-                return new )::");
+            return new )::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->referencedNProtocol->response_message_struct));
 source->append(R"::(Reader(response.Buffer, response.Offset);
-            }
-            finally { }
         }
         )::");
 }
@@ -195,28 +179,26 @@ source->append(Codegen::GetString(method_name_1));
 source->append(R"::((this Trinity.Storage.IMessagePassingEndpoint storage)
         {
             byte* bufferPtr = stackalloc byte[TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength];
-            try
-            {
-                int token = Interlocked.Increment(ref )::");
+            int token = Interlocked.Increment(ref )::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::(Base.s_)::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(_token_counter);
-                var task_source = new TaskCompletionSource<)::");
+            var task_source = new TaskCompletionSource<)::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->referencedNProtocol->response_message_struct));
 source->append(R"::(Reader>();
-                )::");
+            )::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::(Base.s_)::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(_token_sources[token] = task_source;
-                *(int*)(bufferPtr + TrinityProtocol.MsgHeader) = token;
-                *(int*)(bufferPtr + TrinityProtocol.MsgHeader + sizeof(int)) = Global.CloudStorage.MyInstanceId;
-                *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
-                *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte))::");
+            *(int*)(bufferPtr + TrinityProtocol.MsgHeader) = token;
+            *(int*)(bufferPtr + TrinityProtocol.MsgHeader + sizeof(int)) = Global.CloudStorage.MyInstanceId;
+            *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
+            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte))::");
 source->append(Codegen::GetString(get_comm_protocol_trinitymessagetype((*(node->protocolList))[iterator_1]->referencedNProtocol)));
 source->append(R"::( ;
-                *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::)::");
+            *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::)::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(.TSL.)::");
 source->append(Codegen::GetString(get_comm_class_basename(node)));
@@ -227,12 +209,10 @@ source->append(Codegen::GetString(get_comm_protocol_type_string((*(node->protoco
 source->append(R"::(MessageType.)::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(;
-                )::");
+            )::");
 source->append(Codegen::GetString(send_message_method_1));
 source->append(R"::((bufferPtr, TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
-                return task_source.Task;
-            }
-            finally { }
+            return task_source.Task;
         }
         )::");
 }
@@ -254,26 +234,24 @@ source->append(R"::(Writer msg)
             bufferPtrs[1]     = msg.buffer + TrinityProtocol.MsgHeader;
             size[0]           = TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
             size[1]           = msg.Length;
-            try
-            {
-                int token = Interlocked.Increment(ref )::");
+            int token = Interlocked.Increment(ref )::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::(Base.s_)::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(_token_counter);
-                var task_source = new TaskCompletionSource<)::");
+            var task_source = new TaskCompletionSource<)::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->referencedNProtocol->response_message_struct));
 source->append(R"::(Reader>();
-                )::");
+            )::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::(Base.s_)::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(_token_sources[token] = task_source;
-                *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader + msg.Length + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
-                *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte))::");
+            *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader + msg.Length + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
+            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte))::");
 source->append(Codegen::GetString(get_comm_protocol_trinitymessagetype((*(node->protocolList))[iterator_1]->referencedNProtocol)));
 source->append(R"::( ;
-                *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::)::");
+            *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::)::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(.TSL.)::");
 source->append(Codegen::GetString(get_comm_class_basename(node)));
@@ -284,14 +262,12 @@ source->append(Codegen::GetString(get_comm_protocol_type_string((*(node->protoco
 source->append(R"::(MessageType.)::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(;
-                *(int*)(bufferPtr + TrinityProtocol.MsgHeader) = token;
-                *(int*)(bufferPtr + TrinityProtocol.MsgHeader + sizeof(int)) = Global.CloudStorage.MyInstanceId;
-                )::");
+            *(int*)(bufferPtr + TrinityProtocol.MsgHeader) = token;
+            *(int*)(bufferPtr + TrinityProtocol.MsgHeader + sizeof(int)) = Global.CloudStorage.MyInstanceId;
+            )::");
 source->append(Codegen::GetString(send_message_method_1));
 source->append(R"::((bufferPtrs, size, 2);
-                return task_source.Task;
-            }
-            finally { }
+            return task_source.Task;
         }
         )::");
 }

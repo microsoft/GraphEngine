@@ -169,7 +169,7 @@ namespace FanoutSearch
 
             if (!s_enable_external_query)
             {
-                throw new Exception("Lambda queray not enabled.");
+                throw new Exception("Lambda query not enabled.");
             }
 
             try

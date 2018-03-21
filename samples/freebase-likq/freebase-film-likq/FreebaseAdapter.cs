@@ -11,7 +11,7 @@ using Trinity.Storage;
 using Trinity.Core.Lib;
 using Trinity.TSL.Lib;
 using FanoutSearch;
-using freebase_tsl;
+using freebase_film_tsl;
 
 namespace freebase_likq
 {
@@ -54,7 +54,7 @@ namespace freebase_likq
                             singleValuedStrProps.Add(fname);
                         }
 
-                        if (fname == "CellID" || fname == "cellType")
+                        if (fname == "CellId" || fname == "cellType")
                         {
                             continue;
                         }
@@ -523,7 +523,7 @@ namespace freebase_likq
                     {
                         sb.Append(',');
                     }
-                    sb.Append(String.Format("\"CellID\":{0}", sub_cell.CellId));
+                    sb.Append(String.Format("\"CellId\":{0}", sub_cell.CellId));
                 }
             }
         }

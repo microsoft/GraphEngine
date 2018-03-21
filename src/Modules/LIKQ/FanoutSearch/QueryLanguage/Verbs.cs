@@ -14,6 +14,7 @@ using Trinity.Storage;
 namespace FanoutSearch
 {
     [Flags]
+    [Serializable]
     public enum Action
     {
         Continue = ~1,

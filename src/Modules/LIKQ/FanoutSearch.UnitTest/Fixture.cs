@@ -9,25 +9,33 @@ using System.Text;
 using System.Threading.Tasks;
 using Trinity;
 using Trinity.Network;
+using Xunit;
+
+[assembly: CollectionBehavior(DisableTestParallelization = true, MaxParallelThreads = 1)]
 
 namespace FanoutSearch.UnitTest
 {
-    class Initializer
+    [CollectionDefinition("All")]
+    public class AllLIKQTestCollection : ICollectionFixture<TrinityServerFixture> { }
+
+    public class TrinityServerFixture : IDisposable
     {
-        internal static void Initialize()
+        private TrinityServer server;
+
+        public TrinityServerFixture()
         {
             Global.Initialize();
             LambdaDSL.SetDialect("MAG", "StartFrom", "VisitNode", "FollowEdge", "Action");
             FanoutSearchModule.SetQueryTimeout(-1);
             FanoutSearchModule.RegisterIndexService(FakeIndexService);
-            FanoutSearchModule.RegisterExpressionSerializerFactory(() => new ExpressionSerializer());
-            TrinityServer server = new TrinityServer();
+            server = new TrinityServer();
             server.RegisterCommunicationModule<FanoutSearchModule>();
             server.Start();
         }
 
-        internal static void Uninitialize()
+        public void Dispose()
         {
+            server.Stop();
             Global.Uninitialize();
         }
 
@@ -43,24 +51,12 @@ namespace FanoutSearch.UnitTest
     {
         internal static void FanoutSearchQueryException(System.Action action, string message_substring)
         {
-            try
-            {
-                action();
-            }
-            catch (FanoutSearchQueryException ex) when (ex.Message.Contains(message_substring)) { return; }
-
-            throw new Exception(String.Format("Expected BadRequestException:{0} was not met", message_substring));
+            Assert.Contains(message_substring, Assert.Throws<FanoutSearchQueryException>(action).InnerException.Message);
         }
 
         internal static void FanoutSearchQueryException(System.Action<string> action, string param, string message_substring)
         {
-            try
-            {
-                action(param);
-            }
-            catch (FanoutSearchQueryException ex) when (ex.Message.Contains(message_substring)) { return; }
-
-            throw new Exception(String.Format("Expected BadRequestException:{0} was not met", message_substring));
+            Assert.Contains(message_substring, Assert.Throws<FanoutSearchQueryException>(() => action(param)).InnerException.Message);
         }
     }
 }
