@@ -78,7 +78,7 @@ namespace FanoutSearch.UnitTest
         [Fact]
         public void Test4()
         {
-            var paths = KnowledgeGraph.StartFrom(123).VisitNode(_ => _.return_if(_.CellId == 123)).ToList();
+            var paths = KnowledgeGraph.StartFrom(123).VisitNode(_ => _.return_if(_.CellID == 123)).ToList();
         }
 
         [Fact]
