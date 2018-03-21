@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-#if NETCOREAPP2_0
+#if NETSTANDARD2_0
 using Microsoft.Extensions.Caching.Memory;
 #else
 using System.Runtime.Caching;
@@ -37,7 +37,7 @@ namespace FanoutSearch
     {
         private QueryPredicateCompiler m_compiler;
         private MemoryCache            m_memory_cache;
-#if NETCOREAPP2_0
+#if NETSTANDARD2_0
         private MemoryCacheEntryOptions m_entry_option = new MemoryCacheEntryOptions();
 #else
         private CacheItemPolicy        m_cache_policy;
@@ -46,7 +46,7 @@ namespace FanoutSearch
         internal QueryResultCache(QueryPredicateCompiler compiler)
         {
             m_compiler = compiler;
-#if NETCOREAPP2_0
+#if NETSTANDARD2_0
             m_memory_cache = new MemoryCache(new MemoryCacheOptions());
             m_entry_option.SlidingExpiration = compiler.GetExperationTime();
 #else
@@ -68,7 +68,7 @@ namespace FanoutSearch
             string key_query = GetQueryResultCacheRequestKey(request);
             string key_trans = GetQueryResultCacheTransactionKey(entry.transaction_id);
 
-#if NETCOREAPP2_0
+#if NETSTANDARD2_0
             m_memory_cache.Set(key_query, entry, m_entry_option);
             m_memory_cache.Set(key_trans, entry, m_entry_option);
 #else
