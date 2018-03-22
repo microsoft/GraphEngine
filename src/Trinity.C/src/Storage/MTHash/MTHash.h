@@ -47,6 +47,19 @@ namespace Storage
 
     using LocalMemoryStorage::CellAccessOptions;
     class MemoryTrunk;
+
+    struct MTHashAllocationInfo
+    {
+        /// Freed entry list head
+        int32_t FreeEntryList;
+        /// Freed entry count
+        std::atomic<int32_t> FreeEntryCount;
+        /// Actually allocated entry count, not counting guard entries
+        std::atomic<uint32_t> EntryCount;
+        /// Non empty entries count, including free entries
+        std::atomic<int32_t> NonEmptyEntryCount;
+    };
+
     class MTHash
     {
     public:
@@ -86,26 +99,19 @@ namespace Storage
 
         CellEntry* CellEntries;
         MTEntry* MTEntries;
-        /////////////////////////////
-        MemoryTrunk * memory_trunk;
+        ///////////////////////////// 32 bytes
+        MemoryTrunk* memory_trunk;
 
-        int32_t FreeEntryList;
-        TrinityLock FreeListLock;
-        TrinityLock EntryAllocLock;
+        TrinityLock* FreeListLock;
+        TrinityLock* EntryAllocLock;
 
-        std::atomic<uint32_t> EntryCount;
-
-        /// Non empty entries count, including free entries
-        std::atomic<int32_t> NonEmptyEntryCount;
-
-        /// Freed entry count
-        std::atomic<int32_t> FreeEntryCount;
+        MTHashAllocationInfo* ExtendedInfo;
         /**************************** 64-byte block **********************/
         ///////////////////////////////////////////////////////////////////
 
-        inline MTHash() { BucketLockers = nullptr; };
+        MTHash();
         void AllocateMTHash();
-        void DeallocateMTHash(bool deallocateBucketLockers);
+        void DeallocateMTHash();
         void InitMTHashAttributes(MemoryTrunk * mt);
         void Initialize(uint32_t capacity, MemoryTrunk * mt);
         bool Initialize(const String& input_file, MemoryTrunk* mt);

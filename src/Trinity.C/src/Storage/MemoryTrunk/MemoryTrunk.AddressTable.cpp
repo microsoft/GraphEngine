@@ -18,12 +18,12 @@ namespace Storage
         HeadGroup HeadGroupShadow;
         uint32_t CommittedTailShadow;
 
-        if (split_lock.trylock())
+        if (split_lock->trylock())
         {
             HeadGroupShadow.head_group.store(head.head_group.load(std::memory_order_relaxed));
             CommittedTailShadow = committed_tail;
 
-            entry_count = (hashtable->NonEmptyEntryCount.load());
+            entry_count = (hashtable->ExtendedInfo->NonEmptyEntryCount.load());
 
             /* **********************************************************************************************
              * After this snapshot point, existing cells may be deleted, updated and new cells may be added *
@@ -38,7 +38,7 @@ namespace Storage
                 if (--retry == 0)
                 {
                     add_memory_entry_flag.fetch_and(0x7FFFFFFF);
-                    split_lock.unlock();
+                    split_lock->unlock();
                     return nullptr;
                 }
             }
@@ -62,7 +62,7 @@ namespace Storage
             add_memory_entry_flag.fetch_and(0x7FFFFFFF);
             /// add_memory_entry_flag epilogue
 
-            split_lock.unlock();
+            split_lock->unlock();
         }
         else
             return nullptr;
@@ -143,7 +143,7 @@ namespace Storage
         bool  AddressTableOneRegion = (CommittedTailShadow < HeadGroupShadow.committed_head) ||
             (CommittedTailShadow == HeadGroupShadow.committed_head && CommittedTailShadow == 0);
 
-        if (hashtable->FreeEntryCount != 0 && hashtable->FreeEntryCount == hashtable->NonEmptyEntryCount) // Double checking
+        if (hashtable->ExtendedInfo->FreeEntryCount != 0 && hashtable->ExtendedInfo->FreeEntryCount == hashtable->ExtendedInfo->NonEmptyEntryCount) // Double checking
         {
             uint64_t mem_to_decommit = 0;
             if (AddressTableOneRegion)
@@ -173,7 +173,7 @@ namespace Storage
             committed_tail = 0;
             head.append_head = 0;
             head.committed_head = 0;
-            for (int32_t i = 0; i < hashtable->NonEmptyEntryCount; ++i)
+            for (int32_t i = 0; i < hashtable->ExtendedInfo->NonEmptyEntryCount; ++i)
             {
                 hashtable->CellEntries[i].size = -1;
             }

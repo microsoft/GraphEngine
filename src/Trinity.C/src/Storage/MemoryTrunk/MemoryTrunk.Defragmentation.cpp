@@ -26,8 +26,8 @@ namespace Storage
         if (head.append_head == LastAppendHead && !LocalMemoryStorage::dirty_flags[TrunkId])
             return;
 
-        int free_entry_cnt = hashtable->FreeEntryCount.load();
-        int non_empty_cnt  = hashtable->NonEmptyEntryCount.load();
+        int free_entry_cnt = hashtable->ExtendedInfo->FreeEntryCount.load();
+        int non_empty_cnt  = hashtable->ExtendedInfo->NonEmptyEntryCount.load();
 
         if (non_empty_cnt == 0 && free_entry_cnt == 0) return;
 
@@ -48,7 +48,7 @@ namespace Storage
         if (addressTable == nullptr)
             return;
 
-        if (!defrag_lock.trylock())
+        if (!defrag_lock->trylock())
         {
             delete[] addressTable;
             return;
@@ -56,7 +56,7 @@ namespace Storage
 
         if (!IsAddressTableValid.load())
         {
-            defrag_lock.unlock();
+            defrag_lock->unlock();
             delete[] addressTable;
             return;
         }
@@ -76,7 +76,7 @@ namespace Storage
             }
         }
 
-        defrag_lock.unlock();
+        defrag_lock->unlock();
 
         if (addressTable != nullptr)
             delete[] addressTable;

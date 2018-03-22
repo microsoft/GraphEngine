@@ -18,10 +18,10 @@ namespace memStoreTest2
         [ParamsSource(nameof(ThreadCountValue))]
         public int ThreadCount { get; set; }
 
-        [Params(1*Million, 512*Million)]
-        public int TotalCellCount { get; set; }
+        [Params(1*MB, 512*MB, 16384*MB)]
+        public long TotalSize { get; set; }
 
-        [Params(17, 134)]
+        [Params(17, 134, 6729)]
         public int CellSize { get; set; }
 
         public IEnumerable<int> ThreadCountValue
@@ -37,7 +37,7 @@ namespace memStoreTest2
             }
         }
 
-        public const int Million = (1024 * 1024);
+        public const long MB = (1024 * 1024);
 
         private int[][] m_CellIds;
         private int m_CntPerThread;
@@ -48,7 +48,7 @@ namespace memStoreTest2
             TrinityConfig.LoggingLevel = LogLevel.Off;
             Global.LocalStorage.ResetStorage();
 
-            m_CntPerThread = (int)(TotalCellCount / ThreadCount / CellSize);
+            m_CntPerThread = (int)(TotalSize / ThreadCount / CellSize);
             Random r = new Random((int)19900921);
             m_CellIds = Enumerable.Range(0, ThreadCount)
                 .Select(_ => Enumerable.Range(0, m_CntPerThread)

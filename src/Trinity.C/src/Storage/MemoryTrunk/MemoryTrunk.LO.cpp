@@ -39,7 +39,7 @@ namespace Storage
             int32_t* new_LOPreservedSizeArray = new int[LOCapacity];
             int32_t new_lo_index = 1;
 
-            int32_t entry_count = hashtable->NonEmptyEntryCount;
+            int32_t entry_count = hashtable->ExtendedInfo->NonEmptyEntryCount;
             for (int32_t i = 0; i < entry_count; i++)
             {
                 if (hashtable->CellEntries[i].location != -1)

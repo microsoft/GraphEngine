@@ -28,14 +28,14 @@ namespace Storage
         char* cell_p         = nullptr;
 		PTHREAD_CONTEXT pctx = nullptr; 
 
-        if (!alloc_lock.trylock())
+        if (!alloc_lock->trylock())
         {
             //  !Note, we should setup the Tx so that the arena
             //  is aware that we are locking current cell.
 			pctx = EnsureCurrentThreadContext();
             pctx->SetLockingCell(cellId);
             EnterMemoryAllocationArena(pctx);
-            alloc_lock.lock();
+            alloc_lock->lock();
         }
 
 		while(true)
@@ -63,7 +63,7 @@ namespace Storage
                 //  we have not alerted the arena, and the memory trunk
                 //  has sufficient space. A fast path without touching
                 //  the thread context is thus achieved.
-                alloc_lock.unlock();
+                alloc_lock->unlock();
                 return cell_p;
             }
 
@@ -80,7 +80,7 @@ namespace Storage
             {
                 continue;
             }
-            alloc_lock.unlock();
+            alloc_lock->unlock();
             Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "CellAlloc: MemoryTrunk {0} is out of Memory.", TrunkId);
             return NULL;
         }
@@ -163,14 +163,14 @@ namespace Storage
             if (!ret) goto EXPAND_RETURN;
 
             //Then allocate memory between trunk_ptr to committed_tail
-            split_lock.lock();
+            split_lock->lock();
             ret = Memory::ExpandMemoryFromCurrentPosition(trunkPtr, CurrentVMAllocUnit);
             if (ret)
             {
                 head.append_head = 0; //warp back to head
                 head.committed_head = CurrentVMAllocUnit;
             }
-            split_lock.unlock();
+            split_lock->unlock();
             goto EXPAND_RETURN;
         }
 
@@ -183,14 +183,14 @@ namespace Storage
             if (!ret) goto EXPAND_RETURN;
 
             //Then allocate memory between trunk_ptr to committed_tail
-            split_lock.lock();
+            split_lock->lock();
             ret = Memory::ExpandMemoryFromCurrentPosition(trunkPtr, minimum_to_expand);
             if (ret)
             {
                 head.append_head = 0; //warp back to head
                 head.committed_head = minimum_to_expand;
             }
-            split_lock.unlock();
+            split_lock->unlock();
             goto EXPAND_RETURN;
         }
 
@@ -209,11 +209,11 @@ namespace Storage
 
     bool MemoryTrunk::Reload(uint32_t minimum_size)
     {
-        if (hashtable->NonEmptyEntryCount == 0)
+        if (hashtable->ExtendedInfo->NonEmptyEntryCount == 0)
             return true;
 
         //! Use pending_flag to notify other threads a high-priority task is ongoing
-        defrag_lock.lock(pending_flag);
+        defrag_lock->lock(pending_flag);
 
         HeadGroup temp_head_group;
 
@@ -228,7 +228,7 @@ namespace Storage
         if (temp_head_group.append_head == 0xFFFFFFFF) //Reload buffer allocation failed!
         {
             hashtable->ReleaseAllEntryLocksExceptArena();
-            defrag_lock.unlock();
+            defrag_lock->unlock();
 
             Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Reload: MemoryTrunk {0} temporary buffer allocation failed.", TrunkId);
             return false;
@@ -238,7 +238,7 @@ namespace Storage
         if (available_space < minimum_size)
         {
             hashtable->ReleaseAllEntryLocksExceptArena();
-            defrag_lock.unlock();
+            defrag_lock->unlock();
             Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Reload: MemoryTrunk {0} run out of memory during trunk reloading, available size: {1}, required size: {2}.", TrunkId, available_space, minimum_size);
             return false;
         }
@@ -251,7 +251,7 @@ namespace Storage
         head.head_group.store(temp_head_group.head_group);
         //Console.WriteLine("Reloaded: append head: {0} committed_head: {1}", head.append_head, head.committed_head);
         IsAddressTableValid.store(false); //! Reloading will invalidate the address table
-        defrag_lock.unlock();
+        defrag_lock->unlock();
         return true;
     }
 
@@ -261,7 +261,7 @@ namespace Storage
     int32_t MemoryTrunk::ReloadImpl()
     {
         CellEntry* entries = hashtable->CellEntries;
-        CellEntry* entriesEndPtr = entries + hashtable->NonEmptyEntryCount;
+        CellEntry* entriesEndPtr = entries + hashtable->ExtendedInfo->NonEmptyEntryCount;
 
         char * buffer = (char*)malloc(TrunkLength);
         if (buffer == NULL)

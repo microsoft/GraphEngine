@@ -36,9 +36,9 @@ namespace Storage
 
             if (offset < 0)
             {
-                memory_trunk->lo_lock.lock();
+                memory_trunk->lo_lock->lock();
                 memory_trunk->DisposeLargeObject(-offset);
-                memory_trunk->lo_lock.unlock();
+                memory_trunk->lo_lock->unlock();
             }
             else
             {
@@ -80,9 +80,9 @@ namespace Storage
 
             if (offset < 0)
             {
-                memory_trunk->lo_lock.lock();
+                memory_trunk->lo_lock->lock();
                 memory_trunk->DisposeLargeObject(-offset);
-                memory_trunk->lo_lock.unlock();
+                memory_trunk->lo_lock->unlock();
             }
             else
             {

@@ -502,7 +502,7 @@ namespace Storage
 			{
 				Trinity::Diagnostics::WriteLine(LogLevel::Verbose, "Resetting memory trunk #{0}", i);
 				memory_trunks[i].DeallocateTrunk();
-				hashtables[i].DeallocateMTHash(/** deallocateBucketLockers: */false);
+				hashtables[i].DeallocateMTHash();
 				memory_trunks[i].Initialize(i, (char*)MemoryPtr + (TrinityConfig::ReservedSpacePerTrunk() * (uint64_t)i), TrinityConfig::MemoryPoolSize >> 8);
 				hashtables[i].Initialize((uint32_t)(TrinityConfig::MemoryPoolSize >> 15), memory_trunks + i); // Default capacity = 256M >> 15 = 8192
 			}
