@@ -7,48 +7,52 @@
 
 #ifdef TRINITY_PLATFORM_WINDOWS
 
-// std::mutex is not as fast on windows.
-
 class TrinityLock
 {
 private:
-    CRITICAL_SECTION m_csection;
+    volatile LONG m_spinlock;
+    const LONG c_available = 1;
+    const LONG c_acquired = 0;
 
 public:
-    TrinityLock()
+    TrinityLock() 
     {
-        // WinXP onwards and this function does not fail.
-        InitializeCriticalSectionAndSpinCount(&m_csection, 4000);
+        m_spinlock = c_available;
     }
-
-    ~TrinityLock()
-    {
-        DeleteCriticalSection(&m_csection);
-    }
-
 
     void lock()
     {
-        EnterCriticalSection(&m_csection);
+        while (true) 
+        {
+            auto val = InterlockedDecrement(&m_spinlock);
+            if (val == c_acquired) return;
+            //  val is a negative integer, and when we
+            //  wake a thread, the 
+            WaitOnAddress(&m_spinlock, &val, sizeof(LONG), INFINITE);
+        }
     }
 
     void unlock()
     {
-        LeaveCriticalSection(&m_csection);
+        m_spinlock = c_available;
+        WakeByAddressSingle((PVOID)&m_spinlock);
     }
 
     void lock(std::atomic<int32_t> & pending_flag)
     {
-        if (!TryEnterCriticalSection(&m_csection)) 
+        if (!trylock())
         {
             pending_flag.store(1);
-            EnterCriticalSection(&m_csection);
+            lock();
         }
     }
 
     bool trylock()
     {
-        return TryEnterCriticalSection(&m_csection);
+        auto val = InterlockedDecrement(&m_spinlock);
+        return (val == c_acquired);
+        //  we don't have to make up the value, because
+        //  the unlocker will rearm the lock flag.
     }
 };
 #else
@@ -74,7 +78,7 @@ public:
 
     void lock(std::atomic<int32_t> & pending_flag)
     {
-        if (!m_mutex.trylock()) 
+        if (!m_mutex.trylock())
         {
             pending_flag.store(1);
             m_mutex.lock();
