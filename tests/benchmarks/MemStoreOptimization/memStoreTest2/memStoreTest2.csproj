@@ -3,7 +3,6 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net461;netcoreapp2.0</TargetFrameworks>
-    <RootNamespace>MemStoreTest1</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
