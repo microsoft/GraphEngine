@@ -77,7 +77,6 @@ namespace Storage
     private:
         enum Int32_Constants :int32_t
         {
-            retry_enter_threshold = 128,
             PhysicalMemoryPageLocking = 0,
         };
 
@@ -98,10 +97,10 @@ namespace Storage
         HeadGroup head;
         std::atomic<uint32_t> committed_tail;
 
-        TrinitySpinlock defrag_lock;
-        TrinitySpinlock alloc_lock;
-        TrinitySpinlock lo_lock;
-        TrinitySpinlock split_lock;
+        TrinityLock defrag_lock;
+        TrinityLock alloc_lock;
+        TrinityLock lo_lock;
+        TrinityLock split_lock;
         std::atomic<int32_t> pending_flag;
 
         /********** Defragmentation *********/

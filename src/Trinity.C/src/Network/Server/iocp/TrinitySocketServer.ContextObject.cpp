@@ -14,7 +14,7 @@ namespace Trinity
 {
     namespace Network
     {
-        TrinitySpinlock psco_spinlock; // psco = per socket context object
+        TrinityLock psco_spinlock; // psco = per socket context object
         std::unordered_set<PerSocketContextObject*> psco_set;
 
         OverlappedOpStruct* AllocateOverlappedOpStruct(SocketAsyncOperation opType)

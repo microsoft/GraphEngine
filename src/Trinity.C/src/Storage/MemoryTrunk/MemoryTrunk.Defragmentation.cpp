@@ -48,7 +48,7 @@ namespace Storage
         if (addressTable == nullptr)
             return;
 
-        if (!defrag_lock.trylock(retry_enter_threshold))
+        if (!defrag_lock.trylock())
         {
             delete[] addressTable;
             return;

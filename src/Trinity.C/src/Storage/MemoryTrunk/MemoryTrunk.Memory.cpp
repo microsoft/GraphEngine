@@ -28,7 +28,7 @@ namespace Storage
         char* cell_p         = nullptr;
 		PTHREAD_CONTEXT pctx = nullptr; 
 
-        if (!alloc_lock.trylock(100000))
+        if (!alloc_lock.trylock())
         {
             //  !Note, we should setup the Tx so that the arena
             //  is aware that we are locking current cell.

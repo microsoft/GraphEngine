@@ -7,6 +7,8 @@
 #include "Storage/LocalStorage/ThreadContext.h"
 #include <threading>
 
+#define COUNTER_THRESHOLD 4000
+
 namespace Storage
 {
     void MTHash::GetAllEntryLocksExceptArena()

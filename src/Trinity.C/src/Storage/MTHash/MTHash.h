@@ -10,7 +10,7 @@
 #include "Trinity/Configuration/TrinityConfig.h"
 #include "Memory/Memory.h"
 #include "CellEntry.h"
-#include "Threading/TrinitySpinlock.h"
+#include "Threading/TrinityLock.h"
 #include "Utility/HashHelper.h"
 #include "Trinity/Diagnostics/Log.h"
 #include "Storage/LocalStorage/ThreadContext.h"
@@ -90,8 +90,8 @@ namespace Storage
         MemoryTrunk * memory_trunk;
 
         int32_t FreeEntryList;
-        TrinitySpinlock FreeListLock;
-        TrinitySpinlock EntryAllocLock;
+        TrinityLock FreeListLock;
+        TrinityLock EntryAllocLock;
 
         std::atomic<uint32_t> EntryCount;
 

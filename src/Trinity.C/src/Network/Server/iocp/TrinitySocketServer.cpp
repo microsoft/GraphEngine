@@ -7,7 +7,7 @@
 #include "TrinitySocketServer.h"
 #include <Trinity/Environment.h>
 #include "Network/Server/iocp/Common.h"
-#include "Threading/TrinitySpinlock.h"
+#include "Threading/TrinityLock.h"
 #include "Network/ProtocolConstants.h"
 #include "Network/Server/TrinityServer.h"
 #include "Network/SocketOptionsHelper.h"
@@ -26,7 +26,7 @@ namespace Trinity
         SOCKET socket;
         HANDLE hIocp;
 
-        TrinitySpinlock spinlock;
+        TrinityLock spinlock;
         bool initialized = false;
 
         bool InitializeNetwork()

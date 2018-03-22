@@ -408,7 +408,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClInclude Include="src\Storage\MTHash\MTHash.h" />
     <ClInclude Include="src\Storage\MTHash\MT_ENUMERATOR.h" />
     <ClInclude Include="include\TrinityCommon.h" />
-    <ClInclude Include="src\Threading\TrinitySpinlock.h" />
+    <ClInclude Include="src\Threading\TrinityLock.h" />
     <ClInclude Include="src\Trinity\Configuration\TrinityConfig.h" />
     <ClInclude Include="src\Trinity\Diagnostics\Log.h" />
     <ClInclude Include="src\Utility\FileIO.h" />
