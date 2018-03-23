@@ -160,7 +160,7 @@ std::string* module_content = Modules::SerializeParametersToBuffer((*(node))[ite
 }
 source->append(R"::(
             buffer = tmpcellptr - preservedHeaderLength;
-            this.CellPtr = buffer + preservedHeaderLength;
+            this.m_ptr = buffer + preservedHeaderLength;
             Length = BufferLength - preservedHeaderLength;
             )::");
 if ((*(node))[iterator_1]->getLayoutType() != LT_FIXED)
@@ -210,7 +210,7 @@ std::string* module_content = Modules::SerializeParametersToBuffer((*(node))[ite
 }
 source->append(R"::(
             buffer = tmpcellptr - preservedHeaderLength;
-            this.CellPtr = buffer + preservedHeaderLength;
+            this.m_ptr = buffer + preservedHeaderLength;
             Length = BufferLength - preservedHeaderLength;
             )::");
 if ((*(node))[iterator_1]->getLayoutType() != LT_FIXED)
@@ -232,14 +232,14 @@ source->append(R"::(
             if (delta >= 0)
             {
                 byte* currentBufferPtr = buffer;
-                int required_length = (int)(tgtlen + (this.CellPtr - currentBufferPtr));
+                int required_length = (int)(tgtlen + (this.m_ptr - currentBufferPtr));
                 if(required_length < curlen) throw new AccessorResizeException("Accessor size overflow.");
                 if (required_length <= BufferLength)
                 {
                     Memory.memmove(
                         ptr + ptr_offset + delta,
                         ptr + ptr_offset,
-                        (ulong)(curlen - (ptr + ptr_offset - this.CellPtr)));
+                        (ulong)(curlen - (ptr + ptr_offset - this.m_ptr)));
                     Length = tgtlen;
                     return ptr;
                 }
@@ -247,8 +247,8 @@ source->append(R"::(
                 {
                     while (BufferLength < required_length)
                     {
-                        if (int.MaxValue - BufferLength >= (Buff)::");
-source->append(R"::(erLength>>1)) BufferLength += (BufferLength >> 1);
+                        if (int.MaxValue - BufferLength >= (BufferLe)::");
+source->append(R"::(ngth>>1)) BufferLength += (BufferLength >> 1);
                         else if (int.MaxValue - BufferLength >= (1 << 20)) BufferLength += (1 << 20);
                         else BufferLength = int.MaxValue;
                     }
@@ -257,17 +257,17 @@ source->append(R"::(erLength>>1)) BufferLength += (BufferLength >> 1);
                         tmpBuffer,
                         currentBufferPtr,
                         (ulong)(ptr + ptr_offset - currentBufferPtr));
-                    byte* newCellPtr = tmpBuffer + (this.CellPtr - currentBufferPtr);
+                    byte* newCellPtr = tmpBuffer + (this.m_ptr - currentBufferPtr);
                     Memory.memcpy(
                         newCellPtr + (ptr_offset + delta),
                         ptr + ptr_offset,
-                        (ulong)(curlen - (ptr + ptr_offset - this.CellPtr)));
+                        (ulong)(curlen - (ptr + ptr_offset - this.m_ptr)));
                     Length = tgtlen;
-                    this.CellPtr = newCellPtr;
+                    this.m_ptr = newCellPtr;
                     Memory.free(buffer);
                     buffer = tmpBuffer;
-                    return tmpBuffer + (ptr )::");
-source->append(R"::(- currentBufferPtr);
+                    return tmpBuffer + (ptr - currentB)::");
+source->append(R"::(ufferPtr);
                 }
             }
             else
@@ -276,7 +276,7 @@ source->append(R"::(- currentBufferPtr);
                 Memory.memmove(
                     ptr + ptr_offset,
                     ptr + ptr_offset - delta,
-                    (ulong)(Length - (ptr + ptr_offset - delta - this.CellPtr)));
+                    (ulong)(Length - (ptr + ptr_offset - delta - this.m_ptr)));
                 Length = tgtlen;
                 return ptr;
             }

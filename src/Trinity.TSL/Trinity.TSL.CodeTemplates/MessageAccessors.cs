@@ -102,7 +102,7 @@ namespace t_Namespace
             MODULE_CALL("SerializeParametersToBuffer", "$t_accessor", "\"message\"");
 
             buffer = tmpcellptr - preservedHeaderLength;
-            this.CellPtr = buffer + preservedHeaderLength;
+            this.m_ptr = buffer + preservedHeaderLength;
             Length = BufferLength - preservedHeaderLength;
 
             IF("$t_accessor->getLayoutType() != LT_FIXED");
@@ -125,7 +125,7 @@ namespace t_Namespace
             MODULE_CALL("SerializeParametersToBuffer", "$t_accessor", "\"message\"");
 
             buffer = tmpcellptr - preservedHeaderLength;
-            this.CellPtr = buffer + preservedHeaderLength;
+            this.m_ptr = buffer + preservedHeaderLength;
             Length = BufferLength - preservedHeaderLength;
 
             IF("$t_accessor->getLayoutType() != LT_FIXED");
@@ -140,14 +140,14 @@ namespace t_Namespace
             if (delta >= 0)
             {
                 byte* currentBufferPtr = buffer;
-                int required_length = (int)(tgtlen + (this.CellPtr - currentBufferPtr));
+                int required_length = (int)(tgtlen + (this.m_ptr - currentBufferPtr));
                 if(required_length < curlen) throw new AccessorResizeException("Accessor size overflow.");
                 if (required_length <= BufferLength)
                 {
                     Memory.memmove(
                         ptr + ptr_offset + delta,
                         ptr + ptr_offset,
-                        (ulong)(curlen - (ptr + ptr_offset - this.CellPtr)));
+                        (ulong)(curlen - (ptr + ptr_offset - this.m_ptr)));
                     Length = tgtlen;
                     return ptr;
                 }
@@ -167,13 +167,13 @@ namespace t_Namespace
                         tmpBuffer,
                         currentBufferPtr,
                         (ulong)(ptr + ptr_offset - currentBufferPtr));
-                    byte* newCellPtr = tmpBuffer + (this.CellPtr - currentBufferPtr);
+                    byte* newCellPtr = tmpBuffer + (this.m_ptr - currentBufferPtr);
                     Memory.memcpy(
                         newCellPtr + (ptr_offset + delta),
                         ptr + ptr_offset,
-                        (ulong)(curlen - (ptr + ptr_offset - this.CellPtr)));
+                        (ulong)(curlen - (ptr + ptr_offset - this.m_ptr)));
                     Length = tgtlen;
-                    this.CellPtr = newCellPtr;
+                    this.m_ptr = newCellPtr;
                     Memory.free(buffer);
                     buffer = tmpBuffer;
                     return tmpBuffer + (ptr - currentBufferPtr);
@@ -185,7 +185,7 @@ namespace t_Namespace
                 Memory.memmove(
                     ptr + ptr_offset,
                     ptr + ptr_offset - delta,
-                    (ulong)(Length - (ptr + ptr_offset - delta - this.CellPtr)));
+                    (ulong)(Length - (ptr + ptr_offset - delta - this.m_ptr)));
                 Length = tgtlen;
                 return ptr;
             }

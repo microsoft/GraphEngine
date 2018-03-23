@@ -35,7 +35,7 @@ namespace FanoutSearch
 
         public static bool has_cell_id(this ICell cell, params long[] cellIds)
         {
-            return cellIds.Contains(cell.CellID);
+            return cellIds.Contains(cell.CellId);
         }
 
         public static bool type(this ICell cell, string type_name)

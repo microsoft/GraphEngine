@@ -35,7 +35,7 @@ namespace Trinity.FFI.Interop
         public static int CO_New_3(string cellType, long cellId, string content)
         {
             ICell c = Global.LocalStorage.NewGenericCell(cellType, content);
-            c.CellID = cellId;
+            c.CellId = cellId;
             return Cache.Put(c);
         }
 
@@ -76,13 +76,13 @@ namespace Trinity.FFI.Interop
         [FFIExport]
         public static long CO_GetId(int index)
         {
-            return Cache.Get(index).CellID;
+            return Cache.Get(index).CellId;
         }
 
         [FFIExport]
         public static void CO_SetId(int index, long value)
         {
-            Cache.Get(index).CellID = value;
+            Cache.Get(index).CellId = value;
         }
 
         [FFIExport]

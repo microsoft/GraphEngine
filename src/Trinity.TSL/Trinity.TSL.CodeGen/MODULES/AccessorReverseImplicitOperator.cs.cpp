@@ -55,7 +55,16 @@ std::string* module_content = Modules::PushPointerFromVariable(node, &module_ctx
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::( ret;
             )::");
-if (has_resize_1)
+if (for_cell_1)
+{
+source->append(R"::(
+            ret = )::");
+source->append(Codegen::GetString(data_type_get_accessor_name(node)));
+source->append(R"::(._get()._Setup(field.CellId, tmpcellptr, -1, 0, null);
+            ret.CellId = field.CellId;
+            )::");
+}
+else if (has_resize_1)
 {
 source->append(R"::(
             ret = new )::");
@@ -69,18 +78,6 @@ source->append(R"::(
             ret = new )::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::((tmpcellptr);
-            )::");
-}
-if (for_cell_1)
-{
-source->append(R"::(
-            ret.CellID = field.CellID;
-            )::");
-}
-else
-{
-source->append(R"::(
-            ret.CellID = null;
             )::");
 }
 source->append(R"::(

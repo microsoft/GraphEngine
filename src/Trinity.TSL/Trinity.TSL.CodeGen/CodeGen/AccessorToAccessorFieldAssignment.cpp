@@ -23,26 +23,26 @@ static void _FixedLengthAccessorFieldAssignment(NFieldType* type, string accesso
     if (!create_optional)
     {
         source->append("\
-                Memory.Copy(value.CellPtr, targetPtr, " + fieldLength + "); ");
+                Memory.Copy(value.m_ptr, targetPtr, " + fieldLength + "); ");
     }
     else
     {
         source->append(R":(
-                int offset = (int)(targetPtr - CellPtr);
+                int offset = (int)(targetPtr - m_ptr);
                 int length = ):" + fieldLength + R":(;
-                if (value.CellID != this.CellID)
+                if (value.CellId != this.CellId)
                 {
-                    this.CellPtr = this.ResizeFunction(this.CellPtr, offset, length);
-                    Memory.Copy(value.CellPtr, this.CellPtr + offset, length);
+                    this.m_ptr = this.ResizeFunction(this.m_ptr, offset, length);
+                    Memory.Copy(value.m_ptr, this.m_ptr + offset, length);
                 }
                 else
                 {
                     byte[] tmpcell = new byte[length];
                     fixed (byte* tmpcellptr = tmpcell)
                     {
-                        Memory.Copy(value.CellPtr, tmpcellptr, length);
-                        this.CellPtr = this.ResizeFunction(this.CellPtr, offset, length);
-                        Memory.Copy(tmpcellptr, this.CellPtr + offset, length);
+                        Memory.Copy(value.m_ptr, tmpcellptr, length);
+                        this.m_ptr = this.ResizeFunction(this.m_ptr, offset, length);
+                        Memory.Copy(tmpcellptr, this.m_ptr + offset, length);
                     }
                 }
 ):");
@@ -53,7 +53,7 @@ static void _StructAccessorFieldAssignment(NFieldType* type, string accessor_fie
 {
     bool isfixed = type->layoutType == LT_FIXED;
     string ret = R"::(
-                int offset = (int)(targetPtr - CellPtr);
+                int offset = (int)(targetPtr - m_ptr);
                 byte* oldtargetPtr = targetPtr;)::";
 
     if (!create_optional)
@@ -69,39 +69,39 @@ static void _StructAccessorFieldAssignment(NFieldType* type, string accessor_fie
     }
 
     ret += R"::(
-                targetPtr = value.CellPtr;)::";
+                targetPtr = value.m_ptr;)::";
     Modules::PushPointerThroughFieldType(type, context);
     ret += R"::(
-                int newlength = (int)(targetPtr - value.CellPtr);)::";
+                int newlength = (int)(targetPtr - value.m_ptr);)::";
     if (isfixed)
     {
         ret += R"::(
-                Memory.Copy(value.CellPtr, oldtargetPtr, oldlength);)::";
+                Memory.Copy(value.m_ptr, oldtargetPtr, oldlength);)::";
     }
     else
     {
         ret += R"::(
                 if (newlength != oldlength)
                 {
-                    if (value.CellID != this.CellID)
+                    if (value.CellId != this.CellId)
                     {
-                        this.CellPtr = this.ResizeFunction(this.CellPtr, offset, newlength - oldlength);
-                        Memory.Copy(value.CellPtr, this.CellPtr + offset, newlength);
+                        this.m_ptr = this.ResizeFunction(this.m_ptr, offset, newlength - oldlength);
+                        Memory.Copy(value.m_ptr, this.m_ptr + offset, newlength);
                     }
                     else
                     {
                         byte[] tmpcell = new byte[newlength];
                         fixed(byte* tmpcellptr = tmpcell)
                         {
-                            Memory.Copy(value.CellPtr, tmpcellptr, newlength);
-                            this.CellPtr = this.ResizeFunction(this.CellPtr, offset, newlength - oldlength);
-                            Memory.Copy(tmpcellptr, this.CellPtr + offset, newlength);
+                            Memory.Copy(value.m_ptr, tmpcellptr, newlength);
+                            this.m_ptr = this.ResizeFunction(this.m_ptr, offset, newlength - oldlength);
+                            Memory.Copy(tmpcellptr, this.m_ptr + offset, newlength);
                         }
                     }
                 }
                 else
                 {
-                    Memory.Copy(value.CellPtr, oldtargetPtr, oldlength);
+                    Memory.Copy(value.m_ptr, oldtargetPtr, oldlength);
                 })::";
     }
     source->append(ret);
@@ -111,7 +111,7 @@ static void _LengthPrefixedAccessorFieldAssignment(NFieldType* type, string acce
 {
     string ret;
     ret += R"::(
-                int length = *(int*)(value.CellPtr - 4);)::";
+                int length = *(int*)(value.m_ptr - 4);)::";
     string resize_len;
                 
 
@@ -127,20 +127,20 @@ static void _LengthPrefixedAccessorFieldAssignment(NFieldType* type, string acce
     }
 
     ret += R"::(
-                if (value.CellID != )::" + accessor_field_name + R"::(.CellID)
+                if (value.CellId != )::" + accessor_field_name + R"::(.CellId)
                 {
                     //if not in the same Cell
-                    )::" + accessor_field_name + ".CellPtr = " + accessor_field_name + ".ResizeFunction(targetPtr, 0, " + resize_len + R"::();
-                    Memory.Copy(value.CellPtr - 4, )::" + accessor_field_name + R"::(.CellPtr, length + 4);
+                    )::" + accessor_field_name + ".m_ptr = " + accessor_field_name + ".ResizeFunction(targetPtr, 0, " + resize_len + R"::();
+                    Memory.Copy(value.m_ptr - 4, )::" + accessor_field_name + R"::(.m_ptr, length + 4);
                 }
                 else
                 {
                     byte[] tmpcell = new byte[length + 4];
                     fixed (byte* tmpcellptr = tmpcell)
                     {                        
-                        Memory.Copy(value.CellPtr - 4, tmpcellptr, length + 4);
-                        )::" + accessor_field_name + ".CellPtr = " + accessor_field_name + ".ResizeFunction(targetPtr, 0, " + resize_len + R"::();
-                        Memory.Copy(tmpcellptr, )::" + accessor_field_name + R"::(.CellPtr, length + 4);
+                        Memory.Copy(value.m_ptr - 4, tmpcellptr, length + 4);
+                        )::" + accessor_field_name + ".m_ptr = " + accessor_field_name + ".ResizeFunction(targetPtr, 0, " + resize_len + R"::();
+                        Memory.Copy(tmpcellptr, )::" + accessor_field_name + R"::(.m_ptr, length + 4);
                     }
                 }
 )::";
@@ -158,8 +158,8 @@ namespace Trinity
              * Generates accessor to accessor-field assignment code.
              * When this module is called, the caller should guarantee that 'targetPtr'
              * points to the location of the field to be assigned. Also, if an accessor
-             * is needed for the field, the CellPtr field of the accessor should point
-             * to targetPtr, and CellID should be properly set.
+             * is needed for the field, the m_ptr field of the accessor should point
+             * to targetPtr, and CellId should be properly set.
              * Arguments:
              * 0. accessor field name
              * 1. "FieldDoesNotExist" or "FieldExists" -> determines whether

@@ -222,7 +222,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Psapi.lib;ws2_32.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Synchronization.lib;Psapi.lib;ws2_32.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
@@ -276,7 +276,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Psapi.lib;ws2_32.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Synchronization.lib;Psapi.lib;ws2_32.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
@@ -370,10 +370,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClInclude Include="include\Trinity\IO\File.h" />
     <ClInclude Include="include\Trinity\IO\Path.h" />
     <ClInclude Include="include\Trinity\IO\StreamWriter.h" />
-    <ClInclude Include="include\Trinity\NonCopyable.h" />
-    <ClInclude Include="include\Trinity\NonReferencable.h" />
     <ClInclude Include="include\Trinity\Random.h" />
-    <ClInclude Include="include\Trinity\ref.h" />
     <ClInclude Include="include\Trinity\String.h" />
     <ClInclude Include="include\Trinity\Threading\Mutex.h" />
     <ClInclude Include="include\Trinity\Threading\Parallel.h" />
@@ -398,6 +395,8 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClInclude Include="src\Runtime\Debug.h" />
     <ClInclude Include="src\Debugger\Debugger.h" />
     <ClInclude Include="src\Runtime\InternalCalls.h" />
+    <ClInclude Include="src\Storage\LocalStorage\ThreadContext.h" />
+    <ClInclude Include="src\Storage\MTHash\MT_SHADOW_ENUMERATOR.h" />
     <ClInclude Include="src\Trinity\Diagnostics\LogAutoFlushTask.h" />
     <ClInclude Include="src\Runtime\Transition.h" />
     <ClInclude Include="src\Mathematics\TrinityMath.h" />
@@ -409,7 +408,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClInclude Include="src\Storage\MTHash\MTHash.h" />
     <ClInclude Include="src\Storage\MTHash\MT_ENUMERATOR.h" />
     <ClInclude Include="include\TrinityCommon.h" />
-    <ClInclude Include="src\Threading\TrinitySpinlock.h" />
+    <ClInclude Include="src\Threading\TrinityLock.h" />
     <ClInclude Include="src\Trinity\Configuration\TrinityConfig.h" />
     <ClInclude Include="src\Trinity\Diagnostics\Log.h" />
     <ClInclude Include="src\Utility\FileIO.h" />
@@ -439,8 +438,10 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClCompile Include="src\Storage\LocalStorage\GCTask.cpp" />
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.cpp" />
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.Enumeration.cpp" />
+    <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.Tx.cpp" />
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.WriteAheadLog.cpp" />
     <ClCompile Include="src\Storage\LocalStorage\localstorage_exported_methods.cpp" />
+    <ClCompile Include="src\Storage\LocalStorage\ThreadContext.cpp" />
     <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.AddressTable.cpp" />
     <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.Cell.Memory.cpp" />
     <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.Defragmentation.cpp" />
@@ -453,6 +454,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClCompile Include="src\Storage\MTHash\MTHash.lock.cpp" />
     <ClCompile Include="src\Storage\MTHash\MTHash.Resize.cpp" />
     <ClCompile Include="src\Storage\MTHash\MT_ENUMERATOR.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MT_SHADOW_ENUMERATOR.cpp" />
     <ClCompile Include="src\Runtime\InternalCalls.cpp" />
     <ClCompile Include="src\Runtime\dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>

@@ -87,8 +87,6 @@ namespace TrinityConfig
 
     String StorageRoot();
     void SetStorageRoot(String storageRoot);
-    String LogDirectory();
-    void SetLogDirectory(String logDir);
     void SetGCDefragInterval(int32_t interval);
 
     /// <summary>

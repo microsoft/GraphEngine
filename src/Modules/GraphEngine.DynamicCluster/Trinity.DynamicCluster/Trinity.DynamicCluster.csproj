@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Client" Version="1.0.9083" />
-    <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
+    <PackageReference Include="GraphEngine.Client" Version="2.0.9328" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
     <PackageReference Include="Nito.AsyncEx.Coordination" Version="1.0.2" />
     <PackageReference Include="Nito.AsyncEx.Tasks" Version="1.1.0" />
     <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
@@ -34,10 +34,10 @@
     <Copyright>Copyright 2018</Copyright>
     <Company>Microsoft Corporation</Company>
 
-    <Version>1.0.9083</Version>
-    <AssemblyVersion>1.0.9083.0</AssemblyVersion>
-    <FileVersion>1.0.9083.0</FileVersion>
-    <PackageVersion>1.0.9083</PackageVersion>
+    <Version>2.0.9328</Version>
+    <AssemblyVersion>2.0.9328.0</AssemblyVersion>
+    <FileVersion>2.0.9328.0</FileVersion>
+    <PackageVersion>2.0.9328</PackageVersion>
 
     <PackageId>GraphEngine.DynamicCluster</PackageId>
     <Title>GraphEngine DynamicCluster</Title>

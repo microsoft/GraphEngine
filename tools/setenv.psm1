@@ -29,6 +29,7 @@ Function Init-Configuration {
     $Global:TRINITY_STORAGE_COMPOSITE_SLN = "$REPO_ROOT\src\Modules\GraphEngine.Storage.Composite\GraphEngine.Storage.Composite.sln"
     $Global:TRINITY_FFI_ROOT              = "$REPO_ROOT\src\Modules\Trinity.FFI"
     $Global:TRINITY_OUTPUT_DIR            = "$REPO_ROOT\bin"
+    $Global:TRINITY_TEST_DIR              = "$REPO_ROOT\tests"
 
     New-Item -Path "$TRINITY_OUTPUT_DIR" -ItemType Directory -ErrorAction SilentlyContinue
 }
@@ -77,31 +78,21 @@ Function Remove-Build {
 }
 
 Function Invoke-DotNet($proj, $action, $config = $null) {
+  Write-Output "========> Invoke: $proj[$config] -> $action"
   if ($config -eq $null){
-    $cmd = @'
- & $DOTNET_EXE $action "$proj"
-'@
+    & $DOTNET_EXE $action "$proj"
   }else{
-    $cmd = @'
- & $DOTNET_EXE $action -c $config "$proj"
-'@
+    & $DOTNET_EXE "$action" -c $config "$proj"
   }
-    Write-Output "========> Invoke: $proj[$config] -> $action"
-    Invoke-Expression $cmd -ErrorAction Stop
 }
 
 Function Invoke-MSBuild($proj, $config = "Release", $platform = $null) {
-  if ($platform -eq $null) {
-    $cmd = @'
- & $MSBUILD_EXE "/p:Configuration=$config" "$proj"
-'@
-  }else{
-    $cmd = @'
- & $MSBUILD_EXE "/p:Configuration=$config;Platform=$platform" "$proj"
-'@
-  }
   Write-Output "========> MSBUILD: $proj[$config|$platform]"
-  Invoke-Expression $cmd -ErrorAction Stop
+  if ($platform -eq $null) {
+     & $MSBUILD_EXE "/p:Configuration=$config" "$proj"
+  }else{
+     & $MSBUILD_EXE "/p:Configuration=$config;Platform=$platform" "$proj"
+  }
 }
 
 Function New-Package($proj, $config = "Release") {
@@ -125,6 +116,40 @@ Function Invoke-Sub($sub) {
   try { . $sub.FullName }
   finally { Pop-Location; Init-Configuration }
 # Call Init-Configuration again in case the sub erased the variables, or they are somehow lost.
+}
+
+Function Invoke-Test($proj, $block) {
+  Write-Output ("========>[+] Invoke-Test: " + $proj)
+  Push-Location
+  try { & $block }
+  finally { Pop-Location }
+}
+
+Function Test-Xunit($proj, $config = "Release") {
+  $proj = Get-Item -Path $proj
+  $dir  = $proj.Directory.FullName
+  $proj = $proj.Name
+
+  Invoke-Test -proj $proj -block {
+      Set-Location $dir
+      Invoke-DotNet -proj $proj -action restore
+      Invoke-DotNet -proj $proj -action build -config $config
+      Invoke-Expression "& $DOTNET_EXE xunit"
+  }
+}
+
+Function Test-ExeProject($proj, $config = "Release") {
+    $proj = Get-Item -Path $proj
+    $dir  = $proj.Directory
+    $proj = $proj.Name
+
+    Invoke-Test -proj $proj -block {
+        Set-Location $dir
+        Invoke-DotNet -proj $proj -action restore
+        Invoke-DotNet -proj $proj -action build -config $config
+        Invoke-Expression "& $DOTNET_EXE run --framework net461 '$proj'"
+        Invoke-Expression "& $DOTNET_EXE run --framework netcoreapp2.0 '$proj'"
+    }
 }
 
 Init-Configuration

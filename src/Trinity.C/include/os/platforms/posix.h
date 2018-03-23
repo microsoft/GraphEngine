@@ -18,6 +18,7 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <pthread.h>
+#include <assert.h>
 
 #include "arch/cpu.h"
 
@@ -50,3 +51,4 @@ int GetLastError();
 #define TRINITY_COMPILER_WARNING(msg) _Pragma(_HELPER_1(_HELPER_2(msg)))
 #define ALIGNED(x) __attribute__ ((aligned(x)))
 #define DLL_EXPORT extern "C" __attribute__ ((visibility ("default")))
+#define THREAD_LOCAL thread_local

@@ -283,12 +283,11 @@ namespace Trinity
                 return path;
             }
 
-            inline String CompletePath(String path, bool create_nonexistent)
+            inline bool _CompletePath(/*INOUT*/ String& path, bool create_nonexistent) 
             {
-                if (path.Empty() || Path::IsPathRootOnly(path))
-                {
-                    return path;
-                }
+                if (path.Empty()) return true;
+                    
+                if (Path::IsPathRootOnly(path)) return Directory::Exists(path);
 
                 path = Path::GetFullPath(path);
 
@@ -300,21 +299,18 @@ namespace Trinity
                     path.PopBack();
 #endif
 
-                if (create_nonexistent)
-                {
-                    String parent_dir = Path::GetDirectoryName(path);
+                if (!create_nonexistent) return Directory::Exists(path);
 
-                    if (!Directory::Exists(parent_dir))
-                    {
-                        CompletePath(parent_dir, true);
-                    }
+                String parent_dir = Path::GetDirectoryName(path);
+                if (!Directory::Exists(parent_dir) && !_CompletePath(parent_dir, true)) return false;
 
-                    if (!Directory::Exists(path))
-                    {
-                        Directory::Create(path);
-                    }
-                }
+                if (!Directory::Exists(path)) return Directory::Create(path);
+                else return true;
+            }
 
+            inline String CompletePath(String path, bool create_nonexistent)
+            {
+                _CompletePath(path, create_nonexistent);
                 return path;
             }
 

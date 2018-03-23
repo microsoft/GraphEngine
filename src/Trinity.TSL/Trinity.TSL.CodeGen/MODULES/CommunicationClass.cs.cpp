@@ -221,7 +221,7 @@ source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(Handler(new )::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->referencedNProtocol->request_message_struct));
 source->append(R"::(Reader(args.Buffer, args.Offset), rsp);
-            *(int*)(rsp.CellPtr - TrinityProtocol.MsgHeader) = rsp.Length + TrinityProtocol.TrinityMsgHeader;
+            *(int*)(rsp.m_ptr - TrinityProtocol.MsgHeader) = rsp.Length + TrinityProtocol.TrinityMsgHeader;
             args.Response = new TrinityMessage(rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader);
         }
         public abstract void )::");
@@ -248,7 +248,7 @@ source->append(R"::(Writer();
             )::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(Handler(rsp);
-            *(int*)(rsp.CellPtr - TrinityProtocol.MsgHeader) = rsp.Length + TrinityProtocol.TrinityMsgHeader;
+            *(int*)(rsp.m_ptr - TrinityProtocol.MsgHeader) = rsp.Length + TrinityProtocol.TrinityMsgHeader;
             args.Response = new TrinityMessage(rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader);
         }
         public abstract void )::");
@@ -297,8 +297,8 @@ source->append(Codegen::GetString(get_comm_protocol_type_string((*(node->protoco
 source->append(R"::(MessageType.)::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(__Response;
-                *(int*)(rsp.CellPtr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength) = token;
-                *(int*)(rsp.CellPtr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength + sizeof(int)) = 0;
+                *(int*)(rsp.m_ptr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength) = token;
+                *(int*)(rsp.m_ptr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength + sizeof(int)) = 0;
                 )::");
 if (node->type() == PGT_MODULE)
 {
@@ -360,8 +360,8 @@ source->append(Codegen::GetString(get_comm_protocol_type_string((*(node->protoco
 source->append(R"::(MessageType.)::");
 source->append(Codegen::GetString((*(node->protocolList))[iterator_1]->name));
 source->append(R"::(__Response;
-                *(int*)(rsp.CellPtr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength) = token;
-                *(int*)(rsp.CellPtr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength + sizeof(int)) = 0;
+                *(int*)(rsp.m_ptr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength) = token;
+                *(int*)(rsp.m_ptr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength + sizeof(int)) = 0;
                 )::");
 if (node->type() == PGT_MODULE)
 {

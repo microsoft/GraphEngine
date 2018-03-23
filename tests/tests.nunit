@@ -1,6 +1,0 @@
-<NUnitProject>
-    <Settings activeConfig="Release" processModel="Multiple"/>
-    <Config name="Release">
-        <assembly path="storage\storage4_nunit\bin\Release\storage4_nunit.dll"/>
-    </Config>
-</NUnitProject>

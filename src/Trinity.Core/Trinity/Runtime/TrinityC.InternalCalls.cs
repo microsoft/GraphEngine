@@ -76,10 +76,10 @@ namespace Trinity
     #region Storage
             new InternalCallEntry("CInitialize"                             , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CCellCount"                              , typeof(CLocalMemoryStorage)),
-            new InternalCallEntry("CResetStorage"                           , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CDispose"                                , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CSaveStorage"                            , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CLoadStorage"                            , typeof(CLocalMemoryStorage)),
+            new InternalCallEntry("CResetStorage"                           , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CGetTrinityImageSignature"               , typeof(CLocalMemoryStorage)),
 
             /* Non-logging interfaces */
@@ -109,6 +109,10 @@ namespace Trinity
             new InternalCallEntry("CLocalMemoryStorageEnumeratorMoveNext"   , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CLocalMemoryStorageEnumeratorReset"      , typeof(CLocalMemoryStorage)),
 
+            new InternalCallEntry("CThreadContextAllocate"                  , typeof(CLocalMemoryStorage)),
+            new InternalCallEntry("CThreadContextSet"                       , typeof(CLocalMemoryStorage)),
+            new InternalCallEntry("CThreadContextDeallocate"                , typeof(CLocalMemoryStorage)),
+
             new InternalCallEntry("SetDefragmentationPaused"                , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("StopDefragAndAwaitCeased"                , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("RestartDefragmentation"                  , typeof(CLocalMemoryStorage)),
@@ -119,12 +123,34 @@ namespace Trinity
             new InternalCallEntry("CTotalCellSize"                          , typeof(CLocalMemoryStorage)),
 
             new InternalCallEntry("CGetLockedCellInfo4CellAccessor"         , typeof(CLocalMemoryStorage)),
-            new InternalCallEntry("CGetLockedCellInfo4SaveCell"             , typeof(CLocalMemoryStorage)),
-            new InternalCallEntry("CGetLockedCellInfo4AddCell"              , typeof(CLocalMemoryStorage)),
-            new InternalCallEntry("CGetLockedCellInfo4UpdateCell"           , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CGetLockedCellInfo4LoadCell"             , typeof(CLocalMemoryStorage)),
             new InternalCallEntry("CGetLockedCellInfo4AddOrUseCell"         , typeof(CLocalMemoryStorage)),
+
             new InternalCallEntry("CLockedGetCellSize"                      , typeof(CLocalMemoryStorage)),
+
+            #region Tx
+            new InternalCallEntry("TxCResizeCell"                           , typeof(CLocalMemoryStorage)),
+            new InternalCallEntry("TxCGetCellType"                          , typeof(CLocalMemoryStorage)),
+            new InternalCallEntry("TxCReleaseCellLock"                      , typeof(CLocalMemoryStorage)),
+
+            new InternalCallEntry("TxCGetLockedCellInfo4CellAccessor"       , typeof(CLocalMemoryStorage)),
+            new InternalCallEntry("TxCGetLockedCellInfo4LoadCell"           , typeof(CLocalMemoryStorage)),
+            new InternalCallEntry("TxCGetLockedCellInfo4AddOrUseCell"       , typeof(CLocalMemoryStorage)),
+
+
+            /* Non-logging interfaces */
+            new InternalCallEntry("TxCSaveCell"                             , typeof(CLocalMemoryStorage), new List<Type>{typeof(void*), typeof(long), typeof(byte*), typeof(int), typeof(ushort)}),
+            new InternalCallEntry("TxCAddCell"                              , typeof(CLocalMemoryStorage), new List<Type>{typeof(void*), typeof(long), typeof(byte*), typeof(int), typeof(ushort)}),
+            new InternalCallEntry("TxCUpdateCell"                           , typeof(CLocalMemoryStorage), new List<Type>{typeof(void*), typeof(long), typeof(byte*), typeof(int)}),
+            new InternalCallEntry("TxCRemoveCell"                           , typeof(CLocalMemoryStorage), new List<Type>{typeof(void*), typeof(long)}),
+
+            /* Logging interfaces */
+            new InternalCallEntry("TxCLoggedSaveCell"                       , typeof(CLocalMemoryStorage), new List<Type>{typeof(void*), typeof(long), typeof(byte*), typeof(int), typeof(ushort), typeof(CellAccessOptions)}),
+            new InternalCallEntry("TxCLoggedAddCell"                        , typeof(CLocalMemoryStorage), new List<Type>{typeof(void*), typeof(long), typeof(byte*), typeof(int), typeof(ushort), typeof(CellAccessOptions)}),
+            new InternalCallEntry("TxCLoggedUpdateCell"                     , typeof(CLocalMemoryStorage), new List<Type>{typeof(void*), typeof(long), typeof(byte*), typeof(int), typeof(CellAccessOptions)}),
+            new InternalCallEntry("TxCLoggedRemoveCell"                     , typeof(CLocalMemoryStorage), new List<Type>{typeof(void*), typeof(long), typeof(CellAccessOptions)}),
+
+            #endregion
 
             new InternalCallEntry("CStartDebugger"                          , typeof(CLocalMemoryStorage)),
     #endregion

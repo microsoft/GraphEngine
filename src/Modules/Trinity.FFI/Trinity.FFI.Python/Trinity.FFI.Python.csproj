@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>GraphEngine.FFI.Python</PackageId>
-    <Version>1.0.9083</Version>
+    <Version>2.0.9328</Version>
     <Authors>Microsoft Graph Engine Team</Authors>
     <Company>Microsoft Corporation</Company>
     <Product>GraphEngine.FFI.Python</Product>
@@ -20,6 +20,27 @@
   <PropertyGroup>
     <OutputPath>..\..\..\..\bin</OutputPath>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="build\**" />
+    <Compile Remove="GraphEngine.egg-info\**" />
+    <Compile Remove="GraphEngine\**" />
+    <Compile Remove="storage\**" />
+    <Compile Remove="tests\**" />
+    <Compile Remove="__pycache__\**" />
+    <EmbeddedResource Remove="build\**" />
+    <EmbeddedResource Remove="GraphEngine.egg-info\**" />
+    <EmbeddedResource Remove="GraphEngine\**" />
+    <EmbeddedResource Remove="storage\**" />
+    <EmbeddedResource Remove="tests\**" />
+    <EmbeddedResource Remove="__pycache__\**" />
+    <None Remove="build\**" />
+    <None Remove="GraphEngine.egg-info\**" />
+    <None Remove="GraphEngine\**" />
+    <None Remove="storage\**" />
+    <None Remove="tests\**" />
+    <None Remove="__pycache__\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <SwigFile Include="$(ProjectDir)..\Trinity.FFI.Native\Trinity.FFI.Swig.i" />

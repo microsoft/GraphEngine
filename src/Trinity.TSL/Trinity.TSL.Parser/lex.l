@@ -549,7 +549,7 @@ PSTR_TERM           (?:\\.|[^;,\{\}\(\)\[\]\:\\\"\'\ \n\t\r])
 "String"                                            CAPTURE_TOKEN(T_STRINGTYPE);
 "string"                                            CAPTURE_TOKEN(T_STRINGTYPE);
 
-        /* Aliases for CellID type, will be converted to long(int64) */
+        /* Aliases for CellId type, will be converted to long(int64) */
 "CellID"                                            CAPTURE_TOKEN(T_LONGTYPE);
 "CellId"                                            CAPTURE_TOKEN(T_LONGTYPE);
 

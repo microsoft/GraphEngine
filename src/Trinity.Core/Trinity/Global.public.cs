@@ -34,12 +34,42 @@ namespace Trinity
         /// is triggered. However, when the Graph Engine
         /// is uninitialized, one would have to manually
         /// call this again before using the local memory storage.
+        /// Note, the system will load from the default configuration
+        /// file path "trinity.xml", only if no configuration
+        /// file has been loaded.
         /// </summary>
         public static void Initialize()
+        {
+            Initialize_impl(null);
+        }
+
+        /// <summary>
+        /// Initializes Graph Engine.
+        /// </summary>
+        /// <param name="config_file">
+        /// The path to the configuration file. If set to null,
+        /// the system will load from the default configuration
+        /// file path "trinity.xml", only if no configuration
+        /// file has been loaded.
+        /// </param>
+        public static void Initialize(string config_file)
+        {
+            Initialize_impl(config_file);
+        }
+
+        private static void Initialize_impl(string config_file = null)
         {
             lock (s_storage_init_lock)
             {
                 if (s_master_init_flag) return;
+
+                TrinityC.Init();
+
+                if (config_file != null) TrinityConfig.LoadConfig(config_file);
+                else TrinityConfig.EnsureConfig();
+
+                Log.Initialize();
+
                 _LoadGraphEngineExtensions();
                 _ScanForTSLStorageExtension();
                 _ScanForMemoryCloudExtension();
@@ -86,7 +116,10 @@ namespace Trinity
                         isCloudStorageInited = false;
                     }
 
+                    // !Note, BackgroundThread.Stop may write log entries,
+                    //  so we uninitialize Log later than BackgroundThread.
                     BackgroundThread.Stop();
+                    Log.Uninitialize();
                     s_master_init_flag = false;
                 }
 

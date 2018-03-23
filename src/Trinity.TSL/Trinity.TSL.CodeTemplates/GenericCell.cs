@@ -150,7 +150,7 @@ namespace t_Namespace
             {
                 /*FOREACH*/
                 case CellType.t_cell_name:
-                return t_cell_name_Accessor.New(cellId, cellPtr, entryIndex, CellAccessOptions.ThrowExceptionOnCellNotFound);
+                return t_cell_name_Accessor._get()._Setup(cellId, cellPtr, entryIndex, CellAccessOptions.ThrowExceptionOnCellNotFound);
                 /*END*/
                 default:
                 storage.ReleaseCellLock(cellId, entryIndex);
@@ -214,7 +214,7 @@ namespace t_Namespace
             switch (cellType)
             {
                 /*FOREACH*/
-                case "t_cell_name": return t_cell_name_Accessor.New(cellId, options);
+                case "t_cell_name": return t_cell_name_Accessor._get()._Lock(cellId, options);
                 /*END*/
                 default:
                 Throw.invalid_cell_type();
@@ -228,6 +228,7 @@ namespace t_Namespace
         /// <inheritdoc/>
         public IEnumerable<ICell> EnumerateGenericCells(LocalMemoryStorage storage)
         {
+            //TODO no tx
             foreach (var cellInfo in Global.LocalStorage)
             {
                 switch ((CellType)cellInfo.CellType)
@@ -235,7 +236,7 @@ namespace t_Namespace
                     /*FOREACH*/
                     case CellType.t_cell_name:
                         {
-                            var t_cell_name_accessor = t_cell_name_Accessor.AllocIterativeAccessor(cellInfo);
+                            var t_cell_name_accessor = t_cell_name_Accessor.AllocIterativeAccessor(cellInfo, null);
                             var t_cell_name_cell     = (t_cell_name)t_cell_name_accessor;
                             t_cell_name_accessor.Dispose();
                             yield return t_cell_name_cell;
@@ -260,7 +261,7 @@ namespace t_Namespace
                     /*FOREACH*/
                     case CellType.t_cell_name:
                         {
-                            var t_cell_name_accessor = t_cell_name_Accessor.AllocIterativeAccessor(cellInfo);
+                            var t_cell_name_accessor = t_cell_name_Accessor.AllocIterativeAccessor(cellInfo, null);
                             yield return t_cell_name_accessor;
                             t_cell_name_accessor.Dispose();
                             break;
@@ -343,7 +344,7 @@ namespace t_Namespace
             {
                 /*FOREACH*/
                 case CellType.t_cell_name:
-                return t_cell_name_Accessor.New(cellId, cellBuffer, entryIndex, options);
+                return t_cell_name_Accessor._get()._Setup(cellId, cellBuffer, entryIndex, options);
                 /*END*/
                 default:
                 throw new CellTypeNotMatchException("Cannot determine cell type.");

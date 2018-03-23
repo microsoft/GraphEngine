@@ -32,8 +32,8 @@ source->append(R"::(
     /// </summary>
     public unsafe class DateTimeAccessor : IAccessor
     {
-        internal byte* CellPtr;
-        internal long? CellID;
+        internal byte* m_ptr;
+        internal long CellId;
         /// <summary>
         ///     Converts the specified string representation of a date and time to its <see cref="Trinity.TSL.Lib.DateTimeAccessor"/>
         ///     equivalent and returns a value that indicates whether the conversion succeeded.
@@ -46,8 +46,8 @@ source->append(R"::(
         /// <param name="value">
         ///     When this method returns, contains the <see cref="Trinity.TSL.Lib.DateTimeAccessor"/> value equivalent to
         ///     the date and time contained in s, if the conversion succeeded, or <see cref="System.DateTime.MinValue"/>
-        ///     if the conversion failed. The conversion fails if the s param)::");
-source->append(R"::(eter is null,
+        ///     if the conversion failed. The conversion fails if the s paramete)::");
+source->append(R"::(r is null,
         ///     is an empty string (""), or does not contain a valid string representation
         ///     of a date and time. This parameter is passed uninitialized.
         /// </param>
@@ -72,8 +72,8 @@ source->append(R"::(eter is null,
         /// <summary>
         ///     Converts the specified string representation of a date and time to its <see cref="System.DateTime"/>
         ///     equivalent and returns a value that indicates whether the conversion succeeded.
-        /// </sum)::");
-source->append(R"::(mary>
+        /// </summar)::");
+source->append(R"::(y>
         ///
         /// <param name="input">
         ///     A string containing a date and time to convert.
@@ -93,11 +93,11 @@ source->append(R"::(mary>
         public static bool TryParse(string input, out DateTime value)
         {
             return DateTime.TryParse(input, null, DateTimeStyles.RoundtripKind, out value);
-   )::");
-source->append(R"::(     }
+      )::");
+source->append(R"::(  }
         internal DateTimeAccessor(byte* _CellPtr)
         {
-            CellPtr = _CellPtr;
+            m_ptr = _CellPtr;
         }
         internal int length
         {
@@ -112,7 +112,7 @@ source->append(R"::(     }
         /// <returns>A 64-bit signed integer that encodes the .Net DateTime. </returns>
         public unsafe long ToBinary()
         {
-            return *(long*)CellPtr;
+            return *(long*)m_ptr;
         }
         #region IAccessor Implementation
         /// <summary>
@@ -124,8 +124,8 @@ source->append(R"::(     }
             byte[] ret = new byte[sizeof(long)];
             fixed (byte* ptr = ret)
             {
-                Me)::");
-source->append(R"::(mory.Copy(CellPtr, ptr, length);
+                Memory.Co)::");
+source->append(R"::(py(m_ptr, ptr, length);
             }
             return ret;
         }
@@ -134,7 +134,7 @@ source->append(R"::(mory.Copy(CellPtr, ptr, length);
         /// </summary>
         public unsafe byte* GetUnderlyingBufferPointer()
         {
-            return CellPtr;
+            return m_ptr;
         }
         /// <summary>
         /// Get the length of the buffer.
@@ -152,9 +152,9 @@ source->append(R"::(mory.Copy(CellPtr, ptr, length);
         /// Converts the value of the current DateTime object to its equivalent string representation.
         /// </summary>
         /// <returns>A string representation of the value of the current DateTime object.</returns>
-        public override unsafe string ToString()::");
-source->append(R"::()
-        {
+        public override unsafe string ToString()
+        )::");
+source->append(R"::({
             return DateTime.FromBinary(this.ToBinary()).ToString("o", CultureInfo.InvariantCulture);
         }
         /// <summary>
@@ -177,8 +177,8 @@ source->append(R"::()
         /// <summary>
         /// Converts a DateTime instance to DateTimeAccessor.
         /// </summary>
-        /// <p)::");
-source->append(R"::(aram name="value">A DateTime instance.</param>
+        /// <param name=")::");
+source->append(R"::(value">A DateTime instance.</param>
         /// <returns>A DateTimeAccessor instance corresponding to the specified DateTime.</returns>
         public unsafe static implicit operator DateTimeAccessor(DateTime value)
         {
@@ -192,7 +192,6 @@ source->append(R"::(aram name="value">A DateTime instance.</param>
                 *(long*)targetPtr = 0;
             }
             DateTimeAccessor ret = new DateTimeAccessor(targetPtr);
-            ret.CellID = null;
             return ret;
         }
         /// <summary>
@@ -200,16 +199,16 @@ source->append(R"::(aram name="value">A DateTime instance.</param>
         /// </summary>
         /// <param name="a">The first DateTimeAccessor instance.</param>
         /// <param name="b">The second DateTimeAccessor instance.</param>
-        /// <returns>true if two given DateTimeAccessor instances)::");
-source->append(R"::( have the same value; otherwise, false.</returns>
+        /// <returns>true if two given DateTimeAccessor instances have the same value; otherwise, false.</re)::");
+source->append(R"::(turns>
         public static bool operator ==(DateTimeAccessor a, DateTimeAccessor b)
         {
             if (ReferenceEquals(a, b))
               return true;
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
               return false;
-            if (a.CellPtr == b.CellPtr) return true;
-            return (*(long*)a.CellPtr) == (*(long*)b.CellPtr);
+            if (a.m_ptr == b.m_ptr) return true;
+            return (*(long*)a.m_ptr) == (*(long*)b.m_ptr);
         }
         /// <summary>
         /// Returns a value indicating whether two given DateTimeAccessor instances have the same value.
@@ -222,8 +221,8 @@ source->append(R"::( have the same value; otherwise, false.</returns>
             return !(a == b);
         }
         /// <summary>
-    )::");
-source->append(R"::(    /// Returns a value indicating whether this instance is equal to a specified object.
+        /// Returns a value indicating whether this ins)::");
+source->append(R"::(tance is equal to a specified object.
         /// </summary>
         /// <param name="value">An object to compare to this instance.</param>
         /// <returns>true if value is an instance of DateTimeAccessor and equals the value of this instance; otherwise, false.</returns>
@@ -242,7 +241,7 @@ source->append(R"::(    /// Returns a value indicating whether this instance is 
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override int GetHashCode()
         {
-            return (*(long*)CellPtr).GetHashCode();
+            return (*(long*)m_ptr).GetHashCode();
         }
     }
 }

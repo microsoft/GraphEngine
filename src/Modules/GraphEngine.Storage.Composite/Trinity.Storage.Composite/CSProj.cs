@@ -5,7 +5,7 @@ namespace Trinity.Storage.Composite
     internal static class CSProj
     {
         private static string AssemblyReferenceDirectory;
-        private static Package[] Packages = new Package[] { new Package("GraphEngine.Core", "1.0.9083"), new Package("Newtonsoft.Json", "9.0.1") };
+        private static Package[] Packages = new Package[] { new Package("GraphEngine.Core", "2.0.9328"), new Package("Newtonsoft.Json", "9.0.1") };
 
         public static string _makeReference(string reference) => $@"
     <Reference Include = ""{reference}"">

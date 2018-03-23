@@ -3,28 +3,39 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 #pragma once
+#include <functional>
+#include <corelib>
+#include <diagnostics>
 #include "TrinityCommon.h"
 #include "Trinity/Configuration/TrinityConfig.h"
 #include "Memory/Memory.h"
 #include "CellEntry.h"
-#include "Threading/TrinitySpinlock.h"
+#include "Threading/TrinityLock.h"
 #include "Utility/HashHelper.h"
-#include "MT_ENUMERATOR.h"
-#include <corelib>
-#include <diagnostics>
+#include "Trinity/Diagnostics/Log.h"
+#include "Storage/LocalStorage/ThreadContext.h"
 
 #define CELL_ACQUIRE_LOCK
 #define CELL_ATOMIC
 #define CELL_LOCK_PROTECTED
 
-#define ENTRYLOCK_NOLOCK         0
-#define ENTRYLOCK_LOCK           1
-#define ENTRYLOCK_ARENA          3
+#define ENTRYLOCK_NOLOCK            0
+#define ENTRYLOCK_LOCK              1
+#define ENTRYLOCK_MAX_LOCK_CNT      255
 
-#define BUCKETLOCK_NOLOCK        0
-#define BUCKETLOCK_LOCK          1
-#define BUCKETLOCK_EIGHT_NOLOCKS 0x0ULL
-#define BUCKETLOCK_EIGHT_LOCKS   0x0101010101010101ULL
+#define BUCKETLOCK_NOLOCK           0
+#define BUCKETLOCK_LOCK             1
+#define BUCKETLOCK_EIGHT_NOLOCKS    0x0ULL
+#define BUCKETLOCK_EIGHT_LOCKS      0x0101010101010101ULL
+
+#define BUCKET_LOCK_SPIN_TIMEOUT    30000
+#define BUCKET_LOCK_SPIN_DIVISOR    300
+#define BUCKET_LOCK_SPIN_COUNT      20000
+#define ENTRY_LOCK_SPIN_DIVISOR     300
+#define ENTRY_LOCK_SPIN_COUNT       50000
+#define LOOKUP_IDLE_SPIN_COUNT      10000
+#define MTHASH_LOOKUP_MAX_RETRY     128
+#define MTHASH_ALL_ENTRY_SPIN_COUNT 900000
 
 namespace Storage
 {
@@ -36,6 +47,19 @@ namespace Storage
 
     using LocalMemoryStorage::CellAccessOptions;
     class MemoryTrunk;
+
+    struct MTHashAllocationInfo
+    {
+        /// Freed entry list head
+        int32_t FreeEntryList;
+        /// Freed entry count
+        std::atomic<int32_t> FreeEntryCount;
+        /// Actually allocated entry count, not counting guard entries
+        std::atomic<uint32_t> EntryCount;
+        /// Non empty entries count, including free entries
+        std::atomic<int32_t> NonEmptyEntryCount;
+    };
+
     class MTHash
     {
     public:
@@ -64,6 +88,8 @@ namespace Storage
         static uint64_t MTEntryOffset;
         static uint64_t BucketMemoryOffset;
         static uint64_t BucketLockerMemoryOffset;
+        static uint64_t LookupLossyCounter;
+        const  uint64_t LookupSlowPathThreshold = 8192;
 
         /*****************************************************************/
         /**************************** 64-byte block **********************/
@@ -73,26 +99,19 @@ namespace Storage
 
         CellEntry* CellEntries;
         MTEntry* MTEntries;
-        /////////////////////////////
-        MemoryTrunk * memory_trunk;
+        ///////////////////////////// 32 bytes
+        MemoryTrunk* memory_trunk;
 
-        int32_t FreeEntryList;
-        TrinitySpinlock FreeListLock;
-        TrinitySpinlock EntryAllocLock;
+        TrinityLock* FreeListLock;
+        TrinityLock* EntryAllocLock;
 
-        std::atomic<uint32_t> EntryCount;
-
-        /// Non empty entries count, including free entries
-        std::atomic<int32_t> NonEmptyEntryCount;
-
-        /// Freed entry count
-        std::atomic<int32_t> FreeEntryCount;
+        MTHashAllocationInfo* ExtendedInfo;
         /**************************** 64-byte block **********************/
         ///////////////////////////////////////////////////////////////////
 
-        inline MTHash(){ BucketLockers = nullptr; };
+        MTHash();
         void AllocateMTHash();
-        void DeallocateMTHash(bool deallocateBucketLockers);
+        void DeallocateMTHash();
         void InitMTHashAttributes(MemoryTrunk * mt);
         void Initialize(uint32_t capacity, MemoryTrunk * mt);
         bool Initialize(const String& input_file, MemoryTrunk* mt);
@@ -119,103 +138,55 @@ namespace Storage
 
         inline uint32_t GetBucketIndex(int64_t cellId)
         {
-            return (((uint32_t) cellId) ^ ((uint32_t) (cellId >> 0x20))) % BucketCount;
+            return (((uint32_t)cellId) ^ ((uint32_t)(cellId >> 0x20))) % BucketCount;
         }
 
-        inline void GetBucketLock(uint32_t index)
-        {
-            if (TrinityConfig::ReadOnly())
-                return;
-
-            char cmpxchg_val = BUCKETLOCK_NOLOCK;
-            if (!std::atomic_compare_exchange_strong(BucketLockers + index, &cmpxchg_val, char(BUCKETLOCK_LOCK)))
-            {
-                int32_t fail_counter = 0;
-                while (true)
-                {
-                    cmpxchg_val = BUCKETLOCK_NOLOCK;
-                    if (BucketLockers[index].load(std::memory_order_relaxed) == BUCKETLOCK_NOLOCK &&
-                        std::atomic_compare_exchange_strong(BucketLockers + index, &cmpxchg_val, char(BUCKETLOCK_LOCK)))
-                    { return; }
-                    if (++fail_counter >= 10000)
-                    { Runtime::TransitionSleep(0); }
-                }
-            }
-            return;
-        }
-
-        inline void ReleaseBucketLock(uint32_t index)
-        {
-            if (TrinityConfig::ReadOnly())
-                return;
-
-            BucketLockers[index].store(BUCKETLOCK_NOLOCK, std::memory_order_release);
-        }
-
-        inline void GetEntryLock(int32_t index)
-        {
-            if (TrinityConfig::ReadOnly())
-                return;
-
-            char cmpxchg_val = ENTRYLOCK_NOLOCK;
-            if (!std::atomic_compare_exchange_strong(&MTEntries[index].EntryLock, &cmpxchg_val, char(ENTRYLOCK_LOCK)))
-            {
-                int32_t fail_counter = 0;
-                while (true)
-                {
-                    cmpxchg_val = ENTRYLOCK_NOLOCK;
-                    if (MTEntries[index].EntryLock.load(std::memory_order_relaxed) == ENTRYLOCK_NOLOCK && 
-                        std::atomic_compare_exchange_strong(&MTEntries[index].EntryLock, &cmpxchg_val, char(ENTRYLOCK_LOCK)))
-                        return;
-                    if (++fail_counter >= 10000)
-                    {
-                        Runtime::TransitionSleep(0);
-                    }
-                }
-            }
-            return;
-        }
-
-        inline void ReleaseEntryLock(int32_t index)
-        {
-            if (TrinityConfig::ReadOnly())
-                return;
-
-            MTEntries[index].EntryLock.store(ENTRYLOCK_NOLOCK, std::memory_order_release);
-        }
-
-        void Expand(bool force);
 
         void MarkTrunkDirty();
 
-        // Thread-safe
-        void                         FreeEntry    (int32_t entry_index);
-        int32_t                      FindFreeEntry();
-        int32_t                      Count        ();
-        bool                         ContainsKey  (cellid_t key);
-        CELL_ATOMIC TrinityErrorCode GetCellType  (IN cellid_t cellId, OUT uint16_t &cellType);
-        CELL_ATOMIC int32_t          GetCellSize  (IN cellid_t key);
+        void Expand(bool force);
 
-        // lock
-        void GetAllEntryLocksExceptArena();
-        void ReleaseAllEntryLocksExceptArena();
-        void Lock();
-        void Unlock();
-        bool TryGetEntryLockForDefragment(int32_t index);
+        // Thread-safe
+        void                         FreeEntry(int32_t entry_index);
+        int32_t                      FindFreeEntry();
+        int32_t                      Count();
+        // Lock-related
+        //  The locking policy: favor _GetBucketLock() over TryGetEntryLock().
+        //  _GetBucketLock() will always succeed, while TryGetEntryLock() might fail.
+        //  TryGetEntryLock() is always called with bucket lock acquired.
+        //  When TryGetEntryLock() fails, bucket lock is released, and the attempt
+        //  to get the bucket lock will be made later, so that others requiring
+        //  this bucket lock can get a chance to proceed. Thus, MTHash::Lock
+        //  has the higher priority in taking all bucket locks (it will always 
+        //  succeed, because others fail, and provide a time window for it).
+        ALLOC_THREAD_CTX void GetAllEntryLocksExceptArena();
+        ALLOC_THREAD_CTX void ReleaseAllEntryLocksExceptArena();
+        ALLOC_THREAD_CTX TrinityErrorCode Lock();                     // E_SUCCESS or E_DEADLOCK.
+        TrinityErrorCode TryGetBucketLock(const uint32_t index);            // E_SUCCESS or E_TIMEOUT.
+        TrinityErrorCode TryGetEntryLock(const int32_t index);              // E_SUCCESS or E_TIMEOUT.
+        bool             TryGetEntryLockForDefragment(const int32_t index);
+        ALLOC_THREAD_CTX void Unlock();
+        void             ReleaseBucketLock(const uint32_t index);
+        uint8_t          ReleaseEntryLock(const int32_t index);
 
         // Cell manipulation interfaces
-        CELL_ATOMIC         TrinityErrorCode RemoveCell            (IN cellid_t cellId);
-        CELL_ATOMIC         TrinityErrorCode RemoveCell            (IN cellid_t cellId,         IN CellAccessOptions options);
-        CELL_LOCK_PROTECTED TrinityErrorCode ResizeCell            (IN int32_t  cellEntryIndex, IN int32_t offsetInCell, IN int32_t sizeDelta, OUT char*& cell_ptr);
+        CELL_ATOMIC         TrinityErrorCode RemoveCell(IN cellid_t cellId);
+        CELL_ATOMIC         TrinityErrorCode RemoveCell(IN cellid_t cellId, IN CellAccessOptions options);
+        CELL_LOCK_PROTECTED TrinityErrorCode ResizeCell(IN int32_t  cellEntryIndex, IN int32_t offsetInCell, IN int32_t sizeDelta, OUT char*& cell_ptr);
+        CELL_ATOMIC         TrinityErrorCode GetCellType(IN cellid_t cellId, OUT uint16_t &cellType);
+        // XXX GetCellSize not exposed through LocalMemoryStorage.
+        CELL_ATOMIC         TrinityErrorCode GetCellSize(IN cellid_t key, OUT int32_t &size);
+        TrinityErrorCode                     ContainsKey(IN cellid_t key);
+
         /////////////////////////////////
 
         // GetLockedCellInfo interfaces
-        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4CellAccessor(IN cellid_t cellId, OUT int32_t &cellSize   , OUT uint16_t &type, OUT char* &cellPtr, OUT int32_t &entryIndex);
-        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4SaveCell    (IN cellid_t cellId, IN int32_t cellSize     , IN uint16_t type  , OUT char* &cellPtr, OUT int32_t &entryIndex);
-        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4AddCell     (IN cellid_t cellId, IN int32_t cellSize     , IN uint16_t type  , OUT char* &cellPtr, OUT int32_t &entryIndex);
-        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4UpdateCell  (IN cellid_t cellId, IN int32_t cellSize     , OUT char* &cellPtr, OUT int32_t &entryIndex);
-        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4LoadCell    (IN cellid_t cellId, OUT int32_t &cellSize   , OUT char* &cellPtr, OUT int32_t &entryIndex);
-        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4AddOrUseCell(IN cellid_t cellId, IN OUT int32_t &cellSize, IN uint16_t type  , OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4CellAccessor(IN const cellid_t cellId, OUT int32_t &cellSize, OUT uint16_t &type, OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4SaveCell(IN const cellid_t cellId, IN const int32_t cellSize, IN const uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4AddCell(IN const cellid_t cellId, IN const int32_t cellSize, IN const uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4UpdateCell(IN const cellid_t cellId, IN const int32_t cellSize, OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4LoadCell(IN const cellid_t cellId, OUT int32_t &cellSize, OUT char* &cellPtr, OUT int32_t &entryIndex);
+        CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4AddOrUseCell(IN const cellid_t cellId, IN OUT int32_t &cellSize, IN const uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex);
         ///////////////////////////////////
 
         // DiskIO
@@ -231,6 +202,146 @@ namespace Storage
     private:
         CELL_LOCK_PROTECTED void _discard_locked_free_entry(IN uint32_t bucket_index, IN int32_t entry_index);
 
+        void _GetBucketLock(uint32_t index);              // High priority. Guarantees success.
+
+        ALLOC_THREAD_CTX template<typename TLockAction, typename TLookupFound, typename TLookupNotFound, typename TSetupTx>
+        TrinityErrorCode _Lookup_impl
+		(const cellid_t cellId, 
+		 const TLockAction& entry_lock_action, 
+	     const TLookupFound& found_action, 
+         const TLookupNotFound& not_found_action,
+         const TSetupTx& setup_tx)
+        {
+            int32_t          backoff_attempts = 0;
+            uint32_t         bucket_index     = GetBucketIndex(cellId);
+            bool             tx_setup         = false;
+            int32_t          previous_entry_index;
+
+        start:
+            previous_entry_index = -1;
+            if (TryGetBucketLock(bucket_index) != TrinityErrorCode::E_SUCCESS)
+            {
+                goto backoff;
+            }
+            
+            for (int32_t entry_index = Buckets[bucket_index]; entry_index >= 0; entry_index = MTEntries[entry_index].NextEntry)
+            {
+                if (MTEntries[entry_index].Key == cellId)
+                {
+                    switch (TrinityErrorCode err = entry_lock_action(entry_index)) 
+                    {
+                    case TrinityErrorCode::E_SUCCESS:
+                        return found_action(entry_index, bucket_index, previous_entry_index);
+                    case TrinityErrorCode::E_TIMEOUT:
+                        ReleaseBucketLock(bucket_index);
+                        goto backoff;
+                    default: /* E_CELL_LOCK_OVERFLOW or other errors */
+                        ReleaseBucketLock(bucket_index);
+                        return err;
+                    }
+                }
+                previous_entry_index = entry_index;
+            }
+
+        notfound:
+            return not_found_action(bucket_index);
+
+        backoff:
+            if (++backoff_attempts > MTHASH_LOOKUP_MAX_RETRY)
+            {
+                if (!tx_setup) 
+                {
+                    setup_tx();
+                    tx_setup = true;
+                }
+
+                if (TrinityErrorCode::E_DEADLOCK == Arbitrate())
+                {
+                    return TrinityErrorCode::E_DEADLOCK;
+                }
+                else
+                {
+                    backoff_attempts = 0;
+                }
+            }
+
+            if (++LookupLossyCounter < LookupSlowPathThreshold)
+            {
+                goto start;
+            }
+
+            //  !slow path = fast path + collect free entries in bucket chain
+            LookupLossyCounter = 0;
+
+            previous_entry_index = -1;
+            if (TryGetBucketLock(bucket_index) != TrinityErrorCode::E_SUCCESS)
+            {
+                goto backoff;
+            }
+            
+            for (int32_t entry_index = Buckets[bucket_index]; entry_index >= 0; entry_index = MTEntries[entry_index].NextEntry)
+            {
+                if (CellEntries[entry_index].location == -1)
+                {
+                    if (previous_entry_index < 0)
+                    {
+                        Buckets[bucket_index] = MTEntries[entry_index].NextEntry;
+                    }
+                    else
+                    {
+                        MTEntries[previous_entry_index].NextEntry = MTEntries[entry_index].NextEntry;
+                    }
+                    FreeEntry(entry_index);
+                    // roll back to previous and jump over
+                    entry_index = previous_entry_index;
+                } 
+                else if (MTEntries[entry_index].Key == cellId)
+                {
+                    switch (TrinityErrorCode err = entry_lock_action(entry_index)) 
+                    {
+                    case TrinityErrorCode::E_SUCCESS:
+                        return found_action(entry_index, bucket_index, previous_entry_index);
+                    case TrinityErrorCode::E_TIMEOUT:
+                        ReleaseBucketLock(bucket_index);
+                        goto backoff;
+                    default: /* E_CELL_LOCK_OVERFLOW or other errors */
+                        ReleaseBucketLock(bucket_index);
+                        return err;
+                    }
+                }
+                previous_entry_index = entry_index;
+            }
+
+            goto notfound;
+        }
+
+        template<typename TLookupFound, typename TLookupNotFound>
+        inline TrinityErrorCode _Lookup_LockEntry_Or_NotFound
+        (const cellid_t cellId, 
+         const TLookupFound& found_action, 
+         const TLookupNotFound& not_found_action)
+        {
+            return _Lookup_impl(
+                cellId, 
+                [this](const int32_t entry_idx) {return TryGetEntryLock(entry_idx); }, 
+                found_action, 
+                not_found_action,
+                [=] { PTHREAD_CONTEXT pctx = EnsureCurrentThreadContext(); pctx->SetLockingCell(cellId); });
+        }
+
+        template<typename TLookupFound, typename TLookupNotFound>
+        inline TrinityErrorCode _Lookup_NoLockEntry_Or_NotFound
+        (const cellid_t cellId, 
+         const TLookupFound& found_action, 
+         const TLookupNotFound& not_found_action)
+        {
+            return _Lookup_impl(
+                cellId, 
+                [](const int32_t _) {return TrinityErrorCode::E_SUCCESS; }, 
+                found_action, 
+                not_found_action, 
+                [] {});
+        }
     };
 
 #define ENTER_ALLOCMEM_CELLENTRY_UPDATE_CRITICAL_SECTION() \

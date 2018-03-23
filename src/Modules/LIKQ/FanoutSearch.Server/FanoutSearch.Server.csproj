@@ -3,10 +3,11 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.0;net46</TargetFrameworks>
     <OutputType>Exe</OutputType>
+    <IsPackable>False</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
   </ItemGroup>
 
   <ItemGroup>

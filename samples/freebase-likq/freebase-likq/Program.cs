@@ -88,7 +88,7 @@ namespace freebase_likq
             {
                 if (!type_object.Contains_type_object_name) continue;
                 string name = type_object.type_object_name.ToString().Replace("'", "''");
-                batch.Add(Tuple.Create(name, type_object.CellID.Value));
+                batch.Add(Tuple.Create(name, type_object.CellId));
                 if (++processed_count % 100000 == 0)
                 {
                     Log.WriteLine("{0} cells processed", processed_count);

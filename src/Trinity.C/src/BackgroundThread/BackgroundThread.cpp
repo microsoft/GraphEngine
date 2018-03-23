@@ -10,8 +10,12 @@ namespace BackgroundThread
 {
     std::mutex TaskScheduler::_mutex;
     std::thread* TaskScheduler::_thread = nullptr;
-    std::vector<ReferencePointer<BackgroundTask>> TaskScheduler::_taskList;
+    std::vector<TaskScheduler::_refTask> TaskScheduler::_taskList;
     uint64_t TaskScheduler::_current_time;
+    std::atomic<bool> TaskScheduler::_stopped;
 
     TaskScheduler::_TaskSchedulerConfig TaskScheduler::_config;
 }
+
+DLL_EXPORT void CStartBackgroundThread() { BackgroundThread::TaskScheduler::Start(); }
+DLL_EXPORT void CStopBackgroundThread() { BackgroundThread::TaskScheduler::Stop(); }

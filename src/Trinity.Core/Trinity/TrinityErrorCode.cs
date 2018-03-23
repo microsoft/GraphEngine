@@ -18,11 +18,23 @@ namespace Trinity
         /// <summary>
         /// Indicates that a response message is too long.
         /// </summary>
-        E_MSG_OVERFLOW          = -15,
+        E_MSG_OVERFLOW          = -18,
         /// <summary>
         /// Indicates that the network subsystem has shut down.
+        E_NETWORK_SHUTDOWN      = -17,        
         /// </summary>
-        E_NETWORK_SHUTDOWN      = -14,
+        /// <summary>
+        /// Indicates too many recursive cell locks, leading to overflow.
+        /// </summary>
+        E_CELL_LOCK_OVERFLOW    = -16,
+        /// <summary>
+        /// Indicates a timeout.
+        /// </summary>
+        E_TIMEOUT               = -15,
+        /// <summary>
+        /// Indicates deadlocks. 
+        /// </summary>
+        E_DEADLOCK              = -14,
         /// <summary>
         /// Indicates a remote message handler exception.
         /// </summary>
@@ -93,5 +105,10 @@ namespace Trinity
         /// Represents a status that an expected cell is found.
         /// </summary>
         E_CELL_FOUND = 1,
+
+        /// <summary>
+        /// Represents a status that an enumerator has finished enumerating items and reached the end.
+        /// </summary>
+        E_ENUMERATION_END = 2,
     }
 }

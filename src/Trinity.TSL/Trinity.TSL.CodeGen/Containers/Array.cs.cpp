@@ -43,13 +43,13 @@ source->append(R"::(
         public static readonly int Rank = )::");
 source->append(Codegen::GetString(node->arrayInfo.array_dimension_size->size()));
 source->append(R"::(;
-        internal byte* CellPtr;
-        internal long? CellID;
+        internal byte* m_ptr;
+        internal long CellId;
         internal )::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::((byte* _CellPtr)
         {
-            this.CellPtr = _CellPtr;
+            this.m_ptr = _CellPtr;
         }
         /// <summary>
         /// Gets the total number of elements
@@ -83,7 +83,7 @@ source->append(Codegen::GetString(node->arrayInfo.arrayElement->type_size()));
 source->append(R"::(];
             fixed (byte* ptr = ret)
             {
-                Memory.Copy(CellPtr, ptr, Length * )::");
+                Memory.Copy(m_ptr, ptr, Length * )::");
 source->append(Codegen::GetString(node->arrayInfo.arrayElement->type_size()));
 source->append(R"::();
             }
@@ -118,7 +118,7 @@ source->append(R"::(
         {
             get
             {
-                byte* offset = CellPtr + 
+                byte* offset = m_ptr + 
                     )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->arrayInfo.array_dimension_size)->size();++iterator_1)
 {
@@ -137,7 +137,7 @@ if (data_type_need_accessor(node->arrayInfo.arrayElement))
 {
 source->append(R"::(
                 {
-                    elementAccessor.CellPtr = offset;
+                    elementAccessor.m_ptr = offset;
                     return elementAccessor;
                 }
                 )::");
@@ -156,7 +156,7 @@ source->append(R"::(
             }
             set
             {
-                byte* offset = CellPtr + 
+                byte* offset = m_ptr + 
                     )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->arrayInfo.array_dimension_size)->size();++iterator_1)
 {
@@ -176,7 +176,7 @@ if (data_type_need_accessor(node->arrayInfo.arrayElement))
 source->append(R"::(
                 {
                     if ((object)value == null) throw new ArgumentNullException("The assigned variable is null.");
-                    Memory.Copy(value.CellPtr, offset, )::");
+                    Memory.Copy(value.m_ptr, offset, )::");
 source->append(Codegen::GetString(node->arrayInfo.arrayElement->type_size()));
 source->append(R"::();
                 }
@@ -204,8 +204,8 @@ source->append(R"::(
 source->append(Codegen::GetString(data_type_get_accessor_name(node->arrayInfo.arrayElement)));
 source->append(R"::(> action)
         {
-            byte* targetPtr = CellPtr;
-            byte* endPtr = CellPtr + Length * )::");
+            byte* targetPtr = m_ptr;
+            byte* endPtr = m_ptr + Length * )::");
 source->append(Codegen::GetString(node->arrayInfo.arrayElement->type_size()));
 source->append(R"::(;
             while (targetPtr < endPtr)
@@ -215,7 +215,7 @@ if (data_type_need_accessor(node->arrayInfo.arrayElement))
 {
 source->append(R"::(
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.m_ptr = targetPtr;
                     action(elementAccessor);
                     targetPtr += )::");
 source->append(Codegen::GetString(node->arrayInfo.arrayElement->type_size()));
@@ -250,8 +250,8 @@ source->append(R"::( target;
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::( target)
             {
-                targetPtr   = target.CellPtr;
-                endPtr      = target.CellPtr + target.Length * )::");
+                targetPtr   = target.m_ptr;
+                endPtr      = target.m_ptr + target.Length * )::");
 source->append(Codegen::GetString(node->arrayInfo.arrayElement->type_size()));
 source->append(R"::(;
                 this.target = target;
@@ -269,7 +269,7 @@ if (data_type_need_accessor(node->arrayInfo.arrayElement))
 {
 source->append(R"::(
                 {
-                    target.elementAccessor.CellPtr = targetPtr;
+                    target.elementAccessor.m_ptr = targetPtr;
                     return target.elementAccessor;
                 }
                 )::");
@@ -317,7 +317,7 @@ source->append(R"::(> GetEnumerator()
         public unsafe void Clear(int index, int length)
         {
             if (index < 0 || length < 0 ||index >= Length || index+length > Length) throw new IndexOutOfRangeException();
-            Memory.memset(CellPtr + index* )::");
+            Memory.memset(m_ptr + index* )::");
 source->append(Codegen::GetString(node->arrayInfo.arrayElement->type_size()));
 source->append(R"::(, 0, (ulong)(length * )::");
 source->append(Codegen::GetString(node->arrayInfo.arrayElement->type_size()));
@@ -367,7 +367,7 @@ source->append(R"::(
 source->append(Codegen::GetString(node->arrayInfo.arrayElement));
 source->append(R"::(* p = ret)
             {
-                Memory.Copy(accessor.CellPtr, p, )::");
+                Memory.Copy(accessor.m_ptr, p, )::");
 source->append(Codegen::GetString(node->type_size()));
 source->append(R"::();
             }
@@ -378,7 +378,7 @@ else
 source->append(Codegen::GetString(data_type_get_accessor_name(node->arrayInfo.arrayElement)));
 source->append(R"::( _element = new )::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node->arrayInfo.arrayElement)));
-source->append(R"::((accessor.CellPtr);
+source->append(R"::((accessor.m_ptr);
             )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->arrayInfo.array_dimension_size)->size();++iterator_1)
 {
@@ -406,7 +406,7 @@ source->append(",");
 }
 source->append(R"::(
                     ] = _element;
-                _element.CellPtr += )::");
+                _element.m_ptr += )::");
 source->append(Codegen::GetString(node->type_size()));
 source->append(R"::( ;
             }
@@ -435,8 +435,8 @@ source->append(R"::( b)
               return true;
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
               return false;
-            if (a.CellPtr == b.CellPtr) return true;
-            return Memory.Compare(a.CellPtr, b.CellPtr, a.Length * )::");
+            if (a.m_ptr == b.m_ptr) return true;
+            return Memory.Compare(a.m_ptr, b.m_ptr, a.Length * )::");
 source->append(Codegen::GetString(node->arrayInfo.arrayElement->type_size()));
 source->append(R"::();
         }

@@ -550,7 +550,7 @@ source->append(R"::(
                                 {
                                     new_index.AddItem(accessor.)::");
 source->append(Codegen::GetString((*(TSLIndexTargetVector))[iterator_1]->target));
-source->append(R"::(, accessor.CellID.Value);
+source->append(R"::(, accessor.CellId);
                                 }
                                 )::");
 }
@@ -580,7 +580,7 @@ source->append(R"::(
                                     {
                                         new_index.AddItem((string))::");
 source->append(Codegen::GetString(std::string("element_") + GetString(final_element_1)));
-source->append(R"::(, accessor.CellID.Value);
+source->append(R"::(, accessor.CellId);
                                     }
                                     )::");
 delete container_chain_1;

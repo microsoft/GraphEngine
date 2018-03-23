@@ -34,8 +34,8 @@ namespace FanoutSearch.UnitTest
             Global.LocalStorage.SaveMyCell(2);
 
             var rsp = JArray.Parse(mod.LambdaQuery($@"MAG.StartFrom(0).FollowEdge(""edges"").VisitNode(Action.Continue).VisitNode(Action.Return);"));
-            Assert.Contains(rsp, p => p[1].Value<long>("CellID") == 11 && p[2].Value<long>("CellID") == 1);
-            Assert.Contains(rsp, p => p[1].Value<long>("CellID") == 22 && p[2].Value<long>("CellID") == 2);
+            Assert.Contains(rsp, p => p[1].Value<long>("CellId") == 11 && p[2].Value<long>("CellId") == 1);
+            Assert.Contains(rsp, p => p[1].Value<long>("CellId") == 22 && p[2].Value<long>("CellId") == 2);
         }
 
         [Fact]
@@ -48,8 +48,8 @@ namespace FanoutSearch.UnitTest
             Global.LocalStorage.SaveMyCell(2);
 
             var rsp = JArray.Parse(mod.LambdaQuery($@"MAG.StartFrom(0).VisitNode(Action.Continue).VisitNode(Action.Return);"));
-            Assert.Contains(rsp, p => p[1].Value<long>("CellID") == 11 && p[2].Value<long>("CellID") == 1);
-            Assert.Contains(rsp, p => p[1].Value<long>("CellID") == 22 && p[2].Value<long>("CellID") == 2);
+            Assert.Contains(rsp, p => p[1].Value<long>("CellId") == 11 && p[2].Value<long>("CellId") == 1);
+            Assert.Contains(rsp, p => p[1].Value<long>("CellId") == 22 && p[2].Value<long>("CellId") == 2);
         }
 
         [Fact]
@@ -62,8 +62,8 @@ namespace FanoutSearch.UnitTest
             Global.LocalStorage.SaveMyCell(2);
 
             var rsp = JArray.Parse(mod.LambdaQuery($@"MAG.StartFrom(0).FollowEdge(""edges"").VisitNode(Action.Continue).VisitNode(Action.Return);"));
-            Assert.Contains(rsp, p => p[1].Value<long>("CellID") == -11 && p[2].Value<long>("CellID") == 1);
-            Assert.Contains(rsp, p => p[1].Value<long>("CellID") == -22 && p[2].Value<long>("CellID") == 2);
+            Assert.Contains(rsp, p => p[1].Value<long>("CellId") == -11 && p[2].Value<long>("CellId") == 1);
+            Assert.Contains(rsp, p => p[1].Value<long>("CellId") == -22 && p[2].Value<long>("CellId") == 2);
         }
 
         [Fact]
@@ -76,8 +76,8 @@ namespace FanoutSearch.UnitTest
             Global.LocalStorage.SaveMyCell(2);
 
             var rsp = JArray.Parse(mod.LambdaQuery($@"MAG.StartFrom(0).VisitNode(Action.Continue).VisitNode(Action.Return);"));
-            Assert.Contains(rsp, p => p[1].Value<long>("CellID") == -11 && p[2].Value<long>("CellID") == 1);
-            Assert.Contains(rsp, p => p[1].Value<long>("CellID") == -22 && p[2].Value<long>("CellID") == 2);
+            Assert.Contains(rsp, p => p[1].Value<long>("CellId") == -11 && p[2].Value<long>("CellId") == 1);
+            Assert.Contains(rsp, p => p[1].Value<long>("CellId") == -22 && p[2].Value<long>("CellId") == 2);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Trinity.FFI.Interop
         // cell accessor cellId cannot be changed
         public static long CA_GetId(int index)
         {
-            return Cache.Get(index).CellID;
+            return Cache.Get(index).CellId;
         }
 
         [FFIExport]

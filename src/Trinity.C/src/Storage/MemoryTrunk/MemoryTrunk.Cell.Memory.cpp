@@ -9,7 +9,7 @@ namespace Storage
 {
     using namespace Trinity::Diagnostics;
 
-    TrinityErrorCode MemoryTrunk::AddMemoryCell(int32_t cell_length, int32_t cellEntryIndex, OUT int32_t& cell_offset)
+    TrinityErrorCode MemoryTrunk::AddMemoryCell(cellid_t cell_id, int32_t cell_length, OUT int32_t& cell_offset)
     {
         cell_offset = 0;
 
@@ -22,7 +22,7 @@ namespace Storage
         {
             char* cell_ptr = (char*)AllocateLargeObject(cell_length);
             if (cell_ptr == NULL) return TrinityErrorCode::E_NOMEM;
-            lo_lock.lock();
+            lo_lock->lock();
             if (LOIndex >= LOCapacity)
             {
                 ResizeLOContainer();
@@ -33,11 +33,11 @@ namespace Storage
             cell_offset = -LOIndex;
             LOIndex++;
             LOCount++;
-            lo_lock.unlock();
+            lo_lock->unlock();
         }
         else
         {
-            char* cell_ptr = CellAlloc((uint32_t)cell_length, cellEntryIndex);
+            char* cell_ptr = CellAlloc(cell_id, (uint32_t)cell_length);
             if (cell_ptr == NULL) return TrinityErrorCode::E_NOMEM;
             cell_offset = (int32_t)(cell_ptr - trunkPtr);
         }

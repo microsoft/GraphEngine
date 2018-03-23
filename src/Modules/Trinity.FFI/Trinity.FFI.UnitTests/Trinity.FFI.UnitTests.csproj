@@ -4,11 +4,12 @@
     <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
     <AllowUnsafe>true</AllowUnsafe>
     <NoWarn>MSB4018</NoWarn>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
-    <PackageReference Include="GraphEngine.FFI" Version="1.0.9083" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
+    <PackageReference Include="GraphEngine.FFI" Version="2.0.9328" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.0-beta1-build3642" />
     <PackageReference Include="xunit" Version="2.2.0" />

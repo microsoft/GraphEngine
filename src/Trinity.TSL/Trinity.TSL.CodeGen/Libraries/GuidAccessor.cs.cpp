@@ -32,8 +32,8 @@ source->append(R"::(
     /// </summary>
     public unsafe class GuidAccessor : IAccessor
     {
-        internal byte* CellPtr;
-        internal long? CellID;
+        internal byte* m_ptr;
+        internal long CellId;
         ///
         /// <summary>
         ///     Converts the string representation of a GUID to the equivalent <see cref=")::");
@@ -88,7 +88,7 @@ source->append(R"::(="input">
         }
         internal GuidAccessor(byte* _CellPtr)
         {
-            CellPtr = _CellPtr;
+            m_ptr = _CellPtr;
         }
         internal int length
         {
@@ -105,10 +105,10 @@ source->append(R"::(="input">
         public unsafe byte[] ToByteArray()
         {
             byte[] ret = new byte[16];
-         )::");
-source->append(R"::(   fixed (byte* ptr = ret)
+           )::");
+source->append(R"::( fixed (byte* ptr = ret)
             {
-                Memory.Copy(CellPtr, ptr, 16);
+                Memory.Copy(m_ptr, ptr, 16);
             }
             return ret;
         }
@@ -117,7 +117,7 @@ source->append(R"::(   fixed (byte* ptr = ret)
         /// </summary>
         public unsafe byte* GetUnderlyingBufferPointer()
         {
-            return CellPtr;
+            return m_ptr;
         }
         /// <summary>
         /// Get the length of the buffer.
@@ -134,8 +134,8 @@ source->append(R"::(   fixed (byte* ptr = ret)
         /// <summary>
         /// Returns a string representation of the value of this instance in registry format. 
         /// </summary>
-        /// <returns>Returns a string representation of the value of this instance in registry form)::");
-source->append(R"::(at.</returns>
+        /// <returns>Returns a string representation of the value of this instance in registry format.</r)::");
+source->append(R"::(eturns>
         public override unsafe string ToString()
         {
             Guid tmp = this;
@@ -154,9 +154,9 @@ source->append(R"::(at.</returns>
         /// </summary>
         /// <param name="format">A single format specifier that indicates how to format the value of this Guid. The format parameter can be "N", "D", "B", "P", or "X". If format is null or an empty string (""), "D" is used. </param>
         /// <returns>The value of this Guid, represented as a series of lowercase hexadecimal digits in the specified format. </returns>
-        public string ToString(string format)::");
-source->append(R"::()
-        {
+        public string ToString(string format)
+   )::");
+source->append(R"::(     {
             Guid tmp = this;
             return tmp.ToString(format, CultureInfo.InvariantCulture);
         }
@@ -179,14 +179,13 @@ source->append(R"::()
         {
             byte* tmpcellptr = BufferAllocator.AllocBuffer(16);
             byte* targetPtr = tmpcellptr;
-            byte[] tmpGuid = value.ToByteArray();)::");
-source->append(R"::(
-            fixed (byte* tmpGuidPtr = tmpGuid)
+            byte[] tmpGuid = value.ToByteArray();
+    )::");
+source->append(R"::(        fixed (byte* tmpGuidPtr = tmpGuid)
             {
                 Memory.Copy(tmpGuidPtr, targetPtr, 16);
             }
             GuidAccessor ret = new GuidAccessor(tmpcellptr);
-            ret.CellID = null;
             return ret;
         }
         /// <summary>
@@ -201,10 +200,10 @@ source->append(R"::(
               return true;
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
               return false;
-            if (a.CellPtr == b.CellPtr) return true;
-            retu)::");
-source->append(R"::(rn Memory.Compare(a.CellPtr, b.CellPtr, 16);
-        }
+            if (a.m_ptr == b.m_ptr) return true;
+            return Memory.Compare(a.m_ptr, b.m_ptr, 16);
+)::");
+source->append(R"::(        }
         /// <summary>Determines whether two specified GuidAccessor have different values.</summary>
         /// <returns>true if the value of <paramref name="a" /> is different from the value of <paramref name="b" />; otherwise, false.</returns>
         /// <param name="a">The first GuidAccessor to compare, or null. </param>
@@ -220,8 +219,8 @@ source->append(R"::(rn Memory.Compare(a.CellPtr, b.CellPtr, 16);
         /// <returns>true if <paramref name="obj" /> is a GuidAccessor and its value is the same as this instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
-   )::");
-source->append(R"::(         GuidAccessor b = obj as GuidAccessor;
+            GuidAccessor b = obj as GuidAccessor;)::");
+source->append(R"::(
             if (b == null)
                 return false;
             return (this == b);
@@ -232,7 +231,7 @@ source->append(R"::(         GuidAccessor b = obj as GuidAccessor;
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override int GetHashCode()
         {
-            return HashHelper.HashBytes(this.CellPtr, this.length);
+            return HashHelper.HashBytes(this.m_ptr, this.length);
         }
     }
 }

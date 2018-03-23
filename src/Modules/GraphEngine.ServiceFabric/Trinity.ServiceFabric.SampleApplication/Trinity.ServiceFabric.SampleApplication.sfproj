@@ -7,6 +7,7 @@
     <MinToolsVersion>1.5</MinToolsVersion>
     <SupportedMSBuildNuGetPackageVersion>1.6.4</SupportedMSBuildNuGetPackageVersion>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <IsPackable>False</IsPackable>
   </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">

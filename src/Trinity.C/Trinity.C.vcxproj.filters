@@ -36,9 +36,6 @@
     <ClInclude Include="src\Storage\MTHash\MTHash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Threading\TrinitySpinlock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Trinity\Configuration\TrinityConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -70,6 +67,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Trinity\Collections\Tuple.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Trinity\Diagnostics\Stopwatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Trinity\Diagnostics\TrinityDbg.h">
@@ -123,16 +123,7 @@
     <ClInclude Include="include\Trinity\Environment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Trinity\NonCopyable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Trinity\NonReferencable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Trinity\Random.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Trinity\ref.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Trinity\String.h">
@@ -195,7 +186,10 @@
     <ClInclude Include="src\Network\SocketOptionsHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Trinity\Diagnostics\Stopwatch.h">
+    <ClInclude Include="src\Storage\LocalStorage\ThreadContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Storage\MTHash\MT_SHADOW_ENUMERATOR.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Trinity\Hash\NonCryptographicHash.h">
@@ -205,6 +199,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\TrinityErrorCode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Threading\TrinityLock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -350,6 +347,12 @@
     <ClCompile Include="src\Network\network_exported_methods.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Storage\LocalStorage\ThreadContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Storage\MTHash\MT_SHADOW_ENUMERATOR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\Network\ProtocolConstants.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -357,6 +360,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Storage\LocalStorage\localstorage_exported_methods.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.Tx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

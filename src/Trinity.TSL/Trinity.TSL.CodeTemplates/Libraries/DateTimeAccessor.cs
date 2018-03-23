@@ -17,8 +17,8 @@ namespace t_Namespace
     [TARGET("NTSL")]
     public unsafe class DateTimeAccessor : IAccessor
     {
-        internal byte* CellPtr;
-        internal long? CellID;
+        internal byte* m_ptr;
+        internal long CellId;
 
         /// <summary>
         ///     Converts the specified string representation of a date and time to its <see cref="Trinity.TSL.Lib.DateTimeAccessor"/>
@@ -82,7 +82,7 @@ namespace t_Namespace
 
         internal DateTimeAccessor(byte* _CellPtr)
         {
-            CellPtr = _CellPtr;
+            m_ptr = _CellPtr;
         }
 
         internal int length
@@ -99,7 +99,7 @@ namespace t_Namespace
         /// <returns>A 64-bit signed integer that encodes the .Net DateTime. </returns>
         public unsafe long ToBinary()
         {
-            return *(long*)CellPtr;
+            return *(long*)m_ptr;
         }
 
 
@@ -114,7 +114,7 @@ namespace t_Namespace
             byte[] ret = new byte[sizeof(long)];
             fixed (byte* ptr = ret)
             {
-                Memory.Copy(CellPtr, ptr, length);
+                Memory.Copy(m_ptr, ptr, length);
             }
             return ret;
         }
@@ -124,7 +124,7 @@ namespace t_Namespace
         /// </summary>
         public unsafe byte* GetUnderlyingBufferPointer()
         {
-            return CellPtr;
+            return m_ptr;
         }
 
         /// <summary>
@@ -189,7 +189,6 @@ namespace t_Namespace
             }
 
             DateTimeAccessor ret = new DateTimeAccessor(targetPtr);
-            ret.CellID = null;
             return ret;
         }
 
@@ -206,8 +205,8 @@ namespace t_Namespace
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
               return false;
             // If both are same instance, return true.
-            if (a.CellPtr == b.CellPtr) return true;
-            return (*(long*)a.CellPtr) == (*(long*)b.CellPtr);
+            if (a.m_ptr == b.m_ptr) return true;
+            return (*(long*)a.m_ptr) == (*(long*)b.m_ptr);
         }
 
         /// <summary>
@@ -243,7 +242,7 @@ namespace t_Namespace
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override int GetHashCode()
         {
-            return (*(long*)CellPtr).GetHashCode();
+            return (*(long*)m_ptr).GetHashCode();
         }
     }
 }

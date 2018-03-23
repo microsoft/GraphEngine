@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.FFI.Python" Version="1.0.9083" />
+    <PackageReference Include="GraphEngine.FFI.Python" Version="2.0.9328" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
     <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
-    <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
   </ItemGroup>
 
   <ItemGroup>

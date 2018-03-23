@@ -32,13 +32,6 @@ namespace Runtime
 #define DEBUG_WRITELINE(format, ...)
 #endif
 
-    void TransitionSleep(int32_t duration)
-    {
-        //TRINITY_INTEROP_ENTER_UNMANAGED();
-        YieldProcessor();
-        //TRINITY_INTEROP_LEAVE_UNMANAGED();
-    }
-
     int64_t build_integer(const uint8_t* base, const uint64_t size)
     {
         int64_t ret = *(int64_t*)base;

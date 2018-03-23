@@ -29,6 +29,7 @@ using System.Linq.Expressions;
 using )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(.Linq;
+using Trinity.Storage.Transaction;
 namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
@@ -133,6 +134,7 @@ source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(_Accessor>
     {
         private     LocalMemoryStorage              m_storage;
+        private     LocalTransactionContext         m_tx;
         private     HashSet<long>                   m_filter_set;
         private     bool                            m_is_positive_filtering;
         private     Func<)::");
@@ -140,11 +142,12 @@ source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(_Accessor,bool> m_filter_predicate;
         internal )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_AccessorEnumerable(LocalMemoryStorage storage)
+source->append(R"::(_AccessorEnumerable(LocalMemoryStorage storage, LocalTransactionContext tx)
         {
             this.m_storage     = storage;
             m_filter_set       = null;
             m_filter_predicate = null;
+            m_tx               = tx;
         }
         internal void SetPositiveFiltering(HashSet<long> set)
         {
@@ -171,7 +174,7 @@ source->append(R"::()
                         {
                             var accessor = )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_Accessor.AllocIterativeAccessor(cellInfo);
+source->append(R"::(_Accessor.AllocIterativeAccessor(cellInfo, m_tx);
                             yield return accessor;
                             accessor.Dispose();
                         }
@@ -185,7 +188,7 @@ source->append(R"::()
                         {
                             var accessor = )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_Accessor.AllocIterativeAccessor(cellInfo);
+source->append(R"::(_Accessor.AllocIterativeAccessor(cellInfo, m_tx);
                             if (m_filter_predicate(accessor))
                                 yield return accessor;
                             accessor.Dispose();
@@ -241,22 +244,24 @@ source->append(R"::(_Enumerable : IEnumerable<)::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(>
     {
-        private     LocalMemoryStorage              m_storage;
-        private     HashSet<long>                   m_filter_set;
-        private     bool                            m_is_positive_filtering;
-        private     Func<)::");
+        private LocalMemoryStorage      m_storage;
+        private HashSet<long>           m_filter_set;
+        private bool                    m_is_positive_filtering;
+        private Func<)::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(,bool>          m_filter_predicate;
-        private     static Type                     m_cell_type = typeof()::");
+source->append(R"::(,bool>  m_filter_predicate;
+        private static Type             m_cell_type = typeof()::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::();
+        private LocalTransactionContext m_tx;
         internal )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_Enumerable(LocalMemoryStorage storage)
+source->append(R"::(_Enumerable(LocalMemoryStorage storage, LocalTransactionContext tx)
         {
-            this.m_storage     = storage;
+            m_storage          = storage;
             m_filter_set       = null;
             m_filter_predicate = null;
+            m_tx               = tx;
         }
         internal void SetPositiveFiltering(HashSet<long> set)
         {
@@ -283,7 +288,7 @@ source->append(R"::()
                         {
                             var accessor = )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_Accessor.AllocIterativeAccessor(cellInfo);
+source->append(R"::(_Accessor.AllocIterativeAccessor(cellInfo, m_tx);
                             yield return accessor;
                             accessor.Dispose();
                         }
@@ -297,7 +302,7 @@ source->append(R"::()
                         {
                             var accessor = )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_Accessor.AllocIterativeAccessor(cellInfo);
+source->append(R"::(_Accessor.AllocIterativeAccessor(cellInfo, m_tx);
                             if (m_filter_predicate(accessor))
                                 yield return accessor;
                             accessor.Dispose();
@@ -363,11 +368,11 @@ source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(_AccessorEnumerable   m_accessor_enumerable;
         internal )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_Accessor_local_query_provider(LocalMemoryStorage storage)
+source->append(R"::(_Accessor_local_query_provider(LocalMemoryStorage storage, LocalTransactionContext tx)
         {
             m_accessor_enumerable = new )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_AccessorEnumerable(storage);
+source->append(R"::(_AccessorEnumerable(storage, tx);
         }
         public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
         {
@@ -474,11 +479,11 @@ source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(_Enumerable           s_cell_enumerable;
         internal )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_local_query_provider(LocalMemoryStorage storage)
+source->append(R"::(_local_query_provider(LocalMemoryStorage storage, LocalTransactionContext tx)
         {
             s_cell_enumerable = new )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_Enumerable(storage);
+source->append(R"::(_Enumerable(storage, tx);
         }
         public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
         {
@@ -595,12 +600,12 @@ source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(_Accessor_local_selector() { /* nobody should reach this method */ }
         internal )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_Accessor_local_selector(Trinity.Storage.LocalMemoryStorage storage)
+source->append(R"::(_Accessor_local_selector(Trinity.Storage.LocalMemoryStorage storage, LocalTransactionContext tx)
         {
             this.query_expression              = Expression.Constant(this);
             this.query_provider                = new )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_Accessor_local_query_provider(storage);
+source->append(R"::(_Accessor_local_query_provider(storage, tx);
         }
         internal unsafe )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
@@ -673,12 +678,12 @@ source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
 source->append(R"::(_local_selector() { /* nobody should reach this method */ }
         internal )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_local_selector(Trinity.Storage.LocalMemoryStorage storage)
+source->append(R"::(_local_selector(Trinity.Storage.LocalMemoryStorage storage, LocalTransactionContext tx)
         {
             this.query_expression              = Expression.Constant(this);
             this.query_provider                = new )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_local_query_provider(storage);
+source->append(R"::(_local_query_provider(storage, tx);
         }
         internal unsafe )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
@@ -747,7 +752,7 @@ source->append(R"::(_Selector(this LocalMemoryStorage storage)
         {
             return new )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_local_selector(storage);
+source->append(R"::(_local_selector(storage, null);
         }
         /// <summary>
         /// Enumerates all the )::");
@@ -766,7 +771,45 @@ source->append(R"::(_Accessor_Selector(this LocalMemoryStorage storage)
         {
             return new )::");
 source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
-source->append(R"::(_Accessor_local_selector(storage);
+source->append(R"::(_Accessor_local_selector(storage, null);
+        }
+        /// <summary>
+        /// Enumerates all the )::");
+source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
+source->append(R"::( within the local memory storage.
+        /// </summary>
+        /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> object.</param>
+        /// <returns>All the )::");
+source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
+source->append(R"::( within the local memory storage.</returns>
+        public static )::");
+source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
+source->append(R"::(_local_selector )::");
+source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
+source->append(R"::(_Selector(this LocalMemoryStorage storage, LocalTransactionContext tx)
+        {
+            return new )::");
+source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
+source->append(R"::(_local_selector(storage, tx);
+        }
+        /// <summary>
+        /// Enumerates all the )::");
+source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
+source->append(R"::(_Accessor within the local memory storage.
+        /// </summary>
+        /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> object.</param>
+        /// <returns>All the )::");
+source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
+source->append(R"::(_Accessor within the local memory storage.</returns>
+        public static )::");
+source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
+source->append(R"::(_Accessor_local_selector )::");
+source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
+source->append(R"::(_Accessor_Selector(this LocalMemoryStorage storage, LocalTransactionContext tx)
+        {
+            return new )::");
+source->append(Codegen::GetString((*(node->cellList))[iterator_1]->name));
+source->append(R"::(_Accessor_local_selector(storage, tx);
         }
         )::");
 }

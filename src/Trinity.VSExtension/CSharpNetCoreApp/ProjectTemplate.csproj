@@ -8,7 +8,7 @@
   <ItemGroup>
     <None Remove="**/*.tsl" />
     <TslCodegen Include="**/*.tsl" />
-    <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
   </ItemGroup>
   
 </Project>

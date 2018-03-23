@@ -7,9 +7,9 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-    <PackageReference Include="GraphEngine.Core" Version="1.0.9083" />
-    <PackageReference Include="GraphEngine.Storage.Composite" Version="1.0.9083" />
-    <PackageReference Include="GraphEngine.FFI" Version="1.0.9083" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
+    <PackageReference Include="GraphEngine.Storage.Composite" Version="2.0.9328" />
+    <PackageReference Include="GraphEngine.FFI" Version="2.0.9328" />
   </ItemGroup>
 
 </Project>

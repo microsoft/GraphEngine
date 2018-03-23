@@ -13,6 +13,7 @@ using System.Security;
 using Trinity.Configuration;
 using Trinity.Core.Lib;
 using Trinity.Diagnostics;
+using Trinity.Storage.Transaction;
 using Trinity.TSL.Lib;
 using Trinity.Utilities;
 
@@ -125,6 +126,19 @@ namespace Trinity.Storage
         private const string           c_logfile_path                  = "write_ahead_log";
 
         #region Write-ahead-log logic
+        /// <summary>
+        /// Logs a cell action to the persistent storage.
+        /// </summary>
+        /// <param name="cellId">The 64-bit cell id.</param>
+        /// <param name="cellPtr">A pointer pointing to the underlying cell buffer.</param>
+        /// <param name="cellSize">The size of the cell in bytes.</param>
+        /// <param name="cellType">A 16-bit unsigned integer indicating the cell type.</param>
+        /// <param name="options">An flag indicating a cell access option.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe static void CWriteAheadLog(long cellId, byte* cellPtr, int cellSize, ushort cellType, CellAccessOptions options)
+        {
+            CLocalMemoryStorage.CWriteAheadLog(cellId, cellPtr, cellSize, cellType, options);
+        }
 
         /// <summary>
         /// Initializes the write-ahead logging file associated
@@ -484,7 +498,7 @@ load_success:
                 }
 
                 /* Only save storage when the log is not empty. */
-                if (record_cnt == 0 ? true : SaveStorage())
+                if (record_cnt == 0 || TrinityErrorCode.E_SUCCESS == SaveStorage())
                 {
                     /* Save storage succeded. Dropping old logs now. */
                     try
@@ -544,60 +558,6 @@ load_fail:
         /// <param name="writeAheadLogOptions">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
         /// <param name="cellId">A 64-bit cell Id.</param>
         /// <param name="buff">A memory buffer that contains the cell content.</param>
-        /// <returns>true if saving succeeds; otherwise, false.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode SaveCell(CellAccessOptions writeAheadLogOptions, long cellId, byte[] buff)
-        {
-            fixed (byte* p = buff)
-            {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, p, buff.Length, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
-                return eResult;
-            }
-        }
-
-        /// <summary>
-        /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
-        /// </summary>
-        /// <param name="writeAheadLogOptions">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
-        /// <param name="cellId">A 64-bit cell Id.</param>
-        /// <param name="buff">A memory buffer that contains the cell content.</param>
-        /// <param name="cellType">Indicates the cell type.</param>
-        /// <returns>true if saving succeeds; otherwise, false.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode SaveCell(CellAccessOptions writeAheadLogOptions, long cellId, byte[] buff, ushort cellType)
-        {
-            fixed (byte* p = buff)
-            {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, p, buff.Length, cellType, writeAheadLogOptions);
-                return eResult;
-            }
-        }
-
-        /// <summary>
-        /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
-        /// </summary>
-        /// <param name="writeAheadLogOptions">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
-        /// <param name="cellId">A 64-bit cell Id.</param>
-        /// <param name="buff">A memory buffer that contains the cell content.</param>
-        /// <param name="offset">The byte offset into the buff.</param>
-        /// <param name="cellSize">The size of the cell.</param>
-        /// <returns>true if saving succeeds; otherwise, false.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode SaveCell(CellAccessOptions writeAheadLogOptions, long cellId, byte[] buff, int offset, int cellSize)
-        {
-            fixed (byte* p = buff)
-            {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, p + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
-                return eResult;
-            }
-        }
-
-        /// <summary>
-        /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
-        /// </summary>
-        /// <param name="writeAheadLogOptions">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
-        /// <param name="cellId">A 64-bit cell Id.</param>
-        /// <param name="buff">A memory buffer that contains the cell content.</param>
         /// <param name="offset">The byte offset into the buff.</param>
         /// <param name="cellSize">The size of the cell.</param>
         /// <param name="cellType">Indicates the cell type.</param>
@@ -607,8 +567,7 @@ load_fail:
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, p + offset, cellSize, cellType, writeAheadLogOptions);
-                return eResult;
+                return SaveCell(writeAheadLogOptions, cellId, p + offset, cellSize, cellType);
             }
         }
 
@@ -618,114 +577,14 @@ load_fail:
         /// <param name="writeAheadLogOptions">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
         /// <param name="cellId">A 64-bit cell Id.</param>
         /// <param name="buff">A memory buffer that contains the cell content.</param>
-        /// <param name="offset">The byte offset into the buff.</param>
         /// <param name="cellSize">The size of the cell.</param>
         /// <param name="cellType">Indicates the cell type.</param>
         /// <returns>true if saving succeeds; otherwise, false.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode SaveCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int offset, int cellSize, ushort cellType)
+        public TrinityErrorCode SaveCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int cellSize, ushort cellType)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, buff + offset, cellSize, cellType, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, buff, cellSize, cellType, writeAheadLogOptions);
             return eResult;
-        }
-
-
-        /// <summary>
-        /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
-        /// </summary>
-        /// <param name="writeAheadLogOptions">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
-        /// <param name="cellId">A 64-bit cell Id.</param>
-        /// <param name="buff">A memory buffer that contains the cell content.</param>
-        /// <param name="offset">The byte offset into the buff.</param>
-        /// <param name="cellSize">The size of the cell.</param>
-        /// <returns>true if saving succeeds; otherwise, false.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode SaveCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int offset, int cellSize)
-        {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, buff + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
-            return eResult;
-        }
-
-        /// <summary>
-        /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
-        /// </summary>
-        /// <param name="writeAheadLogOptions">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
-        /// <param name="cellId">A 64-bit cell Id.</param>
-        /// <param name="buff">A memory buffer that contains the cell content.</param>
-        /// <param name="cellSize">The size of the cell.</param>
-        /// <returns>true if saving succeeds; otherwise, false.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode SaveCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int cellSize)
-        {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, buff, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
-            return eResult;
-        }
-
-        /// <summary>
-        /// Adds a new cell to the Trinity key-value store.
-        /// </summary>
-        /// <param name="writeAheadLogOptions">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
-        /// <param name="cellId">A 64-bit cell Id.</param>
-        /// <param name="buff">A memory buffer that contains the cell content.</param>
-        /// <param name="cellSize">The size of the cell.</param>
-        /// <returns>true if adding succeeds; otherwise, false.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode AddCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int cellSize)
-        {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, buff, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
-            return eResult;
-        }
-
-        /// <summary>
-        /// Adds a new cell to the Trinity key-value store.
-        /// </summary>
-        /// <param name="writeAheadLogOptions">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
-        /// <param name="cellId">A 64-bit cell Id.</param>
-        /// <param name="buff">A memory buffer that contains the cell content.</param>
-        /// <param name="offset">The byte offset into the buff.</param>
-        /// <param name="cellSize">The size of the cell.</param>
-        /// <returns>true if adding succeeds; otherwise, false.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode AddCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int offset, int cellSize)
-        {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, buff + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
-            return eResult;
-        }
-
-        /// <summary>
-        /// Adds a new cell to the Trinity key-value store.
-        /// </summary>
-        /// <param name="writeAheadLogOptions">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
-        /// <param name="cellId">A 64-bit cell Id.</param>
-        /// <param name="buff">A memory buffer that contains the cell content.</param>
-        /// <returns>true if adding succeeds; otherwise, false.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode AddCell(CellAccessOptions writeAheadLogOptions, long cellId, byte[] buff)
-        {
-            fixed (byte* p = buff)
-            {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, p, buff.Length, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
-                return eResult;
-            }
-        }
-
-        /// <summary>
-        /// Adds a new cell to the Trinity key-value store.
-        /// </summary>
-        /// <param name="writeAheadLogOptions">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
-        /// <param name="cellId">A 64-bit cell Id.</param>
-        /// <param name="buff">A memory buffer that contains the cell content.</param>
-        /// <param name="offset">The byte offset into the buff.</param>
-        /// <param name="cellSize">The size of the cell.</param>
-        /// <returns>true if adding succeeds; otherwise, false.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode AddCell(CellAccessOptions writeAheadLogOptions, long cellId, byte[] buff, int offset, int cellSize)
-        {
-            fixed (byte* p = buff)
-            {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, p + offset, cellSize, StorageConfig.c_UndefinedCellType, writeAheadLogOptions);
-                return eResult;
-            }
         }
 
         /// <summary>
@@ -743,8 +602,7 @@ load_fail:
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, p + offset, cellSize, cellType, writeAheadLogOptions);
-                return eResult;
+                return AddCell(writeAheadLogOptions, cellId, p + offset, cellSize, cellType);
             }
         }
 
@@ -754,30 +612,13 @@ load_fail:
         /// <param name="writeAheadLogOptions">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
         /// <param name="cellId">A 64-bit cell Id.</param>
         /// <param name="buff">A memory buffer that contains the cell content.</param>
-        /// <param name="offset">The byte offset into the buff.</param>
         /// <param name="cellSize">The size of the cell.</param>
         /// <param name="cellType">Indicates the cell type.</param>
         /// <returns>true if adding succeeds; otherwise, false.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode AddCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int offset, int cellSize, ushort cellType)
+        public TrinityErrorCode AddCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int cellSize, ushort cellType)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, buff + offset, cellSize, cellType, writeAheadLogOptions);
-            return eResult;
-        }
-
-        /// <summary>
-        /// Updates an existing cell in the Trinity key-value store.
-        /// </summary>
-        /// <param name="writeAheadLogOptions">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
-        /// <param name="cellId">A 64-bit cell Id.</param>
-        /// <param name="buff">A memory buffer that contains the cell content.</param>
-        /// <param name="offset">The byte offset into the buff.</param>
-        /// <param name="cellSize">The size of the cell.</param>
-        /// <returns>true if updating succeeds; otherwise, false.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode UpdateCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int offset, int cellSize)
-        {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedUpdateCell(cellId, buff + offset, cellSize, writeAheadLogOptions);
+            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedAddCell(cellId, buff, cellSize, cellType, writeAheadLogOptions);
             return eResult;
         }
 
@@ -802,23 +643,6 @@ load_fail:
         /// <param name="writeAheadLogOptions">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
         /// <param name="cellId">A 64-bit cell Id.</param>
         /// <param name="buff">A memory buffer that contains the cell content.</param>
-        /// <returns>true if updating succeeds; otherwise, false.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode UpdateCell(CellAccessOptions writeAheadLogOptions, long cellId, byte[] buff)
-        {
-            fixed (byte* p = buff)
-            {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedUpdateCell(cellId, p, buff.Length, writeAheadLogOptions);
-                return eResult;
-            }
-        }
-
-        /// <summary>
-        /// Updates an existing cell in the Trinity key-value store.
-        /// </summary>
-        /// <param name="writeAheadLogOptions">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
-        /// <param name="cellId">A 64-bit cell Id.</param>
-        /// <param name="buff">A memory buffer that contains the cell content.</param>
         /// <param name="offset">The byte offset into the buff.</param>
         /// <param name="cellSize">The size of the cell.</param>
         /// <returns>true if updating succeeds; otherwise, false.</returns>
@@ -827,8 +651,7 @@ load_fail:
         {
             fixed (byte* p = buff)
             {
-                TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedUpdateCell(cellId, p + offset, cellSize, writeAheadLogOptions);
-                return eResult;
+                return UpdateCell(writeAheadLogOptions, cellId, p + offset, cellSize);
             }
         }
 
@@ -845,6 +668,43 @@ load_fail:
             return eResult;
         }
 
+        #endregion
+
+        #region Tx
+        /// <summary>
+        /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
+        /// </summary>
+        /// <param name="writeAheadLogOptions">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="buff">A memory buffer that contains the cell content.</param>
+        /// <param name="offset">The byte offset into the buff.</param>
+        /// <param name="cellSize">The size of the cell.</param>
+        /// <param name="cellType">Indicates the cell type.</param>
+        /// <returns>true if saving succeeds; otherwise, false.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public TrinityErrorCode SaveCell(LocalTransactionContext tx, CellAccessOptions writeAheadLogOptions, long cellId, byte[] buff, int offset, int cellSize, ushort cellType)
+        {
+            fixed (byte* p = buff)
+            {
+                return SaveCell(tx, writeAheadLogOptions, cellId, p + offset, cellSize, cellType);
+            }
+        }
+
+        /// <summary>
+        /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
+        /// </summary>
+        /// <param name="writeAheadLogOptions">Specifies write-ahead logging behavior. Valid values are CellAccessOptions.StrongLogAhead(default) and CellAccessOptions.WeakLogAhead. Other values are ignored.</param>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="buff">A memory buffer that contains the cell content.</param>
+        /// <param name="cellSize">The size of the cell.</param>
+        /// <param name="cellType">Indicates the cell type.</param>
+        /// <returns>true if saving succeeds; otherwise, false.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public TrinityErrorCode SaveCell(LocalTransactionContext tx, CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int cellSize, ushort cellType)
+        {
+            TrinityErrorCode eResult= CLocalMemoryStorage.TxCLoggedSaveCell(tx.m_pctx, cellId, buff, cellSize, cellType, writeAheadLogOptions);
+            return eResult;
+        }
         #endregion
     }
 }
