@@ -18,4 +18,5 @@ static TRINITY_INTERFACES* g_TrinityInterfaces;
 %newobject NewCell;
 %newobject LoadCell;
 
+%include "Trinity.FFI.Schema.h"
 %include "Trinity.FFI.SWIG.h"

@@ -28,9 +28,3 @@ cnt = sum([1 for i in Trinity.Global.StorageSchema.CellDescriptors])
 
 print("after load: {}".format(cnt))
 
-descriptors = ge.__ffi.GetCellDescriptors()
-
-print("#desc = {}".format(len(descriptors)))
-
-for desc in descriptors:
-    print(desc)

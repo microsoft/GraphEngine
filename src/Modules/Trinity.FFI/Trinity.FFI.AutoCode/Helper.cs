@@ -30,7 +30,6 @@ namespace Trinity.FFI.AutoCode
             var t = p.ParameterType;
 
             if (t == typeof(CellAccessOptions)) ret += "[MarshalAs(UnmanagedType.I4)]";
-            if (t.IsArray || (t.IsByRef && t.GetElementType().IsArray)) ret += "[MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)]"; // TODO only one layer
             ret += _signature(t, p.IsOut);
 
             ret += " p" + p.Position;
@@ -54,7 +53,7 @@ namespace Trinity.FFI.AutoCode
 
             if (isout) return "out " + _signature(e);
             if (t.IsByRef) return "ref " + _signature(e);
-            if (t.IsArray) return _signature(e) + "[]"; // TODO only one array param
+            if (t.IsArray) return _signature(e) + "[]";
             if (t.IsPointer) throw new NotSupportedException();
             if (t.IsGenericType) throw new NotSupportedException();
             if (t.HasElementType) throw new NotSupportedException();
@@ -67,7 +66,7 @@ namespace Trinity.FFI.AutoCode
             var e = t.GetElementType();
             if (t.IsByRef) { return _signature_cpp(e) + "*"; }
             else if (t.IsPointer) throw new NotSupportedException();
-            else if (t.IsArray) { return "int*, " + "void*"; }
+            else if (t.IsArray) { return "void*"; }
             else if (t.IsGenericType) throw new NotSupportedException();
             else if (t.HasElementType) throw new NotSupportedException();
 

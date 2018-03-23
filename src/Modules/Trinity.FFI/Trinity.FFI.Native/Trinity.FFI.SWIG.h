@@ -71,14 +71,12 @@ public:
 std::vector<CellDescriptor> GetCellDescriptors()
 {
     std::vector<CellDescriptor> ret;
-    int size = 0;
+    long size = 0;
     CellDescriptor* pcdesc = nullptr;
-    printf("GetCellDescriptors==========================\n");
-    if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->schema_get(&size, (void**)&pcdesc)) 
+    if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->schema_get((void**)&pcdesc, &size))
     {
         while (size-- > 0) { 
             ret.push_back(*pcdesc++); 
-            printf("push==========================\n");
         }
     }
 

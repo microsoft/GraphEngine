@@ -8422,6 +8422,98 @@ SWIGINTERN PyObject *Swig_var_g_TrinityInterfaces_get(void) {
 }
 
 
+SWIGINTERN PyObject *_wrap_CellDescriptor_Name_set(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  CellDescriptor *arg1 = (CellDescriptor *) 0 ;
+  char *arg2 = (char *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"CellDescriptor_Name_set",1,1,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_CellDescriptor, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CellDescriptor_Name_set" "', argument " "1"" of type '" "CellDescriptor *""'"); 
+  }
+  arg1 = reinterpret_cast< CellDescriptor * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CellDescriptor_Name_set" "', argument " "2"" of type '" "char *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  if (arg1->Name) delete[] arg1->Name;
+  if (arg2) {
+    size_t size = strlen(reinterpret_cast< const char * >(arg2)) + 1;
+    arg1->Name = (char *)reinterpret_cast< char* >(memcpy((new char[size]), reinterpret_cast< const char * >(arg2), sizeof(char)*(size)));
+  } else {
+    arg1->Name = 0;
+  }
+  resultobj = SWIG_Py_Void();
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_CellDescriptor_Name_get(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  CellDescriptor *arg1 = (CellDescriptor *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  char *result = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "CellDescriptor_Name_get takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_CellDescriptor, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CellDescriptor_Name_get" "', argument " "1"" of type '" "CellDescriptor *""'"); 
+  }
+  arg1 = reinterpret_cast< CellDescriptor * >(argp1);
+  result = (char *) ((arg1)->Name);
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN int _wrap_new_CellDescriptor(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  CellDescriptor *result = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "new_CellDescriptor takes no arguments");
+  result = (CellDescriptor *)new CellDescriptor();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_CellDescriptor, SWIG_BUILTIN_INIT |  0 );
+  return resultobj == Py_None ? -1 : 0;
+fail:
+  return -1;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_CellDescriptor(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  CellDescriptor *arg1 = (CellDescriptor *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "delete_CellDescriptor takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_CellDescriptor, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_CellDescriptor" "', argument " "1"" of type '" "CellDescriptor *""'"); 
+  }
+  arg1 = reinterpret_cast< CellDescriptor * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_Init(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   
@@ -9418,6 +9510,230 @@ static PyHeapTypeObject SwigPyBuiltin__std__vectorT_CellDescriptor_t_type = {
 
 SWIGINTERN SwigPyClientData SwigPyBuiltin__std__vectorT_CellDescriptor_t_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__std__vectorT_CellDescriptor_t_type};
 
+SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_CellDescriptor)
+static SwigPyGetSet CellDescriptor___dict___getset = { SwigPyObject_get___dict__, 0 };
+static SwigPyGetSet CellDescriptor_Name_getset = { _wrap_CellDescriptor_Name_get, _wrap_CellDescriptor_Name_set };
+SWIGINTERN PyGetSetDef SwigPyBuiltin__CellDescriptor_getset[] = {
+    { (char*) "__dict__", (getter) SwigPyBuiltin_GetterClosure, (setter) 0, (char*)"CellDescriptor.__dict__", (void*) &CellDescriptor___dict___getset }
+,
+    { (char*) "Name", (getter) SwigPyBuiltin_GetterClosure, (setter) SwigPyBuiltin_SetterClosure, (char*)"CellDescriptor.Name", (void*) &CellDescriptor_Name_getset }
+,
+    {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
+};
+
+SWIGINTERN PyObject *
+SwigPyBuiltin__CellDescriptor_richcompare(PyObject *self, PyObject *other, int op) {
+  PyObject *result = NULL;
+  PyObject *tuple = PyTuple_New(1);
+  assert(tuple);
+  PyTuple_SET_ITEM(tuple, 0, other);
+  Py_XINCREF(other);
+  if (!result) {
+    if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
+      result = SwigPyObject_richcompare((SwigPyObject *)self, (SwigPyObject *)other, op);
+    } else {
+      result = Py_NotImplemented;
+      Py_INCREF(result);
+    }
+  }
+  Py_DECREF(tuple);
+  return result;
+}
+
+SWIGINTERN PyMethodDef SwigPyBuiltin__CellDescriptor_methods[] = {
+  { NULL, NULL, 0, NULL } /* Sentinel */
+};
+
+static PyHeapTypeObject SwigPyBuiltin__CellDescriptor_type = {
+  {
+#if PY_VERSION_HEX >= 0x03000000
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
+    PyObject_HEAD_INIT(NULL)
+    0,                                        /* ob_size */
+#endif
+    "ffi.CellDescriptor",                     /* tp_name */
+    sizeof(SwigPyObject),                     /* tp_basicsize */
+    0,                                        /* tp_itemsize */
+    (destructor) _wrap_delete_CellDescriptor_closure, /* tp_dealloc */
+    (printfunc) 0,                            /* tp_print */
+    (getattrfunc) 0,                          /* tp_getattr */
+    (setattrfunc) 0,                          /* tp_setattr */
+#if PY_VERSION_HEX >= 0x03000000
+    0,                                        /* tp_compare */
+#else
+    (cmpfunc) 0,                              /* tp_compare */
+#endif
+    (reprfunc) 0,                             /* tp_repr */
+    &SwigPyBuiltin__CellDescriptor_type.as_number,      /* tp_as_number */
+    &SwigPyBuiltin__CellDescriptor_type.as_sequence,    /* tp_as_sequence */
+    &SwigPyBuiltin__CellDescriptor_type.as_mapping,     /* tp_as_mapping */
+    (hashfunc) 0,                             /* tp_hash */
+    (ternaryfunc) 0,                          /* tp_call */
+    (reprfunc) 0,                             /* tp_str */
+    (getattrofunc) 0,                         /* tp_getattro */
+    (setattrofunc) 0,                         /* tp_setattro */
+    &SwigPyBuiltin__CellDescriptor_type.as_buffer,      /* tp_as_buffer */
+#if PY_VERSION_HEX >= 0x03000000
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,   /* tp_flags */
+#else
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_CHECKTYPES, /* tp_flags */
+#endif
+    "::CellDescriptor",                       /* tp_doc */
+    (traverseproc) 0,                         /* tp_traverse */
+    (inquiry) 0,                              /* tp_clear */
+    (richcmpfunc) SwigPyBuiltin__CellDescriptor_richcompare, /* feature:python:tp_richcompare */
+    0,                                        /* tp_weaklistoffset */
+    (getiterfunc) 0,                          /* tp_iter */
+    (iternextfunc) 0,                         /* tp_iternext */
+    SwigPyBuiltin__CellDescriptor_methods,    /* tp_methods */
+    0,                                        /* tp_members */
+    SwigPyBuiltin__CellDescriptor_getset,     /* tp_getset */
+    0,                                        /* tp_base */
+    0,                                        /* tp_dict */
+    (descrgetfunc) 0,                         /* tp_descr_get */
+    (descrsetfunc) 0,                         /* tp_descr_set */
+    (Py_ssize_t)offsetof(SwigPyObject, dict), /* tp_dictoffset */
+    (initproc) _wrap_new_CellDescriptor,      /* tp_init */
+    (allocfunc) 0,                            /* tp_alloc */
+    (newfunc) 0,                              /* tp_new */
+    (freefunc) 0,                             /* tp_free */
+    (inquiry) 0,                              /* tp_is_gc */
+    (PyObject*) 0,                            /* tp_bases */
+    (PyObject*) 0,                            /* tp_mro */
+    (PyObject*) 0,                            /* tp_cache */
+    (PyObject*) 0,                            /* tp_subclasses */
+    (PyObject*) 0,                            /* tp_weaklist */
+    (destructor) 0,                           /* tp_del */
+#if PY_VERSION_HEX >= 0x02060000
+    (int) 0,                                  /* tp_version_tag */
+#endif
+#if PY_VERSION_HEX >= 0x03040000
+    (destructor) 0,                           /* tp_finalize */
+#endif
+#ifdef COUNT_ALLOCS
+    (Py_ssize_t) 0,                           /* tp_allocs */
+    (Py_ssize_t) 0,                           /* tp_frees */
+    (Py_ssize_t) 0,                           /* tp_maxalloc */
+#if PY_VERSION_HEX >= 0x02050000
+    (struct _typeobject*) 0,                  /* tp_prev */
+#endif
+    (struct _typeobject*) 0,                  /* tp_next */
+#endif
+  },
+#if PY_VERSION_HEX >= 0x03050000
+  {
+    (unaryfunc) 0,                            /* am_await */
+    (unaryfunc) 0,                            /* am_aiter */
+    (unaryfunc) 0,                            /* am_anext */
+  },
+#endif
+  {
+    (binaryfunc) 0,                           /* nb_add */
+    (binaryfunc) 0,                           /* nb_subtract */
+    (binaryfunc) 0,                           /* nb_multiply */
+#if PY_VERSION_HEX < 0x03000000
+    (binaryfunc) 0,                           /* nb_divide */
+#endif
+    (binaryfunc) 0,                           /* nb_remainder */
+    (binaryfunc) 0,                           /* nb_divmod */
+    (ternaryfunc) 0,                          /* nb_power */
+    (unaryfunc) 0,                            /* nb_negative */
+    (unaryfunc) 0,                            /* nb_positive */
+    (unaryfunc) 0,                            /* nb_absolute */
+    (inquiry) 0,                              /* nb_nonzero */
+    (unaryfunc) 0,                            /* nb_invert */
+    (binaryfunc) 0,                           /* nb_lshift */
+    (binaryfunc) 0,                           /* nb_rshift */
+    (binaryfunc) 0,                           /* nb_and */
+    (binaryfunc) 0,                           /* nb_xor */
+    (binaryfunc) 0,                           /* nb_or */
+#if PY_VERSION_HEX < 0x03000000
+    (coercion) 0,                             /* nb_coerce */
+#endif
+    (unaryfunc) 0,                            /* nb_int */
+#if PY_VERSION_HEX >= 0x03000000
+    (void*) 0,                                /* nb_reserved */
+#else
+    (unaryfunc) 0,                            /* nb_long */
+#endif
+    (unaryfunc) 0,                            /* nb_float */
+#if PY_VERSION_HEX < 0x03000000
+    (unaryfunc) 0,                            /* nb_oct */
+    (unaryfunc) 0,                            /* nb_hex */
+#endif
+    (binaryfunc) 0,                           /* nb_inplace_add */
+    (binaryfunc) 0,                           /* nb_inplace_subtract */
+    (binaryfunc) 0,                           /* nb_inplace_multiply */
+#if PY_VERSION_HEX < 0x03000000
+    (binaryfunc) 0,                           /* nb_inplace_divide */
+#endif
+    (binaryfunc) 0,                           /* nb_inplace_remainder */
+    (ternaryfunc) 0,                          /* nb_inplace_power */
+    (binaryfunc) 0,                           /* nb_inplace_lshift */
+    (binaryfunc) 0,                           /* nb_inplace_rshift */
+    (binaryfunc) 0,                           /* nb_inplace_and */
+    (binaryfunc) 0,                           /* nb_inplace_xor */
+    (binaryfunc) 0,                           /* nb_inplace_or */
+    (binaryfunc) 0,                           /* nb_floor_divide */
+    (binaryfunc) 0,                           /* nb_true_divide */
+    (binaryfunc) 0,                           /* nb_inplace_floor_divide */
+    (binaryfunc) 0,                           /* nb_inplace_true_divide */
+#if PY_VERSION_HEX >= 0x02050000
+    (unaryfunc) 0,                            /* nb_index */
+#endif
+#if PY_VERSION_HEX >= 0x03050000
+    (binaryfunc) 0,                           /* nb_matrix_multiply */
+    (binaryfunc) 0,                           /* nb_inplace_matrix_multiply */
+#endif
+  },
+  {
+    (lenfunc) 0,                              /* mp_length */
+    (binaryfunc) 0,                           /* mp_subscript */
+    (objobjargproc) 0,                        /* mp_ass_subscript */
+  },
+  {
+    (lenfunc) 0,                              /* sq_length */
+    (binaryfunc) 0,                           /* sq_concat */
+    (ssizeargfunc) 0,                         /* sq_repeat */
+    (ssizeargfunc) 0,                         /* sq_item */
+#if PY_VERSION_HEX >= 0x03000000
+    (void*) 0,                                /* was_sq_slice */
+#else
+    (ssizessizeargfunc) 0,                    /* sq_slice */
+#endif
+    (ssizeobjargproc) 0,                      /* sq_ass_item */
+#if PY_VERSION_HEX >= 0x03000000
+    (void*) 0,                                /* was_sq_ass_slice */
+#else
+    (ssizessizeobjargproc) 0,                 /* sq_ass_slice */
+#endif
+    (objobjproc) 0,                           /* sq_contains */
+    (binaryfunc) 0,                           /* sq_inplace_concat */
+    (ssizeargfunc) 0,                         /* sq_inplace_repeat */
+  },
+  {
+#if PY_VERSION_HEX < 0x03000000
+    (readbufferproc) 0,                       /* bf_getreadbuffer */
+    (writebufferproc) 0,                      /* bf_getwritebuffer */
+    (segcountproc) 0,                         /* bf_getsegcount */
+    (charbufferproc) 0,                       /* bf_getcharbuffer */
+#endif
+#if PY_VERSION_HEX >= 0x02060000
+    (getbufferproc) 0,                        /* bf_getbuffer */
+    (releasebufferproc) 0,                    /* bf_releasebuffer */
+#endif
+  },
+    (PyObject*) 0,                            /* ht_name */
+    (PyObject*) 0,                            /* ht_slots */
+#if PY_VERSION_HEX >= 0x03030000
+    (PyObject*) 0,                            /* ht_qualname */
+    (struct _dictkeysobject*) 0,              /* ht_cached_keys */
+#endif
+};
+
+SWIGINTERN SwigPyClientData SwigPyBuiltin__CellDescriptor_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__CellDescriptor_type};
+
 SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_Cell)
 static SwigPyGetSet Cell___dict___getset = { SwigPyObject_get___dict__, 0 };
 SWIGINTERN PyGetSetDef SwigPyBuiltin__Cell_getset[] = {
@@ -9651,7 +9967,7 @@ SWIGINTERN SwigPyClientData SwigPyBuiltin__Cell_clientdata = {0, 0, 0, 0, 0, 0, 
 
 static swig_type_info _swigt__p_Cell = {"_p_Cell", "Cell *", 0, 0, (void*)&SwigPyBuiltin__Cell_clientdata, 0};
 static swig_type_info _swigt__p_CellAccessOptions = {"_p_CellAccessOptions", "CellAccessOptions *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_CellDescriptor = {"_p_CellDescriptor", "std::vector< CellDescriptor >::value_type *|CellDescriptor *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_CellDescriptor = {"_p_CellDescriptor", "std::vector< CellDescriptor >::value_type *|CellDescriptor *", 0, 0, (void*)&SwigPyBuiltin__CellDescriptor_clientdata, 0};
 static swig_type_info _swigt__p_SwigPyObject = {"_p_SwigPyObject", "SwigPyObject *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_TRINITY_INTERFACES = {"_p_TRINITY_INTERFACES", "TRINITY_INTERFACES *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_allocator_type = {"_p_allocator_type", "allocator_type *", 0, 0, (void*)0, 0};
@@ -10460,6 +10776,29 @@ SWIG_init(void) {
   PyDict_SetItemString(md,(char*)"cvar", SWIG_globals());
   SwigPyBuiltin_AddPublicSymbol(public_interface, "cvar");
   SWIG_addvarlink(SWIG_globals(),(char*)"g_TrinityInterfaces",Swig_var_g_TrinityInterfaces_get, Swig_var_g_TrinityInterfaces_set);
+  
+  /* type '::CellDescriptor' */
+  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__CellDescriptor_type;
+  builtin_pytype->tp_dict = d = PyDict_New();
+  SwigPyBuiltin_SetMetaType(builtin_pytype, metatype);
+  builtin_pytype->tp_new = PyType_GenericNew;
+  builtin_base_count = 0;
+  builtin_bases[builtin_base_count] = NULL;
+  SwigPyBuiltin_InitBases(builtin_pytype, builtin_bases);
+  PyDict_SetItemString(d, "this", this_descr);
+  PyDict_SetItemString(d, "thisown", thisown_descr);
+  if (PyType_Ready(builtin_pytype) < 0) {
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'CellDescriptor'.");
+#if PY_VERSION_HEX >= 0x03000000
+    return NULL;
+#else
+    return;
+#endif
+  }
+  Py_INCREF(builtin_pytype);
+  PyModule_AddObject(m, "CellDescriptor", (PyObject*) builtin_pytype);
+  SwigPyBuiltin_AddPublicSymbol(public_interface, "CellDescriptor");
+  d = md;
   
   /* type '::Cell' */
   builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__Cell_type;

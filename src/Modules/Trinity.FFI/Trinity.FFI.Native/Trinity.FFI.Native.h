@@ -62,7 +62,7 @@ typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_2)(long long, CellAccessOp
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_3)(void*);
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_4)(CellAccessOptions, void*);
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_REMOVECELL)(long long);
-typedef TrinityErrorCode (*TRINITY_FFI_SCHEMA_GET)(int*, void**);
+typedef TrinityErrorCode (*TRINITY_FFI_SCHEMA_GET)(void**, long*);
 
 extern "C" struct TRINITY_INTERFACES
 {
