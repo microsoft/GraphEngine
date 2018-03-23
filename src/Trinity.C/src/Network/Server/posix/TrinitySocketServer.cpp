@@ -7,7 +7,7 @@
 #include <thread>
 #include <map>
 #include "os/platforms/posix.h"
-#include "Threading/TrinitySpinlock.h"
+#include "Threading/TrinityLock.h"
 #include "Trinity/Configuration/TrinityConfig.h"
 #include "Trinity/Hash/NonCryptographicHash.h"
 #include "Network/Server/posix/TrinitySocketServer.h"
@@ -29,7 +29,7 @@ namespace Trinity
 {
     namespace Network
     {
-        TrinitySpinlock psco_spinlock; // psco = per socket context object
+        TrinityLock psco_spinlock; // psco = per socket context object
         std::map<int, PerSocketContextObject*> psco_map;
         std::atomic<size_t> g_threadpool_size;
         std::thread* socket_accept_thread = nullptr;
