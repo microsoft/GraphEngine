@@ -27,7 +27,8 @@ public:
             auto val = InterlockedDecrement(&m_spinlock);
             if (val == c_acquired) return;
             //  val is a negative integer, and when we
-            //  wake a thread, the 
+            //  wake a thread, m_spinlock is reset and
+            //  we have to try again to grab the lock.
             WaitOnAddress(&m_spinlock, &val, sizeof(LONG), INFINITE);
         }
     }
