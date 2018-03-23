@@ -15,30 +15,16 @@ namespace Trinity.FFI
     internal unsafe delegate string TRINITY_FFI_SYNC_HANDLER(string content);
     internal unsafe delegate void TRINITY_FFI_ASYNC_HANDLER(string content);
 
-    internal unsafe delegate void TRINITY_FFI_SYNC_REGISTRY(Int32 p0, TRINITY_FFI_SYNC_HANDLER p1);
-    internal unsafe delegate void TRINITY_FFI_ASYNC_REGISTRY(Int32 p0, TRINITY_FFI_ASYNC_HANDLER p1);
-    internal unsafe delegate String TRINITY_FFI_SYNC_SEND(Int32 p0, Int32 p1, String p2);
-    internal unsafe delegate void TRINITY_FFI_ASYNC_SEND(Int32 p0, Int32 p1, String p2);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_LOADCELL(Int64 p0, ref IntPtr p1);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CLOUD_LOADCELL(Int64 p0, ref IntPtr p1);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CELL_FIELDENUM_MOVENEXT(IntPtr p0, IntPtr p1);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CELL_FIELDINFO_NAME(IntPtr p0, out String p1);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CELL_FIELDENUM_CURRENT(IntPtr p0, ref IntPtr p1);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CELL_FIELDENUM_DISPOSE(IntPtr p0);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CELL_FIELDENUM_GET(IntPtr p0, ref IntPtr p1);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_SAVECELL_1(Int64 p0, IntPtr p1);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_SAVECELL_2(Int64 p0, [MarshalAs(UnmanagedType.I4)]CellAccessOptions p1, IntPtr p2);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_SAVECELL_3(IntPtr p0);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_SAVECELL_4([MarshalAs(UnmanagedType.I4)]CellAccessOptions p0, IntPtr p1);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CLOUD_SAVECELL(Int64 p0, IntPtr p1);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_REMOVECELL(Int64 p0);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_NEWCELL_1(String p0, ref IntPtr p1);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_NEWCELL_2(Int64 p0, String p1, ref IntPtr p2);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_NEWCELL_3(String p0, String p1, ref IntPtr p2);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_USECELL_1(Int64 p0, ref IntPtr p1);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_USECELL_2(Int64 p0, [MarshalAs(UnmanagedType.I4)]CellAccessOptions p1, ref IntPtr p2);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_USECELL_3(Int64 p0, [MarshalAs(UnmanagedType.I4)]CellAccessOptions p1, ref IntPtr p2, String p3);
-    internal unsafe delegate void TRINITY_FFI_CELL_DISPOSE(IntPtr p0);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_FDENUM_MOVENEXT(IntPtr p0);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_FDENUM_FIELDNAME(IntPtr p0, ref String p1);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_FDENUM_FIELDOPTIONAL(IntPtr p0, ref Int32 p1);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_FDENUM_FROM_CELLDESC(IntPtr p0, ref IntPtr p1);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_ACCESSOR_USE_1(Int64 p0, ref IntPtr p1);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_ACCESSOR_USE_2(Int64 p0, [MarshalAs(UnmanagedType.I4)]CellAccessOptions p1, ref IntPtr p2);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_ACCESSOR_USE_3(Int64 p0, [MarshalAs(UnmanagedType.I4)]CellAccessOptions p1, ref IntPtr p2, String p3);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CELL_NEW_1(String p0, ref IntPtr p1);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CELL_NEW_2(Int64 p0, String p1, ref IntPtr p2);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CELL_NEW_3(String p0, String p1, ref IntPtr p2);
     internal unsafe delegate String TRINITY_FFI_CELL_TOSTRING(IntPtr p0);
     internal unsafe delegate Int64 TRINITY_FFI_CELL_GETID(IntPtr p0);
     internal unsafe delegate void TRINITY_FFI_CELL_SETID(IntPtr p0, Int64 p1);
@@ -47,82 +33,43 @@ namespace Trinity.FFI
     internal unsafe delegate void TRINITY_FFI_CELL_SET(IntPtr p0, String p1, String p2);
     internal unsafe delegate void TRINITY_FFI_CELL_APPEND(IntPtr p0, String p1, String p2);
     internal unsafe delegate void TRINITY_FFI_CELL_DELETE(IntPtr p0, String p1);
-    internal unsafe delegate Int32 TRINITY_FFI_CA_USE_1(Int64 p0);
-    internal unsafe delegate Int32 TRINITY_FFI_CA_USE_2(Int64 p0, [MarshalAs(UnmanagedType.I4)]CellAccessOptions p1);
-    internal unsafe delegate Int32 TRINITY_FFI_CA_USE_3(Int64 p0, [MarshalAs(UnmanagedType.I4)]CellAccessOptions p1, String p2);
-    internal unsafe delegate Int64 TRINITY_FFI_CA_GETID(Int32 p0);
-    internal unsafe delegate String TRINITY_FFI_CA_GETFIELD(Int32 p0, String p1);
-    internal unsafe delegate void TRINITY_FFI_CA_SETFIELD(Int32 p0, String p1, String p2);
-    internal unsafe delegate void TRINITY_FFI_CA_APPENDFIELD(Int32 p0, String p1, String p2);
-    internal unsafe delegate void TRINITY_FFI_CA_REMOVEFIELD(Int32 p0, String p1);
-    internal unsafe delegate void TRINITY_FFI_CA_DEL(Int32 p0);
-    internal unsafe delegate Int32 TRINITY_FFI_CO_LOAD(Int64 p0);
-    internal unsafe delegate Int32 TRINITY_FFI_CO_NEW_1(String p0);
-    internal unsafe delegate Int32 TRINITY_FFI_CO_NEW_2(String p0, Int64 p1);
-    internal unsafe delegate Int32 TRINITY_FFI_CO_NEW_3(String p0, Int64 p1, String p2);
-    internal unsafe delegate void TRINITY_FFI_CO_SAVE_1(Int32 p0);
-    internal unsafe delegate void TRINITY_FFI_CO_SAVE_2(Int64 p0, Int32 p1);
-    internal unsafe delegate void TRINITY_FFI_CO_SAVE_3([MarshalAs(UnmanagedType.I4)]CellAccessOptions p0, Int32 p1);
-    internal unsafe delegate void TRINITY_FFI_CO_SAVE_4([MarshalAs(UnmanagedType.I4)]CellAccessOptions p0, Int64 p1, Int32 p2);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CO_REMOVE(Int64 p0);
-    internal unsafe delegate Int64 TRINITY_FFI_CO_GETID(Int32 p0);
-    internal unsafe delegate void TRINITY_FFI_CO_SETID(Int32 p0, Int64 p1);
-    internal unsafe delegate String TRINITY_FFI_CO_GETFIELD(Int32 p0, String p1);
-    internal unsafe delegate void TRINITY_FFI_CO_SETFIELD(Int32 p0, String p1, String p2);
-    internal unsafe delegate void TRINITY_FFI_CO_APPENDFIELD(Int32 p0, String p1, String p2);
-    internal unsafe delegate void TRINITY_FFI_CO_REMOVEFIELD(Int32 p0, String p1);
-    internal unsafe delegate void TRINITY_FFI_CO_DEL(Int32 p0);
+    internal unsafe delegate void TRINITY_FFI_CLOUD_SYNC_REGISTRY(Int32 p0, TRINITY_FFI_SYNC_HANDLER p1);
+    internal unsafe delegate void TRINITY_FFI_CLOUD_ASYNC_REGISTRY(Int32 p0, TRINITY_FFI_ASYNC_HANDLER p1);
+    internal unsafe delegate String TRINITY_FFI_CLOUD_SYNC_SEND(Int32 p0, Int32 p1, String p2);
+    internal unsafe delegate void TRINITY_FFI_CLOUD_ASYNC_SEND(Int32 p0, Int32 p1, String p2);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CLOUD_LOADCELL(Int64 p0, ref IntPtr p1);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CLOUD_SAVECELL(Int64 p0, IntPtr p1);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_GC_FREE(IntPtr p0);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_GC_DISPOSE(IntPtr p0);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_LOADCELL(Int64 p0, ref IntPtr p1);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_SAVECELL_1(Int64 p0, IntPtr p1);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_SAVECELL_2(Int64 p0, [MarshalAs(UnmanagedType.I4)]CellAccessOptions p1, IntPtr p2);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_SAVECELL_3(IntPtr p0);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_SAVECELL_4([MarshalAs(UnmanagedType.I4)]CellAccessOptions p0, IntPtr p1);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_REMOVECELL(Int64 p0);
 
     internal struct TRINITY_INTERFACES
     {
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_SYNC_REGISTRY sync_registry;
+        public TRINITY_FFI_FDENUM_MOVENEXT fdenum_movenext;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_ASYNC_REGISTRY async_registry;
+        public TRINITY_FFI_FDENUM_FIELDNAME fdenum_fieldname;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_SYNC_SEND sync_send;
+        public TRINITY_FFI_FDENUM_FIELDOPTIONAL fdenum_fieldoptional;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_ASYNC_SEND async_send;
+        public TRINITY_FFI_FDENUM_FROM_CELLDESC fdenum_from_celldesc;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_LOCAL_LOADCELL local_loadcell;
+        public TRINITY_FFI_ACCESSOR_USE_1 accessor_use_1;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CLOUD_LOADCELL cloud_loadcell;
+        public TRINITY_FFI_ACCESSOR_USE_2 accessor_use_2;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CELL_FIELDENUM_MOVENEXT cell_fieldenum_movenext;
+        public TRINITY_FFI_ACCESSOR_USE_3 accessor_use_3;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CELL_FIELDINFO_NAME cell_fieldinfo_name;
+        public TRINITY_FFI_CELL_NEW_1 cell_new_1;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CELL_FIELDENUM_CURRENT cell_fieldenum_current;
+        public TRINITY_FFI_CELL_NEW_2 cell_new_2;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CELL_FIELDENUM_DISPOSE cell_fieldenum_dispose;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CELL_FIELDENUM_GET cell_fieldenum_get;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_LOCAL_SAVECELL_1 local_savecell_1;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_LOCAL_SAVECELL_2 local_savecell_2;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_LOCAL_SAVECELL_3 local_savecell_3;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_LOCAL_SAVECELL_4 local_savecell_4;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CLOUD_SAVECELL cloud_savecell;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_LOCAL_REMOVECELL local_removecell;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_NEWCELL_1 newcell_1;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_NEWCELL_2 newcell_2;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_NEWCELL_3 newcell_3;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_LOCAL_USECELL_1 local_usecell_1;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_LOCAL_USECELL_2 local_usecell_2;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_LOCAL_USECELL_3 local_usecell_3;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CELL_DISPOSE cell_dispose;
+        public TRINITY_FFI_CELL_NEW_3 cell_new_3;
         [MarshalAs(UnmanagedType.FunctionPtr)]
         public TRINITY_FFI_CELL_TOSTRING cell_tostring;
         [MarshalAs(UnmanagedType.FunctionPtr)]
@@ -140,55 +87,33 @@ namespace Trinity.FFI
         [MarshalAs(UnmanagedType.FunctionPtr)]
         public TRINITY_FFI_CELL_DELETE cell_delete;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CA_USE_1 CA_Use_1;
+        public TRINITY_FFI_CLOUD_SYNC_REGISTRY cloud_sync_registry;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CA_USE_2 CA_Use_2;
+        public TRINITY_FFI_CLOUD_ASYNC_REGISTRY cloud_async_registry;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CA_USE_3 CA_Use_3;
+        public TRINITY_FFI_CLOUD_SYNC_SEND cloud_sync_send;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CA_GETID CA_GetId;
+        public TRINITY_FFI_CLOUD_ASYNC_SEND cloud_async_send;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CA_GETFIELD CA_GetField;
+        public TRINITY_FFI_CLOUD_LOADCELL cloud_loadcell;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CA_SETFIELD CA_SetField;
+        public TRINITY_FFI_CLOUD_SAVECELL cloud_savecell;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CA_APPENDFIELD CA_AppendField;
+        public TRINITY_FFI_GC_FREE gc_free;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CA_REMOVEFIELD CA_RemoveField;
+        public TRINITY_FFI_GC_DISPOSE gc_dispose;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CA_DEL CA_Del;
+        public TRINITY_FFI_LOCAL_LOADCELL local_loadcell;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CO_LOAD CO_Load;
+        public TRINITY_FFI_LOCAL_SAVECELL_1 local_savecell_1;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CO_NEW_1 CO_New_1;
+        public TRINITY_FFI_LOCAL_SAVECELL_2 local_savecell_2;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CO_NEW_2 CO_New_2;
+        public TRINITY_FFI_LOCAL_SAVECELL_3 local_savecell_3;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CO_NEW_3 CO_New_3;
+        public TRINITY_FFI_LOCAL_SAVECELL_4 local_savecell_4;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CO_SAVE_1 CO_Save_1;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CO_SAVE_2 CO_Save_2;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CO_SAVE_3 CO_Save_3;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CO_SAVE_4 CO_Save_4;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CO_REMOVE CO_Remove;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CO_GETID CO_GetId;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CO_SETID CO_SetId;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CO_GETFIELD CO_GetField;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CO_SETFIELD CO_SetField;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CO_APPENDFIELD CO_AppendField;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CO_REMOVEFIELD CO_RemoveField;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CO_DEL CO_Del;
+        public TRINITY_FFI_LOCAL_REMOVECELL local_removecell;
     };
 
     internal static unsafe class Native

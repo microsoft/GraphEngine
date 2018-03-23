@@ -78,7 +78,7 @@ namespace Trinity.FFI
             this.Write(" TRINITY_FFI_");
             
             #line 35 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Native.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(m.Name.ToUpper()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateName(m).ToUpper()));
             
             #line default
             #line hidden
@@ -109,7 +109,7 @@ namespace Trinity.FFI
             this.Write("        [MarshalAs(UnmanagedType.FunctionPtr)]\r\n        public TRINITY_FFI_");
             
             #line 45 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Native.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(m.Name.ToUpper() + " " + m.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateName(m).ToUpper() + " " + Helper.GenerateName(m)));
             
             #line default
             #line hidden

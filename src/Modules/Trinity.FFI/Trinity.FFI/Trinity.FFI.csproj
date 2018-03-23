@@ -43,4 +43,8 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\GraphEngine.Jit\GraphEngine.Jit\GraphEngine.Jit.fsproj" />
+  </ItemGroup>
+
 </Project>

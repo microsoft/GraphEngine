@@ -70,7 +70,7 @@ namespace Trinity.FFI
             this.Write("\t\t\t");
             
             #line 33 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\FFIMethods.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(m.Name + " = " + m.DeclaringType.Name + "." + m.Name + ","));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateName(m) + " = " + m.DeclaringType.Name + "." + m.Name + ","));
             
             #line default
             #line hidden

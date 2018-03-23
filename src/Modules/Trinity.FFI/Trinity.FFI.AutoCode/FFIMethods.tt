@@ -30,7 +30,7 @@ namespace Trinity.FFI
 <#
 	foreach(var m in export_methods)
 	{
-#>			<#= m.Name + " = " + m.DeclaringType.Name + "." + m.Name + ","  #>
+#>			<#= Helper.GenerateName(m) + " = " + m.DeclaringType.Name + "." + m.Name + ","  #>
 <#
 	}
 #>

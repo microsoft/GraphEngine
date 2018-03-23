@@ -10,6 +10,14 @@ namespace Trinity.FFI.AutoCode
 {
     static class Helper
     {
+        internal static string GenerateName(MethodInfo m)
+        {
+            var name = m.Name;
+            var prefix = m.DeclaringType.GetCustomAttribute<FFIPrefixAttribute>();
+            if (prefix == null) throw new ArgumentException($"No prefix found for method {name}");
+            return prefix.Prefix + name;
+        }
+
         internal static string GenerateReturnType(MethodInfo m)
             => (m.ReturnType == typeof(void)) ? "void" : m.ReturnType.Name;
 

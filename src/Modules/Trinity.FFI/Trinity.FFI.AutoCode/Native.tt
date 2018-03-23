@@ -32,7 +32,7 @@ namespace Trinity.FFI
 <# 
 	foreach(var m in export_methods)
 	{#>
-    internal unsafe delegate <#=Helper.GenerateReturnType(m)#> TRINITY_FFI_<#=m.Name.ToUpper()#>(<#=Helper.GenerateParameterList(m)#>);
+    internal unsafe delegate <#=Helper.GenerateReturnType(m)#> TRINITY_FFI_<#=Helper.GenerateName(m).ToUpper()#>(<#=Helper.GenerateParameterList(m)#>);
 <#
 	}#>
 
@@ -42,7 +42,7 @@ namespace Trinity.FFI
 	foreach(var m in export_methods)
 	{#>
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_<#=m.Name.ToUpper() + " " + m.Name#>;
+        public TRINITY_FFI_<#=Helper.GenerateName(m).ToUpper() + " " + Helper.GenerateName(m)#>;
 <#
 	}#>
     };

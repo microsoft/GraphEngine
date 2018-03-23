@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "GraphEngine.Jit", "GraphEngine.Jit\GraphEngine.Jit.fsproj", "{0F48A2AB-7BEE-45E1-955B-A938086EBA11}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.Core", "..\..\Trinity.Core\Trinity.Core.csproj", "{C527257C-8FEC-495A-A98E-38597D9E22B9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0F48A2AB-7BEE-45E1-955B-A938086EBA11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F48A2AB-7BEE-45E1-955B-A938086EBA11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F48A2AB-7BEE-45E1-955B-A938086EBA11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F48A2AB-7BEE-45E1-955B-A938086EBA11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C527257C-8FEC-495A-A98E-38597D9E22B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C527257C-8FEC-495A-A98E-38597D9E22B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C527257C-8FEC-495A-A98E-38597D9E22B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C527257C-8FEC-495A-A98E-38597D9E22B9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A8A767BA-DA4D-4693-8BA5-4C0F7868A97B}
+	EndGlobalSection
+EndGlobal

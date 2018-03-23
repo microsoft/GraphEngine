@@ -96,7 +96,7 @@ typedef void  (*TRINITY_FFI_ASYNC_HANDLER)(char*);
             this.Write(" (*TRINITY_FFI_");
             
             #line 53 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(m.Name.ToUpper()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateName(m).ToUpper()));
             
             #line default
             #line hidden
@@ -127,14 +127,14 @@ foreach(var m in export_methods)
             this.Write("    TRINITY_FFI_");
             
             #line 62 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(m.Name.ToUpper()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateName(m).ToUpper()));
             
             #line default
             #line hidden
             this.Write(" ");
             
             #line 62 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(m.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateName(m)));
             
             #line default
             #line hidden

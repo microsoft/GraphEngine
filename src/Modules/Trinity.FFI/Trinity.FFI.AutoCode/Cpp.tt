@@ -50,7 +50,7 @@ typedef void  (*TRINITY_FFI_ASYNC_HANDLER)(char*);
 <# 
 	foreach(var m in export_methods)
 	{#>
-typedef <#=Helper.GenerateReturnTypeCpp(m)#> (*TRINITY_FFI_<#=m.Name.ToUpper()#>)(<#=Helper.GenerateParameterListCpp(m)#>);
+typedef <#=Helper.GenerateReturnTypeCpp(m)#> (*TRINITY_FFI_<#=Helper.GenerateName(m).ToUpper()#>)(<#=Helper.GenerateParameterListCpp(m)#>);
 <#
 	}#>
 
@@ -59,7 +59,7 @@ extern "C" struct TRINITY_INTERFACES
 <# 
 foreach(var m in export_methods)
 	{#>
-    TRINITY_FFI_<#=m.Name.ToUpper()#> <#=m.Name#>;
+    TRINITY_FFI_<#=Helper.GenerateName(m).ToUpper()#> <#=Helper.GenerateName(m)#>;
 <#
 	}#>
 };
