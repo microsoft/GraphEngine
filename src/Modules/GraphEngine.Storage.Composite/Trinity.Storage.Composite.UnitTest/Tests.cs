@@ -75,7 +75,7 @@ namespace Trinity.Storage.Composite.UnitTest
             Global.LocalStorage.ResetStorage();
             Directory.CreateDirectory("multi_good");
             Directory.GetFiles("multi_good").Each(File.Delete);
-            for(int i = 0; i<content.Length; ++i)
+            for (int i = 0; i<content.Length; ++i)
             {
                 File.WriteAllText($"multi_good/{i}.tsl", content[i]);
             }
@@ -88,7 +88,7 @@ namespace Trinity.Storage.Composite.UnitTest
         public void LoadMultiTsl_Separatedly(int expect, params string[] content)
         {
             Global.LocalStorage.ResetStorage();
-            for(int i = 0; i<content.Length; ++i)
+            for (int i = 0; i<content.Length; ++i)
             {
                 Directory.CreateDirectory($"multi_good{i}");
                 Directory.GetFiles($"multi_good{i}").Each(File.Delete);
@@ -103,7 +103,7 @@ namespace Trinity.Storage.Composite.UnitTest
         public void LoadMultiTslWithBad(int expect, params string[] content)
         {
             Global.LocalStorage.ResetStorage();
-            for(int i = 0; i<content.Length; ++i)
+            for (int i = 0; i<content.Length; ++i)
             {
                 Directory.CreateDirectory($"multi{i}");
                 Directory.GetFiles($"multi{i}").Each(File.Delete);
@@ -114,34 +114,41 @@ namespace Trinity.Storage.Composite.UnitTest
             Assert.Equal(expect, Global.StorageSchema.CellDescriptors.Count());
         }
 
+        [Fact]
+        public void tsl3()
+        {
+            Global.LocalStorage.ResetStorage();
+            CompositeStorage.AddStorageExtension($"./tsl3", $"BenchMark");
+        }
+
         public static IEnumerable<object[]> MultiTslContent()
         {
-            yield return new object[] {1, @" cell empty_thing { } "};
-            yield return new object[] {2, @" cell empty_thing { } ", @" cell empty_thing_2 { } "};
-            yield return new object[] {3, @" cell C1 { } ", @" cell C2 { } ", @" cell C3 { } "};
+            yield return new object[] { 1, @" cell empty_thing { } " };
+            yield return new object[] { 2, @" cell empty_thing { } ", @" cell empty_thing_2 { } " };
+            yield return new object[] { 3, @" cell C1 { } ", @" cell C2 { } ", @" cell C3 { } " };
         }
 
         public static IEnumerable<object[]> MultiTslWithBadContent()
         {
-            yield return new object[] {1, @" cell empty_thing { } "};
-            yield return new object[] {1, @" cell empty_thing { } ", @" BAD "};
-            yield return new object[] {2, @" cell C1 { } ", @" BAD ", @" cell C1 { } "};
-            yield return new object[] {2, @" BAD ", @" cell C1 { } ", @" cell C1 { } "};
-            yield return new object[] {1, @" BAD ", @" cell C1 { } ", @" BAD "};
+            yield return new object[] { 1, @" cell empty_thing { } " };
+            yield return new object[] { 1, @" cell empty_thing { } ", @" BAD " };
+            yield return new object[] { 2, @" cell C1 { } ", @" BAD ", @" cell C1 { } " };
+            yield return new object[] { 2, @" BAD ", @" cell C1 { } ", @" cell C1 { } " };
+            yield return new object[] { 1, @" BAD ", @" cell C1 { } ", @" BAD " };
         }
 
         public static IEnumerable<object[]> SingleTslContent()
         {
-            yield return new object[] { @" cell empty_thing { } " , 1};
-            yield return new object[] { @" cell C1 { int foo; } " , 1};
-            yield return new object[] { @" cell C1 { int foo; } cell C2 { int bar;} " , 2};
+            yield return new object[] { @" cell empty_thing { } ", 1 };
+            yield return new object[] { @" cell C1 { int foo; } ", 1 };
+            yield return new object[] { @" cell C1 { int foo; } cell C2 { int bar;} ", 2 };
         }
 
         public static IEnumerable<object[]> BadSingleTslContent()
         {
-            yield return new object[] { @" obviously not a TSL. "};
-            yield return new object[] { @" cell cell cell C1 { int foo; } "};
-            yield return new object[] { @" protocol P1 { } cell C2 { int bar;} "};
+            yield return new object[] { @" obviously not a TSL. " };
+            yield return new object[] { @" cell cell cell C1 { int foo; } " };
+            yield return new object[] { @" protocol P1 { } cell C2 { int bar;} " };
         }
 
         public Tests()

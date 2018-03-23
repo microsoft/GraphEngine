@@ -62,6 +62,7 @@
 
   <ItemGroup>
     <None Include="GraphEngine\Dependencies.csproj" />
+    <None Include="GraphEngine\**\*.py" />
   </ItemGroup>
 
   <ItemGroup>

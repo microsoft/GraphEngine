@@ -132,7 +132,7 @@ namespace Trinity.Storage.Composite
 
         private static void Build(string projDir, string outDir, string assemblyName)
         {
-            if (!Commands.DotNetBuildCmd($"build {projDir} -o {outDir}"))
+            if (!Commands.DotNetBuildCmd($"build {projDir} -c Release -o {outDir}"))
                 throw new TSLBuildException();
 
             ShadowCopy(outDir, Path.Combine(PathHelper.StorageSlot(true), assemblyName));
@@ -148,7 +148,10 @@ namespace Trinity.Storage.Composite
             var iditv    = new List<int>(s_IDIntervals);
 
             var pshadow  = ShadowCopy(Path.Combine(PathHelper.StorageSlot(primary), ext.AssemblyName));
-            var asm      = Assembly.LoadFrom(Path.Combine(pshadow, ext.AssemblyName+".dll"));
+            var apath    = Path.Combine(pshadow, ext.AssemblyName+".dll");
+            var asm      = Assembly.LoadFrom(apath);
+
+            Log.WriteLine(LogLevel.Debug, $"{nameof(CompositeStorage)}: assembly from {apath} is loaded.");
 
             new[] { "Current Storage Info:",
                    $"#Loaded extensions: {s_Extensions.Count}",
@@ -156,7 +159,7 @@ namespace Trinity.Storage.Composite
                    $"#CellTypeIDs:{ctmap.Count}",
                    $"#StorageSchema:{schemas.Count}",
                    $"#GenericCellOperations:{gcops.Count}" }
-                   .Each(_ => Log.WriteLine(LogLevel.Debug, $"{nameof(CompositeStorage)}: {{0}}", _));
+                   .Each(_ => Log.WriteLine(LogLevel.Verbose, $"{nameof(CompositeStorage)}: {{0}}", _));
 
             var schema    = AssemblyUtility.GetAllClassInstances<IStorageSchema>(assembly: asm).FirstOrDefault();
             var cellOps   = AssemblyUtility.GetAllClassInstances<IGenericCellOperations>(assembly: asm).FirstOrDefault();
