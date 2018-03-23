@@ -18,10 +18,10 @@ namespace memStoreTest2
         [ParamsSource(nameof(ThreadCountValue))]
         public int ThreadCount { get; set; }
 
-        [Params(1*MB, 512*MB, 16384*MB)]
+        [Params(1*MB, 512*MB)]
         public long TotalSize { get; set; }
 
-        [Params(17, 134, 6729)]
+        [Params(17, 134)]
         public int CellSize { get; set; }
 
         public IEnumerable<int> ThreadCountValue
