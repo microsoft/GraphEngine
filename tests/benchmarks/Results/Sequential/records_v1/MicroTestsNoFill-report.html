@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>MicroTestsNoFill</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet=v0.10.13, OS=Windows 10 Redstone 3 [1709, Fall Creators Update] (10.0.16299.309)
+Intel Core i7-4770 CPU 3.40GHz (Haswell), 1 CPU, 8 logical cores and 4 physical cores
+Frequency=3312642 Hz, Resolution=301.8739 ns, Timer=TSC
+  [Host]     : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2633.0
+  Job-UVGHVT : .NET Core 2.0.5 (CoreCLR 4.6.26020.03, CoreFX 4.6.26018.01), 64bit RyuJIT
+  Job-ULUNQO : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2633.0
+</code></pre>
+<pre><code>Server=True  RunStrategy=Throughput  
+</code></pre>
+
+<table>
+<thead><tr><th>  Method</th><th>Toolchain</th><th>Mean</th><th>Error</th><th>StdDev</th>
+</tr>
+</thead><tbody><tr><td>Use</td><td>.NET Core 2.0</td><td>115.00 ns</td><td>0.4013 ns</td><td>0.3558 ns</td>
+</tr><tr><td>UseManipulate</td><td>.NET Core 2.0</td><td>118.52 ns</td><td>0.6779 ns</td><td>0.6341 ns</td>
+</tr><tr><td>LoadMyCell</td><td>.NET Core 2.0</td><td>118.77 ns</td><td>0.6467 ns</td><td>0.6050 ns</td>
+</tr><tr><td>SaveMyCell</td><td>.NET Core 2.0</td><td>86.18 ns</td><td>0.3058 ns</td><td>0.2711 ns</td>
+</tr><tr><td>LoadCellBinary</td><td>.NET Core 2.0</td><td>80.07 ns</td><td>0.4444 ns</td><td>0.4157 ns</td>
+</tr><tr><td>Contains</td><td>.NET Core 2.0</td><td>24.47 ns</td><td>0.3624 ns</td><td>0.3026 ns</td>
+</tr><tr><td>GetCellType</td><td>.NET Core 2.0</td><td>40.59 ns</td><td>0.1623 ns</td><td>0.1174 ns</td>
+</tr><tr><td>Use</td><td>CsProjnet47</td><td>90.43 ns</td><td>0.0879 ns</td><td>0.0686 ns</td>
+</tr><tr><td>UseManipulate</td><td>CsProjnet47</td><td>87.38 ns</td><td>0.3028 ns</td><td>0.2528 ns</td>
+</tr><tr><td>LoadMyCell</td><td>CsProjnet47</td><td>89.07 ns</td><td>0.2237 ns</td><td>0.1983 ns</td>
+</tr><tr><td>SaveMyCell</td><td>CsProjnet47</td><td>88.49 ns</td><td>1.3624 ns</td><td>1.2744 ns</td>
+</tr><tr><td>LoadCellBinary</td><td>CsProjnet47</td><td>64.28 ns</td><td>0.3296 ns</td><td>0.2753 ns</td>
+</tr><tr><td>Contains</td><td>CsProjnet47</td><td>29.52 ns</td><td>0.3097 ns</td><td>0.2745 ns</td>
+</tr><tr><td>GetCellType</td><td>CsProjnet47</td><td>45.04 ns</td><td>0.4360 ns</td><td>0.4079 ns</td>
+</tr></tbody></table>
+</body>
+</html>

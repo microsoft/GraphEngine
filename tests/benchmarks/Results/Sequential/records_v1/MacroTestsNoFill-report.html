@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>MacroTestsNoFill</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet=v0.10.13, OS=Windows 10 Redstone 3 [1709, Fall Creators Update] (10.0.16299.309)
+Intel Core i7-4770 CPU 3.40GHz (Haswell), 1 CPU, 8 logical cores and 4 physical cores
+Frequency=3312642 Hz, Resolution=301.8739 ns, Timer=TSC
+  [Host]     : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2633.0
+  Job-JFKWFM : .NET Core 2.0.5 (CoreCLR 4.6.26020.03, CoreFX 4.6.26018.01), 64bit RyuJIT
+  Job-HHJWTE : .NET Framework 4.7 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2633.0
+</code></pre>
+<pre><code>Server=True  RunStrategy=Monitoring  
+</code></pre>
+
+<table>
+<thead><tr><th>     Method</th><th>Toolchain</th><th>TestSize</th><th>  Mean</th><th>Error</th><th>StdDev</th>
+</tr>
+</thead><tbody><tr><td>LoadMyCellMacro</td><td>.NET Core 2.0</td><td>10000000</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>CreateMyCellMacro</td><td>.NET Core 2.0</td><td>10000000</td><td>5,058.01 ms</td><td>70.391 ms</td><td>46.5595 ms</td>
+</tr><tr><td>ContainsMacro</td><td>.NET Core 2.0</td><td>10000000</td><td>1,193.31 ms</td><td>19.304 ms</td><td>12.7687 ms</td>
+</tr><tr><td>GetCellTypeMacro</td><td>.NET Core 2.0</td><td>10000000</td><td>1,889.88 ms</td><td>24.782 ms</td><td>16.3917 ms</td>
+</tr><tr><td>IterateAccessor</td><td>.NET Core 2.0</td><td>10000000</td><td>95.93 ms</td><td>4.375 ms</td><td>2.8936 ms</td>
+</tr><tr><td>Iterate</td><td>.NET Core 2.0</td><td>10000000</td><td>96.64 ms</td><td>3.242 ms</td><td>2.1441 ms</td>
+</tr><tr><td>LoadMyCellMacro</td><td>CsProjnet47</td><td>10000000</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>CreateMyCellMacro</td><td>CsProjnet47</td><td>10000000</td><td>5,404.42 ms</td><td>232.851 ms</td><td>154.0168 ms</td>
+</tr><tr><td>ContainsMacro</td><td>CsProjnet47</td><td>10000000</td><td>1,974.59 ms</td><td>42.310 ms</td><td>27.9853 ms</td>
+</tr><tr><td>GetCellTypeMacro</td><td>CsProjnet47</td><td>10000000</td><td>1,965.37 ms</td><td>130.608 ms</td><td>86.3893 ms</td>
+</tr><tr><td>IterateAccessor</td><td>CsProjnet47</td><td>10000000</td><td>96.42 ms</td><td>6.093 ms</td><td>4.0300 ms</td>
+</tr><tr><td>Iterate</td><td>CsProjnet47</td><td>10000000</td><td>95.45 ms</td><td>2.223 ms</td><td>1.4707 ms</td>
+</tr><tr><td>LoadMyCellMacro</td><td>.NET Core 2.0</td><td>20000000</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>CreateMyCellMacro</td><td>.NET Core 2.0</td><td>20000000</td><td>10,224.77 ms</td><td>43.639 ms</td><td>28.8645 ms</td>
+</tr><tr><td>ContainsMacro</td><td>.NET Core 2.0</td><td>20000000</td><td>2,447.68 ms</td><td>47.674 ms</td><td>31.5336 ms</td>
+</tr><tr><td>GetCellTypeMacro</td><td>.NET Core 2.0</td><td>20000000</td><td>3,747.38 ms</td><td>62.978 ms</td><td>41.6557 ms</td>
+</tr><tr><td>IterateAccessor</td><td>.NET Core 2.0</td><td>20000000</td><td>96.27 ms</td><td>4.596 ms</td><td>3.0399 ms</td>
+</tr><tr><td>Iterate</td><td>.NET Core 2.0</td><td>20000000</td><td>95.83 ms</td><td>2.113 ms</td><td>1.3975 ms</td>
+</tr><tr><td>LoadMyCellMacro</td><td>CsProjnet47</td><td>20000000</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>CreateMyCellMacro</td><td>CsProjnet47</td><td>20000000</td><td>10,286.50 ms</td><td>74.934 ms</td><td>49.5642 ms</td>
+</tr><tr><td>ContainsMacro</td><td>CsProjnet47</td><td>20000000</td><td>3,809.84 ms</td><td>32.769 ms</td><td>21.6748 ms</td>
+</tr><tr><td>GetCellTypeMacro</td><td>CsProjnet47</td><td>20000000</td><td>3,907.84 ms</td><td>112.704 ms</td><td>74.5468 ms</td>
+</tr><tr><td>IterateAccessor</td><td>CsProjnet47</td><td>20000000</td><td>97.41 ms</td><td>6.430 ms</td><td>4.2528 ms</td>
+</tr><tr><td>Iterate</td><td>CsProjnet47</td><td>20000000</td><td>95.70 ms</td><td>1.975 ms</td><td>1.3065 ms</td>
+</tr><tr><td>LoadMyCellMacro</td><td>.NET Core 2.0</td><td>40000000</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>CreateMyCellMacro</td><td>.NET Core 2.0</td><td>40000000</td><td>20,434.39 ms</td><td>118.505 ms</td><td>78.3835 ms</td>
+</tr><tr><td>ContainsMacro</td><td>.NET Core 2.0</td><td>40000000</td><td>4,761.65 ms</td><td>182.806 ms</td><td>120.9146 ms</td>
+</tr><tr><td>GetCellTypeMacro</td><td>.NET Core 2.0</td><td>40000000</td><td>7,460.18 ms</td><td>154.407 ms</td><td>102.1308 ms</td>
+</tr><tr><td>IterateAccessor</td><td>.NET Core 2.0</td><td>40000000</td><td>97.19 ms</td><td>5.350 ms</td><td>3.5387 ms</td>
+</tr><tr><td>Iterate</td><td>.NET Core 2.0</td><td>40000000</td><td>96.54 ms</td><td>2.441 ms</td><td>1.6145 ms</td>
+</tr><tr><td>LoadMyCellMacro</td><td>CsProjnet47</td><td>40000000</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>CreateMyCellMacro</td><td>CsProjnet47</td><td>40000000</td><td>19,624.51 ms</td><td>269.515 ms</td><td>178.2673 ms</td>
+</tr><tr><td>ContainsMacro</td><td>CsProjnet47</td><td>40000000</td><td>7,569.46 ms</td><td>222.593 ms</td><td>147.2312 ms</td>
+</tr><tr><td>GetCellTypeMacro</td><td>CsProjnet47</td><td>40000000</td><td>7,876.69 ms</td><td>589.603 ms</td><td>389.9856 ms</td>
+</tr><tr><td>IterateAccessor</td><td>CsProjnet47</td><td>40000000</td><td>96.35 ms</td><td>5.196 ms</td><td>3.4370 ms</td>
+</tr><tr><td>Iterate</td><td>CsProjnet47</td><td>40000000</td><td>94.89 ms</td><td>1.098 ms</td><td>0.7262 ms</td>
+</tr><tr><td>LoadMyCellMacro</td><td>.NET Core 2.0</td><td>80000000</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>CreateMyCellMacro</td><td>.NET Core 2.0</td><td>80000000</td><td>41,441.24 ms</td><td>202.608 ms</td><td>134.0130 ms</td>
+</tr><tr><td>ContainsMacro</td><td>.NET Core 2.0</td><td>80000000</td><td>9,926.39 ms</td><td>119.054 ms</td><td>78.7469 ms</td>
+</tr><tr><td>GetCellTypeMacro</td><td>.NET Core 2.0</td><td>80000000</td><td>15,012.07 ms</td><td>385.104 ms</td><td>254.7222 ms</td>
+</tr><tr><td>IterateAccessor</td><td>.NET Core 2.0</td><td>80000000</td><td>96.09 ms</td><td>4.917 ms</td><td>3.2523 ms</td>
+</tr><tr><td>Iterate</td><td>.NET Core 2.0</td><td>80000000</td><td>96.83 ms</td><td>1.664 ms</td><td>1.1006 ms</td>
+</tr><tr><td>LoadMyCellMacro</td><td>CsProjnet47</td><td>80000000</td><td>NA</td><td>NA</td><td>NA</td>
+</tr><tr><td>CreateMyCellMacro</td><td>CsProjnet47</td><td>80000000</td><td>39,952.76 ms</td><td>343.893 ms</td><td>227.4638 ms</td>
+</tr><tr><td>ContainsMacro</td><td>CsProjnet47</td><td>80000000</td><td>15,760.73 ms</td><td>172.908 ms</td><td>114.3678 ms</td>
+</tr><tr><td>GetCellTypeMacro</td><td>CsProjnet47</td><td>80000000</td><td>15,298.19 ms</td><td>179.867 ms</td><td>118.9706 ms</td>
+</tr><tr><td>IterateAccessor</td><td>CsProjnet47</td><td>80000000</td><td>96.59 ms</td><td>6.023 ms</td><td>3.9841 ms</td>
+</tr><tr><td>Iterate</td><td>CsProjnet47</td><td>80000000</td><td>94.88 ms</td><td>1.904 ms</td><td>1.2593 ms</td>
+</tr></tbody></table>
+</body>
+</html>
