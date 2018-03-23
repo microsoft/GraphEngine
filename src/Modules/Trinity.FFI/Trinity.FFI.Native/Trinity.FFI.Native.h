@@ -33,10 +33,6 @@ enum CellAccessOptions: int32_t
 typedef char* (*TRINITY_FFI_SYNC_HANDLER)(char*);
 typedef void  (*TRINITY_FFI_ASYNC_HANDLER)(char*);
 
-typedef TrinityErrorCode (*TRINITY_FFI_FDENUM_MOVENEXT)(void*);
-typedef TrinityErrorCode (*TRINITY_FFI_FDENUM_FIELDNAME)(void*, char**);
-typedef TrinityErrorCode (*TRINITY_FFI_FDENUM_FIELDOPTIONAL)(void*, long*);
-typedef TrinityErrorCode (*TRINITY_FFI_FDENUM_FROM_CELLDESC)(void*, void**);
 typedef TrinityErrorCode (*TRINITY_FFI_ACCESSOR_USE_1)(long long, void**);
 typedef TrinityErrorCode (*TRINITY_FFI_ACCESSOR_USE_2)(long long, CellAccessOptions, void**);
 typedef TrinityErrorCode (*TRINITY_FFI_ACCESSOR_USE_3)(long long, CellAccessOptions, void**, char*);
@@ -57,6 +53,7 @@ typedef char* (*TRINITY_FFI_CLOUD_SYNC_SEND)(long, long, char*);
 typedef void (*TRINITY_FFI_CLOUD_ASYNC_SEND)(long, long, char*);
 typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_LOADCELL)(long long, void**);
 typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_SAVECELL)(long long, void*);
+typedef TrinityErrorCode (*TRINITY_FFI_ENUM_NEXT)(void*);
 typedef TrinityErrorCode (*TRINITY_FFI_GC_FREE)(void*);
 typedef TrinityErrorCode (*TRINITY_FFI_GC_DISPOSE)(void*);
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_LOADCELL)(long long, void**);
@@ -65,13 +62,10 @@ typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_2)(long long, CellAccessOp
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_3)(void*);
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_4)(CellAccessOptions, void*);
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_REMOVECELL)(long long);
+typedef TrinityErrorCode (*TRINITY_FFI_SCHEMA_GET)(int*, void**);
 
 extern "C" struct TRINITY_INTERFACES
 {
-    TRINITY_FFI_FDENUM_MOVENEXT fdenum_movenext;
-    TRINITY_FFI_FDENUM_FIELDNAME fdenum_fieldname;
-    TRINITY_FFI_FDENUM_FIELDOPTIONAL fdenum_fieldoptional;
-    TRINITY_FFI_FDENUM_FROM_CELLDESC fdenum_from_celldesc;
     TRINITY_FFI_ACCESSOR_USE_1 accessor_use_1;
     TRINITY_FFI_ACCESSOR_USE_2 accessor_use_2;
     TRINITY_FFI_ACCESSOR_USE_3 accessor_use_3;
@@ -92,6 +86,7 @@ extern "C" struct TRINITY_INTERFACES
     TRINITY_FFI_CLOUD_ASYNC_SEND cloud_async_send;
     TRINITY_FFI_CLOUD_LOADCELL cloud_loadcell;
     TRINITY_FFI_CLOUD_SAVECELL cloud_savecell;
+    TRINITY_FFI_ENUM_NEXT enum_next;
     TRINITY_FFI_GC_FREE gc_free;
     TRINITY_FFI_GC_DISPOSE gc_dispose;
     TRINITY_FFI_LOCAL_LOADCELL local_loadcell;
@@ -100,6 +95,7 @@ extern "C" struct TRINITY_INTERFACES
     TRINITY_FFI_LOCAL_SAVECELL_3 local_savecell_3;
     TRINITY_FFI_LOCAL_SAVECELL_4 local_savecell_4;
     TRINITY_FFI_LOCAL_REMOVECELL local_removecell;
+    TRINITY_FFI_SCHEMA_GET schema_get;
 };
 
 TRINITYFFINATIVE_API TRINITY_INTERFACES* TRINITY_FFI_GET_INTERFACES();

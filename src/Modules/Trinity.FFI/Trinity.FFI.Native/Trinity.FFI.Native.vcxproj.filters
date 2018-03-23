@@ -21,6 +21,9 @@
     <ClInclude Include="Trinity.FFI.SWIG.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Trinity.FFI.Schema.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Trinity.FFI.Native.cpp">

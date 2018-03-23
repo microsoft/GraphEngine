@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using Trinity.TSL.Lib;
+using Trinity.FFI.Interop;
 
 namespace Trinity.FFI
 {

@@ -38,11 +38,12 @@
 
 
   <ItemGroup>
-    <Compile Include="Library.fs" />
+    <Compile Include="TypeSystem.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
+    <PackageReference Include="Microsoft.Net.Compilers" Version="2.7.0" />
   </ItemGroup>
 
 </Project>

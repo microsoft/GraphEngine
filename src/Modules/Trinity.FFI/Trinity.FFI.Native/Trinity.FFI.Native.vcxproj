@@ -104,6 +104,7 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Trinity.FFI.Schema.h" />
     <ClInclude Include="Trinity.FFI.Native.h" />
     <ClInclude Include="Trinity.FFI.SWIG.h" />
   </ItemGroup>

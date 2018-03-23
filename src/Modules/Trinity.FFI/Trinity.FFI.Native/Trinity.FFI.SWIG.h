@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Trinity.FFI.Native.h"
+#include "Trinity.FFI.Schema.h"
 
 extern TRINITY_INTERFACES* g_TrinityInterfaces;
 
@@ -9,9 +10,6 @@ void Init()
 {
 	g_TrinityInterfaces = TRINITY_FFI_GET_INTERFACES();
 }
-
-
-
 
 class Cell
 {
@@ -68,28 +66,24 @@ public:
 
 		g_TrinityInterfaces->gc_free(m_cell);
 	}
-
-	std::vector<char*> GetFieldNames()
-	{
-		std::vector<char*> vec;
-		do
-		{
-			void* etor;
-			char* val = NULL;
-			if (TrinityErrorCode::E_SUCCESS != g_TrinityInterfaces->fdenum_from_celldesc(m_cell, &etor)) break;
-			while (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->fdenum_movenext(etor))
-			{
-				if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->fdenum_fieldname(etor, &val))
-				{
-					vec.push_back(val);
-				}
-			}
-			g_TrinityInterfaces->gc_dispose(etor);
-		} while (false);
-
-		return vec;
-	}
 };
+
+std::vector<CellDescriptor> GetCellDescriptors()
+{
+    std::vector<CellDescriptor> ret;
+    int size = 0;
+    CellDescriptor* pcdesc = nullptr;
+    printf("GetCellDescriptors==========================\n");
+    if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->schema_get(&size, (void**)&pcdesc)) 
+    {
+        while (size-- > 0) { 
+            ret.push_back(*pcdesc++); 
+            printf("push==========================\n");
+        }
+    }
+
+    return ret;
+}
 
 Cell* LoadCell(long long cellId)
 {

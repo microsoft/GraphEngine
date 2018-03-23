@@ -28,7 +28,9 @@ namespace Trinity.FFI.AutoCode
         {
             string ret = "";
             var t = p.ParameterType;
+
             if (t == typeof(CellAccessOptions)) ret += "[MarshalAs(UnmanagedType.I4)]";
+            if (t.IsArray || (t.IsByRef && t.GetElementType().IsArray)) ret += "[MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)]"; // TODO only one layer
             ret += _signature(t, p.IsOut);
 
             ret += " p" + p.Position;
@@ -49,13 +51,15 @@ namespace Trinity.FFI.AutoCode
         private static string _signature(Type t, bool isout = false)
         {
             var e = t.GetElementType();
+
             if (isout) return "out " + _signature(e);
-            else if (t.IsByRef) return "ref " + _signature(e);
-            else if (t.IsPointer) throw new NotSupportedException();
-            else if (t.IsArray) throw new NotSupportedException();
-            else if (t.IsGenericType) throw new NotSupportedException();
-            else if (t.HasElementType) throw new NotSupportedException();
-            else return t.Name;
+            if (t.IsByRef) return "ref " + _signature(e);
+            if (t.IsArray) return _signature(e) + "[]"; // TODO only one array param
+            if (t.IsPointer) throw new NotSupportedException();
+            if (t.IsGenericType) throw new NotSupportedException();
+            if (t.HasElementType) throw new NotSupportedException();
+
+            return t.Name;
         }
 
         private static string _signature_cpp(Type t)
@@ -63,7 +67,7 @@ namespace Trinity.FFI.AutoCode
             var e = t.GetElementType();
             if (t.IsByRef) { return _signature_cpp(e) + "*"; }
             else if (t.IsPointer) throw new NotSupportedException();
-            else if (t.IsArray) throw new NotSupportedException();
+            else if (t.IsArray) { return "int*, " + "void*"; }
             else if (t.IsGenericType) throw new NotSupportedException();
             else if (t.HasElementType) throw new NotSupportedException();
 
