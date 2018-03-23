@@ -14,32 +14,30 @@ using Trinity.TSL.Lib;
 
 namespace MemStoreTest1
 {
-    [MarkdownExporter, RPlotExporter, HtmlExporter, CsvExporter]
-    public class MicroTestsNoFill
+    public class MicroTests
     {
-        [GlobalSetup]
-        public void Init()
+        [Benchmark]
+        public void UseMyCell()
         {
-            TrinityConfig.LoggingLevel = Trinity.Diagnostics.LogLevel.Off;
-            Global.LocalStorage.ResetStorage();
-            Global.LocalStorage.SaveMyCell(cell);
+            using (var cell = Global.LocalStorage.UseMyCell(0, CellAccessOptions.CreateNewOnCellNotFound)) { }
         }
 
         [Benchmark]
-        public void Use()
+        public void UseManipulateMyCell()
         {
-            using (var cell = Global.LocalStorage.UseMyCell(0, CellAccessOptions.CreateNewOnCellNotFound))
-            {
-            }
+            using (var cell = Global.LocalStorage.UseMyCell(0, CellAccessOptions.CreateNewOnCellNotFound)) { ++cell.A; }
         }
 
         [Benchmark]
-        public void UseManipulate()
+        public void UseC2()
         {
-            using (var cell = Global.LocalStorage.UseMyCell(0, CellAccessOptions.CreateNewOnCellNotFound))
-            {
-                ++cell.A;
-            }
+            using (var cell = Global.LocalStorage.UseC2(1, CellAccessOptions.CreateNewOnCellNotFound)) { }
+        }
+
+        [Benchmark]
+        public void UseManipulateC2()
+        {
+            using (var cell = Global.LocalStorage.UseC2(1, CellAccessOptions.CreateNewOnCellNotFound)) { cell.F12 = "hey"; }
         }
 
         [Benchmark]
@@ -75,73 +73,33 @@ namespace MemStoreTest1
         }
     }
 
-    [ClrJob, CoreJob]
-    [MinColumn, MaxColumn]
-    [MarkdownExporter, RPlotExporter]
-    public class MicroTestsFill
+    public class MicroTestsNoFill : MicroTests
     {
-        [Params(10000000, 20000000, 40000000, 80000000)]
-        public int TestSize { get; set; }
+        [GlobalSetup]
+        public void Init()
+        {
+            TrinityConfig.LoggingLevel = Trinity.Diagnostics.LogLevel.Off;
+            Global.LocalStorage.ResetStorage();
+            Global.LocalStorage.SaveMyCell(0);
+        }
+    }
+
+    public class MicroTestsFill : MicroTests
+    {
+        [Params(1000000, 2000000, 4000000, 8000000)]
+        public int FillSize { get; set; }
 
         [GlobalSetup]
         public void Init()
         {
             TrinityConfig.LoggingLevel = Trinity.Diagnostics.LogLevel.Off;
             Global.LocalStorage.ResetStorage();
-            Parallel.For(0, TestSize, i =>
+            Parallel.For(0, FillSize, i =>
             {
                 Global.LocalStorage.SaveMyCell(i, new MyCell());
             });
 
-        }
-
-        [Benchmark]
-        public void Use()
-        {
-            using (var cell = Global.LocalStorage.UseMyCell(0, CellAccessOptions.CreateNewOnCellNotFound))
-            {
-            }
-        }
-
-        [Benchmark]
-        public void UseManipulate()
-        {
-            using (var cell = Global.LocalStorage.UseMyCell(0, CellAccessOptions.CreateNewOnCellNotFound))
-            {
-                ++cell.A;
-            }
-        }
-
-        [Benchmark]
-        public MyCell LoadMyCell()
-        {
-            return Global.LocalStorage.LoadMyCell(0);
-        }
-
-        public MyCell cell = new MyCell();
-
-        [Benchmark]
-        public bool SaveMyCell()
-        {
-            return Global.LocalStorage.SaveMyCell(cell);
-        }
-
-        [Benchmark]
-        public TrinityErrorCode LoadCellBinary()
-        {
-            return Global.LocalStorage.LoadCell(0, out _, out _);
-        }
-
-        [Benchmark]
-        public bool Contains()
-        {
-            return Global.LocalStorage.Contains(0);
-        }
-
-        [Benchmark]
-        public CellType GetCellType()
-        {
-            return Global.LocalStorage.GetCellType(0);
+            Global.LocalStorage.SaveC2(1);
         }
     }
 }

@@ -9,6 +9,12 @@ using System.Diagnostics;
 using System.Threading;
 using Trinity.Diagnostics;
 using memStoreTest2;
+using BenchmarkDotNet.Engines;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Toolchains.CsProj;
+using BenchmarkDotNet.Jobs;
+using BenchmarkDotNet.Exporters;
+using BenchmarkDotNet.Running;
 
 namespace LockPerformanceTest
 {
@@ -16,87 +22,17 @@ namespace LockPerformanceTest
     {
         static void Main(string[] args)
         {
-            //SaveTwiceTest();
-            //EnumerationPerformanceTest();
-            LocalStorageParallelSaveEfficiencyTest();
-            //RecursiveCellLockTest();
-            //RecursiveCellLockTest2();
-            //UseCellTest();
-            //DeadlockTest();
-            //DeadlockTest2();
-            //Deadlock_Savestorage_Test();
-            //Deadlock_Enum_test();
+            Func<RunStrategy, IConfig> cfg = strategy => ManualConfig.Create(DefaultConfig.Instance)
+                    .With(Job.Default.With(CsProjCoreToolchain.NetCoreApp20).With(strategy).WithGcServer(true))
+                    .With(Job.Default.With(CsProjClassicNetToolchain.Current.Value).With(strategy).WithGcServer(true))
+                    .With(DefaultExporters.Html)
+                    .With(DefaultExporters.RPlot);
+
+            BenchmarkRunner.Run<ParallelBenchmark>(cfg(RunStrategy.Monitoring));
         }
 
-        private static void __parallel_save(int thread_cnt, long total_cell_cnt)
-        {
-            Global.LocalStorage.ResetStorage();
-            TrinityConfig.LoggingLevel = LogLevel.Info;
+        // TODO move simple tests as UTs
 
-            List<Thread> threads = new List<Thread>();
-
-            //int thread_cnt = Environment.ProcessorCount;
-            int cell_size = 134;
-            int cnt_per_thread = (int)(total_cell_cnt / thread_cnt / cell_size);
-            Random r = new Random((int)19900921);
-            int[][] cell_ids = Enumerable.Range(0, thread_cnt)
-                .Select(_ => Enumerable.Range(0, cnt_per_thread)
-                    .Select(__ => r.Next()).ToArray())
-                .ToArray();
-
-            Log.WriteLine(LogLevel.Warning, "Start testing parallel save [{0} threads, {1} cells]", thread_cnt, total_cell_cnt);
-            Stopwatch sw = Stopwatch.StartNew();
-
-            for (int i=0; i < thread_cnt; ++i)
-            {
-                int thread_id = i;
-                threads.Add(new Thread(() =>
-                {
-                    byte[] bytes = new byte[cell_size];
-
-                    for (int n = 0; n < cnt_per_thread; ++n)
-                    {
-                        Global.LocalStorage.SaveCell(
-                            cell_ids[thread_id][n]
-                            , bytes);
-                    }
-                }));
-
-                threads.Last().Start();
-            }
-
-            threads.ForEach(x => x.Join());
-
-            sw.Stop();
-
-            Log.WriteLine(LogLevel.Warning, "Parallel save time cost = {0}ms", sw.ElapsedMilliseconds);
-            Log.WriteLine(LogLevel.Warning, "Total cell count = {0}", Global.LocalStorage.CellCount);
-            Log.WriteLine(LogLevel.Warning, "Total cell size = {0}", Global.LocalStorage.TotalCellSize);
-
-            sw.Restart();
-            for (int i=0; i < thread_cnt; ++i)
-            {
-                int thread_id = i;
-                threads.Add(new Thread(() =>
-                {
-                    for (int n = 0; n < cnt_per_thread; ++n)
-                    {
-                        long cellid = cell_ids[thread_id][n];
-                        int size; ushort type; byte* cellPtr; int entryIndex;
-                        Global.LocalStorage.GetLockedCellInfo(cellid, out size, out type, out cellPtr, out entryIndex);
-                        Global.LocalStorage.ReleaseCellLock(cellid, entryIndex);
-                    }
-                }));
-
-                threads.Last().Start();
-            }
-
-            threads.ForEach(x => x.Join());
-
-            sw.Stop();
-
-            Log.WriteLine(LogLevel.Warning, "Parallel lock cell time cost = {0}ms", sw.ElapsedMilliseconds);
-        }
         private static void RecursiveCellLockTest2()
         {
             TrinityConfig.LoggingLevel = LogLevel.Verbose;
@@ -247,18 +183,6 @@ namespace LockPerformanceTest
             byte[] content = new byte[12];
             Global.LocalStorage.SaveCell(0, content);
             Global.LocalStorage.SaveCell(0, content);
-        }
-
-        public static void LocalStorageParallelSaveEfficiencyTest()
-        {
-            TrinityConfig.LoggingLevel = LogLevel.Warning;
-            long total_cell_cnt = 1L << 29;
-            __parallel_save(1, total_cell_cnt);
-            __parallel_save(2, total_cell_cnt);
-            for (int thread_cnt = 4; thread_cnt < Environment.ProcessorCount * 4; thread_cnt += 2)
-            {
-                __parallel_save(thread_cnt, total_cell_cnt);
-            }
         }
 
         private static void EnumerationPerformanceTest()
