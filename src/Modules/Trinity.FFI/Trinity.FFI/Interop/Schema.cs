@@ -39,7 +39,6 @@ namespace Trinity.FFI.Interop
             {
                 schema = Global.StorageSchema.CellDescriptors.Select(CellDescriptor.Make).ToArray();
                 size = schema.Length;
-                Console.WriteLine("C# schema size = " + schema.Length);
                 return TrinityErrorCode.E_SUCCESS;
             }
             catch
