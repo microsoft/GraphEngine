@@ -9,12 +9,12 @@ namespace Storage
 {
     void MTHash::Expand(bool force)
     {
-        EntryAllocLock.lock();
-        uint32_t CurrentEntryCount = EntryCount.load();
+        EntryAllocLock->lock();
+        uint32_t CurrentEntryCount = ExtendedInfo->EntryCount.load();
 
-        if ((!force) && ((uint32_t)NonEmptyEntryCount.load() < CurrentEntryCount))
+        if ((!force) && ((uint32_t)ExtendedInfo->NonEmptyEntryCount.load() < CurrentEntryCount))
         {
-            EntryAllocLock.unlock();
+            EntryAllocLock->unlock();
             return;
         }
 
@@ -38,7 +38,7 @@ namespace Storage
 
         Memory::ExpandMemoryFromCurrentPosition((char*)MTEntries + ((CurrentEntryCount + UInt32_Contants::GuardedEntryCount) << 4), size_expanded << 4);
 
-        EntryCount.store(expanded_entry_count);
-        EntryAllocLock.unlock();
+        ExtendedInfo->EntryCount.store(expanded_entry_count);
+        EntryAllocLock->unlock();
     }
 }

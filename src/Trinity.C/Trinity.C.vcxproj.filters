@@ -36,9 +36,6 @@
     <ClInclude Include="src\Storage\MTHash\MTHash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Threading\TrinitySpinlock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Trinity\Configuration\TrinityConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -202,6 +199,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\TrinityErrorCode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Threading\TrinityLock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

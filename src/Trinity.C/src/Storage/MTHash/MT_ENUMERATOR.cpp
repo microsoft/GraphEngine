@@ -16,7 +16,7 @@ namespace Storage
         m_CellEntryIndex = -1;
         m_TrunkPtr       = mth->memory_trunk->trunkPtr;
         m_LOPtr          = mth->memory_trunk->LOPtrs;
-        m_EndPtr         = mth->CellEntries + mth->NonEmptyEntryCount;
+        m_EndPtr         = mth->CellEntries + mth->ExtendedInfo->NonEmptyEntryCount;
     }
 
     void MT_ENUMERATOR::Invalidate()

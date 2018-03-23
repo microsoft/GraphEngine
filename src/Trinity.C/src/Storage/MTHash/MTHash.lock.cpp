@@ -7,16 +7,18 @@
 #include "Storage/LocalStorage/ThreadContext.h"
 #include <threading>
 
+#define COUNTER_THRESHOLD 4000
+
 namespace Storage
 {
     void MTHash::GetAllEntryLocksExceptArena()
     {
         PTHREAD_CONTEXT pctx = EnsureCurrentThreadContext();
         pctx->ReloadingMemoryTrunk = true;
-        EntryAllocLock.lock();
+        EntryAllocLock->lock();
         auto arena_cells = ReadMemoryAllocationArena();
 
-        for (uint32_t i = 0; i < EntryCount.load(); ++i)
+        for (uint32_t i = 0; i < ExtendedInfo->EntryCount.load(); ++i)
         {
             char cmpxchg_val = ENTRYLOCK_NOLOCK;
             if (!std::atomic_compare_exchange_strong_explicit(&MTEntries[i].EntryLock, &cmpxchg_val, char(ENTRYLOCK_LOCK), std::memory_order_acquire, std::memory_order_relaxed))
@@ -56,14 +58,14 @@ namespace Storage
         //  to release the spinlock. So it is impossible for
         //  a new thread to hold a lock, and join the arena.
         auto arena_cells = ReadMemoryAllocationArena();
-        for (uint32_t i = 0; i < EntryCount.load(); ++i)
+        for (uint32_t i = 0; i < ExtendedInfo->EntryCount.load(); ++i)
         {
             if (arena_cells.find(MTEntries[i].Key) != arena_cells.end())
                 continue;
             MTEntries[i].EntryLock.store(ENTRYLOCK_NOLOCK);
         }
         pctx->ReloadingMemoryTrunk = false;
-        EntryAllocLock.unlock();
+        EntryAllocLock->unlock();
     }
 
     TrinityErrorCode MTHash::TryGetBucketLock(const uint32_t index)
@@ -221,8 +223,8 @@ namespace Storage
          *  are in possess, we can slow down a bit to make lock holders
          *  to run faster.
          */
-        EntryAllocLock.lock();
-        for (int32_t i = 0; i < NonEmptyEntryCount; ++i)
+        EntryAllocLock->lock();
+        for (int32_t i = 0; i < ExtendedInfo->NonEmptyEntryCount; ++i)
         {
             int retry_cnt = 0;
             while (MTEntries[i].EntryLock.load(std::memory_order_relaxed) != ENTRYLOCK_NOLOCK)
@@ -235,14 +237,14 @@ namespace Storage
                     TrinityErrorCode eResult = Storage::Arbitrate();
                     if (eResult != TrinityErrorCode::E_SUCCESS)
                     {
-                        EntryAllocLock.unlock();
+                        EntryAllocLock->unlock();
                         return eResult;
                     }
                     retry_cnt = 0;
                 }
             }
         }
-        EntryAllocLock.unlock();
+        EntryAllocLock->unlock();
 
         Trinity::Diagnostics::WriteLine(LogLevel::Verbose, "MTHash {0}: Lock acquired.", this->memory_trunk->TrunkId);
 

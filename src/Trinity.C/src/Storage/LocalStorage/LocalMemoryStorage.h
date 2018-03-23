@@ -4,7 +4,7 @@
 //
 #pragma once
 #include "TrinityCommon.h"
-#include "Threading/TrinitySpinlock.h"
+#include "Threading/TrinityLock.h"
 #include "Storage/MTHash/MTHash.h"
 #include "Storage/MemoryTrunk/MemoryTrunk.h"
 #include "Storage/LocalStorage/ThreadContext.h"

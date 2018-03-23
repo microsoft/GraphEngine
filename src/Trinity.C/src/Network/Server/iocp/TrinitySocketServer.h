@@ -6,14 +6,14 @@
 #ifdef TRINITY_PLATFORM_WINDOWS
 #include "Network/Server/iocp/Common.h"
 #include "Network/Server/TrinityServer.h"
-#include <Threading/TrinitySpinlock.h>
+#include <Threading/TrinityLock.h>
 #include <unordered_set>
 
 namespace Trinity
 {
     namespace Network
     {
-        extern TrinitySpinlock psco_spinlock; // psco = per socket context object
+        extern TrinityLock psco_spinlock; // psco = per socket context object
         extern std::unordered_set<PerSocketContextObject*> psco_set;
 
         PerSocketContextObject* AllocatePerSocketContextObject(SOCKET socket);

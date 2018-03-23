@@ -222,7 +222,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Psapi.lib;ws2_32.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Synchronization.lib;Psapi.lib;ws2_32.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
@@ -276,7 +276,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Psapi.lib;ws2_32.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Synchronization.lib;Psapi.lib;ws2_32.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
@@ -408,7 +408,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClInclude Include="src\Storage\MTHash\MTHash.h" />
     <ClInclude Include="src\Storage\MTHash\MT_ENUMERATOR.h" />
     <ClInclude Include="include\TrinityCommon.h" />
-    <ClInclude Include="src\Threading\TrinitySpinlock.h" />
+    <ClInclude Include="src\Threading\TrinityLock.h" />
     <ClInclude Include="src\Trinity\Configuration\TrinityConfig.h" />
     <ClInclude Include="src\Trinity\Diagnostics\Log.h" />
     <ClInclude Include="src\Utility\FileIO.h" />

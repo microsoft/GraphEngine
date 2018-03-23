@@ -16,7 +16,7 @@ namespace Storage
 
     struct THREAD_CONTEXT_SET
     {
-        TrinitySpinlock                     m_mutex;
+        TrinityLock                         m_mutex;
         std::unordered_set<PTHREAD_CONTEXT> m_pcontexts;
 
         void Enter(PTHREAD_CONTEXT pctx)

@@ -14,16 +14,16 @@ namespace Storage
         bool success = true;
 
         success = success && bw.Write((char)VERSION);                  // 1B
-        success = success && bw.Write(NonEmptyEntryCount);             // 4B
-        success = success && bw.Write(FreeEntryCount);                 // 4B
-        success = success && bw.Write(FreeEntryList);                  // 4B
+        success = success && bw.Write(ExtendedInfo->NonEmptyEntryCount);             // 4B
+        success = success && bw.Write(ExtendedInfo->FreeEntryCount);                 // 4B
+        success = success && bw.Write(ExtendedInfo->FreeEntryList);                  // 4B
         success = success && bw.Write(BucketCount);                    // 4B
-        success = success && bw.Write(EntryCount);                     // 4B
+        success = success && bw.Write(ExtendedInfo->EntryCount);                     // 4B
 
-        int32_t mtentry_array_length = (int32_t)EntryCount << 4;
-        int32_t long_array_length    = (int32_t)EntryCount << 3;
-        int32_t int_array_length     = (int32_t)EntryCount << 2;
-        int32_t ushort_array_length  = (int32_t)EntryCount << 1;
+        int32_t mtentry_array_length = (int32_t)ExtendedInfo->EntryCount << 4;
+        int32_t long_array_length    = (int32_t)ExtendedInfo->EntryCount << 3;
+        int32_t int_array_length     = (int32_t)ExtendedInfo->EntryCount << 2;
+        int32_t ushort_array_length  = (int32_t)ExtendedInfo->EntryCount << 1;
 
         uint32_t buffer_size = mtentry_array_length > (BucketCount << 2) ? mtentry_array_length : (BucketCount << 2);
         char* buff = new char[buffer_size];
@@ -41,7 +41,7 @@ namespace Storage
             )//one segment
         {
             CellEntry* entryPtr    = (CellEntry*)p;
-            CellEntry* entryEndPtr = entryPtr + NonEmptyEntryCount;
+            CellEntry* entryEndPtr = entryPtr + ExtendedInfo->NonEmptyEntryCount;
             for (; entryPtr != entryEndPtr; ++entryPtr)
             {
                 if (entryPtr->offset > 0 && entryPtr->size > 0)
@@ -53,7 +53,7 @@ namespace Storage
         else//two segments
         {
             CellEntry* entryPtr    = (CellEntry*)p;
-            CellEntry* entryEndPtr = entryPtr + NonEmptyEntryCount;
+            CellEntry* entryEndPtr = entryPtr + ExtendedInfo->NonEmptyEntryCount;
             for (; entryPtr != entryEndPtr; ++entryPtr)
             {
                 if (entryPtr->offset >= (int32_t)memory_trunk->head.committed_head && entryPtr->size > 0)
@@ -80,7 +80,7 @@ namespace Storage
         if (!br.Good())
             return false;
 
-        DeallocateMTHash(/** is_dtor: */false);
+        DeallocateMTHash();
 
         /*********** Read meta data ************/
         int32_t version = (int32_t)br.ReadChar();
@@ -90,21 +90,21 @@ namespace Storage
             Trinity::Diagnostics::FatalError("The Trinity disk image version does not match.");
         }
 
-        NonEmptyEntryCount = br.ReadInt32();
-        FreeEntryCount     = br.ReadInt32();
-        FreeEntryList      = br.ReadInt32();
+        ExtendedInfo->NonEmptyEntryCount = br.ReadInt32();
+        ExtendedInfo->FreeEntryCount     = br.ReadInt32();
+        ExtendedInfo->FreeEntryList      = br.ReadInt32();
 
         if (BucketCount != br.ReadUInt32())
         {
             Trinity::Diagnostics::FatalError("The Trinity disk image is invalid.");
         }
 
-        EntryCount = br.ReadUInt32();
+        ExtendedInfo->EntryCount = br.ReadUInt32();
 
-        uint32_t mtentry_array_length = (uint32_t)EntryCount << 4;
-        uint32_t long_array_length    = (uint32_t)EntryCount << 3;
-        uint32_t int_array_length     = (uint32_t)EntryCount << 2;
-        uint32_t ushort_array_length  = (uint32_t)EntryCount << 1;
+        uint32_t mtentry_array_length = (uint32_t)ExtendedInfo->EntryCount << 4;
+        uint32_t long_array_length    = (uint32_t)ExtendedInfo->EntryCount << 3;
+        uint32_t int_array_length     = (uint32_t)ExtendedInfo->EntryCount << 2;
+        uint32_t ushort_array_length  = (uint32_t)ExtendedInfo->EntryCount << 1;
         /////////////////////////////////////////////////////////
 
         AllocateMTHash();

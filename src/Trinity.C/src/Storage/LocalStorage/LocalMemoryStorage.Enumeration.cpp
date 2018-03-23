@@ -36,7 +36,7 @@ namespace Storage
                 Trinity::Diagnostics::WriteLine(LogLevel::Debug, "Enumerator {0}: starting enumeration on trunk {1}", p_enum, p_enum->mt_hash->memory_trunk->TrunkId);
 
                 if (!TrinityConfig::ReadOnly())
-                    p_enum->mt_hash->memory_trunk->defrag_lock.lock();
+                    p_enum->mt_hash->memory_trunk->defrag_lock->lock();
 
                 TrinityErrorCode eResult = p_enum->mt_hash->Lock();
 
@@ -52,7 +52,7 @@ namespace Storage
                 }
 
                 if (!TrinityConfig::ReadOnly())
-                    p_enum->mt_hash->memory_trunk->defrag_lock.unlock();
+                    p_enum->mt_hash->memory_trunk->defrag_lock->unlock();
                 p_enum->mt_hash->Unlock();
 
                 TRINITY_INTEROP_LEAVE_UNMANAGED();

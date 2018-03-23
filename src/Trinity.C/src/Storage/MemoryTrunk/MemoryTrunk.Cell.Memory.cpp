@@ -22,7 +22,7 @@ namespace Storage
         {
             char* cell_ptr = (char*)AllocateLargeObject(cell_length);
             if (cell_ptr == NULL) return TrinityErrorCode::E_NOMEM;
-            lo_lock.lock();
+            lo_lock->lock();
             if (LOIndex >= LOCapacity)
             {
                 ResizeLOContainer();
@@ -33,7 +33,7 @@ namespace Storage
             cell_offset = -LOIndex;
             LOIndex++;
             LOCount++;
-            lo_lock.unlock();
+            lo_lock->unlock();
         }
         else
         {
