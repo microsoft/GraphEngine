@@ -78,7 +78,7 @@ public:
 
     void lock(std::atomic<int32_t> & pending_flag)
     {
-        if (!m_mutex.trylock())
+        if (!m_mutex.try_lock())
         {
             pending_flag.store(1);
             m_mutex.lock();
@@ -87,7 +87,7 @@ public:
 
     bool trylock()
     {
-        return m_mutex.trylock();
+        return m_mutex.try_lock();
     }
 };
 #endif
