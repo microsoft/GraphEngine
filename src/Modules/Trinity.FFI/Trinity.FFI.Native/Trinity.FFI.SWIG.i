@@ -9,6 +9,7 @@
 
 namespace std {
 	%template(cdesc_vec) vector<CellDescriptor>;
+	%template(fdesc_vec) vector<FieldDescriptor>;
 };
 
 %inline %{

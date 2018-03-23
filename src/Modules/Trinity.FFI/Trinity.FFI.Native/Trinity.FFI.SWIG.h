@@ -84,6 +84,12 @@ std::vector<CellDescriptor> GetCellDescriptors() {
     return __getarray<CellDescriptor>(g_TrinityInterfaces->schema_get);
 }
 
+std::vector<FieldDescriptor> GetFieldDescriptors(CellDescriptor* cellDesc) {
+    return __getarray<FieldDescriptor>( [=](void** pe, long* ps) {
+        return g_TrinityInterfaces->schema_fields(cellDesc->Handle, pe, ps); 
+    });
+}
+
 Cell* LoadCell(long long cellId) {
     void* pcell = nullptr;
     if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->local_loadcell(cellId, &pcell)) {

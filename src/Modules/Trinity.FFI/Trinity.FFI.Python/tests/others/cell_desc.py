@@ -18,3 +18,6 @@ print("#desc = {}".format(len(descriptors)))
 
 for desc in descriptors:
     print(desc.Name)
+    print(desc.Handle)
+    for f in ge.__ffi.GetFieldDescriptors(desc):
+        print('    {} {}'.format(f.TypeName, f.Name))

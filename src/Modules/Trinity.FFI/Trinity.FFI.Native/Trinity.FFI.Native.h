@@ -63,6 +63,7 @@ typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_3)(void*);
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_4)(CellAccessOptions, void*);
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_REMOVECELL)(long long);
 typedef TrinityErrorCode (*TRINITY_FFI_SCHEMA_GET)(void**, long*);
+typedef TrinityErrorCode (*TRINITY_FFI_SCHEMA_FIELDS)(void*, void**, long*);
 
 extern "C" struct TRINITY_INTERFACES
 {
@@ -96,6 +97,7 @@ extern "C" struct TRINITY_INTERFACES
     TRINITY_FFI_LOCAL_SAVECELL_4 local_savecell_4;
     TRINITY_FFI_LOCAL_REMOVECELL local_removecell;
     TRINITY_FFI_SCHEMA_GET schema_get;
+    TRINITY_FFI_SCHEMA_FIELDS schema_fields;
 };
 
 TRINITYFFINATIVE_API TRINITY_INTERFACES* TRINITY_FFI_GET_INTERFACES();

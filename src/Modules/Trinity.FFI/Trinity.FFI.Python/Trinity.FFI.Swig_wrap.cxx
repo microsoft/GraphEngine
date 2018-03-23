@@ -3545,20 +3545,24 @@ SwigPyBuiltin_SetMetaType (PyTypeObject *type, PyTypeObject *metatype)
 #define SWIGTYPE_p_Cell swig_types[0]
 #define SWIGTYPE_p_CellAccessOptions swig_types[1]
 #define SWIGTYPE_p_CellDescriptor swig_types[2]
-#define SWIGTYPE_p_SwigPyObject swig_types[3]
-#define SWIGTYPE_p_TRINITY_INTERFACES swig_types[4]
-#define SWIGTYPE_p_allocator_type swig_types[5]
-#define SWIGTYPE_p_char swig_types[6]
-#define SWIGTYPE_p_difference_type swig_types[7]
-#define SWIGTYPE_p_p_PyObject swig_types[8]
-#define SWIGTYPE_p_size_type swig_types[9]
-#define SWIGTYPE_p_std__allocatorT_CellDescriptor_t swig_types[10]
-#define SWIGTYPE_p_std__invalid_argument swig_types[11]
-#define SWIGTYPE_p_std__vectorT_CellDescriptor_std__allocatorT_CellDescriptor_t_t swig_types[12]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[13]
-#define SWIGTYPE_p_value_type swig_types[14]
-static swig_type_info *swig_types[16];
-static swig_module_info swig_module = {swig_types, 15, 0, 0, 0, 0};
+#define SWIGTYPE_p_FieldDescriptor swig_types[3]
+#define SWIGTYPE_p_SwigPyObject swig_types[4]
+#define SWIGTYPE_p_TRINITY_INTERFACES swig_types[5]
+#define SWIGTYPE_p_allocator_type swig_types[6]
+#define SWIGTYPE_p_char swig_types[7]
+#define SWIGTYPE_p_difference_type swig_types[8]
+#define SWIGTYPE_p_p_PyObject swig_types[9]
+#define SWIGTYPE_p_size_type swig_types[10]
+#define SWIGTYPE_p_std__allocatorT_CellDescriptor_t swig_types[11]
+#define SWIGTYPE_p_std__allocatorT_FieldDescriptor_t swig_types[12]
+#define SWIGTYPE_p_std__invalid_argument swig_types[13]
+#define SWIGTYPE_p_std__vectorT_CellDescriptor_std__allocatorT_CellDescriptor_t_t swig_types[14]
+#define SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t swig_types[15]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[16]
+#define SWIGTYPE_p_value_type swig_types[17]
+#define SWIGTYPE_p_void swig_types[18]
+static swig_type_info *swig_types[20];
+static swig_module_info swig_module = {swig_types, 19, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -5434,6 +5438,118 @@ SWIGINTERN std::vector< CellDescriptor >::iterator std_vector_Sl_CellDescriptor_
 SWIGINTERN std::vector< CellDescriptor >::iterator std_vector_Sl_CellDescriptor_Sg__erase__SWIG_1(std::vector< CellDescriptor > *self,std::vector< CellDescriptor >::iterator first,std::vector< CellDescriptor >::iterator last){ return self->erase(first, last); }
 SWIGINTERN std::vector< CellDescriptor >::iterator std_vector_Sl_CellDescriptor_Sg__insert__SWIG_0(std::vector< CellDescriptor > *self,std::vector< CellDescriptor >::iterator pos,std::vector< CellDescriptor >::value_type const &x){ return self->insert(pos, x); }
 SWIGINTERN void std_vector_Sl_CellDescriptor_Sg__insert__SWIG_1(std::vector< CellDescriptor > *self,std::vector< CellDescriptor >::iterator pos,std::vector< CellDescriptor >::size_type n,std::vector< CellDescriptor >::value_type const &x){ self->insert(pos, n, x); }
+
+  namespace swig {
+    template <>  struct traits< FieldDescriptor > {
+      typedef pointer_category category;
+      static const char* type_name() { return"FieldDescriptor"; }
+    };
+  }
+
+
+      namespace swig {
+	template <>  struct traits<std::vector< FieldDescriptor, std::allocator< FieldDescriptor > > > {
+	  typedef pointer_category category;
+	  static const char* type_name() {
+	    return "std::vector<" "FieldDescriptor" "," "std::allocator< FieldDescriptor >" " >";
+	  }
+	};
+      }
+    
+SWIGINTERN swig::SwigPyIterator *std_vector_Sl_FieldDescriptor_Sg__iterator(std::vector< FieldDescriptor > *self,PyObject **PYTHON_SELF){
+      return swig::make_output_iterator(self->begin(), self->begin(), self->end(), *PYTHON_SELF);
+    }
+SWIGINTERN bool std_vector_Sl_FieldDescriptor_Sg____nonzero__(std::vector< FieldDescriptor > const *self){
+      return !(self->empty());
+    }
+SWIGINTERN bool std_vector_Sl_FieldDescriptor_Sg____bool__(std::vector< FieldDescriptor > const *self){
+      return !(self->empty());
+    }
+SWIGINTERN std::vector< FieldDescriptor >::size_type std_vector_Sl_FieldDescriptor_Sg____len__(std::vector< FieldDescriptor > const *self){
+      return self->size();
+    }
+SWIGINTERN std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > *std_vector_Sl_FieldDescriptor_Sg____getslice__(std::vector< FieldDescriptor > *self,std::vector< FieldDescriptor >::difference_type i,std::vector< FieldDescriptor >::difference_type j){
+      return swig::getslice(self, i, j, 1);
+    }
+SWIGINTERN void std_vector_Sl_FieldDescriptor_Sg____setslice____SWIG_0(std::vector< FieldDescriptor > *self,std::vector< FieldDescriptor >::difference_type i,std::vector< FieldDescriptor >::difference_type j){
+      swig::setslice(self, i, j, 1, std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >());
+    }
+SWIGINTERN void std_vector_Sl_FieldDescriptor_Sg____setslice____SWIG_1(std::vector< FieldDescriptor > *self,std::vector< FieldDescriptor >::difference_type i,std::vector< FieldDescriptor >::difference_type j,std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > const &v){
+      swig::setslice(self, i, j, 1, v);
+    }
+SWIGINTERN void std_vector_Sl_FieldDescriptor_Sg____delslice__(std::vector< FieldDescriptor > *self,std::vector< FieldDescriptor >::difference_type i,std::vector< FieldDescriptor >::difference_type j){
+      swig::delslice(self, i, j, 1);
+    }
+SWIGINTERN void std_vector_Sl_FieldDescriptor_Sg____delitem____SWIG_0(std::vector< FieldDescriptor > *self,std::vector< FieldDescriptor >::difference_type i){
+      swig::erase(self, swig::getpos(self, i));
+    }
+SWIGINTERN std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > *std_vector_Sl_FieldDescriptor_Sg____getitem____SWIG_0(std::vector< FieldDescriptor > *self,PySliceObject *slice){
+      Py_ssize_t i, j, step;
+      if( !PySlice_Check(slice) ) {
+        SWIG_Error(SWIG_TypeError, "Slice object expected.");
+        return NULL;
+      }
+      PySlice_GetIndices(SWIGPY_SLICE_ARG(slice), (Py_ssize_t)self->size(), &i, &j, &step);
+      std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >::difference_type id = i;
+      std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >::difference_type jd = j;
+      return swig::getslice(self, id, jd, step);
+    }
+SWIGINTERN void std_vector_Sl_FieldDescriptor_Sg____setitem____SWIG_0(std::vector< FieldDescriptor > *self,PySliceObject *slice,std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > const &v){
+      Py_ssize_t i, j, step;
+      if( !PySlice_Check(slice) ) {
+        SWIG_Error(SWIG_TypeError, "Slice object expected.");
+        return;
+      }
+      PySlice_GetIndices(SWIGPY_SLICE_ARG(slice), (Py_ssize_t)self->size(), &i, &j, &step);
+      std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >::difference_type id = i;
+      std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >::difference_type jd = j;
+      swig::setslice(self, id, jd, step, v);
+    }
+SWIGINTERN void std_vector_Sl_FieldDescriptor_Sg____setitem____SWIG_1(std::vector< FieldDescriptor > *self,PySliceObject *slice){
+      Py_ssize_t i, j, step;
+      if( !PySlice_Check(slice) ) {
+        SWIG_Error(SWIG_TypeError, "Slice object expected.");
+        return;
+      }
+      PySlice_GetIndices(SWIGPY_SLICE_ARG(slice), (Py_ssize_t)self->size(), &i, &j, &step);
+      std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >::difference_type id = i;
+      std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >::difference_type jd = j;
+      swig::delslice(self, id, jd, step);
+    }
+SWIGINTERN void std_vector_Sl_FieldDescriptor_Sg____delitem____SWIG_1(std::vector< FieldDescriptor > *self,PySliceObject *slice){
+      Py_ssize_t i, j, step;
+      if( !PySlice_Check(slice) ) {
+        SWIG_Error(SWIG_TypeError, "Slice object expected.");
+        return;
+      }
+      PySlice_GetIndices(SWIGPY_SLICE_ARG(slice), (Py_ssize_t)self->size(), &i, &j, &step);
+      std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >::difference_type id = i;
+      std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >::difference_type jd = j;
+      swig::delslice(self, id, jd, step);
+    }
+SWIGINTERN std::vector< FieldDescriptor >::value_type const &std_vector_Sl_FieldDescriptor_Sg____getitem____SWIG_1(std::vector< FieldDescriptor > const *self,std::vector< FieldDescriptor >::difference_type i){
+      return *(swig::cgetpos(self, i));
+    }
+SWIGINTERN void std_vector_Sl_FieldDescriptor_Sg____setitem____SWIG_2(std::vector< FieldDescriptor > *self,std::vector< FieldDescriptor >::difference_type i,std::vector< FieldDescriptor >::value_type const &x){
+      *(swig::getpos(self,i)) = x;
+    }
+SWIGINTERN void std_vector_Sl_FieldDescriptor_Sg____setitem____SWIG_3(std::vector< FieldDescriptor > *self,std::vector< FieldDescriptor >::difference_type i){
+      swig::erase(self, swig::getpos(self, i));
+    }
+SWIGINTERN std::vector< FieldDescriptor >::value_type std_vector_Sl_FieldDescriptor_Sg__pop(std::vector< FieldDescriptor > *self){
+      if (self->size() == 0)
+	throw std::out_of_range("pop from empty container");
+      std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >::value_type x = self->back();
+      self->pop_back();
+      return x;
+    }
+SWIGINTERN void std_vector_Sl_FieldDescriptor_Sg__append(std::vector< FieldDescriptor > *self,std::vector< FieldDescriptor >::value_type const &x){
+      self->push_back(x);
+    }
+SWIGINTERN std::vector< FieldDescriptor >::iterator std_vector_Sl_FieldDescriptor_Sg__erase__SWIG_0(std::vector< FieldDescriptor > *self,std::vector< FieldDescriptor >::iterator pos){ return self->erase(pos); }
+SWIGINTERN std::vector< FieldDescriptor >::iterator std_vector_Sl_FieldDescriptor_Sg__erase__SWIG_1(std::vector< FieldDescriptor > *self,std::vector< FieldDescriptor >::iterator first,std::vector< FieldDescriptor >::iterator last){ return self->erase(first, last); }
+SWIGINTERN std::vector< FieldDescriptor >::iterator std_vector_Sl_FieldDescriptor_Sg__insert__SWIG_0(std::vector< FieldDescriptor > *self,std::vector< FieldDescriptor >::iterator pos,std::vector< FieldDescriptor >::value_type const &x){ return self->insert(pos, x); }
+SWIGINTERN void std_vector_Sl_FieldDescriptor_Sg__insert__SWIG_1(std::vector< FieldDescriptor > *self,std::vector< FieldDescriptor >::iterator pos,std::vector< FieldDescriptor >::size_type n,std::vector< FieldDescriptor >::value_type const &x){ self->insert(pos, n, x); }
 
 static TRINITY_INTERFACES* g_TrinityInterfaces;
 
@@ -8397,6 +8513,1952 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_fdesc_vec_iterator(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  PyObject **arg2 = (PyObject **) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  swig::SwigPyIterator *result = 0 ;
+  
+  arg2 = &self;
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "fdesc_vec_iterator takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_iterator" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  result = (swig::SwigPyIterator *)std_vector_Sl_FieldDescriptor_Sg__iterator(arg1,arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGPY_UNARYFUNC_CLOSURE(_wrap_fdesc_vec_iterator)
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___nonzero__(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  bool result;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "fdesc_vec___nonzero__ takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec___nonzero__" "', argument " "1"" of type '" "std::vector< FieldDescriptor > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  result = (bool)std_vector_Sl_FieldDescriptor_Sg____nonzero__((std::vector< FieldDescriptor > const *)arg1);
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGPY_INQUIRY_CLOSURE(_wrap_fdesc_vec___nonzero__)
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___bool__(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  bool result;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "fdesc_vec___bool__ takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec___bool__" "', argument " "1"" of type '" "std::vector< FieldDescriptor > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  result = (bool)std_vector_Sl_FieldDescriptor_Sg____bool__((std::vector< FieldDescriptor > const *)arg1);
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___len__(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  std::vector< FieldDescriptor >::size_type result;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "fdesc_vec___len__ takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec___len__" "', argument " "1"" of type '" "std::vector< FieldDescriptor > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  result = std_vector_Sl_FieldDescriptor_Sg____len__((std::vector< FieldDescriptor > const *)arg1);
+  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGPY_LENFUNC_CLOSURE(_wrap_fdesc_vec___len__)
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___getslice__(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor >::difference_type arg2 ;
+  std::vector< FieldDescriptor >::difference_type arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  ptrdiff_t val2 ;
+  int ecode2 = 0 ;
+  ptrdiff_t val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > *result = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec___getslice__",2,2,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec___getslice__" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  ecode2 = SWIG_AsVal_ptrdiff_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "fdesc_vec___getslice__" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::difference_type""'");
+  } 
+  arg2 = static_cast< std::vector< FieldDescriptor >::difference_type >(val2);
+  ecode3 = SWIG_AsVal_ptrdiff_t(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "fdesc_vec___getslice__" "', argument " "3"" of type '" "std::vector< FieldDescriptor >::difference_type""'");
+  } 
+  arg3 = static_cast< std::vector< FieldDescriptor >::difference_type >(val3);
+  try {
+    result = (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > *)std_vector_Sl_FieldDescriptor_Sg____getslice__(arg1,arg2,arg3);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  catch(std::invalid_argument &_e) {
+    SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___setslice____SWIG_0(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor >::difference_type arg2 ;
+  std::vector< FieldDescriptor >::difference_type arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  ptrdiff_t val2 ;
+  int ecode2 = 0 ;
+  ptrdiff_t val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec___setslice__",2,2,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec___setslice__" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  ecode2 = SWIG_AsVal_ptrdiff_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "fdesc_vec___setslice__" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::difference_type""'");
+  } 
+  arg2 = static_cast< std::vector< FieldDescriptor >::difference_type >(val2);
+  ecode3 = SWIG_AsVal_ptrdiff_t(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "fdesc_vec___setslice__" "', argument " "3"" of type '" "std::vector< FieldDescriptor >::difference_type""'");
+  } 
+  arg3 = static_cast< std::vector< FieldDescriptor >::difference_type >(val3);
+  try {
+    std_vector_Sl_FieldDescriptor_Sg____setslice____SWIG_0(arg1,arg2,arg3);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  catch(std::invalid_argument &_e) {
+    SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___setslice____SWIG_1(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor >::difference_type arg2 ;
+  std::vector< FieldDescriptor >::difference_type arg3 ;
+  std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > *arg4 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  ptrdiff_t val2 ;
+  int ecode2 = 0 ;
+  ptrdiff_t val3 ;
+  int ecode3 = 0 ;
+  int res4 = SWIG_OLDOBJ ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec___setslice__",3,3,&obj1,&obj2,&obj3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec___setslice__" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  ecode2 = SWIG_AsVal_ptrdiff_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "fdesc_vec___setslice__" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::difference_type""'");
+  } 
+  arg2 = static_cast< std::vector< FieldDescriptor >::difference_type >(val2);
+  ecode3 = SWIG_AsVal_ptrdiff_t(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "fdesc_vec___setslice__" "', argument " "3"" of type '" "std::vector< FieldDescriptor >::difference_type""'");
+  } 
+  arg3 = static_cast< std::vector< FieldDescriptor >::difference_type >(val3);
+  {
+    std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > *ptr = (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > *)0;
+    res4 = swig::asptr(obj3, &ptr);
+    if (!SWIG_IsOK(res4)) {
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "fdesc_vec___setslice__" "', argument " "4"" of type '" "std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "fdesc_vec___setslice__" "', argument " "4"" of type '" "std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > const &""'"); 
+    }
+    arg4 = ptr;
+  }
+  try {
+    std_vector_Sl_FieldDescriptor_Sg____setslice____SWIG_1(arg1,arg2,arg3,(std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > const &)*arg4);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  catch(std::invalid_argument &_e) {
+    SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res4)) delete arg4;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res4)) delete arg4;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___setslice__(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[5] = {
+    0
+  };
+  Py_ssize_t ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? PyObject_Length(args) : 0;
+  argv[0] = self;
+  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
+    argv[ii + 1] = PyTuple_GET_ITEM(args,ii);
+  }
+  argc++;
+  if (argc == 3) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_ptrdiff_t(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_ptrdiff_t(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_fdesc_vec___setslice____SWIG_0(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_ptrdiff_t(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_ptrdiff_t(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          int res = swig::asptr(argv[3], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+          _v = SWIG_CheckState(res);
+          if (_v) {
+            return _wrap_fdesc_vec___setslice____SWIG_1(self, args);
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'fdesc_vec___setslice__'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    std::vector< FieldDescriptor >::__setslice__(std::vector< FieldDescriptor >::difference_type,std::vector< FieldDescriptor >::difference_type)\n"
+    "    std::vector< FieldDescriptor >::__setslice__(std::vector< FieldDescriptor >::difference_type,std::vector< FieldDescriptor >::difference_type,std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___delslice__(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor >::difference_type arg2 ;
+  std::vector< FieldDescriptor >::difference_type arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  ptrdiff_t val2 ;
+  int ecode2 = 0 ;
+  ptrdiff_t val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec___delslice__",2,2,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec___delslice__" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  ecode2 = SWIG_AsVal_ptrdiff_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "fdesc_vec___delslice__" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::difference_type""'");
+  } 
+  arg2 = static_cast< std::vector< FieldDescriptor >::difference_type >(val2);
+  ecode3 = SWIG_AsVal_ptrdiff_t(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "fdesc_vec___delslice__" "', argument " "3"" of type '" "std::vector< FieldDescriptor >::difference_type""'");
+  } 
+  arg3 = static_cast< std::vector< FieldDescriptor >::difference_type >(val3);
+  try {
+    std_vector_Sl_FieldDescriptor_Sg____delslice__(arg1,arg2,arg3);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  catch(std::invalid_argument &_e) {
+    SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___delitem____SWIG_0(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor >::difference_type arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  ptrdiff_t val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec___delitem__",1,1,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec___delitem__" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  ecode2 = SWIG_AsVal_ptrdiff_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "fdesc_vec___delitem__" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::difference_type""'");
+  } 
+  arg2 = static_cast< std::vector< FieldDescriptor >::difference_type >(val2);
+  try {
+    std_vector_Sl_FieldDescriptor_Sg____delitem____SWIG_0(arg1,arg2);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  catch(std::invalid_argument &_e) {
+    SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___getitem____SWIG_0(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  PySliceObject *arg2 = (PySliceObject *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj1 = 0 ;
+  std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > *result = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec___getitem__",1,1,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec___getitem__" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  {
+    if (!PySlice_Check(obj1)) {
+      SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "fdesc_vec___getitem__" "', argument " "2"" of type '" "PySliceObject *""'");
+    }
+    arg2 = (PySliceObject *) obj1;
+  }
+  try {
+    result = (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > *)std_vector_Sl_FieldDescriptor_Sg____getitem____SWIG_0(arg1,arg2);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  catch(std::invalid_argument &_e) {
+    SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___setitem____SWIG_0(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  PySliceObject *arg2 = (PySliceObject *) 0 ;
+  std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > *arg3 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res3 = SWIG_OLDOBJ ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec___setitem__",2,2,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec___setitem__" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  {
+    if (!PySlice_Check(obj1)) {
+      SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "fdesc_vec___setitem__" "', argument " "2"" of type '" "PySliceObject *""'");
+    }
+    arg2 = (PySliceObject *) obj1;
+  }
+  {
+    std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > *ptr = (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > *)0;
+    res3 = swig::asptr(obj2, &ptr);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "fdesc_vec___setitem__" "', argument " "3"" of type '" "std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "fdesc_vec___setitem__" "', argument " "3"" of type '" "std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > const &""'"); 
+    }
+    arg3 = ptr;
+  }
+  try {
+    std_vector_Sl_FieldDescriptor_Sg____setitem____SWIG_0(arg1,arg2,(std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > const &)*arg3);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  catch(std::invalid_argument &_e) {
+    SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return resultobj;
+fail:
+  if (SWIG_IsNewObj(res3)) delete arg3;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___setitem____SWIG_1(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  PySliceObject *arg2 = (PySliceObject *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec___setitem__",1,1,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec___setitem__" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  {
+    if (!PySlice_Check(obj1)) {
+      SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "fdesc_vec___setitem__" "', argument " "2"" of type '" "PySliceObject *""'");
+    }
+    arg2 = (PySliceObject *) obj1;
+  }
+  try {
+    std_vector_Sl_FieldDescriptor_Sg____setitem____SWIG_1(arg1,arg2);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  catch(std::invalid_argument &_e) {
+    SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___delitem____SWIG_1(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  PySliceObject *arg2 = (PySliceObject *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec___delitem__",1,1,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec___delitem__" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  {
+    if (!PySlice_Check(obj1)) {
+      SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "fdesc_vec___delitem__" "', argument " "2"" of type '" "PySliceObject *""'");
+    }
+    arg2 = (PySliceObject *) obj1;
+  }
+  try {
+    std_vector_Sl_FieldDescriptor_Sg____delitem____SWIG_1(arg1,arg2);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  catch(std::invalid_argument &_e) {
+    SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___delitem__(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[3] = {
+    0
+  };
+  Py_ssize_t ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? PyObject_Length(args) : 0;
+  argv[0] = self;
+  for (ii = 0; (ii < 1) && (ii < argc); ii++) {
+    argv[ii + 1] = PyTuple_GET_ITEM(args,ii);
+  }
+  argc++;
+  if (argc == 2) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        _v = PySlice_Check(argv[1]);
+      }
+      if (_v) {
+        return _wrap_fdesc_vec___delitem____SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_ptrdiff_t(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_fdesc_vec___delitem____SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'fdesc_vec___delitem__'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    std::vector< FieldDescriptor >::__delitem__(std::vector< FieldDescriptor >::difference_type)\n"
+    "    std::vector< FieldDescriptor >::__delitem__(PySliceObject *)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___getitem____SWIG_1(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor >::difference_type arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  ptrdiff_t val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj1 = 0 ;
+  std::vector< FieldDescriptor >::value_type *result = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec___getitem__",1,1,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec___getitem__" "', argument " "1"" of type '" "std::vector< FieldDescriptor > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  ecode2 = SWIG_AsVal_ptrdiff_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "fdesc_vec___getitem__" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::difference_type""'");
+  } 
+  arg2 = static_cast< std::vector< FieldDescriptor >::difference_type >(val2);
+  try {
+    result = (std::vector< FieldDescriptor >::value_type *) &std_vector_Sl_FieldDescriptor_Sg____getitem____SWIG_1((std::vector< FieldDescriptor > const *)arg1,arg2);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FieldDescriptor, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___getitem__(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[3] = {
+    0
+  };
+  Py_ssize_t ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? PyObject_Length(args) : 0;
+  argv[0] = self;
+  for (ii = 0; (ii < 1) && (ii < argc); ii++) {
+    argv[ii + 1] = PyTuple_GET_ITEM(args,ii);
+  }
+  argc++;
+  if (argc == 2) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        _v = PySlice_Check(argv[1]);
+      }
+      if (_v) {
+        return _wrap_fdesc_vec___getitem____SWIG_0(self, args);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_ptrdiff_t(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_fdesc_vec___getitem____SWIG_1(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'fdesc_vec___getitem__'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    std::vector< FieldDescriptor >::__getitem__(PySliceObject *)\n"
+    "    std::vector< FieldDescriptor >::__getitem__(std::vector< FieldDescriptor >::difference_type) const\n");
+  return 0;
+}
+
+
+SWIGPY_BINARYFUNC_CLOSURE(_wrap_fdesc_vec___getitem__)
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___setitem____SWIG_2(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor >::difference_type arg2 ;
+  std::vector< FieldDescriptor >::value_type *arg3 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  ptrdiff_t val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec___setitem__",2,2,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec___setitem__" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  ecode2 = SWIG_AsVal_ptrdiff_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "fdesc_vec___setitem__" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::difference_type""'");
+  } 
+  arg2 = static_cast< std::vector< FieldDescriptor >::difference_type >(val2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_FieldDescriptor,  0  | 0);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "fdesc_vec___setitem__" "', argument " "3"" of type '" "std::vector< FieldDescriptor >::value_type const &""'"); 
+  }
+  if (!argp3) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "fdesc_vec___setitem__" "', argument " "3"" of type '" "std::vector< FieldDescriptor >::value_type const &""'"); 
+  }
+  arg3 = reinterpret_cast< std::vector< FieldDescriptor >::value_type * >(argp3);
+  try {
+    std_vector_Sl_FieldDescriptor_Sg____setitem____SWIG_2(arg1,arg2,(FieldDescriptor const &)*arg3);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___setitem____SWIG_3(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor >::difference_type arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  ptrdiff_t val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec___setitem__",1,1,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec___setitem__" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  ecode2 = SWIG_AsVal_ptrdiff_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "fdesc_vec___setitem__" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::difference_type""'");
+  } 
+  arg2 = static_cast< std::vector< FieldDescriptor >::difference_type >(val2);
+  try {
+    std_vector_Sl_FieldDescriptor_Sg____setitem____SWIG_3(arg1,arg2);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  catch(std::invalid_argument &_e) {
+    SWIG_exception_fail(SWIG_ValueError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec___setitem__(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[4] = {
+    0
+  };
+  Py_ssize_t ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? PyObject_Length(args) : 0;
+  argv[0] = self;
+  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+    argv[ii + 1] = PyTuple_GET_ITEM(args,ii);
+  }
+  argc++;
+  if (argc == 2) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        _v = PySlice_Check(argv[1]);
+      }
+      if (_v) {
+        return _wrap_fdesc_vec___setitem____SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_ptrdiff_t(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_fdesc_vec___setitem____SWIG_3(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        _v = PySlice_Check(argv[1]);
+      }
+      if (_v) {
+        int res = swig::asptr(argv[2], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_fdesc_vec___setitem____SWIG_0(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_ptrdiff_t(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_FieldDescriptor, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_fdesc_vec___setitem____SWIG_2(self, args);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'fdesc_vec___setitem__'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    std::vector< FieldDescriptor >::__setitem__(PySliceObject *,std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > const &)\n"
+    "    std::vector< FieldDescriptor >::__setitem__(PySliceObject *)\n"
+    "    std::vector< FieldDescriptor >::__setitem__(std::vector< FieldDescriptor >::difference_type,std::vector< FieldDescriptor >::value_type const &)\n"
+    "    std::vector< FieldDescriptor >::__setitem__(std::vector< FieldDescriptor >::difference_type)\n");
+  return 0;
+}
+
+
+SWIGPY_OBJOBJARGPROC_CLOSURE(_wrap_fdesc_vec___setitem__)
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_pop(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  std::vector< FieldDescriptor >::value_type result;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "fdesc_vec_pop takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_pop" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  try {
+    result = std_vector_Sl_FieldDescriptor_Sg__pop(arg1);
+  }
+  catch(std::out_of_range &_e) {
+    SWIG_exception_fail(SWIG_IndexError, (&_e)->what());
+  }
+  
+  resultobj = SWIG_NewPointerObj((new std::vector< FieldDescriptor >::value_type(static_cast< const std::vector< FieldDescriptor >::value_type& >(result))), SWIGTYPE_p_FieldDescriptor, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_append(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor >::value_type *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec_append",1,1,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_append" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_FieldDescriptor,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fdesc_vec_append" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::value_type const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "fdesc_vec_append" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::value_type const &""'"); 
+  }
+  arg2 = reinterpret_cast< std::vector< FieldDescriptor >::value_type * >(argp2);
+  std_vector_Sl_FieldDescriptor_Sg__append(arg1,(FieldDescriptor const &)*arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN int _wrap_new_fdesc_vec__SWIG_0(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *result = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "new_fdesc_vec takes no arguments");
+  result = (std::vector< FieldDescriptor > *)new std::vector< FieldDescriptor >();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, SWIG_BUILTIN_INIT |  0 );
+  return resultobj == Py_None ? -1 : 0;
+fail:
+  return -1;
+}
+
+
+SWIGINTERN int _wrap_new_fdesc_vec__SWIG_1(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = 0 ;
+  int res1 = SWIG_OLDOBJ ;
+  PyObject * obj1 = 0 ;
+  std::vector< FieldDescriptor > *result = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"new_fdesc_vec",1,1,&obj1)) SWIG_fail;
+  {
+    std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > *ptr = (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > *)0;
+    res1 = swig::asptr(obj1, &ptr);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_fdesc_vec" "', argument " "1"" of type '" "std::vector< FieldDescriptor > const &""'"); 
+    }
+    if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_fdesc_vec" "', argument " "1"" of type '" "std::vector< FieldDescriptor > const &""'"); 
+    }
+    arg1 = ptr;
+  }
+  result = (std::vector< FieldDescriptor > *)new std::vector< FieldDescriptor >((std::vector< FieldDescriptor > const &)*arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, SWIG_BUILTIN_INIT |  0 );
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return resultobj == Py_None ? -1 : 0;
+fail:
+  if (SWIG_IsNewObj(res1)) delete arg1;
+  return -1;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_empty(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  bool result;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "fdesc_vec_empty takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_empty" "', argument " "1"" of type '" "std::vector< FieldDescriptor > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  result = (bool)((std::vector< FieldDescriptor > const *)arg1)->empty();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_size(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  std::vector< FieldDescriptor >::size_type result;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "fdesc_vec_size takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_size" "', argument " "1"" of type '" "std::vector< FieldDescriptor > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  result = ((std::vector< FieldDescriptor > const *)arg1)->size();
+  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_swap(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor > *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec_swap",1,1,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_swap" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fdesc_vec_swap" "', argument " "2"" of type '" "std::vector< FieldDescriptor > &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "fdesc_vec_swap" "', argument " "2"" of type '" "std::vector< FieldDescriptor > &""'"); 
+  }
+  arg2 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp2);
+  (arg1)->swap(*arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_begin(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  std::vector< FieldDescriptor >::iterator result;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "fdesc_vec_begin takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_begin" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  result = (arg1)->begin();
+  resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< FieldDescriptor >::iterator & >(result)),
+    swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_end(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  std::vector< FieldDescriptor >::iterator result;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "fdesc_vec_end takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_end" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  result = (arg1)->end();
+  resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< FieldDescriptor >::iterator & >(result)),
+    swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_rbegin(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  std::vector< FieldDescriptor >::reverse_iterator result;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "fdesc_vec_rbegin takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_rbegin" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  result = (arg1)->rbegin();
+  resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< FieldDescriptor >::reverse_iterator & >(result)),
+    swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_rend(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  std::vector< FieldDescriptor >::reverse_iterator result;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "fdesc_vec_rend takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_rend" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  result = (arg1)->rend();
+  resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< FieldDescriptor >::reverse_iterator & >(result)),
+    swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_clear(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "fdesc_vec_clear takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_clear" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  (arg1)->clear();
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_get_allocator(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  SwigValueWrapper< std::allocator< FieldDescriptor > > result;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "fdesc_vec_get_allocator takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_get_allocator" "', argument " "1"" of type '" "std::vector< FieldDescriptor > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  result = ((std::vector< FieldDescriptor > const *)arg1)->get_allocator();
+  resultobj = SWIG_NewPointerObj((new std::vector< FieldDescriptor >::allocator_type(static_cast< const std::vector< FieldDescriptor >::allocator_type& >(result))), SWIGTYPE_p_std__allocatorT_FieldDescriptor_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN int _wrap_new_fdesc_vec__SWIG_2(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor >::size_type arg1 ;
+  size_t val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj1 = 0 ;
+  std::vector< FieldDescriptor > *result = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"new_fdesc_vec",1,1,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_size_t(obj1, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_fdesc_vec" "', argument " "1"" of type '" "std::vector< FieldDescriptor >::size_type""'");
+  } 
+  arg1 = static_cast< std::vector< FieldDescriptor >::size_type >(val1);
+  result = (std::vector< FieldDescriptor > *)new std::vector< FieldDescriptor >(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, SWIG_BUILTIN_INIT |  0 );
+  return resultobj == Py_None ? -1 : 0;
+fail:
+  return -1;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_pop_back(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "fdesc_vec_pop_back takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_pop_back" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  (arg1)->pop_back();
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_resize__SWIG_0(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor >::size_type arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec_resize",1,1,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_resize" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "fdesc_vec_resize" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::size_type""'");
+  } 
+  arg2 = static_cast< std::vector< FieldDescriptor >::size_type >(val2);
+  (arg1)->resize(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_erase__SWIG_0(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor >::iterator arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  swig::SwigPyIterator *iter2 = 0 ;
+  int res2 ;
+  PyObject * obj1 = 0 ;
+  std::vector< FieldDescriptor >::iterator result;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec_erase",1,1,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_erase" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
+  if (!SWIG_IsOK(res2) || !iter2) {
+    SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "fdesc_vec_erase" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::iterator""'");
+  } else {
+    swig::SwigPyIterator_T<std::vector< FieldDescriptor >::iterator > *iter_t = dynamic_cast<swig::SwigPyIterator_T<std::vector< FieldDescriptor >::iterator > *>(iter2);
+    if (iter_t) {
+      arg2 = iter_t->get_current();
+    } else {
+      SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "fdesc_vec_erase" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::iterator""'");
+    }
+  }
+  result = std_vector_Sl_FieldDescriptor_Sg__erase__SWIG_0(arg1,arg2);
+  resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< FieldDescriptor >::iterator & >(result)),
+    swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_erase__SWIG_1(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor >::iterator arg2 ;
+  std::vector< FieldDescriptor >::iterator arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  swig::SwigPyIterator *iter2 = 0 ;
+  int res2 ;
+  swig::SwigPyIterator *iter3 = 0 ;
+  int res3 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  std::vector< FieldDescriptor >::iterator result;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec_erase",2,2,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_erase" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
+  if (!SWIG_IsOK(res2) || !iter2) {
+    SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "fdesc_vec_erase" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::iterator""'");
+  } else {
+    swig::SwigPyIterator_T<std::vector< FieldDescriptor >::iterator > *iter_t = dynamic_cast<swig::SwigPyIterator_T<std::vector< FieldDescriptor >::iterator > *>(iter2);
+    if (iter_t) {
+      arg2 = iter_t->get_current();
+    } else {
+      SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "fdesc_vec_erase" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::iterator""'");
+    }
+  }
+  res3 = SWIG_ConvertPtr(obj2, SWIG_as_voidptrptr(&iter3), swig::SwigPyIterator::descriptor(), 0);
+  if (!SWIG_IsOK(res3) || !iter3) {
+    SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "fdesc_vec_erase" "', argument " "3"" of type '" "std::vector< FieldDescriptor >::iterator""'");
+  } else {
+    swig::SwigPyIterator_T<std::vector< FieldDescriptor >::iterator > *iter_t = dynamic_cast<swig::SwigPyIterator_T<std::vector< FieldDescriptor >::iterator > *>(iter3);
+    if (iter_t) {
+      arg3 = iter_t->get_current();
+    } else {
+      SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "fdesc_vec_erase" "', argument " "3"" of type '" "std::vector< FieldDescriptor >::iterator""'");
+    }
+  }
+  result = std_vector_Sl_FieldDescriptor_Sg__erase__SWIG_1(arg1,arg2,arg3);
+  resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< FieldDescriptor >::iterator & >(result)),
+    swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_erase(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[4] = {
+    0
+  };
+  Py_ssize_t ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? PyObject_Length(args) : 0;
+  argv[0] = self;
+  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+    argv[ii + 1] = PyTuple_GET_ITEM(args,ii);
+  }
+  argc++;
+  if (argc == 2) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      swig::SwigPyIterator *iter = 0;
+      int res = SWIG_ConvertPtr(argv[1], SWIG_as_voidptrptr(&iter), swig::SwigPyIterator::descriptor(), 0);
+      _v = (SWIG_IsOK(res) && iter && (dynamic_cast<swig::SwigPyIterator_T<std::vector< FieldDescriptor >::iterator > *>(iter) != 0));
+      if (_v) {
+        return _wrap_fdesc_vec_erase__SWIG_0(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      swig::SwigPyIterator *iter = 0;
+      int res = SWIG_ConvertPtr(argv[1], SWIG_as_voidptrptr(&iter), swig::SwigPyIterator::descriptor(), 0);
+      _v = (SWIG_IsOK(res) && iter && (dynamic_cast<swig::SwigPyIterator_T<std::vector< FieldDescriptor >::iterator > *>(iter) != 0));
+      if (_v) {
+        swig::SwigPyIterator *iter = 0;
+        int res = SWIG_ConvertPtr(argv[2], SWIG_as_voidptrptr(&iter), swig::SwigPyIterator::descriptor(), 0);
+        _v = (SWIG_IsOK(res) && iter && (dynamic_cast<swig::SwigPyIterator_T<std::vector< FieldDescriptor >::iterator > *>(iter) != 0));
+        if (_v) {
+          return _wrap_fdesc_vec_erase__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'fdesc_vec_erase'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    std::vector< FieldDescriptor >::erase(std::vector< FieldDescriptor >::iterator)\n"
+    "    std::vector< FieldDescriptor >::erase(std::vector< FieldDescriptor >::iterator,std::vector< FieldDescriptor >::iterator)\n");
+  return 0;
+}
+
+
+SWIGINTERN int _wrap_new_fdesc_vec__SWIG_3(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor >::size_type arg1 ;
+  std::vector< FieldDescriptor >::value_type *arg2 = 0 ;
+  size_t val1 ;
+  int ecode1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  std::vector< FieldDescriptor > *result = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"new_fdesc_vec",2,2,&obj1,&obj2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_size_t(obj1, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_fdesc_vec" "', argument " "1"" of type '" "std::vector< FieldDescriptor >::size_type""'");
+  } 
+  arg1 = static_cast< std::vector< FieldDescriptor >::size_type >(val1);
+  res2 = SWIG_ConvertPtr(obj2, &argp2, SWIGTYPE_p_FieldDescriptor,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_fdesc_vec" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::value_type const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_fdesc_vec" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::value_type const &""'"); 
+  }
+  arg2 = reinterpret_cast< std::vector< FieldDescriptor >::value_type * >(argp2);
+  result = (std::vector< FieldDescriptor > *)new std::vector< FieldDescriptor >(arg1,(std::vector< FieldDescriptor >::value_type const &)*arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, SWIG_BUILTIN_INIT |  0 );
+  return resultobj == Py_None ? -1 : 0;
+fail:
+  return -1;
+}
+
+
+SWIGINTERN int _wrap_new_fdesc_vec(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[3] = {
+    0
+  };
+  Py_ssize_t ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 0) {
+    return _wrap_new_fdesc_vec__SWIG_0(self, args);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_size_t(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_new_fdesc_vec__SWIG_2(self, args);
+    }
+  }
+  if (argc == 1) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_new_fdesc_vec__SWIG_1(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    {
+      int res = SWIG_AsVal_size_t(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      int res = SWIG_ConvertPtr(argv[1], 0, SWIGTYPE_p_FieldDescriptor, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_new_fdesc_vec__SWIG_3(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'new_fdesc_vec'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    std::vector< FieldDescriptor >::vector()\n"
+    "    std::vector< FieldDescriptor >::vector(std::vector< FieldDescriptor > const &)\n"
+    "    std::vector< FieldDescriptor >::vector(std::vector< FieldDescriptor >::size_type)\n"
+    "    std::vector< FieldDescriptor >::vector(std::vector< FieldDescriptor >::size_type,std::vector< FieldDescriptor >::value_type const &)\n");
+  return -1;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_push_back(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor >::value_type *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec_push_back",1,1,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_push_back" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_FieldDescriptor,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fdesc_vec_push_back" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::value_type const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "fdesc_vec_push_back" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::value_type const &""'"); 
+  }
+  arg2 = reinterpret_cast< std::vector< FieldDescriptor >::value_type * >(argp2);
+  (arg1)->push_back((std::vector< FieldDescriptor >::value_type const &)*arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_front(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  std::vector< FieldDescriptor >::value_type *result = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "fdesc_vec_front takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_front" "', argument " "1"" of type '" "std::vector< FieldDescriptor > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  result = (std::vector< FieldDescriptor >::value_type *) &((std::vector< FieldDescriptor > const *)arg1)->front();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FieldDescriptor, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_back(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  std::vector< FieldDescriptor >::value_type *result = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "fdesc_vec_back takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_back" "', argument " "1"" of type '" "std::vector< FieldDescriptor > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  result = (std::vector< FieldDescriptor >::value_type *) &((std::vector< FieldDescriptor > const *)arg1)->back();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FieldDescriptor, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_assign(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor >::size_type arg2 ;
+  std::vector< FieldDescriptor >::value_type *arg3 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec_assign",2,2,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_assign" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "fdesc_vec_assign" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::size_type""'");
+  } 
+  arg2 = static_cast< std::vector< FieldDescriptor >::size_type >(val2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_FieldDescriptor,  0  | 0);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "fdesc_vec_assign" "', argument " "3"" of type '" "std::vector< FieldDescriptor >::value_type const &""'"); 
+  }
+  if (!argp3) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "fdesc_vec_assign" "', argument " "3"" of type '" "std::vector< FieldDescriptor >::value_type const &""'"); 
+  }
+  arg3 = reinterpret_cast< std::vector< FieldDescriptor >::value_type * >(argp3);
+  (arg1)->assign(arg2,(std::vector< FieldDescriptor >::value_type const &)*arg3);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_resize__SWIG_1(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor >::size_type arg2 ;
+  std::vector< FieldDescriptor >::value_type *arg3 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec_resize",2,2,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_resize" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "fdesc_vec_resize" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::size_type""'");
+  } 
+  arg2 = static_cast< std::vector< FieldDescriptor >::size_type >(val2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_FieldDescriptor,  0  | 0);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "fdesc_vec_resize" "', argument " "3"" of type '" "std::vector< FieldDescriptor >::value_type const &""'"); 
+  }
+  if (!argp3) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "fdesc_vec_resize" "', argument " "3"" of type '" "std::vector< FieldDescriptor >::value_type const &""'"); 
+  }
+  arg3 = reinterpret_cast< std::vector< FieldDescriptor >::value_type * >(argp3);
+  (arg1)->resize(arg2,(std::vector< FieldDescriptor >::value_type const &)*arg3);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_resize(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[4] = {
+    0
+  };
+  Py_ssize_t ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? PyObject_Length(args) : 0;
+  argv[0] = self;
+  for (ii = 0; (ii < 2) && (ii < argc); ii++) {
+    argv[ii + 1] = PyTuple_GET_ITEM(args,ii);
+  }
+  argc++;
+  if (argc == 2) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_size_t(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_fdesc_vec_resize__SWIG_0(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_size_t(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_FieldDescriptor, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_fdesc_vec_resize__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'fdesc_vec_resize'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    std::vector< FieldDescriptor >::resize(std::vector< FieldDescriptor >::size_type)\n"
+    "    std::vector< FieldDescriptor >::resize(std::vector< FieldDescriptor >::size_type,std::vector< FieldDescriptor >::value_type const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_insert__SWIG_0(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor >::iterator arg2 ;
+  std::vector< FieldDescriptor >::value_type *arg3 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  swig::SwigPyIterator *iter2 = 0 ;
+  int res2 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  std::vector< FieldDescriptor >::iterator result;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec_insert",2,2,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_insert" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
+  if (!SWIG_IsOK(res2) || !iter2) {
+    SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "fdesc_vec_insert" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::iterator""'");
+  } else {
+    swig::SwigPyIterator_T<std::vector< FieldDescriptor >::iterator > *iter_t = dynamic_cast<swig::SwigPyIterator_T<std::vector< FieldDescriptor >::iterator > *>(iter2);
+    if (iter_t) {
+      arg2 = iter_t->get_current();
+    } else {
+      SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "fdesc_vec_insert" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::iterator""'");
+    }
+  }
+  res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_FieldDescriptor,  0  | 0);
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "fdesc_vec_insert" "', argument " "3"" of type '" "std::vector< FieldDescriptor >::value_type const &""'"); 
+  }
+  if (!argp3) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "fdesc_vec_insert" "', argument " "3"" of type '" "std::vector< FieldDescriptor >::value_type const &""'"); 
+  }
+  arg3 = reinterpret_cast< std::vector< FieldDescriptor >::value_type * >(argp3);
+  result = std_vector_Sl_FieldDescriptor_Sg__insert__SWIG_0(arg1,arg2,(FieldDescriptor const &)*arg3);
+  resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< FieldDescriptor >::iterator & >(result)),
+    swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_insert__SWIG_1(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor >::iterator arg2 ;
+  std::vector< FieldDescriptor >::size_type arg3 ;
+  std::vector< FieldDescriptor >::value_type *arg4 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  swig::SwigPyIterator *iter2 = 0 ;
+  int res2 ;
+  size_t val3 ;
+  int ecode3 = 0 ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec_insert",3,3,&obj1,&obj2,&obj3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_insert" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, SWIG_as_voidptrptr(&iter2), swig::SwigPyIterator::descriptor(), 0);
+  if (!SWIG_IsOK(res2) || !iter2) {
+    SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "fdesc_vec_insert" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::iterator""'");
+  } else {
+    swig::SwigPyIterator_T<std::vector< FieldDescriptor >::iterator > *iter_t = dynamic_cast<swig::SwigPyIterator_T<std::vector< FieldDescriptor >::iterator > *>(iter2);
+    if (iter_t) {
+      arg2 = iter_t->get_current();
+    } else {
+      SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "fdesc_vec_insert" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::iterator""'");
+    }
+  }
+  ecode3 = SWIG_AsVal_size_t(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "fdesc_vec_insert" "', argument " "3"" of type '" "std::vector< FieldDescriptor >::size_type""'");
+  } 
+  arg3 = static_cast< std::vector< FieldDescriptor >::size_type >(val3);
+  res4 = SWIG_ConvertPtr(obj3, &argp4, SWIGTYPE_p_FieldDescriptor,  0  | 0);
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "fdesc_vec_insert" "', argument " "4"" of type '" "std::vector< FieldDescriptor >::value_type const &""'"); 
+  }
+  if (!argp4) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "fdesc_vec_insert" "', argument " "4"" of type '" "std::vector< FieldDescriptor >::value_type const &""'"); 
+  }
+  arg4 = reinterpret_cast< std::vector< FieldDescriptor >::value_type * >(argp4);
+  std_vector_Sl_FieldDescriptor_Sg__insert__SWIG_1(arg1,arg2,arg3,(FieldDescriptor const &)*arg4);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_insert(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[5] = {
+    0
+  };
+  Py_ssize_t ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? PyObject_Length(args) : 0;
+  argv[0] = self;
+  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
+    argv[ii + 1] = PyTuple_GET_ITEM(args,ii);
+  }
+  argc++;
+  if (argc == 3) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      swig::SwigPyIterator *iter = 0;
+      int res = SWIG_ConvertPtr(argv[1], SWIG_as_voidptrptr(&iter), swig::SwigPyIterator::descriptor(), 0);
+      _v = (SWIG_IsOK(res) && iter && (dynamic_cast<swig::SwigPyIterator_T<std::vector< FieldDescriptor >::iterator > *>(iter) != 0));
+      if (_v) {
+        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_FieldDescriptor, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_fdesc_vec_insert__SWIG_0(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    int res = swig::asptr(argv[0], (std::vector< FieldDescriptor,std::allocator< FieldDescriptor > >**)(0));
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      swig::SwigPyIterator *iter = 0;
+      int res = SWIG_ConvertPtr(argv[1], SWIG_as_voidptrptr(&iter), swig::SwigPyIterator::descriptor(), 0);
+      _v = (SWIG_IsOK(res) && iter && (dynamic_cast<swig::SwigPyIterator_T<std::vector< FieldDescriptor >::iterator > *>(iter) != 0));
+      if (_v) {
+        {
+          int res = SWIG_AsVal_size_t(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          int res = SWIG_ConvertPtr(argv[3], 0, SWIGTYPE_p_FieldDescriptor, 0);
+          _v = SWIG_CheckState(res);
+          if (_v) {
+            return _wrap_fdesc_vec_insert__SWIG_1(self, args);
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'fdesc_vec_insert'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    std::vector< FieldDescriptor >::insert(std::vector< FieldDescriptor >::iterator,std::vector< FieldDescriptor >::value_type const &)\n"
+    "    std::vector< FieldDescriptor >::insert(std::vector< FieldDescriptor >::iterator,std::vector< FieldDescriptor >::size_type,std::vector< FieldDescriptor >::value_type const &)\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_reserve(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  std::vector< FieldDescriptor >::size_type arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"fdesc_vec_reserve",1,1,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_reserve" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "fdesc_vec_reserve" "', argument " "2"" of type '" "std::vector< FieldDescriptor >::size_type""'");
+  } 
+  arg2 = static_cast< std::vector< FieldDescriptor >::size_type >(val2);
+  (arg1)->reserve(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_fdesc_vec_capacity(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  std::vector< FieldDescriptor >::size_type result;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "fdesc_vec_capacity takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fdesc_vec_capacity" "', argument " "1"" of type '" "std::vector< FieldDescriptor > const *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  result = ((std::vector< FieldDescriptor > const *)arg1)->capacity();
+  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_fdesc_vec(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  std::vector< FieldDescriptor > *arg1 = (std::vector< FieldDescriptor > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "delete_fdesc_vec takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_fdesc_vec" "', argument " "1"" of type '" "std::vector< FieldDescriptor > *""'"); 
+  }
+  arg1 = reinterpret_cast< std::vector< FieldDescriptor > * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN int Swig_var_g_TrinityInterfaces_set(PyObject *_val) {
   {
     void *argp = 0;
@@ -8481,6 +10543,54 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_CellDescriptor_Handle_set(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  CellDescriptor *arg1 = (CellDescriptor *) 0 ;
+  void *arg2 = (void *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  PyObject * obj1 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"CellDescriptor_Handle_set",1,1,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_CellDescriptor, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CellDescriptor_Handle_set" "', argument " "1"" of type '" "CellDescriptor *""'"); 
+  }
+  arg1 = reinterpret_cast< CellDescriptor * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1,SWIG_as_voidptrptr(&arg2), 0, SWIG_POINTER_DISOWN);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "CellDescriptor_Handle_set" "', argument " "2"" of type '" "void *""'"); 
+  }
+  if (arg1) (arg1)->Handle = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_CellDescriptor_Handle_get(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  CellDescriptor *arg1 = (CellDescriptor *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *result = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "CellDescriptor_Handle_get takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_CellDescriptor, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "CellDescriptor_Handle_get" "', argument " "1"" of type '" "CellDescriptor *""'"); 
+  }
+  arg1 = reinterpret_cast< CellDescriptor * >(argp1);
+  result = (void *) ((arg1)->Handle);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN int _wrap_new_CellDescriptor(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   CellDescriptor *result = 0 ;
@@ -8506,6 +10616,205 @@ SWIGINTERN PyObject *_wrap_delete_CellDescriptor(PyObject *self, PyObject *args)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_CellDescriptor" "', argument " "1"" of type '" "CellDescriptor *""'"); 
   }
   arg1 = reinterpret_cast< CellDescriptor * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FieldDescriptor_Name_set(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  FieldDescriptor *arg1 = (FieldDescriptor *) 0 ;
+  char *arg2 = (char *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"FieldDescriptor_Name_set",1,1,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_FieldDescriptor, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FieldDescriptor_Name_set" "', argument " "1"" of type '" "FieldDescriptor *""'"); 
+  }
+  arg1 = reinterpret_cast< FieldDescriptor * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FieldDescriptor_Name_set" "', argument " "2"" of type '" "char *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  if (arg1->Name) delete[] arg1->Name;
+  if (arg2) {
+    size_t size = strlen(reinterpret_cast< const char * >(arg2)) + 1;
+    arg1->Name = (char *)reinterpret_cast< char* >(memcpy((new char[size]), reinterpret_cast< const char * >(arg2), sizeof(char)*(size)));
+  } else {
+    arg1->Name = 0;
+  }
+  resultobj = SWIG_Py_Void();
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FieldDescriptor_Name_get(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  FieldDescriptor *arg1 = (FieldDescriptor *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  char *result = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "FieldDescriptor_Name_get takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_FieldDescriptor, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FieldDescriptor_Name_get" "', argument " "1"" of type '" "FieldDescriptor *""'"); 
+  }
+  arg1 = reinterpret_cast< FieldDescriptor * >(argp1);
+  result = (char *) ((arg1)->Name);
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FieldDescriptor_TypeName_set(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  FieldDescriptor *arg1 = (FieldDescriptor *) 0 ;
+  char *arg2 = (char *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"FieldDescriptor_TypeName_set",1,1,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_FieldDescriptor, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FieldDescriptor_TypeName_set" "', argument " "1"" of type '" "FieldDescriptor *""'"); 
+  }
+  arg1 = reinterpret_cast< FieldDescriptor * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FieldDescriptor_TypeName_set" "', argument " "2"" of type '" "char *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  if (arg1->TypeName) delete[] arg1->TypeName;
+  if (arg2) {
+    size_t size = strlen(reinterpret_cast< const char * >(arg2)) + 1;
+    arg1->TypeName = (char *)reinterpret_cast< char* >(memcpy((new char[size]), reinterpret_cast< const char * >(arg2), sizeof(char)*(size)));
+  } else {
+    arg1->TypeName = 0;
+  }
+  resultobj = SWIG_Py_Void();
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FieldDescriptor_TypeName_get(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  FieldDescriptor *arg1 = (FieldDescriptor *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  char *result = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "FieldDescriptor_TypeName_get takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_FieldDescriptor, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FieldDescriptor_TypeName_get" "', argument " "1"" of type '" "FieldDescriptor *""'"); 
+  }
+  arg1 = reinterpret_cast< FieldDescriptor * >(argp1);
+  result = (char *) ((arg1)->TypeName);
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FieldDescriptor_Handle_set(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  FieldDescriptor *arg1 = (FieldDescriptor *) 0 ;
+  void *arg2 = (void *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  PyObject * obj1 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"FieldDescriptor_Handle_set",1,1,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_FieldDescriptor, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FieldDescriptor_Handle_set" "', argument " "1"" of type '" "FieldDescriptor *""'"); 
+  }
+  arg1 = reinterpret_cast< FieldDescriptor * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1,SWIG_as_voidptrptr(&arg2), 0, SWIG_POINTER_DISOWN);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "FieldDescriptor_Handle_set" "', argument " "2"" of type '" "void *""'"); 
+  }
+  if (arg1) (arg1)->Handle = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FieldDescriptor_Handle_get(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  FieldDescriptor *arg1 = (FieldDescriptor *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *result = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "FieldDescriptor_Handle_get takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_FieldDescriptor, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FieldDescriptor_Handle_get" "', argument " "1"" of type '" "FieldDescriptor *""'"); 
+  }
+  arg1 = reinterpret_cast< FieldDescriptor * >(argp1);
+  result = (void *) ((arg1)->Handle);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN int _wrap_new_FieldDescriptor(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  FieldDescriptor *result = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "new_FieldDescriptor takes no arguments");
+  result = (FieldDescriptor *)new FieldDescriptor();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_FieldDescriptor, SWIG_BUILTIN_INIT |  0 );
+  return resultobj == Py_None ? -1 : 0;
+fail:
+  return -1;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_FieldDescriptor(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  FieldDescriptor *arg1 = (FieldDescriptor *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "delete_FieldDescriptor takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_FieldDescriptor, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_FieldDescriptor" "', argument " "1"" of type '" "FieldDescriptor *""'"); 
+  }
+  arg1 = reinterpret_cast< FieldDescriptor * >(argp1);
   delete arg1;
   resultobj = SWIG_Py_Void();
   return resultobj;
@@ -9003,6 +11312,28 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_GetFieldDescriptors(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  CellDescriptor *arg1 = (CellDescriptor *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > result;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"GetFieldDescriptors",1,1,&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_CellDescriptor, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "GetFieldDescriptors" "', argument " "1"" of type '" "CellDescriptor *""'"); 
+  }
+  arg1 = reinterpret_cast< CellDescriptor * >(argp1);
+  result = GetFieldDescriptors(arg1);
+  resultobj = swig::from(static_cast< std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 static PyMethodDef SwigMethods[] = {
 	 { (char *)"SWIG_PyInstanceMethod_New", (PyCFunction)SWIG_PyInstanceMethod_New, METH_O, NULL},
 	 { (char *)"Init", _wrap_Init, METH_VARARGS, NULL},
@@ -9013,6 +11344,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"NewCell_2", _wrap_NewCell_2, METH_VARARGS, NULL},
 	 { (char *)"NewCell_3", _wrap_NewCell_3, METH_VARARGS, NULL},
 	 { (char *)"GetCellDescriptors", _wrap_GetCellDescriptors, METH_VARARGS, NULL},
+	 { (char *)"GetFieldDescriptors", _wrap_GetFieldDescriptors, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 
@@ -9510,10 +11842,265 @@ static PyHeapTypeObject SwigPyBuiltin__std__vectorT_CellDescriptor_t_type = {
 
 SWIGINTERN SwigPyClientData SwigPyBuiltin__std__vectorT_CellDescriptor_t_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__std__vectorT_CellDescriptor_t_type};
 
+SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_fdesc_vec)
+static SwigPyGetSet fdesc_vec___dict___getset = { SwigPyObject_get___dict__, 0 };
+SWIGINTERN PyGetSetDef SwigPyBuiltin__std__vectorT_FieldDescriptor_t_getset[] = {
+    { (char*) "__dict__", (getter) SwigPyBuiltin_GetterClosure, (setter) 0, (char*)"std::vector<(FieldDescriptor)>.__dict__", (void*) &fdesc_vec___dict___getset }
+,
+    {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
+};
+
+SWIGINTERN PyObject *
+SwigPyBuiltin__std__vectorT_FieldDescriptor_t_richcompare(PyObject *self, PyObject *other, int op) {
+  PyObject *result = NULL;
+  PyObject *tuple = PyTuple_New(1);
+  assert(tuple);
+  PyTuple_SET_ITEM(tuple, 0, other);
+  Py_XINCREF(other);
+  if (!result) {
+    if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
+      result = SwigPyObject_richcompare((SwigPyObject *)self, (SwigPyObject *)other, op);
+    } else {
+      result = Py_NotImplemented;
+      Py_INCREF(result);
+    }
+  }
+  Py_DECREF(tuple);
+  return result;
+}
+
+SWIGINTERN PyMethodDef SwigPyBuiltin__std__vectorT_FieldDescriptor_t_methods[] = {
+  { "iterator", (PyCFunction) _wrap_fdesc_vec_iterator, METH_VARARGS, (char*) "" },
+  { "__nonzero__", (PyCFunction) _wrap_fdesc_vec___nonzero__, METH_VARARGS, (char*) "" },
+  { "__bool__", (PyCFunction) _wrap_fdesc_vec___bool__, METH_VARARGS, (char*) "" },
+  { "__len__", (PyCFunction) _wrap_fdesc_vec___len__, METH_VARARGS, (char*) "" },
+  { "__getslice__", (PyCFunction) _wrap_fdesc_vec___getslice__, METH_VARARGS, (char*) "" },
+  { "__setslice__", (PyCFunction) _wrap_fdesc_vec___setslice__, METH_VARARGS, (char*) "" },
+  { "__delslice__", (PyCFunction) _wrap_fdesc_vec___delslice__, METH_VARARGS, (char*) "" },
+  { "__delitem__", (PyCFunction) _wrap_fdesc_vec___delitem__, METH_VARARGS, (char*) "" },
+  { "__getitem__", (PyCFunction) _wrap_fdesc_vec___getitem__, METH_VARARGS, (char*) "" },
+  { "__setitem__", (PyCFunction) _wrap_fdesc_vec___setitem__, METH_VARARGS, (char*) "" },
+  { "pop", (PyCFunction) _wrap_fdesc_vec_pop, METH_VARARGS, (char*) "" },
+  { "append", (PyCFunction) _wrap_fdesc_vec_append, METH_VARARGS, (char*) "" },
+  { "empty", (PyCFunction) _wrap_fdesc_vec_empty, METH_VARARGS, (char*) "" },
+  { "size", (PyCFunction) _wrap_fdesc_vec_size, METH_VARARGS, (char*) "" },
+  { "swap", (PyCFunction) _wrap_fdesc_vec_swap, METH_VARARGS, (char*) "" },
+  { "begin", (PyCFunction) _wrap_fdesc_vec_begin, METH_VARARGS, (char*) "" },
+  { "end", (PyCFunction) _wrap_fdesc_vec_end, METH_VARARGS, (char*) "" },
+  { "rbegin", (PyCFunction) _wrap_fdesc_vec_rbegin, METH_VARARGS, (char*) "" },
+  { "rend", (PyCFunction) _wrap_fdesc_vec_rend, METH_VARARGS, (char*) "" },
+  { "clear", (PyCFunction) _wrap_fdesc_vec_clear, METH_VARARGS, (char*) "" },
+  { "get_allocator", (PyCFunction) _wrap_fdesc_vec_get_allocator, METH_VARARGS, (char*) "" },
+  { "pop_back", (PyCFunction) _wrap_fdesc_vec_pop_back, METH_VARARGS, (char*) "" },
+  { "resize", (PyCFunction) _wrap_fdesc_vec_resize, METH_VARARGS, (char*) "" },
+  { "erase", (PyCFunction) _wrap_fdesc_vec_erase, METH_VARARGS, (char*) "" },
+  { "push_back", (PyCFunction) _wrap_fdesc_vec_push_back, METH_VARARGS, (char*) "" },
+  { "front", (PyCFunction) _wrap_fdesc_vec_front, METH_VARARGS, (char*) "" },
+  { "back", (PyCFunction) _wrap_fdesc_vec_back, METH_VARARGS, (char*) "" },
+  { "assign", (PyCFunction) _wrap_fdesc_vec_assign, METH_VARARGS, (char*) "" },
+  { "insert", (PyCFunction) _wrap_fdesc_vec_insert, METH_VARARGS, (char*) "" },
+  { "reserve", (PyCFunction) _wrap_fdesc_vec_reserve, METH_VARARGS, (char*) "" },
+  { "capacity", (PyCFunction) _wrap_fdesc_vec_capacity, METH_VARARGS, (char*) "" },
+  { NULL, NULL, 0, NULL } /* Sentinel */
+};
+
+static PyHeapTypeObject SwigPyBuiltin__std__vectorT_FieldDescriptor_t_type = {
+  {
+#if PY_VERSION_HEX >= 0x03000000
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
+    PyObject_HEAD_INIT(NULL)
+    0,                                        /* ob_size */
+#endif
+    "ffi.fdesc_vec",                          /* tp_name */
+    sizeof(SwigPyObject),                     /* tp_basicsize */
+    0,                                        /* tp_itemsize */
+    (destructor) _wrap_delete_fdesc_vec_closure, /* tp_dealloc */
+    (printfunc) 0,                            /* tp_print */
+    (getattrfunc) 0,                          /* tp_getattr */
+    (setattrfunc) 0,                          /* tp_setattr */
+#if PY_VERSION_HEX >= 0x03000000
+    0,                                        /* tp_compare */
+#else
+    (cmpfunc) 0,                              /* tp_compare */
+#endif
+    (reprfunc) 0,                             /* tp_repr */
+    &SwigPyBuiltin__std__vectorT_FieldDescriptor_t_type.as_number,      /* tp_as_number */
+    &SwigPyBuiltin__std__vectorT_FieldDescriptor_t_type.as_sequence,    /* tp_as_sequence */
+    &SwigPyBuiltin__std__vectorT_FieldDescriptor_t_type.as_mapping,     /* tp_as_mapping */
+    (hashfunc) 0,                             /* tp_hash */
+    (ternaryfunc) 0,                          /* tp_call */
+    (reprfunc) 0,                             /* tp_str */
+    (getattrofunc) 0,                         /* tp_getattro */
+    (setattrofunc) 0,                         /* tp_setattro */
+    &SwigPyBuiltin__std__vectorT_FieldDescriptor_t_type.as_buffer,      /* tp_as_buffer */
+#if PY_VERSION_HEX >= 0x03000000
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,   /* tp_flags */
+#else
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_CHECKTYPES, /* tp_flags */
+#endif
+    "std::vector< FieldDescriptor >",         /* tp_doc */
+    (traverseproc) 0,                         /* tp_traverse */
+    (inquiry) 0,                              /* tp_clear */
+    (richcmpfunc) SwigPyBuiltin__std__vectorT_FieldDescriptor_t_richcompare, /* feature:python:tp_richcompare */
+    0,                                        /* tp_weaklistoffset */
+    (getiterfunc) (getiterfunc) _wrap_fdesc_vec_iterator_closure, /* tp_iter */
+    (iternextfunc) 0,                         /* tp_iternext */
+    SwigPyBuiltin__std__vectorT_FieldDescriptor_t_methods, /* tp_methods */
+    0,                                        /* tp_members */
+    SwigPyBuiltin__std__vectorT_FieldDescriptor_t_getset, /* tp_getset */
+    0,                                        /* tp_base */
+    0,                                        /* tp_dict */
+    (descrgetfunc) 0,                         /* tp_descr_get */
+    (descrsetfunc) 0,                         /* tp_descr_set */
+    (Py_ssize_t)offsetof(SwigPyObject, dict), /* tp_dictoffset */
+    (initproc) _wrap_new_fdesc_vec,           /* tp_init */
+    (allocfunc) 0,                            /* tp_alloc */
+    (newfunc) 0,                              /* tp_new */
+    (freefunc) 0,                             /* tp_free */
+    (inquiry) 0,                              /* tp_is_gc */
+    (PyObject*) 0,                            /* tp_bases */
+    (PyObject*) 0,                            /* tp_mro */
+    (PyObject*) 0,                            /* tp_cache */
+    (PyObject*) 0,                            /* tp_subclasses */
+    (PyObject*) 0,                            /* tp_weaklist */
+    (destructor) 0,                           /* tp_del */
+#if PY_VERSION_HEX >= 0x02060000
+    (int) 0,                                  /* tp_version_tag */
+#endif
+#if PY_VERSION_HEX >= 0x03040000
+    (destructor) 0,                           /* tp_finalize */
+#endif
+#ifdef COUNT_ALLOCS
+    (Py_ssize_t) 0,                           /* tp_allocs */
+    (Py_ssize_t) 0,                           /* tp_frees */
+    (Py_ssize_t) 0,                           /* tp_maxalloc */
+#if PY_VERSION_HEX >= 0x02050000
+    (struct _typeobject*) 0,                  /* tp_prev */
+#endif
+    (struct _typeobject*) 0,                  /* tp_next */
+#endif
+  },
+#if PY_VERSION_HEX >= 0x03050000
+  {
+    (unaryfunc) 0,                            /* am_await */
+    (unaryfunc) 0,                            /* am_aiter */
+    (unaryfunc) 0,                            /* am_anext */
+  },
+#endif
+  {
+    (binaryfunc) 0,                           /* nb_add */
+    (binaryfunc) 0,                           /* nb_subtract */
+    (binaryfunc) 0,                           /* nb_multiply */
+#if PY_VERSION_HEX < 0x03000000
+    (binaryfunc) 0,                           /* nb_divide */
+#endif
+    (binaryfunc) 0,                           /* nb_remainder */
+    (binaryfunc) 0,                           /* nb_divmod */
+    (ternaryfunc) 0,                          /* nb_power */
+    (unaryfunc) 0,                            /* nb_negative */
+    (unaryfunc) 0,                            /* nb_positive */
+    (unaryfunc) 0,                            /* nb_absolute */
+    (inquiry) (inquiry) _wrap_fdesc_vec___nonzero___closure, /* nb_nonzero */
+    (unaryfunc) 0,                            /* nb_invert */
+    (binaryfunc) 0,                           /* nb_lshift */
+    (binaryfunc) 0,                           /* nb_rshift */
+    (binaryfunc) 0,                           /* nb_and */
+    (binaryfunc) 0,                           /* nb_xor */
+    (binaryfunc) 0,                           /* nb_or */
+#if PY_VERSION_HEX < 0x03000000
+    (coercion) 0,                             /* nb_coerce */
+#endif
+    (unaryfunc) 0,                            /* nb_int */
+#if PY_VERSION_HEX >= 0x03000000
+    (void*) 0,                                /* nb_reserved */
+#else
+    (unaryfunc) 0,                            /* nb_long */
+#endif
+    (unaryfunc) 0,                            /* nb_float */
+#if PY_VERSION_HEX < 0x03000000
+    (unaryfunc) 0,                            /* nb_oct */
+    (unaryfunc) 0,                            /* nb_hex */
+#endif
+    (binaryfunc) 0,                           /* nb_inplace_add */
+    (binaryfunc) 0,                           /* nb_inplace_subtract */
+    (binaryfunc) 0,                           /* nb_inplace_multiply */
+#if PY_VERSION_HEX < 0x03000000
+    (binaryfunc) 0,                           /* nb_inplace_divide */
+#endif
+    (binaryfunc) 0,                           /* nb_inplace_remainder */
+    (ternaryfunc) 0,                          /* nb_inplace_power */
+    (binaryfunc) 0,                           /* nb_inplace_lshift */
+    (binaryfunc) 0,                           /* nb_inplace_rshift */
+    (binaryfunc) 0,                           /* nb_inplace_and */
+    (binaryfunc) 0,                           /* nb_inplace_xor */
+    (binaryfunc) 0,                           /* nb_inplace_or */
+    (binaryfunc) 0,                           /* nb_floor_divide */
+    (binaryfunc) 0,                           /* nb_true_divide */
+    (binaryfunc) 0,                           /* nb_inplace_floor_divide */
+    (binaryfunc) 0,                           /* nb_inplace_true_divide */
+#if PY_VERSION_HEX >= 0x02050000
+    (unaryfunc) 0,                            /* nb_index */
+#endif
+#if PY_VERSION_HEX >= 0x03050000
+    (binaryfunc) 0,                           /* nb_matrix_multiply */
+    (binaryfunc) 0,                           /* nb_inplace_matrix_multiply */
+#endif
+  },
+  {
+    (lenfunc) 0,                              /* mp_length */
+    (binaryfunc) (binaryfunc) _wrap_fdesc_vec___getitem___closure, /* mp_subscript */
+    (objobjargproc) (objobjargproc) _wrap_fdesc_vec___setitem___closure, /* mp_ass_subscript */
+  },
+  {
+    (lenfunc) (lenfunc) _wrap_fdesc_vec___len___closure, /* sq_length */
+    (binaryfunc) 0,                           /* sq_concat */
+    (ssizeargfunc) 0,                         /* sq_repeat */
+    (ssizeargfunc) 0,                         /* sq_item */
+#if PY_VERSION_HEX >= 0x03000000
+    (void*) 0,                                /* was_sq_slice */
+#else
+    (ssizessizeargfunc) 0,                    /* sq_slice */
+#endif
+    (ssizeobjargproc) 0,                      /* sq_ass_item */
+#if PY_VERSION_HEX >= 0x03000000
+    (void*) 0,                                /* was_sq_ass_slice */
+#else
+    (ssizessizeobjargproc) 0,                 /* sq_ass_slice */
+#endif
+    (objobjproc) 0,                           /* sq_contains */
+    (binaryfunc) 0,                           /* sq_inplace_concat */
+    (ssizeargfunc) 0,                         /* sq_inplace_repeat */
+  },
+  {
+#if PY_VERSION_HEX < 0x03000000
+    (readbufferproc) 0,                       /* bf_getreadbuffer */
+    (writebufferproc) 0,                      /* bf_getwritebuffer */
+    (segcountproc) 0,                         /* bf_getsegcount */
+    (charbufferproc) 0,                       /* bf_getcharbuffer */
+#endif
+#if PY_VERSION_HEX >= 0x02060000
+    (getbufferproc) 0,                        /* bf_getbuffer */
+    (releasebufferproc) 0,                    /* bf_releasebuffer */
+#endif
+  },
+    (PyObject*) 0,                            /* ht_name */
+    (PyObject*) 0,                            /* ht_slots */
+#if PY_VERSION_HEX >= 0x03030000
+    (PyObject*) 0,                            /* ht_qualname */
+    (struct _dictkeysobject*) 0,              /* ht_cached_keys */
+#endif
+};
+
+SWIGINTERN SwigPyClientData SwigPyBuiltin__std__vectorT_FieldDescriptor_t_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__std__vectorT_FieldDescriptor_t_type};
+
 SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_CellDescriptor)
+static SwigPyGetSet CellDescriptor_Handle_getset = { _wrap_CellDescriptor_Handle_get, _wrap_CellDescriptor_Handle_set };
 static SwigPyGetSet CellDescriptor___dict___getset = { SwigPyObject_get___dict__, 0 };
 static SwigPyGetSet CellDescriptor_Name_getset = { _wrap_CellDescriptor_Name_get, _wrap_CellDescriptor_Name_set };
 SWIGINTERN PyGetSetDef SwigPyBuiltin__CellDescriptor_getset[] = {
+    { (char*) "Handle", (getter) SwigPyBuiltin_GetterClosure, (setter) SwigPyBuiltin_SetterClosure, (char*)"CellDescriptor.Handle", (void*) &CellDescriptor_Handle_getset }
+,
     { (char*) "__dict__", (getter) SwigPyBuiltin_GetterClosure, (setter) 0, (char*)"CellDescriptor.__dict__", (void*) &CellDescriptor___dict___getset }
 ,
     { (char*) "Name", (getter) SwigPyBuiltin_GetterClosure, (setter) SwigPyBuiltin_SetterClosure, (char*)"CellDescriptor.Name", (void*) &CellDescriptor_Name_getset }
@@ -9733,6 +12320,236 @@ static PyHeapTypeObject SwigPyBuiltin__CellDescriptor_type = {
 };
 
 SWIGINTERN SwigPyClientData SwigPyBuiltin__CellDescriptor_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__CellDescriptor_type};
+
+SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_FieldDescriptor)
+static SwigPyGetSet FieldDescriptor_Handle_getset = { _wrap_FieldDescriptor_Handle_get, _wrap_FieldDescriptor_Handle_set };
+static SwigPyGetSet FieldDescriptor___dict___getset = { SwigPyObject_get___dict__, 0 };
+static SwigPyGetSet FieldDescriptor_Name_getset = { _wrap_FieldDescriptor_Name_get, _wrap_FieldDescriptor_Name_set };
+static SwigPyGetSet FieldDescriptor_TypeName_getset = { _wrap_FieldDescriptor_TypeName_get, _wrap_FieldDescriptor_TypeName_set };
+SWIGINTERN PyGetSetDef SwigPyBuiltin__FieldDescriptor_getset[] = {
+    { (char*) "Handle", (getter) SwigPyBuiltin_GetterClosure, (setter) SwigPyBuiltin_SetterClosure, (char*)"FieldDescriptor.Handle", (void*) &FieldDescriptor_Handle_getset }
+,
+    { (char*) "__dict__", (getter) SwigPyBuiltin_GetterClosure, (setter) 0, (char*)"FieldDescriptor.__dict__", (void*) &FieldDescriptor___dict___getset }
+,
+    { (char*) "Name", (getter) SwigPyBuiltin_GetterClosure, (setter) SwigPyBuiltin_SetterClosure, (char*)"FieldDescriptor.Name", (void*) &FieldDescriptor_Name_getset }
+,
+    { (char*) "TypeName", (getter) SwigPyBuiltin_GetterClosure, (setter) SwigPyBuiltin_SetterClosure, (char*)"FieldDescriptor.TypeName", (void*) &FieldDescriptor_TypeName_getset }
+,
+    {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
+};
+
+SWIGINTERN PyObject *
+SwigPyBuiltin__FieldDescriptor_richcompare(PyObject *self, PyObject *other, int op) {
+  PyObject *result = NULL;
+  PyObject *tuple = PyTuple_New(1);
+  assert(tuple);
+  PyTuple_SET_ITEM(tuple, 0, other);
+  Py_XINCREF(other);
+  if (!result) {
+    if (SwigPyObject_Check(self) && SwigPyObject_Check(other)) {
+      result = SwigPyObject_richcompare((SwigPyObject *)self, (SwigPyObject *)other, op);
+    } else {
+      result = Py_NotImplemented;
+      Py_INCREF(result);
+    }
+  }
+  Py_DECREF(tuple);
+  return result;
+}
+
+SWIGINTERN PyMethodDef SwigPyBuiltin__FieldDescriptor_methods[] = {
+  { NULL, NULL, 0, NULL } /* Sentinel */
+};
+
+static PyHeapTypeObject SwigPyBuiltin__FieldDescriptor_type = {
+  {
+#if PY_VERSION_HEX >= 0x03000000
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
+    PyObject_HEAD_INIT(NULL)
+    0,                                        /* ob_size */
+#endif
+    "ffi.FieldDescriptor",                    /* tp_name */
+    sizeof(SwigPyObject),                     /* tp_basicsize */
+    0,                                        /* tp_itemsize */
+    (destructor) _wrap_delete_FieldDescriptor_closure, /* tp_dealloc */
+    (printfunc) 0,                            /* tp_print */
+    (getattrfunc) 0,                          /* tp_getattr */
+    (setattrfunc) 0,                          /* tp_setattr */
+#if PY_VERSION_HEX >= 0x03000000
+    0,                                        /* tp_compare */
+#else
+    (cmpfunc) 0,                              /* tp_compare */
+#endif
+    (reprfunc) 0,                             /* tp_repr */
+    &SwigPyBuiltin__FieldDescriptor_type.as_number,      /* tp_as_number */
+    &SwigPyBuiltin__FieldDescriptor_type.as_sequence,    /* tp_as_sequence */
+    &SwigPyBuiltin__FieldDescriptor_type.as_mapping,     /* tp_as_mapping */
+    (hashfunc) 0,                             /* tp_hash */
+    (ternaryfunc) 0,                          /* tp_call */
+    (reprfunc) 0,                             /* tp_str */
+    (getattrofunc) 0,                         /* tp_getattro */
+    (setattrofunc) 0,                         /* tp_setattro */
+    &SwigPyBuiltin__FieldDescriptor_type.as_buffer,      /* tp_as_buffer */
+#if PY_VERSION_HEX >= 0x03000000
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,   /* tp_flags */
+#else
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_CHECKTYPES, /* tp_flags */
+#endif
+    "::FieldDescriptor",                      /* tp_doc */
+    (traverseproc) 0,                         /* tp_traverse */
+    (inquiry) 0,                              /* tp_clear */
+    (richcmpfunc) SwigPyBuiltin__FieldDescriptor_richcompare, /* feature:python:tp_richcompare */
+    0,                                        /* tp_weaklistoffset */
+    (getiterfunc) 0,                          /* tp_iter */
+    (iternextfunc) 0,                         /* tp_iternext */
+    SwigPyBuiltin__FieldDescriptor_methods,   /* tp_methods */
+    0,                                        /* tp_members */
+    SwigPyBuiltin__FieldDescriptor_getset,    /* tp_getset */
+    0,                                        /* tp_base */
+    0,                                        /* tp_dict */
+    (descrgetfunc) 0,                         /* tp_descr_get */
+    (descrsetfunc) 0,                         /* tp_descr_set */
+    (Py_ssize_t)offsetof(SwigPyObject, dict), /* tp_dictoffset */
+    (initproc) _wrap_new_FieldDescriptor,     /* tp_init */
+    (allocfunc) 0,                            /* tp_alloc */
+    (newfunc) 0,                              /* tp_new */
+    (freefunc) 0,                             /* tp_free */
+    (inquiry) 0,                              /* tp_is_gc */
+    (PyObject*) 0,                            /* tp_bases */
+    (PyObject*) 0,                            /* tp_mro */
+    (PyObject*) 0,                            /* tp_cache */
+    (PyObject*) 0,                            /* tp_subclasses */
+    (PyObject*) 0,                            /* tp_weaklist */
+    (destructor) 0,                           /* tp_del */
+#if PY_VERSION_HEX >= 0x02060000
+    (int) 0,                                  /* tp_version_tag */
+#endif
+#if PY_VERSION_HEX >= 0x03040000
+    (destructor) 0,                           /* tp_finalize */
+#endif
+#ifdef COUNT_ALLOCS
+    (Py_ssize_t) 0,                           /* tp_allocs */
+    (Py_ssize_t) 0,                           /* tp_frees */
+    (Py_ssize_t) 0,                           /* tp_maxalloc */
+#if PY_VERSION_HEX >= 0x02050000
+    (struct _typeobject*) 0,                  /* tp_prev */
+#endif
+    (struct _typeobject*) 0,                  /* tp_next */
+#endif
+  },
+#if PY_VERSION_HEX >= 0x03050000
+  {
+    (unaryfunc) 0,                            /* am_await */
+    (unaryfunc) 0,                            /* am_aiter */
+    (unaryfunc) 0,                            /* am_anext */
+  },
+#endif
+  {
+    (binaryfunc) 0,                           /* nb_add */
+    (binaryfunc) 0,                           /* nb_subtract */
+    (binaryfunc) 0,                           /* nb_multiply */
+#if PY_VERSION_HEX < 0x03000000
+    (binaryfunc) 0,                           /* nb_divide */
+#endif
+    (binaryfunc) 0,                           /* nb_remainder */
+    (binaryfunc) 0,                           /* nb_divmod */
+    (ternaryfunc) 0,                          /* nb_power */
+    (unaryfunc) 0,                            /* nb_negative */
+    (unaryfunc) 0,                            /* nb_positive */
+    (unaryfunc) 0,                            /* nb_absolute */
+    (inquiry) 0,                              /* nb_nonzero */
+    (unaryfunc) 0,                            /* nb_invert */
+    (binaryfunc) 0,                           /* nb_lshift */
+    (binaryfunc) 0,                           /* nb_rshift */
+    (binaryfunc) 0,                           /* nb_and */
+    (binaryfunc) 0,                           /* nb_xor */
+    (binaryfunc) 0,                           /* nb_or */
+#if PY_VERSION_HEX < 0x03000000
+    (coercion) 0,                             /* nb_coerce */
+#endif
+    (unaryfunc) 0,                            /* nb_int */
+#if PY_VERSION_HEX >= 0x03000000
+    (void*) 0,                                /* nb_reserved */
+#else
+    (unaryfunc) 0,                            /* nb_long */
+#endif
+    (unaryfunc) 0,                            /* nb_float */
+#if PY_VERSION_HEX < 0x03000000
+    (unaryfunc) 0,                            /* nb_oct */
+    (unaryfunc) 0,                            /* nb_hex */
+#endif
+    (binaryfunc) 0,                           /* nb_inplace_add */
+    (binaryfunc) 0,                           /* nb_inplace_subtract */
+    (binaryfunc) 0,                           /* nb_inplace_multiply */
+#if PY_VERSION_HEX < 0x03000000
+    (binaryfunc) 0,                           /* nb_inplace_divide */
+#endif
+    (binaryfunc) 0,                           /* nb_inplace_remainder */
+    (ternaryfunc) 0,                          /* nb_inplace_power */
+    (binaryfunc) 0,                           /* nb_inplace_lshift */
+    (binaryfunc) 0,                           /* nb_inplace_rshift */
+    (binaryfunc) 0,                           /* nb_inplace_and */
+    (binaryfunc) 0,                           /* nb_inplace_xor */
+    (binaryfunc) 0,                           /* nb_inplace_or */
+    (binaryfunc) 0,                           /* nb_floor_divide */
+    (binaryfunc) 0,                           /* nb_true_divide */
+    (binaryfunc) 0,                           /* nb_inplace_floor_divide */
+    (binaryfunc) 0,                           /* nb_inplace_true_divide */
+#if PY_VERSION_HEX >= 0x02050000
+    (unaryfunc) 0,                            /* nb_index */
+#endif
+#if PY_VERSION_HEX >= 0x03050000
+    (binaryfunc) 0,                           /* nb_matrix_multiply */
+    (binaryfunc) 0,                           /* nb_inplace_matrix_multiply */
+#endif
+  },
+  {
+    (lenfunc) 0,                              /* mp_length */
+    (binaryfunc) 0,                           /* mp_subscript */
+    (objobjargproc) 0,                        /* mp_ass_subscript */
+  },
+  {
+    (lenfunc) 0,                              /* sq_length */
+    (binaryfunc) 0,                           /* sq_concat */
+    (ssizeargfunc) 0,                         /* sq_repeat */
+    (ssizeargfunc) 0,                         /* sq_item */
+#if PY_VERSION_HEX >= 0x03000000
+    (void*) 0,                                /* was_sq_slice */
+#else
+    (ssizessizeargfunc) 0,                    /* sq_slice */
+#endif
+    (ssizeobjargproc) 0,                      /* sq_ass_item */
+#if PY_VERSION_HEX >= 0x03000000
+    (void*) 0,                                /* was_sq_ass_slice */
+#else
+    (ssizessizeobjargproc) 0,                 /* sq_ass_slice */
+#endif
+    (objobjproc) 0,                           /* sq_contains */
+    (binaryfunc) 0,                           /* sq_inplace_concat */
+    (ssizeargfunc) 0,                         /* sq_inplace_repeat */
+  },
+  {
+#if PY_VERSION_HEX < 0x03000000
+    (readbufferproc) 0,                       /* bf_getreadbuffer */
+    (writebufferproc) 0,                      /* bf_getwritebuffer */
+    (segcountproc) 0,                         /* bf_getsegcount */
+    (charbufferproc) 0,                       /* bf_getcharbuffer */
+#endif
+#if PY_VERSION_HEX >= 0x02060000
+    (getbufferproc) 0,                        /* bf_getbuffer */
+    (releasebufferproc) 0,                    /* bf_releasebuffer */
+#endif
+  },
+    (PyObject*) 0,                            /* ht_name */
+    (PyObject*) 0,                            /* ht_slots */
+#if PY_VERSION_HEX >= 0x03030000
+    (PyObject*) 0,                            /* ht_qualname */
+    (struct _dictkeysobject*) 0,              /* ht_cached_keys */
+#endif
+};
+
+SWIGINTERN SwigPyClientData SwigPyBuiltin__FieldDescriptor_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__FieldDescriptor_type};
 
 SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_Cell)
 static SwigPyGetSet Cell___dict___getset = { SwigPyObject_get___dict__, 0 };
@@ -9968,6 +12785,7 @@ SWIGINTERN SwigPyClientData SwigPyBuiltin__Cell_clientdata = {0, 0, 0, 0, 0, 0, 
 static swig_type_info _swigt__p_Cell = {"_p_Cell", "Cell *", 0, 0, (void*)&SwigPyBuiltin__Cell_clientdata, 0};
 static swig_type_info _swigt__p_CellAccessOptions = {"_p_CellAccessOptions", "CellAccessOptions *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_CellDescriptor = {"_p_CellDescriptor", "std::vector< CellDescriptor >::value_type *|CellDescriptor *", 0, 0, (void*)&SwigPyBuiltin__CellDescriptor_clientdata, 0};
+static swig_type_info _swigt__p_FieldDescriptor = {"_p_FieldDescriptor", "std::vector< FieldDescriptor >::value_type *|FieldDescriptor *", 0, 0, (void*)&SwigPyBuiltin__FieldDescriptor_clientdata, 0};
 static swig_type_info _swigt__p_SwigPyObject = {"_p_SwigPyObject", "SwigPyObject *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_TRINITY_INTERFACES = {"_p_TRINITY_INTERFACES", "TRINITY_INTERFACES *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_allocator_type = {"_p_allocator_type", "allocator_type *", 0, 0, (void*)0, 0};
@@ -9976,15 +12794,19 @@ static swig_type_info _swigt__p_difference_type = {"_p_difference_type", "differ
 static swig_type_info _swigt__p_p_PyObject = {"_p_p_PyObject", "PyObject **", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_size_type = {"_p_size_type", "size_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__allocatorT_CellDescriptor_t = {"_p_std__allocatorT_CellDescriptor_t", "std::vector< CellDescriptor >::allocator_type *|std::allocator< CellDescriptor > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__allocatorT_FieldDescriptor_t = {"_p_std__allocatorT_FieldDescriptor_t", "std::vector< FieldDescriptor >::allocator_type *|std::allocator< FieldDescriptor > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__invalid_argument = {"_p_std__invalid_argument", "std::invalid_argument *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_CellDescriptor_std__allocatorT_CellDescriptor_t_t = {"_p_std__vectorT_CellDescriptor_std__allocatorT_CellDescriptor_t_t", "std::vector< CellDescriptor > *|std::vector< CellDescriptor,std::allocator< CellDescriptor > > *", 0, 0, (void*)&SwigPyBuiltin__std__vectorT_CellDescriptor_t_clientdata, 0};
+static swig_type_info _swigt__p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t = {"_p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t", "std::vector< FieldDescriptor,std::allocator< FieldDescriptor > > *|std::vector< FieldDescriptor > *", 0, 0, (void*)&SwigPyBuiltin__std__vectorT_FieldDescriptor_t_clientdata, 0};
 static swig_type_info _swigt__p_swig__SwigPyIterator = {"_p_swig__SwigPyIterator", "swig::SwigPyIterator *", 0, 0, (void*)&SwigPyBuiltin__swig__SwigPyIterator_clientdata, 0};
 static swig_type_info _swigt__p_value_type = {"_p_value_type", "value_type *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_void = {"_p_void", "void *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Cell,
   &_swigt__p_CellAccessOptions,
   &_swigt__p_CellDescriptor,
+  &_swigt__p_FieldDescriptor,
   &_swigt__p_SwigPyObject,
   &_swigt__p_TRINITY_INTERFACES,
   &_swigt__p_allocator_type,
@@ -9993,15 +12815,19 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_p_PyObject,
   &_swigt__p_size_type,
   &_swigt__p_std__allocatorT_CellDescriptor_t,
+  &_swigt__p_std__allocatorT_FieldDescriptor_t,
   &_swigt__p_std__invalid_argument,
   &_swigt__p_std__vectorT_CellDescriptor_std__allocatorT_CellDescriptor_t_t,
+  &_swigt__p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t,
   &_swigt__p_swig__SwigPyIterator,
   &_swigt__p_value_type,
+  &_swigt__p_void,
 };
 
 static swig_cast_info _swigc__p_Cell[] = {  {&_swigt__p_Cell, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_CellAccessOptions[] = {  {&_swigt__p_CellAccessOptions, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_CellDescriptor[] = {  {&_swigt__p_CellDescriptor, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_FieldDescriptor[] = {  {&_swigt__p_FieldDescriptor, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_SwigPyObject[] = {  {&_swigt__p_SwigPyObject, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_TRINITY_INTERFACES[] = {  {&_swigt__p_TRINITY_INTERFACES, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_allocator_type[] = {  {&_swigt__p_allocator_type, 0, 0, 0},{0, 0, 0, 0}};
@@ -10010,15 +12836,19 @@ static swig_cast_info _swigc__p_difference_type[] = {  {&_swigt__p_difference_ty
 static swig_cast_info _swigc__p_p_PyObject[] = {  {&_swigt__p_p_PyObject, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_size_type[] = {  {&_swigt__p_size_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__allocatorT_CellDescriptor_t[] = {  {&_swigt__p_std__allocatorT_CellDescriptor_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__allocatorT_FieldDescriptor_t[] = {  {&_swigt__p_std__allocatorT_FieldDescriptor_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__invalid_argument[] = {  {&_swigt__p_std__invalid_argument, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_CellDescriptor_std__allocatorT_CellDescriptor_t_t[] = {  {&_swigt__p_std__vectorT_CellDescriptor_std__allocatorT_CellDescriptor_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t[] = {  {&_swigt__p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_swig__SwigPyIterator[] = {  {&_swigt__p_swig__SwigPyIterator, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_value_type[] = {  {&_swigt__p_value_type, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_void[] = {  {&_swigt__p_void, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Cell,
   _swigc__p_CellAccessOptions,
   _swigc__p_CellDescriptor,
+  _swigc__p_FieldDescriptor,
   _swigc__p_SwigPyObject,
   _swigc__p_TRINITY_INTERFACES,
   _swigc__p_allocator_type,
@@ -10027,10 +12857,13 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_p_PyObject,
   _swigc__p_size_type,
   _swigc__p_std__allocatorT_CellDescriptor_t,
+  _swigc__p_std__allocatorT_FieldDescriptor_t,
   _swigc__p_std__invalid_argument,
   _swigc__p_std__vectorT_CellDescriptor_std__allocatorT_CellDescriptor_t_t,
+  _swigc__p_std__vectorT_FieldDescriptor_std__allocatorT_FieldDescriptor_t_t,
   _swigc__p_swig__SwigPyIterator,
   _swigc__p_value_type,
+  _swigc__p_void,
 };
 
 
@@ -10773,6 +13606,29 @@ SWIG_init(void) {
   PyModule_AddObject(m, "cdesc_vec", (PyObject*) builtin_pytype);
   SwigPyBuiltin_AddPublicSymbol(public_interface, "cdesc_vec");
   d = md;
+  
+  /* type 'std::vector< FieldDescriptor >' */
+  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__std__vectorT_FieldDescriptor_t_type;
+  builtin_pytype->tp_dict = d = PyDict_New();
+  SwigPyBuiltin_SetMetaType(builtin_pytype, metatype);
+  builtin_pytype->tp_new = PyType_GenericNew;
+  builtin_base_count = 0;
+  builtin_bases[builtin_base_count] = NULL;
+  SwigPyBuiltin_InitBases(builtin_pytype, builtin_bases);
+  PyDict_SetItemString(d, "this", this_descr);
+  PyDict_SetItemString(d, "thisown", thisown_descr);
+  if (PyType_Ready(builtin_pytype) < 0) {
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'fdesc_vec'.");
+#if PY_VERSION_HEX >= 0x03000000
+    return NULL;
+#else
+    return;
+#endif
+  }
+  Py_INCREF(builtin_pytype);
+  PyModule_AddObject(m, "fdesc_vec", (PyObject*) builtin_pytype);
+  SwigPyBuiltin_AddPublicSymbol(public_interface, "fdesc_vec");
+  d = md;
   PyDict_SetItemString(md,(char*)"cvar", SWIG_globals());
   SwigPyBuiltin_AddPublicSymbol(public_interface, "cvar");
   SWIG_addvarlink(SWIG_globals(),(char*)"g_TrinityInterfaces",Swig_var_g_TrinityInterfaces_get, Swig_var_g_TrinityInterfaces_set);
@@ -10798,6 +13654,29 @@ SWIG_init(void) {
   Py_INCREF(builtin_pytype);
   PyModule_AddObject(m, "CellDescriptor", (PyObject*) builtin_pytype);
   SwigPyBuiltin_AddPublicSymbol(public_interface, "CellDescriptor");
+  d = md;
+  
+  /* type '::FieldDescriptor' */
+  builtin_pytype = (PyTypeObject *)&SwigPyBuiltin__FieldDescriptor_type;
+  builtin_pytype->tp_dict = d = PyDict_New();
+  SwigPyBuiltin_SetMetaType(builtin_pytype, metatype);
+  builtin_pytype->tp_new = PyType_GenericNew;
+  builtin_base_count = 0;
+  builtin_bases[builtin_base_count] = NULL;
+  SwigPyBuiltin_InitBases(builtin_pytype, builtin_bases);
+  PyDict_SetItemString(d, "this", this_descr);
+  PyDict_SetItemString(d, "thisown", thisown_descr);
+  if (PyType_Ready(builtin_pytype) < 0) {
+    PyErr_SetString(PyExc_TypeError, "Could not create type 'FieldDescriptor'.");
+#if PY_VERSION_HEX >= 0x03000000
+    return NULL;
+#else
+    return;
+#endif
+  }
+  Py_INCREF(builtin_pytype);
+  PyModule_AddObject(m, "FieldDescriptor", (PyObject*) builtin_pytype);
+  SwigPyBuiltin_AddPublicSymbol(public_interface, "FieldDescriptor");
   d = md;
   
   /* type '::Cell' */
