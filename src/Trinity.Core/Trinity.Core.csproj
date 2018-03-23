@@ -54,7 +54,7 @@
   </ItemGroup>
 
   <!-- NetFx does not pick up runtimes\{rid}\native, use assembly release technique. -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net451'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
     <EmbeddedResource Include="..\..\bin\Trinity.C.dll">
       <Link>Trinity.C.dll</Link>
     </EmbeddedResource>
