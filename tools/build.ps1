@@ -8,5 +8,6 @@ Invoke-Sub "$TRINITY_CLIENT_ROOT\build.ps1"
 New-Package -proj $TRINITY_STORAGE_COMPOSITE_SLN
 New-Package -proj $TRINITY_DYNAMICCLUSTER_SLN
 New-Package -proj $TRINITY_SERVICE_FABRIC_SLN
+New-Package -proj $TRINITY_JIT_SLN
 Invoke-Sub "$SPARK_MODULE_ROOT\build.ps1"
 Invoke-Sub "$TRINITY_FFI_ROOT\build.ps1"
