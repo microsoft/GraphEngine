@@ -28,6 +28,7 @@ namespace Trinity.FFI.Interop
     internal unsafe struct NativeTypeDescriptor
     {
         internal byte* TypeName;
+        internal byte* QualifiedName; // Full clr type name
         internal NativeTypeDescriptor* ElementType;
         internal NativeMemberDescriptor* Members;
         internal NativeAttributeDescriptor* TSLAttributes;
@@ -47,6 +48,7 @@ namespace Trinity.FFI.Interop
             var ret = new NativeTypeDescriptor
             {
                 TypeName = desc.TypeName.ToUtf8(),
+                QualifiedName = desc.QualifiedName.ToUtf8(),
                 TypeCode = desc.TypeCode.Tag,
                 NrMember = desc.Members.Count(),
                 NrTSLAttribute = desc.TSLAttributes.Count(),
@@ -55,19 +57,25 @@ namespace Trinity.FFI.Interop
 
             if (ret.NrMember == 0) ret.Members = null;
             else ret.Members = (NativeMemberDescriptor*)Memory.malloc((ulong)ret.NrMember * (ulong)sizeof(NativeMemberDescriptor));
-            for(int i=0;i<ret.NrMember;++i) { ret.Members[i] = desc.Members.ElementAt(i).ToNative(); }
+            for (int i = 0; i<ret.NrMember; ++i) { ret.Members[i] = desc.Members.ElementAt(i).ToNative(); }
 
             if (ret.ElementArity == 0) ret.ElementType = null;
             else ret.ElementType = (NativeTypeDescriptor*)Memory.malloc((ulong)ret.ElementArity * (ulong)sizeof(NativeTypeDescriptor));
-            for(int i=0;i<ret.ElementArity;++i) { ret.ElementType[i] = desc.ElementType.ElementAt(i).ToNative(); }
+            for (int i = 0; i<ret.ElementArity; ++i) { ret.ElementType[i] = desc.ElementType.ElementAt(i).ToNative(); }
 
             if (ret.NrTSLAttribute == 0) ret.TSLAttributes = null;
             else ret.TSLAttributes = (NativeAttributeDescriptor*)Memory.malloc((ulong)ret.NrTSLAttribute * (ulong)sizeof(NativeAttributeDescriptor));
-            for(int i=0;i<ret.NrTSLAttribute;++i) { ret.TSLAttributes[i] = desc.TSLAttributes.ElementAt(i).ToNative(); }
-
-            Console.WriteLine($"TypeDesc {desc.TypeName}");
+            for (int i = 0; i<ret.NrTSLAttribute; ++i) { ret.TSLAttributes[i] = desc.TSLAttributes.ElementAt(i).ToNative(); }
 
             return ret;
+        }
+
+        private static int Strlen(byte* name)
+        {
+            for(int len = 0; ; ++len)
+            {
+                if (*name++ == 0) return len;
+            }
         }
 
         internal static NativeMemberDescriptor ToNative(this MemberDescriptor desc)

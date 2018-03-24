@@ -9,6 +9,10 @@
 
 namespace std {
 	%template(tdesc_vec) vector<TypeDescriptor>;
+	%template(ptdesc_vec) vector<TypeDescriptor*>;
+	%template(pmdesc_vec) vector<MemberDescriptor*>;
+	%template(padesc_vec) vector<AttributeDescriptor*>;
+
 };
 
 %newobject NewCell;

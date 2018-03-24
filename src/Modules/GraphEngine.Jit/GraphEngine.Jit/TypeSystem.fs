@@ -23,6 +23,7 @@ type MemberDescriptor = {
 
 and TypeDescriptor = {
     TypeName              :  string 
+    QualifiedName         :  string
     ElementType           :  seq<TypeDescriptor>       // non-empty for container types
     Members               :  seq<MemberDescriptor>     // non-empty for structs
     TSLAttributes         :  seq<AttributeDescriptor>  // non-empty for cell/field with attributes
@@ -63,16 +64,19 @@ module Builder =
     let rec MakeFromType(T: Type) = 
         match T with
         | PrimitiveType tcode -> { TypeDescriptor.TypeName = T.Name
+                                   QualifiedName = T.AssemblyQualifiedName
                                    TSLAttributes = Seq.empty
                                    ElementType = Seq.empty
                                    Members = Seq.empty
                                    TypeCode = tcode }
         | ListType elem ->       { TypeDescriptor.TypeName = T.Name
+                                   QualifiedName = T.AssemblyQualifiedName
                                    TSLAttributes = Seq.empty
                                    ElementType = seq [ elem |> MakeFromType ]
                                    Members = Seq.empty
                                    TypeCode = TypeCode.LIST }
         | StructType members ->  { TypeDescriptor.TypeName = T.Name
+                                   QualifiedName = T.AssemblyQualifiedName
                                    TSLAttributes = Seq.empty
                                    ElementType = Seq.empty
                                    Members = members |> Seq.map (fun m ->
@@ -92,6 +96,7 @@ module Builder =
     let Make (cellDesc: ICellDescriptor) = 
         let members = Seq.map MakeMember <| cellDesc.GetFieldDescriptors()
         { TypeDescriptor.TypeName = cellDesc.TypeName
+          QualifiedName = cellDesc.Type.AssemblyQualifiedName
           ElementType = Seq.empty
           Members = members
           TSLAttributes = cellDesc.Attributes.Select(MakeAttr)

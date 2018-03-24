@@ -73,14 +73,10 @@ template<typename T, typename F> std::vector<T> __getarray(F f) {
     T* pelem = nullptr;
     std::vector<T> vec;
     if (TrinityErrorCode::E_SUCCESS == f((void**)&pelem, &size)) {
-        printf("success size=%d, array=%llx\n", size, pelem);
         while (size-- > 0) {
-            printf("before push\n");
             vec.push_back(std::move(*pelem++));
-            printf("push\n");
         }
     }
-    printf("returning\n");
     return vec;
 }
 

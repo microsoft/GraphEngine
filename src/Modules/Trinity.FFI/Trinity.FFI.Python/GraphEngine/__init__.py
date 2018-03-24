@@ -35,7 +35,7 @@ __Trinity = __import__('Trinity')
 # set default storage root to cwd/storage
 __Trinity.TrinityConfig.StorageRoot = join(os.getcwd(), "storage")
 # set default logging level
-__Trinity.TrinityConfig.LoggingLevel = __Trinity.Diagnostics.LogLevel.Debug
+__Trinity.TrinityConfig.LoggingLevel = __Trinity.Diagnostics.LogLevel.Info
 # load default configuration file
 __Trinity.TrinityConfig.LoadConfig(join(os.getcwd(), "trinity.xml"))
 # then initialize Trinity
