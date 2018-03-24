@@ -8,10 +8,10 @@ import Trinity.Storage.Composite
 
 def InspectType(typeDesc, indent=0):
     pad = ''.ljust(indent)
-    members = typeDesc.get_Members()
-    print("{}Type {}".format(pad, typeDesc.get_TypeName()))
-    print("{}  QualifiedName={}".format(pad, typeDesc.get_QualifiedName()))
-    print("{}  TypeCode={}".format(pad, typeDesc.get_TypeCode()))
+    members = typeDesc.Members
+    print("{}Type {}".format(pad, typeDesc.TypeName))
+    print("{}  QualifiedName={}".format(pad, typeDesc.QualifiedName))
+    print("{}  TypeCode={}".format(pad, typeDesc.TypeCode))
     print("{}  NrMember={}".format(pad, len(members)))
     for member in members:
         print("{}  Member {}".format(pad, member.Name))

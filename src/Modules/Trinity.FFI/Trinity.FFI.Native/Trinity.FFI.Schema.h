@@ -27,10 +27,10 @@ template<typename T, typename S> void __deepcopy_arr(T* &dst, S &dst_size, T* co
     else { dst = nullptr; dst_size = 0; }
 }
 
-template<typename T> std::vector<T*> __get_ptrs(T* arr, int len)
+template<typename T> std::vector<T*>* __get_ptrs(T* arr, int len)
 {
-    std::vector<T*> vec;
-    for(T* p = arr; p < arr + len; ++p) { vec.push_back(p); }
+    std::vector<T*>* vec = new std::vector<T*>();
+    for(T* p = arr; p < arr + len; ++p) { vec->push_back(p); }
     return vec;
 }
 
@@ -92,17 +92,17 @@ struct TypeDescriptor
         return strdup(QualifiedName);
     }
 
-    std::vector<TypeDescriptor*> get_ElementType()
+    std::vector<TypeDescriptor*>* get_ElementType()
     {
         return __get_ptrs(ElementType, ElementArity);
     }
 
-    std::vector<MemberDescriptor*> get_Members()
+    std::vector<MemberDescriptor*>* get_Members()
     {
         return __get_ptrs(Members, NrMember);
     }
 
-    std::vector<AttributeDescriptor*> get_TSLAttributes()
+    std::vector<AttributeDescriptor*>* get_TSLAttributes()
     {
         return __get_ptrs(TSLAttributes, NrTSLAttribute);
     }

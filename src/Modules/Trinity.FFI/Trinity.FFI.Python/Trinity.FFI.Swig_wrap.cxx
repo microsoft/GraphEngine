@@ -5775,6 +5775,24 @@ SWIGINTERN std::vector< AttributeDescriptor * >::iterator std_vector_Sl_Attribut
 SWIGINTERN std::vector< AttributeDescriptor * >::iterator std_vector_Sl_AttributeDescriptor_Sm__Sg__insert__SWIG_0(std::vector< AttributeDescriptor * > *self,std::vector< AttributeDescriptor * >::iterator pos,std::vector< AttributeDescriptor * >::value_type x){ return self->insert(pos, x); }
 SWIGINTERN void std_vector_Sl_AttributeDescriptor_Sm__Sg__insert__SWIG_1(std::vector< AttributeDescriptor * > *self,std::vector< AttributeDescriptor * >::iterator pos,std::vector< AttributeDescriptor * >::size_type n,std::vector< AttributeDescriptor * >::value_type x){ self->insert(pos, n, x); }
 
+#define TypeDescriptor_TypeName_get(self_) self_->get_TypeName()
+  
+
+#define TypeDescriptor_QualifiedName_get(self_) self_->get_QualifiedName()
+  
+
+#define TypeDescriptor_TypeCode_get(self_) self_->get_TypeCode()
+  
+
+#define TypeDescriptor_ElementType_get(self_) self_->get_ElementType()
+  
+
+#define TypeDescriptor_Members_get(self_) self_->get_Members()
+  
+
+#define TypeDescriptor_TSLAttributes_get(self_) self_->get_TSLAttributes()
+  
+
 SWIGINTERN swig_type_info*
 SWIG_pchar_descriptor(void)
 {
@@ -14827,20 +14845,20 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_TypeDescriptor_get_TypeName(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_TypeDescriptor_TypeName_get(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   TypeDescriptor *arg1 = (TypeDescriptor *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   char *result = 0 ;
   
-  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "TypeDescriptor_get_TypeName takes no arguments");
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "TypeDescriptor_TypeName_get takes no arguments");
   res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_TypeDescriptor, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TypeDescriptor_get_TypeName" "', argument " "1"" of type '" "TypeDescriptor *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TypeDescriptor_TypeName_get" "', argument " "1"" of type '" "TypeDescriptor *""'"); 
   }
   arg1 = reinterpret_cast< TypeDescriptor * >(argp1);
-  result = (char *)(arg1)->get_TypeName();
+  result = (char *)TypeDescriptor_TypeName_get(arg1);
   resultobj = SWIG_FromCharPtr((const char *)result);
   return resultobj;
 fail:
@@ -14848,20 +14866,20 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_TypeDescriptor_get_QualifiedName(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_TypeDescriptor_QualifiedName_get(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   TypeDescriptor *arg1 = (TypeDescriptor *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   char *result = 0 ;
   
-  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "TypeDescriptor_get_QualifiedName takes no arguments");
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "TypeDescriptor_QualifiedName_get takes no arguments");
   res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_TypeDescriptor, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TypeDescriptor_get_QualifiedName" "', argument " "1"" of type '" "TypeDescriptor *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TypeDescriptor_QualifiedName_get" "', argument " "1"" of type '" "TypeDescriptor *""'"); 
   }
   arg1 = reinterpret_cast< TypeDescriptor * >(argp1);
-  result = (char *)(arg1)->get_QualifiedName();
+  result = (char *)TypeDescriptor_QualifiedName_get(arg1);
   resultobj = SWIG_FromCharPtr((const char *)result);
   return resultobj;
 fail:
@@ -14869,84 +14887,84 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_TypeDescriptor_get_ElementType(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  TypeDescriptor *arg1 = (TypeDescriptor *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  std::vector< TypeDescriptor *,std::allocator< TypeDescriptor * > > result;
-  
-  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "TypeDescriptor_get_ElementType takes no arguments");
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_TypeDescriptor, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TypeDescriptor_get_ElementType" "', argument " "1"" of type '" "TypeDescriptor *""'"); 
-  }
-  arg1 = reinterpret_cast< TypeDescriptor * >(argp1);
-  result = (arg1)->get_ElementType();
-  resultobj = swig::from(static_cast< std::vector< TypeDescriptor*,std::allocator< TypeDescriptor * > > >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_TypeDescriptor_get_Members(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  TypeDescriptor *arg1 = (TypeDescriptor *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  std::vector< MemberDescriptor *,std::allocator< MemberDescriptor * > > result;
-  
-  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "TypeDescriptor_get_Members takes no arguments");
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_TypeDescriptor, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TypeDescriptor_get_Members" "', argument " "1"" of type '" "TypeDescriptor *""'"); 
-  }
-  arg1 = reinterpret_cast< TypeDescriptor * >(argp1);
-  result = (arg1)->get_Members();
-  resultobj = swig::from(static_cast< std::vector< MemberDescriptor*,std::allocator< MemberDescriptor * > > >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_TypeDescriptor_get_TSLAttributes(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  TypeDescriptor *arg1 = (TypeDescriptor *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  std::vector< AttributeDescriptor *,std::allocator< AttributeDescriptor * > > result;
-  
-  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "TypeDescriptor_get_TSLAttributes takes no arguments");
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_TypeDescriptor, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TypeDescriptor_get_TSLAttributes" "', argument " "1"" of type '" "TypeDescriptor *""'"); 
-  }
-  arg1 = reinterpret_cast< TypeDescriptor * >(argp1);
-  result = (arg1)->get_TSLAttributes();
-  resultobj = swig::from(static_cast< std::vector< AttributeDescriptor*,std::allocator< AttributeDescriptor * > > >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_TypeDescriptor_get_TypeCode(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_TypeDescriptor_TypeCode_get(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   TypeDescriptor *arg1 = (TypeDescriptor *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   int result;
   
-  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "TypeDescriptor_get_TypeCode takes no arguments");
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "TypeDescriptor_TypeCode_get takes no arguments");
   res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_TypeDescriptor, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TypeDescriptor_get_TypeCode" "', argument " "1"" of type '" "TypeDescriptor *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TypeDescriptor_TypeCode_get" "', argument " "1"" of type '" "TypeDescriptor *""'"); 
   }
   arg1 = reinterpret_cast< TypeDescriptor * >(argp1);
-  result = (int)(arg1)->get_TypeCode();
+  result = (int)TypeDescriptor_TypeCode_get(arg1);
   resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TypeDescriptor_ElementType_get(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  TypeDescriptor *arg1 = (TypeDescriptor *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  std::vector< TypeDescriptor *,std::allocator< TypeDescriptor * > > *result = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "TypeDescriptor_ElementType_get takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_TypeDescriptor, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TypeDescriptor_ElementType_get" "', argument " "1"" of type '" "TypeDescriptor *""'"); 
+  }
+  arg1 = reinterpret_cast< TypeDescriptor * >(argp1);
+  result = (std::vector< TypeDescriptor *,std::allocator< TypeDescriptor * > > *)TypeDescriptor_ElementType_get(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_TypeDescriptor_p_std__allocatorT_TypeDescriptor_p_t_t, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TypeDescriptor_Members_get(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  TypeDescriptor *arg1 = (TypeDescriptor *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  std::vector< MemberDescriptor *,std::allocator< MemberDescriptor * > > *result = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "TypeDescriptor_Members_get takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_TypeDescriptor, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TypeDescriptor_Members_get" "', argument " "1"" of type '" "TypeDescriptor *""'"); 
+  }
+  arg1 = reinterpret_cast< TypeDescriptor * >(argp1);
+  result = (std::vector< MemberDescriptor *,std::allocator< MemberDescriptor * > > *)TypeDescriptor_Members_get(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_MemberDescriptor_p_std__allocatorT_MemberDescriptor_p_t_t, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TypeDescriptor_TSLAttributes_get(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  TypeDescriptor *arg1 = (TypeDescriptor *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  std::vector< AttributeDescriptor *,std::allocator< AttributeDescriptor * > > *result = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "TypeDescriptor_TSLAttributes_get takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_TypeDescriptor, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TypeDescriptor_TSLAttributes_get" "', argument " "1"" of type '" "TypeDescriptor *""'"); 
+  }
+  arg1 = reinterpret_cast< TypeDescriptor * >(argp1);
+  result = (std::vector< AttributeDescriptor *,std::allocator< AttributeDescriptor * > > *)TypeDescriptor_TSLAttributes_get(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_AttributeDescriptor_p_std__allocatorT_AttributeDescriptor_p_t_t, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -17252,9 +17270,27 @@ static PyHeapTypeObject SwigPyBuiltin__AttributeDescriptor_type = {
 SWIGINTERN SwigPyClientData SwigPyBuiltin__AttributeDescriptor_clientdata = {0, 0, 0, 0, 0, 0, (PyTypeObject *)&SwigPyBuiltin__AttributeDescriptor_type};
 
 SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_TypeDescriptor)
+static SwigPyGetSet TypeDescriptor_QualifiedName_getset = { _wrap_TypeDescriptor_QualifiedName_get, 0 };
+static SwigPyGetSet TypeDescriptor_TypeCode_getset = { _wrap_TypeDescriptor_TypeCode_get, 0 };
+static SwigPyGetSet TypeDescriptor_Members_getset = { _wrap_TypeDescriptor_Members_get, 0 };
 static SwigPyGetSet TypeDescriptor___dict___getset = { SwigPyObject_get___dict__, 0 };
+static SwigPyGetSet TypeDescriptor_ElementType_getset = { _wrap_TypeDescriptor_ElementType_get, 0 };
+static SwigPyGetSet TypeDescriptor_TSLAttributes_getset = { _wrap_TypeDescriptor_TSLAttributes_get, 0 };
+static SwigPyGetSet TypeDescriptor_TypeName_getset = { _wrap_TypeDescriptor_TypeName_get, 0 };
 SWIGINTERN PyGetSetDef SwigPyBuiltin__TypeDescriptor_getset[] = {
+    { (char*) "QualifiedName", (getter) SwigPyBuiltin_GetterClosure, (setter) 0, (char*)"TypeDescriptor.QualifiedName", (void*) &TypeDescriptor_QualifiedName_getset }
+,
+    { (char*) "TypeCode", (getter) SwigPyBuiltin_GetterClosure, (setter) 0, (char*)"TypeDescriptor.TypeCode", (void*) &TypeDescriptor_TypeCode_getset }
+,
+    { (char*) "Members", (getter) SwigPyBuiltin_GetterClosure, (setter) 0, (char*)"TypeDescriptor.Members", (void*) &TypeDescriptor_Members_getset }
+,
     { (char*) "__dict__", (getter) SwigPyBuiltin_GetterClosure, (setter) 0, (char*)"TypeDescriptor.__dict__", (void*) &TypeDescriptor___dict___getset }
+,
+    { (char*) "ElementType", (getter) SwigPyBuiltin_GetterClosure, (setter) 0, (char*)"TypeDescriptor.ElementType", (void*) &TypeDescriptor_ElementType_getset }
+,
+    { (char*) "TSLAttributes", (getter) SwigPyBuiltin_GetterClosure, (setter) 0, (char*)"TypeDescriptor.TSLAttributes", (void*) &TypeDescriptor_TSLAttributes_getset }
+,
+    { (char*) "TypeName", (getter) SwigPyBuiltin_GetterClosure, (setter) 0, (char*)"TypeDescriptor.TypeName", (void*) &TypeDescriptor_TypeName_getset }
 ,
     {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
 };
@@ -17279,12 +17315,6 @@ SwigPyBuiltin__TypeDescriptor_richcompare(PyObject *self, PyObject *other, int o
 }
 
 SWIGINTERN PyMethodDef SwigPyBuiltin__TypeDescriptor_methods[] = {
-  { "get_TypeName", (PyCFunction) _wrap_TypeDescriptor_get_TypeName, METH_VARARGS, (char*) "" },
-  { "get_QualifiedName", (PyCFunction) _wrap_TypeDescriptor_get_QualifiedName, METH_VARARGS, (char*) "" },
-  { "get_ElementType", (PyCFunction) _wrap_TypeDescriptor_get_ElementType, METH_VARARGS, (char*) "" },
-  { "get_Members", (PyCFunction) _wrap_TypeDescriptor_get_Members, METH_VARARGS, (char*) "" },
-  { "get_TSLAttributes", (PyCFunction) _wrap_TypeDescriptor_get_TSLAttributes, METH_VARARGS, (char*) "" },
-  { "get_TypeCode", (PyCFunction) _wrap_TypeDescriptor_get_TypeCode, METH_VARARGS, (char*) "" },
   { NULL, NULL, 0, NULL } /* Sentinel */
 };
 
