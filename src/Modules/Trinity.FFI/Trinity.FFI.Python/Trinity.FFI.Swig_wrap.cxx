@@ -8554,6 +8554,19 @@ fail:
 }
 
 
+SWIGINTERN int _wrap_new_AttributeDescriptor(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  AttributeDescriptor *result = 0 ;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "new_AttributeDescriptor takes no arguments");
+  result = (AttributeDescriptor *)new AttributeDescriptor();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_AttributeDescriptor, SWIG_BUILTIN_INIT |  0 );
+  return resultobj == Py_None ? -1 : 0;
+fail:
+  return -1;
+}
+
+
 SWIGINTERN PyObject *_wrap_delete_AttributeDescriptor(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   AttributeDescriptor *arg1 = (AttributeDescriptor *) 0 ;
@@ -8571,19 +8584,6 @@ SWIGINTERN PyObject *_wrap_delete_AttributeDescriptor(PyObject *self, PyObject *
   return resultobj;
 fail:
   return NULL;
-}
-
-
-SWIGINTERN int _wrap_new_AttributeDescriptor(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  AttributeDescriptor *result = 0 ;
-  
-  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "new_AttributeDescriptor takes no arguments");
-  result = (AttributeDescriptor *)new AttributeDescriptor();
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_AttributeDescriptor, SWIG_BUILTIN_INIT |  0 );
-  return resultobj == Py_None ? -1 : 0;
-fail:
-  return -1;
 }
 
 
