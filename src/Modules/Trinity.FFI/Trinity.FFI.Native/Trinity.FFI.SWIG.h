@@ -4,7 +4,7 @@
 #include "Trinity.FFI.Native.h"
 #include "Trinity.FFI.Schema.h"
 
-extern TRINITY_INTERFACES* g_TrinityInterfaces;
+TRINITY_INTERFACES* g_TrinityInterfaces;
 
 void Init()
 {
@@ -69,25 +69,23 @@ public:
 };
 
 template<typename T, typename F> std::vector<T> __getarray(F f) {
-    std::vector<T> vec;
     long size = 0;
     T* pelem = nullptr;
+    std::vector<T> vec;
     if (TrinityErrorCode::E_SUCCESS == f((void**)&pelem, &size)) {
+        printf("success size=%d, array=%llx\n", size, pelem);
         while (size-- > 0) {
-            vec.push_back(*pelem++);
+            printf("before push\n");
+            vec.push_back(std::move(*pelem++));
+            printf("push\n");
         }
     }
+    printf("returning\n");
     return vec;
 }
 
-std::vector<CellDescriptor> GetCellDescriptors() {
-    return __getarray<CellDescriptor>(g_TrinityInterfaces->schema_get);
-}
-
-std::vector<FieldDescriptor> GetFieldDescriptors(CellDescriptor* cellDesc) {
-    return __getarray<FieldDescriptor>( [=](void** pe, long* ps) {
-        return g_TrinityInterfaces->schema_fields(cellDesc->Handle, pe, ps); 
-    });
+std::vector<TypeDescriptor> GetCellDescriptors() {
+    return __getarray<TypeDescriptor>(g_TrinityInterfaces->schema_get);
 }
 
 Cell* LoadCell(long long cellId) {

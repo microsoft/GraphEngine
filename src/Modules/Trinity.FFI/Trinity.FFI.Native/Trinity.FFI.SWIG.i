@@ -8,16 +8,12 @@
 %include "std_vector.i"
 
 namespace std {
-	%template(cdesc_vec) vector<CellDescriptor>;
-	%template(fdesc_vec) vector<FieldDescriptor>;
+	%template(tdesc_vec) vector<TypeDescriptor>;
 };
-
-%inline %{
-static TRINITY_INTERFACES* g_TrinityInterfaces;
-%}
 
 %newobject NewCell;
 %newobject LoadCell;
 
 %include "Trinity.FFI.Schema.h"
 %include "Trinity.FFI.SWIG.h"
+

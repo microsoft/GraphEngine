@@ -1,4 +1,5 @@
-﻿#pragma warning disable CS0169
+﻿/*
+#pragma warning disable CS0169
 using System;
 using Xunit;
 
@@ -582,3 +583,4 @@ namespace Trinity.FFI.UnitTests
         }
     }
 }
+*/

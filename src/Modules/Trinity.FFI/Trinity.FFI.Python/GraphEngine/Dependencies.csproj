@@ -6,9 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FSharp.Core" Version="4.2.3" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
     <PackageReference Include="GraphEngine.Storage.Composite" Version="2.0.9328" />
+    <PackageReference Include="GraphEngine.Jit" Version="2.0.9328" />
     <PackageReference Include="GraphEngine.FFI" Version="2.0.9328" />
     <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="2.0.0" />
   </ItemGroup>

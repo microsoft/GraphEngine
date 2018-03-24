@@ -43,7 +43,6 @@ namespace Trinity.FFI
 			local_savecell_4 = LocalStorage.savecell_4,
 			local_removecell = LocalStorage.removecell,
 			schema_get = Schema.get,
-			schema_fields = Schema.fields,
         };
 
         public static void Initialize()

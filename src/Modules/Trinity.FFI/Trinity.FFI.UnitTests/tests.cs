@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Xunit;
-
+/*
 namespace Trinity.FFI.UnitTests
 {
     public struct TestStruct_1
@@ -147,3 +147,4 @@ namespace Trinity.FFI.UnitTests
         }
     }
 }
+*/

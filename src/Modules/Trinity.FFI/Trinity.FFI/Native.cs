@@ -45,8 +45,7 @@ namespace Trinity.FFI
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_SAVECELL_3(IntPtr p0);
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_SAVECELL_4([MarshalAs(UnmanagedType.I4)]CellAccessOptions p0, IntPtr p1);
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_REMOVECELL(Int64 p0);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_SCHEMA_GET(out CellDescriptor[] p0, out Int32 p1);
-    internal unsafe delegate TrinityErrorCode TRINITY_FFI_SCHEMA_FIELDS(IntPtr p0, out FieldDescriptor[] p1, out Int32 p2);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_SCHEMA_GET(out NativeTypeDescriptor[] p0, out Int32 p1);
 
     internal struct TRINITY_INTERFACES
     {
@@ -110,8 +109,6 @@ namespace Trinity.FFI
         public TRINITY_FFI_LOCAL_REMOVECELL local_removecell;
         [MarshalAs(UnmanagedType.FunctionPtr)]
         public TRINITY_FFI_SCHEMA_GET schema_get;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_SCHEMA_FIELDS schema_fields;
     };
 
     internal static unsafe class Native

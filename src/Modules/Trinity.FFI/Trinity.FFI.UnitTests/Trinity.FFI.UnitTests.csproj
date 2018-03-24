@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
+    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
+
     <AllowUnsafe>true</AllowUnsafe>
     <NoWarn>MSB4018</NoWarn>
     <IsPackable>false</IsPackable>
@@ -10,6 +12,8 @@
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
     <PackageReference Include="GraphEngine.FFI" Version="2.0.9328" />
+    <PackageReference Include="GraphEngine.Jit" Version="2.0.9328" />
+    <PackageReference Include="GraphEngine.Storage.Composite" Version="2.0.9328" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.0-beta1-build3642" />
     <PackageReference Include="xunit" Version="2.2.0" />
@@ -17,7 +21,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TslCodegen Include="**/*.tsl" />
     <Compile Remove="Properties/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="tsl3\def.tsl" />
+    <TslCodegen Remove="tsl3\def.tsl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="tsl3\def.tsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

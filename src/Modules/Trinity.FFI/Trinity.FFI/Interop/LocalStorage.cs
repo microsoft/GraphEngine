@@ -16,9 +16,7 @@ namespace Trinity.FFI.Interop
         {
             try
             {
-                ICell c = Global.LocalStorage.LoadGenericCell(cellId);
-                GCHandle handle = GCHandle.Alloc(c);
-                cell = GCHandle.ToIntPtr(handle);
+                cell = Global.LocalStorage.LoadGenericCell(cellId).GCHandle();
                 return TrinityErrorCode.E_SUCCESS;
             }
             catch (Exception ex)
@@ -34,8 +32,7 @@ namespace Trinity.FFI.Interop
         {
             try
             {
-                ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
-                Global.LocalStorage.SaveGenericCell(cellId, c);
+                Global.LocalStorage.SaveGenericCell(cellId, cell.Target<ICell>());
                 return TrinityErrorCode.E_SUCCESS;
             }
             catch
@@ -49,9 +46,7 @@ namespace Trinity.FFI.Interop
         {
             try
             {
-                ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
-                c.CellId = cellId;
-                Global.LocalStorage.SaveGenericCell(options, c);
+                Global.LocalStorage.SaveGenericCell(options, cellId, cell.Target<ICell>());
                 return TrinityErrorCode.E_SUCCESS;
             }
             catch
@@ -65,8 +60,7 @@ namespace Trinity.FFI.Interop
         {
             try
             {
-                ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
-                Global.LocalStorage.SaveGenericCell(c);
+                Global.LocalStorage.SaveGenericCell(cell.Target<ICell>());
                 return TrinityErrorCode.E_SUCCESS;
             }
             catch
@@ -80,8 +74,7 @@ namespace Trinity.FFI.Interop
         {
             try
             {
-                ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
-                Global.LocalStorage.SaveGenericCell(options, c);
+                Global.LocalStorage.SaveGenericCell(options, cell.Target<ICell>());
                 return TrinityErrorCode.E_SUCCESS;
             }
             catch
