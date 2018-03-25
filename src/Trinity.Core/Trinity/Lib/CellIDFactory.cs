@@ -82,9 +82,9 @@ namespace Trinity.Core.Lib
     /// <summary>
     /// A utility class for generating 64-bit cell ids.
     /// </summary>
-    public unsafe static class CellIDFactory
+    public unsafe static class CellIdFactory
     {
-        static CellIDFactory()
+        static CellIdFactory()
         {
             rand = new XRandom(Environment.TickCount);
         }
@@ -103,29 +103,11 @@ namespace Trinity.Core.Lib
         }
 
         /// <summary>
-        /// Obsolete. Use NewCellId() instead.
-        /// </summary>
-        /// <returns>A new 64-bit cell id.</returns>
-        public static long NewCellID()
-        {
-            return NewCellId();
-        }
-
-        /// <summary>
         /// Generates a sequentially incremented 64-bit cell id.
         /// </summary>
         /// <returns>A new 64-bit cell id.</returns>
         /// <remarks>This is a thread-safe method that you can call to get a new cell id.</remarks> 
         public static long NextSequentialCellId()
-        {
-            return Interlocked.Increment(ref sn);
-        }
-
-        /// <summary>
-        /// Obsolete. Use NextSequentialCellId() instead.
-        /// </summary>
-        /// <returns>A new 64-bit cell id.</returns>
-        public static long NextSequentialCellID()
         {
             return Interlocked.Increment(ref sn);
         }

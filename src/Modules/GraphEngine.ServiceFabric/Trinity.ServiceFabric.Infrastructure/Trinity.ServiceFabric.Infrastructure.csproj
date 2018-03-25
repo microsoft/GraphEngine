@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net461</TargetFrameworks>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Version>2.0.9328.0</Version>
+    <FileVersion>2.0.9328.0</FileVersion>
+    <AssemblyVersion>2.0.9328.0</AssemblyVersion>
+    <PackageVersion>2.0.9328</PackageVersion>
+    <Authors>Microsoft Graph Engine Team</Authors>
+    <Company>Microsoft Corporation</Company>
+    <Description>Provides GraphEngine-specific Service Fabric runtime support.</Description>
+    <Copyright>Copyright 2018</Copyright>
+    <Title>GraphEngine Service Fabric Infrastructure Runtime</Title>
+    <PackageTags>Graph Engine Trinity Service Fabric Dynamic Cluster</PackageTags>
+    <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
+    <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
+    <PackageId>GraphEngine.ServiceFabric.Infrastructure</PackageId>
+    <OutputPath>..\..\..\..\bin</OutputPath>
+    <PlatformTarget>x64</PlatformTarget>
+    <Platforms>x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
+    <PackageReference Include="GraphEngine.DynamicCluster" Version="2.0.9328" />
+    <PackageReference Include="Microsoft.ServiceFabric" version="6.0.232" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data" version="2.8.232" />
+    <PackageReference Include="Microsoft.ServiceFabric.Diagnostics.Internal" version="2.8.232" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" version="2.8.232" />
+    <PackageReference Include="Nito.AsyncEx.Tasks" version="1.1.0" />
+    <PackageReference Include="Nito.Disposables" version="1.0.0" />
+    <PackageReference Include="System.Collections.Immutable" version="1.4.0" />
+    <PackageReference Include="System.IO.Compression.ZipFile" version="4.3.0" />
+    <PackageReference Include="System.Runtime.Numerics" version="4.3.0" />
+    <PackageReference Include="System.ValueTuple" version="4.4.0" />
+  </ItemGroup>
+</Project>

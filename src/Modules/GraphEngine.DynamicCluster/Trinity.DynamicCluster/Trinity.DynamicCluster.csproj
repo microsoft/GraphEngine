@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <AssemblyName>Trinity.DynamicCluster</AssemblyName>
+    <RootNamespace>Trinity.DynamicCluster</RootNamespace>
+    <OutputPath>..\..\..\..\bin</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.Client" Version="2.0.9328" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
+    <PackageReference Include="Nito.AsyncEx.Coordination" Version="1.0.2" />
+    <PackageReference Include="Nito.AsyncEx.Tasks" Version="1.1.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TslCodegen Include="**/*.tsl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\names.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\names.txt" />
+  </ItemGroup>
+
+  <!-- NuGet package metadata -->
+  <PropertyGroup>
+    <Authors>Microsoft Graph Engine Team</Authors>
+    <Description>Dynamic cluster orchestration for Graph Engine</Description>
+    <Copyright>Copyright 2018</Copyright>
+    <Company>Microsoft Corporation</Company>
+
+    <Version>2.0.9328</Version>
+    <AssemblyVersion>2.0.9328.0</AssemblyVersion>
+    <FileVersion>2.0.9328.0</FileVersion>
+    <PackageVersion>2.0.9328</PackageVersion>
+
+    <PackageId>GraphEngine.DynamicCluster</PackageId>
+    <Title>GraphEngine DynamicCluster</Title>
+    <PackageTags>Graph Engine Trinity Cluster Management</PackageTags>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
+    <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/Microsoft/GraphEngine</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+</Project>

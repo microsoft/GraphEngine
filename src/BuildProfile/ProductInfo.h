@@ -6,11 +6,11 @@
 #ifndef TRINITY_PRODUCT_INFO
 #define TRINITY_PRODUCT_INFO
 
-#define FILEVER 1,0,8850,0
-#define PRODUCTVER 1,0,8850,0
+#define FILEVER 2.0.9328,0
+#define PRODUCTVER 2.0.9328,0
 
-#define PRODUCT_FILE_VERSION "1.0.8850.0"
-#define PRODUCT_VERSION "1.0.8850.0"
+#define PRODUCT_FILE_VERSION "2.0.9328.0"
+#define PRODUCT_VERSION "2.0.9328.0"
 #define PRODUCT_NAME "Graph Engine"
 #define PRODUCT_COMPANY_NAME "Microsoft Corporation"
 #define PRODUCT_COPYRIGHT "© Microsoft Corporation.  All rights reserved."

@@ -11,7 +11,7 @@ using Trinity.TSL.Lib;
 
 namespace Trinity.Storage
 {
-    partial class LocalMemoryStorage : Storage
+    partial class LocalMemoryStorage
     {
         private Action<LocalMemoryStorage, ICell>                                m_SaveGenericCell_ICell;
         private Action<LocalMemoryStorage, long, ICell>                    		 m_SaveGenericCell_long_ICell;
@@ -191,6 +191,7 @@ namespace Trinity.Storage
             m_NewGenericCell_string_string                 = operations.NewGenericCell;
             m_UseGenericCell_long                          = operations.UseGenericCell;
             m_UseGenericCell_long_CellAccessOptions        = operations.UseGenericCell;
+            m_UseGenericCell_long_CellAccessOptions_string = operations.UseGenericCell;
             m_EnumerateGenericCells                        = operations.EnumerateGenericCells;
             m_EnumerateGenericCellAccessors                = operations.EnumerateGenericCellAccessors;
         }

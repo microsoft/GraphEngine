@@ -1,0 +1,6 @@
+﻿cell C1
+{
+	int foo;
+	optional int baz;
+	string bar;
+}

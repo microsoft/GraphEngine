@@ -1,0 +1,56 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Reflection" #>
+<#
+    Assembly ffi_asm   = typeof(FFIExportAttribute).Assembly;
+    var export_methods = from type in ffi_asm.GetTypes()
+                         select type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic) into method
+                         from m in method
+                         where m.GetCustomAttribute<FFIExportAttribute>() != null
+                         select m;
+#>
+/***********************************
+
+  Auto-generated from Native.tt
+
+ ***********************************/
+
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Text;
+using Trinity.TSL.Lib;
+using Trinity.FFI.Interop;
+
+namespace Trinity.FFI
+{
+    internal unsafe delegate string TRINITY_FFI_SYNC_HANDLER(string content);
+    internal unsafe delegate void TRINITY_FFI_ASYNC_HANDLER(string content);
+
+<# 
+	foreach(var m in export_methods)
+	{#>
+    internal unsafe delegate <#=Helper.GenerateReturnType(m)#> TRINITY_FFI_<#=Helper.GenerateName(m).ToUpper()#>(<#=Helper.GenerateParameterList(m)#>);
+<#
+	}#>
+
+    internal struct TRINITY_INTERFACES
+    {
+<# 
+	foreach(var m in export_methods)
+	{#>
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_<#=Helper.GenerateName(m).ToUpper() + " " + Helper.GenerateName(m)#>;
+<#
+	}#>
+    };
+
+    internal static unsafe class Native
+    {
+        [DllImport("trinity_ffi", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+        internal static extern void TRINITY_FFI_SET_INTERFACES(ref TRINITY_INTERFACES interfaces);
+    }
+}

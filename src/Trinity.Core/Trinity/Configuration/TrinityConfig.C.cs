@@ -55,9 +55,6 @@ namespace Trinity
         internal static extern void CSetGCDefragInterval(int value);
 
         [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-        internal static extern unsafe void CLogInitializeLogger(string logDir);
-
-        [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
         internal static extern void CLogSetLogLevel(LogLevel level);
 
         [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]

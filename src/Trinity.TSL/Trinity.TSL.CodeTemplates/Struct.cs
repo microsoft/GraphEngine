@@ -140,31 +140,24 @@ namespace t_Namespace
     /// <summary>
     /// Provides in-place operations of t_struct_name defined in TSL.
     /// </summary>
-    public unsafe partial class t_struct_name_Accessor : __meta
+    public unsafe partial class t_struct_name_Accessor : __meta, IAccessor
     {
         ///<summary>
         ///The pointer to the content of the object.
         ///</summary>
-        internal byte* CellPtr;
-        internal long? CellID;
-
-        [IF("!%struct_fixed")]
-        internal ResizeFunctionDelegate ResizeFunction;
-
-        [END]
-
-        [MUTE]
-        internal unsafe t_struct_name_Accessor(byte* _CellPtr) { throw new NotImplementedException(); }
-        [MUTE_END]
+        internal byte* m_ptr;
+        internal long CellId;
 
         internal unsafe t_struct_name_Accessor(byte* _CellPtr
             /*IF("!%struct_fixed")*/
             , ResizeFunctionDelegate func
             /*END*/)
         {
-            CellPtr = _CellPtr;
+            m_ptr = _CellPtr;
             IF("!%struct_fixed");
             ResizeFunction = func;
+            ELSE();
+            ResizeFunction = (a,b,c) => { return Throw.invalid_resize_on_fixed_struct(); };
             END();
 
             FOREACH();
@@ -180,13 +173,32 @@ namespace t_Namespace
         ///</summary>
         public byte[] ToByteArray()
         {
-            byte* targetPtr = CellPtr;
+            byte* targetPtr = m_ptr;
             MODULE_CALL("PushPointerThroughStruct", "node");
-            int size = (int)(targetPtr - CellPtr);
+            int size = (int)(targetPtr - m_ptr);
             byte[] ret = new byte[size];
-            Memory.Copy(CellPtr, 0, ret, 0, size);
+            Memory.Copy(m_ptr, 0, ret, 0, size);
             return ret;
         }
+
+        #region IAccessor
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return m_ptr;
+        }
+
+        public unsafe int GetBufferLength()
+        {
+            byte* targetPtr = m_ptr;
+
+            MODULE_CALL("PushPointerThroughStruct", "node");
+
+            int size = (int)(targetPtr - m_ptr);
+            return size;
+        }
+
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+        #endregion
 
         [MODULE_CALL("AccessorFieldsDefinition", "node")]
 

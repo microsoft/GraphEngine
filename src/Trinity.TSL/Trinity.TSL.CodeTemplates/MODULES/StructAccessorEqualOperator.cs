@@ -21,15 +21,15 @@ namespace t_Namespace
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
                 return false;
             // If both are same instance, return true.
-            if (a.CellPtr == b.CellPtr) return true;
-            byte* targetPtr = a.CellPtr;
+            if (a.m_ptr == b.m_ptr) return true;
+            byte* targetPtr = a.m_ptr;
             MODULE_CALL("PushPointerThroughStruct", "node");
-            int lengthA = (int)(targetPtr - a.CellPtr);
-            targetPtr = b.CellPtr;
+            int lengthA = (int)(targetPtr - a.m_ptr);
+            targetPtr = b.m_ptr;
             MODULE_CALL("PushPointerThroughStruct", "node");
-            int lengthB = (int)(targetPtr - b.CellPtr);
+            int lengthB = (int)(targetPtr - b.m_ptr);
             if(lengthA != lengthB) return false;
-            return Memory.Compare(a.CellPtr,b.CellPtr,lengthA);
+            return Memory.Compare(a.m_ptr,b.m_ptr,lengthA);
         }
 
         public static bool operator != (t_struct_name_Accessor a, t_struct_name_Accessor b)

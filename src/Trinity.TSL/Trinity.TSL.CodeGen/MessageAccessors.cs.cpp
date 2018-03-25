@@ -21,6 +21,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Trinity.Core.Lib;
 using Trinity.Network.Messaging;
+using Trinity.Storage;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
 namespace )::");
@@ -159,7 +160,57 @@ std::string* module_content = Modules::SerializeParametersToBuffer((*(node))[ite
 }
 source->append(R"::(
             buffer = tmpcellptr - preservedHeaderLength;
-            this.CellPtr = buffer + preservedHeaderLength;
+            this.m_ptr = buffer + preservedHeaderLength;
+            Length = BufferLength - preservedHeaderLength;
+            )::");
+if ((*(node))[iterator_1]->getLayoutType() != LT_FIXED)
+{
+source->append(R"::(
+            this.ResizeFunction = WriterResizeFunction;
+            )::");
+}
+source->append(R"::(
+        }
+        internal unsafe )::");
+source->append(Codegen::GetString((*(node))[iterator_1]->name));
+source->append(R"::(Writer(int asyncRspHeaderLength, )::");
+for (size_t iterator_2 = 0; iterator_2 < ((*(node))[iterator_1]->fieldList)->size();++iterator_2)
+{
+source->append(R"::( )::");
+source->append(Codegen::GetString((*((*(node))[iterator_1]->fieldList))[iterator_2]->fieldType));
+source->append(R"::( )::");
+source->append(Codegen::GetString((*((*(node))[iterator_1]->fieldList))[iterator_2]->name));
+source->append(R"::( = default()::");
+source->append(Codegen::GetString((*((*(node))[iterator_1]->fieldList))[iterator_2]->fieldType));
+source->append(R"::() )::");
+if (iterator_2 < ((*(node))[iterator_1]->fieldList)->size() - 1)
+source->append(",");
+}
+source->append(R"::()
+            : base(null
+                  )::");
+if ((*(node))[iterator_1]->getLayoutType() != LT_FIXED)
+{
+source->append(R"::(
+                  , null
+                  )::");
+}
+source->append(R"::( )
+        {
+            int preservedHeaderLength = TrinityProtocol.MsgHeader + asyncRspHeaderLength;
+            )::");
+
+{
+    ModuleContext module_ctx;
+    module_ctx.m_stack_depth = 0;
+module_ctx.m_arguments.push_back(Codegen::GetString("message"));
+std::string* module_content = Modules::SerializeParametersToBuffer((*(node))[iterator_1], &module_ctx);
+    source->append(*module_content);
+    delete module_content;
+}
+source->append(R"::(
+            buffer = tmpcellptr - preservedHeaderLength;
+            this.m_ptr = buffer + preservedHeaderLength;
             Length = BufferLength - preservedHeaderLength;
             )::");
 if ((*(node))[iterator_1]->getLayoutType() != LT_FIXED)
@@ -176,53 +227,57 @@ if ((*(node))[iterator_1]->getLayoutType() != LT_FIXED)
 source->append(R"::(
         private byte* WriterResizeFunction(byte* ptr, int ptr_offset, int delta)
         {
+            int curlen = Length;
+            int tgtlen = curlen + delta;
             if (delta >= 0)
             {
                 byte* currentBufferPtr = buffer;
-                int required_length = (int)(this.Length + delta + (this.CellPtr - currentBufferPtr));
+                int required_length = (int)(tgtlen + (this.m_ptr - currentBufferPtr));
+                if(required_length < curlen) throw new AccessorResizeException("Accessor size overflow.");
                 if (required_length <= BufferLength)
                 {
                     Memory.memmove(
                         ptr + ptr_offset + delta,
                         ptr + ptr_offset,
-                        (ulong)(Length - (ptr + ptr_offset - this.CellPtr)));
-                    Length += delta;
+                        (ulong)(curlen - (ptr + ptr_offset - this.m_ptr)));
+                    Length = tgtlen;
                     return ptr;
                 }
                 else
                 {
-                    int target_length = BufferLength << 1;
-                    while (target_length < required_length)
+                    while (BufferLength < required_length)
                     {
-                        target_length = (target_length << 1);
+                        if (int.MaxValue - BufferLength >= (BufferLe)::");
+source->append(R"::(ngth>>1)) BufferLength += (BufferLength >> 1);
+                        else if (int.MaxValue - BufferLength >= (1 << 20)) BufferLength += (1 << 20);
+                        else BufferLength = int.MaxValue;
                     }
-                    byte* tmpBuffer = (byte*)Memory.malloc((ulong)target_length);
-                    Memory.me)::");
-source->append(R"::(mcpy(
+                    byte* tmpBuffer = (byte*)Memory.malloc((ulong)BufferLength);
+                    Memory.memcpy(
                         tmpBuffer,
                         currentBufferPtr,
                         (ulong)(ptr + ptr_offset - currentBufferPtr));
-                    byte* newCellPtr = tmpBuffer + (this.CellPtr - currentBufferPtr);
+                    byte* newCellPtr = tmpBuffer + (this.m_ptr - currentBufferPtr);
                     Memory.memcpy(
                         newCellPtr + (ptr_offset + delta),
                         ptr + ptr_offset,
-                        (ulong)(Length - (ptr + ptr_offset - this.CellPtr)));
-                    Length += delta;
-                    this.CellPtr = newCellPtr;
+                        (ulong)(curlen - (ptr + ptr_offset - this.m_ptr)));
+                    Length = tgtlen;
+                    this.m_ptr = newCellPtr;
                     Memory.free(buffer);
                     buffer = tmpBuffer;
-                    BufferLength = target_length;
-                    return tmpBuffer + (ptr - currentBufferPtr);
+                    return tmpBuffer + (ptr - currentB)::");
+source->append(R"::(ufferPtr);
                 }
             }
             else
             {
+                if (curlen + delta < 0) throw new AccessorResizeException("Accessor target size underflow.");
                 Memory.memmove(
                     ptr + ptr_offset,
                     ptr + ptr_offset - delta,
-                    (ulong)(Length - (ptr + ptr_offset - delta - this.CellPtr)));
-                Length += del)::");
-source->append(R"::(ta;
+                    (ulong)(Length - (ptr + ptr_offset - delta - this.m_ptr)));
+                Length = tgtlen;
                 return ptr;
             }
         }

@@ -28,7 +28,6 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(.InvertedIndex
 {
-    
     public unsafe class InvertedBigramIndexer
     {
         const int CacheSize = 1024;
@@ -69,9 +68,9 @@ source->append(R"::(.InvertedIndex\", index_name);
                 string path_L1 = temp_dir + i + "\\";
                 Directory.CreateDirectory(path_L1);
             }
-            #endregion
-)::");
-source->append(R"::(        }
+         )::");
+source->append(R"::(   #endregion
+        }
         public void BuildIndex()
         {
             #region Flush all bigram indices
@@ -100,9 +99,9 @@ source->append(R"::(        }
             {
                 if (i > ushort.MaxValue)
                     break;
-                IndexBigram((int)itemBytes[i], (int)itemBytes[i + 1], cellId, (ushort)i);
-   )::");
-source->append(R"::(         }
+                IndexBigram((int)itemBytes[i], (int)item)::");
+source->append(R"::(Bytes[i + 1], cellId, (ushort)i);
+            }
             TotalIndexedItemCount++;
         }
         unsafe void IndexBigram(int a, int b, long id, ushort offsetInString)
@@ -130,9 +129,9 @@ source->append(R"::(         }
                 string path_L1 = temp_dir + i + "\\";
                 for (int j = 0; j < 256; j++)
                 {
-                    SortBigram(path_L1 + j, i, j);
-                )::");
-source->append(R"::(}
+      )::");
+source->append(R"::(              SortBigram(path_L1 + j, i, j);
+                }
             }
             byte[] buffer = new byte[65536 << 3];
             fixed (byte* bp = buffer)
@@ -156,10 +155,10 @@ source->append(R"::(}
             {
                 byte[] buffer = new byte[(int)fs.Length];
                 fs.Read(buffer, 0, buffer.Length);
-                int count = buffer.Length / sizeof(IndexItem);
+                int count = buffer.Length / s)::");
+source->append(R"::(izeof(IndexItem);
                 IndexItem[] indexItems = new IndexItem[count];
-)::");
-source->append(R"::(                fixed (byte* bp = buffer)
+                fixed (byte* bp = buffer)
                 {
                     IndexItem* p = (IndexItem*)bp;
                     for (int i = 0; i < count; i++)
@@ -181,12 +180,12 @@ source->append(R"::(                fixed (byte* bp = buffer)
                 }
                 bw_index.Write(count);
                 bw_index.Write(buffer, 0, buffer.Length);
-                bg_index[(a << 8) + b] = IndexFileOffset;
+                bg_index[(a << 8) + b] = IndexFileO)::");
+source->append(R"::(ffset;
                 IndexFileOffset += (sizeof(int) + buffer.Length);
             }
         }
-    )::");
-source->append(R"::(    unsafe void FlushIndex(int a, int b)
+        unsafe void FlushIndex(int a, int b)
         {
             int idx = (a << 8) + b;
             string bigram_index_file = string.Format(CultureInfo.InvariantCulture, "{0}\\{1}\\{2}", temp_dir, a, b);
@@ -209,12 +208,12 @@ source->append(R"::(    unsafe void FlushIndex(int a, int b)
             bw_index.Close();
         }
         void Commit()
-        {
+ )::");
+source->append(R"::(       {
             try
             {
                 File.Delete(bg_index_file);
-                File.Delete(index_file))::");
-source->append(R"::(;
+                File.Delete(index_file);
             }
             catch (Exception) { }
             File.Move(tmp_bg_index_file, bg_index_file);

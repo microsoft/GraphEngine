@@ -27,8 +27,8 @@ source->append(R"::(_Accessor b)
                 return true;
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
                 return false;
-            if (a.CellPtr == b.CellPtr) return true;
-            byte* targetPtr = a.CellPtr;
+            if (a.m_ptr == b.m_ptr) return true;
+            byte* targetPtr = a.m_ptr;
             )::");
 
 {
@@ -39,8 +39,8 @@ std::string* module_content = Modules::PushPointerThroughStruct(node, &module_ct
     delete module_content;
 }
 source->append(R"::(
-            int lengthA = (int)(targetPtr - a.CellPtr);
-            targetPtr = b.CellPtr;
+            int lengthA = (int)(targetPtr - a.m_ptr);
+            targetPtr = b.m_ptr;
             )::");
 
 {
@@ -51,9 +51,9 @@ std::string* module_content = Modules::PushPointerThroughStruct(node, &module_ct
     delete module_content;
 }
 source->append(R"::(
-            int lengthB = (int)(targetPtr - b.CellPtr);
+            int lengthB = (int)(targetPtr - b.m_ptr);
             if(lengthA != lengthB) return false;
-            return Memory.Compare(a.CellPtr,b.CellPtr,lengthA);
+            return Memory.Compare(a.m_ptr,b.m_ptr,lengthA);
         }
         public static bool operator != ()::");
 source->append(Codegen::GetString(node->name));

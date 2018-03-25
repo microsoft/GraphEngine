@@ -30,7 +30,6 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
-    
     /// <summary>
     /// Provides facilities for serializing data to Json strings.
     /// </summary>
@@ -87,7 +86,7 @@ source->append(R"::( cell)
         {
             s_ensure_string_builder();
             s_stringBuilder.Append('{');
-            s_stringBuilder.AppendFormat("\"CellID\":{0}", cell.CellID);
+            s_stringBuilder.AppendFormat("\"CellId\":{0}", cell.CellId);
             )::");
 for (size_t iterator_2 = 0; iterator_2 < ((*(node->cellList))[iterator_1]->fieldList)->size();++iterator_2)
 {

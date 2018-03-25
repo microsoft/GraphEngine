@@ -6,6 +6,7 @@ using System.Text;
 using Trinity.Core.Lib;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
+using Trinity.Storage;
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
 namespace t_Namespace
@@ -14,10 +15,10 @@ namespace t_Namespace
     /// Represents a Trinity data type that corresponds .Net DateTime.
     /// </summary>
     [TARGET("NTSL")]
-    public unsafe class DateTimeAccessor
+    public unsafe class DateTimeAccessor : IAccessor
     {
-        internal byte* CellPtr;
-        internal long? CellID;
+        internal byte* m_ptr;
+        internal long CellId;
 
         /// <summary>
         ///     Converts the specified string representation of a date and time to its <see cref="Trinity.TSL.Lib.DateTimeAccessor"/>
@@ -81,7 +82,7 @@ namespace t_Namespace
 
         internal DateTimeAccessor(byte* _CellPtr)
         {
-            CellPtr = _CellPtr;
+            m_ptr = _CellPtr;
         }
 
         internal int length
@@ -98,8 +99,11 @@ namespace t_Namespace
         /// <returns>A 64-bit signed integer that encodes the .Net DateTime. </returns>
         public unsafe long ToBinary()
         {
-            return *(long*)CellPtr;
+            return *(long*)m_ptr;
         }
+
+
+        #region IAccessor Implementation
 
         /// <summary>
         /// Returns an eight byte array that contains the value of this instance.
@@ -110,10 +114,33 @@ namespace t_Namespace
             byte[] ret = new byte[sizeof(long)];
             fixed (byte* ptr = ret)
             {
-                Memory.Copy(CellPtr, ptr, length);
+                Memory.Copy(m_ptr, ptr, length);
             }
             return ret;
         }
+
+        /// <summary>
+        /// Get the pointer to the underlying buffer.
+        /// </summary>
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return m_ptr;
+        }
+
+        /// <summary>
+        /// Get the length of the buffer.
+        /// </summary>
+        public unsafe int GetBufferLength()
+        {
+            return length;
+        }
+
+        /// <summary>
+        /// The ResizeFunctionDelegate that should be called when this accessor is trying to resize itself.
+        /// </summary>
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Converts the value of the current DateTime object to its equivalent string representation.
@@ -162,7 +189,6 @@ namespace t_Namespace
             }
 
             DateTimeAccessor ret = new DateTimeAccessor(targetPtr);
-            ret.CellID = null;
             return ret;
         }
 
@@ -179,8 +205,8 @@ namespace t_Namespace
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
               return false;
             // If both are same instance, return true.
-            if (a.CellPtr == b.CellPtr) return true;
-            return (*(long*)a.CellPtr) == (*(long*)b.CellPtr);
+            if (a.m_ptr == b.m_ptr) return true;
+            return (*(long*)a.m_ptr) == (*(long*)b.m_ptr);
         }
 
         /// <summary>
@@ -216,7 +242,7 @@ namespace t_Namespace
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override int GetHashCode()
         {
-            return (*(long*)CellPtr).GetHashCode();
+            return (*(long*)m_ptr).GetHashCode();
         }
     }
 }

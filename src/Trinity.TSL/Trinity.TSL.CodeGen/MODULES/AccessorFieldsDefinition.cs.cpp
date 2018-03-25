@@ -22,7 +22,7 @@ bool field_fixed_1 = ((*(node->fieldList))[iterator_1]->fieldType->layoutType ==
 bool field_optional_1 = ((*(node->fieldList))[iterator_1]->is_optional());
 bool field_need_accessor_1 = (data_type_need_accessor((*(node->fieldList))[iterator_1]->fieldType));
 bool field_lenprefix_1 = (data_type_is_length_prefixed((*(node->fieldList))[iterator_1]->fieldType));
-OptionalFieldCalculator optcalc_1 = OptionalFieldCalculator(node, "this.CellPtr");
+OptionalFieldCalculator optcalc_1 = OptionalFieldCalculator(node, "this.m_ptr");
 std::string accessor_field_name_1 = (*(*(node->fieldList))[iterator_1]->name) + "_Accessor_Field";
 if (field_need_accessor_1)
 {
@@ -92,7 +92,7 @@ source->append(R"::( doesn't exist for current cell.");
             this.Contains_)::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::( = false;
-            byte* targetPtr = CellPtr;
+            byte* targetPtr = m_ptr;
             )::");
 
 {
@@ -147,7 +147,7 @@ source->append(R"::( doesn't exist for current cell.");
                 )::");
 }
 source->append(R"::(
-                byte* targetPtr = CellPtr;
+                byte* targetPtr = m_ptr;
                 )::");
 
 {
@@ -168,10 +168,10 @@ source->append(R"::(*)(targetPtr);
 else if (field_lenprefix_1)
 {
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::(_Accessor_Field.CellPtr = targetPtr + 4;
+source->append(R"::(_Accessor_Field.m_ptr = targetPtr + 4;
                 )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::(_Accessor_Field.CellID = this.CellID;
+source->append(R"::(_Accessor_Field.CellId = this.CellId;
                 return )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::(_Accessor_Field;
@@ -180,10 +180,10 @@ source->append(R"::(_Accessor_Field;
 else
 {
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::(_Accessor_Field.CellPtr = targetPtr;
+source->append(R"::(_Accessor_Field.m_ptr = targetPtr;
                 )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::(_Accessor_Field.CellID = this.CellID;
+source->append(R"::(_Accessor_Field.CellId = this.CellId;
                 return )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::(_Accessor_Field;
@@ -200,11 +200,11 @@ source->append(R"::(
                 if ((object)value == null) throw new ArgumentNullException("The assigned variable is null.");
                 )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::(_Accessor_Field.CellID = this.CellID;
+source->append(R"::(_Accessor_Field.CellId = this.CellId;
                 )::");
 }
 source->append(R"::(
-                byte* targetPtr = CellPtr;
+                byte* targetPtr = m_ptr;
                 )::");
 
 {
@@ -235,14 +235,6 @@ module_ctx.m_arguments.push_back(Codegen::GetString("FieldDoesNotExist"));
 std::string* module_content = Modules::AccessorToAccessorFieldAssignment((*(node->fieldList))[iterator_1]->fieldType, &module_ctx);
     source->append(*module_content);
     delete module_content;
-}
-if (!field_need_accessor_1)
-{
-source->append(R"::( 
-                    targetPtr = this.ResizeFunction(targetPtr, 0, )::");
-source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->fieldType->type_size()));
-source->append(R"::();
-                    )::");
 }
 source->append(R"::(
                 }

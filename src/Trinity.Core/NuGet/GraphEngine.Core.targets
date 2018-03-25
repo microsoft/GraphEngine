@@ -2,13 +2,11 @@
 <!--
 *   Consume .tsl files and produce C# types
 *
-*   (Dependencies are defined by Tsl.CSharp.props.  Be sure to import that first)
-*   Dependencies:
-*     $TSL_PATH  : Path to directory containing Trinity.TSL.CompilerTask.dll
+*   (Dependencies are defined by GraphEngine.Core.props.  Be sure to import that first)
 *
 *   User-Defines:
 *     @TslCodegen         : A tsl file to compile
-*     $TslOutputDirectory : Output directory for the generated files, by default IntermediateOutputPath
+*     $TslOutputPath      : Output directory for the generated files, by default IntermediateOutputPath
 *
 -->
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -17,7 +15,7 @@
     <!--This property is used as OutputPath parameter in TSL_COMPILER_TASK-->
     <TslOutputPath Condition=" '$(TslOutputPath)' == '' ">$(IntermediateOutputPath)</TslOutputPath>
     <!--This property is used to specify the location of the genreated source code-->
-    <TslGeneratedCodePath Condition=" '$(TslGeneratedCodePath)' == '' ">$(IntermediateOutputPath)GeneratedCode\</TslGeneratedCodePath>
+    <TslGeneratedCodePath Condition=" '$(TslGeneratedCodePath)' == '' ">$(TslOutputPath)GeneratedCode\</TslGeneratedCodePath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TslDebugArguments)' == ''">
@@ -29,31 +27,28 @@
     <AvailableItemName Include="TslCodegen" />
   </ItemGroup>
 
-  <!--
-    * TslCodegenCs - transform .tsl files into .cs files
-  -->
+  <Target Name="TslCodegenPrepare"
+          BeforeTargets="TslCodegenCs">
+    <ItemGroup>
+      <OldGeneratedCode Include="$(TslGeneratedCodePath)**\*.cs" />
+    </ItemGroup>
+    <MakeDir Directories="$(TslGeneratedCodePath)" ContinueOnError="true"/>
+    <Delete Files="@(OldGeneratedCode)" ContinueOnError="true"/>
+    <Exec Condition="'$(OS)' != 'Windows_NT' " Command="chmod u+x $(TSL_CODEGEN_PATH)" />
+  </Target>
+  
   <Target Name="TslCodegenCs"
           Inputs="@(TslCodegen)"
           Outputs="$(TslGeneratedCodePath)\**\*.cs"
-          BeforeTargets="CoreCompile"
+          BeforeTargets="TslCompileCs"
+          DependsOnTargets="TslCodegenPrepare"
           Condition="'@(TslCodegen)' != ''">
-
-    <RemoveDir Directories="$(TslGeneratedCodePath)" ContinueOnError="true" />
-    <MakeDir Directories="$(TslGeneratedCodePath)" ContinueOnError="true"/>
-    <Exec Command="&quot;$(TSL_CODEGEN_PATH)&quot; --ProjectRoot &quot;$(MSBuildProjectDirectory)&quot; --ScriptList &quot;@(TslCodegen)&quot; --RootNamespace $(RootNamespace) --OutputPath $(TslOutputPath) $(TslDebugArguments)" />
+    <Exec Command="&quot;$(TSL_CODEGEN_PATH)&quot; --ProjectRoot &quot;$(MSBuildProjectDirectory)&quot; --ScriptList &quot;@(TslCodegen)&quot; --RootNamespace $(RootNamespace) --OutputPath $(TslOutputPath) $(TslDebugArguments) $(TslAdditionalArguments)" />
   </Target>
 
-  <Target Name="TslCodegenClean"
-          BeforeTargets="Clean">
-    <RemoveDir Directories="$(TslOutputDirectory)" ContinueOnError="true" />
-  </Target>
-
-  <!--
-    * TslCompileCs - whether or not we are rebuilding sources, we still need them compiled,
-    *                      so this target should always run.
-  -->
   <Target Name="TslCompileCs"
           BeforeTargets="CoreCompile"
+          DependsOnTargets="TslCodegenCs"
           Condition="'@(TslCodegen)' != ''">
 
     <Error

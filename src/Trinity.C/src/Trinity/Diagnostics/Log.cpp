@@ -37,8 +37,8 @@ namespace Trinity
         } LOG_ENTRY, *PLOG_ENTRY;
         // static data and methods
 
-        static std::mutex           s_LogMutex;
-        static std::mutex           s_LogInitMutex;
+        static std::recursive_mutex s_LogMutex;
+        static std::recursive_mutex s_LogInitMutex;
         static std::deque<LOG_ENTRY>s_LogEntries;
         static LogLevel             s_CurrentLogLevel = LogLevel::Info;
         static String               s_LogLevelName[7]  { "OFF", "Fatal", "Error", "Warning", "Info", "Debug", "Verbose", };
@@ -47,29 +47,56 @@ namespace Trinity
         static StreamWriter         s_LogStream;
         static bool                 s_EchoOnConsole = true;
         static bool                 s_initialized = false;
+        static LogAutoFlushTask*    s_bgtask = nullptr;
 
-        static void lock()
+        void CloseFile()
         {
-            s_LogMutex.lock();
-        }
+            std::lock_guard<std::recursive_mutex> lock(s_LogInitMutex);
+            std::lock_guard<std::recursive_mutex> lock2(s_LogMutex);
 
-        static void unlock()
-        {
-            s_LogMutex.unlock();
+            if (s_LogStream.Good()) try { s_LogStream.Close(); } catch (...) {}
         }
 
         void InitializeLogger()
         {
-            s_LogInitMutex.lock();
-            if (s_initialized)
-            {
-                s_LogInitMutex.unlock();
-                return;
-            }
-            String log_path = TrinityConfig::LogDirectory();
+            std::lock_guard<std::recursive_mutex> lock(s_LogInitMutex);
+            if (s_initialized) return;
+
+            s_bgtask = new LogAutoFlushTask();
+            BackgroundThread::TaskScheduler::AddTask(s_bgtask);
+            s_initialized = true;
+        }
+
+        void UninitializeLogger()
+        {
+            std::lock_guard<std::recursive_mutex> lock(s_LogInitMutex);
+            std::lock_guard<std::recursive_mutex> lock2(s_LogMutex);
+            if (!s_initialized) return;
+
+            CloseFile();
+            s_LogEntries.clear();
+            BackgroundThread::TaskScheduler::RemoveTask(s_bgtask);
+            // !s_bgtask is wrapped in ref, no need to delete
+            s_bgtask = nullptr;
+
+            s_initialized = false;
+        }
+
+        void OpenFile(String log_path)
+        {
+            std::lock_guard<std::recursive_mutex> lock(s_LogInitMutex);
+            std::lock_guard<std::recursive_mutex> lock2(s_LogMutex);
+
+            CloseFile();
 
             //If two instances are started at the same time, one of them would fail to open log file.
         DetermineLogFileName:
+            if (!Path::_CompletePath(log_path, true)) 
+            {
+                WriteLine(LogLevel::Error, "Log: cannot create log directory '{0}', logging to file is disabled.", log_path);
+                return;
+            }
+
             s_LogFileName = Path::Combine(log_path, "trinity-[" + DateTime::Now().ToStringForFilename() + "].log");
             s_LogStream.Open(s_LogFileName);
             if (!s_LogStream.Good())
@@ -82,13 +109,10 @@ namespace Trinity
                 }
                 else
                 {
+                    //  If the file is absent, it means that we cannot access the log file. abort.
                     WriteLine(LogLevel::Error, "Logger: cannot open log file {0} for write, logging to file is disabled.", s_LogFileName);
                 }
             }
-            WriteLine(LogLevel::Info, "Trinity Assembly Path: {0}", Path::MyAssemblyPath());
-            BackgroundThread::TaskScheduler::AddTask(new LogAutoFlushTask());
-            s_initialized = true;
-            s_LogInitMutex.unlock();
         }
 
         static String LogLevelToString(LogLevel level)
@@ -153,14 +177,15 @@ namespace Trinity
             symbol->MaxNameLen = 255;
             symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
 
-            lock();
-            for (i = 1 /*skip myself*/; i < frames; i++)
             {
-                SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
-                String func_name = String(symbol->Name);
-                Trinity::IO::Console::WriteLine("{0}: {1} - {2}", frames - i - 1, func_name, (LPVOID)symbol->Address);
+                std::lock_guard<std::recursive_mutex> lock(s_LogMutex);
+                for (i = 1 /*skip myself*/; i < frames; i++)
+                {
+                    SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
+                    String func_name = String(symbol->Name);
+                    Trinity::IO::Console::WriteLine("{0}: {1} - {2}", frames - i - 1, func_name, (LPVOID)symbol->Address);
+                }
             }
-            unlock();
 
             free(symbol);
 
@@ -176,7 +201,7 @@ namespace Trinity
         {
             if (logLevel <= s_CurrentLogLevel && logLevel != LogLevel::Off)
             {
-                lock();
+                std::lock_guard<std::recursive_mutex> lock(s_LogMutex);
 
                 DateTime dt     = DateTime::Now();
                 String   time   = "[" + dt.ToString() + "]";
@@ -195,13 +220,12 @@ namespace Trinity
                     _flush_if_necessary(logLevel);
                 }
 
-                unlock();
             }
         }
 
         void Flush()
         {
-            lock();
+            std::lock_guard<std::recursive_mutex> lock(s_LogMutex);
 
             if (s_LogStream.Good())
             {
@@ -209,15 +233,12 @@ namespace Trinity
             }
 
             Console::Flush();
-
-            unlock();
         }
 
         void _writeline_impl(LogLevel logLevel, const char* srcFile, int32_t lineNum, const String& msg)
         {
             if (logLevel <= s_CurrentLogLevel && logLevel != LogLevel::Off)
             {
-
                 String message;
 
                 message.Append(String::Format("::Begin LogEntry (LogLevel:{0})", LogLevelToString(logLevel)));
@@ -251,10 +272,27 @@ namespace Trinity
 }
 
 DLL_EXPORT
-VOID __stdcall CLogInitializeLogger(const u16char* logDir)
+VOID __stdcall CLogOpenFile(const u16char* logDir)
 {
-    TrinityConfig::SetLogDirectory(String::FromWcharArray(logDir, -1));
+    Trinity::Diagnostics::OpenFile(logDir);
+}
+
+DLL_EXPORT
+VOID __stdcall CLogCloseFile()
+{
+    Trinity::Diagnostics::CloseFile();
+}
+
+DLL_EXPORT
+VOID __stdcall CLogInitialize()
+{
     Trinity::Diagnostics::InitializeLogger();
+}
+
+DLL_EXPORT
+VOID __stdcall CLogUninitialize()
+{
+    Trinity::Diagnostics::UninitializeLogger();
 }
 
 DLL_EXPORT
@@ -287,11 +325,10 @@ VOID __stdcall CLogSetEchoOnConsole(bool is_set)
 DLL_EXPORT
 TrinityErrorCode __stdcall CLogCollectEntries(OUT size_t& arr_size, OUT PLOG_ENTRY& entries)
 {
-    lock();
+    std::lock_guard<std::recursive_mutex> lock(s_LogMutex);
     arr_size   = s_LogEntries.size();
     entries    = arr_size == 0 ? nullptr : (PLOG_ENTRY)malloc(sizeof(LOG_ENTRY) * arr_size);
     std::copy(s_LogEntries.begin(), s_LogEntries.end(), entries);
     s_LogEntries.clear();
-    unlock();
     return arr_size == 0 ? TrinityErrorCode::E_FAILURE : TrinityErrorCode::E_SUCCESS;
 }

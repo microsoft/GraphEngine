@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Trinity.FFI": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\Anaconda3_64\\python.exe",
+      "commandLineArgs": "cell_desc.py",
+      "workingDirectory": "C:\\Users\\Yatao\\git\\GraphEngine\\src\\Modules\\Trinity.FFI\\Trinity.FFI.Python\\tests\\others"
+    }
+  }
+}

@@ -14,12 +14,12 @@ namespace t_Namespace
         /// Tells whether the cell with the given id is a t_cell_name.
         /// </summary>
         /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
-        /// <param name="CellID">The id of the cell.</param>
+        /// <param name="cellId">The id of the cell.</param>
         /// <returns>True if the cell is found and is of the correct type. Otherwise false.</returns>
-        public unsafe static bool Ist_cell_name(this Trinity.Storage.LocalMemoryStorage storage, long CellID)
+        public unsafe static bool Ist_cell_name(this Trinity.Storage.LocalMemoryStorage storage, long cellId)
         {
             ushort cellType;
-            if (storage.GetCellType(CellID, out cellType) == TrinityErrorCode.E_SUCCESS)
+            if (storage.GetCellType(cellId, out cellType) == TrinityErrorCode.E_SUCCESS)
             {
                 return cellType == (ushort)CellType.t_cell_name;
             }
@@ -31,12 +31,12 @@ namespace t_Namespace
         /// Get the type of the cell.
         /// </summary>
         /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
-        /// <param name="CellID">The id of the cell.</param>
+        /// <param name="cellId">The id of the cell.</param>
         /// <returns>If the cell is found, returns the type of the cell. Otherwise, returns CellType.Undefined.</returns>
-        public unsafe static CellType GetCellType(this Trinity.Storage.LocalMemoryStorage storage, long CellID)
+        public unsafe static CellType GetCellType(this Trinity.Storage.LocalMemoryStorage storage, long cellId)
         {
             ushort cellType;
-            if (storage.GetCellType(CellID, out cellType) == TrinityErrorCode.E_SUCCESS)
+            if (storage.GetCellType(cellId, out cellType) == TrinityErrorCode.E_SUCCESS)
             {
                 return (CellType)cellType;
             }

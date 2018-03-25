@@ -202,20 +202,20 @@ namespace Storage
             CR;
             CR;
             MSG("Searching.");
-            DEBUG_DUMP_DEC("NonEmptyEntryCount", p_hash->NonEmptyEntryCount);
-            DEBUG_DUMP_DEC("EntryCount", p_hash->EntryCount);
-            DEBUG_DUMP_DEC("FreeEntryCount", p_hash->FreeEntryCount);
-            DEBUG_DUMP_DEC("FreeEntryList", p_hash->FreeEntryList);
+            DEBUG_DUMP_DEC("NonEmptyEntryCount", p_hash->ExtendedInfo->NonEmptyEntryCount);
+            DEBUG_DUMP_DEC("EntryCount", p_hash->ExtendedInfo->EntryCount);
+            DEBUG_DUMP_DEC("FreeEntryCount", p_hash->ExtendedInfo->FreeEntryCount);
+            DEBUG_DUMP_DEC("FreeEntryList", p_hash->ExtendedInfo->FreeEntryList);
             CR;
 
-            for (uint32_t i = 0; i < p_hash->EntryCount; ++i)
+            for (uint32_t i = 0; i < p_hash->ExtendedInfo->EntryCount; ++i)
             {
                 auto p_mtentry = p_hash->MTEntries + i;
                 auto p_cellentry = p_hash->CellEntries + i;
                 uint32_t committed_head = memory_trunks[trunk_id].head.committed_head;
                 uint32_t committed_tail = memory_trunks[trunk_id].committed_tail;
 
-                if (p_hash->CellEntries[i].location == -1 && i < (uint32_t)p_hash->NonEmptyEntryCount && p_hash->FreeEntryList == -1)
+                if (p_hash->CellEntries[i].location == -1 && i < (uint32_t)p_hash->ExtendedInfo->NonEmptyEntryCount && p_hash->ExtendedInfo->FreeEntryList == -1)
                 {
                     /* An invalid entry is not supposed to be found here. */
                     DEBUG_DUMP_DEC("Invalid hole entry", i);
@@ -244,7 +244,7 @@ namespace Storage
 
                     CR;
                     CR;
-                    if (i >= (uint32_t)p_hash->NonEmptyEntryCount)
+                    if (i >= (uint32_t)p_hash->ExtendedInfo->NonEmptyEntryCount)
                     {
                         MSG("Cell entry out of range!");
                     }
@@ -309,9 +309,9 @@ namespace Storage
             DEBUG_DUMP_HEX("memory_trunk", p_hash->memory_trunk);
             //DEBUG_DUMP_HEX("ExternOffsetArray", p_hash->ExternOffsetArray);
             //DEBUG_DUMP_HEX("ExternArrayPtr", p_hash->ExternArrayPtr);
-            DEBUG_DUMP_DEC("FreeEntryList", p_hash->FreeEntryList);
-            DEBUG_DUMP_DEC("EntryCount", p_hash->EntryCount);
-            DEBUG_DUMP_DEC("NonEmptyEntryCount", p_hash->NonEmptyEntryCount);
+            DEBUG_DUMP_DEC("FreeEntryList", p_hash->ExtendedInfo->FreeEntryList);
+            DEBUG_DUMP_DEC("EntryCount", p_hash->ExtendedInfo->EntryCount);
+            DEBUG_DUMP_DEC("NonEmptyEntryCount", p_hash->ExtendedInfo->NonEmptyEntryCount);
             CR;
             MSG("memory:");
             CR;
@@ -325,8 +325,8 @@ namespace Storage
             }
 
             CHECK_MEMORY(p_hash->Buckets, MTHash::BucketCount << 2);
-            CHECK_MEMORY(p_hash->CellEntries, p_hash->EntryCount << 3);
-            CHECK_MEMORY(p_hash->MTEntries, p_hash->EntryCount << 4);
+            CHECK_MEMORY(p_hash->CellEntries, p_hash->ExtendedInfo->EntryCount << 3);
+            CHECK_MEMORY(p_hash->MTEntries, p_hash->ExtendedInfo->EntryCount << 4);
             //CHECK_MEMORY(p_hash->NextEntryArray, p_hash->EntryCount << 2);
 
             if (failure)
@@ -346,7 +346,7 @@ namespace Storage
 
             CR;
 
-            for (int32_t i = 0; i < p_hash->NonEmptyEntryCount; ++i)
+            for (int32_t i = 0; i < p_hash->ExtendedInfo->NonEmptyEntryCount; ++i)
             {
                 auto p_entry = p_hash->CellEntries + i;
                 if (p_entry->location == -1)

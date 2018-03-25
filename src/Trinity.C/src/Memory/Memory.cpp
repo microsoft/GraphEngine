@@ -150,6 +150,10 @@ namespace Memory
     can commit pages without first determining
     the current commitment state of each page.
 
+    MemoryCommit adds the specified address range
+    to the committed memory set with read-write
+    permissions, and then zeros the region.
+
     ***************************************/
     void * MemoryCommit(void * buf, uint64_t size)
     {
@@ -157,7 +161,15 @@ namespace Memory
         //Commit the desired size, the actually allocated space will be larger(up to a whole page) than the desired size.
         return VirtualAlloc(buf, size, MEM_COMMIT, PAGE_READWRITE);
 #else
-        return mprotect(buf, size, PROT_READ | PROT_WRITE) == 0 ? buf : NULL;
+        if (0 == mprotect(buf, size, PROT_READ | PROT_WRITE))
+        {
+            memset(buf, 0, size);
+            return buf;
+        }
+        else 
+        {
+            return NULL;
+        }
 #endif
     }
 

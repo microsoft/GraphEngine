@@ -14,7 +14,9 @@
 #include "Array.h"
 #include "Collections/List.h"
 
+#ifndef __cplusplus_cli
 #include <thread>
+#endif
 
 #if defined(TRINITY_PLATFORM_WINDOWS)
 typedef wchar_t u16char;
@@ -601,7 +603,9 @@ namespace Trinity
         static String ToString(const char* value) { return String(value); }
         static String ToString(const u16char* value) { return String::FromWcharArray(value, -1); }
         static String ToString(char value) { return String(1, value); }
+#ifndef __cplusplus_cli
         static String ToString(const std::thread::id &thread_id) { std::stringstream stream; stream << thread_id; return stream.str(); }
+#endif
 
         //TODO more TryParse types
         bool TryParse(String& value)
@@ -609,11 +613,12 @@ namespace Trinity
             value = *this;
             return true;
         }
-        bool TryParse(size_t& value)
+
+        bool TryParse(uint64_t& value)
         {
             try
             {
-                value = std::stol(_string);
+                value = std::stoull(_string);
                 return true;
             }
             catch (...)
@@ -635,11 +640,24 @@ namespace Trinity
             }
         }
 
-        bool TryParse(int& value)
+        bool TryParse(int32_t& value)
         {
             try
             {
                 value = std::stoi(_string);
+                return true;
+            }
+            catch (...)
+            {
+                return false;
+            }
+        }
+
+        bool TryParse(uint32_t& value)
+        {
+            try
+            {
+                value = std::stoul(_string);
                 return true;
             }
             catch (...)

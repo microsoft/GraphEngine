@@ -21,18 +21,21 @@ namespace Trinity.Configuration
         #region Singleton
         static LoggingConfig s_instance = new LoggingConfig();
         private LoggingConfig() { LoggingLevel = c_DefaultLogLevel; }
+        /// <summary>
+        /// Gets the configuration entry singleton instance.
+        /// </summary>
         [ConfigInstance]
         public static LoggingConfig Instance { get { return s_instance; } }
         [ConfigEntryName]
-        internal static string ConfigEntry { get { return ConfigurationConstants.Tags.LOGGING; } }
+        internal static string ConfigEntry { get { return ConfigurationConstants.Tags.LOGGING.LocalName; } }
         #endregion
 
         #region Fields
         internal const  LogLevel c_DefaultLogLevel  = LogLevel.Info;
         private LogLevel         m_LogLevel         = c_DefaultLogLevel;
-        private string           m_LogDir           = ConfigurationConstants.DefaultValue.BLANK;
-        private bool             m_EchoOnConsole    = ConfigurationConstants.DefaultValue.DEFAULT_VALUE_TRUE;
-        private bool             m_LogToFile        =ConfigurationConstants.DefaultValue.DEFAULT_VALUE_TRUE;
+        private string           m_LogDir           = ConfigurationConstants.Values.BLANK;
+        private bool             m_EchoOnConsole    = ConfigurationConstants.Values.DEFAULT_VALUE_TRUE;
+        private bool             m_LogToFile        =ConfigurationConstants.Values.DEFAULT_VALUE_TRUE;
         #endregion
 
         #region Private helpers
@@ -40,7 +43,7 @@ namespace Trinity.Configuration
         {
             get
             {
-                return Path.Combine(AssemblyPath.MyAssemblyPath,"trinity-log");
+                return Path.Combine(AssemblyUtility.MyAssemblyPath,"trinity-log");
             }
         }
 
@@ -72,25 +75,6 @@ namespace Trinity.Configuration
                 if (m_LogDir == null || m_LogDir.Length == 0)
                     m_LogDir = DefaultLogDirectory;
 
-
-                if (!Directory.Exists(m_LogDir))
-                {
-                    try
-                    {
-                        Directory.CreateDirectory(m_LogDir);
-                    }
-                    catch
-                    {
-                        ThrowCreatingLogDirectoryException(m_LogDir);
-                    }
-                }
-
-                try
-                {
-                    CTrinityConfig.CLogInitializeLogger(m_LogDir);
-                }
-                catch { }
-
                 return m_LogDir;
             }
             set
@@ -102,28 +86,7 @@ namespace Trinity.Configuration
                     m_LogDir = DefaultLogDirectory;
                 }
 
-                if (m_LogDir[m_LogDir.Length - 1] != Path.DirectorySeparatorChar)
-                {
-                    m_LogDir += Path.DirectorySeparatorChar;
-                }
-
-                if (!Directory.Exists(m_LogDir))
-                {
-                    try
-                    {
-                        Directory.CreateDirectory(m_LogDir);
-                    }
-                    catch (Exception)
-                    {
-                        ThrowCreatingLogDirectoryException(m_LogDir);
-                    }
-                }
-
-                try
-                {
-                    CTrinityConfig.CLogInitializeLogger(m_LogDir);
-                }
-                catch (Exception) { }
+                Log.SetLogDirectory(m_LogDir);
             }
         }
 
@@ -146,7 +109,7 @@ namespace Trinity.Configuration
         public bool LogToFile
         {
             get { return m_LogToFile; }
-            set { m_LogToFile = value;}
+            set { m_LogToFile = value; Log.SetLogToFile(value); }
         }
     }
 }

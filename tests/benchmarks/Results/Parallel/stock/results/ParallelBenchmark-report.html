@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>ParallelBenchmark</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet=v0.10.13, OS=Windows 10 Redstone 1 [1607, Anniversary Update] (10.0.14393.2007)
+Intel Xeon CPU E5-2690 v3 2.60GHz, 1 CPU, 24 logical cores and 12 physical cores
+Frequency=2539061 Hz, Resolution=393.8464 ns, Timer=TSC
+  [Host]     : .NET Framework 4.6.2 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2117.0
+  Job-JFKWFM : .NET Core 2.0.6 (CoreCLR 4.6.26212.01, CoreFX 4.6.26212.01), 64bit RyuJIT
+  Job-KNTBNH : .NET Framework 4.6.2 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2117.0
+</code></pre>
+<pre><code>Server=True  RunStrategy=Monitoring  
+</code></pre>
+
+<table>
+<thead><tr><th>Method</th><th>Toolchain</th><th>TotalCellCount</th><th>CellSize</th><th>ThreadCount</th><th>     Mean</th><th> Error</th><th>StdDev</th>
+</tr>
+</thead><tbody><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>1</td><td>24,432.0 us</td><td>1,128.4 us</td><td>746.3 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>1</td><td>13,721.1 us</td><td>2,572.3 us</td><td>1,701.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>1</td><td>25,228.9 us</td><td>1,194.3 us</td><td>790.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>1</td><td>13,276.8 us</td><td>945.7 us</td><td>625.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>2</td><td>14,135.0 us</td><td>1,312.4 us</td><td>868.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>2</td><td>7,545.9 us</td><td>1,727.8 us</td><td>1,142.8 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>2</td><td>15,085.5 us</td><td>1,544.0 us</td><td>1,021.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>2</td><td>7,122.4 us</td><td>796.2 us</td><td>526.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>4</td><td>8,344.0 us</td><td>1,076.5 us</td><td>712.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>4</td><td>4,379.3 us</td><td>1,754.6 us</td><td>1,160.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>4</td><td>8,122.4 us</td><td>998.1 us</td><td>660.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>4</td><td>3,972.1 us</td><td>679.4 us</td><td>449.4 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>6</td><td>6,001.9 us</td><td>998.5 us</td><td>660.5 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>6</td><td>3,462.6 us</td><td>1,524.0 us</td><td>1,008.0 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>6</td><td>5,965.9 us</td><td>937.7 us</td><td>620.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>6</td><td>3,303.9 us</td><td>846.2 us</td><td>559.7 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>8</td><td>4,776.9 us</td><td>946.7 us</td><td>626.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>8</td><td>2,577.3 us</td><td>868.8 us</td><td>574.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>8</td><td>4,952.1 us</td><td>857.1 us</td><td>566.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>8</td><td>2,828.7 us</td><td>947.3 us</td><td>626.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>10</td><td>4,263.5 us</td><td>823.9 us</td><td>544.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>10</td><td>2,378.8 us</td><td>731.2 us</td><td>483.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>10</td><td>4,629.2 us</td><td>880.5 us</td><td>582.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>10</td><td>2,363.4 us</td><td>522.5 us</td><td>345.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>12</td><td>4,242.6 us</td><td>957.7 us</td><td>633.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>12</td><td>2,472.6 us</td><td>787.6 us</td><td>520.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>12</td><td>4,760.7 us</td><td>710.5 us</td><td>470.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>12</td><td>2,379.4 us</td><td>474.0 us</td><td>313.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>14</td><td>4,276.1 us</td><td>834.3 us</td><td>551.8 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>14</td><td>2,600.3 us</td><td>917.4 us</td><td>606.8 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>14</td><td>4,346.2 us</td><td>790.4 us</td><td>522.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>14</td><td>2,384.7 us</td><td>485.6 us</td><td>321.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>16</td><td>3,994.0 us</td><td>821.6 us</td><td>543.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>16</td><td>2,649.8 us</td><td>1,009.3 us</td><td>667.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>16</td><td>4,018.8 us</td><td>772.5 us</td><td>510.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>16</td><td>2,313.0 us</td><td>635.4 us</td><td>420.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>18</td><td>3,985.3 us</td><td>1,343.5 us</td><td>888.7 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>18</td><td>2,375.8 us</td><td>636.3 us</td><td>420.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>18</td><td>3,884.8 us</td><td>832.2 us</td><td>550.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>18</td><td>2,376.0 us</td><td>553.6 us</td><td>366.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>20</td><td>3,979.8 us</td><td>1,572.3 us</td><td>1,040.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>20</td><td>2,435.2 us</td><td>663.5 us</td><td>438.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>20</td><td>4,038.9 us</td><td>884.1 us</td><td>584.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>20</td><td>2,439.4 us</td><td>604.4 us</td><td>399.8 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>22</td><td>3,691.3 us</td><td>804.4 us</td><td>532.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>22</td><td>2,473.2 us</td><td>656.3 us</td><td>434.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>22</td><td>3,870.8 us</td><td>723.2 us</td><td>478.3 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>22</td><td>2,478.1 us</td><td>598.2 us</td><td>395.7 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>24</td><td>4,065.3 us</td><td>1,029.7 us</td><td>681.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>24</td><td>2,928.8 us</td><td>1,049.0 us</td><td>693.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>24</td><td>4,034.8 us</td><td>992.6 us</td><td>656.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>24</td><td>2,528.7 us</td><td>581.5 us</td><td>384.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>26</td><td>4,007.3 us</td><td>889.4 us</td><td>588.3 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>26</td><td>2,644.4 us</td><td>846.5 us</td><td>559.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>26</td><td>4,426.4 us</td><td>1,489.8 us</td><td>985.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>26</td><td>2,640.3 us</td><td>555.6 us</td><td>367.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>28</td><td>4,208.0 us</td><td>1,631.2 us</td><td>1,078.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>28</td><td>2,745.8 us</td><td>665.0 us</td><td>439.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>28</td><td>4,170.6 us</td><td>831.2 us</td><td>549.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>28</td><td>2,776.1 us</td><td>544.0 us</td><td>359.8 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>30</td><td>4,082.7 us</td><td>903.5 us</td><td>597.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>30</td><td>3,037.6 us</td><td>1,552.9 us</td><td>1,027.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>30</td><td>4,204.8 us</td><td>776.4 us</td><td>513.5 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>30</td><td>2,869.3 us</td><td>548.0 us</td><td>362.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>32</td><td>4,241.1 us</td><td>771.2 us</td><td>510.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>32</td><td>2,953.1 us</td><td>726.7 us</td><td>480.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>32</td><td>4,376.9 us</td><td>735.7 us</td><td>486.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>32</td><td>3,711.5 us</td><td>1,623.0 us</td><td>1,073.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>34</td><td>4,256.5 us</td><td>839.4 us</td><td>555.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>34</td><td>3,018.8 us</td><td>684.1 us</td><td>452.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>34</td><td>4,379.7 us</td><td>783.7 us</td><td>518.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>34</td><td>3,053.6 us</td><td>548.5 us</td><td>362.8 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>36</td><td>4,360.4 us</td><td>786.8 us</td><td>520.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>36</td><td>3,105.3 us</td><td>699.5 us</td><td>462.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>36</td><td>5,734.2 us</td><td>1,949.9 us</td><td>1,289.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>36</td><td>3,196.7 us</td><td>803.8 us</td><td>531.7 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>38</td><td>4,444.5 us</td><td>940.3 us</td><td>622.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>38</td><td>3,263.6 us</td><td>672.4 us</td><td>444.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>38</td><td>4,581.8 us</td><td>728.9 us</td><td>482.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>38</td><td>3,351.4 us</td><td>717.9 us</td><td>474.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>40</td><td>4,439.6 us</td><td>817.0 us</td><td>540.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>40</td><td>3,965.0 us</td><td>2,397.3 us</td><td>1,585.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>40</td><td>4,594.7 us</td><td>776.0 us</td><td>513.3 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>40</td><td>3,471.3 us</td><td>761.2 us</td><td>503.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>42</td><td>4,459.0 us</td><td>880.4 us</td><td>582.3 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>42</td><td>3,470.5 us</td><td>699.1 us</td><td>462.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>42</td><td>4,606.3 us</td><td>802.5 us</td><td>530.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>42</td><td>4,444.1 us</td><td>2,316.4 us</td><td>1,532.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>44</td><td>4,598.8 us</td><td>865.0 us</td><td>572.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>44</td><td>3,582.3 us</td><td>718.4 us</td><td>475.2 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>44</td><td>4,731.8 us</td><td>809.4 us</td><td>535.3 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>44</td><td>3,725.5 us</td><td>778.8 us</td><td>515.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>46</td><td>4,732.7 us</td><td>1,015.5 us</td><td>671.7 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>46</td><td>3,759.2 us</td><td>665.4 us</td><td>440.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>46</td><td>5,826.5 us</td><td>2,248.0 us</td><td>1,486.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>46</td><td>3,943.9 us</td><td>753.8 us</td><td>498.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>48</td><td>4,831.2 us</td><td>831.3 us</td><td>549.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>48</td><td>3,881.4 us</td><td>623.9 us</td><td>412.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>48</td><td>4,941.0 us</td><td>821.9 us</td><td>543.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>48</td><td>4,012.2 us</td><td>747.0 us</td><td>494.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>50</td><td>4,840.8 us</td><td>913.7 us</td><td>604.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>50</td><td>4,608.5 us</td><td>2,681.3 us</td><td>1,773.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>50</td><td>5,084.5 us</td><td>789.3 us</td><td>522.1 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>50</td><td>4,107.5 us</td><td>745.6 us</td><td>493.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>52</td><td>4,969.0 us</td><td>954.2 us</td><td>631.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>52</td><td>4,112.3 us</td><td>653.3 us</td><td>432.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>52</td><td>5,264.2 us</td><td>818.8 us</td><td>541.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>52</td><td>5,492.8 us</td><td>2,970.2 us</td><td>1,964.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>54</td><td>5,049.0 us</td><td>952.9 us</td><td>630.3 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>54</td><td>4,189.7 us</td><td>654.5 us</td><td>432.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>54</td><td>5,317.7 us</td><td>956.0 us</td><td>632.3 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>54</td><td>4,374.8 us</td><td>769.6 us</td><td>509.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>56</td><td>5,193.1 us</td><td>905.5 us</td><td>598.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>56</td><td>4,305.7 us</td><td>694.9 us</td><td>459.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>56</td><td>6,432.5 us</td><td>2,066.8 us</td><td>1,367.1 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>56</td><td>4,573.9 us</td><td>767.2 us</td><td>507.4 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>58</td><td>5,265.7 us</td><td>858.2 us</td><td>567.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>58</td><td>4,508.6 us</td><td>630.0 us</td><td>416.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>58</td><td>5,521.7 us</td><td>813.2 us</td><td>537.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>58</td><td>4,803.8 us</td><td>790.3 us</td><td>522.8 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>60</td><td>5,399.6 us</td><td>934.7 us</td><td>618.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>60</td><td>4,890.2 us</td><td>1,859.2 us</td><td>1,229.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>60</td><td>5,557.7 us</td><td>911.3 us</td><td>602.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>60</td><td>4,916.7 us</td><td>821.1 us</td><td>543.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>62</td><td>5,502.6 us</td><td>930.7 us</td><td>615.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>62</td><td>4,832.6 us</td><td>685.7 us</td><td>453.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>62</td><td>5,712.6 us</td><td>849.4 us</td><td>561.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>62</td><td>6,242.5 us</td><td>2,912.4 us</td><td>1,926.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>64</td><td>5,594.0 us</td><td>888.1 us</td><td>587.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>64</td><td>4,989.1 us</td><td>599.9 us</td><td>396.8 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>64</td><td>5,771.3 us</td><td>820.8 us</td><td>542.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>64</td><td>5,031.5 us</td><td>769.7 us</td><td>509.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>66</td><td>5,775.9 us</td><td>1,023.0 us</td><td>676.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>66</td><td>5,078.8 us</td><td>636.8 us</td><td>421.2 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>66</td><td>6,002.6 us</td><td>797.9 us</td><td>527.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>66</td><td>5,246.4 us</td><td>756.3 us</td><td>500.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>68</td><td>5,887.6 us</td><td>902.8 us</td><td>597.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>68</td><td>5,185.1 us</td><td>661.8 us</td><td>437.8 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>68</td><td>6,093.0 us</td><td>862.7 us</td><td>570.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>68</td><td>5,309.0 us</td><td>878.4 us</td><td>581.0 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>70</td><td>5,890.0 us</td><td>944.1 us</td><td>624.5 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>70</td><td>5,248.9 us</td><td>588.1 us</td><td>389.0 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>70</td><td>6,219.7 us</td><td>813.6 us</td><td>538.1 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>70</td><td>5,385.8 us</td><td>762.1 us</td><td>504.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>72</td><td>6,067.7 us</td><td>953.9 us</td><td>630.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>72</td><td>5,331.8 us</td><td>634.3 us</td><td>419.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>72</td><td>6,421.1 us</td><td>879.7 us</td><td>581.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>72</td><td>5,567.5 us</td><td>800.2 us</td><td>529.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>74</td><td>6,191.0 us</td><td>1,025.8 us</td><td>678.5 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>74</td><td>5,468.0 us</td><td>774.4 us</td><td>512.2 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>74</td><td>6,387.8 us</td><td>808.8 us</td><td>535.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>74</td><td>5,716.1 us</td><td>818.5 us</td><td>541.4 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>76</td><td>6,349.4 us</td><td>917.8 us</td><td>607.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>76</td><td>5,631.7 us</td><td>755.0 us</td><td>499.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>76</td><td>6,568.8 us</td><td>859.9 us</td><td>568.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>76</td><td>6,073.3 us</td><td>2,292.0 us</td><td>1,516.0 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>78</td><td>6,440.5 us</td><td>886.7 us</td><td>586.5 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>78</td><td>5,694.9 us</td><td>789.7 us</td><td>522.3 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>78</td><td>6,648.2 us</td><td>819.0 us</td><td>541.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>78</td><td>6,132.1 us</td><td>840.5 us</td><td>555.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>80</td><td>6,720.5 us</td><td>1,034.1 us</td><td>684.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>80</td><td>5,869.4 us</td><td>831.0 us</td><td>549.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>80</td><td>6,932.7 us</td><td>800.8 us</td><td>529.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>80</td><td>6,543.3 us</td><td>2,294.3 us</td><td>1,517.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>82</td><td>6,705.2 us</td><td>1,033.6 us</td><td>683.7 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>82</td><td>6,007.7 us</td><td>740.8 us</td><td>490.0 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>82</td><td>7,052.6 us</td><td>837.1 us</td><td>553.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>82</td><td>6,758.1 us</td><td>2,170.3 us</td><td>1,435.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>84</td><td>6,752.3 us</td><td>927.5 us</td><td>613.5 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>84</td><td>6,111.3 us</td><td>865.7 us</td><td>572.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>84</td><td>7,202.3 us</td><td>849.4 us</td><td>561.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>84</td><td>6,890.8 us</td><td>2,032.3 us</td><td>1,344.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>86</td><td>6,905.5 us</td><td>954.6 us</td><td>631.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>86</td><td>6,369.9 us</td><td>697.0 us</td><td>461.0 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>86</td><td>7,320.3 us</td><td>871.0 us</td><td>576.1 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>86</td><td>7,068.2 us</td><td>2,153.8 us</td><td>1,424.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>88</td><td>7,075.9 us</td><td>984.8 us</td><td>651.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>88</td><td>6,547.4 us</td><td>590.7 us</td><td>390.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>88</td><td>7,463.1 us</td><td>910.1 us</td><td>602.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>88</td><td>7,196.4 us</td><td>2,024.3 us</td><td>1,338.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>90</td><td>7,121.8 us</td><td>1,024.7 us</td><td>677.8 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>90</td><td>6,715.5 us</td><td>674.2 us</td><td>445.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>90</td><td>7,626.1 us</td><td>831.3 us</td><td>549.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>90</td><td>7,423.6 us</td><td>2,342.2 us</td><td>1,549.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>92</td><td>7,287.2 us</td><td>1,097.5 us</td><td>725.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>92</td><td>6,849.1 us</td><td>598.2 us</td><td>395.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>92</td><td>7,781.9 us</td><td>896.6 us</td><td>593.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>92</td><td>7,487.5 us</td><td>2,338.4 us</td><td>1,546.7 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>94</td><td>7,478.2 us</td><td>884.7 us</td><td>585.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>94</td><td>6,976.4 us</td><td>538.4 us</td><td>356.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>94</td><td>7,800.0 us</td><td>824.1 us</td><td>545.1 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>94</td><td>7,568.3 us</td><td>2,076.2 us</td><td>1,373.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>96</td><td>7,642.3 us</td><td>1,029.8 us</td><td>681.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>17</td><td>96</td><td>7,046.9 us</td><td>490.4 us</td><td>324.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>96</td><td>7,957.6 us</td><td>818.5 us</td><td>541.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>17</td><td>96</td><td>7,571.8 us</td><td>2,359.9 us</td><td>1,561.0 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>1</td><td>5,621.8 us</td><td>1,035.7 us</td><td>685.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>1</td><td>2,155.7 us</td><td>1,005.9 us</td><td>665.3 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>1</td><td>5,625.6 us</td><td>935.7 us</td><td>618.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>1</td><td>2,058.0 us</td><td>645.8 us</td><td>427.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>2</td><td>3,192.4 us</td><td>952.7 us</td><td>630.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>2</td><td>1,319.9 us</td><td>872.8 us</td><td>577.3 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>2</td><td>3,304.7 us</td><td>868.7 us</td><td>574.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>2</td><td>1,274.8 us</td><td>753.5 us</td><td>498.4 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>4</td><td>2,156.9 us</td><td>871.3 us</td><td>576.3 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>4</td><td>978.6 us</td><td>772.3 us</td><td>510.8 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>4</td><td>2,136.0 us</td><td>823.3 us</td><td>544.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>4</td><td>970.7 us</td><td>706.3 us</td><td>467.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>6</td><td>1,817.1 us</td><td>878.8 us</td><td>581.3 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>6</td><td>945.4 us</td><td>692.2 us</td><td>457.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>6</td><td>1,752.5 us</td><td>809.0 us</td><td>535.1 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>6</td><td>925.3 us</td><td>661.4 us</td><td>437.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>8</td><td>1,731.9 us</td><td>873.8 us</td><td>578.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>8</td><td>1,007.9 us</td><td>631.6 us</td><td>417.8 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>8</td><td>1,703.9 us</td><td>757.9 us</td><td>501.3 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>8</td><td>1,017.0 us</td><td>574.0 us</td><td>379.7 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>10</td><td>1,691.3 us</td><td>804.2 us</td><td>531.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>10</td><td>1,118.8 us</td><td>520.8 us</td><td>344.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>10</td><td>1,730.0 us</td><td>784.5 us</td><td>518.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>10</td><td>1,113.8 us</td><td>497.1 us</td><td>328.8 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>12</td><td>1,815.1 us</td><td>751.4 us</td><td>497.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>12</td><td>1,220.0 us</td><td>501.2 us</td><td>331.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>12</td><td>1,826.5 us</td><td>732.5 us</td><td>484.5 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>12</td><td>1,215.6 us</td><td>542.6 us</td><td>358.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>14</td><td>1,895.4 us</td><td>805.1 us</td><td>532.5 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>14</td><td>1,317.8 us</td><td>572.7 us</td><td>378.8 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>14</td><td>1,947.2 us</td><td>773.0 us</td><td>511.3 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>14</td><td>1,306.0 us</td><td>551.1 us</td><td>364.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>16</td><td>2,049.9 us</td><td>894.6 us</td><td>591.7 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>16</td><td>1,428.8 us</td><td>557.3 us</td><td>368.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>16</td><td>2,035.0 us</td><td>744.3 us</td><td>492.3 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>16</td><td>1,482.5 us</td><td>528.6 us</td><td>349.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>18</td><td>2,121.5 us</td><td>871.1 us</td><td>576.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>18</td><td>1,631.0 us</td><td>522.0 us</td><td>345.3 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>18</td><td>2,207.5 us</td><td>820.7 us</td><td>542.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>18</td><td>1,602.4 us</td><td>559.8 us</td><td>370.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>20</td><td>2,207.0 us</td><td>815.7 us</td><td>539.5 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>20</td><td>1,769.2 us</td><td>538.3 us</td><td>356.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>20</td><td>2,255.2 us</td><td>758.4 us</td><td>501.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>20</td><td>1,767.2 us</td><td>550.6 us</td><td>364.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>22</td><td>2,347.7 us</td><td>836.4 us</td><td>553.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>22</td><td>1,883.6 us</td><td>567.2 us</td><td>375.2 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>22</td><td>2,392.1 us</td><td>768.0 us</td><td>508.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>22</td><td>1,900.7 us</td><td>532.0 us</td><td>351.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>24</td><td>2,478.7 us</td><td>869.5 us</td><td>575.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>24</td><td>1,988.4 us</td><td>560.8 us</td><td>370.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>24</td><td>2,497.2 us</td><td>760.4 us</td><td>503.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>24</td><td>1,994.7 us</td><td>561.1 us</td><td>371.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>26</td><td>2,637.7 us</td><td>951.1 us</td><td>629.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>26</td><td>2,123.1 us</td><td>709.3 us</td><td>469.2 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>26</td><td>2,657.9 us</td><td>777.2 us</td><td>514.1 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>26</td><td>2,095.6 us</td><td>553.7 us</td><td>366.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>28</td><td>2,723.5 us</td><td>862.1 us</td><td>570.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>28</td><td>2,201.1 us</td><td>565.6 us</td><td>374.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>28</td><td>2,813.5 us</td><td>783.9 us</td><td>518.5 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>28</td><td>2,250.7 us</td><td>545.4 us</td><td>360.7 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>30</td><td>2,918.8 us</td><td>912.0 us</td><td>603.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>30</td><td>2,275.1 us</td><td>573.9 us</td><td>379.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>30</td><td>2,989.1 us</td><td>750.8 us</td><td>496.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>30</td><td>2,352.1 us</td><td>591.9 us</td><td>391.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>32</td><td>2,990.7 us</td><td>862.7 us</td><td>570.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>32</td><td>2,395.2 us</td><td>600.8 us</td><td>397.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>32</td><td>3,042.7 us</td><td>791.2 us</td><td>523.3 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>32</td><td>2,457.3 us</td><td>593.7 us</td><td>392.7 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>34</td><td>3,123.7 us</td><td>832.7 us</td><td>550.8 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>34</td><td>2,551.7 us</td><td>587.3 us</td><td>388.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>34</td><td>3,176.7 us</td><td>784.0 us</td><td>518.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>34</td><td>2,706.6 us</td><td>781.9 us</td><td>517.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>36</td><td>3,237.6 us</td><td>845.2 us</td><td>559.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>36</td><td>2,666.8 us</td><td>566.8 us</td><td>374.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>36</td><td>3,312.8 us</td><td>769.3 us</td><td>508.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>36</td><td>2,905.2 us</td><td>733.0 us</td><td>484.8 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>38</td><td>3,362.9 us</td><td>912.5 us</td><td>603.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>38</td><td>2,813.4 us</td><td>563.6 us</td><td>372.8 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>38</td><td>3,444.4 us</td><td>790.0 us</td><td>522.5 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>38</td><td>3,006.4 us</td><td>737.6 us</td><td>487.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>40</td><td>3,398.8 us</td><td>852.4 us</td><td>563.8 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>40</td><td>2,980.6 us</td><td>549.6 us</td><td>363.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>40</td><td>3,658.1 us</td><td>771.3 us</td><td>510.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>40</td><td>3,170.6 us</td><td>833.4 us</td><td>551.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>42</td><td>3,659.5 us</td><td>892.5 us</td><td>590.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>42</td><td>3,170.7 us</td><td>490.6 us</td><td>324.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>42</td><td>4,041.3 us</td><td>1,065.9 us</td><td>705.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>42</td><td>3,359.2 us</td><td>750.1 us</td><td>496.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>44</td><td>3,865.9 us</td><td>863.6 us</td><td>571.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>44</td><td>3,411.8 us</td><td>596.3 us</td><td>394.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>44</td><td>3,983.8 us</td><td>765.6 us</td><td>506.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>44</td><td>3,393.0 us</td><td>792.5 us</td><td>524.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>46</td><td>3,963.0 us</td><td>944.1 us</td><td>624.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>46</td><td>3,454.0 us</td><td>560.3 us</td><td>370.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>46</td><td>4,117.4 us</td><td>776.1 us</td><td>513.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>46</td><td>3,569.1 us</td><td>953.5 us</td><td>630.7 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>48</td><td>4,142.3 us</td><td>857.7 us</td><td>567.3 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>48</td><td>3,583.8 us</td><td>492.0 us</td><td>325.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>48</td><td>4,193.4 us</td><td>747.2 us</td><td>494.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>48</td><td>3,688.6 us</td><td>838.6 us</td><td>554.7 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>50</td><td>4,299.6 us</td><td>900.2 us</td><td>595.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>50</td><td>3,776.0 us</td><td>505.7 us</td><td>334.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>50</td><td>4,359.8 us</td><td>814.4 us</td><td>538.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>50</td><td>3,883.5 us</td><td>811.5 us</td><td>536.8 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>52</td><td>4,408.0 us</td><td>864.9 us</td><td>572.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>52</td><td>3,913.5 us</td><td>552.6 us</td><td>365.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>52</td><td>4,568.1 us</td><td>762.4 us</td><td>504.3 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>52</td><td>4,045.2 us</td><td>797.3 us</td><td>527.4 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>54</td><td>4,597.2 us</td><td>920.7 us</td><td>609.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>54</td><td>4,075.2 us</td><td>526.2 us</td><td>348.0 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>54</td><td>4,718.1 us</td><td>802.3 us</td><td>530.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>54</td><td>4,257.5 us</td><td>862.9 us</td><td>570.7 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>56</td><td>4,670.3 us</td><td>883.2 us</td><td>584.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>56</td><td>4,241.8 us</td><td>490.4 us</td><td>324.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>56</td><td>4,815.2 us</td><td>785.2 us</td><td>519.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>56</td><td>4,260.6 us</td><td>835.6 us</td><td>552.7 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>58</td><td>4,818.6 us</td><td>893.4 us</td><td>590.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>58</td><td>4,391.1 us</td><td>648.1 us</td><td>428.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>58</td><td>4,935.1 us</td><td>698.7 us</td><td>462.1 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>58</td><td>4,412.9 us</td><td>821.9 us</td><td>543.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>60</td><td>4,903.2 us</td><td>894.7 us</td><td>591.8 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>60</td><td>4,494.7 us</td><td>462.7 us</td><td>306.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>60</td><td>5,044.1 us</td><td>752.9 us</td><td>498.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>60</td><td>4,648.6 us</td><td>813.0 us</td><td>537.8 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>62</td><td>5,046.7 us</td><td>984.8 us</td><td>651.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>62</td><td>4,631.5 us</td><td>582.2 us</td><td>385.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>62</td><td>5,224.5 us</td><td>769.9 us</td><td>509.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>62</td><td>4,744.1 us</td><td>867.1 us</td><td>573.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>64</td><td>5,098.9 us</td><td>916.4 us</td><td>606.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>64</td><td>4,814.3 us</td><td>560.2 us</td><td>370.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>64</td><td>5,323.5 us</td><td>792.7 us</td><td>524.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>64</td><td>4,923.8 us</td><td>809.5 us</td><td>535.4 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>66</td><td>5,233.2 us</td><td>924.6 us</td><td>611.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>66</td><td>4,938.8 us</td><td>550.5 us</td><td>364.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>66</td><td>5,385.0 us</td><td>804.5 us</td><td>532.1 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>66</td><td>5,058.3 us</td><td>791.6 us</td><td>523.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>68</td><td>5,331.4 us</td><td>975.3 us</td><td>645.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>68</td><td>5,037.8 us</td><td>507.3 us</td><td>335.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>68</td><td>5,520.8 us</td><td>779.1 us</td><td>515.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>68</td><td>5,112.0 us</td><td>955.4 us</td><td>632.0 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>70</td><td>5,482.5 us</td><td>1,072.1 us</td><td>709.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>70</td><td>5,201.1 us</td><td>625.0 us</td><td>413.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>70</td><td>5,608.3 us</td><td>780.6 us</td><td>516.3 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>70</td><td>5,345.9 us</td><td>775.9 us</td><td>513.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>72</td><td>5,566.8 us</td><td>933.4 us</td><td>617.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>72</td><td>5,382.5 us</td><td>682.6 us</td><td>451.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>72</td><td>5,794.4 us</td><td>784.4 us</td><td>518.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>72</td><td>5,486.2 us</td><td>829.0 us</td><td>548.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>74</td><td>5,680.3 us</td><td>1,074.1 us</td><td>710.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>74</td><td>5,485.7 us</td><td>616.8 us</td><td>407.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>74</td><td>5,762.8 us</td><td>771.7 us</td><td>510.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>74</td><td>5,563.4 us</td><td>901.0 us</td><td>595.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>76</td><td>5,835.5 us</td><td>933.0 us</td><td>617.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>76</td><td>5,628.6 us</td><td>623.0 us</td><td>412.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>76</td><td>6,020.3 us</td><td>743.2 us</td><td>491.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>76</td><td>5,817.3 us</td><td>781.0 us</td><td>516.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>78</td><td>5,890.0 us</td><td>971.1 us</td><td>642.3 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>78</td><td>5,760.6 us</td><td>681.8 us</td><td>450.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>78</td><td>6,207.7 us</td><td>782.3 us</td><td>517.5 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>78</td><td>5,808.3 us</td><td>805.0 us</td><td>532.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>80</td><td>6,024.4 us</td><td>1,015.0 us</td><td>671.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>80</td><td>5,906.4 us</td><td>579.4 us</td><td>383.3 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>80</td><td>6,378.3 us</td><td>871.0 us</td><td>576.1 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>80</td><td>6,005.4 us</td><td>927.0 us</td><td>613.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>82</td><td>6,138.8 us</td><td>1,010.3 us</td><td>668.3 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>82</td><td>6,036.4 us</td><td>576.4 us</td><td>381.3 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>82</td><td>6,511.6 us</td><td>737.2 us</td><td>487.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>82</td><td>6,273.8 us</td><td>986.4 us</td><td>652.4 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>84</td><td>6,324.4 us</td><td>972.0 us</td><td>642.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>84</td><td>6,167.0 us</td><td>587.2 us</td><td>388.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>84</td><td>6,643.8 us</td><td>734.5 us</td><td>485.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>84</td><td>6,788.1 us</td><td>2,256.0 us</td><td>1,492.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>86</td><td>6,416.1 us</td><td>982.1 us</td><td>649.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>86</td><td>6,315.4 us</td><td>655.0 us</td><td>433.3 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>86</td><td>6,919.7 us</td><td>866.4 us</td><td>573.1 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>86</td><td>6,896.1 us</td><td>2,187.1 us</td><td>1,446.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>88</td><td>6,538.2 us</td><td>913.0 us</td><td>603.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>88</td><td>6,412.1 us</td><td>612.8 us</td><td>405.3 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>88</td><td>7,113.9 us</td><td>708.1 us</td><td>468.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>88</td><td>7,065.8 us</td><td>2,384.7 us</td><td>1,577.4 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>90</td><td>6,663.5 us</td><td>949.3 us</td><td>627.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>90</td><td>6,625.0 us</td><td>777.7 us</td><td>514.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>90</td><td>7,119.7 us</td><td>841.2 us</td><td>556.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>90</td><td>7,238.2 us</td><td>2,277.9 us</td><td>1,506.7 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>92</td><td>6,782.9 us</td><td>979.2 us</td><td>647.7 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>92</td><td>6,702.8 us</td><td>622.5 us</td><td>411.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>92</td><td>7,309.4 us</td><td>776.9 us</td><td>513.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>92</td><td>7,371.3 us</td><td>2,091.5 us</td><td>1,383.4 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>94</td><td>6,986.8 us</td><td>1,016.2 us</td><td>672.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>94</td><td>6,879.3 us</td><td>588.1 us</td><td>389.0 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>94</td><td>7,595.2 us</td><td>820.3 us</td><td>542.5 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>94</td><td>7,497.8 us</td><td>2,016.1 us</td><td>1,333.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>96</td><td>7,128.6 us</td><td>1,153.0 us</td><td>762.7 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>1048576</td><td>134</td><td>96</td><td>6,983.0 us</td><td>603.4 us</td><td>399.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>96</td><td>7,711.4 us</td><td>892.3 us</td><td>590.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>1048576</td><td>134</td><td>96</td><td>7,571.7 us</td><td>2,136.3 us</td><td>1,413.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>1</td><td>11,686,050.1 us</td><td>149,776.1 us</td><td>99,067.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>1</td><td>8,843,947.6 us</td><td>124,954.3 us</td><td>82,649.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>1</td><td>11,989,129.7 us</td><td>435,752.4 us</td><td>288,223.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>1</td><td>8,787,329.4 us</td><td>145,807.9 us</td><td>96,442.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>2</td><td>6,986,046.1 us</td><td>99,172.1 us</td><td>65,596.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>2</td><td>4,500,877.8 us</td><td>55,213.2 us</td><td>36,520.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>2</td><td>6,641,109.1 us</td><td>59,738.0 us</td><td>39,513.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>2</td><td>4,486,557.6 us</td><td>26,373.0 us</td><td>17,444.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>4</td><td>3,538,128.9 us</td><td>23,460.2 us</td><td>15,517.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>4</td><td>2,358,550.2 us</td><td>58,227.8 us</td><td>38,514.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>4</td><td>3,822,568.0 us</td><td>44,016.3 us</td><td>29,114.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>4</td><td>2,378,559.5 us</td><td>9,993.4 us</td><td>6,610.0 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>6</td><td>2,467,859.9 us</td><td>76,519.8 us</td><td>50,613.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>6</td><td>1,627,401.2 us</td><td>27,855.8 us</td><td>18,424.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>6</td><td>2,499,785.0 us</td><td>33,659.3 us</td><td>22,263.5 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>6</td><td>1,626,819.7 us</td><td>27,093.0 us</td><td>17,920.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>8</td><td>2,033,929.6 us</td><td>74,038.6 us</td><td>48,972.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>8</td><td>1,256,633.8 us</td><td>36,018.1 us</td><td>23,823.8 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>8</td><td>1,952,299.3 us</td><td>67,708.3 us</td><td>44,784.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>8</td><td>1,249,867.4 us</td><td>25,212.5 us</td><td>16,676.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>10</td><td>1,584,012.9 us</td><td>73,744.1 us</td><td>48,777.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>10</td><td>1,027,724.8 us</td><td>16,677.7 us</td><td>11,031.3 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>10</td><td>1,637,885.4 us</td><td>96,289.5 us</td><td>63,689.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>10</td><td>1,026,523.7 us</td><td>21,717.3 us</td><td>14,364.7 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>12</td><td>1,397,553.6 us</td><td>70,615.3 us</td><td>46,707.7 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>12</td><td>903,441.3 us</td><td>18,115.8 us</td><td>11,982.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>12</td><td>1,466,416.3 us</td><td>71,787.6 us</td><td>47,483.1 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>12</td><td>933,694.1 us</td><td>92,282.2 us</td><td>61,038.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>14</td><td>1,453,820.9 us</td><td>45,304.3 us</td><td>29,966.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>14</td><td>920,356.7 us</td><td>28,022.1 us</td><td>18,534.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>14</td><td>1,477,795.1 us</td><td>31,493.7 us</td><td>20,831.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>14</td><td>911,436.8 us</td><td>24,815.0 us</td><td>16,413.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>16</td><td>1,254,190.3 us</td><td>46,405.4 us</td><td>30,694.3 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>16</td><td>817,503.8 us</td><td>13,566.2 us</td><td>8,973.2 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>16</td><td>1,328,114.0 us</td><td>36,219.6 us</td><td>23,957.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>16</td><td>805,759.1 us</td><td>10,966.0 us</td><td>7,253.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>18</td><td>1,245,794.0 us</td><td>18,189.3 us</td><td>12,031.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>18</td><td>741,373.7 us</td><td>12,260.1 us</td><td>8,109.3 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>18</td><td>1,267,968.2 us</td><td>20,621.6 us</td><td>13,639.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>18</td><td>731,958.9 us</td><td>15,200.8 us</td><td>10,054.4 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>20</td><td>1,179,074.9 us</td><td>11,281.9 us</td><td>7,462.3 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>20</td><td>682,823.6 us</td><td>11,366.1 us</td><td>7,518.0 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>20</td><td>1,106,002.4 us</td><td>9,794.6 us</td><td>6,478.5 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>20</td><td>675,009.0 us</td><td>13,582.5 us</td><td>8,984.0 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>22</td><td>1,093,166.8 us</td><td>22,065.2 us</td><td>14,594.8 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>22</td><td>620,191.5 us</td><td>6,373.7 us</td><td>4,215.8 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>22</td><td>1,060,460.1 us</td><td>7,602.5 us</td><td>5,028.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>22</td><td>611,279.4 us</td><td>6,128.5 us</td><td>4,053.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>24</td><td>1,093,458.1 us</td><td>48,657.4 us</td><td>32,183.8 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>24</td><td>569,528.2 us</td><td>33,566.9 us</td><td>22,202.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>24</td><td>1,136,614.9 us</td><td>40,249.0 us</td><td>26,622.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>24</td><td>643,897.1 us</td><td>85,519.8 us</td><td>56,566.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>26</td><td>2,170,962.7 us</td><td>170,812.3 us</td><td>112,981.8 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>26</td><td>923,388.1 us</td><td>12,564.2 us</td><td>8,310.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>26</td><td>2,037,484.9 us</td><td>191,076.7 us</td><td>126,385.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>26</td><td>912,413.5 us</td><td>12,003.4 us</td><td>7,939.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>28</td><td>2,415,682.5 us</td><td>171,348.4 us</td><td>113,336.3 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>28</td><td>867,452.6 us</td><td>7,015.1 us</td><td>4,640.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>28</td><td>2,401,769.9 us</td><td>270,802.5 us</td><td>179,119.1 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>28</td><td>866,404.5 us</td><td>8,142.6 us</td><td>5,385.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>30</td><td>2,550,338.8 us</td><td>220,854.5 us</td><td>146,081.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>30</td><td>819,680.9 us</td><td>6,959.3 us</td><td>4,603.2 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>30</td><td>2,555,831.1 us</td><td>314,099.0 us</td><td>207,757.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>30</td><td>802,653.0 us</td><td>9,637.0 us</td><td>6,374.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>32</td><td>2,630,558.4 us</td><td>242,106.8 us</td><td>160,138.7 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>32</td><td>777,889.5 us</td><td>6,627.9 us</td><td>4,384.0 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>32</td><td>2,710,149.7 us</td><td>213,995.7 us</td><td>141,544.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>32</td><td>773,561.5 us</td><td>3,498.7 us</td><td>2,314.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>34</td><td>2,727,322.2 us</td><td>324,107.3 us</td><td>214,376.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>34</td><td>734,848.6 us</td><td>5,192.9 us</td><td>3,434.8 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>34</td><td>2,744,519.5 us</td><td>306,130.0 us</td><td>202,486.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>34</td><td>729,370.5 us</td><td>6,130.8 us</td><td>4,055.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>36</td><td>2,684,523.6 us</td><td>343,856.3 us</td><td>227,439.7 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>36</td><td>709,360.1 us</td><td>25,361.1 us</td><td>16,774.8 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>36</td><td>2,706,620.9 us</td><td>366,092.0 us</td><td>242,147.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>36</td><td>692,630.2 us</td><td>5,469.2 us</td><td>3,617.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>38</td><td>2,686,519.6 us</td><td>489,964.1 us</td><td>324,080.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>38</td><td>700,574.4 us</td><td>7,503.2 us</td><td>4,962.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>38</td><td>2,540,886.6 us</td><td>455,098.3 us</td><td>301,019.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>38</td><td>693,588.9 us</td><td>22,192.5 us</td><td>14,678.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>40</td><td>2,678,179.8 us</td><td>441,805.0 us</td><td>292,226.7 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>40</td><td>676,882.9 us</td><td>9,340.1 us</td><td>6,177.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>40</td><td>2,640,246.5 us</td><td>552,452.2 us</td><td>365,412.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>40</td><td>664,633.1 us</td><td>9,269.5 us</td><td>6,131.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>42</td><td>2,667,120.3 us</td><td>324,793.3 us</td><td>214,830.7 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>42</td><td>641,771.4 us</td><td>5,614.2 us</td><td>3,713.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>42</td><td>2,600,595.1 us</td><td>361,813.1 us</td><td>239,317.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>42</td><td>645,799.5 us</td><td>6,151.6 us</td><td>4,068.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>44</td><td>2,459,564.6 us</td><td>360,193.3 us</td><td>238,245.5 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>44</td><td>619,076.4 us</td><td>6,186.8 us</td><td>4,092.2 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>44</td><td>2,497,788.3 us</td><td>372,491.5 us</td><td>246,380.1 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>44</td><td>617,546.4 us</td><td>3,436.3 us</td><td>2,272.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>46</td><td>2,426,069.0 us</td><td>358,422.3 us</td><td>237,074.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>46</td><td>605,054.2 us</td><td>7,430.3 us</td><td>4,914.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>46</td><td>2,280,567.8 us</td><td>264,845.1 us</td><td>175,178.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>46</td><td>599,960.4 us</td><td>3,374.9 us</td><td>2,232.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>48</td><td>2,234,803.4 us</td><td>367,728.5 us</td><td>243,229.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>48</td><td>611,994.2 us</td><td>58,502.4 us</td><td>38,695.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>48</td><td>2,319,013.2 us</td><td>319,246.1 us</td><td>211,161.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>48</td><td>635,718.8 us</td><td>49,166.8 us</td><td>32,520.8 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>50</td><td>2,324,670.0 us</td><td>282,227.3 us</td><td>186,675.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>50</td><td>744,116.9 us</td><td>7,471.9 us</td><td>4,942.2 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>50</td><td>2,197,170.4 us</td><td>322,866.9 us</td><td>213,556.5 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>50</td><td>735,119.1 us</td><td>9,717.4 us</td><td>6,427.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>52</td><td>2,131,225.2 us</td><td>265,090.8 us</td><td>175,341.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>52</td><td>719,729.1 us</td><td>6,433.1 us</td><td>4,255.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>52</td><td>2,221,742.6 us</td><td>280,653.7 us</td><td>185,635.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>52</td><td>712,408.8 us</td><td>8,930.1 us</td><td>5,906.7 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>54</td><td>2,266,040.3 us</td><td>179,177.9 us</td><td>118,515.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>54</td><td>698,646.0 us</td><td>5,094.2 us</td><td>3,369.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>54</td><td>2,189,797.6 us</td><td>218,193.7 us</td><td>144,321.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>54</td><td>694,180.3 us</td><td>6,764.5 us</td><td>4,474.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>56</td><td>2,340,908.4 us</td><td>311,279.5 us</td><td>205,892.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>56</td><td>679,301.6 us</td><td>8,631.4 us</td><td>5,709.2 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>56</td><td>2,222,897.9 us</td><td>206,903.4 us</td><td>136,853.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>56</td><td>678,689.3 us</td><td>5,238.4 us</td><td>3,464.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>58</td><td>2,207,434.2 us</td><td>233,409.0 us</td><td>154,385.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>58</td><td>664,555.7 us</td><td>9,865.1 us</td><td>6,525.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>58</td><td>2,316,424.3 us</td><td>145,941.6 us</td><td>96,531.3 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>58</td><td>661,100.5 us</td><td>7,163.6 us</td><td>4,738.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>60</td><td>2,416,004.1 us</td><td>292,551.9 us</td><td>193,505.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>60</td><td>657,735.4 us</td><td>18,176.6 us</td><td>12,022.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>60</td><td>2,194,345.2 us</td><td>311,833.1 us</td><td>206,258.3 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>60</td><td>651,750.5 us</td><td>14,985.2 us</td><td>9,911.8 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>62</td><td>2,254,286.0 us</td><td>392,441.2 us</td><td>259,575.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>62</td><td>651,576.0 us</td><td>7,255.3 us</td><td>4,798.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>62</td><td>2,225,004.9 us</td><td>420,365.6 us</td><td>278,045.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>62</td><td>645,603.8 us</td><td>4,215.5 us</td><td>2,788.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>64</td><td>2,280,261.9 us</td><td>168,720.2 us</td><td>111,598.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>64</td><td>633,147.1 us</td><td>5,710.4 us</td><td>3,777.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>64</td><td>2,257,179.7 us</td><td>346,944.6 us</td><td>229,482.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>64</td><td>628,514.6 us</td><td>4,684.3 us</td><td>3,098.4 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>66</td><td>2,179,200.0 us</td><td>336,074.0 us</td><td>222,292.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>66</td><td>621,890.2 us</td><td>7,283.9 us</td><td>4,817.8 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>66</td><td>2,410,365.7 us</td><td>444,883.2 us</td><td>294,262.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>66</td><td>613,078.8 us</td><td>6,366.2 us</td><td>4,210.8 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>68</td><td>2,333,674.4 us</td><td>355,176.8 us</td><td>234,927.5 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>68</td><td>608,193.6 us</td><td>3,426.9 us</td><td>2,266.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>68</td><td>2,188,913.9 us</td><td>410,763.6 us</td><td>271,694.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>68</td><td>600,449.9 us</td><td>4,984.9 us</td><td>3,297.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>70</td><td>2,229,986.8 us</td><td>354,210.0 us</td><td>234,288.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>70</td><td>593,976.8 us</td><td>24,074.0 us</td><td>15,923.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>70</td><td>2,234,442.6 us</td><td>287,886.1 us</td><td>190,418.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>70</td><td>592,527.7 us</td><td>3,470.4 us</td><td>2,295.4 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>72</td><td>2,049,247.1 us</td><td>239,933.5 us</td><td>158,701.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>72</td><td>676,272.0 us</td><td>66,808.1 us</td><td>44,189.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>72</td><td>2,128,191.3 us</td><td>303,552.4 us</td><td>200,781.1 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>72</td><td>620,189.2 us</td><td>52,681.2 us</td><td>34,845.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>74</td><td>2,161,192.1 us</td><td>251,444.9 us</td><td>166,315.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>74</td><td>688,147.5 us</td><td>4,838.6 us</td><td>3,200.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>74</td><td>2,221,092.8 us</td><td>260,601.2 us</td><td>172,371.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>74</td><td>684,666.7 us</td><td>9,865.6 us</td><td>6,525.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>76</td><td>1,996,284.6 us</td><td>337,871.2 us</td><td>223,480.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>76</td><td>667,808.1 us</td><td>7,415.1 us</td><td>4,904.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>76</td><td>2,181,794.6 us</td><td>235,282.6 us</td><td>155,624.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>76</td><td>676,480.3 us</td><td>4,737.6 us</td><td>3,133.7 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>78</td><td>2,130,982.2 us</td><td>301,646.7 us</td><td>199,520.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>78</td><td>654,557.9 us</td><td>7,036.0 us</td><td>4,653.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>78</td><td>2,313,249.9 us</td><td>279,985.2 us</td><td>185,192.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>78</td><td>653,574.1 us</td><td>10,491.5 us</td><td>6,939.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>80</td><td>2,157,693.6 us</td><td>177,650.7 us</td><td>117,504.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>80</td><td>643,945.0 us</td><td>5,710.3 us</td><td>3,777.0 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>80</td><td>2,084,337.0 us</td><td>215,215.7 us</td><td>142,351.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>80</td><td>644,278.4 us</td><td>15,542.5 us</td><td>10,280.4 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>82</td><td>2,112,250.5 us</td><td>299,199.3 us</td><td>197,901.8 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>82</td><td>639,994.8 us</td><td>6,143.3 us</td><td>4,063.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>82</td><td>2,238,837.9 us</td><td>264,784.8 us</td><td>175,138.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>82</td><td>636,295.3 us</td><td>15,931.2 us</td><td>10,537.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>84</td><td>2,184,962.6 us</td><td>355,741.8 us</td><td>235,301.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>84</td><td>632,305.5 us</td><td>5,086.4 us</td><td>3,364.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>84</td><td>2,113,115.3 us</td><td>327,606.1 us</td><td>216,691.1 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>84</td><td>633,324.4 us</td><td>8,531.5 us</td><td>5,643.0 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>86</td><td>2,011,349.8 us</td><td>226,178.8 us</td><td>149,603.3 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>86</td><td>627,617.1 us</td><td>5,064.3 us</td><td>3,349.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>86</td><td>2,221,444.4 us</td><td>309,772.8 us</td><td>204,895.5 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>86</td><td>614,838.2 us</td><td>4,596.6 us</td><td>3,040.4 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>88</td><td>1,938,044.6 us</td><td>244,361.9 us</td><td>161,630.3 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>88</td><td>610,806.7 us</td><td>3,166.0 us</td><td>2,094.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>88</td><td>2,109,542.7 us</td><td>184,485.7 us</td><td>122,025.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>88</td><td>612,940.7 us</td><td>4,301.0 us</td><td>2,844.8 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>90</td><td>2,192,041.4 us</td><td>168,656.9 us</td><td>111,556.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>90</td><td>605,184.4 us</td><td>6,505.9 us</td><td>4,303.3 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>90</td><td>2,082,362.0 us</td><td>228,455.5 us</td><td>151,109.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>90</td><td>598,533.6 us</td><td>4,448.1 us</td><td>2,942.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>92</td><td>2,008,870.1 us</td><td>262,787.3 us</td><td>173,817.5 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>92</td><td>595,983.2 us</td><td>6,977.8 us</td><td>4,615.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>92</td><td>2,114,425.9 us</td><td>370,045.2 us</td><td>244,762.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>92</td><td>590,520.7 us</td><td>4,764.0 us</td><td>3,151.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>94</td><td>2,110,392.3 us</td><td>258,193.5 us</td><td>170,779.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>94</td><td>588,308.6 us</td><td>6,328.1 us</td><td>4,185.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>94</td><td>1,959,853.2 us</td><td>164,478.9 us</td><td>108,792.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>94</td><td>588,375.8 us</td><td>12,428.6 us</td><td>8,220.8 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>96</td><td>1,933,259.0 us</td><td>222,880.7 us</td><td>147,421.8 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>17</td><td>96</td><td>631,685.8 us</td><td>48,041.5 us</td><td>31,776.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>96</td><td>2,023,215.7 us</td><td>226,232.4 us</td><td>149,638.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>17</td><td>96</td><td>644,516.9 us</td><td>46,042.0 us</td><td>30,453.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>1</td><td>2,003,805.3 us</td><td>43,236.7 us</td><td>28,598.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>1</td><td>1,067,240.9 us</td><td>29,863.9 us</td><td>19,753.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>1</td><td>2,052,582.2 us</td><td>63,147.6 us</td><td>41,768.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>1</td><td>1,073,352.3 us</td><td>2,631.3 us</td><td>1,740.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>2</td><td>1,097,350.4 us</td><td>32,648.2 us</td><td>21,594.8 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>2</td><td>544,761.7 us</td><td>11,901.4 us</td><td>7,872.0 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>2</td><td>1,112,764.1 us</td><td>43,992.7 us</td><td>29,098.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>2</td><td>544,782.9 us</td><td>6,423.3 us</td><td>4,248.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>4</td><td>612,374.9 us</td><td>18,100.6 us</td><td>11,972.5 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>4</td><td>284,633.1 us</td><td>4,439.6 us</td><td>2,936.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>4</td><td>624,118.0 us</td><td>25,982.4 us</td><td>17,185.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>4</td><td>280,280.0 us</td><td>4,699.1 us</td><td>3,108.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>6</td><td>437,224.1 us</td><td>15,242.4 us</td><td>10,081.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>6</td><td>202,241.1 us</td><td>4,143.4 us</td><td>2,740.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>6</td><td>426,000.7 us</td><td>59,305.3 us</td><td>39,226.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>6</td><td>214,066.5 us</td><td>34,565.5 us</td><td>22,862.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>8</td><td>350,189.8 us</td><td>28,029.5 us</td><td>18,539.8 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>8</td><td>157,849.6 us</td><td>11,965.1 us</td><td>7,914.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>8</td><td>328,087.3 us</td><td>19,357.4 us</td><td>12,803.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>8</td><td>156,927.5 us</td><td>3,690.5 us</td><td>2,441.0 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>10</td><td>287,130.6 us</td><td>11,127.8 us</td><td>7,360.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>10</td><td>129,746.6 us</td><td>4,316.6 us</td><td>2,855.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>10</td><td>298,071.3 us</td><td>19,152.1 us</td><td>12,667.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>10</td><td>130,550.3 us</td><td>5,559.5 us</td><td>3,677.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>12</td><td>263,501.5 us</td><td>22,436.7 us</td><td>14,840.5 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>12</td><td>124,354.6 us</td><td>10,264.1 us</td><td>6,789.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>12</td><td>266,802.6 us</td><td>19,189.0 us</td><td>12,692.3 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>12</td><td>122,290.7 us</td><td>9,747.7 us</td><td>6,447.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>14</td><td>257,365.4 us</td><td>7,441.6 us</td><td>4,922.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>14</td><td>110,612.8 us</td><td>3,122.9 us</td><td>2,065.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>14</td><td>256,983.4 us</td><td>4,737.0 us</td><td>3,133.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>14</td><td>110,435.2 us</td><td>3,318.5 us</td><td>2,195.0 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>16</td><td>249,094.8 us</td><td>5,422.4 us</td><td>3,586.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>16</td><td>99,996.0 us</td><td>2,493.8 us</td><td>1,649.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>16</td><td>245,579.1 us</td><td>7,258.8 us</td><td>4,801.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>16</td><td>97,043.2 us</td><td>2,041.4 us</td><td>1,350.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>18</td><td>242,721.6 us</td><td>7,805.1 us</td><td>5,162.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>18</td><td>90,206.8 us</td><td>2,056.7 us</td><td>1,360.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>18</td><td>244,495.2 us</td><td>8,199.9 us</td><td>5,423.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>18</td><td>88,873.4 us</td><td>1,678.3 us</td><td>1,110.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>20</td><td>255,174.8 us</td><td>10,501.3 us</td><td>6,945.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>20</td><td>81,371.2 us</td><td>1,760.6 us</td><td>1,164.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>20</td><td>253,446.6 us</td><td>9,820.1 us</td><td>6,495.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>20</td><td>80,659.3 us</td><td>2,580.2 us</td><td>1,706.7 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>22</td><td>255,399.3 us</td><td>12,430.8 us</td><td>8,222.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>22</td><td>73,928.2 us</td><td>1,326.7 us</td><td>877.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>22</td><td>276,192.9 us</td><td>11,777.4 us</td><td>7,790.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>22</td><td>73,893.8 us</td><td>1,265.3 us</td><td>836.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>24</td><td>299,181.6 us</td><td>13,193.2 us</td><td>8,726.5 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>24</td><td>70,057.9 us</td><td>8,783.7 us</td><td>5,809.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>24</td><td>279,763.9 us</td><td>11,337.7 us</td><td>7,499.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>24</td><td>69,326.7 us</td><td>4,652.7 us</td><td>3,077.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>26</td><td>681,727.3 us</td><td>132,200.8 us</td><td>87,442.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>26</td><td>106,076.7 us</td><td>3,199.6 us</td><td>2,116.3 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>26</td><td>684,877.9 us</td><td>125,018.2 us</td><td>82,691.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>26</td><td>105,499.1 us</td><td>3,575.6 us</td><td>2,365.0 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>28</td><td>741,182.2 us</td><td>73,749.9 us</td><td>48,781.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>28</td><td>100,825.7 us</td><td>2,492.6 us</td><td>1,648.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>28</td><td>689,254.2 us</td><td>154,759.3 us</td><td>102,363.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>28</td><td>99,654.6 us</td><td>1,202.8 us</td><td>795.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>30</td><td>741,673.6 us</td><td>102,959.5 us</td><td>68,101.3 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>30</td><td>97,310.6 us</td><td>3,150.2 us</td><td>2,083.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>30</td><td>680,183.1 us</td><td>134,447.2 us</td><td>88,928.5 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>30</td><td>98,501.9 us</td><td>4,060.5 us</td><td>2,685.8 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>32</td><td>710,815.6 us</td><td>96,245.7 us</td><td>63,660.5 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>32</td><td>93,471.1 us</td><td>4,164.3 us</td><td>2,754.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>32</td><td>715,586.6 us</td><td>129,199.9 us</td><td>85,457.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>32</td><td>92,862.6 us</td><td>2,847.5 us</td><td>1,883.4 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>34</td><td>733,468.8 us</td><td>160,231.5 us</td><td>105,983.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>34</td><td>90,367.9 us</td><td>2,790.2 us</td><td>1,845.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>34</td><td>710,203.3 us</td><td>102,390.1 us</td><td>67,724.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>34</td><td>90,339.1 us</td><td>1,571.6 us</td><td>1,039.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>36</td><td>728,658.1 us</td><td>74,152.3 us</td><td>49,047.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>36</td><td>85,048.5 us</td><td>1,591.4 us</td><td>1,052.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>36</td><td>707,408.4 us</td><td>126,581.3 us</td><td>83,725.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>36</td><td>85,556.6 us</td><td>1,443.1 us</td><td>954.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>38</td><td>686,583.6 us</td><td>165,059.9 us</td><td>109,176.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>38</td><td>83,015.9 us</td><td>1,561.8 us</td><td>1,033.0 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>38</td><td>714,423.4 us</td><td>127,305.3 us</td><td>84,204.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>38</td><td>80,806.0 us</td><td>1,171.8 us</td><td>775.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>40</td><td>616,264.9 us</td><td>146,053.3 us</td><td>96,605.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>40</td><td>79,177.9 us</td><td>834.8 us</td><td>552.2 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>40</td><td>714,949.2 us</td><td>145,454.5 us</td><td>96,209.1 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>40</td><td>78,472.5 us</td><td>1,201.9 us</td><td>795.0 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>42</td><td>680,834.2 us</td><td>171,488.2 us</td><td>113,428.8 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>42</td><td>75,961.1 us</td><td>1,084.3 us</td><td>717.2 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>42</td><td>715,459.5 us</td><td>245,126.5 us</td><td>162,136.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>42</td><td>75,705.6 us</td><td>1,349.0 us</td><td>892.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>44</td><td>557,712.5 us</td><td>156,777.8 us</td><td>103,698.8 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>44</td><td>73,392.5 us</td><td>1,061.4 us</td><td>702.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>44</td><td>658,005.2 us</td><td>162,485.8 us</td><td>107,474.3 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>44</td><td>73,406.9 us</td><td>1,795.1 us</td><td>1,187.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>46</td><td>573,136.8 us</td><td>117,478.9 us</td><td>77,705.1 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>46</td><td>70,420.4 us</td><td>1,280.0 us</td><td>846.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>46</td><td>575,307.1 us</td><td>140,554.4 us</td><td>92,968.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>46</td><td>69,548.8 us</td><td>773.0 us</td><td>511.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>48</td><td>500,847.0 us</td><td>95,947.5 us</td><td>63,463.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>48</td><td>73,950.1 us</td><td>10,042.4 us</td><td>6,642.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>48</td><td>617,704.4 us</td><td>186,801.6 us</td><td>123,557.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>48</td><td>71,643.7 us</td><td>9,702.9 us</td><td>6,417.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>50</td><td>594,411.9 us</td><td>162,972.4 us</td><td>107,796.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>50</td><td>88,305.3 us</td><td>3,202.0 us</td><td>2,118.0 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>50</td><td>650,469.4 us</td><td>93,109.0 us</td><td>61,585.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>50</td><td>89,309.6 us</td><td>1,818.3 us</td><td>1,202.7 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>52</td><td>627,389.3 us</td><td>168,845.5 us</td><td>111,680.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>52</td><td>86,510.6 us</td><td>3,845.7 us</td><td>2,543.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>52</td><td>702,087.1 us</td><td>127,756.7 us</td><td>84,503.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>52</td><td>85,945.3 us</td><td>1,044.1 us</td><td>690.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>54</td><td>729,900.0 us</td><td>169,797.2 us</td><td>112,310.3 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>54</td><td>85,329.1 us</td><td>3,360.1 us</td><td>2,222.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>54</td><td>686,550.3 us</td><td>112,036.0 us</td><td>74,104.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>54</td><td>86,726.4 us</td><td>3,440.9 us</td><td>2,275.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>56</td><td>739,042.6 us</td><td>106,672.8 us</td><td>70,557.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>56</td><td>84,270.3 us</td><td>3,961.8 us</td><td>2,620.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>56</td><td>697,328.8 us</td><td>110,669.6 us</td><td>73,201.1 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>56</td><td>82,509.2 us</td><td>2,782.3 us</td><td>1,840.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>58</td><td>711,396.4 us</td><td>138,404.1 us</td><td>91,545.7 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>58</td><td>83,218.4 us</td><td>1,697.9 us</td><td>1,123.0 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>58</td><td>693,817.6 us</td><td>155,287.8 us</td><td>102,713.3 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>58</td><td>82,005.2 us</td><td>1,998.7 us</td><td>1,322.0 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>60</td><td>664,979.7 us</td><td>142,993.8 us</td><td>94,581.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>60</td><td>80,627.3 us</td><td>1,117.4 us</td><td>739.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>60</td><td>700,724.4 us</td><td>131,370.1 us</td><td>86,893.2 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>60</td><td>79,818.8 us</td><td>1,256.6 us</td><td>831.2 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>62</td><td>747,184.6 us</td><td>80,233.1 us</td><td>53,069.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>62</td><td>77,519.2 us</td><td>1,100.9 us</td><td>728.2 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>62</td><td>716,235.4 us</td><td>136,027.6 us</td><td>89,973.8 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>62</td><td>78,109.6 us</td><td>780.3 us</td><td>516.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>64</td><td>679,270.8 us</td><td>141,390.6 us</td><td>93,521.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>64</td><td>77,023.2 us</td><td>602.8 us</td><td>398.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>64</td><td>716,082.5 us</td><td>124,156.1 us</td><td>82,121.5 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>64</td><td>75,540.5 us</td><td>974.5 us</td><td>644.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>66</td><td>729,423.1 us</td><td>146,660.5 us</td><td>97,006.8 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>66</td><td>73,978.4 us</td><td>1,265.8 us</td><td>837.3 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>66</td><td>715,112.9 us</td><td>136,814.6 us</td><td>90,494.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>66</td><td>73,940.2 us</td><td>1,012.4 us</td><td>669.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>68</td><td>679,188.4 us</td><td>151,796.4 us</td><td>100,403.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>68</td><td>73,151.7 us</td><td>874.5 us</td><td>578.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>68</td><td>662,614.5 us</td><td>155,219.2 us</td><td>102,667.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>68</td><td>73,726.5 us</td><td>2,395.7 us</td><td>1,584.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>70</td><td>737,051.5 us</td><td>98,045.8 us</td><td>64,851.2 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>70</td><td>71,969.1 us</td><td>1,216.2 us</td><td>804.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>70</td><td>719,697.9 us</td><td>118,406.3 us</td><td>78,318.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>70</td><td>71,463.7 us</td><td>1,608.0 us</td><td>1,063.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>72</td><td>593,045.5 us</td><td>153,439.8 us</td><td>101,491.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>72</td><td>75,200.5 us</td><td>5,206.0 us</td><td>3,443.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>72</td><td>713,553.5 us</td><td>102,364.7 us</td><td>67,707.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>72</td><td>72,737.3 us</td><td>2,013.1 us</td><td>1,331.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>74</td><td>675,508.7 us</td><td>141,885.4 us</td><td>93,848.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>74</td><td>82,153.2 us</td><td>1,790.9 us</td><td>1,184.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>74</td><td>709,475.4 us</td><td>137,128.9 us</td><td>90,702.3 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>74</td><td>81,528.6 us</td><td>767.1 us</td><td>507.4 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>76</td><td>787,000.5 us</td><td>234,648.5 us</td><td>155,205.4 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>76</td><td>80,637.6 us</td><td>1,812.8 us</td><td>1,199.0 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>76</td><td>655,218.1 us</td><td>141,888.7 us</td><td>93,850.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>76</td><td>80,013.9 us</td><td>1,618.6 us</td><td>1,070.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>78</td><td>676,048.3 us</td><td>161,241.0 us</td><td>106,651.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>78</td><td>79,934.6 us</td><td>2,527.6 us</td><td>1,671.8 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>78</td><td>705,179.2 us</td><td>138,298.5 us</td><td>91,475.9 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>78</td><td>79,089.8 us</td><td>2,077.1 us</td><td>1,373.9 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>80</td><td>739,865.9 us</td><td>67,333.6 us</td><td>44,537.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>80</td><td>78,814.4 us</td><td>2,326.3 us</td><td>1,538.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>80</td><td>656,387.3 us</td><td>157,173.3 us</td><td>103,960.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>80</td><td>79,025.8 us</td><td>3,512.2 us</td><td>2,323.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>82</td><td>615,598.7 us</td><td>158,184.1 us</td><td>104,629.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>82</td><td>77,497.9 us</td><td>2,121.8 us</td><td>1,403.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>82</td><td>714,160.2 us</td><td>103,206.4 us</td><td>68,264.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>82</td><td>76,564.3 us</td><td>1,600.4 us</td><td>1,058.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>84</td><td>717,596.9 us</td><td>120,874.5 us</td><td>79,951.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>84</td><td>76,449.8 us</td><td>1,489.8 us</td><td>985.4 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>84</td><td>658,703.6 us</td><td>142,949.7 us</td><td>94,552.4 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>84</td><td>76,429.0 us</td><td>684.2 us</td><td>452.5 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>86</td><td>603,050.5 us</td><td>163,726.4 us</td><td>108,294.9 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>86</td><td>75,085.8 us</td><td>1,348.2 us</td><td>891.8 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>86</td><td>715,435.0 us</td><td>143,727.2 us</td><td>95,066.7 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>86</td><td>75,353.5 us</td><td>1,102.8 us</td><td>729.4 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>88</td><td>650,353.9 us</td><td>172,715.5 us</td><td>114,240.6 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>88</td><td>74,184.0 us</td><td>1,179.1 us</td><td>779.9 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>88</td><td>572,456.5 us</td><td>117,364.8 us</td><td>77,629.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>88</td><td>73,829.8 us</td><td>748.9 us</td><td>495.3 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>90</td><td>624,595.5 us</td><td>179,846.0 us</td><td>118,957.0 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>90</td><td>72,575.9 us</td><td>645.8 us</td><td>427.1 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>90</td><td>677,028.8 us</td><td>170,228.5 us</td><td>112,595.6 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>90</td><td>72,371.2 us</td><td>428.0 us</td><td>283.1 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>92</td><td>613,840.9 us</td><td>179,163.1 us</td><td>118,505.3 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>92</td><td>72,335.8 us</td><td>779.7 us</td><td>515.7 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>92</td><td>519,478.3 us</td><td>73,070.3 us</td><td>48,331.5 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>92</td><td>71,640.7 us</td><td>1,006.3 us</td><td>665.6 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>94</td><td>583,128.0 us</td><td>146,058.3 us</td><td>96,608.5 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>94</td><td>71,792.3 us</td><td>1,208.9 us</td><td>799.6 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>94</td><td>569,568.0 us</td><td>148,127.3 us</td><td>97,977.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>94</td><td>71,030.0 us</td><td>1,100.3 us</td><td>727.8 us</td>
+</tr><tr><td>ParallelSave</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>96</td><td>515,467.3 us</td><td>102,913.3 us</td><td>68,070.8 us</td>
+</tr><tr><td>ParallelUse</td><td>.NET Core 2.0</td><td>536870912</td><td>134</td><td>96</td><td>78,078.4 us</td><td>3,405.5 us</td><td>2,252.5 us</td>
+</tr><tr><td>ParallelSave</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>96</td><td>535,491.4 us</td><td>105,030.2 us</td><td>69,471.0 us</td>
+</tr><tr><td>ParallelUse</td><td>CsProjnet462</td><td>536870912</td><td>134</td><td>96</td><td>75,809.8 us</td><td>2,879.3 us</td><td>1,904.5 us</td>
+</tr></tbody></table>
+</body>
+</html>

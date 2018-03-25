@@ -32,8 +32,15 @@ namespace Storage
         InitLOContainer();
     }
 
-    MemoryTrunk::MemoryTrunk(){}
-    MemoryTrunk::MemoryTrunk(int32_t id, void* mem_ptr, uint64_t initial_size)
+    MemoryTrunk::MemoryTrunk()
+    {
+        split_lock  = new TrinityLock();
+        alloc_lock  = new TrinityLock();
+        defrag_lock = new TrinityLock();
+        lo_lock     = new TrinityLock();
+    }
+
+    MemoryTrunk::MemoryTrunk(int32_t id, void* mem_ptr, uint64_t initial_size): MemoryTrunk()
     {
         Initialize(id, mem_ptr, initial_size);
     }
@@ -44,6 +51,10 @@ namespace Storage
     MemoryTrunk::~MemoryTrunk()
     {
         DeallocateTrunk();
+        delete split_lock;
+        delete alloc_lock;
+        delete defrag_lock;
+        delete lo_lock;
     }
 
     void MemoryTrunk::DeallocateTrunk()

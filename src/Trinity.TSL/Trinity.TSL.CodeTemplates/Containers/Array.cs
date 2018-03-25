@@ -29,11 +29,11 @@ namespace t_Namespace
         /// Gets the rank (number of dimentsions) of the Array.
         /// </summary>
         public static readonly int Rank = t_int_2;
-        internal byte* CellPtr;
-        internal long? CellID;
+        internal byte* m_ptr;
+        internal long CellId;
         internal t_array_name(byte* _CellPtr)
         {
-            this.CellPtr = _CellPtr;
+            this.m_ptr = _CellPtr;
         }
         /// <summary>
         /// Gets the total number of elements
@@ -59,7 +59,7 @@ namespace t_Namespace
             byte[] ret = new byte[Length * t_int_3];
             fixed (byte* ptr = ret)
             {
-                Memory.Copy(CellPtr, ptr, Length * t_int_3);
+                Memory.Copy(m_ptr, ptr, Length * t_int_3);
             }
             return ret;
         }
@@ -82,7 +82,7 @@ namespace t_Namespace
                 //[i_1,i_2,i_3,...,i_n]
                 //i_n + i_n-1 * sd_n + i_n-2 * sd_n * sd_n-1 + ... + i_1 * s_2 * s_3 * ... * s_n
 
-                byte* offset = CellPtr + 
+                byte* offset = m_ptr + 
                     /*FOREACH("+")*/
                     indexDimt_dim_idx * t_int_4
                     /*END*/
@@ -90,7 +90,7 @@ namespace t_Namespace
 
                 IF("data_type_need_accessor(node->arrayInfo.arrayElement)");
                 {
-                    elementAccessor.CellPtr = offset;
+                    elementAccessor.m_ptr = offset;
                     return elementAccessor;
                 }
                 ELSE();
@@ -101,7 +101,7 @@ namespace t_Namespace
             }
             set
             {
-                byte* offset = CellPtr + 
+                byte* offset = m_ptr + 
                     /*FOREACH("+")*/
                     indexDimt_dim_idx * t_int_4
                     /*END*/
@@ -109,7 +109,7 @@ namespace t_Namespace
                 IF("data_type_need_accessor(node->arrayInfo.arrayElement)");
                 {
                     if ((object)value == null) throw new ArgumentNullException("The assigned variable is null.");
-                    Memory.Copy(value.CellPtr, offset, t_int_3);
+                    Memory.Copy(value.m_ptr, offset, t_int_3);
                 }
                 ELSE();
                 {
@@ -125,13 +125,13 @@ namespace t_Namespace
         /// <param name="action">A lambda expression which has one parameter indicates element in array</param>
         public unsafe void ForEach(Action<t_accessor_type> action)
         {
-            byte* targetPtr = CellPtr;
-            byte* endPtr = CellPtr + Length * t_int_3;
+            byte* targetPtr = m_ptr;
+            byte* endPtr = m_ptr + Length * t_int_3;
             while (targetPtr < endPtr)
             {
                 IF("data_type_need_accessor(node->arrayInfo.arrayElement)");
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.m_ptr = targetPtr;
                     action(elementAccessor);
                     targetPtr += t_int_3;
                 }
@@ -151,8 +151,8 @@ namespace t_Namespace
             t_array_name target;
             internal _iterator(t_array_name target)
             {
-                targetPtr   = target.CellPtr;
-                endPtr      = target.CellPtr + target.Length * t_int_3;
+                targetPtr   = target.m_ptr;
+                endPtr      = target.m_ptr + target.Length * t_int_3;
                 this.target = target;
             }
             internal bool good()
@@ -163,7 +163,7 @@ namespace t_Namespace
             {
                 IF("data_type_need_accessor(node->arrayInfo.arrayElement)");
                 {
-                    target.elementAccessor.CellPtr = targetPtr;
+                    target.elementAccessor.m_ptr = targetPtr;
                     return target.elementAccessor;
                 }
                 ELSE();
@@ -201,7 +201,7 @@ namespace t_Namespace
         public unsafe void Clear(int index, int length)
         {
             if (index < 0 || length < 0 ||index >= Length || index+length > Length) throw new IndexOutOfRangeException();
-            Memory.memset(CellPtr + index* t_int_3, 0, (ulong)(length * t_int_3));
+            Memory.memset(m_ptr + index* t_int_3, 0, (ulong)(length * t_int_3));
         }
 
         public unsafe static implicit operator t_data_type[ /*FOREACH(",")*/ /*USE_LIST("t_dim")*/ /*END*/ ]
@@ -213,11 +213,11 @@ namespace t_Namespace
             IF("!data_type_need_accessor($t_data_type)");
             fixed (t_data_type* p = ret)
             {
-                Memory.Copy(accessor.CellPtr, p, META_OUTPUT("node->type_size()"));
+                Memory.Copy(accessor.m_ptr, p, META_OUTPUT("node->type_size()"));
             }
             ELSE();
 
-            t_accessor_type _element = new t_accessor_type(accessor.CellPtr);
+            t_accessor_type _element = new t_accessor_type(accessor.m_ptr);
 
             FOREACH();
             USE_LIST("t_dim");
@@ -229,7 +229,7 @@ namespace t_Namespace
                     t_iterator
                     /*END*/
                     ] = _element;
-                _element.CellPtr += META_OUTPUT("node->type_size()"); ;
+                _element.m_ptr += META_OUTPUT("node->type_size()"); ;
             }
 
             END();
@@ -246,8 +246,8 @@ namespace t_Namespace
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
               return false;
             // If both are same instance, return true.
-            if (a.CellPtr == b.CellPtr) return true;
-            return Memory.Compare(a.CellPtr, b.CellPtr, a.Length * t_int_3);
+            if (a.m_ptr == b.m_ptr) return true;
+            return Memory.Compare(a.m_ptr, b.m_ptr, a.Length * t_int_3);
         }
 
         public static bool operator != (t_array_name a,t_array_name b)

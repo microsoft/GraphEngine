@@ -1,0 +1,77 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageId>GraphEngine.FFI.Python</PackageId>
+    <Version>2.0.9328</Version>
+    <Authors>Microsoft Graph Engine Team</Authors>
+    <Company>Microsoft Corporation</Company>
+    <Product>GraphEngine.FFI.Python</Product>
+    <Description>GraphEngine hosted Python runtime</Description>
+    <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
+    <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
+    <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
+    <Copyright>Copyright 2018</Copyright>
+    <RepositoryUrl>https://github.com/Microsoft/GraphEngine/</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath>..\..\..\..\bin</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="build\**" />
+    <Compile Remove="GraphEngine.egg-info\**" />
+    <Compile Remove="GraphEngine\**" />
+    <Compile Remove="storage\**" />
+    <Compile Remove="tests\**" />
+    <Compile Remove="__pycache__\**" />
+    <EmbeddedResource Remove="build\**" />
+    <EmbeddedResource Remove="GraphEngine.egg-info\**" />
+    <EmbeddedResource Remove="GraphEngine\**" />
+    <EmbeddedResource Remove="storage\**" />
+    <EmbeddedResource Remove="tests\**" />
+    <EmbeddedResource Remove="__pycache__\**" />
+    <None Remove="build\**" />
+    <None Remove="GraphEngine.egg-info\**" />
+    <None Remove="GraphEngine\**" />
+    <None Remove="storage\**" />
+    <None Remove="tests\**" />
+    <None Remove="__pycache__\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SwigFile Include="$(ProjectDir)..\Trinity.FFI.Native\Trinity.FFI.Swig.i" />
+    <CppFile Include="$(ProjectDir)..\Trinity.FFI.Native\Trinity.FFI.Schema.h" />
+    <CppFile Include="$(ProjectDir)..\Trinity.FFI.Native\Trinity.FFI.SWIG.h" />
+    <CppFile Include="$(ProjectDir)..\Trinity.FFI.Native\Trinity.FFI.Native.h" />
+  </ItemGroup>
+  
+  <Target Name="BuildPythonExt" BeforeTargets="DispatchToInnerBuilds" Inputs="@(SwigFile);@(CppFile)" Outputs="Trinity.FFI.Swig_wrap.cxx;build\lib.win-amd64-3.6\GraphEngine\_ffi.cp36-win_amd64.pyd;build\lib.win-amd64-3.6\GraphEngine\ffi.py" Condition="'@(SwigFile)' != ''">
+    <Exec Command="swig.exe -modern -c++ -builtin -outcurrentdir -python &quot;@(SwigFile)&quot;" Outputs="Trinity.FFI.Swig_wrap.cxx" />
+    <Move SourceFiles="ffi.py" DestinationFolder="GraphEngine" />
+    <Exec Command="python.exe setup.py build" Outputs="build\lib.win-amd64-3.6\GraphEngine\_ffi.cp36-win_amd64.pyd;build\lib.win-amd64-3.6\GraphEngine\ffi.py" />  
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="Python.Runtime" Version="2.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.FFI\Trinity.FFI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="GraphEngine\Dependencies.csproj" />
+    <None Include="GraphEngine\**\*.py" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="tests\**" />
+    <Compile Remove="tests\**" />
+    <Content Remove="tests\**" />
+  </ItemGroup>
+
+</Project>

@@ -77,7 +77,6 @@ namespace Storage
     private:
         enum Int32_Constants :int32_t
         {
-            retry_enter_threshold = 128,
             PhysicalMemoryPageLocking = 0,
         };
 
@@ -91,28 +90,17 @@ namespace Storage
             MaxLargeObjectSize = 0x40000000,
         };
 
-        /*****************************************************************/
         /**************************** 64-byte block 1 ********************/
         char* trunkPtr;
         MTHash* hashtable;
         HeadGroup head;
         std::atomic<uint32_t> committed_tail;
-
-        TrinitySpinlock defrag_lock;
-        TrinitySpinlock alloc_lock;
-        TrinitySpinlock lo_lock;
-        TrinitySpinlock split_lock;
         std::atomic<int32_t> pending_flag;
-
-        /********** Defragmentation *********/
-        std::atomic<uint32_t> LastAppendHead;
-        std::atomic<bool> IsAddressTableValid;
-        //////////////////////////////////////
-        std::atomic<uint32_t> add_memory_entry_flag;
-        /**************************** 64-byte block 1 ********************/
-        ///////////////////////////////////////////////////////////////////
-
-        /*****************************************************************/
+        //////////////////////////// 32bytes
+        TrinityLock* split_lock;
+        TrinityLock* alloc_lock;
+        TrinityLock* defrag_lock;
+        TrinityLock* lo_lock;
         /**************************** 64-byte block 2 ********************/
         char** LOPtrs;
         int32_t* LOPreservedSizeArray;
@@ -122,9 +110,13 @@ namespace Storage
         int32_t LOCapacity;
         ///Current number of large objects
         int32_t LOCount;
-        ////////////////////////////////////
         int32_t TrunkId;
-        int32_t padding[8];
+        ///////////////////////////// 32bytes
+        std::atomic<uint32_t> add_memory_entry_flag;
+        /********** Defragmentation *********/
+        std::atomic<uint32_t> LastAppendHead;
+        std::atomic<uint8_t> IsAddressTableValid;
+        uint8_t padding[23];
         /**************************** 64-byte block 2 ******************/
         /////////////////////////////////////////////////////////////////
 
@@ -148,7 +140,7 @@ namespace Storage
         /////////////////////////////////////////////////////
 
         /*********************** Memory ************************/
-        TrinityErrorCode AddMemoryCell(int32_t cell_length, int32_t cellEntryIndex, OUT int32_t& cell_offset);
+        TrinityErrorCode AddMemoryCell(cellid_t cellId, int32_t cell_length, OUT int32_t& cell_offset);
         TrinityErrorCode ExpandLargeObject(int32_t lo_index, int32_t original_size, int32_t new_size);
         TrinityErrorCode ShrinkLargeObject(int32_t lo_index, int32_t original_size, int32_t new_size);
         ////////////////////////////////////////////////////////
@@ -166,10 +158,10 @@ namespace Storage
 
         /// Allocate a continuous memory from the committed memory region.
         /// Note after calling this function, all cell_offsets may be invalid due to a possible reload.
+        /// @param cellId The target cellId.
         /// @param cellSize The bytes of memory to allocate.
-        /// @param entryIndex The entry index in MTHash.
         /// @return A memory pointer pointing to the allocated memory.
-        char* CellAlloc(uint32_t cellSize, int32_t entryIndex);
+        ALLOC_THREAD_CTX char* CellAlloc(cellid_t cellId, uint32_t cellSize);
 
         /// Allocate virtual memory and move committed_head and append_head (when committed_region splits)
         /// Guarantee that after this call:

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -26,41 +26,41 @@
     <ProjectGuid>{53440B2C-3D01-40DA-BBAE-36B654541EE7}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>TrinityC</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test-Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-CoreCLR|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test-Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -98,7 +98,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-CoreCLR|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\..\bin\coreclr\</OutDir>
+    <OutDir>..\..\bin\</OutDir>
     <CustomBuildBeforeTargets />
     <TargetName>Trinity</TargetName>
   </PropertyGroup>
@@ -222,7 +222,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Psapi.lib;ws2_32.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Synchronization.lib;Psapi.lib;ws2_32.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
@@ -276,7 +276,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Psapi.lib;ws2_32.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Synchronization.lib;Psapi.lib;ws2_32.lib;Dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
@@ -352,6 +352,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
   <ItemGroup>
     <ClInclude Include="include\os\platforms\darwin.h" />
     <ClInclude Include="include\os\platforms\posix.h" />
+    <ClInclude Include="include\TrinityErrorCode.h" />
     <ClInclude Include="include\Trinity\Array.h" />
     <ClInclude Include="include\Trinity\Collections\HashSet.h" />
     <ClInclude Include="include\Trinity\Collections\List.h" />
@@ -369,10 +370,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClInclude Include="include\Trinity\IO\File.h" />
     <ClInclude Include="include\Trinity\IO\Path.h" />
     <ClInclude Include="include\Trinity\IO\StreamWriter.h" />
-    <ClInclude Include="include\Trinity\NonCopyable.h" />
-    <ClInclude Include="include\Trinity\NonReferencable.h" />
     <ClInclude Include="include\Trinity\Random.h" />
-    <ClInclude Include="include\Trinity\ref.h" />
     <ClInclude Include="include\Trinity\String.h" />
     <ClInclude Include="include\Trinity\Threading\Mutex.h" />
     <ClInclude Include="include\Trinity\Threading\Parallel.h" />
@@ -397,6 +395,8 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClInclude Include="src\Runtime\Debug.h" />
     <ClInclude Include="src\Debugger\Debugger.h" />
     <ClInclude Include="src\Runtime\InternalCalls.h" />
+    <ClInclude Include="src\Storage\LocalStorage\ThreadContext.h" />
+    <ClInclude Include="src\Storage\MTHash\MT_SHADOW_ENUMERATOR.h" />
     <ClInclude Include="src\Trinity\Diagnostics\LogAutoFlushTask.h" />
     <ClInclude Include="src\Runtime\Transition.h" />
     <ClInclude Include="src\Mathematics\TrinityMath.h" />
@@ -408,7 +408,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClInclude Include="src\Storage\MTHash\MTHash.h" />
     <ClInclude Include="src\Storage\MTHash\MT_ENUMERATOR.h" />
     <ClInclude Include="include\TrinityCommon.h" />
-    <ClInclude Include="src\Threading\TrinitySpinlock.h" />
+    <ClInclude Include="src\Threading\TrinityLock.h" />
     <ClInclude Include="src\Trinity\Configuration\TrinityConfig.h" />
     <ClInclude Include="src\Trinity\Diagnostics\Log.h" />
     <ClInclude Include="src\Utility\FileIO.h" />
@@ -438,7 +438,10 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClCompile Include="src\Storage\LocalStorage\GCTask.cpp" />
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.cpp" />
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.Enumeration.cpp" />
+    <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.Tx.cpp" />
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.WriteAheadLog.cpp" />
+    <ClCompile Include="src\Storage\LocalStorage\localstorage_exported_methods.cpp" />
+    <ClCompile Include="src\Storage\LocalStorage\ThreadContext.cpp" />
     <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.AddressTable.cpp" />
     <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.Cell.Memory.cpp" />
     <ClCompile Include="src\Storage\MemoryTrunk\MemoryTrunk.Defragmentation.cpp" />
@@ -451,6 +454,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClCompile Include="src\Storage\MTHash\MTHash.lock.cpp" />
     <ClCompile Include="src\Storage\MTHash\MTHash.Resize.cpp" />
     <ClCompile Include="src\Storage\MTHash\MT_ENUMERATOR.cpp" />
+    <ClCompile Include="src\Storage\MTHash\MT_SHADOW_ENUMERATOR.cpp" />
     <ClCompile Include="src\Runtime\InternalCalls.cpp" />
     <ClCompile Include="src\Runtime\dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>

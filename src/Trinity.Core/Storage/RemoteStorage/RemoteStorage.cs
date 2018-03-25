@@ -27,41 +27,52 @@ using Trinity.Configuration;
 namespace Trinity.Storage
 {
 #pragma warning disable 0420
-    internal partial class RemoteStorage : Storage, IDisposable
+    public partial class RemoteStorage : IStorage
     {
         BlockingCollection<Network.Client.SynClient> ConnPool = new BlockingCollection<Network.Client.SynClient>(new ConcurrentQueue<Network.Client.SynClient>());
 
         private volatile bool disposed = false;
-        internal bool connected = false;
+        internal bool m_connected = false;
         private int m_send_retry = NetworkConfig.Instance.ClientSendRetry;
         private int m_client_count = 0;
-        private MemoryCloud memory_cloud;
-        public int MyServerId;
+        private MemoryCloud m_memorycloud = null;
+        private BackgroundTask m_bgtask = null;
 
-        internal RemoteStorage(ServerInfo server_info, int connPerServer)
-        {
-            for (int i = 0; i < connPerServer; i++)
-            {
-                Connect(server_info);
-            }
-        }
+        /// <summary>
+        /// Deprecated. Use PartitionId instead.
+        /// </summary>
+        [Obsolete]
+        public int MyServerId { get { return PartitionId; } set { PartitionId = value; } }
+        /// <summary>
+        /// The partition id of this remote instance.
+        /// </summary>
+        public int PartitionId { get; protected set; }
 
-        internal RemoteStorage(AvailabilityGroup trinityServer, int connPerServer, MemoryCloud mc, int serverId, bool nonblocking)
+        /// <summary>
+        /// Client mode ctor
+        /// </summary>
+        internal RemoteStorage(ServerInfo server_info, int connPerServer) : this(new[] { server_info }, connPerServer, mc: null, partitionId: -1, nonblocking: false) { }
+
+        protected internal RemoteStorage(IEnumerable<ServerInfo> servers, int connPerServer, MemoryCloud mc, int partitionId, bool nonblocking)
         {
-            this.memory_cloud = mc;
-            this.MyServerId = serverId;
+            this.m_memorycloud = mc;
+            this.PartitionId = partitionId;
 
             var connect_async_task = Task.Factory.StartNew(() =>
             {
                 for (int k = 0; k < connPerServer; k++) // make different server connections interleaved 
                 {
-                    for (int i = 0; i < trinityServer.Instances.Count; i++)
+                    foreach(var s in servers)
                     {
-                        Connect(trinityServer.Instances[i]);
+                        Connect(s);
                     }
                 }
-                BackgroundThread.AddBackgroundTask(new BackgroundTask(Heartbeat, TrinityConfig.HeartbeatInterval));
-                mc.ReportServerConnectedEvent(serverId);
+                if (mc != null && partitionId != -1)
+                {
+                    m_bgtask = new BackgroundTask(Heartbeat, TrinityConfig.HeartbeatInterval);
+                    BackgroundThread.AddBackgroundTask(m_bgtask);
+                    mc.ReportServerConnectedEvent(this);
+                }
             });
 
             if (!nonblocking)
@@ -83,7 +94,7 @@ namespace Trinity.Storage
                     {
                         ConnPool.Add(client);
                         ++m_client_count;
-                        connected = true;
+                        m_connected = true;
                         break;
                     }
                 }
@@ -103,18 +114,18 @@ namespace Trinity.Storage
 
             if (TrinityErrorCode.E_SUCCESS == eResult)
             {
-                if (!connected)
+                if (!m_connected)
                 {
-                    connected = true;
-                    memory_cloud.ReportServerConnectedEvent(MyServerId);
+                    m_connected = true;
+                    m_memorycloud.ReportServerConnectedEvent(this);
                 }
             }
             else
             {
-                if (connected)
+                if (m_connected)
                 {
-                    connected = false;
-                    memory_cloud.ReportServerDisconnectedEvent(MyServerId);
+                    m_connected = false;
+                    m_memorycloud.ReportServerDisconnectedEvent(this);
                     InvalidateSynClients();
                 }
             }
@@ -145,7 +156,7 @@ namespace Trinity.Storage
         private void InvalidateSynClients()
         {
             List<SynClient> clients = new List<SynClient>();
-            for (int i=0; i<m_client_count; ++i)
+            for (int i = 0; i < m_client_count; ++i)
             {
                 clients.Add(GetClient());
             }
@@ -156,7 +167,7 @@ namespace Trinity.Storage
             }
         }
 
-        public override void Dispose()
+        public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
@@ -173,6 +184,7 @@ namespace Trinity.Storage
                         client.Dispose();
                     }
                 }
+                BackgroundThread.RemoveBackgroundTask(m_bgtask);
 
                 this.disposed = true;
             }

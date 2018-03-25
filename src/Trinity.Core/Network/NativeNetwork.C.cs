@@ -40,6 +40,8 @@ namespace Trinity.Network
         [DllImport(TrinityC.AssemblyName)]
         internal static extern bool ClientSend(UInt64 socket, byte* buf, Int32 len);
         [DllImport(TrinityC.AssemblyName)]
+        internal static extern bool ClientSendMulti(UInt64 socket, byte** bufs, Int32* lens, Int32 count);
+        [DllImport(TrinityC.AssemblyName)]
         internal static extern TrinityErrorCode ClientReceive(UInt64 socket, out byte* buf, out Int32 len);
         [DllImport(TrinityC.AssemblyName)]
         internal static extern TrinityErrorCode WaitForAckPackage(UInt64 socket);

@@ -28,7 +28,6 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(
 {
-    
     internal struct GenericFieldAccessor
     {
         #region FieldID lookup table

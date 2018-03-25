@@ -1,10 +1,10 @@
 # Graph Engine - Open Source
 
-| - | Windows .NET Framework | Windows .NET Core | Ubuntu 16.04 .NET Core |
-|:------:|:------:|:------:|:------:|
-|Build|[![Build Status](http://ci.graphengine.io/buildStatus/icon?job=GraphEngine-Windows-NetFX)](http://ci.graphengine.io/job/GraphEngine-Windows-NetFX/)|[![Build Status](http://ci.graphengine.io/buildStatus/icon?job=GraphEngine-Windows-NetCore)](http://ci.graphengine.io/job/GraphEngine-Windows-NetCore/)|[![Build Status](http://ci.graphengine.io/buildStatus/icon?job=GraphEngine-Ubuntu-NetCore)](http://ci.graphengine.io/job/GraphEngine-Ubuntu-NetCore/)
-|Tests|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/GraphEngine-Windows-NetFx.svg)](http://ci.graphengine.io/job/GraphEngine-Windows-NetFx/)|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/GraphEngine-Windows-NetCore.svg)](http://ci.graphengine.io/job/GraphEngine-Windows-NetCore/)|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/GraphEngine-Ubuntu-NetCore.svg)](http://ci.graphengine.io/job/GraphEngine-Ubuntu-NetCore/)|
-|Stress|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/GraphEngine-Windows-NetFx-Stress.svg)](http://ci.graphengine.io/job/GraphEngine-Windows-NetFx-Stress/)|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/GraphEngine-Windows-NetCore-Stress.svg)](http://ci.graphengine.io/job/GraphEngine-Windows-NetCore-Stress/)|[![Tests](https://img.shields.io/jenkins/t/http/ci.graphengine.io/job/GraphEngine-Ubuntu1604-NetCore-Stress.svg)](http://ci.graphengine.io/job/GraphEngine-Ubuntu-NetCore-Stress/)|
+| - | Windows Multi Targeting | Ubuntu 16.04 .NET Core |
+|:------:|:------:|:------:|
+|Build|[<img src="https://trinitygraphengine.visualstudio.com/_apis/public/build/definitions/4cfbb293-cd2c-4f49-aa03-06894081c93b/3/badge"/>](https://trinitygraphengine.visualstudio.com/trinity-ci/_build/index?definitionId=3)|[<img src="https://trinitygraphengine.visualstudio.com/_apis/public/build/definitions/4cfbb293-cd2c-4f49-aa03-06894081c93b/4/badge"/>](https://trinitygraphengine.visualstudio.com/trinity-ci/_build/index?definitionId=4)|
+|Tests|_|_|
+|Stress|_|_|
 
 Microsoft [Graph Engine](http://www.graphengine.io/) is a distributed
 in-memory data processing engine, underpinned by a strongly-typed
@@ -15,13 +15,13 @@ This repository contains the source code of Graph Engine and its graph
 query language -- <a
 href="https://www.graphengine.io/video/likq.video.html"
 target="_blank">Language Integrated Knowledge Query</a> (LIKQ).
-[LIKQ](https://github.com/Microsoft/GraphEngine/tree/master/src/LIKQ)
+[LIKQ](https://github.com/Microsoft/GraphEngine/tree/master/src/Modules/LIKQ)
 is a versatile graph query language on top of Graph Engine. It
 combines the capability of fast graph exploration and the flexibility
 of lambda expression: server-side computations can be expressed in
 lambda expressions, embedded in LIKQ, and executed on the server side
 during graph traversal.  LIKQ is powering [Academic Graph Search
-API](https://www.microsoft.com/cognitive-services/en-us/Academic-Knowledge-API/documentation/GraphSearchMethod),
+API](https://azure.microsoft.com/en-us/services/cognitive-services/academic-knowledge/),
 which is part of Microsoft Cognitive Services.
 
 ## Downloads
@@ -51,24 +51,44 @@ Please submit bugs and feature requests in [GitHub Issues](https://github.com/Mi
 
 ## Building for Windows
 
-To build the `.Net Framework 4.5.1` version, run `tools/build.bat`.
+Install [Visual Studio 2017](https://www.visualstudio.com/).
+Install Windows 10 SDK (10.0.15063.0) for Desktop C++. 
+The Windows build will generate multi-targeting nuget packages for all
+the available modules, so make sure you also install `.NET Core SDK
+2.0`.  Additionally, to build the python FFI packages, make sure you
+install a python3 environment, and the Visual Studio 2015 C++
+toolchain. All these dependencies can be installed with the visual
+studio 2017 installer (yes, including MSVC 2015 stuff).
 
-To build the `CoreCLR` version, you need to download and install the
-latest [CoreCLR 2.0
-SDK](https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-dev-win-x64.latest.exe).
-Then, run `tools/build_coreclr.bat`.
+Run `tools/build.ps1` with `powershell`. 
+
+The Linux native assemblies will be automatically packaged, so the
+Windows build will also work for Linux `.Net Core`.
+
+Nuget packages will be built and put at
+`bin/GraphEngine**._version_.nupkg`. The folder `bin/` will be
+registered as a local NuGet repository and the local package cache for
+`GraphEngine.**` will be cleared. After the packages are built, you
+can run `dotnet restore` to use the newly built package.
 
 ## Building for Linux
 
-Install `libunwind8`, `g++`, `cmake` and `libssl-dev`, then execute
-`tools/build.sh`.  When the build script is executed for the first
-time, it will download and install the latest CoreCLR 2.0 SDK to
-`tools/dotnet`.  A nuget package will be built and put at
-`bin/coreclr/GraphEngine.CoreCLR._version_.nupkg`. The folder
-`bin/coreclr` will be registered as a local NuGet repository and the
-local package cache for `GraphEngine.CoreCLR` will be cleared. After
-the package is built, you can run `dotnet restore` to use the newly
-built package.
+Install `libunwind8`, `g++`, `cmake` and `libssl-dev`.
+Install `dotnet` package following [the official guide](https://www.microsoft.com/net/learn/get-started/linuxubuntu).
+
+Execute `tools/build.sh`. 
+
+The Windows native assemblies will be automatically packaged, so the
+Linux build will also work for Windows .Net Core. Note, as targeting
+`.Net Framework` is not supported, the packages built on Linux are not
+equivalent to their Windows builds, and will only support `.Net Core`.
+
+Nuget packages will be built and put at
+`bin/GraphEngine**._version_.nupkg`. The folder `bin/` will be
+registered as a local NuGet repository and the local package cache for
+`GraphEngine.Core` will be cleared. After the packages are built, you
+can run `dotnet restore` to use the newly built package.
+
 
 Note: the build script currently only supports `Ubuntu 16.04`.
 

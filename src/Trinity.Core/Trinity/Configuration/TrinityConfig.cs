@@ -20,11 +20,6 @@ namespace Trinity
     public enum RunningMode : int
     {
         /// <summary>
-        /// Undefined running mode.
-        /// </summary>
-        Undefined,
-
-        /// <summary>
         ///Embedded (in-process) mode.
         /// </summary>
         Embedded,
@@ -62,14 +57,6 @@ namespace Trinity
         static TrinityConfig()
         {
             GetConfigurationInstances().ToList();
-            try
-            {
-                LoadTrinityConfig();
-            }
-            catch
-            {
-                Log.WriteLine(LogLevel.Error, "Failure to load config file, the default configuration takes effect");
-            }
         }
 
         /// <summary>
@@ -133,8 +120,8 @@ namespace Trinity
                     ServerInfo server = ServerInfo._LegacyCreateServerInfo(
                         hostName: "127.0.0.1",
                         port: TrinityConfig.CurrentClusterConfig.ServerPort,
-                        assemblyPath: AssemblyPath.MyAssemblyPath,
-                        storageRoot: AssemblyPath.MyAssemblyPath + "storage\\",
+                        assemblyPath: AssemblyUtility.MyAssemblyPath,
+                        storageRoot: AssemblyUtility.MyAssemblyPath + "storage\\",
                         loggingLevel: LogLevel.Debug.ToString(),
                         availabilityGroup: "0");
 

@@ -1,0 +1,514 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="TrinityConfig"
+    targetNamespace="https://www.graphengine.io/schema/config"
+    elementFormDefault="qualified"
+    xmlns="https://www.graphengine.io/schema/config"
+    xmlns:mstns="https://www.graphengine.io/schema/config"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+  <xs:annotation>
+    <xs:documentation>
+      A Graph Engine Configuration File is an XML file with the default name trinity.xml.
+      When a Graph Engine instance is initialized, it will automatically load the default configuration file, unless TrinityConfig.LoadConfig(...) is explicitly called.
+      The file can contain configuration settings for a single machine and/or a cluster of machines.
+      This document defines the schema of the configuration specification version 2.0.
+    </xs:documentation>
+  </xs:annotation>
+  <xs:element name="Trinity" type="mstns:TrinityConfig"/>
+  <xs:complexType name="TrinityConfig">
+    <xs:annotation>
+      <xs:documentation>
+        The root node is always Trinity. There must be exactly one root node.
+        The root node has an optional attribute ConfigVersion.
+        The root node itself is a ConfigNode. Configuration entries specified under the root node are automatically appended to the Local section.
+        Note, nuget package GraphEngine.Core 1.0.8482 and below only support configuration specification 1.0.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="mstns:ConfigNode">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="Local" type="mstns:Local"/>
+            <xs:element name="Cluster" type="mstns:Cluster"/>
+            <xs:element name="Template" type="mstns:Template"/>
+            <xs:element name="Import" type="mstns:Import"/>
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="ConfigVersion" type="xs:string" default="2.0" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies the version of the configuration file. Currently, the value must be 1.0 or 2.0 if specified.
+              The value "2.0" indicates that the configuration file conforms to the specification 2.0 given here.
+              Note, if ConfigVersion is not specified, the configuration file will be parsed as version 1.0, which is now obsolete.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="Cluster">
+    <xs:annotation>
+      <xs:documentation>
+        A Cluster node contains configurations for servers and proxies of a Graph Engine cluster.
+        There can be multiple Cluster nodes as long as they have different identifiers.
+        A Cluster node can have an optional attribute Id.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+      <xs:choice minOccurs="1" maxOccurs="unbounded">
+        <xs:element name="Server" type="mstns:Remote"/>
+        <xs:element name="Proxy" type="mstns:Remote"/>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="Id" type="xs:string" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The cluster configuration identified by an Id can be retrieved by the Id later in the program.
+          If omitted, the current Cluster configuration is then treated as the default one.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="Local">
+    <xs:annotation>
+      <xs:documentation>
+        A Local node configures the settings for the machine that reads the current configuration file.
+        There can be multiple Local nodes. Multiple Local nodes will be merged.
+        If a machine is configured by both a Local node and a Cluster node, the configuration settings in a Local node have higher priority.
+        If specified, they will override configurations specified in a Cluster node. A Local node can have an optional attribute Template.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="mstns:ConfigNode">
+        <xs:attribute name="Template" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              The value is the ID of a template. If it is specified, the current node will inherit the attributes and child elements of the template.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="Remote">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        A Remote node is a configuration section bound with a specific machine,
+        identified by its address and assembly path. There are two types of
+        remote nodes, Server and Proxy, which can be used to create TrinityServer
+        or TrinityProxy communication instances.
+        The remote nodes within a Cluster node are interpreted as an ordered list.
+        An availability group is assigned an index number upon their first occurence.
+        For example, if there are three Server nodes:
+        <![CDATA[
+
+        <Server AvailabilityGroup="AG1" .../>
+        <Server AvailabilityGroup="AG2" .../>
+        <Server AvailabilityGroup="AG1" .../>
+
+        ]]>
+        The three servers will be assigned index numbers 0, 1, 0, respectively.
+        Multiple Server nodes can be specified within a Cluster node is for easily
+        deploying Graph Engine to a cluster of machines using a single configuration
+        file. For a Graph Engine cluster consisting of multiple machines, when a
+        Graph Engine instance is started, it loads its server configuration from
+        one of the Server nodes according to the following rules:
+        The Endpoint property matches one of the network interfaces of the machine
+        on which the Graph Engine instance is running.
+        If AssemblyPath is specified, it matches the directory where the running
+        Graph Engine instance resides.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="mstns:ConfigNode">
+        <xs:attribute name="Endpoint" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies an Hostname:Port string that describes the server endpoint.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="AvailabilityGroup" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Each server is associated with an availability group.
+              This attribute specifies the identifier of the availability group that the current server belongs to.
+              If not specified, each server will be in its own default availability group.
+              Multiple Server nodes could have the same availability group.
+              The servers within the same availability group correspond to the same server Id in MemoryCloud.SendMessage(...).
+              The ServerId parameter in the SendMessage method is the index number of the availability group.
+              Note, when this attribute is used, all Server nodes within a Cluster node must specify the attribute or none of them should specify.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="AssemblyPath" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies the directory of the running Graph Engine instance.
+              Useful for running multiple Graph Engine instances on the same machine
+              (listening on different ports, or bound to different network interfaces).
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="Template" type="xs:string" use="optional">
+          <xs:annotation>
+            <xs:documentation>
+              The value is the ID of a template. If it is specified, the current node will inherit the attributes and child elements of the template.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="Template">
+    <xs:annotation>
+      <xs:documentation>
+        A Template node can be referenced by other nodes as a configuration template.
+        The content within a template node will be inherited by the nodes that reference it.
+        Multiple templates with the same identifier will be merged.
+        A Template node must specify a mandatory attribute Id.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="mstns:ConfigNode">
+        <xs:attribute name="Id" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies the identifier of the template, which can be referenced by other nodes.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="Import">
+    <xs:annotation>
+      <xs:documentation>
+        An Import node specifies other configuration files to import.
+        Each Import node will be replaced with the top-level elements read from the imported configuration files.
+        Note that the imported configuration files must have the same ConfigVersion with the current configuration file.
+        An imported configuration file can recursively import other configuration files.
+        A configuration file cannot import itself.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="File" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Specifies a file to import.
+          The file must have .xml file extension and has a Trinity root node with the same ConfigVersion.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="ConfigNode" abstract="true">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        A configuration node contains a number of configuration entries.
+        A configuration node specifies the configuration settings concerning a certain aspect of the system functionality, such as Storage and Logging.
+        An external Graph Engine module could also register a configuration node so that its settings can be specified in the Graph Engine configuration file.
+        An external module should follow the following rules for registering a configuration node:
+        One module should register only one configuration node.
+        The name of the node should be distinctive to avoid ambiguity.
+        The name of the node should be related to the module.
+        If there are two modules that register the same configuration node name, the entries will be renamed to AssemblyName:EntryName.
+        Whenever possible, use attributes to specify settings.
+        Use children entries only if it is necessary, for example, to specify a list.
+
+        Configuration Override
+        Overrides take place at configuration node level. The content in a node will not be merged.
+        Any properties in a lower priority configuration node will be overridden by the one in a higher priority configuration node.
+        When a template node is referenced, it has the priority of the referencing node.
+
+        Merging Configuration Nodes
+        Referencing a configuration template or specifying multiple Local configuration entries will result in merging configuration entries.
+        When merging occurs, configuration entries will be laid out in the order they appear in the configuration file.
+        The entries that appear later will override the earlier entries with the same name.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Storage">
+          <xs:complexType>
+            <xs:attribute name="TrunkCount" default="256" use="optional">
+              <xs:annotation>
+                <xs:documentation>
+                  Specifies the number of memory trunks in the local memory storage of a Graph Engine instance.
+                  Must be a power of 2 within range [1, 256].
+                </xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+                <xs:restriction base="xs:int">
+                  <xs:enumeration value="1"/>
+                  <xs:enumeration value="2"/>
+                  <xs:enumeration value="4"/>
+                  <xs:enumeration value="8"/>
+                  <xs:enumeration value="16"/>
+                  <xs:enumeration value="32"/>
+                  <xs:enumeration value="64"/>
+                  <xs:enumeration value="128"/>
+                  <xs:enumeration value="256"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="ReadOnly" type="xs:boolean" default="false" use="optional">
+              <xs:annotation>
+                <xs:documentation>
+                  A Boolean value that specifies whether the local memory storage is read-only.
+                  In the read-only mode, the local memory storage is lock-free, write operations will result in exceptions and system crashes.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="StorageCapacity" default="Max8G" use="optional">
+              <xs:annotation>
+                <xs:documentation>
+                  Specifies the capacity profile of the local memory storage.
+                  A capacity profile specifies the maximum number of entries that the local memory storage can hold.
+                </xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="Max256M"/>
+                  <xs:enumeration value="Max512M"/>
+                  <xs:enumeration value="Max1G"/>
+                  <xs:enumeration value="Max2G"/>
+                  <xs:enumeration value="Max4G"/>
+                  <xs:enumeration value="Max8G"/>
+                  <xs:enumeration value="Max16G"/>
+                  <xs:enumeration value="Max32G"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="StorageRoot" type="xs:string" use="optional">
+              <xs:annotation>
+                <xs:documentation>
+                  Specifies the path of a directory for saving and loading Graph Engine disk images.
+                  The default path is the storage directory in AssemblyPath.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="DefragInterval" type="xs:int" default="600" use="optional">
+              <xs:annotation>
+                <xs:documentation>
+                  An integer value that specifies a time interval in milliseconds.
+                  The local memory storage garbage collector issues defragmentation operations periodically.
+                  The value of DefragInterval specifies the time between two defragmentation operations.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Logging">
+          <xs:complexType>
+            <xs:attribute name="LogDirectory" type="xs:string" use="optional">
+              <xs:annotation>
+                <xs:documentation>
+                  Specifies the path of a directory to store log files.
+                  The default path is the trinity-log directory in AssemblyPath.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="LogLevel" default="Info" use="optional">
+              <xs:annotation>
+                <xs:documentation>
+                  Specifies the logging level.
+                </xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="Verbose" />
+                  <xs:enumeration value="Debug" />
+                  <xs:enumeration value="Info" />
+                  <xs:enumeration value="Warning" />
+                  <xs:enumeration value="Error" />
+                  <xs:enumeration value="Fatal" />
+                  <xs:enumeration value="Off" />
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="LogToFile" type="xs:boolean" default="true" use="optional">
+              <xs:annotation>
+                <xs:documentation>
+                  A Boolean value that specifies whether to stream log entries to a file on disk.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="EchoOnConsole" type="xs:boolean" default="true" use="optional">
+              <xs:annotation>
+                <xs:documentation>
+                  A Boolean value that specifies whether to echo log entries on the standard output.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Network">
+          <xs:complexType>
+            <xs:attribute name="HttpPort" type="xs:int" default="80" use="optional">
+              <xs:annotation>
+                <xs:documentation>
+                  If a server/proxy has an Http endpoint, it will listen on the specified Http port after it is started.
+                  The value is an integer. When a negative integer is specified, the HTTP server is disabled and no port will be opened.
+                  The default port is 80.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="ClientMaxConn" type="xs:int" default="2" use="optional">
+              <xs:annotation>
+                <xs:documentation>
+                  Specifies how many network connections will be established between a client and a Graph Engine communication instance.
+                  The default value is 2.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="ClientSendRetry" type="xs:int" default="1" use="optional">
+              <xs:annotation>
+                <xs:documentation>
+                  Specifies how many retries will be attempted when a message cannot be sent.
+                  The default value is 1.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="ClientReconnectRetry" type="xs:int" default="1" use="optional">
+              <xs:annotation>
+                <xs:documentation>
+                  Specifies how many retries will be attempted when a message cannot be sent.
+                  The default value is 1.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="Handshake" type="xs:boolean" default="true" use="optional">
+              <xs:annotation>
+                <xs:documentation>
+                  A Boolean value that specifies whether a server/proxy/client performs handshaking when establishing a connection.
+                  For compatibility with older versions of Graph Engine that does not support Handshake, set this to FALSE.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Extension">
+          <xs:annotation>
+            <xs:documentation>
+              Specifies the priorities of the extensions. When loading an extension of a specific type(interface),
+              the one with the highest priority is loaded.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="ExtensionPriority">
+                <xs:complexType>
+                  <xs:attribute name="Name" type="xs:string">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The full name of the extension assembly.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="Priority" type="xs:int">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The priority of the extension.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <!-- Below are known configuration nodes defined in various extensions. -->
+        <xs:element name="Trinity.LIKQ">
+          <xs:complexType>
+            <xs:attribute name="Timeout" type="xs:int" default="10000" use="optional">
+              <xs:annotation>
+                <xs:documentation>
+                  Specifies the timeout value of a query. After timeout, the traversals will be interrupted.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Trinity.ElasticSearch">
+          <xs:complexType>
+            <xs:attribute name="ConnectionEndpoint" type="xs:anyURI" use="required">
+              <xs:annotation>
+                <xs:documentation>
+                  The endpoint of the ElasticSearch service.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Trinity.Azure.Storage">
+          <xs:complexType>
+            <xs:attribute name="ContainerName" use="required" type="xs:string">
+              <xs:annotation>
+                <xs:documentation>
+                  The container to use.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="ConnectionString" use="required" type="xs:string">
+              <xs:annotation>
+                <xs:documentation>
+                  The connection string
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Trinity.DynamicCluster">
+          <xs:complexType>
+            <xs:attribute name="MinimumReplica" use="optional" type="xs:int" default="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Specifies the minimum number of replications per chunk per partition.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="ReplicationMode" use="optional" default="Mirroring">
+              <xs:annotation>
+                <xs:documentation>
+                  Specifies the replication mode.
+                </xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="Mirroring" />
+                  <xs:enumeration value="Sharding" />
+                  <xs:enumeration value="MirroredSharding" />
+                  <xs:enumeration value="Unrestricted" />
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="ConcurrentDownloads" use="optional" type="xs:unsignedInt">
+              <xs:annotation>
+                <xs:documentation>
+                  The number of concurrent downloads on an instance, in a persistent storage load operation.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="ConcurrentUploads" use="optional" type="xs:unsignedInt">
+              <xs:annotation>
+                <xs:documentation>
+                  The number of concurrent uploads on an instance, in a persistent storage save operation.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Trinity.FFI">
+          <xs:complexType>
+            <xs:attribute name="ProgramDirectory" type="xs:string" use="optional" default="StorageRoot/FFI">
+              <xs:annotation>
+                <xs:documentation>
+                  Specifies the location of FFI programs to be loaded on communication instance startup.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

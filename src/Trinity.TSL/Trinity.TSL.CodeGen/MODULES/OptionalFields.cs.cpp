@@ -67,7 +67,7 @@ source->append(R"::(
             byte [] bytes = new byte[)::");
 source->append(Codegen::GetString(optcalc_1.headerLength));
 source->append(R"::(];
-            Memory.Copy(CellPtr, 0, bytes, 0, )::");
+            Memory.Copy(m_ptr, 0, bytes, 0, )::");
 source->append(Codegen::GetString(optcalc_1.headerLength));
 source->append(R"::();
             return bytes;

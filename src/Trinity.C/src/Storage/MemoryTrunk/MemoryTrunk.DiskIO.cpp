@@ -263,7 +263,7 @@ namespace Storage
 
             while (it.MoveNext() == TrinityErrorCode::E_SUCCESS)
             {
-                int32_t lo_idx = it.CellEntryPtr->offset;
+                int32_t lo_idx = it.CellEntryPtr()->offset;
                 if (lo_idx < 0)
                 {
                     lo_idx = -lo_idx;

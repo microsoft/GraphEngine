@@ -5,6 +5,7 @@ using System.Text;
 using Trinity.Core.Lib;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
+using Trinity.Storage;
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
 namespace t_Namespace
@@ -13,26 +14,64 @@ namespace t_Namespace
     /// Represents a TSL double list corresponding to List{double}.
     /// </summary>
     [TARGET("NTSL")]
-    public unsafe class doubleListAccessor : IEnumerable<double>
+    public unsafe class doubleListAccessor : IAccessor, IEnumerable<double>
     {
-        internal byte* CellPtr;
-        internal long? CellID;
-        internal ResizeFunctionDelegate ResizeFunction;
+        internal byte* m_ptr;
+        internal long CellId;
 
         internal doubleListAccessor(byte* _CellPtr, ResizeFunctionDelegate func)
         {
-            CellPtr = _CellPtr;
+            m_ptr = _CellPtr;
             ResizeFunction = func;
-            CellPtr += sizeof(int);
+            m_ptr += sizeof(int);
         }
 
         internal int length
         {
             get
             {
-                return *(int*)(CellPtr - sizeof(int));
+                return *(int*)(m_ptr - sizeof(int));
             }
         }
+
+        #region IAccessor Implementation
+
+        /// <summary>
+        /// Copies the elements to a new byte array
+        /// </summary>
+        /// <returns>Elements compactly arranged in a byte array.</returns>
+        public unsafe byte[] ToByteArray()
+        {
+            byte[] ret = new byte[length];
+            fixed (byte* retptr = ret)
+            {
+                Memory.Copy(m_ptr, retptr, length);
+                return ret;
+            }
+        }
+
+        /// <summary>
+        /// Get the pointer to the underlying buffer.
+        /// </summary>
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return m_ptr - sizeof(int);
+        }
+
+        /// <summary>
+        /// Get the length of the buffer.
+        /// </summary>
+        public unsafe int GetBufferLength()
+        {
+            return length + sizeof(int);
+        }
+
+        /// <summary>
+        /// The ResizeFunctionDelegate that should be called when this accessor is trying to resize itself.
+        /// </summary>
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Gets the number of double elements actually contained in the List. 
@@ -47,7 +86,7 @@ namespace t_Namespace
 
         internal double* GetUnsafePointer()
         {
-            return (double*)CellPtr;
+            return (double*)m_ptr;
         }
 
         /// <summary>
@@ -59,25 +98,11 @@ namespace t_Namespace
         {
             get
             {
-                return *(double*)(CellPtr + (index << 3));
+                return *(double*)(m_ptr + (index << 3));
             }
             set
             {
-                *(double*)(CellPtr + (index << 3)) = value;
-            }
-        }
-
-        /// <summary>
-        /// Copies the elements to a new byte array
-        /// </summary>
-        /// <returns>Elements compactly arranged in a byte array.</returns>
-        public unsafe byte[] ToByteArray()
-        {
-            byte[] ret = new byte[length];
-            fixed (byte* retptr = ret)
-            {
-                Memory.Copy(CellPtr, retptr, length);
-                return ret;
+                *(double*)(m_ptr + (index << 3)) = value;
             }
         }
 
@@ -90,7 +115,7 @@ namespace t_Namespace
             double[] ret = new double[length >> 3];
             fixed (double* retptr = ret)
             {
-                Memory.Copy(CellPtr, retptr, length);
+                Memory.Copy(m_ptr, retptr, length);
             }
             return ret;
         }
@@ -101,8 +126,8 @@ namespace t_Namespace
         /// <param name="action">A lambda expression which has one parameter indicates element in List</param>
         public unsafe void ForEach(Action<double> action)
         {
-            byte* targetPtr = CellPtr;
-            byte* endPtr = CellPtr + length;
+            byte* targetPtr = m_ptr;
+            byte* endPtr = m_ptr + length;
             while (targetPtr < endPtr)
             {
                 action(*(double*)targetPtr);
@@ -115,8 +140,8 @@ namespace t_Namespace
         /// <param name="action">A lambda expression which has two parameters. First indicates element in the List and second the index of this element.</param>
         public unsafe void ForEach(Action<double, int> action)
         {
-            byte* targetPtr = CellPtr;
-            byte* endPtr = CellPtr + length;
+            byte* targetPtr = m_ptr;
+            byte* endPtr = m_ptr + length;
             for (int index = 0; targetPtr < endPtr; ++index)
             {
                 action(*(double*)targetPtr, index);
@@ -130,8 +155,8 @@ namespace t_Namespace
             byte* endPtr;
             internal _iterator(doubleListAccessor target)
             {
-                targetPtr = target.CellPtr;
-                endPtr    = target.CellPtr + target.length;
+                targetPtr = target.m_ptr;
+                endPtr    = target.m_ptr + target.length;
             }
 
             internal bool good()
@@ -178,10 +203,10 @@ namespace t_Namespace
         public unsafe void Add(double element)
         {
             int size = sizeof(double);
-            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), *(int*)(this.CellPtr - sizeof(int)) + sizeof(int), size);
-            byte* targetPtr = this.CellPtr + (*(int*)this.CellPtr) + sizeof(int);
-            *(int*)this.CellPtr += size;
-            this.CellPtr += sizeof(int);
+            this.m_ptr = this.ResizeFunction(this.m_ptr - sizeof(int), *(int*)(this.m_ptr - sizeof(int)) + sizeof(int), size);
+            byte* targetPtr = this.m_ptr + (*(int*)this.m_ptr) + sizeof(int);
+            *(int*)this.m_ptr += size;
+            this.m_ptr += sizeof(int);
             *(double*)targetPtr = element;
         }
 
@@ -195,12 +220,12 @@ namespace t_Namespace
             if (index < 0 || index > Count) throw new IndexOutOfRangeException();
             int size = sizeof(double);
 
-            byte* targetPtr = CellPtr + (index << 3);
-            int offset = (int)(targetPtr - CellPtr);
-            this.CellPtr = this.ResizeFunction(this.CellPtr - 4, offset + 4, size);
-            *(int*)this.CellPtr += size;
-            this.CellPtr += 4;
-            targetPtr = this.CellPtr + offset;
+            byte* targetPtr = m_ptr + (index << 3);
+            int offset = (int)(targetPtr - m_ptr);
+            this.m_ptr = this.ResizeFunction(this.m_ptr - 4, offset + 4, size);
+            *(int*)this.m_ptr += size;
+            this.m_ptr += 4;
+            targetPtr = this.m_ptr + offset;
             *(double*)targetPtr = element;
         }
 
@@ -212,8 +237,8 @@ namespace t_Namespace
         public unsafe void Insert(double element, Comparison<double> comparison)
         {
             int size = sizeof(double);
-            byte* targetPtr = CellPtr;
-            byte* endPtr = CellPtr + length;
+            byte* targetPtr = m_ptr;
+            byte* endPtr = m_ptr + length;
             while (targetPtr < endPtr)
             {
                 if (comparison(*(double*)targetPtr, element) <= 0)
@@ -225,13 +250,13 @@ namespace t_Namespace
                     break;
                 }
             }
-            int offset = (int)(targetPtr - CellPtr);
+            int offset = (int)(targetPtr - m_ptr);
 
-            this.CellPtr = this.ResizeFunction(this.CellPtr - 4, offset + 4, size);
-            *(int*)this.CellPtr += size;
-            this.CellPtr += 4;
+            this.m_ptr = this.ResizeFunction(this.m_ptr - 4, offset + 4, size);
+            *(int*)this.m_ptr += size;
+            this.m_ptr += 4;
 
-            targetPtr = this.CellPtr + offset;
+            targetPtr = this.m_ptr + offset;
             *(double*)targetPtr = element;
         }
 
@@ -243,13 +268,13 @@ namespace t_Namespace
         {
             if (index < 0 || index >= Count) throw new IndexOutOfRangeException();
 
-            byte* targetPtr = CellPtr + (index << 3);
-            int offset = (int)(targetPtr - CellPtr);
+            byte* targetPtr = m_ptr + (index << 3);
+            int offset = (int)(targetPtr - m_ptr);
             int size = -sizeof(double);
 
-            this.CellPtr = this.ResizeFunction(this.CellPtr - 4, offset + 4, size);
-            *(int*)this.CellPtr += size;
-            this.CellPtr += 4;
+            this.m_ptr = this.ResizeFunction(this.m_ptr - 4, offset + 4, size);
+            *(int*)this.m_ptr += size;
+            this.m_ptr += 4;
         }
 
         /// <summary>
@@ -261,10 +286,10 @@ namespace t_Namespace
             if (collection == null) throw new ArgumentNullException("collection is null.");
             doubleListAccessor tcollection = collection;
             int delta = tcollection.length;
-            CellPtr = ResizeFunction(CellPtr - 4, *(int*)(CellPtr - 4) + 4, delta);
-            Memory.Copy(tcollection.CellPtr, CellPtr + *(int*)CellPtr + 4, delta);
-            *(int*)CellPtr += delta;
-            this.CellPtr += 4;
+            m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
+            Memory.Copy(tcollection.m_ptr, m_ptr + *(int*)m_ptr + 4, delta);
+            *(int*)m_ptr += delta;
+            this.m_ptr += 4;
         }
 
         /// <summary>
@@ -275,13 +300,13 @@ namespace t_Namespace
         {
             if (collection == null) return;
             int delta = collection.Length << 3;
-            CellPtr = ResizeFunction(CellPtr - 4, *(int*)(CellPtr - 4) + 4, delta);
+            m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
             fixed (double* dp = collection)
             {
-                Memory.Copy(dp, CellPtr + *(int*)CellPtr + 4, delta);
+                Memory.Copy(dp, m_ptr + *(int*)m_ptr + 4, delta);
             }
-            *(int*)CellPtr += delta;
-            this.CellPtr += 4;
+            *(int*)m_ptr += delta;
+            this.m_ptr += 4;
         }
 
         /// <summary>
@@ -294,13 +319,13 @@ namespace t_Namespace
         {
             if (collection == null) return;
             int delta = count << 3;
-            CellPtr = ResizeFunction(CellPtr - 4, *(int*)(CellPtr - 4) + 4, delta);
+            m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
             fixed (double* dp = &collection[startIndex])
             {
-                Memory.Copy(dp, CellPtr + *(int*)CellPtr + 4, delta);
+                Memory.Copy(dp, m_ptr + *(int*)m_ptr + 4, delta);
             }
-            *(int*)CellPtr += delta;
-            this.CellPtr += 4;
+            *(int*)m_ptr += delta;
+            this.m_ptr += 4;
         }
 
         /// <summary>
@@ -311,24 +336,24 @@ namespace t_Namespace
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
             int delta = collection.length;
-            if (collection.CellID != CellID)
+            if (collection.CellId != CellId)
             {
-                CellPtr = ResizeFunction(CellPtr - 4, *(int*)(CellPtr - 4) + 4, delta);
-                Memory.Copy(collection.CellPtr, CellPtr + *(int*)CellPtr + 4, delta);
-                *(int*)CellPtr += delta;
+                m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
+                Memory.Copy(collection.m_ptr, m_ptr + *(int*)m_ptr + 4, delta);
+                *(int*)m_ptr += delta;
             }
             else
             {
                 byte[] tmpcell = new byte[delta];
                 fixed (byte* tmpcellptr = tmpcell)
                 {
-                    Memory.Copy(collection.CellPtr, tmpcellptr, delta);
-                    CellPtr = ResizeFunction(CellPtr - 4, *(int*)(CellPtr - 4) + 4, delta);
-                    Memory.Copy(tmpcellptr, CellPtr + *(int*)CellPtr + 4, delta);
-                    *(int*)CellPtr += delta;
+                    Memory.Copy(collection.m_ptr, tmpcellptr, delta);
+                    m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
+                    Memory.Copy(tmpcellptr, m_ptr + *(int*)m_ptr + 4, delta);
+                    *(int*)m_ptr += delta;
                 }
             }
-            this.CellPtr += 4;
+            this.m_ptr += 4;
         }
 
         /// <summary>
@@ -337,10 +362,10 @@ namespace t_Namespace
         public unsafe void Clear()
         {
             int delta = length;
-            Memory.memset(CellPtr, 0, (ulong)delta);
-            CellPtr = ResizeFunction(CellPtr - 4, 4, -delta);
-            *(int*)CellPtr = 0;
-            this.CellPtr += 4;
+            Memory.memset(m_ptr, 0, (ulong)delta);
+            m_ptr = ResizeFunction(m_ptr - 4, 4, -delta);
+            *(int*)m_ptr = 0;
+            this.m_ptr += 4;
         }
 
         /// <summary>
@@ -384,7 +409,7 @@ namespace t_Namespace
             //ForEach((x, i) => array[i] = x);
             fixed (double* dp = array)
             {
-                Memory.Copy(CellPtr, 0, dp, 0, length);
+                Memory.Copy(m_ptr, 0, dp, 0, length);
             }
         }
 
@@ -401,7 +426,7 @@ namespace t_Namespace
             //ForEach((x, i) => array[i + arrayIndex] = x);
             fixed (double* dp = array)
             {
-                Memory.Copy(CellPtr, 0, dp, arrayIndex * sizeof(double), length);
+                Memory.Copy(m_ptr, 0, dp, arrayIndex * sizeof(double), length);
             }
         }
 
@@ -420,7 +445,7 @@ namespace t_Namespace
             if (index >= Count) throw new ArgumentException("index is equal to or greater than the Count of the source List.");
             fixed (double* dp = array)
             {
-                Memory.Copy(CellPtr, index * sizeof(double), dp, arrayIndex * sizeof(double), count * sizeof(double));
+                Memory.Copy(m_ptr, index * sizeof(double), dp, arrayIndex * sizeof(double), count * sizeof(double));
             }
         }
 
@@ -435,12 +460,12 @@ namespace t_Namespace
             if (index < 0) throw new ArgumentOutOfRangeException("index is less than 0.");
             if (index > Count) throw new ArgumentOutOfRangeException("index is greater than Count.");
             doubleListAccessor tmpAccessor = collection;
-            byte* targetPtr = CellPtr + (index << 3);
-            int offset = (int)(targetPtr - CellPtr);
-            CellPtr = ResizeFunction(CellPtr - 4, offset + 4, tmpAccessor.length);
-            Memory.Copy(tmpAccessor.CellPtr, CellPtr + offset + 4, tmpAccessor.length);
-            *(int*)CellPtr += tmpAccessor.length;
-            this.CellPtr += 4;
+            byte* targetPtr = m_ptr + (index << 3);
+            int offset = (int)(targetPtr - m_ptr);
+            m_ptr = ResizeFunction(m_ptr - 4, offset + 4, tmpAccessor.length);
+            Memory.Copy(tmpAccessor.m_ptr, m_ptr + offset + 4, tmpAccessor.length);
+            *(int*)m_ptr += tmpAccessor.length;
+            this.m_ptr += 4;
         }
 
         /// <summary>
@@ -453,12 +478,12 @@ namespace t_Namespace
             if (index < 0) throw new ArgumentOutOfRangeException("index is less than 0.");
             if (index > Count) throw new ArgumentOutOfRangeException("index is greater than Count.");
             if (index + count > Count) throw new ArgumentException("index and count do not denote a valid range of elements in the List.");
-            byte* targetPtr = CellPtr + (index << 3);
-            int offset = (int)(targetPtr - CellPtr);
+            byte* targetPtr = m_ptr + (index << 3);
+            int offset = (int)(targetPtr - m_ptr);
             int size = -(count << 3);
-            CellPtr = ResizeFunction(CellPtr - 4, offset + 4, size);
-            *(int*)CellPtr += size;
-            this.CellPtr += 4;
+            m_ptr = ResizeFunction(m_ptr - 4, offset + 4, size);
+            *(int*)m_ptr += size;
+            this.m_ptr += 4;
         }
 
         /// <summary>
@@ -512,7 +537,6 @@ namespace t_Namespace
             }
 
             doubleListAccessor ret = new doubleListAccessor(tmpcellptr, null);
-            ret.CellID = null;
             return ret;
         }
 
@@ -529,10 +553,10 @@ namespace t_Namespace
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
               return false;
             // If both are same instance, return true.
-            if (a.CellPtr == b.CellPtr) return true;
+            if (a.m_ptr == b.m_ptr) return true;
             // If length not equal, return false.
             if (a.length != b.length) return false;
-            return Memory.Compare(a.CellPtr, b.CellPtr, a.length);
+            return Memory.Compare(a.m_ptr, b.m_ptr, a.length);
         }
 
         /// <summary>Determines whether two specified doubleList have different values.</summary>
@@ -563,7 +587,7 @@ namespace t_Namespace
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override int GetHashCode()
         {
-            return HashHelper.HashBytes(this.CellPtr, this.length);
+            return HashHelper.HashBytes(this.m_ptr, this.length);
         }
     }
 }

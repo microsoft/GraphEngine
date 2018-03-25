@@ -5,6 +5,7 @@ using System.Text;
 using Trinity.Core.Lib;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
+using Trinity.Storage;
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
 namespace t_Namespace
@@ -13,24 +14,23 @@ namespace t_Namespace
     /// Represents a TSL string corresponding to a string instance.
     /// </summary>
     [TARGET("NTSL")]
-    public unsafe class StringAccessor : IEnumerable<char>
+    public unsafe class StringAccessor : IAccessor, IEnumerable<char>
     {
-        internal byte* CellPtr;
-        internal long? CellID;
-        internal ResizeFunctionDelegate ResizeFunction;
+        internal byte* m_ptr;
+        internal long CellId;
 
         internal StringAccessor(byte* _CellPtr, ResizeFunctionDelegate func)
         {
-            CellPtr = _CellPtr;
+            m_ptr = _CellPtr;
             ResizeFunction = func;
-            CellPtr += 4;
+            m_ptr += 4;
         }
 
         private int length
         {
             get
             {
-                return *(int*)(CellPtr - 4);
+                return *(int*)(m_ptr - 4);
             }
         }
 
@@ -45,27 +45,7 @@ namespace t_Namespace
             }
         }
 
-        /// <summary>
-        /// Gets the Char object at a specified position in the current String object.
-        /// </summary>
-        /// <param name="index">A position in the current string. </param>
-        /// <returns>The object at position index.</returns>
-        public unsafe char this[int index]
-        {
-            get
-            {
-                return *(char*)(CellPtr + (index << 1));
-            }
-        }
-
-        /// <summary>
-        /// Returns this instance of String
-        /// </summary>
-        /// <returns>The current string.</returns>
-        public unsafe override string ToString()
-        {
-            return Trinity.Core.Lib.BitHelper.GetString(CellPtr, *(int*)(CellPtr - 4));
-        }
+        #region IAccessor Implementation
 
         /// <summary>
         /// Copies the elements to a new byte array
@@ -76,9 +56,54 @@ namespace t_Namespace
             byte[] ret = new byte[length];
             fixed (byte* retptr = ret)
             {
-                Memory.Copy(CellPtr, retptr, length);
+                Memory.Copy(m_ptr, retptr, length);
                 return ret;
             }
+        }
+
+        /// <summary>
+        /// Get the pointer to the underlying buffer.
+        /// </summary>
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return m_ptr - sizeof(int);
+        }
+
+        /// <summary>
+        /// Get the length of the buffer.
+        /// </summary>
+        public unsafe int GetBufferLength()
+        {
+            return length + sizeof(int);
+        }
+
+        /// <summary>
+        /// The ResizeFunctionDelegate that should be called when this accessor is trying to resize itself.
+        /// </summary>
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+
+        #endregion
+
+        /// <summary>
+        /// Gets the Char object at a specified position in the current String object.
+        /// </summary>
+        /// <param name="index">A position in the current string. </param>
+        /// <returns>The object at position index.</returns>
+        public unsafe char this[int index]
+        {
+            get
+            {
+                return *(char*)(m_ptr + (index << 1));
+            }
+        }
+
+        /// <summary>
+        /// Returns this instance of String
+        /// </summary>
+        /// <returns>The current string.</returns>
+        public unsafe override string ToString()
+        {
+            return Trinity.Core.Lib.BitHelper.GetString(m_ptr, *(int*)(m_ptr - 4));
         }
 
         /// <summary>
@@ -105,8 +130,8 @@ namespace t_Namespace
         /// <param name="action">A lambda expression which has one parameter indicates char in string</param>
         public unsafe void ForEach(Action<char> action)
         {
-            byte* targetPtr = CellPtr;
-            byte* endPtr = CellPtr + length;
+            byte* targetPtr = m_ptr;
+            byte* endPtr = m_ptr + length;
             while (targetPtr < endPtr)
             {
                 action(*(char*)targetPtr);
@@ -120,8 +145,8 @@ namespace t_Namespace
         /// <param name="action">A lambda expression which has two parameters. First indicates char in the string and second the index of this char.</param>
         public unsafe void ForEach(Action<char, int> action)
         {
-            byte* targetPtr = CellPtr;
-            byte* endPtr = CellPtr + length;
+            byte* targetPtr = m_ptr;
+            byte* endPtr = m_ptr + length;
             for (int index = 0; targetPtr < endPtr; ++index)
             {
                 action(*(char*)targetPtr, index);
@@ -135,8 +160,8 @@ namespace t_Namespace
             byte* endPtr;
             internal _iterator(StringAccessor target)
             {
-                targetPtr = target.CellPtr;
-                endPtr    = target.CellPtr + target.length;
+                targetPtr = target.m_ptr;
+                endPtr    = target.m_ptr + target.length;
             }
 
             internal bool good()
@@ -185,7 +210,7 @@ namespace t_Namespace
         {
             if ((object)accessor == null) return null;
 
-            return new string((char*)accessor.CellPtr, 0, accessor.length >> 1);
+            return new string((char*)accessor.m_ptr, 0, accessor.length >> 1);
         }
 
         /// <summary>
@@ -224,7 +249,6 @@ namespace t_Namespace
             }
 
             StringAccessor ret = new StringAccessor(tmpcellptr, null);
-            ret.CellID = null;
             return ret;
         }
 
@@ -241,7 +265,7 @@ namespace t_Namespace
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
               return false;
             // If both are same instance, return true.
-            if (a.CellPtr == b.CellPtr) return true;
+            if (a.m_ptr == b.m_ptr) return true;
             return (a.ToString() == b.ToString());
         }
 
@@ -303,7 +327,7 @@ namespace t_Namespace
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override unsafe int GetHashCode()
         {
-            char* strPtr = (char*)CellPtr;
+            char* strPtr = (char*)m_ptr;
             int n1 = 0x15051505;
             int n2 = n1;
             int* intPtr = (int*)strPtr;

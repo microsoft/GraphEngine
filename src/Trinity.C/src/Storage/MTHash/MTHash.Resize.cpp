@@ -9,17 +9,18 @@ namespace Storage
 {
     void MTHash::Expand(bool force)
     {
-        EntryAllocLock.lock();
-        uint32_t CurrentEntryCount = EntryCount.load();
+        EntryAllocLock->lock();
+        uint32_t CurrentEntryCount = ExtendedInfo->EntryCount.load();
 
-        if ((!force) && ((uint32_t)NonEmptyEntryCount.load() < CurrentEntryCount))
+        if ((!force) && ((uint32_t)ExtendedInfo->NonEmptyEntryCount.load() < CurrentEntryCount))
         {
-            EntryAllocLock.unlock();
+            EntryAllocLock->unlock();
             return;
         }
 
         if ((CurrentEntryCount + UInt32_Contants::GuardedEntryCount) >= TrinityConfig::MaxEntryCount())
         {
+			//XXX should not exit here
             Trinity::Diagnostics::FatalError(1, "Memory Trunk {0} is out of Memory::", memory_trunk->TrunkId);
         }
 
@@ -30,13 +31,14 @@ namespace Storage
         }
 
         uint64_t size_expanded = expanded_entry_count - CurrentEntryCount;
+		Trinity::Diagnostics::WriteLine(LogLevel::Verbose, "MemoryTrunk {0}: Expand: {1}->{2}", memory_trunk->TrunkId, CurrentEntryCount, expanded_entry_count);
 
         Memory::ExpandMemoryFromCurrentPosition((char*)CellEntries + ((CurrentEntryCount + UInt32_Contants::GuardedEntryCount) << 3), size_expanded << 3);
         memset((char*)CellEntries + ((CurrentEntryCount + UInt32_Contants::GuardedEntryCount) << 3), -1, size_expanded << 3);
 
         Memory::ExpandMemoryFromCurrentPosition((char*)MTEntries + ((CurrentEntryCount + UInt32_Contants::GuardedEntryCount) << 4), size_expanded << 4);
 
-        EntryCount.store(expanded_entry_count);
-        EntryAllocLock.unlock();
+        ExtendedInfo->EntryCount.store(expanded_entry_count);
+        EntryAllocLock->unlock();
     }
 }

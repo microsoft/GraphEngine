@@ -5,6 +5,7 @@ using System.Text;
 using Trinity.Core.Lib;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
+using Trinity.Storage;
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
 namespace t_Namespace
@@ -13,17 +14,16 @@ namespace t_Namespace
     /// Represents a TSL string corresponding to a string instance.
     /// </summary>
     [TARGET("NTSL")]
-    public unsafe class U8StringAccessor
+    public unsafe class U8StringAccessor : IAccessor
     {
-        internal byte* CellPtr;
-        internal long? CellID;
-        internal ResizeFunctionDelegate ResizeFunction;
+        internal byte* m_ptr;
+        internal long  CellId;
 
         internal U8StringAccessor(byte* _CellPtr, ResizeFunctionDelegate func)
         {
-            CellPtr = _CellPtr;
+            m_ptr = _CellPtr;
             ResizeFunction = func;
-            CellPtr += 4;
+            m_ptr += 4;
         }
 
         /// <summary>
@@ -33,9 +33,48 @@ namespace t_Namespace
         {
             get
             {
-                return *(int*)(CellPtr - 4);
+                return *(int*)(m_ptr - 4);
             }
         }
+
+        #region IAccessor Implementation
+
+        /// <summary>
+        /// Copies the elements to a new byte array
+        /// </summary>
+        /// <returns>Elements compactly arranged in a byte array.</returns>
+        public unsafe byte[] ToByteArray()
+        {
+            byte[] ret = new byte[Length];
+            fixed (byte* retptr = ret)
+            {
+                Memory.Copy(m_ptr, retptr, Length);
+                return ret;
+            }
+        }
+
+        /// <summary>
+        /// Get the pointer to the underlying buffer.
+        /// </summary>
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return m_ptr - sizeof(int);
+        }
+
+        /// <summary>
+        /// Get the length of the buffer.
+        /// </summary>
+        public unsafe int GetBufferLength()
+        {
+            return Length + sizeof(int);
+        }
+
+        /// <summary>
+        /// The ResizeFunctionDelegate that should be called when this accessor is trying to resize itself.
+        /// </summary>
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Returns this instance of String
@@ -47,23 +86,9 @@ namespace t_Namespace
             byte[] content = new byte[len];
             fixed (byte* pcontent = content)
             {
-                Memory.Copy(this.CellPtr, pcontent, len);
+                Memory.Copy(this.m_ptr, pcontent, len);
             }
             return Encoding.UTF8.GetString(content);
-        }
-
-        /// <summary>
-        /// Copies the elements to a new byte array
-        /// </summary>
-        /// <returns>Elements compactly arranged in a byte array.</returns>
-        public unsafe byte[] ToByteArray()
-        {
-            byte[] ret = new byte[Length];
-            fixed (byte* retptr = ret)
-            {
-                Memory.Copy(CellPtr, retptr, Length);
-                return ret;
-            }
         }
 
         /// <summary>
@@ -112,7 +137,6 @@ namespace t_Namespace
             Memory.Copy(content, targetPtr + sizeof(int), len);
 
             U8StringAccessor ret = new U8StringAccessor(targetPtr, null);
-            ret.CellID = null;
             return ret;
         }
 
@@ -129,7 +153,7 @@ namespace t_Namespace
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
                 return false;
             // If both are same instance, return true.
-            if (a.CellPtr == b.CellPtr) return true;
+            if (a.m_ptr == b.m_ptr) return true;
             return (a.ToString() == b.ToString());
         }
 
@@ -191,7 +215,7 @@ namespace t_Namespace
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override unsafe int GetHashCode()
         {
-            return HashHelper.HashBytes(this.CellPtr, this.Length);
+            return HashHelper.HashBytes(this.m_ptr, this.Length);
         }
 
         /// <summary>Determines whether the two specified StringAccessor have different values.</summary>

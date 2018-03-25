@@ -34,20 +34,21 @@ namespace Storage
 		static void              _calculate_storage_slot();
 		static TrinityErrorCode  _load_signature(PTRINITY_IMAGE_SIGNATURE, bool = true);
 
-		TrinityErrorCode Initialize()
-		{
-			uint64_t MemoryReserveUnit = TrinityConfig::MemoryReserveUnit();
-			MTHash::MTEntryOffset = (MemoryReserveUnit << 3); // skip CellEntries
-			MTHash::BucketMemoryOffset = MTHash::MTEntryOffset + (MemoryReserveUnit << 4);
-			MTHash::BucketLockerMemoryOffset = MTHash::BucketMemoryOffset + (MemoryReserveUnit << 2);
+        TrinityErrorCode Initialize()
+        {
+            //TODO tell if local storage has already been initialized. Useful for mutli-tenant applications.
+            uint64_t MemoryReserveUnit       = TrinityConfig::MemoryReserveUnit();
+            MTHash::MTEntryOffset            = (MemoryReserveUnit << 3); // skip CellEntries
+            MTHash::BucketMemoryOffset       = MTHash::MTEntryOffset + (MemoryReserveUnit << 4);
+            MTHash::BucketLockerMemoryOffset = MTHash::BucketMemoryOffset + (MemoryReserveUnit << 2);
 
-			trunk_count = TrinityConfig::TrunkCount();
-			trunk_id_mask = trunk_count - 1;
-			MemoryPtr = Memory::MemoryReserve(TrinityConfig::TrinityReservedSpace());
-			memory_trunks = new MemoryTrunk[trunk_count];
-			hashtables = new MTHash[trunk_count];
-			hashtables_end = hashtables + trunk_count;
-			dirty_flags = new int32_t[trunk_count];
+            trunk_count                      = TrinityConfig::TrunkCount();
+            trunk_id_mask                    = trunk_count - 1;
+            MemoryPtr                        = Memory::MemoryReserve(TrinityConfig::TrinityReservedSpace());
+            memory_trunks                    = new MemoryTrunk[trunk_count];
+            hashtables                       = new MTHash[trunk_count];
+            hashtables_end                   = hashtables + trunk_count;
+            dirty_flags                      = new int32_t[trunk_count];
 
 			if (MemoryPtr == nullptr)
 			{
@@ -60,7 +61,7 @@ namespace Storage
 				hashtables[i].Initialize((uint32_t)(TrinityConfig::MemoryPoolSize >> 15), memory_trunks + i); // Default capacity = 256M >> 15 = 8192
 			}
 
-			memset(dirty_flags, 0, sizeof(int32_t)* trunk_count);
+            memset(dirty_flags, 0, sizeof(int32_t) * trunk_count);
 
 			disposed.store(false);
 			initialized.store(true);
@@ -110,61 +111,32 @@ namespace Storage
 			memory_trunks[trunkIndex].Defragment(/*calledByGCThread:*/true);
 		}
 
-		static uint64_t _CellCount_impl()
-		{
-			uint64_t total = 0;
-			for (int32_t i = 0; i < trunk_count; i++)
-			{
-				total += (uint64_t)memory_trunks[i].CellCount();
-			}
-			return total;
-		}
+        void Dispose()
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
+            disposal_lock.lock();
+            if (!disposed)
+            {
+                GCTask::StopDefragAndAwaitCeased();
+                delete[] memory_trunks; //! This will call the MemoryTrunk deconstructor implicitly
+                delete[] hashtables; //! This will call the MTHash deconstructor implicitly
+                delete   g_ImageSignature;
+                delete[] dirty_flags;
 
-		uint64_t CellCount()
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			uint64_t total = _CellCount_impl();
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-			return total;
-		}
+                memory_trunks = nullptr;
+                hashtables = nullptr;
+                hashtables_end = nullptr;
+                g_ImageSignature = nullptr;
 
-		void Dispose()
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			if (!disposed)
-			{
-				disposal_lock.lock();
-				if (!disposed)
-				{
-					GCTask::StopDefragAndAwaitCeased();
-					delete[] memory_trunks; //! This will call the MemoryTrunk deconstructor implicitly
-					delete[] hashtables; //! This will call the MTHash deconstructor implicitly
-					delete   g_ImageSignature;
-					delete[] dirty_flags;
-
-					memory_trunks = nullptr;
-					hashtables = nullptr;
-					hashtables_end = nullptr;
-					g_ImageSignature = nullptr;
-
-					disposed.store(true);
-				}
-				disposal_lock.unlock();
-			}
+                disposed.store(true);
+            }
+            disposal_lock.unlock();
 			TRINITY_INTEROP_LEAVE_UNMANAGED();
 		}
 
-		TrinityErrorCode ResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, char*& cell_ptr)
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			TrinityErrorCode ret = hashtables[GetTrunkId(cellId)].ResizeCell(cellEntryIndex, offset, delta, cell_ptr);
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-			return ret;
-		}
-
-		///////////////////////////////////////////////////////////////////////////////////////////
-		// Whole DB scale operations
-		///////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        // Whole DB operations
+        ///////////////////////////////////////////////////////////////////////////////////////////
 
 		static String s_primaryStorageSlot;
 		static String s_secondaryStorageSlot;
@@ -181,22 +153,56 @@ namespace Storage
 
 		static std::mutex s_critical_lock;
 
-		static inline void _enter_db_critical()
-		{
-			s_critical_lock.lock();
-			GCTask::StopDefragAndAwaitCeased();
+        static inline TrinityErrorCode _enter_db_critical()
+        {
+            s_critical_lock.lock();
+            GCTask::StopDefragAndAwaitCeased();
 
-			Parallel::For(0, trunk_count, [&](int32_t trunk_idx){hashtables[trunk_idx].Lock(); });
+            PTHREAD_CONTEXT pctx = EnsureCurrentThreadContext();
+            TrinityErrorCode err = TrinityErrorCode::E_SUCCESS;
 
-		}
+            if (pctx->LockingMTHash >= 0)
+            {
+                Diagnostics::WriteLine(LogLevel::Error, "LocalMemoryStorage: current thread has already locked a trunk. Cannot lock the whole storage.");
+                err = TrinityErrorCode::E_DEADLOCK;
+            }
+            else
+            {
+                for (int32_t trunk_idx = 0; trunk_idx < trunk_count; ++trunk_idx)
+                {
+                    TrinityErrorCode hash_lock_err = hashtables[trunk_idx].Lock();
+                    if (hash_lock_err != TrinityErrorCode::E_SUCCESS)
+                    {
+                        err = hash_lock_err;
+                    }
+                }
+                // clean up LockingHash
+                pctx->LockingMTHash = -1;
+            }
 
-		static inline void _exit_db_critical()
-		{
-			Parallel::For(0, trunk_count, [&](int32_t trunk_idx){hashtables[trunk_idx].Unlock(); });
+            return err;
+        }
 
-			GCTask::RestartDefragmentation();
-			s_critical_lock.unlock();
-		}
+        static inline TrinityErrorCode _exit_db_critical()
+        {
+            PTHREAD_CONTEXT pctx = EnsureCurrentThreadContext();
+            //  If LockingMTHash >= 0, it means that we haven't
+            //  cleared it in _enter_db_critical because it failed
+            //  due to a locked MTHash. In that case we should not
+            //  unlock anything.
+            if (pctx->LockingMTHash < 0)
+            {
+                for (int32_t trunk_idx = 0; trunk_idx < trunk_count; ++trunk_idx)
+                {
+                    hashtables[trunk_idx].Unlock();
+                }
+            }
+
+            GCTask::RestartDefragmentation();
+            s_critical_lock.unlock();
+
+            return TrinityErrorCode::E_SUCCESS;
+        }
 
 		static inline TrinityErrorCode _save_signature(PTRINITY_IMAGE_SIGNATURE p_sig)
 		{
@@ -225,10 +231,10 @@ namespace Storage
 			return TrinityErrorCode::E_SUCCESS;
 		}
 
-		static inline TrinityErrorCode _load_signature(PTRINITY_IMAGE_SIGNATURE p_sig, bool is_primary)
-		{
-			String dir_path = is_primary ? GetPrimaryStorageSlot() : GetSecondaryStorageSlot();
-			String file_path = Path::Combine(dir_path, "image.sig");
+        static inline TrinityErrorCode _load_signature(PTRINITY_IMAGE_SIGNATURE p_sig, bool is_primary)
+        {
+            String dir_path  = is_primary ? GetPrimaryStorageSlot() : GetSecondaryStorageSlot();
+            String file_path = Path::Combine(dir_path, "image.sig");
 
 			FILE* fp;
 
@@ -308,13 +314,26 @@ namespace Storage
 			delete[] p_signatures;
 		}
 
-		bool LoadStorage()
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
+        uint64_t _CellCount_impl();
 
-			_enter_db_critical();
+        ALLOC_THREAD_CTX TrinityErrorCode LoadStorage()
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
 
-			_calculate_storage_slot();
+            TrinityErrorCode err;
+            PTHREAD_CONTEXT p_ctx = EnsureCurrentThreadContext();
+            LockingStorageContext ls_ctx(p_ctx);//RAII guard
+
+            err = _enter_db_critical();
+            if (err != TrinityErrorCode::E_SUCCESS)
+            {
+                Trinity::Diagnostics::WriteLine(LogLevel::Error, "LoadStorage: _enter_db_critical() returns error {0}", err);
+                _exit_db_critical();
+                TRINITY_INTEROP_LEAVE_UNMANAGED();
+                return err;
+            }
+
+            _calculate_storage_slot();
 
 			Trinity::Diagnostics::WriteLine(LogLevel::Info, "Loading storage from [SLOT {0}]", s_primaryStorageSlot);
 
@@ -343,7 +362,7 @@ namespace Storage
 			}
 
 			PMD5_SIGNATURE p_sig = g_ImageSignature->trunk_signatures;
-			Parallel::For(0, trunk_count, [&](int32_t trunk_idx){
+			Parallel::For(0, trunk_count, [&](int32_t trunk_idx) {
 				memory_trunks[trunk_idx].hashtable->GetMD5Hash((char*)(p_sig + trunk_idx));
 			});
 
@@ -381,22 +400,32 @@ namespace Storage
 
 			TRINITY_INTEROP_LEAVE_UNMANAGED();
 
-			return true;
-		}
+            return TrinityErrorCode::E_SUCCESS;
+        }
 
-		bool SaveStorage()
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
+        ALLOC_THREAD_CTX TrinityErrorCode SaveStorage()
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
 
-			if (TrinityConfig::ReadOnly())
-			{
-				TRINITY_INTEROP_LEAVE_UNMANAGED();
-				return false;
-			}
+            if (TrinityConfig::ReadOnly())
+            {
+                TRINITY_INTEROP_LEAVE_UNMANAGED();
+                return TrinityErrorCode::E_READONLY;
+            }
 
-			bool success = true;
+            bool success = true;
+            TrinityErrorCode err;
+            PTHREAD_CONTEXT p_ctx = EnsureCurrentThreadContext();
+            LockingStorageContext ls_ctx(p_ctx);//RAII guard
 
-			_enter_db_critical();
+            err = _enter_db_critical();
+            if (err != TrinityErrorCode::E_SUCCESS)
+            {
+                Trinity::Diagnostics::WriteLine(LogLevel::Error, "SaveStorage: _enter_db_critical() returns error {0}", err);
+                _exit_db_critical();
+                TRINITY_INTEROP_LEAVE_UNMANAGED();
+                return err;
+            }
 
 			_calculate_storage_slot();
 
@@ -412,7 +441,7 @@ namespace Storage
 			if (success)
 			{
 				PMD5_SIGNATURE p_sig = g_ImageSignature->trunk_signatures;
-				Parallel::For(0, trunk_count, [&](int32_t trunk_idx){
+				Parallel::For(0, trunk_count, [&](int32_t trunk_idx) {
 					memory_trunks[trunk_idx].hashtable->GetMD5Hash((char*)(p_sig + trunk_idx));
 				});
 
@@ -426,39 +455,54 @@ namespace Storage
 
 			_exit_db_critical();
 
-			if (success)
-			{
-				Trinity::Diagnostics::WriteLine(LogLevel::Info, "Save storage complete, image version = {0}.", g_ImageSignature->version);
-			}
-			else
-			{
-				Trinity::Diagnostics::WriteLine(LogLevel::Error, "Save storage failed.");
-			}
+            if (success)
+            {
+                Trinity::Diagnostics::WriteLine(LogLevel::Info, "Save storage complete, image version = {0}.", g_ImageSignature->version);
+                err = TrinityErrorCode::E_SUCCESS;
+            }
+            else
+            {
+                Trinity::Diagnostics::WriteLine(LogLevel::Error, "Save storage failed.");
+                err = TrinityErrorCode::E_FAILURE;
+            }
 
 			TRINITY_INTEROP_LEAVE_UNMANAGED();
 
-			return success;
-		}
+            return err;
+        }
 
-		bool ResetStorage()
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
+        ALLOC_THREAD_CTX TrinityErrorCode ResetStorage()
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
 
-			if (TrinityConfig::ReadOnly())
-			{
-				TRINITY_INTEROP_LEAVE_UNMANAGED();
-				return false;
-			}
+            if (TrinityConfig::ReadOnly())
+            {
+                TRINITY_INTEROP_LEAVE_UNMANAGED();
+                return TrinityErrorCode::E_READONLY;
+            }
 
-			_enter_db_critical();
+            TrinityErrorCode err;
+            PTHREAD_CONTEXT p_ctx = EnsureCurrentThreadContext();
+            LockingStorageContext ls_ctx(p_ctx);//RAII guard
 
-			Trinity::Diagnostics::WriteLine(LogLevel::Info, "Resetting storage.");
+            err = _enter_db_critical();
+            if (err != TrinityErrorCode::E_SUCCESS)
+            {
+                Trinity::Diagnostics::WriteLine(LogLevel::Error, "ResetStorage: _enter_db_critical() returns error {0}", err);
+                _exit_db_critical();
+                TRINITY_INTEROP_LEAVE_UNMANAGED();
+                return err;
+            }
+
+
+
+            Trinity::Diagnostics::WriteLine(LogLevel::Info, "Resetting storage.");
 
 			for (int32_t i = 0; i < trunk_count; i++)
 			{
 				Trinity::Diagnostics::WriteLine(LogLevel::Verbose, "Resetting memory trunk #{0}", i);
 				memory_trunks[i].DeallocateTrunk();
-				hashtables[i].DeallocateMTHash(/** deallocateBucketLockers: */false);
+				hashtables[i].DeallocateMTHash();
 				memory_trunks[i].Initialize(i, (char*)MemoryPtr + (TrinityConfig::ReservedSpacePerTrunk() * (uint64_t)i), TrinityConfig::MemoryPoolSize >> 8);
 				hashtables[i].Initialize((uint32_t)(TrinityConfig::MemoryPoolSize >> 15), memory_trunks + i); // Default capacity = 256M >> 15 = 8192
 			}
@@ -475,93 +519,77 @@ namespace Storage
 
 			TRINITY_INTEROP_LEAVE_UNMANAGED();
 
-			return true;
-		}
+            return TrinityErrorCode::E_SUCCESS;
+        }
 
-		///////////////////////////////////////////////////////////////////////////////////////////
-		// Whole DB scale operations END
-		///////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        // Whole DB operations END
+        ///////////////////////////////////////////////////////////////////////////////////////////
 
-		///////////////////////////////////////////////////////////////////////////////////////////
-		// Single cell scale operations
-		///////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        // Non-TX Single cell operations
+        ///////////////////////////////////////////////////////////////////////////////////////////
 
-		// GeteLockedCellInfo interfaces
-		CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4CellAccessor(IN cellid_t cellId, OUT int32_t &size, OUT uint16_t &type, OUT char* &cellPtr, OUT int32_t &entryIndex)
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			auto eResult = hashtables[GetTrunkId(cellId)].CGetLockedCellInfo4CellAccessor(cellId, size, type, cellPtr, entryIndex);
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-			return eResult;
-		}
+        // GetLockedCellInfo interfaces
+        TrinityErrorCode CGetLockedCellInfo4CellAccessor(IN cellid_t cellId, OUT int32_t &size, OUT uint16_t &type, OUT char* &cellPtr, OUT int32_t &entryIndex)
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
+            TrinityErrorCode eResult = hashtables[GetTrunkId(cellId)].CGetLockedCellInfo4CellAccessor(cellId, size, type, cellPtr, entryIndex);
+            TRINITY_INTEROP_LEAVE_UNMANAGED();
+            return eResult;
+        }
 
-		CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4SaveCell(IN cellid_t cellId, IN int32_t size, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex)
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			auto eResult = hashtables[GetTrunkId(cellId)].CGetLockedCellInfo4SaveCell(cellId, size, type, cellPtr, entryIndex);
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-			return eResult;
-		}
+        TrinityErrorCode CGetLockedCellInfo4LoadCell(IN cellid_t cellId, OUT int32_t &size, OUT char* &cellPtr, OUT int32_t &entryIndex)
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
+            TrinityErrorCode eResult = hashtables[GetTrunkId(cellId)].CGetLockedCellInfo4LoadCell(cellId, size, cellPtr, entryIndex);
+            TRINITY_INTEROP_LEAVE_UNMANAGED();
+            return eResult;
+        }
 
-		CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4AddCell(IN cellid_t cellId, IN int32_t size, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex)
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			auto eResult = hashtables[GetTrunkId(cellId)].CGetLockedCellInfo4AddCell(cellId, size, type, cellPtr, entryIndex);
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-			return eResult;
-		}
+        TrinityErrorCode CGetLockedCellInfo4AddOrUseCell(IN cellid_t cellId, IN OUT int32_t &size, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex)
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
+            TrinityErrorCode eResult = hashtables[GetTrunkId(cellId)].CGetLockedCellInfo4AddOrUseCell(cellId, size, type, cellPtr, entryIndex);
+            TRINITY_INTEROP_LEAVE_UNMANAGED();
+            return eResult;
+        }
 
-		CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4UpdateCell(IN cellid_t cellId, IN int32_t size, OUT char* &cellPtr, OUT int32_t &entryIndex)
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			auto eResult = hashtables[GetTrunkId(cellId)].CGetLockedCellInfo4UpdateCell(cellId, size, cellPtr, entryIndex);
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-			return eResult;
-		}
+        TrinityErrorCode CLockedGetCellSize(IN cellid_t cellId, IN int32_t entryIndex, OUT int32_t &size)
+        {
+            size = hashtables[GetTrunkId(cellId)].CellSize(entryIndex);
+            return TrinityErrorCode::E_SUCCESS;
+        }
 
-		CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4LoadCell(IN cellid_t cellId, OUT int32_t &size, OUT char* &cellPtr, OUT int32_t &entryIndex)
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			auto eResult = hashtables[GetTrunkId(cellId)].CGetLockedCellInfo4LoadCell(cellId, size, cellPtr, entryIndex);
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-			return eResult;
-		}
+        void ReleaseCellLock(IN cellid_t cellId, IN int32_t entryIndex)
+        {
+            hashtables[GetTrunkId(cellId)].ReleaseEntryLock(entryIndex);
+        }
 
-		CELL_ACQUIRE_LOCK TrinityErrorCode CGetLockedCellInfo4AddOrUseCell(IN cellid_t cellId, IN OUT int32_t &size, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex)
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			auto eResult = hashtables[GetTrunkId(cellId)].CGetLockedCellInfo4AddOrUseCell(cellId, size, type, cellPtr, entryIndex);
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-			return eResult;
-		}
+        TrinityErrorCode ResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, OUT char*& cell_ptr)
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
+            TrinityErrorCode result = hashtables[GetTrunkId(cellId)].ResizeCell(cellEntryIndex, offset, delta, cell_ptr);
+            TRINITY_INTEROP_LEAVE_UNMANAGED();
+            return result;
+        }
 
-		CELL_LOCK_PROTECTED TrinityErrorCode CLockedGetCellSize(IN cellid_t cellId, IN int32_t entryIndex, OUT int32_t &size)
-		{
-			size = hashtables[GetTrunkId(cellId)].CellSize(entryIndex);
-			return TrinityErrorCode::E_SUCCESS;
-		}
+        ////////////////////////////////////////
 
-		CELL_LOCK_PROTECTED void ReleaseCellLock(cellid_t cellId, int32_t entryIndex)
-		{
-			hashtables[GetTrunkId(cellId)].ReleaseEntryLock(entryIndex);
-		}
-		////////////////////////////////////////
-
-		TrinityErrorCode LoadCell(cellid_t cellId, Array<char>& cellBuff)
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-
-			MTHash * hashtable = hashtables + GetTrunkId(cellId);
-			char* cellPtr;
-			int32_t entryIndex;
-			int32_t cellSize;
-			TrinityErrorCode eResult = hashtable->CGetLockedCellInfo4LoadCell(cellId, cellSize, cellPtr, entryIndex);
-			if (TrinityErrorCode::E_SUCCESS == eResult)
-			{
-				cellBuff = Array<char>(cellSize);
-				memcpy(cellBuff, cellPtr, cellSize);
-				hashtable->ReleaseEntryLock(entryIndex);
-			}
+        TrinityErrorCode LoadCell(cellid_t cellId, Array<char>& cellBuff)
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
+            MTHash * hashtable = hashtables + GetTrunkId(cellId);
+            char* cellPtr;
+            int32_t entryIndex;
+            int32_t cellSize;
+            TrinityErrorCode eResult = hashtable->CGetLockedCellInfo4LoadCell(cellId, cellSize, cellPtr, entryIndex);
+            if (TrinityErrorCode::E_SUCCESS == eResult)
+            {
+                cellBuff = Array<char>(cellSize);
+                memcpy(cellBuff, cellPtr, cellSize);
+                hashtable->ReleaseEntryLock(entryIndex);
+            }
 
 			TRINITY_INTEROP_LEAVE_UNMANAGED();
 			return eResult;
@@ -569,145 +597,149 @@ namespace Storage
 
 		// Non-logging interfaces
 
-		TrinityErrorCode SaveCell(cellid_t cellId, char* buff, int32_t cellSize, uint16_t cellType)
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			MTHash * hashtable = hashtables + GetTrunkId(cellId);
-			char* cellPtr;
-			int32_t entryIndex;
-			TrinityErrorCode eResult = hashtable->CGetLockedCellInfo4SaveCell(cellId, cellSize, cellType, cellPtr, entryIndex);
-			if (TrinityErrorCode::E_SUCCESS == eResult)
-			{
-				memcpy(cellPtr, buff, cellSize);
-				hashtable->ReleaseEntryLock(entryIndex);
-			}
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-			return eResult;
-		}
+        TrinityErrorCode SaveCell(cellid_t cellId, char* buff, int32_t cellSize, uint16_t cellType)
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
+            MTHash * hashtable = hashtables + GetTrunkId(cellId);
+            char* cellPtr;
+            int32_t entryIndex;
+            TrinityErrorCode eResult = hashtable->CGetLockedCellInfo4SaveCell(cellId, cellSize, cellType, cellPtr, entryIndex);
+            if (TrinityErrorCode::E_SUCCESS == eResult)
+            {
+                memcpy(cellPtr, buff, cellSize);
+                hashtable->ReleaseEntryLock(entryIndex);
+            }
+            TRINITY_INTEROP_LEAVE_UNMANAGED();
+            return eResult;
+        }
 
-		TrinityErrorCode AddCell(cellid_t cellId, char* buff, int32_t cellSize, uint16_t cellType)
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			MTHash * hashtable = hashtables + GetTrunkId(cellId);
-			char* cellPtr;
-			int32_t entryIndex;
-			TrinityErrorCode eResult = hashtable->CGetLockedCellInfo4AddCell(cellId, cellSize, cellType, cellPtr, entryIndex);
-			if (TrinityErrorCode::E_SUCCESS == eResult)
-			{
-				memcpy(cellPtr, buff, cellSize);
-				hashtable->ReleaseEntryLock(entryIndex);
-			}
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-			return eResult;
-		}
+        TrinityErrorCode AddCell(cellid_t cellId, char* buff, int32_t cellSize, uint16_t cellType)
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
+            MTHash * hashtable = hashtables + GetTrunkId(cellId);
+            char* cellPtr;
+            int32_t entryIndex;
+            TrinityErrorCode eResult = hashtable->CGetLockedCellInfo4AddCell(cellId, cellSize, cellType, cellPtr, entryIndex);
+            if (TrinityErrorCode::E_SUCCESS == eResult)
+            {
+                memcpy(cellPtr, buff, cellSize);
+                hashtable->ReleaseEntryLock(entryIndex);
+            }
+            TRINITY_INTEROP_LEAVE_UNMANAGED();
+            return eResult;
+        }
 
-		TrinityErrorCode UpdateCell(cellid_t cellId, char* buff, int32_t cellSize)
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			MTHash * hashtable = hashtables + GetTrunkId(cellId);
-			char* cellPtr;
-			int32_t entryIndex;
-			TrinityErrorCode eResult = hashtable->CGetLockedCellInfo4UpdateCell(cellId, cellSize, cellPtr, entryIndex);
-			if (TrinityErrorCode::E_SUCCESS == eResult)
-			{
-				memcpy(cellPtr, buff, cellSize);
-				hashtable->ReleaseEntryLock(entryIndex);
-			}
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-			return eResult;
-		}
+        TrinityErrorCode UpdateCell(cellid_t cellId, char* buff, int32_t cellSize)
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
+            MTHash * hashtable = hashtables + GetTrunkId(cellId);
+            char* cellPtr;
+            int32_t entryIndex;
+            TrinityErrorCode eResult = hashtable->CGetLockedCellInfo4UpdateCell(cellId, cellSize, cellPtr, entryIndex);
+            if (TrinityErrorCode::E_SUCCESS == eResult)
+            {
+                memcpy(cellPtr, buff, cellSize);
+                hashtable->ReleaseEntryLock(entryIndex);
+            }
+            TRINITY_INTEROP_LEAVE_UNMANAGED();
+            return eResult;
+        }
 
-		TrinityErrorCode RemoveCell(cellid_t cellId)
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			TrinityErrorCode eResult = hashtables[GetTrunkId(cellId)].RemoveCell(cellId);
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-			return eResult;
-		}
+        TrinityErrorCode RemoveCell(cellid_t cellId)
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
+            TrinityErrorCode eResult = hashtables[GetTrunkId(cellId)].RemoveCell(cellId);
+            TRINITY_INTEROP_LEAVE_UNMANAGED();
+            return eResult;
+        }
 
 		// Logging interfaces
 
-		TrinityErrorCode SaveCell(cellid_t cellId, char* buff, int32_t cellSize, uint16_t cellType, CellAccessOptions options)
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			MTHash * hashtable = hashtables + GetTrunkId(cellId);
-			char* cellPtr;
-			int32_t entryIndex;
-			TrinityErrorCode eResult = hashtable->CGetLockedCellInfo4SaveCell(cellId, cellSize, cellType, cellPtr, entryIndex);
-			if (TrinityErrorCode::E_SUCCESS == eResult)
-			{
-				Logging::WriteAheadLog(cellId, buff, cellSize, cellType, options);
-				memcpy(cellPtr, buff, cellSize);
-				hashtable->ReleaseEntryLock(entryIndex);
-			}
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-			return eResult;
-		}
+        TrinityErrorCode SaveCell(cellid_t cellId, char* buff, int32_t cellSize, uint16_t cellType, CellAccessOptions options)
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
 
-		TrinityErrorCode AddCell(cellid_t cellId, char* buff, int32_t cellSize, uint16_t cellType, CellAccessOptions options)
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			MTHash * hashtable = hashtables + GetTrunkId(cellId);
-			char* cellPtr;
-			int32_t entryIndex;
-			TrinityErrorCode eResult = hashtable->CGetLockedCellInfo4AddCell(cellId, cellSize, cellType, cellPtr, entryIndex);
-			if (TrinityErrorCode::E_SUCCESS == eResult)
-			{
-				Logging::WriteAheadLog(cellId, buff, cellSize, cellType, options);
-				memcpy(cellPtr, buff, cellSize);
-				hashtable->ReleaseEntryLock(entryIndex);
-			}
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-			return eResult;
-		}
+            MTHash * hashtable = hashtables + GetTrunkId(cellId);
+            char* cellPtr;
+            int32_t entryIndex;
+            TrinityErrorCode eResult = hashtable->CGetLockedCellInfo4SaveCell(cellId, cellSize, cellType, cellPtr, entryIndex);
+            if (TrinityErrorCode::E_SUCCESS == eResult)
+            {
+                Logging::WriteAheadLog(cellId, buff, cellSize, cellType, options);
+                memcpy(cellPtr, buff, cellSize);
+                hashtable->ReleaseEntryLock(entryIndex);
+            }
+            TRINITY_INTEROP_LEAVE_UNMANAGED();
+            return eResult;
+        }
 
-		TrinityErrorCode UpdateCell(cellid_t cellId, char* buff, int32_t cellSize, CellAccessOptions options)
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			MTHash * hashtable = hashtables + GetTrunkId(cellId);
-			char* cellPtr;
-			int32_t entryIndex;
-			TrinityErrorCode eResult = hashtable->CGetLockedCellInfo4UpdateCell(cellId, cellSize, cellPtr, entryIndex);
-			if (TrinityErrorCode::E_SUCCESS == eResult)
-			{
-				uint16_t cellType = hashtable->CellType(entryIndex);
-				Logging::WriteAheadLog(cellId, buff, cellSize, cellType, options);
-				memcpy(cellPtr, buff, cellSize);
-				hashtable->ReleaseEntryLock(entryIndex);
-			}
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-			return eResult;
-		}
+        TrinityErrorCode AddCell(cellid_t cellId, char* buff, int32_t cellSize, uint16_t cellType, CellAccessOptions options)
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
+            MTHash * hashtable = hashtables + GetTrunkId(cellId);
+            char* cellPtr;
+            int32_t entryIndex;
+            TrinityErrorCode eResult = hashtable->CGetLockedCellInfo4AddCell(cellId, cellSize, cellType, cellPtr, entryIndex);
+            if (TrinityErrorCode::E_SUCCESS == eResult)
+            {
+                Logging::WriteAheadLog(cellId, buff, cellSize, cellType, options);
+                memcpy(cellPtr, buff, cellSize);
+                hashtable->ReleaseEntryLock(entryIndex);
+            }
+            TRINITY_INTEROP_LEAVE_UNMANAGED();
+            return eResult;
+        }
 
-		TrinityErrorCode RemoveCell(cellid_t cellId, CellAccessOptions options)
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			TrinityErrorCode eResult = hashtables[GetTrunkId(cellId)].RemoveCell(cellId, options);
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-			return eResult;
-		}
+        TrinityErrorCode UpdateCell(cellid_t cellId, char* buff, int32_t cellSize, CellAccessOptions options)
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
+            MTHash * hashtable = hashtables + GetTrunkId(cellId);
+            char* cellPtr;
+            int32_t entryIndex;
+            TrinityErrorCode eResult = hashtable->CGetLockedCellInfo4UpdateCell(cellId, cellSize, cellPtr, entryIndex);
+            if (TrinityErrorCode::E_SUCCESS == eResult)
+            {
+                uint16_t cellType = hashtable->CellType(entryIndex);
+                Logging::WriteAheadLog(cellId, buff, cellSize, cellType, options);
+                memcpy(cellPtr, buff, cellSize);
+                hashtable->ReleaseEntryLock(entryIndex);
+            }
+            TRINITY_INTEROP_LEAVE_UNMANAGED();
+            return eResult;
+        }
+
+        TrinityErrorCode RemoveCell(cellid_t cellId, CellAccessOptions options)
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
+            TrinityErrorCode eResult = hashtables[GetTrunkId(cellId)].RemoveCell(cellId, options);
+            TRINITY_INTEROP_LEAVE_UNMANAGED();
+            return eResult;
+        }
 
 		////////////////////////////////////////
 
-		TrinityErrorCode GetCellType(cellid_t cellId, uint16_t& cellType)
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			TrinityErrorCode eResult = hashtables[GetTrunkId(cellId)].GetCellType(cellId, cellType);
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-			return eResult;
-		}
+        TrinityErrorCode GetCellType(cellid_t cellId, uint16_t& cellType)
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
+            TrinityErrorCode eResult = hashtables[GetTrunkId(cellId)].GetCellType(cellId, cellType);
+            TRINITY_INTEROP_LEAVE_UNMANAGED();
+            return eResult;
+        }
 
-		bool Contains(cellid_t cellId)
-		{
-			TRINITY_INTEROP_ENTER_UNMANAGED();
-			bool ret = hashtables[GetTrunkId(cellId)].ContainsKey(cellId);
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-			return ret;
-		}
+        TrinityErrorCode Contains(cellid_t cellId)
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
+            // !Note, THREAD_CONTEXT is never required for doing a Contains query,
+			//  because ContainsKey calls _Lookup_NoLockEntry_Or_NotFound, and will
+			//  never perform a lock-cell action.
+            TrinityErrorCode eResult = hashtables[GetTrunkId(cellId)].ContainsKey(cellId);
+            TRINITY_INTEROP_LEAVE_UNMANAGED();
+            return eResult;
+        }
 
-		///////////////////////////////////////////////////////////////////////////////////////////
-		// Single cell scale operations END
-		///////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        // Single cell operations END
+        ///////////////////////////////////////////////////////////////////////////////////////////
 
 		uint64_t TrunkCommittedMemorySize()
 		{
@@ -719,15 +751,33 @@ namespace Storage
 			return total;
 		}
 
-		uint64_t MTHashCommittedMemorySize()
-		{
-			uint64_t total = 0;
-			for (int32_t i = 0; i < trunk_count; i++)
-			{
-				total += hashtables[i].CommittedMemorySize();
-			}
-			return total;
-		}
+        uint64_t MTHashCommittedMemorySize()
+        {
+            uint64_t total = 0;
+            for (int32_t i = 0; i < trunk_count; i++)
+            {
+                total += hashtables[i].CommittedMemorySize();
+            }
+            return total;
+        }
+
+        static uint64_t _CellCount_impl()
+        {
+            uint64_t total = 0;
+            for (int32_t i = 0; i < trunk_count; i++)
+            {
+                total += (uint64_t)memory_trunks[i].CellCount();
+            }
+            return total;
+        }
+
+        uint64_t CellCount()
+        {
+            TRINITY_INTEROP_ENTER_UNMANAGED();
+            uint64_t total = _CellCount_impl();
+            TRINITY_INTEROP_LEAVE_UNMANAGED();
+            return total;
+        }
 
 		uint64_t TotalCellSize()
 		{

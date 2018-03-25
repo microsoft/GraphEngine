@@ -30,16 +30,16 @@ source->append(R"::( : IEnumerable<)::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node->listElementType)));
 source->append(R"::(>
     {
-        internal byte* CellPtr;
-        internal long? CellID;
+        internal byte* m_ptr;
+        internal long CellId;
         internal ResizeFunctionDelegate ResizeFunction;
         internal )::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::((byte* _CellPtr, ResizeFunctionDelegate func)
         {
-            CellPtr = _CellPtr;
+            m_ptr = _CellPtr;
             ResizeFunction = func;
-            CellPtr += 4;
+            m_ptr += 4;
             )::");
 
 {
@@ -55,7 +55,7 @@ source->append(R"::(
         {
             get
             {
-                return *(int*)(CellPtr - 4);
+                return *(int*)(m_ptr - 4);
             }
         }
         )::");
@@ -85,8 +85,8 @@ source->append(R"::(;
 else
 {
 source->append(R"::(
-                byte* targetPtr = CellPtr;
-                byte* endPtr = CellPtr + length;
+                byte* targetPtr = m_ptr;
+                byte* endPtr = m_ptr + length;
                 int ret = 0;
                 while (targetPtr < endPtr)
                 {
@@ -125,7 +125,7 @@ if (!element_need_accessor_1)
 source->append(R"::(
                 return *()::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node->listElementType)));
-source->append(R"::(*)(CellPtr + index * )::");
+source->append(R"::(*)(m_ptr + index * )::");
 source->append(Codegen::GetString(element_len_1));
 source->append(R"::();
                 )::");
@@ -138,7 +138,7 @@ source->append(R"::(
 if (element_fixed_1)
 {
 source->append(R"::(
-                    elementAccessor.CellPtr = (this.CellPtr + index * )::");
+                    elementAccessor.m_ptr = (this.m_ptr + index * )::");
 source->append(Codegen::GetString(element_len_1));
 source->append(R"::();
                     )::");
@@ -147,7 +147,7 @@ else
 {
 source->append(R"::(
                     {
-                        byte* targetPtr = CellPtr;
+                        byte* targetPtr = m_ptr;
                         while (index-- > 0)
                         {
                             )::");
@@ -165,13 +165,13 @@ source->append(R"::(
 if (data_type_is_length_prefixed(node->listElementType))
 {
 source->append(R"::(
-                        elementAccessor.CellPtr = targetPtr + 4;
+                        elementAccessor.m_ptr = targetPtr + 4;
                         )::");
 }
 else
 {
 source->append(R"::(
-                        elementAccessor.CellPtr = targetPtr;
+                        elementAccessor.m_ptr = targetPtr;
                         )::");
 }
 source->append(R"::(
@@ -179,7 +179,7 @@ source->append(R"::(
                     )::");
 }
 source->append(R"::(
-                    elementAccessor.CellID = this.CellID;
+                    elementAccessor.CellId = this.CellId;
                     return elementAccessor;
                 }
                 )::");
@@ -194,7 +194,7 @@ if (!element_need_accessor_1)
 source->append(R"::(
                 *()::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node->listElementType)));
-source->append(R"::(*)(CellPtr + index * )::");
+source->append(R"::(*)(m_ptr + index * )::");
 source->append(Codegen::GetString(element_len_1));
 source->append(R"::() = value;
                 )::");
@@ -204,8 +204,8 @@ else
 source->append(R"::(
                 {
                     if ((object)value == null) throw new ArgumentNullException("The assigned variable is null.");
-                    elementAccessor.CellID = this.CellID;
-                    byte* targetPtr = CellPtr;
+                    elementAccessor.CellId = this.CellId;
+                    byte* targetPtr = m_ptr;
                     )::");
 if (element_fixed_1)
 {
@@ -259,7 +259,7 @@ source->append(R"::(
             byte[] ret = new byte[length];
             fixed (byte* retptr = ret)
             {
-                Memory.Copy(CellPtr, retptr, length);
+                Memory.Copy(m_ptr, retptr, length);
                 return ret;
             }
         }
@@ -271,13 +271,13 @@ source->append(R"::(
 source->append(Codegen::GetString(data_type_get_accessor_name(node->listElementType)));
 source->append(R"::(> action)
         {
-            byte* targetPtr = CellPtr;
-            byte* endPtr = CellPtr + length;
+            byte* targetPtr = m_ptr;
+            byte* endPtr = m_ptr + length;
             )::");
 if (element_need_accessor_1)
 {
 source->append(R"::(
-            elementAccessor.CellID = this.CellID;
+            elementAccessor.CellId = this.CellId;
             )::");
 }
 source->append(R"::(
@@ -301,7 +301,7 @@ else if (element_fixed_1)
 {
 source->append(R"::(
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.m_ptr = targetPtr;
                     action(elementAccessor);
                     targetPtr += )::");
 source->append(Codegen::GetString(element_len_1));
@@ -313,7 +313,7 @@ else if (data_type_is_length_prefixed(node->listElementType))
 {
 source->append(R"::(
                 {
-                    elementAccessor.CellPtr = targetPtr + 4;
+                    elementAccessor.m_ptr = targetPtr + 4;
                     action(elementAccessor);
                     )::");
 
@@ -332,7 +332,7 @@ else
 {
 source->append(R"::(
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.m_ptr = targetPtr;
                     action(elementAccessor);
                     )::");
 
@@ -358,8 +358,8 @@ source->append(R"::(
 source->append(Codegen::GetString(data_type_get_accessor_name(node->listElementType)));
 source->append(R"::(, int> action)
         {
-            byte* targetPtr = CellPtr;
-            byte* endPtr = CellPtr + length;
+            byte* targetPtr = m_ptr;
+            byte* endPtr = m_ptr + length;
             for (int index = 0; targetPtr < endPtr; ++index)
             {
                 )::");
@@ -380,7 +380,7 @@ else if (element_fixed_1)
 {
 source->append(R"::(
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.m_ptr = targetPtr;
                     action(elementAccessor, index);
                     targetPtr += )::");
 source->append(Codegen::GetString(element_len_1));
@@ -392,7 +392,7 @@ else if (data_type_is_length_prefixed(node->listElementType))
 {
 source->append(R"::(
                 {
-                    elementAccessor.CellPtr = targetPtr + 4;
+                    elementAccessor.m_ptr = targetPtr + 4;
                     action(elementAccessor, index);
                     )::");
 
@@ -411,7 +411,7 @@ else
 {
 source->append(R"::(
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.m_ptr = targetPtr;
                     action(elementAccessor, index);
                     )::");
 
@@ -440,7 +440,7 @@ source->append(R"::( target;
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::( target)
             {
-                targetPtr = target.CellPtr;
+                targetPtr = target.m_ptr;
                 endPtr = targetPtr + target.length;
                 this.target = target;
             }
@@ -467,7 +467,7 @@ else if (element_fixed_1)
 {
 source->append(R"::(
                 {
-                    target.elementAccessor.CellPtr = targetPtr;
+                    target.elementAccessor.m_ptr = targetPtr;
                     return (target.elementAccessor);
                 }
                 )::");
@@ -476,7 +476,7 @@ else if (data_type_is_length_prefixed(node->listElementType))
 {
 source->append(R"::(
                 {
-                    target.elementAccessor.CellPtr = targetPtr + 4;
+                    target.elementAccessor.m_ptr = targetPtr + 4;
                     return target.elementAccessor;
                 }
                 )::");
@@ -485,7 +485,7 @@ else
 {
 source->append(R"::(
                 {
-                    target.elementAccessor.CellPtr = targetPtr;
+                    target.elementAccessor.m_ptr = targetPtr;
                     return target.elementAccessor;
                 }
                 )::");
@@ -564,10 +564,10 @@ std::string* module_content = Modules::PushPointerFromVariable(node->listElement
 source->append(R"::(
             }
             int size = (int)targetPtr;
-            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), *(int*)(this.CellPtr-sizeof(int))+sizeof(int), size);
-            targetPtr = this.CellPtr + (*(int*)this.CellPtr)+sizeof(int);
-            *(int*)this.CellPtr += size;
-            this.CellPtr += sizeof(int);
+            this.m_ptr = this.ResizeFunction(this.m_ptr - sizeof(int), *(int*)(this.m_ptr-sizeof(int))+sizeof(int), size);
+            targetPtr = this.m_ptr + (*(int*)this.m_ptr)+sizeof(int);
+            *(int*)this.m_ptr += size;
+            this.m_ptr += sizeof(int);
             )::");
 
 {
@@ -607,7 +607,7 @@ std::string* module_content = Modules::PushPointerFromVariable(node->listElement
 source->append(R"::(
             }
             int size = (int)targetPtr;
-            targetPtr = CellPtr;
+            targetPtr = m_ptr;
             )::");
 if (element_fixed_1)
 {
@@ -636,11 +636,11 @@ source->append(R"::(
             )::");
 }
 source->append(R"::(
-            int offset = (int)(targetPtr - CellPtr);
-            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), offset + sizeof(int), size);
-            *(int*)this.CellPtr += size;
-            this.CellPtr += sizeof(int);
-            targetPtr = this.CellPtr + offset;
+            int offset = (int)(targetPtr - m_ptr);
+            this.m_ptr = this.ResizeFunction(this.m_ptr - sizeof(int), offset + sizeof(int), size);
+            *(int*)this.m_ptr += size;
+            this.m_ptr += sizeof(int);
+            targetPtr = this.m_ptr + offset;
             )::");
 
 {
@@ -681,8 +681,8 @@ std::string* module_content = Modules::PushPointerFromVariable(node->listElement
 source->append(R"::(
             }
             int size = (int)targetPtr;
-            targetPtr = CellPtr;
-            byte* endPtr = CellPtr + length;
+            targetPtr = m_ptr;
+            byte* endPtr = m_ptr + length;
             while (targetPtr<endPtr)
             {
                 )::");
@@ -709,7 +709,7 @@ else if (element_fixed_1)
 {
 source->append(R"::(
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.m_ptr = targetPtr;
                     if (comparison(elementAccessor, element)<=0)
                     {
                         targetPtr += )::");
@@ -730,7 +730,7 @@ else if (node->listElementType->is_struct())
 {
 source->append(R"::(
                 {
-                    elementAccessor.CellPtr = targetPtr + 4;
+                    elementAccessor.m_ptr = targetPtr + 4;
                     if (comparison(elementAccessor, element)<=0)
                     {
                         )::");
@@ -755,7 +755,7 @@ else
 {
 source->append(R"::(
                 {
-                    elementAccessor.CellPtr = targetPtr;
+                    elementAccessor.m_ptr = targetPtr;
                     if (comparison(elementAccessor, element)<=0)
                     {
                         )::");
@@ -778,11 +778,11 @@ source->append(R"::(
 }
 source->append(R"::(
             }
-            int offset = (int)(targetPtr - CellPtr);
-            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), offset + sizeof(int), size);
-            *(int*)this.CellPtr += size;
-            this.CellPtr += sizeof(int);
-            targetPtr = this.CellPtr + offset;
+            int offset = (int)(targetPtr - m_ptr);
+            this.m_ptr = this.ResizeFunction(this.m_ptr - sizeof(int), offset + sizeof(int), size);
+            *(int*)this.m_ptr += size;
+            this.m_ptr += sizeof(int);
+            targetPtr = this.m_ptr + offset;
             )::");
 
 {
@@ -803,7 +803,7 @@ source->append(R"::(
         public unsafe void RemoveAt(int index)
         {
             if (index < 0 || index >= Count) throw new IndexOutOfRangeException();
-            byte* targetPtr = CellPtr;
+            byte* targetPtr = m_ptr;
             for (int i = 0; i < index; i++)
             {
                 )::");
@@ -817,7 +817,7 @@ std::string* module_content = Modules::PushPointerThroughFieldType(node->listEle
 }
 source->append(R"::(
             }
-            int offset = (int)(targetPtr - CellPtr);
+            int offset = (int)(targetPtr - m_ptr);
             byte* oldtargetPtr = targetPtr;
             )::");
 
@@ -830,9 +830,9 @@ std::string* module_content = Modules::PushPointerThroughFieldType(node->listEle
 }
 source->append(R"::(
             int size = (int)(oldtargetPtr - targetPtr);
-            this.CellPtr = this.ResizeFunction(this.CellPtr - sizeof(int), offset + sizeof(int), size);
-            *(int*)this.CellPtr += size;
-            this.CellPtr += sizeof(int);
+            this.m_ptr = this.ResizeFunction(this.m_ptr - sizeof(int), offset + sizeof(int), size);
+            *(int*)this.m_ptr += size;
+            this.m_ptr += sizeof(int);
         }
         /// <summary>
         /// Adds the elements of the specified collection to the end of the List
@@ -847,10 +847,10 @@ source->append(R"::( collection)
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::( tcollection = collection;
             int delta = tcollection.length;
-            CellPtr = ResizeFunction(CellPtr - 4, *(int*)(CellPtr - 4) + 4, delta);
-            Memory.Copy(tcollection.CellPtr, CellPtr + *(int*)CellPtr + 4, delta);
-            *(int*)CellPtr += delta;
-            this.CellPtr += 4;
+            m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
+            Memory.Copy(tcollection.m_ptr, m_ptr + *(int*)m_ptr + 4, delta);
+            *(int*)m_ptr += delta;
+            this.m_ptr += 4;
         }
         /// <summary>
         /// Adds the elements of the specified collection to the end of the List
@@ -862,36 +862,36 @@ source->append(R"::( collection)
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
             int delta = collection.length;
-            if (collection.CellID != CellID)
+            if (collection.CellId != CellId)
             {
-                CellPtr = ResizeFunction(CellPtr - 4, *(int*)(CellPtr - 4) + 4, delta);
-                Memory.Copy(collection.CellPtr, CellPtr + *(int*)CellPtr + 4, delta);
-                *(int*)CellPtr += delta;
+                m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
+                Memory.Copy(collection.m_ptr, m_ptr + *(int*)m_ptr + 4, delta);
+                *(int*)m_ptr += delta;
             }
             else
             {
                 byte[] tmpcell = new byte[delta];
                 fixed (byte* tmpcellptr = tmpcell)
                 {
-                    Memory.Copy(collection.CellPtr, tmpcellptr, delta);
-                    CellPtr = ResizeFunction(CellPtr - 4, *(int*)(CellPtr - 4) + 4, delta);
-                    Memory.Copy(tmpcellptr, CellPtr + *(int*)CellPtr + 4, delta);
-                    *(int*)CellPtr += delta;
+                    Memory.Copy(collection.m_ptr, tmpcellptr, delta);
+                    m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
+                    Memory.Copy(tmpcellptr, m_ptr + *(int*)m_ptr + 4, delta);
+                    *(int*)m_ptr += delta;
                 }
             }
-            this.CellPtr += 4;
+            this.m_ptr += 4;
         }
         /// <summary>
-        /// Removes all elements from the)::");
-source->append(R"::( List
-        /// </summary>
+        /// Removes all elements from the List
+)::");
+source->append(R"::(        /// </summary>
         public unsafe void Clear()
         {
             int delta = length;
-            Memory.memset(CellPtr, 0, (ulong)delta);
-            CellPtr = ResizeFunction(CellPtr - 4, 4, -delta);
-            *(int*)CellPtr = 0;
-            this.CellPtr += 4;
+            Memory.memset(m_ptr, 0, (ulong)delta);
+            m_ptr = ResizeFunction(m_ptr - 4, 4, -delta);
+            *(int*)m_ptr = 0;
+            this.m_ptr += 4;
         }
         /// <summary>
         /// Determines whether an element is in the List
@@ -960,8 +960,8 @@ source->append(R"::([] array, int arrayIndex)
         /// </summary>
         /// <param name="index">The zero-based index in the source List at which copying begins.</param>
         /// <param name="array">The one-dimensional Array that is the destination of the elements copied from List. The Array must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based index in arr)::");
-source->append(R"::(ay at which copying begins.</param>;
+        /// <param name="arrayIndex">The zero-based i)::");
+source->append(R"::(ndex in array at which copying begins.</param>;
         /// <param name="count">The number of elements to copy.</param>
         public unsafe void CopyTo(int index, )::");
 source->append(Codegen::GetString(node->listElementType));
@@ -1067,7 +1067,7 @@ source->append(R"::( collection)
             )::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::( tmpAccessor = collection;
-            byte* targetPtr = CellPtr;
+            byte* targetPtr = m_ptr;
             for (int i = 0; i < index; i++)
             {
                 )::");
@@ -1081,11 +1081,11 @@ std::string* module_content = Modules::PushPointerThroughFieldType(node->listEle
 }
 source->append(R"::(
             }
-            int offset = (int)(targetPtr - CellPtr);
-            CellPtr = ResizeFunction(CellPtr - 4, offset + 4, tmpAccessor.length);
-            Memory.Copy(tmpAccessor.CellPtr, CellPtr + offset + 4, tmpAccessor.length);
-            *(int*)CellPtr += tmpAccessor.length;
-            this.CellPtr += 4;
+            int offset = (int)(targetPtr - m_ptr);
+            m_ptr = ResizeFunction(m_ptr - 4, offset + 4, tmpAccessor.length);
+            Memory.Copy(tmpAccessor.m_ptr, m_ptr + offset + 4, tmpAccessor.length);
+            *(int*)m_ptr += tmpAccessor.length;
+            this.m_ptr += 4;
         }
         /// <summary>
         /// Removes a range of elements from the List.
@@ -1097,8 +1097,8 @@ source->append(R"::(
             if (index < 0) throw new ArgumentOutOfRangeException("index is less than 0.");
             if (index > Count) throw new ArgumentOutOfRangeException("index is greater than Count.");
             if (index + count > Count) throw new ArgumentException("index and count do not denote a valid range of elements in the List.");
-         )::");
-source->append(R"::(   byte* targetPtr = CellPtr;
+      )::");
+source->append(R"::(      byte* targetPtr = m_ptr;
             for (int i = 0; i < index; i++)
             {
                 )::");
@@ -1112,7 +1112,7 @@ std::string* module_content = Modules::PushPointerThroughFieldType(node->listEle
 }
 source->append(R"::(
             }
-            int offset = (int)(targetPtr - CellPtr);
+            int offset = (int)(targetPtr - m_ptr);
             byte* oldtargetPtr = targetPtr;
             for (int i = 0; i < count; i++)
             {
@@ -1128,9 +1128,9 @@ std::string* module_content = Modules::PushPointerThroughFieldType(node->listEle
 source->append(R"::(
             }
             int size = (int)(oldtargetPtr - targetPtr);
-            CellPtr = ResizeFunction(CellPtr - 4, offset + 4, size);
-            *(int*)CellPtr += size;
-            this.CellPtr += 4;
+            m_ptr = ResizeFunction(m_ptr - 4, offset + 4, size);
+            *(int*)m_ptr += size;
+            this.m_ptr += 4;
         }
         public unsafe static implicit operator )::");
 source->append(Codegen::GetString(node));
@@ -1167,9 +1167,9 @@ source->append(R"::( b)
                 return true;
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
                 return false;
-            if (a.CellPtr == b.CellPtr) return true;
+            if (a.m_ptr == b.m_ptr) return true;
             if (a.length != b.length) return false;
-            return Memory.Compare(a.CellPtr, b.CellPtr, a.length);
+            return Memory.Compare(a.m_ptr, b.m_ptr, a.length);
         }
         public static bool operator !=()::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));

@@ -11,8 +11,8 @@ set:
 
 For brevity, in this sample project we focus on how to serve LIKQ
 queries with a prebuilt data image.  Please refer to the
-`GraphEngine.DataImporter` sample project in the `experimental` branch
-to see how to automatically generate a schema file and import data.
+`GraphEngine.DataImporter` project to see how to automatically
+generate a schema file and import data.
 
 LIKQ module does not provide a built-in index backend. In this sample
 project, a sample index backend based on SQLite is provided.  When
@@ -25,16 +25,19 @@ backend to interpret the constraints specified by the _match_ object.
 
 ## Building and running the demo
 
-After the freebase-likq solution is built successfully, run
-`freebase-likq.exe`. It will automatically download Freebase graph
-image, build SQLite index and start serving LIKQ.  To enable the LIKQ
-HTTP endpoint, either run the program as administrator, or grant the
-current user the permission to listen to port 80: `netsh http add
-urlacl url=http://+:80/ user=Domain\username`.
-
 Note that the full Freebase image is ~`32GB` so make sure that you run the demo on a beefy server!
-We also have prepared a smaller dataset `freebase-film-dataset.zip`. Please modify `Program.cs` to
-direct the program to download the small dataset if you want to.
+We also have prepared a smaller dataset `freebase-film-dataset.zip`. Both datasets are supported,
+and we have prepared two separate executables.
+
+After the freebase-likq solution is built successfully, run
+`freebase-likq.exe` or `freebase-film-likq.exe`. 
+It will automatically download Freebase graph image, 
+build SQLite index and start serving LIKQ.  
+
+To enable the LIKQ HTTP endpoint, either run the program 
+as administrator, or grant the current user the permission 
+to listen to port 80: 
+`netsh http add urlacl url=http://+:80/ user=Domain\username`.
 
 Now you can query Freebase via LIKQ. Here is a quick example:
 
@@ -66,7 +69,7 @@ And the result shall look like this:
 ```
 {
     "Results":
-[[{"CellID":530972568887245,"type_object_name":"Tom Cruise"},{"CellID":332530798387447},{"CellID":547400553082314,"type_object_name":"Nicole Kidman"}],[{"CellID":530972568887245,"type_object_name":"Tom Cruise"},{"CellID":290269080985430},{"CellID":435682361078655,"type_object_name":"Mimi Rogers"}],[{"CellID":530972568887245,"type_object_name":"Tom Cruise"},{"CellID":438165252269041},{"CellID":524140155134870,"type_object_name":"Katie Holmes"}],[{"CellID":530972568887245,"type_object_name":"Tom Cruise"},{"CellID":292606011314464},{"CellID":360255961521166,"type_object_name":"Penélope Cruz"}]]
+[[{"CellId":530972568887245,"type_object_name":"Tom Cruise"},{"CellId":332530798387447},{"CellId":547400553082314,"type_object_name":"Nicole Kidman"}],[{"CellId":530972568887245,"type_object_name":"Tom Cruise"},{"CellId":290269080985430},{"CellId":435682361078655,"type_object_name":"Mimi Rogers"}],[{"CellId":530972568887245,"type_object_name":"Tom Cruise"},{"CellId":438165252269041},{"CellId":524140155134870,"type_object_name":"Katie Holmes"}],[{"CellId":530972568887245,"type_object_name":"Tom Cruise"},{"CellId":292606011314464},{"CellId":360255961521166,"type_object_name":"Penélope Cruz"}]]
 }
 ```
 
@@ -88,7 +91,7 @@ And the result shall be different every time (because we apply sampling of proba
 ```
 {
     "Results":
-[[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["travel_travel_destination_visitor_information_site"]},{"CellID":376867967714800,"type_object_name":""}],[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["travel_travel_destination_climate"]},{"CellID":365581129565857,"type_object_name":""}],[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["travel_travel_destination_climate"]},{"CellID":451288213711482,"type_object_name":""}],[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["common_topic_webpage"]},{"CellID":382284952397975,"type_object_name":""}],[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["common_topic_webpage"]},{"CellID":459237260174344,"type_object_name":""}],[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["travel_travel_destination_climate"]},{"CellID":433800880109811,"type_object_name":""}],[{"CellID":297095894548906,"type_object_name":"Beijing","graph_outlinks":["olympics_olympic_host_city_olympics_hosted"]},{"CellID":294136728044394,"type_object_name":"2008 Summer Olympics"}]]
+[[{"CellId":297095894548906,"type_object_name":"Beijing","graph_outlinks":["travel_travel_destination_visitor_information_site"]},{"CellId":376867967714800,"type_object_name":""}],[{"CellId":297095894548906,"type_object_name":"Beijing","graph_outlinks":["travel_travel_destination_climate"]},{"CellId":365581129565857,"type_object_name":""}],[{"CellId":297095894548906,"type_object_name":"Beijing","graph_outlinks":["travel_travel_destination_climate"]},{"CellId":451288213711482,"type_object_name":""}],[{"CellId":297095894548906,"type_object_name":"Beijing","graph_outlinks":["common_topic_webpage"]},{"CellId":382284952397975,"type_object_name":""}],[{"CellId":297095894548906,"type_object_name":"Beijing","graph_outlinks":["common_topic_webpage"]},{"CellId":459237260174344,"type_object_name":""}],[{"CellId":297095894548906,"type_object_name":"Beijing","graph_outlinks":["travel_travel_destination_climate"]},{"CellId":433800880109811,"type_object_name":""}],[{"CellId":297095894548906,"type_object_name":"Beijing","graph_outlinks":["olympics_olympic_host_city_olympics_hosted"]},{"CellId":294136728044394,"type_object_name":"2008 Summer Olympics"}]]
 }
 ```
 

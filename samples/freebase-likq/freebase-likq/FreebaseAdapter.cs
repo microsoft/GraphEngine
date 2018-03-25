@@ -54,7 +54,7 @@ namespace freebase_likq
                             singleValuedStrProps.Add(fname);
                         }
 
-                        if (fname == "CellID" || fname == "cellType")
+                        if (fname == "CellId" || fname == "cellType")
                         {
                             continue;
                         }
@@ -176,7 +176,7 @@ namespace freebase_likq
 
         public CellGroupAccessor(long id)
         {
-            CellID = id;
+            CellId = id;
             category_cell_id = id;
         }
 
@@ -188,7 +188,7 @@ namespace freebase_likq
             }
             else
             {
-                s_accessor.CellID = id;
+                s_accessor.CellId = id;
                 s_accessor.child_ids.Clear();
                 s_accessor.child_ids_initialized = false;
                 s_accessor.category_cell_id = id;
@@ -201,16 +201,16 @@ namespace freebase_likq
         {
             //string np = CellGroupUtil.Normalize(fieldName);
             ushort ct = CellGroupUtil.GetTypeCode(fieldName);
-            return CellGroupUtil.GetCellID(CellID, ct);
+            return CellGroupUtil.GetCellID(CellId, ct);
         }
 
         private IEnumerable<long> ChildrenIDs()
         {
-            using (var cell = Global.LocalStorage.Usetype_object(CellID))
+            using (var cell = Global.LocalStorage.Usetype_object(CellId))
             {
                 foreach (var type in cell.types)
                 {
-                    yield return CellGroupUtil.GetCellID(CellID, type);
+                    yield return CellGroupUtil.GetCellID(CellId, type);
                 }
             }
         }
@@ -238,7 +238,7 @@ namespace freebase_likq
         #endregion
 
         #region ICell Members
-        public long CellID
+        public long CellId
         {
             get
             {
@@ -298,7 +298,7 @@ namespace freebase_likq
 
             if (fieldName.Equals("type_object_type"))
             {
-                using (var cell = Global.LocalStorage.UseGenericCell(CellID, CellAccessOptions.ReturnNullOnCellNotFound))
+                using (var cell = Global.LocalStorage.UseGenericCell(CellId, CellAccessOptions.ReturnNullOnCellNotFound))
                 {
                     if (cell == null)
                     {
@@ -523,7 +523,7 @@ namespace freebase_likq
                     {
                         sb.Append(',');
                     }
-                    sb.Append(String.Format(@"""CellID"":{0}", sub_cell.CellID));
+                    sb.Append(String.Format("\"CellId\":{0}", sub_cell.CellId));
                 }
             }
         }
@@ -620,6 +620,11 @@ namespace freebase_likq
         }
 
         public int GetBufferLength()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICell Deserialize()
         {
             throw new NotImplementedException();
         }

@@ -15,7 +15,7 @@ namespace Trinity.Utilities
     {
         internal static string ResolveTrinityHome()
         {
-            string assembly_path = AssemblyPath.MyAssemblyPath;
+            string assembly_path = AssemblyUtility.MyAssemblyPath;
             string trinity_home = Environment.GetEnvironmentVariable("TrinityHome");
             string trinity_path = Environment.GetEnvironmentVariable("TrinityPath");
             string trinity_flag_file = assembly_path + "trinity";
@@ -46,7 +46,7 @@ namespace Trinity.Utilities
 
         internal static string ResolveTrinityPath()
         {
-            string assembly_path = AssemblyPath.TrinityCorePath;
+            string assembly_path = AssemblyUtility.TrinityCorePath;
             string trinity_home = Environment.GetEnvironmentVariable("TrinityHome");
             string trinity_path = Environment.GetEnvironmentVariable("TrinityPath");
             string trinity_flag_file = Path.Combine(assembly_path, "trinity");

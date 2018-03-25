@@ -27,17 +27,70 @@ namespace Trinity
     /// </summary>
     public static partial class Global
     {
+        /// <summary>
+        /// Initializes Graph Engine.
+        /// This method will be automatically called
+        /// when the static constructor of `Global`
+        /// is triggered. However, when the Graph Engine
+        /// is uninitialized, one would have to manually
+        /// call this again before using the local memory storage.
+        /// Note, the system will load from the default configuration
+        /// file path "trinity.xml", only if no configuration
+        /// file has been loaded.
+        /// </summary>
         public static void Initialize()
+        {
+            Initialize_impl(null);
+        }
+
+        /// <summary>
+        /// Initializes Graph Engine.
+        /// </summary>
+        /// <param name="config_file">
+        /// The path to the configuration file. If set to null,
+        /// the system will load from the default configuration
+        /// file path "trinity.xml", only if no configuration
+        /// file has been loaded.
+        /// </param>
+        public static void Initialize(string config_file)
+        {
+            Initialize_impl(config_file);
+        }
+
+        private static void Initialize_impl(string config_file = null)
         {
             lock (s_storage_init_lock)
             {
                 if (s_master_init_flag) return;
-                _LoadTSLExtensions();
+
+                TrinityC.Init();
+
+                if (config_file != null) TrinityConfig.LoadConfig(config_file);
+                else TrinityConfig.EnsureConfig();
+
+                Log.Initialize();
+
+                _LoadGraphEngineExtensions();
                 _ScanForTSLStorageExtension();
+                _ScanForMemoryCloudExtension();
+                _ScanForStartupTasks();
                 s_master_init_flag = true;
+                BackgroundThread.Start();
+            }
+            try
+            {
+                Initialized();
+            }
+            catch
+            {
+                //TODO log
             }
         }
 
+        /// <summary>
+        /// Uninitializes the Graph Engine, including the
+        /// communication instance, message passing, and local memory storage.
+        /// </summary>
         public static void Uninitialize()
         {
             lock (s_storage_init_lock)
@@ -63,35 +116,36 @@ namespace Trinity
                         isCloudStorageInited = false;
                     }
 
+                    // !Note, BackgroundThread.Stop may write log entries,
+                    //  so we uninitialize Log later than BackgroundThread.
                     BackgroundThread.Stop();
+                    Log.Uninitialize();
                     s_master_init_flag = false;
                 }
-        }
 
-        /// <summary>
-        /// Creates a cloud storage instance with the specified name.
-        /// </summary>
-        /// <param name="config">A ClusterConfig instance.</param>
-        /// <returns>The newly created cloud storage instance.</returns>
-        public static MemoryCloud CreateCloudStorage(ClusterConfig config)
-        {
-            lock (s_storage_init_lock)
+            try
             {
-                MemoryCloud mc = new MemoryCloud(config);
-                mc.RegisterGenericOperationsProvider(generic_cell_ops);
-                s_registered_memoryclouds.Add(mc);
-                return mc;
+                Uninitialized();
+            }
+            catch
+            {
+                //TODO log
             }
         }
 
         /// <summary>
         /// Creates a cloud storage instance with the specified name.
         /// </summary>
-        /// <param name="configFile">The file path of a configuration file.</param>
         /// <returns>The newly created cloud storage instance.</returns>
-        public static MemoryCloud CreateCloudStorage(string configFile)
+        public static MemoryCloud CreateCloudStorage()
         {
-            return CreateCloudStorage(ClusterConfig._LegacyLoadClusterConfig(configFile));
+            lock (s_storage_init_lock)
+            {
+                MemoryCloud mc = new_memorycloud_func();
+                mc.RegisterGenericOperationsProvider(generic_cell_ops);
+                s_registered_memoryclouds.Add(mc);
+                return mc;
+            }
         }
 
         /// <summary>
@@ -106,11 +160,11 @@ namespace Trinity
         {
             lock (s_storage_init_lock)
             {
-                var old_storage_schema  = storage_schema;
+                var old_storage_schema = storage_schema;
                 var old_genops_provider = generic_cell_ops;
 
-                var loaded_tuple        = _LoadTSLStorageExtension(Assembly.LoadFrom(assemblyFilePath));
-                var new_storage_schema  = loaded_tuple.Item2;
+                var loaded_tuple = _LoadTSLStorageExtension(Assembly.LoadFrom(assemblyFilePath));
+                var new_storage_schema = loaded_tuple.Item2;
                 var new_genops_provider = loaded_tuple.Item1;
 
                 if (new_storage_schema == null || new_genops_provider == null) { throw new InvalidOperationException("The specified assembly is not a TSL extension."); }
@@ -121,8 +175,8 @@ namespace Trinity
 
                     var old_schema_signatures = old_storage_schema.CellTypeSignatures;
                     var new_schema_signatures = new_storage_schema.CellTypeSignatures;
-                    var incremental           = true;
-                    var sigs_len              = old_schema_signatures.Count();
+                    var incremental = true;
+                    var sigs_len = old_schema_signatures.Count();
 
                     if (new_schema_signatures.Count() < sigs_len) { incremental = false; }
                     else { incremental = Enumerable.SequenceEqual(old_schema_signatures, new_schema_signatures.Take(sigs_len)); }
@@ -184,8 +238,8 @@ namespace Trinity
                         {
                             if (cloud_storage == null)
                             {
-                                cloud_storage = CreateCloudStorage(TrinityConfig.CurrentClusterConfig);
-                                cloud_storage.Open(false);
+                                cloud_storage = CreateCloudStorage();
+                                cloud_storage.Open(TrinityConfig.CurrentClusterConfig, false);
                             }
                             Thread.MemoryBarrier();
                             isCloudStorageInited = true;
@@ -203,7 +257,7 @@ namespace Trinity
         {
             get
             {
-                return CloudStorage.ServerCount;
+                return CloudStorage.PartitionCount;
             }
         }
 
@@ -219,19 +273,21 @@ namespace Trinity
         }
 
         /// <summary>
-        /// Obsolete. Use MyServerId instead.
+        /// Obsolete. Use MyPartitionId instead.
         /// </summary>
+        [Obsolete]
         public static int MyServerID
         {
             get
             {
-                return MyServerId;
+                return MyPartitionId;
             }
         }
 
         /// <summary>
         /// Obsolete. Use MyProxyId instead.
         /// </summary>
+        [Obsolete]
         public static int MyProxyID
         {
             get
@@ -243,11 +299,11 @@ namespace Trinity
         /// <summary>
         /// Gets the ID of current server instance in the cluster.
         /// </summary>
-        public static int MyServerId
+        public static int MyPartitionId
         {
             get
             {
-                return CloudStorage.MyServerId;
+                return CloudStorage.MyPartitionId;
             }
         }
 
@@ -295,7 +351,7 @@ namespace Trinity
         }
 
         /// <summary>
-        /// Represents the running communication instance (a TrinityServer or a TrinityProxy).
+        /// Represents the running communication instance (a TrinityServer, a TrinityProxy, a TrinityClient, etc.).
         /// If no server/proxy are started, the value is null.
         /// </summary>
         public static CommunicationInstance CommunicationInstance

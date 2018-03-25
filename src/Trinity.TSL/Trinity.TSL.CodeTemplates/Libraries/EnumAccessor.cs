@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
+using Trinity.Storage;
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
 namespace t_Namespace
@@ -12,14 +13,14 @@ namespace t_Namespace
     /// Represents a 256-bit enum type.
     /// </summary>
     [TARGET("NTSL")]
-    public unsafe class EnumAccessor
+    public unsafe class EnumAccessor : IAccessor
     {
-        internal byte* CellPtr;
-        internal long? CellID;
+        internal byte* m_ptr;
+        internal long CellId;
 
         internal EnumAccessor(byte* _CellPtr)
         {
-            CellPtr = _CellPtr;
+            m_ptr = _CellPtr;
         }
 
         internal int length
@@ -30,14 +31,7 @@ namespace t_Namespace
             }
         }
 
-        /// <summary>
-        /// Gets the byte value.
-        /// </summary>
-        /// <returns>A byte.</returns>
-        public byte ToByte()
-        {
-            return *(byte*)CellPtr;
-        }
+        #region IAccessor Implementation
 
         /// <summary>
         /// Gets the underlying blob.
@@ -45,8 +39,42 @@ namespace t_Namespace
         /// <returns>A byte array with size one.</returns>
         public byte[] ToByteArray()
         {
-            return new byte[] { *(byte*)CellPtr };
+            return new byte[] { *(byte*)m_ptr };
         }
+
+        /// <summary>
+        /// Get the pointer to the underlying buffer.
+        /// </summary>
+        public unsafe byte* GetUnderlyingBufferPointer()
+        {
+            return m_ptr;
+        }
+
+        /// <summary>
+        /// Get the length of the buffer.
+        /// </summary>
+        public unsafe int GetBufferLength()
+        {
+            return length;
+        }
+
+        /// <summary>
+        /// The ResizeFunctionDelegate that should be called when this accessor is trying to resize itself.
+        /// </summary>
+        public ResizeFunctionDelegate ResizeFunction { get; set; }
+
+        #endregion
+        
+
+        /// <summary>
+        /// Gets the byte value.
+        /// </summary>
+        /// <returns>A byte.</returns>
+        public byte ToByte()
+        {
+            return *(byte*)m_ptr;
+        }
+
 
         /// <summary>
         /// Converts a EnumAccessor accessor to a byte value.
@@ -55,7 +83,7 @@ namespace t_Namespace
         /// <returns>A byte.</returns>
         public static implicit operator byte(EnumAccessor accessor)
         {
-            return *(byte*)accessor.CellPtr;
+            return *(byte*)accessor.m_ptr;
         }
 
         /// <summary>
@@ -82,7 +110,7 @@ namespace t_Namespace
               return true;
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
               return false;
-            return *a.CellPtr == *b.CellPtr;
+            return *a.m_ptr == *b.m_ptr;
         }
 
         /// <summary>
@@ -103,7 +131,7 @@ namespace t_Namespace
         /// <returns>true if obj is an instance of EnumAccessor and equals the value of this instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
-            return ((obj is EnumAccessor) && ((*CellPtr) == (((EnumAccessor)obj).ToByte())));
+            return ((obj is EnumAccessor) && ((*m_ptr) == (((EnumAccessor)obj).ToByte())));
         }
 
         /// <summary>
@@ -112,7 +140,7 @@ namespace t_Namespace
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override int GetHashCode()
         {
-            return (*CellPtr).GetHashCode();
+            return (*m_ptr).GetHashCode();
         }
     }
 }

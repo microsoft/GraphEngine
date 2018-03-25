@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Trinity ConfigVersion="2.0">
   <Local>
-    <Logging LoggingLevel="Info" LogDirectory="/mnt/d/home/git/GraphEngine/tests/unittests/config/config1/bin/Release/netcoreapp2.0/trinity-log" LogEchoOnConsole="TRUE" LogToFile="TRUE" />
+    <Logging LoggingLevel="Info" LogDirectory="C:\src\GraphEngine\tests\unittests\config\config1\bin\Release\netstandard2.0\trinity-log" LogEchoOnConsole="TRUE" LogToFile="TRUE" />
     <Network HttpPort="80" ClientMaxConn="2" ClientSendRetry="1" ClientReconnectRetry="1" Handshake="TRUE" ClientDisableSendBuffer="False" />
-    <Storage TrunkCount="256" ReadOnly="False" StorageCapacity="Max8G" StorageRoot="/mnt/d/home/git/GraphEngine/tests/unittests/config/config1/bin/Release/netcoreapp2.0/storage/" DefragInterval="600" />
+    <Storage TrunkCount="256" ReadOnly="False" StorageCapacity="Max8G" StorageRoot="C:\src\GraphEngine\tests\unittests\config\config1\bin\Release\netstandard2.0\storage\" DefragInterval="600" />
   </Local>
 </Trinity>

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net461;netcoreapp2.0</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
+    <RootNamespace>GraphEngine.DataImporter</RootNamespace>
+    <AssemblyName>GraphEngine.DataImporter</AssemblyName>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="1.9.71" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <TslCodegen Include="TSLGeneratorMetadata.tsl" />
+  </ItemGroup>
+</Project>

@@ -8,10 +8,11 @@
 #include <mutex>
 #include <chrono>
 #include <cassert>
+#include <memory>
 
 #include <diagnostics>
 #include <Trinity/Diagnostics/Log.h>
-#include <Trinity/ref.h>
+#include "Storage/LocalStorage/ThreadContext.h"
 
 
 namespace BackgroundThread
@@ -42,12 +43,20 @@ namespace BackgroundThread
 
     class TaskScheduler
     {
+        using _refTask   = std::shared_ptr<BackgroundTask>;
+
     public:
         static void AddTask(BackgroundTask* const task)
         {
             _lock();
-            auto refptr = ref<BackgroundTask>(task);
-            _taskList.push_back(refptr);
+            _taskList.push_back(_refTask(task));
+            _unlock();
+        }
+        static void RemoveTask(BackgroundTask* const task)
+        {
+            _lock();
+            auto i = std::find_if(_taskList.begin(), _taskList.end(), [=](const _refTask& it) { return it.get() == task; });
+            if (i != _taskList.end()) _taskList.erase(i);
             _unlock();
         }
         static void ClearAllTasks()
@@ -62,12 +71,24 @@ namespace BackgroundThread
             _lock();
             if (_thread == nullptr)
             {
+                _stopped.store(false);
                 _thread = new std::thread(BackgroundExecutionLoop);
             }
             _unlock();
         }
+        static void Stop()
+        {
+            _lock();
+            if (_thread != nullptr) 
+            {
+                _stopped.store(true);
+                if(_thread->joinable()) _thread->join();
+                _thread = nullptr;
+            }
+            _unlock();
+        }
     private:
-        static std::vector<ReferencePointer<BackgroundTask>> GetTasks()
+        static std::vector<_refTask> GetTasks()
         {
             /**
              * Changes will take effect after the current iteration
@@ -81,7 +102,11 @@ namespace BackgroundThread
 
         static void BackgroundExecutionLoop()
         {
-            while (true)
+            // Give the background thread a thread context.
+            Storage::PTHREAD_CONTEXT pctx = Storage::AllocateThreadContext();
+            Trinity::Diagnostics::WriteLine(LogLevel::Debug, "Unmanaged background thread started.");
+
+            while (!_stopped.load())
             {
                 //TODO in the future we might want to
                 //make GetTasks() to take the tasks out
@@ -96,18 +121,18 @@ namespace BackgroundThread
 
                 /* phase 1: process Overdue tasks */
 
-                for (auto& task : taskList)
+                for (auto task : taskList)
                 {
-                    if (Overdue(task.Pointer()))
+                    if (Overdue(task.get()))
                         _current_time = task->_execute_task(_current_time);
                 }
 
                 /* phase 2: calculate sleep time */
 
                 uint64_t sleep_time = UINT64_MAX;
-                for (auto& task : taskList)
+                for (auto task : taskList)
                 {
-                    if (!Overdue(task.Pointer()))
+                    if (!Overdue(task.get()))
                     {
                         uint64_t time_remained = task->_lastExecution + task->_waitTime - _current_time;
                         sleep_time = std::min(sleep_time, time_remained);
@@ -124,6 +149,10 @@ namespace BackgroundThread
                 std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
                 _current_time += sleep_time;
             }
+
+            Storage::DeallocateThreadContext(pctx);
+
+            Trinity::Diagnostics::WriteLine(LogLevel::Debug, "Unmanaged background thread stopped.");
         }
 
         static inline bool Overdue(BackgroundTask* task)
@@ -131,14 +160,14 @@ namespace BackgroundThread
             return (task->_lastExecution == -1 || (task->_lastExecution + task->_waitTime) <= _current_time);
         }
 
-
         static inline void _lock() { _mutex.lock(); }
         static inline void _unlock() { _mutex.unlock(); }
 
         static std::mutex _mutex;
         static std::thread* _thread;
-        static std::vector<ReferencePointer<BackgroundTask>> _taskList;
+        static std::vector<_refTask> _taskList;
         static uint64_t _current_time;
+        static std::atomic<bool> _stopped;
         static struct _TaskSchedulerConfig
         {
         public:

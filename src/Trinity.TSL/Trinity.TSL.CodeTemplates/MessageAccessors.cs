@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Trinity.Core.Lib;
 using Trinity.Network.Messaging;
+using Trinity.Storage;
 using Trinity.TSL;
 using Trinity.TSL.Lib;
 
@@ -101,7 +102,30 @@ namespace t_Namespace
             MODULE_CALL("SerializeParametersToBuffer", "$t_accessor", "\"message\"");
 
             buffer = tmpcellptr - preservedHeaderLength;
-            this.CellPtr = buffer + preservedHeaderLength;
+            this.m_ptr = buffer + preservedHeaderLength;
+            Length = BufferLength - preservedHeaderLength;
+
+            IF("$t_accessor->getLayoutType() != LT_FIXED");
+            this.ResizeFunction = WriterResizeFunction;
+            END();
+        }
+
+        // internal use for ASYNC_WITH_RSP
+        internal unsafe t_accessor_nameWriter(int asyncRspHeaderLength, [FOREACH(",")] t_field_type t_field_name = default(t_field_type) /*END*/)
+            : base(null
+                  /*IF("$t_accessor->getLayoutType() != LT_FIXED")*/
+                  , null
+                  /*END*/ )
+        {
+            int preservedHeaderLength = TrinityProtocol.MsgHeader + asyncRspHeaderLength;
+            MUTE();
+            byte* tmpcellptr = null;
+            MUTE_END();
+
+            MODULE_CALL("SerializeParametersToBuffer", "$t_accessor", "\"message\"");
+
+            buffer = tmpcellptr - preservedHeaderLength;
+            this.m_ptr = buffer + preservedHeaderLength;
             Length = BufferLength - preservedHeaderLength;
 
             IF("$t_accessor->getLayoutType() != LT_FIXED");
@@ -111,51 +135,58 @@ namespace t_Namespace
         [IF("$t_accessor->getLayoutType() != LT_FIXED")]
         private byte* WriterResizeFunction(byte* ptr, int ptr_offset, int delta)
         {
+            int curlen = Length;
+            int tgtlen = curlen + delta;
             if (delta >= 0)
             {
                 byte* currentBufferPtr = buffer;
-                int required_length = (int)(this.Length + delta + (this.CellPtr - currentBufferPtr));
+                int required_length = (int)(tgtlen + (this.m_ptr - currentBufferPtr));
+                if(required_length < curlen) throw new AccessorResizeException("Accessor size overflow.");
                 if (required_length <= BufferLength)
                 {
                     Memory.memmove(
                         ptr + ptr_offset + delta,
                         ptr + ptr_offset,
-                        (ulong)(Length - (ptr + ptr_offset - this.CellPtr)));
-                    Length += delta;
+                        (ulong)(curlen - (ptr + ptr_offset - this.m_ptr)));
+                    Length = tgtlen;
                     return ptr;
                 }
                 else
                 {
-                    int target_length = BufferLength << 1;
-                    while (target_length < required_length)
+                    while (BufferLength < required_length)
                     {
-                        target_length = (target_length << 1);
+                        // first try: 1.5x growth
+                        if (int.MaxValue - BufferLength >= (BufferLength>>1)) BufferLength += (BufferLength >> 1);
+                        // second try: step size
+                        else if (int.MaxValue - BufferLength >= (1 << 20)) BufferLength += (1 << 20);
+                        // third try: approach intmax
+                        else BufferLength = int.MaxValue;
                     }
-                    byte* tmpBuffer = (byte*)Memory.malloc((ulong)target_length);
+                    byte* tmpBuffer = (byte*)Memory.malloc((ulong)BufferLength);
                     Memory.memcpy(
                         tmpBuffer,
                         currentBufferPtr,
                         (ulong)(ptr + ptr_offset - currentBufferPtr));
-                    byte* newCellPtr = tmpBuffer + (this.CellPtr - currentBufferPtr);
+                    byte* newCellPtr = tmpBuffer + (this.m_ptr - currentBufferPtr);
                     Memory.memcpy(
                         newCellPtr + (ptr_offset + delta),
                         ptr + ptr_offset,
-                        (ulong)(Length - (ptr + ptr_offset - this.CellPtr)));
-                    Length += delta;
-                    this.CellPtr = newCellPtr;
+                        (ulong)(curlen - (ptr + ptr_offset - this.m_ptr)));
+                    Length = tgtlen;
+                    this.m_ptr = newCellPtr;
                     Memory.free(buffer);
                     buffer = tmpBuffer;
-                    BufferLength = target_length;
                     return tmpBuffer + (ptr - currentBufferPtr);
                 }
             }
             else
             {
+                if (curlen + delta < 0) throw new AccessorResizeException("Accessor target size underflow.");
                 Memory.memmove(
                     ptr + ptr_offset,
                     ptr + ptr_offset - delta,
-                    (ulong)(Length - (ptr + ptr_offset - delta - this.CellPtr)));
-                Length += delta;
+                    (ulong)(Length - (ptr + ptr_offset - delta - this.m_ptr)));
+                Length = tgtlen;
                 return ptr;
             }
         }
