@@ -23,21 +23,24 @@ namespace Trinity.ServiceFabric.Stateless
         public TrinityServer TrinityServer { get; private set; }
         public string TrinityServerEndpointName { get; private set; }
 
+        private Func<TrinityStatelessService, ITrinityStorageImage> externalStroageFactory;
+
         public TrinityStatelessService(StatelessServiceContext serviceContext,
             TrinityServer trinityServer, string trinityServerEndpointName,
             Func<TrinityStatelessService, ITrinityStorageImage> externalStroageFactory) : base(serviceContext)
         {
             TrinityServer = trinityServer;
             TrinityServerEndpointName = trinityServerEndpointName;
-
-            TrinityConfig.CreateClusterConfig = () => ClusterConfig;
-            Global.CreateLocalMemoryStorage = () => new LocalMemoryStorageBackedByExternal(this, externalStroageFactory(this));
+            this.externalStroageFactory = externalStroageFactory;
         }
 
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
         {
             ClusterConfig = StatelessClusterConfig.Resolve(Context.ServiceName, Context.PartitionId, RunningMode.Server);
             ClusterConfig.MyServerId = Enumerable.Range(0, ClusterConfig.Servers.Count).First(idx => ClusterConfig.GetServerInfo(idx).InstanceId == Context.InstanceId);
+
+            TrinityConfig.CreateClusterConfig = () => ClusterConfig;
+            Global.CreateLocalMemoryStorage = () => new LocalMemoryStorageBackedByExternal(ClusterConfig, externalStroageFactory(this));
 
             Trinity.Storage.MemoryCloud.StaticGetPartitionIdByCellId = StatelessClusterConfig.GetPartitionIdByCellId;
 

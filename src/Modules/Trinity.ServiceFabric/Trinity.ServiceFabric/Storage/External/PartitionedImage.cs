@@ -2,19 +2,15 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Trinity.ServiceFabric.Diagnostics;
-using Trinity.ServiceFabric.Stateless;
 
 namespace Trinity.ServiceFabric.Storage.External
 {
     public class PartitionedImage : ITrinityStorageImage
     {
-        public IEnumerable<int> AllPartitions => Enumerable.Range(0, StatelessClusterConfig.TotalStoragePartitionCount);
-        public IEnumerable<int> LocalPartitions => AllPartitions.Where(p => p % Service.ClusterConfig.ServerCount == Service.ClusterConfig.MyServerId);
-
-        private TrinityStatelessService Service { get; set; }
+        private IEnumerable<int> AllPartitions { get; set; }
+        private IEnumerable<int> LocalPartitions { get; set; }
         private IPartitionedImageStorage[] ImageSlots { get; set; }
         private PartitionedImageSignature[] ImageSignatures { get; set; }
         private int CurrentSlotIndex { get; set; } = int.MinValue;
@@ -24,10 +20,12 @@ namespace Trinity.ServiceFabric.Storage.External
         private PartitionedImageSignature CurrentSignature => UseImageSignature(CurrentSlotIndex);
         private PartitionedImageSignature NextSignature => UseImageSignature(NextSlotIndex);
 
-        public PartitionedImage(TrinityStatelessService service, Func<int, IPartitionedImageStorage> imageStorageFactory)
+        public PartitionedImage(int totalPartitions, int imageSlots, IClusterConfig clusterConfig, Func<int, IPartitionedImageStorage> imageStorageFactory)
         {
-            this.Service = service;
-            this.ImageSlots = Enumerable.Range(0, StatelessClusterConfig.StorageImageSlots).Select(slot => imageStorageFactory(slot)).ToArray();
+            this.AllPartitions = Enumerable.Range(0, totalPartitions);
+            this.LocalPartitions = clusterConfig.MyServerId == -1 ? AllPartitions :
+                AllPartitions.Where(p => p % clusterConfig.Servers.Count == clusterConfig.MyServerId);
+            this.ImageSlots = Enumerable.Range(0, imageSlots).Select(slot => imageStorageFactory(slot)).ToArray();
         }
 
         public bool LoadLocalStorage()

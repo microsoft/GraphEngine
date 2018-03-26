@@ -1,29 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Trinity.ServiceFabric.Diagnostics;
-using Trinity.ServiceFabric.Stateless;
 using Trinity.ServiceFabric.Storage.External;
 using Trinity.Storage;
 
 namespace Trinity.ServiceFabric.Storage
 {
-    class LocalMemoryStorageBackedByExternal : LocalMemoryStorage
+    public class LocalMemoryStorageBackedByExternal : LocalMemoryStorage
     {
-        private TrinityStatelessService service;
+        private IClusterConfig clusterConfig;
         private ITrinityStorageImage externalStorage;
 
-        public LocalMemoryStorageBackedByExternal(TrinityStatelessService trinityStatelessService, ITrinityStorageImage externalStorage)
+        public LocalMemoryStorageBackedByExternal(IClusterConfig clusterConfig, ITrinityStorageImage externalStorage)
         {
-            this.service = trinityStatelessService;
+            this.clusterConfig = clusterConfig;
             this.externalStorage = externalStorage;
         }
 
         protected override bool LoadLocalMemoryStorage()
         {
-            var serverId = service.ClusterConfig.MyServerId;
+            var serverId = clusterConfig.MyServerId;
             try
             {
                 Log.Info("Server {0} is loading storage ...", serverId);
@@ -42,7 +37,7 @@ namespace Trinity.ServiceFabric.Storage
 
         protected override bool SaveLocalMemoryStorage()
         {
-            var serverId = service.ClusterConfig.MyServerId;
+            var serverId = clusterConfig.MyServerId;
             try
             {
                 Log.Info("Server {0} is saving storage ...", serverId);

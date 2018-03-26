@@ -44,7 +44,8 @@ namespace DemoTrinityStateless
         private static ITrinityStorageImage CreateTrinityStorageImage(TrinityStatelessService service)
         {
             var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
-            return new PartitionedImage(service, (slotIndex) => new AzureBlobPartitionedImageStorage(connectionString, "storage", $"slot-{slotIndex}"));
+            return new PartitionedImage(StatelessClusterConfig.TotalStoragePartitionCount, StatelessClusterConfig.StorageImageSlots,
+                service.ClusterConfig, (slotIndex) => new AzureBlobPartitionedImageStorage(connectionString, "storage", $"slot-{slotIndex}"));
         }
     }
 }
