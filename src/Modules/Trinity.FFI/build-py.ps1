@@ -11,8 +11,7 @@ if ($python -eq $null -or $swig -eq $null) {
 }
 
 $SOL_ROOT=$TRINITY_FFI_ROOT
-Invoke-Expression "git submodule init" -ErrorAction Stop
-Invoke-Expression "git submodule update --recursive" -ErrorAction Stop
+Restore-GitSubmodules
 
 Remove-GraphEngineCache -prefix "graphengine.ffi.python"
 Remove-GraphEngineCache -prefix "python.runtime"

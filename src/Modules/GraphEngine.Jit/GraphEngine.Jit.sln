@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.Core", "..\..\Trini
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{0CB52B42-DEA7-4014-8109-DCF7295D59AF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphEngine.Jit.Native", "GraphEngine.Jit.Native\GraphEngine.Jit.Native.vcxproj", "{70F12780-C275-4BB5-8F79-6EC5006E6536}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphEngine.Jit.UnitTest", "GraphEngine.Jit.UnitTest\GraphEngine.Jit.UnitTest.csproj", "{BF8420D5-2878-43A3-B857-5280F17C6D89}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,9 +24,13 @@ Global
 		{0F48A2AB-7BEE-45E1-955B-A938086EBA11}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F48A2AB-7BEE-45E1-955B-A938086EBA11}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C527257C-8FEC-495A-A98E-38597D9E22B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C527257C-8FEC-495A-A98E-38597D9E22B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C527257C-8FEC-495A-A98E-38597D9E22B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C527257C-8FEC-495A-A98E-38597D9E22B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70F12780-C275-4BB5-8F79-6EC5006E6536}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{70F12780-C275-4BB5-8F79-6EC5006E6536}.Release|Any CPU.ActiveCfg = Release|x64
+		{BF8420D5-2878-43A3-B857-5280F17C6D89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF8420D5-2878-43A3-B857-5280F17C6D89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF8420D5-2878-43A3-B857-5280F17C6D89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF8420D5-2878-43A3-B857-5280F17C6D89}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

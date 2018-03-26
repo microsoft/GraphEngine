@@ -21,7 +21,6 @@ Function Init-Configuration {
     $Global:TRINITY_CORE_SLN              = "$REPO_ROOT\src\Trinity.Core\Trinity.Core.sln"
     $Global:TRINITY_C_SLN                 = "$REPO_ROOT\src\Trinity.C\Trinity.C.sln"
     $Global:TRINITY_TSL_SLN               = "$REPO_ROOT\src\Trinity.TSL\Trinity.TSL.sln"
-    $Global:TRINITY_JIT_SLN               = "$REPO_ROOT\src\Modules\GraphEngine.Jit\GraphEngine.Jit.sln"
     $Global:SPARK_MODULE_ROOT             = "$REPO_ROOT\src\Modules\Spark"
     $Global:LIKQ_SLN                      = "$REPO_ROOT\src\Modules\LIKQ\LIKQ.sln"
     $Global:TRINITY_CLIENT_ROOT           = "$REPO_ROOT\src\Modules\GraphEngine.Client"
@@ -29,6 +28,7 @@ Function Init-Configuration {
     $Global:TRINITY_SERVICE_FABRIC_SLN    = "$REPO_ROOT\src\Modules\GraphEngine.ServiceFabric\GraphEngine.ServiceFabric.sln"
     $Global:TRINITY_STORAGE_COMPOSITE_SLN = "$REPO_ROOT\src\Modules\GraphEngine.Storage.Composite\GraphEngine.Storage.Composite.sln"
     $Global:TRINITY_FFI_ROOT              = "$REPO_ROOT\src\Modules\Trinity.FFI"
+    $Global:TRINITY_JIT_ROOT              = "$REPO_ROOT\src\Modules\GraphEngine.Jit"
     $Global:TRINITY_OUTPUT_DIR            = "$REPO_ROOT\bin"
     $Global:TRINITY_TEST_DIR              = "$REPO_ROOT\tests"
 
@@ -151,6 +151,11 @@ Function Test-ExeProject($proj, $config = "Release") {
         Invoke-Expression "& $DOTNET_EXE run --framework net461 '$proj'"
         Invoke-Expression "& $DOTNET_EXE run --framework netcoreapp2.0 '$proj'"
     }
+}
+
+Function Restore-GitSubmodules {
+    Invoke-Expression "git submodule init" -ErrorAction Stop
+    Invoke-Expression "git submodule update --recursive" -ErrorAction Stop
 }
 
 Init-Configuration
