@@ -9,7 +9,7 @@
     <UTF8_TSL_PATH Condition="('$(UTF8_TSL_PATH)' == '')">$(MSBuildThisFileDirectory)..\..\</UTF8_TSL_PATH>
     <UTF8_TSL_CODEGEN_PATH Condition="'$(OS)' == 'Windows_NT'">$(UTF8_TSL_PATH)tools\Trinity.TSL.CodeGen.exe</UTF8_TSL_CODEGEN_PATH>
     <UTF8_TSL_CODEGEN_PATH Condition="'$(UTF8_TSL_CODEGEN_PATH)' == ''">$(UTF8_TSL_PATH)tools\Trinity.TSL.CodeGen</UTF8_TSL_CODEGEN_PATH>
-    <UTF8_TSL_ENCODER_PATH Condition="'$(OS)' == 'Windows_NT'">$(UTF8_TSL_PATH)tools\Utf8TslEncoder\Trinity.TSL.Utf8.Encoder.dll</UTF8_TSL_ENCODER_PATH>
+    <UTF8_TSL_ENCODER_PATH>$(UTF8_TSL_PATH)tools\Trinity.TSL.Utf8.Encoder.dll</UTF8_TSL_ENCODER_PATH>
   </PropertyGroup>
 
   <!-- Configurations -->
