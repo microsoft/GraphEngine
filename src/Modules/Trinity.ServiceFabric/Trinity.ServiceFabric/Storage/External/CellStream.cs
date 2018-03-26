@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Trinity.ServiceFabric.Storage.External
@@ -25,6 +22,11 @@ namespace Trinity.ServiceFabric.Storage.External
         protected const int CELLTYPE_BYTES = sizeof(ushort);
         protected const int CELLSIZE_BYTES = sizeof(int);
 
+        protected const int HEAD_SIZE = CELLID_BYTES + CELLTYPE_BYTES + CELLSIZE_BYTES;
+        protected const int CELLID_OFFSET = 0;
+        protected const int CELLTYPE_OFFSET = CELLID_BYTES;
+        protected const int CELLSIZE_OFFSET = CELLID_BYTES + CELLTYPE_BYTES;
+
         protected Stream stream;
 
         public CellStream(Stream stream)
@@ -43,7 +45,6 @@ namespace Trinity.ServiceFabric.Storage.External
     {
         protected const int DEFAULT_BUFFER_SIZE = 1024 * 1024;
         protected readonly byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-        private readonly MemoryStream memstream = new MemoryStream();
 
         public CellStreamReader(Stream stream) : base(stream)
         { }
@@ -52,50 +53,32 @@ namespace Trinity.ServiceFabric.Storage.External
         {
             cellId = -1; cellType = 0; bytes = null;
 
-            var nread = ReadBytes(CELLID_BYTES, force:false);
-            if (nread == 0)
+            var head = ReadBytes(HEAD_SIZE);
+            if (head == null || head.Length != HEAD_SIZE)
                 return false;
 
-            cellId = BitConverter.ToInt64(memstream.ToArray(), 0);
-
-            ReadBytes(CELLTYPE_BYTES);
-            cellType = BitConverter.ToUInt16(memstream.ToArray(), 0);
-
-            ReadBytes(CELLSIZE_BYTES);
-            var cellSize = BitConverter.ToInt32(memstream.ToArray(), 0);
+            cellId = BitConverter.ToInt64(head, CELLID_OFFSET);
+            cellType = BitConverter.ToUInt16(head, CELLTYPE_OFFSET);
+            var cellSize = BitConverter.ToInt32(head, CELLSIZE_OFFSET);
 
             if (cellSize > 0)
-            {
-                ReadBytes(cellSize);
-                bytes = memstream.ToArray();
-            }
+                bytes = ReadBytes(cellSize);
 
             return true;
         }
 
-        private int ReadBytes(int count, bool force = true)
+        private byte[] ReadBytes(int count)
         {
-            memstream.Seek(0, SeekOrigin.Begin);
-            var bytesToRead = count;
-            while (bytesToRead > 0)
+            using (var ms = new MemoryStream())
             {
-                var nread = stream.Read(buffer, 0, bytesToRead);
-                if (nread == 0)
-                    break;
-                memstream.Write(buffer, 0, nread);
-                bytesToRead -= nread;
+                stream.CopyTo(ms, count);
+                return ms.ToArray();
             }
-
-            if (bytesToRead == 0 || (bytesToRead == count && !force))
-                return count - bytesToRead;
-
-            throw new Exception("Corrupted cell stream");
         }
 
         public override void Dispose()
         {
             base.Dispose();
-            memstream.Dispose();
         }
     }
 
@@ -122,7 +105,8 @@ namespace Trinity.ServiceFabric.Storage.External
                 ms.Write(content, 0, content.Length);
 
                 var bytes = ms.ToArray();
-                await stream.WriteAsync(bytes, 0, bytes.Length);
+                await stream.(bytes, 0, bytes.Length);
+                // await ms.CopyToAsync(stream);
             }
         }
     }
