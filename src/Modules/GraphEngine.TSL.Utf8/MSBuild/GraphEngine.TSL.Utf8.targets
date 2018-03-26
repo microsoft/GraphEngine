@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+*   Rewrite @(TslCodegen) and escape UTF8 characters. Inject tasks into TslCodegen build pipeline.
+*
+*   - Original :: TslCodegenPrepare -> TslCodegenCs -> TslCompileCs -> CoreCompile
+*   - Injected :: TslCodegenPrepare -> [Utf8TslEncode -> Utf8TslItemGroupInjection] 
+*                                   -> TslCodegenCs -> [Utf8TslDecode] 
+*                                                     -> TslCompileCs -> CoreCompile
+*
+*   (Dependencies are defined by GraphEngine.Core.props.  Be sure to import that first)
+*
+-->
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <EncodedTslPath>$(TslOutputPath)Utf8EncodedTsl\</EncodedTslPath>
+  </PropertyGroup>
+
+  <UsingTask TaskName="GraphEngine.TSL.Utf8.EncoderTask" AssemblyFile="$(TaskAssembly)" />
+  <UsingTask TaskName="GraphEngine.TSL.Utf8.DecoderTask" AssemblyFile="$(TaskAssembly)" />
+
+  <Target Name="Utf8TslEncodePrepare"
+          BeforeTargets="Utf8TslEncode"
+          DependsOnTargets="TslCodegenPrepare">
+    <ItemGroup>
+      <OldEncodedFiles Include="$(EncodedTslPath)**\*.tsl" />
+    </ItemGroup>
+    <Delete Files="@(OldEncodedFiles)" ContinueOnError="true"/>
+  </Target>
+
+  <Target Name="Utf8TslEncode"
+  	      Inputs="@(TslCodegen)"
+  	      Outputs="@(TslCodegen->'$(EncodedTslPath)%(Identity)')"
+  	      DependsOnTargets="TslCodegenPrepare;Utf8TslEncodePrepare"
+          BeforeTargets="Utf8TslItemGroupInjection;TslCodegenCs">
+    <Error 
+      Text="GraphEngine.TSL.Utf8 depends on GraphEngine.Core, and it is not properly referenced."
+      Condition="'$(TSL_PATH)' == ''" />
+
+    <MakeDir Directories="$(EncodedTslPath)" ContinueOnError="true"/>
+
+    <EncoderTask Input="@(TslCodegen->'%(Identity)')" Output="$(EncodedTslPath)%(TslCodegen.Identity)">
+      <!--After encoding, emit EncoderTask.Output property to Utf8TslCodegen group-->
+      <Output TaskParameter="Output" ItemName="Utf8TslCodegen" />
+    </EncoderTask>
+
+  </Target>
+
+  <Target Name="Utf8TslItemGroupInjection" 
+          DependsOnTargets="Utf8TslEncode"
+          BeforeTargets="TslCodegenCs">
+    <ItemGroup>
+
+      <!-- Remove the original Tslcodegen item so that we don't compile the unmodified version. -->
+      <TslCodegen Remove="@(TslCodegen)" />
+
+      <!-- At the same time, add Utf8Tslcodegen to the game. -->
+      <Tslcodegen Include="@(Utf8TslCodegen)" />
+
+    </ItemGroup>
+
+    <!--Debug info-->
+    <Message Importance="high" Text="After injection: @(TslCodegen)" />
+
+  </Target>
+
+  <Target Name="Utf8TslDecode"
+  	      DependsOnTargets="TslCodegenCs"
+          BeforeTargets="TslCompileCs">
+    <ItemGroup>
+      <_Utf8GeneratedFiles Include="$(TslGeneratedCodePath)**\*.cs">
+        <AutoGen>true</AutoGen>
+      </_Utf8GeneratedFiles>
+    </ItemGroup>
+    <DecoderTask SourceFile="%(_Utf8GeneratedFiles.FullPath)" />
+  </Target>
+
+</Project>

@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFrameworks>net46;netstandard2.0</TargetFrameworks>
+    <RootNamespace>GraphEngine.TSL.Utf8</RootNamespace>
+    <AssemblyName>GraphEngine.TSL.Utf8Encoding.Task</AssemblyName>
+    <OutputPath>..\..\..\bin</OutputPath>
+
+    <!-- See: https://www.natemcmaster.com/blog/2017/07/05/msbuild-task-in-nuget/ -->
+    
+    <!-- Suppresses the warnings about the package not having assemblies in lib/*/.dll.-->
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <!-- Change the default location where NuGet will put the build output -->
+    <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.6.82" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="MSBuild\GraphEngine.TSL.Utf8.props">
+      <PackagePath>build</PackagePath>
+    </Content>
+    <Content Include="MSBuild\GraphEngine.TSL.Utf8.targets">
+      <PackagePath>build</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <!-- NuGet package metadata -->
+  <PropertyGroup>
+    <Authors>Microsoft Graph Engine Team</Authors>
+    <Description>Graph Engine TSL codegen UTF-8 support</Description>
+    <Copyright>Copyright 2018</Copyright>
+    <Company>Microsoft Corporation</Company>
+
+    <Version>2.0.9328</Version>
+    <AssemblyVersion>2.0.9328.0</AssemblyVersion>
+    <FileVersion>2.0.9328.0</FileVersion>
+    <PackageVersion>2.0.9328</PackageVersion>
+
+    <PackageId>GraphEngine.TSL.Utf8</PackageId>
+    <PackageTags>Graph Engine Trinity TSL utf8 unicode</PackageTags>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
+    <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/Microsoft/GraphEngine</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+
+</Project>
