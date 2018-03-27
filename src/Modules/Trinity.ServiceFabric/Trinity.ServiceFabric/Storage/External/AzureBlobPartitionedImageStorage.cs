@@ -56,6 +56,7 @@ namespace Trinity.ServiceFabric.Storage.External
                         throw new Exception("Failed to SaveCell");
 
                     cell = await reader.ReadCellAsync();
+                    cellId = cell.Item1;
                 }
             }
 
@@ -68,14 +69,11 @@ namespace Trinity.ServiceFabric.Storage.External
             var blob = Container.GetBlockBlobReference(Path.Combine(storageFolder, $"{partition}.image"));
 
             var cellIds = Global.LocalStorage.GenericCellAccessor_Selector()
-                .Where(c => Global.CloudStorage.GetPartitionIdByCellId(c.CellID) == partition)
+                //.Where(c => Global.CloudStorage.GetPartitionIdByCellId(c.CellID) == partition)
                 .Select(c => c.CellID).ToList();
 
             using (var writer = CreateCellStreamWriter(blob.OpenWrite()))
             {
-                if (Global.MyServerId == 0)
-                    Debug.WriteLine($"Partition#{partition} begin saving");
-
                 foreach (var id in cellIds)
                 {
                     byte[] bytes;
@@ -84,9 +82,6 @@ namespace Trinity.ServiceFabric.Storage.External
                     Global.LocalStorage.LoadCell(id, out bytes, out cellType);
                     await writer.WriteCellAsync(id, cellType, bytes);
                 }
-
-                if (Global.MyServerId == 0)
-                    Debug.WriteLine($"Partition#{partition} end saving");
             }
 
             return blob.Properties.ContentMD5;

@@ -64,11 +64,22 @@ namespace Trinity.ServiceFabric.Storage.External
 
         private async Task<byte[]> ReadBytesAsync(int count)
         {
-            using (var ms = new MemoryStream())
+            var bytes = new byte[count];
+            var offset = 0;
+            while (offset < count)
             {
-                await stream.CopyToAsync(ms, count);
-                return ms.ToArray();
+                var nread = await stream.ReadAsync(bytes, offset, count - offset);
+                if (nread == 0)
+                    break;
+                offset += nread;
             }
+
+            if (offset == count)
+                return bytes;
+            if (offset == 0)
+                return null;
+
+            throw new Exception("Corrupted cell stream");
         }
 
         public override void Dispose()
