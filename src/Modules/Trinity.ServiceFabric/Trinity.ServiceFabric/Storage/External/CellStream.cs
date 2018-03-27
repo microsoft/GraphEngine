@@ -6,12 +6,11 @@ namespace Trinity.ServiceFabric.Storage.External
 {
     public interface ICellStreamReader : IDisposable
     {
-        bool ReadCell(out long cellId, out ushort cellType, out byte[] bytes);
+        Task<Tuple<long /*cellId*/, ushort /*cellType*/, byte[] /*bytes*/>> ReadCellAsync();
     }
 
     public interface ICellStreamWriter : IDisposable
     {
-        void WriteCell(long cellId, ushort cellType, byte[] content);
         Task WriteCellAsync(long cellId, ushort cellType, byte[] content);
     }
 
@@ -49,29 +48,25 @@ namespace Trinity.ServiceFabric.Storage.External
         public CellStreamReader(Stream stream) : base(stream)
         { }
 
-        public bool ReadCell(out long cellId, out ushort cellType, out byte[] bytes)
+        public async Task<Tuple<long, ushort, byte[]>> ReadCellAsync()
         {
-            cellId = -1; cellType = 0; bytes = null;
-
-            var head = ReadBytes(HEAD_SIZE);
+            var head = await ReadBytesAsync(HEAD_SIZE);
             if (head == null || head.Length != HEAD_SIZE)
-                return false;
+                return new Tuple<long, ushort, byte[]>(0, 0, null);
 
-            cellId = BitConverter.ToInt64(head, CELLID_OFFSET);
-            cellType = BitConverter.ToUInt16(head, CELLTYPE_OFFSET);
+            var cellId = BitConverter.ToInt64(head, CELLID_OFFSET);
+            var cellType = BitConverter.ToUInt16(head, CELLTYPE_OFFSET);
             var cellSize = BitConverter.ToInt32(head, CELLSIZE_OFFSET);
+            var bytes = cellSize > 0 ? await ReadBytesAsync(cellSize) : new byte[0];
 
-            if (cellSize > 0)
-                bytes = ReadBytes(cellSize);
-
-            return true;
+            return new Tuple<long, ushort, byte[]>(cellId, cellType, bytes);
         }
 
-        private byte[] ReadBytes(int count)
+        private async Task<byte[]> ReadBytesAsync(int count)
         {
             using (var ms = new MemoryStream())
             {
-                stream.CopyTo(ms, count);
+                await stream.CopyToAsync(ms, count);
                 return ms.ToArray();
             }
         }
@@ -87,14 +82,6 @@ namespace Trinity.ServiceFabric.Storage.External
         public CellStreamWriter(Stream stream) : base(stream)
         { }
 
-        public void WriteCell(long cellId, ushort cellType, byte[] content)
-        {
-            stream.Write(BitConverter.GetBytes(cellId), 0, CELLID_BYTES);
-            stream.Write(BitConverter.GetBytes(cellType), 0, CELLTYPE_BYTES);
-            stream.Write(BitConverter.GetBytes(content.Length), 0, CELLSIZE_BYTES);
-            stream.Write(content, 0, content.Length);
-        }
-
         public async Task WriteCellAsync(long cellId, ushort cellType, byte[] content)
         {
             using (var ms = new MemoryStream())
@@ -105,8 +92,7 @@ namespace Trinity.ServiceFabric.Storage.External
                 ms.Write(content, 0, content.Length);
 
                 var bytes = ms.ToArray();
-                await stream.(bytes, 0, bytes.Length);
-                // await ms.CopyToAsync(stream);
+                await stream.WriteAsync(bytes, 0, bytes.Length);
             }
         }
     }

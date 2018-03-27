@@ -8,7 +8,7 @@ namespace Trinity.ServiceFabric.Storage.External
 {
     public interface IPartitionedImageStorage
     {
-        string LoadImagePartition(int partition);
+        Task<string> LoadImagePartitionAsync(int partition);
         Task<string> SaveImagePartitionAsync(int partition);
 
         ImagePartitionSignature LoadPartitionSignature(int partition);

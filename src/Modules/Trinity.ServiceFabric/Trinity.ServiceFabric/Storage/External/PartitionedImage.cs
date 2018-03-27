@@ -39,8 +39,9 @@ namespace Trinity.ServiceFabric.Storage.External
                 {
                     // load all local image partitions
                     Log.Info("Loading image from storage slot[{0}]", CurrentSlotIndex);
-                    var signatures = new ConcurrentDictionary<int, string>();
-                    Parallel.ForEach(LocalPartitions, p => signatures.TryAdd(p, CurrentSlot.LoadImagePartition(p)));
+                    var signatures = new Dictionary<int, string>();
+                    var sigs = Task.WhenAll(LocalPartitions.Select(p => CurrentSlot.LoadImagePartitionAsync(p))).Result;
+                    Enumerable.Range(0, LocalPartitions.Count()).ToList().ForEach(i => signatures.Add(LocalPartitions.ElementAt(i), sigs[i]));
 
                     // compare image partition signatures
                     if (!signatures.All(kv => kv.Value == CurrentSignature.GetPartitionSignature(kv.Key).Signature))
@@ -71,9 +72,9 @@ namespace Trinity.ServiceFabric.Storage.External
 
                 // save all local partitions into the NEXT slot
                 Log.Info("Saving image into storage slot[{0}]...", NextSlotIndex);
-                var signatures = new ConcurrentDictionary<int, string>();
+                var signatures = new Dictionary<int, string>();
                 var sigs = Task.WhenAll(LocalPartitions.Select(p => NextSlot.SaveImagePartitionAsync(p))).Result;
-                Enumerable.Range(0, LocalPartitions.Count()).ToList().ForEach(i => signatures.TryAdd(LocalPartitions.ElementAt(i), sigs[i]));
+                Enumerable.Range(0, LocalPartitions.Count()).ToList().ForEach(i => signatures.Add(LocalPartitions.ElementAt(i), sigs[i]));
 
                 // save local image partition signatures
                 NextSignature.Update(CurrentSignature.NextVersion, signatures);

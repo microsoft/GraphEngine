@@ -2,7 +2,6 @@
 using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -43,19 +42,20 @@ namespace Trinity.ServiceFabric.Storage.External
             await UploadBlockBlobAsync(Path.Combine(storageFolder, $"{signature.PartitionId}.sig"), Encoding.UTF8.GetBytes(json));
         }
 
-        public string LoadImagePartition(int partition)
+        public async Task<string> LoadImagePartitionAsync(int partition)
         {
             var blob = Container.GetBlockBlobReference(Path.Combine(storageFolder, $"{partition}.image"));
 
             using (var reader = CreateCellStreamReader(blob.OpenRead()))
             {
-                long cellId;
-                ushort cellType;
-                byte[] content;
-
-                while (reader.ReadCell(out cellId, out cellType, out content))
+                var cell = await reader.ReadCellAsync();
+                long cellId = cell.Item1;
+                while (cellId != 0)
                 {
-                    Global.LocalStorage.SaveCell(cellId, content, cellType);
+                    if (Global.LocalStorage.SaveCell(cellId, cell.Item3, cell.Item2) != TrinityErrorCode.E_SUCCESS)
+                        throw new Exception("Failed to SaveCell");
+
+                    cell = await reader.ReadCellAsync();
                 }
             }
 

@@ -188,10 +188,7 @@ namespace Trinity.ServiceFabric.Diagnostics
         [Event(TrinityInfoEventId, Level = EventLevel.Informational, Message = "{0}")]
         private void TrinityInfo(string message)
         {
-            if (this.IsEnabled())
-            {
-                WriteEvent(TrinityInfoEventId, message);
-            }
+            Trinity.Diagnostics.Log.WriteLine(message);
         }
 
         public static void Fatal(string message, params object[] args)
