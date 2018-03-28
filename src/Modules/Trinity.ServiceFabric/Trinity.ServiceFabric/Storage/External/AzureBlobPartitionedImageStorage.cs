@@ -69,7 +69,7 @@ namespace Trinity.ServiceFabric.Storage.External
             var blob = Container.GetBlockBlobReference(Path.Combine(storageFolder, $"{partition}.image"));
 
             var cellIds = Global.LocalStorage.GenericCellAccessor_Selector()
-                //.Where(c => Global.CloudStorage.GetPartitionIdByCellId(c.CellID) == partition)
+                .Where(c => Global.CloudStorage.GetPartitionIdByCellId(c.CellID) == partition)
                 .Select(c => c.CellID).ToList();
 
             using (var writer = CreateCellStreamWriter(blob.OpenWrite()))
