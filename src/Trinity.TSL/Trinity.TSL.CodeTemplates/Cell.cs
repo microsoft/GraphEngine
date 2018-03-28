@@ -626,6 +626,13 @@ namespace t_Namespace
             END();//FOREACH
 
             this.CellEntryIndex = -1;
+
+            this.ResizeFunction = (byte* ptr, int ptr_offset, int delta) =>
+            {
+                int offset = (int)(ptr - CellPtr) + ptr_offset;
+                CellPtr = Global.LocalStorage.ResizeCell((long)CellID, CellEntryIndex, offset, delta);
+                return CellPtr + (offset - ptr_offset);
+            };
         }
 
         internal static unsafe byte[] construct(long CellID /*FOREACH*/, t_field_type t_field_name = default(t_field_type) /*END*/)

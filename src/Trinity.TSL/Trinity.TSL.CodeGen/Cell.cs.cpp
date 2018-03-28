@@ -918,6 +918,12 @@ source->append(Codegen::GetString(node->name));
 source->append(R"::(_Accessor(byte* _CellPtr)
         {
             CellPtr = _CellPtr;
+            this.ResizeFunction = (byte* ptr, int ptr_offset, int delta) =>
+            {
+                int offset = (int)(ptr - CellPtr) + ptr_offset;
+                CellPtr = Global.LocalStorage.ResizeCell((long)CellID, CellEntryIndex, offset, delta);
+                return CellPtr + (offset - ptr_offset);
+            };
             )::");
 for (size_t iterator_1 = 0; iterator_1 < (node->fieldList)->size();++iterator_1)
 {
