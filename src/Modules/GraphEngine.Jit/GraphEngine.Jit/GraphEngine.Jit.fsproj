@@ -39,6 +39,7 @@
 
   <ItemGroup>
     <Compile Include="AsmJit.fs" />
+    <Compile Include="Runtime.fs" />
     <Compile Include="TypeSystem.fs" />
   </ItemGroup>
 

@@ -26,6 +26,11 @@ module AsmJit =
     extern unit private DeleteX86Assembler(nativeint)
 
     [<System.Runtime.InteropServices.DllImport("GraphEngine.Jit.Native.dll")>]
+    extern nativeint private NewX86Compiler(nativeint)
+    [<System.Runtime.InteropServices.DllImport("GraphEngine.Jit.Native.dll")>]
+    extern unit private DeleteX86Compiler(nativeint)
+
+    [<System.Runtime.InteropServices.DllImport("GraphEngine.Jit.Native.dll")>]
     extern nativeint private AddFunction(nativeint, nativeint)
     [<System.Runtime.InteropServices.DllImport("GraphEngine.Jit.Native.dll")>]
     extern unit private RemoveFunction(nativeint, nativeint)
@@ -34,19 +39,29 @@ module AsmJit =
         let m_Handle = NewJitRuntime()
         interface IDisposable with member x.Dispose() = DeleteJitRuntime(m_Handle)
         member internal x.Handle = m_Handle
+        member x.MakeCode() = CodeHolder(x)
 
-    type CodeHolder(rt: Runtime) = 
+    and CodeHolder(rt: Runtime) = 
+        let m_rt = rt
         let m_Handle = NewCodeHolder(rt.Handle)
         interface IDisposable with member x.Dispose() = DeleteCodeHolder(m_Handle)
         member internal x.Handle = m_Handle
+        member x.AttachAssembler() = X86Assembler(x)
+        member x.AttachCompiler() = X86Compiler(x)
+        member x.Emit() = Function(m_rt, x)
 
-    type X86Assembler(code: CodeHolder) =
+    and X86Assembler(code: CodeHolder) =
         let m_Handle = NewX86Assembler(code.Handle)
         interface IDisposable with member x.Dispose() = DeleteX86Assembler(m_Handle)
         member internal x.Handle = m_Handle
 
-    type Function(rt: Runtime, code: CodeHolder) = 
-        let m_Rt = rt
-        let m_Fn = AddFunction(rt.Handle, code.Handle)
-        interface IDisposable with member x.Dispose() = RemoveFunction(m_Rt.Handle, m_Fn)
-        member x.FunctionPointer = m_Fn
+    and X86Compiler(code: CodeHolder) =
+        let m_Handle = NewX86Compiler(code.Handle)
+        interface IDisposable with member x.Dispose() = DeleteX86Compiler(m_Handle)
+        member internal x.Handle = m_Handle
+
+    and Function(rt: Runtime, code: CodeHolder) = 
+        let m_rt = rt
+        let m_fn = AddFunction(rt.Handle, code.Handle)
+        interface IDisposable with member x.Dispose() = RemoveFunction(m_rt.Handle, m_fn)
+        member x.FunctionPointer = m_fn
