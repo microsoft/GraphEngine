@@ -1,0 +1,125 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2027
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.Client", "Trinity.Client\Trinity.Client.csproj", "{3D6DA1D3-C437-416C-9C73-8DAC07FC472B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.Client.TestClient", "Trinity.Client.TestClient\Trinity.Client.TestClient.csproj", "{6623DF4B-D77E-4967-A0A1-1D5F44F8EDDD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.Client.TestProtocols", "Trinity.Client.TestProtocols\Trinity.Client.TestProtocols.csproj", "{BF3C0F3B-7BC9-40E2-BD17-947C338EEC1E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.Client.TestServer", "Trinity.Client.TestServer\Trinity.Client.TestServer.csproj", "{072BD8BE-4078-4F0F-B158-6880AA7B184B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.TestFacilityServer.ProtocolsDefintions", "Trinity.WPF.Test.Protocols\Trinity.GE.TestFacilityServer.ProtocolsDefintions.csproj", "{F55F1870-B54C-40FE-8DBA-8DE9ED476B55}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trinity GE Test Facility Server", "Trinity GE Test Facility Server", "{563F1C9C-5759-47D9-8B53-1631D8645275}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI ServiceLocator for CastleWindsor Adapter", "UI ServiceLocator for CastleWindsor Adapter", "{61E4DAC6-F896-4D7F-94A3-AD9227D65A47}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trinity GE WPF TestFacility Infrastructure", "Trinity GE WPF TestFacility Infrastructure", "{86BE1CBD-003E-4AAB-A531-8673F52B5229}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.WPF.UI.Infrastructure", "UI Infrastructure\Trinity.GE.WPF.UI.Infrastructure\Trinity.GE.WPF.UI.Infrastructure.csproj", "{E22B7A0B-6120-427E-94C2-955724D0178A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI.CastleWindsorAdapter.ServiceLocator", "UI WPF ServiceLocator\UI.CastleWindsorAdapter.ServiceLocator\UI.CastleWindsorAdapter.ServiceLocator.csproj", "{772C5F8D-266C-4DAA-B7AF-91A99DBDE1AF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trinity GE WPF Test Facility UI Modules", "Trinity GE WPF Test Facility UI Modules", "{18097C4F-E453-4E6F-B621-D34D569D84C2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trinity GE WPF Test Facility Master Shell", "Trinity GE WPF Test Facility Master Shell", "{52D8A13B-BD30-4260-BF1D-71D5AE8D27F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.WPF.TestFacility.UIShell.Module", "Test Facility Master Shell\Trinity.GE.WPF.TestFacility.UIShell.Module\Trinity.GE.WPF.TestFacility.UIShell.Module.csproj", "{C51048FA-F6F5-4ED9-B0CD-1F16431AA031}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.WPF.TestFacility.UI.MainMenu.Module", "UI Modules\Trinity.GE.WPF.TestFacility.UI.MainMenu.Module\Trinity.GE.WPF.TestFacility.UI.MainMenu.Module.csproj", "{5ECBC5A5-9B0D-4DAE-AC98-13158E1862BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module", "UI Modules\Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module\Trinity.GE.WPF.TestFacility.UI.MainPresentationHost.Module.csproj", "{2DD674E8-E5A0-412C-9D9E-22E898BE9D63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module", "UI Modules\Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module\Trinity.GE.WPF.TestFacility.UI.ProgramInfo.Module.csproj", "{89684280-8CE1-4662-9CD9-45027474B969}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.WPF.TestFacility.ServerManagerView.Module", "UI Modules\Trinity.GE.WPF.TestFacility.ServerManagerView.Module\Trinity.GE.WPF.TestFacility.ServerManagerView.Module.csproj", "{3A2DA924-F408-432E-B951-7D95D922FB9C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.TestFacilityServer", "Test Facility Server\Trinity.GE.TestFacilityServer\Trinity.GE.TestFacilityServer.csproj", "{C4CA5B58-A165-47AB-98B6-A46BB3FA0743}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.GE.TestFacilityServer.Infrastructure", "Test Facility Server\Trinity.GE.TestFacilityServer.Infrastructure\Trinity.GE.TestFacilityServer.Infrastructure.csproj", "{9ABB21E5-959C-4811-B855-A8C63559FBD3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3D6DA1D3-C437-416C-9C73-8DAC07FC472B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D6DA1D3-C437-416C-9C73-8DAC07FC472B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D6DA1D3-C437-416C-9C73-8DAC07FC472B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D6DA1D3-C437-416C-9C73-8DAC07FC472B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6623DF4B-D77E-4967-A0A1-1D5F44F8EDDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6623DF4B-D77E-4967-A0A1-1D5F44F8EDDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6623DF4B-D77E-4967-A0A1-1D5F44F8EDDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6623DF4B-D77E-4967-A0A1-1D5F44F8EDDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF3C0F3B-7BC9-40E2-BD17-947C338EEC1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF3C0F3B-7BC9-40E2-BD17-947C338EEC1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF3C0F3B-7BC9-40E2-BD17-947C338EEC1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF3C0F3B-7BC9-40E2-BD17-947C338EEC1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{072BD8BE-4078-4F0F-B158-6880AA7B184B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{072BD8BE-4078-4F0F-B158-6880AA7B184B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{072BD8BE-4078-4F0F-B158-6880AA7B184B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{072BD8BE-4078-4F0F-B158-6880AA7B184B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F55F1870-B54C-40FE-8DBA-8DE9ED476B55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F55F1870-B54C-40FE-8DBA-8DE9ED476B55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F55F1870-B54C-40FE-8DBA-8DE9ED476B55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F55F1870-B54C-40FE-8DBA-8DE9ED476B55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E22B7A0B-6120-427E-94C2-955724D0178A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E22B7A0B-6120-427E-94C2-955724D0178A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E22B7A0B-6120-427E-94C2-955724D0178A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E22B7A0B-6120-427E-94C2-955724D0178A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{772C5F8D-266C-4DAA-B7AF-91A99DBDE1AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{772C5F8D-266C-4DAA-B7AF-91A99DBDE1AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{772C5F8D-266C-4DAA-B7AF-91A99DBDE1AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{772C5F8D-266C-4DAA-B7AF-91A99DBDE1AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C51048FA-F6F5-4ED9-B0CD-1F16431AA031}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C51048FA-F6F5-4ED9-B0CD-1F16431AA031}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C51048FA-F6F5-4ED9-B0CD-1F16431AA031}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C51048FA-F6F5-4ED9-B0CD-1F16431AA031}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5ECBC5A5-9B0D-4DAE-AC98-13158E1862BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ECBC5A5-9B0D-4DAE-AC98-13158E1862BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ECBC5A5-9B0D-4DAE-AC98-13158E1862BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ECBC5A5-9B0D-4DAE-AC98-13158E1862BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DD674E8-E5A0-412C-9D9E-22E898BE9D63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DD674E8-E5A0-412C-9D9E-22E898BE9D63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DD674E8-E5A0-412C-9D9E-22E898BE9D63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DD674E8-E5A0-412C-9D9E-22E898BE9D63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89684280-8CE1-4662-9CD9-45027474B969}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89684280-8CE1-4662-9CD9-45027474B969}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89684280-8CE1-4662-9CD9-45027474B969}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89684280-8CE1-4662-9CD9-45027474B969}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A2DA924-F408-432E-B951-7D95D922FB9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A2DA924-F408-432E-B951-7D95D922FB9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A2DA924-F408-432E-B951-7D95D922FB9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A2DA924-F408-432E-B951-7D95D922FB9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4CA5B58-A165-47AB-98B6-A46BB3FA0743}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4CA5B58-A165-47AB-98B6-A46BB3FA0743}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4CA5B58-A165-47AB-98B6-A46BB3FA0743}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4CA5B58-A165-47AB-98B6-A46BB3FA0743}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ABB21E5-959C-4811-B855-A8C63559FBD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ABB21E5-959C-4811-B855-A8C63559FBD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ABB21E5-959C-4811-B855-A8C63559FBD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ABB21E5-959C-4811-B855-A8C63559FBD3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F55F1870-B54C-40FE-8DBA-8DE9ED476B55} = {563F1C9C-5759-47D9-8B53-1631D8645275}
+		{E22B7A0B-6120-427E-94C2-955724D0178A} = {86BE1CBD-003E-4AAB-A531-8673F52B5229}
+		{772C5F8D-266C-4DAA-B7AF-91A99DBDE1AF} = {61E4DAC6-F896-4D7F-94A3-AD9227D65A47}
+		{C51048FA-F6F5-4ED9-B0CD-1F16431AA031} = {52D8A13B-BD30-4260-BF1D-71D5AE8D27F5}
+		{5ECBC5A5-9B0D-4DAE-AC98-13158E1862BE} = {18097C4F-E453-4E6F-B621-D34D569D84C2}
+		{2DD674E8-E5A0-412C-9D9E-22E898BE9D63} = {18097C4F-E453-4E6F-B621-D34D569D84C2}
+		{89684280-8CE1-4662-9CD9-45027474B969} = {18097C4F-E453-4E6F-B621-D34D569D84C2}
+		{3A2DA924-F408-432E-B951-7D95D922FB9C} = {18097C4F-E453-4E6F-B621-D34D569D84C2}
+		{C4CA5B58-A165-47AB-98B6-A46BB3FA0743} = {563F1C9C-5759-47D9-8B53-1631D8645275}
+		{9ABB21E5-959C-4811-B855-A8C63559FBD3} = {563F1C9C-5759-47D9-8B53-1631D8645275}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C53F0FFC-9BFC-4C08-975C-C5CBE5B1888E}
+	EndGlobalSection
+EndGlobal
