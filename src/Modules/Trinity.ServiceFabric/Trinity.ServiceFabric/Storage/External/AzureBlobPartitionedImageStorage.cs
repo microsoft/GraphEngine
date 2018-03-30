@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Trinity.ServiceFabric.Diagnostics;
 
 namespace Trinity.ServiceFabric.Storage.External
 {
@@ -60,6 +61,8 @@ namespace Trinity.ServiceFabric.Storage.External
                 }
             }
 
+            Log.Info($"Image partition#{partition} loaded");
+
             return blob.Properties.ContentMD5;
         }
 
@@ -83,6 +86,8 @@ namespace Trinity.ServiceFabric.Storage.External
                     await writer.WriteCellAsync(id, cellType, bytes);
                 }
             }
+
+            Log.Info($"Image partition#{partition} saved");
 
             return blob.Properties.ContentMD5;
         }

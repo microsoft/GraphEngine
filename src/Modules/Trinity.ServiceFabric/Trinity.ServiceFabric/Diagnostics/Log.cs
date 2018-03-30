@@ -13,6 +13,7 @@ namespace Trinity.ServiceFabric.Diagnostics
     public sealed class Log : EventSource
     {
         public static readonly Log Current = new Log();
+        public static bool UseTrinityLog { get; set; } = false;
 
         static Log()
         {
@@ -196,22 +197,34 @@ namespace Trinity.ServiceFabric.Diagnostics
 
         public static void Fatal(string message, params object[] args)
         {
-            Log.Current.TrinityFatal(string.Format(message, args));
+            if (UseTrinityLog)
+                Trinity.Diagnostics.Log.WriteLine(Trinity.Diagnostics.LogLevel.Fatal, message, args);
+            else
+                Log.Current.TrinityFatal(string.Format(message, args));
         }
 
         public static void Error(string message, params object[] args)
         {
-            Log.Current.TrinityError(string.Format(message, args));
+            if (UseTrinityLog)
+                Trinity.Diagnostics.Log.WriteLine(Trinity.Diagnostics.LogLevel.Error, message, args);
+            else
+                Log.Current.TrinityError(string.Format(message, args));
         }
 
         public static void Warn(string message, params object[] args)
         {
-            Log.Current.TrinityWarn(string.Format(message, args));
+            if (UseTrinityLog)
+                Trinity.Diagnostics.Log.WriteLine(Trinity.Diagnostics.LogLevel.Warning, message, args);
+            else
+                Log.Current.TrinityWarn(string.Format(message, args));
         }
 
         public static void Info(string message, params object[] args)
         {
-            Log.Current.TrinityInfo(string.Format(message, args));
+            if (UseTrinityLog)
+                Trinity.Diagnostics.Log.WriteLine(Trinity.Diagnostics.LogLevel.Info, message, args);
+            else
+                Log.Current.TrinityInfo(string.Format(message, args));
         }
         #endregion
 
