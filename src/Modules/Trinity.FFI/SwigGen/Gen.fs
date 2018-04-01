@@ -6,8 +6,28 @@ module TGEN =
     open GraphEngine.Jit.TypeSystem
     open System
     open Trinity.Storage
+    open SwigGen.Command
+    open SwigGen.Operator
+            
+        
+        
+    let Definition'Struct (struct': TypeDescriptor): string = 
+        raise (NotImplementedException(""))
     
-    let Transpile(anyType : TypeDescriptor) : string = raise (NotImplementedException(""))
+    let Definition'CellType(cellType': TypeDescriptor): string = 
+        raise (NotImplementedException(""))
+    
+    let Definition'GenericList(list': TypeDescriptor): string = 
+        raise (NotImplementedException(""))
+    
+    let Transpile(anyType : TypeDescriptor) : string = 
+    
+        match anyType.TypeCode with
+            | STRUCT -> Definition'Struct anyType
+            | LIST   -> Definition'GenericList anyType
+            | CELL   -> Definition'CellType anyType
+            | _      -> failwith "unknown typecode"
+        
     
     let TypeInfer(anyType: TypeDescriptor): List<TypeDescriptor> = raise (NotImplementedException(""))
     (** inference out the descriptors of struct types and generic list types in a cell descriptor.**)
@@ -18,10 +38,8 @@ module TGEN =
         
         schema.CellDescriptors
                 |> List.ofSeq
-                |> List.map Builder.Make
-                |> List.map TypeInfer
-                |> List.collect (function it -> it)
-                |> List.map Transpile
+                |> List.map (Builder.Make >> TypeInfer)
+                |> List.collect (List.map Transpile)
                 |> partial System.String.Join "\n"
 
    

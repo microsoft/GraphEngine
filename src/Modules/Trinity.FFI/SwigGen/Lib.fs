@@ -2,13 +2,79 @@
 
 open System.IO
 
+
+module Operator = 
+    let (->>) (key: string) (value: 'T) = (key, value.ToString())
+
+module PString = 
+    (** python like string utilities **)
+    open System
+    
+    let (|Prefix|_|) (p : string) (s : string) = 
+        if s.StartsWith(p) then Some(s.Substring(p.Length))
+        else None
+    
+    type StrOrChr = 
+        | Chr of char
+        | Str of string
+    
+    let str'Concat (xs : List<'T>) = String.Join("", xs)
+    
+    let rev'concat (xs : List<'T>) = 
+        xs
+        |> List.rev
+        |> str'Concat
+    
+    let rec format'root (template : List<char>) (result : List<string>) (kvpairs : Map<string, string>) 
+            (cache : List<char>) : string = 
+        match template with
+        | '{'  :: '{' :: tail -> format'root tail result kvpairs ('{' :: cache)
+        | '{'  ::        tail -> 
+            if cache.IsEmpty 
+            then 
+                format'render tail result kvpairs []
+            else 
+                format'render tail ((cache |> rev'concat) :: result) kvpairs []
+        | '\\' :: chr :: tail -> format'root tail result kvpairs (chr :: cache)
+        | '}'  :: '}' :: tail -> format'root tail result kvpairs ('}' :: cache)
+        | '}'  :: _           -> failwith "missing pair parentheses."
+        | chr  ::        tail -> format'root tail result kvpairs (chr :: cache)
+        | [] -> 
+            if cache.IsEmpty 
+            then 
+                result |> rev'concat
+            else 
+                (cache |> rev'concat) :: result |> rev'concat
+    
+    and format'render (chrs : List<char>) (result : List<string>) (kvpairs : Map<string, string>) (name : List<char>) = 
+        match chrs with
+        | '}' :: tail -> 
+            if name.IsEmpty 
+            then 
+                failwith "empty name cannot be render."
+            else 
+                name
+                |> rev'concat
+                |> kvpairs.TryFind
+                |> (fun some -> 
+                if some.IsNone 
+                then 
+                    failwith "unexpected keyword args"
+                else 
+                    some.Value)
+                    |> (fun value -> format'root tail (value :: result) kvpairs [])
+                    
+        | chr :: tail -> format'render tail result kvpairs (chr :: name)
+        | _           -> failwith "unsolved error."
+    
+    let format (template : string) (kvpairs : Map<string, string>) : string = 
+        format'root (template.ToCharArray() |> List.ofArray) [] kvpairs []
+
 module Command = 
     (** 
     A default implementation of Command Line Parser.
     **)
-    let (|Prefix|_|) (p : string) (s : string) = 
-        if s.StartsWith(p) then Some(s.Substring(p.Length))
-        else None
+    open PString
     
     type Argument = 
         | Optional of string
@@ -64,3 +130,26 @@ module IO =
     let write filename content = File.WriteAllText(filename, content)
     let readlines filename = File.ReadAllLines(filename)
     let read filename = File.ReadAllText(filename)
+
+
+//
+//module Main = 
+//
+//    [<EntryPoint>]
+//    let main (argv: string[]) = 
+//        let myMap = Map.ofList [("1", "number1") ; ("2", "number2"); ("qwe???", "红可太秀了")]
+//        let s = PString.format "{1} some some some; {qwe???} some some some \\{ {2}  {{{1}}} some " myMap
+//        System.Console.WriteLine(s) 
+//        0
+
+
+
+
+
+
+
+
+
+
+
+
