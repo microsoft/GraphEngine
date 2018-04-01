@@ -26,6 +26,8 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "GraphEngine.Jit", "..\Graph
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{8544D34C-2DEC-439B-8EF4-80CBF8B137BD}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SwigGen", "SwigGen\SwigGen.fsproj", "{791E3CCD-5A67-48BA-B7AA-BAF06B0CF6E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -140,6 +142,18 @@ Global
 		{36CC8F89-613F-4827-A6A7-08572C70C32C}.Release|x64.Build.0 = Release|Any CPU
 		{36CC8F89-613F-4827-A6A7-08572C70C32C}.Release|x86.ActiveCfg = Release|Any CPU
 		{36CC8F89-613F-4827-A6A7-08572C70C32C}.Release|x86.Build.0 = Release|Any CPU
+		{791E3CCD-5A67-48BA-B7AA-BAF06B0CF6E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{791E3CCD-5A67-48BA-B7AA-BAF06B0CF6E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{791E3CCD-5A67-48BA-B7AA-BAF06B0CF6E4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{791E3CCD-5A67-48BA-B7AA-BAF06B0CF6E4}.Debug|x64.Build.0 = Debug|Any CPU
+		{791E3CCD-5A67-48BA-B7AA-BAF06B0CF6E4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{791E3CCD-5A67-48BA-B7AA-BAF06B0CF6E4}.Debug|x86.Build.0 = Debug|Any CPU
+		{791E3CCD-5A67-48BA-B7AA-BAF06B0CF6E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{791E3CCD-5A67-48BA-B7AA-BAF06B0CF6E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{791E3CCD-5A67-48BA-B7AA-BAF06B0CF6E4}.Release|x64.ActiveCfg = Release|Any CPU
+		{791E3CCD-5A67-48BA-B7AA-BAF06B0CF6E4}.Release|x64.Build.0 = Release|Any CPU
+		{791E3CCD-5A67-48BA-B7AA-BAF06B0CF6E4}.Release|x86.ActiveCfg = Release|Any CPU
+		{791E3CCD-5A67-48BA-B7AA-BAF06B0CF6E4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
