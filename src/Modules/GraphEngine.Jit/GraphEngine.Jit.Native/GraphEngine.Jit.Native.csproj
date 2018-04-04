@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AssemblyName>GraphEngine.Jit.Native</AssemblyName>
+    <RootNamespace>GraphEngine.Jit.Native</RootNamespace>
+    <OutputTypeEx>library</OutputTypeEx>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <OutputPath>..\..\..\..\bin</OutputPath>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\asmjit\build\Release\asmjit.dll">
+      <PackagePath>runtimes\win-x64\native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CppSharp" Version="0.8.19" />
+    <PackageReference Include="Baseclass.Contrib.Nuget.Output" Version="2.4.3" />
+  </ItemGroup>
+
+</Project>

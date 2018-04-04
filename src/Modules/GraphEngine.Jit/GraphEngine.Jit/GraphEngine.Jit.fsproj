@@ -38,9 +38,8 @@
 
 
   <ItemGroup>
-    <Compile Include="AsmJit.fs" />
-    <Compile Include="Runtime.fs" />
     <Compile Include="TypeSystem.fs" />
+    <Compile Include="Runtime.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -52,6 +51,10 @@
       <PackagePath>runtimes\win-x64\native</PackagePath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GraphEngine.Jit.Native\GraphEngine.Jit.Native.csproj" />
   </ItemGroup>
 
 </Project>

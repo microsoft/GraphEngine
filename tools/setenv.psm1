@@ -10,6 +10,8 @@ Function Init-Configuration {
         throw "Visual Studio 2017 or required components were not found"
     }
     $Global:MSBUILD_EXE   = "$VS_INSTALLDIR\MSBuild\15.0\Bin\MSBuild.exe"
+    $Global:DEVENV_EXE    = "$VS_INSTALLDIR\Common7\IDE\devenv.exe"
+    $Global:DEVENV_COM    = "$VS_INSTALLDIR\Common7\IDE\devenv.com"
     $Global:NUGET_EXE     = "$REPO_ROOT\tools\NuGet.exe"
     $Global:DOTNET_EXE    = "dotnet"
 
@@ -44,6 +46,8 @@ Function Write-Configuration {
   Write-Output "MSBUILD_EXE:                   $MSBUILD_EXE"
   Write-Output "NUGET_EXE:                     $NUGET_EXE"
   Write-Output "DOTNET_EXE:                    $DOTNET_EXE"
+  Write-Output "DEVENV_COM:                    $DEVENV_COM"
+  Write-Output "DEVENV_EXE:                    $DEVENV_EXE"
 
   Write-Output "TRINITY_CORE_SLN               $TRINITY_CORE_SLN"
   Write-Output "TRINITY_C_SLN:                 $TRINITY_C_SLN"
