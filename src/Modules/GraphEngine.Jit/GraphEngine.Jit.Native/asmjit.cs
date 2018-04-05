@@ -55936,6 +55936,1807 @@ namespace GraphEngine.Jit.Native
         }
     }
 
+    namespace Asmjit
+    {
+        /// <summary>Base runtime.</summary>
+        public unsafe abstract partial class Runtime : IDisposable
+        {
+            [StructLayout(LayoutKind.Explicit, Size = 32)]
+            public partial struct __Internal
+            {
+                [FieldOffset(0)]
+                internal global::System.IntPtr vfptr_Runtime;
+
+                [FieldOffset(8)]
+                internal global::GraphEngine.Jit.Native.Asmjit.CodeInfo.__Internal _codeInfo;
+
+                [FieldOffset(24)]
+                internal byte _runtimeType;
+
+                [FieldOffset(25)]
+                internal byte _allocType;
+
+                [FieldOffset(26)]
+                internal fixed byte _reserved[6];
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="??0Runtime@asmjit@@QEAA@XZ")]
+                internal static extern global::System.IntPtr ctor(global::System.IntPtr instance);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="??1Runtime@asmjit@@UEAA@XZ")]
+                internal static extern void dtor(global::System.IntPtr instance, int delete);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?getCodeInfo@Runtime@asmjit@@QEBAAEBVCodeInfo@2@XZ")]
+                internal static extern global::System.IntPtr GetCodeInfo(global::System.IntPtr instance);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?getArchType@Runtime@asmjit@@QEBAIXZ")]
+                internal static extern uint GetArchType(global::System.IntPtr instance);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?getArchSubType@Runtime@asmjit@@QEBAIXZ")]
+                internal static extern uint GetArchSubType(global::System.IntPtr instance);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?getRuntimeType@Runtime@asmjit@@QEBAIXZ")]
+                internal static extern uint GetRuntimeType(global::System.IntPtr instance);
+            }
+
+            public enum RuntimeType : uint
+            {
+                kRuntimeNone = 0,
+                kRuntimeJit = 1,
+                kRuntimeRemote = 2
+            }
+
+            public global::System.IntPtr __Instance { get; protected set; }
+
+            protected int __PointerAdjustment;
+            internal static readonly global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.Asmjit.Runtime> NativeToManagedMap = new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.Asmjit.Runtime>();
+            protected void*[] __OriginalVTables;
+
+            protected bool __ownsNativeInstance;
+
+            internal static global::GraphEngine.Jit.Native.Asmjit.Runtime __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+            {
+                return new global::GraphEngine.Jit.Native.Asmjit.RuntimeInternal(native.ToPointer(), skipVTables);
+            }
+
+            internal static global::GraphEngine.Jit.Native.Asmjit.Runtime __CreateInstance(global::GraphEngine.Jit.Native.Asmjit.Runtime.__Internal native, bool skipVTables = false)
+            {
+                return new global::GraphEngine.Jit.Native.Asmjit.RuntimeInternal(native, skipVTables);
+            }
+
+            protected Runtime(void* native, bool skipVTables = false)
+            {
+                if (native == null)
+                    return;
+                __Instance = new global::System.IntPtr(native);
+                if (skipVTables)
+                    __OriginalVTables = new void*[] { *(void**) (__Instance + 0) };
+                else
+                    SetupVTables(true);
+            }
+
+            /// <summary>Create a `Runtime` instance.</summary>
+            protected Runtime()
+            {
+                __Instance = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.Runtime.__Internal));
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                __Internal.ctor((__Instance + __PointerAdjustment));
+                SetupVTables(GetType().FullName == "GraphEngine.Jit.Native.Asmjit.Runtime");
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+            }
+
+            public virtual void Dispose(bool disposing)
+            {
+                if (__Instance == IntPtr.Zero)
+                    return;
+                global::GraphEngine.Jit.Native.Asmjit.Runtime __dummy;
+                NativeToManagedMap.TryRemove(__Instance, out __dummy);
+                ((global::GraphEngine.Jit.Native.Asmjit.Runtime.__Internal*) __Instance)->vfptr_Runtime = new global::System.IntPtr(__OriginalVTables[0]);
+                if (disposing)
+                {
+                    var __slot = *(void**) ((IntPtr) __OriginalVTables[0] + 0 * 8);
+                    if (__slot != null)
+                    {
+                        var ___dtorDelegate = (global::GraphEngine.Jit.Native.Delegates.Action_IntPtr_int) Marshal.GetDelegateForFunctionPointer(new IntPtr(__slot), typeof(global::GraphEngine.Jit.Native.Delegates.Action_IntPtr_int));
+                        ___dtorDelegate((__Instance + __PointerAdjustment), 0);
+                    }
+                    else
+                        __Internal.dtor((__Instance + __PointerAdjustment), 0);
+                }
+                if (__ownsNativeInstance)
+                    Marshal.FreeHGlobal(__Instance);
+                __Instance = IntPtr.Zero;
+            }
+
+            /// <summary>Allocate a memory needed for a code stored in the</summary>
+            /// <remarks>
+            /// <para>relocate it to the target location.</para>
+            /// <para>The beginning of the memory allocated for the function is returned in</para>
+            /// <para>`dst`. If failed the</para>
+            /// <para>(this means that you don't have to set it to null before calling `add()`).</para>
+            /// </remarks>
+            public abstract uint Add(void** dst, global::GraphEngine.Jit.Native.Asmjit.CodeHolder code);
+
+            /// <summary>Release `p` allocated by `add()`.</summary>
+            public abstract uint Release(global::System.IntPtr p);
+
+            /// <summary>Get CodeInfo of this runtime.</summary>
+            /// <remarks>
+            /// <para>CodeInfo can be used to setup a CodeHolder in case you plan to generate a</para>
+            /// <para>code compatible and executable by this Runtime.</para>
+            /// </remarks>
+            public global::GraphEngine.Jit.Native.Asmjit.CodeInfo CodeInfo
+            {
+                get
+                {
+                    var __ret = __Internal.GetCodeInfo((__Instance + __PointerAdjustment));
+                    global::GraphEngine.Jit.Native.Asmjit.CodeInfo __result0;
+                    if (__ret == IntPtr.Zero) __result0 = null;
+                    else if (global::GraphEngine.Jit.Native.Asmjit.CodeInfo.NativeToManagedMap.ContainsKey(__ret))
+                        __result0 = (global::GraphEngine.Jit.Native.Asmjit.CodeInfo) global::GraphEngine.Jit.Native.Asmjit.CodeInfo.NativeToManagedMap[__ret];
+                    else __result0 = global::GraphEngine.Jit.Native.Asmjit.CodeInfo.__CreateInstance(__ret);
+                    return __result0;
+                }
+            }
+
+            /// <summary>Get the Runtime's architecture type, see</summary>
+            public uint ArchType
+            {
+                get
+                {
+                    var __ret = __Internal.GetArchType((__Instance + __PointerAdjustment));
+                    return __ret;
+                }
+            }
+
+            /// <summary>Get the Runtime's architecture sub-type, see</summary>
+            public uint ArchSubType
+            {
+                get
+                {
+                    var __ret = __Internal.GetArchSubType((__Instance + __PointerAdjustment));
+                    return __ret;
+                }
+            }
+
+            /// <summary>Get the runtime type, see</summary>
+            public uint runtimeType
+            {
+                get
+                {
+                    var __ret = __Internal.GetRuntimeType((__Instance + __PointerAdjustment));
+                    return __ret;
+                }
+            }
+
+            #region Virtual table interop
+
+            // ASMJIT_API virtual ~Runtime() noexcept
+            private static global::GraphEngine.Jit.Native.Delegates.Action_IntPtr_int _dtorDelegateInstance;
+
+            private static void _dtorDelegateHook(global::System.IntPtr instance, int delete)
+            {
+                if (!NativeToManagedMap.ContainsKey(instance))
+                    throw new global::System.Exception("No managed instance was found");
+
+                var __target = (global::GraphEngine.Jit.Native.Asmjit.Runtime) NativeToManagedMap[instance];
+                if (__target.__ownsNativeInstance)
+                    __target.SetupVTables();
+                __target.Dispose(true);
+            }
+
+            // Error _add(void** dst, CodeHolder* code) noexcept = 0
+            private static global::GraphEngine.Jit.Native.Delegates.Func_uint_IntPtr_voidPtrPtr_IntPtr _AddDelegateInstance;
+
+            private static uint _AddDelegateHook(global::System.IntPtr instance, void** dst, global::System.IntPtr code)
+            {
+                if (!NativeToManagedMap.ContainsKey(instance))
+                    throw new global::System.Exception("No managed instance was found");
+
+                var __target = (global::GraphEngine.Jit.Native.Asmjit.Runtime) NativeToManagedMap[instance];
+                if (__target.__ownsNativeInstance)
+                    __target.SetupVTables();
+                global::GraphEngine.Jit.Native.Asmjit.CodeHolder __result1;
+                if (code == IntPtr.Zero) __result1 = null;
+                else if (global::GraphEngine.Jit.Native.Asmjit.CodeHolder.NativeToManagedMap.ContainsKey(code))
+                    __result1 = (global::GraphEngine.Jit.Native.Asmjit.CodeHolder) global::GraphEngine.Jit.Native.Asmjit.CodeHolder.NativeToManagedMap[code];
+                else __result1 = global::GraphEngine.Jit.Native.Asmjit.CodeHolder.__CreateInstance(code);
+                var __ret = __target.Add(dst, __result1);
+                return __ret;
+            }
+
+            // Error _release(void* p) noexcept = 0
+            private static global::GraphEngine.Jit.Native.Delegates.Func_uint_IntPtr_IntPtr _ReleaseDelegateInstance;
+
+            private static uint _ReleaseDelegateHook(global::System.IntPtr instance, global::System.IntPtr p)
+            {
+                if (!NativeToManagedMap.ContainsKey(instance))
+                    throw new global::System.Exception("No managed instance was found");
+
+                var __target = (global::GraphEngine.Jit.Native.Asmjit.Runtime) NativeToManagedMap[instance];
+                if (__target.__ownsNativeInstance)
+                    __target.SetupVTables();
+                var __ret = __target.Release(p);
+                return __ret;
+            }
+
+            private static void*[] __ManagedVTables;
+            private static void*[] __ManagedVTablesDtorOnly;
+            private static void*[] _Thunks;
+
+            private void SetupVTables(bool destructorOnly = false)
+            {
+                if (__OriginalVTables != null)
+                    return;
+                __OriginalVTables = new void*[] { *(void**) (__Instance + 0) };
+
+                if (_Thunks == null)
+                {
+                    _Thunks = new void*[3];
+                    _dtorDelegateInstance += _dtorDelegateHook;
+                    _Thunks[0] = Marshal.GetFunctionPointerForDelegate(_dtorDelegateInstance).ToPointer();
+                    _AddDelegateInstance += _AddDelegateHook;
+                    _Thunks[1] = Marshal.GetFunctionPointerForDelegate(_AddDelegateInstance).ToPointer();
+                    _ReleaseDelegateInstance += _ReleaseDelegateHook;
+                    _Thunks[2] = Marshal.GetFunctionPointerForDelegate(_ReleaseDelegateInstance).ToPointer();
+                }
+
+                if (destructorOnly)
+                {
+                    if (__ManagedVTablesDtorOnly == null)
+                    {
+                        __ManagedVTablesDtorOnly = new void*[1];
+                        var vfptr0 = Marshal.AllocHGlobal(3 * 8);
+                        __ManagedVTablesDtorOnly[0] = vfptr0.ToPointer();
+                        *(void**) (vfptr0 + 0) = _Thunks[0];
+                        *(void**) (vfptr0 + 8) = *(void**) (new IntPtr(*(void**) __Instance) + 0 + 8);
+                        *(void**) (vfptr0 + 16) = *(void**) (new IntPtr(*(void**) __Instance) + 0 + 16);
+                    }
+
+                    *(void**) (__Instance + 0) = __ManagedVTablesDtorOnly[0];
+                }
+                else
+                {
+                    if (__ManagedVTables == null)
+                    {
+                        __ManagedVTables = new void*[1];
+                        var vfptr0 = Marshal.AllocHGlobal(3 * 8);
+                        __ManagedVTables[0] = vfptr0.ToPointer();
+                        *(void**) (vfptr0 + 0) = _Thunks[0];
+                        *(void**) (vfptr0 + 8) = _Thunks[1];
+                        *(void**) (vfptr0 + 16) = _Thunks[2];
+                    }
+
+                    *(void**) (__Instance + 0) = __ManagedVTables[0];
+                }
+            }
+
+            #endregion
+        }
+
+        /// <summary>Runtime designed to be used in the same process the code is generated in.</summary>
+        public unsafe abstract partial class HostRuntime : global::GraphEngine.Jit.Native.Asmjit.Runtime, IDisposable
+        {
+            [StructLayout(LayoutKind.Explicit, Size = 32)]
+            public new partial struct __Internal
+            {
+                [FieldOffset(0)]
+                internal global::System.IntPtr vfptr_Runtime;
+
+                [FieldOffset(8)]
+                internal global::GraphEngine.Jit.Native.Asmjit.CodeInfo.__Internal _codeInfo;
+
+                [FieldOffset(24)]
+                internal byte _runtimeType;
+
+                [FieldOffset(25)]
+                internal byte _allocType;
+
+                [FieldOffset(26)]
+                internal fixed byte _reserved[6];
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="??0HostRuntime@asmjit@@QEAA@XZ")]
+                internal static extern global::System.IntPtr ctor(global::System.IntPtr instance);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="??1HostRuntime@asmjit@@UEAA@XZ")]
+                internal static extern void dtor(global::System.IntPtr instance, int delete);
+            }
+
+            internal static new global::GraphEngine.Jit.Native.Asmjit.HostRuntime __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+            {
+                return new global::GraphEngine.Jit.Native.Asmjit.HostRuntimeInternal(native.ToPointer(), skipVTables);
+            }
+
+            internal static global::GraphEngine.Jit.Native.Asmjit.HostRuntime __CreateInstance(global::GraphEngine.Jit.Native.Asmjit.HostRuntime.__Internal native, bool skipVTables = false)
+            {
+                return new global::GraphEngine.Jit.Native.Asmjit.HostRuntimeInternal(native, skipVTables);
+            }
+
+            protected HostRuntime(void* native, bool skipVTables = false)
+                : base((void*) null)
+            {
+                __PointerAdjustment = 0;
+                if (native == null)
+                    return;
+                __Instance = new global::System.IntPtr(native);
+                if (skipVTables)
+                    __OriginalVTables = new void*[] { *(void**) (__Instance + 0) };
+                else
+                    SetupVTables(true);
+            }
+
+            /// <summary>Create a `HostRuntime` instance.</summary>
+            protected HostRuntime()
+                : this((void*) null)
+            {
+                __Instance = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.HostRuntime.__Internal));
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                __Internal.ctor((__Instance + __PointerAdjustment));
+                SetupVTables(GetType().FullName == "GraphEngine.Jit.Native.Asmjit.HostRuntime");
+            }
+
+            public override void Dispose(bool disposing)
+            {
+                if (__Instance == IntPtr.Zero)
+                    return;
+                global::GraphEngine.Jit.Native.Asmjit.Runtime __dummy;
+                NativeToManagedMap.TryRemove(__Instance, out __dummy);
+                ((global::GraphEngine.Jit.Native.Asmjit.HostRuntime.__Internal*) __Instance)->vfptr_Runtime = new global::System.IntPtr(__OriginalVTables[0]);
+                if (disposing)
+                {
+                    var __slot = *(void**) ((IntPtr) __OriginalVTables[0] + 0 * 8);
+                    if (__slot != null)
+                    {
+                        var ___dtorDelegate = (global::GraphEngine.Jit.Native.Delegates.Action_IntPtr_int) Marshal.GetDelegateForFunctionPointer(new IntPtr(__slot), typeof(global::GraphEngine.Jit.Native.Delegates.Action_IntPtr_int));
+                        ___dtorDelegate((__Instance + __PointerAdjustment), 0);
+                    }
+                    else
+                        __Internal.dtor((__Instance + __PointerAdjustment), 0);
+                }
+                if (__ownsNativeInstance)
+                    Marshal.FreeHGlobal(__Instance);
+                __Instance = IntPtr.Zero;
+            }
+
+            /// <summary>Flush an instruction cache.</summary>
+            /// <remarks>
+            /// <para>This member function is called after the code has been copied to the</para>
+            /// <para>destination buffer. It is only useful for JIT code generation as it</para>
+            /// <para>causes a flush of the processor's cache.</para>
+            /// <para>Flushing is basically a NOP under X86/X64, but is needed by architectures</para>
+            /// <para>that do not have a transparent instruction cache like ARM.</para>
+            /// <para>This function can also be overridden to improve compatibility with tools</para>
+            /// <para>such as Valgrind, however, it's not an official part of AsmJit.</para>
+            /// </remarks>
+            public virtual void Flush(global::System.IntPtr p, ulong size)
+            {
+                var __slot = *(void**) ((IntPtr) __OriginalVTables[0] + 3 * 8);
+                var ___FlushDelegate = (global::GraphEngine.Jit.Native.Delegates.Action_IntPtr_IntPtr_ulong) Marshal.GetDelegateForFunctionPointer(new IntPtr(__slot), typeof(global::GraphEngine.Jit.Native.Delegates.Action_IntPtr_IntPtr_ulong));
+                ___FlushDelegate((__Instance + __PointerAdjustment), p, size);
+            }
+
+            #region Virtual table interop
+
+            // ASMJIT_API virtual ~HostRuntime() noexcept
+            private static global::GraphEngine.Jit.Native.Delegates.Action_IntPtr_int _dtorDelegateInstance;
+
+            private static void _dtorDelegateHook(global::System.IntPtr instance, int delete)
+            {
+                if (!NativeToManagedMap.ContainsKey(instance))
+                    throw new global::System.Exception("No managed instance was found");
+
+                var __target = (global::GraphEngine.Jit.Native.Asmjit.HostRuntime) NativeToManagedMap[instance];
+                if (__target.__ownsNativeInstance)
+                    __target.SetupVTables();
+                __target.Dispose(true);
+            }
+
+            // Error _add(void** dst, CodeHolder* code) noexcept = 0
+            private static global::GraphEngine.Jit.Native.Delegates.Func_uint_IntPtr_voidPtrPtr_IntPtr _AddDelegateInstance;
+
+            private static uint _AddDelegateHook(global::System.IntPtr instance, void** dst, global::System.IntPtr code)
+            {
+                if (!NativeToManagedMap.ContainsKey(instance))
+                    throw new global::System.Exception("No managed instance was found");
+
+                var __target = (global::GraphEngine.Jit.Native.Asmjit.HostRuntime) NativeToManagedMap[instance];
+                if (__target.__ownsNativeInstance)
+                    __target.SetupVTables();
+                global::GraphEngine.Jit.Native.Asmjit.CodeHolder __result1;
+                if (code == IntPtr.Zero) __result1 = null;
+                else if (global::GraphEngine.Jit.Native.Asmjit.CodeHolder.NativeToManagedMap.ContainsKey(code))
+                    __result1 = (global::GraphEngine.Jit.Native.Asmjit.CodeHolder) global::GraphEngine.Jit.Native.Asmjit.CodeHolder.NativeToManagedMap[code];
+                else __result1 = global::GraphEngine.Jit.Native.Asmjit.CodeHolder.__CreateInstance(code);
+                var __ret = __target.Add(dst, __result1);
+                return __ret;
+            }
+
+            // Error _release(void* p) noexcept = 0
+            private static global::GraphEngine.Jit.Native.Delegates.Func_uint_IntPtr_IntPtr _ReleaseDelegateInstance;
+
+            private static uint _ReleaseDelegateHook(global::System.IntPtr instance, global::System.IntPtr p)
+            {
+                if (!NativeToManagedMap.ContainsKey(instance))
+                    throw new global::System.Exception("No managed instance was found");
+
+                var __target = (global::GraphEngine.Jit.Native.Asmjit.HostRuntime) NativeToManagedMap[instance];
+                if (__target.__ownsNativeInstance)
+                    __target.SetupVTables();
+                var __ret = __target.Release(p);
+                return __ret;
+            }
+
+            // void flush(const void* p, size_t size) noexcept
+            private static global::GraphEngine.Jit.Native.Delegates.Action_IntPtr_IntPtr_ulong _FlushDelegateInstance;
+
+            private static void _FlushDelegateHook(global::System.IntPtr instance, global::System.IntPtr p, ulong size)
+            {
+                if (!NativeToManagedMap.ContainsKey(instance))
+                    throw new global::System.Exception("No managed instance was found");
+
+                var __target = (global::GraphEngine.Jit.Native.Asmjit.HostRuntime) NativeToManagedMap[instance];
+                if (__target.__ownsNativeInstance)
+                    __target.SetupVTables();
+                __target.Flush(p, size);
+            }
+
+            private static void*[] __ManagedVTables;
+            private static void*[] __ManagedVTablesDtorOnly;
+            private static void*[] _Thunks;
+
+            private void SetupVTables(bool destructorOnly = false)
+            {
+                if (__OriginalVTables != null)
+                    return;
+                __OriginalVTables = new void*[] { *(void**) (__Instance + 0) };
+
+                if (_Thunks == null)
+                {
+                    _Thunks = new void*[4];
+                    _dtorDelegateInstance += _dtorDelegateHook;
+                    _Thunks[0] = Marshal.GetFunctionPointerForDelegate(_dtorDelegateInstance).ToPointer();
+                    _AddDelegateInstance += _AddDelegateHook;
+                    _Thunks[1] = Marshal.GetFunctionPointerForDelegate(_AddDelegateInstance).ToPointer();
+                    _ReleaseDelegateInstance += _ReleaseDelegateHook;
+                    _Thunks[2] = Marshal.GetFunctionPointerForDelegate(_ReleaseDelegateInstance).ToPointer();
+                    _FlushDelegateInstance += _FlushDelegateHook;
+                    _Thunks[3] = Marshal.GetFunctionPointerForDelegate(_FlushDelegateInstance).ToPointer();
+                }
+
+                if (destructorOnly)
+                {
+                    if (__ManagedVTablesDtorOnly == null)
+                    {
+                        __ManagedVTablesDtorOnly = new void*[1];
+                        var vfptr0 = Marshal.AllocHGlobal(4 * 8);
+                        __ManagedVTablesDtorOnly[0] = vfptr0.ToPointer();
+                        *(void**) (vfptr0 + 0) = _Thunks[0];
+                        *(void**) (vfptr0 + 8) = *(void**) (new IntPtr(*(void**) __Instance) + 0 + 8);
+                        *(void**) (vfptr0 + 16) = *(void**) (new IntPtr(*(void**) __Instance) + 0 + 16);
+                        *(void**) (vfptr0 + 24) = *(void**) (new IntPtr(*(void**) __Instance) + 0 + 24);
+                    }
+
+                    *(void**) (__Instance + 0) = __ManagedVTablesDtorOnly[0];
+                }
+                else
+                {
+                    if (__ManagedVTables == null)
+                    {
+                        __ManagedVTables = new void*[1];
+                        var vfptr0 = Marshal.AllocHGlobal(4 * 8);
+                        __ManagedVTables[0] = vfptr0.ToPointer();
+                        *(void**) (vfptr0 + 0) = _Thunks[0];
+                        *(void**) (vfptr0 + 8) = _Thunks[1];
+                        *(void**) (vfptr0 + 16) = _Thunks[2];
+                        *(void**) (vfptr0 + 24) = _Thunks[3];
+                    }
+
+                    *(void**) (__Instance + 0) = __ManagedVTables[0];
+                }
+            }
+
+            #endregion
+        }
+
+        /// <summary>Runtime designed to store and execute code generated at runtime (JIT).</summary>
+        public unsafe partial class JitRuntime : global::GraphEngine.Jit.Native.Asmjit.HostRuntime, IDisposable
+        {
+            [StructLayout(LayoutKind.Explicit, Size = 160)]
+            public new partial struct __Internal
+            {
+                [FieldOffset(0)]
+                internal global::System.IntPtr vfptr_Runtime;
+
+                [FieldOffset(8)]
+                internal global::GraphEngine.Jit.Native.Asmjit.CodeInfo.__Internal _codeInfo;
+
+                [FieldOffset(24)]
+                internal byte _runtimeType;
+
+                [FieldOffset(25)]
+                internal byte _allocType;
+
+                [FieldOffset(26)]
+                internal fixed byte _reserved[6];
+
+                [FieldOffset(32)]
+                internal global::GraphEngine.Jit.Native.Asmjit.VMemMgr.__Internal _memMgr;
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="??0JitRuntime@asmjit@@QEAA@XZ")]
+                internal static extern global::System.IntPtr ctor(global::System.IntPtr instance);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?getAllocType@JitRuntime@asmjit@@QEBAIXZ")]
+                internal static extern uint GetAllocType(global::System.IntPtr instance);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?setAllocType@JitRuntime@asmjit@@QEAAXI@Z")]
+                internal static extern void SetAllocType(global::System.IntPtr instance, uint allocType);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?getMemMgr@JitRuntime@asmjit@@QEBAPEAVVMemMgr@2@XZ")]
+                internal static extern global::System.IntPtr GetMemMgr(global::System.IntPtr instance);
+            }
+
+            internal static new global::GraphEngine.Jit.Native.Asmjit.JitRuntime __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+            {
+                return new global::GraphEngine.Jit.Native.Asmjit.JitRuntime(native.ToPointer(), skipVTables);
+            }
+
+            internal static global::GraphEngine.Jit.Native.Asmjit.JitRuntime __CreateInstance(global::GraphEngine.Jit.Native.Asmjit.JitRuntime.__Internal native, bool skipVTables = false)
+            {
+                return new global::GraphEngine.Jit.Native.Asmjit.JitRuntime(native, skipVTables);
+            }
+
+            private static void* __CopyValue(global::GraphEngine.Jit.Native.Asmjit.JitRuntime.__Internal native)
+            {
+                var ret = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.JitRuntime.__Internal));
+                *(global::GraphEngine.Jit.Native.Asmjit.JitRuntime.__Internal*) ret = native;
+                return ret.ToPointer();
+            }
+
+            private JitRuntime(global::GraphEngine.Jit.Native.Asmjit.JitRuntime.__Internal native, bool skipVTables = false)
+                : this(__CopyValue(native), skipVTables)
+            {
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            protected JitRuntime(void* native, bool skipVTables = false)
+                : base((void*) null)
+            {
+                __PointerAdjustment = 0;
+                if (native == null)
+                    return;
+                __Instance = new global::System.IntPtr(native);
+                if (skipVTables)
+                    __OriginalVTables = new void*[] { *(void**) (__Instance + 0) };
+                else
+                    SetupVTables(true);
+            }
+
+            /// <summary>Create a `JitRuntime` instance.</summary>
+            public JitRuntime()
+                : this((void*) null)
+            {
+                __Instance = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.JitRuntime.__Internal));
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                __Internal.ctor((__Instance + __PointerAdjustment));
+                SetupVTables(GetType().FullName == "GraphEngine.Jit.Native.Asmjit.JitRuntime");
+            }
+
+            public override uint Add(void** dst, global::GraphEngine.Jit.Native.Asmjit.CodeHolder code)
+            {
+                var __slot = *(void**) ((IntPtr) __OriginalVTables[0] + 1 * 8);
+                var ___AddDelegate = (global::GraphEngine.Jit.Native.Delegates.Func_uint_IntPtr_voidPtrPtr_IntPtr) Marshal.GetDelegateForFunctionPointer(new IntPtr(__slot), typeof(global::GraphEngine.Jit.Native.Delegates.Func_uint_IntPtr_voidPtrPtr_IntPtr));
+                var __arg1 = ReferenceEquals(code, null) ? global::System.IntPtr.Zero : code.__Instance;
+                var __ret = ___AddDelegate((__Instance + __PointerAdjustment), dst, __arg1);
+                return __ret;
+            }
+
+            public override uint Release(global::System.IntPtr p)
+            {
+                var __slot = *(void**) ((IntPtr) __OriginalVTables[0] + 2 * 8);
+                var ___ReleaseDelegate = (global::GraphEngine.Jit.Native.Delegates.Func_uint_IntPtr_IntPtr) Marshal.GetDelegateForFunctionPointer(new IntPtr(__slot), typeof(global::GraphEngine.Jit.Native.Delegates.Func_uint_IntPtr_IntPtr));
+                var __ret = ___ReleaseDelegate((__Instance + __PointerAdjustment), p);
+                return __ret;
+            }
+
+            /// <summary>Get the type of allocation.</summary>
+            /// <remarks>Set the type of allocation.</remarks>
+            public uint AllocType
+            {
+                get
+                {
+                    var __ret = __Internal.GetAllocType((__Instance + __PointerAdjustment));
+                    return __ret;
+                }
+
+                set
+                {
+                    __Internal.SetAllocType((__Instance + __PointerAdjustment), value);
+                }
+            }
+
+            /// <summary>Get the virtual memory manager.</summary>
+            public global::GraphEngine.Jit.Native.Asmjit.VMemMgr MemMgr
+            {
+                get
+                {
+                    var __ret = __Internal.GetMemMgr((__Instance + __PointerAdjustment));
+                    global::GraphEngine.Jit.Native.Asmjit.VMemMgr __result0;
+                    if (__ret == IntPtr.Zero) __result0 = null;
+                    else if (global::GraphEngine.Jit.Native.Asmjit.VMemMgr.NativeToManagedMap.ContainsKey(__ret))
+                        __result0 = (global::GraphEngine.Jit.Native.Asmjit.VMemMgr) global::GraphEngine.Jit.Native.Asmjit.VMemMgr.NativeToManagedMap[__ret];
+                    else __result0 = global::GraphEngine.Jit.Native.Asmjit.VMemMgr.__CreateInstance(__ret);
+                    return __result0;
+                }
+            }
+
+            #region Virtual table interop
+
+            // ASMJIT_API virtual ~JitRuntime() noexcept
+            private static global::GraphEngine.Jit.Native.Delegates.Action_IntPtr_int _dtorDelegateInstance;
+
+            private static void _dtorDelegateHook(global::System.IntPtr instance, int delete)
+            {
+                if (!NativeToManagedMap.ContainsKey(instance))
+                    throw new global::System.Exception("No managed instance was found");
+
+                var __target = (global::GraphEngine.Jit.Native.Asmjit.JitRuntime) NativeToManagedMap[instance];
+                if (__target.__ownsNativeInstance)
+                    __target.SetupVTables();
+                __target.Dispose(true);
+            }
+
+            // Error _add(void** dst, CodeHolder* code) noexcept override
+            private static global::GraphEngine.Jit.Native.Delegates.Func_uint_IntPtr_voidPtrPtr_IntPtr _AddDelegateInstance;
+
+            private static uint _AddDelegateHook(global::System.IntPtr instance, void** dst, global::System.IntPtr code)
+            {
+                if (!NativeToManagedMap.ContainsKey(instance))
+                    throw new global::System.Exception("No managed instance was found");
+
+                var __target = (global::GraphEngine.Jit.Native.Asmjit.JitRuntime) NativeToManagedMap[instance];
+                if (__target.__ownsNativeInstance)
+                    __target.SetupVTables();
+                global::GraphEngine.Jit.Native.Asmjit.CodeHolder __result1;
+                if (code == IntPtr.Zero) __result1 = null;
+                else if (global::GraphEngine.Jit.Native.Asmjit.CodeHolder.NativeToManagedMap.ContainsKey(code))
+                    __result1 = (global::GraphEngine.Jit.Native.Asmjit.CodeHolder) global::GraphEngine.Jit.Native.Asmjit.CodeHolder.NativeToManagedMap[code];
+                else __result1 = global::GraphEngine.Jit.Native.Asmjit.CodeHolder.__CreateInstance(code);
+                var __ret = __target.Add(dst, __result1);
+                return __ret;
+            }
+
+            // Error _release(void* p) noexcept override
+            private static global::GraphEngine.Jit.Native.Delegates.Func_uint_IntPtr_IntPtr _ReleaseDelegateInstance;
+
+            private static uint _ReleaseDelegateHook(global::System.IntPtr instance, global::System.IntPtr p)
+            {
+                if (!NativeToManagedMap.ContainsKey(instance))
+                    throw new global::System.Exception("No managed instance was found");
+
+                var __target = (global::GraphEngine.Jit.Native.Asmjit.JitRuntime) NativeToManagedMap[instance];
+                if (__target.__ownsNativeInstance)
+                    __target.SetupVTables();
+                var __ret = __target.Release(p);
+                return __ret;
+            }
+
+            // void flush(const void* p, size_t size) noexcept
+            private static global::GraphEngine.Jit.Native.Delegates.Action_IntPtr_IntPtr_ulong _FlushDelegateInstance;
+
+            private static void _FlushDelegateHook(global::System.IntPtr instance, global::System.IntPtr p, ulong size)
+            {
+                if (!NativeToManagedMap.ContainsKey(instance))
+                    throw new global::System.Exception("No managed instance was found");
+
+                var __target = (global::GraphEngine.Jit.Native.Asmjit.JitRuntime) NativeToManagedMap[instance];
+                if (__target.__ownsNativeInstance)
+                    __target.SetupVTables();
+                __target.Flush(p, size);
+            }
+
+            private static void*[] __ManagedVTables;
+            private static void*[] __ManagedVTablesDtorOnly;
+            private static void*[] _Thunks;
+
+            private void SetupVTables(bool destructorOnly = false)
+            {
+                if (__OriginalVTables != null)
+                    return;
+                __OriginalVTables = new void*[] { *(void**) (__Instance + 0) };
+
+                if (_Thunks == null)
+                {
+                    _Thunks = new void*[4];
+                    _dtorDelegateInstance += _dtorDelegateHook;
+                    _Thunks[0] = Marshal.GetFunctionPointerForDelegate(_dtorDelegateInstance).ToPointer();
+                    _AddDelegateInstance += _AddDelegateHook;
+                    _Thunks[1] = Marshal.GetFunctionPointerForDelegate(_AddDelegateInstance).ToPointer();
+                    _ReleaseDelegateInstance += _ReleaseDelegateHook;
+                    _Thunks[2] = Marshal.GetFunctionPointerForDelegate(_ReleaseDelegateInstance).ToPointer();
+                    _FlushDelegateInstance += _FlushDelegateHook;
+                    _Thunks[3] = Marshal.GetFunctionPointerForDelegate(_FlushDelegateInstance).ToPointer();
+                }
+
+                if (destructorOnly)
+                {
+                    if (__ManagedVTablesDtorOnly == null)
+                    {
+                        __ManagedVTablesDtorOnly = new void*[1];
+                        var vfptr0 = Marshal.AllocHGlobal(4 * 8);
+                        __ManagedVTablesDtorOnly[0] = vfptr0.ToPointer();
+                        *(void**) (vfptr0 + 0) = _Thunks[0];
+                        *(void**) (vfptr0 + 8) = *(void**) (new IntPtr(*(void**) __Instance) + 0 + 8);
+                        *(void**) (vfptr0 + 16) = *(void**) (new IntPtr(*(void**) __Instance) + 0 + 16);
+                        *(void**) (vfptr0 + 24) = *(void**) (new IntPtr(*(void**) __Instance) + 0 + 24);
+                    }
+
+                    *(void**) (__Instance + 0) = __ManagedVTablesDtorOnly[0];
+                }
+                else
+                {
+                    if (__ManagedVTables == null)
+                    {
+                        __ManagedVTables = new void*[1];
+                        var vfptr0 = Marshal.AllocHGlobal(4 * 8);
+                        __ManagedVTables[0] = vfptr0.ToPointer();
+                        *(void**) (vfptr0 + 0) = _Thunks[0];
+                        *(void**) (vfptr0 + 8) = _Thunks[1];
+                        *(void**) (vfptr0 + 16) = _Thunks[2];
+                        *(void**) (vfptr0 + 24) = _Thunks[3];
+                    }
+
+                    *(void**) (__Instance + 0) = __ManagedVTables[0];
+                }
+            }
+
+            #endregion
+        }
+
+        public unsafe partial class RuntimeInternal : global::GraphEngine.Jit.Native.Asmjit.Runtime, IDisposable
+        {
+            private static void* __CopyValue(global::GraphEngine.Jit.Native.Asmjit.Runtime.__Internal native)
+            {
+                var ret = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.Runtime.__Internal));
+                *(global::GraphEngine.Jit.Native.Asmjit.Runtime.__Internal*) ret = native;
+                return ret.ToPointer();
+            }
+
+            internal RuntimeInternal(global::GraphEngine.Jit.Native.Asmjit.Runtime.__Internal native, bool skipVTables = false)
+                : this(__CopyValue(native), skipVTables)
+            {
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            internal RuntimeInternal(void* native, bool skipVTables = false)
+                : base((void*) null)
+            {
+                __PointerAdjustment = 0;
+                __Instance = new global::System.IntPtr(native);
+                __OriginalVTables = new void*[] { *(void**) (__Instance + 0) };
+            }
+
+            /// <summary>Allocate a memory needed for a code stored in the</summary>
+            /// <remarks>
+            /// <para>relocate it to the target location.</para>
+            /// <para>The beginning of the memory allocated for the function is returned in</para>
+            /// <para>`dst`. If failed the</para>
+            /// <para>(this means that you don't have to set it to null before calling `add()`).</para>
+            /// </remarks>
+            public override uint Add(void** dst, global::GraphEngine.Jit.Native.Asmjit.CodeHolder code)
+            {
+                var __slot = *(void**) ((IntPtr) __OriginalVTables[0] + 1 * 8);
+                var ___AddDelegate = (global::GraphEngine.Jit.Native.Delegates.Func_uint_IntPtr_voidPtrPtr_IntPtr) Marshal.GetDelegateForFunctionPointer(new IntPtr(__slot), typeof(global::GraphEngine.Jit.Native.Delegates.Func_uint_IntPtr_voidPtrPtr_IntPtr));
+                var __arg1 = ReferenceEquals(code, null) ? global::System.IntPtr.Zero : code.__Instance;
+                var __ret = ___AddDelegate((__Instance + __PointerAdjustment), dst, __arg1);
+                return __ret;
+            }
+
+            /// <summary>Release `p` allocated by `add()`.</summary>
+            public override uint Release(global::System.IntPtr p)
+            {
+                var __slot = *(void**) ((IntPtr) __OriginalVTables[0] + 2 * 8);
+                var ___ReleaseDelegate = (global::GraphEngine.Jit.Native.Delegates.Func_uint_IntPtr_IntPtr) Marshal.GetDelegateForFunctionPointer(new IntPtr(__slot), typeof(global::GraphEngine.Jit.Native.Delegates.Func_uint_IntPtr_IntPtr));
+                var __ret = ___ReleaseDelegate((__Instance + __PointerAdjustment), p);
+                return __ret;
+            }
+        }
+
+        public unsafe partial class HostRuntimeInternal : global::GraphEngine.Jit.Native.Asmjit.HostRuntime, IDisposable
+        {
+            private static void* __CopyValue(global::GraphEngine.Jit.Native.Asmjit.HostRuntime.__Internal native)
+            {
+                var ret = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.HostRuntime.__Internal));
+                *(global::GraphEngine.Jit.Native.Asmjit.HostRuntime.__Internal*) ret = native;
+                return ret.ToPointer();
+            }
+
+            internal HostRuntimeInternal(global::GraphEngine.Jit.Native.Asmjit.HostRuntime.__Internal native, bool skipVTables = false)
+                : this(__CopyValue(native), skipVTables)
+            {
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            internal HostRuntimeInternal(void* native, bool skipVTables = false)
+                : base((void*) null)
+            {
+                __PointerAdjustment = 0;
+                __Instance = new global::System.IntPtr(native);
+                __OriginalVTables = new void*[] { *(void**) (__Instance + 0) };
+            }
+
+            /// <summary>Allocate a memory needed for a code stored in the</summary>
+            /// <remarks>
+            /// <para>relocate it to the target location.</para>
+            /// <para>The beginning of the memory allocated for the function is returned in</para>
+            /// <para>`dst`. If failed the</para>
+            /// <para>(this means that you don't have to set it to null before calling `add()`).</para>
+            /// </remarks>
+            public override uint Add(void** dst, global::GraphEngine.Jit.Native.Asmjit.CodeHolder code)
+            {
+                var __slot = *(void**) ((IntPtr) __OriginalVTables[0] + 1 * 8);
+                var ___AddDelegate = (global::GraphEngine.Jit.Native.Delegates.Func_uint_IntPtr_voidPtrPtr_IntPtr) Marshal.GetDelegateForFunctionPointer(new IntPtr(__slot), typeof(global::GraphEngine.Jit.Native.Delegates.Func_uint_IntPtr_voidPtrPtr_IntPtr));
+                var __arg1 = ReferenceEquals(code, null) ? global::System.IntPtr.Zero : code.__Instance;
+                var __ret = ___AddDelegate((__Instance), dst, __arg1);
+                return __ret;
+            }
+
+            /// <summary>Release `p` allocated by `add()`.</summary>
+            public override uint Release(global::System.IntPtr p)
+            {
+                var __slot = *(void**) ((IntPtr) __OriginalVTables[0] + 2 * 8);
+                var ___ReleaseDelegate = (global::GraphEngine.Jit.Native.Delegates.Func_uint_IntPtr_IntPtr) Marshal.GetDelegateForFunctionPointer(new IntPtr(__slot), typeof(global::GraphEngine.Jit.Native.Delegates.Func_uint_IntPtr_IntPtr));
+                var __ret = ___ReleaseDelegate((__Instance), p);
+                return __ret;
+            }
+        }
+    }
+
+    namespace Asmjit
+    {
+        /// <summary>Information about OS virtual memory.</summary>
+        public unsafe partial class VMemInfo : IDisposable
+        {
+            [StructLayout(LayoutKind.Explicit, Size = 24)]
+            public partial struct __Internal
+            {
+                [FieldOffset(0)]
+                internal global::System.IntPtr hCurrentProcess;
+
+                [FieldOffset(8)]
+                internal ulong pageSize;
+
+                [FieldOffset(16)]
+                internal ulong pageGranularity;
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="??0VMemInfo@asmjit@@QEAA@AEBU01@@Z")]
+                internal static extern global::System.IntPtr cctor(global::System.IntPtr instance, global::System.IntPtr _0);
+            }
+
+            public global::System.IntPtr __Instance { get; protected set; }
+
+            protected int __PointerAdjustment;
+            internal static readonly global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.Asmjit.VMemInfo> NativeToManagedMap = new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.Asmjit.VMemInfo>();
+            protected void*[] __OriginalVTables;
+
+            protected bool __ownsNativeInstance;
+
+            internal static global::GraphEngine.Jit.Native.Asmjit.VMemInfo __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+            {
+                return new global::GraphEngine.Jit.Native.Asmjit.VMemInfo(native.ToPointer(), skipVTables);
+            }
+
+            internal static global::GraphEngine.Jit.Native.Asmjit.VMemInfo __CreateInstance(global::GraphEngine.Jit.Native.Asmjit.VMemInfo.__Internal native, bool skipVTables = false)
+            {
+                return new global::GraphEngine.Jit.Native.Asmjit.VMemInfo(native, skipVTables);
+            }
+
+            private static void* __CopyValue(global::GraphEngine.Jit.Native.Asmjit.VMemInfo.__Internal native)
+            {
+                var ret = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.VMemInfo.__Internal));
+                *(global::GraphEngine.Jit.Native.Asmjit.VMemInfo.__Internal*) ret = native;
+                return ret.ToPointer();
+            }
+
+            private VMemInfo(global::GraphEngine.Jit.Native.Asmjit.VMemInfo.__Internal native, bool skipVTables = false)
+                : this(__CopyValue(native), skipVTables)
+            {
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            protected VMemInfo(void* native, bool skipVTables = false)
+            {
+                if (native == null)
+                    return;
+                __Instance = new global::System.IntPtr(native);
+            }
+
+            public VMemInfo()
+            {
+                __Instance = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.VMemInfo.__Internal));
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            public VMemInfo(global::GraphEngine.Jit.Native.Asmjit.VMemInfo _0)
+            {
+                __Instance = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.VMemInfo.__Internal));
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                *((global::GraphEngine.Jit.Native.Asmjit.VMemInfo.__Internal*) __Instance) = *((global::GraphEngine.Jit.Native.Asmjit.VMemInfo.__Internal*) _0.__Instance);
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+            }
+
+            public virtual void Dispose(bool disposing)
+            {
+                if (__Instance == IntPtr.Zero)
+                    return;
+                global::GraphEngine.Jit.Native.Asmjit.VMemInfo __dummy;
+                NativeToManagedMap.TryRemove(__Instance, out __dummy);
+                if (__ownsNativeInstance)
+                    Marshal.FreeHGlobal(__Instance);
+                __Instance = IntPtr.Zero;
+            }
+        }
+
+        /// <summary>OS utilities.</summary>
+        /// <remarks>
+        /// <para>Virtual Memory</para>
+        /// <para>--------------</para>
+        /// <para>Provides functions to allocate and release virtual memory that is required</para>
+        /// <para>to execute dynamically generated code. If both processor and host OS support</para>
+        /// <para>data-execution-prevention (DEP) then the only way to run machine code is to</para>
+        /// <para>allocate virtual memory that has `OSUtils::kVMExecutable` flag enabled. All</para>
+        /// <para>functions provides by OSUtils use internally platform specific API.</para>
+        /// <para>Benchmarking</para>
+        /// <para>------------</para>
+        /// <para>OSUtils also provide a function `getTickCount()` that can be used for</para>
+        /// <para>benchmarking purposes. It's similar to Windows-only `GetTickCount()`, but</para>
+        /// <para>it's cross-platform and tries to be the most reliable platform specific</para>
+        /// <para>calls to make the result usable.</para>
+        /// </remarks>
+        public unsafe partial class OSUtils : IDisposable
+        {
+            [StructLayout(LayoutKind.Explicit, Size = 0)]
+            public partial struct __Internal
+            {
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="??0OSUtils@asmjit@@QEAA@AEBU01@@Z")]
+                internal static extern global::System.IntPtr cctor(global::System.IntPtr instance, global::System.IntPtr _0);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?allocVirtualMemory@OSUtils@asmjit@@SAPEAX_KPEA_KI@Z")]
+                internal static extern global::System.IntPtr AllocVirtualMemory(ulong size, ulong* allocated, uint flags);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?releaseVirtualMemory@OSUtils@asmjit@@SAIPEAX_K@Z")]
+                internal static extern uint ReleaseVirtualMemory(global::System.IntPtr p, ulong size);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?allocProcessMemory@OSUtils@asmjit@@SAPEAXPEAX_KPEA_KI@Z")]
+                internal static extern global::System.IntPtr AllocProcessMemory(global::System.IntPtr hProcess, ulong size, ulong* allocated, uint flags);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?releaseProcessMemory@OSUtils@asmjit@@SAIPEAX0_K@Z")]
+                internal static extern uint ReleaseProcessMemory(global::System.IntPtr hProcess, global::System.IntPtr p, ulong size);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?getVirtualMemoryInfo@OSUtils@asmjit@@SA?AUVMemInfo@2@XZ")]
+                internal static extern void GetVirtualMemoryInfo(global::System.IntPtr @return);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?getTickCount@OSUtils@asmjit@@SAIXZ")]
+                internal static extern uint GetTickCount();
+            }
+
+            /// <summary>Virtual memory flags.</summary>
+            public enum VMFlags : uint
+            {
+                /// <summary>Virtual memory is writable.</summary>
+                kVMWritable = 0x1,
+                /// <summary>Virtual memory is executable.</summary>
+                kVMExecutable = 0x2
+            }
+
+            public global::System.IntPtr __Instance { get; protected set; }
+
+            protected int __PointerAdjustment;
+            internal static readonly global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.Asmjit.OSUtils> NativeToManagedMap = new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.Asmjit.OSUtils>();
+            protected void*[] __OriginalVTables;
+
+            protected bool __ownsNativeInstance;
+
+            internal static global::GraphEngine.Jit.Native.Asmjit.OSUtils __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+            {
+                return new global::GraphEngine.Jit.Native.Asmjit.OSUtils(native.ToPointer(), skipVTables);
+            }
+
+            internal static global::GraphEngine.Jit.Native.Asmjit.OSUtils __CreateInstance(global::GraphEngine.Jit.Native.Asmjit.OSUtils.__Internal native, bool skipVTables = false)
+            {
+                return new global::GraphEngine.Jit.Native.Asmjit.OSUtils(native, skipVTables);
+            }
+
+            private static void* __CopyValue(global::GraphEngine.Jit.Native.Asmjit.OSUtils.__Internal native)
+            {
+                var ret = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.OSUtils.__Internal));
+                *(global::GraphEngine.Jit.Native.Asmjit.OSUtils.__Internal*) ret = native;
+                return ret.ToPointer();
+            }
+
+            private OSUtils(global::GraphEngine.Jit.Native.Asmjit.OSUtils.__Internal native, bool skipVTables = false)
+                : this(__CopyValue(native), skipVTables)
+            {
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            protected OSUtils(void* native, bool skipVTables = false)
+            {
+                if (native == null)
+                    return;
+                __Instance = new global::System.IntPtr(native);
+            }
+
+            public OSUtils()
+            {
+                __Instance = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.OSUtils.__Internal));
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            public OSUtils(global::GraphEngine.Jit.Native.Asmjit.OSUtils _0)
+            {
+                __Instance = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.OSUtils.__Internal));
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                *((global::GraphEngine.Jit.Native.Asmjit.OSUtils.__Internal*) __Instance) = *((global::GraphEngine.Jit.Native.Asmjit.OSUtils.__Internal*) _0.__Instance);
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+            }
+
+            public virtual void Dispose(bool disposing)
+            {
+                if (__Instance == IntPtr.Zero)
+                    return;
+                global::GraphEngine.Jit.Native.Asmjit.OSUtils __dummy;
+                NativeToManagedMap.TryRemove(__Instance, out __dummy);
+                if (__ownsNativeInstance)
+                    Marshal.FreeHGlobal(__Instance);
+                __Instance = IntPtr.Zero;
+            }
+
+            /// <summary>Allocate virtual memory.</summary>
+            public static global::System.IntPtr AllocVirtualMemory(ulong size, ref ulong allocated, uint flags)
+            {
+                fixed (ulong* __refParamPtr1 = &allocated)
+                {
+                    var __arg1 = __refParamPtr1;
+                    var __ret = __Internal.AllocVirtualMemory(size, __arg1, flags);
+                    return __ret;
+                }
+            }
+
+            /// <summary>Release virtual memory previously allocated by</summary>
+            public static uint ReleaseVirtualMemory(global::System.IntPtr p, ulong size)
+            {
+                var __ret = __Internal.ReleaseVirtualMemory(p, size);
+                return __ret;
+            }
+
+            /// <summary>Allocate virtual memory of `hProcess` (Windows).</summary>
+            public static global::System.IntPtr AllocProcessMemory(global::System.IntPtr hProcess, ulong size, ref ulong allocated, uint flags)
+            {
+                fixed (ulong* __refParamPtr2 = &allocated)
+                {
+                    var __arg2 = __refParamPtr2;
+                    var __ret = __Internal.AllocProcessMemory(hProcess, size, __arg2, flags);
+                    return __ret;
+                }
+            }
+
+            /// <summary>Release virtual memory of `hProcess` (Windows).</summary>
+            public static uint ReleaseProcessMemory(global::System.IntPtr hProcess, global::System.IntPtr p, ulong size)
+            {
+                var __ret = __Internal.ReleaseProcessMemory(hProcess, p, size);
+                return __ret;
+            }
+
+            public static global::GraphEngine.Jit.Native.Asmjit.VMemInfo VirtualMemoryInfo
+            {
+                get
+                {
+                    var __ret = new global::GraphEngine.Jit.Native.Asmjit.VMemInfo.__Internal();
+                    __Internal.GetVirtualMemoryInfo(new IntPtr(&__ret));
+                    return global::GraphEngine.Jit.Native.Asmjit.VMemInfo.__CreateInstance(__ret);
+                }
+            }
+
+            /// <summary>Get the current CPU tick count, used for benchmarking (1ms resolution).</summary>
+            public static uint TickCount
+            {
+                get
+                {
+                    var __ret = __Internal.GetTickCount();
+                    return __ret;
+                }
+            }
+        }
+
+        /// <summary>Lock.</summary>
+        public unsafe partial class Lock : IDisposable
+        {
+            [StructLayout(LayoutKind.Explicit, Size = 40)]
+            public partial struct __Internal
+            {
+                [FieldOffset(0)]
+                internal global::RTL_CRITICAL_SECTION.__Internal _handle;
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="??0Lock@asmjit@@QEAA@XZ")]
+                internal static extern global::System.IntPtr ctor(global::System.IntPtr instance);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="??1Lock@asmjit@@QEAA@XZ")]
+                internal static extern void dtor(global::System.IntPtr instance, int delete);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?lock@Lock@asmjit@@QEAAXXZ")]
+                internal static extern void @lock(global::System.IntPtr instance);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?unlock@Lock@asmjit@@QEAAXXZ")]
+                internal static extern void Unlock(global::System.IntPtr instance);
+            }
+
+            public global::System.IntPtr __Instance { get; protected set; }
+
+            protected int __PointerAdjustment;
+            internal static readonly global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.Asmjit.Lock> NativeToManagedMap = new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.Asmjit.Lock>();
+            protected void*[] __OriginalVTables;
+
+            protected bool __ownsNativeInstance;
+
+            internal static global::GraphEngine.Jit.Native.Asmjit.Lock __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+            {
+                return new global::GraphEngine.Jit.Native.Asmjit.Lock(native.ToPointer(), skipVTables);
+            }
+
+            internal static global::GraphEngine.Jit.Native.Asmjit.Lock __CreateInstance(global::GraphEngine.Jit.Native.Asmjit.Lock.__Internal native, bool skipVTables = false)
+            {
+                return new global::GraphEngine.Jit.Native.Asmjit.Lock(native, skipVTables);
+            }
+
+            private static void* __CopyValue(global::GraphEngine.Jit.Native.Asmjit.Lock.__Internal native)
+            {
+                var ret = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.Lock.__Internal));
+                *(global::GraphEngine.Jit.Native.Asmjit.Lock.__Internal*) ret = native;
+                return ret.ToPointer();
+            }
+
+            private Lock(global::GraphEngine.Jit.Native.Asmjit.Lock.__Internal native, bool skipVTables = false)
+                : this(__CopyValue(native), skipVTables)
+            {
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            protected Lock(void* native, bool skipVTables = false)
+            {
+                if (native == null)
+                    return;
+                __Instance = new global::System.IntPtr(native);
+            }
+
+            /// <summary>Create a new `Lock` instance.</summary>
+            public Lock()
+            {
+                __Instance = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.Lock.__Internal));
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                __Internal.ctor((__Instance + __PointerAdjustment));
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+            }
+
+            public virtual void Dispose(bool disposing)
+            {
+                if (__Instance == IntPtr.Zero)
+                    return;
+                global::GraphEngine.Jit.Native.Asmjit.Lock __dummy;
+                NativeToManagedMap.TryRemove(__Instance, out __dummy);
+                if (disposing)
+                    __Internal.dtor((__Instance + __PointerAdjustment), 0);
+                if (__ownsNativeInstance)
+                    Marshal.FreeHGlobal(__Instance);
+                __Instance = IntPtr.Zero;
+            }
+
+            /// <summary>Lock.</summary>
+            public void @lock()
+            {
+                __Internal.@lock((__Instance + __PointerAdjustment));
+            }
+
+            /// <summary>Unlock.</summary>
+            public void Unlock()
+            {
+                __Internal.Unlock((__Instance + __PointerAdjustment));
+            }
+        }
+
+        /// <summary>Scoped lock.</summary>
+        public unsafe partial class AutoLock : IDisposable
+        {
+            [StructLayout(LayoutKind.Explicit, Size = 8)]
+            public partial struct __Internal
+            {
+                [FieldOffset(0)]
+                internal global::System.IntPtr _target;
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="??0AutoLock@asmjit@@QEAA@AEAULock@1@@Z")]
+                internal static extern global::System.IntPtr ctor(global::System.IntPtr instance, global::System.IntPtr target);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="??1AutoLock@asmjit@@QEAA@XZ")]
+                internal static extern void dtor(global::System.IntPtr instance, int delete);
+            }
+
+            public global::System.IntPtr __Instance { get; protected set; }
+
+            protected int __PointerAdjustment;
+            internal static readonly global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.Asmjit.AutoLock> NativeToManagedMap = new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.Asmjit.AutoLock>();
+            protected void*[] __OriginalVTables;
+
+            protected bool __ownsNativeInstance;
+
+            internal static global::GraphEngine.Jit.Native.Asmjit.AutoLock __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+            {
+                return new global::GraphEngine.Jit.Native.Asmjit.AutoLock(native.ToPointer(), skipVTables);
+            }
+
+            internal static global::GraphEngine.Jit.Native.Asmjit.AutoLock __CreateInstance(global::GraphEngine.Jit.Native.Asmjit.AutoLock.__Internal native, bool skipVTables = false)
+            {
+                return new global::GraphEngine.Jit.Native.Asmjit.AutoLock(native, skipVTables);
+            }
+
+            private static void* __CopyValue(global::GraphEngine.Jit.Native.Asmjit.AutoLock.__Internal native)
+            {
+                var ret = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.AutoLock.__Internal));
+                *(global::GraphEngine.Jit.Native.Asmjit.AutoLock.__Internal*) ret = native;
+                return ret.ToPointer();
+            }
+
+            private AutoLock(global::GraphEngine.Jit.Native.Asmjit.AutoLock.__Internal native, bool skipVTables = false)
+                : this(__CopyValue(native), skipVTables)
+            {
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            protected AutoLock(void* native, bool skipVTables = false)
+            {
+                if (native == null)
+                    return;
+                __Instance = new global::System.IntPtr(native);
+            }
+
+            public AutoLock(global::GraphEngine.Jit.Native.Asmjit.Lock target)
+            {
+                __Instance = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.AutoLock.__Internal));
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                if (ReferenceEquals(target, null))
+                    throw new global::System.ArgumentNullException("target", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = target.__Instance;
+                __Internal.ctor((__Instance + __PointerAdjustment), __arg0);
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+            }
+
+            public virtual void Dispose(bool disposing)
+            {
+                if (__Instance == IntPtr.Zero)
+                    return;
+                global::GraphEngine.Jit.Native.Asmjit.AutoLock __dummy;
+                NativeToManagedMap.TryRemove(__Instance, out __dummy);
+                if (disposing)
+                    __Internal.dtor((__Instance + __PointerAdjustment), 0);
+                if (__ownsNativeInstance)
+                    Marshal.FreeHGlobal(__Instance);
+                __Instance = IntPtr.Zero;
+            }
+        }
+    }
+
+    namespace Asmjit
+    {
+        /// <summary>
+        /// <para>Reference implementation of memory manager that uses `VMemUtil` to allocate</para>
+        /// <para>chunks of virtual memory and bit arrays to manage it.</para>
+        /// </summary>
+        public unsafe partial class VMemMgr : IDisposable
+        {
+            [StructLayout(LayoutKind.Explicit, Size = 128)]
+            public partial struct __Internal
+            {
+                [FieldOffset(0)]
+                internal global::System.IntPtr _hProcess;
+
+                [FieldOffset(8)]
+                internal global::GraphEngine.Jit.Native.Asmjit.Lock.__Internal _lock;
+
+                [FieldOffset(48)]
+                internal ulong _blockSize;
+
+                [FieldOffset(56)]
+                internal ulong _blockDensity;
+
+                [FieldOffset(64)]
+                internal byte _keepVirtualMemory;
+
+                [FieldOffset(72)]
+                internal ulong _allocatedBytes;
+
+                [FieldOffset(80)]
+                internal ulong _usedBytes;
+
+                [FieldOffset(88)]
+                internal global::System.IntPtr _root;
+
+                [FieldOffset(96)]
+                internal global::System.IntPtr _first;
+
+                [FieldOffset(104)]
+                internal global::System.IntPtr _last;
+
+                [FieldOffset(112)]
+                internal global::System.IntPtr _optimal;
+
+                [FieldOffset(120)]
+                internal global::System.IntPtr _permanent;
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="??0VMemMgr@asmjit@@QEAA@PEAX@Z")]
+                internal static extern global::System.IntPtr ctor(global::System.IntPtr instance, global::System.IntPtr hProcess);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="??0VMemMgr@asmjit@@QEAA@AEBV01@@Z")]
+                internal static extern global::System.IntPtr cctor_1(global::System.IntPtr instance, global::System.IntPtr _0);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="??1VMemMgr@asmjit@@QEAA@XZ")]
+                internal static extern void dtor(global::System.IntPtr instance, int delete);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?reset@VMemMgr@asmjit@@QEAAXXZ")]
+                internal static extern void Reset(global::System.IntPtr instance);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?alloc@VMemMgr@asmjit@@QEAAPEAX_KI@Z")]
+                internal static extern global::System.IntPtr Alloc(global::System.IntPtr instance, ulong size, uint type);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?release@VMemMgr@asmjit@@QEAAIPEAX@Z")]
+                internal static extern uint Release(global::System.IntPtr instance, global::System.IntPtr p);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?shrink@VMemMgr@asmjit@@QEAAIPEAX_K@Z")]
+                internal static extern uint Shrink(global::System.IntPtr instance, global::System.IntPtr p, ulong used);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?getKeepVirtualMemory@VMemMgr@asmjit@@QEBA_NXZ")]
+                [return: MarshalAs(UnmanagedType.I1)]
+                internal static extern bool GetKeepVirtualMemory(global::System.IntPtr instance);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?setKeepVirtualMemory@VMemMgr@asmjit@@QEAAX_N@Z")]
+                internal static extern void SetKeepVirtualMemory(global::System.IntPtr instance, bool val);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?getProcessHandle@VMemMgr@asmjit@@QEBAPEAXXZ")]
+                internal static extern global::System.IntPtr GetProcessHandle(global::System.IntPtr instance);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?getAllocatedBytes@VMemMgr@asmjit@@QEBA_KXZ")]
+                internal static extern ulong GetAllocatedBytes(global::System.IntPtr instance);
+
+                [SuppressUnmanagedCodeSecurity]
+                [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="?getUsedBytes@VMemMgr@asmjit@@QEBA_KXZ")]
+                internal static extern ulong GetUsedBytes(global::System.IntPtr instance);
+            }
+
+            /// <summary>Type of virtual memory allocation, see `VMemMgr::alloc()`.</summary>
+            public enum AllocType : uint
+            {
+                /// <summary>Normal memory allocation, has to be freed by `VMemMgr::release()`.</summary>
+                kAllocFreeable = 0,
+                /// <summary>Allocate permanent memory, can't be freed.</summary>
+                kAllocPermanent = 1
+            }
+
+            public unsafe partial class MemNode
+            {
+                [StructLayout(LayoutKind.Explicit, Size = 0)]
+                public partial struct __Internal
+                {
+                }
+
+                public global::System.IntPtr __Instance { get; protected set; }
+
+                protected int __PointerAdjustment;
+                internal static readonly global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.Asmjit.VMemMgr.MemNode> NativeToManagedMap = new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.Asmjit.VMemMgr.MemNode>();
+                protected void*[] __OriginalVTables;
+
+                protected bool __ownsNativeInstance;
+
+                internal static global::GraphEngine.Jit.Native.Asmjit.VMemMgr.MemNode __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+                {
+                    return new global::GraphEngine.Jit.Native.Asmjit.VMemMgr.MemNode(native.ToPointer(), skipVTables);
+                }
+
+                internal static global::GraphEngine.Jit.Native.Asmjit.VMemMgr.MemNode __CreateInstance(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.MemNode.__Internal native, bool skipVTables = false)
+                {
+                    return new global::GraphEngine.Jit.Native.Asmjit.VMemMgr.MemNode(native, skipVTables);
+                }
+
+                private static void* __CopyValue(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.MemNode.__Internal native)
+                {
+                    var ret = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.MemNode.__Internal));
+                    *(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.MemNode.__Internal*) ret = native;
+                    return ret.ToPointer();
+                }
+
+                private MemNode(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.MemNode.__Internal native, bool skipVTables = false)
+                    : this(__CopyValue(native), skipVTables)
+                {
+                    __ownsNativeInstance = true;
+                    NativeToManagedMap[__Instance] = this;
+                }
+
+                protected MemNode(void* native, bool skipVTables = false)
+                {
+                    if (native == null)
+                        return;
+                    __Instance = new global::System.IntPtr(native);
+                }
+            }
+
+            public unsafe partial class PermanentNode
+            {
+                [StructLayout(LayoutKind.Explicit, Size = 0)]
+                public partial struct __Internal
+                {
+                }
+
+                public global::System.IntPtr __Instance { get; protected set; }
+
+                protected int __PointerAdjustment;
+                internal static readonly global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.Asmjit.VMemMgr.PermanentNode> NativeToManagedMap = new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.Asmjit.VMemMgr.PermanentNode>();
+                protected void*[] __OriginalVTables;
+
+                protected bool __ownsNativeInstance;
+
+                internal static global::GraphEngine.Jit.Native.Asmjit.VMemMgr.PermanentNode __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+                {
+                    return new global::GraphEngine.Jit.Native.Asmjit.VMemMgr.PermanentNode(native.ToPointer(), skipVTables);
+                }
+
+                internal static global::GraphEngine.Jit.Native.Asmjit.VMemMgr.PermanentNode __CreateInstance(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.PermanentNode.__Internal native, bool skipVTables = false)
+                {
+                    return new global::GraphEngine.Jit.Native.Asmjit.VMemMgr.PermanentNode(native, skipVTables);
+                }
+
+                private static void* __CopyValue(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.PermanentNode.__Internal native)
+                {
+                    var ret = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.PermanentNode.__Internal));
+                    *(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.PermanentNode.__Internal*) ret = native;
+                    return ret.ToPointer();
+                }
+
+                private PermanentNode(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.PermanentNode.__Internal native, bool skipVTables = false)
+                    : this(__CopyValue(native), skipVTables)
+                {
+                    __ownsNativeInstance = true;
+                    NativeToManagedMap[__Instance] = this;
+                }
+
+                protected PermanentNode(void* native, bool skipVTables = false)
+                {
+                    if (native == null)
+                        return;
+                    __Instance = new global::System.IntPtr(native);
+                }
+            }
+
+            /// <summary>\{</summary>
+            public unsafe partial class RbNode
+            {
+                [StructLayout(LayoutKind.Explicit, Size = 0)]
+                public partial struct __Internal
+                {
+                }
+
+                public global::System.IntPtr __Instance { get; protected set; }
+
+                protected int __PointerAdjustment;
+                internal static readonly global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.Asmjit.VMemMgr.RbNode> NativeToManagedMap = new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.Asmjit.VMemMgr.RbNode>();
+                protected void*[] __OriginalVTables;
+
+                protected bool __ownsNativeInstance;
+
+                internal static global::GraphEngine.Jit.Native.Asmjit.VMemMgr.RbNode __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+                {
+                    return new global::GraphEngine.Jit.Native.Asmjit.VMemMgr.RbNode(native.ToPointer(), skipVTables);
+                }
+
+                internal static global::GraphEngine.Jit.Native.Asmjit.VMemMgr.RbNode __CreateInstance(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.RbNode.__Internal native, bool skipVTables = false)
+                {
+                    return new global::GraphEngine.Jit.Native.Asmjit.VMemMgr.RbNode(native, skipVTables);
+                }
+
+                private static void* __CopyValue(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.RbNode.__Internal native)
+                {
+                    var ret = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.RbNode.__Internal));
+                    *(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.RbNode.__Internal*) ret = native;
+                    return ret.ToPointer();
+                }
+
+                private RbNode(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.RbNode.__Internal native, bool skipVTables = false)
+                    : this(__CopyValue(native), skipVTables)
+                {
+                    __ownsNativeInstance = true;
+                    NativeToManagedMap[__Instance] = this;
+                }
+
+                protected RbNode(void* native, bool skipVTables = false)
+                {
+                    if (native == null)
+                        return;
+                    __Instance = new global::System.IntPtr(native);
+                }
+            }
+
+            public global::System.IntPtr __Instance { get; protected set; }
+
+            protected int __PointerAdjustment;
+            internal static readonly global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.Asmjit.VMemMgr> NativeToManagedMap = new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.Asmjit.VMemMgr>();
+            protected void*[] __OriginalVTables;
+
+            protected bool __ownsNativeInstance;
+
+            internal static global::GraphEngine.Jit.Native.Asmjit.VMemMgr __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+            {
+                return new global::GraphEngine.Jit.Native.Asmjit.VMemMgr(native.ToPointer(), skipVTables);
+            }
+
+            internal static global::GraphEngine.Jit.Native.Asmjit.VMemMgr __CreateInstance(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.__Internal native, bool skipVTables = false)
+            {
+                return new global::GraphEngine.Jit.Native.Asmjit.VMemMgr(native, skipVTables);
+            }
+
+            private static void* __CopyValue(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.__Internal native)
+            {
+                var ret = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.__Internal));
+                *(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.__Internal*) ret = native;
+                return ret.ToPointer();
+            }
+
+            private VMemMgr(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.__Internal native, bool skipVTables = false)
+                : this(__CopyValue(native), skipVTables)
+            {
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            protected VMemMgr(void* native, bool skipVTables = false)
+            {
+                if (native == null)
+                    return;
+                __Instance = new global::System.IntPtr(native);
+            }
+
+            /// <summary>Create a `VMemMgr` instance.</summary>
+            /// <remarks>
+            /// <para>NOTE: When running on Windows it's possible to specify a `hProcess` to</para>
+            /// <para>be used for memory allocation. Using `hProcess` allows to allocate memory</para>
+            /// <para>of a remote process.</para>
+            /// </remarks>
+            public VMemMgr(global::System.IntPtr hProcess)
+            {
+                __Instance = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.__Internal));
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                __Internal.ctor((__Instance + __PointerAdjustment), hProcess);
+            }
+
+            public VMemMgr(global::GraphEngine.Jit.Native.Asmjit.VMemMgr _0)
+            {
+                __Instance = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.Asmjit.VMemMgr.__Internal));
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                *((global::GraphEngine.Jit.Native.Asmjit.VMemMgr.__Internal*) __Instance) = *((global::GraphEngine.Jit.Native.Asmjit.VMemMgr.__Internal*) _0.__Instance);
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+            }
+
+            public virtual void Dispose(bool disposing)
+            {
+                if (__Instance == IntPtr.Zero)
+                    return;
+                global::GraphEngine.Jit.Native.Asmjit.VMemMgr __dummy;
+                NativeToManagedMap.TryRemove(__Instance, out __dummy);
+                if (disposing)
+                    __Internal.dtor((__Instance + __PointerAdjustment), 0);
+                if (__ownsNativeInstance)
+                    Marshal.FreeHGlobal(__Instance);
+                __Instance = IntPtr.Zero;
+            }
+
+            /// <summary>Free all allocated memory.</summary>
+            public void Reset()
+            {
+                __Internal.Reset((__Instance + __PointerAdjustment));
+            }
+
+            /// <summary>Allocate a `size` bytes of virtual memory.</summary>
+            /// <remarks>
+            /// <para>Note that if you are implementing your own virtual memory manager then you</para>
+            /// <para>can quitly ignore type of allocation. This is mainly for AsmJit to memory</para>
+            /// <para>manager that allocated memory will be never freed.</para>
+            /// </remarks>
+            public global::System.IntPtr Alloc(ulong size, uint type)
+            {
+                var __ret = __Internal.Alloc((__Instance + __PointerAdjustment), size, type);
+                return __ret;
+            }
+
+            /// <summary>Free previously allocated memory at a given `address`.</summary>
+            public uint Release(global::System.IntPtr p)
+            {
+                var __ret = __Internal.Release((__Instance + __PointerAdjustment), p);
+                return __ret;
+            }
+
+            /// <summary>Free extra memory allocated with `p`.</summary>
+            public uint Shrink(global::System.IntPtr p, ulong used)
+            {
+                var __ret = __Internal.Shrink((__Instance + __PointerAdjustment), p, used);
+                return __ret;
+            }
+
+            /// <summary>Get whether to keep allocated memory after the `VMemMgr` is destroyed.</summary>
+            /// <remarks>
+            /// <para>Set whether to keep allocated memory after the memory manager is destroyed.</para>
+            /// <para>This method is usable when patching code of remote process. You need to</para>
+            /// <para>allocate process memory, store generated assembler into it and patch the</para>
+            /// <para>method you want to redirect (into your code). This method affects only</para>
+            /// <para>VMemMgr destructor. After destruction all internal</para>
+            /// <para>structures are freed, only the process virtual memory remains.</para>
+            /// <para>NOTE: Memory allocated with kAllocPermanent is always kept.</para>
+            /// </remarks>
+            public bool KeepVirtualMemory
+            {
+                get
+                {
+                    var __ret = __Internal.GetKeepVirtualMemory((__Instance + __PointerAdjustment));
+                    return __ret;
+                }
+
+                set
+                {
+                    __Internal.SetKeepVirtualMemory((__Instance + __PointerAdjustment), value);
+                }
+            }
+
+            /// <summary>Get the handle of the process memory manager is bound to.</summary>
+            public global::System.IntPtr ProcessHandle
+            {
+                get
+                {
+                    var __ret = __Internal.GetProcessHandle((__Instance + __PointerAdjustment));
+                    return __ret;
+                }
+            }
+
+            /// <summary>Get how many bytes are currently allocated.</summary>
+            public ulong AllocatedBytes
+            {
+                get
+                {
+                    var __ret = __Internal.GetAllocatedBytes((__Instance + __PointerAdjustment));
+                    return __ret;
+                }
+            }
+
+            /// <summary>Get how many bytes are currently used.</summary>
+            public ulong UsedBytes
+            {
+                get
+                {
+                    var __ret = __Internal.GetUsedBytes((__Instance + __PointerAdjustment));
+                    return __ret;
+                }
+            }
+        }
+    }
+
     namespace Delegates
     {
         [SuppressUnmanagedCodeSecurity, UnmanagedFunctionPointer(global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
@@ -55980,5 +57781,11 @@ namespace GraphEngine.Jit.Native
 
         [SuppressUnmanagedCodeSecurity, UnmanagedFunctionPointer(global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
         internal unsafe delegate uint Func_uint_IntPtr(global::System.IntPtr _0);
+
+        [SuppressUnmanagedCodeSecurity, UnmanagedFunctionPointer(global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+        internal unsafe delegate uint Func_uint_IntPtr_voidPtrPtr_IntPtr(global::System.IntPtr _0, void** _1, global::System.IntPtr _2);
+
+        [SuppressUnmanagedCodeSecurity, UnmanagedFunctionPointer(global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+        internal unsafe delegate void Action_IntPtr_IntPtr_ulong(global::System.IntPtr _0, global::System.IntPtr _1, ulong _2);
     }
 }

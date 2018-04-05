@@ -39,18 +39,12 @@
 
   <ItemGroup>
     <Compile Include="TypeSystem.fs" />
+    <Compile Include="Verbs.fs" />
     <Compile Include="Runtime.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="..\..\..\..\bin\GraphEngine.Jit.Native.dll">
-      <PackagePath>runtimes\win-x64\native</PackagePath>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>

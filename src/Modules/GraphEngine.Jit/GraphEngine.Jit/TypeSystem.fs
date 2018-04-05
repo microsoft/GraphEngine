@@ -1,5 +1,7 @@
 namespace GraphEngine.Jit.TypeSystem
 
+open System
+
 type TypeCode = 
     NULL
     | U8      | U16     | U32    | U64
@@ -24,9 +26,9 @@ type MemberDescriptor = {
 and TypeDescriptor = {
     TypeName              :  string 
     QualifiedName         :  string
-    ElementType           :  seq<TypeDescriptor>       // non-empty for container types
-    Members               :  seq<MemberDescriptor>     // non-empty for structs
-    TSLAttributes         :  seq<AttributeDescriptor>  // non-empty for cell/field with attributes
+    ElementType           :  seq<TypeDescriptor>          // non-empty for container types
+    Members               :  seq<MemberDescriptor>        // non-empty for structs
+    TSLAttributes         :  seq<AttributeDescriptor>     // non-empty for cell/field with attributes
     TypeCode              :  TypeCode 
 }
 

@@ -68,6 +68,7 @@ namespace GraphEngine.Jit.CppSharpCodegen
             mod.IncludeDirs.Add(asmjitsrcpath);
             //mod.Headers.AddRange(Directory.GetFiles(asmjitsrcpath, "*.h", SearchOption.AllDirectories));
             mod.Headers.Add(c(asmjitsrcpath, "x86", "x86compiler.h"));
+            mod.Headers.Add(c(asmjitsrcpath, "base", "runtime.h"));
             mod.LibraryDirs.Add(asmjitbuildpath);
             mod.Libraries.Add("asmjit.lib");
 

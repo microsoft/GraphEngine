@@ -8,5 +8,30 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Runtime.CompilerServices;
+
 [assembly:InternalsVisibleTo("asmjit")]
 
+public unsafe partial class RTL_CRITICAL_SECTION
+{
+    [StructLayout(LayoutKind.Explicit, Size = 40)]
+    public partial struct __Internal
+    {
+        [FieldOffset(0)]
+        internal global::System.IntPtr DebugInfo;
+
+        [FieldOffset(8)]
+        internal int LockCount;
+
+        [FieldOffset(12)]
+        internal int RecursionCount;
+
+        [FieldOffset(16)]
+        internal global::System.IntPtr OwningThread;
+
+        [FieldOffset(24)]
+        internal global::System.IntPtr LockSemaphore;
+
+        [FieldOffset(32)]
+        internal ulong SpinCount;
+    }
+}
