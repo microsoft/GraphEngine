@@ -58,17 +58,26 @@ namespace GraphEngine.Jit.CppSharpCodegen
 
             var opt = driver.Options;
             opt.GeneratorKind = CppSharp.Generators.GeneratorKind.CSharp;
+            opt.GenerateFunctionTemplates = true;
+            opt.GenerateClassTemplates = true;
+            opt.Quiet = false;
             var mod = opt.AddModule("asmjit");
-            var asmpath = Assembly.GetExecutingAssembly().Location;
+            var asmpath = d(Assembly.GetExecutingAssembly().Location);
+            var projpath = c(asmpath, "..", "..", "..");
+            var solpath = c(projpath, "..");
 
-            var asmjitpath = c(d(asmpath), "..", "..", "..", "..", "asmjit");
+            var asmjitpath = c(solpath, "asmjit");
             var asmjitsrcpath = c(asmjitpath, "src", "asmjit");
             var asmjitbuildpath = c(asmjitpath, "build", "Release");
 
             mod.IncludeDirs.Add(asmjitsrcpath);
             //mod.Headers.AddRange(Directory.GetFiles(asmjitsrcpath, "*.h", SearchOption.AllDirectories));
+            mod.Headers.Add(c(asmjitsrcpath, "x86", "x86assembler.h"));
             mod.Headers.Add(c(asmjitsrcpath, "x86", "x86compiler.h"));
             mod.Headers.Add(c(asmjitsrcpath, "base", "runtime.h"));
+
+            mod.Headers.Add(c(projpath, "Templates.h"));
+
             mod.LibraryDirs.Add(asmjitbuildpath);
             mod.Libraries.Add("asmjit.lib");
 
@@ -76,6 +85,7 @@ namespace GraphEngine.Jit.CppSharpCodegen
             mod.Defines.Add("_WINDOWS");
             mod.Defines.Add("NDEBUG");
             mod.Defines.Add("_UNICODE");
+
             mod.OutputNamespace = "GraphEngine.Jit.Native";
         }
 

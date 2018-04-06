@@ -7,6 +7,8 @@ module TypeSystem =
     open System.Linq
     open Trinity.Storage
     open System.Reflection
+    open GraphEngine.Jit.Native
+    open GraphEngine.Jit.Native.Asmjit
 
 
     type TypeCode = 
@@ -18,6 +20,23 @@ module TypeSystem =
         | CHAR    | STRING | U8STRING
         | LIST
         | STRUCT  | CELL
+
+    let AsmJitTypeMap = 
+        [ (NULL, TypeId.Id.kVoid);
+          (U8, TypeId.Id.kU8);
+          (U16, TypeId.Id.kU16);
+          (U32, TypeId.Id.kU32);
+          (U64 , TypeId.Id.kU64 );
+          (I8, TypeId.Id.kI8      );
+          (I16, TypeId.Id.kI16     );
+          (I32, TypeId.Id.kI32    );
+          (I64, TypeId.Id.kI64 );
+          (F32, TypeId.Id.kF32     );
+          (F64, TypeId.Id.kF64 );
+          (BOOL, TypeId.Id.kU8 );
+          (CHAR, TypeId.Id.kU16    );
+        ]
+        |> Map.ofList
 
     type AttributeDescriptor = {
         Name  : string
@@ -105,3 +124,12 @@ module TypeSystem =
           Members = members
           TSLAttributes = cellDesc.Attributes.Select(MakeAttr)
           TypeCode = TypeCode.CELL }
+
+    let FindTypeId(T: TypeDescriptor) = AsmJitTypeMap.TryFind T.TypeCode |> defaultArg <| TypeId.Id.kUIntPtr
+
+    let MakeFuncSignature (retT: TypeDescriptor) (argsT: list<TypeDescriptor> option) =
+        let ret = new FuncSignature()
+        let idRet = FindTypeId retT
+        let idArgs = defaultArg argsT [] |> Seq.map FindTypeId |> Seq.toArray
+        Helper.Init(ret, CallConv.Id.kIdHost, idRet, idArgs)
+        ret
