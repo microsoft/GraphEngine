@@ -1,6 +1,6 @@
 ﻿namespace GraphEngine.Jit
 
-module Runtime = 
+module JitCompiler = 
     open GraphEngine.Jit.Native.Asmjit
     open GraphEngine.Jit.TypeSystem
     open System.Collections.Generic

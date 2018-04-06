@@ -1,7 +1,6 @@
 ﻿namespace GraphEngine.Jit
 
 open GraphEngine.Jit.TypeSystem
-open GraphEngine.Jit.TypeSystem.Builder
 open System
 
 //  !Note, only BGet should generate code to extract data from Trinity;
