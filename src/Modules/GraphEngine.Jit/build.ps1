@@ -19,9 +19,5 @@ Pop-Location
 
 Invoke-MSBuild -proj "$ASMJIT_BUILD\asmjit.vcxproj" -config Release -platform x64
 
-Write-Output "==========>[x] Blocking issue: https://github.com/baseclass/Contrib.Nuget/issues/35"
-return
-Write-Output "==========> Build with VisualStudio"
-& $DEVENV_COM "$TRINITY_JIT_ROOT\GraphEngine.Jit.sln" /Build "Release|AnyCPU"
-
+# Invoke-MSBuild -proj "$TRINITY_JIT_ROOT\GraphEngine.Jit.CppSharpCodegen\GraphEngine.Jit.CppSharpCodegen.csproj" -config Release -platform x64
 New-Package -proj "$TRINITY_JIT_ROOT\GraphEngine.Jit.sln"

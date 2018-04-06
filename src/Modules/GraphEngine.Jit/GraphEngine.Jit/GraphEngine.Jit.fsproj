@@ -36,7 +36,6 @@
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
-
   <ItemGroup>
     <Compile Include="TypeSystem.fs" />
     <Compile Include="Verbs.fs" />

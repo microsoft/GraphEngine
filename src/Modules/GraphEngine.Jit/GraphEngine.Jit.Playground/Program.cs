@@ -10,9 +10,9 @@ namespace GraphEngine.Jit.Playground
     {
         static void Main(string[] args)
         {
-            IntPtr fn = IntPtr.Zero;
-            Assembly.AsmJit.test(ref fn);
-            Console.WriteLine(Assembly.AsmJit.test2(fn));
+            //IntPtr fn = IntPtr.Zero;
+            //Assembly.AsmJit.test(ref fn);
+            //Console.WriteLine(Assembly.AsmJit.test2(fn));
         }
     }
 }

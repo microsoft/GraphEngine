@@ -12,7 +12,7 @@ type FunctionDescriptor = {
 } with member x.Inputs = match x.Verb with
                             | Get -> seq []
                             | Set -> seq [x.DeclaringType]
-                            | IndexGet -> match x.DeclaringType. with
-                                | ListType _ -> seq [Builder.MakeFromType <| typeof<int32>]
-                            | IndexSet -> seq [Builder.MakeFromType <| typeof<int32>; x.DeclaringType]
+                            //| IndexGet -> match x.DeclaringType with
+                            //    | ListType _ -> seq [Builder.MakeFromType <| typeof<int32>]
+                            //| IndexSet -> seq [Builder.MakeFromType <| typeof<int32>; x.DeclaringType]
 
