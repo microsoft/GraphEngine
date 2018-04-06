@@ -43,6 +43,7 @@ module Builder =
 
     let (|PrimitiveType|ListType|StructType|) (T: Type) = 
         match T with
+        | x when x = typeof<Unit>    -> PrimitiveType NULL
         | x when x = typeof<byte>    -> PrimitiveType U8
         | x when x = typeof<uint16>  -> PrimitiveType U16
         | x when x = typeof<uint32>  -> PrimitiveType U32
@@ -96,6 +97,7 @@ module Builder =
           Type = MakeFromType(fieldDesc.Type)
           Optional = fieldDesc.Optional }
     let Make (cellDesc: ICellDescriptor) = 
+        //cellDesc.Type |> MakeFromType with x.
         let members = Seq.map MakeMember <| cellDesc.GetFieldDescriptors()
         { TypeDescriptor.TypeName = cellDesc.TypeName
           QualifiedName = cellDesc.Type.AssemblyQualifiedName
