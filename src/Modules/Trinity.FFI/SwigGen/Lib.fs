@@ -5,6 +5,7 @@ open System.IO
 
 module Operator = 
     let (->>) (key: string) (value: 'T) = (key, value.ToString())
+    let (>>>) (head: 'T) (tail: seq<'T>) =  Seq.append (head |> Seq.singleton) tail
 
 module PString = 
     (** python like string utilities **)
@@ -18,12 +19,14 @@ module PString =
         | Chr of char
         | Str of string
     
-    let str'Concat (xs : List<'T>) = String.Join("", xs)
+    let str'concat (xs : seq<'T>) = String.Join("", xs)
+
+    let str'concatBy (sep: string) (xs: seq<'T>) = String.Join(sep, xs)
     
-    let rev'concat (xs : List<'T>) = 
+    let rev'concat (xs : seq<'T>) = 
         xs
-        |> List.rev
-        |> str'Concat
+        |> Seq.rev
+        |> str'concat
     
     let rec format'root (template : List<char>) (result : List<string>) (kvpairs : Map<string, string>) 
             (cache : List<char>) : string = 
