@@ -6,6 +6,8 @@ open System.IO
 module Operator = 
     let (->>) (key: string) (value: 'T) = (key, value.ToString())
     let (>>>) (head: 'T) (tail: seq<'T>) =  Seq.append (head |> Seq.singleton) tail
+    let (<^.^^>) (left: 'T) (right: 'G) = (left, right)
+    let (<^^.^>) (right: 'T) (left: 'G) = (left, right)
 
 module PString = 
     (** python like string utilities **)
