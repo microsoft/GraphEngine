@@ -57737,6 +57737,102 @@ namespace GraphEngine.Jit.Native
         }
     }
 
+    public unsafe partial class TypeIdSpecializer : IDisposable
+    {
+        [StructLayout(LayoutKind.Explicit, Size = 0)]
+        public partial struct __Internal
+        {
+            [SuppressUnmanagedCodeSecurity]
+            [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                EntryPoint="??0TypeIdSpecializer@@QEAA@AEBV0@@Z")]
+            internal static extern global::System.IntPtr cctor(global::System.IntPtr instance, global::System.IntPtr _0);
+
+            [SuppressUnmanagedCodeSecurity]
+            [DllImport("asmjit", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                EntryPoint="?LPVOID@TypeIdSpecializer@@SAHXZ")]
+            internal static extern int LPVOID();
+        }
+
+        public global::System.IntPtr __Instance { get; protected set; }
+
+        protected int __PointerAdjustment;
+        internal static readonly global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.TypeIdSpecializer> NativeToManagedMap = new global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, global::GraphEngine.Jit.Native.TypeIdSpecializer>();
+        protected void*[] __OriginalVTables;
+
+        protected bool __ownsNativeInstance;
+
+        internal static global::GraphEngine.Jit.Native.TypeIdSpecializer __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+        {
+            return new global::GraphEngine.Jit.Native.TypeIdSpecializer(native.ToPointer(), skipVTables);
+        }
+
+        internal static global::GraphEngine.Jit.Native.TypeIdSpecializer __CreateInstance(global::GraphEngine.Jit.Native.TypeIdSpecializer.__Internal native, bool skipVTables = false)
+        {
+            return new global::GraphEngine.Jit.Native.TypeIdSpecializer(native, skipVTables);
+        }
+
+        private static void* __CopyValue(global::GraphEngine.Jit.Native.TypeIdSpecializer.__Internal native)
+        {
+            var ret = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.TypeIdSpecializer.__Internal));
+            *(global::GraphEngine.Jit.Native.TypeIdSpecializer.__Internal*) ret = native;
+            return ret.ToPointer();
+        }
+
+        private TypeIdSpecializer(global::GraphEngine.Jit.Native.TypeIdSpecializer.__Internal native, bool skipVTables = false)
+            : this(__CopyValue(native), skipVTables)
+        {
+            __ownsNativeInstance = true;
+            NativeToManagedMap[__Instance] = this;
+        }
+
+        protected TypeIdSpecializer(void* native, bool skipVTables = false)
+        {
+            if (native == null)
+                return;
+            __Instance = new global::System.IntPtr(native);
+        }
+
+        public TypeIdSpecializer()
+        {
+            __Instance = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.TypeIdSpecializer.__Internal));
+            __ownsNativeInstance = true;
+            NativeToManagedMap[__Instance] = this;
+        }
+
+        public TypeIdSpecializer(global::GraphEngine.Jit.Native.TypeIdSpecializer _0)
+        {
+            __Instance = Marshal.AllocHGlobal(sizeof(global::GraphEngine.Jit.Native.TypeIdSpecializer.__Internal));
+            __ownsNativeInstance = true;
+            NativeToManagedMap[__Instance] = this;
+            *((global::GraphEngine.Jit.Native.TypeIdSpecializer.__Internal*) __Instance) = *((global::GraphEngine.Jit.Native.TypeIdSpecializer.__Internal*) _0.__Instance);
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+        }
+
+        public virtual void Dispose(bool disposing)
+        {
+            if (__Instance == IntPtr.Zero)
+                return;
+            global::GraphEngine.Jit.Native.TypeIdSpecializer __dummy;
+            NativeToManagedMap.TryRemove(__Instance, out __dummy);
+            if (__ownsNativeInstance)
+                Marshal.FreeHGlobal(__Instance);
+            __Instance = IntPtr.Zero;
+        }
+
+        public static int LPVOID
+        {
+            get
+            {
+                var __ret = __Internal.LPVOID();
+                return __ret;
+            }
+        }
+    }
+
     namespace Delegates
     {
         [SuppressUnmanagedCodeSecurity, UnmanagedFunctionPointer(global::System.Runtime.InteropServices.CallingConvention.Cdecl)]

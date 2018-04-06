@@ -101,3 +101,4 @@ module VerbTraits =
         | Enum  EFree          -> tUnit
         | Enum  ENext          -> tBool
         | Enum  ECurrent       -> tObject // XXX strong type lost, consider add enumerator to TypeDescriptor
+
