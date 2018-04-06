@@ -22,7 +22,9 @@
 
   <ItemGroup>
     <PackageReference Include="CppSharp" Version="0.8.19" />
-    <PackageReference Include="Baseclass.Contrib.Nuget.Output" Version="2.4.3" />
+    <PackageReference Include="Baseclass.Contrib.Nuget.Output" Version="2.4.3">
+      <IncludeAssets>Compile</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>
