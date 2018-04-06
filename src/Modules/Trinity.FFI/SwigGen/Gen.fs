@@ -10,6 +10,17 @@ module TGEN =
     open SwigGen.Operator
     open GraphEngine.Jit.TypeSystem
 
+    type HashSet<'T> = System.Collections.Generic.HashSet<'T>
+    type Dict<'K, 'V> = System.Collections.Generic.Dictionary<'K, 'V>
+
+    let make'operations (typeCode: TypeCode) : seq<string> =
+        /// TODO: code-gen
+        match typeCode with 
+            | LIST   -> 
+                    seq ["LSet"; "LGet"; "LContains"; "LCount"]
+            | STRUCT ->
+                    seq ["SGet"; "SSet"]
+
 
     let manglingChar = '_'
             
@@ -17,7 +28,7 @@ module TGEN =
 
     let MakeName (typeDesc :TypeDescriptor): string = raise (NotImplementedException())
     
-    let make'operations (typeDesc: TypeDescriptor) : seq<string> = raise (NotImplementedException())
+    
     
     let make'attribute'method  (memberDesc: MemberDescriptor) : string = raise (NotImplementedException()) 
     
@@ -43,13 +54,23 @@ module TGEN =
                  -> anyType >>> TypeInfer (Seq.head elemType)
             | {TypeCode=CELL; Members=members}
             | {TypeCode=STRUCT; Members=members} 
-                 -> 
-                    members
+                 -> members
                     |> Seq.map (fun field -> field.Type)
                     |> fun tail -> anyType >>> tail
             | _  -> seq []
     
+    type BuildSpec = {
+        Dependencies: TypeDescriptor[];
+        SrcCode     : string -> string
+    }
+
+    let GenerateSrcCode(schema: IStorageSchema): seq<BuildSpec> =
+        schema.CellDescriptors
         
+
+        
+        
+    
     
     let GenerateSrcCode(schema : IStorageSchema, 
                         generatedTypeNames: System.Collections.Generic.HashSet<string>) : string = 
