@@ -10,7 +10,6 @@
     <OutputTypeEx>library</OutputTypeEx>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <OutputPath>..\..\..\..\bin</OutputPath>
-    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,5 +25,27 @@
       <IncludeAssets>Compile</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+
+  <!-- NuGet package metadata -->
+  <PropertyGroup>
+    <Authors>Microsoft Graph Engine Team</Authors>
+    <Description>GraphEngine Jit code generator native assembly.</Description>
+    <Copyright>Copyright 2018</Copyright>
+    <Company>Microsoft Corporation</Company>
+
+    <Version>2.0.9328</Version>
+    <AssemblyVersion>2.0.9328.0</AssemblyVersion>
+    <FileVersion>2.0.9328.0</FileVersion>
+    <PackageVersion>2.0.9328</PackageVersion>
+
+    <PackageId>GraphEngine.Jit.Native</PackageId>
+    <PackageTags>Graph Engine Trinity Core Runtime Jit Compiler Native</PackageTags>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
+    <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/Microsoft/GraphEngine</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
 
 </Project>
