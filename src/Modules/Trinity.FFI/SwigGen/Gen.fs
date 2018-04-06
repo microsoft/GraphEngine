@@ -8,7 +8,6 @@ module TGEN =
     open Trinity.Storage
     open SwigGen.Command
     open SwigGen.Operator
-    open GraphEngine.Jit.TypeSystem
 
 
     let manglingChar = '_'
@@ -64,7 +63,7 @@ module TGEN =
                 true
 
         schema.CellDescriptors
-                |> Seq.map (Builder.Make >> TypeInfer)
+                |> Seq.map (Make >> TypeInfer)
                 |> Seq.collect (Seq.filter (fun t -> generatedTypeNames.Contains t.TypeName))
                 |> Seq.map Transpile
                 |> PString.str'concatBy "\n"

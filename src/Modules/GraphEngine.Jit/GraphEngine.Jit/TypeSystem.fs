@@ -1,43 +1,43 @@
-namespace GraphEngine.Jit.TypeSystem
+namespace GraphEngine.Jit
 
-open System
+module TypeSystem = 
 
-type TypeCode = 
-    NULL
-    | U8      | U16     | U32    | U64
-    | I8      | I16     | I32    | I64
-    | F32     | F64
-    | BOOL 
-    | CHAR    | STRING | U8STRING
-    | LIST
-    | STRUCT  | CELL
-
-type AttributeDescriptor = {
-    Name  : string
-    Value : string
-}
-
-type MemberDescriptor = {
-    Name                  : string
-    Type                  : TypeDescriptor 
-    Optional              : bool 
-}
-
-and TypeDescriptor = {
-    TypeName              :  string 
-    QualifiedName         :  string
-    ElementType           :  seq<TypeDescriptor>          // non-empty for container types
-    Members               :  seq<MemberDescriptor>        // non-empty for structs
-    TSLAttributes         :  seq<AttributeDescriptor>     // non-empty for cell/field with attributes
-    TypeCode              :  TypeCode 
-}
-
-module Builder = 
+    open System
     open System.Collections.Generic
     open System.Linq
     open Trinity.Storage
-    open System
     open System.Reflection
+
+
+    type TypeCode = 
+        NULL
+        | U8      | U16     | U32    | U64
+        | I8      | I16     | I32    | I64
+        | F32     | F64
+        | BOOL 
+        | CHAR    | STRING | U8STRING
+        | LIST
+        | STRUCT  | CELL
+
+    type AttributeDescriptor = {
+        Name  : string
+        Value : string
+    }
+
+    type MemberDescriptor = {
+        Name                  : string
+        Type                  : TypeDescriptor 
+        Optional              : bool 
+    }
+
+    and TypeDescriptor = {
+        TypeName              :  string 
+        QualifiedName         :  string
+        ElementType           :  seq<TypeDescriptor>          // non-empty for container types
+        Members               :  seq<MemberDescriptor>        // non-empty for structs
+        TSLAttributes         :  seq<AttributeDescriptor>     // non-empty for cell/field with attributes
+        TypeCode              :  TypeCode 
+    }
 
     let IsStruct (T: Type) = T.IsAnsiClass && not T.IsClass
 

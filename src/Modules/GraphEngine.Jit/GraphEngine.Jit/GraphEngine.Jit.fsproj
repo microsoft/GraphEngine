@@ -39,7 +39,7 @@
   <ItemGroup>
     <Compile Include="TypeSystem.fs" />
     <Compile Include="Verbs.fs" />
-    <Compile Include="Runtime.fs" />
+    <Compile Include="JitCompiler.fs" />
   </ItemGroup>
 
   <ItemGroup>

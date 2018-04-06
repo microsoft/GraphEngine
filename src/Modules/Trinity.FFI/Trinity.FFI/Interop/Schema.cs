@@ -1,4 +1,5 @@
-﻿using GraphEngine.Jit.TypeSystem;
+﻿using GraphEngine.Jit;
+using GraphEngine.Jit.Native;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Trinity.Core.Lib;
 using Trinity.Storage;
+using static GraphEngine.Jit.TypeSystem;
 
 namespace Trinity.FFI.Interop
 {
@@ -38,7 +40,7 @@ namespace Trinity.FFI.Interop
         internal int TypeCode;
 
         internal static NativeTypeDescriptor Make(ICellDescriptor desc)
-            => Builder.Make(desc).ToNative();
+            => GraphEngine.Jit.TypeSystem.Make(desc).ToNative();
     }
 
     internal static unsafe class InterpExtension
