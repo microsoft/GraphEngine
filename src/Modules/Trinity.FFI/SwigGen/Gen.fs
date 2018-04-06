@@ -8,65 +8,53 @@ module TGEN =
     open Trinity.Storage
     open SwigGen.Command
     open SwigGen.Operator
-    let manglingChar = "蛤"
+    open GraphEngine.Jit.TypeSystem
+
+
+    let manglingChar = '_'
             
     let mangling (name: string) = name.Replace(manglingChar, manglingChar + manglingChar)
 
-    let MakeName (typeDesc :TypeDescriptor): string = 
-        raise (NotImplementedException())
-
-    let makeMethod ()
-
-        
-    let Definition'Struct (struct': TypeDescriptor): string = 
-        PString.format "
-void {TypeName}{manglingChar}{FieldName}{manglingChar}Get_{Attrs}(void* struct_ptr, void* &data){{
-        
-        
-}}
+    let MakeName (typeDesc :TypeDescriptor): string = raise (NotImplementedException())
     
+    let make'operations (typeDesc: TypeDescriptor) : seq<string> = raise (NotImplementedException())
+    
+    let make'attribute'method  (memberDesc: MemberDescriptor) : string = raise (NotImplementedException()) 
+    
+    let make'list'method (typeDesc: TypeDescriptor) : string = raise (NotImplementedException())
+        
+    let define'structOrCell = Seq.collect make'attribute'method >> PString.str'concatBy "\n"
 
-"            (
-                Map [ 
-                    
-                    "manglingChar" ->> manglingChar
-                    "1" ->> "2"
-                ])
-    
-    let Definition'CellType(cellType': TypeDescriptor): string = 
-        raise (NotImplementedException(""))
-    
-    let Definition'GenericList(list': TypeDescriptor): string = 
-        raise (NotImplementedException(""))
+    let define'genericList = Seq.head >> make'list'method
+
     
     let Transpile(anyType : TypeDescriptor) : string = 
-    
         match anyType.TypeCode with
-            | STRUCT -> Definition'Struct anyType
-            | LIST   -> Definition'GenericList anyType
-            | CELL   -> Definition'CellType anyType
+            | STRUCT
+            | CELL -> define'structOrCell anyType.Members
+            | LIST   -> define'genericList anyType.ElementType
             | _      -> failwith "unexpected type"
         
     
-    let TypeInfer(anyType: TypeDescriptor): List<TypeDescriptor> = 
+    let rec TypeInfer(anyType: TypeDescriptor): seq<TypeDescriptor> = 
     (** inference out the descriptors of struct types and generic list types in a cell descriptor.**)
         match anyType with 
             | {TypeCode=LIST; ElementType = elemType} 
-                 -> raise (NotImplementedException())
+                 -> anyType >>> TypeInfer (Seq.head elemType)
             | {TypeCode=CELL; Members=members}
             | {TypeCode=STRUCT; Members=members} 
                  -> 
                     members
-                    |> List.ofSeq
-                    |> List.map (fun field -> field.Type)
-                    |> fun tail -> anyType::tail
-            | _  -> failwith "unexpected type"
+                    |> Seq.map (fun field -> field.Type)
+                    |> fun tail -> anyType >>> tail
+            | _  -> seq []
     
         
     
     let GenerateSrcCode(schema : IStorageSchema, 
                         generatedTypeNames: System.Collections.Generic.HashSet<string>) : string = 
         let partial f x y = f (x, y)
+
         let filterAndUpdate (typeDesc: TypeDescriptor) = 
             if typeDesc.TypeName |> generatedTypeNames.Contains
             then 
@@ -76,10 +64,9 @@ void {TypeName}{manglingChar}{FieldName}{manglingChar}Get_{Attrs}(void* struct_p
                 true
 
         schema.CellDescriptors
-                |> List.ofSeq
-                |> List.map (Builder.Make >> TypeInfer)
-                |> List.collect (List.filter (fun t -> generatedTypeNames.Contains t.TypeName))
-                |> List.map Transpile
-                |> partial System.String.Join "\n"
+                |> Seq.map (Builder.Make >> TypeInfer)
+                |> Seq.collect (Seq.filter (fun t -> generatedTypeNames.Contains t.TypeName))
+                |> Seq.map Transpile
+                |> PString.str'concatBy "\n"
 
    
