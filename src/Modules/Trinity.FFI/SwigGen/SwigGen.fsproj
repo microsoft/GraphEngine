@@ -19,9 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Lib.fs" />
     <Content Include="packages.config" />
     <Compile Include="Gen.fs" />
+    <Compile Include="MethodExport.fs" />
   </ItemGroup>
 </Project>
