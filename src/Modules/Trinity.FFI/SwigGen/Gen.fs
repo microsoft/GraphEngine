@@ -66,20 +66,16 @@ module TGEN =
         raise (NotImplementedException())
         (** 
           maybe implemented as:
-          | List   -> seq [ LGet; LSet; LCount; LContains ]
+          | LIST   -> seq [ LGet; LSet; LCount; LContains ]
+          | CELL
           | Struct -> seq [ SGet; SSet  ]
           | _      -> seq [ BGet; BSet  ]
-    
-        what's accurately a `Verb`?
-
-        LSet means set values on List or set List values?
-        SSet means set values on Struct or set Struct values?
 
         **)
 
     let render'swig (verb: Verb): SwigCode = raise (NotImplementedException())
         (**
-        match ext with "swig"
+        match verb with
         | LSet      -> SwigTemplates.ListSet
         | LGet      -> SwigTemplates.ListGet
         | LCount    -> SwigTemplates.ListCount
@@ -93,38 +89,17 @@ module TGEN =
         | _         -> failwiths "NotImplemented"
         **)
 
-    let make'operations' (typeDesc: TypeDescriptor) : seq<Verb * SwigCode> = 
+    let make'operations (typeCode: TypeSystem.TypeCode) : seq<Verb * SwigCode> = 
         (**
         a Verb is for asmjit to make jit method.
         a CodeGenerator can makes the swig codes by using a function pointer address.
         **)
-        typeDesc.TypeCode
+        typeCode
         |> make'verbs
         |> fun verbs ->
                 verbs
                 |> Seq.map render'swig
                 |> Seq.zip verbs
-        
-
-    let make'operations (typeCode) : seq<string> = failwith "NotImplemented"
-        (** 
-            constant function, also called by constant 
-        **)
-        (**
-        TODO:
-            This one could be incorrect because I might mix up subjects with objects.
-       
-        **)
-
-        //match typeCode with 
-        //| LIST   -> 
-        //        seq [SwigTemplates.ListGet; 
-        //             SwigTemplates.ListSet; 
-        //             SwigTemplates.Contains; 
-        //             SwigTemplates.Count]
-        //| _     ->
-        //        seq [SwigTemplates.FieldGet;
-        //             SwigTemplates.FieldSet]
    
 
     let make'arg'type(typeDesc: TypeDescriptor) : string = 
@@ -132,26 +107,29 @@ module TGEN =
         | STRUCT
         | CELL // maybe a cell can be used as a field one day
         | LIST -> "void*"
-        | _    -> typeDesc.TypeName.ToLower()
+
+        | _    -> typeDesc.TypeName.ToLower() // primitive type
     
     let rec make'name (desc: TypeDescriptor) = 
             match desc with
-            | {TypeCode=LIST; ElementType=elemType} -> 
+            | {TypeCode=LIST; ElementType=elemType}  -> 
                     let elemTypeName = elemType |> Seq.head |> make'name
                     PString.format "List{_}{elem}" (Map["_" ->> m_code; "elem" ->> elemTypeName])
-            | {TypeCode=CELL}                       ->
-                     sprintf "Cell%c" m_code 
-            | {TypeCode=STRUCT}                     ->
-                     sprintf "Struct%c" m_code
-            | _                                     ->
-                    desc.TypeName.ToLower()
+            | {TypeCode=CELL; TypeName=cellName}     ->
+                    PString.format "Cell{_}{cellName}" (Map ["_" ->> m_code; "cellName" ->> mangling cellName])  
+            | {TypeCode=STRUCT; TypeName=structName} ->
+                     PString.format "Struct{_}{structName}" (Map["_" ->> m_code; "structName" ->> mangling structName])
+            | _                                      ->
+                    desc.TypeName.ToLower() // primitive type
     
-    let define'struct'method  (struct': TypeDescriptor) : seq<Verb * CodeGenerator> = seq {
+    let define'struct'method  (struct': TypeDescriptor) : seq<FunctionDescriptor * CodeGenerator> = seq {
         (** a cell is a struct, too **)
         let rootName = make'name struct'
+        let operations = struct'.TypeCode |> make'operations |> Seq.toArray
         for eachMember in struct'.Members do
             let fieldName = mangling eachMember.Name
-            for verb, swigCode in make'operations' struct' do
+            for verb, swigCode in operations do
+                let fnDesc = {DeclaringType=eachMember.Type; Verb=verb}
                 let codeGenerator (funcPtrAddr: string)  = 
                      PString.format swigCode (
                         Map[
@@ -161,21 +139,22 @@ module TGEN =
                             "funcPtrAddr" ->> funcPtrAddr;
                             "fieldType"   ->> (make'arg'type eachMember.Type)
                         ])
-                yield (verb, codeGenerator)
+                yield (fnDesc, codeGenerator)
         }
     
-    let define'list'method (list': TypeDescriptor) : seq<Verb * CodeGenerator> = seq{
-        let elem = list'.ElementType |> Seq.head
-        for verb, swigCode in make'operations' list' do
+    let define'list'method (list': TypeDescriptor) : seq<FunctionDescriptor * CodeGenerator> = seq{
+        let elemType = Seq.head list'.ElementType
+        for verb, swigCode in make'operations list'.TypeCode do
+            let fnDesc = {DeclaringType=elemType; Verb=verb}
             let codeGenerator (funcPtrAddr: string) =
                 PString.format swigCode (
                     Map[
                         "_"           ->> m_code;
-                        "elemName"    ->> (make'name elem);
+                        "ListType"    ->> (make'name list');
                         "funcPtrAddr" ->> funcPtrAddr;
-                        "elemType"    ->> (make'arg'type elem)
+                        "elemType"    ->> (elemType |> make'arg'type)
                     ])
-            yield (verb, codeGenerator)
+            yield (fnDesc, codeGenerator)
         }
     
     let define'method = function 
@@ -185,7 +164,7 @@ module TGEN =
     let rec TypeInfer(anyType: TypeDescriptor): seq<TypeDescriptor> = 
     (** inference out the descriptors of struct types and generic list types in a cell descriptor.**)
         match anyType with 
-            | {TypeCode=LIST; ElementType = elemType}  -> 
+            | {TypeCode=LIST; ElementType = elemType} -> 
                     anyType >>> TypeInfer (Seq.head elemType)
 
             | {TypeCode=CELL; Members=members}
@@ -197,7 +176,7 @@ module TGEN =
                     Seq.empty
    
 
-    let GenerateSrcCode(schema: IStorageSchema): seq<TypeDescriptor * array<Verb * CodeGenerator>> =
+    let GenerateSrcCode(schema: IStorageSchema): seq<TypeDescriptor * seq<FunctionDescriptor * CodeGenerator>> =
         schema.CellDescriptors
         |> Seq.map Make
         |> Seq.collect TypeInfer
@@ -205,5 +184,4 @@ module TGEN =
         |> Seq.map (fun typeDesc ->
                 typeDesc
                 |> define'method
-                |> Seq.toArray
-                |> fun methods -> (typeDesc, methods))
+                |> fun methods   -> (typeDesc, methods))
