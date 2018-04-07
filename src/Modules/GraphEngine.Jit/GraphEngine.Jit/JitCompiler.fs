@@ -28,7 +28,7 @@ module JitCompiler =
 
     let CompileFunction (f: FunctionDescriptor): NativeFunction =
         match f.Verb with
-        | Basic BGet -> CompileBGet f
+        | BGet -> CompileBGet f
         | _ -> failwith "NotImplemented"
 
     let Compile (verbs: seq<FunctionDescriptor>)  = 
