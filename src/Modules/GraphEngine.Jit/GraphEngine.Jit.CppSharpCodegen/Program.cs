@@ -13,9 +13,6 @@ namespace GraphEngine.Jit.CppSharpCodegen
 {
     class AsmJit : ILibrary
     {
-        //private RenameDuplicatedPass m_renameFieldPass;
-
-
         public void Postprocess(Driver driver, ASTContext ctx)
         {
         }
@@ -30,6 +27,10 @@ namespace GraphEngine.Jit.CppSharpCodegen
             passes_removed += driver.Context.TranslationUnitPasses.Passes.RemoveAll(_ => _ is CheckStaticClass);
             //Duplicated conversion operators
             passes_removed += driver.Context.TranslationUnitPasses.Passes.RemoveAll(_ => _ is ConstructorToConversionOperatorPass);
+            //Remove case modifications..
+            passes_removed += driver.Context.TranslationUnitPasses.Passes.RemoveAll(_ => _ is CaseRenamePass);
+            //Remove case modifications..
+            passes_removed += driver.Context.TranslationUnitPasses.Passes.RemoveAll(_ => _ is RenamePass);
 
             Console.WriteLine($"Removed passes: {passes_removed}.");
 
@@ -46,13 +47,20 @@ namespace GraphEngine.Jit.CppSharpCodegen
             var c = ctx.FindClass("X86Compiler").First();
             c.FindOperator(CXXOperatorKind.Conversion).Last().Ignore = true;
 
-            //XXX turn off bindings for X86InstDB
+            //Turn off bindings for X86InstDB
             var db = ctx.FindClass("X86InstDB").First();
             db.Ignore = true;
+
+            //Turn off bindings for explicit X86Emitter
+            var emitter = ctx.FindClass("X86Emitter").First();
+            emitter.Ignore = true;
+
         }
 
         public void Setup(Driver driver)
         {
+            Diagnostics.Level = DiagnosticKind.Message;
+
             string c(params string[] p) => Path.Combine(p);
             string d(string p) => Path.GetDirectoryName(p);
 
@@ -72,11 +80,12 @@ namespace GraphEngine.Jit.CppSharpCodegen
 
             mod.IncludeDirs.Add(asmjitsrcpath);
             //mod.Headers.AddRange(Directory.GetFiles(asmjitsrcpath, "*.h", SearchOption.AllDirectories));
-            mod.Headers.Add(c(asmjitsrcpath, "x86", "x86assembler.h"));
+            //mod.Headers.Add(c(asmjitsrcpath, "x86", "x86assembler.h"));
+            //mod.Headers.Add(c(asmjitsrcpath, "x86", "x86emitter.h"));
             mod.Headers.Add(c(asmjitsrcpath, "x86", "x86compiler.h"));
             mod.Headers.Add(c(asmjitsrcpath, "base", "runtime.h"));
 
-            mod.Headers.Add(c(projpath, "Templates.h"));
+            //mod.Headers.Add(c(projpath, "Templates.h"));
 
             mod.LibraryDirs.Add(asmjitbuildpath);
             mod.Libraries.Add("asmjit.lib");
@@ -91,8 +100,6 @@ namespace GraphEngine.Jit.CppSharpCodegen
 
         public void SetupPasses(Driver driver)
         {
-            //m_renameFieldPass = new RenameDuplicatedPass();
-            //driver.AddTranslationUnitPass(m_renameFieldPass);
         }
     }
 
@@ -103,8 +110,15 @@ namespace GraphEngine.Jit.CppSharpCodegen
             File.Delete("asmjit.cs");
             File.Delete("Std.cs");
             ConsoleDriver.Run(new AsmJit());
+            PatchAsmjit();
             File.Copy("asmjit.cs", "../../../../GraphEngine.Jit.Native/asmjit.cs", overwrite: true);
             File.Copy("Std.cs", "../../../../GraphEngine.Jit.Native/Std.cs", overwrite: true);
+        }
+
+        private static void PatchAsmjit()
+        {
+            var patched_src = File.ReadAllText("asmjit.cs").Replace("protected static global::GraphEngine.Jit.Native.asmjit.X86Compiler _addOptions", "public static global::GraphEngine.Jit.Native.asmjit.X86Compiler _addOptions");
+            File.WriteAllText("asmjit.cs", patched_src);
         }
     }
 }

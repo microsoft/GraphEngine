@@ -1,4 +1,4 @@
-﻿using GraphEngine.Jit.Native.Asmjit;
+﻿using GraphEngine.Jit.Native.asmjit;
 using System;
 using System.Linq;
 
@@ -9,7 +9,7 @@ namespace GraphEngine.Jit.Native
         public static unsafe IntPtr Add(this JitRuntime cc, CodeHolder code)
         {
             void* callsite = null;
-            if(0 != cc.Add(&callsite, code))
+            if(0 != cc._add(&callsite, code))
             {
                 throw new AsmJitException();
             }
@@ -21,7 +21,7 @@ namespace GraphEngine.Jit.Native
             var buf = argsid.Select(x => (byte)x).ToArray();
             fixed (byte* p = buf)
             {
-                fs.Init((uint)ccid, (byte)retid, p, (uint)buf.Length);
+                fs.init((uint)ccid, (byte)retid, p, (uint)buf.Length);
             }
         }
     }

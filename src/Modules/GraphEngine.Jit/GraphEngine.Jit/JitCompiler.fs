@@ -1,7 +1,7 @@
 ﻿namespace GraphEngine.Jit
 
 module JitCompiler = 
-    open GraphEngine.Jit.Native.Asmjit
+    open GraphEngine.Jit.Native.asmjit
     open GraphEngine.Jit.TypeSystem
     open GraphEngine.Jit.VerbTraits
     open System.Collections.Generic
@@ -15,12 +15,12 @@ module JitCompiler =
 
     let CompileBGet (f: FunctionDescriptor) =
         let cbuf = new CodeHolder()
-        cbuf.Init(s_rt.CodeInfo) |> ignore
+        cbuf.init(s_rt.codeInfo) |> ignore
         use cc = new X86Compiler(cbuf)
-        use func = MakeFuncSignature (Output f) None |> cc.AddFunc
+        use func = MakeFuncSignature (Output f) None |> cc.addFunc
 
-        let p = cc.NewUIntPtr()
-        cc.SetArg(0u, p) |> ignore
+        let p = cc.newUIntPtr()
+        cc.setArg(0u, p) |> ignore
 
         { NativeFunction.CallSite = GraphEngine.Jit.Native.Helper.Add(s_rt, cbuf)
           Descriptor = seq [ f ] 

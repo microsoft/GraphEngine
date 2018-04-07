@@ -8,7 +8,7 @@ module TypeSystem =
     open Trinity.Storage
     open System.Reflection
     open GraphEngine.Jit.Native
-    open GraphEngine.Jit.Native.Asmjit
+    open GraphEngine.Jit.Native.asmjit
 
 
     type TypeCode = 

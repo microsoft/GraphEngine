@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 
 [assembly:InternalsVisibleTo("asmjit")]
 
-public unsafe partial class RTL_CRITICAL_SECTION
+public unsafe partial class _RTL_CRITICAL_SECTION
 {
     [StructLayout(LayoutKind.Explicit, Size = 40)]
     public partial struct __Internal
