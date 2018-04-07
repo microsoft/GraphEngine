@@ -23,20 +23,32 @@ module TypeSystem =
 
     let AsmJitTypeMap = 
         [ (NULL, TypeId.Id.kVoid);
-          (U8, TypeId.Id.kU8);
-          (U16, TypeId.Id.kU16);
-          (U32, TypeId.Id.kU32);
-          (U64 , TypeId.Id.kU64 );
-          (I8, TypeId.Id.kI8      );
-          (I16, TypeId.Id.kI16     );
-          (I32, TypeId.Id.kI32    );
-          (I64, TypeId.Id.kI64 );
-          (F32, TypeId.Id.kF32     );
-          (F64, TypeId.Id.kF64 );
-          (BOOL, TypeId.Id.kU8 );
-          (CHAR, TypeId.Id.kU16    );
-        ]
-        |> Map.ofList
+          (U8,   TypeId.Id.kU8);
+          (U16,  TypeId.Id.kU16);
+          (U32,  TypeId.Id.kU32);
+          (U64,  TypeId.Id.kU64);
+          (I8,   TypeId.Id.kI8);
+          (I16,  TypeId.Id.kI16);
+          (I32,  TypeId.Id.kI32);
+          (I64,  TypeId.Id.kI64);
+          (F32,  TypeId.Id.kF32);
+          (F64,  TypeId.Id.kF64);
+          (BOOL, TypeId.Id.kU8);
+          (CHAR, TypeId.Id.kU16); ] |> Map.ofList
+
+    let AtomWidthMap = 
+        [ (U8,   1);
+          (U16,  2);
+          (U32,  4);
+          (U64,  8);
+          (I8,   1);
+          (I16,  2);
+          (I32,  4);
+          (I64,  8);
+          (F32,  4);
+          (F64,  8);
+          (BOOL, 1);
+          (CHAR, 2); ] |> Map.ofList
 
     type AttributeDescriptor = {
         Name  : string
@@ -133,3 +145,5 @@ module TypeSystem =
         let idArgs = defaultArg argsT [] |> Seq.map FindTypeId |> Seq.toArray
         Helper.Init(ret, CallConv.Id.kIdHost, idRet, idArgs)
         ret
+
+    let TryGetTypeWidth(T: TypeDescriptor) = AtomWidthMap.TryFind T.TypeCode
