@@ -52,25 +52,22 @@ module TGEN =
     open Trinity.Storage
     open SwigGen.Command
     open SwigGen.Operator
+
+    type CodeGenerator = (string -> string)[]
     
     let m_code = '_'
     let mangling (name: string) = name.Replace(m_code, m_code + m_code)
-
-    type HashSet<'T> = System.Collections.Generic.HashSet<'T>
-    type Dict<'K, 'V> = System.Collections.Generic.Dictionary<'K, 'V>
-
     let make'operations (typeCode) : seq<string> =
         (** constant function, also called by constant **)
-        
         match typeCode with 
-            | LIST   -> 
-                    seq [SwigTemplates.ListGet; 
-                         SwigTemplates.ListSet; 
-                         SwigTemplates.Contains; 
-                         SwigTemplates.Count]
-            | _     ->
-                    seq [SwigTemplates.FieldGet;
-                         SwigTemplates.FieldSet]
+        | LIST   -> 
+                seq [SwigTemplates.ListGet; 
+                        SwigTemplates.ListSet; 
+                        SwigTemplates.Contains; 
+                        SwigTemplates.Count]
+        | _     ->
+                seq [SwigTemplates.FieldGet;
+                        SwigTemplates.FieldSet]
 
     let make'arg'type(typeDesc: TypeDescriptor) : string = 
         match typeDesc.TypeCode with
@@ -81,14 +78,14 @@ module TGEN =
     
     let rec make'name (desc: TypeDescriptor) = 
             match desc with
-            | {TypeCode=LIST; ElementType=elem} -> 
-                    let elemFmt = elem |> Seq.head |> make'name
-                    PString.format "List{_}{elem}" (Map["_" ->> m_code; "elem" ->> elemFmt])
-            | {TypeCode=CELL}                   ->
+            | {TypeCode=LIST; ElementType=elemType} -> 
+                    let elemTypeName = elemType |> Seq.head |> make'name
+                    PString.format "List{_}{elem}" (Map["_" ->> m_code; "elem" ->> elemTypeName])
+            | {TypeCode=CELL}                       ->
                      sprintf "Cell%c" m_code 
-            | {TypeCode=STRUCT}                 ->
+            | {TypeCode=STRUCT}                     ->
                      sprintf "Struct%c" m_code
-            | _                                 ->
+            | _                                     ->
                     desc.TypeName.ToLower()
     
     let define'struct'method  (struct': TypeDescriptor) : seq<string -> string> = seq {
@@ -128,16 +125,18 @@ module TGEN =
     let rec TypeInfer(anyType: TypeDescriptor): seq<TypeDescriptor> = 
     (** inference out the descriptors of struct types and generic list types in a cell descriptor.**)
         match anyType with 
-            | {TypeCode=LIST; ElementType = elemType} 
-                 -> anyType >>> TypeInfer (Seq.head elemType)
+            | {TypeCode=LIST; ElementType = elemType}  -> 
+                    anyType >>> TypeInfer (Seq.head elemType)
+
             | {TypeCode=CELL; Members=members}
-            | {TypeCode=STRUCT; Members=members} 
-                 -> members
+            | {TypeCode=STRUCT; Members=members}      -> 
+                    members
                     |> Seq.map (fun field -> field.Type)
                     |> fun tail -> anyType >>> tail
-            | _  -> Seq.empty
+            | _                                       -> 
+                    Seq.empty
     
-    type CodeGenerator = (string -> string)[]
+    
    
 
     let GenerateSrcCode(schema: IStorageSchema): seq<TypeDescriptor * CodeGenerator> =
