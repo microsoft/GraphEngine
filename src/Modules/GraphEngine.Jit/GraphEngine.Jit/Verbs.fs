@@ -1,7 +1,9 @@
-﻿namespace GraphEngine.Jit
+﻿module Verbs
 
-open GraphEngine.Jit.TypeSystem
 open System
+open TypeSystem
+open GraphEngine.Jit.Native
+open GraphEngine.Jit.Native.asmjit
 
 //  !Note, only BGet should generate code to extract data from Trinity;
 //   Other getters should only be interpreted as "getting the accessor of a type"
@@ -16,8 +18,8 @@ type Verb =
     | BGet
     | BSet
     (** ListVerb **)
-    | LInlineGet of int // get value at a const index
-    | LInlineSet of int // set value at a const index
+    | LInlineGet of int // get value at a constant index
+    | LInlineSet of int // set value at a constant index
     | LGet
     | LSet
     | LContains
@@ -33,49 +35,51 @@ type Verb =
     | EFree
     | ENext
     | ECurrent
+    (** ComposedVerb **)
+    | ComposedVerb of array<Verb>
 
 type FunctionDescriptor = {
     DeclaringType : TypeDescriptor
     Verb          : Verb
 }
 
-module VerbTraits = 
-    let private MemberType x name = x.DeclaringType.Members |> Seq.find(fun m -> m.Name = name ) |> (fun m -> m.Type)
+type FunctionSignature(fdesc: FunctionDescriptor) =
 
-    let Inputs (x: FunctionDescriptor) =
-        let listElem = x.DeclaringType.ElementType |> Seq.tryHead
-        match x.Verb with
+    let listElem = fdesc.DeclaringType.ElementType |> Seq.tryHead
+    let tUnit = MakeFromType(typeof<Unit>)
+    let tInt = MakeFromType(typeof<int32>)
+    let tBool = MakeFromType(typeof<bool>)
+    let tString = MakeFromType(typeof<string>)
+    let tX = fdesc.DeclaringType
+
+    member private x.MemberType name = fdesc.DeclaringType.Members |> Seq.find(fun m -> m.Name = name ) |> (fun m -> m.Type)
+
+    member x.Input : seq<TypeDescriptor> = 
+        let listElem = fdesc.DeclaringType.ElementType |> Seq.tryHead
+        match fdesc.Verb with
         | BGet           -> seq []
-        | BSet           -> seq [ x.DeclaringType ]
+        | BSet           -> seq [ fdesc.DeclaringType ]
 
         | LGet           -> seq [ MakeFromType(typeof<int32>) ]
         | LSet           -> seq [ MakeFromType(typeof<int32>); listElem.Value ]
-        | LInlineGet i   -> seq []
-        | LInlineSet i   -> seq [ listElem.Value ]
+        | LInlineGet _   -> seq []
+        | LInlineSet _   -> seq [ listElem.Value ]
         | LContains      -> seq [ listElem.Value ]
         | LCount         -> seq [ MakeFromType(typeof<int32>); listElem.Value ]
 
-        | SGet name      -> seq []
-        | SSet name      -> seq [ MemberType x name ]
+        | SGet _         -> seq []
+        | SSet name      -> seq [ x.MemberType name ]
 
-        | GSGet t        -> seq [ MakeFromType(typeof<string>) ]
+        | GSGet _        -> seq [ MakeFromType(typeof<string>) ]
         | GSSet t        -> seq [ MakeFromType(typeof<string>); t ]
 
         | EAlloc         -> seq []
         | EFree          -> seq []
         | ENext          -> seq []
         | ECurrent       -> seq []
+    member x.Output: TypeDescriptor =
 
-    let Output (x: FunctionDescriptor) =
-        let listElem = x.DeclaringType.ElementType |> Seq.tryHead
-        let tUnit = MakeFromType(typeof<Unit>)
-        let tInt = MakeFromType(typeof<int32>)
-        let tBool = MakeFromType(typeof<bool>)
-        let tString = MakeFromType(typeof<string>)
-        let tObject = MakeFromType(typeof<Object>)
-        let tX = x.DeclaringType
-
-        match x.Verb with
+        match fdesc.Verb with
         | BGet           -> tX
         | BSet           -> tUnit
 
@@ -86,14 +90,25 @@ module VerbTraits =
         | LContains      -> tBool
         | LCount         -> tInt
 
-        | SGet name      -> MemberType x name
-        | SSet name      -> tUnit
+        | SGet name      -> x.MemberType name
+        | SSet _         -> tUnit
 
         | GSGet t        -> t
-        | GSSet t        -> tUnit
+        | GSSet _        -> tUnit
 
-        | EAlloc         -> tObject
+        | EAlloc         -> tUnit // XXX
         | EFree          -> tUnit
         | ENext          -> tBool
-        | ECurrent       -> tObject // XXX strong type lost, consider add enumerator to TypeDescriptor
+        | ECurrent       -> tUnit // XXX
+
+        | ComposedVerb _ -> failwith "notimplemented"
+
+    member x.AsmJitFuncSignature = 
+        let ret = new FuncSignature()
+        let idRet = FindTypeId x.Output
+        let idArgs = x.Input |> Seq.map FindTypeId |> Seq.toArray
+        Helper.Init(ret, CallConv.Id.kIdHost, idRet, idArgs)
+        ret
+
+
 

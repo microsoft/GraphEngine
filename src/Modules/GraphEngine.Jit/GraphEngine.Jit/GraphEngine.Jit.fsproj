@@ -40,14 +40,12 @@
     <Compile Include="TypeSystem.fs" />
     <Compile Include="Verbs.fs" />
     <Compile Include="JitCompiler.fs" />
+    <Compile Include="Utils.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\GraphEngine.Jit.Native\GraphEngine.Jit.Native.csproj" />
+    <PackageReference Include="GraphEngine.Jit.Native" Version="2.0.9328" />
   </ItemGroup>
 
 </Project>

@@ -88,7 +88,7 @@ namespace GraphEngine.Jit.CppSharpCodegen
             //mod.Headers.Add(c(projpath, "Templates.h"));
 
             mod.LibraryDirs.Add(asmjitbuildpath);
-            mod.Libraries.Add("asmjit.lib");
+            mod.Libraries.Add("asmjit.dll");
 
             mod.Defines.Add("WIN32");
             mod.Defines.Add("_WINDOWS");
@@ -100,6 +100,7 @@ namespace GraphEngine.Jit.CppSharpCodegen
 
         public void SetupPasses(Driver driver)
         {
+            driver.AddTranslationUnitPass(new ProcessInlinePass());
         }
     }
 

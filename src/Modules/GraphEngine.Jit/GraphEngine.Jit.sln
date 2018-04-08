@@ -9,13 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.Core", "..\..\Trini
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{0CB52B42-DEA7-4014-8109-DCF7295D59AF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphEngine.Jit.UnitTest", "GraphEngine.Jit.UnitTest\GraphEngine.Jit.UnitTest.csproj", "{BF8420D5-2878-43A3-B857-5280F17C6D89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphEngine.Jit.Playground", "GraphEngine.Jit.Playground\GraphEngine.Jit.Playground.csproj", "{F1BE24FA-C020-4DC9-9E36-20443D156CFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphEngine.Jit.Playground", "GraphEngine.Jit.Playground\GraphEngine.Jit.Playground.csproj", "{F1BE24FA-C020-4DC9-9E36-20443D156CFD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphEngine.Jit.CppSharpCodegen", "GraphEngine.Jit.CppSharpCodegen\GraphEngine.Jit.CppSharpCodegen.csproj", "{E42892C5-DBCD-4362-9FE6-CAE732C9000B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphEngine.Jit.Native", "GraphEngine.Jit.Native\GraphEngine.Jit.Native.csproj", "{64BA4911-D9AD-4A7E-B9E3-AFE7A23C41D3}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "GraphEngine.Jit.UnitTest", "GraphEngine.Jit.UnitTest\GraphEngine.Jit.UnitTest.fsproj", "{8DE1005B-4E22-4B8D-983D-425223B8F446}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,20 +25,14 @@ Global
 		{0F48A2AB-7BEE-45E1-955B-A938086EBA11}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C527257C-8FEC-495A-A98E-38597D9E22B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C527257C-8FEC-495A-A98E-38597D9E22B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BF8420D5-2878-43A3-B857-5280F17C6D89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BF8420D5-2878-43A3-B857-5280F17C6D89}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BF8420D5-2878-43A3-B857-5280F17C6D89}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BF8420D5-2878-43A3-B857-5280F17C6D89}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F1BE24FA-C020-4DC9-9E36-20443D156CFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F1BE24FA-C020-4DC9-9E36-20443D156CFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1BE24FA-C020-4DC9-9E36-20443D156CFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1BE24FA-C020-4DC9-9E36-20443D156CFD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E42892C5-DBCD-4362-9FE6-CAE732C9000B}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{E42892C5-DBCD-4362-9FE6-CAE732C9000B}.Release|Any CPU.ActiveCfg = Release|x64
-		{64BA4911-D9AD-4A7E-B9E3-AFE7A23C41D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{64BA4911-D9AD-4A7E-B9E3-AFE7A23C41D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{64BA4911-D9AD-4A7E-B9E3-AFE7A23C41D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{64BA4911-D9AD-4A7E-B9E3-AFE7A23C41D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DE1005B-4E22-4B8D-983D-425223B8F446}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DE1005B-4E22-4B8D-983D-425223B8F446}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DE1005B-4E22-4B8D-983D-425223B8F446}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DE1005B-4E22-4B8D-983D-425223B8F446}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

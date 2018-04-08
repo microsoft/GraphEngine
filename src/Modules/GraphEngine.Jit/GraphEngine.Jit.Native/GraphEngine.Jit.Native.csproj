@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="CppSharp" Version="0.8.19" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
     <PackageReference Include="Baseclass.Contrib.Nuget.Output" Version="2.4.3">
       <IncludeAssets>Compile</IncludeAssets>
     </PackageReference>
