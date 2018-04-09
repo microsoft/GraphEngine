@@ -101,6 +101,7 @@ Function Invoke-MSBuild($proj, $config = "Release", $platform = $null) {
 }
 
 Function New-Package($proj, $config = "Release") {
+  Invoke-DotNet -proj $proj -action clean -config $config
   Invoke-DotNet -proj $proj -action restore
   Invoke-DotNet -proj $proj -action build -config $config
   Invoke-DotNet -proj $proj -action pack -config $config

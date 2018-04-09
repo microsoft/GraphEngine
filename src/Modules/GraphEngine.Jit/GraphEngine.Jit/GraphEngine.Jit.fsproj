@@ -12,6 +12,7 @@
     <OutputPath>..\..\..\..\bin</OutputPath>
     <ServerGarbageCollection>true</ServerGarbageCollection>
     <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <!-- NuGet package metadata -->
@@ -38,14 +39,14 @@
 
   <ItemGroup>
     <Compile Include="TypeSystem.fs" />
+    <Compile Include="Utils.fs" />
+    <Compile Include="JitNativeInterop.fs" />
     <Compile Include="Verbs.fs" />
     <Compile Include="JitCompiler.fs" />
-    <Compile Include="Utils.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
-    <PackageReference Include="GraphEngine.Jit.Native" Version="2.0.9328" />
   </ItemGroup>
 
 </Project>

@@ -17,6 +17,7 @@
     <PackageId>GraphEngine.ServiceFabric.Remoting</PackageId>
     <OutputPath>..\..\..\..\bin</OutputPath>
     <Platforms>x64</Platforms>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

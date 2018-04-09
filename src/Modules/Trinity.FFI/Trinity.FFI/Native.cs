@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Trinity.TSL.Lib;
 using Trinity.FFI.Interop;
+using static GraphEngine.Jit.JitNativeInterop;
 
 namespace Trinity.FFI
 {

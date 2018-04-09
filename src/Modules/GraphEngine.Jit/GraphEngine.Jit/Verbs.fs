@@ -1,9 +1,7 @@
-﻿module Verbs
+﻿module GraphEngine.Jit.Verbs
 
 open System
 open TypeSystem
-open GraphEngine.Jit.Native
-open GraphEngine.Jit.Native.asmjit
 
 //  !Note, only BGet should generate code to extract data from Trinity;
 //   Other getters should only be interpreted as "getting the accessor of a type"
@@ -102,13 +100,5 @@ type FunctionSignature(fdesc: FunctionDescriptor) =
         | ECurrent       -> tUnit // XXX
 
         | ComposedVerb _ -> failwith "notimplemented"
-
-    member x.AsmJitFuncSignature = 
-        let ret = new FuncSignature()
-        let idRet = FindTypeId x.Output
-        let idArgs = x.Input |> Seq.map FindTypeId |> Seq.toArray
-        Helper.Init(ret, CallConv.Id.kIdHost, idRet, idArgs)
-        ret
-
 
 

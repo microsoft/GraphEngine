@@ -13,7 +13,7 @@ namespace Trinity.FFI.UnitTests
         public void LoadsJitAssembly()
         {
             CompositeStorage.AddStorageExtension(".\\tsl3", "TSLTest3");
-            foreach(var tdesc in Global.StorageSchema.CellDescriptors.Select(GraphEngine.Jit.TypeSystem.Builder.Make))
+            foreach(var tdesc in Global.StorageSchema.CellDescriptors.Select(GraphEngine.Jit.TypeSystem.Make))
             {
                 Console.WriteLine(tdesc);
             }

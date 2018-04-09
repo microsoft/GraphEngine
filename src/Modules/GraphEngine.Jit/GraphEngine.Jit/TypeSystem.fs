@@ -1,11 +1,9 @@
-module TypeSystem
+module GraphEngine.Jit.TypeSystem
 
 open System
 open System.Collections.Generic
 open Trinity.Storage
 open System.Reflection
-open GraphEngine.Jit.Native
-open GraphEngine.Jit.Native.asmjit
 
 
 type TypeCode = 
@@ -17,21 +15,6 @@ type TypeCode =
     | CHAR    | STRING | U8STRING
     | LIST
     | STRUCT  | CELL
-
-let AsmJitTypeMap = 
-    [ (NULL, TypeId.Id.kVoid);
-      (U8,   TypeId.Id.kU8);
-      (U16,  TypeId.Id.kU16);
-      (U32,  TypeId.Id.kU32);
-      (U64,  TypeId.Id.kU64);
-      (I8,   TypeId.Id.kI8);
-      (I16,  TypeId.Id.kI16);
-      (I32,  TypeId.Id.kI32);
-      (I64,  TypeId.Id.kI64);
-      (F32,  TypeId.Id.kF32);
-      (F64,  TypeId.Id.kF64);
-      (BOOL, TypeId.Id.kU8);
-      (CHAR, TypeId.Id.kU16); ] |> Map.ofList
 
 let AtomWidthMap = 
     [ (U8,   1);
@@ -133,7 +116,5 @@ let Make (cellDesc: ICellDescriptor) =
       Members                                = Seq.map MakeMember <| cellDesc.GetFieldDescriptors()
       TSLAttributes                          = cellDesc.Attributes |> Seq.map MakeAttr
       TypeCode                               = TypeCode.CELL }
-
-let FindTypeId(T: TypeDescriptor)            = AsmJitTypeMap.TryFind T.TypeCode |> defaultArg <| TypeId.Id.kUIntPtr
 
 let TryGetTypeWidth(T: TypeDescriptor) = AtomWidthMap.TryFind T.TypeCode

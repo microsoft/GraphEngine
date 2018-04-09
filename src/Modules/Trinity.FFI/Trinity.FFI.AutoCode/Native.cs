@@ -54,6 +54,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Trinity.TSL.Lib;
 using Trinity.FFI.Interop;
+using static GraphEngine.Jit.JitNativeInterop;
 
 namespace Trinity.FFI
 {
@@ -62,7 +63,7 @@ namespace Trinity.FFI
 
 ");
             
-            #line 33 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Native.tt"
+            #line 34 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Native.tt"
  
 	foreach(var m in export_methods)
 	{
@@ -71,28 +72,28 @@ namespace Trinity.FFI
             #line hidden
             this.Write("    internal unsafe delegate ");
             
-            #line 36 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Native.tt"
+            #line 37 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Native.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateReturnType(m)));
             
             #line default
             #line hidden
             this.Write(" TRINITY_FFI_");
             
-            #line 36 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Native.tt"
+            #line 37 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Native.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateName(m).ToUpper()));
             
             #line default
             #line hidden
             this.Write("(");
             
-            #line 36 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Native.tt"
+            #line 37 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Native.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateParameterList(m)));
             
             #line default
             #line hidden
             this.Write(");\r\n");
             
-            #line 37 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Native.tt"
+            #line 38 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Native.tt"
 
 	}
             
@@ -100,7 +101,7 @@ namespace Trinity.FFI
             #line hidden
             this.Write("\r\n    internal struct TRINITY_INTERFACES\r\n    {\r\n");
             
-            #line 42 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Native.tt"
+            #line 43 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Native.tt"
  
 	foreach(var m in export_methods)
 	{
@@ -109,14 +110,14 @@ namespace Trinity.FFI
             #line hidden
             this.Write("        [MarshalAs(UnmanagedType.FunctionPtr)]\r\n        public TRINITY_FFI_");
             
-            #line 46 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Native.tt"
+            #line 47 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Native.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateName(m).ToUpper() + " " + Helper.GenerateName(m)));
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 47 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Native.tt"
+            #line 48 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Native.tt"
 
 	}
             

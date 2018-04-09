@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{2BCD7F27-26E0-4DC0-9E2D-F061341D3A1D}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>GraphEngineJitNative</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>ASMJIT_EMBED;ASMJIT_DEBUG;_DEBUG;GRAPHENGINEJITNATIVE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\git\GraphEngine\src\Trinity.C\src;D:\git\GraphEngine\src\Trinity.C\include;D:\git\GraphEngine\src\Modules\GraphEngine.Jit\asmjit\src\asmjit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>ASMJIT_EMBED;ASMJIT_RELEASE;NDEBUG;GRAPHENGINEJITNATIVE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\git\GraphEngine\src\Trinity.C\src;D:\git\GraphEngine\src\Trinity.C\include;D:\git\GraphEngine\src\Modules\GraphEngine.Jit\asmjit\src\asmjit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\asmjit\src\asmjit\base\arch.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\assembler.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\codebuilder.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\codecompiler.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\codeemitter.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\codeholder.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\constpool.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\cpuinfo.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\func.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\globals.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\inst.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\logging.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\operand.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\osutils.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\regalloc.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\runtime.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\string.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\utils.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\vmem.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\base\zone.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\x86\x86assembler.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\x86\x86builder.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\x86\x86compiler.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\x86\x86inst.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\x86\x86instimpl.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\x86\x86internal.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\x86\x86logging.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\x86\x86operand.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\x86\x86operand_regs.cpp" />
+    <ClCompile Include="..\asmjit\src\asmjit\x86\x86regalloc.cpp" />
+    <ClCompile Include="GraphEngine.Jit.Native.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\asmjit\src\asmjit\arm.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\asmjit.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\asmjit_apibegin.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\asmjit_apiend.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\asmjit_build.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\arch.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\assembler.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\codebuilder.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\codecompiler.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\codeemitter.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\codeholder.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\constpool.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\cpuinfo.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\func.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\globals.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\inst.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\logging.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\misc_p.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\operand.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\osutils.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\regalloc_p.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\runtime.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\simdtypes.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\string.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\utils.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\vmem.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\base\zone.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\x86.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\x86\x86assembler.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\x86\x86builder.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\x86\x86compiler.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\x86\x86emitter.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\x86\x86globals.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\x86\x86inst.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\x86\x86instimpl_p.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\x86\x86internal_p.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\x86\x86logging_p.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\x86\x86misc.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\x86\x86operand.h" />
+    <ClInclude Include="..\asmjit\src\asmjit\x86\x86regalloc_p.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
