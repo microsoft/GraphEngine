@@ -10,6 +10,7 @@ open System
 open JitCompiler
 open Trinity.Core.Lib
 open Microsoft.FSharp.NativeInterop
+open GraphEngine.Jit
 
 [<Fact>]
 let ``Verb allocation`` () =
@@ -82,6 +83,10 @@ let TypeDescriptorCollection() = seq {
 [<Theory>]
 [<MemberData("ICellDescriptorGen")>]
 let ``TypeDescriptor allocation from ICellDescriptor`` (a,b,c) = (a,b,c) |> celldesc |> Make
+
+[<Theory>]
+[<MemberData("ICellDescriptorGen")>]
+let ``NativeTypeDescriptor allocation from ICellDescriptor`` (a,b,c) = (a,b,c) |> celldesc |> Make |> JitNativeInterop.TypeDescriptorToNative
 
 [<Theory>]
 [<MemberData("TypeDescriptorCollection")>]

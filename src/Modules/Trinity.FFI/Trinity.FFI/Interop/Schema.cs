@@ -17,7 +17,7 @@ namespace Trinity.FFI.Interop
         {
             try
             {
-                schema = Global.StorageSchema.CellDescriptors.Select(Make).ToArray();
+                schema = Make(Global.StorageSchema.CellDescriptors);
                 size = schema.Length;
                 return TrinityErrorCode.E_SUCCESS;
             }

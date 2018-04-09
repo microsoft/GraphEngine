@@ -13,6 +13,7 @@
     <ServerGarbageCollection>true</ServerGarbageCollection>
     <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
     <IsPackable>true</IsPackable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <!-- NuGet package metadata -->
@@ -47,6 +48,13 @@
 
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="$(ProjectDirectory)..\..\..\..\bin\GraphEngine.Jit.Native.dll">
+      <PackagePath>runtimes\win-x64\native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

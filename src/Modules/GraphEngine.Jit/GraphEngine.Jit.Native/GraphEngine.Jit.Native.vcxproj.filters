@@ -238,5 +238,8 @@
     <ClInclude Include="..\asmjit\src\asmjit\x86\x86regalloc_p.h">
       <Filter>asmjit/x86</Filter>
     </ClInclude>
+    <ClInclude Include="TypeSystem.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

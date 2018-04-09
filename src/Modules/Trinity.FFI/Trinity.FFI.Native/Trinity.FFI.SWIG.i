@@ -25,6 +25,6 @@ namespace std {
 %attribute(TypeDescriptor, std::vector<MemberDescriptor*>, Members, get_Members)
 %attribute(TypeDescriptor, std::vector<AttributeDescriptor*>, TSLAttributes, get_TSLAttributes)
 
-%include "Trinity.FFI.Schema.h"
+%include "../../GraphEngine.Jit/GraphEngine.Jit.Native/TypeSystem.h"
 %include "Trinity.FFI.SWIG.h"
 

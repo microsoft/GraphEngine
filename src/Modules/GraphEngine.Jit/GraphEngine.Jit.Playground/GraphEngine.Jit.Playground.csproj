@@ -9,7 +9,6 @@
     <AssemblyName>GraphEngine.Jit.Playground</AssemblyName>
     <OutputTypeEx>Exe</OutputTypeEx>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <OutputPath>..\..\..\..\bin</OutputPath>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 

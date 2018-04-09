@@ -4,7 +4,7 @@ from os.path import dirname, abspath, join, exists, expanduser
 # when we implement hosting in Trinity.FFI.Native, we can remove the dependency on pythonnet
 
 __dep_packages = [
-    'FSharp.Core/4.2.3/lib/netstandard1.6/FSharp.Core.dll',
+    'FSharp.Core/4.3.4/lib/netstandard1.6/FSharp.Core.dll',
     'GraphEngine.Core/2.0.9328/lib/netstandard2.0/Trinity.Core.dll',
     'GraphEngine.Storage.Composite/2.0.9328/lib/netstandard2.0/Trinity.Storage.Composite.dll',
     'GraphEngine.Jit/2.0.9328/lib/netstandard2.0/GraphEngine.Jit.dll',
@@ -23,10 +23,12 @@ if not all([exists(f) for f in __package_dirs]):
 #todo detect os and determine .net rid
 ge_native_lib  = join(__nuget_root, "GraphEngine.Core/2.0.9328/runtimes/win-x64/native/Trinity.dll")
 ffi_native_lib = join(__nuget_root, "GraphEngine.FFI/2.0.9328/runtimes/win-x64/native/trinity_ffi.dll")
+jit_native_lib = join(__nuget_root, "GraphEngine.Jit/2.0.9328/runtimes/win-x64/native/GraphEngine.Jit.Native.dll")
 
 sys.path.append(__module_dir)
 ctypes.cdll.LoadLibrary(ge_native_lib)
 ctypes.cdll.LoadLibrary(ffi_native_lib)
+ctypes.cdll.LoadLibrary(jit_native_lib)
 
 for f in __package_dirs:
     clr.AddReference(f)

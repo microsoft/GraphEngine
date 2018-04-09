@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <vector>
 
 #define pdebug printf("%s, line %d, this=%llx\n", __FUNCTION__, __LINE__, this);
 #define pdebug_ printf("%s, line %d\n", __FUNCTION__, __LINE__);
