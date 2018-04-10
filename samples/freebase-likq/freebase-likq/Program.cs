@@ -8,11 +8,11 @@ using Newtonsoft.Json.Linq;
 using Trinity.Core.Lib;
 using System.IO;
 using Trinity.Diagnostics;
-using System.Data.SQLite;
 using System.Net;
 using System.Diagnostics;
 using System.IO.Compression;
 using freebase_tsl;
+using System.Data.SQLite;
 
 namespace freebase_likq
 {
