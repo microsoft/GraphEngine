@@ -5,6 +5,10 @@ open System.Collections.Generic
 open Trinity.Storage
 open System.Reflection
 
+(* 
+    The integer tags of a DU behave exactly
+    as if they are enum cases
+*)
 
 type TypeCode = 
     NULL
@@ -12,7 +16,7 @@ type TypeCode =
     | I8      | I16     | I32    | I64
     | F32     | F64
     | BOOL 
-    | CHAR    | STRING | U8STRING
+    | CHAR    | STRING  | U8STRING
     | LIST
     | STRUCT  | CELL
 

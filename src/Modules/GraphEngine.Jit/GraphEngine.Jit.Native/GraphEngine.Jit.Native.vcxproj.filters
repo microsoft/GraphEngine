@@ -241,5 +241,8 @@
     <ClInclude Include="TypeSystem.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="JitRoutines.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

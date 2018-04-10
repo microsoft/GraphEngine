@@ -41,8 +41,8 @@
   <ItemGroup>
     <Compile Include="TypeSystem.fs" />
     <Compile Include="Utils.fs" />
-    <Compile Include="JitNativeInterop.fs" />
     <Compile Include="Verbs.fs" />
+    <Compile Include="JitNativeInterop.fs" />
     <Compile Include="JitCompiler.fs" />
   </ItemGroup>
 

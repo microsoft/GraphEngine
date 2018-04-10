@@ -1,34 +1,24 @@
 ﻿module GraphEngine.Jit.JitCompiler 
+#nowarn "9"
 
 open TypeSystem
 open Verbs
+open JitNativeInterop
 open System.Collections.Generic
 open System
 open System.Runtime.InteropServices
+open Utils
+open Microsoft.FSharp.NativeInterop
 
 type NativeFunction = { CallSite: nativeint; Descriptor: FunctionDescriptor }
 
 let s_types = new Dictionary<TypeDescriptor, NativeFunction [] >()
 
-type IL = 
-    | NewArg of TypeCode * string
-    | NewPtr of TypeCode * string
-    | NewGp  of TypeCode * string
-    | Mov    of string   * string    // reg to reg
-    | Load   of string   * string    // mem to reg
-    | ILoad  of string   * int       // imm to reg
-    | IAdd   of string   * int       // add imm to reg
-    | Add    of string   * string    // add reg to reg
-    | SetArg of int      * string
-    | Ret    of string
-    | Call   of string
-    | IRet
-
 [<DllImport("GraphEngine.Jit.Native.dll")>]
-extern nativeint Init()
+extern nativeint CompileFunctionNative (nativeint)
 
 let CompileFunction (f: FunctionDescriptor): NativeFunction =
-    let fs = FunctionSignature f
+    let p = f |> FunctionDescriptorToNative |> Alloc |> NativePtr.toNativeInt
 
-    { NativeFunction.CallSite = IntPtr.Zero
+    { NativeFunction.CallSite = CompileFunctionNative p
       Descriptor = f }

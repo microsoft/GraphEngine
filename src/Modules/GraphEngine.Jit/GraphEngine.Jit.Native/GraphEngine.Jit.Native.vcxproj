@@ -160,6 +160,7 @@
     <ClInclude Include="..\asmjit\src\asmjit\x86\x86misc.h" />
     <ClInclude Include="..\asmjit\src\asmjit\x86\x86operand.h" />
     <ClInclude Include="..\asmjit\src\asmjit\x86\x86regalloc_p.h" />
+    <ClInclude Include="JitRoutines.h" />
     <ClInclude Include="TypeSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

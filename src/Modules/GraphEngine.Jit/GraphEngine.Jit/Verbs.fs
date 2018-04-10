@@ -34,7 +34,7 @@ type Verb =
     | ENext
     | ECurrent
     (** ComposedVerb **)
-    | ComposedVerb of array<Verb>
+    | ComposedVerb of Verb * Verb
 
 type FunctionDescriptor = {
     DeclaringType : TypeDescriptor

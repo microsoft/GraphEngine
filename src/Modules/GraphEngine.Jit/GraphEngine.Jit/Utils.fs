@@ -19,6 +19,12 @@ let ToStringCase (value: 'a) =
 
 let Malloc = uint64 >> Memory.malloc >> IntPtr
 
+//  Copy a value type to unmanaged heap
+let Alloc (v: 'a) =
+    let buf = Malloc sizeof<'a> |> NativePtr.ofNativeInt<'a>
+    NativePtr.write buf v
+    buf
+
 let ToUtf8 (str: string) =
     let buf = Encoding.UTF8.GetBytes(str)
     let ret = buf.Length + 1 |> Malloc
@@ -34,3 +40,6 @@ let SeqToNative (s: seq<'a>) =
     else let p = buflen |> Memory.malloc
          use buf = fixed arr
          Memory.memcpy(p, (NativePtr.toNativeInt buf).ToPointer(), buflen) |> IntPtr
+
+let ToUnionTag (c: 'a) =
+    c |> box |> FSharpValue.PreComputeUnionTagReader typeof<'a>
