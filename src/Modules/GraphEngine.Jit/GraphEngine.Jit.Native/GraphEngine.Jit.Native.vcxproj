@@ -59,7 +59,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>ASMJIT_EMBED;ASMJIT_DEBUG;_DEBUG;GRAPHENGINEJITNATIVE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\git\GraphEngine\src\Trinity.C\src;D:\git\GraphEngine\src\Trinity.C\include;D:\git\GraphEngine\src\Modules\GraphEngine.Jit\asmjit\src\asmjit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\Trinity.C\src;..\..\..\Trinity.C\include;..\..\..\Modules\GraphEngine.Jit\asmjit\src\asmjit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -76,7 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>ASMJIT_EMBED;ASMJIT_RELEASE;NDEBUG;GRAPHENGINEJITNATIVE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\git\GraphEngine\src\Trinity.C\src;D:\git\GraphEngine\src\Trinity.C\include;D:\git\GraphEngine\src\Modules\GraphEngine.Jit\asmjit\src\asmjit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\Trinity.C\src;..\..\..\Trinity.C\include;..\..\..\Modules\GraphEngine.Jit\asmjit\src\asmjit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
