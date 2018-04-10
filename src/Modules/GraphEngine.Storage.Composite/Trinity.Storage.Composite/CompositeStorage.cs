@@ -90,7 +90,6 @@ namespace Trinity.Storage.Composite
                 );
         }
 
-
         #region TSL-CodeGen-Build-Load
         private static void CreateCSProj(string projDir, string assemblyName)
         {
@@ -138,7 +137,7 @@ namespace Trinity.Storage.Composite
             ShadowCopy(outDir, Path.Combine(PathHelper.StorageSlot(true), assemblyName));
         }
 
-        private static void Load(StorageExtensionRecord ext, bool primary)
+        private static IStorageSchema Load(StorageExtensionRecord ext, bool primary)
         {
             //  capture states
             var ctoffset = ext.CellTypeOffset;
@@ -202,16 +201,17 @@ namespace Trinity.Storage.Composite
                 s_Extensions.Add(ext);
 
                 Log.WriteLine(LogLevel.Info, $"{nameof(CompositeStorage)}: storage extension '{ext.RootNamespace}' loaded");
+
+                return schema;
             }
         }
         #endregion
 
         public static void UpdateStorageExtensionSchema(SchemaUpdate changes)
         {
-            throw new NotImplementedException();
         }
 
-        public static StorageExtensionRecord AddStorageExtension(string tslSrcDir, string rootNamespace)
+        public static IStorageSchema AddStorageExtension(string tslSrcDir, string rootNamespace)
         {
             //  assemblyName serves as a global-unique identifier for a storage extension.
             var assemblyName = Guid.NewGuid().ToString("N");
@@ -220,17 +220,21 @@ namespace Trinity.Storage.Composite
             var outDir       = GetTempDirectory();
             var ext          = new StorageExtensionRecord(s_currentCellTypeOffset, rootNamespace, assemblyName);
 
+            IStorageSchema schema;
+
             CreateCSProj(projDir, assemblyName);
 
             CodeGen(tslSrcDir, rootNamespace, ext.CellTypeOffset, projDir);
 
             Build(projDir, outDir, assemblyName);
 
-            Load(ext, true);
+            schema = Load(ext, true);
 
             SaveMetadata();
 
-            return ext;
+            AggregatedStorageSchema.s_singleton.Update();
+
+            return schema;
         }
 
         private static string GetTempDirectory()

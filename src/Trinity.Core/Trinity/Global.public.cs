@@ -375,5 +375,7 @@ namespace Trinity
                 }
             }
         }
+
+        public static event StorageSchemaUpdatedHandler StorageSchemaUpdated = delegate { };
     }
 }

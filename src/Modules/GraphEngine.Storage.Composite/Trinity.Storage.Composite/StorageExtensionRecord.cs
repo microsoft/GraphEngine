@@ -1,4 +1,6 @@
-﻿namespace Trinity.Storage.Composite
+﻿using System.IO;
+
+namespace Trinity.Storage.Composite
 {
     [System.Serializable]
     public class StorageExtensionRecord

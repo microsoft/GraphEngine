@@ -11,6 +11,7 @@ using Trinity.Extension;
 
 namespace Trinity.Storage
 {
+    public delegate void StorageSchemaUpdatedHandler();
     /// <summary>
     /// Exposes methods for accessing the storage schema defined in a TSL storage extension assembly.
     /// </summary>
@@ -30,6 +31,11 @@ namespace Trinity.Storage
         /// Gets the type signature strings for all cell types defined in a TSL storage extension assembly.
         /// </summary>
         IEnumerable<string> CellTypeSignatures { get; }
+    }
+
+    public interface IStorageSchemaUpdateNotifier
+    {
+        event StorageSchemaUpdatedHandler StorageSchemaUpdated;
     }
 
     [ExtensionPriority(-100)]

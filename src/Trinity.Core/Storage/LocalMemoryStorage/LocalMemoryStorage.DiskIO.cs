@@ -18,6 +18,7 @@ using System.Diagnostics;
 using Trinity.Core.Lib;
 using System.Runtime.CompilerServices;
 using Trinity.Configuration;
+using static Trinity.Utilities.EventRaiser;
 
 namespace Trinity.Storage
 {
