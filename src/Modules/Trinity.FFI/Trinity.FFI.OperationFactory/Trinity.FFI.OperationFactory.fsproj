@@ -19,10 +19,11 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Utils.fs" />
     <Content Include="packages.config" />
-    <Compile Include="MetaGen.fs" />
-    <Compile Include="MethodExport.fs" />
+    
     <Compile Include="NoJit.fs" />
     <Compile Include="SwigGen.fs" />
+    <Compile Include="MetaGen.fs" />
+    <Compile Include="MethodExport.fs" />
   </ItemGroup>
 
   <ItemGroup>

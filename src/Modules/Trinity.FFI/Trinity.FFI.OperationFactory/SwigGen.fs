@@ -1,75 +1,93 @@
-﻿module SwigGen
+﻿namespace Trinity.FFI.OperationFactory
 
-open GraphEngine.Jit.Verbs;
+open GraphEngine.Jit.Verbs
 
-module Templates = 
+module Swig = 
+    open GraphEngine.Jit.TypeSystem
     open System
-    open Trinity.FFI.OperationFactory.PString;
-   
+    open Trinity.FFI.OperationFactory.Operator
+    open Trinity.FFI.OperationFactory.PString
+
+    type Name = string
         
-    let to'templates (verb: Verb) =
+    type Code = string
         
+    type FunctionId = string
+        
+    type TypeStr = string
+
+    type ManglingChar = char
+    
+    
+    let to'templates'then (verb : Verb) = 
         match verb with
-        | LGet           -> 
-            "
-            static void (* _List_Get_{typesig})(void* dataSrc, int idx, {elem type} &elem) = {fn addr};
-            static void List_Get_{typesig}(void* dataPtr, int idx, {elemType} &elem){{
-                _List_Get_{typesig}(dataPtr, idx, elem);
+        | LGet -> "
+            static void (* {_}List{_}Get{_}{subject name}{_}{object name})(void* subject, int idx, {object type} &object) = {!fn addr};
+            static void List{_}Get{_}{subject name}{_}{object name}(void* subject, int idx, {object type} &object){{
+                    {_}List{_}Get{_}{subject name}{_}{object name}(subject, idx, object);
             }}
             "
-
-        | LSet           -> 
-            "
-            static void (* _Set_{private fn name})(void* dataSrc, int idx, {elem type} elem) = {fn addr};
-            static void Set_{public fn name}(void* dataPtr, int idx, {elemType} elem){{
-                {private fn name}(dataPtr, idx, elem);
+        | LSet -> "
+            static void (* {_}List{_}Set{_}{subject name}{_}{object name})(void* subject, int idx, {object type} &object) = {!fn addr};
+            static void List{_}Set{_}{subject name}{_}{object name}(void* subject, int idx, {object type} &object){{
+                    {_}List{_}Set{_}{subject name}{_}{object name}(subject, idx, object);
             }}
             "
-
         | LInlineGet idx -> "
-            void* {_}{list type name}{_}Get_at" + idx.ToString() + "(void* dataPtr, {element type} &elem) = {function pointer address};
-            void {ListType}{_}Get_at" + idx.ToString() + "(void* dataPtr, {elemType} &elem){{
-                {ListType}{_}Get_at"+ idx.ToString() + "(dataPtr, elem);
+            static void (* {_}List{_}Get{_}{subject name}{_}{object name})_At" + idx.ToString() + "(void* subject, {object type} &object) = {!fn addr};
+            static void List{_}Get{_}{subject name}{_}{object name}" + idx.ToString() + "(void* subject, {object type} &object){{
+                    {_}List{_}Get{_}{subject name}{_}{object name}" + idx.ToString() + "(subject, object);
             }}
             "
         | LInlineSet idx -> "
-            void* {_}{ListType}{_}Set_at" + idx.ToString() + "(void* dataPtr, {elemType} elem) = {funcPtrAddr};
-            void {ListType}{_}Set_at" + idx.ToString() + "(void* dataPtr, {elemType} elem){{
-                {_}{ListType}{_}Set_at" + idx.ToString() + "(dataPtr, elem);
+            static void (* {_}List{_}Set{_}{subject name}{_}{object name})_At" + idx.ToString() + "(void* subject, {object type} object) = {!fn addr};
+            static void List{_}Set{_}{subject name}{_}{object name}" + idx.ToString() + "(void* subject, {object type} object){{
+                    {_}List{_}Set{_}{subject name}{_}{object name}" + idx.ToString() + "(subject, object);
             }}
            "
-        | LContains      -> "
-            void* {_}{ListType}{_}Contains(void* dataPtr, {elemType} elem) = {funcPtrAddr};
-            void {ListType}{_}Contains(void* dataPtr, {elemType} elem){{
-                {_}{ListType}{_}Contains(dataPtr, elem);
+        | LContains -> "
+            static bool (* {_}List{_}Contains{_}{subject name}{_}{object name})(void* subject, {object type} &object) = {!fn addr};
+            static bool List{_}Contains{_}{subject name}{_}{object name}(void* subject, {object type} &object){{
+                    return {_}List{_}Contains{_}{subject name}{_}{object name}(subject, object);
             }}
             "
-        | LCount         -> "
-            void* {_}{ListType}{_}Count(void* dataPtr) = {funcPtrAddr};
-            void {ListType}{_}Count(void* dataPtr){{
-                {_}{ListType}{_}Count(dataPtr);
+        | LCount -> "
+            static int (* {_}List{_}Count{_}{subject name})(void* subject) = {!fn addr};
+            static int List{_}Count{_}{subject name}(void* subject){{
+                    return {_}List{_}Count{_}{subject name}(subject);
             }}
             "
         | SGet fieldName -> "
-            void* {_}{rootName}{_}Get{_}" + fieldName + "(void* dataPtr, {{fieldType}} &field) = {funcPtrAddr};
-            void {rootName}{_}Get{_}"+ fieldName + "(void* dataPtr, {{fieldType}} &field){{
-                {_}{rootName}{_}Get{_}" + fieldName + "(dataPtr, field);
+            static void (* {_}Struct{_}Get{_}" + fieldName + "{_}{object name})(void* subject, {object type} &object) = {!fn addr};
+            static void Struct{_}Get{_}" + fieldName + "{_}{object name}(void* subject, {object type} &object){{
+                    {_}Struct{_}Get{_}" + fieldName + "{_}{object name}(subject, object);
             }}
             "
-        
         | SSet fieldName -> "
-            void* {_}{rootName}{_}Set{_}" + fieldName + "(void* dataPtr, {{fieldType}} field) = {funcPtrAddr};
-            void {rootName}{_}Set{_}" + fieldName + "(void* dataPtr, {{fieldType}} field){{
-                {_}{rootName}{_}Set{_}" + fieldName + "(dataPtr, field);
+            static void (* {_}Struct{_}Set{_}" + fieldName + "{_}{object name})(void* subject, {object type} object) = {!fn addr};
+            static void Struct{_}Set{_}" + fieldName + "{_}{object name}(void* subject, {object type} object){{
+                    {_}Struct{_}Set{_}" + fieldName + "{_}{object name}(subject, object);
             }}
             "
-        | BGet           -> "
-            void * {_}{accessorType}{_}BasicGet(void* acc, {dataSrcType} &data) = {funcPtrAddr};
-            void {accessorType}{_}BasicGet(void* acc, {dataSrcType} &data){{
-                {_}{accessorType}{_}BasicGet(acc, data);
-            }}
-            "
-
         //| BSet          -> raise (NotImplementedException())
-
-        | _             -> raise (NotImplementedException())
+        | _ -> raise (NotImplementedException())
+    
+    let render (manglingChar: ManglingChar)
+               (name'maker : TypeDescriptor -> Name) 
+               (typestr'mapper : TypeDescriptor -> TypeStr) 
+               (subject : TypeDescriptor) 
+               (object : TypeDescriptor) 
+               (verb : Verb) : FunctionId -> Code = 
+        let subject'name = name'maker subject
+        let object'name  = name'maker object
+        let object'type  = typestr'mapper object 
+        
+        let partial'format = 
+            format'cond (fun it -> it.Head <> '!') 
+                        (to'templates'then verb) 
+                        (Map [ "_"            ->> manglingChar
+                               "subject name" ->> subject'name
+                               "object name"  ->> object'name
+                               "object type"  ->> object'type ])
+        
+        fun fnId -> format partial'format (Map["!fn addr" ->> fnId])

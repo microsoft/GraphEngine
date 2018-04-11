@@ -75,15 +75,15 @@ module PString =
     let rec format'root'cond (predicate: list<char> -> bool) (template : List<char>) (result : List<string>) (kvpairs : Map<string, string>) 
             (cache : List<char>) : string = 
         match template with
-        | '{'  :: '{' :: tail -> format'root'cond predicate tail result kvpairs ('{' :: cache)
+        | '{'  :: '{' :: tail -> format'root'cond predicate tail result kvpairs ('{' :: '{' :: cache)
         | '{'  ::        tail -> 
             if cache.IsEmpty 
             then 
                 format'render'cond predicate tail result kvpairs []
             else 
                 format'render'cond predicate tail ((cache |> rev'concat) :: result) kvpairs []
-        | '\\' :: chr :: tail -> format'root'cond predicate tail result kvpairs (chr :: cache)
-        | '}'  :: '}' :: tail -> format'root'cond predicate tail result kvpairs ('}' :: cache)
+        | '\\' :: chr :: tail -> format'root'cond predicate tail result kvpairs ('\\' :: chr :: cache)
+        | '}'  :: '}' :: tail -> format'root'cond predicate tail result kvpairs ('}' :: '}' :: cache)
         | '}'  :: _           -> failwith "missing pair parentheses."
         | chr  ::        tail -> format'root'cond predicate tail result kvpairs (chr :: cache)
         | [] -> 

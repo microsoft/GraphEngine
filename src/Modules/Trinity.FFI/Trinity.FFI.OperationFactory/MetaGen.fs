@@ -8,15 +8,14 @@ module TGEN =
     open GraphEngine.Jit.TypeSystem
     open System
     open Trinity.Storage
-    open Trinity.FFI.OperationFactory.Command
     open Trinity.FFI.OperationFactory.Operator
 
     type SwigCode      = string
     type CodeGenerator = (string -> string)
 
     
-    let m_code = '_'
-    let mangling (name: string) = name.Replace(m_code, m_code + m_code)
+    let manglingCharmanglingChar = '_'
+    let mangling (name: string) = name.Replace(manglingCharmanglingChar, manglingCharmanglingChar + manglingCharmanglingChar)
     
     let make'arg'type(typeDesc: TypeDescriptor) : string = 
         (** 
@@ -50,11 +49,11 @@ module TGEN =
         match desc with
         | {TypeCode=LIST; ElementType=elemType}  -> 
                 let elemTypeName = elemType |> Seq.head |> make'name
-                PString.format "List{_}{elem}" (Map["_" ->> m_code; "elem" ->> elemTypeName])
+                PString.format "List{_}{elem}" (Map["_" ->> manglingCharmanglingChar; "elem" ->> elemTypeName])
         | {TypeCode=CELL; TypeName=cellName}     ->
-                PString.format "Cell{_}{cellName}" (Map ["_" ->> m_code; "cellName" ->> mangling cellName])  
+                PString.format "Cell{_}{cellName}" (Map ["_" ->> manglingCharmanglingChar; "cellName" ->> mangling cellName])  
         | {TypeCode=STRUCT; TypeName=structName} ->
-                    PString.format "Struct{_}{structName}" (Map["_" ->> m_code; "structName" ->> mangling structName])
+                    PString.format "Struct{_}{structName}" (Map["_" ->> manglingCharmanglingChar; "structName" ->> mangling structName])
         | _                                      ->
                 desc.TypeName.ToLower() // primitive type
     
@@ -79,69 +78,7 @@ module TGEN =
              |> Seq.map (fun verb -> ({DeclaringType=elemType; Verb=verb}, render'verb type' elemType verb))
         
         | _                                      -> 
-             failwith "Unexpected type descrriptor."                                 
-                  
-        
-        
-
-        
-
-    let render'struct'methods (render'verb: Verb -> 'T) (rootType: TypeDescriptor) (memberDesc: MemberDescriptor) : seq<FunctionDescriptor * 'T> =
-        let memberName       = memberDesc.Name
-        let memberType       = memberDesc.Type
-        let fnDescMaker verb = {DeclaringType=memberType ; Verb=verb}
-        match rootType.TypeCode with
-        | CELL
-        | STRUCT  -> 
-            [SGet; SSet]
-            |> Seq.map (fun it -> it memberName)
-            |> Seq.map (fun verb -> (fnDescMaker verb, render'verb verb))
-        | _       -> failwith "unexpected type with members"
-  
-
-    let render'list'methods (render'verb: Verb -> 'T) (rootType: TypeDescriptor) (elemType: TypeDescriptor) : seq<FunctionDescriptor * SwigCode> =
-        (**
-        where to announce a inline index method?
-        **)
-        failwith "out of date"
-
-    let define'struct'methods  (struct': TypeDescriptor) : seq<FunctionDescriptor * CodeGenerator> = seq {
-        (** a cell is a struct, too **)
-        let rootName = make'name struct'
-        let memberMaker = render'struct'methods struct'
-        for eachMember in struct'.Members do
-            let fieldName = mangling eachMember.Name
-            let fieldTypeName = make'arg'type eachMember.Type
-            for fnDesc, swigCode in memberMaker eachMember do
-                let codeGenerator (funcPtrAddr: string)  = 
-                     PString.format swigCode (
-                        Map[
-                            "_"           ->> m_code;
-                            "rootName"    ->> rootName;
-                            "fieldName"   ->> fieldName;
-                            "funcPtrAddr" ->> funcPtrAddr;
-                            "fieldType"   ->> fieldTypeName
-                        ])
-                yield (fnDesc, codeGenerator)
-        }
-    
-    let define'list'methods (list': TypeDescriptor) : seq<FunctionDescriptor * CodeGenerator> = seq{
-        let elemType = Seq.head list'.ElementType
-        for fnDesc, swigCode in render'list'methods list' elemType do
-            let codeGenerator (funcPtrAddr: string) =
-                PString.format swigCode (
-                    Map[
-                        "_"           ->> m_code;
-                        "ListType"    ->> (make'name list');
-                        "funcPtrAddr" ->> funcPtrAddr;
-                        "elemType"    ->> (elemType |> make'arg'type)
-                    ])
-            yield (fnDesc, codeGenerator)
-        }
-    
-    let define'methods = function 
-        | {TypeCode=LIST} as typeDesc ->  define'list'methods typeDesc
-        | _               as typeDesc ->  define'struct'methods typeDesc
+             failwith "Unexpected type descrriptor."            
     
     let rec TypeInfer(anyType: TypeDescriptor): seq<TypeDescriptor> = 
     (** inference out the descriptors of struct types and generic list types in a cell descriptor.**)
@@ -158,12 +95,17 @@ module TGEN =
                 Seq.empty
    
 
-    let Generate(schema: IStorageSchema): seq<TypeDescriptor * seq<FunctionDescriptor * CodeGenerator>> =
+    let Generate (render'verb : TypeDescriptor -> TypeDescriptor -> Verb -> 'T) (schema: IStorageSchema): seq<TypeDescriptor * seq<FunctionDescriptor * 'T>> =
         schema.CellDescriptors
         |> Seq.map Make
         |> Seq.collect TypeInfer
         |> Seq.distinct
         |> Seq.map (fun typeDesc ->
                 typeDesc
-                |> define'methods
+                |> render'operations render'verb
                 |> fun methods   -> (typeDesc, methods))
+    
+
+    open Trinity.FFI.OperationFactory.Swig
+    let Generate'Swig it = Swig.render manglingCharmanglingChar make'name make'arg'type |> Generate <| it
+

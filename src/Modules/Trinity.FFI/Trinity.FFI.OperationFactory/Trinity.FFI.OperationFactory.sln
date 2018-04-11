@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Trinity.FFI.OperationFactory", "Trinity.FFI.OperationFactory.fsproj", "{D4F9C76E-D360-4487-A2AE-26627CE8387F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D4F9C76E-D360-4487-A2AE-26627CE8387F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4F9C76E-D360-4487-A2AE-26627CE8387F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4F9C76E-D360-4487-A2AE-26627CE8387F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4F9C76E-D360-4487-A2AE-26627CE8387F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
