@@ -113,6 +113,9 @@
     <ClCompile Include="..\asmjit\src\asmjit\x86\x86regalloc.cpp">
       <Filter>asmjit/x86</Filter>
     </ClCompile>
+    <ClCompile Include="FuncCtx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\asmjit\src\asmjit\arm.h">
@@ -241,7 +244,7 @@
     <ClInclude Include="TypeSystem.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="JitRoutines.h">
+    <ClInclude Include="GraphEngine.Jit.Native.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

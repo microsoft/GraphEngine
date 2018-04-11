@@ -31,7 +31,7 @@ template<typename T, typename S> void __deepcopy_arr(T* &dst, S &dst_size, T* co
 template<typename T> std::vector<T*>* __get_ptrs(T* arr, int len)
 {
     std::vector<T*>* vec = new std::vector<T*>();
-    for(T* p = arr; p < arr + len; ++p) { vec->push_back(p); }
+    for (T* p = arr; p < arr + len; ++p) { vec->push_back(p); }
     return vec;
 }
 
@@ -191,19 +191,19 @@ TypeDescriptor::~TypeDescriptor()
 
 //  !Keep in sync with TypeSystem.fs
 enum TypeCode : int32_t {
-      TC_NULL
-    , TC_U8      , TC_U16     , TC_U32    , TC_U64
-    , TC_I8      , TC_I16     , TC_I32    , TC_I64
-    , TC_F32     , TC_F64
-    , TC_BOOL 
-    , TC_CHAR    , TC_STRING  , TC_U8STRING
+    TC_NULL
+    , TC_U8, TC_U16, TC_U32, TC_U64
+    , TC_I8, TC_I16, TC_I32, TC_I64
+    , TC_F32, TC_F64
+    , TC_BOOL
+    , TC_CHAR, TC_STRING, TC_U8STRING
     , TC_LIST
-    , TC_STRUCT  , TC_CELL
+    , TC_STRUCT, TC_CELL
 };
 
 //  !Keep in sync with Verbs.fs
 enum VerbCode : int32_t {
-      VC_BGet
+    VC_BGet
     , VC_BSet
     , VC_LInlineGet // of int
     , VC_LInlineSet // of int
@@ -236,7 +236,7 @@ struct Verb
     VerbCode Code;
     VerbData Data;
 
-    ~Verb() 
+    ~Verb()
     {
         if (Code == VerbCode::VC_GSGet || Code == VerbCode::VC_GSSet)
         {
@@ -263,6 +263,7 @@ struct Verb
         }
     }
 };
+
 
 struct FunctionDescriptor
 {
