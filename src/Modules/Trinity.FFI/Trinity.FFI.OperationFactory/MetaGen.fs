@@ -58,6 +58,34 @@ module TGEN =
         | _                                      ->
                 desc.TypeName.ToLower() // primitive type
     
+    let render'operations (render'verb : TypeDescriptor -> TypeDescriptor -> Verb -> 'T) (type': TypeDescriptor) : seq<FunctionDescriptor * 'T> =
+        match type' with
+        | {TypeCode=CELL; Members=members}
+        | {TypeCode=STRUCT; Members=members}    ->
+           members
+           |> Seq.collect (
+                fun (member': MemberDescriptor) ->
+                    let fieldName   = member'.Name
+                    let memberType  = member'.Type
+                    let fnDescMaker = fun verb  -> {DeclaringType=memberType; Verb=verb} 
+                    [SGet; SSet]
+                    |> Seq.map (fun it   -> it fieldName)
+                    |> Seq.map (fun verb -> (fnDescMaker verb, render'verb type' memberType verb))
+           )
+        
+        | {TypeCode=LIST;ElementType=elemTypes}  ->
+             let elemType = Seq.head elemTypes
+             [LGet; LSet;  LContains; LCount;]
+             |> Seq.map (fun verb -> ({DeclaringType=elemType; Verb=verb}, render'verb type' elemType verb))
+        
+        | _                                      -> 
+             failwith "Unexpected type descrriptor."                                 
+                  
+        
+        
+
+        
+
     let render'struct'methods (render'verb: Verb -> 'T) (rootType: TypeDescriptor) (memberDesc: MemberDescriptor) : seq<FunctionDescriptor * 'T> =
         let memberName       = memberDesc.Name
         let memberType       = memberDesc.Type

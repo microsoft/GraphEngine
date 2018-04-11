@@ -1,24 +1,33 @@
 ﻿module SwigGen
 
 open GraphEngine.Jit.Verbs;
+
 module Templates = 
     open System
-    
-    let render (verb: Verb) = function
-        | LGet           -> "
-            void* {_}{ListType}{_}Get(void* dataPtr, int idx, {elemType} &elem) = {funcPtrAddr};
-            void {ListType}{_}Get(void* dataPtr, int idx, {elemType} &elem){{
-                {ListType}{_}Get(dataPtr, idx, elem);
+    open Trinity.FFI.OperationFactory.PString;
+   
+        
+    let to'templates (verb: Verb) =
+        
+        match verb with
+        | LGet           -> 
+            "
+            static void (* _List_Get_{typesig})(void* dataSrc, int idx, {elem type} &elem) = {fn addr};
+            static void List_Get_{typesig}(void* dataPtr, int idx, {elemType} &elem){{
+                _List_Get_{typesig}(dataPtr, idx, elem);
             }}
             "
-        | LSet           -> "
-            void* {_}{ListType}{_}Set(void* dataPtr, int idx, {elemType} elem) = {funcPtrAddr};
-            void {ListType}{_}Set(void* dataPtr, int idx, {elemType} elem){{
-                {_}{ListType}{_}Set(dataPtr, idx, elem);
+
+        | LSet           -> 
+            "
+            static void (* _Set_{private fn name})(void* dataSrc, int idx, {elem type} elem) = {fn addr};
+            static void Set_{public fn name}(void* dataPtr, int idx, {elemType} elem){{
+                {private fn name}(dataPtr, idx, elem);
             }}
             "
+
         | LInlineGet idx -> "
-            void* {_}{ListType}{_}Get_at" + idx.ToString() + "(void* dataPtr, {elemType} &elem) = {funcPtrAddr};
+            void* {_}{list type name}{_}Get_at" + idx.ToString() + "(void* dataPtr, {element type} &elem) = {function pointer address};
             void {ListType}{_}Get_at" + idx.ToString() + "(void* dataPtr, {elemType} &elem){{
                 {ListType}{_}Get_at"+ idx.ToString() + "(dataPtr, elem);
             }}

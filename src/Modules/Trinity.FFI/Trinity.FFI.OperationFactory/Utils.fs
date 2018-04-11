@@ -71,10 +71,60 @@ module PString =
                     
         | chr :: tail -> format'render tail result kvpairs (chr :: name)
         | _           -> failwith "unsolved error."
+
+    let rec format'root'cond (predicate: list<char> -> bool) (template : List<char>) (result : List<string>) (kvpairs : Map<string, string>) 
+            (cache : List<char>) : string = 
+        match template with
+        | '{'  :: '{' :: tail -> format'root'cond predicate tail result kvpairs ('{' :: cache)
+        | '{'  ::        tail -> 
+            if cache.IsEmpty 
+            then 
+                format'render'cond predicate tail result kvpairs []
+            else 
+                format'render'cond predicate tail ((cache |> rev'concat) :: result) kvpairs []
+        | '\\' :: chr :: tail -> format'root'cond predicate tail result kvpairs (chr :: cache)
+        | '}'  :: '}' :: tail -> format'root'cond predicate tail result kvpairs ('}' :: cache)
+        | '}'  :: _           -> failwith "missing pair parentheses."
+        | chr  ::        tail -> format'root'cond predicate tail result kvpairs (chr :: cache)
+        | [] -> 
+            if cache.IsEmpty 
+            then 
+                result |> rev'concat
+            else 
+                (cache |> rev'concat) :: result |> rev'concat
     
+    and format'render'cond (predicate: list<char> -> bool) (chrs : List<char>) (result : List<string>) (kvpairs : Map<string, string>) (name : List<char>) = 
+        match chrs with
+        | '}' :: tail -> 
+            if name.IsEmpty 
+            then 
+                failwith "empty name cannot be render."
+            elif predicate name
+            then
+                name
+                |> rev'concat
+                |> kvpairs.TryFind
+                |> (fun some -> 
+                if some.IsNone 
+                then 
+                    failwith "unexpected keyword args"
+                else 
+                    some.Value)
+                    |> (fun value -> format'root'cond predicate tail (value :: result) kvpairs [])
+            else
+                let value = "{" + (name |> rev'concat) + "}"
+                format'root'cond predicate tail (value :: result) kvpairs []
+                
+                    
+        | chr :: tail -> format'render'cond predicate tail result kvpairs (chr :: name)
+        | _           -> failwith "unsolved error."
+
     let format (template : string) (kvpairs : Map<string, string>) : string = 
         format'root (template.ToCharArray() |> List.ofArray) [] kvpairs []
-
+    
+    let format'cond (predicate: list<char> -> bool) (template : string) (kvpairs : Map<string, string>) : string =
+        format'root'cond predicate (template.ToCharArray() |> List.ofArray) [] kvpairs []
+   
 module Command = 
     (** 
     A default implementation of Command Line Parser.
