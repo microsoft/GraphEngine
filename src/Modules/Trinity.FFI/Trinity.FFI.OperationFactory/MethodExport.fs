@@ -1,11 +1,12 @@
-﻿namespace SwigGen
+﻿namespace Trinity.FFI.OperationFactory
 
-open SwigGen
+open Trinity.FFI.OperationFactory
 
 module MethodExport = 
-    open SwigGen.TGEN
+    open Trinity.FFI.OperationFactory.TGEN
     open GraphEngine.Jit.TypeSystem
     open GraphEngine.Jit.JitCompiler
+    open GraphEngine.Jit.Verbs
     open GraphEngine.Jit
     open System
 

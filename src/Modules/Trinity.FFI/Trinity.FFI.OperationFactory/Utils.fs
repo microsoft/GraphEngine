@@ -1,4 +1,4 @@
-﻿namespace SwigGen
+﻿namespace Trinity.FFI.OperationFactory
 
 open System.IO
 
