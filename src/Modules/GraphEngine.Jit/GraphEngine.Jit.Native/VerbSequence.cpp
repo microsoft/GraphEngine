@@ -9,6 +9,7 @@ VerbSequence::VerbSequence(FunctionDescriptor* f)
 
     pmember = nullptr;
     imember = -1;
+    parent = nullptr;
 }
 
 // for all setters, lcontains, lcount and bget, we allow no further sub-verbs.
@@ -30,6 +31,7 @@ bool VerbSequence::Next()
         pmember = *i;
         imember = i - members->begin();
         delete members;
+        parent = type;
         type = &pmember->Type;
         break;
     }
@@ -38,6 +40,7 @@ bool VerbSequence::Next()
     case VerbCode::VC_LContains:
     {
         auto vec = type->get_ElementType();
+        parent = type;
         type = vec->at(0);
         delete vec;
     }
@@ -51,7 +54,17 @@ Verb* VerbSequence::CurrentVerb()
     return pcurrent;
 }
 
+TypeDescriptor* VerbSequence::ParentType()
+{
+    return parent;
+}
+
 TypeDescriptor* VerbSequence::CurrentType()
 {
     return type;
+}
+
+MemberDescriptor* VerbSequence::CurrentMember()
+{
+    return pmember;
 }

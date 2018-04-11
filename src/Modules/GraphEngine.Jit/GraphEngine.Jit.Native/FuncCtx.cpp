@@ -30,6 +30,6 @@ void FuncCtx::ret(X86Gp& gp)
 
 asmjit::Error FuncCtx::finalize()
 {
-    if (!returned) ret();
+    if (!returned) ret(cellPtr);
     return cc.finalize();
 }

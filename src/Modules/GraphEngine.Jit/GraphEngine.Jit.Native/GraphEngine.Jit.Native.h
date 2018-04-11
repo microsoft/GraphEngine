@@ -38,6 +38,7 @@ public:
 struct VerbSequence
 {
 private:
+    TypeDescriptor*   parent;
     TypeDescriptor*   type;
     Verb*             pstart;
     Verb*             pend;
@@ -52,6 +53,8 @@ public:
     bool Next();
     Verb* CurrentVerb();
     TypeDescriptor* CurrentType();
+    TypeDescriptor* ParentType();
+    MemberDescriptor* CurrentMember();
 };
 
 TypeId::Id _get_typeid(IN TypeDescriptor* const type);
