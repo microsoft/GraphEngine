@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+*   Consume .tsl files and produce C# types
+*
+*   (Dependencies are defined by GraphEngine.Core.props.  Be sure to import that first)
+*
+*   User-Defines:
+*     @Utf8TslCodegen         : A tsl file to compile
+*     $Utf8TslOutputPath      : Output directory for the generated files, by default IntermediateOutputPath
+*
+-->
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <!--This property is used as OutputPath parameter in TSL_COMPILER_TASK-->
+    <Utf8TslOutputPath Condition=" '$(Utf8TslOutputPath)' == '' ">$(IntermediateOutputPath)</Utf8TslOutputPath>
+    <!--This property is used to specify the location of the genreated source code-->
+    <Utf8TslGeneratedCodePath Condition=" '$(Utf8TslGeneratedCodePath)' == '' ">$(Utf8TslOutputPath)GeneratedCode\</Utf8TslGeneratedCodePath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Utf8TslDebugArguments)' == ''">
+    <Utf8TslDebugArguments Condition="'$(Configuration)' != 'Release'">--Debug</Utf8TslDebugArguments>
+    <Utf8TslDebugArguments Condition="'$(Configuration)' == 'Release'"></Utf8TslDebugArguments>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AvailableItemName Include="Utf8TslCodegen" />
+  </ItemGroup>
+
+  <Target Name="Utf8TslEncode"
+  	      Inputs="@(Utf8TslCodegen->'%(FullPath)')"
+  	      Outputs="@(Utf8TslCodegen->'%(FullPath).tsl')"
+  	      DependsOnTargets="TslCodegenPrepare"
+          BeforeTargets="Utf8TslCodegenPrepare"
+          Condition="'@(Utf8TslCodegen)' != ''">
+    <Message Text="@(Utf8TslCodegen->'%(FullPath)')" />   
+    <Exec Command="dotnet &quot;$(UTF8_TSL_ENCODER_PATH)&quot; 0 &quot;@(Utf8TslCodegen->'%(FullPath)')&quot;" />
+  </Target>
+
+  <Target Name="Utf8TslCodegenPrepare"
+  	      DependsOnTargets="Utf8TslEncode"
+          BeforeTargets="Utf8TslCodegenCs">
+
+    <ItemGroup>
+      <OldGeneratedCode Include="$(Utf8TslGeneratedCodePath)**\*.cs" />
+    </ItemGroup>
+    <MakeDir Directories="$(Utf8TslGeneratedCodePath)" ContinueOnError="true"/>
+    <Delete Files="@(OldGeneratedCode)" ContinueOnError="true"/>
+    <Exec Condition="'$(OS)' != 'Windows_NT' " Command="chmod u+x $(UTF8_TSL_CODEGEN_PATH)" />
+  </Target>
+  
+  <Target Name="Utf8TslCodegenCs"
+          Inputs="@(Utf8TslCodegen->'%(FullPath).tsl')"
+          Outputs="$(Utf8TslGeneratedCodePath)\**\*.cs"
+          BeforeTargets="Utf8TslCompileCs"
+          DependsOnTargets="Utf8TslCodegenPrepare"
+          Condition="'@(Utf8TslCodegen)' != ''">
+    <Exec Command="&quot;$(UTF8_TSL_CODEGEN_PATH)&quot; --ProjectRoot &quot;$(MSBuildProjectDirectory)&quot; --ScriptList &quot;@(Utf8TslCodegen->'%(FullPath).tsl')&quot; --RootNamespace $(RootNamespace) --OutputPath $(Utf8TslOutputPath) $(Utf8TslDebugArguments) $(Utf8TslAdditionalArguments)" />
+  </Target>
+
+  <Target Name="Utf8TslDecode"
+  	      Inputs="$(Utf8TslGeneratedCodePath)\**\*.cs"
+  	      Outputs="$(Utf8TslGeneratedCodePath)\**\*.cs"
+  	      DependsOnTargets="Utf8TslCodegenCs"
+          BeforeTargets="Utf8TslCompileCs"
+          Condition="'@(Utf8TslCodegen)' != ''">
+    <Exec Command="dotnet &quot;$(UTF8_TSL_ENCODER_PATH)&quot; 1 &quot;$([System.IO.Path]::GetFullPath('$(Utf8TslGeneratedCodePath)'))&quot;" />
+  </Target>
+
+
+  <Target Name="Utf8TslCompileCs"
+          BeforeTargets="CoreCompile"
+          DependsOnTargets="Utf8TslDecode"
+          Condition="'@(Utf8TslCodegen)' != ''">
+
+    <Error
+      Text="A Graph Engine project cannot be built with Prefer32Bit option enabled. Please uncheck the toggle in project properties page, or edit the project file."
+      Condition=" $(Prefer32Bit) == true " />
+
+    <Error
+      Text="A Graph Engine project should target AnyCPU or x64. Please change the platform in the project properties page, or edit the project file."
+      Condition=" '$(Platform)' != 'AnyCPU' AND '$(Platform)' != 'anycpu' AND '$(Platform)' != 'x64' " />
+
+    <ItemGroup>
+      <_Utf8TslGeneratedFiles Include="$(Utf8TslGeneratedCodePath)**\*.cs">
+        <AutoGen>true</AutoGen>
+      </_Utf8TslGeneratedFiles>
+
+      <_Utf8TslGeneratedFileNames Include="@(_Utf8TslGeneratedFiles)"/>
+      <Compile Include="@(_Utf8TslGeneratedFileNames)" />
+
+      <!--
+        * MsBuild wants to keep track of all our outputs, to understand how to clean build.  It seems it
+        * needs to know all of them regardless of what we actually produced THIS build, so adding always.
+      -->
+      <FileWrites Include="@(_Utf8TslGeneratedFileNames)" />
+    </ItemGroup>
+  </Target>
+</Project>
