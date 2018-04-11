@@ -5,25 +5,28 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <AssemblyName>SwigGen</AssemblyName>
-    <RootNamespace>SwigGen</RootNamespace>
+    <AssemblyName>Trinity.FFI.OperationFactory</AssemblyName>
+    <RootNamespace>Trinity.FFI.OperationFactory</RootNamespace>
     <OutputTypeEx>library</OutputTypeEx>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <OutputPath>..\..\..\..\bin</OutputPath>
     <IsPackable>false</IsPackable>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
-    <PackageReference Include="GraphEngine.Jit" Version="2.0.9328" />
-  </ItemGroup>
 
   <ItemGroup>
     
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Lib.fs" />
+    <Compile Include="Utils.fs" />
     <Content Include="packages.config" />
-    <Compile Include="Gen.fs" />
+    <Compile Include="MetaGen.fs" />
     <Compile Include="MethodExport.fs" />
+    <Compile Include="NoJit.fs" />
+    <Compile Include="SwigGen.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
+    <PackageReference Include="GraphEngine.Jit" Version="2.0.9328" />
   </ItemGroup>
 </Project>

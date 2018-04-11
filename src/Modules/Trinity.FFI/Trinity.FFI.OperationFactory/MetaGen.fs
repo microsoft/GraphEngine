@@ -1,58 +1,15 @@
-﻿namespace SwigGen
+﻿namespace Trinity.FFI.OperationFactory
 
-open SwigGen
-
-module SwigTemplates = 
-    
-    let ListGet = "
-    void* {_}{ListType}{_}Get(void* dataPtr, int idx, {elemType} &elem) = {funcPtrAddr};
-    void {ListType}{_}Get(void* dataPtr, int idx, {elemType} &elem){{
-        {ListType}{_}Get(dataPtr, idx, elem);
-    }}
-    "
-
-    let ListSet = "
-    void* {_}{ListType}{_}Set(void* dataPtr, int idx, {elemType} elem) = {funcPtrAddr};
-    void {ListType}{_}Set(void* dataPtr, int idx, {elemType} elem){{
-        {_}{ListType}{_}Set(dataPtr, idx, elem);
-    }}
-    "
-    
-    let Contains = "
-    void* {_}{ListType}{_}Contains(void* dataPtr, {elemType} elem) = {funcPtrAddr};
-    void {ListType}{_}Contains(void* dataPtr, {elemType} elem){{
-        {_}{ListType}{_}Contains(dataPtr, elem);
-    }}
-    "
-
-    let Count = "
-    void* {_}{ListType}{_}Count(void* dataPtr) = {funcPtrAddr};
-    void {ListType}{_}Count(void* dataPtr){{
-        {_}{ListType}{_}Count(dataPtr);
-    }}
-    "
-
-    let FieldGet = "
-    void* {_}{rootName}{_}Get{_}{fieldName}(void* dataPtr, {{fieldType}} &field) = {funcPtrAddr};
-    void {rootName}{_}Get{_}{fieldName}(void* dataPtr, {{fieldType}} &field){{
-        {_}{rootName}{_}Get{_}{fieldName}(dataPtr, field);
-    }}
-    "
-
-    let FieldSet = "
-    void* {_}{rootName}{_}Set{_}{fieldName}(void* dataPtr, {{fieldType}} field) = {funcPtrAddr};
-    void {rootName}{_}Set{_}{fieldName}(void* dataPtr, {{fieldType}} field){{
-        {_}{rootName}{_}Set{_}{fieldName}(dataPtr, field);
-    }}
-    "
+open Trinity.FFI.OperationFactory
 
 module TGEN = 
     open GraphEngine.Jit
+    open GraphEngine.Jit.Verbs
     open GraphEngine.Jit.TypeSystem
     open System
     open Trinity.Storage
-    open SwigGen.Command
-    open SwigGen.Operator
+    open Trinity.FFI.OperationFactory.Command
+    open Trinity.FFI.OperationFactory.Operator
 
     type SwigCode      = string
     type CodeGenerator = (string -> string)
@@ -101,28 +58,53 @@ module TGEN =
         | _                                      ->
                 desc.TypeName.ToLower() // primitive type
     
-    let render'struct'methods (rootType: TypeDescriptor) (memberDesc: MemberDescriptor) : seq<FunctionDescriptor * SwigCode> = seq{
-        let memberName = memberDesc.Name
-        let memberType = memberDesc.Type
+    let render'operations (render'verb : TypeDescriptor -> TypeDescriptor -> Verb -> 'T) (type': TypeDescriptor) : seq<FunctionDescriptor * 'T> =
+        match type' with
+        | {TypeCode=CELL; Members=members}
+        | {TypeCode=STRUCT; Members=members}    ->
+           members
+           |> Seq.collect (
+                fun (member': MemberDescriptor) ->
+                    let fieldName   = member'.Name
+                    let memberType  = member'.Type
+                    let fnDescMaker = fun verb  -> {DeclaringType=memberType; Verb=verb} 
+                    [SGet; SSet]
+                    |> Seq.map (fun it   -> it fieldName)
+                    |> Seq.map (fun verb -> (fnDescMaker verb, render'verb type' memberType verb))
+           )
+        
+        | {TypeCode=LIST;ElementType=elemTypes}  ->
+             let elemType = Seq.head elemTypes
+             [LGet; LSet;  LContains; LCount;]
+             |> Seq.map (fun verb -> ({DeclaringType=elemType; Verb=verb}, render'verb type' elemType verb))
+        
+        | _                                      -> 
+             failwith "Unexpected type descrriptor."                                 
+                  
+        
+        
+
+        
+
+    let render'struct'methods (render'verb: Verb -> 'T) (rootType: TypeDescriptor) (memberDesc: MemberDescriptor) : seq<FunctionDescriptor * 'T> =
+        let memberName       = memberDesc.Name
+        let memberType       = memberDesc.Type
+        let fnDescMaker verb = {DeclaringType=memberType ; Verb=verb}
         match rootType.TypeCode with
         | CELL
         | STRUCT  -> 
-            yield ({DeclaringType=memberType ; Verb=SGet memberName}, SwigTemplates.FieldGet)
-            yield ({DeclaringType=memberType ; Verb=SSet memberName}, SwigTemplates.FieldSet)
+            [SGet; SSet]
+            |> Seq.map (fun it -> it memberName)
+            |> Seq.map (fun verb -> (fnDescMaker verb, render'verb verb))
         | _       -> failwith "unexpected type with members"
-    }
+  
 
-    let render'list'methods (rootType: TypeDescriptor) (elemType: TypeDescriptor) : seq<FunctionDescriptor * SwigCode> = seq{
-        (** the rootType might be used in the future **)
+    let render'list'methods (render'verb: Verb -> 'T) (rootType: TypeDescriptor) (elemType: TypeDescriptor) : seq<FunctionDescriptor * SwigCode> =
         (**
         where to announce a inline index method?
         **)
-        yield ({DeclaringType=elemType; Verb=LGet}, SwigTemplates.FieldGet)
-        yield ({DeclaringType=elemType; Verb=LSet}, SwigTemplates.FieldSet)
-        yield ({DeclaringType=elemType; Verb=LContains}, SwigTemplates.Contains)
-        yield ({DeclaringType=elemType; Verb=LCount}, SwigTemplates.Count)
-    }
-    
+        failwith "out of date"
+
     let define'struct'methods  (struct': TypeDescriptor) : seq<FunctionDescriptor * CodeGenerator> = seq {
         (** a cell is a struct, too **)
         let rootName = make'name struct'
