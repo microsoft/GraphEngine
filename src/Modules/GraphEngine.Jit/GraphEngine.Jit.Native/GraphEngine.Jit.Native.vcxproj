@@ -156,8 +156,11 @@
     <ClCompile Include="..\asmjit\src\asmjit\x86\x86operand.cpp" />
     <ClCompile Include="..\asmjit\src\asmjit\x86\x86operand_regs.cpp" />
     <ClCompile Include="..\asmjit\src\asmjit\x86\x86regalloc.cpp" />
+    <ClCompile Include="CellAccessor.cpp" />
     <ClCompile Include="FuncCtx.cpp" />
     <ClCompile Include="GraphEngine.Jit.Native.cpp" />
+    <ClCompile Include="JitRoutines.cpp" />
+    <ClCompile Include="VerbSequence.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\asmjit\src\asmjit\arm.h" />

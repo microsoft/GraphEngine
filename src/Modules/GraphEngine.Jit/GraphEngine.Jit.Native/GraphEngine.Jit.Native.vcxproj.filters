@@ -116,6 +116,15 @@
     <ClCompile Include="FuncCtx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="VerbSequence.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JitRoutines.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CellAccessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\asmjit\src\asmjit\arm.h">

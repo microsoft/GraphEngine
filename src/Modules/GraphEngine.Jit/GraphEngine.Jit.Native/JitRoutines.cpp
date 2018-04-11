@@ -82,12 +82,14 @@ JitRoutine(BGet)
     }
     else if (tid != TypeId::kUIntPtr)
     {
+        // simple atom
         cc.mov(retreg, address);
     }
     else 
     {
         auto plan = walk(seq.CurrentType());
         simplify(plan);
+
         //TODO execute the plan
     }
 
