@@ -160,6 +160,7 @@
     <ClCompile Include="FuncCtx.cpp" />
     <ClCompile Include="GraphEngine.Jit.Native.cpp" />
     <ClCompile Include="JitRoutines.cpp" />
+    <ClCompile Include="TypeSystem.cpp" />
     <ClCompile Include="VerbSequence.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -205,6 +206,7 @@
     <ClInclude Include="..\asmjit\src\asmjit\x86\x86operand.h" />
     <ClInclude Include="..\asmjit\src\asmjit\x86\x86regalloc_p.h" />
     <ClInclude Include="GraphEngine.Jit.Native.h" />
+    <ClInclude Include="Trinity.h" />
     <ClInclude Include="TypeSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

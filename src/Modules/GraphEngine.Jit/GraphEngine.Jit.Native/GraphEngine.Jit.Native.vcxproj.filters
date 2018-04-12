@@ -125,6 +125,9 @@
     <ClCompile Include="CellAccessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TypeSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\asmjit\src\asmjit\arm.h">
@@ -254,6 +257,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="GraphEngine.Jit.Native.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Trinity.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -12,11 +12,7 @@ template<typename T> void __deepcopy(T* &dst, T* const &src)
     else { dst = nullptr; }
 }
 
-void __deepcopy(char* &dst, char* const &src)
-{
-    if (src) { dst = _strdup(src); }
-    else { dst = nullptr; }
-}
+void __deepcopy(char* &dst, char* const &src);
 
 template<typename T, typename S> void __deepcopy_arr(T* &dst, S &dst_size, T* const &src, S const &src_size)
 {
@@ -171,23 +167,6 @@ struct MemberDescriptor
         Name = nullptr;
     }
 };
-
-TypeDescriptor::~TypeDescriptor()
-{
-    for (int i = 0; i < ElementArity; ++i) { ElementType[i].~TypeDescriptor(); }
-    for (int i = 0; i < NrMember; ++i) { Members[i].~MemberDescriptor(); }
-    for (int i = 0; i < NrTSLAttribute; ++i) { TSLAttributes[i].~AttributeDescriptor(); }
-
-    if (TypeName) free(TypeName);
-    if (ElementType) free(ElementType);
-    if (Members) free(Members);
-    if (TSLAttributes) free(TSLAttributes);
-
-    TypeName = nullptr;
-    ElementType = nullptr;
-    Members = nullptr;
-    TSLAttributes = nullptr;
-}
 
 //  !Keep in sync with TypeSystem.fs
 enum TypeCode : int32_t {

@@ -1,4 +1,5 @@
 #include "GraphEngine.Jit.Native.h"
+#include "Trinity.h"
 #include <cstring>
 #include <algorithm>
 #include <functional>
@@ -34,7 +35,7 @@ extern "C" void tsl_assign(CellAccessor* accessor, char* dst, char* src, int32_t
     if (size_dst != size_src) 
     {
         auto offset = dst - accessor->cellPtr;
-        Storage::LocalMemoryStorage::ResizeCell(accessor->cellId, accessor->entryIndex, offset, size_src - size_dst, accessor->cellPtr);
+        ::CResizeCell(accessor->cellId, accessor->entryIndex, offset, size_src - size_dst, accessor->cellPtr);
         dst = accessor->cellPtr + offset;
     }
 
@@ -60,10 +61,9 @@ extern "C" char* tsl_setu8string(CellAccessor* accessor, int32_t* p, char* trini
     tsl_assign(accessor, (char*)(p + 1), (char*)str.c_str(), tlen, slen);
 }
 
-
 // type-safe call
-template <typename TRET, typename... TARGS>
-CCFuncCall* safecall(X86Compiler &cc, TRET(TARGS...) func)
+template <class TRET, class... TARGS>
+CCFuncCall* safecall(X86Compiler &cc, TRET (*func)(TARGS...))
 {
     return cc.call(imm_ptr(func), FuncSignatureT<TRET, TARGS...>());
 }
