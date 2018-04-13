@@ -47,7 +47,8 @@ module CSharp =
                                             "_"            ->> object'name;
                                             "object name"  ->> object'name
                                             ])
-             function 
+             function verb ->
+             match verb with
              | LGet -> 
                 let toFnName = fun head -> PString.format "{0}{_}{1}{_}{2}" (Map["_" ->> manglingChar; "0" ->> head; "1" ->> operationSig; "2" ->> "Get"])
                 let RHS  = if Pritimive then "src[idx]" else "GCHandle.ToIntPtr(GCHandle.Alloc(src[idx])).ToPointer()"
@@ -86,7 +87,7 @@ module CSharp =
              | LInlineGet idx ->
              
                 let toFnName = fun head -> PString.format "{0}{_}{1}{_}{2}" (Map["_" ->> manglingChar; "0" ->> head; "1" ->> operationSig; "2" ->> "Get"])
-                let RHS  = sprintf (if Pritimive then "src[%d]" else sprintf "GCHandle.ToIntPtr(GCHandle.Alloc(src[%d])).ToPointer()") idx
+                let RHS  = sprintf (if Pritimive then "src[%d]" else "GCHandle.ToIntPtr(GCHandle.Alloc(src[%d])).ToPointer()") idx
                 let RET  = sprintf "@object = %s" RHS
                 
                 " 
@@ -203,21 +204,21 @@ module CSharp =
                   
              | _        -> raise (NotImplementedException())
              
-             |> fun (template, toFnName, RET) ->
-                 let FUNC = toFnName "FUNC"
-                 let DELE = toFnName "DELE"
-                 let INST = toFnName "INST"
-                 let ADDR = toFnName "ADDR"
-                 let renderMap = Map[
-                                    "FUNC"         ->> FUNC;
-                                    "DELE"         ->> DELE;
-                                    "INST"         ->> INST;
-                                    "ADDR"         ->> ADDR;
-                                    "RET"          ->> RET;
-                                    "arg type"     ->> arg'type;
-                                    "subject type" ->> subject'type;
-                                 ]
-                 PString.format template renderMap
+             |>fun(template, toFnName, RET) -> 
+                         let FUNC = toFnName "FUNC"
+                         let DELE = toFnName "DELE"
+                         let INST = toFnName "INST"
+                         let ADDR = toFnName "ADDR"
+                         
+                         let renderMap = 
+                             Map [ "FUNC" ->> FUNC
+                                   "DELE" ->> DELE
+                                   "INST" ->> INST
+                                   "ADDR" ->> ADDR
+                                   "RET" ->> RET
+                                   "arg type" ->> arg'type
+                                   "subject type" ->> subject'type ]
+                         PString.format template renderMap
                                 
              
              

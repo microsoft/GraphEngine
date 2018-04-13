@@ -15,20 +15,6 @@ module TGEN =
 
     
     let mangling (manglingChar: char) (name: string) = name.Replace(manglingChar, manglingChar + manglingChar)
-    
-    let make'arg'type (isPrimitive: bool)(typeDesc: TypeDescriptor) : string = 
-        (** 
-            transfrom an argument's typedescriptor into a name of supported swig type.
-            eg.            
-            Int ->
-            void xxx(void* data, int arg);
-                                 ^
-                                  
-            List<int> ->
-            void xxx(void* data, void* &arg);
-                                 ^
-         **)
-         if isPrimitive then typeDesc.TypeName else "void*"
          
     let rec make'name (manglingChar: char) (desc: TypeDescriptor) = 
         (** transform a typedescriptor into a name signature 
@@ -104,5 +90,5 @@ module TGEN =
         
 
     open Trinity.FFI.OperationFactory.Swig
-    let Generate'Swig (manglingChar: char) = Swig.render manglingChar make'name make'arg'type |> Generate
+    let Generate'Swig (manglingChar: char) = Swig.render manglingChar make'name |> Generate
 

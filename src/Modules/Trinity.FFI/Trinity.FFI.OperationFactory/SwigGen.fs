@@ -73,9 +73,16 @@ module Swig =
         //| BSet          -> raise (NotImplementedException())
         | _ -> raise (NotImplementedException())
     
+    let swig'typestr'mapper (typeDesc: TypeDescriptor) = 
+        if 
+            isPrimitive typeDesc.TypeCode
+        then
+            typeDesc.TypeName.ToLower()
+        else
+            "void*"
+           
     let render (manglingChar        : ManglingChar)
                (name'maker          : ManglingChar   -> TypeDescriptor -> Name) 
-               (typestr'mapper      : TypeDescriptor -> TypeStr) 
                (subject             : TypeDescriptor) 
                (object              : TypeDescriptor) 
                (verb                : Verb) 
@@ -83,7 +90,7 @@ module Swig =
          
         let subject'name = name'maker manglingChar subject
         let object'name  = name'maker manglingChar object
-        let object'type  = typestr'mapper object 
+        let object'type  = swig'typestr'mapper object 
         
         let partial'format = 
             format'cond (fun it -> it.Head <> '!') 
