@@ -2,7 +2,7 @@
 
 open Trinity.FFI.OperationFactory
 
-module TGEN = 
+module MetaGen = 
     open GraphEngine.Jit
     open GraphEngine.Jit.Verbs
     open GraphEngine.Jit.TypeSystem
@@ -38,7 +38,7 @@ module TGEN =
         | _                                      ->
                 desc.TypeName.ToLower() // primitive type
     
-    let render'operations (render'verb : TypeDescriptor -> TypeDescriptor -> Verb -> 'T) (type': TypeDescriptor) : seq<FunctionDescriptor * 'T> =
+    let render'operations (render : TypeDescriptor -> Verb -> 'T ) (type': TypeDescriptor) : seq<'T> =
         match type' with
         | {TypeCode=CELL; Members=members}
         | {TypeCode=STRUCT; Members=members}    ->
@@ -46,18 +46,13 @@ module TGEN =
            |> Seq.collect (
                 fun (member': MemberDescriptor) ->
                     let fieldName   = member'.Name
-                    let memberType  = member'.Type
-                    let fnDescMaker = fun verb  -> {DeclaringType=memberType; Verb=verb} 
                     [SGet; SSet]
-                    |> Seq.map (fun it   -> it fieldName)
-                    |> Seq.map (fun verb -> (fnDescMaker verb, render'verb type' memberType verb))
-           )
+                    |> Seq.map (fun verbMaker -> verbMaker fieldName))
+                    |> Seq.map (fun it -> render type' it)
         
         | {TypeCode=LIST;ElementType=elemTypes}  ->
-             let elemType = Seq.head elemTypes
-             [LGet; LSet;  LContains; LCount;]
-             |> Seq.map (fun verb -> ({DeclaringType=elemType; Verb=verb}, render'verb type' elemType verb))
-        
+             [LGet; LSet; LContains; LCount;]
+             |> Seq.map (fun it -> render type' it)
         | _                                      -> 
              failwith "Unexpected type descrriptor."            
     
@@ -76,19 +71,23 @@ module TGEN =
                 Seq.empty
    
 
-    let Generate (render'verb : TypeDescriptor -> TypeDescriptor -> Verb -> 'T) 
-                 (schema: IStorageSchema)
-                 : seq<TypeDescriptor * seq<FunctionDescriptor * 'T>> =
+    let Generate (render : TypeDescriptor -> Verb -> 'T) 
+                 (schema : IStorageSchema)
+                 : seq<TypeDescriptor * seq<'T>> =
         schema.CellDescriptors
         |> Seq.map Make
         |> Seq.collect TypeInfer
         |> Seq.distinct
         |> Seq.map (fun typeDesc ->
                 typeDesc
-                |> render'operations render'verb
+                |> render'operations render
                 |> fun methods   -> (typeDesc, methods))
         
 
-    open Trinity.FFI.OperationFactory.Swig
-    let Generate'Swig (manglingChar: char) = Swig.render manglingChar make'name |> Generate
-
+    
+    open Trinity.FFI.OperationFactory.SwigGen
+    open Trinity.FFI.OperationFactory.CSharpGen
+    open Trinity.FFI.OperationFactory.JitGen
+    let GenerateSwig (manglingChar: char) = SwigGen.render manglingChar make'name |> Generate
+    let GenerateCSharp (manglingChar: char) = CSharpGen.render manglingChar make'name |> Generate
+    let GenerateJit (manglingChar: char) = JitGen.render manglingChar make'name |> Generate

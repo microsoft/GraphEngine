@@ -1,13 +1,12 @@
 ﻿namespace Trinity.FFI.OperationFactory
 
 
-
-module Swig = 
+module SwigGen = 
+    open Trinity.FFI.OperationFactory.CommonForRender
+    open Trinity.FFI.OperationFactory.Operator
     open GraphEngine.Jit.Verbs
     open GraphEngine.Jit.TypeSystem
     open System
-    open Trinity.FFI.OperationFactory.Operator
-    open Trinity.FFI.OperationFactory.PString
 
     type Name = string
         
@@ -84,20 +83,21 @@ module Swig =
     let render (manglingChar        : ManglingChar)
                (name'maker          : ManglingChar   -> TypeDescriptor -> Name) 
                (subject             : TypeDescriptor) 
-               (object              : TypeDescriptor) 
                (verb                : Verb) 
-               : FunctionId -> Code =
+               : Verb * (FunctionId -> Code) =
          
         let subject'name = name'maker manglingChar subject
+        let object = getObjectFromSubjectAndVerb subject verb
+        
         let object'name  = name'maker manglingChar object
         let object'type  = swig'typestr'mapper object 
         
         let partial'format = 
-            format'cond (fun it -> it.Head <> '!') 
+            PString.format'cond (fun it -> it.Head <> '!') 
                         (to'templates'then verb) 
                         (Map [ "_"            ->> manglingChar
                                "subject name" ->> subject'name
                                "object name"  ->> object'name
                                "object type"  ->> object'type ])
         
-        fun fnId -> format partial'format (Map["!fn addr" ->> fnId])
+        verb, fun fnId -> PString.format partial'format (Map["!fn addr" ->> fnId])

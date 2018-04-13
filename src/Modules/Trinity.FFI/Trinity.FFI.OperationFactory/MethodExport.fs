@@ -3,7 +3,7 @@
 open Trinity.FFI.OperationFactory
 
 module MethodExport = 
-    open Trinity.FFI.OperationFactory.TGEN
+    open Trinity.FFI.OperationFactory.MetaGen
     open GraphEngine.Jit.TypeSystem
     open GraphEngine.Jit.JitCompiler
     open GraphEngine.Jit.Verbs
