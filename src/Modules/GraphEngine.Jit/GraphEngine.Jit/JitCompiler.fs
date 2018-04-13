@@ -15,10 +15,10 @@ type NativeFunction = { CallSite: nativeint; Descriptor: FunctionDescriptor }
 let s_types = new Dictionary<TypeDescriptor, NativeFunction [] >()
 
 [<DllImport("GraphEngine.Jit.Native.dll")>]
-extern nativeint CompileFunctionNative (nativeint)
+extern nativeint CompileFunctionToNative (nativeint)
 
 let CompileFunction (f: FunctionDescriptor): NativeFunction =
     let p = f |> FunctionDescriptorToNative |> Alloc |> NativePtr.toNativeInt
 
-    { NativeFunction.CallSite = CompileFunctionNative p
+    { NativeFunction.CallSite = CompileFunctionToNative p
       Descriptor = f }

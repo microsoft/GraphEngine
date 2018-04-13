@@ -51,6 +51,15 @@ type NativeFunctionDescriptor =
       Verbs           : nativeint
       NrVerbs         : int32 }
 
+[<StructLayout(LayoutKind.Sequential, Pack = 1)>]
+[<Struct>]
+type NativeCellAccessor = 
+    { mutable CellPtr         : nativeint
+      mutable CellId          : int64 
+      mutable Size            : int32 
+      mutable EntryIndex      : int32
+      mutable Type            : uint16 }
+
 let AttributeDescriptorToNative(desc: AttributeDescriptor) =
     { Name  = desc.Name  |> ToUtf8
       Value = desc.Value |> ToUtf8 }

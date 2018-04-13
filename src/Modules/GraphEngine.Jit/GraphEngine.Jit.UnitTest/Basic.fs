@@ -11,6 +11,7 @@ open JitCompiler
 open Trinity.Core.Lib
 open Microsoft.FSharp.NativeInterop
 open GraphEngine.Jit
+open GraphEngine.Jit.Helper
 
 [<Fact>]
 let ``Verb allocation`` () =
@@ -94,6 +95,7 @@ let ``FunctionDescriptor allocation``(tdesc: TypeDescriptor) =
     { DeclaringType = tdesc
       Verb          = BGet }
 
+open JitNativeInterop
 [<Theory>]
 [<MemberData("TypeDescriptorCollection")>]
 let ``JitCompiler basic compilation`` (tdesc: TypeDescriptor) =
@@ -101,15 +103,27 @@ let ``JitCompiler basic compilation`` (tdesc: TypeDescriptor) =
                        Verb          = BGet },
                      { DeclaringType = tdesc
                        Verb          = BGet }
-    let nfget :: nfset :: _ = [fget; fset] |> List.map CompileFunction
+    //let nfget :: nfset :: _ = [fget; fset] |> List.map CompileFunction
+    let [nfget; nfset] = [fget; fset] |> List.map CompileFunction
+
+    Assert.NotEqual(IntPtr.Zero, nfget.CallSite)
+    Assert.NotEqual(IntPtr.Zero, nfset.CallSite)
 
     let p = Memory.malloc 4UL |> IntPtr
-
+    let mutable accessor = {
+        CellPtr    = p
+        CellId     = 0L
+        Size       = 4
+        EntryIndex = 0
+        Type       = 0us
+    }
+    let paccessor = &&accessor |> NativePtr.toNativeInt
     try
-        ()
-        //GraphEngine.Jit.Native.Helper.Call(nfset.CallSite, p, 123)
-        //Assert.Equal(123,
-        //             GraphEngine.Jit.Native.Helper.Call(nfget.CallSite, p))
+        CallHelper.Call(nfset.CallSite,paccessor,123)
+
+        Assert.Equal(123, NativePtr.read <| NativePtr.ofNativeInt<int32> p)
+
+        Assert.Equal(123, CallHelper.Call(nfget.CallSite,paccessor))
     finally
         Memory.free(p.ToPointer())
 

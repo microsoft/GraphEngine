@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GraphEngine.Jit\GraphEngine.Jit.fsproj" />
+    <TslCodegen Include="**/*.tsl" />
   </ItemGroup>
 
 </Project>
