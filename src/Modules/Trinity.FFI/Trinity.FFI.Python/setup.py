@@ -13,7 +13,7 @@ with open('./README.md', encoding='utf-8') as f:
     readme = f.read()
 
 ge_module = Extension('_ffi',
-                           sources=['Trinity.FFI.SWIG_wrap.cxx'],
+                           sources=['Trinity.FFI.SWIG_wrap.cxx', '../../GraphEngine.Jit/GraphEngine.Jit.Native/TypeSystem.cpp'],
                            include_dirs = ['../Trinity.FFI.Native',
                                            '../../../Trinity.C/include'],
                            libraries = ['trinity_ffi'],
