@@ -64,6 +64,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\..\GraphEngine.Jit\GraphEngine.Jit.Native\TypeSystem.cpp" Link="TypeSystem.cpp" />
+    <None Include="..\..\GraphEngine.Jit\GraphEngine.Jit.Native\TypeSystem.h" Link="TypeSystem.h" />
     <None Include="GraphEngine\Dependencies.csproj" />
     <None Include="GraphEngine\**\*.py" />
   </ItemGroup>
