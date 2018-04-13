@@ -14,10 +14,9 @@ module TGEN =
     type CodeGenerator = (string -> string)
 
     
-    let manglingCharmanglingChar = '_'
-    let mangling (name: string) = name.Replace(manglingCharmanglingChar, manglingCharmanglingChar + manglingCharmanglingChar)
+    let mangling (manglingChar: char) (name: string) = name.Replace(manglingChar, manglingChar + manglingChar)
     
-    let make'arg'type(typeDesc: TypeDescriptor) : string = 
+    let make'arg'type (isPrimitive: bool)(typeDesc: TypeDescriptor) : string = 
         (** 
             transfrom an argument's typedescriptor into a name of supported swig type.
             eg.            
@@ -29,14 +28,9 @@ module TGEN =
             void xxx(void* data, void* &arg);
                                  ^
          **)
-        match typeDesc.TypeCode with
-        | STRUCT
-        | CELL // maybe a cell can be used as a field one day
-        | LIST -> "void*"
-
-        | _    -> typeDesc.TypeName.ToLower() // primitive type
-    
-    let rec make'name (desc: TypeDescriptor) = 
+         if isPrimitive then typeDesc.TypeName else "void*"
+         
+    let rec make'name (manglingChar: char) (desc: TypeDescriptor) = 
         (** transform a typedescriptor into a name signature 
             
             eg. List<List<int>> ->
@@ -45,15 +39,16 @@ module TGEN =
                 List<My_Struct> ->
                 List_My__Struct(if `_` is the mangling code
         **)
+        let m_mangling = mangling manglingChar
         
         match desc with
         | {TypeCode=LIST; ElementType=elemType}  -> 
-                let elemTypeName = elemType |> Seq.head |> make'name
-                PString.format "List{_}{elem}" (Map["_" ->> manglingCharmanglingChar; "elem" ->> elemTypeName])
+                let elemTypeName = elemType |> Seq.head |> (make'name manglingChar)
+                PString.format "List{_}{elem}" (Map["_" ->> manglingChar; "elem" ->> elemTypeName])
         | {TypeCode=CELL; TypeName=cellName}     ->
-                PString.format "Cell{_}{cellName}" (Map ["_" ->> manglingCharmanglingChar; "cellName" ->> mangling cellName])  
+                PString.format "Cell{_}{cellName}" (Map ["_" ->> manglingChar; "cellName" ->> m_mangling cellName])  
         | {TypeCode=STRUCT; TypeName=structName} ->
-                    PString.format "Struct{_}{structName}" (Map["_" ->> manglingCharmanglingChar; "structName" ->> mangling structName])
+                    PString.format "Struct{_}{structName}" (Map["_" ->> manglingChar; "structName" ->> m_mangling structName])
         | _                                      ->
                 desc.TypeName.ToLower() // primitive type
     
@@ -95,7 +90,9 @@ module TGEN =
                 Seq.empty
    
 
-    let Generate (render'verb : TypeDescriptor -> TypeDescriptor -> Verb -> 'T) (schema: IStorageSchema): seq<TypeDescriptor * seq<FunctionDescriptor * 'T>> =
+    let Generate (render'verb : TypeDescriptor -> TypeDescriptor -> Verb -> 'T) 
+                 (schema: IStorageSchema)
+                 : seq<TypeDescriptor * seq<FunctionDescriptor * 'T>> =
         schema.CellDescriptors
         |> Seq.map Make
         |> Seq.collect TypeInfer
@@ -104,8 +101,8 @@ module TGEN =
                 typeDesc
                 |> render'operations render'verb
                 |> fun methods   -> (typeDesc, methods))
-    
+        
 
     open Trinity.FFI.OperationFactory.Swig
-    let Generate'Swig it = Swig.render manglingCharmanglingChar make'name make'arg'type |> Generate <| it
+    let Generate'Swig (manglingChar: char) = Swig.render manglingChar make'name make'arg'type |> Generate
 
