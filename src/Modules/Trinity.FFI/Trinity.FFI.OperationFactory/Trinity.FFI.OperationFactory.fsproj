@@ -15,15 +15,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+
     
+
+    
+
+    
+
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Utils.fs" />
     <Content Include="packages.config" />
-    
     <Compile Include="NoJit.fs" />
+
+    <!-- Generation -->
+    <Compile Include="CommonForRender.fs" />
     <Compile Include="SwigGen.fs" />
+    <Compile Include="CSharpGen.fs" />
+    <Compile Include="JitGen.fs" />
+
     <Compile Include="MetaGen.fs" />
     <Compile Include="MethodExport.fs" />
+
   </ItemGroup>
 
   <ItemGroup>

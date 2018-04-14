@@ -1,12 +1,12 @@
 ﻿namespace Trinity.FFI.OperationFactory
 
-open GraphEngine.Jit.Verbs
 
-module Swig = 
+module SwigGen = 
+    open Trinity.FFI.OperationFactory.CommonForRender
+    open Trinity.FFI.OperationFactory.Operator
+    open GraphEngine.Jit.Verbs
     open GraphEngine.Jit.TypeSystem
     open System
-    open Trinity.FFI.OperationFactory.Operator
-    open Trinity.FFI.OperationFactory.PString
 
     type Name = string
         
@@ -21,13 +21,13 @@ module Swig =
     
     let to'templates'then (verb : Verb) = 
         match verb with
-        | LGet -> "
+        | LGet           -> "
             static void (* {_}List{_}Get{_}{subject name}{_}{object name})(void* subject, int idx, {object type} &object) = {!fn addr};
             static void List{_}Get{_}{subject name}{_}{object name}(void* subject, int idx, {object type} &object){{
                     {_}List{_}Get{_}{subject name}{_}{object name}(subject, idx, object);
             }}
             "
-        | LSet -> "
+        | LSet           -> "
             static void (* {_}List{_}Set{_}{subject name}{_}{object name})(void* subject, int idx, {object type} &object) = {!fn addr};
             static void List{_}Set{_}{subject name}{_}{object name}(void* subject, int idx, {object type} &object){{
                     {_}List{_}Set{_}{subject name}{_}{object name}(subject, idx, object);
@@ -45,13 +45,13 @@ module Swig =
                     {_}List{_}Set{_}{subject name}{_}{object name}" + idx.ToString() + "(subject, object);
             }}
            "
-        | LContains -> "
+        | LContains      -> "
             static bool (* {_}List{_}Contains{_}{subject name}{_}{object name})(void* subject, {object type} &object) = {!fn addr};
             static bool List{_}Contains{_}{subject name}{_}{object name}(void* subject, {object type} &object){{
                     return {_}List{_}Contains{_}{subject name}{_}{object name}(subject, object);
             }}
             "
-        | LCount -> "
+        | LCount         -> "
             static int (* {_}List{_}Count{_}{subject name})(void* subject) = {!fn addr};
             static int List{_}Count{_}{subject name}(void* subject){{
                     return {_}List{_}Count{_}{subject name}(subject);
@@ -72,22 +72,32 @@ module Swig =
         //| BSet          -> raise (NotImplementedException())
         | _ -> raise (NotImplementedException())
     
-    let render (manglingChar: ManglingChar)
-               (name'maker : TypeDescriptor -> Name) 
-               (typestr'mapper : TypeDescriptor -> TypeStr) 
-               (subject : TypeDescriptor) 
-               (object : TypeDescriptor) 
-               (verb : Verb) : FunctionId -> Code = 
-        let subject'name = name'maker subject
-        let object'name  = name'maker object
-        let object'type  = typestr'mapper object 
+    let swig'typestr'mapper (typeDesc: TypeDescriptor) = 
+        if 
+            isPrimitive typeDesc.TypeCode
+        then
+            typeDesc.TypeName.ToLower()
+        else
+            "void*"
+           
+    let render (manglingChar        : ManglingChar)
+               (name'maker          : ManglingChar   -> TypeDescriptor -> Name) 
+               (subject             : TypeDescriptor) 
+               (verb                : Verb) 
+               : Verb * (FunctionId -> Code) =
+         
+        let subject'name = name'maker manglingChar subject
+        let object = getObjectFromSubjectAndVerb subject verb
+        
+        let object'name  = name'maker manglingChar object
+        let object'type  = swig'typestr'mapper object 
         
         let partial'format = 
-            format'cond (fun it -> it.Head <> '!') 
+            PString.format'cond (fun it -> it.Head <> '!') 
                         (to'templates'then verb) 
                         (Map [ "_"            ->> manglingChar
                                "subject name" ->> subject'name
                                "object name"  ->> object'name
                                "object type"  ->> object'type ])
         
-        fun fnId -> format partial'format (Map["!fn addr" ->> fnId])
+        verb, fun fnId -> PString.format partial'format (Map["!fn addr" ->> fnId])

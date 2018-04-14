@@ -103,6 +103,7 @@ let rec MakeFromType(T: Type) =
                                                                Optional = false }) // XXX
                                TypeCode = TypeCode.STRUCT }
 
+let isPrimitive = AtomWidthMap.ContainsKey
 
 let MakeAttr (attr: KeyValuePair<string, string>) = 
     { AttributeDescriptor.Name               = attr.Key 
