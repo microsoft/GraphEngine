@@ -5,8 +5,11 @@ open Trinity.FFI.OperationFactory.Operator
 module CommonForRender = 
     
     
-    
-
+    let rec TypeName (t: TypeDescriptor) = 
+        match t.TypeCode with
+        | LIST   -> sprintf "List<%s>" (t.ElementType |> Seq.head |> TypeName)
+        | _      -> t.TypeName
+        
     let getMemberTypeFromSubject  (memberName: string) (subject: TypeDescriptor) =
         subject.Members
         |> Seq.filter (fun it -> it.Name.Equals memberName)

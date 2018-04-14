@@ -93,7 +93,8 @@ module SwigGen =
         let object'type  = swig'typestr'mapper object 
         
         let partial'format = 
-            PString.format'cond (fun it -> it.Head <> '!') 
+            PString.format'cond 
+                        (fun it -> it.Head <> '!') 
                         (to'templates'then verb) 
                         (Map [ "_"            ->> manglingChar
                                "subject name" ->> subject'name
