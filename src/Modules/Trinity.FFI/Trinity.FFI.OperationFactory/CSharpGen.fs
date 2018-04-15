@@ -21,17 +21,17 @@ module CSharpGen =
                  (verb                : Verb) : Verb * (FunctionAddrGetterName * Code) = 
              
              let subject'name = name'maker manglingCode subject
-             let subject'type = subject.TypeName
+             let subject'type = subject |> TypeName
                           
              let getObjectInfo (object: TypeDescriptor) = 
                  let object'name  = name'maker manglingCode object
-                 let object'type  = object.TypeName
+                 let object'type  = object |> TypeName
                  let Pritimive    = isPrimitive object.TypeCode
-                 let arg'type     = if Pritimive then object'type else "void*"             
-                 let operationSig = PString.format "{suject name}{_}{object_name}" (
+                 let arg'type     = if Pritimive then object'type else "void*"           
+                 let operationSig = PString.format "{subject name}{_}{object name}" (
                                                     Map [
                                                         "subject name" ->> subject'name;
-                                                        "_"            ->> object'name;
+                                                        "_"            ->> manglingCode;
                                                         "object name"  ->> object'name
                                                     ])
                  (object'name, object'type, Pritimive, arg'type, operationSig)

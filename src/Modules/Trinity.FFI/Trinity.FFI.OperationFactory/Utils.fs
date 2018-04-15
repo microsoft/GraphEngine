@@ -64,7 +64,7 @@ module PString =
                 |> (fun some -> 
                 if some.IsNone 
                 then 
-                    failwith "unexpected keyword args"
+                    failwith (sprintf "unexpected keyword args (%s)" (name |> rev'concat))
                 else 
                     some.Value)
                     |> (fun value -> format'root tail (value :: result) kvpairs [])
@@ -99,7 +99,7 @@ module PString =
             if name.IsEmpty 
             then 
                 failwith "empty name cannot be render."
-            elif predicate name
+            elif name |> List.rev |> predicate
             then
                 name
                 |> rev'concat
@@ -107,7 +107,7 @@ module PString =
                 |> (fun some -> 
                 if some.IsNone 
                 then 
-                    failwith "unexpected keyword args"
+                    failwith (sprintf "unexpected keyword args (%s)" (name |> rev'concat))
                 else 
                     some.Value)
                     |> (fun value -> format'root'cond predicate tail (value :: result) kvpairs [])

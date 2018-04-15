@@ -54,7 +54,7 @@ module MetaGen =
              [LGet; LSet; LContains; LCount;]
              |> Seq.map (fun it -> render type' it)
         | _                                      -> 
-             failwith "Unexpected type descrriptor."            
+             failwith (sprintf "Unexpected type descrriptor (%s)."  (type'.TypeCode.ToString()))            
     
     let rec TypeInfer(anyType: TypeDescriptor): seq<TypeDescriptor> = 
     (** inference out the descriptors of struct types and generic list types in a cell descriptor.**)
@@ -65,7 +65,7 @@ module MetaGen =
         | {TypeCode=CELL; Members=members}
         | {TypeCode=STRUCT; Members=members}      -> 
                 members
-                |> Seq.map (fun field -> field.Type)
+                |> Seq.collect (fun field -> field.Type |> TypeInfer)
                 |> fun tail -> anyType >>> tail
         | _                                       -> 
                 Seq.empty
