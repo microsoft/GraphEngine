@@ -7,12 +7,13 @@
   <PropertyGroup>
     <RootNamespace>GraphEngine.Jit.Playground</RootNamespace>
     <AssemblyName>GraphEngine.Jit.Playground</AssemblyName>
-    <OutputTypeEx>Exe</OutputTypeEx>
+    <OutputType>Exe</OutputType>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
     <ProjectReference Include="..\GraphEngine.Jit\GraphEngine.Jit.fsproj" />
     <TslCodegen Include="**/*.tsl" />
   </ItemGroup>

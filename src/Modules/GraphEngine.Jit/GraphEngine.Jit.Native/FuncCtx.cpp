@@ -8,12 +8,14 @@ FuncCtx::FuncCtx(X86Compiler& compiler) : cc(compiler), argIndex(0), returned(fa
 
     // prolog: we always load the cell pointer into a gp register "cellPtr"
     // void* cellPtr = cellAccessor->cellPtr;
-    cc.mov(cellPtr, x86::ptr(cellAccessor));
+    debug(
+        cc.mov(cellPtr, x86::qword_ptr(cellAccessor))
+    );
 }
 
 void FuncCtx::addArg(Reg& reg)
 {
-    cc.setArg(argIndex++, reg);
+    debug(cc.setArg(argIndex++, reg));
 }
 
 void FuncCtx::ret()

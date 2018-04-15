@@ -19,6 +19,9 @@ extern nativeint CompileFunctionToNative (nativeint)
 
 let CompileFunction (f: FunctionDescriptor): NativeFunction =
     let p = f |> FunctionDescriptorToNative |> Alloc |> NativePtr.toNativeInt
+    //printf "NativeFunctionDescriptor = %d" p
+    //let callsite = CompileFunctionToNative p
+    //printf "CallSite = %d" callsite
 
-    { NativeFunction.CallSite = CompileFunctionToNative p
+    { NativeFunction.CallSite = (CompileFunctionToNative p)
       Descriptor = f }

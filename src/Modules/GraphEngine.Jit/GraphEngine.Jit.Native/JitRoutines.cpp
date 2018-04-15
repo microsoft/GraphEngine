@@ -123,11 +123,11 @@ std::vector<int32_t>&& walk(TypeDescriptor* type, MemberDescriptor* this_member 
 
 JitRoutine(BGet)
 {
-    auto address = x86::ptr(ctx.cellPtr);
+    print("Enter BGet");
+
     auto tid = JitTypeId();
     auto tc = seq.CurrentType()->get_TypeCode();
-    auto retreg = ctx.cellPtr.clone();
-    retreg.setTypeAndId(tid, retreg.getId());
+    auto retreg = cc.newGpReg(tid);
 
     if (tc == TypeCode::TC_STRING)
     {
@@ -144,7 +144,13 @@ JitRoutine(BGet)
     else if (tid != TypeId::kUIntPtr)
     {
         // simple atom
-        cc.mov(retreg, address);
+        print("Atom");
+        auto atomsize = asmjit::TypeId::sizeOf(tid);
+        debug(atomsize);
+        debug(
+            cc.mov(retreg, x86::ptr(ctx.cellPtr, 0, atomsize))
+        );
+        debug(cc.isInErrorState());
     }
     else
     {
@@ -186,7 +192,6 @@ JitRoutine(BGet)
 
 JitRoutine(BSet)
 {
-    auto address = x86::ptr(ctx.cellPtr);
     auto tid = JitTypeId();
     auto tc = seq.CurrentType()->get_TypeCode();
     auto src = cc.newGpReg(tid);
@@ -209,7 +214,12 @@ JitRoutine(BSet)
     else if (tid != TypeId::kUIntPtr)
     {
         // simple atom
-        cc.mov(address, src);
+        auto atomsize = asmjit::TypeId::sizeOf(tid);
+        debug(atomsize);
+        debug(
+            cc.mov(x86::ptr(ctx.cellPtr, 0, atomsize), src)
+        );
+        debug(cc.isInErrorState());
     }
     else
     {

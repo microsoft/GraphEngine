@@ -1,4 +1,5 @@
 ﻿cell C1
 {
 	int F1;
+	string F2;
 }

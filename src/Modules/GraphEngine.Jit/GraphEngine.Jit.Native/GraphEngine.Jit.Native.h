@@ -9,6 +9,9 @@
 #include "Storage\LocalStorage\LocalMemoryStorage.h"
 using namespace asmjit;
 
+#define print(x) std::wcout << x << std::endl
+#define debug(x) std::wcout << #x << " = " << (x) << std::endl
+
 struct CellAccessor
 {
     char* cellPtr;
@@ -55,6 +58,16 @@ public:
     TypeDescriptor* CurrentType();
     TypeDescriptor* ParentType();
     MemberDescriptor* CurrentMember();
+};
+
+class ErrHandler : public ErrorHandler
+{
+public:
+    bool handleError(asmjit::Error err, const char* message, CodeEmitter* origin)
+    {
+        debug(message);
+        return false;
+    }
 };
 
 TypeId::Id _get_typeid(IN TypeDescriptor* const type);
