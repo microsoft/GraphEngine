@@ -96,9 +96,22 @@ module SwigGen =
             PString.format'cond 
                         (fun it -> it.Head <> '!') 
                         (to'templates'then verb) 
-                        (Map [ "_"            ->> manglingChar
-                               "subject name" ->> subject'name
-                               "object name"  ->> object'name
-                               "object type"  ->> object'type ])
+                        [ 
+                            "_"            ->> manglingChar;
+                            "subject name" ->> subject'name;
+                            "object name"  ->> object'name;
+                            "object type"  ->> object'type 
+                        ]
         
-        verb, fun fnId -> PString.format partial'format (Map["!fn addr" ->> fnId])
+        verb, fun fnId -> PString.format partial'format ["!fn addr" ->> fnId]
+    
+    let genSourceCode (moduleName: Name) (sourceCode: Code) = 
+        "
+        %module {moduleName}
+        %{{
+        #define SWIG_FILE_WITH_INIT
+        {sourceCode}
+        %}}
+        {sourceCode}
+        " |> fun template -> PString.format template ["moduleName" ->> moduleName; "sourceCode" ->> sourceCode]
+
