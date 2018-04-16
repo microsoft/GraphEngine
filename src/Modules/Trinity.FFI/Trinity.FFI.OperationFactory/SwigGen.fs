@@ -18,37 +18,40 @@ module SwigGen =
 
     type ManglingChar = char
     
-    
+   
     let to'templates'then (verb : Verb) = 
         match verb with
-        | LGet           -> "
-            static void (* {_}List{_}Get{_}{subject name}{_}{object name})(void* subject, int idx, {object type} &object) = {!fn addr};
-            static void List{_}Get{_}{subject name}{_}{object name}(void* subject, int idx, {object type} &object){{
-                    {_}List{_}Get{_}{subject name}{_}{object name}(subject, idx, object);
+        | LGet           -> 
+            
+
+            "
+            static {object type} (* {_}{subject name}{_}Get)(void* subject, int idx) =  ({object type} (*)(void*, int)){!fn addr};
+            static {object type} {subject name}{_}Get(void* subject, int idx){{
+                    return {_}{subject name}{_}Get(subject, idx);
             }}
             "
         | LSet           -> "
-            static void (* {_}List{_}Set{_}{subject name}{_}{object name})(void* subject, int idx, {object type} &object) = {!fn addr};
-            static void List{_}Set{_}{subject name}{_}{object name}(void* subject, int idx, {object type} &object){{
-                    {_}List{_}Set{_}{subject name}{_}{object name}(subject, idx, object);
+            static void (* {_}List{_}{subject name}{_}Set)(void* subject, int idx, {object type} object) = (void (*)(void*, int, {object type})){!fn addr};
+            static void List{_}{subject name}{_}Set(void* subject, int idx, {object type} object){{
+                    {_}List{_}{subject name}{_}Set(subject, idx, object);
             }}
             "
         | LInlineGet idx -> "
-            static void (* {_}List{_}Get{_}{subject name}{_}{object name})_At" + idx.ToString() + "(void* subject, {object type} &object) = {!fn addr};
-            static void List{_}Get{_}{subject name}{_}{object name}" + idx.ToString() + "(void* subject, {object type} &object){{
-                    {_}List{_}Get{_}{subject name}{_}{object name}" + idx.ToString() + "(subject, object);
+            static {object type} (* {_}List{_}Get{_}{object name}{_}At)" + idx.ToString() + "(void* subject) = ({object type} (*)(void*)){!fn addr};
+            static {object type} List{_}Get{_}{object name}{_}At" + idx.ToString() + "(void* subject){{
+                    return {_}List{_}Get{_}{object name}{_}At" + idx.ToString() + "(subject);
             }}
             "
         | LInlineSet idx -> "
-            static void (* {_}List{_}Set{_}{subject name}{_}{object name})_At" + idx.ToString() + "(void* subject, {object type} object) = {!fn addr};
-            static void List{_}Set{_}{subject name}{_}{object name}" + idx.ToString() + "(void* subject, {object type} object){{
-                    {_}List{_}Set{_}{subject name}{_}{object name}" + idx.ToString() + "(subject, object);
+            static void (* {_}List{_}Set{_}{object name}{_}At)" + idx.ToString() + "(void* subject, {object type} object) = (void (*)(void*, {object type})){!fn addr};
+            static void List{_}Set{_}{object name}{_}At" + idx.ToString() + "(void* subject, {object type} object){{
+                    {_}List{_}Set{_}{object name}{_}At" + idx.ToString() + "(subject, object);
             }}
            "
         | LContains      -> "
-            static bool (* {_}List{_}Contains{_}{subject name}{_}{object name})(void* subject, {object type} &object) = {!fn addr};
-            static bool List{_}Contains{_}{subject name}{_}{object name}(void* subject, {object type} &object){{
-                    return {_}List{_}Contains{_}{subject name}{_}{object name}(subject, object);
+            static bool (* {_}List{_}Contains{_}{object name})(void* subject, {object type} object) = (bool (*)(void*, {object type})){!fn addr};
+            static bool List{_}Contains{_}{object name}(void* subject, {object type} object){{
+                    return {_}List{_}Contains{_}{object name}(subject, object);
             }}
             "
         | LCount         -> "
@@ -91,14 +94,28 @@ module SwigGen =
         
         let object'name  = name'maker manglingChar object
         let object'type  = swig'typestr'mapper object 
+
+        let render'filter = fun lst -> lst.Head = ':'
+        match verb with
+        | LGet -> 
+            
+            "
+            static {object type} (* {_}{subject name}{_}Get)(void* subject, int idx) =  ({object type} (*)(void*, int)){!fn addr};
+            static {object type} {subject name}{_}Get(void* subject, int idx){{
+                    return {_}{subject name}{_}Get(subject, idx);
+            }}
+            "
+            |> fun it -> PString.format'cond render'filter it []
+
+            
         
-        let partial'format = 
-            PString.format'cond 
-                        (fun it -> it.Head <> '!') 
-                        (to'templates'then verb) 
-                        (Map [ "_"            ->> manglingChar
-                               "subject name" ->> subject'name
-                               "object name"  ->> object'name
-                               "object type"  ->> object'type ])
+        //let partial'format = 
+        //    PString.format'cond 
+        //                (fun it -> it.Head <> '!') 
+        //                (to'templates'then verb) 
+        //                (Map [ "_"            ->> manglingChar
+        //                       "subject name" ->> subject'name
+        //                       "object name"  ->> object'name
+        //                       "object type"  ->> object'type ])
         
-        verb, fun fnId -> PString.format partial'format (Map["!fn addr" ->> fnId])
+        //verb, fun fnId -> PString.format partial'format (Map["!fn addr" ->> fnId])
