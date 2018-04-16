@@ -22,10 +22,18 @@
 
     
 
+    <Compile Include="ProjectGen.fs" />
+
+    
+
+    
+
+    
+
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Utils.fs" />
     <Content Include="packages.config" />
-    <Compile Include="NoJit.fs" />
+    <Compile Include="Build.fs" />
 
     <!-- Generation -->
     <Compile Include="CommonForRender.fs" />

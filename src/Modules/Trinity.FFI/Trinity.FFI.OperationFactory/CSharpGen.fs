@@ -28,12 +28,12 @@ module CSharpGen =
                  let object'type  = object |> TypeName
                  let Pritimive    = isPrimitive object.TypeCode
                  let arg'type     = if Pritimive then object'type else "void*"           
-                 let operationSig = PString.format "{subject name}{_}{object name}" (
-                                                    Map [
+                 let operationSig = PString.format "{subject name}{_}{object name}" 
+                                                    [
                                                         "subject name" ->> subject'name;
                                                         "_"            ->> manglingCode;
                                                         "object name"  ->> object'name
-                                                    ])
+                                                    ]
                  (object'name, object'type, Pritimive, arg'type, operationSig)
              
              (** Although do pattern matching twice when it's a struct, the code is less.
@@ -54,7 +54,9 @@ module CSharpGen =
              
              match verb with
              | LGet -> 
-                let toFnName = fun head -> PString.format "{0}{_}{1}{_}{2}" (Map["_" ->> manglingCode; "0" ->> head; "1" ->> operationSig; "2" ->> "Get"])
+                let toFnName = fun head -> 
+                                    PString.format "{0}{_}{1}{_}{2}"  
+                                                   ["_" ->> manglingCode; "0" ->> head; "1" ->> operationSig; "2" ->> "Get"]
                 let RHS  = if Pritimive then "src[idx]" else "GCHandle.ToIntPtr(GCHandle.Alloc(src[idx])).ToPointer()"
                 let RET  = sprintf "@object = %s" RHS
                 
@@ -72,7 +74,9 @@ module CSharpGen =
 
                                 
              | LSet -> 
-                let toFnName = fun head -> PString.format "{0}{_}{1}{_}{2}" (Map["_" ->> manglingCode; "0" ->> head; "1" ->> operationSig; "2" ->> "Set"])
+                let toFnName = fun head -> 
+                                    PString.format "{0}{_}{1}{_}{2}" 
+                                                   ["_" ->> manglingCode; "0" ->> head; "1" ->> operationSig; "2" ->> "Set"]
                 let RHS  = if Pritimive then "@object" else sprintf "((%s)GCHandle.FromIntPtr((IntPtr)@object).Target)" object'type
                 let RET  = sprintf "src[idx] = %s" RHS
                  
@@ -89,7 +93,10 @@ module CSharpGen =
                 |> fun it -> (it, toFnName, RET)
 
              | LInlineGet idx ->
-                let toFnName = fun head -> PString.format "{0}{_}{1}{_}{2}" (Map["_" ->> manglingCode; "0" ->> head; "1" ->> operationSig; "2" ->> "Get"])
+                let toFnName = fun head -> 
+                                    PString.format "{0}{_}{1}{_}{2}" 
+                                                   ["_" ->> manglingCode; "0" ->> head; "1" ->> operationSig; "2" ->> "Get"]
+
                 let RHS  = sprintf (if Pritimive then "src[%d]" else "GCHandle.ToIntPtr(GCHandle.Alloc(src[%d])).ToPointer()") idx
                 let RET  = sprintf "@object = %s" RHS
                     
@@ -107,7 +114,10 @@ module CSharpGen =
                     
                                    
              | LInlineSet idx -> 
-                let toFnName = fun head -> PString.format "{0}{_}{1}{_}{2}" (Map["_" ->> manglingCode; "0" ->> head; "1" ->> operationSig; "2" ->> "Set"])
+                let toFnName = fun head -> 
+                                    PString.format "{0}{_}{1}{_}{2}" 
+                                                   ["_" ->> manglingCode; "0" ->> head; "1" ->> operationSig; "2" ->> "Set"]
+
                 let LHS  = sprintf "src[%d]" idx
                 let RHS  = if Pritimive then "@object" else sprintf "((%s)GCHandle.FromIntPtr((IntPtr)@object).Target)" object'type
                 let RET  = sprintf "%s = %s" LHS RHS;
@@ -124,7 +134,9 @@ module CSharpGen =
                 |> fun it -> (it, toFnName, RET)
              
              | LCount ->
-                let toFnName = fun head -> PString.format "{0}{_}{1}{_}{2}" (Map["_" ->> manglingCode; "0" ->> head; "1" ->> operationSig; "2" ->> "LCount"])
+                let toFnName = fun head -> 
+                                    PString.format "{0}{_}{1}{_}{2}" 
+                                                   ["_" ->> manglingCode; "0" ->> head; "1" ->> operationSig; "2" ->> "LCount"]
                   
                 let RET  = "return src.Count()"
                   
@@ -141,7 +153,10 @@ module CSharpGen =
                 |> fun it -> (it, toFnName, RET)
 
              | LContains ->
-                let toFnName = fun head -> PString.format "{0}{_}{1}{_}{2}" (Map["_" ->> manglingCode; "0" ->> head; "1" ->> operationSig; "2" ->> "Contains"])                  
+                let toFnName = fun head -> 
+                                    PString.format "{0}{_}{1}{_}{2}" 
+                                                   ["_" ->> manglingCode; "0" ->> head; "1" ->> operationSig; "2" ->> "Contains"]
+                                                   
                 let ELEM  = if Pritimive then "@object" else sprintf "((%s)GCHandle.FromIntPtr((IntPtr)@object).Target)" object'type
                 let RET   = sprintf "return src.Contains(%s)? 1 : 0" ELEM
 
@@ -160,11 +175,13 @@ module CSharpGen =
                                        
              | SGet fieldName ->
                 let toFnName = fun head -> PString.format "{0}{_}{1}{_}{2}_{3}" 
-                                                        (Map["_" ->> manglingCode; 
-                                                                "0" ->> head; 
-                                                                "1" ->> operationSig; 
-                                                                "2" ->> "Get"; 
-                                                                "3" ->> fieldName])
+                                                          [
+                                                            "_" ->> manglingCode; 
+                                                            "0" ->> head; 
+                                                            "1" ->> operationSig; 
+                                                            "2" ->> "Get"; 
+                                                            "3" ->> fieldName
+                                                          ]
                 let LHS  = "@object"
                 let RHS  = sprintf (if Pritimive then "src.%s" else "GCHandle.ToIntPtr(GCHandle.Alloc(src.%s)).ToPointer()") fieldName
                 let RET  = sprintf "%s = %s" LHS RHS;
@@ -183,11 +200,13 @@ module CSharpGen =
                   
              | SSet fieldName ->
                 let toFnName = fun head -> PString.format "{0}{_}{1}{_}{2}_{3}" 
-                                                            (Map["_" ->> manglingCode; 
-                                                                "0" ->> head; 
-                                                                "1" ->> operationSig; 
-                                                                "2" ->> "Set"; 
-                                                                "3" ->> fieldName])
+                                                          [
+                                                            "_" ->> manglingCode; 
+                                                            "0" ->> head; 
+                                                            "1" ->> operationSig; 
+                                                            "2" ->> "Set"; 
+                                                            "3" ->> fieldName
+                                                          ]
 
                 let LHS  = sprintf "src.%s" fieldName
                 let RHS  = if Pritimive then "@object" else sprintf "((%s)GCHandle.FromIntPtr((IntPtr)@object).Target)" object'type
@@ -214,7 +233,7 @@ module CSharpGen =
                         let ADDR = toFnName "ADDR"
                          
                         let renderMap = 
-                            Map [ 
+                               [ 
                                 "FUNC" ->> FUNC
                                 "DELE" ->> DELE
                                 "INST" ->> INST
@@ -222,7 +241,7 @@ module CSharpGen =
                                 "RET"  ->> RET
                                 "arg type"     ->> arg'type
                                 "subject type" ->> subject'type 
-                                ]
+                               ]
 
                         (verb, (ADDR, PString.format template renderMap))
                                 
