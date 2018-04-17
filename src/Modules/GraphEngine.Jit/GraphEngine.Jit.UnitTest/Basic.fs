@@ -222,7 +222,7 @@ let StringBGetBSet () =
     _U8StringBGetSet (``TypeDescriptor allocation`` "U8STRING") "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
     //_U8StringBGetSet (``TypeDescriptor allocation`` "U8STRING") "UTF8中文测试"
 
-let _SGet (cell: ICell) field (value: 'a) (set) (assert1) (assert2) =
+let _SGetSet (cell: ICell) field (set) (assert1) (assert2) =
 
     let cdesc = cell :> ICellDescriptor
     let tdesc = TypeSystem.Make cdesc
@@ -277,18 +277,59 @@ let _SGet (cell: ICell) field (value: 'a) (set) (assert1) (assert2) =
     finally
         Global.LocalStorage.ReleaseCellLock(0L, accessor.EntryIndex)
 
-let _IntegerSGet (cell: ICell) field (value: 'a) =
-    _SGet cell field value
+let _IntegerSGetSet (cell: ICell) field (value: 'a) =
+    _SGetSet cell field
         (fun site acc -> CallHelper.CallByVal(site, acc, value) )
         (fun p        -> Assert.Equal<'a>(value, NativePtr.read <| NativePtr.ofNativeInt<'a> p)) 
         (fun site acc -> Assert.Equal<'a>(value, CallHelper.CallByVal<'a>(site, acc)))
 
+let _U8StringSGetSet (cell: ICell) field (value: string) = 
+    let _pu8str      = ToUtf8 value
+    let lu8str       = strlen _pu8str
+    let pu8str       = AddTslHead _pu8str lu8str
+
+    try
+        _SGetSet cell field
+            (fun site acc -> CallHelper.CallByPtr(site, acc, _pu8str))
+            (fun p        -> Assert.Equal(0, Memory.memcmp(p.ToPointer(), pu8str.ToPointer(), uint64 (lu8str + 4))))
+            (fun site acc -> Assert.Equal(value, CallHelper.CallByVal<string>(site, acc)))
+    finally
+        Memory.free(_pu8str.ToPointer())
+        Memory.free(pu8str.ToPointer())
+
+let _StringSGetSet (cell: ICell) field (value: string)  =
+    let mutable _val = value
+    use _pu16str     = fixed _val
+    let lu16str      = value.Length * 2
+    let pu16str      = AddTslHead (NativePtr.toNativeInt _pu16str) lu16str
+
+    try
+        _SGetSet cell field
+            (fun site acc -> CallHelper.CallByPtr(site, acc, NativePtr.toNativeInt _pu16str))
+            (fun p        -> Assert.Equal(0, Memory.memcmp(p.ToPointer(), pu16str.ToPointer(), uint64 (lu16str + 4))))
+            (fun site acc -> Assert.Equal(value, CallHelper.CallByVal<string>(site, acc)))
+    finally
+        Memory.free(pu16str.ToPointer())
+
 [<Fact>]
-let IntegerSGet () =
+let IntegerSGetSet () =
     let mutable s1 = S1(0L, 641934, "", 123)
-    _IntegerSGet s1 "f1" 465912345
-    _IntegerSGet s1 "f3" 13451
+    _IntegerSGetSet s1 "f1" 465912345
+    _IntegerSGetSet s1 "f3" 13451
 
     s1 <- S1(0L, 56256, "yargaaiawrguaw", 56892651)
-    _IntegerSGet s1 "f1" 652634
-    _IntegerSGet s1 "f3" 461371
+    _IntegerSGetSet s1 "f1" 652634
+    _IntegerSGetSet s1 "f3" 461371
+
+    let mutable s2 = S2(0L, new System.Collections.Generic.List<int64>(seq [1L; 2L; 3L]), 123.456, 0)
+    _IntegerSGetSet s2 "f3" 451
+
+[<Fact>]
+let StringSGetSet () =
+    let mutable s1 = S1(0L, 641934, "", 123)
+    _StringSGetSet s1 "f2" "hello"
+    _StringSGetSet s1 "f2" "world"
+
+    s1 <- S1(0L, 56256, "yargaaiawrguaw", 56892651)
+    _StringSGetSet s1 "f2" "hello"
+    _StringSGetSet s1 "f2" "world"

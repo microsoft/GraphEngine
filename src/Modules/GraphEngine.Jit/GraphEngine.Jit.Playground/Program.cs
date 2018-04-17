@@ -23,7 +23,8 @@ namespace GraphEngine.Jit.Playground
         {
             //IntegerBGetBSet();
             //StringBGetBSet();
-            IntegerSGet();
+            IntegerSGetSet();
+            StringSGetSet();
 
             //byte[] buf = new byte[16];
             //int val = int.Parse(Console.ReadLine());
