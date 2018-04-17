@@ -7,9 +7,6 @@ module NoJit =
    type FunctionAddr = uint32
    type FunctionIdentity = string
 
-   
-
-
    let ProjectGenerate (namespace': Path) 
                        (referencePaths: seq<Path>) 
                        (projectDirector: Path) 
