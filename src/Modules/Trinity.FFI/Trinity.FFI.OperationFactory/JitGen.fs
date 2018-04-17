@@ -6,8 +6,13 @@
 module JitGen = 
     open GraphEngine.Jit.Verbs
     open GraphEngine.Jit.TypeSystem
+    open GraphEngine.Jit.JitNativeInterop
+    open Trinity.Storage
     open System
     open Trinity.FFI.OperationFactory.Operator
+    open GraphEngine.Jit
+    open Microsoft.FSharp.NativeInterop
+
 
     type ManglingCode = char
     type Name = string
@@ -36,3 +41,4 @@ module JitGen =
         
         | _                                      -> 
              failwith "Unexpected type descrriptor."
+   

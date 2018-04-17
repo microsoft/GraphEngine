@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace Trinity.FFI.OperationFactory.UnitTests
 {
-    public delegate int TestFnType(ICellAccessor cell);
+    public delegate int TestFnType(IntPtr cell);
     public class Test : IDisposable
     {
 
@@ -86,13 +86,20 @@ namespace Trinity.FFI.OperationFactory.UnitTests
         [Fact]
         public void TestJitRun()
         {
-
+            int _foo, foo = 1;
+            
             var c1 = Global.LocalStorage.NewGenericCell(1, "C1");
-            using (var c1_acc = 
-                    Global.LocalStorage.UseGenericCell(
-                           1, TSL.Lib.CellAccessOptions.CreateNewOnCellNotFound, "C1"))
+            
+
+            c1.SetField("foo", foo);
+            Global.LocalStorage.SaveGenericCell(c1.CellId, c1);
+            using (var s = Global.LocalStorage.UseGenericCell(c1.CellId))
             {
-                c1_acc.SetField("foo", 0);
+                Output.WriteLine(s.GetField<string>("foo"));
+            }
+           
+            {
+                var acc = JitCompiler.CellIdToNativeCellAccessor(c1.CellId);
                 var jit = MetaGen.GenerateJit(ManglingCode).Invoke(Schema);
                 var fnDescs =
                     jit
@@ -104,28 +111,22 @@ namespace Trinity.FFI.OperationFactory.UnitTests
                 var get_foo_from_c1 =
                     fnDescs
                     .First()
-                    .By(_ => 
+                    .By(
+                        _ => 
                         JitCompiler.CompileFunction(
                             new Verbs.FunctionDescriptor(
                                 _.DeclaringType,
                                 Verbs.Verb.NewComposedVerb(_.Verb, Verbs.Verb.BGet)
-                                )
-                            ))
+                                )))
                     .By(native => 
                         Marshal.GetDelegateForFunctionPointer(
                             native.CallSite, typeof(TestFnType)));
 
-                var foo = get_foo_from_c1.DynamicInvoke(c1_acc);
+                _foo = (int) get_foo_from_c1.DynamicInvoke(acc);
                 
-                Output.WriteLine(foo.ToString());
+                Output.WriteLine(_foo.ToString());
             }
-
-            
-
-
-
-
-
+            Assert.Equal(_foo, foo);
 
         }
     }

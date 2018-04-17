@@ -36,3 +36,7 @@ class Record:
         cls_def.__init__ = __init__
         cls_def.__str__ = __str__
         return cls_def
+
+
+def binding(cls):
+    return cls
