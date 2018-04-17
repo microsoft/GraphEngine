@@ -20,6 +20,9 @@ bool VerbSequence::Next()
 {
     if (++pcurrent == pend) return false;
 
+    debug(pcurrent->Code);
+    debug(type->get_QualifiedName());
+
     switch (pcurrent->Code) {
     case VerbCode::VC_GSGet:
     case VerbCode::VC_GSSet:

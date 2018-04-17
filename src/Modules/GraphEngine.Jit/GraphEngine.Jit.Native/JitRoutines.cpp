@@ -221,7 +221,6 @@ JitRoutine(BSet)
 
     if (tc == TypeCode::TC_STRING)
     {
-        print("BSet TC_STRING");
         auto call = safecall(cc, tsl_setstring);
         call->setArg(0, ctx.cellAccessor);
         call->setArg(1, ctx.cellPtr);
@@ -238,11 +237,7 @@ JitRoutine(BSet)
     {
         // simple atom
         auto atomsize = asmjit::TypeId::sizeOf(tid);
-        debug(atomsize);
-        debug(
-            cc.mov(x86::ptr(ctx.cellPtr, 0, atomsize), src)
-        );
-        debug(cc.isInErrorState());
+        cc.mov(x86::ptr(ctx.cellPtr, 0, atomsize), src);
     }
     else
     {
@@ -251,8 +246,8 @@ JitRoutine(BSet)
         if (plan.size() == 0) return; // empty struct
         else if (plan.size() == 1 && plan[0] == -1) // jump
         {
-            auto src_len_gp = cc.newGpw("src_len");
-            auto dst_len_gp = cc.newGpw("dst_len");
+            auto src_len_gp = cc.newGpd("src_len");
+            auto dst_len_gp = cc.newGpd("dst_len");
 
             //TODO optional
 
@@ -290,8 +285,8 @@ JitRoutine(BSet)
             call->setArg(0, ctx.cellAccessor);
             call->setArg(1, ctx.cellPtr);
             call->setArg(2, src);
-            call->setArg(3, q);
-            call->setArg(4, p);
+            call->setArg(3, q.r32());
+            call->setArg(4, p.r32());
         }
         else //fixed copying
         {

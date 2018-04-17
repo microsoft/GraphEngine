@@ -102,7 +102,8 @@ let VerbToNative (v: Verb) =
         // TODO forbid EAlloc etc.
         | ComposedVerb _              -> failwith "Cannot convert ComposedVerb to native"
         | _                           -> 0 |> nativeint
-    { Code = v |> ToUnionTag; Data = data }
+    DebugDump
+        { Code = v |> ToUnionTag; Data = data }
 
 let VerbsToNative (v: Verb) =
     VerbsToSeq v |> Seq.map VerbToNative   |> SeqToNative
