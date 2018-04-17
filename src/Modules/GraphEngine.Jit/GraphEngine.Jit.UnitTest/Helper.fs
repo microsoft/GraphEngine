@@ -170,6 +170,11 @@ type CallHelper =
     static member CallByPtr<'a> (callsite: nativeint, paccessor: nativeint) = 
         Marshal.GetDelegateForFunctionPointer(callsite, getter<nativeint>()).DynamicInvoke(paccessor) :?> nativeint
 
+    static member CallByPtr(callsite: nativeint, paccessor: nativeint, arg0: int, arg1: nativeint) = 
+        Marshal.GetDelegateForFunctionPointer(callsite, typeof<lpsetter>).DynamicInvoke(paccessor, arg0, arg1) |> ignore
+    static member CallByPtr<'a> (callsite: nativeint, paccessor: nativeint, arg0: int) = 
+        Marshal.GetDelegateForFunctionPointer(callsite, typeof<lpgetter>).DynamicInvoke(paccessor, arg0) :?> nativeint
+
     static member GetPushedPtr (callsite: nativeint, paccessor: nativeint): nativeint = 
         Marshal.GetDelegateForFunctionPointer(callsite, typeof<pgetter>).DynamicInvoke(paccessor) :?> nativeint
     static member GetPushedPtr (callsite: nativeint, paccessor: nativeint, arg0: int): nativeint = 
