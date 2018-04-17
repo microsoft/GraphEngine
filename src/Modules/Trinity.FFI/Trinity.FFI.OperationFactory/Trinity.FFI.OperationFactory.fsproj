@@ -17,8 +17,6 @@
   <ItemGroup>
 
     <Compile Include="ProjectGen.fs" />
-
-    <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Utils.fs" />
     <Content Include="packages.config" />
 

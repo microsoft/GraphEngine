@@ -26,15 +26,3 @@ let CompileFunction (f: FunctionDescriptor): NativeFunction =
     { NativeFunction.CallSite = (CompileFunctionToNative p)
       Descriptor = f }
 
-(** for test **)
-let CellIdToNativeCellAccessor (cellId: int64) = 
-    let mutable accessor: NativeCellAccessor = {
-        CellPtr = IntPtr.Zero
-        CellId = cellId
-        Type = 0us
-        EntryIndex = -1
-        Size = 0
-    }
-    let mutable p: nativeptr<byte> = NativePtr.ofNativeInt (nativeint 0)
-    Trinity.Global.LocalStorage.GetLockedCellInfo(accessor.CellId, &accessor.Size, &accessor.Type, &p, &accessor.EntryIndex) |> ignore
-    &&accessor |> NativePtr.toNativeInt

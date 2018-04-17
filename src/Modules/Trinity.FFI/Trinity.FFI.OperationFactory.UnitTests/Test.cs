@@ -97,7 +97,7 @@ namespace Trinity.FFI.OperationFactory.UnitTests
             }
            
             {
-                var acc = JitCompiler.CellIdToNativeCellAccessor(c1.CellId);
+                var acc = Helper.LockCell(c1.CellId);
                 var jit = MetaGen.GenerateJit(ManglingCode).Invoke(Schema);
                 var fnDescs =
                     jit
