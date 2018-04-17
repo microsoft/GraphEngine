@@ -17,3 +17,10 @@ cell S2
     double f2;
     int f3;
 }
+
+cell S3 
+{
+	int f1;
+    List<string> f2;
+    int f3;
+}

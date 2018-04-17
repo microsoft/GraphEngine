@@ -374,6 +374,20 @@ let _IntegerSLGetSet (cell: ICell) field (index: int32) (value: 'a) =
         (fun p        -> Assert.Equal<'a>(value, NativePtr.read <| NativePtr.ofNativeInt<'a> p)) 
         (fun site acc -> Assert.Equal<'a>(value, CallHelper.CallByVal<'a>(site, acc, index)))
 
+let _StringSLGetSet (cell: ICell) field (index: int32) (value: string) =
+    let mutable _val = value
+    use _pu16str     = fixed _val
+    let lu16str      = value.Length * 2
+    let pu16str      = AddTslHead (NativePtr.toNativeInt _pu16str) lu16str
+
+    try
+        _SLGetSet cell field index
+            (fun site acc       -> CallHelper.CallByPtr(site, acc, index, NativePtr.toNativeInt _pu16str))
+            (fun (p: nativeint) -> Assert.Equal(0, Memory.memcmp(p.ToPointer(), pu16str.ToPointer(), uint64 (lu16str + 4))))
+            (fun site acc       -> Assert.Equal(value, CallHelper.CallByVal<string>(site, acc, index)))
+    finally
+        Memory.free(pu16str.ToPointer())
+
 [<Fact>]
 let IntegerSLGetSet () =
     let mutable s2 = S2(0L, new System.Collections.Generic.List<int64>(seq [1L; 2L; 3L]), 123.456, 0)
@@ -385,3 +399,9 @@ let IntegerSLGetSet () =
     _IntegerSLGetSet s2 "f1" 0 7L
     _IntegerSLGetSet s2 "f1" 1 8L
     _IntegerSLGetSet s2 "f1" 2 9L
+
+[<Fact>]
+let StringSLGetSet () = 
+    let mutable s3 = S3(0L, 0, new System.Collections.Generic.List<string>(seq [""; ""]), 0)
+    _StringSLGetSet s3 "f2" 0 "hello"
+    _StringSLGetSet s3 "f2" 1 "world!"
