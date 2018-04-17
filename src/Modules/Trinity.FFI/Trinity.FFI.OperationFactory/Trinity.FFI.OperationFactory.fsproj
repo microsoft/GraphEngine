@@ -16,19 +16,7 @@
 
   <ItemGroup>
 
-    
-
-    
-
-    
-
     <Compile Include="ProjectGen.fs" />
-
-    
-
-    
-
-    
 
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Utils.fs" />
@@ -40,9 +28,10 @@
     <Compile Include="CSharpGen.fs" />
     <Compile Include="JitGen.fs" />
 
+    <Compile Include="CodeGen.fs" />
     <Compile Include="MetaGen.fs" />
     <Compile Include="MethodExport.fs" />
-    <Compile Include="Build.fs" />
+    
 
   </ItemGroup>
 

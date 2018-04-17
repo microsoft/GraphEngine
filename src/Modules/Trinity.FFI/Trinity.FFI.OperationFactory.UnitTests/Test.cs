@@ -59,7 +59,7 @@ namespace Trinity.FFI.OperationFactory.UnitTests
                 .Each(
                 _ => _.Item2.Take(2).Each(nested =>
                 {
-                    var (verb, (fnName, Code)) = nested;
+                    var (fnName, Code) = nested;
                     Output.WriteLine($"Get function address by calling this one: {fnName}");
                     Output.WriteLine(Code);
                 }));
@@ -73,11 +73,9 @@ namespace Trinity.FFI.OperationFactory.UnitTests
               .Take(2)
               .Each(
                 for_each_type =>
-                    for_each_type
-                        .Item2
-                        .SelectMany(_ => _)
+                    for_each_type.Item2
                         .Take(2)
-                        .Each(x => $"{{Type: {x.Item2.DeclaringType.TypeName}; Verb: {x.Item2.Verb.ToString()}}}".By(Output.WriteLine))
+                        .Each(x => $"{{Type: {x.DeclaringType.TypeName}; Verb: {x.Verb.ToString()}}}".By(Output.WriteLine))
               );
         }
 
@@ -105,8 +103,7 @@ namespace Trinity.FFI.OperationFactory.UnitTests
                     jit
                         .SelectMany(
                             type_and_fields =>
-                                type_and_fields.Item2.SelectMany(
-                                    field => field.Select(_ => _.Item2)));
+                                type_and_fields.Item2);
 
                 var get_foo_from_c1 =
                     fnDescs
@@ -128,6 +125,13 @@ namespace Trinity.FFI.OperationFactory.UnitTests
             }
             Assert.Equal(_foo, foo);
 
+        }
+
+        [Fact]
+        public void TestSwigFileGen()
+        {
+            var codeGenerators = MetaGen.CodeGenSwigJit(ManglingCode, Schema);
+            codeGenerators.Invoke("moduleName").By(Output.WriteLine);
         }
     }
 }

@@ -91,3 +91,22 @@ module MetaGen =
     let GenerateSwig (manglingChar: char) = SwigGen.render manglingChar make'name |> Generate
     let GenerateCSharp (manglingChar: char) = CSharpGen.render manglingChar make'name |> Generate
     let GenerateJit (manglingChar: char) = JitGen.render manglingChar make'name |> Generate
+
+    let GenerateSwigJit (manglingChar: char) = 
+        
+        let swig = SwigGen.render manglingChar make'name
+        let jit  = JitGen.render manglingChar make'name
+
+        let new'render (type': TypeDescriptor) (verb: Verb) =
+            let swig'result = swig type' verb 
+            let jit'result  = jit  type' verb
+            jit'result, swig'result
+        Generate new'render
+   
+    open Trinity.FFI.OperationFactory.CodeGen
+    let CodeGenSwigJit (manglingChar: char) (schema: IStorageSchema)= 
+        let f = CodeGen.generateSwigFile manglingChar make'name
+        let g = GenerateSwigJit manglingChar schema
+        f(g)
+
+        

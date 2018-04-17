@@ -18,7 +18,7 @@ module CSharpGen =
      let render  (manglingCode        : ManglingCode)
                  (name'maker          : ManglingCode -> TypeDescriptor -> Name) 
                  (subject             : TypeDescriptor) 
-                 (verb                : Verb) : Verb * (FunctionAddrGetterName * Code) = 
+                 (verb                : Verb) : FunctionAddrGetterName * Code = 
              
              let subject'name = name'maker manglingCode subject
              let subject'type = subject |> TypeName
@@ -243,7 +243,7 @@ module CSharpGen =
                                 "subject type" ->> subject'type 
                                ]
 
-                        (verb, (ADDR, PString.format template renderMap))
+                        (ADDR, PString.format template renderMap)
                                 
              
              
