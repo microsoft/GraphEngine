@@ -1,0 +1,19 @@
+﻿cell C1
+{
+	int F1;
+	string F2;
+}
+
+cell S1 
+{
+    int f1;
+    string f2;
+    int f3;
+}
+
+cell S2 
+{
+    List<int64> f1;
+    double f2;
+    int f3;
+}

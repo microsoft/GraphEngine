@@ -9,6 +9,9 @@ using static GraphEngine.Jit.Verbs;
 using static GraphEngine.Jit.JitCompiler;
 using static GraphEngine.Jit.TypeSystem;
 using static GraphEngine.Jit.JitNativeInterop;
+using GraphEngine.Jit.TSL;
+
+using static GraphEngine.Jit.Basic;
 
 namespace GraphEngine.Jit.Playground
 {
@@ -18,32 +21,16 @@ namespace GraphEngine.Jit.Playground
     {
         static void Main(string[] args)
         {
-            var cd = Global.StorageSchema.CellDescriptors.First();
-            var td = Make(cd);
+            //IntegerBGetBSet();
+            //StringBGetBSet();
+            IntegerSGet();
 
-            var gfd = new FunctionDescriptor(td.Members.First().Type, Verb.BGet);
-            var sfd = new FunctionDescriptor(td.Members.First().Type, Verb.BSet);
-
-            var ng = GraphEngine.Jit.JitCompiler.CompileFunction(gfd);
-            var ns = GraphEngine.Jit.JitCompiler.CompileFunction(sfd);
-
-            Console.WriteLine(ng.CallSite);
-            Console.WriteLine(ns.CallSite);
-            var nfg = Marshal.GetDelegateForFunctionPointer<Getter>(ng.CallSite);
-            var nfs = Marshal.GetDelegateForFunctionPointer<Setter>(ns.CallSite);
-
-            NativeCellAccessor accessor = new NativeCellAccessor( );
-            byte[] buf = new byte[16];
-            fixed(byte* p = buf)
-            {
-                accessor.CellPtr = (IntPtr)p;
-                nfs(accessor, 123);
-                Console.WriteLine(nfg(accessor));
-                Console.WriteLine(*(int*)p);
-                *(int*)p = 123;
-                Console.WriteLine(nfg(accessor));
-
-            }
+            //byte[] buf = new byte[16];
+            //int val = int.Parse(Console.ReadLine());
+            //fixed(byte* p = buf)
+            //{
+            //    *(long*)p += val;
+            //}
         }
     }
 }

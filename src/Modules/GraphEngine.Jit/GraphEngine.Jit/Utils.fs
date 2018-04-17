@@ -7,6 +7,8 @@ open Trinity.Core.Lib
 open System.Text
 open System
 open System.Linq
+open System
+open System.Runtime.InteropServices
 
 let ParseCase<'a> (value: string) =
     match FSharpType.GetUnionCases typeof<'a> |> Array.filter (fun x -> x.Name = value) with
@@ -17,12 +19,22 @@ let ToStringCase (value: 'a) =
     let caseInfo, _ = FSharpValue.GetUnionFields(value, typeof<'a>)
     caseInfo.Name
 
+[<DllImport("msvcrt")>]
+extern int strlen(IntPtr)
+
 let Malloc = uint64 >> Memory.malloc >> IntPtr
 
 //  Copy a value type to unmanaged heap
 let Alloc (v: 'a) =
     let buf = Malloc sizeof<'a> |> NativePtr.ofNativeInt<'a>
     NativePtr.write buf v
+    buf
+
+let AddTslHead (p: IntPtr) len = 
+    let buf = Malloc (sizeof<int> + len)
+    NativePtr.ofNativeInt<int>(buf) |> NativePtr.write <| len
+    let pcontent = NativePtr.add (NativePtr.ofNativeInt<uint8>(buf)) (sizeof<int>) |> NativePtr.toNativeInt
+    Memory.memcpy(pcontent.ToPointer(), p.ToPointer(), uint64 len) |> ignore
     buf
 
 let ToUtf8 (str: string) =

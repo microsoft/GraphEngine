@@ -1,5 +1,7 @@
 ﻿module GraphEngine.Jit.Basic
 
+#nowarn "9"
+
 open Xunit
 open Verbs
 open TypeSystem
@@ -12,6 +14,8 @@ open Trinity.Core.Lib
 open Microsoft.FSharp.NativeInterop
 open GraphEngine.Jit
 open GraphEngine.Jit.Helper
+open GraphEngine.Jit.TSL
+open Trinity
 
 [<Fact>]
 let ``Verb allocation`` () =
@@ -34,7 +38,7 @@ let ``TypeDescriptor allocation`` (tcode: string) =
 [<InlineData(typeof<string>, 0, "STRING")>]
 [<InlineData(typeof<System.DateTime>, 0, "S")>]
 [<InlineData(typeof<System.Collections.Generic.List<int>>, 0, "L")>]
-let ``TypeDescriptor allocation from System.Type`` (t: System.Type) (w: int32) (tt: string) =
+let ``TypeDescriptor allocation from Type`` (t: System.Type) (w: int32) (tt: string) =
     let desc = MakeFromType t
     if w > 0 then Assert.Equal(w, (TryGetTypeWidth desc).Value)
     match t with
@@ -73,13 +77,20 @@ let celldesc (name: string, fields: seq<IFieldDescriptor>, ct) =
         member this.TypeName: string = 
             name }
 
-let ICellDescriptorGen() = seq {
-    yield  [| "C1" :> obj; new List<IFieldDescriptor>() :> obj ; 0us  :> obj|]
-}
+let ICellDescriptorGen() = 
+    let _seq: obj array seq = seq {
+        yield [|"C1"; new List<IFieldDescriptor>(); 0us|]
+        yield! (Global.StorageSchema.CellDescriptors |> Seq.map<ICellDescriptor, obj array> 
+            (fun x -> [| x.TypeName; x.GetFieldDescriptors(); x.CellType |]))
+    }
+    Array.ofSeq _seq
 
-let TypeDescriptorCollection() = seq {
-    yield [| ``TypeDescriptor allocation`` "U32" :> obj |]
-}
+let TypeDescriptorCollection() : obj array array = 
+    [| 
+      [| ``TypeDescriptor allocation`` "U32" |]
+      [| ``TypeDescriptor allocation`` "I16" |]
+      [| ``TypeDescriptor allocation`` "U8"  |]
+    |] 
 
 [<Theory>]
 [<MemberData("ICellDescriptorGen")>]
@@ -96,36 +107,188 @@ let ``FunctionDescriptor allocation``(tdesc: TypeDescriptor) =
       Verb          = BGet }
 
 open JitNativeInterop
-[<Theory>]
-[<MemberData("TypeDescriptorCollection")>]
-let ``JitCompiler basic compilation`` (tdesc: TypeDescriptor) =
+open System.Runtime.InteropServices
+open Trinity.Diagnostics
+
+let _AllocAccessor allocsize = 
+    let p = Memory.malloc (uint64 allocsize) |> IntPtr
+    {
+        CellPtr    = p
+        CellId     = 0L
+        Size       = allocsize
+        EntryIndex = 0
+        Type       = 0us
+    }
+
+let _AllocAccessorWithHeader allocsize = 
+    let p = Memory.malloc (uint64 (allocsize + 4)) |> IntPtr
+    NativePtr.write (NativePtr.ofNativeInt<int> p) allocsize
+    {
+        CellPtr    = p
+        CellId     = 0L
+        Size       = allocsize + 4
+        EntryIndex = 0
+        Type       = 0us
+    }
+
+let _BGetSet(tdesc: TypeDescriptor) (getaccessor) (set) (assert1) (assert2) =
     let fget, fset = { DeclaringType = tdesc
                        Verb          = BGet },
                      { DeclaringType = tdesc
-                       Verb          = BGet }
-    //let nfget :: nfset :: _ = [fget; fset] |> List.map CompileFunction
+                       Verb          = BSet }
     let [nfget; nfset] = [fget; fset] |> List.map CompileFunction
 
     Assert.NotEqual(IntPtr.Zero, nfget.CallSite)
     Assert.NotEqual(IntPtr.Zero, nfset.CallSite)
 
-    let p = Memory.malloc 4UL |> IntPtr
-    let mutable accessor = {
-        CellPtr    = p
-        CellId     = 0L
-        Size       = 4
-        EntryIndex = 0
-        Type       = 0us
-    }
-    let paccessor = &&accessor |> NativePtr.toNativeInt
+    let mutable accessor = getaccessor()
+    let paccessor        = &&accessor |> NativePtr.toNativeInt
     try
-        CallHelper.Call(nfset.CallSite,paccessor,123)
-
-        Assert.Equal(123, NativePtr.read <| NativePtr.ofNativeInt<int32> p)
-
-        Assert.Equal(123, CallHelper.Call(nfget.CallSite,paccessor))
+        set nfset.CallSite paccessor     // setter invoke
+        assert1 accessor.CellPtr         // manual inspect
+        assert2 nfget.CallSite paccessor // getter inspect
     finally
-        Memory.free(p.ToPointer())
+        Memory.free(accessor.CellPtr.ToPointer())
 
+let _IntegerBGetSet (tdesc: TypeDescriptor) (value: 'a) =
+    _BGetSet tdesc
+        (fun ()       -> _AllocAccessor sizeof<'a>)
+        (fun site acc -> CallHelper.CallByVal(site, acc, value))
+        (fun p        -> Assert.Equal<'a>(value, NativePtr.read <| NativePtr.ofNativeInt<'a> p)) 
+        (fun site acc -> Assert.Equal<'a>(value, CallHelper.CallByVal<'a>(site, acc)))
 
-    //GraphEngine.Jit.Native.Helper.Call(nfget.CallSite, 
+let _FloatBGetSet = _IntegerBGetSet
+
+// string setter expect "real" string
+// string getter return "real" string
+// but the accessor should contain a "tsl string"
+
+let _U8StringBGetSet (tdesc: TypeDescriptor) (value: string) = 
+    let _pu8str      = ToUtf8 value
+    let lu8str       = strlen _pu8str
+    let pu8str       = AddTslHead _pu8str lu8str
+
+    try
+        _BGetSet tdesc
+            (fun ()       -> _AllocAccessorWithHeader lu8str)
+            (fun site acc -> CallHelper.CallByPtr(site, acc, _pu8str))
+            (fun p        -> Assert.Equal(0, Memory.memcmp(p.ToPointer(), pu8str.ToPointer(), uint64 (lu8str + 4))))
+            (fun site acc -> Assert.Equal(value, CallHelper.CallByVal<string>(site, acc)))
+    finally
+        Memory.free(_pu8str.ToPointer())
+        Memory.free(pu8str.ToPointer())
+
+let _StringBGetSet (tdesc: TypeDescriptor) (value: string) =
+    let mutable _val = value
+    use _pu16str     = fixed _val
+    let lu16str      = value.Length * 2
+    let pu16str      = AddTslHead (NativePtr.toNativeInt _pu16str) lu16str
+
+    try
+        _BGetSet tdesc
+            (fun ()       -> _AllocAccessorWithHeader lu16str)
+            (fun site acc -> CallHelper.CallByPtr(site, acc, NativePtr.toNativeInt _pu16str))
+            (fun p        -> Assert.Equal(0, Memory.memcmp(p.ToPointer(), pu16str.ToPointer(), uint64 (lu16str + 4))))
+            (fun site acc -> Assert.Equal(value, CallHelper.CallByVal<string>(site, acc)))
+    finally
+        Memory.free(pu16str.ToPointer())
+
+[<Fact>]
+let IntegerBGetBSet () =
+    _IntegerBGetSet (``TypeDescriptor allocation`` "U8") 255uy
+    _IntegerBGetSet (``TypeDescriptor allocation`` "I8") -71y
+
+    _IntegerBGetSet (``TypeDescriptor allocation`` "U16") 46131us
+    _IntegerBGetSet (``TypeDescriptor allocation`` "I16") -516s
+
+    _IntegerBGetSet (``TypeDescriptor allocation`` "U32") 123u
+    _IntegerBGetSet (``TypeDescriptor allocation`` "I32") 5108346
+
+    _IntegerBGetSet (``TypeDescriptor allocation`` "U64") 4968173491UL
+    _IntegerBGetSet (``TypeDescriptor allocation`` "I64") 6924560298457134L
+
+[<Fact>]
+let ``FloatBGetBSet`` () =
+    _FloatBGetSet (``TypeDescriptor allocation`` "F32") 3.14f
+    _FloatBGetSet (``TypeDescriptor allocation`` "F64") 12345678.90123
+
+[<Fact>]
+let StringBGetBSet () =
+    _StringBGetSet (``TypeDescriptor allocation`` "STRING") "hello"
+    _StringBGetSet (``TypeDescriptor allocation`` "STRING") "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    //_StringBGetSet (``TypeDescriptor allocation`` "STRING") "UTF8中文测试"
+
+    _U8StringBGetSet (``TypeDescriptor allocation`` "U8STRING") "hello"
+    _U8StringBGetSet (``TypeDescriptor allocation`` "U8STRING") "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    //_U8StringBGetSet (``TypeDescriptor allocation`` "U8STRING") "UTF8中文测试"
+
+let _SGet (cell: ICell) field (value: 'a) (set) (assert1) (assert2) =
+
+    let cdesc = cell :> ICellDescriptor
+    let tdesc = TypeSystem.Make cdesc
+    let mutable accessor: NativeCellAccessor = {
+        CellPtr = IntPtr.Zero
+        CellId = 0L
+        Type = 0us
+        EntryIndex = -1
+        Size = 0
+    }
+
+    let mutable p: nativeptr<byte> = NativePtr.ofNativeInt (nativeint 0)
+
+    Global.LocalStorage.SaveGenericCell(cell) |> ignore
+    let mutable arr = [| 0uy |]
+    Global.LocalStorage.LoadCell(0L, &arr) |> ignore
+
+    Global.LocalStorage.GetLockedCellInfo(0L, &accessor.Size, &accessor.Type, &p, &accessor.EntryIndex) |> ignore
+    try
+        printfn ""
+        printfn "Content:"
+        Array.mapi (printfn "%02x %02x") [| for i in 0..accessor.Size -> NativePtr.read (NativePtr.add p i) |]
+        printfn "Content End"
+        printfn ""
+        accessor.CellPtr <- NativePtr.toNativeInt p
+
+        let fbget, fget, fset = 
+                         { DeclaringType = tdesc
+                           Verb          = ComposedVerb(SGet field, BGet) },
+                         { DeclaringType = tdesc
+                           Verb          = SGet field },
+                         { DeclaringType = tdesc
+                           Verb          = SSet field }
+        let [nfbget; nfget; nfset] = [fbget; fget; fset] |> List.map CompileFunction
+
+        Assert.NotEqual(IntPtr.Zero, nfbget.CallSite)
+        Assert.NotEqual(IntPtr.Zero, nfget.CallSite)
+        Assert.NotEqual(IntPtr.Zero, nfset.CallSite)
+
+        let paccessor = &&accessor |> NativePtr.toNativeInt
+
+        printfn "paccessor  = %X" paccessor
+        printfn "pcell      = %X" accessor.CellPtr
+        printfn "pushed     = %X" (CallHelper.GetPushedPtr(nfget.CallSite, paccessor))
+
+        printfn "set"
+        set nfset.CallSite paccessor                                 // setter invoke
+        printfn "assert1"
+        assert1 (CallHelper.GetPushedPtr(nfget.CallSite, paccessor)) // manual inspect
+        printfn "assert2"
+        assert2 nfbget.CallSite paccessor                            // getter inspect
+    finally
+        Global.LocalStorage.ReleaseCellLock(0L, accessor.EntryIndex)
+
+let _IntegerSGet (cell: ICell) field (value: 'a) =
+    _SGet cell field value
+        (fun site acc -> CallHelper.CallByVal(site, acc, value) )
+        (fun p        -> Assert.Equal<'a>(value, NativePtr.read <| NativePtr.ofNativeInt<'a> p)) 
+        (fun site acc -> Assert.Equal<'a>(value, CallHelper.CallByVal<'a>(site, acc)))
+
+[<Fact>]
+let IntegerSGet () =
+    let mutable s1 = S1(0L, 641934, "", 123)
+    _IntegerSGet s1 "f1" 465912345
+    _IntegerSGet s1 "f3" 13451
+
+    s1 <- S1(0L, 56256, "yargaaiawrguaw", 56892651)
+    _IntegerSGet s1 "f1" 652634
+    _IntegerSGet s1 "f3" 461371

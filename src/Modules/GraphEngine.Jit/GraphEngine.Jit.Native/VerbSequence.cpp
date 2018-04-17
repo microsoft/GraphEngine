@@ -10,6 +10,8 @@ VerbSequence::VerbSequence(FunctionDescriptor* f)
     pmember = nullptr;
     imember = -1;
     parent = nullptr;
+
+    debug(f->NrVerbs);
 }
 
 // for all setters, lcontains, lcount and bget, we allow no further sub-verbs.
@@ -20,11 +22,14 @@ bool VerbSequence::Next()
 
     switch (pcurrent->Code) {
     case VerbCode::VC_GSGet:
+    case VerbCode::VC_GSSet:
     {
         type = pcurrent->Data.GenericTypeArgument;
+        // XXX pmember
         break;
     }
     case VerbCode::VC_SGet:
+    case VerbCode::VC_SSet:
     {
         auto members = type->get_Members();
         auto i = std::find_if(members->begin(), members->end(), [=](auto m) { return !strcmp(m->Name, pcurrent->Data.MemberName); });
@@ -36,6 +41,7 @@ bool VerbSequence::Next()
         break;
     }
     case VerbCode::VC_LGet:
+    case VerbCode::VC_LSet:
     case VerbCode::VC_LInlineGet:
     case VerbCode::VC_LContains:
     {

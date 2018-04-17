@@ -6,14 +6,22 @@
 
 extern "C" char* tsl_getstring(int32_t* trinity_string_ptr)
 {
-    auto str = Trinity::String::FromWcharArray((u16char*)(trinity_string_ptr + 1), *trinity_string_ptr);
+    print("Enter tsl_getstring");
+    auto len = *trinity_string_ptr;
+    auto str = Trinity::String::FromWcharArray((u16char*)(trinity_string_ptr + 1), len / 2);
+    debug(len);
+    debug(trinity_string_ptr);
+    debug(str.c_str());
     return _strdup(str.c_str());
 }
 
 extern "C" char* tsl_getu8string(int32_t* trinity_string_ptr)
 {
+    print("Enter tsl_getu8string");
     int32_t len = 1 + *trinity_string_ptr;
+    debug(len);
     char* buf = (char*)malloc(len);
+    debug(trinity_string_ptr);
     if (strcpy_s(buf, len, (char*)(trinity_string_ptr + 1))) return nullptr;
     else return buf;
 }
@@ -44,18 +52,27 @@ extern "C" void tsl_assign(CellAccessor* accessor, char* dst, char* src, int32_t
 
 extern "C" void tsl_setstring(CellAccessor* accessor, int32_t* p, u16char* str)
 {
+    print("Enter tsl_setstring");
     auto tlen = *p;
-    auto slen = wcslen(str);
+    auto slen = wcslen(str) * sizeof(u16char);
 
-    *p = slen * sizeof(u16char);
+    debug(tlen);
+    debug(slen);
+
+    *p = slen;
     tsl_assign(accessor, (char*)(p + 1), (char*)str, tlen, slen);
 }
 
-extern "C" char* tsl_setu8string(CellAccessor* accessor, int32_t* p, char* trinity_string_ptr)
+extern "C" void tsl_setu8string(CellAccessor* accessor, int32_t* p, char* trinity_string_ptr)
 {
+    print("Enter tsl_setu8string");
+
     Trinity::String str(trinity_string_ptr);
     int32_t tlen = *p;
     int32_t slen = str.Length();
+
+    debug(tlen);
+    debug(slen);
 
     *p = slen;
     tsl_assign(accessor, (char*)(p + 1), (char*)str.c_str(), tlen, slen);
@@ -70,25 +87,35 @@ CCFuncCall* safecall(X86Compiler &cc, TRET (*func)(TARGS...))
 
 void push(X86Compiler &cc, X86Gp& reg, std::vector<int32_t>& plan)
 {
+    print("enter push");
     for (auto i : plan)
     {
+        debug(i);
         if (i > 0) 
         {
             cc.add(reg, i);
         }
         else
         {
-            cc.add(reg, x86::dword_ptr(reg));
+            auto tmp = cc.newGpq("tmp");
+            cc.movsxd(tmp, x86::ptr(reg, 0, sizeof(int32_t)));
+            cc.add(reg, tmp);
             cc.add(reg, sizeof(int32_t));
         }
     }
 }
 
-std::vector<int32_t>&& walk(TypeDescriptor* type, MemberDescriptor* this_member = nullptr)
+std::vector<int32_t> walk(TypeDescriptor* type, MemberDescriptor* this_member = nullptr)
 {
+    print("enter walk");
+    debug(type);
+    debug(this_member);
     std::vector<int32_t> plan;
     auto tc = type->get_TypeCode();
     auto tid = _get_typeid(type);
+
+    debug(tc);
+    debug(tid);
 
     if (tc == TypeCode::TC_STRING || tc == TypeCode::TC_U8STRING || tc == TypeCode::TC_LIST)
     {
@@ -118,7 +145,7 @@ std::vector<int32_t>&& walk(TypeDescriptor* type, MemberDescriptor* this_member 
         plan.push_back(TypeId::sizeOf(tid));
     }
 
-    return std::move(plan);
+    return plan;
 }
 
 JitRoutine(BGet)
@@ -131,6 +158,7 @@ JitRoutine(BGet)
 
     if (tc == TypeCode::TC_STRING)
     {
+        print("TC_STRING");
         auto call = safecall(cc, tsl_getstring);
         call->setArg(0, ctx.cellPtr);
         call->setRet(0, retreg);
@@ -143,14 +171,8 @@ JitRoutine(BGet)
     }
     else if (tid != TypeId::kUIntPtr)
     {
-        // simple atom
-        print("Atom");
         auto atomsize = asmjit::TypeId::sizeOf(tid);
-        debug(atomsize);
-        debug(
-            cc.mov(retreg, x86::ptr(ctx.cellPtr, 0, atomsize))
-        );
-        debug(cc.isInErrorState());
+        cc.mov(retreg, x86::ptr(ctx.cellPtr, 0, atomsize));
     }
     else
     {
@@ -199,6 +221,7 @@ JitRoutine(BSet)
 
     if (tc == TypeCode::TC_STRING)
     {
+        print("BSet TC_STRING");
         auto call = safecall(cc, tsl_setstring);
         call->setArg(0, ctx.cellAccessor);
         call->setArg(1, ctx.cellPtr);
@@ -206,7 +229,7 @@ JitRoutine(BSet)
     }
     else if (tc == TypeCode::TC_U8STRING)
     {
-        auto call = safecall(cc, tsl_setstring);
+        auto call = safecall(cc, tsl_setu8string);
         call->setArg(0, ctx.cellAccessor);
         call->setArg(1, ctx.cellPtr);
         call->setArg(2, src);
@@ -284,12 +307,15 @@ JitRoutine(BSet)
 
 JitRoutine(SGet)
 {
+    print("Enter SGet");
     auto plan = walk(seq.ParentType(), seq.CurrentMember());
+    print("SGet: before push");
     push(cc, ctx.cellPtr, plan);
 }
 
 JitRoutine(SSet)
 {
+    print("Enter SSet");
     SGet(cc, ctx, seq);
     BSet(cc, ctx, seq);
 }
