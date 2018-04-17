@@ -382,9 +382,9 @@ let _StringSLGetSet (cell: ICell) field (index: int32) (value: string) =
 
     try
         _SLGetSet cell field index
-            (fun site acc -> CallHelper.CallByPtr(site, acc, index, NativePtr.toNativeInt _pu16str))
+            (fun site acc       -> CallHelper.CallByPtr(site, acc, index, NativePtr.toNativeInt _pu16str))
             (fun (p: nativeint) -> Assert.Equal(0, Memory.memcmp(p.ToPointer(), pu16str.ToPointer(), uint64 (lu16str + 4))))
-            (fun site acc -> Assert.Equal(value, CallHelper.CallByVal<string>(site, acc, index)))
+            (fun site acc       -> Assert.Equal(value, CallHelper.CallByVal<string>(site, acc, index)))
     finally
         Memory.free(pu16str.ToPointer())
 

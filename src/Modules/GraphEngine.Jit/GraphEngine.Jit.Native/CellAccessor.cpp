@@ -3,7 +3,6 @@
 
 TrinityErrorCode LockCell(CellAccessor& accessor)
 {
-
     return ::CGetLockedCellInfo4CellAccessor(accessor.cellId, accessor.size, accessor.type, accessor.cellPtr, accessor.entryIndex);
 }
 
