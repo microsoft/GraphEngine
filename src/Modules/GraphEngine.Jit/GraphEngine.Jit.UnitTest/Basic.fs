@@ -131,6 +131,7 @@ let _AllocAccessorWithHeader allocsize =
         Type       = 0us
     }
 
+//  !Assume accessor.CellPtr is malloc'ed
 let _BGetSet(tdesc: TypeDescriptor) (getaccessor) (set) (assert1) (assert2) =
     let fget, fset = { DeclaringType = tdesc
                        Verb          = BGet },
@@ -150,12 +151,14 @@ let _BGetSet(tdesc: TypeDescriptor) (getaccessor) (set) (assert1) (assert2) =
     finally
         Memory.free(accessor.CellPtr.ToPointer())
 
-let _IntegerBGetSet (tdesc: TypeDescriptor) (value: 'a) =
-    _BGetSet tdesc
-        (fun ()       -> _AllocAccessor sizeof<'a>)
-        (fun site acc -> CallHelper.CallByVal(site, acc, value))
+let _IntegerTest (value: 'a) fn =
+    fn  (fun site acc -> CallHelper.CallByVal(site, acc, value))
         (fun p        -> Assert.Equal<'a>(value, NativePtr.read <| NativePtr.ofNativeInt<'a> p)) 
         (fun site acc -> Assert.Equal<'a>(value, CallHelper.CallByVal<'a>(site, acc)))
+        
+
+let _IntegerBGetSet (tdesc: TypeDescriptor) (value: 'a) =
+    _IntegerTest value <| _BGetSet tdesc (fun () -> _AllocAccessor sizeof<'a>)
 
 let _FloatBGetSet = _IntegerBGetSet
 
@@ -163,17 +166,20 @@ let _FloatBGetSet = _IntegerBGetSet
 // string getter return "real" string
 // but the accessor should contain a "tsl string"
 
+let _StrTest (value: string) (strlen: int) (prawstr: nativeint) (ptslstr: nativeint) fn =
+    fn
+        (fun ()            -> _AllocAccessorWithHeader strlen)
+        (fun site acc      -> CallHelper.CallByPtr(site, acc, prawstr))
+        (fun (p:nativeint) -> Assert.Equal(0, Memory.memcmp(p.ToPointer(), ptslstr.ToPointer(), uint64 (strlen + 4))))
+        (fun site acc      -> Assert.Equal(value, CallHelper.CallByVal<string>(site, acc)))
+
 let _U8StringBGetSet (tdesc: TypeDescriptor) (value: string) = 
     let _pu8str      = ToUtf8 value
     let lu8str       = strlen _pu8str
     let pu8str       = AddTslHead _pu8str lu8str
 
-    try
-        _BGetSet tdesc
-            (fun ()       -> _AllocAccessorWithHeader lu8str)
-            (fun site acc -> CallHelper.CallByPtr(site, acc, _pu8str))
-            (fun p        -> Assert.Equal(0, Memory.memcmp(p.ToPointer(), pu8str.ToPointer(), uint64 (lu8str + 4))))
-            (fun site acc -> Assert.Equal(value, CallHelper.CallByVal<string>(site, acc)))
+    try 
+        _StrTest value lu8str _pu8str pu8str <| _BGetSet tdesc
     finally
         Memory.free(_pu8str.ToPointer())
         Memory.free(pu8str.ToPointer())
@@ -185,11 +191,7 @@ let _StringBGetSet (tdesc: TypeDescriptor) (value: string) =
     let pu16str      = AddTslHead (NativePtr.toNativeInt _pu16str) lu16str
 
     try
-        _BGetSet tdesc
-            (fun ()       -> _AllocAccessorWithHeader lu16str)
-            (fun site acc -> CallHelper.CallByPtr(site, acc, NativePtr.toNativeInt _pu16str))
-            (fun p        -> Assert.Equal(0, Memory.memcmp(p.ToPointer(), pu16str.ToPointer(), uint64 (lu16str + 4))))
-            (fun site acc -> Assert.Equal(value, CallHelper.CallByVal<string>(site, acc)))
+        _StrTest value lu16str (NativePtr.toNativeInt _pu16str) pu16str <| _BGetSet tdesc
     finally
         Memory.free(pu16str.ToPointer())
 
@@ -208,7 +210,7 @@ let IntegerBGetBSet () =
     _IntegerBGetSet (``TypeDescriptor allocation`` "I64") 6924560298457134L
 
 [<Fact>]
-let ``FloatBGetBSet`` () =
+let FloatBGetBSet () =
     _FloatBGetSet (``TypeDescriptor allocation`` "F32") 3.14f
     _FloatBGetSet (``TypeDescriptor allocation`` "F64") 12345678.90123
 
@@ -222,8 +224,8 @@ let StringBGetBSet () =
     _U8StringBGetSet (``TypeDescriptor allocation`` "U8STRING") "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
     //_U8StringBGetSet (``TypeDescriptor allocation`` "U8STRING") "UTF8中文测试"
 
-let _SGetSet (cell: ICell) field (set) (assert1) (assert2) =
-
+//  !All cell-tests go through this routine instead of _BGetSet
+let _CellGetSet (cell: ICell) action =
     let cdesc = cell :> ICellDescriptor
     let tdesc = TypeSystem.Make cdesc
     let mutable accessor: NativeCellAccessor = {
@@ -248,7 +250,14 @@ let _SGetSet (cell: ICell) field (set) (assert1) (assert2) =
         printfn "Content End"
         printfn ""
         accessor.CellPtr <- NativePtr.toNativeInt p
+        let paccessor = &&accessor |> NativePtr.toNativeInt
+        action tdesc accessor paccessor
+    finally
+        Global.LocalStorage.ReleaseCellLock(0L, accessor.EntryIndex)
 
+let _SGetSet (cell: ICell) field (set) (assert1) (assert2) =
+
+    _CellGetSet cell (fun (tdesc: TypeDescriptor) (accessor: NativeCellAccessor) (paccessor: nativeint)  ->
         let fbget, fget, fset = 
                          { DeclaringType = tdesc
                            Verb          = ComposedVerb(SGet field, BGet) },
@@ -262,8 +271,6 @@ let _SGetSet (cell: ICell) field (set) (assert1) (assert2) =
         Assert.NotEqual(IntPtr.Zero, nfget.CallSite)
         Assert.NotEqual(IntPtr.Zero, nfset.CallSite)
 
-        let paccessor = &&accessor |> NativePtr.toNativeInt
-
         printfn "paccessor  = %X" paccessor
         printfn "pcell      = %X" accessor.CellPtr
         printfn "pushed     = %X" (CallHelper.GetPushedPtr(nfget.CallSite, paccessor))
@@ -274,8 +281,7 @@ let _SGetSet (cell: ICell) field (set) (assert1) (assert2) =
         assert1 (CallHelper.GetPushedPtr(nfget.CallSite, paccessor)) // manual inspect
         printfn "assert2"
         assert2 nfbget.CallSite paccessor                            // getter inspect
-    finally
-        Global.LocalStorage.ReleaseCellLock(0L, accessor.EntryIndex)
+        )
 
 let _IntegerSGetSet (cell: ICell) field (value: 'a) =
     _SGetSet cell field
@@ -333,3 +339,49 @@ let StringSGetSet () =
     s1 <- S1(0L, 56256, "yargaaiawrguaw", 56892651)
     _StringSGetSet s1 "f2" "hello"
     _StringSGetSet s1 "f2" "world"
+
+let _SLGetSet (cell: ICell) field index (set) (assert1) (assert2) =
+
+    _CellGetSet cell (fun (tdesc: TypeDescriptor) (accessor: NativeCellAccessor) (paccessor: nativeint)  ->
+        let fbget, fget, fset = 
+                         { DeclaringType = tdesc
+                           Verb          = ComposedVerb(SGet field, ComposedVerb(LGet, BGet)) },
+                         { DeclaringType = tdesc
+                           Verb          = ComposedVerb(SGet field, LGet) },
+                         { DeclaringType = tdesc
+                           Verb          = ComposedVerb(SGet field, LSet) }
+        let [nfbget; nfget; nfset] = [fbget; fget; fset] |> List.map CompileFunction
+
+        Assert.NotEqual(IntPtr.Zero, nfbget.CallSite)
+        Assert.NotEqual(IntPtr.Zero, nfget.CallSite)
+        Assert.NotEqual(IntPtr.Zero, nfset.CallSite)
+
+        printfn "paccessor  = %X" paccessor
+        printfn "pcell      = %X" accessor.CellPtr
+        printfn "pushed     = %X" (CallHelper.GetPushedPtr(nfget.CallSite, paccessor, index))
+
+        printfn "set"
+        set nfset.CallSite paccessor                                 // setter invoke
+        printfn "assert1"
+        assert1 (CallHelper.GetPushedPtr(nfget.CallSite, paccessor, index)) // manual inspect
+        printfn "assert2"
+        assert2 nfbget.CallSite paccessor                            // getter inspect
+        )
+
+let _IntegerSLGetSet (cell: ICell) field (index: int32) (value: 'a) =
+    _SLGetSet cell field index
+        (fun site acc -> CallHelper.CallByVal(site, acc, index, value) )
+        (fun p        -> Assert.Equal<'a>(value, NativePtr.read <| NativePtr.ofNativeInt<'a> p)) 
+        (fun site acc -> Assert.Equal<'a>(value, CallHelper.CallByVal<'a>(site, acc, index)))
+
+[<Fact>]
+let IntegerSLGetSet () =
+    let mutable s2 = S2(0L, new System.Collections.Generic.List<int64>(seq [1L; 2L; 3L]), 123.456, 0)
+
+    _IntegerSLGetSet s2 "f1" 0 4L
+    _IntegerSLGetSet s2 "f1" 1 5L
+    _IntegerSLGetSet s2 "f1" 2 6L
+
+    _IntegerSLGetSet s2 "f1" 0 7L
+    _IntegerSLGetSet s2 "f1" 1 8L
+    _IntegerSLGetSet s2 "f1" 2 9L

@@ -10,6 +10,12 @@ open System.Linq
 open System
 open System.Runtime.InteropServices
 
+let DebugDump x = 
+    printfn "========="
+    printfn "%A" x
+    printfn "========="
+    x
+
 let ParseCase<'a> (value: string) =
     match FSharpType.GetUnionCases typeof<'a> |> Array.filter (fun x -> x.Name = value) with
     | [| case |] -> (FSharpValue.MakeUnion(case, [||]) :?> 'a)
