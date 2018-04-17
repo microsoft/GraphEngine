@@ -5,9 +5,14 @@ using Trinity.FFI.OperationFactory;
 using Trinity.Storage.Composite;
 using System.Linq;
 using Trinity.Storage;
+using GraphEngine.Jit;
+using System.Runtime.InteropServices;
+
+
 
 namespace Trinity.FFI.OperationFactory.UnitTests
 {
+    public delegate int TestFnType(ICell cell);
     public class Test : IDisposable
     {
 
@@ -74,6 +79,54 @@ namespace Trinity.FFI.OperationFactory.UnitTests
                         .Take(2)
                         .Each(x => $"{{Type: {x.Item2.DeclaringType.TypeName}; Verb: {x.Item2.Verb.ToString()}}}".By(Output.WriteLine))
               );
+        }
+
+        
+
+        [Fact]
+        public void TestJitRun()
+        {
+
+            var c1 = Global.LocalStorage.NewGenericCell(1, "C1");
+            using (var c1_acc = 
+                    Global.LocalStorage.UseGenericCell(
+                           1, TSL.Lib.CellAccessOptions.CreateNewOnCellNotFound, "C1"))
+            {
+                c1_acc.SetField("foo", 0);
+                var jit = MetaGen.GenerateJit(ManglingCode).Invoke(Schema);
+                var fnDescs =
+                    jit
+                        .SelectMany(
+                            type_and_fields =>
+                                type_and_fields.Item2.SelectMany(
+                                    field => field.Select(_ => _.Item2)));
+
+                var get_foo_from_c1 =
+                    fnDescs
+                    .First()
+                    .By(_ => 
+                        JitCompiler.CompileFunction(
+                            new Verbs.FunctionDescriptor(
+                                _.DeclaringType,
+                                Verbs.Verb.NewComposedVerb(_.Verb, Verbs.Verb.BGet)
+                                )
+                            ))
+                    .By(native => 
+                        Marshal.GetDelegateForFunctionPointer(
+                            native.CallSite, typeof(TestFnType)));
+
+                var foo = get_foo_from_c1.DynamicInvoke(c1_acc);
+                
+                Output.WriteLine(foo.ToString());
+            }
+
+            
+
+
+
+
+
+
         }
     }
 }

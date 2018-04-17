@@ -24,8 +24,7 @@ module JitGen =
            |> Seq.collect (
                 fun (member': MemberDescriptor) ->
                     let fieldName   = member'.Name
-                    let memberType  = member'.Type
-                    let fnDescMaker = fun verb  -> verb, {DeclaringType=memberType; Verb=verb} 
+                    let fnDescMaker = fun verb  -> verb, {DeclaringType=subject; Verb=verb} 
                     [SGet; SSet]
                     |> Seq.map (fun it   -> it fieldName)
                     |> Seq.map fnDescMaker)
