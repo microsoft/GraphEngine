@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace Trinity.FFI.OperationFactory.UnitTests
 {
-    public delegate int TestFnType(ICell cell);
+    public delegate int TestFnType(ICellAccessor cell);
     public class Test : IDisposable
     {
 
