@@ -119,11 +119,11 @@ module PString =
         | chr :: tail -> format'render'cond predicate tail result kvpairs (chr :: name)
         | _           -> failwith "unsolved error."
 
-    let format (template : string) (kvpairs : Map<string, string>) : string = 
-        format'root (template.ToCharArray() |> List.ofArray) [] kvpairs []
+    let format (template : string) (kvpairs : seq<string * string>) : string = 
+        format'root (template.ToCharArray() |> List.ofArray) [] (Map.ofSeq kvpairs) []
     
-    let format'cond (predicate: list<char> -> bool) (template : string) (kvpairs : Map<string, string>) : string =
-        format'root'cond predicate (template.ToCharArray() |> List.ofArray) [] kvpairs []
+    let format'cond (predicate: list<char> -> bool) (template : string) (kvpairs : seq<string *string>) : string =
+        format'root'cond predicate (template.ToCharArray() |> List.ofArray) [] (Map.ofSeq kvpairs) []
    
 module Command = 
     (** 
@@ -196,9 +196,6 @@ module IO =
 //        let s = PString.format "{1} some some some; {qwe???} some some some \\{ {2}  {{{1}}} some " myMap
 //        System.Console.WriteLine(s) 
 //        0
-
-
-
 
 
 

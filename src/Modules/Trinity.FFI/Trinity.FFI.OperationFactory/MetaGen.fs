@@ -14,9 +14,9 @@ module MetaGen =
     type CodeGenerator = (string -> string)
 
     
-    let mangling (manglingChar: char) (name: string) = name.Replace(manglingChar, manglingChar + manglingChar)
+    let mangling (manglingCode: char) (name: string) = name.Replace(manglingCode, manglingCode + manglingCode)
          
-    let rec make'name (manglingChar: char) (desc: TypeDescriptor) = 
+    let rec make'name (manglingCode: char) (desc: TypeDescriptor) = 
         (** transform a typedescriptor into a name signature 
             
             eg. List<List<int>> ->
@@ -25,16 +25,16 @@ module MetaGen =
                 List<My_Struct> ->
                 List_My__Struct(if `_` is the mangling code
         **)
-        let m_mangling = mangling manglingChar
+        let m_mangling = mangling manglingCode
         
         match desc with
         | {TypeCode=LIST; ElementType=elemType}  -> 
-                let elemTypeName = elemType |> Seq.head |> (make'name manglingChar)
-                PString.format "List{_}{elem}" (Map["_" ->> manglingChar; "elem" ->> elemTypeName])
+                let elemTypeName = elemType |> Seq.head |> (make'name manglingCode)
+                PString.format "List{_}{elem}" ["_" ->> manglingCode; "elem" ->> elemTypeName]
         | {TypeCode=CELL; TypeName=cellName}     ->
-                PString.format "Cell{_}{cellName}" (Map ["_" ->> manglingChar; "cellName" ->> m_mangling cellName])  
+                PString.format "Cell{_}{cellName}" ["_" ->> manglingCode; "cellName" ->> m_mangling cellName]
         | {TypeCode=STRUCT; TypeName=structName} ->
-                    PString.format "Struct{_}{structName}" (Map["_" ->> manglingChar; "structName" ->> m_mangling structName])
+                    PString.format "Struct{_}{structName}" ["_" ->> manglingCode; "structName" ->> m_mangling structName]
         | _                                      ->
                 desc.TypeName.ToLower() // primitive type
     
