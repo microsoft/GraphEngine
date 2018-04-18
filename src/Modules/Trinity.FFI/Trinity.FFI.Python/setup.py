@@ -19,8 +19,8 @@ ge_module = Extension('_ffi',
                            libraries = ['trinity_ffi'],
                            library_dirs = ['../../../../bin'],
                            # Uncomment the following lines to produce PDB
-                           extra_compile_args = ['/Zi'],
-                           extra_link_args = ['/DEBUG'],
+                           # extra_compile_args = ['/Zi'],
+                           # extra_link_args = ['/DEBUG'],
                            )
 
 

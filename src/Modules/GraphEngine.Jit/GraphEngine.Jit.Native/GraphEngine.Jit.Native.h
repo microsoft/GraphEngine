@@ -7,19 +7,12 @@
 #include <map>
 #include <memory>
 #include "Storage\LocalStorage\LocalMemoryStorage.h"
+#include "CellAccessor.h"
 using namespace asmjit;
 
 #define print(x) std::wcout << x << std::endl
 #define debug(x) std::wcout << #x << " = " << (x) << std::endl
 
-struct CellAccessor
-{
-    char* cellPtr;
-    cellid_t cellId;
-    int32_t size;
-    int32_t entryIndex;
-    uint16_t type;
-};
 
 struct FuncCtx
 {

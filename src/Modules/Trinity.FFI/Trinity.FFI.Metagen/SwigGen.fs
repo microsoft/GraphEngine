@@ -33,8 +33,8 @@ module SwigGen =
         | I32 -> "int32_t"
         | I64 -> "int64_t"
         
-        | F32 
-        | F64      -> "float"
+        | F32      -> "float"
+        | F64      -> "double"
         
         | BOOL     -> "bool"
         | CHAR     -> "char"

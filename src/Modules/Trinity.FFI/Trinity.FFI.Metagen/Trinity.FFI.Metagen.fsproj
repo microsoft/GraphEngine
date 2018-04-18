@@ -28,6 +28,16 @@
 
   <ItemGroup>
 
+    <Content Include="..\..\GraphEngine.Jit\GraphEngine.Jit.Native\CellAccessor.h" Link="CellAccessor.h">
+      <PackagePath>content\include</PackagePath>
+    </Content>
+    <Content Include="..\Trinity.FFI.Native\swig_accessor.h" Link="swig_accessor.h">
+      <PackagePath>content\include</PackagePath>
+    </Content>
+    <Content Include="..\..\..\..\bin\trinity_ffi.lib" Link="trinity_ffi.lib">
+      <PackagePath>content\win-x64</PackagePath>
+    </Content>
+
     <Compile Include="ProjectGen.fs" />
     <Compile Include="Utils.fs" />
 
@@ -40,9 +50,10 @@
     <Compile Include="CodeGen.fs" />
     <Compile Include="MetaGen.fs" />
     <Compile Include="MethodExport.fs" />
-    
 
   </ItemGroup>
+
+  <ItemGroup />
 
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />

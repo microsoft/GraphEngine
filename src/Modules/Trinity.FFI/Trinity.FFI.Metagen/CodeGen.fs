@@ -104,7 +104,7 @@ module CodeGen =
 %module {moduleName}
 %{{
 #include \"GraphEngine.Jit.Native.h\"
-#include \"CellAccessor.cpp\"
+#include \"CellAccessor.h\"
 #define SWIG_FILE_WITH_INIT
 {source}
 %}}

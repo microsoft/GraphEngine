@@ -64,7 +64,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;TRINITYFFINATIVE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile />
-      <AdditionalIncludeDirectories>$(ProjectDirectory)..\..\..\Trinity.C\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDirectory)..\..\..\Trinity.C\src;$(ProjectDirectory)..\..\..\Trinity.C\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -88,7 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile />
       <PrecompiledHeaderOutputFile />
-      <AdditionalIncludeDirectories>$(ProjectDirectory)..\..\..\Trinity.C\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDirectory)..\..\..\Trinity.C\src;$(ProjectDirectory)..\..\..\Trinity.C\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -104,10 +104,13 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\GraphEngine.Jit\GraphEngine.Jit.Native\Trinity.h" />
+    <ClInclude Include="swig_accessor.h" />
     <ClInclude Include="Trinity.FFI.Native.h" />
     <ClInclude Include="Trinity.FFI.SWIG.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="swig_accessor.cpp" />
     <ClCompile Include="Trinity.FFI.Native.cpp" />
   </ItemGroup>
   <ItemGroup>

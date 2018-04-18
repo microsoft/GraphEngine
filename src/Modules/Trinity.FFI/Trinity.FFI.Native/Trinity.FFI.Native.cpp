@@ -22,3 +22,13 @@ TRINITYFFINATIVE_API TRINITY_INTERFACES*  TRINITY_FFI_GET_INTERFACES()
 
     return &g_interfaces;
 }
+
+TrinityErrorCode LockCell(CellAccessor& accessor)
+{
+    return ::CGetLockedCellInfo4CellAccessor(accessor.cellId, accessor.size, accessor.type, accessor.cellPtr, accessor.entryIndex);
+}
+
+void UnlockCell(CellAccessor& accessor)
+{
+    ::CReleaseCellLock(accessor.cellId, accessor.entryIndex);
+}
