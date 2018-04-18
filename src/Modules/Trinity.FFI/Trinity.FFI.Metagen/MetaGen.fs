@@ -85,17 +85,14 @@ module MetaGen =
         
 
     
-    open Trinity.FFI.Metagen.SwigGen
-    open Trinity.FFI.Metagen.CSharpGen
-    open Trinity.FFI.Metagen.JitGen
-    let GenerateSwig (manglingChar: char) = SwigGen.render manglingChar make'name |> Generate
-    let GenerateCSharp (manglingChar: char) = CSharpGen.render manglingChar make'name |> Generate
-    let GenerateJit (manglingChar: char) = JitGen.render manglingChar make'name |> Generate
+    let GenerateSwig (manglingCode: char) = SwigGen.render manglingCode make'name |> Generate
+    let GenerateCSharp (manglingCode: char) = CSharpGen.render manglingCode make'name |> Generate
+    let GenerateJit (manglingCode: char) = JitGen.render manglingCode make'name |> Generate
 
-    let GenerateSwigJit (manglingChar: char) = 
+    let GenerateSwigJit (manglingCode: char) = 
         
-        let swig = SwigGen.render manglingChar make'name
-        let jit  = JitGen.render manglingChar make'name
+        let swig = SwigGen.render manglingCode make'name
+        let jit  = JitGen.render manglingCode make'name
 
         let new'render (type': TypeDescriptor) (verb: Verb) =
             let swig'result = swig type' verb 
@@ -104,8 +101,8 @@ module MetaGen =
         Generate new'render
    
     open Trinity.FFI.Metagen.CodeGen
-    let CodeGenSwigJit (manglingChar: char) (schema: IStorageSchema)= 
-        GenerateSwigJit manglingChar schema
-        |> CodeGen.generateSwigFile manglingChar make'name
+    let CodeGenSwigJit (manglingCode: char) (schema: IStorageSchema)= 
+        GenerateSwigJit manglingCode schema
+        |> CodeGen.generateSwigFile manglingCode make'name
 
         

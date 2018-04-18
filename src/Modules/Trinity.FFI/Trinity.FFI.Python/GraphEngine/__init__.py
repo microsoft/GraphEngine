@@ -9,6 +9,7 @@ __dep_packages = [
     'GraphEngine.Storage.Composite/2.0.9328/lib/netstandard2.0/Trinity.Storage.Composite.dll',
     'GraphEngine.Jit/2.0.9328/lib/netstandard2.0/GraphEngine.Jit.dll',
     'GraphEngine.FFI/2.0.9328/lib/netstandard2.0/Trinity.FFI.dll',
+    'GraphEngine.FFI.Metagen/2.0.9328/lib/netstandard2.0/Trinity.FFI.Metagen.dll',
     'Newtonsoft.Json/9.0.1/lib/netstandard1.0/Newtonsoft.Json.dll',
     'Microsoft.Extensions.ObjectPool/2.0.0/lib/netstandard2.0/Microsoft.Extensions.ObjectPool.dll',
 ]
@@ -33,7 +34,6 @@ ctypes.cdll.LoadLibrary(jit_native_lib)
 
 for f in __package_dirs:
     clr.AddReference(f)
-clr.AddReference('Trinity.FFI.Metagen')
 
 __Trinity = __import__('Trinity')
 # set default storage root to cwd/storage

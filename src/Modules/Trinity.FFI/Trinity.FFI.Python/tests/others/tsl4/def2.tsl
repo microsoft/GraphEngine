@@ -1,0 +1,5 @@
+﻿cell C2
+{
+    List<int> lst;
+	string bar;
+}

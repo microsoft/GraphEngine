@@ -11,10 +11,10 @@ import GraphEngine as ge
 import Trinity
 import Trinity.Storage
 import Trinity.Storage.Composite
-import Trinity.FFI.OperationFactory
+import Trinity.FFI.Metagen
 import Trinity.FFI as tf
 
 
-schema = Trinity.Storage.Composite.CompositeStorage.AddStorageExtension("./tsl", "TestTslModule")
+schema = Trinity.Storage.Composite.CompositeStorage.AddStorageExtension("./tsl4", "TestTslModule")
 
 tf.JitTools.SwigGen(schema, "test")
