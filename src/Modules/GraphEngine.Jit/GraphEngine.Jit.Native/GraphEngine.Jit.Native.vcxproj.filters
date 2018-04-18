@@ -122,9 +122,6 @@
     <ClCompile Include="JitRoutines.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CellAccessor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TypeSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -260,6 +257,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Trinity.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CellAccessor.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

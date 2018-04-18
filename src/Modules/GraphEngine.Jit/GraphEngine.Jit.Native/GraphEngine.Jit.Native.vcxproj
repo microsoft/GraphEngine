@@ -156,7 +156,6 @@
     <ClCompile Include="..\asmjit\src\asmjit\x86\x86operand.cpp" />
     <ClCompile Include="..\asmjit\src\asmjit\x86\x86operand_regs.cpp" />
     <ClCompile Include="..\asmjit\src\asmjit\x86\x86regalloc.cpp" />
-    <ClCompile Include="CellAccessor.cpp" />
     <ClCompile Include="FuncCtx.cpp" />
     <ClCompile Include="GraphEngine.Jit.Native.cpp" />
     <ClCompile Include="JitRoutines.cpp" />
@@ -205,6 +204,7 @@
     <ClInclude Include="..\asmjit\src\asmjit\x86\x86misc.h" />
     <ClInclude Include="..\asmjit\src\asmjit\x86\x86operand.h" />
     <ClInclude Include="..\asmjit\src\asmjit\x86\x86regalloc_p.h" />
+    <ClInclude Include="CellAccessor.h" />
     <ClInclude Include="GraphEngine.Jit.Native.h" />
     <ClInclude Include="Trinity.h" />
     <ClInclude Include="TypeSystem.h" />
