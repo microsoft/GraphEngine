@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "Trinity.FFI.Native.h"
-#include "../../GraphEngine.Jit/GraphEngine.Jit.Native/TypeSystem.h"
+#include "TypeSystem.h"
 
 TRINITY_INTERFACES* g_TrinityInterfaces;
 

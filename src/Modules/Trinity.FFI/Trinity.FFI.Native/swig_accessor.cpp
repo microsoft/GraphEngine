@@ -1,6 +1,5 @@
-#include "../../GraphEngine.Jit/GraphEngine.Jit.Native/Trinity.h"
-#include "../../GraphEngine.Jit/GraphEngine.Jit.Native/CellAccessor.h"
-
+#include "Trinity.h"
+#include "CellAccessor.h"
 DLL_EXPORT TrinityErrorCode LockCell(IN OUT CellAccessor& accessor, IN const int32_t options)
 {
 	//TODO options are dishonored!
