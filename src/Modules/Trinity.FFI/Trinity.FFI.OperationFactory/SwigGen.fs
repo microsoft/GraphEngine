@@ -21,12 +21,29 @@ module SwigGen =
     type FunctionDecl = string
     
     let swig'typestr'mapper (typeDesc: TypeDescriptor) = 
-        if 
-            isPrimitive typeDesc.TypeCode
-        then
-            typeDesc.TypeName.ToLower()
-        else
-            "void*"
+        match typeDesc.TypeCode with
+        | NULL     -> "void"
+        
+        | U8  -> "uint8_t"
+        | U16 -> "uint16_t"
+        | U32 -> "uint32_t"
+        | U64 -> "uint64_t"
+        | I8  -> "int8_t"
+        | I16 -> "int16_t"
+        | I32 -> "int32_t"
+        | I64 -> "int64_t"
+        
+        | F32 
+        | F64      -> "float"
+        
+        | BOOL     -> "bool"
+        | CHAR     -> "char"
+        | STRING   -> "char*"
+        | U8STRING -> "wchar*"
+        
+
+        | _        -> "void*"
+
            
     let render (manglingCode        : ManglingChar)
                (name'maker          : ManglingChar   -> TypeDescriptor -> Name) 
@@ -113,7 +130,7 @@ static void {:fnName}(void* subject, {object type} object)
         
         |> fun template -> PString.format'cond render'filter template TemplateArgs
         
-        |> fun template -> (decl, fun fnAddr -> PString.format template ["!fn addr" ->> fnAddr])
+        |> fun template -> (PString.format decl TemplateArgs, fun fnAddr -> PString.format template ["!fn addr" ->> fnAddr])
                  
     
 

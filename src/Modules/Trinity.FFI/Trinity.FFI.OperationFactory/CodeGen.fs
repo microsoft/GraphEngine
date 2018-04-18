@@ -57,18 +57,6 @@ module CodeGen =
          (manglingCode : ManglingChar)
          (name'maker   : ManglingChar   -> TypeDescriptor -> Name) 
          (spec         : seq<TypeDescriptor *  seq<FunctionDescriptor*(FunctionDecl * (FunctionId -> Code))>>) = 
-        
-        let sources = 
-            "
-struct CellAccessor
-{
-    char* cellPtr;
-    cellid_t cellId;
-    int32_t size;
-    int32_t entryIndex;
-    uint16_t type;
-}
-            " :: []
 
         let rec reducer (seqs) (definitions: list<FunctionDecl>) (sources: list<Code>) = 
 
@@ -109,12 +97,14 @@ struct CellAccessor
             | _     ->
                 List.rev definitions, List.rev sources
         
-        let (decls, srcs) = reducer (List.ofSeq spec) [] sources
+        let (decls, srcs) = reducer (List.ofSeq spec) [] []
         
         fun (moduleName: Name) -> 
             "
 %module {moduleName}
 %{{
+#include \"GraphEngine.Jit.Native.h\"
+#include \"CellAccessor.cpp\"
 #define SWIG_FILE_WITH_INIT
 {source}
 %}}

@@ -105,8 +105,7 @@ module MetaGen =
    
     open Trinity.FFI.OperationFactory.CodeGen
     let CodeGenSwigJit (manglingChar: char) (schema: IStorageSchema)= 
-        let f = CodeGen.generateSwigFile manglingChar make'name
-        let g = GenerateSwigJit manglingChar schema
-        f(g)
+        GenerateSwigJit manglingChar schema
+        |> CodeGen.generateSwigFile manglingChar make'name
 
         

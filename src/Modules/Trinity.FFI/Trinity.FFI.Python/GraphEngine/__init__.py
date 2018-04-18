@@ -30,8 +30,10 @@ ctypes.cdll.LoadLibrary(ge_native_lib)
 ctypes.cdll.LoadLibrary(ffi_native_lib)
 ctypes.cdll.LoadLibrary(jit_native_lib)
 
+
 for f in __package_dirs:
     clr.AddReference(f)
+clr.AddReference('Trinity.FFI.OperationFactory')
 
 __Trinity = __import__('Trinity')
 # set default storage root to cwd/storage
