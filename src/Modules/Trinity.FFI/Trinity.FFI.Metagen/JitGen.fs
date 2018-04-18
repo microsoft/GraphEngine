@@ -1,4 +1,4 @@
-﻿namespace Trinity.FFI.OperationFactory
+﻿namespace Trinity.FFI.Metagen
 
 
 
@@ -9,7 +9,7 @@ module JitGen =
     open GraphEngine.Jit.JitNativeInterop
     open Trinity.Storage
     open System
-    open Trinity.FFI.OperationFactory.Operator
+    open Trinity.FFI.Metagen.Operator
     open GraphEngine.Jit
     open Microsoft.FSharp.NativeInterop
 

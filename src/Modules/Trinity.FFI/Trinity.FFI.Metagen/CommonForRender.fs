@@ -1,7 +1,7 @@
-﻿namespace Trinity.FFI.OperationFactory
+﻿namespace Trinity.FFI.Metagen
 open GraphEngine.Jit.Verbs
 open GraphEngine.Jit.TypeSystem
-open Trinity.FFI.OperationFactory.Operator
+open Trinity.FFI.Metagen.Operator
 module CommonForRender = 
     
     

@@ -1,4 +1,4 @@
-﻿namespace Trinity.FFI.OperationFactory
+﻿namespace Trinity.FFI.Metagen
 
 open System.IO
 

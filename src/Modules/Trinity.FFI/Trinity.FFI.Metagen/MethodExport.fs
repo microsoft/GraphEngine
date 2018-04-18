@@ -1,9 +1,9 @@
-﻿namespace Trinity.FFI.OperationFactory
+﻿namespace Trinity.FFI.Metagen
 
-open Trinity.FFI.OperationFactory
+open Trinity.FFI.Metagen
 
 module MethodExport = 
-    open Trinity.FFI.OperationFactory.MetaGen
+    open Trinity.FFI.Metagen.MetaGen
     open GraphEngine.Jit.TypeSystem
     open GraphEngine.Jit.JitCompiler
     open GraphEngine.Jit.Verbs

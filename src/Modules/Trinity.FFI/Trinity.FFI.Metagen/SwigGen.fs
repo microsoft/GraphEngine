@@ -1,9 +1,9 @@
-﻿namespace Trinity.FFI.OperationFactory
+﻿namespace Trinity.FFI.Metagen
 
 
 module SwigGen = 
-    open Trinity.FFI.OperationFactory.CommonForRender
-    open Trinity.FFI.OperationFactory.Operator
+    open Trinity.FFI.Metagen.CommonForRender
+    open Trinity.FFI.Metagen.Operator
     open GraphEngine.Jit.Verbs
     open GraphEngine.Jit.TypeSystem
     open System

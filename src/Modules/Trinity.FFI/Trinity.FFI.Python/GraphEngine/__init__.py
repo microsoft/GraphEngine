@@ -33,7 +33,7 @@ ctypes.cdll.LoadLibrary(jit_native_lib)
 
 for f in __package_dirs:
     clr.AddReference(f)
-clr.AddReference('Trinity.FFI.OperationFactory')
+clr.AddReference('Trinity.FFI.Metagen')
 
 __Trinity = __import__('Trinity')
 # set default storage root to cwd/storage

@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 using Xunit.Abstractions;
-using Trinity.FFI.OperationFactory;
+using Trinity.FFI.Metagen;
 using Trinity.Storage.Composite;
 using System.Linq;
 using Trinity.Storage;
@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 
 
-namespace Trinity.FFI.OperationFactory.UnitTests
+namespace Trinity.FFI.Metagen.UnitTests
 {
     public delegate int TestFnType(IntPtr cell);
     public class Test : IDisposable

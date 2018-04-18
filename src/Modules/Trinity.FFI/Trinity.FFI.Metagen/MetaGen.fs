@@ -1,6 +1,6 @@
-﻿namespace Trinity.FFI.OperationFactory
+﻿namespace Trinity.FFI.Metagen
 
-open Trinity.FFI.OperationFactory
+open Trinity.FFI.Metagen
 
 module MetaGen = 
     open GraphEngine.Jit
@@ -8,7 +8,7 @@ module MetaGen =
     open GraphEngine.Jit.TypeSystem
     open System
     open Trinity.Storage
-    open Trinity.FFI.OperationFactory.Operator
+    open Trinity.FFI.Metagen.Operator
 
     type SwigCode      = string
     type CodeGenerator = (string -> string)
@@ -85,9 +85,9 @@ module MetaGen =
         
 
     
-    open Trinity.FFI.OperationFactory.SwigGen
-    open Trinity.FFI.OperationFactory.CSharpGen
-    open Trinity.FFI.OperationFactory.JitGen
+    open Trinity.FFI.Metagen.SwigGen
+    open Trinity.FFI.Metagen.CSharpGen
+    open Trinity.FFI.Metagen.JitGen
     let GenerateSwig (manglingChar: char) = SwigGen.render manglingChar make'name |> Generate
     let GenerateCSharp (manglingChar: char) = CSharpGen.render manglingChar make'name |> Generate
     let GenerateJit (manglingChar: char) = JitGen.render manglingChar make'name |> Generate
@@ -103,7 +103,7 @@ module MetaGen =
             jit'result, swig'result
         Generate new'render
    
-    open Trinity.FFI.OperationFactory.CodeGen
+    open Trinity.FFI.Metagen.CodeGen
     let CodeGenSwigJit (manglingChar: char) (schema: IStorageSchema)= 
         GenerateSwigJit manglingChar schema
         |> CodeGen.generateSwigFile manglingChar make'name

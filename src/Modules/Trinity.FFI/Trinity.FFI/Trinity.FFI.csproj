@@ -33,7 +33,6 @@
     <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
     <PackageReference Include="GraphEngine.Jit" Version="2.0.9328" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
-    <ProjectReference Include="..\Trinity.FFI.OperationFactory\Trinity.FFI.OperationFactory.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,6 +43,10 @@
     <Content Include="..\..\..\..\bin\trinity_ffi.dll">
       <PackagePath>runtimes\win-x64\native</PackagePath>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.FFI.Metagen\Trinity.FFI.Metagen.fsproj" />
   </ItemGroup>
 
 </Project>

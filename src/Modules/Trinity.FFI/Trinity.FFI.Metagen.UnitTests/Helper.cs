@@ -5,7 +5,7 @@ using Trinity.Core.Lib;
 using static GraphEngine.Jit.JitNativeInterop;
 using static GraphEngine.Jit.Utils;
 
-namespace Trinity.FFI.OperationFactory.UnitTests
+namespace Trinity.FFI.Metagen.UnitTests
 {
     internal static unsafe class Helper
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Trinity.FFI.OperationFactory;
+using Trinity.FFI.Metagen;
 using Trinity.Storage;
 using GraphEngine.Jit;
 

@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Trinity.FFI.OperationFactory\Trinity.FFI.OperationFactory.fsproj" />
+    <ProjectReference Include="..\Trinity.FFI.Metagen\Trinity.FFI.Metagen.fsproj" />
   </ItemGroup>
 
 </Project>

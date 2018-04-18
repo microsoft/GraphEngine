@@ -3,9 +3,9 @@ Remove-GraphEngineCache -prefix "graphengine.ffi"
 $SOL_ROOT=$TRINITY_FFI_ROOT
 Invoke-MSBuild  -proj "$SOL_ROOT\Trinity.FFI.Native\Trinity.FFI.Native.vcxproj" -config Release -platform x64
 
+New-Package     -proj "$SOL_ROOT\Trinity.FFI.Metagen\Trinity.FFI.Metagen.fsproj"
 New-Package     -proj "$SOL_ROOT\Trinity.FFI\Trinity.FFI.csproj"
 Invoke-DotNet   -proj "$SOL_ROOT\Trinity.FFI.UnitTests\Trinity.FFI.UnitTests.csproj" -action restore
 Invoke-DotNet   -proj "$SOL_ROOT\Trinity.FFI.UnitTests\Trinity.FFI.UnitTests.csproj" -action build -config Release
-New-Package     -proj "$SOL_ROOT\Trinity.FFI.OperationFactory\Trinity.FFI.OperationFactory.fsproj"
 
 Invoke-Sub "$SOL_ROOT\build-py.ps1"
