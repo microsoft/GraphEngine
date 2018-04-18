@@ -9,6 +9,7 @@ using namespace Storage::LocalMemoryStorage;
 #define DLL_IMPORT extern "C" __declspec(dllimport)
 
 //====================== LocalMemoryStorage ==========================//
+DLL_IMPORT TrinityErrorCode  CInitialize();
 DLL_IMPORT uint64_t          CCellCount();
 DLL_IMPORT BOOL              CResetStorage();
 DLL_IMPORT void              CDispose();
