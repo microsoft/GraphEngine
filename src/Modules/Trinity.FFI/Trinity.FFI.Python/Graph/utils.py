@@ -37,6 +37,6 @@ class Record:
         cls_def.__str__ = __str__
         return cls_def
 
-
 def binding(cls):
     return cls
+
