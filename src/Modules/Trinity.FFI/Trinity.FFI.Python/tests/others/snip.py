@@ -54,4 +54,33 @@ with open('./setup.py', 'w') as f:
 	f.write(setup_code)
 
 os.system(f'swig -modern -c++ -builtin -outcurrentdir -python {filename}')
-call(['python', '-c', setup_code, 'build'])
+call(['python', '-c', setup_code, 'build', '--build-lib', './'])
+
+# enum CellAccessOptions : int32_t
+# {
+# 	ThrowExceptionOnCellNotFound = 1,
+# 	ReturnNullOnCellNotFound = 2,
+# 	CreateNewOnCellNotFound = 4,
+# 	StrongLogAhead = 8,
+# 	WeakLogAhead = 16
+# };
+
+import operations
+
+ffi  = ge.__ffi
+
+new  = ffi.NewCell_2
+
+save = ffi.SaveCell_1
+
+c1 = new(2, 'C1')
+
+save(c1.GetID(), c1)
+
+cellId = c1.GetID()
+
+c1_acc = operations.Use_Cell_C1(cellId, 0)
+
+operations.Cell_C1_Set_foo(c1_acc, 1)
+
+print(operations.Cell_C1_Get_foo(c1_acc))

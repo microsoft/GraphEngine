@@ -78,20 +78,21 @@ module CodeGen =
             
                 if subject.TypeCode = CELL
                 then 
-                   let decl = sprintf "CellAccessor Use%c%s(cellid_t cellid, CellAccessOptions options);" manglingCode subject'name
+                   let decl_head = sprintf "CellAccessor Use%c%s(int64_t cellid, int32_t options)" manglingCode subject'name
 
                    let src  = sprintf "
 %s
 {
     CellAccessor accessor;
+    accessor.cellId = cellid;
     auto errCode = LockCell(accessor, options);
     if (errCode)
     throw errCode;
     return accessor;
 }
-                               " decl
+                               " decl_head
 
-                   reducer tail (decl::extended'definitions) (src::extended'sources)
+                   reducer tail ((sprintf "%s;" decl_head)::extended'definitions) (src::extended'sources)
                 else
                    reducer tail extended'definitions extended'sources
             | _     ->
@@ -101,9 +102,10 @@ module CodeGen =
         
         fun (moduleName: Name) -> 
             "
+
 %module {moduleName}
 %{{
-#include \"GraphEngine.Jit.Native.h\"
+#include \"swig_accessor.h\"
 #include \"CellAccessor.h\"
 #define SWIG_FILE_WITH_INIT
 {source}

@@ -3539,15 +3539,14 @@ SwigPyBuiltin_SetMetaType (PyTypeObject *type, PyTypeObject *metatype)
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define SWIGTYPE_p_CellAccessOptions swig_types[0]
-#define SWIGTYPE_p_CellAccessor swig_types[1]
-#define SWIGTYPE_p_SwigPyObject swig_types[2]
-#define SWIGTYPE_p_char swig_types[3]
-#define SWIGTYPE_p_int32_t swig_types[4]
-#define SWIGTYPE_p_int64_t swig_types[5]
-#define SWIGTYPE_p_void swig_types[6]
-static swig_type_info *swig_types[8];
-static swig_module_info swig_module = {swig_types, 7, 0, 0, 0, 0};
+#define SWIGTYPE_p_CellAccessor swig_types[0]
+#define SWIGTYPE_p_SwigPyObject swig_types[1]
+#define SWIGTYPE_p_char swig_types[2]
+#define SWIGTYPE_p_int32_t swig_types[3]
+#define SWIGTYPE_p_int64_t swig_types[4]
+#define SWIGTYPE_p_void swig_types[5]
+static swig_type_info *swig_types[7];
+static swig_module_info swig_module = {swig_types, 6, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3661,209 +3660,114 @@ namespace swig {
 #include <stddef.h>
 
 
-
 #include "swig_accessor.h"
-
 #include "CellAccessor.h"
-
 #define SWIG_FILE_WITH_INIT
 
-enum CellAccessOptions{
-    a = 1
-};
-
-
-static void (* _Cell_C2_Set_bar)(void*, char*) = (void (*)(void*, char*))2589590618304;
-
+static void (* _Cell_C2_Set_bar)(void*, char*) = (void (*)(void*, char*))3480872288448;
 static void Cell_C2_Set_bar(void* subject, char* object)
-
 {
-
         return _Cell_C2_Set_bar(subject, object);
-
 }
-
             
 
-
-static char* (* _Cell_C2_Get_bar)(void*) = (char* (*)(void*))2589590618240;
-
+static char* (* _Cell_C2_Get_bar)(void*) = (char* (*)(void*))3480872288384;
 static char* Cell_C2_Get_bar(void* subject)
-
 {
-
         return _Cell_C2_Get_bar(subject);
-
 }
-
             
 
-
-static void (* _Cell_C2_Set_lst)(void*, void*) = (void (*)(void*, void*))2589590618176;
-
+static void (* _Cell_C2_Set_lst)(void*, void*) = (void (*)(void*, void*))3480872288320;
 static void Cell_C2_Set_lst(void* subject, void* object)
-
 {
-
         return _Cell_C2_Set_lst(subject, object);
-
 }
-
             
 
-
-static void* (* _Cell_C2_Get_lst)(void*) = (void* (*)(void*))2589590618112;
-
+static void* (* _Cell_C2_Get_lst)(void*) = (void* (*)(void*))3480872288256;
 static void* Cell_C2_Get_lst(void* subject)
-
 {
-
         return _Cell_C2_Get_lst(subject);
-
 }
-
             
 
-
-CellAccessor Use_Cell_C2(int64_t cellid, CellAccessOptions options);
-
+CellAccessor Use_Cell_C2(int64_t cellid, int32_t options)
 {
-
     CellAccessor accessor;
-
+    accessor.cellId = cellid;
     auto errCode = LockCell(accessor, options);
-
     if (errCode)
-
     throw errCode;
-
     return accessor;
-
 }
-
                                
 
-
-static int (* _List_int32_Count)(void*) = (int (*)(void* )) 2589590618560;
-
+static int (* _List_int32_Count)(void*) = (int (*)(void* )) 3480872288704;
 static int List_int32_Count(void* subject)
-
 {
-
     return _List_int32_Count(subject);
-
 }
-
             
 
-
-static bool (* _List_int32_Contains)(void*, int32_t) = (bool (*)(void*, int32_t)) 2589590618496;
-
+static bool (* _List_int32_Contains)(void*, int32_t) = (bool (*)(void*, int32_t)) 3480872288640;
 static bool List_int32_Contains(void* subject, int32_t object)
-
 {
-
     return _List_int32_Contains(subject, object);
-
 }
-
             
 
-
-static void (* _List_int32_Get)(void*, int) = (void (*)(void*, int, int32_t))2589590618432;
-
-static void List_int32_Get(void* subject, int idx, int32_t object){
-
-        return _List_int32_Get(subject, idx, object);
-
+static void (* _List_int32_Set)(void*, int,  int32_t) = (void (*)(void*, int, int32_t object))3480872288576;
+static void List_int32_Set(void* subject, int idx, int32_t object){
+        return _List_int32_Set(subject, idx, object);
 }
-
             
 
-
-static int32_t (* _List_int32_Get)(void*, int) =  (int32_t (*)(void*, int))2589590618368;
-
+static int32_t (* _List_int32_Get)(void*, int) =  (int32_t (*)(void*, int))3480872288512;
 static int32_t List_int32_Get(void* subject, int idx)
-
 {
-
         return _List_int32_Get(subject, idx);
-
 }
-
             
 
-
-static void (* _Cell_C1_Set_bar)(void*, char*) = (void (*)(void*, char*))2589590618816;
-
+static void (* _Cell_C1_Set_bar)(void*, char*) = (void (*)(void*, char*))3480872288960;
 static void Cell_C1_Set_bar(void* subject, char* object)
-
 {
-
         return _Cell_C1_Set_bar(subject, object);
-
 }
-
             
 
-
-static char* (* _Cell_C1_Get_bar)(void*) = (char* (*)(void*))2589590618752;
-
+static char* (* _Cell_C1_Get_bar)(void*) = (char* (*)(void*))3480872288896;
 static char* Cell_C1_Get_bar(void* subject)
-
 {
-
         return _Cell_C1_Get_bar(subject);
-
 }
-
             
 
-
-static void (* _Cell_C1_Set_foo)(void*, int32_t) = (void (*)(void*, int32_t))2589590618688;
-
+static void (* _Cell_C1_Set_foo)(void*, int32_t) = (void (*)(void*, int32_t))3480872288832;
 static void Cell_C1_Set_foo(void* subject, int32_t object)
-
 {
-
         return _Cell_C1_Set_foo(subject, object);
-
 }
-
             
 
-
-static int32_t (* _Cell_C1_Get_foo)(void*) = (int32_t (*)(void*))2589590618624;
-
+static int32_t (* _Cell_C1_Get_foo)(void*) = (int32_t (*)(void*))3480872288768;
 static int32_t Cell_C1_Get_foo(void* subject)
-
 {
-
         return _Cell_C1_Get_foo(subject);
-
 }
-
             
 
-
-CellAccessor Use_Cell_C1(int64_t cellid, CellAccessOptions options);
-
+CellAccessor Use_Cell_C1(int64_t cellid, int32_t options)
 {
-
     CellAccessor accessor;
-
+    accessor.cellId = cellid;
     auto errCode = LockCell(accessor, options);
-
     if (errCode)
-
     throw errCode;
-
     return accessor;
-
 }
-
                                
-
 
 
 SWIGINTERN swig_type_info*
@@ -4298,7 +4202,7 @@ fail:
 SWIGINTERN PyObject *_wrap_Use_Cell_C2(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   int64_t arg1 ;
-  CellAccessOptions arg2 ;
+  int32_t arg2 ;
   void *argp1 ;
   int res1 = 0 ;
   void *argp2 ;
@@ -4322,14 +4226,14 @@ SWIGINTERN PyObject *_wrap_Use_Cell_C2(PyObject *self, PyObject *args) {
     }
   }
   {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_CellAccessOptions,  0  | 0);
+    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_int32_t,  0  | 0);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Use_Cell_C2" "', argument " "2"" of type '" "CellAccessOptions""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Use_Cell_C2" "', argument " "2"" of type '" "int32_t""'"); 
     }  
     if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Use_Cell_C2" "', argument " "2"" of type '" "CellAccessOptions""'");
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Use_Cell_C2" "', argument " "2"" of type '" "int32_t""'");
     } else {
-      CellAccessOptions * temp = reinterpret_cast< CellAccessOptions * >(argp2);
+      int32_t * temp = reinterpret_cast< int32_t * >(argp2);
       arg2 = *temp;
       if (SWIG_IsNewObj(res2)) delete temp;
     }
@@ -4399,7 +4303,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_List_int32_Get__SWIG_0(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_List_int32_Set(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -4413,30 +4317,30 @@ SWIGINTERN PyObject *_wrap_List_int32_Get__SWIG_0(PyObject *self, PyObject *args
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
   
-  if(!PyArg_UnpackTuple(args,(char *)"List_int32_Get",3,3,&obj0,&obj1,&obj2)) SWIG_fail;
+  if(!PyArg_UnpackTuple(args,(char *)"List_int32_Set",3,3,&obj0,&obj1,&obj2)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0,SWIG_as_voidptrptr(&arg1), 0, 0);
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "List_int32_Get" "', argument " "1"" of type '" "void *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "List_int32_Set" "', argument " "1"" of type '" "void *""'"); 
   }
   ecode2 = SWIG_AsVal_int(obj1, &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "List_int32_Get" "', argument " "2"" of type '" "int""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "List_int32_Set" "', argument " "2"" of type '" "int""'");
   } 
   arg2 = static_cast< int >(val2);
   {
     res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_int32_t,  0  | 0);
     if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "List_int32_Get" "', argument " "3"" of type '" "int32_t""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "List_int32_Set" "', argument " "3"" of type '" "int32_t""'"); 
     }  
     if (!argp3) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "List_int32_Get" "', argument " "3"" of type '" "int32_t""'");
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "List_int32_Set" "', argument " "3"" of type '" "int32_t""'");
     } else {
       int32_t * temp = reinterpret_cast< int32_t * >(argp3);
       arg3 = *temp;
       if (SWIG_IsNewObj(res3)) delete temp;
     }
   }
-  List_int32_Get(arg1,arg2,arg3);
+  List_int32_Set(arg1,arg2,arg3);
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -4444,7 +4348,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_List_int32_Get__SWIG_1(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_List_int32_Get(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   void *arg1 = (void *) 0 ;
   int arg2 ;
@@ -4470,62 +4374,6 @@ SWIGINTERN PyObject *_wrap_List_int32_Get__SWIG_1(PyObject *self, PyObject *args
   return resultobj;
 fail:
   return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_List_int32_Get(PyObject *self, PyObject *args) {
-  Py_ssize_t argc;
-  PyObject *argv[4] = {
-    0
-  };
-  Py_ssize_t ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 3) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 2) {
-    int _v;
-    void *ptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &ptr, 0, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        int res = SWIG_AsVal_int(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        return _wrap_List_int32_Get__SWIG_1(self, args);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    void *ptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &ptr, 0, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        int res = SWIG_AsVal_int(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_int32_t, 0);
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          return _wrap_List_int32_Get__SWIG_0(self, args);
-        }
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'List_int32_Get'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    List_int32_Get(void *,int,int32_t)\n"
-    "    List_int32_Get(void *,int)\n");
-  return 0;
 }
 
 
@@ -4639,7 +4487,7 @@ fail:
 SWIGINTERN PyObject *_wrap_Use_Cell_C1(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   int64_t arg1 ;
-  CellAccessOptions arg2 ;
+  int32_t arg2 ;
   void *argp1 ;
   int res1 = 0 ;
   void *argp2 ;
@@ -4663,14 +4511,14 @@ SWIGINTERN PyObject *_wrap_Use_Cell_C1(PyObject *self, PyObject *args) {
     }
   }
   {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_CellAccessOptions,  0  | 0);
+    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_int32_t,  0  | 0);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Use_Cell_C1" "', argument " "2"" of type '" "CellAccessOptions""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Use_Cell_C1" "', argument " "2"" of type '" "int32_t""'"); 
     }  
     if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Use_Cell_C1" "', argument " "2"" of type '" "CellAccessOptions""'");
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Use_Cell_C1" "', argument " "2"" of type '" "int32_t""'");
     } else {
-      CellAccessOptions * temp = reinterpret_cast< CellAccessOptions * >(argp2);
+      int32_t * temp = reinterpret_cast< int32_t * >(argp2);
       arg2 = *temp;
       if (SWIG_IsNewObj(res2)) delete temp;
     }
@@ -4692,6 +4540,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"Use_Cell_C2", _wrap_Use_Cell_C2, METH_VARARGS, NULL},
 	 { (char *)"List_int32_Count", _wrap_List_int32_Count, METH_VARARGS, NULL},
 	 { (char *)"List_int32_Contains", _wrap_List_int32_Contains, METH_VARARGS, NULL},
+	 { (char *)"List_int32_Set", _wrap_List_int32_Set, METH_VARARGS, NULL},
 	 { (char *)"List_int32_Get", _wrap_List_int32_Get, METH_VARARGS, NULL},
 	 { (char *)"Cell_C1_Set_bar", _wrap_Cell_C1_Set_bar, METH_VARARGS, NULL},
 	 { (char *)"Cell_C1_Get_bar", _wrap_Cell_C1_Get_bar, METH_VARARGS, NULL},
@@ -4704,7 +4553,6 @@ static PyMethodDef SwigMethods[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
-static swig_type_info _swigt__p_CellAccessOptions = {"_p_CellAccessOptions", "CellAccessOptions *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_CellAccessor = {"_p_CellAccessor", "CellAccessor *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_SwigPyObject = {"_p_SwigPyObject", "SwigPyObject *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
@@ -4713,7 +4561,6 @@ static swig_type_info _swigt__p_int64_t = {"_p_int64_t", "int64_t *", 0, 0, (voi
 static swig_type_info _swigt__p_void = {"_p_void", "void *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
-  &_swigt__p_CellAccessOptions,
   &_swigt__p_CellAccessor,
   &_swigt__p_SwigPyObject,
   &_swigt__p_char,
@@ -4722,7 +4569,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_void,
 };
 
-static swig_cast_info _swigc__p_CellAccessOptions[] = {  {&_swigt__p_CellAccessOptions, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_CellAccessor[] = {  {&_swigt__p_CellAccessor, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_SwigPyObject[] = {  {&_swigt__p_SwigPyObject, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
@@ -4731,7 +4577,6 @@ static swig_cast_info _swigc__p_int64_t[] = {  {&_swigt__p_int64_t, 0, 0, 0},{0,
 static swig_cast_info _swigc__p_void[] = {  {&_swigt__p_void, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
-  _swigc__p_CellAccessOptions,
   _swigc__p_CellAccessor,
   _swigc__p_SwigPyObject,
   _swigc__p_char,

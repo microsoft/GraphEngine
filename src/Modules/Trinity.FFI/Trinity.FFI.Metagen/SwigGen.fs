@@ -77,9 +77,9 @@ static {object type} {subject name}{_}Get(void* subject, int idx)
         | LSet ->
             decl <- PString.format "static void {subject name}{_}Set(void* subject, int idx, {object type});" TemplateArgs
             "
-static void (* {_}{subject name}{_}Get)(void*, int,  {object type}) = (void (*)(void*, int, {object type} object)){!fn addr};
-static void {subject name}{_}Get(void* subject, int idx, {object type} object){{
-        return {_}{subject name}{_}Get(subject, idx, object);
+static void (* {_}{subject name}{_}Set)(void*, int,  {object type}) = (void (*)(void*, int, {object type} object)){!fn addr};
+static void {subject name}{_}Set(void* subject, int idx, {object type} object){{
+        return {_}{subject name}{_}Set(subject, idx, object);
 }}
             "
 
