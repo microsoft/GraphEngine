@@ -58,14 +58,20 @@ module CodeGen =
          (name'maker   : ManglingChar   -> TypeDescriptor -> Name) 
          (spec         : seq<TypeDescriptor *  seq<FunctionDescriptor*(FunctionDecl * (FunctionId -> Code))>>) = 
 
+        let use_newobj = new System.Collections.Generic.List<string>()
+
         let rec reducer (seqs) (definitions: list<FunctionDecl>) (sources: list<Code>) = 
 
             match seqs with 
             | (subject: TypeDescriptor, fields: seq<FunctionDescriptor*(FunctionDecl * (FunctionId -> Code))>) :: tail ->
 
                 let (defs, srcs) = fields |> Seq.map (fun (toCompile, (fnDecl, codeMaker)) -> 
-                                                (** Callsite.ToInt? **)
-                                                CompileFunction(toCompile).CallSite.ToInt64().ToString()
+                                                let concrete_verb = 
+                                                    match toCompile.Verb with
+                                                    | SGet x -> ComposedVerb(SGet x, BGet)
+                                                    | SSet x -> ComposedVerb(SSet x, BSet)
+                                                    | x      -> x
+                                                sprintf "0x%xll" (CompileFunction({ toCompile with Verb = concrete_verb }).CallSite.ToInt64())
                                                 |> codeMaker
                                                 |> fun it -> (fnDecl, it))
                                        |> List.ofSeq
@@ -78,14 +84,16 @@ module CodeGen =
             
                 if subject.TypeCode = CELL
                 then 
-                   let decl_head = sprintf "CellAccessor Use%c%s(int64_t cellid, int32_t options)" manglingCode subject'name
+                   let func_name = sprintf "Use%c%s" manglingCode subject'name
+                   let decl_head = sprintf "CellAccessor* %s(int64_t cellid, int32_t options)" func_name
+                   use_newobj.Add("%newobject " + func_name + ";")
 
                    let src  = sprintf "
 %s
 {
-    CellAccessor accessor;
-    accessor.cellId = cellid;
-    auto errCode = LockCell(accessor, options);
+    CellAccessor* accessor = new CellAccessor();
+    accessor->cellId = cellid;
+    auto errCode = LockCell(*accessor, options);
     if (errCode)
     throw errCode;
     return accessor;
@@ -104,20 +112,23 @@ module CodeGen =
             "
 
 %module {moduleName}
+%include <stdint.i>
 %{{
 #include \"swig_accessor.h\"
 #include \"CellAccessor.h\"
 #define SWIG_FILE_WITH_INIT
 {source}
 %}}
-{delc}
+{decl}
+{use_newobj}
             " 
             |> fun template -> 
                 PString.format template
                                [
                                 "moduleName" ->> moduleName
                                 "source"     ->> (srcs  |> PString.str'concatBy "\n" )
-                                "delc"       ->> (decls |> PString.str'concatBy "\n")
+                                "decl"       ->> (decls |> PString.str'concatBy "\n")
+                                "use_newobj" ->> (use_newobj |> PString.str'concatBy "\n")
                                ]
     
    
