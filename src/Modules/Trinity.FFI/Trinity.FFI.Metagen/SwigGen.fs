@@ -75,9 +75,9 @@ static {object type} {subject name}{_}Get(void* subject, int idx)
             "
         
         | LSet ->
-            decl <- PString.format "static void {subject name}{_}Get(void* subject, int idx, {object type} object);" TemplateArgs
+            decl <- PString.format "static void {subject name}{_}Set(void* subject, int idx, {object type});" TemplateArgs
             "
-static void (* {_}{subject name}{_}Get)(void*, int) = (void (*)(void*, int, {object type} object)){!fn addr};
+static void (* {_}{subject name}{_}Get)(void*, int,  {object type}) = (void (*)(void*, int, {object type} object)){!fn addr};
 static void {subject name}{_}Get(void* subject, int idx, {object type} object){{
         return {_}{subject name}{_}Get(subject, idx, object);
 }}
@@ -94,7 +94,7 @@ static int {subject name}{_}Count(void* subject)
             "
         | LContains ->
 
-            decl <- PString.format "static bool {subject name}{_}Contains(void* subject, {object type} object);" TemplateArgs;
+            decl <- PString.format "static bool {subject name}{_}Contains(void* subject, {object type});" TemplateArgs;
             "
 static bool (* {_}{subject name}{_}Contains)(void*, {object type}) = (bool (*)(void*, {object type})) {!fn addr};
 static bool {subject name}{_}Contains(void* subject, {object type} object)
@@ -104,7 +104,7 @@ static bool {subject name}{_}Contains(void* subject, {object type} object)
             "
         | SGet fieldName ->
             let fnName = sprintf "{subject name}{_}Get{_}%s" fieldName
-            decl <- PString.format "static {object type} {fnName}(void* subject));"  ("fnName" ->> fnName ::TemplateArgs);
+            decl <- PString.format "static {object type} {fnName}(void*);"  ("fnName" ->> fnName ::TemplateArgs);
             "
 static {object type} (* {_}{:fnName})(void*) = ({object type} (*)(void*)){!fn addr};
 static {object type} {:fnName}(void* subject)
@@ -116,7 +116,7 @@ static {object type} {:fnName}(void* subject)
         
         | SSet fieldName ->
             let fnName = sprintf "{subject name}{_}Set{_}%s" fieldName
-            decl <- PString.format "static void {fnName}(void* subject, {object type} object);" ("fnName" ->> fnName ::TemplateArgs);
+            decl <- PString.format "static void {fnName}(void* subject, {object type});" ("fnName" ->> fnName ::TemplateArgs);
             "
 static void (* {_}{:fnName})(void*, {object type}) = (void (*)(void*, {object type})){!fn addr};
 static void {:fnName}(void* subject, {object type} object)
