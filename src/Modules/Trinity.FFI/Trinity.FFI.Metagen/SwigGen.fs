@@ -24,14 +24,14 @@ module SwigGen =
         match typeDesc.TypeCode with
         | NULL     -> "void"
         
-        | U8  -> "uint8_t"
-        | U16 -> "uint16_t"
-        | U32 -> "uint32_t"
-        | U64 -> "uint64_t"
-        | I8  -> "int8_t"
-        | I16 -> "int16_t"
-        | I32 -> "int32_t"
-        | I64 -> "int64_t"
+        | U8       -> "uint8_t"
+        | U16      -> "uint16_t"
+        | U32      -> "uint32_t"
+        | U64      -> "uint64_t"
+        | I8       -> "int8_t"
+        | I16      -> "int16_t"
+        | I32      -> "int32_t"
+        | I64      -> "int64_t"
         
         | F32      -> "float"
         | F64      -> "double"
@@ -52,18 +52,25 @@ module SwigGen =
                : FunctionDecl * (FunctionId -> Code) =
         
         let mutable decl: string = null
-         
+        
         let subject'name = name'maker manglingCode subject
         
-        let object = getObjectFromSubjectAndVerb subject verb
-
-        let object'type  = swig'typestr'mapper object 
+        let object'type  = 
+            match verb with
+            | BSet
+            | BGet -> swig'typestr'mapper subject
+            | _    -> swig'typestr'mapper (getObjectFromSubjectAndVerb subject verb) 
 
         let TemplateArgs = ["object type" ->> object'type; "subject name" ->> subject'name; "_" ->> manglingCode]
 
-
+        
         let render'filter = fun (lst: list<char>) -> lst.Head <> '!'
         match verb with
+        | BGet ->
+            decl <- "static {object type} Get{_}{subject name}(void *);"
+            "
+            
+            "
         | LGet -> 
             decl <- PString.format "static {object type} {subject name}{_}Get(void* subject, int idx);" TemplateArgs 
             "
