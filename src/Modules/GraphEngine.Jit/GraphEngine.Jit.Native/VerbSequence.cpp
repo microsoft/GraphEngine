@@ -10,6 +10,7 @@ VerbSequence::VerbSequence(FunctionDescriptor* f)
     pmember = nullptr;
     imember = -1;
     parent = nullptr;
+	iidx = -1;
 
     debug(f->NrVerbs);
 }
@@ -43,15 +44,22 @@ bool VerbSequence::Next()
         type = &pmember->Type;
         break;
     }
+    case VerbCode::VC_LInlineGet:
+    case VerbCode::VC_LInlineSet:
+	{
+		iidx = pcurrent->Data.Index;
+	}
+	/* FALLTHROUGH */
     case VerbCode::VC_LGet:
     case VerbCode::VC_LSet:
-    case VerbCode::VC_LInlineGet:
     case VerbCode::VC_LContains:
+    case VerbCode::VC_LCount:
     {
         auto vec = type->get_ElementType();
         parent = type;
         type = vec->at(0);
         delete vec;
+		break;
     }
     }
 
@@ -76,4 +84,9 @@ TypeDescriptor* VerbSequence::CurrentType()
 MemberDescriptor* VerbSequence::CurrentMember()
 {
     return pmember;
+}
+
+int64_t VerbSequence::InlineIndex()
+{
+	return iidx;
 }

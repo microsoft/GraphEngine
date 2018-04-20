@@ -90,7 +90,6 @@ let rec VerbsToSeq (v: Verb) = seq {
         yield x
         yield! VerbsToSeq y
     | _ -> yield v
-
 }
 
 let VerbToNative (v: Verb) = 
@@ -102,8 +101,7 @@ let VerbToNative (v: Verb) =
         // TODO forbid EAlloc etc.
         | ComposedVerb _              -> failwith "Cannot convert ComposedVerb to native"
         | _                           -> 0 |> nativeint
-    DebugDump
-        { Code = v |> ToUnionTag; Data = data }
+    { Code = v |> ToUnionTag; Data = data }
 
 let VerbsToNative (v: Verb) =
     VerbsToSeq v |> Seq.map VerbToNative   |> SeqToNative

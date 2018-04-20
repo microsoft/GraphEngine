@@ -10,8 +10,8 @@ struct CellAccessor
     int32_t entryIndex;
     uint16_t type;
 
-	CellAccessor() {}
-	~CellAccessor() {}
+    CellAccessor() {}
+    ~CellAccessor() {}
 };
 
 #pragma pack(pop)

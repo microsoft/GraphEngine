@@ -28,7 +28,8 @@ namespace GraphEngine.Jit.Playground
             //IntegerSGetSet();
             //StringSGetSet();
             //IntegerSLGetSet();
-            StringSLGetSet();
+            //StringSLGetSet();
+            IntegerSLCount();
 
             //byte[] buf = new byte[16];
             //int val = int.Parse(Console.ReadLine());

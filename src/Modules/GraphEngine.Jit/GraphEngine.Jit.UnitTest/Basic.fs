@@ -405,3 +405,27 @@ let StringSLGetSet () =
     let mutable s3 = S3(0L, 0, new System.Collections.Generic.List<string>(seq [""; ""]), 0)
     _StringSLGetSet s3 "f2" 0 "hello"
     _StringSLGetSet s3 "f2" 1 "world!"
+
+let _SLCount (cell: ICell) field (assert_len) =
+
+    _CellGetSet cell (fun (tdesc: TypeDescriptor) (accessor: NativeCellAccessor) (paccessor: nativeint)  ->
+        let fcnt = { DeclaringType = tdesc
+                     Verb          = ComposedVerb(SGet field, LCount) }
+        let nfcnt = CompileFunction fcnt
+
+        Assert.NotEqual(IntPtr.Zero, nfcnt.CallSite)
+
+        printfn "paccessor  = %X" paccessor
+        printfn "pcell      = %X" accessor.CellPtr
+
+        printfn "length assertion"
+        Assert.Equal(assert_len, (CallHelper.CallByVal<int>(nfcnt.CallSite, paccessor)))
+        )
+
+[<Fact>]
+let IntegerSLCount () =
+    let mutable s2 = S2(0L, new System.Collections.Generic.List<int64>(seq [1L; 2L; 3L]), 123.456, 0)
+    _SLCount s2 "f1" 3
+
+    s2 <- S2(0L, new System.Collections.Generic.List<int64>(seq [1L; 2L; 3L; 5L; 8L]), 2333.33333, 0)
+    _SLCount s2 "f1" 5
