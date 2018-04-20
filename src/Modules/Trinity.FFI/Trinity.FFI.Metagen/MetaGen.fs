@@ -50,19 +50,18 @@ module MetaGen =
                     |> fun it -> if isPrimitive member'.Type.TypeCode then ComposedVerb(it, BGet) else it
                     |> fun it -> [it; SSet fieldName;]
                     |> Seq.map (render type'))
-           |> fun tail -> [BGet; BSet] |> Seq.map (render type') |> Seq.append tail 
-           
         
         | {TypeCode=LIST;ElementType=elemTypes}  ->
              LGet
              |> fun it -> if (elemTypes |> Seq.head |> fun x -> isPrimitive x.TypeCode) then ComposedVerb (it, BGet) else it
              |> fun it -> it::[LSet; LContains; LCount;] 
              |>  Seq.map (render type')
-                
 
         | _                                      ->
              (** primitive type **)
              raise (NotImplementedException())
+
+        |> fun tail -> [BGet; BSet] |> Seq.map (render type') |> Seq.append tail 
     
     let rec TypeInfer(anyType: TypeDescriptor): seq<TypeDescriptor> = 
     (** inference out the descriptors of struct types and generic list types in a cell descriptor.**)
