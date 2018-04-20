@@ -70,68 +70,68 @@ module SwigGen =
         | BGet ->
             decl <- "static void* Get{_}{subject name}(void *);"
             
-            "static void* (* {_}Get{_}{subject name})(void*) = (void* (*)(void*)){!fn addr};" +
-            "static void* Get{_}{subject name}(void *subject)" + 
-            "{{" +
-            "       return {_}Get{subject name}(subject);" + 
+            "static void* (* {_}Get{_}{subject name})(void*) = (void* (*)(void*)){!fn addr};" +/
+            "static void* Get{_}{subject name}(void *subject)" +/
+            "{{" +/
+            "       return {_}Get{_}{subject name}(subject);" +/ 
             "}}"
         
         | BSet ->
             decl <- "static void Set{_}{subject name}(void*, void*);"
 
-            "static void (* {_}Set{_}{subject name}(void*, void*) = (void (*)(void*, void*)){!fn addr};" +
-            "static void Set{_}{subject name}(void* subject, void* object)" + 
-            "{{" + 
-            "       return {_}Set{_}{subject name}(subject, object);" +
+            "static void (* {_}Set{_}{subject name})(void*, void*) = (void (*)(void*, void*)){!fn addr};" +/
+            "static void Set{_}{subject name}(void* subject, void* object)" +/ 
+            "{{" +/ 
+            "       return {_}Set{_}{subject name}(subject, object);" +/
             "}}"
 
         | ComposedVerb (LGet, BGet)
         | LGet -> 
             decl <- PString.format "static {object type} {subject name}{_}Get(void*, int);" TemplateArgs 
             
-            "static {object type} (* {_}{subject name}{_}Get)(void*, int) =  ({object type} (*)(void*, int)){!fn addr};" +
-            "static {object type} {subject name}{_}Get(void* subject, int idx)" + 
-            "{{" +
-            "        return {_}{subject name}{_}Get(subject, idx);" +
+            "static {object type} (* {_}{subject name}{_}Get)(void*, int) =  ({object type} (*)(void*, int)){!fn addr};" +/
+            "static {object type} {subject name}{_}Get(void* subject, int idx)" +/ 
+            "{{" +/
+            "        return {_}{subject name}{_}Get(subject, idx);" +/
             "}}"
             
         
         | LSet ->
             decl <- PString.format "static void {subject name}{_}Set(void*, int, {object type});" TemplateArgs
-            "static void (* {_}{subject name}{_}Set)(void*, int,  {object type}) = (void (*)(void*, int, {object type} object)){!fn addr};" +
-            "static void {subject name}{_}Set(void* subject, int idx, {object type} object)" +
-            "{{" + 
-            "return {_}{subject name}{_}Set(subject, idx, object);" + 
+            "static void (* {_}{subject name}{_}Set)(void*, int,  {object type}) = (void (*)(void*, int, {object type} object)){!fn addr};" +/
+            "static void {subject name}{_}Set(void* subject, int idx, {object type} object)" +/
+            "{{" +/ 
+            "return {_}{subject name}{_}Set(subject, idx, object);" +/ 
             "}}"
             
 
         | LCount ->
             decl <- PString.format "static int Count{_}{subject name}(void* subject);" TemplateArgs;
             
-            "static int (* {_}Count{_}{subject name})(void*) = (int (*)(void* )) {!fn addr};" +
-            "static int Count{_}{subject name}(void* subject)" +
-            "{{" +
-            "    return {_}Count{_}{subject name}(subject);"+
+            "static int (* {_}Count{_}{subject name})(void*) = (int (*)(void* )) {!fn addr};" +/
+            "static int Count{_}{subject name}(void* subject)" +/
+            "{{" +/
+            "    return {_}Count{_}{subject name}(subject);"+/
             "}}"
 
         | LContains ->
 
             decl <- PString.format "static bool Contains{_}{subject name}(void*, {object type});" TemplateArgs;
             
-            "static bool (* {_}Contains{_}{subject name})(void*, {object type}) = (bool (*)(void*, {object type})) {!fn addr};" +
-            "static bool Contains{_}{subject name}(void* subject, {object type} object)" +
-            "{{" +
-            "    return {_}Contains{_}{subject name}(subject, object);" +
+            "static bool (* {_}Contains{_}{subject name})(void*, {object type}) = (bool (*)(void*, {object type})) {!fn addr};" +/
+            "static bool Contains{_}{subject name}(void* subject, {object type} object)" +/
+            "{{" +/
+            "    return {_}Contains{_}{subject name}(subject, object);" +/
             "}}"
         
         | ComposedVerb (SGet fieldName, BGet)
         | SGet fieldName ->
             let fnName = sprintf "{subject name}{_}Get{_}%s" fieldName
             decl <- PString.format "static {object type} {fnName}(void*);"  ("fnName" ->> fnName ::TemplateArgs);
-            "static {object type} (* {_}{:fnName})(void*) = ({object type} (*)(void*)){!fn addr};" + 
-            "static {object type} {:fnName}(void* subject)" +
-            "{{" +
-            "    return {_}{:fnName}(subject);" +
+            "static {object type} (* {_}{:fnName})(void*) = ({object type} (*)(void*)){!fn addr};" +/
+            "static {object type} {:fnName}(void* subject)" +/
+            "{{" +/
+            "    return {_}{:fnName}(subject);" +/
             "}}"
             
             |> fun template -> PString.format'cond (fun lst -> lst.Head = ':') template [":fnName" ->> fnName]
@@ -140,10 +140,10 @@ module SwigGen =
             let fnName = sprintf "{subject name}{_}Set{_}%s" fieldName
             decl <- PString.format "static void {fnName}(void*, {object type});" ("fnName" ->> fnName ::TemplateArgs);
 
-            "static void (* {_}{:fnName})(void*, {object type}) = (void (*)(void*, {object type})){!fn addr};" + 
-            "static void {:fnName}(void* subject, {object type} object)" +
-            "{{" +
-            "    return {_}{:fnName}(subject, object);" +
+            "static void (* {_}{:fnName})(void*, {object type}) = (void (*)(void*, {object type})){!fn addr};" +/ 
+            "static void {:fnName}(void* subject, {object type} object)" +/
+            "{{" +/
+            "    return {_}{:fnName}(subject, object);" +/
             "}}"
 
             |> fun template -> PString.format'cond (fun lst -> lst.Head = ':') template [":fnName" ->> fnName]
