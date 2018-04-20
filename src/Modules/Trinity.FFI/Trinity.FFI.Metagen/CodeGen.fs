@@ -66,12 +66,13 @@ module CodeGen =
             | (subject: TypeDescriptor, fields: seq<FunctionDescriptor*(FunctionDecl * (FunctionId -> Code))>) :: tail ->
 
                 let (defs, srcs) = fields |> Seq.map (fun (toCompile, (fnDecl, codeMaker)) -> 
-                                                let concrete_verb = 
-                                                    match toCompile.Verb with
-                                                    | SGet x -> ComposedVerb(SGet x, BGet)
-                                                    | SSet x -> ComposedVerb(SSet x, BSet)
-                                                    | x      -> x
-                                                sprintf "0x%xll" (CompileFunction({ toCompile with Verb = concrete_verb }).CallSite.ToInt64())
+                                                //let concrete_verb = 
+                                                //    match toCompile.Verb with
+                                                //    | SGet x -> ComposedVerb(SGet x, BGet)
+                                                //    | SSet x -> ComposedVerb(SSet x, BSet)
+                                                //    | x      -> x
+
+                                                sprintf "0x%xll" ((CompileFunction toCompile).CallSite.ToInt64())
                                                 |> codeMaker
                                                 |> fun it -> (fnDecl, it))
                                        |> List.ofSeq
