@@ -33,11 +33,13 @@ extern "C" void* tsl_copy_dynamic(int32_t* ptr)
 
 extern "C" void tsl_assign(CellAccessor* accessor, char* dst, char* src, int32_t size_dst, int32_t size_src)
 {
-    if (size_dst != size_src) 
+    if (size_dst != size_src)
     {
-        auto offset = dst - accessor->cellPtr;
-        ::CResizeCell(accessor->cellId, accessor->entryIndex, offset, size_src - size_dst, accessor->cellPtr);
-        dst = accessor->cellPtr + offset;
+        auto offset = reinterpret_cast<int64_t>(dst) - accessor->cellPtr;
+        char* cellPtr;
+        ::CResizeCell(accessor->cellId, accessor->entryIndex, offset, size_src - size_dst, cellPtr);
+        accessor->cellPtr = reinterpret_cast<int64_t>(cellPtr);
+        dst = cellPtr + offset;
     }
 
     memcpy(dst, src, size_src);
@@ -64,7 +66,7 @@ extern "C" void tsl_setu8string(CellAccessor* accessor, int32_t* p, char* trinit
 
 // type-safe call
 template <class TRET, class... TARGS>
-CCFuncCall* safecall(X86Compiler &cc, TRET (*func)(TARGS...))
+CCFuncCall* safecall(X86Compiler &cc, TRET(*func)(TARGS...))
 {
     return cc.call(imm_ptr(func), FuncSignatureT<TRET, TARGS...>());
 }
@@ -73,12 +75,13 @@ void push(X86Compiler &cc, X86Gp& reg, std::vector<int32_t>& plan)
 {
     for (auto i : plan)
     {
-        if (i > 0) 
+        if (i > 0)
         {
             cc.add(reg, i);
         }
         else
         {
+            //TODO optional
             auto tmp = cc.newGpq("tmp");
             cc.movsxd(tmp, x86::ptr(reg, 0, sizeof(int32_t)));
             cc.add(reg, tmp);
@@ -288,11 +291,31 @@ JitRoutine(SSet)
 JitRoutine(GSGet)
 {
     //TODO reflection layer for generic interfaces
+    //TODO type converter
 }
 
 JitRoutine(GSSet)
 {
 
+}
+
+int32_t calculate_shift(int32_t size)
+{
+    int bits = 0;
+    int shift = 0;
+    for (int i = 0; i < 32; ++i)
+    {
+        if (size & 1)
+        {
+            ++bits;
+            shift = i;
+        }
+
+        size >>= 1;
+    }
+
+    if (bits != 1) return -1;
+    else return shift;
 }
 
 JitRoutine(LGet)
@@ -308,20 +331,8 @@ JitRoutine(LGet)
     if (plan.size() == 1 && plan[0] > 0)
     {
         //fixed element type
-
-        int size = plan[0];
-        int bits = 0;
-        int shift = 0;
-        for (int i = 0; i < 32; ++i) {
-            if (size & 1) {
-                ++bits;
-                shift = i;
-            }
-
-            size >>= 1;
-        }
-
-        if (bits == 1)
+        auto shift = calculate_shift(plan[0]);
+        if (shift >= 0)
         {
             cc.lea(ctx.cellPtr, x86::ptr(ctx.cellPtr, index, shift));
         }
@@ -329,7 +340,6 @@ JitRoutine(LGet)
         //maybe an opt pass for such things
         else
         {
-            auto eax = x86::eax;
             cc.imul(index, plan[0]);
             cc.lea(ctx.cellPtr, x86::ptr(index));
         }
@@ -371,5 +381,48 @@ JitRoutine(LContains)
 
 JitRoutine(LCount)
 {
+    auto plan = walk(seq.CurrentType());
+    auto len = cc.newGpd("list_len");
+    cc.mov(len, x86::dword_ptr(ctx.cellPtr));
 
+    print("LCount element plan:");
+    debug(plan.size());
+    for (auto i : plan) debug(i);
+
+    if (plan.size() == 1 && plan[0] > 0)
+    {
+        //fixed element type
+        auto shift = calculate_shift(plan[0]);
+        if (shift == 0)
+        {
+            //just return len
+        }
+        else if (shift > 0)
+        {
+            cc.shr(len, shift);
+        }
+        else
+        {
+            auto dummy   = cc.newInt32("dummy");
+            auto divisor = cc.newInt32("size");
+            cc.xor_(dummy, dummy);
+            cc.mov(divisor, plan[0]);
+            cc.idiv(dummy, len, divisor);
+        }
+    }
+    else
+    {
+        //keep walking
+        auto l = cc.newLabel();
+        auto pend = cc.newGpq("pend");
+        cc.lea(pend, x86::byte_ptr(ctx.cellPtr, len, /*no shift*/ 0, /*offset*/ sizeof(int32_t)));
+        cc.xor_(len, len);
+        cc.bind(l);
+        push(cc, ctx.cellPtr, plan);
+        cc.inc(len);
+        cc.cmp(ctx.cellPtr, pend);
+        cc.jb(l);
+    }
+
+    cc.ret(len);
 }

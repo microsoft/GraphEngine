@@ -51,9 +51,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="$(ProjectDirectory)..\..\..\..\bin\GraphEngine.Jit.Native.dll" />
     <Content Include="$(ProjectDirectory)..\..\..\..\bin\GraphEngine.Jit.Native.dll">
       <PackagePath>runtimes\win-x64\native</PackagePath>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

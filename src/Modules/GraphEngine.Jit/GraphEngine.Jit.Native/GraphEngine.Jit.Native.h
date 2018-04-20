@@ -42,6 +42,7 @@ private:
 
     MemberDescriptor* pmember;
     int32_t           imember;
+    int64_t           iidx; //inline integer index
 public:
 
     VerbSequence(FunctionDescriptor* f);
@@ -51,6 +52,7 @@ public:
     TypeDescriptor* CurrentType();
     TypeDescriptor* ParentType();
     MemberDescriptor* CurrentMember();
+	int64_t InlineIndex();
 };
 
 class ErrHandler : public ErrorHandler
