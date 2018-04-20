@@ -8,6 +8,7 @@ module Operator =
     let (>>>) (head: 'T) (tail: seq<'T>) =  Seq.append (head |> Seq.singleton) tail
     let (<^.^^>) (left: 'T) (right: 'G) = (left, right)
     let (<^^.^>) (right: 'T) (left: 'G) = (left, right)
+    let inline (+/) (left: string) (right: string) = left + "\n" + right
 
 module PString = 
     (** python like string utilities **)

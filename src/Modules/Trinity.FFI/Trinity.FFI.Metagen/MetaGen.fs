@@ -30,11 +30,11 @@ module MetaGen =
         match desc with
         | {TypeCode=LIST; ElementType=elemType}  -> 
                 let elemTypeName = elemType |> Seq.head |> (make'name manglingCode)
-                PString.format "List{_}{elem}" ["_" ->> manglingCode; "elem" ->> elemTypeName]
+                PString.format "List{_}{elem}"          ["_" ->> manglingCode; "elem"       ->> elemTypeName]
         | {TypeCode=CELL; TypeName=cellName}     ->
-                PString.format "Cell{_}{cellName}" ["_" ->> manglingCode; "cellName" ->> m_mangling cellName]
+                PString.format "Cell{_}{cellName}"      ["_" ->> manglingCode; "cellName"   ->> m_mangling cellName]
         | {TypeCode=STRUCT; TypeName=structName} ->
-                    PString.format "Struct{_}{structName}" ["_" ->> manglingCode; "structName" ->> m_mangling structName]
+                 PString.format "Struct{_}{structName}" ["_" ->> manglingCode; "structName" ->> m_mangling structName]
         | _                                      ->
                 desc.TypeName.ToLower() // primitive type
     
@@ -46,15 +46,22 @@ module MetaGen =
            |> Seq.collect (
                 fun (member': MemberDescriptor) ->
                     let fieldName   = member'.Name
-                    [SGet; SSet]
-                    |> Seq.map (fun verbMaker -> verbMaker fieldName))
-                    |> Seq.map (fun it -> render type' it)
+                    SGet fieldName
+                    |> fun it -> if isPrimitive member'.Type.TypeCode then ComposedVerb(it, BGet) else it
+                    |> fun it -> [it; SSet fieldName;]
+                    |> Seq.map (render type'))
         
         | {TypeCode=LIST;ElementType=elemTypes}  ->
-             [LGet; LSet; LContains; LCount;]
-             |> Seq.map (fun it -> render type' it)
-        | _                                      -> 
-             failwith (sprintf "Unexpected type descrriptor (%s)."  (type'.TypeCode.ToString()))            
+             LGet
+             |> fun it -> if (elemTypes |> Seq.head |> fun x -> isPrimitive x.TypeCode) then ComposedVerb (it, BGet) else it
+             |> fun it -> it::[LSet; LContains; LCount;] 
+             |>  Seq.map (render type')
+
+        | _                                      ->
+             (** primitive type **)
+             raise (NotImplementedException())
+
+        |> fun tail -> [BGet; BSet] |> Seq.map (render type') |> Seq.append tail 
     
     let rec TypeInfer(anyType: TypeDescriptor): seq<TypeDescriptor> = 
     (** inference out the descriptors of struct types and generic list types in a cell descriptor.**)
@@ -68,6 +75,7 @@ module MetaGen =
                 |> Seq.collect (fun field -> field.Type |> TypeInfer)
                 |> fun tail -> anyType >>> tail
         | _                                       -> 
+                (** primitive type **)
                 Seq.empty
    
 
@@ -85,9 +93,9 @@ module MetaGen =
         
 
     
-    let GenerateSwig (manglingCode: char) = SwigGen.render manglingCode make'name |> Generate
+    let GenerateSwig   (manglingCode: char) = SwigGen.render   manglingCode make'name |> Generate
     let GenerateCSharp (manglingCode: char) = CSharpGen.render manglingCode make'name |> Generate
-    let GenerateJit (manglingCode: char) = JitGen.render manglingCode make'name |> Generate
+    let GenerateJit    (manglingCode: char) = JitGen.render    manglingCode make'name |> Generate
 
     let GenerateSwigJit (manglingCode: char) = 
         
