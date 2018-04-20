@@ -48,8 +48,9 @@ module MetaGen =
                     let fieldName   = member'.Name
                     SGet fieldName
                     |> fun it -> if isPrimitive member'.Type.TypeCode then ComposedVerb(it, BGet) else it
-                    |> fun it -> it::[SSet fieldName; BGet; BSet]
+                    |> fun it -> [it; SSet fieldName;]
                     |> Seq.map (render type'))
+           |> fun tail -> [BGet; BSet] |> Seq.map (render type') |> Seq.append tail 
            
         
         | {TypeCode=LIST;ElementType=elemTypes}  ->

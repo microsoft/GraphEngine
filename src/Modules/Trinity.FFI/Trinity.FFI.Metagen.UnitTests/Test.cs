@@ -95,26 +95,28 @@ namespace Trinity.FFI.Metagen.UnitTests
             {
                 Output.WriteLine(s.GetField<string>("foo"));
             }
+
+            
            
             {
                 var acc = Helper.LockCell(c1.CellId);
                 var jit = MetaGen.GenerateJit(ManglingCode).Invoke(Schema);
+
+                jit.Each(x => 
+                    Output.WriteLine(
+                        $"{x.Item1.TypeName}: {x.Item2.Select(fnDesc => fnDesc.Verb.ToString()).By(all => String.Join('\n', all))}"));
+
                 var fnDescs =
                     jit
-                        .SelectMany(
-                            type_and_fields =>
-                                type_and_fields.Item2);
+                        .Where(_ => _.Item1.TypeName.Equals("C1"))
+                        .First()
+                        .By(type_and_fields => type_and_fields.Item2);
+
 
                 var get_foo_from_c1 =
                     fnDescs
                     .First()
-                    .By(
-                        _ => 
-                        JitCompiler.CompileFunction(
-                            new Verbs.FunctionDescriptor(
-                                _.DeclaringType,
-                                Verbs.Verb.NewComposedVerb(_.Verb, Verbs.Verb.BGet)
-                                )))
+                    .By(JitCompiler.CompileFunction)
                     .By(native => 
                         Marshal.GetDelegateForFunctionPointer(
                             native.CallSite, typeof(TestFnType)));

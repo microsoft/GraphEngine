@@ -127,8 +127,8 @@ module CodeGen =
                 PString.format template
                                [
                                 "moduleName" ->> moduleName
-                                "source"     ->> (srcs  |> PString.str'concatBy "\n" )
-                                "decl"       ->> (decls |> PString.str'concatBy "\n")
+                                "source"     ->> (srcs       |> PString.str'concatBy "\n" )
+                                "decl"       ->> (decls      |> PString.str'concatBy "\n")
                                 "use_newobj" ->> (use_newobj |> PString.str'concatBy "\n")
                                ]
     

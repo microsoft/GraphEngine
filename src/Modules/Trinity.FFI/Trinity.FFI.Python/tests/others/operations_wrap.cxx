@@ -3672,34 +3672,14 @@ namespace swig {
 #include "swig_accessor.h"
 #include "CellAccessor.h"
 #define SWIG_FILE_WITH_INIT
-
-static void (* _Cell_C2_Set_bar)(void*, char*) = (void (*)(void*, char*))0x208606e00c0ll;
-static void Cell_C2_Set_bar(void* subject, char* object)
-{
-        return _Cell_C2_Set_bar(subject, object);
-}
-            
-
-static char* (* _Cell_C2_Get_bar)(void*) = (char* (*)(void*))0x208606e0080ll;
-static char* Cell_C2_Get_bar(void* subject)
-{
-        return _Cell_C2_Get_bar(subject);
-}
-            
-
-static void (* _Cell_C2_Set_lst)(void*, void*) = (void (*)(void*, void*))0x208606e0040ll;
-static void Cell_C2_Set_lst(void* subject, void* object)
-{
-        return _Cell_C2_Set_lst(subject, object);
-}
-            
-
-static void* (* _Cell_C2_Get_lst)(void*) = (void* (*)(void*))0x208606e0000ll;
-static void* Cell_C2_Get_lst(void* subject)
-{
-        return _Cell_C2_Get_lst(subject);
-}
-            
+static void (* _Set_Cell_C2(void*, void*) = (void (*)(void*, void*))0x177e8070200ll;static void Set_Cell_C2(void* subject, void* object){       return _Set_Cell_C2(subject, object);}
+static void* (* _Get_Cell_C2)(void*) = (void* (*)(void*))0x177e80701c0ll;static void* Get_Cell_C2(void *subject){       return _GetCell_C2(subject);}
+static void (* _Cell_C2_Set_bar)(void*, char*) = (void (*)(void*, char*))0x177e8070180ll;static void Cell_C2_Set_bar(void* subject, char* object){    return _Cell_C2_Set_bar(subject, object);}
+static char* (* _Cell_C2_Get_bar)(void*) = (char* (*)(void*))0x177e8070140ll;static char* Cell_C2_Get_bar(void* subject){    return _Cell_C2_Get_bar(subject);}
+static void (* _Set_Cell_C2(void*, void*) = (void (*)(void*, void*))0x177e80700c0ll;static void Set_Cell_C2(void* subject, void* object){       return _Set_Cell_C2(subject, object);}
+static void* (* _Get_Cell_C2)(void*) = (void* (*)(void*))0x177e8070080ll;static void* Get_Cell_C2(void *subject){       return _GetCell_C2(subject);}
+static void (* _Cell_C2_Set_lst)(void*, void*) = (void (*)(void*, void*))0x177e8070040ll;static void Cell_C2_Set_lst(void* subject, void* object){    return _Cell_C2_Set_lst(subject, object);}
+static void* (* _Cell_C2_Get_lst)(void*) = (void* (*)(void*))0x177e8070000ll;static void* Cell_C2_Get_lst(void* subject){    return _Cell_C2_Get_lst(subject);}
 
 CellAccessor* Use_Cell_C2(int64_t cellid, int32_t options)
 {
@@ -3711,61 +3691,18 @@ CellAccessor* Use_Cell_C2(int64_t cellid, int32_t options)
     return accessor;
 }
                                
-
-static int (* _List_int32_Count)(void*) = (int (*)(void* )) 0x208606e01c0ll;
-static int List_int32_Count(void* subject)
-{
-    return _List_int32_Count(subject);
-}
-            
-
-static bool (* _List_int32_Contains)(void*, int32_t) = (bool (*)(void*, int32_t)) 0x208606e0180ll;
-static bool List_int32_Contains(void* subject, int32_t object)
-{
-    return _List_int32_Contains(subject, object);
-}
-            
-
-static void (* _List_int32_Set)(void*, int,  int32_t) = (void (*)(void*, int, int32_t object))0x208606e0140ll;
-static void List_int32_Set(void* subject, int idx, int32_t object){
-        return _List_int32_Set(subject, idx, object);
-}
-            
-
-static int32_t (* _List_int32_Get)(void*, int) =  (int32_t (*)(void*, int))0x208606e0100ll;
-static int32_t List_int32_Get(void* subject, int idx)
-{
-        return _List_int32_Get(subject, idx);
-}
-            
-
-static void (* _Cell_C1_Set_bar)(void*, char*) = (void (*)(void*, char*))0x208606e02c0ll;
-static void Cell_C1_Set_bar(void* subject, char* object)
-{
-        return _Cell_C1_Set_bar(subject, object);
-}
-            
-
-static char* (* _Cell_C1_Get_bar)(void*) = (char* (*)(void*))0x208606e0280ll;
-static char* Cell_C1_Get_bar(void* subject)
-{
-        return _Cell_C1_Get_bar(subject);
-}
-            
-
-static void (* _Cell_C1_Set_foo)(void*, int32_t) = (void (*)(void*, int32_t))0x208606e0240ll;
-static void Cell_C1_Set_foo(void* subject, int32_t object)
-{
-        return _Cell_C1_Set_foo(subject, object);
-}
-            
-
-static int32_t (* _Cell_C1_Get_foo)(void*) = (int32_t (*)(void*))0x208606e0200ll;
-static int32_t Cell_C1_Get_foo(void* subject)
-{
-        return _Cell_C1_Get_foo(subject);
-}
-            
+static int (* _Count_List_int32)(void*) = (int (*)(void* )) 0x177e8070340ll;static int Count_List_int32(void* subject){    return _Count_List_int32(subject);}
+static bool (* _Contains_List_int32)(void*, int32_t) = (bool (*)(void*, int32_t)) 0x177e8070300ll;static bool Contains_List_int32(void* subject, int32_t object){    return _Contains_List_int32(subject, object);}
+static void (* _List_int32_Set)(void*, int,  int32_t) = (void (*)(void*, int, int32_t object))0x177e80702c0ll;static void List_int32_Set(void* subject, int idx, int32_t object){return _List_int32_Set(subject, idx, object);}
+static int32_t (* _List_int32_Get)(void*, int) =  (int32_t (*)(void*, int))0x177e8070280ll;static int32_t List_int32_Get(void* subject, int idx){        return _List_int32_Get(subject, idx);}
+static void (* _Set_Cell_C1(void*, void*) = (void (*)(void*, void*))0x177e8070580ll;static void Set_Cell_C1(void* subject, void* object){       return _Set_Cell_C1(subject, object);}
+static void* (* _Get_Cell_C1)(void*) = (void* (*)(void*))0x177e8070540ll;static void* Get_Cell_C1(void *subject){       return _GetCell_C1(subject);}
+static void (* _Cell_C1_Set_bar)(void*, char*) = (void (*)(void*, char*))0x177e8070500ll;static void Cell_C1_Set_bar(void* subject, char* object){    return _Cell_C1_Set_bar(subject, object);}
+static char* (* _Cell_C1_Get_bar)(void*) = (char* (*)(void*))0x177e80704c0ll;static char* Cell_C1_Get_bar(void* subject){    return _Cell_C1_Get_bar(subject);}
+static void (* _Set_Cell_C1(void*, void*) = (void (*)(void*, void*))0x177e8070440ll;static void Set_Cell_C1(void* subject, void* object){       return _Set_Cell_C1(subject, object);}
+static void* (* _Get_Cell_C1)(void*) = (void* (*)(void*))0x177e8070400ll;static void* Get_Cell_C1(void *subject){       return _GetCell_C1(subject);}
+static void (* _Cell_C1_Set_foo)(void*, int32_t) = (void (*)(void*, int32_t))0x177e80703c0ll;static void Cell_C1_Set_foo(void* subject, int32_t object){    return _Cell_C1_Set_foo(subject, object);}
+static int32_t (* _Cell_C1_Get_foo)(void*) = (int32_t (*)(void*))0x177e8070380ll;static int32_t Cell_C1_Get_foo(void* subject){    return _Cell_C1_Get_foo(subject);}
 
 CellAccessor* Use_Cell_C1(int64_t cellid, int32_t options)
 {
@@ -4156,6 +4093,52 @@ SWIGINTERNINLINE PyObject*
 #ifdef __cplusplus
 extern "C" {
 #endif
+SWIGINTERN PyObject *_wrap_Set_Cell_C2(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  void *arg1 = (void *) 0 ;
+  void *arg2 = (void *) 0 ;
+  int res1 ;
+  int res2 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"Set_Cell_C2",2,2,&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0,SWIG_as_voidptrptr(&arg1), 0, 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Set_Cell_C2" "', argument " "1"" of type '" "void *""'"); 
+  }
+  res2 = SWIG_ConvertPtr(obj1,SWIG_as_voidptrptr(&arg2), 0, 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Set_Cell_C2" "', argument " "2"" of type '" "void *""'"); 
+  }
+  Set_Cell_C2(arg1,arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Get_Cell_C2(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  void *arg1 = (void *) 0 ;
+  int res1 ;
+  PyObject * obj0 = 0 ;
+  void *result = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"Get_Cell_C2",1,1,&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0,SWIG_as_voidptrptr(&arg1), 0, 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Get_Cell_C2" "', argument " "1"" of type '" "void *""'"); 
+  }
+  result = (void *)Get_Cell_C2(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_Cell_C2_Set_bar(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   void *arg1 = (void *) 0 ;
@@ -4284,19 +4267,19 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_List_int32_Count(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_Count_List_int32(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   void *arg1 = (void *) 0 ;
   int res1 ;
   PyObject * obj0 = 0 ;
   int result;
   
-  if(!PyArg_UnpackTuple(args,(char *)"List_int32_Count",1,1,&obj0)) SWIG_fail;
+  if(!PyArg_UnpackTuple(args,(char *)"Count_List_int32",1,1,&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0,SWIG_as_voidptrptr(&arg1), 0, 0);
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "List_int32_Count" "', argument " "1"" of type '" "void *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Count_List_int32" "', argument " "1"" of type '" "void *""'"); 
   }
-  result = (int)List_int32_Count(arg1);
+  result = (int)Count_List_int32(arg1);
   resultobj = SWIG_From_int(static_cast< int >(result));
   return resultobj;
 fail:
@@ -4304,7 +4287,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_List_int32_Contains(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_Contains_List_int32(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   void *arg1 = (void *) 0 ;
   int32_t arg2 ;
@@ -4315,17 +4298,17 @@ SWIGINTERN PyObject *_wrap_List_int32_Contains(PyObject *self, PyObject *args) {
   PyObject * obj1 = 0 ;
   bool result;
   
-  if(!PyArg_UnpackTuple(args,(char *)"List_int32_Contains",2,2,&obj0,&obj1)) SWIG_fail;
+  if(!PyArg_UnpackTuple(args,(char *)"Contains_List_int32",2,2,&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0,SWIG_as_voidptrptr(&arg1), 0, 0);
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "List_int32_Contains" "', argument " "1"" of type '" "void *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Contains_List_int32" "', argument " "1"" of type '" "void *""'"); 
   }
   ecode2 = SWIG_AsVal_int(obj1, &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "List_int32_Contains" "', argument " "2"" of type '" "int32_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Contains_List_int32" "', argument " "2"" of type '" "int32_t""'");
   } 
   arg2 = static_cast< int32_t >(val2);
-  result = (bool)List_int32_Contains(arg1,arg2);
+  result = (bool)Contains_List_int32(arg1,arg2);
   resultobj = SWIG_From_bool(static_cast< bool >(result));
   return resultobj;
 fail:
@@ -4393,6 +4376,52 @@ SWIGINTERN PyObject *_wrap_List_int32_Get(PyObject *self, PyObject *args) {
   arg2 = static_cast< int >(val2);
   result = (int32_t)List_int32_Get(arg1,arg2);
   resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Set_Cell_C1(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  void *arg1 = (void *) 0 ;
+  void *arg2 = (void *) 0 ;
+  int res1 ;
+  int res2 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"Set_Cell_C1",2,2,&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0,SWIG_as_voidptrptr(&arg1), 0, 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Set_Cell_C1" "', argument " "1"" of type '" "void *""'"); 
+  }
+  res2 = SWIG_ConvertPtr(obj1,SWIG_as_voidptrptr(&arg2), 0, 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Set_Cell_C1" "', argument " "2"" of type '" "void *""'"); 
+  }
+  Set_Cell_C1(arg1,arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Get_Cell_C1(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  void *arg1 = (void *) 0 ;
+  int res1 ;
+  PyObject * obj0 = 0 ;
+  void *result = 0 ;
+  
+  if(!PyArg_UnpackTuple(args,(char *)"Get_Cell_C1",1,1,&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0,SWIG_as_voidptrptr(&arg1), 0, 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Get_Cell_C1" "', argument " "1"" of type '" "void *""'"); 
+  }
+  result = (void *)Get_Cell_C1(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -4531,15 +4560,19 @@ fail:
 
 static PyMethodDef SwigMethods[] = {
 	 { (char *)"SWIG_PyInstanceMethod_New", (PyCFunction)SWIG_PyInstanceMethod_New, METH_O, NULL},
+	 { (char *)"Set_Cell_C2", _wrap_Set_Cell_C2, METH_VARARGS, NULL},
+	 { (char *)"Get_Cell_C2", _wrap_Get_Cell_C2, METH_VARARGS, NULL},
 	 { (char *)"Cell_C2_Set_bar", _wrap_Cell_C2_Set_bar, METH_VARARGS, NULL},
 	 { (char *)"Cell_C2_Get_bar", _wrap_Cell_C2_Get_bar, METH_VARARGS, NULL},
 	 { (char *)"Cell_C2_Set_lst", _wrap_Cell_C2_Set_lst, METH_VARARGS, NULL},
 	 { (char *)"Cell_C2_Get_lst", _wrap_Cell_C2_Get_lst, METH_VARARGS, NULL},
 	 { (char *)"Use_Cell_C2", _wrap_Use_Cell_C2, METH_VARARGS, NULL},
-	 { (char *)"List_int32_Count", _wrap_List_int32_Count, METH_VARARGS, NULL},
-	 { (char *)"List_int32_Contains", _wrap_List_int32_Contains, METH_VARARGS, NULL},
+	 { (char *)"Count_List_int32", _wrap_Count_List_int32, METH_VARARGS, NULL},
+	 { (char *)"Contains_List_int32", _wrap_Contains_List_int32, METH_VARARGS, NULL},
 	 { (char *)"List_int32_Set", _wrap_List_int32_Set, METH_VARARGS, NULL},
 	 { (char *)"List_int32_Get", _wrap_List_int32_Get, METH_VARARGS, NULL},
+	 { (char *)"Set_Cell_C1", _wrap_Set_Cell_C1, METH_VARARGS, NULL},
+	 { (char *)"Get_Cell_C1", _wrap_Get_Cell_C1, METH_VARARGS, NULL},
 	 { (char *)"Cell_C1_Set_bar", _wrap_Cell_C1_Set_bar, METH_VARARGS, NULL},
 	 { (char *)"Cell_C1_Get_bar", _wrap_Cell_C1_Get_bar, METH_VARARGS, NULL},
 	 { (char *)"Cell_C1_Set_foo", _wrap_Cell_C1_Set_foo, METH_VARARGS, NULL},

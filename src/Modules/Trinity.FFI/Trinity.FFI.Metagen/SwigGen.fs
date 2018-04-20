@@ -58,7 +58,7 @@ module SwigGen =
         let object'type  = 
             match verb with
             | BSet
-            | BGet -> null
+            | BGet -> String.Empty
             | _    -> swig'typestr'mapper (getObjectFromSubjectAndVerb subject verb) 
 
         let TemplateArgs = ["object type" ->> object'type; "subject name" ->> subject'name; "_" ->> manglingCode]

@@ -26,6 +26,7 @@ module CommonForRender =
             subject |> getElemTypeFromSubject  
         else
             match verb with
+            | ComposedVerb (SGet fieldName, BGet)
             | SGet fieldName
             | SSet fieldName ->
                 subject |> getMemberTypeFromSubject fieldName
