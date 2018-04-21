@@ -1,17 +1,13 @@
-from typing import NamedTuple, Tuple, List, Any, Callable, Dict
+from typing import NamedTuple, Tuple, List, Any, Callable, Dict, Union
 import typing
 from abc import ABC, abstractmethod
-from Redy.Magic.Pattern import Pattern
 from Redy.Collections import Flow, Traversal
 from Redy.Tools.TypeInterface import Module
-
-
-class TSLSpec:
-    name: str
+from .tsl.type_spec import *
 
 
 class TSLObject(ABC):
-    spec: TSLSpec
+    spec: TSLTypeSpec
     __accessor__: object
 
 
@@ -25,30 +21,6 @@ class TSLStruct(TSLObject):
 
 class TSLList(TSLObject):
     pass
-
-
-class TslFieldSpec(TSLSpec, NamedTuple):
-    name: str
-    typename: str
-
-    def __str__(self):
-        return f"{self.typename} {self.name};"
-
-
-class TSLStructSpec(TSLSpec, NamedTuple):
-    name: str
-    fields: Tuple[TslFieldSpec, ...]
-
-    def __str__(self):
-        n = '\n'
-        return f'struct {self.name}{{\n{n.join(map(str, self.fields))}\n}}'
-
-
-class TSLCellSpec(TSLSpec, TSLStructSpec):
-
-    def __str__(self):
-        n = '\n'
-        return f'cell {self.name}{{\n{n.join(map(str, self.fields))}\n}}'
 
 
 class TSL:
@@ -66,7 +38,7 @@ class TSL:
     """
 
     def __init__(self):
-        self.tsl_definitions: 'Dict[str, TSLObject]' = {}
+        self.tsl_definitions: 'Dict[str, Union[TSLCell, TSLStruct, TSLList]]' = {}
         self.module = None
         self._total_type_names = set()  # typenames of all types manipulated in current tsl module.
 
@@ -75,14 +47,14 @@ class TSL:
 
         def _():
             for field_name, py_type in __annotations__.items():
-                tsl_typename = tsl_typename_map(py_type)
-                yield TslFieldSpec(field_name, tsl_typename)
+                tsl_type = tsl_type_map(py_type)
+                yield (field_name, tsl_type)
 
         new_cls: TSLObject = type(cls.__name__,
                                   (TSLCell, *cls.__bases__),
                                   dict(cls.__dict__, __slots__=['__accessor__']))
 
-        new_cls.spec = TSLCellSpec(cls.__name__, tuple(_()))
+        new_cls.spec = CellSpec(cls.__name__, dict(_()))
 
         self.tsl_definitions[new_cls.__name__] = new_cls
 
@@ -93,15 +65,15 @@ class TSL:
 
         def _():
             for field_name, py_type in __annotations__.items():
-                tsl_typename = tsl_typename_map(py_type)
-                yield TslFieldSpec(field_name, tsl_typename)
+                tsl_type = tsl_type_map(py_type)
+                yield (field_name, tsl_type)
 
         new_cls: TSLObject = type(cls.__name__,
                                   (TSLStruct, *cls.__bases__),
                                   dict(cls.__dict__, __slots__=['__accessor__'])
                                   )
 
-        new_cls.spec = TSLStructSpec(cls.__name__, tuple(_()))
+        new_cls.spec = StructSpec(cls.__name__, dict(_()))
 
         self.tsl_definitions[new_cls.__name__] = new_cls
 
@@ -126,22 +98,22 @@ def binding_methods_from_module_to_class(class_definition: typing.Union[TSLStruc
     for each in struct_spec.fields:
         _setter, _getter = get_setter_getter_fn(module, each.name)
 
-        if is_primitive(each.typename):
+        if is_primitive(each.type):
             @property
-            def getter(self: TSLObject) -> each.typename:
+            def getter(self: TSLObject) -> each.type:
                 return _getter(self.__accessor__)
         else:
 
             # if this field is not of primitive type, the return of `Jit` is of type `void *`,
             # so wrap it as an object to represent.
-            object_wrapper = get_wrapper(each.typename)
+            object_wrapper = get_wrapper(each.type)
 
             @property
-            def getter(self: TSLObject) -> each.typename:
+            def getter(self: TSLObject) -> each.type:
                 return object_wrapper(_getter(self.__accessor__))
 
         @getter.setter
-        def setter(self: TSLObject, value: each.typename):
+        def setter(self: TSLObject, value: each.type):
             _setter(self.__accessor__, value)
 
         setattr(class_definition, each.name, setter)
