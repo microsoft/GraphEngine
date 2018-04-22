@@ -20,16 +20,17 @@ namespace Trinity.FFI.Metagen.UnitTests
         {
             var arr = lst.ToArray();
 
-            var buflen = (UInt64) (arr.Length * sizeof(int));
+            var buflen = arr.Length * sizeof(int);
 
             IntPtr i = IntPtr.Zero;
             if (buflen != 0L)
             {
-                var p = Memory.malloc(buflen + 4);
+                var p = (byte*)Memory.malloc((ulong)buflen + 4);
+                *(int*)p = buflen;
                 fixed(void* buf = arr)
                 {
-                    i = Alloc(new NativeCellAccessor((IntPtr) Memory.memcpy(p,
-                        buf, buflen + 4), 0, 0, (int)buflen, 0));
+                    Memory.memcpy(p + sizeof(int), buf, (ulong)buflen);
+                    i = Alloc(new NativeCellAccessor((IntPtr) p, 0, 0, buflen, 0));
                 }
             }
 
