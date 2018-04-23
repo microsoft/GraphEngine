@@ -8,7 +8,7 @@ import typing
 # noinspection PyTypeChecker
 @Pattern
 def type_map_spec(py_type) -> TSLTypeSpec:
-    # noinspection PyUnresolvedReferences
+    # noinspection PyUnresolvedReferences,PyProtectedMember
     if issubclass(py_type, typing.List):
         return list
     elif issubclass(py_type, (TSLCell, TSLStruct)):
