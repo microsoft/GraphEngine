@@ -11,7 +11,7 @@ TSLExplicitDefinitionType = Union[TSLCell, TSLStruct]
 class TSL:
     def __init__(self):
         self.tsl_explicit_definitions: 'Dict[str, Type[TSLExplicitDefinitionType]]' = {}
-        self._list_types: Dict[TSLTypeSpec, type] = set()
+        self._list_types: Dict[TSLTypeSpec, type] = {}
         self.module = None
         self.compiled = False
         self._list_type_id_enum = 0
