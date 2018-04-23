@@ -145,16 +145,12 @@ namespace Trinity.FFI.Metagen.UnitTests
 
             var jit = MetaGen.GenerateJit(ManglingCode).Invoke(Schema);
 
-            var fnDescs =
-                    jit
-                        .Where(_ => _.Item1.TypeName.StartsWith("List"))
-                        .First()
-                        .By(type_and_fields => type_and_fields.Item2);
+            var fnDescs = jit.First(_ => _.Item1.TypeName.StartsWith("List"))
+                             .By(type_and_fields => type_and_fields.Item2);
 
             var get_from_lst_int =
                    fnDescs
-                   .Where(v => v.Verb.Equals(Verbs.Verb.LSet))
-                   .First()
+                   .First(v => v.Verb.Equals(Verbs.Verb.NewComposedVerb(Verbs.Verb.LGet, Verbs.Verb.BGet)))
                    .By(_ => {
                        Output.WriteLine(_.Verb.ToString());
                        return JitCompiler.CompileFunction(_); })
@@ -164,8 +160,7 @@ namespace Trinity.FFI.Metagen.UnitTests
 
             var count_lst_int =
                    fnDescs
-                   .Where(v => v.Verb.Equals(Verbs.Verb.LCount))
-                   .First()
+                   .First(v => v.Verb.Equals(Verbs.Verb.LCount))
                    .By(_ => {
                        Output.WriteLine(_.Verb.ToString());
                        return JitCompiler.CompileFunction(_);
