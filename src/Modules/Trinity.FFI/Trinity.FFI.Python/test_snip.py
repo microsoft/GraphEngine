@@ -21,6 +21,7 @@ class C1:
     a: int
     b: List[int]
     c: List[S]
+    d: S
 
 
 assert C1.get_spec().__str__().strip() == """
@@ -28,6 +29,7 @@ cell C1
 { 
 int a;
 List<int> b;
-List<S> c; 
+List<S> c;
+S d; 
 }
 """.strip()

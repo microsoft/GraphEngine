@@ -1,5 +1,6 @@
 import sys
-from typing import NamedTuple, Mapping, TypeVar
+from typing import Mapping, TypeVar
+from collections import namedtuple
 
 K = TypeVar('K')
 V = TypeVar('V')
@@ -27,8 +28,10 @@ class Record:
     """
 
     def __new__(cls, cls_def: type):
-        return type(cls_def.__name__, (NamedTuple, *cls_def.__bases__[1:]),
-                    {k: v for k, v in cls_def.__dict__.items() if k != '__dict__'})
+        typ: type = namedtuple(cls_def.__name__, list(cls_def.__annotations__.keys()))
+        return type(cls_def.__name__,
+                    (*cls_def.__bases__, typ),
+                    dict(cls_def.__dict__))
 
 
 def binding(cls):
