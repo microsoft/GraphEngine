@@ -20,9 +20,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GraphEngine.Jit.Native.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\asmjit\src\asmjit\base\arch.cpp">
       <Filter>asmjit/base</Filter>
     </ClCompile>
@@ -123,6 +120,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TypeSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VerbMixins.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Verb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Compile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -253,13 +262,25 @@
     <ClInclude Include="TypeSystem.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="GraphEngine.Jit.Native.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Trinity.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="CellAccessor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Verb.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VerbSequence.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VerbMixins.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FuncCtx.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -10,11 +10,21 @@ open TypeSystem
 //   the type should then yield the real value.
 //   Further getters can be applied to the result to build up complex getter without
 //   actually getting the whole value out into the runtime.
+//  !Note, keep in sync with Verb.h
 
 type Verb =
     (** BasicVerb **)
     | BGet
     | BSet
+    | BEq
+    | BLe
+    | BLt
+    | BGe
+    | BGt
+    | BHash
+    | BCount
+    | BSize
+
     (** ListVerb **)
     | LInlineGet of int // get value at a constant index
     | LInlineSet of int // set value at a constant index
@@ -22,17 +32,25 @@ type Verb =
     | LSet
     | LContains
     | LCount
+    | LInsertAt
+    | LRemoveAt
+    | LAppend
+    | LConv
+
     (** StructVerb **)
     | SGet of string
     | SSet of string
+
     (** GenericStructVerb **)
     | GSGet of TypeDescriptor
     | GSSet of TypeDescriptor
+
     (** EnumeratorVerb **)
     | EAlloc
     | EFree
     | ENext
     | ECurrent
+
     (** ComposedVerb **)
     | ComposedVerb of Verb * Verb
 

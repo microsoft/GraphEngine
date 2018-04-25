@@ -1,4 +1,4 @@
-#include "GraphEngine.Jit.Native.h"
+#include "FuncCtx.h"
 
 FuncCtx::FuncCtx(X86Compiler& compiler) : cc(compiler), argIndex(0), returned(false)
 {
