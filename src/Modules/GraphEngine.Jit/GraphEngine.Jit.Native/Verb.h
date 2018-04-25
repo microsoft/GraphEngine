@@ -9,6 +9,7 @@ enum VerbCode : int32_t {
     VC_BGet,
     VC_BSet,
     VC_BEq,
+    VC_BSame,
     VC_BLe,
     VC_BLt,
     VC_BGe,

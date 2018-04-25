@@ -17,6 +17,7 @@ type Verb =
     | BGet
     | BSet
     | BEq
+    | BSame
     | BLe
     | BLt
     | BGe
