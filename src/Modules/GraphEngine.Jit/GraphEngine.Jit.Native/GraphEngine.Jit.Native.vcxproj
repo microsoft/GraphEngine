@@ -156,10 +156,13 @@
     <ClCompile Include="..\asmjit\src\asmjit\x86\x86operand.cpp" />
     <ClCompile Include="..\asmjit\src\asmjit\x86\x86operand_regs.cpp" />
     <ClCompile Include="..\asmjit\src\asmjit\x86\x86regalloc.cpp" />
+    <ClCompile Include="Common.cpp" />
     <ClCompile Include="FuncCtx.cpp" />
-    <ClCompile Include="GraphEngine.Jit.Native.cpp" />
+    <ClCompile Include="Compile.cpp" />
     <ClCompile Include="JitRoutines.cpp" />
     <ClCompile Include="TypeSystem.cpp" />
+    <ClCompile Include="Verb.cpp" />
+    <ClCompile Include="VerbMixins.cpp" />
     <ClCompile Include="VerbSequence.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -205,9 +208,13 @@
     <ClInclude Include="..\asmjit\src\asmjit\x86\x86operand.h" />
     <ClInclude Include="..\asmjit\src\asmjit\x86\x86regalloc_p.h" />
     <ClInclude Include="CellAccessor.h" />
-    <ClInclude Include="GraphEngine.Jit.Native.h" />
+    <ClInclude Include="FuncCtx.h" />
+    <ClInclude Include="Common.h" />
     <ClInclude Include="Trinity.h" />
     <ClInclude Include="TypeSystem.h" />
+    <ClInclude Include="Verb.h" />
+    <ClInclude Include="VerbMixins.h" />
+    <ClInclude Include="VerbSequence.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

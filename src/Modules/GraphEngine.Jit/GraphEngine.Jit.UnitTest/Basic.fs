@@ -246,7 +246,7 @@ let _CellGetSet (cell: ICell) action =
     try
         printfn ""
         printfn "Content:"
-        Array.mapi (printfn "%02x %02x") [| for i in 0..accessor.Size -> NativePtr.read (NativePtr.add p i) |]
+        Array.mapi (printfn "%02x %02x") [| for i in 0..accessor.Size -> NativePtr.read (NativePtr.add p i) |] |> ignore
         printfn "Content End"
         printfn ""
         accessor.CellPtr <- NativePtr.toNativeInt p
