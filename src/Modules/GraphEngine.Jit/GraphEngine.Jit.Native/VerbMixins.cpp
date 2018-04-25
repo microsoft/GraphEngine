@@ -44,7 +44,8 @@ namespace Mixin
 
     void GetArgument(IN FunctionDescriptor* fdesc, OUT uint8_t* &pargs, OUT int32_t& nargs)
     {
-        std::vector<uint8_t> vec{};
+        /* 1st argument is always CellAccessor* */
+        std::vector<uint8_t> vec{ TypeId::kUIntPtr };
         VerbSequence seq(fdesc);
         while (seq.Next()) { if (Make(seq.pcurrent)->GetArgs(seq, vec)) break; }
 

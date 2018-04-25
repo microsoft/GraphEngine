@@ -23,13 +23,13 @@ namespace GraphEngine.Jit.Playground
         {
             //Console.ReadLine();
 
-            //IntegerBGetBSet();
-            //StringBGetBSet();
-            //IntegerSGetSet();
-            //StringSGetSet();
+            IntegerBGetBSet();
+            StringBGetBSet();
+            IntegerSGetSet();
+            StringSGetSet();
             IntegerSLGetSet();
-            //StringSLGetSet();
-            //IntegerSLCount();
+            StringSLGetSet();
+            IntegerSLCount();
 
             //byte[] buf = new byte[16];
             //int val = int.Parse(Console.ReadLine());

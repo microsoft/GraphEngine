@@ -140,7 +140,7 @@ namespace Mixin
 
         auto tid = seq.CurrentTypeId();
         auto tc = seq.CurrentTypeCode();
-        auto src = cc.newGpReg(tid);
+        auto src = cc.newGpReg(tid, "value");
         ctx.addArg(src);
 
         if (tc == TypeCode::TC_STRING)

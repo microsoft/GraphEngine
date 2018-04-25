@@ -7,7 +7,7 @@
 #include "FuncCtx.h"
 
 #define CONCRETE_MIXIN_DECLARE(v) \
-    void Dispatch(asmjit::X86Compiler &cc, FuncCtx& ctx, const VerbSequence& seq);
+    void Dispatch(asmjit::X86Compiler &cc, FuncCtx& ctx, const VerbSequence& seq) override;
 
 #define CONCRETE_MIXIN_DEFINE(v) \
     void v::Dispatch(asmjit::X86Compiler &cc, FuncCtx& ctx, const VerbSequence& seq)
@@ -138,11 +138,12 @@ namespace Mixin
         //}
 
     public:
-        //template <typename Q1 = B1>
-        //typename std::enable_if<any<HAS_GetArgs, Q1, BRest...>(), bool >::type GetArgs(const VerbSequence& seq, std::vector<uint8_t> &args)
+        //template <typename Q1 = B1, typename QRest = BRest>
+        //typename std::enable_if<any<HAS_GetArgs, Q1, QRest...>(), bool >::type GetArgs(const VerbSequence& seq, std::vector<uint8_t> &args)
         typename std::conditional<any<HAS_GetArgs, B1, BRest...>(), bool, void* >::type
-            GetArgs(typename const TSeq<HAS_GetArgs>::type &seq, std::vector<uint8_t> &args)
+            GetArgs(typename const TSeq<HAS_GetArgs>::type &seq, std::vector<uint8_t> &args) 
         {
+            print(__FUNCTION__);
             return _GetArgs<B1, BRest...>(seq, args);
         }
 
@@ -153,11 +154,13 @@ namespace Mixin
 
 
         template <typename Q1 = B1>
-        typename std::enable_if<any<HAS_GetRetId, Q1, BRest...>(), bool >::type GetRetId(const VerbSequence& seq, TypeId::Id &retId)
+        typename std::enable_if<any<HAS_GetRetId, Q1, BRest...>(), bool >::type
+            GetRetId(const VerbSequence& seq, TypeId::Id &retId) 
 
-        //typename std::conditional<any<HAS_GetRetId, B1, BRest...>(), bool, void* >::type
-        //    GetRetId(typename const TSeq<HAS_GetRetId>::type &seq, TypeId::Id &retId)
+            //typename std::conditional<any<HAS_GetRetId, B1, BRest...>(), bool, void* >::type
+            //    GetRetId(typename const TSeq<HAS_GetRetId>::type &seq, TypeId::Id &retId)
         {
+            print(__FUNCTION__);
             return _GetRetId<Q1, BRest...>(seq, retId);
             //return _GetRetId<B1, BRest...>(seq, retId);
         }
@@ -168,10 +171,11 @@ namespace Mixin
         //typename std::enable_if<any<HAS_SequenceNext, Q1, QRest...>(), void >::type SequenceNext(VerbSequence& seq)
 
         typename std::conditional<any<HAS_SequenceNext, B1, BRest...>(), void, void* >::type
-            SequenceNext(typename TSeq<HAS_SequenceNext>::type &seq)
+            SequenceNext(typename TSeq<HAS_SequenceNext>::type &seq) 
 
             //void SequenceNext(VerbSequence& seq)
         {
+            print(__FUNCTION__);
             _SequenceNext<B1, BRest...>(seq);
         }
     };
@@ -179,13 +183,13 @@ namespace Mixin
 
     struct IndexInlined : virtual VerbMixin
     {
-        void SequenceNext(VerbSequence& seq)
+        void SequenceNext(VerbSequence& seq) override
         {
             seq.iidx = seq.pcurrent->Data.Index;
         }
 
         // cancel the index parameter so as to inline
-        bool GetArgs(const VerbSequence& seq, std::vector<uint8_t> &args)
+        bool GetArgs(const VerbSequence& seq, std::vector<uint8_t> &args) override
         {
             args.pop_back(); return false;
         }
@@ -194,7 +198,8 @@ namespace Mixin
     template<TypeId::Id tid, bool intercept = true>
     struct Ret : virtual VerbMixin
     {
-        bool GetRetId(const VerbSequence& seq, OUT TypeId::Id &retId) { retId = tid; return intercept; }
+        bool GetRetId(const VerbSequence& seq, OUT TypeId::Id &retId) override 
+        { retId = tid; return intercept; }
     };
 
     struct NoRet : Ret<TypeId::kVoid> {};
@@ -202,46 +207,49 @@ namespace Mixin
     template <bool intercept = true>
     struct RetT : virtual VerbMixin
     {
-        bool GetRetId(const VerbSequence& seq, OUT TypeId::Id &retId) { retId = GetTypeId(seq.ptype); return intercept; }
+        bool GetRetId(const VerbSequence& seq, OUT TypeId::Id &retId) override
+        { retId = GetTypeId(seq.ptype); return intercept; }
     };
 
     template <bool intercept = true>
     struct RetRef : Ret<TypeId::kUIntPtr, intercept> {};
 
+    template <bool intercept = true>
     struct NoArgs : virtual VerbMixin
     {
         // simply interrupt inference
-        bool GetArgs(const VerbSequence& seq, std::vector<uint8_t> &args) { return true; }
+        bool GetArgs(const VerbSequence& seq, std::vector<uint8_t> &args) override 
+        { return intercept; }
     };
 
     template <bool intercept = true>
     struct ArgT : virtual VerbMixin
     {
-        bool GetArgs(const VerbSequence& seq, std::vector<uint8_t> &args) { args.push_back(seq.CurrentTypeId()); return intercept; }
+        bool GetArgs(const VerbSequence& seq, std::vector<uint8_t> &args) override
+        { args.push_back(seq.CurrentTypeId()); return intercept; }
     };
 
     template <TypeId::Id tid, bool intercept = true>
     struct Arg : virtual VerbMixin
     {
-        bool GetArgs(const VerbSequence& seq, std::vector<uint8_t> &args) { args.push_back(tid); return intercept; }
+        bool GetArgs(const VerbSequence& seq, std::vector<uint8_t> &args) override
+        { args.push_back(tid); return intercept; }
     };
 #pragma endregion
 
-    struct AccessorRef : Arg<TypeId::kUIntPtr, false> {};
-
-    struct Basic : AccessorRef {};
-    struct BGet : M<Basic, NoArgs>, RetT<true> { CONCRETE_MIXIN_DECLARE(BGet); };
+    struct Basic : virtual VerbMixin {};
+    struct BGet : M<Basic, NoArgs<true>>, RetT<true> { CONCRETE_MIXIN_DECLARE(BGet); };
     struct BSet : M<Basic, ArgT<true>>, NoRet { CONCRETE_MIXIN_DECLARE(BSet); };
     struct BEq : M<Basic, ArgT<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(BEq); };
     struct BLt : M<Basic, ArgT<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(BLt); };
     struct BLe : M<Basic, ArgT<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(BLe); };
     struct BGt : M<Basic, ArgT<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(BGt); };
     struct BGe : M<Basic, ArgT<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(BGe); };
-    struct BHash : M<Basic, NoArgs, Ret<TypeId::kU64>> { CONCRETE_MIXIN_DECLARE(BHash); };
-    struct BCount : M<Basic, NoArgs, Ret<TypeId::kI32>> { CONCRETE_MIXIN_DECLARE(BCount); };
-    struct BSize : M<Basic, NoArgs, Ret<TypeId::kI32>> { CONCRETE_MIXIN_DECLARE(BSize); };
+    struct BHash : M<Basic, NoArgs<true>, Ret<TypeId::kU64>> { CONCRETE_MIXIN_DECLARE(BHash); };
+    struct BCount : M<Basic, NoArgs<true>, Ret<TypeId::kI32>> { CONCRETE_MIXIN_DECLARE(BCount); };
+    struct BSize : M<Basic, NoArgs<true>, Ret<TypeId::kI32>> { CONCRETE_MIXIN_DECLARE(BSize); };
 
-    struct List : M<AccessorRef, Arg<TypeId::kI32, false>>
+    struct List : Arg<TypeId::kI32, false>
     {
         void SequenceNext(VerbSequence& seq)
         {
@@ -251,20 +259,20 @@ namespace Mixin
             delete vec;
         }
     };
-    struct LGet : M<List, NoArgs, RetRef<false>> { CONCRETE_MIXIN_DECLARE(LGet); };
-    struct LSet : M<List, ArgT<true>, NoRet> { CONCRETE_MIXIN_DECLARE(LSet); };
+    struct LGet : M<List, NoArgs<false>>, RetRef<false> { CONCRETE_MIXIN_DECLARE(LGet); };
+    struct LSet : M<List, ArgT<true>>, NoRet { CONCRETE_MIXIN_DECLARE(LSet); };
     struct LContains : M<List, ArgT<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(LContains); };
-    struct LCount : M<List, NoArgs, Ret<TypeId::kI32>> { CONCRETE_MIXIN_DECLARE(LCount); };
+    struct LCount : M<List, NoArgs<true>, Ret<TypeId::kI32>> { CONCRETE_MIXIN_DECLARE(LCount); };
     struct LInsertAt : M<List, ArgT<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(LInsertAt); };
-    struct LRemoveAt : M<List, NoArgs, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(LRemoveAt); };
-    struct LAppend : M<AccessorRef, ArgT<true>, /*Intercepts Arg chain*/ List, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(LAppend); };
-    struct LConv : M<AccessorRef, NoArgs, /*Intercepts Arg chain */ List, Ret<TypeId::kUIntPtr>> { CONCRETE_MIXIN_DECLARE(LConv); };
+    struct LRemoveAt : M<List, NoArgs<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(LRemoveAt); };
+    struct LAppend : M<ArgT<true>, /*Intercepts Arg chain*/ List, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(LAppend); };
+    struct LConv : M<NoArgs<true>, /*Intercepts Arg chain */ List, Ret<TypeId::kUIntPtr>> { CONCRETE_MIXIN_DECLARE(LConv); };
 
     struct InlinedList : M<List, IndexInlined> {};
-    struct LInlineGet : M<InlinedList, NoArgs, RetRef<false>> { CONCRETE_MIXIN_DECLARE(InlinedLGet); };
+    struct LInlineGet : M<InlinedList, NoArgs<false>, RetRef<false>> { CONCRETE_MIXIN_DECLARE(InlinedLGet); };
     struct LInlineSet : M<InlinedList, ArgT<true>, NoRet> { CONCRETE_MIXIN_DECLARE(InlinedLSet); };
 
-    struct Struct : AccessorRef
+    struct Struct : virtual VerbMixin
     {
         void SequenceNext(VerbSequence& seq)
         {
@@ -277,17 +285,17 @@ namespace Mixin
             seq.ptype = &seq.pmember->Type;
         }
     };
-    struct SGet : M<Struct, NoArgs, RetRef<false>> { CONCRETE_MIXIN_DECLARE(SGet); };
+    struct SGet : M<Struct, NoArgs<false>, RetRef<false>> { CONCRETE_MIXIN_DECLARE(SGet); };
     struct SSet : M<Struct, ArgT<true>, NoRet> { CONCRETE_MIXIN_DECLARE(SSet); };
 
-    struct GenericStruct : M<AccessorRef, Arg<TypeId::kUIntPtr, false>>
+    struct GenericStruct : Arg<TypeId::kUIntPtr, false>
     {
         void SequenceNext(VerbSequence& seq)
         {
             seq.ptype = seq.pcurrent->Data.GenericTypeArgument;
         }
     };
-    struct GSGet : M<GenericStruct, NoArgs, RetRef<false>> { CONCRETE_MIXIN_DECLARE(GSGet); };
+    struct GSGet : M<GenericStruct, NoArgs<false>, RetRef<false>> { CONCRETE_MIXIN_DECLARE(GSGet); };
     struct GSSet : M<GenericStruct, ArgT<true>, NoRet> { CONCRETE_MIXIN_DECLARE(GSSet); };
 
     // =========================== static tests ==================================
@@ -320,13 +328,16 @@ namespace Mixin
         }
     };
 
-    struct MMM : M<Basic, NoArgs>
+    struct MMM : M<Basic, NoArgs<true>>
     {
         void Dispatch(X86Compiler& cc, FuncCtx& ctx, const VerbSequence& seq)
         {
             MMM m1;
 
-            static_assert(HAS_GetArgs::value<Basic>(), "Basic should have GetArgs");
+            static_assert(HAS_GetArgs::value<List>(), "List should have GetArgs");
+            //static_assert(!HAS_GetRetId::value<List>(), "List should not have GetRetId");
+
+            static_assert(!HAS_GetArgs::value<Basic>(), "Basic should not have GetArgs");
             static_assert(HAS_GetArgs::value<NoArgs>(), "NoArgs should have GetArgs");
             static_assert(any<HAS_GetArgs, Basic, NoArgs>(), "should pass any<Has_GetArgs, Basic, NoArgs>");
 
