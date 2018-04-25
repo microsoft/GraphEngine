@@ -1,4 +1,4 @@
-from .type_sys import TSLStruct, TSLCell
+from .type_sys import TSLStruct, TSLCell, TSLList
 from .type_spec import TSLTypeSpec, PrimitiveSpec, ListSpec, CellSpec, StructSpec
 from Redy.Magic.Pattern import Pattern
 from Redy.Magic.Classic import const_return
