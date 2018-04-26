@@ -52,52 +52,28 @@ namespace Trinity
 
     internal unsafe class CStdio
     {
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
+        [SuppressUnmanagedCodeSecurity]
         internal static extern errno_t C_wfopen_s(out void* fp, char* path, char* mode);
 
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
+        [SuppressUnmanagedCodeSecurity]
         internal static extern ulong C_fread(void* buffer, ulong elementSize, ulong count, void* fp);
 
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
+        [SuppressUnmanagedCodeSecurity]
         internal static extern ulong C_fwrite(void* buffer, ulong elementSize, ulong count, void* fp);
 
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
+        [SuppressUnmanagedCodeSecurity]
         internal static extern int C_fflush(void* fp);
 
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
+        [SuppressUnmanagedCodeSecurity]
         internal static extern int C_fclose(void* fp);
 
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
+        [SuppressUnmanagedCodeSecurity]
         internal static extern int C_feof(void* fp);
     }
 }

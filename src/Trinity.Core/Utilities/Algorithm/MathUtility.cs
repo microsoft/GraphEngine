@@ -15,20 +15,12 @@ namespace Trinity.Mathematics
 {
     internal unsafe class CMathUtility
     {
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
+        [SuppressUnmanagedCodeSecurity]
         internal static extern double C_multiply_double_vector(double* dv1, double* dv2, int count);
 
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
+        [SuppressUnmanagedCodeSecurity]
         internal static extern double C_multiply_sparse_double_vector(double* dv1, double* dv2, int* idx, int count);
     }
 

@@ -17,11 +17,7 @@ namespace Trinity
 {
     internal static partial class TrinityC
     {
-#if CORECLR
         internal const string AssemblyName = "Trinity";
-#else
-        internal const string AssemblyName = "Trinity.C.dll";
-#endif
         private static object s_initlock = new object();
         private static bool   s_initialized = false;
 
@@ -34,7 +30,7 @@ namespace Trinity
 
                 string assembly_path = AssemblyUtility.TrinityCorePath;
 #if !CORECLR
-                string native_assembly_name = "Trinity.C.dll";
+                string native_assembly_name = "Trinity.dll";
                 string trinity_c_path = Path.Combine(assembly_path, native_assembly_name);
                 bool found = false;
 
@@ -57,7 +53,7 @@ namespace Trinity
                 }
 #endif
 
-                fixed(char* pAssemblyPath = AssemblyUtility.MyAssemblyPath)
+                fixed (char* pAssemblyPath = AssemblyUtility.MyAssemblyPath)
                 {
                     __INIT_TRINITY_C__(pAssemblyPath);
                 }
@@ -65,15 +61,12 @@ namespace Trinity
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
                     Win32.NativeAPI.timeBeginPeriod(1);
-#if !CORECLR
-                    Register();
-#endif
                 }
 
                 s_initialized = true;
             }
         }
-
+        
         private static void ReleaseNativeAssembly(string native_assembly_name, string trinity_c_path)
         {
             try

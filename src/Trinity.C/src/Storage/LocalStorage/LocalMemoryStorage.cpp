@@ -113,7 +113,6 @@ namespace Storage
 
         void Dispose()
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
             disposal_lock.lock();
             if (!disposed)
             {
@@ -131,7 +130,6 @@ namespace Storage
                 disposed.store(true);
             }
             disposal_lock.unlock();
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
 		}
 
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -318,8 +316,6 @@ namespace Storage
 
         ALLOC_THREAD_CTX TrinityErrorCode LoadStorage()
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
-
             TrinityErrorCode err;
             PTHREAD_CONTEXT p_ctx = EnsureCurrentThreadContext();
             LockingStorageContext ls_ctx(p_ctx);//RAII guard
@@ -329,7 +325,6 @@ namespace Storage
             {
                 Trinity::Diagnostics::WriteLine(LogLevel::Error, "LoadStorage: _enter_db_critical() returns error {0}", err);
                 _exit_db_critical();
-                TRINITY_INTEROP_LEAVE_UNMANAGED();
                 return err;
             }
 
@@ -398,18 +393,13 @@ namespace Storage
 
 			Trinity::Diagnostics::WriteLine(LogLevel::Info, "Load storage complete, image version = {0}", g_ImageSignature->version);
 
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-
             return TrinityErrorCode::E_SUCCESS;
         }
 
         ALLOC_THREAD_CTX TrinityErrorCode SaveStorage()
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
-
             if (TrinityConfig::ReadOnly())
             {
-                TRINITY_INTEROP_LEAVE_UNMANAGED();
                 return TrinityErrorCode::E_READONLY;
             }
 
@@ -423,7 +413,6 @@ namespace Storage
             {
                 Trinity::Diagnostics::WriteLine(LogLevel::Error, "SaveStorage: _enter_db_critical() returns error {0}", err);
                 _exit_db_critical();
-                TRINITY_INTEROP_LEAVE_UNMANAGED();
                 return err;
             }
 
@@ -466,18 +455,13 @@ namespace Storage
                 err = TrinityErrorCode::E_FAILURE;
             }
 
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-
             return err;
         }
 
         ALLOC_THREAD_CTX TrinityErrorCode ResetStorage()
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
-
             if (TrinityConfig::ReadOnly())
             {
-                TRINITY_INTEROP_LEAVE_UNMANAGED();
                 return TrinityErrorCode::E_READONLY;
             }
 
@@ -490,7 +474,6 @@ namespace Storage
             {
                 Trinity::Diagnostics::WriteLine(LogLevel::Error, "ResetStorage: _enter_db_critical() returns error {0}", err);
                 _exit_db_critical();
-                TRINITY_INTEROP_LEAVE_UNMANAGED();
                 return err;
             }
 
@@ -517,8 +500,6 @@ namespace Storage
 
 			Trinity::Diagnostics::WriteLine(LogLevel::Info, "Reset storage complete, image version = {0}", g_ImageSignature->version);
 
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
-
             return TrinityErrorCode::E_SUCCESS;
         }
 
@@ -533,25 +514,19 @@ namespace Storage
         // GetLockedCellInfo interfaces
         TrinityErrorCode CGetLockedCellInfo4CellAccessor(IN cellid_t cellId, OUT int32_t &size, OUT uint16_t &type, OUT char* &cellPtr, OUT int32_t &entryIndex)
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
             TrinityErrorCode eResult = hashtables[GetTrunkId(cellId)].CGetLockedCellInfo4CellAccessor(cellId, size, type, cellPtr, entryIndex);
-            TRINITY_INTEROP_LEAVE_UNMANAGED();
             return eResult;
         }
 
         TrinityErrorCode CGetLockedCellInfo4LoadCell(IN cellid_t cellId, OUT int32_t &size, OUT char* &cellPtr, OUT int32_t &entryIndex)
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
             TrinityErrorCode eResult = hashtables[GetTrunkId(cellId)].CGetLockedCellInfo4LoadCell(cellId, size, cellPtr, entryIndex);
-            TRINITY_INTEROP_LEAVE_UNMANAGED();
             return eResult;
         }
 
         TrinityErrorCode CGetLockedCellInfo4AddOrUseCell(IN cellid_t cellId, IN OUT int32_t &size, IN uint16_t type, OUT char* &cellPtr, OUT int32_t &entryIndex)
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
             TrinityErrorCode eResult = hashtables[GetTrunkId(cellId)].CGetLockedCellInfo4AddOrUseCell(cellId, size, type, cellPtr, entryIndex);
-            TRINITY_INTEROP_LEAVE_UNMANAGED();
             return eResult;
         }
 
@@ -568,9 +543,7 @@ namespace Storage
 
         TrinityErrorCode ResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, OUT char*& cell_ptr)
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
             TrinityErrorCode result = hashtables[GetTrunkId(cellId)].ResizeCell(cellEntryIndex, offset, delta, cell_ptr);
-            TRINITY_INTEROP_LEAVE_UNMANAGED();
             return result;
         }
 
@@ -578,7 +551,6 @@ namespace Storage
 
         TrinityErrorCode LoadCell(cellid_t cellId, Array<char>& cellBuff)
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
             MTHash * hashtable = hashtables + GetTrunkId(cellId);
             char* cellPtr;
             int32_t entryIndex;
@@ -591,7 +563,6 @@ namespace Storage
                 hashtable->ReleaseEntryLock(entryIndex);
             }
 
-			TRINITY_INTEROP_LEAVE_UNMANAGED();
 			return eResult;
 		}
 
@@ -599,7 +570,6 @@ namespace Storage
 
         TrinityErrorCode SaveCell(cellid_t cellId, char* buff, int32_t cellSize, uint16_t cellType)
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
             MTHash * hashtable = hashtables + GetTrunkId(cellId);
             char* cellPtr;
             int32_t entryIndex;
@@ -609,13 +579,11 @@ namespace Storage
                 memcpy(cellPtr, buff, cellSize);
                 hashtable->ReleaseEntryLock(entryIndex);
             }
-            TRINITY_INTEROP_LEAVE_UNMANAGED();
             return eResult;
         }
 
         TrinityErrorCode AddCell(cellid_t cellId, char* buff, int32_t cellSize, uint16_t cellType)
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
             MTHash * hashtable = hashtables + GetTrunkId(cellId);
             char* cellPtr;
             int32_t entryIndex;
@@ -625,13 +593,11 @@ namespace Storage
                 memcpy(cellPtr, buff, cellSize);
                 hashtable->ReleaseEntryLock(entryIndex);
             }
-            TRINITY_INTEROP_LEAVE_UNMANAGED();
             return eResult;
         }
 
         TrinityErrorCode UpdateCell(cellid_t cellId, char* buff, int32_t cellSize)
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
             MTHash * hashtable = hashtables + GetTrunkId(cellId);
             char* cellPtr;
             int32_t entryIndex;
@@ -641,15 +607,12 @@ namespace Storage
                 memcpy(cellPtr, buff, cellSize);
                 hashtable->ReleaseEntryLock(entryIndex);
             }
-            TRINITY_INTEROP_LEAVE_UNMANAGED();
             return eResult;
         }
 
         TrinityErrorCode RemoveCell(cellid_t cellId)
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
             TrinityErrorCode eResult = hashtables[GetTrunkId(cellId)].RemoveCell(cellId);
-            TRINITY_INTEROP_LEAVE_UNMANAGED();
             return eResult;
         }
 
@@ -657,8 +620,6 @@ namespace Storage
 
         TrinityErrorCode SaveCell(cellid_t cellId, char* buff, int32_t cellSize, uint16_t cellType, CellAccessOptions options)
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
-
             MTHash * hashtable = hashtables + GetTrunkId(cellId);
             char* cellPtr;
             int32_t entryIndex;
@@ -669,13 +630,11 @@ namespace Storage
                 memcpy(cellPtr, buff, cellSize);
                 hashtable->ReleaseEntryLock(entryIndex);
             }
-            TRINITY_INTEROP_LEAVE_UNMANAGED();
             return eResult;
         }
 
         TrinityErrorCode AddCell(cellid_t cellId, char* buff, int32_t cellSize, uint16_t cellType, CellAccessOptions options)
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
             MTHash * hashtable = hashtables + GetTrunkId(cellId);
             char* cellPtr;
             int32_t entryIndex;
@@ -686,13 +645,11 @@ namespace Storage
                 memcpy(cellPtr, buff, cellSize);
                 hashtable->ReleaseEntryLock(entryIndex);
             }
-            TRINITY_INTEROP_LEAVE_UNMANAGED();
             return eResult;
         }
 
         TrinityErrorCode UpdateCell(cellid_t cellId, char* buff, int32_t cellSize, CellAccessOptions options)
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
             MTHash * hashtable = hashtables + GetTrunkId(cellId);
             char* cellPtr;
             int32_t entryIndex;
@@ -704,15 +661,12 @@ namespace Storage
                 memcpy(cellPtr, buff, cellSize);
                 hashtable->ReleaseEntryLock(entryIndex);
             }
-            TRINITY_INTEROP_LEAVE_UNMANAGED();
             return eResult;
         }
 
         TrinityErrorCode RemoveCell(cellid_t cellId, CellAccessOptions options)
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
             TrinityErrorCode eResult = hashtables[GetTrunkId(cellId)].RemoveCell(cellId, options);
-            TRINITY_INTEROP_LEAVE_UNMANAGED();
             return eResult;
         }
 
@@ -720,20 +674,16 @@ namespace Storage
 
         TrinityErrorCode GetCellType(cellid_t cellId, uint16_t& cellType)
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
             TrinityErrorCode eResult = hashtables[GetTrunkId(cellId)].GetCellType(cellId, cellType);
-            TRINITY_INTEROP_LEAVE_UNMANAGED();
             return eResult;
         }
 
         TrinityErrorCode Contains(cellid_t cellId)
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
             // !Note, THREAD_CONTEXT is never required for doing a Contains query,
 			//  because ContainsKey calls _Lookup_NoLockEntry_Or_NotFound, and will
 			//  never perform a lock-cell action.
             TrinityErrorCode eResult = hashtables[GetTrunkId(cellId)].ContainsKey(cellId);
-            TRINITY_INTEROP_LEAVE_UNMANAGED();
             return eResult;
         }
 
@@ -773,9 +723,7 @@ namespace Storage
 
         uint64_t CellCount()
         {
-            TRINITY_INTEROP_ENTER_UNMANAGED();
             uint64_t total = _CellCount_impl();
-            TRINITY_INTEROP_LEAVE_UNMANAGED();
             return total;
         }
 
