@@ -129,6 +129,6 @@
   </Target>
   -->
   <Target Name="AfterBuild">
-    <Exec Command="$(OutputPath)Trinity.TSL.Metagen.exe $(ProjectDir)" />
+    <Exec Command="$(OutputPath)Trinity.TSL.Metagen.exe &quot;$(ProjectDir)\&quot;" />
   </Target>
 </Project>
