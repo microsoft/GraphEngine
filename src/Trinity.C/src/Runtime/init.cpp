@@ -27,13 +27,5 @@ DLL_EXPORT VOID __stdcall __INIT_TRINITY_C__(u16char* pAssemblyPath)
 #endif
     Memory::GetWorkingSetSize();
 
-#ifndef TRINITY_DISABLE_PREEMPTIVE
-    Runtime::ProbeCLRMethodAddresses();
-#endif
-
-#ifdef TRINITY_OPTIONAL_PREEMPTIVE
-    Runtime::__transition_enabled = true;
-#endif
-
     Trinity::IO::Path::g_AssemblyPath = Trinity::String::FromWcharArray(pAssemblyPath, -1);
 }

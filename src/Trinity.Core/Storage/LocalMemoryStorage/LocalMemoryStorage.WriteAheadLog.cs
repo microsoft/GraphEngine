@@ -40,7 +40,7 @@ namespace Trinity.Storage
     {
         /// <summary>
         /// As the LOG_RECORD_HEADER is only used within LocalMemoryStorage,
-        /// which already calls InternalCalls.__init(), it is not necessary to
+        /// which already calls TrinityC.__init(), it is not necessary to
         /// make a C wrapper for this struct.
         /// </summary>
         static LOG_RECORD_HEADER() { TrinityC.Init(); }
@@ -50,21 +50,13 @@ namespace Trinity.Storage
         public ushort CELL_TYPE;
         public byte   CHECKSUM; // 8-bit second-order check
 
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
+        [SuppressUnmanagedCodeSecurity]
         internal static extern void CWriteAheadLogComputeChecksum(LOG_RECORD_HEADER* plog, byte* bufferPtr);
 
 
-#if !CORECLR
-        [SecurityCritical]
-        [MethodImpl(MethodImplOptions.InternalCall)]
-#else
         [DllImport(TrinityC.AssemblyName)]
-#endif
+        [SuppressUnmanagedCodeSecurity]
         internal static extern bool CWriteAheadLogValidateChecksum(LOG_RECORD_HEADER* plog, byte* content);
 
     }

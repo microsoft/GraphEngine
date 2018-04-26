@@ -25,11 +25,8 @@ namespace Storage
              */
             static TrinityErrorCode _start_enumeration(PLOCAL_MEMORY_STORAGE_ENUMERATOR p_enum)
             {
-                TRINITY_INTEROP_ENTER_UNMANAGED();
-
                 if (p_enum->mt_hash == nullptr)
                 {
-                    TRINITY_INTEROP_LEAVE_UNMANAGED();
                     return TrinityErrorCode::E_FAILURE;
                 }
 
@@ -55,7 +52,6 @@ namespace Storage
                     p_enum->mt_hash->memory_trunk->defrag_lock->unlock();
                 p_enum->mt_hash->Unlock();
 
-                TRINITY_INTEROP_LEAVE_UNMANAGED();
                 return eResult;
             }
 

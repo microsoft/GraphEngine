@@ -153,8 +153,8 @@ Function Test-ExeProject($proj, $config = "Release") {
         Set-Location $dir
         Invoke-DotNet -proj $proj -action restore
         Invoke-DotNet -proj $proj -action build -config $config
-        Invoke-Expression "& $DOTNET_EXE run --framework net461 '$proj'"
-        Invoke-Expression "& $DOTNET_EXE run --framework netcoreapp2.0 '$proj'"
+        Invoke-Expression "& $DOTNET_EXE run -c Release -f net461"
+        Invoke-Expression "& $DOTNET_EXE run -c Release -f netcoreapp2.0"
     }
 }
 
