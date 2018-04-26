@@ -17,11 +17,7 @@ namespace Trinity
 {
     internal static partial class TrinityC
     {
-#if CORECLR
         internal const string AssemblyName = "Trinity";
-#else
-        internal const string AssemblyName = "Trinity.C.dll";
-#endif
         private static object s_initlock = new object();
         private static bool   s_initialized = false;
 
@@ -32,31 +28,6 @@ namespace Trinity
             {
                 if (s_initialized) return;
 
-                string assembly_path = AssemblyUtility.TrinityCorePath;
-#if !CORECLR
-                string native_assembly_name = "Trinity.C.dll";
-                string trinity_c_path = Path.Combine(assembly_path, native_assembly_name);
-                bool found = false;
-
-                if (File.Exists(trinity_c_path))
-                {
-                    using (Stream resourceStream = GetTrinityCAssembly(native_assembly_name))
-                    {
-                        string embedded_sha = SecureHashHelper.GetSHA512(resourceStream).Trim().ToLowerInvariant();
-                        string ondisk_sha = SecureHashHelper.GetFileSHA512(trinity_c_path).Trim().ToLowerInvariant();
-                        if (embedded_sha.Equals(ondisk_sha))
-                        {
-                            found = true;
-                        }
-                    }
-                }
-
-                if (!found)
-                {
-                    ReleaseNativeAssembly(native_assembly_name, trinity_c_path);
-                }
-#endif
-
                 fixed(char* pAssemblyPath = AssemblyUtility.MyAssemblyPath)
                 {
                     __INIT_TRINITY_C__(pAssemblyPath);
@@ -65,41 +36,10 @@ namespace Trinity
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
                     Win32.NativeAPI.timeBeginPeriod(1);
-#if !CORECLR
-                    Register();
-#endif
                 }
 
                 s_initialized = true;
             }
-        }
-
-        private static void ReleaseNativeAssembly(string native_assembly_name, string trinity_c_path)
-        {
-            try
-            {
-                using (Stream resourceStream = GetTrinityCAssembly(native_assembly_name))
-                using (FileStream fs = new FileStream(trinity_c_path, FileMode.Create))
-                {
-                    resourceStream.CopyTo(fs);
-                    fs.Flush();
-                }
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Trinity.C cannot be released, please make sure the working directory is writable.");
-                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                {
-                    Win32.NativeAPI.timeEndPeriod(1);
-                }
-                Environment.Exit(0);
-            }
-        }
-
-        private static Stream GetTrinityCAssembly(string resource_name)
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            return assembly.GetManifestResourceStream("Trinity." + resource_name);
         }
 
         [DllImport(TrinityC.AssemblyName)]

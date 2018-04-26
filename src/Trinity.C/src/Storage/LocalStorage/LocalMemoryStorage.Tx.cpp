@@ -17,13 +17,11 @@ namespace Storage
 		extern MTHash* hashtables;
 
 #define TRINITY_ENTER_TX() \
-            TRINITY_INTEROP_ENTER_UNMANAGED(); \
             PTHREAD_CONTEXT p_tls_ctx = GetCurrentThreadContext();\
             SetCurrentThreadContext(ctx);
 
 #define TRINITY_LEAVE_TX() \
             SetCurrentThreadContext(p_tls_ctx); \
-            TRINITY_INTEROP_LEAVE_UNMANAGED();
 
         ///////////////////////////////////////////////////////////////////////////////////////////
         // TX Single cell operations

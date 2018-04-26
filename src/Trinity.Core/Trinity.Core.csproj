@@ -44,20 +44,13 @@
     <DefineConstants>CORECLR</DefineConstants>
   </PropertyGroup>
 
+  <!-- NetFx does not pick up runtimes\{rid}\native, use assembly release technique. -->
   <ItemGroup>
     <Compile Remove="BuildNuGetPkg\**" />
     <EmbeddedResource Remove="BuildNuGetPkg\**" />
     <EmbeddedResource Include="Network\Http\index.html" />
     <None Remove="..\..\bin\Trinity.dll" />
-    <None Remove="..\..\bin\Trinity.C.dll" />
     <None Remove="..\..\bin\libTrinity.so" />
-  </ItemGroup>
-
-  <!-- NetFx does not pick up runtimes\{rid}\native, use assembly release technique. -->
-  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
-    <EmbeddedResource Include="..\..\bin\Trinity.C.dll">
-      <Link>Trinity.C.dll</Link>
-    </EmbeddedResource>
   </ItemGroup>
 
   <!-- Nuget package content -->
@@ -79,6 +72,7 @@
     </Content>
     <Content Include="..\..\bin\Trinity.dll">
       <PackagePath>runtimes\win-x64\native</PackagePath>
+      <CopyToOutputDirectory Condition="'$(TargetFramework)' != 'netstandard2.0'">always</CopyToOutputDirectory>
     </Content>
     <Content Include="..\..\bin\libTrinity.so">
       <PackagePath>runtimes\linux-x64\native</PackagePath>
@@ -94,7 +88,7 @@
     <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="2.0.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net451'" >
+  <ItemGroup Condition="'$(TargetFramework)' == 'net451'">
     <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="1.0.0" />
   </ItemGroup>
 
