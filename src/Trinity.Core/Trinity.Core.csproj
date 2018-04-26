@@ -53,6 +53,12 @@
     <None Remove="..\..\bin\libTrinity.so" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
+    <EmbeddedResource Include="..\..\bin\Trinity.dll">
+      <Link>Trinity.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+
   <!-- Nuget package content -->
   <ItemGroup>
     <Content Include="NuGet\GraphEngine.Core.props">
@@ -72,7 +78,6 @@
     </Content>
     <Content Include="..\..\bin\Trinity.dll">
       <PackagePath>runtimes\win-x64\native</PackagePath>
-      <CopyToOutputDirectory Condition="'$(TargetFramework)' != 'netstandard2.0'">always</CopyToOutputDirectory>
     </Content>
     <Content Include="..\..\bin\libTrinity.so">
       <PackagePath>runtimes\linux-x64\native</PackagePath>
