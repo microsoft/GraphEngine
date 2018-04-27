@@ -23,14 +23,15 @@ namespace GraphEngine.Jit.Playground
         {
             //Console.ReadLine();
 
-            IntegerBGetBSet();
-            FloatBGetBSet();
-            StringBGetBSet();
-            IntegerSGetSet();
-            StringSGetSet();
-            IntegerSLGetSet();
-            StringSLGetSet();
-            IntegerSLCount();
+            //IntegerBGetBSet();
+            //FloatBGetBSet();
+            //StringBGetBSet();
+            //IntegerSGetSet();
+            //StringSGetSet();
+            //IntegerSLGetSet();
+            //StringSLGetSet();
+            //IntegerSLCount();
+            IntegerCompare();
 
             //byte[] buf = new byte[16];
             //int val = int.Parse(Console.ReadLine());

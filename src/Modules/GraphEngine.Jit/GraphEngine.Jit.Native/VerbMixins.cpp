@@ -7,6 +7,12 @@ namespace Mixin
     {
         MIXIN(BGet),
         MIXIN(BSet),
+        MIXIN(BCmp),
+        MIXIN(BLe),
+        MIXIN(BLt),
+        MIXIN(BGe),
+        MIXIN(BGt),
+        MIXIN(BRefEq),
 
         MIXIN(LGet),
         MIXIN(LSet),

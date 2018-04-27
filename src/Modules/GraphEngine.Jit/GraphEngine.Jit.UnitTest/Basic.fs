@@ -109,6 +109,7 @@ let ``FunctionDescriptor allocation``(tdesc: TypeDescriptor) =
 open JitNativeInterop
 open System.Runtime.InteropServices
 open Trinity.Diagnostics
+open System.Runtime.InteropServices.ComTypes
 
 let _AllocAccessor allocsize = 
     let p = Memory.malloc (uint64 allocsize) |> IntPtr
@@ -131,31 +132,36 @@ let _AllocAccessorWithHeader allocsize =
         Type       = 0us
     }
 
-//  !Assume accessor.CellPtr is malloc'ed
-let _BGetSet(tdesc: TypeDescriptor) (getaccessor) (set) (assert1) (assert2) =
-    let fget, fset = { DeclaringType = tdesc
-                       Verb          = BGet },
-                     { DeclaringType = tdesc
-                       Verb          = BSet }
-    let [nfget; nfset] = [fget; fset] |> List.map CompileFunction
+let _Compile (tdesc: TypeDescriptor) (vs: Verb list) =
+    let fs = vs |> List.map (fun v -> {DeclaringType = tdesc; Verb = v} |> CompileFunction )
+    for f in fs do
+        Assert.NotEqual(IntPtr.Zero, f.CallSite)
+    fs
 
-    Assert.NotEqual(IntPtr.Zero, nfget.CallSite)
-    Assert.NotEqual(IntPtr.Zero, nfset.CallSite)
-
+let _BTest (getaccessor) (fn) =
     let mutable accessor = getaccessor()
     let paccessor        = &&accessor |> NativePtr.toNativeInt
     try
-        set nfset.CallSite paccessor     // setter invoke
-        assert1 accessor.CellPtr         // manual inspect
-        assert2 nfget.CallSite paccessor // getter inspect
+        fn accessor paccessor
     finally
         Memory.free(accessor.CellPtr.ToPointer())
 
+let _Set (value: 'a) (site: IntPtr) (acc: IntPtr) = CallHelper.CallByVal(site, acc, value)
+
+//  !Assume accessor.CellPtr is malloc'ed
+let _BGetSet(tdesc: TypeDescriptor) (getaccessor) (set) (assert1) (assert2) =
+
+    let [nfget; nfset] = _Compile tdesc [BGet; BSet] 
+
+    _BTest getaccessor (fun accessor paccessor ->
+        set nfset.CallSite paccessor     // setter invoke
+        assert1 accessor.CellPtr         // manual inspect
+        assert2 nfget.CallSite paccessor)// getter inspect 
+
 let _AtomAssignTest (value: 'a) fn =
-    fn  (fun site acc -> CallHelper.CallByVal(site, acc, value))
+    fn  (_Set value)
         (fun p        -> Assert.Equal<'a>(value, NativePtr.read <| NativePtr.ofNativeInt<'a> p)) 
         (fun site acc -> Assert.Equal<'a>(value, CallHelper.CallByVal<'a>(site, acc)))
-        
 
 let _AtomBGetSet (tdesc: TypeDescriptor) (value: 'a) =
     _AtomAssignTest value <| _BGetSet tdesc (fun () -> _AllocAccessor sizeof<'a>)
@@ -256,18 +262,10 @@ let _CellGetSet (cell: ICell) action =
 let _SGetSet (cell: ICell) field (set) (assert1) (assert2) =
 
     _CellGetSet cell (fun (tdesc: TypeDescriptor) (accessor: NativeCellAccessor) (paccessor: nativeint)  ->
-        let fbget, fget, fset = 
-                         { DeclaringType = tdesc
-                           Verb          = ComposedVerb(SGet field, BGet) },
-                         { DeclaringType = tdesc
-                           Verb          = SGet field },
-                         { DeclaringType = tdesc
-                           Verb          = SSet field }
-        let [nfbget; nfget; nfset] = [fbget; fget; fset] |> List.map CompileFunction
 
-        Assert.NotEqual(IntPtr.Zero, nfbget.CallSite)
-        Assert.NotEqual(IntPtr.Zero, nfget.CallSite)
-        Assert.NotEqual(IntPtr.Zero, nfset.CallSite)
+        let [nfbget; nfget; nfset] = _Compile tdesc [ ComposedVerb(SGet field, BGet)
+                                                      SGet field 
+                                                      SSet field ]
 
         printfn "paccessor  = %X" paccessor
         printfn "pcell      = %X" accessor.CellPtr
@@ -341,18 +339,10 @@ let StringSGetSet () =
 let _SLGetSet (cell: ICell) field index (set) (assert1) (assert2) =
 
     _CellGetSet cell (fun (tdesc: TypeDescriptor) (accessor: NativeCellAccessor) (paccessor: nativeint)  ->
-        let fbget, fget, fset = 
-                         { DeclaringType = tdesc
-                           Verb          = ComposedVerb(SGet field, ComposedVerb(LGet, BGet)) },
-                         { DeclaringType = tdesc
-                           Verb          = ComposedVerb(SGet field, LGet) },
-                         { DeclaringType = tdesc
-                           Verb          = ComposedVerb(SGet field, LSet) }
-        let [nfbget; nfget; nfset] = [fbget; fget; fset] |> List.map CompileFunction
 
-        Assert.NotEqual(IntPtr.Zero, nfbget.CallSite)
-        Assert.NotEqual(IntPtr.Zero, nfget.CallSite)
-        Assert.NotEqual(IntPtr.Zero, nfset.CallSite)
+        let [nfbget; nfget; nfset] = _Compile tdesc [ ComposedVerb(SGet field, ComposedVerb(LGet, BGet))
+                                                      ComposedVerb(SGet field, LGet)
+                                                      ComposedVerb(SGet field, LSet) ]
 
         printfn "paccessor  = %X" paccessor
         printfn "pcell      = %X" accessor.CellPtr
@@ -427,3 +417,115 @@ let IntegerSLCount () =
 
     s2 <- S2(0L, new System.Collections.Generic.List<int64>(seq [1L; 2L; 3L; 5L; 8L]), 2333.33333, 0)
     _SLCount s2 "f1" 5
+
+let _BCompare (tdesc: TypeDescriptor) (getaccessor) (small: 'a) (mid: 'a) (large: 'a) =
+    printfn "BCompare %A: %A - %A - %A" typeof<'a> small mid large
+    let [set; cmp; lt; le; gt; ge] = _Compile tdesc [BSet; BCmp; BLt; BLe; BGt; BGe] 
+    printfn "Functions compiled"
+    _BTest getaccessor (fun accessor paccessor ->
+        let test = fun expect vv nf -> 
+            printfn "Test %A %A" expect vv
+            Assert.Equal(expect, CallHelper.CallCmp<'a>(nf.CallSite, paccessor, vv))
+
+        printfn "Set small"
+        CallHelper.CallByVal<'a>(set.CallSite, paccessor, small)
+
+        test -1 large  cmp
+        test -1 mid    cmp
+        test 0  small  cmp
+
+        test 1  large  lt
+        test 1  mid    lt
+        test 0  small  lt
+
+        test 1  large  le
+        test 1  mid    le
+        test 1  small  le
+
+        test 0  large  gt
+        test 0  mid    gt
+        test 0  small  gt
+
+        test 0  large  ge
+        test 0  mid    ge
+        test 1  small  ge
+
+        printfn "Set mid"
+        CallHelper.CallByVal<'a>(set.CallSite, paccessor, mid)
+
+        test -1 large  cmp
+        test 0  mid    cmp
+        test 1  small  cmp
+
+        test 1  large  lt
+        test 0  mid    lt
+        test 0  small  lt
+
+        test 1  large  le
+        test 1  mid    le
+        test 0  small  le
+
+        test 0  large  gt
+        test 0  mid    gt
+        test 1  small  gt
+
+        test 0  large  ge
+        test 1  mid    ge
+        test 1  small  ge
+
+        printfn "Set large"
+        CallHelper.CallByVal<'a>(set.CallSite, paccessor, large)
+
+        test 0  large  cmp
+        test 1  mid    cmp
+        test 1  small  cmp
+
+        test 0  large  lt
+        test 0  mid    lt
+        test 0  small  lt
+
+        test 1  large  le
+        test 0  mid    le
+        test 0  small  le
+
+        test 0  large  gt
+        test 1  mid    gt
+        test 1  small  gt
+
+        test 1  large  ge
+        test 1  mid    ge
+        test 1  small  ge
+        )
+
+let inline _NumericBCompare (tdesc: TypeDescriptor) (value: 'a) (delta: 'a) = 
+     _BCompare tdesc (fun () -> _AllocAccessor sizeof<'a>) (value-delta) (value) (value+delta)
+
+[<Fact>]
+let IntegerCompare() =
+    let t_int32   = MakeFromType typeof<int32>
+    let t_uint32  = MakeFromType typeof<uint32>
+    let t_float32 = MakeFromType typeof<float32>
+    let t_float   = MakeFromType typeof<float>
+
+    let inline disturb (d: 'a) (fn: 'a -> unit) = fun () -> fn d 
+    let tests = List.collect id [
+        [  _NumericBCompare t_int32 0
+           _NumericBCompare t_int32 405923845
+           _NumericBCompare t_int32 -20514305
+        ] |> List.map (disturb 1)
+        [ _NumericBCompare t_uint32 1u
+          _NumericBCompare t_uint32 49401345u
+          _NumericBCompare t_uint32 90071u
+        ] |> List.map (disturb 1u)
+        [ _NumericBCompare t_float32 0.0f
+          _NumericBCompare t_float32 3.14f
+          _NumericBCompare t_float32 -45103.04352f
+        ] |> List.map (disturb 1.0f)
+        [ _NumericBCompare t_float 0.0
+          _NumericBCompare t_float 2.54160571
+          _NumericBCompare t_float -62039145.51201235
+        ] |> List.map (disturb 1.0)
+    ] 
+
+    for t in tests do
+        t()

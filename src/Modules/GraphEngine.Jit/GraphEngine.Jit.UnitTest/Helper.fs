@@ -6,39 +6,51 @@ open System.Runtime.InteropServices
 
 type i8setter   = delegate of nativeint * int8              -> unit
 type i8getter   = delegate of nativeint                     -> int8
+type i8cmp      = delegate of nativeint * int8              -> int32
 
 type i16setter  = delegate of nativeint * int16             -> unit
 type i16getter  = delegate of nativeint                     -> int16
+type i16cmp     = delegate of nativeint * int16             -> int32
 
 type i32setter  = delegate of nativeint * int32             -> unit
 type i32getter  = delegate of nativeint                     -> int32
+type i32cmp     = delegate of nativeint * int32             -> int32
 
 type i64setter  = delegate of nativeint * int64             -> unit
 type i64getter  = delegate of nativeint                     -> int64
+type i64cmp     = delegate of nativeint * int64             -> int32
 
 type u8setter   = delegate of nativeint * uint8             -> unit
 type u8getter   = delegate of nativeint                     -> uint8
+type u8cmp      = delegate of nativeint * uint8             -> int32
 
 type u16setter  = delegate of nativeint * uint16            -> unit
 type u16getter  = delegate of nativeint                     -> uint16
+type u16cmp     = delegate of nativeint * uint16            -> int32
 
 type u32setter  = delegate of nativeint * uint32            -> unit
 type u32getter  = delegate of nativeint                     -> uint32
+type u32cmp     = delegate of nativeint * uint32            -> int32
 
 type u64setter  = delegate of nativeint * uint64            -> unit
 type u64getter  = delegate of nativeint                     -> uint64
+type u64cmp     = delegate of nativeint * uint64            -> int32
 
 type f32setter  = delegate of nativeint * float32           -> unit
 type f32getter  = delegate of nativeint                     -> float32
+type f32cmp     = delegate of nativeint * float32           -> int32
 
 type f64setter  = delegate of nativeint * double            -> unit
 type f64getter  = delegate of nativeint                     -> double
+type f64cmp     = delegate of nativeint * double            -> int32
 
 type strsetter  = delegate of nativeint * string            -> unit
 type strgetter  = delegate of nativeint                     -> string
+type strcmp     = delegate of nativeint * string            -> int32
 
 type psetter    = delegate of nativeint * nativeint         -> unit
 type pgetter    = delegate of nativeint                     -> nativeint
+type pcmp       = delegate of nativeint * nativeint         -> int32
 
 // L-Series
 
@@ -77,6 +89,24 @@ type lstrgetter = delegate of nativeint * int32             -> string
 
 type lpsetter   = delegate of nativeint * int32 * nativeint -> unit
 type lpgetter   = delegate of nativeint * int32             -> nativeint
+
+let cmp<'a>() = 
+    match typeof<'a> with
+    | x when x = typeof<int8>   -> typeof<i8cmp>
+    | x when x = typeof<int16>  -> typeof<i16cmp>
+    | x when x = typeof<int32>  -> typeof<i32cmp>
+    | x when x = typeof<int64>  -> typeof<i64cmp>
+
+    | x when x = typeof<uint8>  -> typeof<u8cmp>
+    | x when x = typeof<uint16> -> typeof<u16cmp>
+    | x when x = typeof<uint32> -> typeof<u32cmp>
+    | x when x = typeof<uint64> -> typeof<u64cmp>
+
+    | x when x = typeof<float32>-> typeof<f32cmp>
+    | x when x = typeof<double> -> typeof<f64cmp>
+
+    | x when x = typeof<string> -> typeof<strcmp>
+    | _                         -> typeof<pcmp>
 
 let getter<'a>() =
     match typeof<'a> with
@@ -179,3 +209,6 @@ type CallHelper =
         Marshal.GetDelegateForFunctionPointer(callsite, typeof<pgetter>).DynamicInvoke(paccessor) :?> nativeint
     static member GetPushedPtr (callsite: nativeint, paccessor: nativeint, arg0: int): nativeint = 
         Marshal.GetDelegateForFunctionPointer(callsite, typeof<lpgetter>).DynamicInvoke(paccessor, arg0) :?> nativeint
+
+    static member CallCmp(callsite: nativeint, paccessor: nativeint, arg0: 'a) = 
+        Marshal.GetDelegateForFunctionPointer(callsite, cmp<'a>()).DynamicInvoke(paccessor, arg0) :?> int32

@@ -159,7 +159,7 @@ namespace Mixin
             auto dummy   = cc.newInt32("dummy");
             auto divisor = cc.newInt32("size");
             cc.xor_(dummy, dummy);
-            cc.mov(divisor, len);
+            cc.mov(divisor, imm(len));
             cc.idiv(dummy, t, divisor);
         }
     }
@@ -167,12 +167,13 @@ namespace Mixin
     template<bool move_pointers>
     X86Gp compare_block(X86Compiler& cc, X86Gp& p1, X86Gp& p2, X86Gp& len1, X86Gp& len2)
     {
-        auto label = cc.newLabel();
+        auto lg = cc.newLabel();
+        auto ll = cc.newLabel();
         auto label2 = cc.newLabel();
 
         cc.cmp(len1, len2);
-        cc.jne(label);
-        cc.cmovl(len1, len2);
+        cc.jg(lg);
+        cc.jl(ll);
 
         if (move_pointers)
         {
@@ -188,9 +189,12 @@ namespace Mixin
         call->setRet(0, retreg);
         cc.jmp(label2);
 
-        cc.bind(label);
-        cc.mov(retreg, 1);
-        cc.cmovl(retreg, -1);
+        cc.bind(lg);
+        cc.mov(retreg, imm(1));
+        cc.jmp(label2);
+
+        cc.bind(ll);
+        cc.mov(retreg, imm(-1));
         cc.bind(label2);
 
         return retreg;
@@ -238,20 +242,33 @@ namespace Mixin
         {
             // simple atom
             auto atomsize = asmjit::TypeId::sizeOf(tid);
+            auto l1 = cc.newLabel();
+            auto l2 = cc.newLabel();
             retreg = cc.newGpReg(TypeId::kI32, "cmpresult");
+
             cc.xor_(retreg, retreg);
 
             if (is_signed_int(tc))
             {
                 cc.cmp(x86::ptr(ctx.cellPtr, 0, atomsize), val);
-                cc.cmovg(retreg, 1);
-                cc.cmovl(retreg, -1);
+                cc.jg(l1);
+                cc.je(l2);
+                cc.mov(retreg, imm(-1));
+                cc.jmp(l2);
+                cc.bind(l1);
+                cc.mov(retreg, imm(1));
+                cc.bind(l2);
             }
             else if (is_unsigned_int(tc) || is_char(tc) || is_bool(tc))
             {
                 cc.cmp(x86::ptr(ctx.cellPtr, 0, atomsize), val);
-                cc.cmova(retreg, 1);
-                cc.cmovb(retreg, -1);
+                cc.ja(l1);
+                cc.je(l2);
+                cc.mov(retreg, imm(-1));
+                cc.jmp(l2);
+                cc.bind(l1);
+                cc.mov(retreg, imm(1));
+                cc.bind(l2);
             }
             else if (is_float(tc))
             {
@@ -273,8 +290,13 @@ namespace Mixin
                 if (atomsize == 4) cc.ucomiss(xmm, x86::ptr(ctx.cellPtr, 0, atomsize));
                 else cc.ucomisd(xmm, x86::ptr(ctx.cellPtr, 0, atomsize));
 
-                cc.cmova(retreg, -1);
-                cc.cmovb(retreg, 1);
+                cc.ja(l1);
+                cc.je(l2);
+                cc.mov(retreg, imm(1));
+                cc.jmp(l2);
+                cc.bind(l1);
+                cc.mov(retreg, imm(-1));
+                cc.bind(l2);
             }
             else
             {
@@ -292,7 +314,7 @@ namespace Mixin
             {
                 // empty struct, return true
                 retreg = cc.newGpd();
-                cc.mov(retreg, 1);
+                cc.mov(retreg, (1));
             }
             else if (plan.size() == 1 && plan[0] == -1) // single jump block
             {
@@ -335,7 +357,7 @@ namespace Mixin
         {
             // simple atom
             auto atomsize = asmjit::TypeId::sizeOf(tid);
-            cc.mov(ret, atomsize);
+            cc.mov(ret, imm(atomsize));
         }
         else
         {
@@ -357,7 +379,7 @@ namespace Mixin
             }
             else //fixed copying
             {
-                cc.mov(ret, plan[0]);
+                cc.mov(ret, imm(plan[0]));
             }
         }
     }
@@ -564,7 +586,12 @@ namespace Mixin
         X86Gp ret = cc.newGpd("ret");
         cc.xor_(ret, ret);
         cc.cmp(cmp, ret);
-        cc.cmovb(ret, 1);
+
+        auto l1 = cc.newLabel();
+
+        cc.jnl(l1);
+        cc.mov(ret, imm(1));
+        cc.bind(l1);
 
         ctx.ret(ret);
     }
@@ -576,7 +603,13 @@ namespace Mixin
         X86Gp ret = cc.newGpd("ret");
         cc.xor_(ret, ret);
         cc.cmp(cmp, ret);
-        cc.cmovbe(ret, 1);
+
+        auto l1 = cc.newLabel();
+        auto l2 = cc.newLabel();
+
+        cc.jnle(l1);
+        cc.mov(ret, imm(1));
+        cc.bind(l1);
 
         ctx.ret(ret);
     }
@@ -588,7 +621,12 @@ namespace Mixin
         X86Gp ret = cc.newGpd("ret");
         cc.xor_(ret, ret);
         cc.cmp(cmp, ret);
-        cc.cmova(ret, 1);
+        
+        auto l1 = cc.newLabel();
+
+        cc.jng(l1);
+        cc.mov(ret, imm(1));
+        cc.bind(l1);
 
         ctx.ret(ret);
     }
@@ -600,7 +638,12 @@ namespace Mixin
         X86Gp ret = cc.newGpd("ret");
         cc.xor_(ret, ret);
         cc.cmp(cmp, ret);
-        cc.cmovae(ret, 1);
+                
+        auto l1 = cc.newLabel();
+
+        cc.jnge(l1);
+        cc.mov(ret, imm(1));
+        cc.bind(l1);
 
         ctx.ret(ret);
     }
@@ -613,7 +656,11 @@ namespace Mixin
         ctx.addArg(comparand);
         cc.xor_(ret, ret);
         cc.cmp(ctx.cellPtr, comparand);
-        cc.cmove(ret, 1);
+
+        auto l = cc.newLabel();
+        cc.jne(l);
+        cc.mov(ret, imm(1));
+        cc.bind(l);
 
         ctx.ret(ret);
     }
@@ -650,7 +697,7 @@ namespace Mixin
         {
             // single element
             ret = cc.newGpd();
-            cc.mov(ret, 1);
+            cc.mov(ret, imm(1));
         }
 
         cc.ret(ret);
