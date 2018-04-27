@@ -314,7 +314,7 @@ namespace Mixin
             {
                 // empty struct, return true
                 retreg = cc.newGpd();
-                cc.mov(retreg, (1));
+                cc.mov(retreg, imm(1));
             }
             else if (plan.size() == 1 && plan[0] == -1) // single jump block
             {
