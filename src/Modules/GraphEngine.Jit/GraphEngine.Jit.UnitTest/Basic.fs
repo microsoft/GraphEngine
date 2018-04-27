@@ -151,16 +151,14 @@ let _BGetSet(tdesc: TypeDescriptor) (getaccessor) (set) (assert1) (assert2) =
     finally
         Memory.free(accessor.CellPtr.ToPointer())
 
-let _IntegerTest (value: 'a) fn =
+let _AtomAssignTest (value: 'a) fn =
     fn  (fun site acc -> CallHelper.CallByVal(site, acc, value))
         (fun p        -> Assert.Equal<'a>(value, NativePtr.read <| NativePtr.ofNativeInt<'a> p)) 
         (fun site acc -> Assert.Equal<'a>(value, CallHelper.CallByVal<'a>(site, acc)))
         
 
-let _IntegerBGetSet (tdesc: TypeDescriptor) (value: 'a) =
-    _IntegerTest value <| _BGetSet tdesc (fun () -> _AllocAccessor sizeof<'a>)
-
-let _FloatBGetSet = _IntegerBGetSet
+let _AtomBGetSet (tdesc: TypeDescriptor) (value: 'a) =
+    _AtomAssignTest value <| _BGetSet tdesc (fun () -> _AllocAccessor sizeof<'a>)
 
 // string setter expect "real" string
 // string getter return "real" string
@@ -197,22 +195,22 @@ let _StringBGetSet (tdesc: TypeDescriptor) (value: string) =
 
 [<Fact>]
 let IntegerBGetBSet () =
-    _IntegerBGetSet (``TypeDescriptor allocation`` "U8") 255uy
-    _IntegerBGetSet (``TypeDescriptor allocation`` "I8") -71y
+    _AtomBGetSet (``TypeDescriptor allocation`` "U8") 255uy
+    _AtomBGetSet (``TypeDescriptor allocation`` "I8") -71y
 
-    _IntegerBGetSet (``TypeDescriptor allocation`` "U16") 46131us
-    _IntegerBGetSet (``TypeDescriptor allocation`` "I16") -516s
+    _AtomBGetSet (``TypeDescriptor allocation`` "U16") 46131us
+    _AtomBGetSet (``TypeDescriptor allocation`` "I16") -516s
 
-    _IntegerBGetSet (``TypeDescriptor allocation`` "U32") 123u
-    _IntegerBGetSet (``TypeDescriptor allocation`` "I32") 5108346
+    _AtomBGetSet (``TypeDescriptor allocation`` "U32") 123u
+    _AtomBGetSet (``TypeDescriptor allocation`` "I32") 5108346
 
-    _IntegerBGetSet (``TypeDescriptor allocation`` "U64") 4968173491UL
-    _IntegerBGetSet (``TypeDescriptor allocation`` "I64") 6924560298457134L
+    _AtomBGetSet (``TypeDescriptor allocation`` "U64") 4968173491UL
+    _AtomBGetSet (``TypeDescriptor allocation`` "I64") 6924560298457134L
 
 [<Fact>]
 let FloatBGetBSet () =
-    _FloatBGetSet (``TypeDescriptor allocation`` "F32") 3.14f
-    _FloatBGetSet (``TypeDescriptor allocation`` "F64") 12345678.90123
+    _AtomBGetSet (``TypeDescriptor allocation`` "F32") 3.14f
+    _AtomBGetSet (``TypeDescriptor allocation`` "F64") 12345678.90123
 
 [<Fact>]
 let StringBGetBSet () =

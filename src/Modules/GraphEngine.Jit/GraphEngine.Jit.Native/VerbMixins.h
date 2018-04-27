@@ -240,12 +240,12 @@ namespace Mixin
     struct Basic : virtual VerbMixin {};
     struct BGet : M<Basic, NoArgs<true>>, RetT<true> { CONCRETE_MIXIN_DECLARE(BGet); };
     struct BSet : M<Basic, ArgT<true>>, NoRet { CONCRETE_MIXIN_DECLARE(BSet); };
-    struct BEq : M<Basic, ArgT<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(BEq); };
-    struct BSame : M<Basic, ArgT<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(BSame); };
-    struct BLt : M<Basic, ArgT<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(BLt); };
-    struct BLe : M<Basic, ArgT<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(BLe); };
-    struct BGt : M<Basic, ArgT<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(BGt); };
-    struct BGe : M<Basic, ArgT<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(BGe); };
+    struct BCmp : M<Basic, ArgT<true>, Ret<TypeId::kI32>> { CONCRETE_MIXIN_DECLARE(BCmp); };
+    struct BLt : M<Basic, ArgT<true>, Ret<TypeId::kU32>> { CONCRETE_MIXIN_DECLARE(BLt); };
+    struct BLe : M<Basic, ArgT<true>, Ret<TypeId::kU32>> { CONCRETE_MIXIN_DECLARE(BLe); };
+    struct BGt : M<Basic, ArgT<true>, Ret<TypeId::kU32>> { CONCRETE_MIXIN_DECLARE(BGt); };
+    struct BGe : M<Basic, ArgT<true>, Ret<TypeId::kU32>> { CONCRETE_MIXIN_DECLARE(BGe); };
+    struct BRefEq : M<Basic, ArgT<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(BRefEq); };
     struct BHash : M<Basic, NoArgs<true>, Ret<TypeId::kU64>> { CONCRETE_MIXIN_DECLARE(BHash); };
     struct BCount : M<Basic, NoArgs<true>, Ret<TypeId::kI32>> { CONCRETE_MIXIN_DECLARE(BCount); };
     struct BSize : M<Basic, NoArgs<true>, Ret<TypeId::kI32>> { CONCRETE_MIXIN_DECLARE(BSize); };

@@ -24,6 +24,7 @@ namespace GraphEngine.Jit.Playground
             //Console.ReadLine();
 
             IntegerBGetBSet();
+            FloatBGetBSet();
             StringBGetBSet();
             IntegerSGetSet();
             StringSGetSet();

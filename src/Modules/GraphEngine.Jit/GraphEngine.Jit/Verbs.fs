@@ -16,12 +16,12 @@ type Verb =
     (** BasicVerb **)
     | BGet
     | BSet
-    | BEq
-    | BSame
+    | BCmp
     | BLe
     | BLt
     | BGe
     | BGt
+    | BRefEq
     | BHash
     | BCount
     | BSize

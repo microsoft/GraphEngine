@@ -17,7 +17,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphEngine.Jit.Native", "G
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Trinity.C", "..\..\Trinity.C\Trinity.C.vcxproj", "{53440B2C-3D01-40DA-BBAE-36B654541EE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphEngine.Jit.TSL", "GraphEngine.Jit.TSL\GraphEngine.Jit.TSL.csproj", "{AD455239-3DFF-4F5D-A7AB-E4574229C30B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphEngine.Jit.TSL", "GraphEngine.Jit.TSL\GraphEngine.Jit.TSL.csproj", "{AD455239-3DFF-4F5D-A7AB-E4574229C30B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,9 +89,10 @@ Global
 		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Release|Any CPU.ActiveCfg = Release|x64
 		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Release|x64.ActiveCfg = Release|x64
 		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Release|x64.Build.0 = Release|x64
-		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Release-CoreCLR|Any CPU.ActiveCfg = Release-CoreCLR|x64
-		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Release-CoreCLR|x64.ActiveCfg = Release-CoreCLR|x64
-		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Release-CoreCLR|x64.Build.0 = Release-CoreCLR|x64
+		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Release-CoreCLR|Any CPU.ActiveCfg = Release|x64
+		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Release-CoreCLR|Any CPU.Build.0 = Release|x64
+		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Release-CoreCLR|x64.ActiveCfg = Release|x64
+		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Release-CoreCLR|x64.Build.0 = Release|x64
 		{AD455239-3DFF-4F5D-A7AB-E4574229C30B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AD455239-3DFF-4F5D-A7AB-E4574229C30B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD455239-3DFF-4F5D-A7AB-E4574229C30B}.Debug|x64.ActiveCfg = Debug|Any CPU

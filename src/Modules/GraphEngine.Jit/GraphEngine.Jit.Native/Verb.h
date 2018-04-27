@@ -8,12 +8,12 @@ enum VerbCode : int32_t {
     /* BasicVerb */
     VC_BGet,
     VC_BSet,
-    VC_BEq,
-    VC_BSame,
+    VC_BCmp,
     VC_BLe,
     VC_BLt,
     VC_BGe,
     VC_BGt,
+    VC_BRefEq,
     VC_BHash,
     VC_BCount, // Nr. elements, e.g. wcstrlen
     VC_BSize,  // Size in bytes

@@ -71,6 +71,297 @@ namespace Mixin
         return plan;
     }
 
+    auto is_bool(TypeCode code) { return code == TypeCode::TC_BOOL; }
+    auto is_char(TypeCode code) { return code == TypeCode::TC_CHAR; }
+    auto is_float(TypeCode code)
+    {
+        switch (code)
+        {
+        case TypeCode::TC_F32:
+        case TypeCode::TC_F64:
+            return true;
+        default:
+            return false;
+        }
+    }
+    auto is_signed_int(TypeCode code)
+    {
+        switch (code)
+        {
+        case TypeCode::TC_I8:
+        case TypeCode::TC_I16:
+        case TypeCode::TC_I32:
+        case TypeCode::TC_I64:
+            return true;
+        default:
+            return false;
+        }
+    }
+    auto is_unsigned_int(TypeCode code)
+    {
+        switch (code)
+        {
+        case TypeCode::TC_U8:
+        case TypeCode::TC_U16:
+        case TypeCode::TC_U32:
+        case TypeCode::TC_U64:
+            return true;
+        default:
+            return false;
+        }
+    }
+    auto is_tslhead(TypeCode code)
+    {
+        switch (code)
+        {
+        case TypeCode::TC_U8STRING:
+        case TypeCode::TC_STRING:
+        case TypeCode::TC_LIST:
+            return true;
+        default:
+            return false;
+        }
+    }
+    auto is_atom(TypeCode code) { return is_bool(code) || is_char(code) || is_float(code) || is_signed_int(code) || is_unsigned_int(code); }
+
+    int32_t calculate_shift(int32_t size)
+    {
+        int bits = 0;
+        int shift = 0;
+        for (int i = 0; i < 32; ++i)
+        {
+            if (size & 1)
+            {
+                ++bits;
+                shift = i;
+            }
+
+            size >>= 1;
+        }
+
+        if (bits != 1) return -1;
+        else return shift;
+    }
+
+    void div32(X86Compiler& cc, const X86Gp& t, int32_t len)
+    {
+        auto shift = calculate_shift(len);
+        if (shift == 0)
+        {
+            //just return len
+        }
+        else if (shift > 0)
+        {
+            cc.shr(t, shift);
+        }
+        else
+        {
+            auto dummy   = cc.newInt32("dummy");
+            auto divisor = cc.newInt32("size");
+            cc.xor_(dummy, dummy);
+            cc.mov(divisor, len);
+            cc.idiv(dummy, t, divisor);
+        }
+    }
+
+    template<bool move_pointers>
+    X86Gp compare_block(X86Compiler& cc, X86Gp& p1, X86Gp& p2, X86Gp& len1, X86Gp& len2)
+    {
+        auto label = cc.newLabel();
+        auto label2 = cc.newLabel();
+
+        cc.cmp(len1, len2);
+        cc.jne(label);
+        cc.cmovl(len1, len2);
+
+        if (move_pointers)
+        {
+            cc.add(p1, sizeof(int32_t));
+            cc.add(p2, sizeof(int32_t));
+        }
+
+        auto retreg = cc.newGpReg(TypeId::kI32, "cmpresult");
+        auto call = safecall(cc, memcmp);
+        call->setArg(0, p1);
+        call->setArg(1, p2);
+        call->setArg(2, len1);
+        call->setRet(0, retreg);
+        cc.jmp(label2);
+
+        cc.bind(label);
+        cc.mov(retreg, 1);
+        cc.cmovl(retreg, -1);
+        cc.bind(label2);
+
+        return retreg;
+    }
+
+    X86Gp compare_block(X86Compiler& cc, X86Gp& p1, X86Gp& p2)
+    {
+        auto len1 = cc.newGpd("len1");
+        auto len2 = cc.newGpd("len2");
+
+        cc.mov(len1, x86::dword_ptr(p1));
+        cc.mov(len2, x86::dword_ptr(p2));
+
+        return compare_block<true>(cc, p1, p2, len1, len2);
+    }
+
+    X86Gp push_get_len(X86Compiler& cc, const char* name, X86Gp& base, std::vector<int32_t>& plan)
+    {
+        auto p = cc.newGpq(name);
+        cc.mov(p, base);
+        push(cc, p, plan);
+        cc.sub(p, base);
+        return p;
+    }
+
+    X86Gp compare(X86Compiler& cc, FuncCtx& ctx, const VerbSequence& seq)
+    {
+        auto tid = seq.CurrentTypeId();
+        auto tc = seq.CurrentTypeCode();
+
+        X86Gp val;
+        X86Gp retreg;
+
+        if (!is_float(tc))
+        {
+            val = cc.newGpReg(tid, "value");
+            ctx.addArg(val);
+        }
+
+        if (is_tslhead(tc))
+        {
+            retreg = compare_block(cc, ctx.cellPtr, val);
+        }
+        else if (is_atom(tc))
+        {
+            // simple atom
+            auto atomsize = asmjit::TypeId::sizeOf(tid);
+            retreg = cc.newGpReg(TypeId::kI32, "cmpresult");
+            cc.xor_(retreg, retreg);
+
+            if (is_signed_int(tc))
+            {
+                cc.cmp(x86::ptr(ctx.cellPtr, 0, atomsize), val);
+                cc.cmovg(retreg, 1);
+                cc.cmovl(retreg, -1);
+            }
+            else if (is_unsigned_int(tc) || is_char(tc) || is_bool(tc))
+            {
+                cc.cmp(x86::ptr(ctx.cellPtr, 0, atomsize), val);
+                cc.cmova(retreg, 1);
+                cc.cmovb(retreg, -1);
+            }
+            else if (is_float(tc))
+            {
+                auto xmm = cc.newXmm("xmm");
+                ctx.addArg(xmm);
+
+                /*
+                (V)UCOMISS (all versions)
+                RESULT <- UnorderedCompare(DEST[31:0] <> SRC[31:0]) {
+                (* Set EFLAGS *) CASE (RESULT) OF
+                    UNORDERED:    ZF,PF,CF <- 111;
+                    GREATER_THAN: ZF,PF,CF <- 000;
+                    LESS_THAN:    ZF,PF,CF <- 001;
+                    EQUAL:        ZF,PF,CF <- 100;
+                ESAC;
+                OF, AF, SF <- 0; }
+                */
+
+                if (atomsize == 4) cc.ucomiss(xmm, x86::ptr(ctx.cellPtr, 0, atomsize));
+                else cc.ucomisd(xmm, x86::ptr(ctx.cellPtr, 0, atomsize));
+
+                cc.cmova(retreg, -1);
+                cc.cmovb(retreg, 1);
+            }
+            else
+            {
+                print("unexpected atom type");
+                debug(tc);
+                throw;
+            }
+        }
+        else
+        {
+            auto plan = walk(seq.ptype);
+            assert(tid == TypeId::kUIntPtr);
+
+            if (plan.size() == 0)
+            {
+                // empty struct, return true
+                retreg = cc.newGpd();
+                cc.mov(retreg, 1);
+            }
+            else if (plan.size() == 1 && plan[0] == -1) // single jump block
+            {
+                retreg = compare_block(cc, ctx.cellPtr, val);
+            }
+            else if (plan.size() > 1) // walking
+            {
+                auto p = push_get_len(cc, "p", val, plan);
+                auto q = push_get_len(cc, "q", ctx.cellPtr, plan);
+
+                retreg = compare_block<false>(cc, ctx.cellPtr, val, q, p);
+            }
+            else //fixed copying
+            {
+                retreg = cc.newGpReg(TypeId::kI32, "cmpresult");
+                auto call = safecall(cc, memcmp);
+                auto len1 = imm(plan[0]);
+                call->setArg(0, ctx.cellPtr);
+                call->setArg(1, val);
+                call->setArg(2, len1);
+                call->setRet(0, retreg);
+            }
+        }
+
+        return retreg;
+    }
+
+    X86Gp calc_size(X86Compiler& cc, FuncCtx &ctx, const VerbSequence& seq)
+    {
+        auto tid = seq.CurrentTypeId();
+        auto tc = seq.CurrentTypeCode();
+
+        auto ret = cc.newGpd("size");
+
+        if (is_tslhead(tc))
+        {
+            cc.mov(ret, x86::dword_ptr(ctx.cellPtr));
+        }
+        else if (is_atom(tc))
+        {
+            // simple atom
+            auto atomsize = asmjit::TypeId::sizeOf(tid);
+            cc.mov(ret, atomsize);
+        }
+        else
+        {
+            auto plan = walk(seq.ptype);
+            assert(tid == TypeId::kUIntPtr);
+
+            if (plan.size() == 0)
+            {
+                cc.xor_(ret, ret);
+            }
+            else if (plan.size() == 1 && plan[0] == -1) // single jump block
+            {
+                cc.mov(ret, x86::dword_ptr(ctx.cellPtr));
+            }
+            else if (plan.size() > 1) // walking
+            {
+                auto q = push_get_len(cc, "q", ctx.cellPtr, plan);
+                cc.mov(ret, q.r32());
+            }
+            else //fixed copying
+            {
+                cc.mov(ret, plan[0]);
+            }
+        }
+    }
+
     CONCRETE_MIXIN_DEFINE(BGet)
     {
         print("IN BGET");
@@ -91,7 +382,26 @@ namespace Mixin
             call->setArg(0, ctx.cellPtr);
             call->setRet(0, retreg);
         }
-        else if (tid != TypeId::kUIntPtr)
+        else if (is_float(tc))
+        {
+            auto atomsize = asmjit::TypeId::sizeOf(tid);
+
+            if (atomsize == 4)
+            {
+                auto xmm = cc.newXmmSs("value");
+                cc.vmovss(xmm, x86::dword_ptr(ctx.cellPtr));
+                ctx.ret(xmm);
+                return;
+            }
+            else
+            {
+                auto xmm = cc.newXmmSd("value");
+                cc.vmovsd(xmm, x86::qword_ptr(ctx.cellPtr));
+                ctx.ret(xmm);
+                return;
+            }
+        }
+        else if (is_atom(tc))
         {
             auto atomsize = asmjit::TypeId::sizeOf(tid);
             cc.mov(retreg, x86::ptr(ctx.cellPtr, 0, atomsize));
@@ -136,36 +446,62 @@ namespace Mixin
 
     CONCRETE_MIXIN_DEFINE(BSet)
     {
-        print("IN BSet");
+        print(__FUNCTION__);
 
         auto tid = seq.CurrentTypeId();
         auto tc = seq.CurrentTypeCode();
-        auto src = cc.newGpReg(tid, "value");
-        ctx.addArg(src);
+
+        X86Gp val;
+
+        if (!is_float(tc))
+        {
+            val = cc.newGpReg(tid, "value");
+            ctx.addArg(val);
+        }
 
         if (tc == TypeCode::TC_STRING)
         {
             auto call = safecall(cc, tsl_setstring);
             call->setArg(0, ctx.cellAccessor);
             call->setArg(1, ctx.cellPtr);
-            call->setArg(2, src);
+            call->setArg(2, val);
         }
         else if (tc == TypeCode::TC_U8STRING)
         {
             auto call = safecall(cc, tsl_setu8string);
             call->setArg(0, ctx.cellAccessor);
             call->setArg(1, ctx.cellPtr);
-            call->setArg(2, src);
+            call->setArg(2, val);
         }
-        else if (tid != TypeId::kUIntPtr)
+        else if (is_float(tc))
+        {
+            auto atomsize = asmjit::TypeId::sizeOf(tid);
+            if (atomsize == 4)
+            {
+                auto xmm = cc.newXmmSs("value");
+                ctx.addArg(xmm);
+                cc.vmovss(x86::dword_ptr(ctx.cellPtr), xmm);
+                //cc.movss(x86::ptr(ctx.cellPtr, 0, atomsize), xmm);
+            }
+            else
+            {
+                auto xmm = cc.newXmmSd("value");
+                ctx.addArg(xmm);
+                cc.vmovsd(x86::dword_ptr(ctx.cellPtr), xmm);
+                //cc.movsd(x86::ptr(ctx.cellPtr, 0, atomsize), xmm);
+            }
+
+        }
+        else if (is_atom(tc))
         {
             // simple atom
             auto atomsize = asmjit::TypeId::sizeOf(tid);
-            cc.mov(x86::ptr(ctx.cellPtr, 0, atomsize), src);
+            cc.mov(x86::ptr(ctx.cellPtr, 0, atomsize), val);
         }
         else
         {
             auto plan = walk(seq.ptype);
+            assert(tid == TypeId::kUIntPtr);
 
             if (plan.size() == 0) return; // empty struct
             else if (plan.size() == 1 && plan[0] == -1) // jump
@@ -176,39 +512,29 @@ namespace Mixin
                 //TODO optional
 
                 // load length headers
-                cc.mov(src_len_gp, x86::dword_ptr(src));
+                cc.mov(src_len_gp, x86::dword_ptr(val));
                 cc.mov(dst_len_gp, x86::dword_ptr(ctx.cellPtr));
                 // set length header of dst
                 cc.mov(x86::dword_ptr(dst_len_gp), src_len_gp);
                 cc.add(ctx.cellPtr, 4);
-                cc.add(src, 4);
+                cc.add(val, 4);
 
                 auto call = safecall(cc, tsl_assign);
                 call->setArg(0, ctx.cellAccessor);
                 call->setArg(1, ctx.cellPtr);
-                call->setArg(2, src);
+                call->setArg(2, val);
                 call->setArg(3, dst_len_gp);
                 call->setArg(4, src_len_gp);
             }
             else if (plan.size() > 1) // walking
             {
-                // void* p = src;
-                // void* q = cellPtr
-                auto p = cc.newGpq("p");
-                auto q = cc.newGpq("q");
-                cc.mov(p, src);
-                cc.mov(q, ctx.cellPtr);
-                push(cc, p, plan);
-                push(cc, q, plan);
-                // p & q at end, calculate len
-                cc.sub(p, src);
-                cc.sub(q, ctx.cellPtr);
-
+                auto p = push_get_len(cc, "p", val, plan);
+                auto q = push_get_len(cc, "q", ctx.cellPtr, plan);
                 auto call = safecall(cc, tsl_assign);
 
                 call->setArg(0, ctx.cellAccessor);
                 call->setArg(1, ctx.cellPtr);
-                call->setArg(2, src);
+                call->setArg(2, val);
                 call->setArg(3, q.r32());
                 call->setArg(4, p.r32());
             }
@@ -216,12 +542,125 @@ namespace Mixin
             {
                 auto call = safecall(cc, memcpy);
                 call->setArg(0, ctx.cellPtr);
-                call->setArg(1, src);
+                call->setArg(1, val);
                 call->setArg(2, imm(plan[0]));
             }
         }
 
         ctx.ret();
+    }
+
+    CONCRETE_MIXIN_DEFINE(BCmp)
+    {
+        print(__FUNCTION__);
+        X86Gp ret = compare(cc, ctx, seq);
+        ctx.ret(ret);
+    }
+
+    CONCRETE_MIXIN_DEFINE(BLt)
+    {
+        print(__FUNCTION__);
+        X86Gp cmp = compare(cc, ctx, seq);
+        X86Gp ret = cc.newGpd("ret");
+        cc.xor_(ret, ret);
+        cc.cmp(cmp, ret);
+        cc.cmovb(ret, 1);
+
+        ctx.ret(ret);
+    }
+
+    CONCRETE_MIXIN_DEFINE(BLe)
+    {
+        print(__FUNCTION__);
+        X86Gp cmp = compare(cc, ctx, seq);
+        X86Gp ret = cc.newGpd("ret");
+        cc.xor_(ret, ret);
+        cc.cmp(cmp, ret);
+        cc.cmovbe(ret, 1);
+
+        ctx.ret(ret);
+    }
+
+    CONCRETE_MIXIN_DEFINE(BGt)
+    {
+        print(__FUNCTION__);
+        X86Gp cmp = compare(cc, ctx, seq);
+        X86Gp ret = cc.newGpd("ret");
+        cc.xor_(ret, ret);
+        cc.cmp(cmp, ret);
+        cc.cmova(ret, 1);
+
+        ctx.ret(ret);
+    }
+
+    CONCRETE_MIXIN_DEFINE(BGe)
+    {
+        print(__FUNCTION__);
+        X86Gp cmp = compare(cc, ctx, seq);
+        X86Gp ret = cc.newGpd("ret");
+        cc.xor_(ret, ret);
+        cc.cmp(cmp, ret);
+        cc.cmovae(ret, 1);
+
+        ctx.ret(ret);
+    }
+
+    CONCRETE_MIXIN_DEFINE(BRefEq)
+    {
+        print(__FUNCTION__);
+        auto comparand = cc.newGpq("comparand");
+        auto ret = cc.newGpd("ret");
+        ctx.addArg(comparand);
+        cc.xor_(ret, ret);
+        cc.cmp(ctx.cellPtr, comparand);
+        cc.cmove(ret, 1);
+
+        ctx.ret(ret);
+    }
+
+    CONCRETE_MIXIN_DEFINE(BHash)
+    {
+        print(__FUNCTION__);
+        auto ret = cc.newGpq("ret");
+        auto plan = walk(seq.ptype);
+        auto len = calc_size(cc, ctx, seq);
+    }
+
+    CONCRETE_MIXIN_DEFINE(BCount)
+    {
+        print(__FUNCTION__);
+
+        auto tc = seq.CurrentTypeCode();
+        X86Gp ret;
+        if (tc == TypeCode::TC_LIST)
+        {
+            JITCALL(LCount);
+            return;
+        }
+        else if (tc == TypeCode::TC_U8STRING)
+        {
+            ret = calc_size(cc, ctx, seq);
+        }
+        else if (tc == TypeCode::TC_STRING)
+        {
+            ret = calc_size(cc, ctx, seq);
+            cc.shr(ret, 1);
+        }
+        else
+        {
+            // single element
+            ret = cc.newGpd();
+            cc.mov(ret, 1);
+        }
+
+        cc.ret(ret);
+    }
+
+    CONCRETE_MIXIN_DEFINE(BSize)
+    {
+        print(__FUNCTION__);
+        auto ret = calc_size(cc, ctx, seq);
+        cc.ret(ret);
     }
 
     CONCRETE_MIXIN_DEFINE(SGet)
@@ -247,24 +686,6 @@ namespace Mixin
 
     }
 
-    int32_t calculate_shift(int32_t size)
-    {
-        int bits = 0;
-        int shift = 0;
-        for (int i = 0; i < 32; ++i)
-        {
-            if (size & 1)
-            {
-                ++bits;
-                shift = i;
-            }
-
-            size >>= 1;
-        }
-
-        if (bits != 1) return -1;
-        else return shift;
-    }
 
     CONCRETE_MIXIN_DEFINE(LGet)
     {
@@ -327,6 +748,7 @@ namespace Mixin
 
     }
 
+
     CONCRETE_MIXIN_DEFINE(LCount)
     {
         auto plan = walk(seq.ptype);
@@ -340,23 +762,7 @@ namespace Mixin
         if (plan.size() == 1 && plan[0] > 0)
         {
             //fixed element type
-            auto shift = calculate_shift(plan[0]);
-            if (shift == 0)
-            {
-                //just return len
-            }
-            else if (shift > 0)
-            {
-                cc.shr(len, shift);
-            }
-            else
-            {
-                auto dummy   = cc.newInt32("dummy");
-                auto divisor = cc.newInt32("size");
-                cc.xor_(dummy, dummy);
-                cc.mov(divisor, plan[0]);
-                cc.idiv(dummy, len, divisor);
-            }
+            div32(cc, len, plan[0]);
         }
         else
         {
