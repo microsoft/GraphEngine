@@ -2,6 +2,7 @@ from .type_sys import TSLStruct, TSLCell, TSLList
 from .type_spec import TSLTypeSpec, PrimitiveSpec, ListSpec, CellSpec, StructSpec
 from Redy.Magic.Pattern import Pattern
 from Redy.Magic.Classic import const_return
+import numpy as np
 import typing
 
 
@@ -18,10 +19,22 @@ def type_map_spec(py_type) -> TSLTypeSpec:
     return py_type
 
 
+@type_map_spec.match(chr)
+@const_return
+def type_map_spec(_):
+    return PrimitiveSpec("char", chr)
+
+
+@type_map_spec.match(np.int64)
+@const_return
+def type_map_spec(_):
+    return PrimitiveSpec("int64", np.int64)
+
+
 @type_map_spec.match(int)
 @const_return
 def type_map_spec(_):
-    return PrimitiveSpec("int", int)
+    return PrimitiveSpec("int32", int)
 
 
 @type_map_spec.match(str)

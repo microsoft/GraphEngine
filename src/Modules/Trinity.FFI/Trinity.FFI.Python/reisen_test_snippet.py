@@ -23,26 +23,30 @@ class C1:
     d: S
 
 
-assert C1.get_spec().__str__().strip() == """
-cell C1
-{ 
-int a;
-List<int> b;
-List<S> c;
-S d; 
-}
-""".strip()
+# assert C1.get_spec().__str__().strip() == """
+# cell C1
+# {
+# int a;
+# List<int> b;
+# List<S> c;
+# S d;
+# }
+# """.strip()
 
 from Graph.DotNet.setup import init_trinity_service, build_module
 
 init_trinity_service()
 
-tsl.bind()
 # module = build_module(tsl.to_tsl, "testing")
-
-
+#
 # s = module.New_Struct_S()
 #
 # module.Struct_S_Set_bar(s, 2)
 #
 # print(module.Struct_S_Get_bar(s))
+
+tsl.bind()
+
+c1 = C1()
+c1.a = 1
+print(c1.a)

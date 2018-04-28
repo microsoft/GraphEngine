@@ -3,29 +3,25 @@ from typing import Callable
 from abc import ABC, abstractmethod
 
 
-class TSLObject(ABC):
+class TSLObject:
     get_spec: Callable[[], TSLTypeSpec]
     __accessor__: object
 
     def __init__(self, accessor):
         raise NotImplemented
 
-    @staticmethod
-    @abstractmethod
     def ref(accessor):
         raise NotImplemented
 
-    @staticmethod
-    @abstractmethod
     def deepcopy(self):
         raise NotImplemented
 
 
-class TSLCell(TSLObject):
+class TSLStruct(TSLObject):
     pass
 
 
-class TSLStruct(TSLObject):
+class TSLCell(TSLStruct):
     pass
 
 

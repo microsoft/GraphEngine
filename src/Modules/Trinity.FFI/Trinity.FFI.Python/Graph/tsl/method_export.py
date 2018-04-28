@@ -5,7 +5,7 @@ from .mangling import mangling
 
 from Redy.Tools.TypeInterface import Module
 from Redy.Magic.Pattern import Pattern
-from Redy.Magic.Classic import cast
+from Redy.Magic.Classic import cast, execute
 from typing import Type, List, Tuple
 
 
@@ -74,10 +74,37 @@ def typename_manging(typ: TSLObject) -> str:
 def tsl_generate_methods(tsl_session, cls_def: Type[TSLObject]):
     if issubclass(cls_def, TSLStruct):
         return TSLStruct
-    elif isinstance(cls_def, TSLList):
+    elif issubclass(cls_def, TSLList):
         return TSLList
     else:
+        print(cls_def.__name__, cls_def.__bases__)
         raise TypeError
+
+
+def make_setter_getter_for_primitive(_getter, _setter):
+    @property
+    def getter(self: TSLStruct):
+        return _getter(self.__accessor__)
+
+    @getter.setter
+    def setter(self, value):
+        assert not isinstance(value, TSLObject)
+        _setter(self.__accessor__, value)
+
+    return setter
+
+
+def make_setter_getter_for_general(_getter, _setter, object_cls):
+    @property
+    def getter(self: TSLStruct):
+        return object_cls(_getter(self.__accessor__))
+
+    @getter.setter
+    def setter(self, value):
+        assert isinstance(value, TSLObject)
+        _setter(self.__accessor__, value.__accessor__)
+
+    return setter
 
 
 @tsl_generate_methods.match(TSLStruct)
@@ -100,25 +127,11 @@ def tsl_generate_methods(tsl_session, cls_def: Type[TSLObject]):
         # print (cell.bar)
 
         if isinstance(field_spec, PrimitiveSpec):
-            @property
-            def getter(self: TSLStruct):
-                return _getter(self.__accessor__)
-
-            @getter.setter
-            def setter(self, value):
-                assert not isinstance(value, TSLObject)
-                _setter(self.__accessor__, value)
+            setter = make_setter_getter_for_primitive(_getter, _setter)
         else:
             field_cls = tsl_session.type_specs_to_type[field_spec]
+            setter = make_setter_getter_for_general(_getter, _setter, field_cls)
 
-            @property
-            def getter(self: TSLStruct):
-                return field_cls(_getter(self.__accessor__))
-
-            @getter.setter
-            def setter(self, value):
-                assert isinstance(value, TSLObject)
-                _setter(self.__accessor__, value.__accessor__)
         setattr(cls_def, field_name, setter)
 
     # BGet. deepcopy.
@@ -157,8 +170,8 @@ def tsl_generate_methods(tsl_session, cls_def: Type[TSLObject]):
 @tsl_generate_methods.match(TSLList)
 def tsl_generate_methods(tsl_session, cls_def):
     spec: ListSpec = cls_def.get_spec()
-    typename = type_spec_to_name(spec)
 
+    typename = type_spec_to_name(spec)
     _get, _set, _count, _contains, _deepcopy, _reference_assign, _new_lst = map(
         lambda verb: getattr(tsl_session.module, str(verb)),
         [

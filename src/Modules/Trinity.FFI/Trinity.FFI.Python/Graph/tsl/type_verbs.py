@@ -15,8 +15,11 @@ class Verb:
     BSet: lambda typename: f"Set{mangling_code}{typename}"
     BNew: lambda typename: f"New{mangling_code}{typename}"
 
-    SGet: lambda typename: lambda member_name: f"{typename}{mangling_code}Get{mangling_code}{member_name}"
-    SSet: lambda typename: lambda member_name: f"{typename}{mangling_code}Set{mangling_code}{member_name}"
+    SGet: lambda typename, member_name: f"{typename}{mangling_code}Get{mangling_code}{member_name}"
+    SSet: lambda typename, member_name: f"{typename}{mangling_code}Set{mangling_code}{member_name}"
+
+    def __str__(self):
+        return self.__inst_str__
 
 
 LSet: Callable[[str], Verb] = Verb.LSet

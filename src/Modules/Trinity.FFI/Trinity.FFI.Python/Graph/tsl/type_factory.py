@@ -28,6 +28,22 @@ class TSL:
         self._inferred = False
         self._list_type_id_enum = 0
 
+    @property
+    def module(self):
+        return self._module
+
+    @property
+    def compiled(self):
+        return self._compiled
+
+    @property
+    def inferred(self):
+        return self._inferred
+
+    @property
+    def namespace(self):
+        return self._namespace
+
     def _define(self, cls_def, category=Type[Union[TSLStruct, TSLCell]]):
         if self._compiled:
             raise StateError("This tsl module has been generated, compiled and built yet.")
@@ -59,7 +75,11 @@ class TSL:
                         lst_type = type(f'List{self._list_type_id_enum}',
                                         (TSLList,),
                                         {'__slots__': ['__accessor__']})
-                        lst_type.get_spec = lambda: tsl_type_spec
+
+                        def make_get_spec(it):
+                            return lambda: it
+
+                        lst_type.get_spec = make_get_spec(tsl_type_spec)
                         self.type_specs_to_type[tsl_type_spec] = lst_type
 
                 yield (field_name, tsl_type_spec)
@@ -121,5 +141,5 @@ class TSL:
 
         self._module = build_module(self.to_tsl, self._namespace)
 
-        for lst_type in self.type_specs_to_type.values():
-            tsl_generate_methods(self, lst_type)
+        for type in self.type_specs_to_type.values():
+            tsl_generate_methods(self, type)
