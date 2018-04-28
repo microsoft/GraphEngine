@@ -55,57 +55,12 @@ void* tsl_copy_dynamic(int32_t* ptr)
     return tsl_copy((char*)ptr, len);
 }
 
-template<bool preserve_content>
-void tsl_resize(CellAccessor* accessor, int32_t offset, int32_t delta)
-{
-    char* cellPtr;
-
-    if (accessor->malloced)
-    {
-        if (preserve_content)
-        {
-            // TODO reservation
-            if (delta > 0)
-            {
-                cellPtr = (char*)realloc((void*)accessor->cellPtr, accessor->size + delta);
-                if (cellPtr == nullptr) throw;
-                memmove(
-                    cellPtr + offset + delta,
-                    cellPtr + offset,
-                    (uint64_t)(accessor->size - offset));
-            }
-            else
-            {
-                cellPtr = (char*)accessor->cellPtr;
-                memmove(
-                    cellPtr + offset,
-                    cellPtr + offset - delta,
-                    (uint64_t)(accessor->size - offset + delta));
-                cellPtr = (char*)realloc((void*)accessor->cellPtr, accessor->size + delta);
-                if (cellPtr == nullptr) throw;
-            }
-        }
-        else
-        {
-            cellPtr = (char*)realloc((void*)accessor->cellPtr, accessor->size + delta);
-            if (cellPtr == nullptr) throw;
-        }
-    }
-    else { ::CResizeCell(accessor->cellId, accessor->entryIndex, offset, delta, cellPtr); }
-
-    accessor->cellPtr = reinterpret_cast<int64_t>(cellPtr);
-    accessor->size += delta;
-}
-
 void tsl_assign(CellAccessor* accessor, char* dst, char* src, int32_t size_dst, int32_t size_src)
 {
     if (size_dst != size_src)
     {
         auto offset = reinterpret_cast<int64_t>(dst) - accessor->cellPtr;
-
-        tsl_resize<false>(accessor, offset, size_src - size_dst);
-
-        dst = (char*)(accessor->cellPtr + offset);
+        dst = (char*)tsl_resize<false>(accessor, offset, size_src - size_dst);
     }
 
     memcpy(dst, src, size_src);

@@ -19,6 +19,7 @@ namespace Mixin
         MIXIN(LSet),
         MIXIN(LContains),
         MIXIN(LCount),
+        MIXIN(LInsertAt),
 
         MIXIN(SGet),
         MIXIN(SSet),
