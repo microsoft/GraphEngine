@@ -265,9 +265,9 @@ namespace Mixin
     struct LSet : M<List, ArgT<true>>, NoRet { CONCRETE_MIXIN_DECLARE(LSet); };
     struct LContains : M<List, ArgT<true>, Ret<TypeId::kU32>> { CONCRETE_MIXIN_DECLARE(LContains); };
     struct LCount : M<List, NoArgs<true>, Ret<TypeId::kI32>> { CONCRETE_MIXIN_DECLARE(LCount); };
-    struct LInsertAt : M<List, ArgT<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(LInsertAt); };
-    struct LRemoveAt : M<List, NoArgs<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(LRemoveAt); };
-    struct LAppend : M<ArgT<true>, /*Intercepts Arg chain*/ List, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(LAppend); };
+    struct LInsertAt : M<List, ArgT<true>, Ret<TypeId::kU32>> { CONCRETE_MIXIN_DECLARE(LInsertAt); };
+    struct LRemoveAt : M<List, NoArgs<true>, Ret<TypeId::kU32>> { CONCRETE_MIXIN_DECLARE(LRemoveAt); };
+    struct LAppend : M<ArgT<true>, /*Intercepts Arg chain*/ List, Ret<TypeId::kU32>> { CONCRETE_MIXIN_DECLARE(LAppend); };
     struct LConv : M<NoArgs<true>, /*Intercepts Arg chain */ List, Ret<TypeId::kUIntPtr>> { CONCRETE_MIXIN_DECLARE(LConv); };
 
     struct InlinedList : M<List, IndexInlined> {};
