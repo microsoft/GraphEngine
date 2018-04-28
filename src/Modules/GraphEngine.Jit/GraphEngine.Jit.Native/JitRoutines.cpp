@@ -378,7 +378,7 @@ namespace Mixin
                 auto q = push_get_len(cc, "q", ctx.cellPtr, plan);
                 cc.mov(ret, q.r32());
             }
-            else //fixed copying
+            else //fixed
             {
                 cc.mov(ret, imm(plan[0]));
             }
@@ -529,7 +529,6 @@ namespace Mixin
                 cc.vmovsd(x86::dword_ptr(ctx.cellPtr), xmm);
                 //cc.movsd(x86::ptr(ctx.cellPtr, 0, atomsize), xmm);
             }
-
         }
         else if (is_atom(tc))
         {
@@ -686,8 +685,17 @@ namespace Mixin
     {
         print(__FUNCTION__);
         auto ret = cc.newGpq("ret");
-        auto plan = walk(seq.ptype);
-        auto len = calc_size(cc, ctx, seq);
+        auto tc = seq.CurrentTypeCode();
+        auto tid = seq.CurrentTypeId();
+
+        auto call = safecall(cc, tsl_hash);
+        call->setArg(0, ctx.cellPtr);
+
+        if (is_atom(tc)) { call->setArg(1, imm(TypeId::sizeOf(tid))); }
+        else { call->setArg(1, calc_size(cc, ctx, seq)); }
+
+        call->setRet(0, ret);
+        ctx.ret(ret);
     }
 
     CONCRETE_MIXIN_DEFINE(BCount)

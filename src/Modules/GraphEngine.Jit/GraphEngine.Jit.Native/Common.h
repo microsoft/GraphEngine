@@ -22,16 +22,15 @@ public:
 
 asmjit::TypeId::Id GetTypeId(IN TypeDescriptor* const type);
 
-extern "C"
-{
-    char* tsl_getstring(int32_t* trinity_string_ptr);
-    char* tsl_getu8string(int32_t* trinity_string_ptr);
-    void* tsl_copy(char* ptr, int32_t size);
-    void* tsl_copy_dynamic(int32_t* ptr);
-    void tsl_assign(CellAccessor* accessor, char* dst, char* src, int32_t size_dst, int32_t size_src);
-    void tsl_setstring(CellAccessor* accessor, int32_t* p, u16char* str);
-    void tsl_setu8string(CellAccessor* accessor, int32_t* p, char* trinity_string_ptr);
-    uint64_t tsl_hash(void* ptr, int32_t len);
-    int32_t tsl_newaccessor(CellAccessor* ptr, int32_t len);
-}
+char* tsl_getstring(int32_t* trinity_string_ptr);
+char* tsl_getu8string(int32_t* trinity_string_ptr);
+void* tsl_copy(char* ptr, int32_t size);
+void* tsl_copy_dynamic(int32_t* ptr);
+template<bool> 
+void tsl_resize(CellAccessor* accessor, int32_t offset, int32_t delta);
+void tsl_assign(CellAccessor* accessor, char* dst, char* src, int32_t size_dst, int32_t size_src);
+void tsl_setstring(CellAccessor* accessor, int32_t* p, u16char* str);
+void tsl_setu8string(CellAccessor* accessor, int32_t* p, char* trinity_string_ptr);
+uint64_t tsl_hash(void* ptr, int32_t len);
+int32_t tsl_newaccessor(CellAccessor* ptr, int32_t len);
 

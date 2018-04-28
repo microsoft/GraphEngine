@@ -2,6 +2,7 @@
 #include "Trinity.h"
 #include "CellAccessor.h"
 #include <map>
+#include "Trinity/Hash/NonCryptographicHash.h"
 
 using namespace asmjit;
 
@@ -27,79 +28,124 @@ TypeId::Id GetTypeId(IN TypeDescriptor* const type)
     return i != s_atom_typemap.cend() ? i->second : TypeId::kUIntPtr;
 }
 
-extern "C"
+char* tsl_getstring(int32_t* trinity_string_ptr)
 {
-    char* tsl_getstring(int32_t* trinity_string_ptr)
-    {
-        auto len = *trinity_string_ptr;
-        auto str = Trinity::String::FromWcharArray((u16char*)(trinity_string_ptr + 1), len / 2);
-        return _strdup(str.c_str());
-    }
-
-    char* tsl_getu8string(int32_t* trinity_string_ptr)
-    {
-        int32_t len = 1 + *trinity_string_ptr;
-        char* buf = (char*)malloc(len);
-        if (strcpy_s(buf, len, (char*)(trinity_string_ptr + 1))) return nullptr;
-        else return buf;
-    }
-
-    void* tsl_copy(char* ptr, int32_t size)
-    {
-        auto buf = malloc(size);
-        return memcpy(buf, ptr, size);
-    }
-
-    void* tsl_copy_dynamic(int32_t* ptr)
-    {
-        auto len = sizeof(int) + *ptr;
-        return tsl_copy((char*)ptr, len);
-    }
-
-    void tsl_assign(CellAccessor* accessor, char* dst, char* src, int32_t size_dst, int32_t size_src)
-    {
-        if (size_dst != size_src)
-        {
-            auto offset = reinterpret_cast<int64_t>(dst) - accessor->cellPtr;
-            char* cellPtr;
-            ::CResizeCell(accessor->cellId, accessor->entryIndex, offset, size_src - size_dst, cellPtr);
-            accessor->cellPtr = reinterpret_cast<int64_t>(cellPtr);
-            dst = cellPtr + offset;
-        }
-
-        memcpy(dst, src, size_src);
-    }
-
-    void tsl_setstring(CellAccessor* accessor, int32_t* p, u16char* str)
-    {
-        auto tlen = *p;
-        auto slen = wcslen(str) * sizeof(u16char);
-
-        *p = slen;
-        tsl_assign(accessor, (char*)(p + 1), (char*)str, tlen, slen);
-    }
-
-    void tsl_setu8string(CellAccessor* accessor, int32_t* p, char* trinity_string_ptr)
-    {
-        Trinity::String str(trinity_string_ptr);
-        int32_t tlen = *p;
-        int32_t slen = str.Length();
-
-        *p = slen;
-        tsl_assign(accessor, (char*)(p + 1), (char*)str.c_str(), tlen, slen);
-    }
-
-    int32_t tsl_newaccessor(CellAccessor* paccessor, int32_t len)
-    {
-        auto buf = calloc(1, len);
-
-        if (buf == nullptr) return TrinityErrorCode::E_NOMEM;
-
-        paccessor->cellPtr = (int64_t)buf;
-        paccessor->size = len;
-        paccessor->malloced = 1;
-
-        return TrinityErrorCode::E_SUCCESS;
-    }
+    auto len = *trinity_string_ptr;
+    auto str = Trinity::String::FromWcharArray((u16char*)(trinity_string_ptr + 1), len / 2);
+    return _strdup(str.c_str());
 }
 
+char* tsl_getu8string(int32_t* trinity_string_ptr)
+{
+    int32_t len = 1 + *trinity_string_ptr;
+    char* buf = (char*)malloc(len);
+    if (strcpy_s(buf, len, (char*)(trinity_string_ptr + 1))) return nullptr;
+    else return buf;
+}
+
+void* tsl_copy(char* ptr, int32_t size)
+{
+    auto buf = malloc(size);
+    return memcpy(buf, ptr, size);
+}
+
+void* tsl_copy_dynamic(int32_t* ptr)
+{
+    auto len = sizeof(int) + *ptr;
+    return tsl_copy((char*)ptr, len);
+}
+
+template<bool preserve_content>
+void tsl_resize(CellAccessor* accessor, int32_t offset, int32_t delta)
+{
+    char* cellPtr;
+
+    if (accessor->malloced)
+    {
+        if (preserve_content)
+        {
+            // TODO reservation
+            if (delta > 0)
+            {
+                cellPtr = (char*)realloc((void*)accessor->cellPtr, accessor->size + delta);
+                if (cellPtr == nullptr) throw;
+                memmove(
+                    cellPtr + offset + delta,
+                    cellPtr + offset,
+                    (uint64_t)(accessor->size - offset));
+            }
+            else
+            {
+                cellPtr = (char*)accessor->cellPtr;
+                memmove(
+                    cellPtr + offset,
+                    cellPtr + offset - delta,
+                    (uint64_t)(accessor->size - offset + delta));
+                cellPtr = (char*)realloc((void*)accessor->cellPtr, accessor->size + delta);
+                if (cellPtr == nullptr) throw;
+            }
+        }
+        else
+        {
+            cellPtr = (char*)realloc((void*)accessor->cellPtr, accessor->size + delta);
+            if (cellPtr == nullptr) throw;
+        }
+    }
+    else { ::CResizeCell(accessor->cellId, accessor->entryIndex, offset, delta, cellPtr); }
+
+    accessor->cellPtr = reinterpret_cast<int64_t>(cellPtr);
+    accessor->size += delta;
+}
+
+void tsl_assign(CellAccessor* accessor, char* dst, char* src, int32_t size_dst, int32_t size_src)
+{
+    if (size_dst != size_src)
+    {
+        auto offset = reinterpret_cast<int64_t>(dst) - accessor->cellPtr;
+
+        tsl_resize<false>(accessor, offset, size_src - size_dst);
+
+        dst = (char*)(accessor->cellPtr + offset);
+    }
+
+    memcpy(dst, src, size_src);
+}
+
+void tsl_setstring(CellAccessor* accessor, int32_t* p, u16char* str)
+{
+    auto tlen = *p;
+    auto slen = wcslen(str) * sizeof(u16char);
+
+    *p = slen;
+    tsl_assign(accessor, (char*)(p + 1), (char*)str, tlen, slen);
+}
+
+void tsl_setu8string(CellAccessor* accessor, int32_t* p, char* trinity_string_ptr)
+{
+    Trinity::String str(trinity_string_ptr);
+    int32_t tlen = *p;
+    int32_t slen = str.Length();
+
+    *p = slen;
+    tsl_assign(accessor, (char*)(p + 1), (char*)str.c_str(), tlen, slen);
+}
+
+int32_t tsl_newaccessor(CellAccessor* paccessor, int32_t len)
+{
+    auto buf = calloc(1, len);
+
+    if (buf == nullptr) return TrinityErrorCode::E_NOMEM;
+
+    paccessor->cellPtr = (int64_t)buf;
+    paccessor->size = len;
+    paccessor->malloced = 1;
+
+    return TrinityErrorCode::E_SUCCESS;
+}
+
+uint64_t tsl_hash(void* ptr, int32_t len)
+{
+    uint64_t ret;
+    Trinity::Hash::hash_64(&ret, (uint8_t*)ptr, len);
+    return ret;
+}
