@@ -58,7 +58,8 @@ type NativeCellAccessor =
       mutable CellId          : int64 
       mutable Size            : int32 
       mutable EntryIndex      : int32
-      mutable Type            : uint16 }
+      mutable Type            : uint16
+      mutable IsMalloc        : uint16 }
 
 let AttributeDescriptorToNative(desc: AttributeDescriptor) =
     { Name  = desc.Name  |> ToUtf8

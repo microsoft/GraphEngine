@@ -6,10 +6,12 @@ DLL_EXPORT TrinityErrorCode LockCell(IN OUT CellAccessor& accessor, IN const int
 	char* ptr;
 	auto ret =  ::CGetLockedCellInfo4CellAccessor(accessor.cellId, accessor.size, accessor.type, ptr, accessor.entryIndex);
 	accessor.cellPtr = (int64_t)ptr;
+    accessor.malloced = 0;
 	return ret;
 }
 
 DLL_EXPORT void UnlockCell(IN const CellAccessor& accessor)
 {
-	::CReleaseCellLock(accessor.cellId, accessor.entryIndex);
+    if (accessor.malloced) { free((void*)accessor.cellPtr); }
+    else { ::CReleaseCellLock(accessor.cellId, accessor.entryIndex); }
 }

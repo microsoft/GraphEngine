@@ -23,7 +23,7 @@ namespace GraphEngine.Jit.Playground
         {
             //Console.ReadLine();
 
-            //IntegerBGetBSet();
+            IntegerBGetBSet();
             //FloatBGetBSet();
             //StringBGetBSet();
             //IntegerSGetSet();
@@ -31,7 +31,7 @@ namespace GraphEngine.Jit.Playground
             //IntegerSLGetSet();
             //StringSLGetSet();
             //IntegerSLCount();
-            IntegerCompare();
+            //IntegerCompare();
 
             //byte[] buf = new byte[16];
             //int val = int.Parse(Console.ReadLine());

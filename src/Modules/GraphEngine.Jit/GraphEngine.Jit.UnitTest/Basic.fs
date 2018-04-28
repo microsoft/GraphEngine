@@ -119,6 +119,7 @@ let _AllocAccessor allocsize =
         Size       = allocsize
         EntryIndex = 0
         Type       = 0us
+        IsMalloc   = 1us
     }
 
 let _AllocAccessorWithHeader allocsize = 
@@ -130,6 +131,7 @@ let _AllocAccessorWithHeader allocsize =
         Size       = allocsize + 4
         EntryIndex = 0
         Type       = 0us
+        IsMalloc   = 1us
     }
 
 let _Compile (tdesc: TypeDescriptor) (vs: Verb list) =
@@ -137,6 +139,23 @@ let _Compile (tdesc: TypeDescriptor) (vs: Verb list) =
     for f in fs do
         Assert.NotEqual(IntPtr.Zero, f.CallSite)
     fs
+
+let _AllocAccessorWithBNew (tdesc: TypeDescriptor) =
+    let [bnew] = _Compile tdesc [BNew]
+    let mutable accessor: NativeCellAccessor = {
+        CellPtr = IntPtr.Zero
+        CellId = 0L
+        Type = 0us
+        EntryIndex = -1
+        Size = 0
+        IsMalloc = 0us
+    }
+    let paccessor = &&accessor |> NativePtr.toNativeInt
+
+    let ret = CallHelper.CallByVal<int32>(bnew.CallSite, paccessor)
+    if ret <> 0 then
+        failwith "nomem"
+    accessor
 
 let _BTest (getaccessor) (fn) =
     let mutable accessor = getaccessor()
@@ -165,6 +184,7 @@ let _AtomAssignTest (value: 'a) fn =
 
 let _AtomBGetSet (tdesc: TypeDescriptor) (value: 'a) =
     _AtomAssignTest value <| _BGetSet tdesc (fun () -> _AllocAccessor sizeof<'a>)
+    _AtomAssignTest value <| _BGetSet tdesc (fun () -> _AllocAccessorWithBNew tdesc)
 
 // string setter expect "real" string
 // string getter return "real" string
@@ -238,6 +258,7 @@ let _CellGetSet (cell: ICell) action =
         Type = 0us
         EntryIndex = -1
         Size = 0
+        IsMalloc = 0us
     }
 
     let mutable p: nativeptr<byte> = NativePtr.ofNativeInt (nativeint 0)

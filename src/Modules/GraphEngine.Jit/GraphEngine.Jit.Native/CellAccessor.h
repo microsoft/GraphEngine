@@ -9,6 +9,7 @@ struct CellAccessor
     int32_t size;
     int32_t entryIndex;
     uint16_t type;
+    uint16_t malloced;
 
     CellAccessor() {}
     ~CellAccessor() {}

@@ -88,5 +88,18 @@ extern "C"
         *p = slen;
         tsl_assign(accessor, (char*)(p + 1), (char*)str.c_str(), tlen, slen);
     }
+
+    int32_t tsl_newaccessor(CellAccessor* paccessor, int32_t len)
+    {
+        auto buf = calloc(1, len);
+
+        if (buf == nullptr) return TrinityErrorCode::E_NOMEM;
+
+        paccessor->cellPtr = (int64_t)buf;
+        paccessor->size = len;
+        paccessor->malloced = 1;
+
+        return TrinityErrorCode::E_SUCCESS;
+    }
 }
 

@@ -12,17 +12,3 @@ Verb::~Verb()
         free(Data.MemberName);
     }
 }
-
-bool Verb::is_setter()
-{
-    switch (Code) {
-    case VC_BSet:
-    case VC_GSSet:
-    case VC_SSet:
-    case VC_LSet:
-    case VC_LInlineSet:
-        return true;
-    default:
-        return false;
-    }
-}

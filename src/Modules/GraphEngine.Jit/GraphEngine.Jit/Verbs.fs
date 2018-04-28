@@ -14,6 +14,7 @@ open TypeSystem
 
 type Verb =
     (** BasicVerb **)
+    | BNew
     | BGet
     | BSet
     | BCmp

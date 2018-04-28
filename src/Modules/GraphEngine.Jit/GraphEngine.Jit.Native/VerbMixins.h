@@ -238,6 +238,7 @@ namespace Mixin
 #pragma endregion
 
     struct Basic : virtual VerbMixin {};
+    struct BNew : M<Basic, NoArgs<true>>, Ret<TypeId::kI32> { CONCRETE_MIXIN_DECLARE(BNew); };
     struct BGet : M<Basic, NoArgs<true>>, RetT<true> { CONCRETE_MIXIN_DECLARE(BGet); };
     struct BSet : M<Basic, ArgT<true>>, NoRet { CONCRETE_MIXIN_DECLARE(BSet); };
     struct BCmp : M<Basic, ArgT<true>, Ret<TypeId::kI32>> { CONCRETE_MIXIN_DECLARE(BCmp); };

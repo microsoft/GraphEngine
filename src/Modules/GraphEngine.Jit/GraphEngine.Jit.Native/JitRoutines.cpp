@@ -2,6 +2,7 @@
 #include <cstring>
 #include <algorithm>
 #include <functional>
+#include <numeric>
 #include "VerbMixins.h"
 
 namespace Mixin
@@ -384,9 +385,25 @@ namespace Mixin
         }
     }
 
+    CONCRETE_MIXIN_DEFINE(BNew)
+    {
+        print(__FUNCTION__);
+
+        auto retreg = cc.newGpd("err");
+        auto plan = walk(seq.ptype);
+        auto len = std::accumulate(plan.begin(), plan.end(), 0, [](int32_t cum, int32_t p) { return cum + (p >= 0 ? p : sizeof(int32_t)); });
+
+        auto call = safecall(cc, tsl_newaccessor);
+        call->setArg(0, ctx.cellAccessor);
+        call->setArg(1, imm(len));
+        call->setRet(0, retreg);
+
+        ctx.ret(retreg);
+    }
+
     CONCRETE_MIXIN_DEFINE(BGet)
     {
-        print("IN BGET");
+        print(__FUNCTION__);
 
         auto tid = seq.CurrentTypeId();
         auto tc = seq.CurrentTypeCode();

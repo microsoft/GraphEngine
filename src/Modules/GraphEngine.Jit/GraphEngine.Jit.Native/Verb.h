@@ -6,6 +6,7 @@
 //  !Keep in sync with Verbs.fs
 enum VerbCode : int32_t {
     /* BasicVerb */
+    VC_BNew,
     VC_BGet,
     VC_BSet,
     VC_BCmp,
@@ -61,7 +62,6 @@ struct Verb
     VerbData Data;
 
     ~Verb();
-    bool is_setter();
 };
 
 struct FunctionDescriptor

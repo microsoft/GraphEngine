@@ -5,6 +5,7 @@ namespace Mixin
 #define MIXIN(x) {VerbCode::VC_##x, new x()}
     static std::unordered_map<VerbCode, VerbMixin*> s_mixins =
     {
+        MIXIN(BNew),
         MIXIN(BGet),
         MIXIN(BSet),
         MIXIN(BCmp),

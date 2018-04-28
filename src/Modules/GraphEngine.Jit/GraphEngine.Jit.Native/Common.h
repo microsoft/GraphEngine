@@ -32,5 +32,6 @@ extern "C"
     void tsl_setstring(CellAccessor* accessor, int32_t* p, u16char* str);
     void tsl_setu8string(CellAccessor* accessor, int32_t* p, char* trinity_string_ptr);
     uint64_t tsl_hash(void* ptr, int32_t len);
+    int32_t tsl_newaccessor(CellAccessor* ptr, int32_t len);
 }
 
