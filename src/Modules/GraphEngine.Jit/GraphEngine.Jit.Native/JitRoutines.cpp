@@ -896,30 +896,70 @@ namespace Mixin
         ctx.ret(len);
     }
 
-    void resize(X86Compiler& cc, FuncCtx& ctx, Reg& e, const X86Gp& offset, X86Gp& elen, TypeCode tc, TypeId::Id tid, std::vector<int32_t> &plan)
+    void seek(X86Compiler& cc, FuncCtx& ctx, Label& l_outofrange, Label& l_resize, X86Gp& idx, X86Gp& offset, TypeCode tc, TypeId::Id tid, std::vector<int32_t> &plan)
     {
-        if (!is_atom(tc) && !is_fixed(plan))
-        {
-            elen = push_get_len(cc, "elen", e.as<X86Gp>(), plan);
-        }
-
-        auto resize_call = safecall(cc, tsl_resize<true>);
-        resize_call->setArg(0, ctx.cellAccessor);
-        resize_call->setArg(1, offset.r32());
+        auto l_seek = cc.newLabel();
 
         if (is_atom(tc))
         {
-            resize_call->setArg(2, imm(TypeId::sizeOf(tid)));
+            auto atom_size = TypeId::sizeOf(tid);
+            auto shift = calculate_shift(atom_size);
+            cc.lea(offset, x86::ptr(0, idx, shift, atom_size));
+            cc.cmp(offset.r32(), x86::dword_ptr(ctx.cellPtr));
+            cc.jg(l_outofrange);
+            cc.add(offset, ctx.cellPtr);
         }
-        else if (is_fixed(plan))
+        else
         {
-            resize_call->setArg(2, imm(plan[0]));
+            auto pend = cc.newGpq("pend");
+            auto cnt = cc.newGpd("cnt");
+            cc.movsxd(pend, x86::dword_ptr(ctx.cellPtr));
+            cc.add(pend, ctx.cellPtr);
+            cc.add(pend, imm(4));
+
+            cc.lea(offset, x86::byte_ptr(ctx.cellPtr, /* offset */sizeof(int32_t)));
+
+            cc.bind(l_seek);
+            cc.cmp(offset, pend);
+            cc.jg(l_outofrange);
+
+            cc.lea(cnt, x86::ptr(idx, -1, 1));
+            cc.test(idx, idx);
+            cc.jz(l_resize);
+            cc.mov(idx, cnt);
+
+            push(cc, offset, plan);
+            cc.jmp(l_seek);
+        }
+    }
+
+    void resize(X86Compiler& cc, FuncCtx& ctx, Reg& e, const X86Gp& offset, X86Gp& elen, TypeCode tc, TypeId::Id tid, std::vector<int32_t> &plan, int sign /* expand or shrink */)
+    {
+        auto push_target = (sign == 1) ? e.as<X86Gp>() : offset;
+
+        if (!is_atom(tc) && !is_fixed(plan))
+        {
+            elen = push_get_len(cc, "elen", push_target, plan);
+            if (sign == -1) cc.neg(elen);
+        }
+
+        auto resize_call = safecall(cc, tsl_resize<true>);
+        resize_call->setRet(0, offset);
+        resize_call->setArg(0, ctx.cellAccessor);
+        resize_call->setArg(1, offset.r32());
+
+        //TODO chain up
+        if (is_atom(tc) || is_fixed(plan))
+        {
+            auto i = imm(sign * (plan[0]));
+            resize_call->setArg(2, i);
+            cc.add(x86::dword_ptr(ctx.cellPtr), i);
         }
         else
         {
             resize_call->setArg(2, elen);
+            cc.add(x86::dword_ptr(ctx.cellPtr), elen.r32());
         }
-        resize_call->setRet(0, offset);
     }
 
     void assign(X86Compiler& cc, const Reg& e, const X86Gp& offset, const X86Gp& elen, TypeCode tc, TypeId::Id tid)
@@ -965,47 +1005,16 @@ namespace Mixin
         //  labels
 
         auto l_outofrange = cc.newLabel();
-        auto l_seek       = cc.newLabel();
         auto l_resize     = cc.newLabel();
         auto l_ret        = cc.newLabel();
 
         //  1. seek insertion point
-        if (is_atom(tc))
-        {
-            auto atom_size = TypeId::sizeOf(tid);
-            auto shift = calculate_shift(atom_size);
-            cc.lea(offset, x86::ptr(0, idx, shift, atom_size));
-            cc.cmp(offset.r32(), x86::dword_ptr(ctx.cellPtr));
-            cc.jg(l_outofrange);
-            cc.add(offset, ctx.cellPtr);
-        }
-        else
-        {
-            auto pend = cc.newGpq("pend");
-            auto cnt = cc.newGpd("cnt");
-            cc.movsxd(pend, x86::dword_ptr(ctx.cellPtr));
-            cc.add(pend, ctx.cellPtr);
-            cc.add(pend, imm(4));
-
-            cc.lea(offset, x86::byte_ptr(ctx.cellPtr, /* offset */sizeof(int32_t)));
-
-            cc.bind(l_seek);
-            cc.cmp(offset, pend);
-            cc.jg(l_outofrange);
-
-            cc.lea(cnt, x86::ptr(idx, -1, 1));
-            cc.test(idx, idx);
-            cc.jz(l_resize);
-            cc.mov(idx, cnt);
-
-            push(cc, offset, plan);
-            cc.jmp(l_seek);
-        }
+        seek(cc, ctx, l_outofrange, l_resize, idx, offset, tc, tid, plan);
 
         cc.bind(l_resize);
 
         //  2. obtain length of the element, resize
-        resize(cc, ctx, e, offset, elen, tc, tid, plan);
+        resize(cc, ctx, e, offset, elen, tc, tid, plan, 1);
 
         //  3. assign
         assign(cc, e, offset, elen, tc, tid);
@@ -1037,7 +1046,6 @@ namespace Mixin
         //  labels
 
         auto l_outofrange = cc.newLabel();
-        auto l_seek       = cc.newLabel();
         auto l_ret        = cc.newLabel();
 
         //  1. seek insertion point
@@ -1045,10 +1053,50 @@ namespace Mixin
         cc.lea(offset, x86::byte_ptr(ctx.cellPtr, ret, /*shift*/0, sizeof(int32_t)));
 
         //  2. obtain length of the element, resize
-        resize(cc, ctx, e, offset, elen, tc, tid, plan);
+        resize(cc, ctx, e, offset, elen, tc, tid, plan, 1);
 
         //  3. assign
         assign(cc, e, offset, elen, tc, tid);
+
+        cc.mov(ret, imm(1));
+        cc.bind(l_ret);
+        ctx.ret(ret);
+
+        cc.bind(l_outofrange);
+        cc.mov(ret, imm(0));
+        cc.jmp(l_ret);
+    }
+
+    CONCRETE_MIXIN_DEFINE(LRemoveAt)
+    {
+        print(__FUNCTION__);
+
+        auto plan = walk(seq.ptype);
+        auto tc = seq.CurrentTypeCode();
+        auto tid = seq.CurrentTypeId();
+        auto offset = cc.newGpq("offset");
+
+        auto idx = cc.newGpd("idx");
+        auto ret = cc.newGpd("ret");
+        auto e = new_argument(cc, tc, tid);
+        ctx.addArg(idx);
+        ctx.addArg(e);
+
+        X86Gp elen;
+
+        //  labels
+
+        auto l_outofrange = cc.newLabel();
+        auto l_resize     = cc.newLabel();
+        auto l_ret        = cc.newLabel();
+
+        //  1. seek insertion point
+        seek(cc, ctx, l_outofrange, l_resize, idx, offset, tc, tid, plan);
+
+        cc.bind(l_resize);
+
+        //  2. obtain length of the element, resize
+        resize(cc, ctx, e, offset, elen, tc, tid, plan, -1);
 
         cc.mov(ret, imm(1));
         cc.bind(l_ret);
