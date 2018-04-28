@@ -328,7 +328,7 @@ namespace Mixin
 
                 retreg = compare_block<false>(cc, ctx.cellPtr, val, q, p);
             }
-            else //fixed copying
+            else //fixed 
             {
                 retreg = cc.newGpReg(TypeId::kI32, "cmpresult");
                 auto call = safecall(cc, memcmp);
@@ -637,7 +637,7 @@ namespace Mixin
         X86Gp ret = cc.newGpd("ret");
         cc.xor_(ret, ret);
         cc.cmp(cmp, ret);
-        
+
         auto l1 = cc.newLabel();
 
         cc.jng(l1);
@@ -654,7 +654,7 @@ namespace Mixin
         X86Gp ret = cc.newGpd("ret");
         cc.xor_(ret, ret);
         cc.cmp(cmp, ret);
-                
+
         auto l1 = cc.newLabel();
 
         cc.jnge(l1);
@@ -725,14 +725,14 @@ namespace Mixin
             cc.mov(ret, imm(1));
         }
 
-        cc.ret(ret);
+        ctx.ret(ret);
     }
 
     CONCRETE_MIXIN_DEFINE(BSize)
     {
         print(__FUNCTION__);
         auto ret = calc_size(cc, ctx, seq);
-        cc.ret(ret);
+        ctx.ret(ret);
     }
 
     CONCRETE_MIXIN_DEFINE(SGet)
@@ -757,7 +757,6 @@ namespace Mixin
     {
 
     }
-
 
     CONCRETE_MIXIN_DEFINE(LGet)
     {
@@ -817,12 +816,56 @@ namespace Mixin
 
     CONCRETE_MIXIN_DEFINE(LContains)
     {
+        print(__FUNCTION__);
 
+        auto plan = walk(seq.ptype);
+        auto len = cc.newGpd("list_len");
+        auto ret = cc.newGpd("ret");
+        auto ltrue = cc.newLabel();
+        auto lfalse = cc.newLabel();
+        auto lret = cc.newLabel();
+
+        cc.mov(len, x86::dword_ptr(ctx.cellPtr));
+        cc.cmp(len, imm(0));
+        cc.je(lfalse);
+
+        //if (plan.size() == 1 && plan[0] > 0)
+        //{
+        //    //fixed element type
+        //    //TODO
+        //}
+
+        //keep walking
+        auto l = cc.newLabel();
+        auto pend = cc.newGpq("pend");
+        cc.add(ctx.cellPtr, imm(sizeof(int)));
+        cc.lea(pend, x86::byte_ptr(ctx.cellPtr, len, /*no shift*/ 0, /*no offset*/ 0));
+        cc.bind(l);
+
+        auto comp_result = compare(cc, ctx, seq);
+        cc.xor_(ret, ret);
+        cc.cmp(comp_result, ret);
+        cc.je(ltrue);
+
+        push(cc, ctx.cellPtr, plan);
+        cc.cmp(ctx.cellPtr, pend);
+        cc.jb(l);
+
+        cc.bind(lfalse);
+        cc.xor_(ret, ret);
+        cc.jmp(lret);
+
+        cc.bind(ltrue);
+        cc.mov(ret, imm(1));
+
+        cc.bind(lret);
+        ctx.ret(ret);
     }
-
 
     CONCRETE_MIXIN_DEFINE(LCount)
     {
+        print(__FUNCTION__);
+
         auto plan = walk(seq.ptype);
         auto len = cc.newGpd("list_len");
         cc.mov(len, x86::dword_ptr(ctx.cellPtr));
@@ -841,7 +884,8 @@ namespace Mixin
             //keep walking
             auto l = cc.newLabel();
             auto pend = cc.newGpq("pend");
-            cc.lea(pend, x86::byte_ptr(ctx.cellPtr, len, /*no shift*/ 0, /*offset*/ sizeof(int32_t)));
+            cc.add(ctx.cellPtr, imm(sizeof(int)));
+            cc.lea(pend, x86::byte_ptr(ctx.cellPtr, len, /*no shift*/ 0, /*no offset*/ 0));
             cc.xor_(len, len);
             cc.bind(l);
             push(cc, ctx.cellPtr, plan);
@@ -850,7 +894,7 @@ namespace Mixin
             cc.jb(l);
         }
 
-        cc.ret(len);
+        ctx.ret(len);
     }
 
 }

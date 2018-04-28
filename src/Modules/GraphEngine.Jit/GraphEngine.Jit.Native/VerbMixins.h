@@ -246,7 +246,7 @@ namespace Mixin
     struct BLe : M<Basic, ArgT<true>, Ret<TypeId::kU32>> { CONCRETE_MIXIN_DECLARE(BLe); };
     struct BGt : M<Basic, ArgT<true>, Ret<TypeId::kU32>> { CONCRETE_MIXIN_DECLARE(BGt); };
     struct BGe : M<Basic, ArgT<true>, Ret<TypeId::kU32>> { CONCRETE_MIXIN_DECLARE(BGe); };
-    struct BRefEq : M<Basic, ArgT<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(BRefEq); };
+    struct BRefEq : M<Basic, ArgT<true>, Ret<TypeId::kU32>> { CONCRETE_MIXIN_DECLARE(BRefEq); };
     struct BHash : M<Basic, NoArgs<true>, Ret<TypeId::kU64>> { CONCRETE_MIXIN_DECLARE(BHash); };
     struct BCount : M<Basic, NoArgs<true>, Ret<TypeId::kI32>> { CONCRETE_MIXIN_DECLARE(BCount); };
     struct BSize : M<Basic, NoArgs<true>, Ret<TypeId::kI32>> { CONCRETE_MIXIN_DECLARE(BSize); };
@@ -263,7 +263,7 @@ namespace Mixin
     };
     struct LGet : M<List, NoArgs<false>>, RetRef<false> { CONCRETE_MIXIN_DECLARE(LGet); };
     struct LSet : M<List, ArgT<true>>, NoRet { CONCRETE_MIXIN_DECLARE(LSet); };
-    struct LContains : M<List, ArgT<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(LContains); };
+    struct LContains : M<List, ArgT<true>, Ret<TypeId::kU32>> { CONCRETE_MIXIN_DECLARE(LContains); };
     struct LCount : M<List, NoArgs<true>, Ret<TypeId::kI32>> { CONCRETE_MIXIN_DECLARE(LCount); };
     struct LInsertAt : M<List, ArgT<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(LInsertAt); };
     struct LRemoveAt : M<List, NoArgs<true>, Ret<TypeId::kU8>> { CONCRETE_MIXIN_DECLARE(LRemoveAt); };
