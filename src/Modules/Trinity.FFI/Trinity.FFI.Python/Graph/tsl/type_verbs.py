@@ -1,7 +1,6 @@
-from Redy.Magic.Classic import data
+from Redy.ADT.Core import data
 from typing import Callable
 from .mangling import mangling_code
-
 
 
 @data
@@ -14,6 +13,7 @@ class Verb:
 
     BGet: lambda typename: f"Get{mangling_code}{typename}"
     BSet: lambda typename: f"Set{mangling_code}{typename}"
+    BNew: lambda typename: f"New{mangling_code}{typename}"
 
     SGet: lambda typename: lambda member_name: f"{typename}{mangling_code}Get{mangling_code}{member_name}"
     SSet: lambda typename: lambda member_name: f"{typename}{mangling_code}Set{mangling_code}{member_name}"
@@ -26,6 +26,7 @@ LCotains: Callable[[str], Verb] = Verb.LContains
 
 BGet: Callable[[str], Verb] = Verb.BGet
 BSet: Callable[[str], Verb] = Verb.BSet
+BNew: Callable[[str], Verb] = Verb.BNew
 
 SGet: Callable[[str, str], Verb] = Verb.SGet
 SSet: Callable[[str, str], Verb] = Verb.SSet

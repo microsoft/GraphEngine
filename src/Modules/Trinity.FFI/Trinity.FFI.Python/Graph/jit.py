@@ -1,4 +1,4 @@
-from .utils import Record
+from .utils import record
 import types
 
 

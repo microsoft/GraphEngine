@@ -57,6 +57,7 @@ module SwigGen =
         
         let object'type  = 
             match verb with
+            | BNew
             | BSet
             | BGet -> String.Empty
             | _    -> swig'typestr'mapper (getObjectFromSubjectAndVerb subject verb) 
@@ -66,6 +67,17 @@ module SwigGen =
         
         let render'filter = fun (lst: list<char>) -> lst.Head <> '!'
         match verb with
+        | BNew ->
+            decl <- "static void* New{_}{subject name}();"
+            "static Inst{_}Constructor {_}New{_}{subject name} = (Inst{_}Constructor) {!fn addr};" +/
+            "static void* New{_}{subject name}()" +/
+            "{{" +/
+            "   CellAccessor* accessor = new CellAccessor();" +/
+            "   auto errCode = {_}New{_}{subject name}(accessor);"+/
+            "   if(errCode)" +/
+            "       throw errCode;"+/
+            "   return accessor;" +/
+            "}}"
         (** BSet/BGet works for cell **)
         | BGet ->
             decl <- "static void* Get{_}{subject name}(void *);"

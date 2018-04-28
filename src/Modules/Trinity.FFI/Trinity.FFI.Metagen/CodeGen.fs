@@ -111,13 +111,13 @@ module CodeGen =
         
         fun (moduleName: Name) -> 
             "
-
 %module {moduleName}
 %include <stdint.i>
 %{{
 #include \"swig_accessor.h\"
 #include \"CellAccessor.h\"
 #define SWIG_FILE_WITH_INIT
+typedef void* (*Inst{_}Constructor)(CellAccessor*);
 {source}
 %}}
 {decl}
@@ -126,6 +126,7 @@ module CodeGen =
             |> fun template -> 
                 PString.format template
                                [
+                                "_"          ->> manglingCode
                                 "moduleName" ->> moduleName
                                 "source"     ->> (srcs       |> PString.str'concatBy "\n" )
                                 "decl"       ->> (decls      |> PString.str'concatBy "\n")

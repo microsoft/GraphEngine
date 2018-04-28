@@ -5,7 +5,7 @@ from .mangling import mangling
 
 from Redy.Tools.TypeInterface import Module
 from Redy.Magic.Pattern import Pattern
-from Redy.Magic.Classic import cast, match
+from Redy.Magic.Classic import cast
 from typing import Type, List, Tuple
 
 
@@ -113,7 +113,7 @@ def tsl_generate_methods(tsl_session, cls_def: Type[TSLObject]):
 
             @property
             def getter(self: TSLStruct):
-                return field_cls.ref(_getter(self.__accessor__))
+                return field_cls(_getter(self.__accessor__))
 
             @getter.setter
             def setter(self, value):
@@ -124,18 +124,18 @@ def tsl_generate_methods(tsl_session, cls_def: Type[TSLObject]):
     # BGet. deepcopy.
     # new_cell = cell.deepcopy()
 
-    deepcopy_name = BGet(typename).__str__()
-    _deepcopy = getattr(tsl_session.module, deepcopy_name)
+    deepcopy_fn_name = BGet(typename).__str__()
+    _deepcopy = getattr(tsl_session.module, deepcopy_fn_name)
 
     def deepcopy(self) -> cls_def:
-        return cls_def.ref(_deepcopy(self.__accessor__))
+        return cls_def(_deepcopy(self.__accessor__))
 
     cls_def.deepcopy = deepcopy
 
     # BSet. change value by reference.
     # cell &= another_cell
-    reference_assign_name = BGet(typename).__str__()
-    _reference_assign = getattr(tsl_session.module, reference_assign_name)
+    reference_assign_fn_name = BGet(typename).__str__()
+    _reference_assign = getattr(tsl_session.module, reference_assign_fn_name)
 
     def reference_assign(self, value):
         assert isinstance(value, TSLObject)
@@ -144,7 +144,14 @@ def tsl_generate_methods(tsl_session, cls_def: Type[TSLObject]):
     cls_def.__iand__ = reference_assign
 
     # New a Cell/Struct
-    raise NotImplemented
+    # my_cell = MyCell()
+    new_struct_fn_name = BNew(typename).__str__()
+    _new_struct = getattr(tsl_session.module, new_struct_fn_name)
+
+    def new_struct(self):
+        self.__accessor__ = _new_struct()
+
+    cls_def.__init__ = new_struct
 
 
 @tsl_generate_methods.match(TSLList)
@@ -152,7 +159,7 @@ def tsl_generate_methods(tsl_session, cls_def):
     spec: ListSpec = cls_def.get_spec()
     typename = type_spec_to_name(spec)
 
-    _get, _set, _count, _contains, _deepcopy, _reference_assign = map(
+    _get, _set, _count, _contains, _deepcopy, _reference_assign, _new_lst = map(
         lambda verb: getattr(tsl_session.module, str(verb)),
         [
             LGet(typename),
@@ -160,7 +167,8 @@ def tsl_generate_methods(tsl_session, cls_def):
             LCount(typename),
             LCotains(typename),
             BGet(typename),
-            BSet(typename)
+            BSet(typename),
+            BNew(typename)
         ])
 
     # Index getter/setter
@@ -176,7 +184,7 @@ def tsl_generate_methods(tsl_session, cls_def):
         field_cls = tsl_session.type_specs_to_type[spec.elem_type]
 
         def __getitem__(self, i: int):
-            return field_cls.ref(_get(self.__accessor__, i))
+            return field_cls(_get(self.__accessor__, i))
 
         def __setitem__(self, i: int, value):
             assert isinstance(value, (TSLList, TSLStruct))
@@ -204,4 +212,7 @@ def tsl_generate_methods(tsl_session, cls_def):
     cls_def.__contains__ = __contains__
 
     # New a List
-    raise NotImplemented
+    def new_lst(self):
+        self.__accessor__ = _new_lst()
+
+    cls_def.__init__ = new_lst

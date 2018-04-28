@@ -61,7 +61,7 @@ module MetaGen =
              (** primitive type **)
              raise (NotImplementedException())
 
-        |> fun tail -> [BGet; BSet] |> Seq.map (render type') |> Seq.append tail 
+        |> fun tail -> [BGet; BSet; BNew] |> Seq.map (render type') |> Seq.append tail 
     
     let rec TypeInfer(anyType: TypeDescriptor): seq<TypeDescriptor> = 
     (** inference out the descriptors of struct types and generic list types in a cell descriptor.**)
@@ -85,7 +85,7 @@ module MetaGen =
         schema.CellDescriptors
         |> Seq.map Make
         |> Seq.collect TypeInfer
-        |> Seq.distinct
+        |> Seq.distinctBy (fun typeDesc -> typeDesc.QualifiedName)
         |> Seq.map (fun typeDesc ->
                 typeDesc
                 |> render'operations render

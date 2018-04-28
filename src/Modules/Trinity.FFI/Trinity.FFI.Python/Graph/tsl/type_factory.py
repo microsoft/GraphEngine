@@ -3,6 +3,7 @@ from .type_sys import *
 from .method_export import tsl_generate_methods
 from ..utils import raise_exc, ImmutableDict
 from ..err import StateError
+from ..DotNet.env import Env, build_module
 
 from typing import Dict, Union, List, Type, Set
 from Redy.Magic.Classic import execute
@@ -11,15 +12,24 @@ TSLExplicitDefinitionType = Union[TSLCell, TSLStruct]
 
 
 class TSL:
-    def __init__(self):
-        self.tsl_explicit_definitions: 'Dict[str, Type[TSLExplicitDefinitionType]]' = {}
+    _default_num = 0
+
+    def __init__(self, namespace=None):
+        if namespace is None:
+            namespace = f'default{self._default_num}'
+            TSL._default_num += 1
+
+        self._namespace = namespace
         self.type_specs_to_type: Dict[TSLTypeSpec, type] = {}
-        self.module = None
-        self.compiled = False
+
+        self._tsl_explicit_definitions: 'Dict[str, Type[TSLExplicitDefinitionType]]' = {}
+        self._module = None
+        self._compiled = False
+        self._inferred = False
         self._list_type_id_enum = 0
 
     def _define(self, cls_def, category=Type[Union[TSLStruct, TSLCell]]):
-        if self.compiled:
+        if self._compiled:
             raise StateError("This tsl module has been generated, compiled and built yet.")
 
         __annotations__ = cls_def.__annotations__
@@ -39,7 +49,7 @@ class TSL:
                 @execute
                 def tsl_type_spec() -> TSLTypeSpec:
                     if isinstance(py_type, str):
-                        return self.tsl_explicit_definitions[py_type].get_spec()
+                        return self._tsl_explicit_definitions[py_type].get_spec()
                     else:
                         return type_map_spec(py_type)
 
@@ -64,11 +74,13 @@ class TSL:
 
         new_cls.get_spec = get_spec
 
-        if new_cls.__name__ in self.tsl_explicit_definitions:
+        if new_cls.__name__ in self._tsl_explicit_definitions:
             # Forbidden redefinitions/definitions of same names.
             raise TypeError(f"Tsl type named {new_cls.__name__} has been used.")
 
-        self.tsl_explicit_definitions[new_cls.__name__] = new_cls
+        self._tsl_explicit_definitions[new_cls.__name__] = new_cls
+        # do not add explicit types(struct, cell) to `type_specs_to_type` now,
+        # it would be done at `self.bind()`
 
         return new_cls
 
@@ -85,25 +97,29 @@ class TSL:
         >>> class MyList(List[int]):
         >>>     pass
         """
-        lst_type = cls_def.__bases__[0]
+        lst_type = cls_def.__bases__[0]  # the first type in the __bases__ should be List[a]
+
         return self.type_specs_to_type[type_map_spec(lst_type)]
+
+    def __str__(self):
+        return f"TSL module[{self._namespace}] with {','.join(map(lambda _: _.__name__, self.type_specs_to_type.values()))}"
 
     @property
     def to_tsl(self):
-        return '\n'.join(str(typedef.get_spec()) for _, typedef in self.tsl_explicit_definitions.items())
+        return '\n'.join(str(typedef.get_spec()) for _, typedef in self._tsl_explicit_definitions.items())
 
-    def fly(self) -> None:
+    def bind(self) -> None:
         """
-        TODO: I don't know how to name this function exactly.
+        TODO: I don't know how to name it exactly.
         Action:
             generate, build and load tsl scripts, and generate methods by using Trinity.FFI.Metagen and swig builder.
         """
-        for _, typ in self.tsl_explicit_definitions.items():
-            self.type_specs_to_type[typ.get_spec()] = typ
+        if not self._inferred:
+            for _, typ in self._tsl_explicit_definitions.items():
+                self.type_specs_to_type[typ.get_spec()] = typ
+            self._inferred = True
 
-        module = self.module = tsl_build_src_code(self.to_tsl)
-        for name, typ in self.tsl_explicit_definitions.items():
-            tsl_generate_methods(self, typ)
+        self._module = build_module(self.to_tsl, self._namespace)
 
-        for lst_type in self.type_specs_to_type:
+        for lst_type in self.type_specs_to_type.values():
             tsl_generate_methods(self, lst_type)

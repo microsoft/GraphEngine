@@ -7,6 +7,9 @@ class TSLObject(ABC):
     get_spec: Callable[[], TSLTypeSpec]
     __accessor__: object
 
+    def __init__(self, accessor):
+        raise NotImplemented
+
     @staticmethod
     @abstractmethod
     def ref(accessor):

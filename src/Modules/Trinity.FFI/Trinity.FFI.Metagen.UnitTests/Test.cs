@@ -39,10 +39,8 @@ namespace Trinity.FFI.Metagen.UnitTests
         {
             var swig = MetaGen.GenerateSwig(ManglingCode).Invoke(Schema);
             swig
-                .Take(2)
                 .Each(_ =>
                       _.Item2
-                       .Take(2)
                        .Each(swigCodeGetter =>
                              swigCodeGetter
                              .Item2

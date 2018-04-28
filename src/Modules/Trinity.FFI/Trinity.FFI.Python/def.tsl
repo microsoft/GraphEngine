@@ -1,0 +1,12 @@
+struct S
+{ 
+List<int> foo;
+string bar; 
+}
+cell C1
+{ 
+int a;
+List<int> b;
+List<S> c;
+S d; 
+}

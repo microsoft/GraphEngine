@@ -1,5 +1,4 @@
 from Graph.tsl import type_sys, type_map, type_spec, type_factory
-from Graph.tsl.type_factory import ImmutableDict
 from typing import List
 
 assert type_map.type_map_spec(str) == type_spec.PrimitiveSpec("string", str)
@@ -12,8 +11,8 @@ tsl = type_factory.TSL()
 
 @tsl.struct
 class S:
-    foo: List[int]
-    bar: str
+    foo: List[str]
+    bar: int
 
 
 @tsl.cell
@@ -33,3 +32,17 @@ List<S> c;
 S d; 
 }
 """.strip()
+
+from Graph.DotNet.setup import init_trinity_service, build_module
+
+init_trinity_service()
+
+tsl.bind()
+# module = build_module(tsl.to_tsl, "testing")
+
+
+# s = module.New_Struct_S()
+#
+# module.Struct_S_Set_bar(s, 2)
+#
+# print(module.Struct_S_Get_bar(s))

@@ -1,6 +1,6 @@
 from abc import abstractmethod, ABC
 from typing import Dict, Tuple
-from ..utils import Record, ImmutableDict
+from ..utils import record, ImmutableDict
 
 isa = isinstance
 
@@ -17,7 +17,7 @@ class TSLTypeSpec(ABC):
         pass
 
 
-@Record
+@record
 class PrimitiveSpec(TSLTypeSpec):
     tsl_name: str
     py_name: str
@@ -26,7 +26,7 @@ class PrimitiveSpec(TSLTypeSpec):
         return f'{self.tsl_name}'
 
 
-@Record
+@record
 class ListSpec(TSLTypeSpec):
     elem_type: TSLTypeSpec
 
@@ -34,7 +34,7 @@ class ListSpec(TSLTypeSpec):
         return f'List<{(lambda _: _.name if isinstance(_, StructSpec) else _)(self.elem_type)}>'
 
 
-@Record
+@record
 class StructSpec(TSLTypeSpec):
     """
     >>> print(StructSpec("S", {"i": PrimitiveSpec("int", "int")}))
@@ -48,7 +48,7 @@ class StructSpec(TSLTypeSpec):
         return f'struct {self.name}\n{{ \n{n.join(map(_field_to_str, self.fields.items()))} \n}}'
 
 
-@Record
+@record
 class CellSpec(StructSpec):
     name: str
     fields: ImmutableDict[str, TSLTypeSpec]
