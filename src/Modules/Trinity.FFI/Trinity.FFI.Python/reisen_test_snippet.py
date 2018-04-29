@@ -65,5 +65,14 @@ c1.a = 1
 
 print(c1.a)
 
-lst2 = module.New_List_int32()
-module.Insert_List_int32(lst2, 0, 1)
+s = S()
+s.bar = 5
+
+s_acc = s.__accessor__
+
+module.Cell_C1_Set_d(c1.__accessor__, s_acc)
+
+# c1.d = s
+
+# lst2 = module.New_List_int32()
+# module.Insert_List_int32(lst2, 0, 1)
