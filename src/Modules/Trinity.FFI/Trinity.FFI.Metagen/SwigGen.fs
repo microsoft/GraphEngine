@@ -136,18 +136,18 @@ module SwigGen =
             "}}"
 
         | LInsertAt ->
-            decl <- PString.format "static void Insert{_}{subject name}(void*, int, {object type});" TemplateArgs
-            "static void (* {_}Insert{_}{subject name})(void*, int, {object type}) = (void, (*)(void*, int, {object type})) {!fn addr};"+/
-            "static void Insert{_}{subject name}(void* subject, int idx, {object type} object)" +/
+            decl <- PString.format "static bool Insert{_}{subject name}(void*, int, {object type});" TemplateArgs
+            "static bool (* {_}Insert{_}{subject name})(void*, int, {object type}) = (bool (*)(void*, int, {object type})) {!fn addr};"+/
+            "static bool Insert{_}{subject name}(void* subject, int idx, {object type} object)" +/
             "{{" +/
             "   return {_}Insert{_}{subject name}(subject, idx, object);"+/
             "}}"
         
         | LRemoveAt ->
-            decl <- PString.format "static void Remove{_}{subject name}(void*, int);" TemplateArgs
+            decl <- PString.format "static bool Remove{_}{subject name}(void*, int);" TemplateArgs
             
-            "static void (* {_}Remove{_}{subject name})(void*, int) = (void (*)(void*, int)) {!fn addr};" +/
-            "static void Remove{_}{subject name}(void* subject, int idx)"+/
+            "static bool (* {_}Remove{_}{subject name})(void*, int) = (bool (*)(void*, int)) {!fn addr};" +/
+            "static bool Remove{_}{subject name}(void* subject, int idx)"+/
             "{{"+/
             "   return {_}Remove{_}{subject name}(subject, idx);"+/
             "}}"

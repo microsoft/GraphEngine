@@ -23,45 +23,6 @@ def type_spec_to_name(typ: TSLTypeSpec) -> str:
         return str(typ)
 
 
-@Pattern
-def get_verbs(spec: TSLTypeSpec) -> List[Tuple[str, List[Verb]]]:
-    """
-    get ffi function name from
-    """
-    # noinspection PyTypeChecker
-    return type(spec)
-
-
-@get_verbs.match(ListSpec)
-def get_verbs(spec):
-    typename = type_spec_to_name(spec)
-
-    return [(list.__name__,
-             [
-                 LGet(typename),
-                 LSet(typename),
-                 LCount(typename),
-                 LCotains(typename),
-                 BGet(typename),
-                 BSet(typename)
-             ])]
-
-
-@get_verbs.match(StructSpec)
-@cast(list)
-def get_verbs(spec: StructSpec):
-    typename = type_spec_to_name(spec)
-    for field_name, _ in spec.fields.items():
-        _field_name = mangling(field_name)
-        yield (
-            field_name,
-            [
-                SGet(typename, _field_name),
-                SSet(typename, _field_name),
-            ])
-    yield from (spec.name, [BGet(typename), BGet(typename)])
-
-
 def tsl_build_src_code(code: str) -> Module:
     raise NotImplemented
 
@@ -94,10 +55,12 @@ def make_setter_getter_for_primitive(_getter, _setter):
     return setter
 
 
-def make_setter_getter_for_general(_getter, _setter, object_cls):
+def make_setter_getter_for_general(_getter, _setter, object_cls: Type[TSLObject]):
     @property
     def getter(self: TSLStruct):
-        return object_cls(_getter(self.__accessor__))
+        new = object_cls.__new__(object_cls)
+        new.__accessor__ = _getter(self.__accessor__)
+        return new
 
     @getter.setter
     def setter(self, value):
@@ -141,7 +104,9 @@ def tsl_generate_methods(tsl_session, cls_def: Type[TSLObject]):
     _deepcopy = getattr(tsl_session.module, deepcopy_fn_name)
 
     def deepcopy(self) -> cls_def:
-        return cls_def(_deepcopy(self.__accessor__))
+        new = cls_def.__new__(cls_def)
+        new.__accessor__ = _deepcopy(self.__accessor__)
+        return new
 
     cls_def.deepcopy = deepcopy
 
@@ -172,19 +137,22 @@ def tsl_generate_methods(tsl_session, cls_def):
     spec: ListSpec = cls_def.get_spec()
 
     typename = type_spec_to_name(spec)
-    _get, _set, _count, _contains, _deepcopy, _reference_assign, _new_lst = map(
+    (_get, _set, _count, _contains, _insert, _remove, _append, _deepcopy, _reference_assign, _new_lst) = map(
         lambda verb: getattr(tsl_session.module, str(verb)),
         [
             LGet(typename),
             LSet(typename),
             LCount(typename),
-            LCotains(typename),
+            LContains(typename),
+            LInsertAt(typename),
+            LRemoveAt(typename),
+            LAppend(typename),
             BGet(typename),
             BSet(typename),
             BNew(typename)
         ])
 
-    # Index getter/setter
+    # Index getter/setter, insert, remove, append
     if isinstance(spec.elem_type, PrimitiveSpec):
         def __getitem__(self, i: int):
             return _get(self.__accessor__, i)
@@ -193,18 +161,38 @@ def tsl_generate_methods(tsl_session, cls_def):
             assert not isinstance(value, (TSLList, TSLStruct))
             _set(self.__accessor__, i, value)
 
+        def insert(self, i: int, value) -> bool:
+            return _insert(self.__accessor__, i, value)
+
+        def append(self, value):
+            _append(self.__accessor__, value)
+
     else:
         field_cls = tsl_session.type_specs_to_type[spec.elem_type]
 
         def __getitem__(self, i: int):
-            return field_cls(_get(self.__accessor__, i))
+            new = field_cls.__new__(field_cls)
+            new.__accessor__ = _get(self.__accessor__, i)
+            return new
 
         def __setitem__(self, i: int, value):
             assert isinstance(value, (TSLList, TSLStruct))
             _set(self.__accessor__, i, value.__accessor__)
 
+        def insert(self, i: int, value):
+            return _insert(self.__accessor__, i, value.__accessor__)
+
+        def append(self, value):
+            _append(self.__accessor__, value.__accessor__)
+
+    def remove_at(self, i: int):
+        return _remove(self.__accessor__, i)
+
     cls_def.__getitem__ = __getitem__
     cls_def.__setitem__ = __setitem__
+    cls_def.append = append
+    cls_def.remove_at = remove_at
+    cls_def.insert = insert
 
     # len(lst: TSLList) -> int
     def __len__(self):
