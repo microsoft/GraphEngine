@@ -72,6 +72,7 @@ struct TypeDescriptor
         __deepcopy(TypeName, other.TypeName);
         __deepcopy(QualifiedName, other.QualifiedName);
         TypeCode = other.TypeCode;
+        CellType = other.CellType;
         __deepcopy_arr(ElementType, ElementArity, other.ElementType, other.ElementArity);
         __deepcopy_arr(Members, NrMember, other.Members, other.NrMember);
         __deepcopy_arr(TSLAttributes, NrTSLAttribute, other.TSLAttributes, other.NrTSLAttribute);
@@ -105,9 +106,14 @@ struct TypeDescriptor
         return __get_ptrs(TSLAttributes, NrTSLAttribute);
     }
 
-    int get_TypeCode()
+    int16_t get_TypeCode()
     {
         return TypeCode;
+    }
+
+    uint16_t get_CellType()
+    {
+        return CellType;
     }
 
 private:
@@ -121,7 +127,8 @@ private:
     int32_t              NrMember;
     int32_t              NrTSLAttribute;
     int32_t              ElementArity;  // 1 for list
-    int32_t              TypeCode;
+    int16_t              TypeCode;
+    uint16_t             CellType;
 
 };
 
@@ -169,7 +176,7 @@ struct MemberDescriptor
 };
 
 //  !Keep in sync with TypeSystem.fs
-enum TypeCode : int32_t {
+enum TypeCode : int16_t {
     TC_NULL
     , TC_U8, TC_U16, TC_U32, TC_U64
     , TC_I8, TC_I16, TC_I32, TC_I64

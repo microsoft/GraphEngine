@@ -31,7 +31,7 @@ module MetaGen =
         | {TypeCode=LIST; ElementType=elemType}  -> 
                 let elemTypeName = elemType |> Seq.head |> (make'name manglingCode)
                 PString.format "List{_}{elem}"          ["_" ->> manglingCode; "elem"       ->> elemTypeName]
-        | {TypeCode=CELL; TypeName=cellName}     ->
+        | {TypeCode=CELL _; TypeName=cellName}     ->
                 PString.format "Cell{_}{cellName}"      ["_" ->> manglingCode; "cellName"   ->> m_mangling cellName]
         | {TypeCode=STRUCT; TypeName=structName} ->
                  PString.format "Struct{_}{structName}" ["_" ->> manglingCode; "structName" ->> m_mangling structName]
@@ -40,7 +40,7 @@ module MetaGen =
     
     let render'operations (render : TypeDescriptor -> Verb -> 'T ) (type': TypeDescriptor) : seq<'T> =
         match type' with
-        | {TypeCode=CELL; Members=members}
+        | {TypeCode=CELL _; Members=members}
         | {TypeCode=STRUCT; Members=members}    ->
            members
            |> Seq.collect (
@@ -69,7 +69,7 @@ module MetaGen =
         | {TypeCode=LIST; ElementType = elemType} -> 
                 anyType >>> TypeInfer (Seq.head elemType)
 
-        | {TypeCode=CELL; Members=members}
+        | {TypeCode=CELL _; Members=members}
         | {TypeCode=STRUCT; Members=members}      -> 
                 members
                 |> Seq.collect (fun field -> field.Type |> TypeInfer)

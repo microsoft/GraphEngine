@@ -29,7 +29,8 @@ type NativeTypeDescriptor =
       NrMember        : int32
       NrTSLAttribute  : int32
       ElementArity    : int32
-      TypeCode        : int32 } 
+      TypeCode        : int16
+      CellType        : uint16 } 
 
 [<StructLayout(LayoutKind.Sequential, Pack = 1)>]
 [<Struct>]
@@ -59,7 +60,8 @@ type NativeCellAccessor =
       mutable Size            : int32 
       mutable EntryIndex      : int32
       mutable Type            : uint16
-      mutable IsMalloc        : uint16 }
+      mutable IsCell          : uint8
+      mutable IsMalloc        : uint8 }
 
 let AttributeDescriptorToNative(desc: AttributeDescriptor) =
     { Name  = desc.Name  |> ToUtf8
@@ -73,7 +75,8 @@ let rec MemberDescriptorToNative(mdesc: MemberDescriptor) =
 and TypeDescriptorToNative(desc: TypeDescriptor) = 
     { TypeName       = desc.TypeName      |> ToUtf8
       QualifiedName  = desc.QualifiedName |> ToUtf8
-      TypeCode       = desc.TypeCode      |> ToUnionTag
+      TypeCode       = desc.TypeCode      |> ToUnionTag |> int16
+      CellType       = match desc.TypeCode with | CELL ct -> ct; | _ -> 0us
       NrMember       = desc.Members       |> Seq.length
       NrTSLAttribute = desc.TSLAttributes |> Seq.length
       ElementArity   = desc.ElementType   |> Seq.length

@@ -18,7 +18,7 @@ type TypeCode =
     | BOOL 
     | CHAR    | STRING  | U8STRING
     | LIST
-    | STRUCT  | CELL
+    | STRUCT  | CELL of CellType: uint16
 
 let AtomWidthMap = 
     [ (U8,   1);
@@ -120,6 +120,6 @@ let Make (cellDesc: ICellDescriptor) =
       ElementType                            = Seq.empty
       Members                                = Seq.map MakeMember <| cellDesc.GetFieldDescriptors()
       TSLAttributes                          = cellDesc.Attributes |> Seq.map MakeAttr
-      TypeCode                               = TypeCode.CELL }
+      TypeCode                               = TypeCode.CELL cellDesc.CellType }
 
 let TryGetTypeWidth(T: TypeDescriptor) = AtomWidthMap.TryFind T.TypeCode
