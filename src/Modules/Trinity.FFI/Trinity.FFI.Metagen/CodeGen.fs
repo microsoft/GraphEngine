@@ -83,8 +83,8 @@ module CodeGen =
             
                 let subject'name = name'maker manglingCode subject
             
-                if subject.TypeCode = CELL
-                then 
+                match subject.TypeCode with
+                | CELL _ ->
                    let func_name = sprintf "Use%c%s" manglingCode subject'name
                    let decl_head = sprintf "CellAccessor* %s(int64_t cellid, int32_t options)" func_name
                    use_newobj.Add("%newobject " + func_name + ";")
@@ -102,7 +102,7 @@ module CodeGen =
                                " decl_head
 
                    reducer tail ((sprintf "%s;" decl_head)::extended'definitions) (src::extended'sources)
-                else
+                | _ ->
                    reducer tail extended'definitions extended'sources
             | _     ->
                 List.rev definitions, List.rev sources
