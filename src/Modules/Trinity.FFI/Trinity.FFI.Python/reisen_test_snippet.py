@@ -53,6 +53,8 @@ class LI(List[int]):
     pass
 
 
+module = tsl.module
+
 lst = LI()
 
 print(len(lst))
@@ -62,3 +64,6 @@ c1 = C1()
 c1.a = 1
 
 print(c1.a)
+
+lst2 = module.New_List_int32()
+module.Insert_List_int32(lst2, 0, 1)
