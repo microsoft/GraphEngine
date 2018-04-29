@@ -45,7 +45,7 @@ class StructSpec(TSLTypeSpec):
     def __str__(self):
         n = '\n'
 
-        return f'struct {self.name}\n{{ \n{n.join(map(_field_to_str, self.fields.items()))} \n}}'
+        return f'struct {self.name}\n{{\n{n.join(map(_field_to_str, self.fields.items()))}\n}}'
 
 
 @record
@@ -55,7 +55,7 @@ class CellSpec(StructSpec):
 
     def __str__(self):
         n = '\n'
-        return f'cell {self.name}\n{{ \n{n.join(map(_field_to_str, self.fields.items()))} \n}}'
+        return f'cell {self.name}\n{{\n{n.join(map(_field_to_str, self.fields.items()))}\n}}'
 
 
 if __name__ == '__main__':
