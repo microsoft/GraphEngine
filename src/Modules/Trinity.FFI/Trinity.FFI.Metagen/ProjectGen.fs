@@ -1,3 +1,0 @@
-﻿namespace Trinity.FFI.Metagen
-
-

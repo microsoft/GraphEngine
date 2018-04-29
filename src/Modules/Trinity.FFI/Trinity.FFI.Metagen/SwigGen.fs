@@ -127,13 +127,37 @@ module SwigGen =
             "}}"
 
         | LContains ->
-
             decl <- PString.format "static bool Contains{_}{subject name}(void*, {object type});" TemplateArgs;
             
             "static bool (* {_}Contains{_}{subject name})(void*, {object type}) = (bool (*)(void*, {object type})) {!fn addr};" +/
             "static bool Contains{_}{subject name}(void* subject, {object type} object)" +/
             "{{" +/
             "    return {_}Contains{_}{subject name}(subject, object);" +/
+            "}}"
+
+        | LInsertAt ->
+            decl <- PString.format "static void Insert{_}{subject name}(void*, int, {object type});" TemplateArgs
+            "static void (* {_}Insert{_}{subject name})(void*, int, {object type}) = (void, (*)(void*, int, {object type})) {!fn addr};"+/
+            "static void Insert{_}{subject name}(void* subject, int idx, {object type} object)" +/
+            "{{" +/
+            "   return {_}Insert{_}{subject name}(subject, idx, object);"+/
+            "}}"
+        
+        | LRemoveAt ->
+            decl <- PString.format "static void Remove{_}{subject name}(void*, int);" TemplateArgs
+            
+            "static void (* {_}Remove{_}{subject name})(void*, int) = (void (*)(void*, int)) {!fn addr};" +/
+            "static void Remove{_}{subject name}(void* subject, int idx)"+/
+            "{{"+/
+            "   return {_}Remove{_}{subject name}(subject, idx);"+/
+            "}}"
+        
+        | LAppend ->
+            decl <- PString.format "static void Append{_}{subject name}(void*, {object type});" TemplateArgs
+            "static void (* {_}Append{_}{subject name})(void*, {object type}) = (void (*)(void*, {object type})) {!fn addr};"+/
+            "static void Append{_}{subject name}(void* subject, {object type} object)"+/
+            "{{"+/
+            "   return {_}Append{_}{subject name}(subject, object);"+/
             "}}"
         
         | ComposedVerb (SGet fieldName, BGet)

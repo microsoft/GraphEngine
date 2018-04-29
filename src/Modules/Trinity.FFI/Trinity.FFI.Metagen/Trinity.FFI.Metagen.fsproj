@@ -37,8 +37,6 @@
     <Content Include="..\..\..\..\bin\trinity_ffi.lib" Link="trinity_ffi.lib">
       <PackagePath>content\win-x64</PackagePath>
     </Content>
-
-    <Compile Include="ProjectGen.fs" />
     <Compile Include="Utils.fs" />
 
     <!-- Generation -->

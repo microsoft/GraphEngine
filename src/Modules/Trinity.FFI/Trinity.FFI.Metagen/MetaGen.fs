@@ -54,7 +54,7 @@ module MetaGen =
         | {TypeCode=LIST;ElementType=elemTypes}  ->
              LGet
              |> fun it -> if (elemTypes |> Seq.head |> fun x -> isPrimitive x.TypeCode) then ComposedVerb (it, BGet) else it
-             |> fun it -> it::[LSet; LContains; LCount;] 
+             |> fun it -> it::[LSet; LContains; LCount; LInsertAt; LRemoveAt; LAppend;] 
              |>  Seq.map (render type')
 
         | _                                      ->
