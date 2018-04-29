@@ -5,10 +5,12 @@ from ..utils import raise_exc, ImmutableDict
 from ..err import StateError
 from ..DotNet.env import Env, build_module
 
-from typing import Dict, Union, List, Type, Set
+from typing import Dict, Union, List, Type, TypeVar, cast as typing_cast
 from Redy.Magic.Classic import execute
 
 TSLExplicitDefinitionType = Union[TSLCell, TSLStruct]
+
+T = TypeVar('T')
 
 
 class TSL:
@@ -110,14 +112,14 @@ class TSL:
     def struct(self, cls_def):
         return self._define(cls_def, TSLStruct)
 
-    def use_list(self, cls_def):
+    def use_list(self, cls_def: T) -> T:
         """
         provide an api for list constructing and dynamically type checking.
         >>> @tsl.use_list
         >>> class MyList(List[int]):
         >>>     pass
         """
-        lst_type = cls_def.__bases__[0]  # the first type in the __bases__ should be List[a]
+        lst_type = cls_def.__orig_bases__[0]
 
         return self.type_specs_to_type[type_map_spec(lst_type)]
 

@@ -1,6 +1,5 @@
 from .type_spec import TSLTypeSpec
 from typing import Callable
-from abc import ABC, abstractmethod
 
 
 class TSLObject:

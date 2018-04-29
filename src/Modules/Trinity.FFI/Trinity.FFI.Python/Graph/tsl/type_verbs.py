@@ -10,6 +10,9 @@ class Verb:
     LSet: lambda list_name: f'{list_name}{mangling_code}Set'
     LCount: lambda list_name: f'Count{mangling_code}{list_name}'
     LContains: lambda list_name: f'Contains{mangling_code}{list_name}'
+    LInsertAt: lambda list_name: f'Insert{mangling_code}{list_name}'
+    LRemoveAt: lambda list_name: f'Remove{mangling_code}{list_name}'
+    LAppend: lambda list_name: f'Append{mangling_code}{list_name}'
 
     BGet: lambda typename: f"Get{mangling_code}{typename}"
     BSet: lambda typename: f"Set{mangling_code}{typename}"
@@ -25,7 +28,10 @@ class Verb:
 LSet: Callable[[str], Verb] = Verb.LSet
 LGet: Callable[[str], Verb] = Verb.LGet
 LCount: Callable[[str], Verb] = Verb.LCount
-LCotains: Callable[[str], Verb] = Verb.LContains
+LContains: Callable[[str], Verb] = Verb.LContains
+LInsertAt: Callable[[str], Verb] = Verb.LInsertAt
+LRemoveAt: Callable[[str], Verb] = Verb.LRemoveAt
+LAppend: Callable[[str], Verb] = Verb.LAppend
 
 BGet: Callable[[str], Verb] = Verb.BGet
 BSet: Callable[[str], Verb] = Verb.BSet

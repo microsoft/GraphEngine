@@ -1,5 +1,5 @@
 from Graph.tsl import type_sys, type_map, type_spec, type_factory
-from typing import List
+from typing import List, Type
 
 assert type_map.type_map_spec(str) == type_spec.PrimitiveSpec("string", str)
 
@@ -47,6 +47,23 @@ init_trinity_service()
 
 tsl.bind()
 
+
+@tsl.use_list
+class LI(List[int]):
+    pass
+
+
+module = tsl.module
+
+lst = LI()
+
+print(len(lst))
+
 c1 = C1()
+
 c1.a = 1
+
 print(c1.a)
+
+lst2 = module.New_List_int32()
+module.Insert_List_int32(lst2, 0, 1)
