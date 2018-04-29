@@ -119,7 +119,8 @@ let _AllocAccessor allocsize =
         Size       = allocsize
         EntryIndex = 0
         Type       = 0us
-        IsMalloc   = 1us
+        IsMalloc   = 1uy
+        IsCell     = 0uy
     }
 
 let _AllocAccessorWithHeader allocsize = 
@@ -131,7 +132,8 @@ let _AllocAccessorWithHeader allocsize =
         Size       = allocsize + 4
         EntryIndex = 0
         Type       = 0us
-        IsMalloc   = 1us
+        IsMalloc   = 1uy
+        IsCell     = 0uy
     }
 
 let _Compile (tdesc: TypeDescriptor) (vs: Verb list) =
@@ -148,7 +150,8 @@ let _AllocAccessorWithBNew (tdesc: TypeDescriptor) =
         Type = 0us
         EntryIndex = -1
         Size = 0
-        IsMalloc = 0us
+        IsMalloc = 0uy
+        IsCell = 1uy
     }
     let paccessor = &&accessor |> NativePtr.toNativeInt
 
@@ -258,7 +261,8 @@ let _CellGetSet (cell: ICell) action =
         Type = 0us
         EntryIndex = -1
         Size = 0
-        IsMalloc = 0us
+        IsMalloc = 0uy
+        IsCell = 1uy
     }
 
     let mutable p: nativeptr<byte> = NativePtr.ofNativeInt (nativeint 0)

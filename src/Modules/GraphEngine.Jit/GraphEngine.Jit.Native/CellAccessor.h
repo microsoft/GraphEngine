@@ -4,12 +4,13 @@
 
 struct CellAccessor
 {
-    int64_t cellPtr;
-    int64_t cellId;
-    int32_t size;
-    int32_t entryIndex;
+    int64_t  cellPtr;
+    int64_t  cellId;
+    int32_t  size;
+    int32_t  entryIndex;
     uint16_t type;
-    uint16_t malloced;
+    uint8_t  isCell;
+    uint8_t  malloced;
 
     CellAccessor() {}
     ~CellAccessor() {}

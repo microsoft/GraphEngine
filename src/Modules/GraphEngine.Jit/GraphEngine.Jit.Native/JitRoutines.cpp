@@ -397,11 +397,23 @@ namespace Mixin
         auto retreg = cc.newGpd("err");
         auto plan = walk(seq.ptype);
         auto len = std::accumulate(plan.begin(), plan.end(), 0, [](int32_t cum, int32_t p) { return cum + (p >= 0 ? p : sizeof(int32_t)); });
+        auto tc = seq.CurrentTypeCode();
 
         auto call = safecall(cc, tsl_newaccessor);
+        call->setRet(0, retreg);
         call->setArg(0, ctx.cellAccessor);
         call->setArg(1, imm(len));
-        call->setRet(0, retreg);
+
+        if (tc == TypeCode::TC_CELL)
+        {
+            call->setArg(2, imm_u(seq.ptype->get_CellType()));
+            call->setArg(3, imm_u(1));
+        }
+        else
+        {
+            call->setArg(2, imm_u(0));
+            call->setArg(3, imm_u(0));
+        }
 
         ctx.ret(retreg);
     }
@@ -1037,20 +1049,15 @@ namespace Mixin
         auto tid = seq.CurrentTypeId();
         auto offset = cc.newGpq("offset");
 
-        auto ret = cc.newGpd("ret");
+        auto len = cc.newGpd("len");
         auto e = new_argument(cc, tc, tid);
         ctx.addArg(e);
 
         X86Gp elen;
 
-        //  labels
-
-        auto l_outofrange = cc.newLabel();
-        auto l_ret        = cc.newLabel();
-
         //  1. seek insertion point
-        cc.movsxd(ret, x86::dword_ptr(ctx.cellPtr));
-        cc.lea(offset, x86::byte_ptr(ctx.cellPtr, ret, /*shift*/0, sizeof(int32_t)));
+        cc.mov(len, x86::dword_ptr(ctx.cellPtr));
+        cc.lea(offset, x86::byte_ptr(ctx.cellPtr, len, /*shift*/0, sizeof(int32_t)));
 
         //  2. obtain length of the element, resize
         resize(cc, ctx, e, offset, elen, tc, tid, plan, 1);
@@ -1058,13 +1065,7 @@ namespace Mixin
         //  3. assign
         assign(cc, e, offset, elen, tc, tid);
 
-        cc.mov(ret, imm(1));
-        cc.bind(l_ret);
-        ctx.ret(ret);
-
-        cc.bind(l_outofrange);
-        cc.mov(ret, imm(0));
-        cc.jmp(l_ret);
+        ctx.ret();
     }
 
     CONCRETE_MIXIN_DEFINE(LRemoveAt)

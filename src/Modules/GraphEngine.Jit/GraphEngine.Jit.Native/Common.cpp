@@ -85,7 +85,7 @@ void tsl_setu8string(CellAccessor* accessor, int32_t* p, char* trinity_string_pt
     tsl_assign(accessor, (char*)(p + 1), (char*)str.c_str(), tlen, slen);
 }
 
-int32_t tsl_newaccessor(CellAccessor* paccessor, int32_t len)
+int32_t tsl_newaccessor(CellAccessor* paccessor, int32_t len, uint16_t type, uint8_t is_cell)
 {
     auto buf = calloc(1, len);
 
@@ -94,6 +94,8 @@ int32_t tsl_newaccessor(CellAccessor* paccessor, int32_t len)
     paccessor->cellPtr = (int64_t)buf;
     paccessor->size = len;
     paccessor->malloced = 1;
+    paccessor->type = type;
+    paccessor->isCell = is_cell;
 
     return TrinityErrorCode::E_SUCCESS;
 }

@@ -30,7 +30,7 @@ void tsl_assign(CellAccessor* accessor, char* dst, char* src, int32_t size_dst, 
 void tsl_setstring(CellAccessor* accessor, int32_t* p, u16char* str);
 void tsl_setu8string(CellAccessor* accessor, int32_t* p, char* trinity_string_ptr);
 uint64_t tsl_hash(void* ptr, int32_t len);
-int32_t tsl_newaccessor(CellAccessor* ptr, int32_t len);
+int32_t tsl_newaccessor(CellAccessor* ptr, int32_t len, uint16_t type, uint8_t is_cell);
 
 template<bool preserve_content>
 void* tsl_resize(CellAccessor* accessor, int32_t offset, int32_t delta)
