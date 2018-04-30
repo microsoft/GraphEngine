@@ -94,7 +94,7 @@ module SwigGen =
             "static void (* {_}Set{_}{subject name})(void*, void*) = (void (*)(void*, void*)){!fn addr};" +/
             "static void Set{_}{subject name}(void* subject, void* object)" +/ 
             "{{" +/ 
-            "       return {_}Set{_}{subject name}(subject, object);" +/
+            "       return {_}Set{_}{subject name}(subject, cast_object(object));" +/
             "}}"
 
         | ComposedVerb (LGet, BGet)
@@ -113,7 +113,7 @@ module SwigGen =
             "static void (* {_}{subject name}{_}Set)(void*, int,  {object type}) = (void (*)(void*, int, {object type} object)){!fn addr};" +/
             "static void {subject name}{_}Set(void* subject, int idx, {object type} object)" +/
             "{{" +/ 
-            "return {_}{subject name}{_}Set(subject, idx, object);" +/ 
+            "return {_}{subject name}{_}Set(subject, idx, cast_object(object));" +/ 
             "}}"
             
 
@@ -132,7 +132,7 @@ module SwigGen =
             "static bool (* {_}Contains{_}{subject name})(void*, {object type}) = (bool (*)(void*, {object type})) {!fn addr};" +/
             "static bool Contains{_}{subject name}(void* subject, {object type} object)" +/
             "{{" +/
-            "    return {_}Contains{_}{subject name}(subject, object);" +/
+            "    return {_}Contains{_}{subject name}(subject, cast_object(object));" +/
             "}}"
 
         | LInsertAt ->
@@ -140,7 +140,7 @@ module SwigGen =
             "static bool (* {_}Insert{_}{subject name})(void*, int, {object type}) = (bool (*)(void*, int, {object type})) {!fn addr};"+/
             "static bool Insert{_}{subject name}(void* subject, int idx, {object type} object)" +/
             "{{" +/
-            "   return {_}Insert{_}{subject name}(subject, idx, object);"+/
+            "   return {_}Insert{_}{subject name}(subject, idx, cast_object(object));"+/
             "}}"
         
         | LRemoveAt ->
@@ -157,7 +157,7 @@ module SwigGen =
             "static void (* {_}Append{_}{subject name})(void*, {object type}) = (void (*)(void*, {object type})) {!fn addr};"+/
             "static void Append{_}{subject name}(void* subject, {object type} object)"+/
             "{{"+/
-            "   return {_}Append{_}{subject name}(subject, object);"+/
+            "   return {_}Append{_}{subject name}(subject, cast_object(object));"+/
             "}}"
         
         | ComposedVerb (SGet fieldName, BGet)
@@ -179,7 +179,7 @@ module SwigGen =
             "static void (* {_}{:fnName})(void*, {object type}) = (void (*)(void*, {object type})){!fn addr};" +/ 
             "static void {:fnName}(void* subject, {object type} object)" +/
             "{{" +/
-            "    return {_}{:fnName}(subject, object);" +/
+            "    return {_}{:fnName}(subject, cast_object(object));" +/
             "}}"
 
             |> fun template -> PString.format'cond (fun lst -> lst.Head = ':') template [":fnName" ->> fnName]

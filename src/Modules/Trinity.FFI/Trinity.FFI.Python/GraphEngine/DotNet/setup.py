@@ -63,7 +63,7 @@ def init_trinity_service() -> Module:
                for module in ['Core', 'FFI', 'Jit']
            ] | Collect | FilterDLL
 
-    sys.path.append(str(module_dir))
+    sys.path.append(str(module_dir.parent()))
 
     for each_lib in libs:
         ctypes.cdll.LoadLibrary(each_lib)

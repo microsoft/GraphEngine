@@ -15,7 +15,7 @@ def type_map_spec(py_type) -> TSLTypeSpec:
     elif issubclass(py_type, (TSLCell, TSLStruct)):
         return TSLStruct
     elif isinstance(py_type, typing._ForwardRef):
-        return py_type.__forward_arg__
+        return None
     return py_type
 
 
@@ -69,3 +69,8 @@ def type_map_spec(typ: typing.List):
 @type_map_spec.match(TSLStruct)
 def type_map_spec(typ: TSLStruct):
     return typ.get_spec()
+
+
+@type_map_spec.match(None)
+def type_map_spec(typ):
+    return typ.__forward_arg__

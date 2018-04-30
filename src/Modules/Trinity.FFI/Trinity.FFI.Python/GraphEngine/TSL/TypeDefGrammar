@@ -1,3 +1,0 @@
-Generic Throw ['<', '>', ','] ::= Identifier L'<' [Type (L',' Type)*] L'>';
-Identifier := R'[a-zA-Z_][a-z0-9A-Z_]*';  
-Type ::=  Generic [L'?'] | Identifier ['?'];
