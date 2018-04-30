@@ -32,6 +32,9 @@ namespace GraphEngine.Jit.Playground
             StringSLGetSet();
             IntegerSLCount();
             IntegerCompare();
+            IntegerSLOps();
+            FloatSLOps();
+            StringSLOps();
 
             //byte[] buf = new byte[16];
             //int val = int.Parse(Console.ReadLine());

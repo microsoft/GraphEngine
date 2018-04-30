@@ -7,7 +7,8 @@
 #include "FuncCtx.h"
 
 #define CONCRETE_MIXIN_DECLARE(v) \
-    void Dispatch(asmjit::X86Compiler &cc, FuncCtx& ctx, const VerbSequence& seq) override;
+    void Dispatch(asmjit::X86Compiler &cc, FuncCtx& ctx, const VerbSequence& seq) override; \
+    bool WouldResize(VerbSequence&) override;
 
 #define CONCRETE_MIXIN_DEFINE(v) \
     void v::Dispatch(asmjit::X86Compiler &cc, FuncCtx& ctx, const VerbSequence& seq)
@@ -20,11 +21,13 @@ namespace Mixin
         virtual bool GetRetId(const VerbSequence& seq, OUT TypeId::Id &retId) { return false; }
         virtual void SequenceNext(VerbSequence& seq) {}
         virtual void Dispatch(X86Compiler &cc, FuncCtx& ctx, const VerbSequence& seq) = 0;
+        virtual bool WouldResize(VerbSequence&) { return false; }
     };
 
     TypeId::Id GetReturnId(FunctionDescriptor* fdesc);
     void GetArgument(IN FunctionDescriptor* fdesc, OUT uint8_t* &pargs, OUT int32_t& nargs);
     void DoDispatch(X86Compiler &cc, FuncCtx& ctx, VerbSequence& seq);
+    bool WouldResize(FunctionDescriptor* fdesc);
     bool SequenceNext(VerbSequence& seq);
     VerbMixin* Make(VerbCode code);
 

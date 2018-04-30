@@ -24,3 +24,10 @@ cell S3
     List<string> f2;
     int f3;
 }
+
+cell S4 
+{
+	string f1;
+    List<float> f2;
+    int f3;
+}

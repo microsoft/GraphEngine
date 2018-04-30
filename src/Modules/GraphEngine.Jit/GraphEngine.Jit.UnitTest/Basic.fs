@@ -195,21 +195,10 @@ let _AtomBGetSet (tdesc: TypeDescriptor) (value: 'a) =
 
 let _StrTest (value: string) (strlen: int) (prawstr: nativeint) (ptslstr: nativeint) fn =
     fn
-        (fun ()            -> _AllocAccessorWithHeader strlen)
+        (fun ()            -> _AllocAccessorWithHeader strlen )
         (fun site acc      -> CallHelper.CallByPtr(site, acc, prawstr))
         (fun (p:nativeint) -> Assert.Equal(0, Memory.memcmp(p.ToPointer(), ptslstr.ToPointer(), uint64 (strlen + 4))))
         (fun site acc      -> Assert.Equal(value, CallHelper.CallByVal<string>(site, acc)))
-
-let _U8StringBGetSet (tdesc: TypeDescriptor) (value: string) = 
-    let _pu8str      = ToUtf8 value
-    let lu8str       = strlen _pu8str
-    let pu8str       = AddTslHead _pu8str lu8str
-
-    try 
-        _StrTest value lu8str _pu8str pu8str <| _BGetSet tdesc
-    finally
-        Memory.free(_pu8str.ToPointer())
-        Memory.free(pu8str.ToPointer())
 
 let _StringBGetSet (tdesc: TypeDescriptor) (value: string) =
     let mutable _val = value
@@ -221,6 +210,29 @@ let _StringBGetSet (tdesc: TypeDescriptor) (value: string) =
         _StrTest value lu16str (NativePtr.toNativeInt _pu16str) pu16str <| _BGetSet tdesc
     finally
         Memory.free(pu16str.ToPointer())
+
+let _U8StrTest (value: string) (strlen: int) (prawstr: nativeint) (ptslstr: nativeint) fn =
+    let mutable _val = value
+    use _pu16str     = fixed _val
+
+    fn
+        (fun ()            -> _AllocAccessorWithHeader strlen )
+        (fun site acc      -> CallHelper.CallByPtr(site, acc, (NativePtr.toNativeInt _pu16str)))
+        (fun (p:nativeint) -> Assert.Equal(0, Memory.memcmp(p.ToPointer(), ptslstr.ToPointer(), uint64 (strlen + 4))))
+        (fun site acc      -> Assert.Equal(value, CallHelper.CallByVal<string>(site, acc)))
+
+
+let _U8StringBGetSet (tdesc: TypeDescriptor) (value: string) = 
+    let _pu8str      = ToUtf8 value
+    let lu8str       = strlen _pu8str
+    let pu8str       = AddTslHead _pu8str lu8str
+
+    try 
+        _U8StrTest value lu8str _pu8str pu8str <| _BGetSet tdesc
+    finally
+        Memory.free(_pu8str.ToPointer())
+        Memory.free(pu8str.ToPointer())
+
 
 [<Fact>]
 let IntegerBGetBSet () =
@@ -245,11 +257,27 @@ let FloatBGetBSet () =
 let StringBGetBSet () =
     _StringBGetSet (``TypeDescriptor allocation`` "STRING") "hello"
     _StringBGetSet (``TypeDescriptor allocation`` "STRING") "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-    //_StringBGetSet (``TypeDescriptor allocation`` "STRING") "UTF8中文测试"
+    _StringBGetSet (``TypeDescriptor allocation`` "STRING") "UTF8中文测试"
 
     _U8StringBGetSet (``TypeDescriptor allocation`` "U8STRING") "hello"
     _U8StringBGetSet (``TypeDescriptor allocation`` "U8STRING") "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-    //_U8StringBGetSet (``TypeDescriptor allocation`` "U8STRING") "UTF8中文测试"
+    _U8StringBGetSet (``TypeDescriptor allocation`` "U8STRING") "UTF8中文测试"
+
+let Dump size p =
+    printfn "========="
+    printfn "Size: %X (%A)" size size
+    printfn "Content:"
+    printf "      00 01 02 03  04 05 06 07   08 09 0A 0B  0C 0D 0E 0F"
+    for i in 0..(size-1) do
+        if i % 16 = 0 then
+            printfn ""
+            printf "%02X " i
+        if i % 8 = 0 then printf " "
+        if i % 4 = 0 then printf " "
+        printf " %02X" (NativePtr.read (NativePtr.add p i))
+    printfn ""
+    printfn "Content End"
+    printfn "========="
 
 //  !All cell-tests go through this routine instead of _BGetSet
 let _CellGetSet (cell: ICell) action =
@@ -273,11 +301,7 @@ let _CellGetSet (cell: ICell) action =
 
     Global.LocalStorage.GetLockedCellInfo(0L, &accessor.Size, &accessor.Type, &p, &accessor.EntryIndex) |> ignore
     try
-        printfn ""
-        printfn "Content:"
-        Array.mapi (printfn "%02x %02x") [| for i in 0..accessor.Size -> NativePtr.read (NativePtr.add p i) |] |> ignore
-        printfn "Content End"
-        printfn ""
+        Dump accessor.Size p
         accessor.CellPtr <- NativePtr.toNativeInt p
         let paccessor = &&accessor |> NativePtr.toNativeInt
         action tdesc accessor paccessor
@@ -299,7 +323,8 @@ let _SGetSet (cell: ICell) field (set) (assert1) (assert2) =
         printfn "set"
         set nfset.CallSite paccessor                                 // setter invoke
         printfn "assert1"
-        assert1 (CallHelper.GetPushedPtr(nfget.CallSite, paccessor)) // manual inspect
+        let p = CallHelper.GetPushedPtr(nfget.CallSite, paccessor)
+        assert1 (p) // manual inspect
         printfn "assert2"
         assert2 nfbget.CallSite paccessor                            // getter inspect
         )
@@ -309,20 +334,6 @@ let _IntegerSGetSet (cell: ICell) field (value: 'a) =
         (fun site acc -> CallHelper.CallByVal(site, acc, value) )
         (fun p        -> Assert.Equal<'a>(value, NativePtr.read <| NativePtr.ofNativeInt<'a> p)) 
         (fun site acc -> Assert.Equal<'a>(value, CallHelper.CallByVal<'a>(site, acc)))
-
-let _U8StringSGetSet (cell: ICell) field (value: string) = 
-    let _pu8str      = ToUtf8 value
-    let lu8str       = strlen _pu8str
-    let pu8str       = AddTslHead _pu8str lu8str
-
-    try
-        _SGetSet cell field
-            (fun site acc -> CallHelper.CallByPtr(site, acc, _pu8str))
-            (fun p        -> Assert.Equal(0, Memory.memcmp(p.ToPointer(), pu8str.ToPointer(), uint64 (lu8str + 4))))
-            (fun site acc -> Assert.Equal(value, CallHelper.CallByVal<string>(site, acc)))
-    finally
-        Memory.free(_pu8str.ToPointer())
-        Memory.free(pu8str.ToPointer())
 
 let _StringSGetSet (cell: ICell) field (value: string)  =
     let mutable _val = value
@@ -354,8 +365,8 @@ let IntegerSGetSet () =
 [<Fact>]
 let StringSGetSet () =
     let mutable s1 = S1(0L, 641934, "", 123)
-    _StringSGetSet s1 "f2" "hello"
-    _StringSGetSet s1 "f2" "world"
+    //_StringSGetSet s1 "f2" "hello"
+    //_StringSGetSet s1 "f2" "world"
 
     s1 <- S1(0L, 56256, "yargaaiawrguaw", 56892651)
     _StringSGetSet s1 "f2" "hello"
@@ -380,6 +391,7 @@ let _SLGetSet (cell: ICell) field index (set) (assert1) (assert2) =
         printfn "assert2"
         assert2 nfbget.CallSite paccessor                            // getter inspect
         )
+
 
 let _IntegerSLGetSet (cell: ICell) field (index: int32) (value: 'a) =
     _SLGetSet cell field index
@@ -442,6 +454,151 @@ let IntegerSLCount () =
 
     s2 <- S2(0L, new System.Collections.Generic.List<int64>(seq [1L; 2L; 3L; 5L; 8L]), 2333.33333, 0)
     _SLCount s2 "f1" 5
+
+let _ListOpsTest
+    (index : int32)
+    (verbs : Verb list)
+    (get   : nativeint -> nativeint -> int32 -> 'b)
+    (insert: nativeint -> nativeint -> int32 -> bool) 
+    (append: nativeint -> nativeint -> unit) 
+    (remove: nativeint -> nativeint -> int32 -> bool)
+    (inspect: 'b -> bool)
+    (cmp: 'b -> 'b -> bool)
+    (tdesc: TypeDescriptor)
+    (accessor: NativeCellAccessor)
+    (paccessor: nativeint) =
+        let [fget; finsert; fcnt; fappend; fremove] = _Compile tdesc verbs
+
+        printfn "paccessor  = %X" paccessor
+        printfn "pcell      = %X" accessor.CellPtr
+        printfn "index      = %d" index
+
+        let mutable _accessor = NativePtr.read (NativePtr.ofNativeInt<NativeCellAccessor> paccessor)
+        let mutable _size = _accessor.Size
+
+        Dump _size (NativePtr.ofNativeInt<byte> _accessor.CellPtr)
+
+        let len1 = CallHelper.CallByVal<int32>(fcnt.CallSite, paccessor)
+        printfn "list len = %d" len1
+
+        printfn "e[0] = %A" (CallHelper.CallByVal<'b>(fget.CallSite, paccessor, 0))
+        printfn "e[1] = %A" (CallHelper.CallByVal<'b>(fget.CallSite, paccessor, 1))
+        printfn "e[2] = %A" (CallHelper.CallByVal<'b>(fget.CallSite, paccessor, 2))
+        //printfn "e[3] = %A" (CallHelper.CallByVal<string>(fget.CallSite, paccessor, 3))
+        //printfn "e[4] = %A" (CallHelper.CallByVal<string>(fget.CallSite, paccessor, 4))
+
+
+        let e = if len1 = 0 
+                then Unchecked.defaultof<'b> 
+                else printfn "get original"
+                     let v = get fget.CallSite paccessor index
+                     printfn "Original = %A" v
+                     v
+
+        printfn "insert"
+        Assert.True(insert finsert.CallSite paccessor index)
+
+        _accessor <- NativePtr.read (NativePtr.ofNativeInt<NativeCellAccessor> paccessor)
+        _size <- _accessor.Size
+        Dump _size (NativePtr.ofNativeInt<byte> _accessor.CellPtr)
+
+        printfn "inspect insert"
+        let v = get fget.CallSite paccessor index
+        printfn "v = %A" v
+        Assert.True(inspect <| v)
+        if len1 <> 0 
+        then printfn "cmp"
+             Assert.True(cmp e (get fget.CallSite paccessor (index + 1)))
+
+        printfn "append"
+        append fappend.CallSite paccessor
+
+        _accessor <- NativePtr.read (NativePtr.ofNativeInt<NativeCellAccessor> paccessor)
+        _size <- _accessor.Size
+        Dump _size (NativePtr.ofNativeInt<byte> _accessor.CellPtr)
+
+
+        let len2 = CallHelper.CallByVal<int32>(fcnt.CallSite, paccessor)
+        Assert.Equal(len1 + 2, len2)
+
+        _accessor <- NativePtr.read (NativePtr.ofNativeInt<NativeCellAccessor> paccessor)
+        _size <- _accessor.Size
+        Dump _size (NativePtr.ofNativeInt<byte> _accessor.CellPtr)
+
+        printfn "inspect append"
+        Assert.True(inspect <| get fget.CallSite paccessor (len1 + 1))
+        
+        printfn "remove at end"
+        Assert.True(remove fremove.CallSite paccessor (len1 + 1))
+
+        let len3 = CallHelper.CallByVal<int32>(fcnt.CallSite, paccessor)
+        Assert.Equal(len1 + 1, len3)
+
+        printfn "remove at index"
+        Assert.True(remove fremove.CallSite paccessor index)
+
+        let len4 = CallHelper.CallByVal<int32>(fcnt.CallSite, paccessor)
+        Assert.Equal(len1, len4)
+
+        if len1 <> 0 
+        then printfn "cmp again"
+             Assert.True(cmp e (get fget.CallSite paccessor index))
+        
+let _SLOps cell field index get insert append remove inspect cmp = 
+    let verbs = [ ComposedVerb(SGet field, ComposedVerb(LGet, BGet))
+                  ComposedVerb(SGet field, LInsertAt) 
+                  ComposedVerb(SGet field, LCount)
+                  ComposedVerb(SGet field, LAppend)
+                  ComposedVerb(SGet field, LRemoveAt) ]
+    let test = _ListOpsTest index verbs
+                            get insert append remove inspect cmp
+    _CellGetSet cell test
+
+let inline __SLOps (cell: ICell) field (index: int32) (value: 'a) =
+    _SLOps cell field index
+        (fun site acc i -> CallHelper.CallByVal<'a>(site, acc, i) )            // SLGet
+        (fun site acc i -> CallHelper.CallByValBool<'a>(site, acc, i, value) ) // LInsert
+        (fun site acc   -> CallHelper.CallByVal<'a>(site, acc, value) )        // LAppend
+        (fun site acc i -> CallHelper.CallByValBool<'a>(site, acc, i) )        // LRemove
+        (fun v          -> v = value )                                         // inspect
+        (fun a b        -> a = b)
+
+[<Fact>]
+let IntegerSLOps () =
+    let mutable s2 = S2(0L, new System.Collections.Generic.List<int64>(seq [1L; 2L; 3L]), 123.456, 0)
+
+    __SLOps s2 "f1" 0 4L
+    __SLOps s2 "f1" 1 5L
+    __SLOps s2 "f1" 2 6L
+
+    __SLOps s2 "f1" 0 7L
+    __SLOps s2 "f1" 1 8L
+    __SLOps s2 "f1" 2 9L
+
+[<Fact>]
+let FloatSLOps () =
+    let mutable s4 = S4(0L, "S4 header", new System.Collections.Generic.List<float32>(seq [1.0f; 2.0f; 3.0f]), 123)
+
+    __SLOps s4 "f2" 0 4.0f
+    __SLOps s4 "f2" 1 5.0f
+    __SLOps s4 "f2" 2 6.0f
+
+    __SLOps s4 "f2" 0 7.0f
+    __SLOps s4 "f2" 1 8.0f
+    __SLOps s4 "f2" 2 9.0f
+
+[<Fact>]
+let StringSLOps () =
+    let mutable s3 = S3(0L, 0xDEADBEEF, new System.Collections.Generic.List<string>(seq ["hello"; "world"; "people"]), 0x78563412)
+
+    __SLOps s3 "f2" 0 "Trinity"
+    __SLOps s3 "f2" 1 "Graph"
+    __SLOps s3 "f2" 2 "Engine"
+
+    __SLOps s3 "f2" 0 "Gets"
+    __SLOps s3 "f2" 1 "JIT"
+    __SLOps s3 "f2" 2 "超能力"
+
 
 let _BCompare (tdesc: TypeDescriptor) (getaccessor) (small: 'a) (mid: 'a) (large: 'a) =
     printfn "BCompare %A: %A - %A - %A" typeof<'a> small mid large

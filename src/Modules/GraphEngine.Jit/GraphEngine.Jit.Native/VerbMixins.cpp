@@ -64,6 +64,13 @@ namespace Mixin
         std::copy(vec.begin(), vec.end(), pargs);
     }
 
+    bool WouldResize(FunctionDescriptor* fdesc)
+    {
+        VerbSequence seq(fdesc);
+        while (seq.Next()) { if (Make(seq.pcurrent)->WouldResize(seq)) return true; }
+        return false;
+    }
+
     void DoDispatch(X86Compiler &cc, FuncCtx& ctx, VerbSequence& seq)
     {
         while (seq.Next() && !ctx.returned) { Make(seq.pcurrent)->Dispatch(cc, ctx, seq); }

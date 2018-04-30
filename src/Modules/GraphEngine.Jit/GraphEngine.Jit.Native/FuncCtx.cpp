@@ -1,7 +1,7 @@
 #include "FuncCtx.h"
 #include "Common.h"
 
-FuncCtx::FuncCtx(X86Compiler& compiler, TypeId::Id ret) : cc(compiler), argIndex(0), returned(false), retId(ret)
+FuncCtx::FuncCtx(X86Compiler& compiler, TypeId::Id ret, bool w) : cc(compiler), argIndex(0), returned(false), retId(ret), wresize(w)
 {
     cellAccessor = cc.newGpq("cellAccessor");
     cellPtr      = cc.newGpq("cellPtr");
@@ -10,6 +10,15 @@ FuncCtx::FuncCtx(X86Compiler& compiler, TypeId::Id ret) : cc(compiler), argIndex
     // prolog: we always load the cell pointer into a gp register "cellPtr"
     // void* cellPtr = cellAccessor->cellPtr;
     cc.mov(cellPtr, x86::qword_ptr(cellAccessor));
+}
+
+void FuncCtx::pushResizeChain()
+{
+    if (!wresize)return;
+    auto p = cc.newGpq("resize_point");
+    cc.mov(p, cellPtr);
+    cc.sub(p, x86::qword_ptr(cellAccessor));
+    resizeChain.push_back(p);
 }
 
 void FuncCtx::addArg(const Reg& reg)
