@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AssemblyName>Trinity.FFI.Metagen</AssemblyName>
+    <RootNamespace>Trinity.FFI.Metagen</RootNamespace>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <OutputPath>..\..\..\..\bin</OutputPath>
+    <IsPackable>true</IsPackable>
+    <OutputType>Library</OutputType>
+
+    <PackageId>GraphEngine.FFI.Metagen</PackageId>
+    <Authors>Microsoft Graph Engine Team</Authors>
+    <Company>Microsoft Corporation</Company>
+    <Product>GraphEngine.FFI.Metagen</Product>
+    <Description>Dynamically generate GraphEngine foreign function interfaces for various runtimes and programming languages.</Description>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
+    <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
+    <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
+    <Copyright>Copyright 2018</Copyright>
+    <Version>2.0.9328</Version>
+    <RepositoryUrl>https://github.com/Microsoft/GraphEngine/</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+
+    <Content Include="..\..\GraphEngine.Jit\GraphEngine.Jit.Native\CellAccessor.h" Link="CellAccessor.h">
+      <PackagePath>content\include</PackagePath>
+    </Content>
+    <Content Include="..\Trinity.FFI.Native\swig_accessor.h" Link="swig_accessor.h">
+      <PackagePath>content\include</PackagePath>
+    </Content>
+    <Content Include="..\..\..\..\bin\trinity_ffi.lib" Link="trinity_ffi.lib">
+      <PackagePath>content\win-x64</PackagePath>
+    </Content>
+    
+    <Compile Include="Utils.fs" />
+
+    <!-- Generation -->
+    <Compile Include="CommonForRender.fs" />
+    <Compile Include="SwigGen.fs" />
+    <Compile Include="CSharpGen.fs" />
+    <Compile Include="JitGen.fs" />
+
+    <Compile Include="CodeGen.fs" />
+    <Compile Include="MetaGen.fs" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
+    <PackageReference Include="GraphEngine.Jit" Version="2.0.9328" />
+  </ItemGroup>
+</Project>

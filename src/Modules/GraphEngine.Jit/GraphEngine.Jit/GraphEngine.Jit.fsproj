@@ -12,6 +12,8 @@
     <OutputPath>..\..\..\..\bin</OutputPath>
     <ServerGarbageCollection>true</ServerGarbageCollection>
     <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+    <IsPackable>true</IsPackable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <!-- NuGet package metadata -->
@@ -36,13 +38,24 @@
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
-
   <ItemGroup>
     <Compile Include="TypeSystem.fs" />
+    <Compile Include="Utils.fs" />
+    <Compile Include="Verbs.fs" />
+    <Compile Include="JitNativeInterop.fs" />
+    <Compile Include="JitCompiler.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="$(ProjectDirectory)..\..\..\..\bin\GraphEngine.Jit.Native.dll" />
+    <Content Include="$(ProjectDirectory)..\..\..\..\bin\GraphEngine.Jit.Native.dll">
+      <PackagePath>runtimes\win-x64\native</PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

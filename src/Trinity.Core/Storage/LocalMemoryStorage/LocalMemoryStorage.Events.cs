@@ -59,20 +59,6 @@ namespace Trinity.Storage
         /// </summary>
         public event StorageEventHandler StorageReset = delegate { };
 
-        private TrinityErrorCode RaiseStorageEvent(StorageEventHandler handler, string handlerName)
-        {
-            var ret = TrinityErrorCode.E_SUCCESS;
-            var listeners = handler.GetInvocationList();
-            foreach (var listener in listeners)
-            {
-                try { listener.DynamicInvoke(); }
-                catch (Exception ex)
-                {
-                    Log.WriteLine(LogLevel.Error, $"An error oucurred in {handlerName}: {{0}}", ex.ToString());
-                    ret = TrinityErrorCode.E_FAILURE;
-                }
-            }
-            return ret;
-        }
+
     }
 }

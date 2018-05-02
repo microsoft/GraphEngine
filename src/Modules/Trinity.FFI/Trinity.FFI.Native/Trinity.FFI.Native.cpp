@@ -3,6 +3,7 @@
 
 #include "Trinity.FFI.Native.h"
 #include <cstring>
+#include "CellAccessor.h"
 
 static struct TRINITY_INTERFACES g_interfaces;
 static bool g_init = false;

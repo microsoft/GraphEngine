@@ -20,11 +20,12 @@ namespace std {
 
 %attribute(TypeDescriptor, char*, TypeName, get_TypeName)
 %attribute(TypeDescriptor, char*, QualifiedName, get_QualifiedName)
-%attribute(TypeDescriptor, int, TypeCode, get_TypeCode)
+%attribute(TypeDescriptor, int16_t, TypeCode, get_TypeCode)
+%attribute(TypeDescriptor, uint16_t, CellType, get_CellType)
 %attribute(TypeDescriptor, std::vector<TypeDescriptor*>, ElementType, get_ElementType)
 %attribute(TypeDescriptor, std::vector<MemberDescriptor*>, Members, get_Members)
 %attribute(TypeDescriptor, std::vector<AttributeDescriptor*>, TSLAttributes, get_TSLAttributes)
 
-%include "Trinity.FFI.Schema.h"
+%include "../../GraphEngine.Jit/GraphEngine.Jit.Native/TypeSystem.h"
 %include "Trinity.FFI.SWIG.h"
 

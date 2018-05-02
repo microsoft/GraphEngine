@@ -19,6 +19,8 @@
     <OutputPath>..\..\..\..\bin</OutputPath>
     <PlatformTarget>x64</PlatformTarget>
     <Platforms>x64</Platforms>
+    <IsPackable>true</IsPackable>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

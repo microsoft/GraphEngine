@@ -21,12 +21,18 @@
     <ClInclude Include="Trinity.FFI.SWIG.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Trinity.FFI.Schema.h">
+    <ClInclude Include="..\..\GraphEngine.Jit\GraphEngine.Jit.Native\Trinity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="swig_accessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Trinity.FFI.Native.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="swig_accessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

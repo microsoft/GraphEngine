@@ -679,29 +679,28 @@ namespace Trinity
             }
         }
 
-        //converts a utf-8 string to a UTF-16LE (Windows Unicode) array, <NUL> terminated.
-        Array<u16char> ToWcharArray() const
+        // len is ignored on non-windows
+        static Array<u16char> Utf8ToUtf16(const char* str, size_t len)
         {
 #if defined(TRINITY_PLATFORM_WINDOWS)
-            size_t byte_count = Length();
             int wchar_count;
 
-            if (byte_count == 0)
+            if (len == 0)
             {
                 Array<u16char> empty_arr(1);
                 empty_arr[0] = 0;
                 return empty_arr;
             }
 
-            if (byte_count > INT_MAX)
+            if (len > INT_MAX)
                 return Array<u16char>(0);
 
-            wchar_count = MultiByteToWideChar(CP_UTF8, 0, c_str(), static_cast<int>(byte_count), NULL, 0);
+            wchar_count = MultiByteToWideChar(CP_UTF8, 0, str, static_cast<int>(len), NULL, 0);
             if (wchar_count == 0)
                 return Array<u16char>(0);
 
             Array<u16char> wchar_arr(wchar_count + 1);//add another unit for storing <NUL>
-            if (0 == MultiByteToWideChar(CP_UTF8, 0, c_str(), static_cast<int>(byte_count), wchar_arr, wchar_count))
+            if (0 == MultiByteToWideChar(CP_UTF8, 0, str, static_cast<int>(len), wchar_arr, wchar_count))
                 return Array<u16char>(0);
             //Manually set the terminating <NUL>
 
@@ -709,13 +708,23 @@ namespace Trinity
             return wchar_arr;
 #else
             std::wstring_convert<std::codecvt_utf8_utf16<u16char>, u16char> converter;
-            auto wstr = converter.from_bytes(c_str());
+            auto wstr = converter.from_bytes(str);
             int wchar_count = wstr.length();
             Array<u16char> wchar_arr(wchar_count + 1);
             memcpy(wchar_arr, wstr.c_str(), wchar_count * sizeof(u16char));
             wchar_arr[wchar_count] = 0;
 
             return wchar_arr;
+#endif
+        }
+
+        //converts a utf-8 string to a UTF-16LE (Windows Unicode) array, <NUL> terminated.
+        Array<u16char> ToWcharArray() const
+        {
+#if defined(TRINITY_PLATFORM_WINDOWS)
+            return Utf8ToUtf16(c_str(), Length());
+#else
+            return Utf8ToUtf16(c_str(), 0);
 #endif
         }
 

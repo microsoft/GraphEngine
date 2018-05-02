@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "Trinity.FFI.Native.h"
-#include "Trinity.FFI.Schema.h"
+#include "TypeSystem.h"
 
 TRINITY_INTERFACES* g_TrinityInterfaces;
 
@@ -139,3 +139,91 @@ Cell* NewCell_3(char* cellType, char* cellContent)
         return nullptr;
     }
 }
+
+
+/*
+
+IKeyValueStore
+
+C1 c1(1, 2, 3);
+Global.LocalStorage.SaveC1(123, c1);
+
+C:
+
+struct C1
+{
+    int   a;
+    char* b;
+    int   c;
+}
+
+Jit'ed:
+
+C1:
+[ 4B a | 8B b | 4B c ]
+C1_Accessor
+[ 4B a | 4B b.Length xB b.Content | 4B c ]
+
+struct C1
+{
+    int a;
+    std::string b;
+    std::vector<std::string> list_of_string;
+    int c;
+}
+
+class C1Accessor:
+    ...
+
+CellAccessor UseC1(cellid_t cellid, CellAccessOptions options)
+{
+    CellAccessor accessor;
+    auto errcode = LockCell(accessor, options);
+    if (errcode)
+        throw errcode;
+    return accessor;
+}
+
+SaveC1(C1* c1)
+{
+    char* ptr = nullptr;
+    ptr += 4;
+    ptr += b.length();
+    ptr += 4;
+    ptr += 4;
+
+    char* buf = malloc(ptr);
+    ptr = 0;
+    *(int*)ptr = c1->a;
+    ptr += 4;
+    *(int*)ptr = c1->b.length();
+    ptr += 4;
+    memcpy(ptr, c1->b.c_str());
+    ptr += b.length();
+    *(int*)ptr = c1->c;
+
+    ::CSaveCell(Types::C1Type, buf, ptr);
+}
+
+c1 = C1() # new
+storage.SaveC1(c1)
+
+==================================
+
+serialize :: C1 -> nativeptr * int
+
+
+
+FFI: generate python interface like new C1()... ---> hooked to Cell::New_Cell, update deferred
+Accessor: Jit'ed strong type, generate python interface like UseC1(id) ---> CellAccessor
+
+LoadCell: runtime object ---- C#     runtime obj
+                         `--- python runtime obj
+                         `--- C++    runtime obj
+                            ^
+============================|===========
+ Trinity Storage:
+
+ [Serialized cell 1]     [Serialized cell 2]
+
+*/

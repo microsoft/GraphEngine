@@ -3553,24 +3553,26 @@ SwigPyBuiltin_SetMetaType (PyTypeObject *type, PyTypeObject *metatype)
 #define SWIGTYPE_p_char swig_types[8]
 #define SWIGTYPE_p_const_reference swig_types[9]
 #define SWIGTYPE_p_difference_type swig_types[10]
-#define SWIGTYPE_p_p_PyObject swig_types[11]
-#define SWIGTYPE_p_p_char swig_types[12]
-#define SWIGTYPE_p_reference swig_types[13]
-#define SWIGTYPE_p_size_type swig_types[14]
-#define SWIGTYPE_p_std__allocatorT_AttributeDescriptor_p_t swig_types[15]
-#define SWIGTYPE_p_std__allocatorT_MemberDescriptor_p_t swig_types[16]
-#define SWIGTYPE_p_std__allocatorT_TypeDescriptor_p_t swig_types[17]
-#define SWIGTYPE_p_std__allocatorT_TypeDescriptor_t swig_types[18]
-#define SWIGTYPE_p_std__invalid_argument swig_types[19]
-#define SWIGTYPE_p_std__vectorT_AttributeDescriptor_p_std__allocatorT_AttributeDescriptor_p_t_t swig_types[20]
-#define SWIGTYPE_p_std__vectorT_MemberDescriptor_p_std__allocatorT_MemberDescriptor_p_t_t swig_types[21]
-#define SWIGTYPE_p_std__vectorT_TypeDescriptor_p_std__allocatorT_TypeDescriptor_p_t_t swig_types[22]
-#define SWIGTYPE_p_std__vectorT_TypeDescriptor_std__allocatorT_TypeDescriptor_t_t swig_types[23]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[24]
-#define SWIGTYPE_p_uint8_t swig_types[25]
-#define SWIGTYPE_p_value_type swig_types[26]
-static swig_type_info *swig_types[28];
-static swig_module_info swig_module = {swig_types, 27, 0, 0, 0, 0};
+#define SWIGTYPE_p_int16_t swig_types[11]
+#define SWIGTYPE_p_p_PyObject swig_types[12]
+#define SWIGTYPE_p_p_char swig_types[13]
+#define SWIGTYPE_p_reference swig_types[14]
+#define SWIGTYPE_p_size_type swig_types[15]
+#define SWIGTYPE_p_std__allocatorT_AttributeDescriptor_p_t swig_types[16]
+#define SWIGTYPE_p_std__allocatorT_MemberDescriptor_p_t swig_types[17]
+#define SWIGTYPE_p_std__allocatorT_TypeDescriptor_p_t swig_types[18]
+#define SWIGTYPE_p_std__allocatorT_TypeDescriptor_t swig_types[19]
+#define SWIGTYPE_p_std__invalid_argument swig_types[20]
+#define SWIGTYPE_p_std__vectorT_AttributeDescriptor_p_std__allocatorT_AttributeDescriptor_p_t_t swig_types[21]
+#define SWIGTYPE_p_std__vectorT_MemberDescriptor_p_std__allocatorT_MemberDescriptor_p_t_t swig_types[22]
+#define SWIGTYPE_p_std__vectorT_TypeDescriptor_p_std__allocatorT_TypeDescriptor_p_t_t swig_types[23]
+#define SWIGTYPE_p_std__vectorT_TypeDescriptor_std__allocatorT_TypeDescriptor_t_t swig_types[24]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[25]
+#define SWIGTYPE_p_uint16_t swig_types[26]
+#define SWIGTYPE_p_uint8_t swig_types[27]
+#define SWIGTYPE_p_value_type swig_types[28]
+static swig_type_info *swig_types[30];
+static swig_module_info swig_module = {swig_types, 29, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -5782,6 +5784,9 @@ SWIGINTERN void std_vector_Sl_AttributeDescriptor_Sm__Sg__insert__SWIG_1(std::ve
   
 
 #define TypeDescriptor_TypeCode_get(self_) self_->get_TypeCode()
+  
+
+#define TypeDescriptor_CellType_get(self_) self_->get_CellType()
   
 
 #define TypeDescriptor_ElementType_get(self_) self_->get_ElementType()
@@ -14892,7 +14897,7 @@ SWIGINTERN PyObject *_wrap_TypeDescriptor_TypeCode_get(PyObject *self, PyObject 
   TypeDescriptor *arg1 = (TypeDescriptor *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int result;
+  int16_t result;
   
   if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "TypeDescriptor_TypeCode_get takes no arguments");
   res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_TypeDescriptor, 0 |  0 );
@@ -14900,8 +14905,29 @@ SWIGINTERN PyObject *_wrap_TypeDescriptor_TypeCode_get(PyObject *self, PyObject 
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TypeDescriptor_TypeCode_get" "', argument " "1"" of type '" "TypeDescriptor *""'"); 
   }
   arg1 = reinterpret_cast< TypeDescriptor * >(argp1);
-  result = (int)TypeDescriptor_TypeCode_get(arg1);
-  resultobj = SWIG_From_int(static_cast< int >(result));
+  result = TypeDescriptor_TypeCode_get(arg1);
+  resultobj = SWIG_NewPointerObj((new int16_t(static_cast< const int16_t& >(result))), SWIGTYPE_p_int16_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_TypeDescriptor_CellType_get(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  TypeDescriptor *arg1 = (TypeDescriptor *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  uint16_t result;
+  
+  if (args && PyTuple_Check(args) && PyTuple_GET_SIZE(args) > 0) SWIG_exception_fail(SWIG_TypeError, "TypeDescriptor_CellType_get takes no arguments");
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_TypeDescriptor, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "TypeDescriptor_CellType_get" "', argument " "1"" of type '" "TypeDescriptor *""'"); 
+  }
+  arg1 = reinterpret_cast< TypeDescriptor * >(argp1);
+  result = TypeDescriptor_CellType_get(arg1);
+  resultobj = SWIG_NewPointerObj((new uint16_t(static_cast< const uint16_t& >(result))), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -17272,6 +17298,7 @@ SWIGINTERN SwigPyClientData SwigPyBuiltin__AttributeDescriptor_clientdata = {0, 
 SWIGPY_DESTRUCTOR_CLOSURE(_wrap_delete_TypeDescriptor)
 static SwigPyGetSet TypeDescriptor_QualifiedName_getset = { _wrap_TypeDescriptor_QualifiedName_get, 0 };
 static SwigPyGetSet TypeDescriptor_TypeCode_getset = { _wrap_TypeDescriptor_TypeCode_get, 0 };
+static SwigPyGetSet TypeDescriptor_CellType_getset = { _wrap_TypeDescriptor_CellType_get, 0 };
 static SwigPyGetSet TypeDescriptor_Members_getset = { _wrap_TypeDescriptor_Members_get, 0 };
 static SwigPyGetSet TypeDescriptor___dict___getset = { SwigPyObject_get___dict__, 0 };
 static SwigPyGetSet TypeDescriptor_ElementType_getset = { _wrap_TypeDescriptor_ElementType_get, 0 };
@@ -17281,6 +17308,8 @@ SWIGINTERN PyGetSetDef SwigPyBuiltin__TypeDescriptor_getset[] = {
     { (char*) "QualifiedName", (getter) SwigPyBuiltin_GetterClosure, (setter) 0, (char*)"TypeDescriptor.QualifiedName", (void*) &TypeDescriptor_QualifiedName_getset }
 ,
     { (char*) "TypeCode", (getter) SwigPyBuiltin_GetterClosure, (setter) 0, (char*)"TypeDescriptor.TypeCode", (void*) &TypeDescriptor_TypeCode_getset }
+,
+    { (char*) "CellType", (getter) SwigPyBuiltin_GetterClosure, (setter) 0, (char*)"TypeDescriptor.CellType", (void*) &TypeDescriptor_CellType_getset }
 ,
     { (char*) "Members", (getter) SwigPyBuiltin_GetterClosure, (setter) 0, (char*)"TypeDescriptor.Members", (void*) &TypeDescriptor_Members_getset }
 ,
@@ -17980,6 +18009,7 @@ static swig_type_info _swigt__p_allocator_type = {"_p_allocator_type", "allocato
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_const_reference = {"_p_const_reference", "const_reference *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_difference_type = {"_p_difference_type", "difference_type *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_int16_t = {"_p_int16_t", "int16_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_p_PyObject = {"_p_p_PyObject", "PyObject **", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_p_char = {"_p_p_char", "char **", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_reference = {"_p_reference", "reference *", 0, 0, (void*)0, 0};
@@ -17994,6 +18024,7 @@ static swig_type_info _swigt__p_std__vectorT_MemberDescriptor_p_std__allocatorT_
 static swig_type_info _swigt__p_std__vectorT_TypeDescriptor_p_std__allocatorT_TypeDescriptor_p_t_t = {"_p_std__vectorT_TypeDescriptor_p_std__allocatorT_TypeDescriptor_p_t_t", "std::vector< TypeDescriptor *,std::allocator< TypeDescriptor * > > *|std::vector< TypeDescriptor * > *", 0, 0, (void*)&SwigPyBuiltin__std__vectorT_TypeDescriptor_p_t_clientdata, 0};
 static swig_type_info _swigt__p_std__vectorT_TypeDescriptor_std__allocatorT_TypeDescriptor_t_t = {"_p_std__vectorT_TypeDescriptor_std__allocatorT_TypeDescriptor_t_t", "std::vector< TypeDescriptor,std::allocator< TypeDescriptor > > *|std::vector< TypeDescriptor > *", 0, 0, (void*)&SwigPyBuiltin__std__vectorT_TypeDescriptor_t_clientdata, 0};
 static swig_type_info _swigt__p_swig__SwigPyIterator = {"_p_swig__SwigPyIterator", "swig::SwigPyIterator *", 0, 0, (void*)&SwigPyBuiltin__swig__SwigPyIterator_clientdata, 0};
+static swig_type_info _swigt__p_uint16_t = {"_p_uint16_t", "uint16_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_uint8_t = {"_p_uint8_t", "uint8_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_value_type = {"_p_value_type", "value_type *", 0, 0, (void*)0, 0};
 
@@ -18009,6 +18040,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_char,
   &_swigt__p_const_reference,
   &_swigt__p_difference_type,
+  &_swigt__p_int16_t,
   &_swigt__p_p_PyObject,
   &_swigt__p_p_char,
   &_swigt__p_reference,
@@ -18023,6 +18055,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_std__vectorT_TypeDescriptor_p_std__allocatorT_TypeDescriptor_p_t_t,
   &_swigt__p_std__vectorT_TypeDescriptor_std__allocatorT_TypeDescriptor_t_t,
   &_swigt__p_swig__SwigPyIterator,
+  &_swigt__p_uint16_t,
   &_swigt__p_uint8_t,
   &_swigt__p_value_type,
 };
@@ -18038,6 +18071,7 @@ static swig_cast_info _swigc__p_allocator_type[] = {  {&_swigt__p_allocator_type
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_const_reference[] = {  {&_swigt__p_const_reference, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_difference_type[] = {  {&_swigt__p_difference_type, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_int16_t[] = {  {&_swigt__p_int16_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_p_PyObject[] = {  {&_swigt__p_p_PyObject, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_p_char[] = {  {&_swigt__p_p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_reference[] = {  {&_swigt__p_reference, 0, 0, 0},{0, 0, 0, 0}};
@@ -18052,6 +18086,7 @@ static swig_cast_info _swigc__p_std__vectorT_MemberDescriptor_p_std__allocatorT_
 static swig_cast_info _swigc__p_std__vectorT_TypeDescriptor_p_std__allocatorT_TypeDescriptor_p_t_t[] = {  {&_swigt__p_std__vectorT_TypeDescriptor_p_std__allocatorT_TypeDescriptor_p_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_TypeDescriptor_std__allocatorT_TypeDescriptor_t_t[] = {  {&_swigt__p_std__vectorT_TypeDescriptor_std__allocatorT_TypeDescriptor_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_swig__SwigPyIterator[] = {  {&_swigt__p_swig__SwigPyIterator, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_uint16_t[] = {  {&_swigt__p_uint16_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_uint8_t[] = {  {&_swigt__p_uint8_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_value_type[] = {  {&_swigt__p_value_type, 0, 0, 0},{0, 0, 0, 0}};
 
@@ -18067,6 +18102,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_char,
   _swigc__p_const_reference,
   _swigc__p_difference_type,
+  _swigc__p_int16_t,
   _swigc__p_p_PyObject,
   _swigc__p_p_char,
   _swigc__p_reference,
@@ -18081,6 +18117,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_std__vectorT_TypeDescriptor_p_std__allocatorT_TypeDescriptor_p_t_t,
   _swigc__p_std__vectorT_TypeDescriptor_std__allocatorT_TypeDescriptor_t_t,
   _swigc__p_swig__SwigPyIterator,
+  _swigc__p_uint16_t,
   _swigc__p_uint8_t,
   _swigc__p_value_type,
 };
@@ -18963,6 +19000,24 @@ SWIG_init(void) {
   PyModule_AddObject(m, "MemberDescriptor", (PyObject*) builtin_pytype);
   SwigPyBuiltin_AddPublicSymbol(public_interface, "MemberDescriptor");
   d = md;
+  SWIG_Python_SetConstant(d, d == md ? public_interface : NULL, "TC_NULL",SWIG_From_int(static_cast< int >(TC_NULL)));
+  SWIG_Python_SetConstant(d, d == md ? public_interface : NULL, "TC_U8",SWIG_From_int(static_cast< int >(TC_U8)));
+  SWIG_Python_SetConstant(d, d == md ? public_interface : NULL, "TC_U16",SWIG_From_int(static_cast< int >(TC_U16)));
+  SWIG_Python_SetConstant(d, d == md ? public_interface : NULL, "TC_U32",SWIG_From_int(static_cast< int >(TC_U32)));
+  SWIG_Python_SetConstant(d, d == md ? public_interface : NULL, "TC_U64",SWIG_From_int(static_cast< int >(TC_U64)));
+  SWIG_Python_SetConstant(d, d == md ? public_interface : NULL, "TC_I8",SWIG_From_int(static_cast< int >(TC_I8)));
+  SWIG_Python_SetConstant(d, d == md ? public_interface : NULL, "TC_I16",SWIG_From_int(static_cast< int >(TC_I16)));
+  SWIG_Python_SetConstant(d, d == md ? public_interface : NULL, "TC_I32",SWIG_From_int(static_cast< int >(TC_I32)));
+  SWIG_Python_SetConstant(d, d == md ? public_interface : NULL, "TC_I64",SWIG_From_int(static_cast< int >(TC_I64)));
+  SWIG_Python_SetConstant(d, d == md ? public_interface : NULL, "TC_F32",SWIG_From_int(static_cast< int >(TC_F32)));
+  SWIG_Python_SetConstant(d, d == md ? public_interface : NULL, "TC_F64",SWIG_From_int(static_cast< int >(TC_F64)));
+  SWIG_Python_SetConstant(d, d == md ? public_interface : NULL, "TC_BOOL",SWIG_From_int(static_cast< int >(TC_BOOL)));
+  SWIG_Python_SetConstant(d, d == md ? public_interface : NULL, "TC_CHAR",SWIG_From_int(static_cast< int >(TC_CHAR)));
+  SWIG_Python_SetConstant(d, d == md ? public_interface : NULL, "TC_STRING",SWIG_From_int(static_cast< int >(TC_STRING)));
+  SWIG_Python_SetConstant(d, d == md ? public_interface : NULL, "TC_U8STRING",SWIG_From_int(static_cast< int >(TC_U8STRING)));
+  SWIG_Python_SetConstant(d, d == md ? public_interface : NULL, "TC_LIST",SWIG_From_int(static_cast< int >(TC_LIST)));
+  SWIG_Python_SetConstant(d, d == md ? public_interface : NULL, "TC_STRUCT",SWIG_From_int(static_cast< int >(TC_STRUCT)));
+  SWIG_Python_SetConstant(d, d == md ? public_interface : NULL, "TC_CELL",SWIG_From_int(static_cast< int >(TC_CELL)));
   PyDict_SetItemString(md,(char*)"cvar", SWIG_globals());
   SwigPyBuiltin_AddPublicSymbol(public_interface, "cvar");
   SWIG_addvarlink(SWIG_globals(),(char*)"g_TrinityInterfaces",Swig_var_g_TrinityInterfaces_get, Swig_var_g_TrinityInterfaces_set);

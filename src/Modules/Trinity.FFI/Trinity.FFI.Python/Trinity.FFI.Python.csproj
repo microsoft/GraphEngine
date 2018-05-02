@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>GraphEngine.FFI.Python</PackageId>
     <Version>2.0.9328</Version>
@@ -15,6 +14,7 @@
     <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
     <Copyright>Copyright 2018</Copyright>
     <RepositoryUrl>https://github.com/Microsoft/GraphEngine/</RepositoryUrl>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -64,6 +64,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\..\GraphEngine.Jit\GraphEngine.Jit.Native\TypeSystem.cpp" Link="TypeSystem.cpp" />
+    <None Include="..\..\GraphEngine.Jit\GraphEngine.Jit.Native\TypeSystem.h" Link="TypeSystem.h" />
     <None Include="GraphEngine\Dependencies.csproj" />
     <None Include="GraphEngine\**\*.py" />
   </ItemGroup>

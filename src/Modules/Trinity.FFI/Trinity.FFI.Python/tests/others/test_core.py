@@ -5,13 +5,13 @@ Created on Tue Jan 30 04:17:03 2018
 @author: twshe
 """
 
-import unittest
+import ge_unittest
 
 from GraphEngine.Storage.core.CellSymTable import SymTablePicker, sync
 from GraphEngine.Storage.core.TSLCell import Cell
 
 
-class TestMethods(unittest.TestCase):
+class TestMethods(ge_unittest.TestCase):
     def test_new_cell(self):
         sync()
         s = SymTablePicker()
@@ -19,4 +19,4 @@ class TestMethods(unittest.TestCase):
         cell.get('foo')
         print(cell)
 
-unittest.main()
+ge_unittest.main()
