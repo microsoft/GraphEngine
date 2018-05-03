@@ -109,3 +109,4 @@ tests/new_test.exe
 **/.ropeproject
 ServiceFabricBackup
 tests/benchmarks/**/*Artifacts*
+/src/IKW GE TFC/GE Test Facility Console

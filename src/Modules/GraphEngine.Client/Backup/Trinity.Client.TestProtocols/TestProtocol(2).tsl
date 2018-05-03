@@ -1,0 +1,17 @@
+﻿struct S1
+{
+	string foo;
+	int bar;
+}
+
+protocol P1
+{
+	Type: asyn;
+	Request: S1;
+	Response: S1;
+}
+
+module TrinityClientTestModule
+{
+	protocol P1;
+}
