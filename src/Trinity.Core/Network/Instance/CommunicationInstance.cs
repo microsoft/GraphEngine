@@ -300,8 +300,8 @@ namespace Trinity.Network
                     m_module_init_signal.Set();
                     MessageDispatcher = MessageHandlers.DefaultParser.DispatchMessage;
 
-                    Console.WriteLine("Working Directory: {0}", Global.MyAssemblyPath);
-                    Console.WriteLine(TrinityConfig.OutputCurrentConfig());
+                    Log.WriteLine("Working Directory: {0}", Global.MyAssemblyPath);
+                    Log.WriteLines(TrinityConfig.OutputCurrentConfig());
 
                     m_started = true;
                     Log.WriteLine("{0} {1} is successfully started.", RunningMode, memory_cloud.MyInstanceId);

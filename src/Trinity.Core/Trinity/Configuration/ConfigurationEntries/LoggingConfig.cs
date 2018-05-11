@@ -20,7 +20,7 @@ namespace Trinity.Configuration
     {
         #region Singleton
         static LoggingConfig s_instance = new LoggingConfig();
-        private LoggingConfig() { LoggingLevel = c_DefaultLogLevel; }
+        private LoggingConfig() { CTrinityConfig.CLogSetEchoOnConsole(false);  LoggingLevel = c_DefaultLogLevel; }
         /// <summary>
         /// Gets the configuration entry singleton instance.
         /// </summary>
@@ -32,10 +32,11 @@ namespace Trinity.Configuration
 
         #region Fields
         internal const  LogLevel c_DefaultLogLevel  = LogLevel.Info;
+        internal const  bool     c_DefaultEchoOnConsole    = ConfigurationConstants.Values.DEFAULT_VALUE_TRUE;
         private LogLevel         m_LogLevel         = c_DefaultLogLevel;
         private string           m_LogDir           = ConfigurationConstants.Values.BLANK;
-        private bool             m_EchoOnConsole    = ConfigurationConstants.Values.DEFAULT_VALUE_TRUE;
-        private bool             m_LogToFile        =ConfigurationConstants.Values.DEFAULT_VALUE_TRUE;
+        private bool?            m_EchoOnConsole    = ConfigurationConstants.Values.DEFAULT_VALUE_TRUE;
+        private bool             m_LogToFile        = ConfigurationConstants.Values.DEFAULT_VALUE_TRUE;
         #endregion
 
         #region Private helpers
@@ -43,7 +44,7 @@ namespace Trinity.Configuration
         {
             get
             {
-                return Path.Combine(AssemblyUtility.MyAssemblyPath,"trinity-log");
+                return Path.Combine(AssemblyUtility.MyAssemblyPath, "trinity-log");
             }
         }
 
@@ -57,7 +58,7 @@ namespace Trinity.Configuration
         /// <summary>
         /// Represents the logging level threshold
         /// </summary>
-        [ConfigSetting(Optional:true)]
+        [ConfigSetting(Optional: true)]
         public LogLevel LoggingLevel
         {
             get { return m_LogLevel; }
@@ -67,7 +68,7 @@ namespace Trinity.Configuration
         /// <summary>
         /// Represents the path to store log files. defaults to AssemblyPath\trinity-log\.
         /// </summary>
-        [ConfigSetting(Optional:true)]
+        [ConfigSetting(Optional: true)]
         public string LogDirectory
         {
             get
@@ -92,20 +93,25 @@ namespace Trinity.Configuration
 
         /// <summary>
         /// Represents a value indicating whether the logged messages are echoed to the Console.
-        /// if the value is true, it will be eachoed to the Console.
+        /// if the value is true, it will be echoed to the Console.
         /// </summary>
         [ConfigSetting(Optional: true)]
         public bool LogEchoOnConsole
         {
-            get { return m_EchoOnConsole; }
-            set { m_EchoOnConsole = value; CTrinityConfig.CLogSetEchoOnConsole(value); }
+            get
+            {
+                //TODO these config props really need to be reactive
+                if (!m_EchoOnConsole.HasValue) { LogEchoOnConsole = c_DefaultEchoOnConsole; }
+                return m_EchoOnConsole.Value;
+            }
+            set { if (m_EchoOnConsole != value) { m_EchoOnConsole = value; CTrinityConfig.CLogSetEchoOnConsole(value); } }
         }
 
         /// <summary>
         /// Represents a value indicating whether to store log entries to a file on disk.
         /// if the value is true, it will be stored to disk. 
         /// </summary>
-        [ConfigSetting(Optional:true)]
+        [ConfigSetting(Optional: true)]
         public bool LogToFile
         {
             get { return m_LogToFile; }

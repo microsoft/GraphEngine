@@ -37,6 +37,7 @@ namespace Trinity.Utilities
         {
             get
             {
+#if CORECLR
                 if (my_assembly_path == null)
                 {
                     //  primary heuristics: find the assembly that calls into Trinity
@@ -88,6 +89,7 @@ namespace Trinity.Utilities
                         catch { continue; }
                     }
                 }
+#endif
 
                 if (my_assembly_path == null)
                 {

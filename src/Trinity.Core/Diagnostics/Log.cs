@@ -98,6 +98,7 @@ namespace Trinity.Diagnostics
         private static bool            s_initialized = false;
         private static bool            s_logtofile = false;
         private static BackgroundTask  s_bgtask;
+        private static readonly char[] s_linebreaks = "\r\n".ToCharArray();
         #endregion
 
         static Log()
@@ -112,6 +113,7 @@ namespace Trinity.Diagnostics
             {
                 if (s_initialized) return;
                 TrinityConfig.EnsureConfig();
+                LoggingConfig.Instance.LogEchoOnConsole = LoggingConfig.Instance.LogEchoOnConsole; //force sync the lazy value
                 CLogInitialize();
                 s_bgtask = new BackgroundTask(CollectLogEntries, c_LogEntryCollectorIdleInterval);
                 BackgroundThread.AddBackgroundTask(s_bgtask);
@@ -207,6 +209,17 @@ namespace Trinity.Diagnostics
         public static void WriteLine(string format = "", params object[] arg)
         {
             WriteLine(LogLevel.Info, format, arg);
+        }
+
+        /// <summary>
+        /// Breaks the text into lines, and log the lines sequentially.
+        /// </summary>
+        /// <param name="lines">Represents the text to be split into lines</param>
+        public static void WriteLines(string lines)
+        {
+            lines.Split(s_linebreaks, StringSplitOptions.RemoveEmptyEntries)
+                 .ToList()
+                 .ForEach(_ => WriteLine("{0}", _));
         }
 
         /// <summary>

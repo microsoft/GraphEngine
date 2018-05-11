@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Trinity.Core.Lib;
+using Trinity.Diagnostics;
 using Trinity.Network.Messaging;
 
 namespace Trinity.Network
@@ -114,7 +115,7 @@ namespace Trinity.Network
             for (int i = 0; i < count; i++)
                 storage.BarrierSync();
             sw.Stop();
-            Console.WriteLine("{0} Barrier Sync took {1}", count, sw.ElapsedMilliseconds);
+            Log.WriteLine("{0} Barrier Sync took {1}", count, sw.ElapsedMilliseconds);
         }
     }
 }

@@ -114,6 +114,7 @@ namespace Trinity.Diagnostics
             }
         }
 #endif
+        //TODO should not write to stdout directly
         public static void PrintServerInfo()
         {
             Console.Clear();
