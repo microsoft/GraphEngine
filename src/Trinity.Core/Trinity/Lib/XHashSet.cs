@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Trinity.Diagnostics;
 
 namespace Trinity.Core.Lib
 {
@@ -61,7 +62,7 @@ namespace Trinity.Core.Lib
         {
             for (int i = 0; i < m; i++)
             {
-                Console.WriteLine("The Hashset[" + i + "].Count=" + HashSetArray[i].Count);
+                Log.WriteLine("The Hashset[" + i + "].Count=" + HashSetArray[i].Count);
             }
         }
         public System.Collections.IEnumerator GetEnumerator()
@@ -145,7 +146,7 @@ namespace Trinity.Core.Lib
         {
             for (int i = 0; i < m; i++)
             {
-                Console.WriteLine("The Hashset[" + i + "].Count=" + HashSetArray[i].Count);
+                Log.WriteLine("The Hashset[" + i + "].Count=" + HashSetArray[i].Count);
             }
         }
         public System.Collections.Generic.IEnumerator<T> GetEnumerator()

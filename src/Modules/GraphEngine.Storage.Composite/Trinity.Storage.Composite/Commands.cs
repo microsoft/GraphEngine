@@ -18,7 +18,7 @@ namespace Trinity.Storage.Composite
                 var output = nuget_proc.StandardOutput.ReadToEnd();
                 var tag = "global-packages: ";
                 var package_root = output.Substring(output.IndexOf(tag) + tag.Length).Trim();
-                Console.WriteLine(package_root);
+                Log.WriteLine("Package root = {0}", package_root);
                 var codegen = Path.Combine(package_root, "GraphEngine.Core/2.0.9328/tools/Trinity.TSL.CodeGen");
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT) codegen += ".exe";
                 return codegen;

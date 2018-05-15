@@ -108,7 +108,7 @@ namespace Trinity.Storage
         {
             this.cluster_config = config;
 
-            Console.WriteLine(config.OutputCurrentConfig());
+            Log.WriteLines(config.OutputCurrentConfig());
 
             if (config.RunningMode == RunningMode.Embedded)
             {
