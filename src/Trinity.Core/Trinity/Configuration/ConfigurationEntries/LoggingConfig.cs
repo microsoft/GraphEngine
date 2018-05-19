@@ -104,7 +104,7 @@ namespace Trinity.Configuration
                 if (!m_EchoOnConsole.HasValue) { LogEchoOnConsole = c_DefaultEchoOnConsole; }
                 return m_EchoOnConsole.Value;
             }
-            set { if (m_EchoOnConsole != value) { m_EchoOnConsole = value; CTrinityConfig.CLogSetEchoOnConsole(value); } }
+            set { m_EchoOnConsole = value; CTrinityConfig.CLogSetEchoOnConsole(value); }
         }
 
         /// <summary>
