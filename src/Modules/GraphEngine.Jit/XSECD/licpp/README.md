@@ -2,7 +2,7 @@
 
 # LICPP
 
-[![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
+[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
 [![Open Source Love svg2](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
 [![Made with Secret Alien Technology](https://img.shields.io/badge/Made%20with-Secret%20Alien%20Technology-green.svg?longCache=true&style=for-the-badge&colorB=82ce82)](https://common-lisp.net/)
