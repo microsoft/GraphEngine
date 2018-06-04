@@ -362,9 +362,6 @@
     <ClCompile Include="src\Storage\LocalStorage\LocalMemoryStorage.Tx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Runtime\Transition.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Trinity.C.rc">

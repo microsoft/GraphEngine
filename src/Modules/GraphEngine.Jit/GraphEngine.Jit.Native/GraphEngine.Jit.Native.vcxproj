@@ -19,7 +19,7 @@
     <ProjectGuid>{2BCD7F27-26E0-4DC0-9E2D-F061341D3A1D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>GraphEngineJitNative</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
