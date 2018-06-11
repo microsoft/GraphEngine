@@ -129,8 +129,12 @@ namespace Storage
         {
             //First allocate the memory between committed_head to trunk_end
             uint32_t padding_size = available_space;
-            ret = Memory::ExpandMemoryFromCurrentPosition(trunkPtr + head.committed_head, padding_size);
-            if (!ret) goto EXPAND_RETURN;
+            
+            if (padding_size)
+            {
+                ret = Memory::ExpandMemoryFromCurrentPosition(trunkPtr + head.committed_head, padding_size);
+                if (!ret) goto EXPAND_RETURN;
+            }
 
             //Then allocate memory between trunk_ptr to committed_tail
             split_lock.lock();
@@ -149,8 +153,12 @@ namespace Storage
         {
             //First allocate the memory between committed_head to trunk_end
             uint32_t padding_size = available_space;
-            ret = Memory::ExpandMemoryFromCurrentPosition(trunkPtr + head.committed_head, padding_size);
-            if (!ret) goto EXPAND_RETURN;
+
+            if (padding_size)
+            {
+                ret = Memory::ExpandMemoryFromCurrentPosition(trunkPtr + head.committed_head, padding_size);
+                if (!ret) goto EXPAND_RETURN;
+            }
 
             //Then allocate memory between trunk_ptr to committed_tail
             split_lock.lock();
@@ -170,7 +178,7 @@ namespace Storage
     EXPAND_RETURN:
         if (ret == false)
         {
-            Trinity::Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "CommittedMemoryExpand: MemoryTrunk {0} failed to expand.", TrunkId);
+            Trinity::Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "CommittedMemoryExpand: MemoryTrunk {0} failed to expand. LastError = {1}", TrunkId, GetLastError());
         }
         return ret;
     RELOAD_RETURN:
