@@ -171,7 +171,7 @@ source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::(_Accessor_Field.m_ptr = targetPtr + 4;
                 )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::(_Accessor_Field.CellId = this.CellId;
+source->append(R"::(_Accessor_Field.m_cellId = this.m_cellId;
                 return )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::(_Accessor_Field;
@@ -183,7 +183,7 @@ source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::(_Accessor_Field.m_ptr = targetPtr;
                 )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::(_Accessor_Field.CellId = this.CellId;
+source->append(R"::(_Accessor_Field.m_cellId = this.m_cellId;
                 return )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
 source->append(R"::(_Accessor_Field;
@@ -200,7 +200,7 @@ source->append(R"::(
                 if ((object)value == null) throw new ArgumentNullException("The assigned variable is null.");
                 )::");
 source->append(Codegen::GetString((*(node->fieldList))[iterator_1]->name));
-source->append(R"::(_Accessor_Field.CellId = this.CellId;
+source->append(R"::(_Accessor_Field.m_cellId = this.m_cellId;
                 )::");
 }
 source->append(R"::(

@@ -209,14 +209,14 @@ source->append(R"::(r _result = SearchSubString4WildcardSearch(pairList);
             #region Another K-way search, similar to that of SearchSubString
             /****************************************************************************************************
              * Each element in the partialResults represents the result list of a substring in the keywords list.
-             * Each IndexItem list is sorted by IndexItem.CellId and IndexItem.Offset
+             * Each IndexItem list is sorted by IndexItem.m_cellId and IndexItem.Offset
              * We perform k-way search starting from the first indexitem of the first list
              * For a cellId at partialResults[0][iterator_0],
              * if we can successfully go through all the pairCount elements in IndexItemList,
              * then we found a match. Otherwise, we continue by checking the next elements in IndexItemList[0].
              *
-             * Successfully)::");
-source->append(R"::( going through all the elements in IndexItemList means:
+             * Successful)::");
+source->append(R"::(ly going through all the elements in IndexItemList means:
              * The distance between the current item offset in partialResults[i] and
              * the current item offset in partialResults[i-1] >= keywords[i-1].Length.
              * ***************************************************************************************************/
@@ -228,7 +228,7 @@ source->append(R"::( going through all the elements in IndexItemList means:
             do
             {
                 IndexItem current_item = partialResults[0][iterator_0];
-                if (current_item.CellId >= cellId)
+                if (current_item.m_cellId >= cellId)
                 {
                     offset = current_item.Offset;
                     int i = 1;
@@ -236,12 +236,12 @@ source->append(R"::( going through all the elements in IndexItemList means:
                     {
                         IndexItem item = new IndexItem();
                         bool match = false;
-                        int j)::");
-source->append(R"::( = IteratorList[i];
+                        i)::");
+source->append(R"::(nt j = IteratorList[i];
                         for (; j < partialResults[i].Count; j++)
                         {
                             item = partialResults[i][j];
-                            if (item.CellId >= current_item.CellId)
+                            if (item.m_cellId >= current_item.m_cellId)
                             {
                                 break;
                             }
@@ -249,26 +249,26 @@ source->append(R"::( = IteratorList[i];
                         if (j == partialResults[i].Count) 
                             return Result;
                         IteratorList[i] = j;
-                        if (item.CellId > current_item.CellId) 
+                        if (item.m_cellId > current_item.m_cellId) 
                         {
-                            cellId = item.CellId;
+                            cellId = item.m_cellId;
                             iterator_0++; 
                             break;
                         }
-                        Debug.Assert(item.CellId == current_item.CellId);
+                        Debug.Assert(item.m_cellId == current_item.m_cellId);
                         do
                         {
                             item = partialResults[i][j];
-                            int distance = item.Offset - offset;
-   )::");
-source->append(R"::(                         if (distance >= keywords[i - 1].Length)
+                            int distance = item.Off)::");
+source->append(R"::(set - offset;
+                            if (distance >= keywords[i - 1].Length)
                             {
                                 offset = item.Offset;
                                 match = true;
                                 break;
                             }
                             j++;
-                        } while (j < partialResults[i].Count && partialResults[i][j].CellId == current_item.CellId);
+                        } while (j < partialResults[i].Count && partialResults[i][j].m_cellId == current_item.m_cellId);
                         if (!match)
                         {
                             iterator_0++;
@@ -277,15 +277,15 @@ source->append(R"::(                         if (distance >= keywords[i - 1].Len
                     }
                     if (i == keywordCount)
                     {
-                        Result.Add(current_item.CellId);
-                        while (iterator_0 < partialResults[0].Count && current_item.CellId == partialResults[0][iterator_0].CellId)
+                        Result.Add(current_item.m_cellId);
+                        while (iterator_0 < partialResults[0].Count && current_item.m_cellId == partialResults[0][iterator_0].m_cellId)
                             iterator_0++;
                     }
                 }
                 else
-                    iterator_0++; 
-         )::");
-source->append(R"::(   } while (iterator_0 < partialResults[0].Count);
+                )::");
+source->append(R"::(    iterator_0++; 
+            } while (iterator_0 < partialResults[0].Count);
             #endregion
             return Result;
         }
@@ -314,9 +314,9 @@ source->append(R"::(   } while (iterator_0 < partialResults[0].Count);
                     p += 2;
                 }
                 else 
-                {
-                    pi.A = )::");
-source->append(R"::(pre_byte;
+                {)::");
+source->append(R"::(
+                    pi.A = pre_byte;
                     pi.B = bytes[p];
                     pi.pos = pos - 1;
                     pairList.Add(pi);
@@ -344,8 +344,8 @@ source->append(R"::(pre_byte;
                 return Result;
             IndexItem*[] IndexItemList = new IndexItem*[pairCount];
             int[] DistanceList = new int[pairCount];
-            int[] ItemCountList = new int[pairCou)::");
-source->append(R"::(nt];
+            int[] Ite)::");
+source->append(R"::(mCountList = new int[pairCount];
             int[] IteratorList = new int[pairCount]; 
             int offset = pairList[0].pos;
             for (int i = 0; i < pairCount; i++)
@@ -365,9 +365,9 @@ source->append(R"::(nt];
             }
             #region K-way search
             /****************************************************************************************************
-             * Each element in the IndexItemList represents a bigram pair (e)::");
-source->append(R"::(.g., ab or bc).
-             * Each IndexItem is sorted by IndexItem.CellId and IndexItem.Offset
+             * Each element in the IndexItemList)::");
+source->append(R"::( represents a bigram pair (e.g., ab or bc).
+             * Each IndexItem is sorted by IndexItem.m_cellId and IndexItem.Offset
              * We perform k-way search starting from IndexItemList[0]
              * For a cellId at IndexItemList[0][iterator_0],
              * if we can successfully go through all the pairCount elements in IndexItemList,
@@ -382,9 +382,9 @@ source->append(R"::(.g., ab or bc).
             offset = 0;
             do
             {
-                IndexItem current_item = IndexItemList[0][iterato)::");
-source->append(R"::(r_0];
-                if (current_item.CellId >= cellId)
+                IndexItem current_i)::");
+source->append(R"::(tem = IndexItemList[0][iterator_0];
+                if (current_item.m_cellId >= cellId)
                 {
                     offset = current_item.Offset;
                     int i = 1;
@@ -396,7 +396,7 @@ source->append(R"::(r_0];
                         for (; j < ItemCountList[i]; j++)
                         {
                             item = IndexItemList[i][j];
-                            if (item.CellId >= current_item.CellId)
+                            if (item.m_cellId >= current_item.m_cellId)
                             {
                                 break;
                             }
@@ -407,15 +407,15 @@ source->append(R"::(r_0];
                                 ReleaseGCHandle(gchandlers);
                             return Result;
                         }
-                        IteratorList[i] =)::");
-source->append(R"::( j;
-                        if (item.CellId > current_item.CellId) 
+     )::");
+source->append(R"::(                   IteratorList[i] = j;
+                        if (item.m_cellId > current_item.m_cellId) 
                         {
-                            cellId = item.CellId;
+                            cellId = item.m_cellId;
                             iterator_0++; 
                             break;
                         }
-                        Debug.Assert(item.CellId == current_item.CellId);
+                        Debug.Assert(item.m_cellId == current_item.m_cellId);
                         do
                         {
                             item = IndexItemList[i][j];
@@ -429,9 +429,9 @@ source->append(R"::( j;
                             else if (distance > DistanceList[i])
                                 break;
                             j++;
-                        } while (j < ItemCountList[i] && IndexItemList[i][j].CellId == current_item.CellId);
-  )::");
-source->append(R"::(                      if (!match)
+                        } while (j < ItemCountList[i] && IndexItem)::");
+source->append(R"::(List[i][j].m_cellId == current_item.m_cellId);
+                        if (!match)
                         {
                             iterator_0++;
                             break;
@@ -439,8 +439,8 @@ source->append(R"::(                      if (!match)
                     }
                     if (i == pairCount)
                     {
-                        Result.Add(current_item.CellId);
-                        while (iterator_0 < ItemCountList[0] && current_item.CellId == IndexItemList[0][iterator_0].CellId)
+                        Result.Add(current_item.m_cellId);
+                        while (iterator_0 < ItemCountList[0] && current_item.m_cellId == IndexItemList[0][iterator_0].m_cellId)
                             iterator_0++;
                     }
                 }
@@ -455,10 +455,10 @@ source->append(R"::(                      if (!match)
         /// <summary>
         /// The only difference from SearchSubString is that the returning result is a List of IntexIndex.
         /// </summary>
-        /// <param name="pairList"></param>
+        /// <param name="pairList"></param)::");
+source->append(R"::(>
         /// <returns></returns>
-        private List)::");
-source->append(R"::(<IndexItem> SearchSubString4WildcardSearch(List<PairInfo> pairList)
+        private List<IndexItem> SearchSubString4WildcardSearch(List<PairInfo> pairList)
         {
             List<GCHandle> gchandlers = null;
             if (!InMemory)
@@ -477,9 +477,9 @@ source->append(R"::(<IndexItem> SearchSubString4WildcardSearch(List<PairInfo> pa
                 if (InMemory)
                     IndexItemList[i] = ReadIndexItemListFromRAM(pairList[i].A, pairList[i].B, out ItemCountList[i]);
                 else
-                    IndexItemList[i] = ReadIndexItemListFromDisk(pairList[i].A, pairList[i].B, out ItemCountList[i], ref gchandlers);
-)::");
-source->append(R"::(                DistanceList[i] = pairList[i].pos - offset;
+                    IndexItemList[i] = ReadIndexItemListFromDisk(pairList[i].A,)::");
+source->append(R"::( pairList[i].B, out ItemCountList[i], ref gchandlers);
+                DistanceList[i] = pairList[i].pos - offset;
                 offset = pairList[i].pos;
                 if (ItemCountList[i] == 0)
                 {
@@ -491,14 +491,14 @@ source->append(R"::(                DistanceList[i] = pairList[i].pos - offset;
             #region K-way search
             /****************************************************************************************************
              * Each element in the IndexItemList represents a bigram pair (e.g., ab or bc).
-             * Each IndexItem is sorted by IndexItem.CellId and IndexItem.Offset
+             * Each IndexItem is sorted by IndexItem.m_cellId and IndexItem.Offset
              * We perform k-way search starting from IndexItemList[0]
              * For a cellId at IndexItemList[0][iterator_0],
              * if we can successfully go through all the pairCount elements in IndexItemList,
-             * then we found a match. Otherwise, we continue by checking the next elements in IndexItemList[0].
+             * then we found a match. Otherwise, we continue by checking the next elements)::");
+source->append(R"::( in IndexItemList[0].
              *
-             * Succ)::");
-source->append(R"::(essfully going through all the elements in IndexItemList means:
+             * Successfully going through all the elements in IndexItemList means:
              * The distance between the current item offset in IndexItemList[i] and
              * the current item offset in IndexItemList[i-1] equals DistanceList[i].
              * ***************************************************************************************************/
@@ -508,7 +508,7 @@ source->append(R"::(essfully going through all the elements in IndexItemList mea
             do
             {
                 IndexItem current_item = IndexItemList[0][iterator_0];
-                if (current_item.CellId >= cellId)
+                if (current_item.m_cellId >= cellId)
                 {
                     offset = current_item.Offset;
                     int i = 1;
@@ -517,11 +517,11 @@ source->append(R"::(essfully going through all the elements in IndexItemList mea
                         IndexItem item = new IndexItem();
                         bool match = false;
                         int j = IteratorList[i];
-                        for (; j < ItemCountList[i]; j++)
+                        for ()::");
+source->append(R"::(; j < ItemCountList[i]; j++)
                         {
-   )::");
-source->append(R"::(                         item = IndexItemList[i][j];
-                            if (item.CellId >= current_item.CellId)
+                            item = IndexItemList[i][j];
+                            if (item.m_cellId >= current_item.m_cellId)
                             {
                                 break;
                             }
@@ -533,18 +533,18 @@ source->append(R"::(                         item = IndexItemList[i][j];
                             return Result;
                         }
                         IteratorList[i] = j;
-                        if (item.CellId > current_item.CellId) 
+                        if (item.m_cellId > current_item.m_cellId) 
                         {
-                            cellId = item.CellId;
+                            cellId = item.m_cellId;
                             iterator_0++; 
                             break;
                         }
-                        Debug.Assert(item.CellId == current_item.CellId);
+                        Debug.Assert(item.m_cellId == current_item.m_cellId);
                         do
                         {
-                            item = IndexItemList[i][j];
-                            int dist)::");
-source->append(R"::(ance = item.Offset - offset;
+                   )::");
+source->append(R"::(         item = IndexItemList[i][j];
+                            int distance = item.Offset - offset;
                             if (distance == DistanceList[i])
                             {
                                 offset = item.Offset;
@@ -554,7 +554,7 @@ source->append(R"::(ance = item.Offset - offset;
                             else if (distance > DistanceList[i])
                                 break;
                             j++;
-                        } while (j < ItemCountList[i] && IndexItemList[i][j].CellId == current_item.CellId);
+                        } while (j < ItemCountList[i] && IndexItemList[i][j].m_cellId == current_item.m_cellId);
                         if (!match)
                         {
                             iterator_0++;
@@ -564,10 +564,10 @@ source->append(R"::(ance = item.Offset - offset;
                     if (i == pairCount)
                     {
                         Result.Add(current_item);
-                        while (iterator_0 < ItemCountList[0] && current_item.CellId == IndexItemList[0][iterator_0].CellId)
+                        while (iterator_0 < ItemCountList[0] && current_item.m_cellId == Ind)::");
+source->append(R"::(exItemList[0][iterator_0].m_cellId)
                             iterator_0++;
-  )::");
-source->append(R"::(                  }
+                    }
                 }
                 else
                     iterator_0++; 
@@ -592,10 +592,10 @@ source->append(R"::(                  }
             int length = sizeof(IndexItem) * count;
             byte[] buffer = new byte[length];
             br_index.Read(buffer, 0, buffer.Length);
-            var gchandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+            var gchandle = GCHandle.Alloc(buffer)::");
+source->append(R"::(, GCHandleType.Pinned);
             gchandlers.Add(gchandle);
-            return)::");
-source->append(R"::( (IndexItem*)gchandle.AddrOfPinnedObject().ToPointer();
+            return (IndexItem*)gchandle.AddrOfPinnedObject().ToPointer();
         }
         private IndexItem* ReadIndexItemListFromRAM(int a, int b, out int count)
         {

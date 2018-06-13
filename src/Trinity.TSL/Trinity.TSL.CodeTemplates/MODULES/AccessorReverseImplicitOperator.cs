@@ -31,7 +31,7 @@ namespace Trinity.TSL
 
             __meta.IF("%for_cell");
             ret = t_accessor_type._get()._Setup(field.CellId, tmpcellptr, -1, 0, null);
-            ret.CellId = field.CellId;
+            ret.m_cellId = field.CellId;
             __meta.ELIF("%has_resize");
             ret = new t_accessor_type(tmpcellptr, null);
             __meta.ELSE();

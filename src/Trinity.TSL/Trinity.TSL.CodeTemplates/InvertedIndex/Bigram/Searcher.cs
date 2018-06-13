@@ -227,7 +227,7 @@ namespace t_Namespace.InvertedIndex
             #region Another K-way search, similar to that of SearchSubString
             /****************************************************************************************************
              * Each element in the partialResults represents the result list of a substring in the keywords list.
-             * Each IndexItem list is sorted by IndexItem.CellId and IndexItem.Offset
+             * Each IndexItem list is sorted by IndexItem.m_cellId and IndexItem.Offset
              * We perform k-way search starting from the first indexitem of the first list
              * For a cellId at partialResults[0][iterator_0],
              * if we can successfully go through all the pairCount elements in IndexItemList,
@@ -246,7 +246,7 @@ namespace t_Namespace.InvertedIndex
             do
             {
                 IndexItem current_item = partialResults[0][iterator_0];
-                if (current_item.CellId >= cellId)
+                if (current_item.m_cellId >= cellId)
                 {
                     offset = current_item.Offset;
                     int i = 1;
@@ -259,7 +259,7 @@ namespace t_Namespace.InvertedIndex
                         for (; j < partialResults[i].Count; j++)
                         {
                             item = partialResults[i][j];
-                            if (item.CellId >= current_item.CellId)
+                            if (item.m_cellId >= current_item.m_cellId)
                             {
                                 break;
                             }
@@ -268,15 +268,15 @@ namespace t_Namespace.InvertedIndex
                             return Result;
 
                         IteratorList[i] = j;
-                        if (item.CellId > current_item.CellId) // did not find any item whose CellId equals the current CellId
+                        if (item.m_cellId > current_item.m_cellId) // did not find any item whose CellId equals the current CellId
                         {
-                            cellId = item.CellId;
+                            cellId = item.m_cellId;
                             iterator_0++; // jump to the first index item, and check the next index item
                             break;
                         }
 
-                        // _item.CellId == item.CellId
-                        Debug.Assert(item.CellId == current_item.CellId);
+                        // _item.m_cellId == item.m_cellId
+                        Debug.Assert(item.m_cellId == current_item.m_cellId);
                         do
                         {
                             item = partialResults[i][j];
@@ -289,7 +289,7 @@ namespace t_Namespace.InvertedIndex
                             }
 
                             j++;
-                        } while (j < partialResults[i].Count && partialResults[i][j].CellId == current_item.CellId);
+                        } while (j < partialResults[i].Count && partialResults[i][j].m_cellId == current_item.m_cellId);
 
                         if (!match)
                         {
@@ -299,13 +299,13 @@ namespace t_Namespace.InvertedIndex
                     }
                     if (i == keywordCount)
                     {
-                        Result.Add(current_item.CellId);
-                        while (iterator_0 < partialResults[0].Count && current_item.CellId == partialResults[0][iterator_0].CellId)
+                        Result.Add(current_item.m_cellId);
+                        while (iterator_0 < partialResults[0].Count && current_item.m_cellId == partialResults[0][iterator_0].m_cellId)
                             iterator_0++;
                     }
                 }
                 else
-                    iterator_0++; // skip current item if its CellId is smaller than the current CellId
+                    iterator_0++; // skip current item if its m_cellId is smaller than the current m_cellId
             } while (iterator_0 < partialResults[0].Count);
             #endregion
             return Result;
@@ -396,7 +396,7 @@ namespace t_Namespace.InvertedIndex
             #region K-way search
             /****************************************************************************************************
              * Each element in the IndexItemList represents a bigram pair (e.g., ab or bc).
-             * Each IndexItem is sorted by IndexItem.CellId and IndexItem.Offset
+             * Each IndexItem is sorted by IndexItem.m_cellId and IndexItem.Offset
              * We perform k-way search starting from IndexItemList[0]
              * For a cellId at IndexItemList[0][iterator_0],
              * if we can successfully go through all the pairCount elements in IndexItemList,
@@ -412,7 +412,7 @@ namespace t_Namespace.InvertedIndex
             do
             {
                 IndexItem current_item = IndexItemList[0][iterator_0];
-                if (current_item.CellId >= cellId)
+                if (current_item.m_cellId >= cellId)
                 {
                     offset = current_item.Offset;
                     int i = 1;
@@ -425,7 +425,7 @@ namespace t_Namespace.InvertedIndex
                         for (; j < ItemCountList[i]; j++)
                         {
                             item = IndexItemList[i][j];
-                            if (item.CellId >= current_item.CellId)
+                            if (item.m_cellId >= current_item.m_cellId)
                             {
                                 break;
                             }
@@ -438,15 +438,15 @@ namespace t_Namespace.InvertedIndex
                         }
 
                         IteratorList[i] = j;
-                        if (item.CellId > current_item.CellId) // did not find any item whose CellId equals the current CellId
+                        if (item.m_cellId > current_item.m_cellId) // did not find any item whose CellId equals the current CellId
                         {
-                            cellId = item.CellId;
+                            cellId = item.m_cellId;
                             iterator_0++; // jump to the first index item, and check the next index item
                             break;
                         }
 
-                        // _item.CellId == item.CellId
-                        Debug.Assert(item.CellId == current_item.CellId);
+                        // _item.m_cellId == item.m_cellId
+                        Debug.Assert(item.m_cellId == current_item.m_cellId);
                         do
                         {
                             item = IndexItemList[i][j];
@@ -460,7 +460,7 @@ namespace t_Namespace.InvertedIndex
                             else if (distance > DistanceList[i])
                                 break;
                             j++;
-                        } while (j < ItemCountList[i] && IndexItemList[i][j].CellId == current_item.CellId);
+                        } while (j < ItemCountList[i] && IndexItemList[i][j].m_cellId == current_item.m_cellId);
 
                         if (!match)
                         {
@@ -470,8 +470,8 @@ namespace t_Namespace.InvertedIndex
                     }
                     if (i == pairCount)
                     {
-                        Result.Add(current_item.CellId);
-                        while (iterator_0 < ItemCountList[0] && current_item.CellId == IndexItemList[0][iterator_0].CellId)
+                        Result.Add(current_item.m_cellId);
+                        while (iterator_0 < ItemCountList[0] && current_item.m_cellId == IndexItemList[0][iterator_0].m_cellId)
                             iterator_0++;
                     }
                 }
@@ -525,7 +525,7 @@ namespace t_Namespace.InvertedIndex
             #region K-way search
             /****************************************************************************************************
              * Each element in the IndexItemList represents a bigram pair (e.g., ab or bc).
-             * Each IndexItem is sorted by IndexItem.CellId and IndexItem.Offset
+             * Each IndexItem is sorted by IndexItem.m_cellId and IndexItem.Offset
              * We perform k-way search starting from IndexItemList[0]
              * For a cellId at IndexItemList[0][iterator_0],
              * if we can successfully go through all the pairCount elements in IndexItemList,
@@ -541,7 +541,7 @@ namespace t_Namespace.InvertedIndex
             do
             {
                 IndexItem current_item = IndexItemList[0][iterator_0];
-                if (current_item.CellId >= cellId)
+                if (current_item.m_cellId >= cellId)
                 {
                     offset = current_item.Offset;
                     int i = 1;
@@ -554,7 +554,7 @@ namespace t_Namespace.InvertedIndex
                         for (; j < ItemCountList[i]; j++)
                         {
                             item = IndexItemList[i][j];
-                            if (item.CellId >= current_item.CellId)
+                            if (item.m_cellId >= current_item.m_cellId)
                             {
                                 break;
                             }
@@ -567,15 +567,15 @@ namespace t_Namespace.InvertedIndex
                         }
 
                         IteratorList[i] = j;
-                        if (item.CellId > current_item.CellId) // did not find any item whose CellId equals the current CellId
+                        if (item.m_cellId > current_item.m_cellId) // did not find any item whose CellId equals the current CellId
                         {
-                            cellId = item.CellId;
+                            cellId = item.m_cellId;
                             iterator_0++; // jump to the first index item, and check the next index item
                             break;
                         }
 
                         // _item.CellId == item.CellId
-                        Debug.Assert(item.CellId == current_item.CellId);
+                        Debug.Assert(item.m_cellId == current_item.m_cellId);
                         do
                         {
                             item = IndexItemList[i][j];
@@ -589,7 +589,7 @@ namespace t_Namespace.InvertedIndex
                             else if (distance > DistanceList[i])
                                 break;
                             j++;
-                        } while (j < ItemCountList[i] && IndexItemList[i][j].CellId == current_item.CellId);
+                        } while (j < ItemCountList[i] && IndexItemList[i][j].m_cellId == current_item.m_cellId);
 
                         if (!match)
                         {
@@ -600,7 +600,7 @@ namespace t_Namespace.InvertedIndex
                     if (i == pairCount)
                     {
                         Result.Add(current_item);
-                        while (iterator_0 < ItemCountList[0] && current_item.CellId == IndexItemList[0][iterator_0].CellId)
+                        while (iterator_0 < ItemCountList[0] && current_item.m_cellId == IndexItemList[0][iterator_0].m_cellId)
                             iterator_0++;
                     }
                 }

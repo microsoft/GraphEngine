@@ -18,7 +18,7 @@ namespace t_Namespace
     public unsafe class GuidAccessor : IAccessor
     {
         internal byte* m_ptr;
-        internal long CellId;
+        internal long m_cellId;
         
         ///
         /// <summary>

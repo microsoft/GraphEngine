@@ -61,7 +61,7 @@ source->append(R"::(
             ret = )::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
 source->append(R"::(._get()._Setup(field.CellId, tmpcellptr, -1, 0, null);
-            ret.CellId = field.CellId;
+            ret.m_cellId = field.CellId;
             )::");
 }
 else if (has_resize_1)

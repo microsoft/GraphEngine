@@ -29,7 +29,7 @@ source->append(R"::(.InvertedIndex
     struct IndexItem
     {
         [FieldOffset(0)]
-        internal long CellId;
+        internal long m_cellId;
         [FieldOffset(8)]
         internal ushort Offset;
     }
