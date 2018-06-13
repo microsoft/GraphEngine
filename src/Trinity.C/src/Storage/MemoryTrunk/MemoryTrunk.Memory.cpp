@@ -129,7 +129,11 @@ namespace Storage
         {
             //First allocate the memory between committed_head to trunk_end
             uint32_t padding_size = available_space;
-            ret = Memory::ExpandMemoryFromCurrentPosition(trunkPtr + head.committed_head, padding_size);
+
+            if (padding_size)
+            {
+                ret = Memory::ExpandMemoryFromCurrentPosition(trunkPtr + head.committed_head, padding_size);
+            }
             if (!ret) goto EXPAND_RETURN;
 
             //Then allocate memory between trunk_ptr to committed_tail
@@ -149,7 +153,10 @@ namespace Storage
         {
             //First allocate the memory between committed_head to trunk_end
             uint32_t padding_size = available_space;
-            ret = Memory::ExpandMemoryFromCurrentPosition(trunkPtr + head.committed_head, padding_size);
+            if (padding_size)
+            {
+                ret = Memory::ExpandMemoryFromCurrentPosition(trunkPtr + head.committed_head, padding_size);
+            }
             if (!ret) goto EXPAND_RETURN;
 
             //Then allocate memory between trunk_ptr to committed_tail
