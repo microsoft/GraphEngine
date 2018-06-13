@@ -115,7 +115,7 @@ namespace t_Namespace.InvertedIndex
                 indexItemCount[idx] = 0;
             }
 
-            index[idx][indexItemCount[idx]] = new IndexItem { CellId = id, Offset = offsetInString };
+            index[idx][indexItemCount[idx]] = new IndexItem { m_cellId = id, Offset = offsetInString };
             indexItemCount[idx]++;
 
             if (indexItemCount[idx] == CacheSize)
@@ -177,7 +177,7 @@ namespace t_Namespace.InvertedIndex
 
                     Array.Sort(indexItems, new Comparison<IndexItem>((x, y) =>
                     {
-                        int ret = x.CellId.CompareTo(y.CellId);
+                        int ret = x.m_cellId.CompareTo(y.m_cellId);
                         if (ret != 0)
                             return ret;
 

@@ -146,7 +146,7 @@ namespace t_Namespace
         ///The pointer to the content of the object.
         ///</summary>
         internal byte* m_ptr;
-        internal long CellId;
+        internal long m_cellId;
 
         internal unsafe t_struct_name_Accessor(byte* _CellPtr
             /*IF("!%struct_fixed")*/

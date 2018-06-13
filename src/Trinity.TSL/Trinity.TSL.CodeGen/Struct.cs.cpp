@@ -221,7 +221,7 @@ source->append(R"::(_Accessor : IAccessor
         ///The pointer to the content of the object.
         ///</summary>
         internal byte* m_ptr;
-        internal long CellId;
+        internal long m_cellId;
         internal unsafe )::");
 source->append(Codegen::GetString(node->name));
 source->append(R"::(_Accessor(byte* _CellPtr

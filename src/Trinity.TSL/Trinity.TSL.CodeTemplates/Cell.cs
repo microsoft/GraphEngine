@@ -560,7 +560,7 @@ namespace t_Namespace
     public unsafe class t_cell_name_Accessor : __meta, ICellAccessor
     {
         #region Fields
-        public   long                    CellId;
+        internal   long                    m_cellId;
         /// <summary>
         /// A pointer to the underlying raw binary blob. Take caution when accessing data with
         /// the raw pointer, as no boundary checks are employed, and improper operations will cause data corruption and/or system crash.
@@ -1183,7 +1183,7 @@ namespace t_Namespace
             }
         }
 
-        long ICell.CellId { get { return CellId; } set { CellId = value; } }
+        public long CellId { get { return m_cellId; } set { m_cellId = value; } }
 
 
         IEnumerable<KeyValuePair<string, T>> ICell.SelectFields<T>(string attributeKey, string attributeValue)

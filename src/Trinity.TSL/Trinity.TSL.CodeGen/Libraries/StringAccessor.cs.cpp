@@ -32,7 +32,7 @@ source->append(R"::(
     public unsafe class StringAccessor : IAccessor, IEnumerable<char>
     {
         internal byte* m_ptr;
-        internal long CellId;
+        internal long m_cellId;
         internal StringAccessor(byte* _CellPtr, ResizeFunctionDelegate func)
         {
             m_ptr = _CellPtr;

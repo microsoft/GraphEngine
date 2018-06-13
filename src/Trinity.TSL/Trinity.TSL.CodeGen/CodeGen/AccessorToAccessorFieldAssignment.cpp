@@ -30,7 +30,7 @@ static void _FixedLengthAccessorFieldAssignment(NFieldType* type, string accesso
         source->append(R":(
                 int offset = (int)(targetPtr - m_ptr);
                 int length = ):" + fieldLength + R":(;
-                if (value.CellId != this.CellId)
+                if (value.m_cellId != this.m_cellId)
                 {
                     this.m_ptr = this.ResizeFunction(this.m_ptr, offset, length);
                     Memory.Copy(value.m_ptr, this.m_ptr + offset, length);
@@ -83,7 +83,7 @@ static void _StructAccessorFieldAssignment(NFieldType* type, string accessor_fie
         ret += R"::(
                 if (newlength != oldlength)
                 {
-                    if (value.CellId != this.CellId)
+                    if (value.m_cellId != this.m_cellId)
                     {
                         this.m_ptr = this.ResizeFunction(this.m_ptr, offset, newlength - oldlength);
                         Memory.Copy(value.m_ptr, this.m_ptr + offset, newlength);
@@ -127,7 +127,7 @@ static void _LengthPrefixedAccessorFieldAssignment(NFieldType* type, string acce
     }
 
     ret += R"::(
-                if (value.CellId != )::" + accessor_field_name + R"::(.CellId)
+                if (value.m_cellId != )::" + accessor_field_name + R"::(.m_cellId)
                 {
                     //if not in the same Cell
                     )::" + accessor_field_name + ".m_ptr = " + accessor_field_name + ".ResizeFunction(targetPtr, 0, " + resize_len + R"::();
@@ -159,7 +159,7 @@ namespace Trinity
              * When this module is called, the caller should guarantee that 'targetPtr'
              * points to the location of the field to be assigned. Also, if an accessor
              * is needed for the field, the m_ptr field of the accessor should point
-             * to targetPtr, and CellId should be properly set.
+             * to targetPtr, and m_cellId should be properly set.
              * Arguments:
              * 0. accessor field name
              * 1. "FieldDoesNotExist" or "FieldExists" -> determines whether

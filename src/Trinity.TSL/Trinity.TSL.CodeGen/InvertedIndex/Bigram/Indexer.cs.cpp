@@ -112,7 +112,7 @@ source->append(R"::(Bytes[i + 1], cellId, (ushort)i);
                 index[idx] = new IndexItem[CacheSize];
                 indexItemCount[idx] = 0;
             }
-            index[idx][indexItemCount[idx]] = new IndexItem { CellId = id, Offset = offsetInString };
+            index[idx][indexItemCount[idx]] = new IndexItem { m_cellId = id, Offset = offsetInString };
             indexItemCount[idx]++;
             if (indexItemCount[idx] == CacheSize)
             {
@@ -129,8 +129,8 @@ source->append(R"::(Bytes[i + 1], cellId, (ushort)i);
                 string path_L1 = temp_dir + i + "\\";
                 for (int j = 0; j < 256; j++)
                 {
-      )::");
-source->append(R"::(              SortBigram(path_L1 + j, i, j);
+    )::");
+source->append(R"::(                SortBigram(path_L1 + j, i, j);
                 }
             }
             byte[] buffer = new byte[65536 << 3];
@@ -155,8 +155,8 @@ source->append(R"::(              SortBigram(path_L1 + j, i, j);
             {
                 byte[] buffer = new byte[(int)fs.Length];
                 fs.Read(buffer, 0, buffer.Length);
-                int count = buffer.Length / s)::");
-source->append(R"::(izeof(IndexItem);
+                int count = buffer.Length /)::");
+source->append(R"::( sizeof(IndexItem);
                 IndexItem[] indexItems = new IndexItem[count];
                 fixed (byte* bp = buffer)
                 {
@@ -167,7 +167,7 @@ source->append(R"::(izeof(IndexItem);
                     }
                     Array.Sort(indexItems, new Comparison<IndexItem>((x, y) =>
                     {
-                        int ret = x.CellId.CompareTo(y.CellId);
+                        int ret = x.m_cellId.CompareTo(y.m_cellId);
                         if (ret != 0)
                             return ret;
                         return x.Offset.CompareTo(y.Offset);
@@ -180,8 +180,8 @@ source->append(R"::(izeof(IndexItem);
                 }
                 bw_index.Write(count);
                 bw_index.Write(buffer, 0, buffer.Length);
-                bg_index[(a << 8) + b] = IndexFileO)::");
-source->append(R"::(ffset;
+                bg_index[(a << 8) + b] = Inde)::");
+source->append(R"::(xFileOffset;
                 IndexFileOffset += (sizeof(int) + buffer.Length);
             }
         }
@@ -207,9 +207,9 @@ source->append(R"::(ffset;
             bw_index.Flush();
             bw_index.Close();
         }
-        void Commit()
- )::");
-source->append(R"::(       {
+        void Commi)::");
+source->append(R"::(t()
+        {
             try
             {
                 File.Delete(bg_index_file);

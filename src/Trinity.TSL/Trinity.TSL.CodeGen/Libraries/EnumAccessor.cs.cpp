@@ -31,7 +31,7 @@ source->append(R"::(
     public unsafe class EnumAccessor : IAccessor
     {
         internal byte* m_ptr;
-        internal long CellId;
+        internal long m_cellId;
         internal EnumAccessor(byte* _CellPtr)
         {
             m_ptr = _CellPtr;

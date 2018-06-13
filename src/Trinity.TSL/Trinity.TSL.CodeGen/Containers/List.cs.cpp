@@ -31,7 +31,7 @@ source->append(Codegen::GetString(data_type_get_accessor_name(node->listElementT
 source->append(R"::(>
     {
         internal byte* m_ptr;
-        internal long CellId;
+        internal long m_cellId;
         internal ResizeFunctionDelegate ResizeFunction;
         internal )::");
 source->append(Codegen::GetString(data_type_get_accessor_name(node)));
@@ -179,7 +179,7 @@ source->append(R"::(
                     )::");
 }
 source->append(R"::(
-                    elementAccessor.CellId = this.CellId;
+                    elementAccessor.m_cellId = this.m_cellId;
                     return elementAccessor;
                 }
                 )::");
@@ -204,7 +204,7 @@ else
 source->append(R"::(
                 {
                     if ((object)value == null) throw new ArgumentNullException("The assigned variable is null.");
-                    elementAccessor.CellId = this.CellId;
+                    elementAccessor.m_cellId = this.m_cellId;
                     byte* targetPtr = m_ptr;
                     )::");
 if (element_fixed_1)
@@ -277,7 +277,7 @@ source->append(R"::(> action)
 if (element_need_accessor_1)
 {
 source->append(R"::(
-            elementAccessor.CellId = this.CellId;
+            elementAccessor.m_cellId = this.m_cellId;
             )::");
 }
 source->append(R"::(
@@ -862,7 +862,7 @@ source->append(R"::( collection)
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
             int delta = collection.length;
-            if (collection.CellId != CellId)
+            if (collection.m_cellId != m_cellId)
             {
                 m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
                 Memory.Copy(collection.m_ptr, m_ptr + *(int*)m_ptr + 4, delta);
@@ -882,9 +882,9 @@ source->append(R"::( collection)
             this.m_ptr += 4;
         }
         /// <summary>
-        /// Removes all elements from the List
-)::");
-source->append(R"::(        /// </summary>
+        /// Removes all elements from the Li)::");
+source->append(R"::(st
+        /// </summary>
         public unsafe void Clear()
         {
             int delta = length;

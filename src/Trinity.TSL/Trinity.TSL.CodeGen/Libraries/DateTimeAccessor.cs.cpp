@@ -33,7 +33,7 @@ source->append(R"::(
     public unsafe class DateTimeAccessor : IAccessor
     {
         internal byte* m_ptr;
-        internal long CellId;
+        internal long m_cellId;
         /// <summary>
         ///     Converts the specified string representation of a date and time to its <see cref="Trinity.TSL.Lib.DateTimeAccessor"/>
         ///     equivalent and returns a value that indicates whether the conversion succeeded.

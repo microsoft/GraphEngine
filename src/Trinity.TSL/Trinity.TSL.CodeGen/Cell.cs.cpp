@@ -823,7 +823,7 @@ source->append(Codegen::GetString(node->name));
 source->append(R"::(_Accessor : ICellAccessor
     {
         #region Fields
-        public   long                    CellId;
+        internal   long                    m_cellId;
         /// <summary>
         /// A pointer to the underlying raw binary blob. Take caution when accessing data with
         /// the raw pointer, as no boundary checks are employed, and improper operations will cause data corruption and/or system crash.
@@ -1653,7 +1653,7 @@ source->append(R"::(
                 break;
             }
         }
-        long ICell.CellId { get { return CellId; } set { CellId = value; } }
+        public long CellId { get { return m_cellId; } set { m_cellId = value; } }
         IEnumerable<KeyValuePair<string, T>> ICell.SelectFields<T>(string attributeKey, string attributeValue)
         {
             switch (TypeConverter<T>.type_id)

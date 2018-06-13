@@ -54,10 +54,10 @@ source->append(R"::(
     public unsafe class longListAccessor : IAccessor, IEnumerable<long>
     {
         internal byte* m_ptr;
-        internal long  CellId;
+        internal long  m_cellId;
         internal const int               c_idcache_count = 256;
-        internal longListAccessor(byte* _CellPtr)::");
-source->append(R"::(, ResizeFunctionDelegate func)
+        internal longListAccessor(byte* _CellP)::");
+source->append(R"::(tr, ResizeFunctionDelegate func)
         {
             ResizeFunction = func;
             m_ptr = _CellPtr + sizeof(int);
@@ -91,8 +91,8 @@ source->append(R"::(, ResizeFunctionDelegate func)
             return m_ptr - sizeof(int);
         }
         /// <summary>
-        /// Get the )::");
-source->append(R"::(length of the buffer.
+        /// Get th)::");
+source->append(R"::(e length of the buffer.
         /// </summary>
         public unsafe int GetBufferLength()
         {
@@ -122,8 +122,8 @@ source->append(R"::(length of the buffer.
         {
             get
             {
-                return *(long*)(m_ptr)::");
-source->append(R"::( + (index << 3));
+                return *(long*)(m_p)::");
+source->append(R"::(tr + (index << 3));
             }
             set
             {
@@ -150,8 +150,8 @@ source->append(R"::( + (index << 3));
         /// <param name="action">A lambda expression which has two parameters. First indicates element in the List and second the index of this element.</param>
         public unsafe void ForEach(Action<long, int> action)
         {
-      )::");
-source->append(R"::(      byte* targetPtr = m_ptr;
+    )::");
+source->append(R"::(        byte* targetPtr = m_ptr;
             byte* endPtr = m_ptr + length;
             for (int index = 0; targetPtr < endPtr; ++index)
             {
@@ -184,8 +184,8 @@ source->append(R"::(      byte* targetPtr = m_ptr;
         /// <summary>
         /// Returns an enumerator that iterate through current list.
         /// </summary>
-        /// <re)::");
-source->append(R"::(turns>
+        /// <)::");
+source->append(R"::(returns>
         /// An IEnumerator object that can be used to iterate through the collection.
         /// </returns>
         public IEnumerator<long> GetEnumerator()
@@ -210,8 +210,8 @@ source->append(R"::(turns>
             int size = sizeof(long);
             this.m_ptr = this.ResizeFunction(this.m_ptr - sizeof(int), *(int*)(this.m_ptr - sizeof(int)) + sizeof(int), size);
             byte* targetPtr = this.m_ptr + (*(int*)this.m_ptr) + sizeof(int);
-            )::");
-source->append(R"::(*(int*)this.m_ptr += size;
+          )::");
+source->append(R"::(  *(int*)this.m_ptr += size;
             this.m_ptr += sizeof(int);
             *(long*)targetPtr = element;
         }
@@ -233,8 +233,8 @@ source->append(R"::(*(int*)this.m_ptr += size;
             *(long*)targetPtr = element;
         }
         /// <summary>
-        /// Inserts an element into the sorted List usi)::");
-source->append(R"::(ng the specified Comparison delegate.
+        /// Inserts an element into the sorted List u)::");
+source->append(R"::(sing the specified Comparison delegate.
         /// </summary>
         /// <param name="element">The element to insert.</param>
         /// <param name="comparison">The Comparison delegate.</param>
@@ -261,8 +261,8 @@ source->append(R"::(ng the specified Comparison delegate.
             targetPtr = this.m_ptr + offset;
             *(long*)targetPtr = element;
         }
-   )::");
-source->append(R"::(     /// <summary>
+ )::");
+source->append(R"::(       /// <summary>
         /// Removes the element at the specified index of the List.
         /// </summary>
         /// <param name="index">The zero-based index of the element to remove.</param>
@@ -282,8 +282,8 @@ source->append(R"::(     /// <summary>
         /// <param name="list">The collection whose elements should be added to the end of the List. The collection itself cannot be null.</param>
         public unsafe void AddRange(List<long> list)
         {
-            if (list == null) th)::");
-source->append(R"::(row new ArgumentNullException("collection is null.");
+            if (list == null) )::");
+source->append(R"::(throw new ArgumentNullException("collection is null.");
             int delta = list.Count << 3;
             m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
             long* cp = (long*)(m_ptr + *(int*)m_ptr + 4);
@@ -303,10 +303,10 @@ source->append(R"::(row new ArgumentNullException("collection is null.");
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
             int delta = collection.length;
-            if (collection.CellId != CellId)
+            if (collection.m_cellId != m_cellId)
             {
-                m_p)::");
-source->append(R"::(tr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
+             )::");
+source->append(R"::(   m_ptr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta);
                 Memory.Copy(collection.m_ptr, m_ptr + *(int*)m_ptr + 4, delta);
                 *(int*)m_ptr += delta;
             }
@@ -331,8 +331,8 @@ source->append(R"::(tr = ResizeFunction(m_ptr - 4, *(int*)(m_ptr - 4) + 4, delta
             int delta = length;
             Memory.memset(m_ptr, 0, (ulong)delta);
             m_ptr = ResizeFunction(m_ptr - 4, 4, -delta);
-            *(int*)m_ptr = )::");
-source->append(R"::(0;
+            *(int*)m_)::");
+source->append(R"::(ptr = 0;
             this.m_ptr += 4;
         }
         /// <summary>
@@ -356,8 +356,8 @@ source->append(R"::(0;
         /// Determines whether the List contains elements that match the conditions defined by the specified predicate.
         /// </summary>
         /// <param name="match">The Predicate delegate that defines the conditions of the elements to search for.</param>
-        /// <retur)::");
-source->append(R"::(ns>true if the List contains one or more elements that match the conditions defined by the specified predicate; otherwise, false.</returns>
+        /// )::");
+source->append(R"::(<returns>true if the List contains one or more elements that match the conditions defined by the specified predicate; otherwise, false.</returns>
         public unsafe bool Exists(Predicate<long> match)
         {
             bool ret = false;
@@ -374,8 +374,8 @@ source->append(R"::(ns>true if the List contains one or more elements that match
         public unsafe void CopyTo(long[] array)
         {
             if (array == null) throw new ArgumentNullException("array is null.");
-            if (array.Length < Count) throw new ArgumentException("The number of elements in the source List is greater than the number of elements that the destination a)::");
-source->append(R"::(rray can contain.");
+            if (array.Length < Count) throw new ArgumentException("The number of elements in the source List is greater than the number of elements that the destina)::");
+source->append(R"::(tion array can contain.");
             fixed (long* lp = array)
             {
                 Memory.Copy(m_ptr, 0, lp, 0, length);
@@ -390,8 +390,8 @@ source->append(R"::(rray can contain.");
         {
             if (array == null) throw new ArgumentNullException("array is null.");
             if (arrayIndex < 0) throw new ArgumentOutOfRangeException("arrayIndex is less than 0.");
-            if (array.Length - arrayIndex < Count) throw new ArgumentException("The number of elements in the source List is greater than the available space from arra)::");
-source->append(R"::(yIndex to the end of the destination array.");
+            if (array.Length - arrayIndex < Count) throw new ArgumentException("The number of elements in the source List is greater than the available space fro)::");
+source->append(R"::(m arrayIndex to the end of the destination array.");
             fixed (long* lp = array)
             {
                 Memory.Copy(m_ptr, 0, lp, arrayIndex * sizeof(long), length);
@@ -406,8 +406,8 @@ source->append(R"::(yIndex to the end of the destination array.");
         /// <param name="count">The number of elements to copy.</param>
         public unsafe void CopyTo(int index, long[] array, int arrayIndex, int count)
         {
-            if (array == null) throw new ArgumentNullException("array is null.");)::");
-source->append(R"::(
+            if (array == null) throw new ArgumentNullException("array is nul)::");
+source->append(R"::(l.");
             if (arrayIndex < 0 || index < 0 || count < 0) throw new ArgumentOutOfRangeException("arrayIndex is less than 0 or index is less than 0 or count is less than 0.");
             if (array.Length - arrayIndex < count) throw new ArgumentException("The number of elements from index to the end of the source List is greater than the available space from arrayIndex to the end of the destination array. ");
             if (index + count > Count) throw new ArgumentException("Source list does not have enough elements to copy.");
@@ -420,8 +420,8 @@ source->append(R"::(
         /// Inserts the elements of a collection into the List at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index at which the new elements should be inserted.</param>
-        /// <param name="collection">The collection )::");
-source->append(R"::(whose elements should be inserted into the List. The collection itself cannot be null, but it can contain elements that are null, if type T is a reference type.</param>
+        /// <param name="collection">The colle)::");
+source->append(R"::(ction whose elements should be inserted into the List. The collection itself cannot be null, but it can contain elements that are null, if type T is a reference type.</param>
         public unsafe void InsertRange(int index, List<long> collection)
         {
             if (collection == null) throw new ArgumentNullException("collection is null.");
@@ -436,8 +436,8 @@ source->append(R"::(whose elements should be inserted into the List. The collect
             this.m_ptr += 4;
         }
         /// <summary>
-        /// Removes a range of elements fr)::");
-source->append(R"::(om the List.
+        /// Removes a range of eleme)::");
+source->append(R"::(nts from the List.
         /// </summary>
         /// <param name="index">The zero-based starting index of the range of elements to remove.</param>
         /// <param name="count">The number of elements to remove.</param>
@@ -455,8 +455,8 @@ source->append(R"::(om the List.
         }
         /// <summary>
         /// Implicitly converts a longList instance to a List{long} instance.
-       )::");
-source->append(R"::( /// </summary>
+ )::");
+source->append(R"::(       /// </summary>
         /// <param name="accessor">The longList instance.</param>
         /// <returns>A List{long} instance.</returns>
         public unsafe static implicit operator List<long>(longListAccessor accessor)
@@ -481,8 +481,8 @@ source->append(R"::( /// </summary>
             else
             {
                 targetPtr += sizeof(int);
-       )::");
-source->append(R"::(     }
+ )::");
+source->append(R"::(           }
             byte* tmpcellptr = BufferAllocator.AllocBuffer((int)targetPtr);
             targetPtr = tmpcellptr;
             if (value != null)
@@ -507,9 +507,9 @@ source->append(R"::(     }
         /// Determines whether two specified longList have the same value.
         /// </summary>
         /// <param name="a">The first longList to compare, or null. </param>
-        /// <param name="b">The second longList to compare, or null. </param>
-  )::");
-source->append(R"::(      /// <returns>true if the value of <paramref name="a" /> is the same as the value of <paramref name="b" />; otherwise, false.</returns>
+        /// <param name="b">The second longList to compare, or null. </para)::");
+source->append(R"::(m>
+        /// <returns>true if the value of <paramref name="a" /> is the same as the value of <paramref name="b" />; otherwise, false.</returns>
         public static bool operator ==(longListAccessor a, longListAccessor b)
         {
             if (ReferenceEquals(a, b))
@@ -524,8 +524,8 @@ source->append(R"::(      /// <returns>true if the value of <paramref name="a" /
         /// <returns>true if the value of <paramref name="a" /> is different from the value of <paramref name="b" />; otherwise, false.</returns>
         /// <param name="a">The first longList to compare, or null. </param>
         /// <param name="b">The second longList to compare, or null. </param>
-        public static bool operator !=(longL)::");
-source->append(R"::(istAccessor a, longListAccessor b)
+        public static bool operator !=)::");
+source->append(R"::((longListAccessor a, longListAccessor b)
         {
             return !(a == b);
         }
