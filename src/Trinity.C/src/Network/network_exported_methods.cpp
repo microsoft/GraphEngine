@@ -25,3 +25,4 @@ DLL_EXPORT void AwaitRequest(void*& pContext) { Network::AwaitRequest(pContext);
 DLL_EXPORT void SendResponse(void* pContext) { Network::SendResponse(pContext); }
 DLL_EXPORT void EnterSocketServerThreadPool() { Network::EnterSocketServerThreadPool(); }
 DLL_EXPORT void ExitSocketServerThreadPool() { Network::ExitSocketServerThreadPool(); }
+DLL_EXPORT bool StartWorkerThreadPool() { return Network::StartWorkerThreadPool(); }

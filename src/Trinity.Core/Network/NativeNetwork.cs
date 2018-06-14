@@ -85,7 +85,12 @@ namespace Trinity.Network
             // config thread pool
             int cpu_core_count = Environment.ProcessorCount;
             CNativeNetwork.StartSocketServer(port);
-            StartWorkerThreadPool();
+            //StartWorkerThreadPool();
+            if (CNativeNetwork.StartWorkerThreadPool())
+            {
+                // Thread Pool Started
+                Console.WriteLine("Native Thread Pool Started");
+            }
         }
 
         public static void StopTrinityServer()
