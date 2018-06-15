@@ -17,6 +17,8 @@ namespace Trinity
 {
 	namespace Network
 	{
+		std::atomic_size_t handlers_count;
+
 		bool StartWorkerThreadPool()
 		{
 			int thread_count = std::thread::hardware_concurrency();
@@ -26,6 +28,8 @@ namespace Trinity
 				std::thread t = std::thread(WorkerThreadProc, i);
 				t.detach();
 			}
+
+			handlers_count = 0;
 
 			return true;
 		}
@@ -54,6 +58,18 @@ namespace Trinity
 			*(uint32_t*)(msg->Buffer) = 7;
 			memcpy(msg->Buffer + 4, "hello\n", 6);
 			msg->BytesToSend = 11;
+		}
+
+		bool register_message_handler(uint16_t msgId, message_handler_t * handler) {
+			if (handlers_count + 1 >= MAX_HANDLERS_COUNT) {
+				return false;
+			}
+			handlers[handlers_count++] = handler;
+			return true;
+		}
+
+		void dispatch_message(MessageBuff * sendRecvBuff) {
+			// Should we parse sendRecvBuff here?
 		}
 
 		void WorkerThreadProc(int tid)

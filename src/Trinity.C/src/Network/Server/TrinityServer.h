@@ -23,6 +23,16 @@ namespace Trinity
             uint32_t BytesToSend;
         }MessageBuff;
 
+		typedef void(message_handler_t)(MessageBuff *);
+		
+		constexpr size_t MAX_HANDLERS_COUNT = 65535;
+		static message_handler_t * handlers[MAX_HANDLERS_COUNT];
+		extern std::atomic_size_t handlers_count;
+
+		bool register_message_handler (uint16_t msgId, message_handler_t * handler);
+
+		void dispatch_message(MessageBuff *);
+
         // Should be defined in an implementation.
         extern std::atomic<size_t> g_threadpool_size;
         // Should be defined in an implementation.

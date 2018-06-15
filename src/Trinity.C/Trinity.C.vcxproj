@@ -191,6 +191,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClInclude Include="include\os\os.h" />
     <ClInclude Include="include\os\platforms\windows.h" />
     <ClInclude Include="src\BackgroundThread\BackgroundThread.h" />
+    <ClInclude Include="src\Network\Server\MessageDispatch.h" />
     <ClInclude Include="src\Network\Server\TrinityServer.h" />
     <ClInclude Include="src\Network\SocketOptionsHelper.h" />
     <ClInclude Include="src\Runtime\Debug.h" />
@@ -221,6 +222,7 @@ _SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClCompile Include="src\Network\Client\windows\ClientSocket.cpp" />
     <ClCompile Include="src\Network\network_exported_methods.cpp" />
     <ClCompile Include="src\Network\ProtocolConstants.cpp" />
+    <ClCompile Include="src\Network\Server\MessageDispatch.cpp" />
     <ClCompile Include="src\Network\Server\TrinityServer.cpp" />
     <ClCompile Include="src\Network\Server\iocp\TrinitySocketServer.ContextObject.cpp" />
     <ClCompile Include="src\Network\Server\iocp\TrinitySocketServer.cpp" />

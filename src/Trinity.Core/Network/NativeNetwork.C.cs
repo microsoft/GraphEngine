@@ -32,6 +32,8 @@ namespace Trinity.Network
         internal static extern void ExitSocketServerThreadPool();
         [DllImport(TrinityC.AssemblyName)]
         internal static extern bool StartWorkerThreadPool();
+        [DllImport(TrinityC.AssemblyName)]
+        internal static extern bool RegisterMessageHandler(ushort msgId, void * handler);
         #endregion
 
         #region Client
