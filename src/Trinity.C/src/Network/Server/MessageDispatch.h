@@ -13,17 +13,41 @@
 #include "Network/ProtocolConstants.h"
 
 namespace Trinity {
-	namespace Network {
-		namespace Messaging {
-			struct SynReqArgs{};
-			struct SynReqRspArgs{};
-			struct AsynReqArgs{};
-			struct AsynReqRspArgs{};
+    namespace Network {
+        namespace Messaging {
+            struct SynReqArgs;
+            struct SynReqRspArgs;
+            struct AsynReqArgs;
+            struct AsynReqRspArgs;
 
-			typedef void (SynReqHandler)(SynReqArgs);
-			typedef void (SynReqRspHandler)(SynReqRspArgs);
-			typedef void (AsynReqHandler)(AsynReqArgs);
-			typedef void (AsynReqRspHandler)(AsynReqRspArgs);
-		};
-	};
+            typedef void(SynReqHandler)(SynReqArgs *);
+            typedef void(SynReqRspHandler)(SynReqRspArgs *);
+            typedef void(AsynReqHandler)(AsynReqArgs *);
+            typedef void(AsynReqRspHandler)(AsynReqRspArgs *);
+
+            struct SyncReqResHandler_t {
+                uint16_t id;
+                SynReqRspHandler * handler;
+            };
+
+            struct SyncReqHandler_t {
+                uint16_t id;
+                SynReqHandler * handler;
+            };
+
+            struct AsyncReqResHandler_t {
+                uint16_t id;
+                AsynReqRspHandler * handler;
+            };
+
+            class MessageHandlers {
+            private:
+                static MessageHandlers * _message_parser;
+
+            public:
+                MessageHandlers() {};
+
+            };
+        };
+    };
 };

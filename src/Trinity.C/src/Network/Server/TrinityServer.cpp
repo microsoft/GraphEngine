@@ -13,6 +13,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <iostream>
+
 namespace Trinity
 {
 	namespace Network
@@ -53,68 +55,83 @@ namespace Trinity
 		{
 			fwprintf(stderr, L"in message handler, message length: %d \n", msg->BytesReceived);
 			// TODO: do some user-specified logic
-			msg->Buffer = (char*)malloc(11);
-			memset(msg->Buffer, 0, 11);
-			*(uint32_t*)(msg->Buffer) = 7;
-			memcpy(msg->Buffer + 4, "hello\n", 6);
-			msg->BytesToSend = 11;
-		}
+            // Parse MsgBuff
+            auto buff = msg->Buffer;
+            int len = msg->BytesReceived;
+            uint16_t msg_type = (buff[1] << 8) + buff[0];
 
-		bool register_message_handler(uint16_t msgId, message_handler_t * handler) {
-			if (handlers_count + 1 >= MAX_HANDLERS_COUNT) {
-				return false;
-			}
-			handlers[handlers_count++] = handler;
-			return true;
-		}
+            switch (msg_type) {
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+                break;
+            default:
+                throw "";
+            }
 
-		void dispatch_message(MessageBuff * sendRecvBuff) {
-			// Should we parse sendRecvBuff here?
-		}
+            msg->Buffer = (char*)malloc(11);
+            memset(msg->Buffer, 0, 11);
+            *(uint32_t*)(msg->Buffer) = 7;
+            memcpy(msg->Buffer + 4, "hello\n", 6);
+            msg->BytesToSend = 11;
+        }
 
-		void WorkerThreadProc(int tid)
-		{
-			fprintf(stderr, "Worker Thread: %d\n", tid);
-			EnterSocketServerThreadPool();
-			while (true)
-			{
-				void* _pContext = NULL;
-				AwaitRequest(_pContext);
-				if (_pContext == NULL) { break; }
-				PerSocketContextObject* pContext = (PerSocketContextObject*)_pContext;
-				MessageHandler((MessageBuff*)pContext);
-				SendResponse(pContext);
-			}
-			fprintf(stderr, "Exit Thread %d\n", tid);
-			ExitSocketServerThreadPool();
-		}
+        bool register_message_handler(uint16_t msg_type, message_handler_t * handler) {
+            handlers[msg_type] = handler;
+            return true;
+        }
 
-		void CheckHandshakeResult(PerSocketContextObject* pContext)
-		{
-			if (pContext->ReceivedMessageBodyBytes != HANDSHAKE_MESSAGE_LENGTH)
-			{
-				Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ServerSocket: Client {0} responds with invalid handshake message header.", pContext);
-				goto handshake_check_fail;
-			}
+        void dispatch_message(MessageBuff * sendRecvBuff) {
+            // Should we parse sendRecvBuff here?
+        }
 
-			if (memcmp(pContext->Message, HANDSHAKE_MESSAGE_CONTENT, HANDSHAKE_MESSAGE_LENGTH) != 0)
-			{
-				Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ServerSocket: Client {0} responds with invalid handshake message.", pContext);
-				goto handshake_check_fail;
-			}
+        void WorkerThreadProc(int tid)
+        {
+            fprintf(stderr, "Worker Thread: %d\n", tid);
+            EnterSocketServerThreadPool();
+            while (true)
+            {
+                void* _pContext = NULL;
+                AwaitRequest(_pContext);
+                if (_pContext == NULL) { break; }
+                PerSocketContextObject* pContext = (PerSocketContextObject*)_pContext;
+                MessageHandler((MessageBuff*)pContext);
+                SendResponse(pContext);
+            }
+            fprintf(stderr, "Exit Thread %d\n", tid);
+            ExitSocketServerThreadPool();
+        }
 
-			// handshake_check_success: acknowledge the handshake and then switch into recv mode
-			pContext->WaitingHandshakeMessage = false;
-			pContext->Message = (char*)malloc(sizeof(int32_t));
-			pContext->RemainingBytesToSend = sizeof(int32_t);
-			*(int32_t*)pContext->Message = (int32_t)TrinityErrorCode::E_SUCCESS;
-			SendResponse(pContext);
-			return;
+        void CheckHandshakeResult(PerSocketContextObject* pContext)
+        {
+            if (pContext->ReceivedMessageBodyBytes != HANDSHAKE_MESSAGE_LENGTH)
+            {
+                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ServerSocket: Client {0} responds with invalid handshake message header.", pContext);
+                goto handshake_check_fail;
+            }
 
-		handshake_check_fail:
-			CloseClientConnection(pContext, false);
-			return;
-		}
+            if (memcmp(pContext->Message, HANDSHAKE_MESSAGE_CONTENT, HANDSHAKE_MESSAGE_LENGTH) != 0)
+            {
+                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ServerSocket: Client {0} responds with invalid handshake message.", pContext);
+                goto handshake_check_fail;
+            }
 
-	}
+            // handshake_check_success: acknowledge the handshake and then switch into recv mode
+            pContext->WaitingHandshakeMessage = false;
+            pContext->Message = (char*)malloc(sizeof(int32_t));
+            pContext->RemainingBytesToSend = sizeof(int32_t);
+            *(int32_t*)pContext->Message = (int32_t)TrinityErrorCode::E_SUCCESS;
+            SendResponse(pContext);
+            return;
+
+        handshake_check_fail:
+            CloseClientConnection(pContext, false);
+            return;
+        }
+
+    }
 }

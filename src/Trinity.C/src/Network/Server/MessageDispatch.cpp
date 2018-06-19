@@ -13,13 +13,11 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <limits>
 
 namespace Trinity {
-	namespace Network {
-		
-		struct SyncReqResHandler_t {
-			uint16_t Id;
-			
-		};
-	};
+    namespace Network {
+        namespace Messaging {
+        };
+    };
 };
