@@ -89,7 +89,16 @@ namespace Trinity.Network
             if (CNativeNetwork.StartWorkerThreadPool())
             {
                 // Thread Pool Started
-                Console.WriteLine("Native Thread Pool Started");
+                Console.WriteLine(">>> Native Thread Pool Started");
+                // Register Preserved Handler
+                var preserved_handler =
+                    Marshal.GetFunctionPointerForDelegate(Global.CommunicationInstance.MessageDispatcher);
+                for(ushort i = 0; i <= 6; ++i)
+                {
+                    CNativeNetwork.RegisterMessageHandler(i, (void *)preserved_handler);
+                    Console.Write(">>> Message Handler Registered for ");
+                    Console.WriteLine(i);
+                }
             }
         }
 
