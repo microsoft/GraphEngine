@@ -33,7 +33,7 @@ namespace Trinity.Network
         [DllImport(TrinityC.AssemblyName)]
         internal static extern bool StartWorkerThreadPool();
         [DllImport(TrinityC.AssemblyName)]
-        internal static extern bool RegisterMessageHandler(ushort msgId, void * handler);
+        internal static extern bool RegisterMessageHandler(ushort msgId, IntPtr handler);
         #endregion
 
         #region Client

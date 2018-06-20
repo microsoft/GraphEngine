@@ -46,5 +46,9 @@ namespace Trinity.Network.Messaging
         /// Preserved asynchronous message.
         /// </summary>
         PRESERVED_ASYNC,
+        /// <summary>
+        /// Upper bound message type -- do not use
+        /// </summary>
+        MESSAGE_TYPE_MAX,
     }
 }

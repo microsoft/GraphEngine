@@ -82,23 +82,14 @@ namespace Trinity.Network
 
         public static void StartTrinityServer(UInt16 port)
         {
-            // config thread pool
-            int cpu_core_count = Environment.ProcessorCount;
-            CNativeNetwork.StartSocketServer(port);
-            //StartWorkerThreadPool();
-            if (CNativeNetwork.StartWorkerThreadPool())
+            if(CNativeNetwork.StartSocketServer(port) == -1)
             {
-                // Thread Pool Started
-                Console.WriteLine(">>> Native Thread Pool Started");
-                // Register Preserved Handler
-                var preserved_handler =
-                    Marshal.GetFunctionPointerForDelegate(Global.CommunicationInstance.MessageDispatcher);
-                for(ushort i = 0; i <= 6; ++i)
-                {
-                    CNativeNetwork.RegisterMessageHandler(i, (void *)preserved_handler);
-                    Console.Write(">>> Message Handler Registered for ");
-                    Console.WriteLine(i);
-                }
+                throw new System.Net.Sockets.SocketException();
+            }
+
+            if(!CNativeNetwork.StartWorkerThreadPool())
+            {
+                throw new Exception("Cannot start worker thread pool");
             }
         }
 
@@ -107,34 +98,36 @@ namespace Trinity.Network
             CNativeNetwork.StopSocketServer();
         }
 
-        internal static void StartWorkerThreadPool()
-        {
-            int ThreadPoolSize = Environment.ProcessorCount << 1;
-            for (int t = 0; t < ThreadPoolSize; t++)
-            {
-                (new Thread(WorkerThreadProc)).Start();
-            }
-        }
+        #region Deprecated
+        //internal static void StartWorkerThreadPool()
+        //{
+        //    int ThreadPoolSize = Environment.ProcessorCount << 1;
+        //    for (int t = 0; t < ThreadPoolSize; t++)
+        //    {
+        //        (new Thread(WorkerThreadProc)).Start();
+        //    }
+        //}
 
-        internal static void WorkerThreadProc()
-        {
-            CNativeNetwork.EnterSocketServerThreadPool();
-            var dispatcher = Global.CommunicationInstance.MessageDispatcher;
+        //internal static void WorkerThreadProc()
+        //{
+        //    CNativeNetwork.EnterSocketServerThreadPool();
+        //    var dispatcher = Global.CommunicationInstance.MessageDispatcher;
 
-            while (true)
-            {
-                void* pContext = null;
-                CNativeNetwork.AwaitRequest(out pContext);
-                // a null pContext means that the completion port is closing.
-                if (pContext == null)
-                {
-                    break;
-                }
-                MessageBuff* sendRecvBuff = (MessageBuff*)pContext;
-                dispatcher(sendRecvBuff);
-                CNativeNetwork.SendResponse(pContext); // Send response back to the client
-            }
-            CNativeNetwork.ExitSocketServerThreadPool();
-        }
+        //    while (true)
+        //    {
+        //        void* pContext = null;
+        //        CNativeNetwork.AwaitRequest(out pContext);
+        //        // a null pContext means that the completion port is closing.
+        //        if (pContext == null)
+        //        {
+        //            break;
+        //        }
+        //        MessageBuff* sendRecvBuff = (MessageBuff*)pContext;
+        //        dispatcher(sendRecvBuff);
+        //        CNativeNetwork.SendResponse(pContext); // Send response back to the client
+        //    }
+        //    CNativeNetwork.ExitSocketServerThreadPool();
+        //}
+        #endregion
     }
 }

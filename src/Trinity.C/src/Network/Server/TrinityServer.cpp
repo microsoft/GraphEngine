@@ -19,31 +19,44 @@ namespace Trinity
 {
     namespace Network
     {
-        bool register_message_handler(uint16_t msg_type, message_handler_t * handler) {
-            handlers[msg_type] = handler;
+        static message_handler_t * s_message_handlers[MAX_HANDLERS_COUNT];
+
+        DWORD RegisterMessageHandler(uint16_t msg_type, message_handler_t * handler)
+        {
+            s_message_handlers[msg_type] = handler;
             return true;
         }
 
-        void default_handler(MessageBuff * buff) {
+        void _default_handler(MessageBuff * buff)
+        {
             buff->Buffer = (char *)malloc(sizeof(TrinityErrorCode));
             buff->BytesToSend = sizeof(TrinityErrorCode);
             *((TrinityErrorCode *)(buff->Buffer)) = TrinityErrorCode::E_RPC_EXCEPTION;
         }
 
-        bool StartWorkerThreadPool()
+        void _workerthread(int32_t tid)
         {
-            int thread_count = std::thread::hardware_concurrency();
-
-            for (size_t i = 0; i < MAX_HANDLERS_COUNT; ++i) {
-                handlers[i] = &default_handler;
-            }
-
-            for (int i = 0; i < thread_count; i++)
+            Diagnostics::WriteLine(Diagnostics::Debug, "TrinityServer: Starting worker thread #{0}", tid);
+            EnterSocketServerThreadPool();
+            while (true)
             {
-                std::thread t = std::thread(WorkerThreadProc, i);
-                t.detach();
+                void* _pContext = NULL;
+                AwaitRequest(_pContext);
+                if (_pContext == NULL) { break; }
+                MessageBuff* msg = (MessageBuff*)_pContext;
+                s_message_handlers[*(uint16_t *)msg->Buffer](msg);
+                SendResponse(_pContext);
             }
+            Diagnostics::WriteLine(Diagnostics::Debug, "TrinityServer: Stopping worker thread #{0}", tid);
+            ExitSocketServerThreadPool();
+        }
 
+        DWORD StartWorkerThreadPool()
+        {
+            int thread_count = std::thread::hardware_concurrency() * 2;
+            std::fill_n(s_message_handlers, MAX_HANDLERS_COUNT, &_default_handler);
+            for(auto i = 0; i < thread_count; ++i ) std::thread(_workerthread, i).detach();
+            
             return true;
         }
 
@@ -61,39 +74,6 @@ namespace Trinity
             return 0;
         }
 
-        // This is only a sample handler
-        void MessageHandler(MessageBuff * msg)
-        {
-            fwprintf(stderr, L">>> in message handler, message length: %d \n", msg->BytesReceived);
-            // Parse MsgBuff
-            auto buff = msg->Buffer;
-            int len = msg->BytesReceived;
-            uint16_t msg_type = *((uint16_t *)buff);
-            handlers[msg_type](msg);
-
-            //msg->Buffer = (char*)malloc(11);
-            //memset(msg->Buffer, 0, 11);
-            //*(uint32_t*)(msg->Buffer) = 7;
-            //memcpy(msg->Buffer + 4, "hello\n", 6);
-            //msg->BytesToSend = 11;
-        }
-
-        void WorkerThreadProc(int tid)
-        {
-            fprintf(stderr, ">>> Worker Thread: %d\n", tid);
-            EnterSocketServerThreadPool();
-            while (true)
-            {
-                void* _pContext = NULL;
-                AwaitRequest(_pContext);
-                if (_pContext == NULL) { break; }
-                PerSocketContextObject* pContext = (PerSocketContextObject*)_pContext;
-                MessageHandler((MessageBuff*)pContext);
-                SendResponse(pContext);
-            }
-            fprintf(stderr, "Exit Thread %d\n", tid);
-            ExitSocketServerThreadPool();
-        }
 
         void CheckHandshakeResult(PerSocketContextObject* pContext)
         {
@@ -117,7 +97,7 @@ namespace Trinity
             SendResponse(pContext);
             return;
 
-        handshake_check_fail:
+handshake_check_fail:
             CloseClientConnection(pContext, false);
             return;
         }

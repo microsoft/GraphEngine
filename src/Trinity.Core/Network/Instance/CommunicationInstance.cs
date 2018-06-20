@@ -21,6 +21,7 @@ using Trinity.Network.Messaging;
 using System.Diagnostics;
 using Trinity.Utilities;
 using Trinity.Extension;
+using System.Runtime.InteropServices;
 
 namespace Trinity.Network
 {
@@ -46,6 +47,7 @@ namespace Trinity.Network
         private bool m_started = false;
         private object m_lock = new object();
         private ManualResetEventSlim m_module_init_signal = new ManualResetEventSlim(initialState: false);
+        private MessageDispatchProc m_Dispatcher = null;
         // XXX ThreadStatic does not work well with async/await. Find a solution.
         [ThreadStatic]
         private static HttpListenerContext s_current_http_ctx = null;
@@ -357,7 +359,18 @@ namespace Trinity.Network
         /// <summary>
         /// A delegate that points to the message dispatch and processing procedure.
         /// </summary>
-        public MessageDispatchProc MessageDispatcher { get; internal set; }
+        public MessageDispatchProc MessageDispatcher
+        {
+            get => m_Dispatcher;
+            internal set
+            {
+                // Register Preserved Handler
+                var preserved_handler = Marshal.GetFunctionPointerForDelegate(value);
+                for (ushort i = 0; i < (int)TrinityMessageType.MESSAGE_TYPE_MAX; ++i)
+                    CNativeNetwork.RegisterMessageHandler(i, preserved_handler);
+                m_Dispatcher = value;
+            }
+        }
 
         /// <summary>
         /// Start listening for incoming connections. When this method is called,
@@ -396,7 +409,7 @@ namespace Trinity.Network
         private void _ScanForAutoRegisteredModules()
         {
             Log.WriteLine("Scanning for auto-registered communication modules.");
-            foreach(var m in AssemblyUtility.GetAllClassTypes<CommunicationModule, AutoRegisteredCommunicationModuleAttribute>())
+            foreach (var m in AssemblyUtility.GetAllClassTypes<CommunicationModule, AutoRegisteredCommunicationModuleAttribute>())
             {
                 m_RegisteredModuleTypes.Add(m);
             }
