@@ -23,6 +23,8 @@ namespace Trinity.ServiceFabric.Storage.External
         public Func<Stream, ICellStreamWriter> CreateCellStreamWriter { get; set; } = (stream) => new CellStreamWriter(stream);
 
         public TimeSpan RetryInterval { get; set; } = TimeSpan.FromSeconds(5);
+        public int DefaultConnectionLimit { get; set; } = Environment.ProcessorCount * 8;
+        public TimeSpan? DefaultRequestMaxExecutionTime { get; set; } = null;
 
         public AzureBlobPartitionedImageStorage(string connectionString, string storageContainer, string folder)
         {
@@ -132,8 +134,8 @@ namespace Trinity.ServiceFabric.Storage.External
                 var storageAccount = CloudStorageAccount.Parse(connectionString);
                 blobClient = storageAccount.CreateCloudBlobClient();
 
-                ServicePointManager.DefaultConnectionLimit = Environment.ProcessorCount * 8;
-                blobClient.DefaultRequestOptions.MaximumExecutionTime = TimeSpan.FromMinutes(1);
+                ServicePointManager.DefaultConnectionLimit = DefaultConnectionLimit;
+                blobClient.DefaultRequestOptions.MaximumExecutionTime = DefaultRequestMaxExecutionTime;
             }
             return blobClient;
         }
