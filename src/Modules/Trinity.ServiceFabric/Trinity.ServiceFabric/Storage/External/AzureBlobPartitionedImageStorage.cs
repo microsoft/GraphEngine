@@ -5,7 +5,9 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Trinity.ServiceFabric.Diagnostics;
 
@@ -19,6 +21,8 @@ namespace Trinity.ServiceFabric.Storage.External
 
         public Func<Stream, ICellStreamReader> CreateCellStreamReader { get; set; } = (stream) => new CellStreamReader(stream);
         public Func<Stream, ICellStreamWriter> CreateCellStreamWriter { get; set; } = (stream) => new CellStreamWriter(stream);
+
+        public TimeSpan RetryInterval { get; set; } = TimeSpan.FromSeconds(5);
 
         public AzureBlobPartitionedImageStorage(string connectionString, string storageContainer, string folder)
         {
@@ -39,8 +43,19 @@ namespace Trinity.ServiceFabric.Storage.External
 
         public async Task SavePartitionSignatureAsync(ImagePartitionSignature signature)
         {
-            var json = JsonConvert.SerializeObject(signature);
-            await UploadBlockBlobAsync(Path.Combine(storageFolder, $"{signature.PartitionId}.sig"), Encoding.UTF8.GetBytes(json));
+            while (true)
+            {
+                try
+                {
+                    var json = JsonConvert.SerializeObject(signature);
+                    await UploadBlockBlobAsync(Path.Combine(storageFolder, $"{signature.PartitionId}.sig"), Encoding.UTF8.GetBytes(json));
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"Failed to save siganature for partition#{signature.PartitionId}. Retry {RetryInterval.TotalSeconds} seconds later: {e}");
+                    await Task.Delay(RetryInterval);
+                }
+            }
         }
 
         public async Task<string> LoadImagePartitionAsync(int partition)
@@ -68,28 +83,39 @@ namespace Trinity.ServiceFabric.Storage.External
 
         public async Task<string> SaveImagePartitionAsync(int partition)
         {
-            Container.CreateIfNotExists();
-            var blob = Container.GetBlockBlobReference(Path.Combine(storageFolder, $"{partition}.image"));
-
-            var cellIds = Global.LocalStorage.GenericCellAccessor_Selector()
-                .Where(c => Global.CloudStorage.GetPartitionIdByCellId(c.CellID) == partition)
-                .Select(c => c.CellID).ToList();
-
-            using (var writer = CreateCellStreamWriter(blob.OpenWrite()))
+            while (true)
             {
-                foreach (var id in cellIds)
+                try
                 {
-                    byte[] bytes;
-                    ushort cellType;
+                    Container.CreateIfNotExists();
+                    var blob = Container.GetBlockBlobReference(Path.Combine(storageFolder, $"{partition}.image"));
 
-                    Global.LocalStorage.LoadCell(id, out bytes, out cellType);
-                    await writer.WriteCellAsync(id, cellType, bytes);
+                    var cellIds = Global.LocalStorage.GenericCellAccessor_Selector()
+                        .Where(c => Global.CloudStorage.GetPartitionIdByCellId(c.CellID) == partition)
+                        .Select(c => c.CellID).ToList();
+
+                    using (var writer = CreateCellStreamWriter(blob.OpenWrite()))
+                    {
+                        foreach (var id in cellIds)
+                        {
+                            byte[] bytes;
+                            ushort cellType;
+
+                            Global.LocalStorage.LoadCell(id, out bytes, out cellType);
+                            await writer.WriteCellAsync(id, cellType, bytes);
+                        }
+                    }
+
+                    Log.Info($"Image partition#{partition} saved");
+
+                    return blob.Properties.ContentMD5;
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"Failed to save image partition#{partition}. Retry after {RetryInterval.TotalSeconds} seconds.: {e}");
+                    await Task.Delay(RetryInterval);
                 }
             }
-
-            Log.Info($"Image partition#{partition} saved");
-
-            return blob.Properties.ContentMD5;
         }
     }
 
@@ -105,6 +131,9 @@ namespace Trinity.ServiceFabric.Storage.External
             {
                 var storageAccount = CloudStorageAccount.Parse(connectionString);
                 blobClient = storageAccount.CreateCloudBlobClient();
+
+                ServicePointManager.DefaultConnectionLimit = Environment.ProcessorCount * 8;
+                blobClient.DefaultRequestOptions.MaximumExecutionTime = TimeSpan.FromMinutes(1);
             }
             return blobClient;
         }
