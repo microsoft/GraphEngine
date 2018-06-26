@@ -51,6 +51,7 @@ namespace Trinity.ServiceFabric.Storage.External
                 {
                     var json = JsonConvert.SerializeObject(signature);
                     await UploadBlockBlobAsync(Path.Combine(storageFolder, $"{signature.PartitionId}.sig"), Encoding.UTF8.GetBytes(json));
+                    return;
                 }
                 catch (Exception e)
                 {
