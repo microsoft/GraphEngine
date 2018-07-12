@@ -2,4 +2,7 @@
 
 #include "TrinityCommon.h"
 
-DLL_IMPORT TrinityErrorCode GraphEngineInitializeHosting(int argc, char** argv);
+#if !defined(TRINITYC_EXPORTS)
+DLL_IMPORT TrinityErrorCode GraphEngineInit(int argc, char** argv, OUT void** lpenv);
+DLL_IMPORT TrinityErrorCode GraphEngineUninit(IN void* lpenv);
+#endif
