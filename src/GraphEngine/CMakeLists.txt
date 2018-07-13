@@ -3,7 +3,8 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-project ("GraphEngine.Hosting")
+project ("GraphEngine")
 
 # Include sub-projects.
-add_subdirectory ("GraphEngine.Hosting")
+add_subdirectory ("trinity_host")
+add_subdirectory ("trinity_host_test")

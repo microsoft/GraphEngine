@@ -403,13 +403,13 @@ public:
     }
 };
 
-DLL_EXPORT TrinityErrorCode GraphEngineInit(
+TrinityErrorCode GraphEngineInit_impl(
     IN int n_apppaths,
     IN wchar_t** lp_apppaths,
     IN wchar_t* lp_entry_asm,
     IN wchar_t* lp_entry_class,
     IN wchar_t* lp_entry_method,
-    OUT HostEnvironment*& lpenv)
+    OUT void*& lpenv)
 {
     TrinityErrorCode err;
     String           apppaths     = String::Join(";", Array<String> (n_apppaths, [&](auto i) { return String::FromWcharArray(lp_apppaths[i], wcslen(lp_apppaths[i])); }));
@@ -421,13 +421,27 @@ DLL_EXPORT TrinityErrorCode GraphEngineInit(
     return err;
 }
 
-DLL_EXPORT TrinityErrorCode GraphEngineUninit(
-    IN const HostEnvironment* lpenv)
+
+DLL_EXPORT TrinityErrorCode GraphEngineInit(
+    IN int n_apppaths,
+    IN wchar_t** lp_apppaths,
+    IN wchar_t* lp_entry_asm,
+    IN wchar_t* lp_entry_class,
+    IN wchar_t* lp_entry_method,
+    OUT void*& lpenv)
 {
-    if (nullptr == lpenv)
+    return GraphEngineInit_impl(n_apppaths, lp_apppaths, lp_entry_asm, lp_entry_class, lp_entry_method, lpenv);
+}
+
+DLL_EXPORT TrinityErrorCode GraphEngineUninit(
+    IN const void* _lpenv)
+{
+    if (nullptr == _lpenv)
     {
         return TrinityErrorCode::E_INVALID_ARGUMENTS;
     }
+    
+    auto lpenv = reinterpret_cast<const HostEnvironment*>(_lpenv);
 
     ICLRRuntimeHost4* host = lpenv->GetCLRRuntimeHost();
     if (nullptr == host)
