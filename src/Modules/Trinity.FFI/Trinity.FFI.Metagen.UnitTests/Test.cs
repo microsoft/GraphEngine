@@ -43,18 +43,13 @@ namespace Trinity.FFI.Metagen.UnitTests
             }
             Output.WriteLine("=====================");
 
-            var all_chaining_ty_descs = FFI.MetaGen.analyzer.calc_chaining(all_type_collected);
 
-            foreach (var e in all_chaining_ty_descs)
+            var all_verbs = FFI.MetaGen.analyzer.generate_chaining_verb(all_type_collected);
+            foreach (var e in all_verbs)
             {
-                Output.WriteLine(e.ToString());
+                Output.WriteLine(e.ToString() + "\n==================\n");
             }
             Output.WriteLine("=====================");
-
-            Output.WriteLine(all_chaining_ty_descs.ToString());
-
-            //var all_verbs = FFI.MetaGen.analyzer.generate_chaining_verb(all_chaining_ty_descs);
-            //Output.WriteLine(all_verbs.ToString());
 
         }
         public void Dispose()

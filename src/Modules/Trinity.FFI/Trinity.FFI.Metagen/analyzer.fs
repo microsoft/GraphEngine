@@ -62,92 +62,32 @@ let find (tb: ('k, 'v) hashmap) (k: 'k) : 'v option =
 
 let member_type mem = mem.Type 
 
-    
 let collect_type (tydescs: TypeDescriptor seq): TypeDescriptor list =
    let tb = hashmap() in
    let rec recur tydesc =
        match find tb tydesc.QualifiedName with 
        | Some v -> v 
        | _ ->
-        let tail = 
+        let (is_primitive, tail) = 
             match tydesc with 
             | {TypeCode = LIST; ElementType = elems} ->
-                elems |> List.ofSeq |> List.collect recur
+                false, elems |> List.ofSeq |> List.collect recur
             | {TypeCode = CELL _; Members = membs }
             | {TypeCode = STRUCT; Members = membs } ->
-                membs |>  List.ofSeq |> List.collect (member_type >> recur)
-            | _ -> []
-        in if tail |> List.contains tydesc 
-            then raise (Exception(tydesc.TypeName |> sprintf "found recursive type `%s`."))
-            else 
-            let result = tydesc :: tail 
-            tb.[tydesc.QualifiedName] <- result 
-            result 
+                false, membs |>  List.ofSeq |> List.collect (member_type >> recur)
+            | _ -> true, []
+        in if is_primitive then []
+           else 
+           if tail |> List.contains tydesc 
+           then raise (Exception(tydesc.TypeName |> sprintf "found recursive type `%s`."))
+           else 
+           let result = tydesc :: tail 
+           tb.[tydesc.QualifiedName] <- result 
+           result 
    in 
    Seq.collect recur tydescs |> List.ofSeq |> List.distinctByRef
 
-   
-open System.IO
-
-
-let calc_chaining (tydescs: TypeDescriptor seq): TypeDescriptor list list = 
-    (** 
-    calculate out all the chains of type owning relationship.
-    e.g
-    ```
-        cell C{
-            S s;
-            int b;
-        }
-        struct S{
-            int a;
-            int c;
-        }
-    ```
-    then we find out all the chains which reach the final type(primitive type) as following:
-    ```
-        [S, int]
-        [S, C]
-        [C, S, int]
-        [C, S, int]
-        [C, int]
-    ```
-
-    *)
-    //let tb = hashmap() in
-    let rec recur (tydesc: TypeDescriptor) : TypeDescriptor list list = 
-        //match find tb tydesc.QualifiedName with 
-        //| Some v -> v 
-        //| _      ->
-            let chain = 
-                match tydesc with 
-                | {TypeCode = CELL _; Members = membs}
-                | {TypeCode = STRUCT; Members = membs} ->
-                        membs |> List.ofSeq 
-                              |> List.collect (member_type >> recur) 
-                              |> List.map (fun it -> tydesc :: it)
-                | {TypeCode = LIST ; ElementType = elems} ->
-                        elems |> List.ofSeq 
-                              |> List.collect recur 
-                              |> List.map (fun it -> tydesc :: it)
-                | _ -> []
-            in 
-            
-            File.WriteAllText("../../log.txt", chain.ToString() + tydesc.TypeName)
-            chain 
-            //tb.[tydesc.QualifiedName] <- chain
-            //chain 
-
-    in 
-    //for each in tydescs do 
-    //      recur(each) |> ignore 
-    
-    List.collect recur << List.ofSeq <| tydescs
-
-    //tb.Values |> Seq.collect id |> List.ofSeq |> List.distinct
-
-
-let generate_chaining_verb(tydesc_chains: TypeDescriptor list seq): Verb list = 
+let generate_chaining_verb(tydescs: TypeDescriptor seq): (TypeDescriptor * (Verb list)) list = 
     (** 
     generate the methods for a type owning relationship chain:
     e.g
@@ -189,47 +129,48 @@ let generate_chaining_verb(tydesc_chains: TypeDescriptor list seq): Verb list =
 
     *)
     let tb = hashmap() in 
-    let rec recur tydesc_chain : Verb list * Verb list = 
-        match find tb tydesc_chain with
+    let rec recur (tydesc: TypeDescriptor) : Verb list * Verb list = 
+        match find tb tydesc.QualifiedName with
         | Some v -> v
         | _      ->
-        match tydesc_chain with 
-        | [] ->
-            failwith "Impossible"
-        | [_] ->
-            ([BGet], [])
-        | subject :: object_tail ->
-            let (l_perspective_chaining, l_no_chaining) = 
-                match subject with 
-                | {TypeCode = LIST} ->
-                    ([LGet], [BNew; BGet; BSet; LGet; LSet; LContains; LCount; LInsertAt; LRemoveAt; LAppend])
+            let (subs, chaining, non_chaining) = 
+                match tydesc with 
+                | {TypeCode = LIST; ElementType = elem} ->
+                    let (l_e, r_e) = recur <| Seq.head elem in 
+                    (l_e |> List.append r_e, [LGet], [BNew; BGet; BSet; LGet; LSet; LContains; LCount; LInsertAt; LRemoveAt; LAppend])
 
                 | {TypeCode = CELL _; Members = membs}
                 | {TypeCode = STRUCT; Members = membs} ->
-                    let (getters, setters) = 
+                    let (subs, getters, setters) = 
                         membs |> List.ofSeq 
-                                |> List.map(fun memb -> 
-                                            let field = memb.Name
-                                            in (SGet field, SSet field))
-                                |> List.unzip
-                    in (getters, List.concat [[BNew; BGet; BSet;]; getters; setters])
+                              |> List.map(fun memb -> 
+                                            let field = memb.Name in
+                                            let (l_e, r_e) = recur memb.Type
+                                            (l_e |> List.append r_e,  SGet field, SSet field))
+                              |> List.unzip3
+                    in (subs |> List.concat, getters, List.concat [[BNew; BGet; BSet;]; getters; setters])
                     
-                | _ -> failwith "Impossible"
-            in 
-            let (r_perspective_chaining, r_no_chaining) = recur(object_tail) in  
-            let left = [
-                for l in l_perspective_chaining do
-                for r in r_perspective_chaining -> 
+                | _ -> ([], [], [BGet])
+            in
+            let chained = [
+                for l in subs do
+                for r in chaining -> 
                     ComposedVerb(l, r)
                 ]
             in 
-            let right = List.append l_no_chaining r_no_chaining in 
-            
-            let result = (left, right) in 
-            tb.[tydesc_chain] <- result 
+            let result = (chained, non_chaining) in 
+            tb.[tydesc.QualifiedName] <- result 
             result 
     in 
-    tb.Values |> Seq.map (fun (a, b) -> List.append a b) |> Seq.concat |> List.ofSeq
+    tydescs 
+    |> Seq.map(fun each ->
+            let (l, r) = recur each in 
+            (each, List.append l r))
+    |> List.ofSeq
+                            
+
+
+    
 
             
             
