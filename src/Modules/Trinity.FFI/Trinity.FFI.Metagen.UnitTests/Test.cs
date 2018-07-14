@@ -28,6 +28,13 @@ namespace Trinity.FFI.Metagen.UnitTests
             Schema = CompositeStorage.AddStorageExtension("../../../tsl", "Some");
         }
 
+
+        [Fact]
+        public void TestAnalyzer()
+        {
+            
+
+        }
         public void Dispose()
         {
             Global.Uninitialize();

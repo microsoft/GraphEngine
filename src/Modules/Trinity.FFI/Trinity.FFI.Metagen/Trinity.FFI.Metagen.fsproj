@@ -11,7 +11,7 @@
     <OutputPath>..\..\..\..\bin</OutputPath>
     <IsPackable>true</IsPackable>
     <OutputType>Library</OutputType>
-
+    <NoWarn>62</NoWarn>
     <PackageId>GraphEngine.FFI.Metagen</PackageId>
     <Authors>Microsoft Graph Engine Team</Authors>
     <Company>Microsoft Corporation</Company>
@@ -27,6 +27,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+
+ 
 
     <Content Include="..\..\GraphEngine.Jit\GraphEngine.Jit.Native\CellAccessor.h" Link="CellAccessor.h">
       <PackagePath>content\include</PackagePath>
@@ -48,7 +50,7 @@
 
     <Compile Include="CodeGen.fs" />
     <Compile Include="MetaGen.fs" />
-
+   <Compile Include="analyzer.fs" />
   </ItemGroup>
 
   <ItemGroup>
