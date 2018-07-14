@@ -13,7 +13,7 @@ namespace Trinity.FFI.Metagen.UnitTests
         internal static IntPtr LockCell(long cellId)
         {
             Global.LocalStorage.GetLockedCellInfo(cellId, out var Size, out var Type, out var CellPtr, out var EntryIndex);
-            return Alloc(new NativeCellAccessor((IntPtr)CellPtr, cellId, Size, EntryIndex, Type, 0));
+            return Alloc(new NativeCellAccessor((IntPtr)CellPtr, cellId, Size, EntryIndex, Type, 0, 0));
         }
         
         internal static T ListToNativeAndThen<T>(List<int> lst, Func<IntPtr, T> andthen)
@@ -30,7 +30,7 @@ namespace Trinity.FFI.Metagen.UnitTests
                 fixed(void* buf = arr)
                 {
                     Memory.memcpy(p + sizeof(int), buf, (ulong)buflen);
-                    i = Alloc(new NativeCellAccessor((IntPtr) p, 0, 0, buflen, 0, 0));
+                    i = Alloc(new NativeCellAccessor((IntPtr) p, 0, 0, buflen, 0, 0, 0));
                 }
             }
 

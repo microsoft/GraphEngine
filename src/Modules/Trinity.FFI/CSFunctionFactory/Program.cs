@@ -1,46 +1,55 @@
 ﻿using System;
-using Trinity.Extension;
-using System.Collections.Generic;
+using Trinity.FFI.Metagen;
+using Trinity;
+using Trinity.FFI;
+using Trinity.Storage.Composite;
+using System.Linq;
+using Trinity.Storage;
+using GraphEngine.Jit;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace CSFunctionFactory
 {
-    unsafe class P
+    public class Test 
     {
 
 
-        // List<int>
-        public delegate int DELE(void* subject, int idx);
+        readonly char ManglingCode = '_';
+        static IStorageSchema Schema;
 
-        public static int FUNC(void* subject, int idx)
-
+        public Test()
         {
-            var src = (List<int>)GCHandle.FromIntPtr((IntPtr)subject).Target;
-            return src[idx];
+            Global.Initialize();
+ 
+            Schema = CompositeStorage.AddStorageExtension("../../../tsl", "Some");
         }
 
-        public static DELE INST = FUNC;
-
-        public static Int64 ADDR => Marshal.GetFunctionPointerForDelegate(INST).ToInt64();
-
-    }
-
-    public class H
-    {
-        public static Int64 Addr() => P.ADDR;
-
-        static void Main(string[] args)
+        public void Run()
         {
-            var x = new C
+            var ty_descs = Schema.CellDescriptors.Select(GraphEngine.Jit.TypeSystem.Make);
+
+            var all_type_collected = Trinity.FFI.MetaGen.analyzer.collect_type(ty_descs);
+
+            foreach (var e in all_type_collected)
             {
-                s = 1,
-                x = 2
-            };
+                Console.WriteLine(e.TypeName);
+            }
+            Console.WriteLine("=====================");
 
-            Console.WriteLine($"Hello World! {P.ADDR}");
+            var all_chaining_ty_descs = FFI.MetaGen.analyzer.calc_chaining(all_type_collected);
 
+            foreach (var e in all_chaining_ty_descs)
+            {
+                Console.WriteLine(e.First().TypeName);
+            }
+            Console.WriteLine("=====================");
+
+            Console.WriteLine(all_chaining_ty_descs.ToString());
         }
+
     }
+
 }
 
 

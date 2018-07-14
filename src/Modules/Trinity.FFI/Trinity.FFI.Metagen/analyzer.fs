@@ -13,7 +13,7 @@ open FSharp.Data
 // ml style naming
 type ('k, 'v) hashmap = System.Collections.Generic.Dictionary<'k, 'v>
 
-let inline _distinctByRef (lst: 'a list) = 
+let _distinctByRef (lst: 'a list) = 
 (**
 for our using case requires nested list comparison by memory address, 
 but fsharp list module hasn't implemented it yet. 
@@ -39,11 +39,13 @@ let benchmark (test : unit -> unit) =
     stopWatch.Elapsed.TotalMilliseconds
 ```
 *)
+
+
     let rec recur l1 l2 = 
         match l1 with 
         | []      -> l2
         | x :: xs -> 
-            if lst |> List.exists (fun it -> obj.ReferenceEquals(it, x)) 
+            if l2 |> List.exists (fun it -> obj.ReferenceEquals(it, x))
             then recur xs l2 
             else recur xs (x::l2) 
     in recur lst []
@@ -61,23 +63,34 @@ let find (tb: ('k, 'v) hashmap) (k: 'k) : 'v option =
 let member_type mem = mem.Type 
 
     
-let rec collect_type (tydesc: TypeDescriptor): TypeDescriptor list = 
-   let tail = 
-       match tydesc with 
-       | {TypeCode = LIST; ElementType = elems} ->
-            elems |> List.ofSeq |> List.collect collect_type
-       | {TypeCode = CELL _; Members = membs }
-       | {TypeCode = STRUCT; Members = membs } ->
-            membs |>  List.ofSeq |> List.collect (member_type >> collect_type)
-       | _ -> []
-   in if tail |> List.contains tydesc 
-      then raise (Exception(tydesc.TypeName |> sprintf "found recursive type `%s`."))
-      else 
-      tydesc :: tail    
- 
+let collect_type (tydescs: TypeDescriptor seq): TypeDescriptor list =
+   let tb = hashmap() in
+   let rec recur tydesc =
+       match find tb tydesc.QualifiedName with 
+       | Some v -> v 
+       | _ ->
+        let tail = 
+            match tydesc with 
+            | {TypeCode = LIST; ElementType = elems} ->
+                elems |> List.ofSeq |> List.collect recur
+            | {TypeCode = CELL _; Members = membs }
+            | {TypeCode = STRUCT; Members = membs } ->
+                membs |>  List.ofSeq |> List.collect (member_type >> recur)
+            | _ -> []
+        in if tail |> List.contains tydesc 
+            then raise (Exception(tydesc.TypeName |> sprintf "found recursive type `%s`."))
+            else 
+            let result = tydesc :: tail 
+            tb.[tydesc.QualifiedName] <- result 
+            result 
+   in 
+   Seq.collect recur tydescs |> List.ofSeq |> List.distinctByRef
+
+   
+open System.IO
 
 
-let calc_chaining (tydescs: TypeDescriptor list): TypeDescriptor list list = 
+let calc_chaining (tydescs: TypeDescriptor seq): TypeDescriptor list list = 
     (** 
     calculate out all the chains of type owning relationship.
     e.g
@@ -101,18 +114,17 @@ let calc_chaining (tydescs: TypeDescriptor list): TypeDescriptor list list =
     ```
 
     *)
-    let tb: (TypeDescriptor, TypeDescriptor list list) hashmap = hashmap() in
+    //let tb = hashmap() in
     let rec recur (tydesc: TypeDescriptor) : TypeDescriptor list list = 
-        match find tb tydesc with 
-        | Some v -> v 
-        | _      ->
+        //match find tb tydesc.QualifiedName with 
+        //| Some v -> v 
+        //| _      ->
             let chain = 
                 match tydesc with 
                 | {TypeCode = CELL _; Members = membs}
                 | {TypeCode = STRUCT; Members = membs} ->
                         membs |> List.ofSeq 
                               |> List.collect (member_type >> recur) 
-                              |> List.distinctByRef 
                               |> List.map (fun it -> tydesc :: it)
                 | {TypeCode = LIST ; ElementType = elems} ->
                         elems |> List.ofSeq 
@@ -120,16 +132,22 @@ let calc_chaining (tydescs: TypeDescriptor list): TypeDescriptor list list =
                               |> List.map (fun it -> tydesc :: it)
                 | _ -> []
             in 
-               tb.[tydesc] <- chain
+            
+            File.WriteAllText("../../log.txt", chain.ToString() + tydesc.TypeName)
             chain 
+            //tb.[tydesc.QualifiedName] <- chain
+            //chain 
 
     in 
-       for each in tydescs do 
-          recur(each) |> ignore 
-    tb.Values |> Seq.collect id |> List.ofSeq
+    //for each in tydescs do 
+    //      recur(each) |> ignore 
+    
+    List.collect recur << List.ofSeq <| tydescs
+
+    //tb.Values |> Seq.collect id |> List.ofSeq |> List.distinct
 
 
-let generate_chaining_verb(tydesc_chains: TypeDescriptor list list): Verb list = 
+let generate_chaining_verb(tydesc_chains: TypeDescriptor list seq): Verb list = 
     (** 
     generate the methods for a type owning relationship chain:
     e.g

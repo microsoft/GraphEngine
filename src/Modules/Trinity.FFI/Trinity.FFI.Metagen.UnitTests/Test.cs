@@ -8,6 +8,7 @@ using Trinity.Storage;
 using GraphEngine.Jit;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using Microsoft.FSharp.Collections;
 
 namespace Trinity.FFI.Metagen.UnitTests
 {
@@ -32,7 +33,28 @@ namespace Trinity.FFI.Metagen.UnitTests
         [Fact]
         public void TestAnalyzer()
         {
-            
+            var ty_descs = Schema.CellDescriptors.Select(TypeSystem.Make);
+
+            var all_type_collected = FFI.MetaGen.analyzer.collect_type(ty_descs);
+
+            foreach(var e in all_type_collected)
+            {
+                Output.WriteLine(e.TypeName);
+            }
+            Output.WriteLine("=====================");
+
+            var all_chaining_ty_descs = FFI.MetaGen.analyzer.calc_chaining(all_type_collected);
+
+            foreach (var e in all_chaining_ty_descs)
+            {
+                Output.WriteLine(e.ToString());
+            }
+            Output.WriteLine("=====================");
+
+            Output.WriteLine(all_chaining_ty_descs.ToString());
+
+            //var all_verbs = FFI.MetaGen.analyzer.generate_chaining_verb(all_chaining_ty_descs);
+            //Output.WriteLine(all_verbs.ToString());
 
         }
         public void Dispose()

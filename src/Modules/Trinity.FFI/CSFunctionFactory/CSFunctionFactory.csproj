@@ -8,9 +8,14 @@
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
     <PackageReference Include="GraphEngine.DynamicCluster" Version="2.0.9328" />
+    <PackageReference Include="GraphEngine.FFI.Metagen" Version="2.0.9328" />
+    <PackageReference Include="GraphEngine.Jit" Version="2.0.9328" />
     <PackageReference Include="GraphEngine.Storage.Composite" Version="2.0.9328" />
   </ItemGroup>
   
+  <ItemGroup>
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+  </ItemGroup>
   <ItemGroup>
     <TslCodegen Include="**/*.tsl" />
   </ItemGroup>
