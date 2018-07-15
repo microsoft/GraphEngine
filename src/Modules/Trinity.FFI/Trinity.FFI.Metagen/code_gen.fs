@@ -7,6 +7,7 @@ open GraphEngine.Jit.TypeSystem
 open GraphEngine.Jit.Verbs
 open GraphEngine.Jit.JitCompiler
 open System
+open System.IO
 
 type hashmap<'k, 'v> = System.Collections.Generic.(** argnum 1 *)
                                                   (** argnum 2 *)
@@ -76,21 +77,24 @@ let chaining_verb_to_name (verb : Verb) =
     | _ -> sprintf "%A" verb
 
 type FuncInfo =
-    { name_sig : string
+    { name_sig : string list
       pos_arg_types : string list
       ret_type : string }
+
 
 let single_method'code_gen (tb : (string * string, FuncInfo) hashmap) (tydesc : TypeDescriptor) (verb : Verb) : method_declaration * method_generator =
     let no_recur_name = ty_to_name false
 
     let rec collect (tydesc : TypeDescriptor) verb : FuncInfo =
-        let mutable name_sig : string = no_recur_name tydesc
-        let get_elem_type = fun () -> Seq.head <| tydesc.ElementType
+        let name_sig : string = no_recur_name tydesc in
+        let mutable name_sig_lsts : string list option = None in
+        let get_elem_type = fun () -> Seq.head <| tydesc.ElementType in
 
         let get_member_type =
             fun (field : string) ->
                 let memb = tydesc.Members |> Seq.find (fun it -> it.Name = field)
                 memb.Type
+        in
         match find tb (tydesc.QualifiedName, verb.ToString()) with
         | Some v -> v
         | _ ->
@@ -131,16 +135,19 @@ let single_method'code_gen (tb : (string * string, FuncInfo) hashmap) (tydesc : 
             | ComposedVerb(l, r) ->
                 match l with
                 | SGet field ->
-                    let memb_ty = get_member_type field
+                    let memb_ty = get_member_type field in
+                    let res = collect memb_ty r in
                     let { name_sig = append_name_sig; pos_arg_types = pos_arg_types; ret_type = ret_type } =
-                        collect memb_ty r
-                    name_sig <- sprintf "%s_%s" name_sig append_name_sig
+                        res
+                    let it = name_sig in
+                    name_sig_lsts <- Some(name_sig :: append_name_sig)
                     pos_arg_types, ret_type
                 | LGet ->
                     let elem_ty = get_elem_type()
                     let { name_sig = append_name_sig; pos_arg_types = pos_arg_types; ret_type = ret_type } =
                         collect elem_ty r
-                    name_sig <- sprintf "%s_%s" name_sig append_name_sig
+                    let it = name_sig in
+                    name_sig_lsts <- Some(name_sig :: append_name_sig)
                     "int" :: pos_arg_types, ret_type
                 | _ -> failwith "Only SGet/LGet requires method chaining composition."
             (** BNew takes no subject argument. **)
@@ -150,13 +157,14 @@ let single_method'code_gen (tb : (string * string, FuncInfo) hashmap) (tydesc : 
             |> function
             | pos_arg_types, ret_type ->
                 let result =
-                    { name_sig = name_sig
+                    { name_sig = match name_sig_lsts with | None -> [name_sig] | Some lst -> lst
                       pos_arg_types = pos_arg_types
                       ret_type = ret_type }
                 tb.[(tydesc.QualifiedName, verb.ToString())] <- result
                 result
     in
     let {name_sig = name_sig; pos_arg_types = pos_arg_types; ret_type = ret_type} = collect tydesc verb in
+    let name_sig = String.Join("_", name_sig) in
     let pos_arg_types = if verb = BNew then pos_arg_types else "*void"::pos_arg_types in
     let join (lst: string list) = String.Join(", ", lst) in
 
@@ -178,16 +186,29 @@ let single_method'code_gen (tb : (string * string, FuncInfo) hashmap) (tydesc : 
         " ret_type name_sig typed_args_string function_type_string addr args_string
     in (decl, generator)
 
+    
+    
 
 let code_gen (tsl_specs: (TypeDescriptor * (Verb list)) list): (method_declaration list) * (method_code list) =
     let tb = hashmap() in
     let generate = single_method'code_gen tb in
-    let methods = [
-        for (ty, verb_lst) in tsl_specs do
-        for verb in verb_lst ->
-             let (decl, generator) = generate ty verb in
-             let native_fn = CompileFunction {DeclaringType = ty; Verb = verb} in
-             let addr = native_fn.CallSite.ToInt64() in
-             (decl, generator addr)
-        ]
+    let methods =
+        tsl_specs
+        |> List.collect(
+            fun (ty, verb_lst) ->
+             verb_lst
+             |> List.map(
+                fun (verb) ->
+                   let (decl, generator) = generate ty verb in
+                   let native_fn = CompileFunction {DeclaringType = ty; Verb = verb} in
+                   let addr = native_fn.CallSite.ToInt64() in
+                    (decl, generator addr)))
+//    let methods = [
+//        for (ty, verb_lst) in tsl_specs do
+//        for verb in verb_lst ->
+//             let (decl, generator) = generate ty verb in
+//             let native_fn = CompileFunction {DeclaringType = ty; Verb = verb} in
+//             let addr = native_fn.CallSite.ToInt64() in
+//             (decl, generator addr)
+//        ]
     in List.unzip methods
