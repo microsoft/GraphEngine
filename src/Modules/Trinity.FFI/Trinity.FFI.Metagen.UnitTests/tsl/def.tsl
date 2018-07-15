@@ -1,41 +1,41 @@
 ﻿cell C1
 {
-	int foo;
-	string bar;
+	int i;
+	string str;
 }
 
 cell C2
 {
-    List<int> lst;
-	string bar;
+    List<int> list_of_int;
+	string str;
 }
 
 struct S
 { 
-List<int> foo;
-string bar; 
+List<int> list_of_int;
+string str; 
 }
 
 struct SS
 {
   S s;
-  List<S> lst;
+  List<S> list_of_s;
 }
 
 
 cell C3
 { 
-int a;
-List<int> b;
-List<S> c;
-S d; 
+int i;
+List<int> list_of_int;
+List<S> list_of_s;
+S s; 
 }
 
 cell C4
 {
    SS ss;
    S s;
-   List<int> bar;
+   List<int> list_of_int;
 }
 
 

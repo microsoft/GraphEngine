@@ -27,27 +27,52 @@ namespace CSFunctionFactory
 
         public void Run()
         {
+            void Output(string s){
+                Console.WriteLine(s);
+            }
+
+
             var ty_descs = Schema.CellDescriptors.Select(GraphEngine.Jit.TypeSystem.Make);
 
             var all_type_collected = Trinity.FFI.MetaGen.analyzer.collect_type(ty_descs);
 
             foreach (var e in all_type_collected)
             {
-                Console.WriteLine(e.TypeName);
+                Output(e.TypeName);
             }
-            Console.WriteLine("=====================");
+            Output("=====================");
 
-            var all_chaining_ty_descs = FFI.MetaGen.analyzer.calc_chaining(all_type_collected);
 
-            foreach (var e in all_chaining_ty_descs)
+            var all_verbs = Trinity.FFI.MetaGen.analyzer.generate_chaining_verb(all_type_collected);
+            //var num = 0;
+            //foreach (var e in all_verbs)
+            //{
+
+            //    var len = e.Item2.Length;
+            //    Output.WriteLine($"{e.Item1.TypeName}, method num: {len}");
+            //    num += len;
+            //    e.Item2.Select(_ => _.ToString()).By(_ => String.Join("\n", _)).By(Output.WriteLine);
+            //    Output.WriteLine("=====================");
+            //}
+            //Output.WriteLine($"Total method num: {num}");
+            var (a, b) = Trinity.FFI.MetaGen.code_gen.code_gen(all_verbs);
+            foreach (var code in a.Zip(b, (l, r) => $"{l}\n{r}\n"))
             {
-                Console.WriteLine(e.First().TypeName);
+                Output(code);
             }
-            Console.WriteLine("=====================");
-
-            Console.WriteLine(all_chaining_ty_descs.ToString());
         }
 
+    }
+
+    public class M
+    {
+
+        public static void Main()
+        {
+
+            var t = new Test();
+            t.Run();
+        }
     }
 
 }

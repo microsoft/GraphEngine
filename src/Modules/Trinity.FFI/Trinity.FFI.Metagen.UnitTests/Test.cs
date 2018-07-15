@@ -49,14 +49,15 @@ namespace Trinity.FFI.Metagen.UnitTests
             //foreach (var e in all_verbs)
             //{
 
-            //    var len = e.Item2.Length;
-            //    Output.WriteLine($"{e.Item1.TypeName}, method num: {len}");
-            //    num += len;
+            //    //var len = e.Item2.Length;
+            //    //Output.WriteLine($"{e.Item1.TypeName}, method num: {len}");
+            //    //num += len;
             //    e.Item2.Select(_ => _.ToString()).By(_ => String.Join("\n", _)).By(Output.WriteLine);
             //    Output.WriteLine("=====================");
             //}
             //Output.WriteLine($"Total method num: {num}");
             var (a, b) = FFI.MetaGen.code_gen.code_gen(all_verbs);
+
             foreach(var code in a.Zip(b, (l, r) => $"{l}\n{r}\n"))
             {
                 Output.WriteLine(code);

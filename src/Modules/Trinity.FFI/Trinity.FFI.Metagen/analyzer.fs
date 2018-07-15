@@ -130,34 +130,36 @@ let generate_chaining_verb(tydescs: TypeDescriptor seq): (TypeDescriptor * (Verb
         match find tb tydesc.QualifiedName with
         | Some v -> v 
         | _      ->
-            let (subs, chaining, non_chaining) = 
-                match tydesc with 
-                | {TypeCode = LIST; ElementType = elem} ->
-                    let subs = recur <| Seq.head elem in 
-                    (subs, [LGet], [LSet; LContains; LCount; LInsertAt; LRemoveAt; LAppend])
-
-                | {TypeCode = CELL _; Members = membs}
-                | {TypeCode = STRUCT; Members = membs} ->
-                    let (subs, getters, setters) = 
-                        membs |> List.ofSeq 
-                              |> List.map(fun memb -> 
-                                            let field = memb.Name in
-                                            let sub = recur memb.Type
-                                            (sub,  SGet field, SSet field))
-                              |> List.unzip3
-                    in (subs |> List.concat, getters, setters)
-                    
-                | _ -> ([], [], [])
-            in
-            let chained = [
-                for l in chaining do
-                for r in subs -> 
-                    ComposedVerb(l, r)
-                ]
-            in 
-            let result = List.append chained (BGet::BSet::non_chaining) in 
-            tb.[tydesc.QualifiedName] <- result 
-            result 
+        let chaining_methods = 
+            match tydesc with 
+            | {TypeCode = LIST; ElementType = elem} ->
+                let subs = recur <| Seq.head elem in
+                LSet     ::
+                LContains::
+                LCount   ::
+                LInsertAt::
+                LRemoveAt::
+                LAppend  ::
+                LGet     :: [for sub_verb in subs -> ComposedVerb(LGet, sub_verb)]
+            | {TypeCode = CELL _; Members = membs}
+            | {TypeCode = STRUCT; Members = membs} ->
+                membs |> List.ofSeq 
+                        |> List.collect(
+                        fun memb ->
+                            let field = memb.Name 
+                            in
+                            let subs  = recur memb.Type 
+                            in
+                            let sget  = SGet field 
+                            in
+                            SSet field::sget::
+                                [for sub_verb in subs 
+                                    -> ComposedVerb(sget, sub_verb)])
+            | _ -> []
+        in 
+        let result = BGet::BSet::chaining_methods in 
+        tb.[tydesc.QualifiedName] <- result 
+        result 
     in 
     tydescs 
     |> Seq.map(fun each ->

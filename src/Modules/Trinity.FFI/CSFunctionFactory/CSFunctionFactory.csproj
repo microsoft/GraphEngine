@@ -8,7 +8,6 @@
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
     <PackageReference Include="GraphEngine.DynamicCluster" Version="2.0.9328" />
-    <PackageReference Include="GraphEngine.FFI.Metagen" Version="2.0.9328" />
     <PackageReference Include="GraphEngine.Jit" Version="2.0.9328" />
     <PackageReference Include="GraphEngine.Storage.Composite" Version="2.0.9328" />
   </ItemGroup>
@@ -18,6 +17,10 @@
   </ItemGroup>
   <ItemGroup>
     <TslCodegen Include="**/*.tsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.FFI.Metagen\Trinity.FFI.Metagen.fsproj" />
+    <ProjectReference Include="..\Trinity.FFI\Trinity.FFI.csproj" />
   </ItemGroup>
 
 </Project>

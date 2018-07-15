@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Trinity.FFI.Metagen", "Trinity.FFI.Metagen.fsproj", "{84E3A95D-8FC6-4603-A896-A95FCC162AC5}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Trinity.FFI.Metagen", "Trinity.FFI.Metagen.fsproj", "{FA40DB20-9A8B-401A-9D59-9828EBB1F509}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,9 +8,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{84E3A95D-8FC6-4603-A896-A95FCC162AC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{84E3A95D-8FC6-4603-A896-A95FCC162AC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{84E3A95D-8FC6-4603-A896-A95FCC162AC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{84E3A95D-8FC6-4603-A896-A95FCC162AC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA40DB20-9A8B-401A-9D59-9828EBB1F509}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA40DB20-9A8B-401A-9D59-9828EBB1F509}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA40DB20-9A8B-401A-9D59-9828EBB1F509}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA40DB20-9A8B-401A-9D59-9828EBB1F509}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
