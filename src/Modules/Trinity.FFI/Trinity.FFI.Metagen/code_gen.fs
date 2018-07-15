@@ -2,8 +2,10 @@
 
 open FSharp.Data
 open FSharp.NativeInterop
+open GraphEngine.Jit
 open GraphEngine.Jit.TypeSystem
 open GraphEngine.Jit.Verbs
+open GraphEngine.Jit.JitCompiler
 open System
 
 type hashmap<'k, 'v> = System.Collections.Generic.(** argnum 1 *)
@@ -28,8 +30,9 @@ let find (tb : ('k, 'v)hashmap) (k : 'k) : 'v option =
     if tb.ContainsKey(k) then Some(tb.[k])
     else None
 
-type method_generator = nativeint -> string
+type method_generator = Int64 -> string
 type method_declaration = string
+type method_code = string
 
 let mangling (name : string) = name.Replace("_", "__")
 
@@ -72,20 +75,12 @@ let chaining_verb_to_name (verb : Verb) =
     | SSet field -> sprintf "SSet_%s" field
     | _ -> sprintf "%A" verb
 
-let rec count_verb_arg (verb : Verb) : int =
-    match verb with
-    | ComposedVerb(l, r) -> count_verb_arg l + count_verb_arg r
-    | SSet _ | BSet | LGet | LRemoveAt | LAppend -> 1
-    | LSet | LInsertAt -> 2
-    | BGet | LCount | SGet _ -> 0
-    | _ -> raise (NotImplementedException())
-
 type FuncInfo =
     { name_sig : string
       pos_arg_types : string list
       ret_type : string }
 
-let code_gen (tb : (string * string, FuncInfo) hashmap) (tydesc : TypeDescriptor) (verb : Verb) : method_declaration * method_generator =
+let single_method'code_gen (tb : (string * string, FuncInfo) hashmap) (tydesc : TypeDescriptor) (verb : Verb) : method_declaration * method_generator =
     let no_recur_name = ty_to_name false
 
     let rec collect (tydesc : TypeDescriptor) verb : FuncInfo =
@@ -97,9 +92,10 @@ let code_gen (tb : (string * string, FuncInfo) hashmap) (tydesc : TypeDescriptor
                 let memb = tydesc.Members |> Seq.find (fun it -> it.Name = field)
                 memb.Type
         match find tb (tydesc.QualifiedName, verb.ToString()) with
-        | Some v -> raise (NotImplementedException())
+        | Some v -> v
         | _ ->
             match verb with
+            (** argnum 1 *)
             | SSet field ->
                 let memb_ty = get_member_type field
                 [ ty_to_string memb_ty ], null_type_string
@@ -110,8 +106,10 @@ let code_gen (tb : (string * string, FuncInfo) hashmap) (tydesc : TypeDescriptor
                 let elem_ty = get_elem_type()
                 [ "int" ], ty_to_string elem_ty
             | LRemoveAt ->
-                let elem_ty = get_elem_type()
                 [ "int" ], "bool"
+            | LContains ->
+                let elem_ty = get_elem_type() in
+                [ty_to_string elem_ty], "bool"
             | LAppend ->
                 let elem_ty = get_elem_type()
                 [ ty_to_string elem_ty ], null_type_string
@@ -123,11 +121,13 @@ let code_gen (tb : (string * string, FuncInfo) hashmap) (tydesc : TypeDescriptor
                 let elem_ty = get_elem_type()
                 [ "int"
                   ty_to_string elem_ty ], "bool"
-            | BGet -> [], ty_to_string tydesc
+            |(** argnum 0 *)
+             BGet -> [], ty_to_string tydesc
             | LCount -> [], "int"
             | SGet field ->
                 let memb_ty = get_member_type field
                 [], ty_to_string memb_ty
+            (** composed *)
             | ComposedVerb(l, r) ->
                 match l with
                 | SGet field ->
@@ -143,9 +143,10 @@ let code_gen (tb : (string * string, FuncInfo) hashmap) (tydesc : TypeDescriptor
                     name_sig <- sprintf "%s_%s" name_sig append_name_sig
                     "int" :: pos_arg_types, ret_type
                 | _ -> failwith "Only SGet/LGet requires method chaining composition."
+            (** BNew takes no subject argument. **)
             | BNew ->
                 [], ty_to_string tydesc
-            | _ -> raise (NotImplementedException())
+            | _ as info -> failwith <| sprintf "NotImplemented verb %A on %s" info  tydesc.TypeName
             |> function
             | pos_arg_types, ret_type ->
                 let result =
@@ -169,10 +170,24 @@ let code_gen (tb : (string * string, FuncInfo) hashmap) (tydesc : TypeDescriptor
     let typed_args_string: string = join typed_parameters in
     let function_type_string = sprintf "%s (*)(%s)" ret_type types_string in
     let decl = sprintf "static %s %s(%s);" ret_type name_sig types_string in
-    let generator id =
+    let generator addr =
         sprintf "
         static %s %s(%s){
             return static_cast<%s>(0x%xll)(%s);
         }
-        " ret_type name_sig typed_args_string function_type_string id args_string
+        " ret_type name_sig typed_args_string function_type_string addr args_string
     in (decl, generator)
+
+
+let code_gen (tsl_specs: (TypeDescriptor * (Verb list)) list): (method_declaration list) * (method_code list) =
+    let tb = hashmap() in
+    let generate = single_method'code_gen tb in
+    let methods = [
+        for (ty, verb_lst) in tsl_specs do
+        for verb in verb_lst ->
+             let (decl, generator) = generate ty verb in
+             let native_fn = CompileFunction {DeclaringType = ty; Verb = verb} in
+             let addr = native_fn.CallSite.ToInt64() in
+             (decl, generator addr)
+        ]
+    in List.unzip methods

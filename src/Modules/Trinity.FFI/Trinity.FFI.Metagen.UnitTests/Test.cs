@@ -45,17 +45,22 @@ namespace Trinity.FFI.Metagen.UnitTests
 
 
             var all_verbs = FFI.MetaGen.analyzer.generate_chaining_verb(all_type_collected);
-            var num = 0;
-            foreach (var e in all_verbs)
+            //var num = 0;
+            //foreach (var e in all_verbs)
+            //{
+
+            //    var len = e.Item2.Length;
+            //    Output.WriteLine($"{e.Item1.TypeName}, method num: {len}");
+            //    num += len;
+            //    e.Item2.Select(_ => _.ToString()).By(_ => String.Join("\n", _)).By(Output.WriteLine);
+            //    Output.WriteLine("=====================");
+            //}
+            //Output.WriteLine($"Total method num: {num}");
+            var (a, b) = FFI.MetaGen.code_gen.code_gen(all_verbs);
+            foreach(var code in a.Zip(b, (l, r) => $"{l}\n{r}\n"))
             {
-   
-                var len = e.Item2.Length;
-                Output.WriteLine($"{e.Item1.TypeName}, method num: {len}");
-                num += len;
-                e.Item2.Select(_ => _.ToString()).By(_ => String.Join("\n", _)).By(Output.WriteLine);
-                Output.WriteLine("=====================");
+                Output.WriteLine(code);
             }
-            Output.WriteLine($"Total method num: {num}");
 
         }
         public void Dispose()
