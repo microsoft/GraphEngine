@@ -16,11 +16,8 @@ namespace Trinity.FFI
             var ty_descs = schema.CellDescriptors.Select(GraphEngine.Jit.TypeSystem.Make);
             var collected_tydescs = MetaGen.analyzer.collect_type(ty_descs);
             var chains = MetaGen.analyzer.generate_chaining_verb(collected_tydescs);
-
-            var (a, b) = MetaGen.code_gen.code_gen(chains);
-
-            var codeGenerators = MetaGen.CodeGenSwigJit(ManglingCode, schema);
-            return codeGenerators.Invoke(ModuleName);
+            var result = MetaGen.code_gen.code_gen(ModuleName, chains);
+            return result;
         }
 
     }

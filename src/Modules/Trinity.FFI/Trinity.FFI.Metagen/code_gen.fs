@@ -198,27 +198,28 @@ let code_gen (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
             let initializer_decl = sprintf "static void* create_%s();" ty_name 
             let initializer_body = 
                 sprintf "\n
-                static void* create_%s(){ 
-                    CellAccessor* accessor = new CellAccessor();
-                    auto errCode = %s_%s_BNew(accessor);
-                    if(errCode) 
-                        throw errCode;
-                    return accessor;
-                }" ty_name ty_name (ty |> ty_non_recur_naming) 
+static void* create_%s(){ 
+    CellAccessor* accessor = new CellAccessor();
+    auto errCode = %s_%s_BNew(accessor);
+    if(errCode) 
+        throw errCode;
+    return accessor;
+}
+                " ty_name ty_name (ty |> ty_non_recur_naming) 
             yield (initializer_decl, initializer_body)
 
         let lock_cell_decl = "void* lock_cell(int64_t, int32_t);"
         let lock_cell_body = 
             sprintf "\n
-            void* UseCell(int64_t cellid, int32_t options)
-            {
-                CellAccessor* accessor = new CellAccessor();
-                accessor->cellId = cellid;
-                auto errCode = LockCell(*accessor, options);
-                if (errCode)
-                throw errCode;
-                return accessor;
-            }
+void* UseCell(int64_t cellid, int32_t options)
+{
+    CellAccessor* accessor = new CellAccessor();
+    accessor->cellId = cellid;
+    auto errCode = LockCell(*accessor, options);
+    if (errCode)
+    throw errCode;
+    return accessor;
+}
             "
         yield (lock_cell_decl, lock_cell_body)
 
@@ -227,16 +228,16 @@ let code_gen (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
     let (=>) a b = (a, b) 
     let swig_template = 
         "
-        %module {moduleName}
-        %include <stdint.i>
-        %{{
-        #include \"swig_accessor.h\"
-        #include \"CellAccessor.h\"
-        #define SWIG_FILE_WITH_INIT
-        {decl}
-        {source}
-        %}}
-        {decl}
+%module {moduleName}
+%include <stdint.i>
+%{{
+#include \"swig_accessor.h\"
+#include \"CellAccessor.h\"
+#define SWIG_FILE_WITH_INIT
+{decl}
+{source}
+%}}
+{decl}
         "
     in PString.format swig_template 
                        ["moduleName" => module_name
