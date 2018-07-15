@@ -4,6 +4,8 @@ open GraphEngine.Jit.JitCompiler
 open GraphEngine.Jit.TypeSystem
 open GraphEngine.Jit.Verbs
 open System
+open Trinity.FFI.Metagen.PString
+open Trinity.FFI.Metagen
 
 type hashmap<'k, 'v> = System.Collections.Generic.Dictionary<'k, 'v>
 
@@ -155,9 +157,7 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
     in
     let { name_sig = name_sig; verb_str_lst = verb_str_lst; pos_arg_types = pos_arg_types; ret_type = ret_type } = collect tydesc verb
     let name_sig = sprintf "%s_%s" name_sig <| String.Join("_", verb_str_lst)
-    let pos_arg_types =
-        if verb = BNew then pos_arg_types
-        else "*void" :: pos_arg_types
+    let pos_arg_types = "void*" :: pos_arg_types
 
     let join (lst : string list) = String.Join(", ", lst)
 
@@ -175,19 +175,74 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
         sprintf ("static %s %s(%s){\nreturn static_cast<%s>(0x%xll)(%s);\n}") ret_type name_sig typed_args_string function_type_string addr args_string
     in (decl, generator)
 
-let code_gen (tsl_specs : (TypeDescriptor * Verb list) list) : method_declaration list * method_code list =
+let code_gen (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
     let tb = hashmap()
     let generate = single_method'code_gen tb
+    let ty_recur_naming = ty_to_name true
+    let ty_non_recur_naming = ty_to_name false 
+    let (decls, defs) = 
+        [ 
+        for (ty, verb_lst) in tsl_specs do
+            let ty_name = ty_recur_naming ty 
+            
+            for verb in verb_lst do
+                let (decl, generator) = generate ty verb
 
-    let methods =
-        [ for (ty, verb_lst) in tsl_specs do
-              for verb in verb_lst ->
-                  let (decl, generator) = generate ty verb
+                let native_fn =
+                    CompileFunction { DeclaringType = ty; Verb = verb }
 
-                  let native_fn =
-                      CompileFunction { DeclaringType = ty
-                                        Verb = verb }
+                let addr = native_fn.CallSite.ToInt64()
 
-                  let addr = native_fn.CallSite.ToInt64()
-                  (decl, generator addr) ]
-    List.unzip methods
+                yield (decl, generator addr)
+
+            let initializer_decl = sprintf "static void* create_%s();" ty_name 
+            let initializer_body = 
+                sprintf "\n
+                static void* create_%s(){ 
+                    CellAccessor* accessor = new CellAccessor();
+                    auto errCode = %s_%s_BNew(accessor);
+                    if(errCode) 
+                        throw errCode;
+                    return accessor;
+                }" ty_name ty_name (ty |> ty_non_recur_naming) 
+            yield (initializer_decl, initializer_body)
+
+        let lock_cell_decl = "void* lock_cell(int64_t, int32_t);"
+        let lock_cell_body = 
+            sprintf "\n
+            void* UseCell(int64_t cellid, int32_t options)
+            {
+                CellAccessor* accessor = new CellAccessor();
+                accessor->cellId = cellid;
+                auto errCode = LockCell(*accessor, options);
+                if (errCode)
+                throw errCode;
+                return accessor;
+            }
+            "
+        yield (lock_cell_decl, lock_cell_body)
+
+        ] |> List.unzip
+        
+    let (=>) a b = (a, b) 
+    let swig_template = 
+        "
+        %module {moduleName}
+        %include <stdint.i>
+        %{{
+        #include \"swig_accessor.h\"
+        #include \"CellAccessor.h\"
+        #define SWIG_FILE_WITH_INIT
+        {decl}
+        {source}
+        %}}
+        {decl}
+        "
+    in PString.format swig_template 
+                       ["moduleName" => module_name
+                        "source"     => (defs       |> PString.str'concatBy "\n" )
+                        "decl"       => (decls      |> PString.str'concatBy "\n")
+                        ]
+    
+    
+

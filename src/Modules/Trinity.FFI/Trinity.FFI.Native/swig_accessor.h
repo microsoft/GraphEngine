@@ -23,4 +23,12 @@ constexpr void* cast_object(void* object) {
 }
 
 
-
+void* LockedCell(int64_t cellid, int32_t options)
+{
+	CellAccessor* accessor = new CellAccessor();
+	accessor->cellId = cellid;
+	auto errCode = LockCell(*accessor, options);
+	if (errCode)
+		throw errCode;
+	return accessor;
+}

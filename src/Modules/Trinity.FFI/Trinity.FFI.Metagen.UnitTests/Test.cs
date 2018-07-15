@@ -31,7 +31,7 @@ namespace Trinity.FFI.Metagen.UnitTests
 
 
         [Fact]
-        public void TestAnalyzer()
+        public void TestNewSwigGen()
         {
             var ty_descs = Schema.CellDescriptors.Select(TypeSystem.Make);
 
@@ -56,12 +56,9 @@ namespace Trinity.FFI.Metagen.UnitTests
             //    Output.WriteLine("=====================");
             //}
             //Output.WriteLine($"Total method num: {num}");
-            var (a, b) = FFI.MetaGen.code_gen.code_gen(all_verbs);
-
-            foreach(var code in a.Zip(b, (l, r) => $"{l}\n{r}\n"))
-            {
-                Output.WriteLine(code);
-            }
+            var swig_code = FFI.MetaGen.code_gen.code_gen("", all_verbs);
+            Output.WriteLine(swig_code);
+            
 
         }
         public void Dispose()

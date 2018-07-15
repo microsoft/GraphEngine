@@ -4,6 +4,7 @@ using System.Text;
 using Trinity.FFI.Metagen;
 using Trinity.Storage;
 using GraphEngine.Jit;
+using System.Linq;
 
 namespace Trinity.FFI
 {
@@ -12,6 +13,12 @@ namespace Trinity.FFI
         internal static char ManglingCode => '_';
         public static string SwigGen(IStorageSchema schema, string ModuleName)
         {
+            var ty_descs = schema.CellDescriptors.Select(GraphEngine.Jit.TypeSystem.Make);
+            var collected_tydescs = MetaGen.analyzer.collect_type(ty_descs);
+            var chains = MetaGen.analyzer.generate_chaining_verb(collected_tydescs);
+
+            var (a, b) = MetaGen.code_gen.code_gen(chains);
+
             var codeGenerators = MetaGen.CodeGenSwigJit(ManglingCode, schema);
             return codeGenerators.Invoke(ModuleName);
         }
