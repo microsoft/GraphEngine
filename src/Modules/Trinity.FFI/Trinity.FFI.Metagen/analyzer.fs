@@ -1,7 +1,4 @@
-﻿
-module Trinity.FFI.MetaGen.analyzer
-
-
+﻿module Trinity.FFI.MetaGen.analyzer
 
 open GraphEngine.Jit.TypeSystem
 open GraphEngine.Jit.Verbs
@@ -129,15 +126,15 @@ let generate_chaining_verb(tydescs: TypeDescriptor seq): (TypeDescriptor * (Verb
 
     *)
     let tb = hashmap() in 
-    let rec recur (tydesc: TypeDescriptor) : Verb list * Verb list = 
+    let rec recur (tydesc: TypeDescriptor) : Verb list = 
         match find tb tydesc.QualifiedName with
-        | Some v -> v
+        | Some v -> v 
         | _      ->
             let (subs, chaining, non_chaining) = 
                 match tydesc with 
                 | {TypeCode = LIST; ElementType = elem} ->
-                    let (l_e, r_e) = recur <| Seq.head elem in 
-                    (l_e |> List.append r_e, [LGet], [BNew; BGet; BSet; LGet; LSet; LContains; LCount; LInsertAt; LRemoveAt; LAppend])
+                    let subs = recur <| Seq.head elem in 
+                    (subs, [LGet], [LSet; LContains; LCount; LInsertAt; LRemoveAt; LAppend])
 
                 | {TypeCode = CELL _; Members = membs}
                 | {TypeCode = STRUCT; Members = membs} ->
@@ -145,36 +142,29 @@ let generate_chaining_verb(tydescs: TypeDescriptor seq): (TypeDescriptor * (Verb
                         membs |> List.ofSeq 
                               |> List.map(fun memb -> 
                                             let field = memb.Name in
-                                            let (l_e, r_e) = recur memb.Type
-                                            (l_e |> List.append r_e,  SGet field, SSet field))
+                                            let sub = recur memb.Type
+                                            (sub,  SGet field, SSet field))
                               |> List.unzip3
-                    in (subs |> List.concat, getters, List.concat [[BNew; BGet; BSet;]; getters; setters])
+                    in (subs |> List.concat, getters, setters)
                     
-                | _ -> ([], [], [BGet])
+                | _ -> ([], [], [])
             in
             let chained = [
-                for l in subs do
-                for r in chaining -> 
+                for l in chaining do
+                for r in subs -> 
                     ComposedVerb(l, r)
                 ]
             in 
-            let result = (chained, non_chaining) in 
+            let result = List.append chained (BGet::BSet::non_chaining) in 
             tb.[tydesc.QualifiedName] <- result 
             result 
     in 
     tydescs 
     |> Seq.map(fun each ->
-            let (l, r) = recur each in 
-            (each, List.append l r))
+            (each, BNew :: recur each))
     |> List.ofSeq
-                            
 
 
-    
-
-            
-            
-        
 
 
 

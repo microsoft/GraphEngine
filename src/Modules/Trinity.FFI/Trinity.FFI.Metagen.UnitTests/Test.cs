@@ -45,11 +45,17 @@ namespace Trinity.FFI.Metagen.UnitTests
 
 
             var all_verbs = FFI.MetaGen.analyzer.generate_chaining_verb(all_type_collected);
+            var num = 0;
             foreach (var e in all_verbs)
             {
-                Output.WriteLine(e.ToString() + "\n==================\n");
+   
+                var len = e.Item2.Length;
+                Output.WriteLine($"{e.Item1.TypeName}, method num: {len}");
+                num += len;
+                e.Item2.Select(_ => _.ToString()).By(_ => String.Join("\n", _)).By(Output.WriteLine);
+                Output.WriteLine("=====================");
             }
-            Output.WriteLine("=====================");
+            Output.WriteLine($"Total method num: {num}");
 
         }
         public void Dispose()

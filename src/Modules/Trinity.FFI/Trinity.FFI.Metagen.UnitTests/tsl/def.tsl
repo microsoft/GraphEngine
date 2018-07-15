@@ -16,6 +16,13 @@ List<int> foo;
 string bar; 
 }
 
+struct SS
+{
+  S s;
+  List<S> lst;
+}
+
+
 cell C3
 { 
 int a;
@@ -23,3 +30,12 @@ List<int> b;
 List<S> c;
 S d; 
 }
+
+cell C4
+{
+   SS ss;
+   S s;
+   List<int> bar;
+}
+
+

@@ -34,6 +34,9 @@
 
  
 
+    
+ 
+
     <Content Include="..\..\GraphEngine.Jit\GraphEngine.Jit.Native\CellAccessor.h" Link="CellAccessor.h">
       <PackagePath>content\include</PackagePath>
     </Content>
@@ -55,6 +58,8 @@
     <Compile Include="CodeGen.fs" />
     <Compile Include="MetaGen.fs" />
    <Compile Include="analyzer.fs" />
+  <Compile Include="code_gen.fs" />
+
   </ItemGroup>
 
   <ItemGroup>
