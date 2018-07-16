@@ -46,7 +46,7 @@ class TSL:
     def namespace(self):
         return self._namespace
 
-    def _define(self, cls_def, category=Type[Union[TSLStruct, TSLCell]]):
+    def _define(self, cls_def, category: Type[Union[TSLStruct, TSLCell]]):
         if self._compiled:
             raise StateError("This tsl module has been generated, compiled and built yet.")
 

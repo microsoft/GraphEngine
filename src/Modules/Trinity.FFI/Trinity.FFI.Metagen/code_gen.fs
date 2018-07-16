@@ -102,7 +102,7 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
             | _ -> failwith "Only SGet/LGet requires method chaining composition."
             |> function
             | { verb_str_lst = verb_str_lst; pos_arg_types = pos_arg_types; ret_type = ret_type } ->
-                let verb_str = sprintf "%s_%s" name_sig <| chaining_verb_to_name l
+                let verb_str = chaining_verb_to_name l
                 verb_str :: verb_str_lst, pos_arg_types, ret_type
         | _ ->
             (** in the final node of a method chain *)
@@ -143,7 +143,7 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
             | info -> failwith <| sprintf "NotImplemented verb %A on %s" info tydesc.TypeName
             |> function
             | pos_arg_types, ret_type ->
-                let verb_str = sprintf "%s_%s" name_sig <| chaining_verb_to_name verb
+                let verb_str = chaining_verb_to_name verb
                 [ verb_str ], pos_arg_types, ret_type
         |> function
         | verb_str_lst, pos_arg_types, ret_type ->
@@ -179,7 +179,6 @@ let code_gen (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
     let tb = hashmap()
     let generate = single_method'code_gen tb
     let ty_recur_naming = ty_to_name true
-    let ty_non_recur_naming = ty_to_name false 
     let (decls, defs) = 
         [ 
         for (ty, verb_lst) in tsl_specs do
@@ -200,12 +199,12 @@ let code_gen (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
                 sprintf "\n
 static void* create_%s(){ 
     CellAccessor* accessor = new CellAccessor();
-    auto errCode = %s_%s_BNew(accessor);
+    auto errCode = %s_BNew(accessor);
     if(errCode) 
         throw errCode;
     return accessor;
 }
-                " ty_name ty_name (ty |> ty_non_recur_naming) 
+                " ty_name ty_name
             yield (initializer_decl, initializer_body)
 
         let lock_cell_decl = "void* lock_cell(int64_t, int32_t);"

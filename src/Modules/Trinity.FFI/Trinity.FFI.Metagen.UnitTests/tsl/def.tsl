@@ -6,28 +6,28 @@
 
 cell C2
 {
-    List<int> list_of_int;
+    List<int> li;
 	string str;
 }
 
 struct S
 { 
-List<int> list_of_int;
+List<int> li;
 string str; 
 }
 
 struct SS
 {
   S s;
-  List<S> list_of_s;
+  List<S> ls;
 }
 
 
 cell C3
 { 
 int i;
-List<int> list_of_int;
-List<S> list_of_s;
+List<int> li;
+List<S> ls;
 S s; 
 }
 
@@ -35,7 +35,7 @@ cell C4
 {
    SS ss;
    S s;
-   List<int> list_of_int;
+   List<int> li;
 }
 
 

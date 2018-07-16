@@ -27,8 +27,7 @@ class Collect:
 class FilterDLL:
     def __init__(self):
         def is_dll(x: str):
-            return x.lower()[-4:] == ('.dll')
-
+            return x.lower().endswith('.dll')
         self.fn = Traversal.filter_by(is_dll)
 
     def __call__(self, collection):
