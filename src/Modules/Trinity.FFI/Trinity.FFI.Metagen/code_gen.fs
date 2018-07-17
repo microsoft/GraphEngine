@@ -164,8 +164,10 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
     let parameters =
         [ for i in 1..(pos_arg_types.Length) -> sprintf "arg%d" i ]
 
+    // reversed
     let typed_parameters =
-        List.zip pos_arg_types parameters |> List.map (fun (parameter, ty_str) -> sprintf "%s %s" ty_str parameter)
+        List.zip pos_arg_types (parameters |> List.rev) |> List.map (fun (parameter, ty_str) -> sprintf "%s %s" ty_str parameter)
+    
     let types_string : string = join pos_arg_types
     let args_string : string = join parameters
     let typed_args_string : string = join typed_parameters

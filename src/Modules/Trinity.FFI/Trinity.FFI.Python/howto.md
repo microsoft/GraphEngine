@@ -12,6 +12,7 @@ cell C
 {
   int i;
   List<int> li;
+  List<S> ls;
   S s;
 }
 

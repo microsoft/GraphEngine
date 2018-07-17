@@ -36,6 +36,7 @@ cell C4
    SS ss;
    S s;
    List<int> li;
+   List<string> ls;
 }
 
 
