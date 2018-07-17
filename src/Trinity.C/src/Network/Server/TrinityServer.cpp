@@ -34,8 +34,9 @@ namespace Trinity
             *((TrinityErrorCode *)(buff->Buffer)) = TrinityErrorCode::E_RPC_EXCEPTION;
         }
 
-        void _workerthread(int32_t tid)
+        void _workerthread()
         {
+            auto tid = std::this_thread::get_id();
             Diagnostics::WriteLine(Diagnostics::Debug, "TrinityServer: Starting worker thread #{0}", tid);
             EnterSocketServerThreadPool();
             while (true)
@@ -55,7 +56,10 @@ namespace Trinity
         {
             int thread_count = std::thread::hardware_concurrency() * 2;
             std::fill_n(s_message_handlers, MAX_HANDLERS_COUNT, &_default_handler);
-            for(auto i = 0; i < thread_count; ++i ) std::thread(_workerthread, i).detach();
+            for(auto i = 0; i < thread_count; ++i ) 
+            {
+                std::thread(_workerthread).detach();
+            }
             
             return true;
         }
@@ -70,7 +74,9 @@ namespace Trinity
             }
             StartWorkerThreadPool();
             while (true)
+            {
                 std::this_thread::sleep_for(std::chrono::seconds(5));
+            }
             return 0;
         }
 

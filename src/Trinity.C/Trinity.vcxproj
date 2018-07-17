@@ -19,11 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{CA0BC85D-C6BC-3CCF-A16F-B8C1E8E10A6C}</ProjectGuid>
+    <ProjectGuid>{1C4935E0-EDB5-34EC-906E-C22A2F8B9C6E}</ProjectGuid>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
     <Keyword>Win32Proj</Keyword>
     <Platform>x64</Platform>
-    <ProjectName>Trinity.C</ProjectName>
+    <ProjectName>Trinity</ProjectName>
     <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -57,26 +57,26 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\yatli\git\GraphEngine\src\Trinity.C\Debug\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Trinity.C.dir\Debug\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Trinity.C</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Trinity.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Trinity</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.dll</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\yatli\git\GraphEngine\src\Trinity.C\Release\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Trinity.C.dir\Release\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Trinity.C</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Trinity.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Trinity</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.dll</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\yatli\git\GraphEngine\src\Trinity.C\MinSizeRel\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Trinity.C.dir\MinSizeRel\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Trinity.C</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Trinity.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Trinity</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.dll</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\yatli\git\GraphEngine\src\Trinity.C\RelWithDebInfo\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Trinity.C.dir\RelWithDebInfo\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Trinity.C</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Trinity.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Trinity</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.dll</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
@@ -101,14 +101,14 @@
       <OmitFramePointers>true</OmitFramePointers>
       <Optimization>Disabled</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ProgramDataBaseFileName> Trinity.C.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName> Trinity.pdb</ProgramDataBaseFileName>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>EBUG;TRINITYC_EXPORTS;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;WIN32;NDEBUG;_WINDOWS;_USRDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;CMAKE_INTDIR="Debug";Trinity_C_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>EBUG;CORECLR;TRINITYC_EXPORTS;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;WIN32;NDEBUG;_WINDOWS;_USRDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;CMAKE_INTDIR="Debug";Trinity_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>WIN32;_DEBUG;EBUG;TRINITYC_EXPORTS;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;NDEBUG;_WINDOWS;_USRDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Debug\";Trinity_C_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;EBUG;CORECLR;TRINITYC_EXPORTS;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;NDEBUG;_WINDOWS;_USRDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Debug\";Trinity_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Users\yatli\git\GraphEngine\src\Trinity.C\src;C:\Users\yatli\git\GraphEngine\src\Trinity.C\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -125,10 +125,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/yatli/git/GraphEngine/src/Trinity.C/Debug/Trinity.C.lib</ImportLibrary>
+      <ImportLibrary>C:/Users/yatli/git/GraphEngine/src/Trinity.C/Debug/Trinity.lib</ImportLibrary>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <OptimizeReferences>true</OptimizeReferences>
-      <ProgramDataBaseFile>C:/Users/yatli/git/GraphEngine/src/Trinity.C/Debug/Trinity.C.pdb</ProgramDataBaseFile>
+      <ProgramDataBaseFile>C:/Users/yatli/git/GraphEngine/src/Trinity.C/Debug/Trinity.pdb</ProgramDataBaseFile>
       <SubSystem>Windows</SubSystem>
     </Link>
     <ProjectReference>
@@ -154,15 +154,15 @@
       <OmitFramePointers>true</OmitFramePointers>
       <Optimization>MaxSpeed</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ProgramDataBaseFileName> Trinity.C.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName> Trinity.pdb</ProgramDataBaseFileName>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <PreprocessorDefinitions>EBUG;TRINITYC_EXPORTS;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;WIN32;NDEBUG;_WINDOWS;_USRDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;CMAKE_INTDIR="Release";Trinity_C_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>EBUG;CORECLR;TRINITYC_EXPORTS;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;WIN32;NDEBUG;_WINDOWS;_USRDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;CMAKE_INTDIR="Release";Trinity_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>WIN32;EBUG;TRINITYC_EXPORTS;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;NDEBUG;_WINDOWS;_USRDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Release\";Trinity_C_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;EBUG;CORECLR;TRINITYC_EXPORTS;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;NDEBUG;_WINDOWS;_USRDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Release\";Trinity_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Users\yatli\git\GraphEngine\src\Trinity.C\src;C:\Users\yatli\git\GraphEngine\src\Trinity.C\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -179,10 +179,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/yatli/git/GraphEngine/src/Trinity.C/Release/Trinity.C.lib</ImportLibrary>
+      <ImportLibrary>C:/Users/yatli/git/GraphEngine/src/Trinity.C/Release/Trinity.lib</ImportLibrary>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <OptimizeReferences>true</OptimizeReferences>
-      <ProgramDataBaseFile>C:/Users/yatli/git/GraphEngine/src/Trinity.C/Release/Trinity.C.pdb</ProgramDataBaseFile>
+      <ProgramDataBaseFile>C:/Users/yatli/git/GraphEngine/src/Trinity.C/Release/Trinity.pdb</ProgramDataBaseFile>
       <SubSystem>Windows</SubSystem>
     </Link>
     <ProjectReference>
@@ -208,14 +208,14 @@
       <OmitFramePointers>true</OmitFramePointers>
       <Optimization>MinSpace</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ProgramDataBaseFileName> Trinity.C.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName> Trinity.pdb</ProgramDataBaseFileName>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>EBUG;NDEBUG;TRINITYC_EXPORTS;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;WIN32;_WINDOWS;_USRDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;CMAKE_INTDIR="MinSizeRel";Trinity_C_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>EBUG;NDEBUG;CORECLR;TRINITYC_EXPORTS;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;WIN32;_WINDOWS;_USRDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;CMAKE_INTDIR="MinSizeRel";Trinity_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>WIN32;EBUG;NDEBUG;TRINITYC_EXPORTS;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;_WINDOWS;_USRDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"MinSizeRel\";Trinity_C_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;EBUG;NDEBUG;CORECLR;TRINITYC_EXPORTS;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;_WINDOWS;_USRDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"MinSizeRel\";Trinity_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Users\yatli\git\GraphEngine\src\Trinity.C\src;C:\Users\yatli\git\GraphEngine\src\Trinity.C\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -232,10 +232,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/yatli/git/GraphEngine/src/Trinity.C/MinSizeRel/Trinity.C.lib</ImportLibrary>
+      <ImportLibrary>C:/Users/yatli/git/GraphEngine/src/Trinity.C/MinSizeRel/Trinity.lib</ImportLibrary>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <OptimizeReferences>true</OptimizeReferences>
-      <ProgramDataBaseFile>C:/Users/yatli/git/GraphEngine/src/Trinity.C/MinSizeRel/Trinity.C.pdb</ProgramDataBaseFile>
+      <ProgramDataBaseFile>C:/Users/yatli/git/GraphEngine/src/Trinity.C/MinSizeRel/Trinity.pdb</ProgramDataBaseFile>
       <SubSystem>Windows</SubSystem>
     </Link>
     <ProjectReference>
@@ -261,14 +261,14 @@
       <OmitFramePointers>true</OmitFramePointers>
       <Optimization>MaxSpeed</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ProgramDataBaseFileName> Trinity.C.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName> Trinity.pdb</ProgramDataBaseFileName>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>EBUG;NDEBUG;TRINITYC_EXPORTS;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;WIN32;_WINDOWS;_USRDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;CMAKE_INTDIR="RelWithDebInfo";Trinity_C_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>EBUG;NDEBUG;CORECLR;TRINITYC_EXPORTS;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;WIN32;_WINDOWS;_USRDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;CMAKE_INTDIR="RelWithDebInfo";Trinity_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>WIN32;EBUG;NDEBUG;TRINITYC_EXPORTS;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;_WINDOWS;_USRDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"RelWithDebInfo\";Trinity_C_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;EBUG;NDEBUG;CORECLR;TRINITYC_EXPORTS;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;_WINDOWS;_USRDLL;_WINSOCK_DEPRECATED_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"RelWithDebInfo\";Trinity_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Users\yatli\git\GraphEngine\src\Trinity.C\src;C:\Users\yatli\git\GraphEngine\src\Trinity.C\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -285,10 +285,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/yatli/git/GraphEngine/src/Trinity.C/RelWithDebInfo/Trinity.C.lib</ImportLibrary>
+      <ImportLibrary>C:/Users/yatli/git/GraphEngine/src/Trinity.C/RelWithDebInfo/Trinity.lib</ImportLibrary>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <OptimizeReferences>true</OptimizeReferences>
-      <ProgramDataBaseFile>C:/Users/yatli/git/GraphEngine/src/Trinity.C/RelWithDebInfo/Trinity.C.pdb</ProgramDataBaseFile>
+      <ProgramDataBaseFile>C:/Users/yatli/git/GraphEngine/src/Trinity.C/RelWithDebInfo/Trinity.pdb</ProgramDataBaseFile>
       <SubSystem>Windows</SubSystem>
     </Link>
     <ProjectReference>

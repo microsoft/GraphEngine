@@ -3,8 +3,9 @@
 #
 cmake_minimum_required (VERSION 3.0.0)
 
-INCLUDE_DIRECTORIES(../../Trinity.C/src/)
-INCLUDE_DIRECTORIES(../../Trinity.C/include/)
+INCLUDE_DIRECTORIES(../../Trinity.C/src)
+INCLUDE_DIRECTORIES(../../Trinity.C/include)
+INCLUDE_DIRECTORIES(../trinity_host)
 FILE(GLOB_RECURSE SRCS *.cpp)
 
 IF(WIN32)

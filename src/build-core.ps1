@@ -1,5 +1,7 @@
 Import-Module "$PSScriptRoot\..\tools\setenv.psm1" -WarningAction Ignore -Force -ErrorAction Stop
-Invoke-MSBuild $TRINITY_C_SLN -config "Release"
+mkdir "$REPO_ROOT\build\trinity_c" -Force | cd
+cmake -G "Visual Studio 15 2017 Win64" --host=x64 $TRINITY_C_SLN -DCMAKE_INSTALL_PREFIX="$REPO_ROOT\bin"
+cmake --build . --config Release --target install
 Invoke-MSBuild $TRINITY_TSL_SLN
 # Copy Linux native Trinity.C/Trinity.TSL.CodeGen
 Copy-Item -Path "$REPO_ROOT\lib\libTrinity.so" -Destination "$REPO_ROOT\bin" -ErrorAction Stop

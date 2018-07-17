@@ -21,7 +21,7 @@ Function Init-Configuration {
     }
 
     $Global:TRINITY_CORE_SLN              = "$REPO_ROOT\src\Trinity.Core\Trinity.Core.sln"
-    $Global:TRINITY_C_SLN                 = "$REPO_ROOT\src\Trinity.C\Trinity.C.sln"
+    $Global:TRINITY_C_SLN                 = "$REPO_ROOT\src\Trinity.C\CMakeLists.txt"
     $Global:TRINITY_TSL_SLN               = "$REPO_ROOT\src\Trinity.TSL\Trinity.TSL.sln"
     $Global:SPARK_MODULE_ROOT             = "$REPO_ROOT\src\Modules\Spark"
     $Global:LIKQ_SLN                      = "$REPO_ROOT\src\Modules\LIKQ\LIKQ.sln"

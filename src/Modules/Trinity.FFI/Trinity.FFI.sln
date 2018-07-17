@@ -12,11 +12,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.FFI.UnitTests", "Tr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.FFI.Python", "Trinity.FFI.Python\Trinity.FFI.Python.csproj", "{DF46ABD1-835D-4DD9-82D5-565A2263E89B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.FFI.Python.UnitTests", "Trinity.FFI.Python.UnitTests\Trinity.FFI.Python.UnitTests.csproj", "{F06891DD-5A38-481B-A676-D800BAEC0C88}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Python.Runtime.15", "pythonnet\src\runtime\Python.Runtime.15.csproj", "{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.FFI.Playground", "Trinity.FFI.Playground\Trinity.FFI.Playground.csproj", "{47D38567-CDE4-468E-9B93-93A998CA6749}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Trinity.FFI.Native", "Trinity.FFI.Native\Trinity.FFI.Native.vcxproj", "{1164CFDC-52CD-4628-85D1-6EFF56CD4D50}"
 EndProject
@@ -48,18 +44,10 @@ Global
 		{DF46ABD1-835D-4DD9-82D5-565A2263E89B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF46ABD1-835D-4DD9-82D5-565A2263E89B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF46ABD1-835D-4DD9-82D5-565A2263E89B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F06891DD-5A38-481B-A676-D800BAEC0C88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F06891DD-5A38-481B-A676-D800BAEC0C88}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F06891DD-5A38-481B-A676-D800BAEC0C88}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F06891DD-5A38-481B-A676-D800BAEC0C88}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Debug|Any CPU.ActiveCfg = DebugWinPY3|Any CPU
 		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Debug|Any CPU.Build.0 = DebugWinPY3|Any CPU
 		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Release|Any CPU.ActiveCfg = ReleaseWinPY3|Any CPU
 		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Release|Any CPU.Build.0 = ReleaseWinPY3|Any CPU
-		{47D38567-CDE4-468E-9B93-93A998CA6749}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{47D38567-CDE4-468E-9B93-93A998CA6749}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{47D38567-CDE4-468E-9B93-93A998CA6749}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{47D38567-CDE4-468E-9B93-93A998CA6749}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1164CFDC-52CD-4628-85D1-6EFF56CD4D50}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{1164CFDC-52CD-4628-85D1-6EFF56CD4D50}.Debug|Any CPU.Build.0 = Debug|x64
 		{1164CFDC-52CD-4628-85D1-6EFF56CD4D50}.Release|Any CPU.ActiveCfg = Release|x64
