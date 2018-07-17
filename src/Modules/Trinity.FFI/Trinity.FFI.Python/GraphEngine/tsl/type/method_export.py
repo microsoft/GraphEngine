@@ -1,30 +1,3 @@
-"""
-@tsl.struct
-class S:
-    a: int
-
-@tsl.cell
-class C:
-    s: S
-    x: A
-
-c : C
-
-it = get(c.s)
-
-it = c.s._
-
-
-c.s[0]
-
-
-for each in c.ls:
-    result = tsl.apply(f, each)
-    tsl.apply(print, result)
-    tsl.assign(x.__setitem__, 0, result)
-
-tsl.execute
-"""
 from GraphEngine.tsl.type.system import *
 from GraphEngine.tsl.type.mangling import *
 from Redy.ADT.Core import data
@@ -32,8 +5,6 @@ from Redy.ADT import traits
 from Redy.Opt import feature, const, constexpr, Macro
 
 _internal_macro = Macro()
-import ast
-
 staging = (const, constexpr)
 
 
@@ -96,7 +67,6 @@ class State:
     spec_dict: dict  # str -> spec, forward_ref
     method_tb: dict  # str -> jit method
     arg_num: int
-    non_primitive_count: int
 
     def update(self, **kwargs):
         return State(*(kwargs[k] if k in kwargs else getattr(self, k) for k in self.__annotations__))
@@ -152,7 +122,7 @@ def create_cls(spec: StructTypeSpec, chain: str, state: State):
                     method(self.__accessor__)
 
         else:
-            chaining_getter = f'{chain}_SGet'
+            chaining_getter = f'{chain}_SGet_{field_name_mangled}'
             field_cls = create_cls(field_spec, chaining_getter, state)
 
             _internal_macro.expr(f"def get_specific_field():\n"
@@ -160,7 +130,7 @@ def create_cls(spec: StructTypeSpec, chain: str, state: State):
 
             _internal_macro.stmt('def set_specific_field():\n'
                                  f'    v = self.__{non_primitive_count}'
-                                 f' = constexpr[field_cls](self.__accessor__, self.__args__)')
+                                 f' = constexpr[field_type](self.__accessor__, self.__args__)')
             _internal_macro.stmt('def return_proxy():\n'
                                  f'    return v')
 
@@ -171,6 +141,7 @@ def create_cls(spec: StructTypeSpec, chain: str, state: State):
             @property
             @feature(_internal_macro, staging)
             def get_method(self):
+                field_type: const = field_cls
                 try:
                     return get_specific_field()
                 except AttributeError:
@@ -180,7 +151,7 @@ def create_cls(spec: StructTypeSpec, chain: str, state: State):
             @get_method.setter
             @feature(_internal_macro, staging)
             def set_method(self, value):
-                method: const = state.method_tb[f'{chain}_SSet']
+                method: const = state.method_tb[f'{chain}_SSet_{field_name_mangled}']
                 if constexpr[state.arg_num]:
                     method(value.ref_get(), *constexpr[take_args](self.__args__), self.__accessor__)
                 else:
@@ -188,7 +159,7 @@ def create_cls(spec: StructTypeSpec, chain: str, state: State):
 
             @feature(staging)
             def ref_set(self, value):
-                method: const = state.method_tb[f'{chain}_SSet']
+                method: const = state.method_tb[f'{chain}_SSet_{field_name_mangled}']
                 if constexpr[state.arg_num]:
                     method(value.ref_get(), *constexpr[take_args](self.__args__), self.__accessor__)
                 else:
@@ -328,3 +299,25 @@ def create_cls(spec: ListTypeSpec, chain: str, state: State):
     cls.__delitem__ = __delitem__
     cls.__setitem__ = __setitem__
     cls.__getitem__ = __getitem__
+
+
+if __name__ == '__main__':
+    methods = {
+        'cell_C_SGet_s_SGet_i_BGet': lambda acc: print('C.s.i<basic>'),
+        'cell_C_SGet_s_SSet_i': lambda acc, value: print('set C.s.i = {}'.format(value)),
+        'cell_C_SGet_s_SGet_k': lambda acc, value: print('C.s.k'),
+        'cell_C_SGet_s_SSet_k': lambda acc, value: print(f'C.s.k = {value}'),
+        'cell_C_SGet_s_SGet_k_SGet_a_BGet': lambda acc: print('C.s.k.a<basic>'),
+        'cell_C_SGet_s_SGet_k_SSet_a': lambda acc, value: print(f'C.s.k.a = {value}'),
+        "cell_C_SGet_s": lambda acc: print('get_ref_of_S'),
+
+    }
+
+    K = StructTypeSpec('K', ImmutableDict([('a', PrimitiveTypeSpec('int32', 'int32_t'))]))
+    S = StructTypeSpec("S", ImmutableDict([('i', PrimitiveTypeSpec("int32", 'int32_t')), ('k', K)]))
+    S_ = create_cls(S, "cell_C_SGet_s", State({}, methods, 0))
+    s = S_("acc", None)
+    print(S_.__dict__.keys(), S_.__slots__)
+    print(s.k)
+    print(s.__dict__)
+
