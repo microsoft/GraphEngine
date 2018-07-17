@@ -30,7 +30,7 @@ let rec ty_to_name (recursive_structure : bool) =
         else "list"
     | { TypeCode = CELL _; TypeName = name } -> sprintf "cell_%s" <| mangling name
     | { TypeCode = STRUCT; TypeName = name } -> sprintf "struct_%s" <| mangling name
-    | { TypeName = name } -> name.ToLower()
+    | { TypeCode = code} -> code.ToString()
 
 let null_type_string = "void"
 
@@ -50,7 +50,7 @@ let ty_to_string tydesc =
     | BOOL -> "bool"
     | CHAR -> "char"
     | STRING -> "char*"
-    | U8STRING -> "wchar*"
+    | U8STRING -> "wchar_t*"
     | _ -> "void*"
 
 let chaining_verb_to_name (verb : Verb) =
@@ -223,6 +223,15 @@ void* UseCell(int64_t cellid, int32_t options)
 }
             "
         yield (lock_cell_decl, lock_cell_body)
+
+        let basic_ref_get_decl = "void* Unbox(void*);"
+        let basic_ref_get_body = "
+void* Unbox(void* object)
+{
+  return cast_object(object);
+}
+        "
+        yield (basic_ref_get_decl, basic_ref_get_body)
 
         ] |> List.unzip
         

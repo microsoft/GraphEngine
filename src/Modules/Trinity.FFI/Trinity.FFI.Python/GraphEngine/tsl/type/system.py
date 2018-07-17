@@ -9,9 +9,6 @@ from Redy.Magic.Classic import const_return
 
 class TSLType(abc.ABC):
     __accessor__: object
-    __meta_cls__: type
-    __ty_args__: typing.Tuple[type] = ()
-    __proxy__: typing.Tuple[typing.Union['Proxy', 'TSLType']]
 
     @classmethod
     @abc.abstractmethod
@@ -26,6 +23,7 @@ class TSLType(abc.ABC):
 
 
 class Struct(TSLType):
+    __slots__ = ('__accessor__',)
 
     @classmethod
     @discrete_cache
@@ -35,7 +33,13 @@ class Struct(TSLType):
 
 
 class Cell(Struct):
-    pass
+    __slots__ = ('__accessor__',)
+
+    @classmethod
+    @discrete_cache
+    def get_spec(cls):
+        annotations: dict = getattr(cls, '__annotations__', {})
+        return CellTypeSpec(cls.__name__, ImmutableDict((k, type_map_spec(v)) for k, v in annotations.items()))
 
 
 class List(TSLType):
@@ -86,7 +90,7 @@ def type_map_spec(ty) -> TypeSpec:
 @type_map_spec.case.ret_pattern(chr)
 @const_return
 def type_map_spec(_):
-    return PrimitiveTypeSpec("char", 'char')
+    return PrimitiveTypeSpec("char", 'CAHR')
 
 
 @type_map_spec.case.ret_pattern("not_defined_yet")
@@ -98,55 +102,55 @@ def type_map_spec(ty: str):
 @type_map_spec.case.ret_pattern(np.int8)
 @const_return
 def type_map_spec(_):
-    return PrimitiveTypeSpec("int8", 'int8_t')
+    return PrimitiveTypeSpec("int8", 'I8')
 
 
 @type_map_spec.case.ret_pattern(np.int16)
 @const_return
 def type_map_spec(_):
-    return PrimitiveTypeSpec("int16", 'int16_t')
+    return PrimitiveTypeSpec("int16", 'I16')
 
 
 @type_map_spec.case.ret_pattern(int)
 @const_return
 def type_map_spec(_):
-    return PrimitiveTypeSpec("int32", 'int32_t')
+    return PrimitiveTypeSpec("int32", 'I32')
 
 
 @type_map_spec.case.ret_pattern(np.int32)
 @const_return
 def type_map_spec(_):
-    return PrimitiveTypeSpec("int32", 'int32_t')
+    return PrimitiveTypeSpec("int32", 'I32')
 
 
 @type_map_spec.case.ret_pattern(np.int64)
 @const_return
 def type_map_spec(_):
-    return PrimitiveTypeSpec("int64", 'int64_t')
+    return PrimitiveTypeSpec("int64", 'I64')
 
 
 @type_map_spec.case.ret_pattern(str)
 @const_return
 def type_map_spec(_):
-    return PrimitiveTypeSpec('string', 'wchar*')
+    return PrimitiveTypeSpec('string', 'STRING')
 
 
 @type_map_spec.case.ret_pattern(bytes)
 @const_return
 def type_map_spec(_):
-    return PrimitiveTypeSpec('u8string', 'char*')
+    return PrimitiveTypeSpec('byte[]', 'U8STRING')
 
 
 @type_map_spec.case.ret_pattern(bool)
 @const_return
 def type_map_spec(_):
-    return PrimitiveTypeSpec('bool', 'bool')
+    return PrimitiveTypeSpec('bool', 'BOOL')
 
 
 @type_map_spec.case.ret_pattern(float)
 @const_return
 def type_map_spec(_):
-    return PrimitiveTypeSpec("double", 'double')
+    return PrimitiveTypeSpec("double", 'DOUBLE')
 
 
 def _generic_type_map(typ_tuple):

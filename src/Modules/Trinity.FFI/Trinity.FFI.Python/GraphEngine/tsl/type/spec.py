@@ -9,7 +9,7 @@ class TypeSpec:
 @record
 class PrimitiveTypeSpec(TypeSpec):
     name: str
-    native_name: str
+    type_code: str
 
     def __repr__(self):
         return self.name
