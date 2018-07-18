@@ -165,16 +165,15 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
         [ for i in 1..(pos_arg_types.Length) -> sprintf "arg%d" i ]
 
     // reversed
-    let typed_parameters =
-        List.zip pos_arg_types (parameters |> List.rev) |> List.map (fun (parameter, ty_str) -> sprintf "%s %s" ty_str parameter)
+    let rev_typed_parameters =
+        List.zip pos_arg_types parameters |> List.rev |> List.map (fun (ty_str, parameter) -> sprintf "%s %s" ty_str parameter)
     
-    let types_string : string = join pos_arg_types
     let args_string : string = join parameters
-    let typed_args_string : string = join typed_parameters
-    let function_type_string = sprintf "%s (*)(%s)" ret_type types_string
-    let decl = sprintf "static %s %s(%s);" ret_type name_sig types_string
+    let typed_args_string : string = join rev_typed_parameters
+    let private_fn_type = sprintf "%s (*)(%s)" ret_type <| join pos_arg_types
+    let decl = sprintf "static %s %s(%s);" ret_type name_sig <| join (List.rev pos_arg_types)
     let generator addr =
-        sprintf ("static %s %s(%s){\nreturn static_cast<%s>(0x%xll)(%s);\n}") ret_type name_sig typed_args_string function_type_string addr args_string
+        sprintf ("static %s %s(%s){\nreturn reinterpret_cast<%s>(0x%xll)(%s);\n}") ret_type name_sig typed_args_string private_fn_type addr args_string
     in (decl, generator)
 
 let code_gen (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
@@ -209,7 +208,7 @@ static void* create_%s(){
                 " ty_name ty_name
             yield (initializer_decl, initializer_body)
 
-        let lock_cell_decl = "void* lock_cell(int64_t, int32_t);"
+        let lock_cell_decl = "void* UseCell(int64_t, int32_t);"
         let lock_cell_body = 
             sprintf "\n
 void* UseCell(int64_t cellid, int32_t options)
