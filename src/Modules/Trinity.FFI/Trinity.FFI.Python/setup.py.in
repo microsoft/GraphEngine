@@ -4,31 +4,34 @@ setup.py
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
 from Redy.Tools.Version import Version
+from os.path import relpath
 
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
+version_filename = '${CMAKE_CURRENT_SOURCE_DIR}/next_version'
 
-version_filename = 'next_version'
+build_dir = '${CMAKE_CURRENT_BINARY_DIR}'
+src_dir   = relpath('${CMAKE_CURRENT_SOURCE_DIR}', build_dir)
+swigcxx   = relpath('${swigcxx}', build_dir)
+typesys   = relpath('${typesys}', build_dir)
+inc_ffi   = relpath('${TRINITY_FFI_NATIVE_DIR}', build_dir)
+inc_tri   = relpath('${TRINITY_C_INCLUDE_DIR}', build_dir)
+inc_jit   = relpath('${GRAPHENGINE_JIT_NATIVE_DIR}', build_dir)
 
 with open(version_filename) as f:
     version = Version(f.read().strip())
 
 try:
-    with open('./README.rst', encoding='utf-8') as f:
+    with open('${CMAKE_CURRENT_SOURCE_DIR}/README.rst', encoding='utf-8') as f:
         readme = f.read()
 except FileNotFoundError:
     readme = ''
 
 ge_module = Extension('_ffi',
-                      sources=['Trinity.FFI.SWIG_wrap.cxx',
-                               '../../GraphEngine.Jit/GraphEngine.Jit.Native/TypeSystem.cpp'],
-                      include_dirs=['../Trinity.FFI.Native',
-                                    '../../../Trinity.C/include',
-                                    '../../GraphEngine.Jit/GraphEngine.Jit.Native'],
-                      libraries=['trinity_ffi'],
-                      library_dirs=['../../../../bin'],
-                      # Uncomment the following lines to produce PDB
-                      extra_compile_args=['/Zi'],
-                      extra_link_args=['/DEBUG'])
+                      sources=[swigcxx, typesys],
+                      include_dirs=[inc_ffi, inc_tri, inc_jit ],
+                      libraries=['trinity_ffi', 'Trinity', 'GraphEngine.Jit.Native'],
+                      library_dirs=['${TRINITY_OUTPUT_DIR}'],
+                      extra_compile_args=${ext_cxx_flags},
+                      extra_link_args=${ext_linker_flags})
 
 setup(name='GraphEngine',
       version=str(version),
@@ -41,6 +44,7 @@ setup(name='GraphEngine',
       author_email='graph@microsoft.com',
       include_package_data=True,
       install_requires=['toolz', 'Redy>=0.1.30', 'pythonnet'],
+      package_dir={ '' : src_dir},
       packages=['GraphEngine'],
       ext_package='GraphEngine',
       ext_modules=[ge_module],

@@ -9,21 +9,25 @@ SET(TRINITY_REQUIRES    "Microsoft.Component.MSBuild Microsoft.VisualStudio.Comp
 SET(TRINITY_REPO_ROOT   ${CMAKE_CURRENT_LIST_DIR})
 SET(TRINITY_OUTPUT_DIR  ${TRINITY_REPO_ROOT}/bin)
 SET(TRINITY_TEST_DIR    ${TRINITY_REPO_ROOT}/tests)
+SET(TRINITY_TOOLS_DIR   ${TRINITY_REPO_ROOT}/tools)
 SET(TRINITY_LIB_DIR     ${TRINITY_REPO_ROOT}/lib)
 SET(TRINITY_SRC_DIR     ${TRINITY_REPO_ROOT}/src)
-#SET(TRINITY_NUGET_EXE   ${TRINITY_REPO_ROOT}/tools/NuGet.exe)
-
 SET(TRINITY_C_DIR       ${TRINITY_SRC_DIR}/Trinity.C)
+SET(TRINITY_NUGET_EXE   ${TRINITY_TOOLS_DIR}/NuGet.exe)
 
-#IF(NOT EXISTS ${TRINITY_NUGET_EXE})
-    #FILE(DOWNLOAD https://dist.nuget.org/win-x86-commandline/latest/nuget.exe ${TRINITY_NUGET_EXE})
-#ENDIF()
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${TRINITY_OUTPUT_DIR})
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${TRINITY_OUTPUT_DIR})
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${TRINITY_OUTPUT_DIR})
 
 IF(WIN32)
     SET(CMAKE_CXX_FLAGS           "/volatile:iso /EHa /fp:except- /Zi /Gy /MP /W3 /DEBUG")
     SET(CMAKE_CXX_FLAGS_RELEASE   "/Oi /Ot /Ob2 /Oy /O2 /MT /GS- /GL")
     SET(CMAKE_CXX_FLAGS_DEBUG     "/Od /MTd /GS")
     SET(CMAKE_SHARED_LINKER_FLAGS "/LTCG /OPT:REF /OPT:ICF /SUBSYSTEM:WINDOWS /INCREMENTAL:NO")
+
+    IF(NOT EXISTS ${TRINITY_NUGET_EXE})
+        FILE(DOWNLOAD https://dist.nuget.org/win-x86-commandline/latest/nuget.exe ${TRINITY_NUGET_EXE})
+    ENDIF()
 ELSEIF(UNIX)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -Wall -Wno-write-strings -Wno-unknown-pragmas -pthread")
 ELSE()
@@ -32,8 +36,14 @@ ENDIF()
 
 PROJECT(GraphEngine VERSION 2.0.9328 LANGUAGES CXX)
 
+#  Native components
+
 ADD_SUBDIRECTORY(src/Trinity.TSL)
 ADD_SUBDIRECTORY(src/Trinity.C)
-#ADD_SUBDIRECTORY(src/Trinity.Core)
 ADD_SUBDIRECTORY(src/Modules/GraphEngine.Jit)
 ADD_SUBDIRECTORY(src/Modules/Trinity.FFI/Trinity.FFI.Native)
+ADD_SUBDIRECTORY(src/Modules/Trinity.FFI/Trinity.FFI.Python)
+
+#  DotNet components
+
+ADD_SUBDIRECTORY(src/Trinity.Core)

@@ -51,10 +51,11 @@ ELSEIF(WIN32)
     TARGET_LINK_LIBRARIES(Trinity      PRIVATE Psapi.lib;ws2_32.lib;Dbghelp.lib;Synchronization.lib)
     TARGET_LINK_LIBRARIES(Trinity.C    PRIVATE Psapi.lib;ws2_32.lib;Dbghelp.lib;Synchronization.lib)
 
-    INSTALL(TARGETS Trinity Trinity.C
-            DESTINATION ${TRINITY_OUTPUT_DIR})
+    #INSTALL(TARGETS Trinity Trinity.C
+            #DESTINATION ${TRINITY_OUTPUT_DIR})
     INSTALL(FILES ${PROJECT_BINARY_DIR}/Trinity.C.pdb 
                   ${PROJECT_BINARY_DIR}/Trinity.pdb 
                   ${TRINITY_LIB_DIR}/libTrinity.so 
             DESTINATION ${TRINITY_OUTPUT_DIR})
+
 ENDIF()

@@ -7,4 +7,4 @@ New-Package     -proj "$SOL_ROOT\Trinity.FFI\Trinity.FFI.csproj"
 Invoke-DotNet   -proj "$SOL_ROOT\Trinity.FFI.UnitTests\Trinity.FFI.UnitTests.csproj" -action restore
 Invoke-DotNet   -proj "$SOL_ROOT\Trinity.FFI.UnitTests\Trinity.FFI.UnitTests.csproj" -action build -config Release
 
-Invoke-Sub "$SOL_ROOT\build-py.ps1"
+#Invoke-Sub "$SOL_ROOT\build-py.ps1"
