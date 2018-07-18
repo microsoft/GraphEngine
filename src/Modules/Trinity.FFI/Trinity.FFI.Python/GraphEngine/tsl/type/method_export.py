@@ -34,6 +34,7 @@ def create_cls(spec: TypeSpec, chain: str, method_tb, arg_num):
 
 @create_cls.case(StructTypeSpec)
 def create_cls(spec: StructTypeSpec, chain: str, method_tb, arg_num):
+    print(chain)
     bases = (Struct, Proxy)
     cls = type(repr(spec), bases, {'__slots__': ('__accessor__', '__args__')})
     fields = spec.field_types.items()
@@ -73,20 +74,16 @@ def create_cls(spec: StructTypeSpec, chain: str, method_tb, arg_num):
         else:
             chaining_getter = f'{chain}_SGet_{field_name_mangled}'
             field_cls = create_cls(field_spec, chaining_getter, method_tb, arg_num)
-            print(field_cls.__slots__)
 
             _internal_macro.expr(f"def get_specific_field():\n"
                                  f"   return self.__{non_primitive_count}")
 
             _internal_macro.stmt('def set_specific_field():\n'
-                                 f'    v = self.__{non_primitive_count}'
-                                 f' = constexpr[field_type](self.__accessor__, self.__args__)')
-            _internal_macro.stmt('def return_proxy():\n'
+                                 f'    v = self.__{non_primitive_count} = constexpr[field_type](self.__args__, self.__accessor__)\n'
                                  f'    return v')
 
             get_specific_field: _internal_macro
             set_specific_field: _internal_macro
-            return_proxy: _internal_macro
 
             @property
             @feature(_internal_macro, staging)
@@ -96,10 +93,9 @@ def create_cls(spec: StructTypeSpec, chain: str, method_tb, arg_num):
                     return get_specific_field()
                 except AttributeError:
                     set_specific_field()
-                    return_proxy()
 
             @get_method.setter
-            @feature(_internal_macro, staging)
+            @feature(staging)
             def set_method(self, value):
                 method: const = method_tb[f'{chain}_SSet_{field_name_mangled}']
                 if constexpr[arg_num]:
@@ -124,13 +120,13 @@ def create_cls(spec: StructTypeSpec, chain: str, method_tb, arg_num):
         self.__args__ = args
 
     cls.__init__ = __init__
-
     cls.__slots__ += tuple(f'__{i}' for i in range(non_primitive_count))
     return cls
 
 
 @create_cls.case(ListTypeSpec)
 def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int):
+    print(chain)
     bases = (List, Proxy)
     cls = type(repr(spec), bases, {'__slots__': ('__accessor__', '__args__')})
     elem = spec.elem_type
@@ -246,19 +242,22 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int):
     cls.__delitem__ = __delitem__
     cls.__setitem__ = __setitem__
     cls.__getitem__ = __getitem__
+    return cls
 
 
 @Pattern
-def make_class(ty: TSLType, method_tb):
+def make_class(ty: typing.Type[TSLType], method_tb):
     return issubclass(ty, Struct)
 
 
 @make_class.case(True)
 def make_class(ty: Struct, method_tb):
     spec: StructTypeSpec = ty.get_spec()
-    ty_name_mangled = type_spec_to_name(spec)
+    chain = type_spec_to_name(spec)
 
-    chain = ty_name_mangled
+    def __init__(self):
+        method = method_tb[f'create_{chain}']
+        self.__accessor__ = method()
 
     fields = spec.field_types.items()
     non_primitive_count = 0
@@ -273,7 +272,7 @@ def make_class(ty: Struct, method_tb):
     @feature(staging)
     def ref_set(self, value):
         method: const = method_tb[f'{chain}_BSet']
-        return method(self.__accessor__, value.ref_get())
+        return method(value.ref_get(), self.__accessor__)
 
     for field_name, field_spec in fields:
         field_name_mangled = mangling(field_name)
@@ -288,25 +287,21 @@ def make_class(ty: Struct, method_tb):
             @get_method.setter
             def set_method(self, value):
                 method: const = method_tb[f'{chain}_SSet_{field_name_mangled}']
-                method(self.__accessor_, value)
+                method(value, self.__accessor_)
 
         else:
             chaining_getter = f'{chain}_SGet_{field_name_mangled}'
             field_cls = create_cls(field_spec, chaining_getter, methods, 0)
-            print(field_cls.__slots__)
 
             _internal_macro.expr(f"def get_specific_field():\n"
                                  f"   return self.__{non_primitive_count}")
 
             _internal_macro.stmt('def set_specific_field():\n'
-                                 f'    v = self.__{non_primitive_count}'
-                                 f' = constexpr[field_type](self.__accessor__, self.__args__)')
-            _internal_macro.stmt('def return_proxy():\n'
+                                 f'    v = self.__{non_primitive_count} = constexpr[field_type](self.__args__, self.__accessor__)\n'
                                  f'    return v')
 
             get_specific_field: _internal_macro
             set_specific_field: _internal_macro
-            return_proxy: _internal_macro
 
             @property
             @feature(_internal_macro, staging)
@@ -316,10 +311,9 @@ def make_class(ty: Struct, method_tb):
                     return get_specific_field()
                 except AttributeError:
                     set_specific_field()
-                    return_proxy()
 
             @get_method.setter
-            @feature(_internal_macro, staging)
+            @feature(staging)
             def set_method(self, value):
                 method: const = method_tb[f'{chain}_SSet_{field_name_mangled}']
                 method(value.ref_get(), self.__accessor__)
@@ -335,24 +329,19 @@ def make_class(ty: Struct, method_tb):
 
     ty.__slots__ += tuple(f'__{i}' for i in range(non_primitive_count))
 
-    def __init__(self):
-        method = method_tb[f'create_{ty_name_mangled}']
-        self.__accessor__ = method()
-
     ty.__init__ = __init__
 
 
 @make_class.case(False)
 def make_class(ty: List, method_tb):
     spec: ListTypeSpec = ty.get_spec()
-    ty_name_mangled = type_spec_to_name(spec)
+    chain = type_spec_to_name(spec)
 
     def __init__(self):
-        method = method_tb[f'create_{ty_name_mangled}']
+        method = method_tb[f'create_{chain}']
         self.__accessor__ = method()
 
     ty.__init__ = __init__
-    chain = ty_name_mangled
 
     # TODO: deepcopy
     # @feature(staging)
@@ -374,7 +363,7 @@ def make_class(ty: List, method_tb):
     @feature(staging)
     def ref_set(self, value):
         method: const = method_tb[f'{chain}_BSet']
-        return method(self.__accessor__, value.ref_get())
+        return method(value.ref_get(), self.__accessor_)
 
     ty.ref_set = ref_get
     elem = spec.elem_type
@@ -403,7 +392,6 @@ def make_class(ty: List, method_tb):
     else:
         chaining_getter = f'{chain}_LGet'
         elem_cls = create_cls(elem, chaining_getter, method_tb, 1)
-        print(elem_cls.__dict__.keys())
 
         @feature(staging)
         def ref_set(self, value):
@@ -442,11 +430,6 @@ def make_class(ty: List, method_tb):
         method: const = method_tb[f'{chain}_LCount']
         return method(self.__accessor__)
 
-    @feature(staging)
-    def __init__(self, acc, args):
-        self.__args__ = args
-        self.__accessor__ = acc
-
     ty.__init__ = __init__
     ty.insert = insert_at
     ty.__contains__ = __contains__
@@ -457,17 +440,9 @@ def make_class(ty: List, method_tb):
 
 
 if __name__ == '__main__':
-    methods = {
-        'cell_C_SGet_s_SGet_i_BGet': lambda acc: print('get C.s.i<basic>'),
-        'cell_C_SGet_s_SSet_i': lambda acc, value: print('set C.s.i = {}'.format(value)),
-        'cell_C_SGet_s_SGet_k': lambda acc, value: print('get C.s.k'),
-        'cell_C_SGet_s_SSet_k': lambda acc, value: print(f'set C.s.k = {value}'),
-        'cell_C_SGet_s_SGet_k_SGet_a_BGet': lambda acc: print('get C.s.k.a<basic>'),
-        'cell_C_SGet_s_SGet_k_SSet_a': lambda acc, value: print(f'set C.s.k.a = {value}'),
-        "cell_C_SGet_s": lambda acc: print('get_ref_of_S'), 'Unbox': lambda self: print('Unbox'),
-        'cell_C_BSet': lambda self, value: print('call ref_set'), 'cell_C_SSet_s': lambda acc, value: print('set C.s'),
+    from collections import defaultdict
 
-    }
+    methods = defaultdict(lambda: lambda *args: print(args))
 
 
     class K(Struct):
@@ -481,11 +456,12 @@ if __name__ == '__main__':
 
     class C(Cell):
         s: S
+        b: typing.List[S]
 
 
     make_class(C, methods)
     print(C.__slots__)
-    assert C.__slots__ == ('__accessor__', '__0')
+    assert C.__slots__ == ('__accessor__', '__0', '__1')
     assert Cell.__slots__ == ('__accessor__',)
 
     # K = StructTypeSpec('K', ImmutableDict([('a', type_map_spec(int))]))  # S = StructTypeSpec("S", ImmutableDict([('i', type_map_spec(int)), ('k', K)]))  # S_ = create_cls(S, "cell_C_SGet_s", methods, 0)  # s = S_("acc", None)  # print(S_.__dict__.keys(), S_.__slots__)  # print(s.k)  # print(s.__dict__)  # print(s.k.a)
