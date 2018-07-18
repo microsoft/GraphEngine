@@ -1,0 +1,5 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.8.0)
+PROJECT(GraphEngine.Jit)
+
+ADD_SUBDIRECTORY(GraphEngine.Jit.Native)
+

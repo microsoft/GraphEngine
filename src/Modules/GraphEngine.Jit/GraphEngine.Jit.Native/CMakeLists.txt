@@ -1,0 +1,20 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.8.0)
+
+SET(ASMJIT_SOURCE_DIR ${PROJECT_SOURCE_DIR}/asmjit/src/asmjit)
+
+FILE(GLOB_RECURSE jit_src    ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+FILE(GLOB_RECURSE asmjit_src ${ASMJIT_SOURCE_DIR}/*.cpp)
+
+INCLUDE_DIRECTORIES(
+    ${TRINITY_C_DIR}/include
+    ${TRINITY_C_DIR}/src
+    ${ASMJIT_SOURCE_DIR}
+)
+
+#  TODO handle coreclr vs netfx
+#  Now we just go with Trinity(coreclr)
+
+ADD_LIBRARY(GraphEngine.Jit.Native SHARED ${jit_src} ${asmjit_src})
+TARGET_COMPILE_DEFINITIONS(GraphEngine.Jit.Native PRIVATE -DASMJIT_EMBED -DASMJIT_RELEASE -DGRAPHENGINEJITNATIVE_EXPORTS)
+TARGET_LINK_LIBRARIES(GraphEngine.Jit.Native Trinity)
+INSTALL(TARGETS GraphEngine.Jit.Native DESTINATION ${TRINITY_OUTPUT_DIR})

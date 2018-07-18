@@ -61,3 +61,4 @@ class Dependency:
         for each in Env.nuget_root.into("{}/{}/lib".format(self.package_name, self.version)).list_dir():
             if each.is_dir() and self.target_framework_check(each[-1]):
                 return each.list_dir()
+

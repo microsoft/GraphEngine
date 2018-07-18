@@ -20,7 +20,7 @@ class TSL:
         if namespace:
             self._namespace = namespace
         else:
-            self._namespace = f'default.{TSL._default_num}'
+            self._namespace = f'default{TSL._default_num}'
             TSL._default_num += 1
         self._root_types = {}
         self._module = None

@@ -11,13 +11,9 @@ if ($python -eq $null -or $swig -eq $null) {
 }
 
 $SOL_ROOT=$TRINITY_FFI_ROOT
-Restore-GitSubmodules
 
 Remove-GraphEngineCache -prefix "graphengine.ffi.python"
-Remove-GraphEngineCache -prefix "python.runtime"
 
-New-Package     -proj "$SOL_ROOT\pythonnet\src\runtime\Python.Runtime.15.csproj" -config ReleaseWinPY3
-Move-Item       -Path "$SOL_ROOT\pythonnet\src\runtime\bin\Python.Runtime.2.4.0.nupkg" -Destination $TRINITY_OUTPUT_DIR -Force
 Remove-And-Print "$SOL_ROOT\Trinity.FFI.Python\build"
 Remove-And-Print "$SOL_ROOT\Trinity.FFI.Python\dist"
 

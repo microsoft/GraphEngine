@@ -13,10 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphEngine.Jit.Playground"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "GraphEngine.Jit.UnitTest", "GraphEngine.Jit.UnitTest\GraphEngine.Jit.UnitTest.fsproj", "{8DE1005B-4E22-4B8D-983D-425223B8F446}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphEngine.Jit.Native", "GraphEngine.Jit.Native\GraphEngine.Jit.Native.vcxproj", "{2BCD7F27-26E0-4DC0-9E2D-F061341D3A1D}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Trinity.C", "..\..\Trinity.C\Trinity.C.vcxproj", "{53440B2C-3D01-40DA-BBAE-36B654541EE7}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphEngine.Jit.TSL", "GraphEngine.Jit.TSL\GraphEngine.Jit.TSL.csproj", "{AD455239-3DFF-4F5D-A7AB-E4574229C30B}"
 EndProject
 Global
@@ -74,25 +70,6 @@ Global
 		{8DE1005B-4E22-4B8D-983D-425223B8F446}.Release-CoreCLR|Any CPU.Build.0 = Release|Any CPU
 		{8DE1005B-4E22-4B8D-983D-425223B8F446}.Release-CoreCLR|x64.ActiveCfg = Release|Any CPU
 		{8DE1005B-4E22-4B8D-983D-425223B8F446}.Release-CoreCLR|x64.Build.0 = Release|Any CPU
-		{2BCD7F27-26E0-4DC0-9E2D-F061341D3A1D}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{2BCD7F27-26E0-4DC0-9E2D-F061341D3A1D}.Debug|x64.ActiveCfg = Debug|x64
-		{2BCD7F27-26E0-4DC0-9E2D-F061341D3A1D}.Debug|x64.Build.0 = Debug|x64
-		{2BCD7F27-26E0-4DC0-9E2D-F061341D3A1D}.Release|Any CPU.ActiveCfg = Release|x64
-		{2BCD7F27-26E0-4DC0-9E2D-F061341D3A1D}.Release|x64.ActiveCfg = Release|x64
-		{2BCD7F27-26E0-4DC0-9E2D-F061341D3A1D}.Release|x64.Build.0 = Release|x64
-		{2BCD7F27-26E0-4DC0-9E2D-F061341D3A1D}.Release-CoreCLR|Any CPU.ActiveCfg = Release-CoreCLR|x64
-		{2BCD7F27-26E0-4DC0-9E2D-F061341D3A1D}.Release-CoreCLR|x64.ActiveCfg = Release|x64
-		{2BCD7F27-26E0-4DC0-9E2D-F061341D3A1D}.Release-CoreCLR|x64.Build.0 = Release|x64
-		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Debug|x64.ActiveCfg = Debug|x64
-		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Debug|x64.Build.0 = Debug|x64
-		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Release|Any CPU.ActiveCfg = Release|x64
-		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Release|x64.ActiveCfg = Release|x64
-		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Release|x64.Build.0 = Release|x64
-		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Release-CoreCLR|Any CPU.ActiveCfg = Release|x64
-		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Release-CoreCLR|Any CPU.Build.0 = Release|x64
-		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Release-CoreCLR|x64.ActiveCfg = Release|x64
-		{53440B2C-3D01-40DA-BBAE-36B654541EE7}.Release-CoreCLR|x64.Build.0 = Release|x64
 		{AD455239-3DFF-4F5D-A7AB-E4574229C30B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AD455239-3DFF-4F5D-A7AB-E4574229C30B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD455239-3DFF-4F5D-A7AB-E4574229C30B}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -111,7 +88,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C527257C-8FEC-495A-A98E-38597D9E22B9} = {0CB52B42-DEA7-4014-8109-DCF7295D59AF}
-		{53440B2C-3D01-40DA-BBAE-36B654541EE7} = {0CB52B42-DEA7-4014-8109-DCF7295D59AF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A8A767BA-DA4D-4693-8BA5-4C0F7868A97B}

@@ -4,21 +4,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.FFI", "Trinity.FFI\Trinity.FFI.csproj", "{BA71DB0A-EFDF-44AF-95AE-0583CEAEBD2A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{1164CFDC-52CD-4628-85D1-6EFF56CD4D50} = {1164CFDC-52CD-4628-85D1-6EFF56CD4D50}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.FFI.UnitTests", "Trinity.FFI.UnitTests\Trinity.FFI.UnitTests.csproj", "{82DBC14A-6EAC-44A8-827D-41298ED29A2B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.FFI.Python", "Trinity.FFI.Python\Trinity.FFI.Python.csproj", "{DF46ABD1-835D-4DD9-82D5-565A2263E89B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Python.Runtime.15", "pythonnet\src\runtime\Python.Runtime.15.csproj", "{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Trinity.FFI.Native", "Trinity.FFI.Native\Trinity.FFI.Native.vcxproj", "{1164CFDC-52CD-4628-85D1-6EFF56CD4D50}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.FFI.AutoCode", "Trinity.FFI.AutoCode\Trinity.FFI.AutoCode.csproj", "{23CA7B91-B2CF-4026-8417-0120DE1651C2}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{8544D34C-2DEC-439B-8EF4-80CBF8B137BD}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Trinity.FFI.Metagen", "Trinity.FFI.Metagen\Trinity.FFI.Metagen.fsproj", "{1363F289-2AF8-46F7-97BD-82E36E379F2E}"
 EndProject
@@ -42,13 +33,6 @@ Global
 		{DF46ABD1-835D-4DD9-82D5-565A2263E89B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF46ABD1-835D-4DD9-82D5-565A2263E89B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF46ABD1-835D-4DD9-82D5-565A2263E89B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Debug|Any CPU.ActiveCfg = DebugWinPY3|Any CPU
-		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Debug|Any CPU.Build.0 = DebugWinPY3|Any CPU
-		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Release|Any CPU.ActiveCfg = ReleaseWinPY3|Any CPU
-		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD}.Release|Any CPU.Build.0 = ReleaseWinPY3|Any CPU
-		{1164CFDC-52CD-4628-85D1-6EFF56CD4D50}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{1164CFDC-52CD-4628-85D1-6EFF56CD4D50}.Debug|Any CPU.Build.0 = Debug|x64
-		{1164CFDC-52CD-4628-85D1-6EFF56CD4D50}.Release|Any CPU.ActiveCfg = Release|x64
 		{23CA7B91-B2CF-4026-8417-0120DE1651C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{23CA7B91-B2CF-4026-8417-0120DE1651C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23CA7B91-B2CF-4026-8417-0120DE1651C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -64,9 +48,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{B24CABF0-12E0-4FF1-82C7-3E157EF35FBD} = {8544D34C-2DEC-439B-8EF4-80CBF8B137BD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5131A755-7096-435E-B891-878D92AB8A15}
