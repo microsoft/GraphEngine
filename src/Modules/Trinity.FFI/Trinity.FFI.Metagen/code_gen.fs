@@ -90,8 +90,6 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
         | ComposedVerb(l, r) ->
             (** composed *)
             match l, r with
-            | _, BGet -> collect tydesc BGet
-            | l, BSet -> collect tydesc BSet
             | SGet field, _ ->
                 let memb_ty = get_member_type field
                 collect memb_ty r
@@ -137,9 +135,9 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
             | LCount -> [], "int"
             | SGet field ->
                 let memb_ty = get_member_type field
-                [], ty_to_string memb_ty
+                [], "void*" // SGet always get 
             (** BNew takes no subject argument. **)
-            | BNew -> [], ty_to_string tydesc
+            | BNew -> [], "void*"
             | info -> failwith <| sprintf "NotImplemented verb %A on %s" info tydesc.TypeName
             |> function
             | pos_arg_types, ret_type ->

@@ -9,6 +9,7 @@ from Redy.Magic.Classic import const_return
 
 class TSLType(abc.ABC):
     __accessor__: object
+    __args__ = None
 
     @classmethod
     @abc.abstractmethod

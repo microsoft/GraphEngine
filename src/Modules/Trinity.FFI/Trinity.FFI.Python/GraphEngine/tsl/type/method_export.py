@@ -84,7 +84,7 @@ def create_cls(spec: StructTypeSpec, chain: str, method_tb, arg_num, cls_tb):
                                  f"   return self.__{non_primitive_count}")
 
             _internal_macro.stmt('def set_specific_field():\n'
-                                 f'    v = self.__{non_primitive_count} = constexpr[field_type](self.__args__, self.__accessor__)\n'
+                                 f'    v = self.__{non_primitive_count} = constexpr[field_type](self.__accessor__, self.__args__)\n'
                                  f'    return v')
 
             get_specific_field: _internal_macro
@@ -326,13 +326,13 @@ def make_class(ty: Struct, method_tb, cls_tb):
 
         else:
             chaining_getter = f'{chain}_SGet_{field_name_mangled}'
-            field_cls = create_cls(field_spec, chaining_getter, methods, 0, cls_tb)
+            field_cls = create_cls(field_spec, chaining_getter, method_tb, 0, cls_tb)
 
             _internal_macro.expr(f"def get_specific_field():\n"
                                  f"   return self.__{non_primitive_count}")
 
             _internal_macro.stmt('def set_specific_field():\n'
-                                 f'    v = self.__{non_primitive_count} = constexpr[field_type](self.__args__, self.__accessor__)\n'
+                                 f'    v = self.__{non_primitive_count} = constexpr[field_type](self.__accessor__, self.__args__)\n'
                                  f'    return v')
 
             get_specific_field: _internal_macro

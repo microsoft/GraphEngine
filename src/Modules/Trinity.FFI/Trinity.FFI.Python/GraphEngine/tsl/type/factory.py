@@ -25,7 +25,7 @@ class TSL:
         self._root_types = {}
         self._module = None
 
-    def __call__(self, cls_def: type):
+    def __call__(self, cls_def: TSLType):
         if isinstance(cls_def, list):
             tp = getattr(cls_def, ' __orig_bases__', None)
             if not tp:
@@ -33,7 +33,7 @@ class TSL:
             lst_type = tp[0]
             spec = type_map_spec(lst_type)
             cls_def.__ty_spec__ = spec
-        self._root_types[repr(cls_def)] = cls_def
+        self._root_types[repr(cls_def.get_spec())] = cls_def
         if self._module:
             cls: typing.Type[TSLType] = cls_def
             make_class(cls, self._module, self._root_types)
