@@ -2,6 +2,16 @@
 Write-Configuration
 Remove-Build
 Remove-GraphEngineCache
+
+mkdir "$REPO_ROOT\build" -Force 
+Set-Location "$REPO_ROOT\build"
+cmake -G "Visual Studio 15 2017 Win64" --host=x64 $REPO_ROOT
+cmake --build . --config Release --target install
+
+New-Package -proj $TRINITY_CORE_SLN
+Register-LocalRepo
+Remove-GraphEngineCache -prefix "GraphEngine.Core"
+
 Invoke-Sub "$REPO_ROOT\src\build-core.ps1"
 New-Package -proj $LIKQ_SLN
 Invoke-Sub "$TRINITY_CLIENT_ROOT\build.ps1"

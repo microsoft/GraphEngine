@@ -20,9 +20,8 @@ Function Init-Configuration {
             Invoke-WebRequest https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile $NUGET_EXE
     }
 
+    $Global:TRINITY_CMAKELISTS            = "$REPO_ROOT\CMakeLists.txt"
     $Global:TRINITY_CORE_SLN              = "$REPO_ROOT\src\Trinity.Core\Trinity.Core.sln"
-    $Global:TRINITY_C_SLN                 = "$REPO_ROOT\src\Trinity.C\CMakeLists.txt"
-    $Global:TRINITY_TSL_SLN               = "$REPO_ROOT\src\Trinity.TSL\Trinity.TSL.sln"
     $Global:SPARK_MODULE_ROOT             = "$REPO_ROOT\src\Modules\Spark"
     $Global:LIKQ_SLN                      = "$REPO_ROOT\src\Modules\LIKQ\LIKQ.sln"
     $Global:TRINITY_CLIENT_ROOT           = "$REPO_ROOT\src\Modules\GraphEngine.Client"
@@ -49,9 +48,8 @@ Function Write-Configuration {
   Write-Output "DEVENV_COM:                    $DEVENV_COM"
   Write-Output "DEVENV_EXE:                    $DEVENV_EXE"
 
+  Write-Output "TRINITY_CMAKELISTS             $TRINITY_CMAKELISTS"
   Write-Output "TRINITY_CORE_SLN               $TRINITY_CORE_SLN"
-  Write-Output "TRINITY_C_SLN:                 $TRINITY_C_SLN"
-  Write-Output "TRINITY_TSL_SLN:               $TRINITY_TSL_SLN"
   Write-Output "SPARK_MODULE_ROOT:             $SPARK_MODULE_ROOT"
   Write-Output "LIKQ_SLN:                      $LIKQ_SLN"
   Write-Output "TRINITY_CLIENT_ROOT:           $TRINITY_CLIENT_ROOT"

@@ -21,30 +21,9 @@ fi
 build_trinity_c()
 {
 	echo "Building Trinity.C"
-	mkdir -p "$REPO_ROOT/bin" || exit -1
-	mkdir -p "$REPO_ROOT/bin/build_trinityc" && pushd "$_" || exit -1
-	cmake "$REPO_ROOT/src/Trinity.C" || exit -1
-	make || exit -1
-	# copy native Trinity.C for Windows-CoreCLR
-	cp "$REPO_ROOT/lib/Trinity.dll" "$REPO_ROOT/bin/Trinity.dll" || exit -1
-	# copy native Trinity.C.dll for Windows
-	cp "$REPO_ROOT/lib/Trinity.C.dll" "$REPO_ROOT/bin/Trinity.C.dll" || exit -1
-	# copy freshly built Trinity.C for Linux-CoreCLR
-	cp "$REPO_ROOT/bin/build_trinityc/libTrinity.so" "$REPO_ROOT/bin/libTrinity.so" || exit -1
-	popd
-}
-
-# build Trinity.TSL
-build_trinity_tsl()
-{
-	echo "Building Trinity.TSL"
-	mkdir -p "$REPO_ROOT/bin/tsl" && pushd "$_" || exit -1
-	cmake "$REPO_ROOT/src/Trinity.TSL" || exit -1
-	make || exit -1
-	# copy native Trinity.TSL.CodeGen.exe for Windows
-	cp "$REPO_ROOT/tools/Trinity.TSL.CodeGen.exe" "$REPO_ROOT/bin/" || exit -1
-	# copy freshly built Trinity.TSL.CodeGen for Linux
-	cp "Trinity.TSL.CodeGen" "$REPO_ROOT/bin/" || exit -1
+	mkdir -p "$REPO_ROOT/build" && pushd "$_" || exit -1
+	cmake "$REPO_ROOT/src" || exit -1
+	make install || exit -1
 	popd
 }
 
@@ -108,7 +87,6 @@ setup_nuget_repo()
 }
 
 build_trinity_c
-build_trinity_tsl
 build_trinity_core
 setup_nuget_repo
 build_likq

@@ -1,207 +1,187 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Cell.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\CellSelectors.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\CellTypeEnum.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\CellTypeExtension.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\CodeGen\AccessorInitialization.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\CodeGen\AccessorToAccessorFieldAssignment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\CodeGen\PushPointer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\CodeGen\StructAccessorReverseImplicitOperator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\CodeGen\Trinity.TSL.CodeGen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\CodeGen\common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\CodeGen\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\CommunicationSchema.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Containers\Array.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Containers\Containers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Containers\List.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Enum.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\ExtensionAttribute.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\ExternalParser.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\GenericCell.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\GenericFieldAccessor.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\HTTP.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Index.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\InvertedIndex\Bigram\IndexItem.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\InvertedIndex\Bigram\Indexer.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\InvertedIndex\Bigram\Searcher.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\LINQ\ExpressionTreeRewritter.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\LINQ\IndexQueryTreeExecutor.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\LINQ\IndexQueryTreeNode.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\LINQ\PLINQWrapper.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Libraries\BufferAllocator.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Libraries\DateTimeAccessor.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Libraries\EnumAccessor.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Libraries\GuidAccessor.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Libraries\StringAccessor.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Libraries\U8StringAccessor.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Libraries\byteListAccessor.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Libraries\doubleListAccessor.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Libraries\intListAccessor.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Libraries\longListAccessor.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\MODULES\AccessorFieldsDefinition.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\MODULES\AccessorReverseImplicitOperator.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\MODULES\CommunicationClass.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\MODULES\CommunicationSchemaModule.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\MODULES\EnumerateFromFieldModule.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\MODULES\HTTPModule.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\MODULES\LegacyMessagePassingMethods.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\MODULES\MessagePassingMethods.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\MODULES\OptionalFields.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\MODULES\SerializeParametersToBuffer.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\MODULES\StructAccessorEqualOperator.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\MODULES\ValueToAccessorFieldAssignment.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\MessageAccessors.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Protocols.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Serializer.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\StorageSchema.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Struct.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Throw.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\Traits.cs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\yatli\git\GraphEngine\src\Trinity.TSL\Trinity.TSL.CodeGen\CMakeLists.txt" />
+  </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+      <UniqueIdentifier>{2FA90CF5-6201-3421-AC47-DFD3E0BC3CD4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Struct.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GenericCell.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Enum.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ExternalParser.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Traits.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GenericFieldAccessor.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HTTP.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Serializer.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CellSelectors.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Index.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Cell.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Throw.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Libraries\BufferAllocator.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Libraries\byteListAccessor.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Libraries\DateTimeAccessor.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Libraries\doubleListAccessor.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Libraries\EnumAccessor.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Libraries\GuidAccessor.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Libraries\intListAccessor.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Libraries\longListAccessor.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Libraries\StringAccessor.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InvertedIndex\Bigram\Indexer.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InvertedIndex\Bigram\IndexItem.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InvertedIndex\Bigram\Searcher.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LINQ\ExpressionTreeRewritter.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LINQ\IndexQueryTreeExecutor.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LINQ\IndexQueryTreeNode.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LINQ\PLINQWrapper.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ExtensionAttribute.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MODULES\HTTPModule.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StorageSchema.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MODULES\CommunicationSchemaModule.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CommunicationSchema.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Libraries\U8StringAccessor.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MODULES\EnumerateFromFieldModule.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CodeGen\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CodeGen\Trinity.TSL.CodeGen.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CellTypeEnum.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CodeGen\common.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Containers\Array.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Containers\List.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Containers\Containers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CodeGen\AccessorInitialization.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MODULES\OptionalFields.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MODULES\AccessorFieldsDefinition.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MODULES\ValueToAccessorFieldAssignment.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MODULES\AccessorReverseImplicitOperator.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MODULES\StructAccessorEqualOperator.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CodeGen\StructAccessorReverseImplicitOperator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CodeGen\PushPointer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CodeGen\AccessorToAccessorFieldAssignment.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MODULES\SerializeParametersToBuffer.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CellTypeExtension.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Protocols.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MODULES\CommunicationClass.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MODULES\MessagePassingMethods.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MessageAccessors.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MODULES\LegacyMessagePassingMethods.cs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="CodeGen\Trinity.TSL.CodeGen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CodeGen\common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CodeGen\OptionalFieldCalculator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CodeGen\AccessorType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
