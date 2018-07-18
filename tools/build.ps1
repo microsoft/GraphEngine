@@ -12,7 +12,6 @@ New-Package -proj $TRINITY_CORE_SLN
 Register-LocalRepo
 Remove-GraphEngineCache -prefix "GraphEngine.Core"
 
-Invoke-Sub "$REPO_ROOT\src\build-core.ps1"
 New-Package -proj $LIKQ_SLN
 Invoke-Sub "$TRINITY_CLIENT_ROOT\build.ps1"
 New-Package -proj $TRINITY_STORAGE_COMPOSITE_SLN
