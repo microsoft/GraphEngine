@@ -69,6 +69,7 @@ def create_cls(spec: StructTypeSpec, chain: str, method_tb, arg_num, cls_tb):
                     return method(self.__accessor__)
 
             @get_method.setter
+            @feature(staging)
             def set_method(self, value):
                 method: const = method_tb[f'{chain}_SSet_{field_name_mangled}']
                 if constexpr[arg_num]:
@@ -303,6 +304,8 @@ def make_class(ty: Struct, method_tb, cls_tb):
         method: const = method_tb[f'{chain}_BSet']
         return method(value.ref_get(), self.__accessor__)
 
+    ty.ref_set = ref_set
+
     for field_name, field_spec in fields:
         if isinstance(field_spec, NotDefinedYet):
             try:
@@ -320,6 +323,7 @@ def make_class(ty: Struct, method_tb, cls_tb):
                 return method(self.__accessor__)
 
             @get_method.setter
+            @feature(staging)
             def set_method(self, value):
                 method: const = method_tb[f'{chain}_SSet_{field_name_mangled}']
                 method(value, self.__accessor__)
@@ -400,7 +404,7 @@ def make_class(ty: List, method_tb, cls_tb):
         method: const = method_tb[f'{chain}_BSet']
         return method(value.ref_get(), self.__accessor__)
 
-    ty.ref_set = ref_get
+    ty.ref_set = ref_set
     elem = spec.elem_type
 
     if isinstance(elem, NotDefinedYet):
