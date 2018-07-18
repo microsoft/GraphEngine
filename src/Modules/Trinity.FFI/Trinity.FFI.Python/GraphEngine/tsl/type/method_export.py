@@ -28,12 +28,12 @@ def take_args(args):
 
 
 @Pattern
-def create_cls(spec: TypeSpec, chain: str, method_tb, arg_num):
+def create_cls(spec: TypeSpec, chain: str, method_tb, arg_num, cls_tb):
     return type(spec)
 
 
 @create_cls.case(StructTypeSpec)
-def create_cls(spec: StructTypeSpec, chain: str, method_tb, arg_num):
+def create_cls(spec: StructTypeSpec, chain: str, method_tb, arg_num, cls_tb):
     print(chain)
     bases = (Struct, Proxy)
     cls = type(repr(spec), bases, {'__slots__': ('__accessor__', '__args__')})
@@ -51,6 +51,11 @@ def create_cls(spec: StructTypeSpec, chain: str, method_tb, arg_num):
     cls.ref_get = ref_get
 
     for field_name, field_spec in fields:
+        if isinstance(field_spec, NotDefinedYet):
+            try:
+                field_spec = cls_tb[field_spec.name].get_spec()
+            except KeyError:
+                raise NameError(f"No class named {field_spec.name}")
         field_name_mangled = mangling(field_name)
         # very javascript here
         if isinstance(field_spec, PrimitiveTypeSpec):
@@ -73,7 +78,7 @@ def create_cls(spec: StructTypeSpec, chain: str, method_tb, arg_num):
 
         else:
             chaining_getter = f'{chain}_SGet_{field_name_mangled}'
-            field_cls = create_cls(field_spec, chaining_getter, method_tb, arg_num)
+            field_cls = create_cls(field_spec, chaining_getter, method_tb, arg_num, cls_tb)
 
             _internal_macro.expr(f"def get_specific_field():\n"
                                  f"   return self.__{non_primitive_count}")
@@ -125,11 +130,17 @@ def create_cls(spec: StructTypeSpec, chain: str, method_tb, arg_num):
 
 
 @create_cls.case(ListTypeSpec)
-def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int):
+def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int, cls_tb):
     print(chain)
     bases = (List, Proxy)
     cls = type(repr(spec), bases, {'__slots__': ('__accessor__', '__args__')})
     elem = spec.elem_type
+
+    if isinstance(elem, NotDefinedYet):
+        try:
+            field_spec = cls_tb[elem.name].get_spec()
+        except KeyError:
+            raise NameError(f"No class named {field_spec.name}")
 
     @feature(staging)
     def ref_get(self):
@@ -142,6 +153,14 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int):
     cls.ref_get = ref_get
 
     if isinstance(elem, PrimitiveTypeSpec):
+        @feature(staging)
+        def append(self, value):
+            method: const = method_tb[f'{chain}_LAppend']
+            if constexpr[arg_num]:
+                return method(value, *constexpr[take_args](self.__args__), self.__accessor__)
+            else:
+                return method(value, self.__accessor__)
+
         @feature(staging)
         def __getitem__(self, idx):
             method: const = method_tb[f'{chain}_LGet_BGet']
@@ -176,7 +195,7 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int):
 
     else:
         chaining_getter = f'{chain}_LGet'
-        elem_cls = create_cls(elem, chaining_getter, method_tb, arg_num + 1)
+        elem_cls = create_cls(elem, chaining_getter, method_tb, arg_num + 1, cls_tb)
 
         @feature(staging)
         def ref_set(self, value):
@@ -184,6 +203,14 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int):
             method(value.ref_get(), *constexpr[take_args](self.__args__), self.__accessor__)
 
         elem_cls.ref_set = ref_set
+
+        @feature(staging)
+        def append(self, value):
+            method: const = method_tb[f'{chain}_LAppend']
+            if constexpr[arg_num]:
+                return method(value.ref_get(), *constexpr[take_args](self.__args__), self.__accessor__)
+            else:
+                return method(value.ref_get(), self.__accessor__)
 
         @feature(staging)
         def __getitem__(self, idx):
@@ -241,17 +268,18 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int):
     cls.__len__ = __len__
     cls.__delitem__ = __delitem__
     cls.__setitem__ = __setitem__
+    cls.append = append
     cls.__getitem__ = __getitem__
     return cls
 
 
 @Pattern
-def make_class(ty: typing.Type[TSLType], method_tb):
+def make_class(ty: typing.Type[TSLType], method_tb, cls_tb):
     return issubclass(ty, Struct)
 
 
 @make_class.case(True)
-def make_class(ty: Struct, method_tb):
+def make_class(ty: Struct, method_tb, cls_tb):
     spec: StructTypeSpec = ty.get_spec()
     chain = type_spec_to_name(spec)
 
@@ -260,12 +288,13 @@ def make_class(ty: Struct, method_tb):
         self.__accessor__ = method()
 
     fields = spec.field_types.items()
+
     non_primitive_count = 0
 
     @feature(staging)
     def ref_get(self):
         method: const = method_tb['Unbox']
-        return method(self.__accessor_)
+        return method(self.__accessor__)
 
     ty.ref_get = ref_get
 
@@ -275,6 +304,12 @@ def make_class(ty: Struct, method_tb):
         return method(value.ref_get(), self.__accessor__)
 
     for field_name, field_spec in fields:
+        if isinstance(field_spec, NotDefinedYet):
+            try:
+                field_spec = cls_tb[field_spec.name].get_spec()
+            except KeyError:
+                raise NameError(f"No class named {field_spec.name}")
+
         field_name_mangled = mangling(field_name)
         # very javascript here
         if isinstance(field_spec, PrimitiveTypeSpec):
@@ -287,11 +322,11 @@ def make_class(ty: Struct, method_tb):
             @get_method.setter
             def set_method(self, value):
                 method: const = method_tb[f'{chain}_SSet_{field_name_mangled}']
-                method(value, self.__accessor_)
+                method(value, self.__accessor__)
 
         else:
             chaining_getter = f'{chain}_SGet_{field_name_mangled}'
-            field_cls = create_cls(field_spec, chaining_getter, methods, 0)
+            field_cls = create_cls(field_spec, chaining_getter, methods, 0, cls_tb)
 
             _internal_macro.expr(f"def get_specific_field():\n"
                                  f"   return self.__{non_primitive_count}")
@@ -333,7 +368,7 @@ def make_class(ty: Struct, method_tb):
 
 
 @make_class.case(False)
-def make_class(ty: List, method_tb):
+def make_class(ty: List, method_tb, cls_tb):
     spec: ListTypeSpec = ty.get_spec()
     chain = type_spec_to_name(spec)
 
@@ -363,12 +398,23 @@ def make_class(ty: List, method_tb):
     @feature(staging)
     def ref_set(self, value):
         method: const = method_tb[f'{chain}_BSet']
-        return method(value.ref_get(), self.__accessor_)
+        return method(value.ref_get(), self.__accessor__)
 
     ty.ref_set = ref_get
     elem = spec.elem_type
 
+    if isinstance(elem, NotDefinedYet):
+        try:
+            elem = cls_tb[elem.name].get_spec()
+        except KeyError:
+            raise NameError(f"No class named {elem.name}")
+
     if isinstance(elem, PrimitiveTypeSpec):
+        @feature(staging)
+        def append(self, value):
+            method: const = method_tb[f'{chain}_LAppend']
+            return method(value, self.__accessor__)
+
         @feature(staging)
         def __getitem__(self, idx):
             method: const = method_tb[f'{chain}_LGet_BGet']
@@ -391,7 +437,7 @@ def make_class(ty: List, method_tb):
 
     else:
         chaining_getter = f'{chain}_LGet'
-        elem_cls = create_cls(elem, chaining_getter, method_tb, 1)
+        elem_cls = create_cls(elem, chaining_getter, method_tb, 1, cls_tb)
 
         @feature(staging)
         def ref_set(self, value):
@@ -399,6 +445,11 @@ def make_class(ty: List, method_tb):
             method(value.ref_get(), self.__args__[0], self.__accessor__)
 
         elem_cls.ref_set = ref_set
+
+        @feature(staging)
+        def append(self, value):
+            method: const = method_tb[f'{chain}_LAppend']
+            return method(value.ref_get(), self.__accessor__)
 
         @feature(staging)
         def __getitem__(self, idx):
@@ -437,6 +488,7 @@ def make_class(ty: List, method_tb):
     ty.__delitem__ = __delitem__
     ty.__setitem__ = __setitem__
     ty.__getitem__ = __getitem__
+    ty.append = append
 
 
 if __name__ == '__main__':
@@ -450,7 +502,7 @@ if __name__ == '__main__':
 
 
     class S(Struct):
-        k: K
+        k: 'K'
         i: int
 
 
@@ -459,7 +511,8 @@ if __name__ == '__main__':
         b: typing.List[S]
 
 
-    make_class(C, methods)
+    cls_tb = {'C': C, 'K': K, 'S': S}
+    make_class(C, methods, cls_tb)
     print(C.__slots__)
     assert C.__slots__ == ('__accessor__', '__0', '__1')
     assert Cell.__slots__ == ('__accessor__',)

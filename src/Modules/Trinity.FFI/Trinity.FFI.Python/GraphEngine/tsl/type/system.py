@@ -24,6 +24,7 @@ class TSLType(abc.ABC):
 
 class Struct(TSLType):
     __slots__ = ('__accessor__',)
+    __ty_spec__: object
 
     @classmethod
     @discrete_cache
@@ -33,7 +34,6 @@ class Struct(TSLType):
 
 
 class Cell(Struct):
-    __slots__ = ('__accessor__',)
 
     @classmethod
     @discrete_cache
@@ -45,7 +45,6 @@ class Cell(Struct):
 class List(TSLType):
     __ty_spec__: object
 
-    @discrete_cache
     def get_spec(self):
         return self.__ty_spec__
 
