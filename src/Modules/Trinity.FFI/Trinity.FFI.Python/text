@@ -1,0 +1,1822 @@
+Test Name:	Trinity.FFI.Metagen.UnitTests.Test.TestNewSwigGen
+Test Outcome:	Passed
+Result StandardOutput:
+List`1
+SS
+C4
+S
+List`1
+C3
+List`1
+C2
+C1
+=====================
+
+%module
+%include <stdint.i>
+%{
+#include "swig_accessor.h"
+#include "CellAccessor.h"
+#define SWIG_FILE_WITH_INIT
+static void* list_STRING_BNew(void*);
+static void* list_STRING_BGet(void*);
+static void list_STRING_BSet(void*, void*);
+static void list_STRING_LSet(void*, int, char*);
+static bool list_STRING_LContains(void*, char*);
+static int list_STRING_LCount(void*);
+static bool list_STRING_LInsertAt(void*, int, char*);
+static bool list_STRING_LRemoveAt(void*, int);
+static void list_STRING_LAppend(void*, char*);
+static char* list_STRING_LGet(void*, int);
+static void* list_STRING_LGet_BGet(void*);
+static void list_STRING_LGet_BSet(void*, void*);
+static void* create_list_STRING();
+static void* struct_SS_BNew(void*);
+static void* struct_SS_BGet(void*);
+static void struct_SS_BSet(void*, void*);
+static void struct_SS_SSet_s(void*, void*);
+static void* struct_SS_SGet_s(void*);
+static void* struct_SS_SGet_s_BGet(void*);
+static void struct_SS_SGet_s_BSet(void*, void*);
+static void struct_SS_SGet_s_SSet_li(void*, void*);
+static void* struct_SS_SGet_s_SGet_li(void*);
+static void* struct_SS_SGet_s_SGet_li_BGet(void*);
+static void struct_SS_SGet_s_SGet_li_BSet(void*, void*);
+static void struct_SS_SGet_s_SGet_li_LSet(void*, int, int32_t);
+static bool struct_SS_SGet_s_SGet_li_LContains(void*, int32_t);
+static int struct_SS_SGet_s_SGet_li_LCount(void*);
+static bool struct_SS_SGet_s_SGet_li_LInsertAt(void*, int, int32_t);
+static bool struct_SS_SGet_s_SGet_li_LRemoveAt(void*, int);
+static void struct_SS_SGet_s_SGet_li_LAppend(void*, int32_t);
+static int32_t struct_SS_SGet_s_SGet_li_LGet(void*, int);
+static void* struct_SS_SGet_s_SGet_li_LGet_BGet(void*);
+static void struct_SS_SGet_s_SGet_li_LGet_BSet(void*, void*);
+static void struct_SS_SGet_s_SSet_str(void*, char*);
+static char* struct_SS_SGet_s_SGet_str(void*);
+static void* struct_SS_SGet_s_SGet_str_BGet(void*);
+static void struct_SS_SGet_s_SGet_str_BSet(void*, void*);
+static void struct_SS_SSet_ls(void*, void*);
+static void* struct_SS_SGet_ls(void*);
+static void* struct_SS_SGet_ls_BGet(void*);
+static void struct_SS_SGet_ls_BSet(void*, void*);
+static void struct_SS_SGet_ls_LSet(void*, int, void*);
+static bool struct_SS_SGet_ls_LContains(void*, void*);
+static int struct_SS_SGet_ls_LCount(void*);
+static bool struct_SS_SGet_ls_LInsertAt(void*, int, void*);
+static bool struct_SS_SGet_ls_LRemoveAt(void*, int);
+static void struct_SS_SGet_ls_LAppend(void*, void*);
+static void* struct_SS_SGet_ls_LGet(void*, int);
+static void* struct_SS_SGet_ls_LGet_BGet(void*);
+static void struct_SS_SGet_ls_LGet_BSet(void*, void*);
+static void struct_SS_SGet_ls_LGet_SSet_li(void*, int, void*);
+static void* struct_SS_SGet_ls_LGet_SGet_li(void*, int);
+static void* struct_SS_SGet_ls_LGet_SGet_li_BGet(void*, int);
+static void struct_SS_SGet_ls_LGet_SGet_li_BSet(void*, int, void*);
+static void struct_SS_SGet_ls_LGet_SGet_li_LSet(void*, int, int, int32_t);
+static bool struct_SS_SGet_ls_LGet_SGet_li_LContains(void*, int, int32_t);
+static int struct_SS_SGet_ls_LGet_SGet_li_LCount(void*, int);
+static bool struct_SS_SGet_ls_LGet_SGet_li_LInsertAt(void*, int, int, int32_t);
+static bool struct_SS_SGet_ls_LGet_SGet_li_LRemoveAt(void*, int, int);
+static void struct_SS_SGet_ls_LGet_SGet_li_LAppend(void*, int, int32_t);
+static int32_t struct_SS_SGet_ls_LGet_SGet_li_LGet(void*, int, int);
+static void* struct_SS_SGet_ls_LGet_SGet_li_LGet_BGet(void*, int);
+static void struct_SS_SGet_ls_LGet_SGet_li_LGet_BSet(void*, int, void*);
+static void struct_SS_SGet_ls_LGet_SSet_str(void*, int, char*);
+static char* struct_SS_SGet_ls_LGet_SGet_str(void*, int);
+static void* struct_SS_SGet_ls_LGet_SGet_str_BGet(void*, int);
+static void struct_SS_SGet_ls_LGet_SGet_str_BSet(void*, int, void*);
+static void* create_struct_SS();
+static void* cell_C4_BNew(void*);
+static void* cell_C4_BGet(void*);
+static void cell_C4_BSet(void*, void*);
+static void cell_C4_SSet_ss(void*, void*);
+static void* cell_C4_SGet_ss(void*);
+static void* cell_C4_SGet_ss_BGet(void*);
+static void cell_C4_SGet_ss_BSet(void*, void*);
+static void cell_C4_SGet_ss_SSet_s(void*, void*);
+static void* cell_C4_SGet_ss_SGet_s(void*);
+static void* cell_C4_SGet_ss_SGet_s_BGet(void*);
+static void cell_C4_SGet_ss_SGet_s_BSet(void*, void*);
+static void cell_C4_SGet_ss_SGet_s_SSet_li(void*, void*);
+static void* cell_C4_SGet_ss_SGet_s_SGet_li(void*);
+static void* cell_C4_SGet_ss_SGet_s_SGet_li_BGet(void*);
+static void cell_C4_SGet_ss_SGet_s_SGet_li_BSet(void*, void*);
+static void cell_C4_SGet_ss_SGet_s_SGet_li_LSet(void*, int, int32_t);
+static bool cell_C4_SGet_ss_SGet_s_SGet_li_LContains(void*, int32_t);
+static int cell_C4_SGet_ss_SGet_s_SGet_li_LCount(void*);
+static bool cell_C4_SGet_ss_SGet_s_SGet_li_LInsertAt(void*, int, int32_t);
+static bool cell_C4_SGet_ss_SGet_s_SGet_li_LRemoveAt(void*, int);
+static void cell_C4_SGet_ss_SGet_s_SGet_li_LAppend(void*, int32_t);
+static int32_t cell_C4_SGet_ss_SGet_s_SGet_li_LGet(void*, int);
+static void* cell_C4_SGet_ss_SGet_s_SGet_li_LGet_BGet(void*);
+static void cell_C4_SGet_ss_SGet_s_SGet_li_LGet_BSet(void*, void*);
+static void cell_C4_SGet_ss_SGet_s_SSet_str(void*, char*);
+static char* cell_C4_SGet_ss_SGet_s_SGet_str(void*);
+static void* cell_C4_SGet_ss_SGet_s_SGet_str_BGet(void*);
+static void cell_C4_SGet_ss_SGet_s_SGet_str_BSet(void*, void*);
+static void cell_C4_SGet_ss_SSet_ls(void*, void*);
+static void* cell_C4_SGet_ss_SGet_ls(void*);
+static void* cell_C4_SGet_ss_SGet_ls_BGet(void*);
+static void cell_C4_SGet_ss_SGet_ls_BSet(void*, void*);
+static void cell_C4_SGet_ss_SGet_ls_LSet(void*, int, void*);
+static bool cell_C4_SGet_ss_SGet_ls_LContains(void*, void*);
+static int cell_C4_SGet_ss_SGet_ls_LCount(void*);
+static bool cell_C4_SGet_ss_SGet_ls_LInsertAt(void*, int, void*);
+static bool cell_C4_SGet_ss_SGet_ls_LRemoveAt(void*, int);
+static void cell_C4_SGet_ss_SGet_ls_LAppend(void*, void*);
+static void* cell_C4_SGet_ss_SGet_ls_LGet(void*, int);
+static void* cell_C4_SGet_ss_SGet_ls_LGet_BGet(void*);
+static void cell_C4_SGet_ss_SGet_ls_LGet_BSet(void*, void*);
+static void cell_C4_SGet_ss_SGet_ls_LGet_SSet_li(void*, int, void*);
+static void* cell_C4_SGet_ss_SGet_ls_LGet_SGet_li(void*, int);
+static void* cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_BGet(void*, int);
+static void cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_BSet(void*, int, void*);
+static void cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LSet(void*, int, int, int32_t);
+static bool cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LContains(void*, int, int32_t);
+static int cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LCount(void*, int);
+static bool cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LInsertAt(void*, int, int, int32_t);
+static bool cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LRemoveAt(void*, int, int);
+static void cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LAppend(void*, int, int32_t);
+static int32_t cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LGet(void*, int, int);
+static void* cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LGet_BGet(void*, int);
+static void cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LGet_BSet(void*, int, void*);
+static void cell_C4_SGet_ss_SGet_ls_LGet_SSet_str(void*, int, char*);
+static char* cell_C4_SGet_ss_SGet_ls_LGet_SGet_str(void*, int);
+static void* cell_C4_SGet_ss_SGet_ls_LGet_SGet_str_BGet(void*, int);
+static void cell_C4_SGet_ss_SGet_ls_LGet_SGet_str_BSet(void*, int, void*);
+static void cell_C4_SSet_s(void*, void*);
+static void* cell_C4_SGet_s(void*);
+static void* cell_C4_SGet_s_BGet(void*);
+static void cell_C4_SGet_s_BSet(void*, void*);
+static void cell_C4_SGet_s_SSet_li(void*, void*);
+static void* cell_C4_SGet_s_SGet_li(void*);
+static void* cell_C4_SGet_s_SGet_li_BGet(void*);
+static void cell_C4_SGet_s_SGet_li_BSet(void*, void*);
+static void cell_C4_SGet_s_SGet_li_LSet(void*, int, int32_t);
+static bool cell_C4_SGet_s_SGet_li_LContains(void*, int32_t);
+static int cell_C4_SGet_s_SGet_li_LCount(void*);
+static bool cell_C4_SGet_s_SGet_li_LInsertAt(void*, int, int32_t);
+static bool cell_C4_SGet_s_SGet_li_LRemoveAt(void*, int);
+static void cell_C4_SGet_s_SGet_li_LAppend(void*, int32_t);
+static int32_t cell_C4_SGet_s_SGet_li_LGet(void*, int);
+static void* cell_C4_SGet_s_SGet_li_LGet_BGet(void*);
+static void cell_C4_SGet_s_SGet_li_LGet_BSet(void*, void*);
+static void cell_C4_SGet_s_SSet_str(void*, char*);
+static char* cell_C4_SGet_s_SGet_str(void*);
+static void* cell_C4_SGet_s_SGet_str_BGet(void*);
+static void cell_C4_SGet_s_SGet_str_BSet(void*, void*);
+static void cell_C4_SSet_li(void*, void*);
+static void* cell_C4_SGet_li(void*);
+static void* cell_C4_SGet_li_BGet(void*);
+static void cell_C4_SGet_li_BSet(void*, void*);
+static void cell_C4_SGet_li_LSet(void*, int, int32_t);
+static bool cell_C4_SGet_li_LContains(void*, int32_t);
+static int cell_C4_SGet_li_LCount(void*);
+static bool cell_C4_SGet_li_LInsertAt(void*, int, int32_t);
+static bool cell_C4_SGet_li_LRemoveAt(void*, int);
+static void cell_C4_SGet_li_LAppend(void*, int32_t);
+static int32_t cell_C4_SGet_li_LGet(void*, int);
+static void* cell_C4_SGet_li_LGet_BGet(void*);
+static void cell_C4_SGet_li_LGet_BSet(void*, void*);
+static void cell_C4_SSet_ls(void*, void*);
+static void* cell_C4_SGet_ls(void*);
+static void* cell_C4_SGet_ls_BGet(void*);
+static void cell_C4_SGet_ls_BSet(void*, void*);
+static void cell_C4_SGet_ls_LSet(void*, int, char*);
+static bool cell_C4_SGet_ls_LContains(void*, char*);
+static int cell_C4_SGet_ls_LCount(void*);
+static bool cell_C4_SGet_ls_LInsertAt(void*, int, char*);
+static bool cell_C4_SGet_ls_LRemoveAt(void*, int);
+static void cell_C4_SGet_ls_LAppend(void*, char*);
+static char* cell_C4_SGet_ls_LGet(void*, int);
+static void* cell_C4_SGet_ls_LGet_BGet(void*);
+static void cell_C4_SGet_ls_LGet_BSet(void*, void*);
+static void* create_cell_C4();
+static void* struct_S_BNew(void*);
+static void* struct_S_BGet(void*);
+static void struct_S_BSet(void*, void*);
+static void struct_S_SSet_li(void*, void*);
+static void* struct_S_SGet_li(void*);
+static void* struct_S_SGet_li_BGet(void*);
+static void struct_S_SGet_li_BSet(void*, void*);
+static void struct_S_SGet_li_LSet(void*, int, int32_t);
+static bool struct_S_SGet_li_LContains(void*, int32_t);
+static int struct_S_SGet_li_LCount(void*);
+static bool struct_S_SGet_li_LInsertAt(void*, int, int32_t);
+static bool struct_S_SGet_li_LRemoveAt(void*, int);
+static void struct_S_SGet_li_LAppend(void*, int32_t);
+static int32_t struct_S_SGet_li_LGet(void*, int);
+static void* struct_S_SGet_li_LGet_BGet(void*);
+static void struct_S_SGet_li_LGet_BSet(void*, void*);
+static void struct_S_SSet_str(void*, char*);
+static char* struct_S_SGet_str(void*);
+static void* struct_S_SGet_str_BGet(void*);
+static void struct_S_SGet_str_BSet(void*, void*);
+static void* create_struct_S();
+static void* list_struct_S_BNew(void*);
+static void* list_struct_S_BGet(void*);
+static void list_struct_S_BSet(void*, void*);
+static void list_struct_S_LSet(void*, int, void*);
+static bool list_struct_S_LContains(void*, void*);
+static int list_struct_S_LCount(void*);
+static bool list_struct_S_LInsertAt(void*, int, void*);
+static bool list_struct_S_LRemoveAt(void*, int);
+static void list_struct_S_LAppend(void*, void*);
+static void* list_struct_S_LGet(void*, int);
+static void* list_struct_S_LGet_BGet(void*);
+static void list_struct_S_LGet_BSet(void*, void*);
+static void list_struct_S_LGet_SSet_li(void*, int, void*);
+static void* list_struct_S_LGet_SGet_li(void*, int);
+static void* list_struct_S_LGet_SGet_li_BGet(void*, int);
+static void list_struct_S_LGet_SGet_li_BSet(void*, int, void*);
+static void list_struct_S_LGet_SGet_li_LSet(void*, int, int, int32_t);
+static bool list_struct_S_LGet_SGet_li_LContains(void*, int, int32_t);
+static int list_struct_S_LGet_SGet_li_LCount(void*, int);
+static bool list_struct_S_LGet_SGet_li_LInsertAt(void*, int, int, int32_t);
+static bool list_struct_S_LGet_SGet_li_LRemoveAt(void*, int, int);
+static void list_struct_S_LGet_SGet_li_LAppend(void*, int, int32_t);
+static int32_t list_struct_S_LGet_SGet_li_LGet(void*, int, int);
+static void* list_struct_S_LGet_SGet_li_LGet_BGet(void*, int);
+static void list_struct_S_LGet_SGet_li_LGet_BSet(void*, int, void*);
+static void list_struct_S_LGet_SSet_str(void*, int, char*);
+static char* list_struct_S_LGet_SGet_str(void*, int);
+static void* list_struct_S_LGet_SGet_str_BGet(void*, int);
+static void list_struct_S_LGet_SGet_str_BSet(void*, int, void*);
+static void* create_list_struct_S();
+static void* cell_C3_BNew(void*);
+static void* cell_C3_BGet(void*);
+static void cell_C3_BSet(void*, void*);
+static void cell_C3_SSet_i(void*, int32_t);
+static int32_t cell_C3_SGet_i(void*);
+static void* cell_C3_SGet_i_BGet(void*);
+static void cell_C3_SGet_i_BSet(void*, void*);
+static void cell_C3_SSet_li(void*, void*);
+static void* cell_C3_SGet_li(void*);
+static void* cell_C3_SGet_li_BGet(void*);
+static void cell_C3_SGet_li_BSet(void*, void*);
+static void cell_C3_SGet_li_LSet(void*, int, int32_t);
+static bool cell_C3_SGet_li_LContains(void*, int32_t);
+static int cell_C3_SGet_li_LCount(void*);
+static bool cell_C3_SGet_li_LInsertAt(void*, int, int32_t);
+static bool cell_C3_SGet_li_LRemoveAt(void*, int);
+static void cell_C3_SGet_li_LAppend(void*, int32_t);
+static int32_t cell_C3_SGet_li_LGet(void*, int);
+static void* cell_C3_SGet_li_LGet_BGet(void*);
+static void cell_C3_SGet_li_LGet_BSet(void*, void*);
+static void cell_C3_SSet_ls(void*, void*);
+static void* cell_C3_SGet_ls(void*);
+static void* cell_C3_SGet_ls_BGet(void*);
+static void cell_C3_SGet_ls_BSet(void*, void*);
+static void cell_C3_SGet_ls_LSet(void*, int, void*);
+static bool cell_C3_SGet_ls_LContains(void*, void*);
+static int cell_C3_SGet_ls_LCount(void*);
+static bool cell_C3_SGet_ls_LInsertAt(void*, int, void*);
+static bool cell_C3_SGet_ls_LRemoveAt(void*, int);
+static void cell_C3_SGet_ls_LAppend(void*, void*);
+static void* cell_C3_SGet_ls_LGet(void*, int);
+static void* cell_C3_SGet_ls_LGet_BGet(void*);
+static void cell_C3_SGet_ls_LGet_BSet(void*, void*);
+static void cell_C3_SGet_ls_LGet_SSet_li(void*, int, void*);
+static void* cell_C3_SGet_ls_LGet_SGet_li(void*, int);
+static void* cell_C3_SGet_ls_LGet_SGet_li_BGet(void*, int);
+static void cell_C3_SGet_ls_LGet_SGet_li_BSet(void*, int, void*);
+static void cell_C3_SGet_ls_LGet_SGet_li_LSet(void*, int, int, int32_t);
+static bool cell_C3_SGet_ls_LGet_SGet_li_LContains(void*, int, int32_t);
+static int cell_C3_SGet_ls_LGet_SGet_li_LCount(void*, int);
+static bool cell_C3_SGet_ls_LGet_SGet_li_LInsertAt(void*, int, int, int32_t);
+static bool cell_C3_SGet_ls_LGet_SGet_li_LRemoveAt(void*, int, int);
+static void cell_C3_SGet_ls_LGet_SGet_li_LAppend(void*, int, int32_t);
+static int32_t cell_C3_SGet_ls_LGet_SGet_li_LGet(void*, int, int);
+static void* cell_C3_SGet_ls_LGet_SGet_li_LGet_BGet(void*, int);
+static void cell_C3_SGet_ls_LGet_SGet_li_LGet_BSet(void*, int, void*);
+static void cell_C3_SGet_ls_LGet_SSet_str(void*, int, char*);
+static char* cell_C3_SGet_ls_LGet_SGet_str(void*, int);
+static void* cell_C3_SGet_ls_LGet_SGet_str_BGet(void*, int);
+static void cell_C3_SGet_ls_LGet_SGet_str_BSet(void*, int, void*);
+static void cell_C3_SSet_s(void*, void*);
+static void* cell_C3_SGet_s(void*);
+static void* cell_C3_SGet_s_BGet(void*);
+static void cell_C3_SGet_s_BSet(void*, void*);
+static void cell_C3_SGet_s_SSet_li(void*, void*);
+static void* cell_C3_SGet_s_SGet_li(void*);
+static void* cell_C3_SGet_s_SGet_li_BGet(void*);
+static void cell_C3_SGet_s_SGet_li_BSet(void*, void*);
+static void cell_C3_SGet_s_SGet_li_LSet(void*, int, int32_t);
+static bool cell_C3_SGet_s_SGet_li_LContains(void*, int32_t);
+static int cell_C3_SGet_s_SGet_li_LCount(void*);
+static bool cell_C3_SGet_s_SGet_li_LInsertAt(void*, int, int32_t);
+static bool cell_C3_SGet_s_SGet_li_LRemoveAt(void*, int);
+static void cell_C3_SGet_s_SGet_li_LAppend(void*, int32_t);
+static int32_t cell_C3_SGet_s_SGet_li_LGet(void*, int);
+static void* cell_C3_SGet_s_SGet_li_LGet_BGet(void*);
+static void cell_C3_SGet_s_SGet_li_LGet_BSet(void*, void*);
+static void cell_C3_SGet_s_SSet_str(void*, char*);
+static char* cell_C3_SGet_s_SGet_str(void*);
+static void* cell_C3_SGet_s_SGet_str_BGet(void*);
+static void cell_C3_SGet_s_SGet_str_BSet(void*, void*);
+static void* create_cell_C3();
+static void* list_I32_BNew(void*);
+static void* list_I32_BGet(void*);
+static void list_I32_BSet(void*, void*);
+static void list_I32_LSet(void*, int, int32_t);
+static bool list_I32_LContains(void*, int32_t);
+static int list_I32_LCount(void*);
+static bool list_I32_LInsertAt(void*, int, int32_t);
+static bool list_I32_LRemoveAt(void*, int);
+static void list_I32_LAppend(void*, int32_t);
+static int32_t list_I32_LGet(void*, int);
+static void* list_I32_LGet_BGet(void*);
+static void list_I32_LGet_BSet(void*, void*);
+static void* create_list_I32();
+static void* cell_C2_BNew(void*);
+static void* cell_C2_BGet(void*);
+static void cell_C2_BSet(void*, void*);
+static void cell_C2_SSet_li(void*, void*);
+static void* cell_C2_SGet_li(void*);
+static void* cell_C2_SGet_li_BGet(void*);
+static void cell_C2_SGet_li_BSet(void*, void*);
+static void cell_C2_SGet_li_LSet(void*, int, int32_t);
+static bool cell_C2_SGet_li_LContains(void*, int32_t);
+static int cell_C2_SGet_li_LCount(void*);
+static bool cell_C2_SGet_li_LInsertAt(void*, int, int32_t);
+static bool cell_C2_SGet_li_LRemoveAt(void*, int);
+static void cell_C2_SGet_li_LAppend(void*, int32_t);
+static int32_t cell_C2_SGet_li_LGet(void*, int);
+static void* cell_C2_SGet_li_LGet_BGet(void*);
+static void cell_C2_SGet_li_LGet_BSet(void*, void*);
+static void cell_C2_SSet_str(void*, char*);
+static char* cell_C2_SGet_str(void*);
+static void* cell_C2_SGet_str_BGet(void*);
+static void cell_C2_SGet_str_BSet(void*, void*);
+static void* create_cell_C2();
+static void* cell_C1_BNew(void*);
+static void* cell_C1_BGet(void*);
+static void cell_C1_BSet(void*, void*);
+static void cell_C1_SSet_i(void*, int32_t);
+static int32_t cell_C1_SGet_i(void*);
+static void* cell_C1_SGet_i_BGet(void*);
+static void cell_C1_SGet_i_BSet(void*, void*);
+static void cell_C1_SSet_str(void*, char*);
+static char* cell_C1_SGet_str(void*);
+static void* cell_C1_SGet_str_BGet(void*);
+static void cell_C1_SGet_str_BSet(void*, void*);
+static void* create_cell_C1();
+void* lock_cell(int64_t, int32_t);
+void* Unbox(void*);
+static void* list_STRING_BNew(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962900000ll)(arg1);
+}
+static void* list_STRING_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962900040ll)(arg1);
+}
+static void list_STRING_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962900080ll)(arg1, arg2);
+}
+static void list_STRING_LSet(arg3 void*, arg2 int, arg1 char*){
+return static_cast<void (*)(void*, int, char*)>(0x26962900140ll)(arg1, arg2, arg3);
+}
+static bool list_STRING_LContains(arg2 void*, arg1 char*){
+return static_cast<bool (*)(void*, char*)>(0x26962900240ll)(arg1, arg2);
+}
+static int list_STRING_LCount(arg1 void*){
+return static_cast<int (*)(void*)>(0x26962900340ll)(arg1);
+}
+static bool list_STRING_LInsertAt(arg3 void*, arg2 int, arg1 char*){
+return static_cast<bool (*)(void*, int, char*)>(0x26962900380ll)(arg1, arg2, arg3);
+}
+static bool list_STRING_LRemoveAt(arg2 void*, arg1 int){
+return static_cast<bool (*)(void*, int)>(0x26962900480ll)(arg1, arg2);
+}
+static void list_STRING_LAppend(arg2 void*, arg1 char*){
+return static_cast<void (*)(void*, char*)>(0x26962900540ll)(arg1, arg2);
+}
+static char* list_STRING_LGet(arg2 void*, arg1 int){
+return static_cast<char* (*)(void*, int)>(0x26962900600ll)(arg1, arg2);
+}
+static void* list_STRING_LGet_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962900680ll)(arg1);
+}
+static void list_STRING_LGet_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962900700ll)(arg1, arg2);
+}
+
+
+static void* create_list_STRING(){
+    CellAccessor* accessor = new CellAccessor();
+    auto errCode = list_STRING_BNew(accessor);
+    if(errCode)
+        throw errCode;
+    return accessor;
+}
+
+static void* struct_SS_BNew(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962900800ll)(arg1);
+}
+static void* struct_SS_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962900840ll)(arg1);
+}
+static void struct_SS_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962900880ll)(arg1, arg2);
+}
+static void struct_SS_SSet_s(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962900940ll)(arg1, arg2);
+}
+static void* struct_SS_SGet_s(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962900a00ll)(arg1);
+}
+static void* struct_SS_SGet_s_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962900a40ll)(arg1);
+}
+static void struct_SS_SGet_s_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962900a80ll)(arg1, arg2);
+}
+static void struct_SS_SGet_s_SSet_li(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962900b40ll)(arg1, arg2);
+}
+static void* struct_SS_SGet_s_SGet_li(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962900c00ll)(arg1);
+}
+static void* struct_SS_SGet_s_SGet_li_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962900c40ll)(arg1);
+}
+static void struct_SS_SGet_s_SGet_li_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962900c80ll)(arg1, arg2);
+}
+static void struct_SS_SGet_s_SGet_li_LSet(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<void (*)(void*, int, int32_t)>(0x26962900d40ll)(arg1, arg2, arg3);
+}
+static bool struct_SS_SGet_s_SGet_li_LContains(arg2 void*, arg1 int32_t){
+return static_cast<bool (*)(void*, int32_t)>(0x26962900d80ll)(arg1, arg2);
+}
+static int struct_SS_SGet_s_SGet_li_LCount(arg1 void*){
+return static_cast<int (*)(void*)>(0x26962900e00ll)(arg1);
+}
+static bool struct_SS_SGet_s_SGet_li_LInsertAt(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<bool (*)(void*, int, int32_t)>(0x26962900e40ll)(arg1, arg2, arg3);
+}
+static bool struct_SS_SGet_s_SGet_li_LRemoveAt(arg2 void*, arg1 int){
+return static_cast<bool (*)(void*, int)>(0x26962900f00ll)(arg1, arg2);
+}
+static void struct_SS_SGet_s_SGet_li_LAppend(arg2 void*, arg1 int32_t){
+return static_cast<void (*)(void*, int32_t)>(0x26962900f80ll)(arg1, arg2);
+}
+static int32_t struct_SS_SGet_s_SGet_li_LGet(arg2 void*, arg1 int){
+return static_cast<int32_t (*)(void*, int)>(0x26962901000ll)(arg1, arg2);
+}
+static void* struct_SS_SGet_s_SGet_li_LGet_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962901040ll)(arg1);
+}
+static void struct_SS_SGet_s_SGet_li_LGet_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962901080ll)(arg1, arg2);
+}
+static void struct_SS_SGet_s_SSet_str(arg2 void*, arg1 char*){
+return static_cast<void (*)(void*, char*)>(0x269629010c0ll)(arg1, arg2);
+}
+static char* struct_SS_SGet_s_SGet_str(arg1 void*){
+return static_cast<char* (*)(void*)>(0x26962901180ll)(arg1);
+}
+static void* struct_SS_SGet_s_SGet_str_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x269629011c0ll)(arg1);
+}
+static void struct_SS_SGet_s_SGet_str_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962901200ll)(arg1, arg2);
+}
+static void struct_SS_SSet_ls(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x269629012c0ll)(arg1, arg2);
+}
+static void* struct_SS_SGet_ls(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962901380ll)(arg1);
+}
+static void* struct_SS_SGet_ls_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x269629013c0ll)(arg1);
+}
+static void struct_SS_SGet_ls_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962901400ll)(arg1, arg2);
+}
+static void struct_SS_SGet_ls_LSet(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x269629014c0ll)(arg1, arg2, arg3);
+}
+static bool struct_SS_SGet_ls_LContains(arg2 void*, arg1 void*){
+return static_cast<bool (*)(void*, void*)>(0x269629015c0ll)(arg1, arg2);
+}
+static int struct_SS_SGet_ls_LCount(arg1 void*){
+return static_cast<int (*)(void*)>(0x26962901700ll)(arg1);
+}
+static bool struct_SS_SGet_ls_LInsertAt(arg3 void*, arg2 int, arg1 void*){
+return static_cast<bool (*)(void*, int, void*)>(0x26962901780ll)(arg1, arg2, arg3);
+}
+static bool struct_SS_SGet_ls_LRemoveAt(arg2 void*, arg1 int){
+return static_cast<bool (*)(void*, int)>(0x26962901880ll)(arg1, arg2);
+}
+static void struct_SS_SGet_ls_LAppend(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962901980ll)(arg1, arg2);
+}
+static void* struct_SS_SGet_ls_LGet(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x26962901a40ll)(arg1, arg2);
+}
+static void* struct_SS_SGet_ls_LGet_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962901ac0ll)(arg1);
+}
+static void struct_SS_SGet_ls_LGet_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962901b80ll)(arg1, arg2);
+}
+static void struct_SS_SGet_ls_LGet_SSet_li(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x26962901c80ll)(arg1, arg2, arg3);
+}
+static void* struct_SS_SGet_ls_LGet_SGet_li(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x26962901d80ll)(arg1, arg2);
+}
+static void* struct_SS_SGet_ls_LGet_SGet_li_BGet(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x26962901e00ll)(arg1, arg2);
+}
+static void struct_SS_SGet_ls_LGet_SGet_li_BSet(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x26962901ec0ll)(arg1, arg2, arg3);
+}
+static void struct_SS_SGet_ls_LGet_SGet_li_LSet(arg4 void*, arg3 int, arg2 int, arg1 int32_t){
+return static_cast<void (*)(void*, int, int, int32_t)>(0x26962901fc0ll)(arg1, arg2, arg3, arg4);
+}
+static bool struct_SS_SGet_ls_LGet_SGet_li_LContains(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<bool (*)(void*, int, int32_t)>(0x26962902080ll)(arg1, arg2, arg3);
+}
+static int struct_SS_SGet_ls_LGet_SGet_li_LCount(arg2 void*, arg1 int){
+return static_cast<int (*)(void*, int)>(0x26962902180ll)(arg1, arg2);
+}
+static bool struct_SS_SGet_ls_LGet_SGet_li_LInsertAt(arg4 void*, arg3 int, arg2 int, arg1 int32_t){
+return static_cast<bool (*)(void*, int, int, int32_t)>(0x26962902200ll)(arg1, arg2, arg3, arg4);
+}
+static bool struct_SS_SGet_ls_LGet_SGet_li_LRemoveAt(arg3 void*, arg2 int, arg1 int){
+return static_cast<bool (*)(void*, int, int)>(0x26962902300ll)(arg1, arg2, arg3);
+}
+static void struct_SS_SGet_ls_LGet_SGet_li_LAppend(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<void (*)(void*, int, int32_t)>(0x26962902400ll)(arg1, arg2, arg3);
+}
+static int32_t struct_SS_SGet_ls_LGet_SGet_li_LGet(arg3 void*, arg2 int, arg1 int){
+return static_cast<int32_t (*)(void*, int, int)>(0x269629024c0ll)(arg1, arg2, arg3);
+}
+static void* struct_SS_SGet_ls_LGet_SGet_li_LGet_BGet(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x26962902580ll)(arg1, arg2);
+}
+static void struct_SS_SGet_ls_LGet_SGet_li_LGet_BSet(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x26962902640ll)(arg1, arg2, arg3);
+}
+static void struct_SS_SGet_ls_LGet_SSet_str(arg3 void*, arg2 int, arg1 char*){
+return static_cast<void (*)(void*, int, char*)>(0x26962902700ll)(arg1, arg2, arg3);
+}
+static char* struct_SS_SGet_ls_LGet_SGet_str(arg2 void*, arg1 int){
+return static_cast<char* (*)(void*, int)>(0x26962902840ll)(arg1, arg2);
+}
+static void* struct_SS_SGet_ls_LGet_SGet_str_BGet(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x269629028c0ll)(arg1, arg2);
+}
+static void struct_SS_SGet_ls_LGet_SGet_str_BSet(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x26962902980ll)(arg1, arg2, arg3);
+}
+
+
+static void* create_struct_SS(){
+    CellAccessor* accessor = new CellAccessor();
+    auto errCode = struct_SS_BNew(accessor);
+    if(errCode)
+        throw errCode;
+    return accessor;
+}
+
+static void* cell_C4_BNew(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962902ac0ll)(arg1);
+}
+static void* cell_C4_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962902b00ll)(arg1);
+}
+static void cell_C4_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962902b80ll)(arg1, arg2);
+}
+static void cell_C4_SSet_ss(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962902c80ll)(arg1, arg2);
+}
+static void* cell_C4_SGet_ss(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962902d40ll)(arg1);
+}
+static void* cell_C4_SGet_ss_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962902d80ll)(arg1);
+}
+static void cell_C4_SGet_ss_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962902dc0ll)(arg1, arg2);
+}
+static void cell_C4_SGet_ss_SSet_s(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962902e80ll)(arg1, arg2);
+}
+static void* cell_C4_SGet_ss_SGet_s(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962902f40ll)(arg1);
+}
+static void* cell_C4_SGet_ss_SGet_s_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962902f80ll)(arg1);
+}
+static void cell_C4_SGet_ss_SGet_s_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962902fc0ll)(arg1, arg2);
+}
+static void cell_C4_SGet_ss_SGet_s_SSet_li(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962903080ll)(arg1, arg2);
+}
+static void* cell_C4_SGet_ss_SGet_s_SGet_li(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962903140ll)(arg1);
+}
+static void* cell_C4_SGet_ss_SGet_s_SGet_li_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962903180ll)(arg1);
+}
+static void cell_C4_SGet_ss_SGet_s_SGet_li_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x269629031c0ll)(arg1, arg2);
+}
+static void cell_C4_SGet_ss_SGet_s_SGet_li_LSet(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<void (*)(void*, int, int32_t)>(0x26962903280ll)(arg1, arg2, arg3);
+}
+static bool cell_C4_SGet_ss_SGet_s_SGet_li_LContains(arg2 void*, arg1 int32_t){
+return static_cast<bool (*)(void*, int32_t)>(0x269629032c0ll)(arg1, arg2);
+}
+static int cell_C4_SGet_ss_SGet_s_SGet_li_LCount(arg1 void*){
+return static_cast<int (*)(void*)>(0x26962903340ll)(arg1);
+}
+static bool cell_C4_SGet_ss_SGet_s_SGet_li_LInsertAt(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<bool (*)(void*, int, int32_t)>(0x26962903380ll)(arg1, arg2, arg3);
+}
+static bool cell_C4_SGet_ss_SGet_s_SGet_li_LRemoveAt(arg2 void*, arg1 int){
+return static_cast<bool (*)(void*, int)>(0x26962903440ll)(arg1, arg2);
+}
+static void cell_C4_SGet_ss_SGet_s_SGet_li_LAppend(arg2 void*, arg1 int32_t){
+return static_cast<void (*)(void*, int32_t)>(0x269629034c0ll)(arg1, arg2);
+}
+static int32_t cell_C4_SGet_ss_SGet_s_SGet_li_LGet(arg2 void*, arg1 int){
+return static_cast<int32_t (*)(void*, int)>(0x26962903540ll)(arg1, arg2);
+}
+static void* cell_C4_SGet_ss_SGet_s_SGet_li_LGet_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962903580ll)(arg1);
+}
+static void cell_C4_SGet_ss_SGet_s_SGet_li_LGet_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x269629035c0ll)(arg1, arg2);
+}
+static void cell_C4_SGet_ss_SGet_s_SSet_str(arg2 void*, arg1 char*){
+return static_cast<void (*)(void*, char*)>(0x26962903600ll)(arg1, arg2);
+}
+static char* cell_C4_SGet_ss_SGet_s_SGet_str(arg1 void*){
+return static_cast<char* (*)(void*)>(0x269629036c0ll)(arg1);
+}
+static void* cell_C4_SGet_ss_SGet_s_SGet_str_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962903700ll)(arg1);
+}
+static void cell_C4_SGet_ss_SGet_s_SGet_str_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962903740ll)(arg1, arg2);
+}
+static void cell_C4_SGet_ss_SSet_ls(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962903800ll)(arg1, arg2);
+}
+static void* cell_C4_SGet_ss_SGet_ls(arg1 void*){
+return static_cast<void* (*)(void*)>(0x269629038c0ll)(arg1);
+}
+static void* cell_C4_SGet_ss_SGet_ls_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962903900ll)(arg1);
+}
+static void cell_C4_SGet_ss_SGet_ls_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962903940ll)(arg1, arg2);
+}
+static void cell_C4_SGet_ss_SGet_ls_LSet(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x26962903a00ll)(arg1, arg2, arg3);
+}
+static bool cell_C4_SGet_ss_SGet_ls_LContains(arg2 void*, arg1 void*){
+return static_cast<bool (*)(void*, void*)>(0x26962903b00ll)(arg1, arg2);
+}
+static int cell_C4_SGet_ss_SGet_ls_LCount(arg1 void*){
+return static_cast<int (*)(void*)>(0x26962903c40ll)(arg1);
+}
+static bool cell_C4_SGet_ss_SGet_ls_LInsertAt(arg3 void*, arg2 int, arg1 void*){
+return static_cast<bool (*)(void*, int, void*)>(0x26962903cc0ll)(arg1, arg2, arg3);
+}
+static bool cell_C4_SGet_ss_SGet_ls_LRemoveAt(arg2 void*, arg1 int){
+return static_cast<bool (*)(void*, int)>(0x26962903dc0ll)(arg1, arg2);
+}
+static void cell_C4_SGet_ss_SGet_ls_LAppend(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962903ec0ll)(arg1, arg2);
+}
+static void* cell_C4_SGet_ss_SGet_ls_LGet(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x26962903f80ll)(arg1, arg2);
+}
+static void* cell_C4_SGet_ss_SGet_ls_LGet_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962904000ll)(arg1);
+}
+static void cell_C4_SGet_ss_SGet_ls_LGet_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x269629040c0ll)(arg1, arg2);
+}
+static void cell_C4_SGet_ss_SGet_ls_LGet_SSet_li(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x269629041c0ll)(arg1, arg2, arg3);
+}
+static void* cell_C4_SGet_ss_SGet_ls_LGet_SGet_li(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x269629042c0ll)(arg1, arg2);
+}
+static void* cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_BGet(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x26962904340ll)(arg1, arg2);
+}
+static void cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_BSet(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x26962904400ll)(arg1, arg2, arg3);
+}
+static void cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LSet(arg4 void*, arg3 int, arg2 int, arg1 int32_t){
+return static_cast<void (*)(void*, int, int, int32_t)>(0x26962904500ll)(arg1, arg2, arg3, arg4);
+}
+static bool cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LContains(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<bool (*)(void*, int, int32_t)>(0x269629045c0ll)(arg1, arg2, arg3);
+}
+static int cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LCount(arg2 void*, arg1 int){
+return static_cast<int (*)(void*, int)>(0x269629046c0ll)(arg1, arg2);
+}
+static bool cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LInsertAt(arg4 void*, arg3 int, arg2 int, arg1 int32_t){
+return static_cast<bool (*)(void*, int, int, int32_t)>(0x26962904740ll)(arg1, arg2, arg3, arg4);
+}
+static bool cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LRemoveAt(arg3 void*, arg2 int, arg1 int){
+return static_cast<bool (*)(void*, int, int)>(0x26962904840ll)(arg1, arg2, arg3);
+}
+static void cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LAppend(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<void (*)(void*, int, int32_t)>(0x26962904940ll)(arg1, arg2, arg3);
+}
+static int32_t cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LGet(arg3 void*, arg2 int, arg1 int){
+return static_cast<int32_t (*)(void*, int, int)>(0x26962904a00ll)(arg1, arg2, arg3);
+}
+static void* cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LGet_BGet(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x26962904ac0ll)(arg1, arg2);
+}
+static void cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LGet_BSet(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x26962904b80ll)(arg1, arg2, arg3);
+}
+static void cell_C4_SGet_ss_SGet_ls_LGet_SSet_str(arg3 void*, arg2 int, arg1 char*){
+return static_cast<void (*)(void*, int, char*)>(0x26962904c40ll)(arg1, arg2, arg3);
+}
+static char* cell_C4_SGet_ss_SGet_ls_LGet_SGet_str(arg2 void*, arg1 int){
+return static_cast<char* (*)(void*, int)>(0x26962904d80ll)(arg1, arg2);
+}
+static void* cell_C4_SGet_ss_SGet_ls_LGet_SGet_str_BGet(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x26962904e00ll)(arg1, arg2);
+}
+static void cell_C4_SGet_ss_SGet_ls_LGet_SGet_str_BSet(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x26962904ec0ll)(arg1, arg2, arg3);
+}
+static void cell_C4_SSet_s(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962905000ll)(arg1, arg2);
+}
+static void* cell_C4_SGet_s(arg1 void*){
+return static_cast<void* (*)(void*)>(0x269629050c0ll)(arg1);
+}
+static void* cell_C4_SGet_s_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962905100ll)(arg1);
+}
+static void cell_C4_SGet_s_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962905180ll)(arg1, arg2);
+}
+static void cell_C4_SGet_s_SSet_li(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962905240ll)(arg1, arg2);
+}
+static void* cell_C4_SGet_s_SGet_li(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962905300ll)(arg1);
+}
+static void* cell_C4_SGet_s_SGet_li_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962905340ll)(arg1);
+}
+static void cell_C4_SGet_s_SGet_li_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962905380ll)(arg1, arg2);
+}
+static void cell_C4_SGet_s_SGet_li_LSet(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<void (*)(void*, int, int32_t)>(0x26962905440ll)(arg1, arg2, arg3);
+}
+static bool cell_C4_SGet_s_SGet_li_LContains(arg2 void*, arg1 int32_t){
+return static_cast<bool (*)(void*, int32_t)>(0x269629054c0ll)(arg1, arg2);
+}
+static int cell_C4_SGet_s_SGet_li_LCount(arg1 void*){
+return static_cast<int (*)(void*)>(0x26962905580ll)(arg1);
+}
+static bool cell_C4_SGet_s_SGet_li_LInsertAt(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<bool (*)(void*, int, int32_t)>(0x269629055c0ll)(arg1, arg2, arg3);
+}
+static bool cell_C4_SGet_s_SGet_li_LRemoveAt(arg2 void*, arg1 int){
+return static_cast<bool (*)(void*, int)>(0x26962905680ll)(arg1, arg2);
+}
+static void cell_C4_SGet_s_SGet_li_LAppend(arg2 void*, arg1 int32_t){
+return static_cast<void (*)(void*, int32_t)>(0x26962905740ll)(arg1, arg2);
+}
+static int32_t cell_C4_SGet_s_SGet_li_LGet(arg2 void*, arg1 int){
+return static_cast<int32_t (*)(void*, int)>(0x269629057c0ll)(arg1, arg2);
+}
+static void* cell_C4_SGet_s_SGet_li_LGet_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962905840ll)(arg1);
+}
+static void cell_C4_SGet_s_SGet_li_LGet_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x269629058c0ll)(arg1, arg2);
+}
+static void cell_C4_SGet_s_SSet_str(arg2 void*, arg1 char*){
+return static_cast<void (*)(void*, char*)>(0x26962905940ll)(arg1, arg2);
+}
+static char* cell_C4_SGet_s_SGet_str(arg1 void*){
+return static_cast<char* (*)(void*)>(0x26962905a00ll)(arg1);
+}
+static void* cell_C4_SGet_s_SGet_str_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962905a40ll)(arg1);
+}
+static void cell_C4_SGet_s_SGet_str_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962905a80ll)(arg1, arg2);
+}
+static void cell_C4_SSet_li(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962905b40ll)(arg1, arg2);
+}
+static void* cell_C4_SGet_li(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962905c00ll)(arg1);
+}
+static void* cell_C4_SGet_li_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962905c40ll)(arg1);
+}
+static void cell_C4_SGet_li_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962905cc0ll)(arg1, arg2);
+}
+static void cell_C4_SGet_li_LSet(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<void (*)(void*, int, int32_t)>(0x26962905d80ll)(arg1, arg2, arg3);
+}
+static bool cell_C4_SGet_li_LContains(arg2 void*, arg1 int32_t){
+return static_cast<bool (*)(void*, int32_t)>(0x26962905e00ll)(arg1, arg2);
+}
+static int cell_C4_SGet_li_LCount(arg1 void*){
+return static_cast<int (*)(void*)>(0x26962905ec0ll)(arg1);
+}
+static bool cell_C4_SGet_li_LInsertAt(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<bool (*)(void*, int, int32_t)>(0x26962905f00ll)(arg1, arg2, arg3);
+}
+static bool cell_C4_SGet_li_LRemoveAt(arg2 void*, arg1 int){
+return static_cast<bool (*)(void*, int)>(0x26962905fc0ll)(arg1, arg2);
+}
+static void cell_C4_SGet_li_LAppend(arg2 void*, arg1 int32_t){
+return static_cast<void (*)(void*, int32_t)>(0x26962906080ll)(arg1, arg2);
+}
+static int32_t cell_C4_SGet_li_LGet(arg2 void*, arg1 int){
+return static_cast<int32_t (*)(void*, int)>(0x26962906100ll)(arg1, arg2);
+}
+static void* cell_C4_SGet_li_LGet_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962906180ll)(arg1);
+}
+static void cell_C4_SGet_li_LGet_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962906200ll)(arg1, arg2);
+}
+static void cell_C4_SSet_ls(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962906280ll)(arg1, arg2);
+}
+static void* cell_C4_SGet_ls(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962906340ll)(arg1);
+}
+static void* cell_C4_SGet_ls_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962906380ll)(arg1);
+}
+static void cell_C4_SGet_ls_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962906400ll)(arg1, arg2);
+}
+static void cell_C4_SGet_ls_LSet(arg3 void*, arg2 int, arg1 char*){
+return static_cast<void (*)(void*, int, char*)>(0x269629064c0ll)(arg1, arg2, arg3);
+}
+static bool cell_C4_SGet_ls_LContains(arg2 void*, arg1 char*){
+return static_cast<bool (*)(void*, char*)>(0x26962906600ll)(arg1, arg2);
+}
+static int cell_C4_SGet_ls_LCount(arg1 void*){
+return static_cast<int (*)(void*)>(0x26962906700ll)(arg1);
+}
+static bool cell_C4_SGet_ls_LInsertAt(arg3 void*, arg2 int, arg1 char*){
+return static_cast<bool (*)(void*, int, char*)>(0x26962906780ll)(arg1, arg2, arg3);
+}
+static bool cell_C4_SGet_ls_LRemoveAt(arg2 void*, arg1 int){
+return static_cast<bool (*)(void*, int)>(0x269629068c0ll)(arg1, arg2);
+}
+static void cell_C4_SGet_ls_LAppend(arg2 void*, arg1 char*){
+return static_cast<void (*)(void*, char*)>(0x269629069c0ll)(arg1, arg2);
+}
+static char* cell_C4_SGet_ls_LGet(arg2 void*, arg1 int){
+return static_cast<char* (*)(void*, int)>(0x26962906ac0ll)(arg1, arg2);
+}
+static void* cell_C4_SGet_ls_LGet_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962906b40ll)(arg1);
+}
+static void cell_C4_SGet_ls_LGet_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962906c00ll)(arg1, arg2);
+}
+
+
+static void* create_cell_C4(){
+    CellAccessor* accessor = new CellAccessor();
+    auto errCode = cell_C4_BNew(accessor);
+    if(errCode)
+        throw errCode;
+    return accessor;
+}
+
+static void* struct_S_BNew(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962906d40ll)(arg1);
+}
+static void* struct_S_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962906d80ll)(arg1);
+}
+static void struct_S_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962906dc0ll)(arg1, arg2);
+}
+static void struct_S_SSet_li(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962906e80ll)(arg1, arg2);
+}
+static void* struct_S_SGet_li(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962906f40ll)(arg1);
+}
+static void* struct_S_SGet_li_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962906f80ll)(arg1);
+}
+static void struct_S_SGet_li_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962906fc0ll)(arg1, arg2);
+}
+static void struct_S_SGet_li_LSet(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<void (*)(void*, int, int32_t)>(0x26962907080ll)(arg1, arg2, arg3);
+}
+static bool struct_S_SGet_li_LContains(arg2 void*, arg1 int32_t){
+return static_cast<bool (*)(void*, int32_t)>(0x269629070c0ll)(arg1, arg2);
+}
+static int struct_S_SGet_li_LCount(arg1 void*){
+return static_cast<int (*)(void*)>(0x26962907140ll)(arg1);
+}
+static bool struct_S_SGet_li_LInsertAt(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<bool (*)(void*, int, int32_t)>(0x26962907180ll)(arg1, arg2, arg3);
+}
+static bool struct_S_SGet_li_LRemoveAt(arg2 void*, arg1 int){
+return static_cast<bool (*)(void*, int)>(0x26962907240ll)(arg1, arg2);
+}
+static void struct_S_SGet_li_LAppend(arg2 void*, arg1 int32_t){
+return static_cast<void (*)(void*, int32_t)>(0x269629072c0ll)(arg1, arg2);
+}
+static int32_t struct_S_SGet_li_LGet(arg2 void*, arg1 int){
+return static_cast<int32_t (*)(void*, int)>(0x26962907340ll)(arg1, arg2);
+}
+static void* struct_S_SGet_li_LGet_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962907380ll)(arg1);
+}
+static void struct_S_SGet_li_LGet_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x269629073c0ll)(arg1, arg2);
+}
+static void struct_S_SSet_str(arg2 void*, arg1 char*){
+return static_cast<void (*)(void*, char*)>(0x26962907400ll)(arg1, arg2);
+}
+static char* struct_S_SGet_str(arg1 void*){
+return static_cast<char* (*)(void*)>(0x269629074c0ll)(arg1);
+}
+static void* struct_S_SGet_str_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962907500ll)(arg1);
+}
+static void struct_S_SGet_str_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962907540ll)(arg1, arg2);
+}
+
+
+static void* create_struct_S(){
+    CellAccessor* accessor = new CellAccessor();
+    auto errCode = struct_S_BNew(accessor);
+    if(errCode)
+        throw errCode;
+    return accessor;
+}
+
+static void* list_struct_S_BNew(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962907600ll)(arg1);
+}
+static void* list_struct_S_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962907640ll)(arg1);
+}
+static void list_struct_S_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962907680ll)(arg1, arg2);
+}
+static void list_struct_S_LSet(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x26962907740ll)(arg1, arg2, arg3);
+}
+static bool list_struct_S_LContains(arg2 void*, arg1 void*){
+return static_cast<bool (*)(void*, void*)>(0x26962907840ll)(arg1, arg2);
+}
+static int list_struct_S_LCount(arg1 void*){
+return static_cast<int (*)(void*)>(0x26962907940ll)(arg1);
+}
+static bool list_struct_S_LInsertAt(arg3 void*, arg2 int, arg1 void*){
+return static_cast<bool (*)(void*, int, void*)>(0x26962907980ll)(arg1, arg2, arg3);
+}
+static bool list_struct_S_LRemoveAt(arg2 void*, arg1 int){
+return static_cast<bool (*)(void*, int)>(0x26962907a80ll)(arg1, arg2);
+}
+static void list_struct_S_LAppend(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962907b40ll)(arg1, arg2);
+}
+static void* list_struct_S_LGet(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x26962907bc0ll)(arg1, arg2);
+}
+static void* list_struct_S_LGet_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962907c40ll)(arg1);
+}
+static void list_struct_S_LGet_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962907d00ll)(arg1, arg2);
+}
+static void list_struct_S_LGet_SSet_li(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x26962907e00ll)(arg1, arg2, arg3);
+}
+static void* list_struct_S_LGet_SGet_li(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x26962907f00ll)(arg1, arg2);
+}
+static void* list_struct_S_LGet_SGet_li_BGet(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x26962907f80ll)(arg1, arg2);
+}
+static void list_struct_S_LGet_SGet_li_BSet(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x26962908000ll)(arg1, arg2, arg3);
+}
+static void list_struct_S_LGet_SGet_li_LSet(arg4 void*, arg3 int, arg2 int, arg1 int32_t){
+return static_cast<void (*)(void*, int, int, int32_t)>(0x26962908100ll)(arg1, arg2, arg3, arg4);
+}
+static bool list_struct_S_LGet_SGet_li_LContains(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<bool (*)(void*, int, int32_t)>(0x26962908180ll)(arg1, arg2, arg3);
+}
+static int list_struct_S_LGet_SGet_li_LCount(arg2 void*, arg1 int){
+return static_cast<int (*)(void*, int)>(0x26962908280ll)(arg1, arg2);
+}
+static bool list_struct_S_LGet_SGet_li_LInsertAt(arg4 void*, arg3 int, arg2 int, arg1 int32_t){
+return static_cast<bool (*)(void*, int, int, int32_t)>(0x26962908300ll)(arg1, arg2, arg3, arg4);
+}
+static bool list_struct_S_LGet_SGet_li_LRemoveAt(arg3 void*, arg2 int, arg1 int){
+return static_cast<bool (*)(void*, int, int)>(0x26962908400ll)(arg1, arg2, arg3);
+}
+static void list_struct_S_LGet_SGet_li_LAppend(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<void (*)(void*, int, int32_t)>(0x26962908500ll)(arg1, arg2, arg3);
+}
+static int32_t list_struct_S_LGet_SGet_li_LGet(arg3 void*, arg2 int, arg1 int){
+return static_cast<int32_t (*)(void*, int, int)>(0x269629085c0ll)(arg1, arg2, arg3);
+}
+static void* list_struct_S_LGet_SGet_li_LGet_BGet(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x26962908640ll)(arg1, arg2);
+}
+static void list_struct_S_LGet_SGet_li_LGet_BSet(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x26962908700ll)(arg1, arg2, arg3);
+}
+static void list_struct_S_LGet_SSet_str(arg3 void*, arg2 int, arg1 char*){
+return static_cast<void (*)(void*, int, char*)>(0x26962908780ll)(arg1, arg2, arg3);
+}
+static char* list_struct_S_LGet_SGet_str(arg2 void*, arg1 int){
+return static_cast<char* (*)(void*, int)>(0x26962908880ll)(arg1, arg2);
+}
+static void* list_struct_S_LGet_SGet_str_BGet(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x26962908900ll)(arg1, arg2);
+}
+static void list_struct_S_LGet_SGet_str_BSet(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x26962908980ll)(arg1, arg2, arg3);
+}
+
+
+static void* create_list_struct_S(){
+    CellAccessor* accessor = new CellAccessor();
+    auto errCode = list_struct_S_BNew(accessor);
+    if(errCode)
+        throw errCode;
+    return accessor;
+}
+
+static void* cell_C3_BNew(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962908a80ll)(arg1);
+}
+static void* cell_C3_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962908ac0ll)(arg1);
+}
+static void cell_C3_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962908b40ll)(arg1, arg2);
+}
+static void cell_C3_SSet_i(arg2 void*, arg1 int32_t){
+return static_cast<void (*)(void*, int32_t)>(0x26962908c00ll)(arg1, arg2);
+}
+static int32_t cell_C3_SGet_i(arg1 void*){
+return static_cast<int32_t (*)(void*)>(0x26962908c40ll)(arg1);
+}
+static void* cell_C3_SGet_i_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962908c80ll)(arg1);
+}
+static void cell_C3_SGet_i_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962908cc0ll)(arg1, arg2);
+}
+static void cell_C3_SSet_li(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962908d00ll)(arg1, arg2);
+}
+static void* cell_C3_SGet_li(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962908dc0ll)(arg1);
+}
+static void* cell_C3_SGet_li_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962908e00ll)(arg1);
+}
+static void cell_C3_SGet_li_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962908e40ll)(arg1, arg2);
+}
+static void cell_C3_SGet_li_LSet(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<void (*)(void*, int, int32_t)>(0x26962908f00ll)(arg1, arg2, arg3);
+}
+static bool cell_C3_SGet_li_LContains(arg2 void*, arg1 int32_t){
+return static_cast<bool (*)(void*, int32_t)>(0x26962908f40ll)(arg1, arg2);
+}
+static int cell_C3_SGet_li_LCount(arg1 void*){
+return static_cast<int (*)(void*)>(0x26962908fc0ll)(arg1);
+}
+static bool cell_C3_SGet_li_LInsertAt(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<bool (*)(void*, int, int32_t)>(0x26962909000ll)(arg1, arg2, arg3);
+}
+static bool cell_C3_SGet_li_LRemoveAt(arg2 void*, arg1 int){
+return static_cast<bool (*)(void*, int)>(0x269629090c0ll)(arg1, arg2);
+}
+static void cell_C3_SGet_li_LAppend(arg2 void*, arg1 int32_t){
+return static_cast<void (*)(void*, int32_t)>(0x26962909140ll)(arg1, arg2);
+}
+static int32_t cell_C3_SGet_li_LGet(arg2 void*, arg1 int){
+return static_cast<int32_t (*)(void*, int)>(0x269629091c0ll)(arg1, arg2);
+}
+static void* cell_C3_SGet_li_LGet_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962909200ll)(arg1);
+}
+static void cell_C3_SGet_li_LGet_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962909240ll)(arg1, arg2);
+}
+static void cell_C3_SSet_ls(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962909280ll)(arg1, arg2);
+}
+static void* cell_C3_SGet_ls(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962909340ll)(arg1);
+}
+static void* cell_C3_SGet_ls_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962909380ll)(arg1);
+}
+static void cell_C3_SGet_ls_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x269629093c0ll)(arg1, arg2);
+}
+static void cell_C3_SGet_ls_LSet(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x26962909480ll)(arg1, arg2, arg3);
+}
+static bool cell_C3_SGet_ls_LContains(arg2 void*, arg1 void*){
+return static_cast<bool (*)(void*, void*)>(0x26962909580ll)(arg1, arg2);
+}
+static int cell_C3_SGet_ls_LCount(arg1 void*){
+return static_cast<int (*)(void*)>(0x269629096c0ll)(arg1);
+}
+static bool cell_C3_SGet_ls_LInsertAt(arg3 void*, arg2 int, arg1 void*){
+return static_cast<bool (*)(void*, int, void*)>(0x26962909740ll)(arg1, arg2, arg3);
+}
+static bool cell_C3_SGet_ls_LRemoveAt(arg2 void*, arg1 int){
+return static_cast<bool (*)(void*, int)>(0x26962909840ll)(arg1, arg2);
+}
+static void cell_C3_SGet_ls_LAppend(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962909940ll)(arg1, arg2);
+}
+static void* cell_C3_SGet_ls_LGet(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x26962909a00ll)(arg1, arg2);
+}
+static void* cell_C3_SGet_ls_LGet_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x26962909a80ll)(arg1);
+}
+static void cell_C3_SGet_ls_LGet_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x26962909b40ll)(arg1, arg2);
+}
+static void cell_C3_SGet_ls_LGet_SSet_li(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x26962909c40ll)(arg1, arg2, arg3);
+}
+static void* cell_C3_SGet_ls_LGet_SGet_li(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x26962909d40ll)(arg1, arg2);
+}
+static void* cell_C3_SGet_ls_LGet_SGet_li_BGet(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x26962909dc0ll)(arg1, arg2);
+}
+static void cell_C3_SGet_ls_LGet_SGet_li_BSet(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x26962909e40ll)(arg1, arg2, arg3);
+}
+static void cell_C3_SGet_ls_LGet_SGet_li_LSet(arg4 void*, arg3 int, arg2 int, arg1 int32_t){
+return static_cast<void (*)(void*, int, int, int32_t)>(0x26962909f40ll)(arg1, arg2, arg3, arg4);
+}
+static bool cell_C3_SGet_ls_LGet_SGet_li_LContains(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<bool (*)(void*, int, int32_t)>(0x26962909fc0ll)(arg1, arg2, arg3);
+}
+static int cell_C3_SGet_ls_LGet_SGet_li_LCount(arg2 void*, arg1 int){
+return static_cast<int (*)(void*, int)>(0x2696290a0c0ll)(arg1, arg2);
+}
+static bool cell_C3_SGet_ls_LGet_SGet_li_LInsertAt(arg4 void*, arg3 int, arg2 int, arg1 int32_t){
+return static_cast<bool (*)(void*, int, int, int32_t)>(0x2696290a140ll)(arg1, arg2, arg3, arg4);
+}
+static bool cell_C3_SGet_ls_LGet_SGet_li_LRemoveAt(arg3 void*, arg2 int, arg1 int){
+return static_cast<bool (*)(void*, int, int)>(0x2696290a240ll)(arg1, arg2, arg3);
+}
+static void cell_C3_SGet_ls_LGet_SGet_li_LAppend(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<void (*)(void*, int, int32_t)>(0x2696290a340ll)(arg1, arg2, arg3);
+}
+static int32_t cell_C3_SGet_ls_LGet_SGet_li_LGet(arg3 void*, arg2 int, arg1 int){
+return static_cast<int32_t (*)(void*, int, int)>(0x2696290a400ll)(arg1, arg2, arg3);
+}
+static void* cell_C3_SGet_ls_LGet_SGet_li_LGet_BGet(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x2696290a4c0ll)(arg1, arg2);
+}
+static void cell_C3_SGet_ls_LGet_SGet_li_LGet_BSet(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x2696290a580ll)(arg1, arg2, arg3);
+}
+static void cell_C3_SGet_ls_LGet_SSet_str(arg3 void*, arg2 int, arg1 char*){
+return static_cast<void (*)(void*, int, char*)>(0x2696290a600ll)(arg1, arg2, arg3);
+}
+static char* cell_C3_SGet_ls_LGet_SGet_str(arg2 void*, arg1 int){
+return static_cast<char* (*)(void*, int)>(0x2696290a700ll)(arg1, arg2);
+}
+static void* cell_C3_SGet_ls_LGet_SGet_str_BGet(arg2 void*, arg1 int){
+return static_cast<void* (*)(void*, int)>(0x2696290a780ll)(arg1, arg2);
+}
+static void cell_C3_SGet_ls_LGet_SGet_str_BSet(arg3 void*, arg2 int, arg1 void*){
+return static_cast<void (*)(void*, int, void*)>(0x2696290a840ll)(arg1, arg2, arg3);
+}
+static void cell_C3_SSet_s(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x2696290a940ll)(arg1, arg2);
+}
+static void* cell_C3_SGet_s(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290aa00ll)(arg1);
+}
+static void* cell_C3_SGet_s_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290aa40ll)(arg1);
+}
+static void cell_C3_SGet_s_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x2696290aac0ll)(arg1, arg2);
+}
+static void cell_C3_SGet_s_SSet_li(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x2696290ab80ll)(arg1, arg2);
+}
+static void* cell_C3_SGet_s_SGet_li(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290ac40ll)(arg1);
+}
+static void* cell_C3_SGet_s_SGet_li_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290ac80ll)(arg1);
+}
+static void cell_C3_SGet_s_SGet_li_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x2696290acc0ll)(arg1, arg2);
+}
+static void cell_C3_SGet_s_SGet_li_LSet(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<void (*)(void*, int, int32_t)>(0x2696290ad80ll)(arg1, arg2, arg3);
+}
+static bool cell_C3_SGet_s_SGet_li_LContains(arg2 void*, arg1 int32_t){
+return static_cast<bool (*)(void*, int32_t)>(0x2696290adc0ll)(arg1, arg2);
+}
+static int cell_C3_SGet_s_SGet_li_LCount(arg1 void*){
+return static_cast<int (*)(void*)>(0x2696290ae80ll)(arg1);
+}
+static bool cell_C3_SGet_s_SGet_li_LInsertAt(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<bool (*)(void*, int, int32_t)>(0x2696290aec0ll)(arg1, arg2, arg3);
+}
+static bool cell_C3_SGet_s_SGet_li_LRemoveAt(arg2 void*, arg1 int){
+return static_cast<bool (*)(void*, int)>(0x2696290af80ll)(arg1, arg2);
+}
+static void cell_C3_SGet_s_SGet_li_LAppend(arg2 void*, arg1 int32_t){
+return static_cast<void (*)(void*, int32_t)>(0x2696290b040ll)(arg1, arg2);
+}
+static int32_t cell_C3_SGet_s_SGet_li_LGet(arg2 void*, arg1 int){
+return static_cast<int32_t (*)(void*, int)>(0x2696290b0c0ll)(arg1, arg2);
+}
+static void* cell_C3_SGet_s_SGet_li_LGet_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290b140ll)(arg1);
+}
+static void cell_C3_SGet_s_SGet_li_LGet_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x2696290b1c0ll)(arg1, arg2);
+}
+static void cell_C3_SGet_s_SSet_str(arg2 void*, arg1 char*){
+return static_cast<void (*)(void*, char*)>(0x2696290b200ll)(arg1, arg2);
+}
+static char* cell_C3_SGet_s_SGet_str(arg1 void*){
+return static_cast<char* (*)(void*)>(0x2696290b2c0ll)(arg1);
+}
+static void* cell_C3_SGet_s_SGet_str_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290b300ll)(arg1);
+}
+static void cell_C3_SGet_s_SGet_str_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x2696290b340ll)(arg1, arg2);
+}
+
+
+static void* create_cell_C3(){
+    CellAccessor* accessor = new CellAccessor();
+    auto errCode = cell_C3_BNew(accessor);
+    if(errCode)
+        throw errCode;
+    return accessor;
+}
+
+static void* list_I32_BNew(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290b400ll)(arg1);
+}
+static void* list_I32_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290b440ll)(arg1);
+}
+static void list_I32_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x2696290b480ll)(arg1, arg2);
+}
+static void list_I32_LSet(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<void (*)(void*, int, int32_t)>(0x2696290b540ll)(arg1, arg2, arg3);
+}
+static bool list_I32_LContains(arg2 void*, arg1 int32_t){
+return static_cast<bool (*)(void*, int32_t)>(0x2696290b580ll)(arg1, arg2);
+}
+static int list_I32_LCount(arg1 void*){
+return static_cast<int (*)(void*)>(0x2696290b600ll)(arg1);
+}
+static bool list_I32_LInsertAt(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<bool (*)(void*, int, int32_t)>(0x2696290b640ll)(arg1, arg2, arg3);
+}
+static bool list_I32_LRemoveAt(arg2 void*, arg1 int){
+return static_cast<bool (*)(void*, int)>(0x2696290b700ll)(arg1, arg2);
+}
+static void list_I32_LAppend(arg2 void*, arg1 int32_t){
+return static_cast<void (*)(void*, int32_t)>(0x2696290b780ll)(arg1, arg2);
+}
+static int32_t list_I32_LGet(arg2 void*, arg1 int){
+return static_cast<int32_t (*)(void*, int)>(0x2696290b800ll)(arg1, arg2);
+}
+static void* list_I32_LGet_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290b840ll)(arg1);
+}
+static void list_I32_LGet_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x2696290b880ll)(arg1, arg2);
+}
+
+
+static void* create_list_I32(){
+    CellAccessor* accessor = new CellAccessor();
+    auto errCode = list_I32_BNew(accessor);
+    if(errCode)
+        throw errCode;
+    return accessor;
+}
+
+static void* cell_C2_BNew(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290b8c0ll)(arg1);
+}
+static void* cell_C2_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290b900ll)(arg1);
+}
+static void cell_C2_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x2696290b940ll)(arg1, arg2);
+}
+static void cell_C2_SSet_li(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x2696290ba00ll)(arg1, arg2);
+}
+static void* cell_C2_SGet_li(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290bac0ll)(arg1);
+}
+static void* cell_C2_SGet_li_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290bb00ll)(arg1);
+}
+static void cell_C2_SGet_li_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x2696290bb40ll)(arg1, arg2);
+}
+static void cell_C2_SGet_li_LSet(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<void (*)(void*, int, int32_t)>(0x2696290bc00ll)(arg1, arg2, arg3);
+}
+static bool cell_C2_SGet_li_LContains(arg2 void*, arg1 int32_t){
+return static_cast<bool (*)(void*, int32_t)>(0x2696290bc40ll)(arg1, arg2);
+}
+static int cell_C2_SGet_li_LCount(arg1 void*){
+return static_cast<int (*)(void*)>(0x2696290bcc0ll)(arg1);
+}
+static bool cell_C2_SGet_li_LInsertAt(arg3 void*, arg2 int, arg1 int32_t){
+return static_cast<bool (*)(void*, int, int32_t)>(0x2696290bd00ll)(arg1, arg2, arg3);
+}
+static bool cell_C2_SGet_li_LRemoveAt(arg2 void*, arg1 int){
+return static_cast<bool (*)(void*, int)>(0x2696290bdc0ll)(arg1, arg2);
+}
+static void cell_C2_SGet_li_LAppend(arg2 void*, arg1 int32_t){
+return static_cast<void (*)(void*, int32_t)>(0x2696290be40ll)(arg1, arg2);
+}
+static int32_t cell_C2_SGet_li_LGet(arg2 void*, arg1 int){
+return static_cast<int32_t (*)(void*, int)>(0x2696290bec0ll)(arg1, arg2);
+}
+static void* cell_C2_SGet_li_LGet_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290bf00ll)(arg1);
+}
+static void cell_C2_SGet_li_LGet_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x2696290bf40ll)(arg1, arg2);
+}
+static void cell_C2_SSet_str(arg2 void*, arg1 char*){
+return static_cast<void (*)(void*, char*)>(0x2696290bf80ll)(arg1, arg2);
+}
+static char* cell_C2_SGet_str(arg1 void*){
+return static_cast<char* (*)(void*)>(0x2696290c040ll)(arg1);
+}
+static void* cell_C2_SGet_str_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290c080ll)(arg1);
+}
+static void cell_C2_SGet_str_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x2696290c0c0ll)(arg1, arg2);
+}
+
+
+static void* create_cell_C2(){
+    CellAccessor* accessor = new CellAccessor();
+    auto errCode = cell_C2_BNew(accessor);
+    if(errCode)
+        throw errCode;
+    return accessor;
+}
+
+static void* cell_C1_BNew(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290c180ll)(arg1);
+}
+static void* cell_C1_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290c1c0ll)(arg1);
+}
+static void cell_C1_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x2696290c200ll)(arg1, arg2);
+}
+static void cell_C1_SSet_i(arg2 void*, arg1 int32_t){
+return static_cast<void (*)(void*, int32_t)>(0x2696290c2c0ll)(arg1, arg2);
+}
+static int32_t cell_C1_SGet_i(arg1 void*){
+return static_cast<int32_t (*)(void*)>(0x2696290c300ll)(arg1);
+}
+static void* cell_C1_SGet_i_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290c340ll)(arg1);
+}
+static void cell_C1_SGet_i_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x2696290c380ll)(arg1, arg2);
+}
+static void cell_C1_SSet_str(arg2 void*, arg1 char*){
+return static_cast<void (*)(void*, char*)>(0x2696290c3c0ll)(arg1, arg2);
+}
+static char* cell_C1_SGet_str(arg1 void*){
+return static_cast<char* (*)(void*)>(0x2696290c480ll)(arg1);
+}
+static void* cell_C1_SGet_str_BGet(arg1 void*){
+return static_cast<void* (*)(void*)>(0x2696290c4c0ll)(arg1);
+}
+static void cell_C1_SGet_str_BSet(arg2 void*, arg1 void*){
+return static_cast<void (*)(void*, void*)>(0x2696290c500ll)(arg1, arg2);
+}
+
+
+static void* create_cell_C1(){
+    CellAccessor* accessor = new CellAccessor();
+    auto errCode = cell_C1_BNew(accessor);
+    if(errCode)
+        throw errCode;
+    return accessor;
+}
+
+
+
+void* UseCell(int64_t cellid, int32_t options)
+{
+    CellAccessor* accessor = new CellAccessor();
+    accessor->cellId = cellid;
+    auto errCode = LockCell(*accessor, options);
+    if (errCode)
+    throw errCode;
+    return accessor;
+}
+
+
+void* Unbox(void* object)
+{
+  return cast_object(object);
+}
+
+%}
+static void* list_STRING_BNew(void*);
+static void* list_STRING_BGet(void*);
+static void list_STRING_BSet(void*, void*);
+static void list_STRING_LSet(void*, int, char*);
+static bool list_STRING_LContains(void*, char*);
+static int list_STRING_LCount(void*);
+static bool list_STRING_LInsertAt(void*, int, char*);
+static bool list_STRING_LRemoveAt(void*, int);
+static void list_STRING_LAppend(void*, char*);
+static char* list_STRING_LGet(void*, int);
+static void* list_STRING_LGet_BGet(void*);
+static void list_STRING_LGet_BSet(void*, void*);
+static void* create_list_STRING();
+static void* struct_SS_BNew(void*);
+static void* struct_SS_BGet(void*);
+static void struct_SS_BSet(void*, void*);
+static void struct_SS_SSet_s(void*, void*);
+static void* struct_SS_SGet_s(void*);
+static void* struct_SS_SGet_s_BGet(void*);
+static void struct_SS_SGet_s_BSet(void*, void*);
+static void struct_SS_SGet_s_SSet_li(void*, void*);
+static void* struct_SS_SGet_s_SGet_li(void*);
+static void* struct_SS_SGet_s_SGet_li_BGet(void*);
+static void struct_SS_SGet_s_SGet_li_BSet(void*, void*);
+static void struct_SS_SGet_s_SGet_li_LSet(void*, int, int32_t);
+static bool struct_SS_SGet_s_SGet_li_LContains(void*, int32_t);
+static int struct_SS_SGet_s_SGet_li_LCount(void*);
+static bool struct_SS_SGet_s_SGet_li_LInsertAt(void*, int, int32_t);
+static bool struct_SS_SGet_s_SGet_li_LRemoveAt(void*, int);
+static void struct_SS_SGet_s_SGet_li_LAppend(void*, int32_t);
+static int32_t struct_SS_SGet_s_SGet_li_LGet(void*, int);
+static void* struct_SS_SGet_s_SGet_li_LGet_BGet(void*);
+static void struct_SS_SGet_s_SGet_li_LGet_BSet(void*, void*);
+static void struct_SS_SGet_s_SSet_str(void*, char*);
+static char* struct_SS_SGet_s_SGet_str(void*);
+static void* struct_SS_SGet_s_SGet_str_BGet(void*);
+static void struct_SS_SGet_s_SGet_str_BSet(void*, void*);
+static void struct_SS_SSet_ls(void*, void*);
+static void* struct_SS_SGet_ls(void*);
+static void* struct_SS_SGet_ls_BGet(void*);
+static void struct_SS_SGet_ls_BSet(void*, void*);
+static void struct_SS_SGet_ls_LSet(void*, int, void*);
+static bool struct_SS_SGet_ls_LContains(void*, void*);
+static int struct_SS_SGet_ls_LCount(void*);
+static bool struct_SS_SGet_ls_LInsertAt(void*, int, void*);
+static bool struct_SS_SGet_ls_LRemoveAt(void*, int);
+static void struct_SS_SGet_ls_LAppend(void*, void*);
+static void* struct_SS_SGet_ls_LGet(void*, int);
+static void* struct_SS_SGet_ls_LGet_BGet(void*);
+static void struct_SS_SGet_ls_LGet_BSet(void*, void*);
+static void struct_SS_SGet_ls_LGet_SSet_li(void*, int, void*);
+static void* struct_SS_SGet_ls_LGet_SGet_li(void*, int);
+static void* struct_SS_SGet_ls_LGet_SGet_li_BGet(void*, int);
+static void struct_SS_SGet_ls_LGet_SGet_li_BSet(void*, int, void*);
+static void struct_SS_SGet_ls_LGet_SGet_li_LSet(void*, int, int, int32_t);
+static bool struct_SS_SGet_ls_LGet_SGet_li_LContains(void*, int, int32_t);
+static int struct_SS_SGet_ls_LGet_SGet_li_LCount(void*, int);
+static bool struct_SS_SGet_ls_LGet_SGet_li_LInsertAt(void*, int, int, int32_t);
+static bool struct_SS_SGet_ls_LGet_SGet_li_LRemoveAt(void*, int, int);
+static void struct_SS_SGet_ls_LGet_SGet_li_LAppend(void*, int, int32_t);
+static int32_t struct_SS_SGet_ls_LGet_SGet_li_LGet(void*, int, int);
+static void* struct_SS_SGet_ls_LGet_SGet_li_LGet_BGet(void*, int);
+static void struct_SS_SGet_ls_LGet_SGet_li_LGet_BSet(void*, int, void*);
+static void struct_SS_SGet_ls_LGet_SSet_str(void*, int, char*);
+static char* struct_SS_SGet_ls_LGet_SGet_str(void*, int);
+static void* struct_SS_SGet_ls_LGet_SGet_str_BGet(void*, int);
+static void struct_SS_SGet_ls_LGet_SGet_str_BSet(void*, int, void*);
+static void* create_struct_SS();
+static void* cell_C4_BNew(void*);
+static void* cell_C4_BGet(void*);
+static void cell_C4_BSet(void*, void*);
+static void cell_C4_SSet_ss(void*, void*);
+static void* cell_C4_SGet_ss(void*);
+static void* cell_C4_SGet_ss_BGet(void*);
+static void cell_C4_SGet_ss_BSet(void*, void*);
+static void cell_C4_SGet_ss_SSet_s(void*, void*);
+static void* cell_C4_SGet_ss_SGet_s(void*);
+static void* cell_C4_SGet_ss_SGet_s_BGet(void*);
+static void cell_C4_SGet_ss_SGet_s_BSet(void*, void*);
+static void cell_C4_SGet_ss_SGet_s_SSet_li(void*, void*);
+static void* cell_C4_SGet_ss_SGet_s_SGet_li(void*);
+static void* cell_C4_SGet_ss_SGet_s_SGet_li_BGet(void*);
+static void cell_C4_SGet_ss_SGet_s_SGet_li_BSet(void*, void*);
+static void cell_C4_SGet_ss_SGet_s_SGet_li_LSet(void*, int, int32_t);
+static bool cell_C4_SGet_ss_SGet_s_SGet_li_LContains(void*, int32_t);
+static int cell_C4_SGet_ss_SGet_s_SGet_li_LCount(void*);
+static bool cell_C4_SGet_ss_SGet_s_SGet_li_LInsertAt(void*, int, int32_t);
+static bool cell_C4_SGet_ss_SGet_s_SGet_li_LRemoveAt(void*, int);
+static void cell_C4_SGet_ss_SGet_s_SGet_li_LAppend(void*, int32_t);
+static int32_t cell_C4_SGet_ss_SGet_s_SGet_li_LGet(void*, int);
+static void* cell_C4_SGet_ss_SGet_s_SGet_li_LGet_BGet(void*);
+static void cell_C4_SGet_ss_SGet_s_SGet_li_LGet_BSet(void*, void*);
+static void cell_C4_SGet_ss_SGet_s_SSet_str(void*, char*);
+static char* cell_C4_SGet_ss_SGet_s_SGet_str(void*);
+static void* cell_C4_SGet_ss_SGet_s_SGet_str_BGet(void*);
+static void cell_C4_SGet_ss_SGet_s_SGet_str_BSet(void*, void*);
+static void cell_C4_SGet_ss_SSet_ls(void*, void*);
+static void* cell_C4_SGet_ss_SGet_ls(void*);
+static void* cell_C4_SGet_ss_SGet_ls_BGet(void*);
+static void cell_C4_SGet_ss_SGet_ls_BSet(void*, void*);
+static void cell_C4_SGet_ss_SGet_ls_LSet(void*, int, void*);
+static bool cell_C4_SGet_ss_SGet_ls_LContains(void*, void*);
+static int cell_C4_SGet_ss_SGet_ls_LCount(void*);
+static bool cell_C4_SGet_ss_SGet_ls_LInsertAt(void*, int, void*);
+static bool cell_C4_SGet_ss_SGet_ls_LRemoveAt(void*, int);
+static void cell_C4_SGet_ss_SGet_ls_LAppend(void*, void*);
+static void* cell_C4_SGet_ss_SGet_ls_LGet(void*, int);
+static void* cell_C4_SGet_ss_SGet_ls_LGet_BGet(void*);
+static void cell_C4_SGet_ss_SGet_ls_LGet_BSet(void*, void*);
+static void cell_C4_SGet_ss_SGet_ls_LGet_SSet_li(void*, int, void*);
+static void* cell_C4_SGet_ss_SGet_ls_LGet_SGet_li(void*, int);
+static void* cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_BGet(void*, int);
+static void cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_BSet(void*, int, void*);
+static void cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LSet(void*, int, int, int32_t);
+static bool cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LContains(void*, int, int32_t);
+static int cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LCount(void*, int);
+static bool cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LInsertAt(void*, int, int, int32_t);
+static bool cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LRemoveAt(void*, int, int);
+static void cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LAppend(void*, int, int32_t);
+static int32_t cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LGet(void*, int, int);
+static void* cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LGet_BGet(void*, int);
+static void cell_C4_SGet_ss_SGet_ls_LGet_SGet_li_LGet_BSet(void*, int, void*);
+static void cell_C4_SGet_ss_SGet_ls_LGet_SSet_str(void*, int, char*);
+static char* cell_C4_SGet_ss_SGet_ls_LGet_SGet_str(void*, int);
+static void* cell_C4_SGet_ss_SGet_ls_LGet_SGet_str_BGet(void*, int);
+static void cell_C4_SGet_ss_SGet_ls_LGet_SGet_str_BSet(void*, int, void*);
+static void cell_C4_SSet_s(void*, void*);
+static void* cell_C4_SGet_s(void*);
+static void* cell_C4_SGet_s_BGet(void*);
+static void cell_C4_SGet_s_BSet(void*, void*);
+static void cell_C4_SGet_s_SSet_li(void*, void*);
+static void* cell_C4_SGet_s_SGet_li(void*);
+static void* cell_C4_SGet_s_SGet_li_BGet(void*);
+static void cell_C4_SGet_s_SGet_li_BSet(void*, void*);
+static void cell_C4_SGet_s_SGet_li_LSet(void*, int, int32_t);
+static bool cell_C4_SGet_s_SGet_li_LContains(void*, int32_t);
+static int cell_C4_SGet_s_SGet_li_LCount(void*);
+static bool cell_C4_SGet_s_SGet_li_LInsertAt(void*, int, int32_t);
+static bool cell_C4_SGet_s_SGet_li_LRemoveAt(void*, int);
+static void cell_C4_SGet_s_SGet_li_LAppend(void*, int32_t);
+static int32_t cell_C4_SGet_s_SGet_li_LGet(void*, int);
+static void* cell_C4_SGet_s_SGet_li_LGet_BGet(void*);
+static void cell_C4_SGet_s_SGet_li_LGet_BSet(void*, void*);
+static void cell_C4_SGet_s_SSet_str(void*, char*);
+static char* cell_C4_SGet_s_SGet_str(void*);
+static void* cell_C4_SGet_s_SGet_str_BGet(void*);
+static void cell_C4_SGet_s_SGet_str_BSet(void*, void*);
+static void cell_C4_SSet_li(void*, void*);
+static void* cell_C4_SGet_li(void*);
+static void* cell_C4_SGet_li_BGet(void*);
+static void cell_C4_SGet_li_BSet(void*, void*);
+static void cell_C4_SGet_li_LSet(void*, int, int32_t);
+static bool cell_C4_SGet_li_LContains(void*, int32_t);
+static int cell_C4_SGet_li_LCount(void*);
+static bool cell_C4_SGet_li_LInsertAt(void*, int, int32_t);
+static bool cell_C4_SGet_li_LRemoveAt(void*, int);
+static void cell_C4_SGet_li_LAppend(void*, int32_t);
+static int32_t cell_C4_SGet_li_LGet(void*, int);
+static void* cell_C4_SGet_li_LGet_BGet(void*);
+static void cell_C4_SGet_li_LGet_BSet(void*, void*);
+static void cell_C4_SSet_ls(void*, void*);
+static void* cell_C4_SGet_ls(void*);
+static void* cell_C4_SGet_ls_BGet(void*);
+static void cell_C4_SGet_ls_BSet(void*, void*);
+static void cell_C4_SGet_ls_LSet(void*, int, char*);
+static bool cell_C4_SGet_ls_LContains(void*, char*);
+static int cell_C4_SGet_ls_LCount(void*);
+static bool cell_C4_SGet_ls_LInsertAt(void*, int, char*);
+static bool cell_C4_SGet_ls_LRemoveAt(void*, int);
+static void cell_C4_SGet_ls_LAppend(void*, char*);
+static char* cell_C4_SGet_ls_LGet(void*, int);
+static void* cell_C4_SGet_ls_LGet_BGet(void*);
+static void cell_C4_SGet_ls_LGet_BSet(void*, void*);
+static void* create_cell_C4();
+static void* struct_S_BNew(void*);
+static void* struct_S_BGet(void*);
+static void struct_S_BSet(void*, void*);
+static void struct_S_SSet_li(void*, void*);
+static void* struct_S_SGet_li(void*);
+static void* struct_S_SGet_li_BGet(void*);
+static void struct_S_SGet_li_BSet(void*, void*);
+static void struct_S_SGet_li_LSet(void*, int, int32_t);
+static bool struct_S_SGet_li_LContains(void*, int32_t);
+static int struct_S_SGet_li_LCount(void*);
+static bool struct_S_SGet_li_LInsertAt(void*, int, int32_t);
+static bool struct_S_SGet_li_LRemoveAt(void*, int);
+static void struct_S_SGet_li_LAppend(void*, int32_t);
+static int32_t struct_S_SGet_li_LGet(void*, int);
+static void* struct_S_SGet_li_LGet_BGet(void*);
+static void struct_S_SGet_li_LGet_BSet(void*, void*);
+static void struct_S_SSet_str(void*, char*);
+static char* struct_S_SGet_str(void*);
+static void* struct_S_SGet_str_BGet(void*);
+static void struct_S_SGet_str_BSet(void*, void*);
+static void* create_struct_S();
+static void* list_struct_S_BNew(void*);
+static void* list_struct_S_BGet(void*);
+static void list_struct_S_BSet(void*, void*);
+static void list_struct_S_LSet(void*, int, void*);
+static bool list_struct_S_LContains(void*, void*);
+static int list_struct_S_LCount(void*);
+static bool list_struct_S_LInsertAt(void*, int, void*);
+static bool list_struct_S_LRemoveAt(void*, int);
+static void list_struct_S_LAppend(void*, void*);
+static void* list_struct_S_LGet(void*, int);
+static void* list_struct_S_LGet_BGet(void*);
+static void list_struct_S_LGet_BSet(void*, void*);
+static void list_struct_S_LGet_SSet_li(void*, int, void*);
+static void* list_struct_S_LGet_SGet_li(void*, int);
+static void* list_struct_S_LGet_SGet_li_BGet(void*, int);
+static void list_struct_S_LGet_SGet_li_BSet(void*, int, void*);
+static void list_struct_S_LGet_SGet_li_LSet(void*, int, int, int32_t);
+static bool list_struct_S_LGet_SGet_li_LContains(void*, int, int32_t);
+static int list_struct_S_LGet_SGet_li_LCount(void*, int);
+static bool list_struct_S_LGet_SGet_li_LInsertAt(void*, int, int, int32_t);
+static bool list_struct_S_LGet_SGet_li_LRemoveAt(void*, int, int);
+static void list_struct_S_LGet_SGet_li_LAppend(void*, int, int32_t);
+static int32_t list_struct_S_LGet_SGet_li_LGet(void*, int, int);
+static void* list_struct_S_LGet_SGet_li_LGet_BGet(void*, int);
+static void list_struct_S_LGet_SGet_li_LGet_BSet(void*, int, void*);
+static void list_struct_S_LGet_SSet_str(void*, int, char*);
+static char* list_struct_S_LGet_SGet_str(void*, int);
+static void* list_struct_S_LGet_SGet_str_BGet(void*, int);
+static void list_struct_S_LGet_SGet_str_BSet(void*, int, void*);
+static void* create_list_struct_S();
+static void* cell_C3_BNew(void*);
+static void* cell_C3_BGet(void*);
+static void cell_C3_BSet(void*, void*);
+static void cell_C3_SSet_i(void*, int32_t);
+static int32_t cell_C3_SGet_i(void*);
+static void* cell_C3_SGet_i_BGet(void*);
+static void cell_C3_SGet_i_BSet(void*, void*);
+static void cell_C3_SSet_li(void*, void*);
+static void* cell_C3_SGet_li(void*);
+static void* cell_C3_SGet_li_BGet(void*);
+static void cell_C3_SGet_li_BSet(void*, void*);
+static void cell_C3_SGet_li_LSet(void*, int, int32_t);
+static bool cell_C3_SGet_li_LContains(void*, int32_t);
+static int cell_C3_SGet_li_LCount(void*);
+static bool cell_C3_SGet_li_LInsertAt(void*, int, int32_t);
+static bool cell_C3_SGet_li_LRemoveAt(void*, int);
+static void cell_C3_SGet_li_LAppend(void*, int32_t);
+static int32_t cell_C3_SGet_li_LGet(void*, int);
+static void* cell_C3_SGet_li_LGet_BGet(void*);
+static void cell_C3_SGet_li_LGet_BSet(void*, void*);
+static void cell_C3_SSet_ls(void*, void*);
+static void* cell_C3_SGet_ls(void*);
+static void* cell_C3_SGet_ls_BGet(void*);
+static void cell_C3_SGet_ls_BSet(void*, void*);
+static void cell_C3_SGet_ls_LSet(void*, int, void*);
+static bool cell_C3_SGet_ls_LContains(void*, void*);
+static int cell_C3_SGet_ls_LCount(void*);
+static bool cell_C3_SGet_ls_LInsertAt(void*, int, void*);
+static bool cell_C3_SGet_ls_LRemoveAt(void*, int);
+static void cell_C3_SGet_ls_LAppend(void*, void*);
+static void* cell_C3_SGet_ls_LGet(void*, int);
+static void* cell_C3_SGet_ls_LGet_BGet(void*);
+static void cell_C3_SGet_ls_LGet_BSet(void*, void*);
+static void cell_C3_SGet_ls_LGet_SSet_li(void*, int, void*);
+static void* cell_C3_SGet_ls_LGet_SGet_li(void*, int);
+static void* cell_C3_SGet_ls_LGet_SGet_li_BGet(void*, int);
+static void cell_C3_SGet_ls_LGet_SGet_li_BSet(void*, int, void*);
+static void cell_C3_SGet_ls_LGet_SGet_li_LSet(void*, int, int, int32_t);
+static bool cell_C3_SGet_ls_LGet_SGet_li_LContains(void*, int, int32_t);
+static int cell_C3_SGet_ls_LGet_SGet_li_LCount(void*, int);
+static bool cell_C3_SGet_ls_LGet_SGet_li_LInsertAt(void*, int, int, int32_t);
+static bool cell_C3_SGet_ls_LGet_SGet_li_LRemoveAt(void*, int, int);
+static void cell_C3_SGet_ls_LGet_SGet_li_LAppend(void*, int, int32_t);
+static int32_t cell_C3_SGet_ls_LGet_SGet_li_LGet(void*, int, int);
+static void* cell_C3_SGet_ls_LGet_SGet_li_LGet_BGet(void*, int);
+static void cell_C3_SGet_ls_LGet_SGet_li_LGet_BSet(void*, int, void*);
+static void cell_C3_SGet_ls_LGet_SSet_str(void*, int, char*);
+static char* cell_C3_SGet_ls_LGet_SGet_str(void*, int);
+static void* cell_C3_SGet_ls_LGet_SGet_str_BGet(void*, int);
+static void cell_C3_SGet_ls_LGet_SGet_str_BSet(void*, int, void*);
+static void cell_C3_SSet_s(void*, void*);
+static void* cell_C3_SGet_s(void*);
+static void* cell_C3_SGet_s_BGet(void*);
+static void cell_C3_SGet_s_BSet(void*, void*);
+static void cell_C3_SGet_s_SSet_li(void*, void*);
+static void* cell_C3_SGet_s_SGet_li(void*);
+static void* cell_C3_SGet_s_SGet_li_BGet(void*);
+static void cell_C3_SGet_s_SGet_li_BSet(void*, void*);
+static void cell_C3_SGet_s_SGet_li_LSet(void*, int, int32_t);
+static bool cell_C3_SGet_s_SGet_li_LContains(void*, int32_t);
+static int cell_C3_SGet_s_SGet_li_LCount(void*);
+static bool cell_C3_SGet_s_SGet_li_LInsertAt(void*, int, int32_t);
+static bool cell_C3_SGet_s_SGet_li_LRemoveAt(void*, int);
+static void cell_C3_SGet_s_SGet_li_LAppend(void*, int32_t);
+static int32_t cell_C3_SGet_s_SGet_li_LGet(void*, int);
+static void* cell_C3_SGet_s_SGet_li_LGet_BGet(void*);
+static void cell_C3_SGet_s_SGet_li_LGet_BSet(void*, void*);
+static void cell_C3_SGet_s_SSet_str(void*, char*);
+static char* cell_C3_SGet_s_SGet_str(void*);
+static void* cell_C3_SGet_s_SGet_str_BGet(void*);
+static void cell_C3_SGet_s_SGet_str_BSet(void*, void*);
+static void* create_cell_C3();
+static void* list_I32_BNew(void*);
+static void* list_I32_BGet(void*);
+static void list_I32_BSet(void*, void*);
+static void list_I32_LSet(void*, int, int32_t);
+static bool list_I32_LContains(void*, int32_t);
+static int list_I32_LCount(void*);
+static bool list_I32_LInsertAt(void*, int, int32_t);
+static bool list_I32_LRemoveAt(void*, int);
+static void list_I32_LAppend(void*, int32_t);
+static int32_t list_I32_LGet(void*, int);
+static void* list_I32_LGet_BGet(void*);
+static void list_I32_LGet_BSet(void*, void*);
+static void* create_list_I32();
+static void* cell_C2_BNew(void*);
+static void* cell_C2_BGet(void*);
+static void cell_C2_BSet(void*, void*);
+static void cell_C2_SSet_li(void*, void*);
+static void* cell_C2_SGet_li(void*);
+static void* cell_C2_SGet_li_BGet(void*);
+static void cell_C2_SGet_li_BSet(void*, void*);
+static void cell_C2_SGet_li_LSet(void*, int, int32_t);
+static bool cell_C2_SGet_li_LContains(void*, int32_t);
+static int cell_C2_SGet_li_LCount(void*);
+static bool cell_C2_SGet_li_LInsertAt(void*, int, int32_t);
+static bool cell_C2_SGet_li_LRemoveAt(void*, int);
+static void cell_C2_SGet_li_LAppend(void*, int32_t);
+static int32_t cell_C2_SGet_li_LGet(void*, int);
+static void* cell_C2_SGet_li_LGet_BGet(void*);
+static void cell_C2_SGet_li_LGet_BSet(void*, void*);
+static void cell_C2_SSet_str(void*, char*);
+static char* cell_C2_SGet_str(void*);
+static void* cell_C2_SGet_str_BGet(void*);
+static void cell_C2_SGet_str_BSet(void*, void*);
+static void* create_cell_C2();
+static void* cell_C1_BNew(void*);
+static void* cell_C1_BGet(void*);
+static void cell_C1_BSet(void*, void*);
+static void cell_C1_SSet_i(void*, int32_t);
+static int32_t cell_C1_SGet_i(void*);
+static void* cell_C1_SGet_i_BGet(void*);
+static void cell_C1_SGet_i_BSet(void*, void*);
+static void cell_C1_SSet_str(void*, char*);
+static char* cell_C1_SGet_str(void*);
+static void* cell_C1_SGet_str_BGet(void*);
+static void cell_C1_SGet_str_BSet(void*, void*);
+static void* create_cell_C1();
+void* lock_cell(int64_t, int32_t);
+void* Unbox(void*);
+

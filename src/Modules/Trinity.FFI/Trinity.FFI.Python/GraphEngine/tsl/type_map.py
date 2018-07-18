@@ -19,31 +19,31 @@ def type_map_spec(py_type) -> TSLTypeSpec:
     return py_type
 
 
-@type_map_spec.match(chr)
+@type_map_spec.case.ret_pattern(chr)
 @const_return
 def type_map_spec(_):
     return PrimitiveSpec("char", chr)
 
 
-@type_map_spec.match(np.int64)
+@type_map_spec.case.ret_pattern(np.int64)
 @const_return
 def type_map_spec(_):
-    return PrimitiveSpec("int64", np.int64)
+    return PrimitiveSpec("int64_t", np.int64)
 
 
-@type_map_spec.match(int)
+@type_map_spec.case.ret_pattern(int)
 @const_return
 def type_map_spec(_):
-    return PrimitiveSpec("int32", int)
+    return PrimitiveSpec("int32_t", int)
 
 
-@type_map_spec.match(str)
+@type_map_spec.case.ret_pattern(str)
 @const_return
 def type_map_spec(_):
-    return PrimitiveSpec('string', str)
+    return PrimitiveSpec('wchar*', str)
 
 
-@type_map_spec.match(float)
+@type_map_spec.case.ret_pattern(float)
 @const_return
 def type_map_spec(_):
     return PrimitiveSpec("double", float)
@@ -57,7 +57,7 @@ def _generic_type_map(typ_tuple):
     return ListSpec(_generic_type_map(typ_tuple[1]))
 
 
-@type_map_spec.match(list)
+@type_map_spec.case(list)
 def type_map_spec(typ: typing.List):
     # noinspection PyUnresolvedReferences
     trees = typ._subs_tree()
@@ -66,11 +66,11 @@ def type_map_spec(typ: typing.List):
     return _generic_type_map(trees)
 
 
-@type_map_spec.match(TSLStruct)
+@type_map_spec.case(TSLStruct)
 def type_map_spec(typ: TSLStruct):
     return typ.get_spec()
 
 
-@type_map_spec.match(None)
+@type_map_spec.case(None)
 def type_map_spec(typ):
     return typ.__forward_arg__

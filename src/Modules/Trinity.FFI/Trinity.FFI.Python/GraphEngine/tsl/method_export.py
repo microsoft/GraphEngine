@@ -2,12 +2,17 @@ from .type_sys import *
 from .type_map import *
 from .type_verbs import *
 from .mangling import mangling
-
+from Redy.Opt import feature, constexpr, const
 from Redy.Tools.TypeInterface import Module
 from Redy.Magic.Pattern import Pattern
 from Redy.Magic.Classic import cast, execute
 from typing import Type, List, Tuple
+from ..err import  *
 
+from collections import namedtuple
+
+staging = (const, constexpr)
+_undef = object()
 
 def type_spec_to_name(typ: TSLTypeSpec) -> str:
     """
@@ -70,14 +75,22 @@ def make_setter_getter_for_general(_getter, _setter, object_cls: Type[TSLObject]
     return setter
 
 
-@tsl_generate_methods.match(TSLStruct)
-def tsl_generate_methods(tsl_session, cls_def: Type[TSLObject]):
+def _render_field_err_info(typename, field):
+    return 'Invalid field {} visiting for type {}.'.format(typename, field)
+
+
+@tsl_generate_methods.case(TSLStruct)
+def tsl_generate_methods(tsl_session, cls_def):
     spec: StructSpec = cls_def.get_spec()
     typename = type_spec_to_name(spec)
+
+    non_primitive_offset = 0
+    non_primitive_field_types: typing.List[typing.Type[TSLNonPrimitiveObject]] = []
+    properties = []
     for field_name, field_spec in spec.fields.items():
+        is_primitive = isinstance(field_spec, PrimitiveSpec)
 
         _field_name = mangling(field_name)
-
         getter_name = SGet(typename, _field_name).__str__()
         setter_name = SSet(typename, _field_name).__str__()
         _getter = getattr(tsl_session.module, getter_name)
@@ -89,50 +102,128 @@ def tsl_generate_methods(tsl_session, cls_def: Type[TSLObject]):
         # cell.some_struct = some_struct
         # print (cell.bar)
 
-        if isinstance(field_spec, PrimitiveSpec):
-            setter = make_setter_getter_for_primitive(_getter, _setter)
-        else:
-            field_cls = tsl_session.type_specs_to_type[field_spec]
-            setter = make_setter_getter_for_general(_getter, _setter, field_cls)
 
-        setattr(cls_def, field_name, setter)
+
+        @property
+        @feature(staging)
+        def getter(self: TSLStruct):
+            struct_get: const = _getter
+            if constexpr[is_primitive]:
+                return struct_get(self.__accessor__)
+            else:
+                # return new proxy
+                field_types = self.__non_primitive_types__
+                field: TSLNonPrimitiveObject = field_types[constexpr[non_primitive_offset]].new_proxy()
+                field.__accessor__ = struct_get(self.__accessor__)
+                return field
+
+                # fields = self.__non_primitive__
+                # field: TSLNonPrimitiveObject = fields[constexpr[non_primitive_offset]]
+                # if field.__accessor__ is None:
+                #     field.__accessor__ = struct_get(self.__accessor__)
+                # return field
+
+        @getter.setter
+        @feature(staging)
+        def setter(self: TSLStruct, value):
+            struct_set: const = _setter
+            if constexpr[is_primitive]:
+                struct_set(self.__accessor__, value)
+            else:
+                assert isinstance(value, TSLObject)
+                struct_set(self.__accessor__, value.__accessor__)
+                #
+                # fields = self.__non_primitive__
+                # # print(fields, constexpr[non_primitive_offset])
+                # fields[constexpr[non_primitive_offset]] = value
+                # struct_set(self.__accessor__, value.__accessor__)
+                # # delete
+                # if value.__accessor__ is None:
+                #     self.__accessor__ = None
+
+        @setter.deleter
+        def deleter(self):
+            struct_set: const = _setter
+            if constexpr[is_primitive]:
+                return struct_set(self.__accessor__, None)
+            else:
+                struct_set(self.__accessor__, None)
+                # fields = self.__non_primitive__
+                # field: TSLNonPrimitiveObject = fields[constexpr[non_primitive_offset]]
+                # acc = field.__accessor__
+                # if acc is not None:
+                #     struct_set(self.__accessor__, None)
+                #     field.__accessor__ = None
+
+        if not is_primitive:
+            field_cls = tsl_session.type_specs_to_type[field_spec]
+            non_primitive_field_types.append(field_cls)
+            non_primitive_offset += 1
+
+        properties.append(setter)
+        setattr(cls_def, field_name, deleter)
+
+    non_primitive_field_types = tuple(non_primitive_field_types)
+    cls_def.__non_primitive_types__ = non_primitive_field_types
+
+    # create a proxy without actual data allocation
+    # >>> MyType.new_proxy()
+    @feature(staging)
+    def new_proxy():
+        cls: const = cls_def
+        self = cls.__new__(cls)
+        self.__accessor__ = None
+        if constexpr[non_primitive_field_types]:
+            self.__non_primitive__ = [each.new_proxy() for each in constexpr[non_primitive_field_types]]
+        return self
+
+    cls_def.new_proxy = staticmethod(new_proxy)
+
+    # __init__ method
+    # New a Cell/Struct
+    # >>> my_cell = MyCell()
+    new_struct_fn_name = BNew(typename).__str__()
+    _new_struct = getattr(tsl_session.module, new_struct_fn_name)
+
+    @feature(staging)
+    def init(self: TSLStruct):
+        struct_initializer: const = _new_struct
+        self.__accessor__ =  struct_initializer()
+        if constexpr[non_primitive_field_types]:
+            self.__non_primitive__ = [each() for each in constexpr[non_primitive_field_types]]
+
+    cls_def.__init__ = init
 
     # BGet. deepcopy.
-    # new_cell = cell.deepcopy()
-
+    # >>> new_cell = cell.deepcopy()
     deepcopy_fn_name = BGet(typename).__str__()
     _deepcopy = getattr(tsl_session.module, deepcopy_fn_name)
 
+    @feature(staging)
     def deepcopy(self) -> cls_def:
-        new = cls_def.__new__(cls_def)
-        new.__accessor__ = _deepcopy(self.__accessor__)
+        struct_deepcopy: const = _deepcopy
+        proxy_creator: const = new_proxy
+        new = proxy_creator()
+        new.__accessor__ = struct_deepcopy(self.__accessor__)
         return new
 
     cls_def.deepcopy = deepcopy
 
     # BSet. change value by reference.
-    # cell &= another_cell
-    reference_assign_fn_name = BGet(typename).__str__()
+    # >>> cell.ref_assign(another_cell)
+    reference_assign_fn_name = BSet(typename).__str__()
     _reference_assign = getattr(tsl_session.module, reference_assign_fn_name)
 
+    @feature(staging)
     def reference_assign(self, value):
         assert isinstance(value, TSLObject)
-        _reference_assign(self.__accessor__, value.__accessor__)
+        struct_ref_assign: const = _reference_assign
+        struct_ref_assign(self.__accessor__, value.__accessor__)
 
-    cls_def.__iand__ = reference_assign
-
-    # New a Cell/Struct
-    # my_cell = MyCell()
-    new_struct_fn_name = BNew(typename).__str__()
-    _new_struct = getattr(tsl_session.module, new_struct_fn_name)
-
-    def new_struct(self):
-        self.__accessor__ = _new_struct()
-
-    cls_def.__init__ = new_struct
+    cls_def.ref_assign = reference_assign
 
 
-@tsl_generate_methods.match(TSLList)
+@tsl_generate_methods.case(TSLList)
 def tsl_generate_methods(tsl_session, cls_def):
     spec: ListSpec = cls_def.get_spec()
 
@@ -154,66 +245,116 @@ def tsl_generate_methods(tsl_session, cls_def):
 
     # Index getter/setter, insert, remove, append
     if isinstance(spec.elem_type, PrimitiveSpec):
+        @feature(staging)
         def __getitem__(self, i: int):
-            return _get(self.__accessor__, i)
+            lst_get: const = _get
+            return lst_get(self.__accessor__, i)
 
+        @feature(staging)
         def __setitem__(self, i: int, value):
             assert not isinstance(value, (TSLList, TSLStruct))
-            _set(self.__accessor__, i, value)
+            lst_set: const = _set
+            lst_set(self.__accessor__, i, value)
 
+        @feature(staging)
         def insert(self, i: int, value) -> bool:
-            return _insert(self.__accessor__, i, value)
+            lst_insert: const = _insert
+            return lst_insert(self.__accessor__, i, value)
 
+        @feature(staging)
         def append(self, value):
-            _append(self.__accessor__, value)
+            lst_append: const = _append
+            lst_append(self.__accessor__, value)
 
     else:
-        field_cls = tsl_session.type_specs_to_type[spec.elem_type]
+        field_cls : TSLNonPrimitiveObject = tsl_session.type_specs_to_type[spec.elem_type]
 
+        @feature(staging)
         def __getitem__(self, i: int):
-            new = field_cls.__new__(field_cls)
-            new.__accessor__ = _get(self.__accessor__, i)
-            return new
+            cls: const = field_cls
+            lst_get: const = _get
+            elem = cls.new_proxy()
+            elem.__accessor__ = lst_get(self.__accessor__, i)
+            return elem
 
+        @feature(staging)
         def __setitem__(self, i: int, value):
             assert isinstance(value, (TSLList, TSLStruct))
-            _set(self.__accessor__, i, value.__accessor__)
+            lst_set: const = _set
+            lst_set(self.__accessor__, i, value.__accessor__)
 
+        @feature(staging)
         def insert(self, i: int, value):
-            return _insert(self.__accessor__, i, value.__accessor__)
+            lst_insert: const = _insert
+            return lst_insert(self.__accessor__, i, value.__accessor__)
 
+        @feature(staging)
         def append(self, value):
-            _append(self.__accessor__, value.__accessor__)
+            lst_append: const = _append
+            lst_append(self.__accessor__, value.__accessor__)
 
-    def remove_at(self, i: int):
-        return _remove(self.__accessor__, i)
+    @feature(staging)
+    def __delitem__(self, i: int):
+        return constexpr[_remove](self.__accessor__, i)
 
+    # create a proxy without actual data allocation
+    # >>> MyList.new_proxy().__accessor__ is None # => True
+    @feature(staging)
+    def new_proxy():
+        cls: const = cls_def
+        self = cls.__new__(cls)
+        self.__accessor__ = None
+        return self
+
+    # initialize a List with allocation
+    def __init__(self):
+        self.__accessor__ = _new_lst()
+
+    cls_def.__init__ = __init__
     cls_def.__getitem__ = __getitem__
     cls_def.__setitem__ = __setitem__
+    cls_def.__delitem__ = __delitem__
+
     cls_def.append = append
-    cls_def.remove_at = remove_at
     cls_def.insert = insert
 
     # len(lst: TSLList) -> int
+    @feature(staging)
     def __len__(self):
-        return _count(self.__accessor__)
+        count: const = _count
+        return count(self.__accessor__)
 
     cls_def.__len__ = __len__
 
-    # elem in lst
-    if isinstance(spec.elem_type, PrimitiveSpec):
-        def __contains__(self, elem):
+    # test is elem in lst
+    @feature(staging)
+    def __contains__(self, elem):
+        contains: const = _contains
+        if constexpr[isinstance(spec.elem_type, PrimitiveSpec)]:
             assert not isinstance(elem, (TSLStruct, TSLList))
-            return _contains(self.__accessor__, elem)
-    else:
-        def __contains__(self, elem):
+            return contains(self.__accessor__, elem)
+        else:
             assert isinstance(elem, (TSLList, TSLStruct))
-            return _contains(self.__accessor__, elem.__accessor__)
+            return contains(self.__accessor__, elem.__accessor__)
 
     cls_def.__contains__ = __contains__
 
-    # New a List
-    def new_lst(self):
-        self.__accessor__ = _new_lst()
+    @feature(staging)
+    def deepcopy(self) -> cls_def:
+        lst_deepcopy: const = _deepcopy
+        proxy_creator: const = new_proxy
+        new = proxy_creator()
+        new.__accessor__ = lst_deepcopy(self.__accessor__)
+        return new
 
-    cls_def.__init__ = new_lst
+    cls_def.deepcopy = deepcopy
+
+    # reference_assign
+
+    @feature(staging)
+    def reference_assign(self, value):
+        assert isinstance(value, TSLObject)
+        lst_ref_assign: const = _reference_assign
+        lst_ref_assign(self.__accessor__, value.__accessor__)
+
+    cls_def.ref_assign = reference_assign

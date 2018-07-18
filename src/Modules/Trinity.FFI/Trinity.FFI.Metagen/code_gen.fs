@@ -30,7 +30,7 @@ let rec ty_to_name (recursive_structure : bool) =
         else "list"
     | { TypeCode = CELL _; TypeName = name } -> sprintf "cell_%s" <| mangling name
     | { TypeCode = STRUCT; TypeName = name } -> sprintf "struct_%s" <| mangling name
-    | { TypeName = name } -> name.ToLower()
+    | { TypeCode = code} -> code.ToString()
 
 let null_type_string = "void"
 
@@ -50,7 +50,7 @@ let ty_to_string tydesc =
     | BOOL -> "bool"
     | CHAR -> "char"
     | STRING -> "char*"
-    | U8STRING -> "wchar*"
+    | U8STRING -> "wchar_t*"
     | _ -> "void*"
 
 let chaining_verb_to_name (verb : Verb) =
@@ -102,7 +102,7 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
             | _ -> failwith "Only SGet/LGet requires method chaining composition."
             |> function
             | { verb_str_lst = verb_str_lst; pos_arg_types = pos_arg_types; ret_type = ret_type } ->
-                let verb_str = sprintf "%s_%s" name_sig <| chaining_verb_to_name l
+                let verb_str = chaining_verb_to_name l
                 verb_str :: verb_str_lst, pos_arg_types, ret_type
         | _ ->
             (** in the final node of a method chain *)
@@ -143,7 +143,7 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
             | info -> failwith <| sprintf "NotImplemented verb %A on %s" info tydesc.TypeName
             |> function
             | pos_arg_types, ret_type ->
-                let verb_str = sprintf "%s_%s" name_sig <| chaining_verb_to_name verb
+                let verb_str = chaining_verb_to_name verb
                 [ verb_str ], pos_arg_types, ret_type
         |> function
         | verb_str_lst, pos_arg_types, ret_type ->
@@ -164,8 +164,10 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
     let parameters =
         [ for i in 1..(pos_arg_types.Length) -> sprintf "arg%d" i ]
 
+    // reversed
     let typed_parameters =
-        List.zip pos_arg_types parameters |> List.map (fun (parameter, ty_str) -> sprintf "%s %s" ty_str parameter)
+        List.zip pos_arg_types (parameters |> List.rev) |> List.map (fun (parameter, ty_str) -> sprintf "%s %s" ty_str parameter)
+    
     let types_string : string = join pos_arg_types
     let args_string : string = join parameters
     let typed_args_string : string = join typed_parameters
@@ -179,7 +181,6 @@ let code_gen (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
     let tb = hashmap()
     let generate = single_method'code_gen tb
     let ty_recur_naming = ty_to_name true
-    let ty_non_recur_naming = ty_to_name false 
     let (decls, defs) = 
         [ 
         for (ty, verb_lst) in tsl_specs do
@@ -200,12 +201,12 @@ let code_gen (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
                 sprintf "\n
 static void* create_%s(){ 
     CellAccessor* accessor = new CellAccessor();
-    auto errCode = %s_%s_BNew(accessor);
+    auto errCode = %s_BNew(accessor);
     if(errCode) 
         throw errCode;
     return accessor;
 }
-                " ty_name ty_name (ty |> ty_non_recur_naming) 
+                " ty_name ty_name
             yield (initializer_decl, initializer_body)
 
         let lock_cell_decl = "void* lock_cell(int64_t, int32_t);"
@@ -222,6 +223,15 @@ void* UseCell(int64_t cellid, int32_t options)
 }
             "
         yield (lock_cell_decl, lock_cell_body)
+
+        let basic_ref_get_decl = "void* Unbox(void*);"
+        let basic_ref_get_body = "
+void* Unbox(void* object)
+{
+  return cast_object(object);
+}
+        "
+        yield (basic_ref_get_decl, basic_ref_get_body)
 
         ] |> List.unzip
         

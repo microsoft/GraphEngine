@@ -24,8 +24,6 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Trinity.FFI.Metagen", "Trin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.FFI.Metagen.UnitTests", "Trinity.FFI.Metagen.UnitTests\Trinity.FFI.Metagen.UnitTests.csproj", "{B27032C1-342B-40E1-AB59-E33E73EA8B70}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSFunctionFactory", "CSFunctionFactory\CSFunctionFactory.csproj", "{89C0618B-9EAD-4591-B935-5CF2F0AAEE0A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,10 +61,6 @@ Global
 		{B27032C1-342B-40E1-AB59-E33E73EA8B70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B27032C1-342B-40E1-AB59-E33E73EA8B70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B27032C1-342B-40E1-AB59-E33E73EA8B70}.Release|Any CPU.Build.0 = Release|Any CPU
-		{89C0618B-9EAD-4591-B935-5CF2F0AAEE0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{89C0618B-9EAD-4591-B935-5CF2F0AAEE0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{89C0618B-9EAD-4591-B935-5CF2F0AAEE0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{89C0618B-9EAD-4591-B935-5CF2F0AAEE0A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
