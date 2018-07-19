@@ -19,6 +19,7 @@ inc_ffi   = relpath('${TRINITY_FFI_NATIVE_DIR}', build_dir)
 inc_tri   = relpath('${TRINITY_C_INCLUDE_DIR}', build_dir)
 inc_jit   = relpath('${GRAPHENGINE_JIT_NATIVE_DIR}', build_dir)
 whl_dir   = relpath('dist', build_dir)
+dep_path  = relpath(str(Path(src_dir, "GraphEngine", "DotNet", "Dependencies.csproj")), build_dir)
 
 with open(version_filename) as f:
     version = Version(f.read().strip())
@@ -50,6 +51,7 @@ setup(name='GraphEngine',
       install_requires=['toolz', 'Redy>=0.1.30', 'pythonnet'],
       package_dir={ '' : src_dir},
       packages=['GraphEngine', 'GraphEngine.tsl', 'GraphEngine.tsl.type', 'GraphEngine.DotNet'],
+      data_files=[('GraphEngine/DotNet', [dep_path])],
       ext_package='GraphEngine',
       ext_modules=[ge_module],
       # encoding='gbk',
