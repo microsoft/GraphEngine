@@ -27,12 +27,7 @@ class TSL:
 
     def __call__(self, cls_def: typing.Type[TSLType]):
         if issubclass(cls_def, List):
-            mro = cls_def.__mro__
-            lst_types = tuple(ty for ty in mro if issubclass(ty, List))
-            if len(lst_types) is not 1:
-                raise TypeError("Invalid list bases: {}".format(', '.join(each.__name__ for each in lst_types)))
-            lst_type = lst_types[0]
-            spec = type_map_spec(lst_type)
+            spec = type_map_spec(cls_def)
             cls_def.__ty_spec__ = spec
         self._root_types[repr(cls_def.get_spec())] = cls_def
         if self._module:
@@ -43,7 +38,7 @@ class TSL:
     @property
     def to_tsl(self):
         return '\n'.join(
-                str(typedef.get_spec()) for typedef in self._root_types.values() if not isinstance(typedef, list))
+                str(typedef.get_spec()) for typedef in self._root_types.values() if not issubclass(typedef, List))
 
     def bind(self):
         self._module = _AttrGetProxy(build_module(self.to_tsl, self._namespace))

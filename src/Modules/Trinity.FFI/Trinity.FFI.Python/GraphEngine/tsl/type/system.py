@@ -10,7 +10,7 @@ T = typing.TypeVar('T')
 
 
 def _remove_bases(cls: type):
-    return type(cls.__name__, (), {**cls.__dict__})
+    return type(cls.__name__, tuple(each for each in cls.__bases__ if each is not TSLType), {**cls.__dict__})
 
 
 class TSLTypeMeta(type):
@@ -50,7 +50,8 @@ class Struct(TSLType):
         return StructTypeSpec(cls.__name__, ImmutableDict((k, type_map_spec(v)) for k, v in annotations.items()))
 
 
-class Cell:
+@_remove_bases
+class Cell(Struct, TSLType):
 
     @classmethod
     @discrete_cache
@@ -66,8 +67,9 @@ class List(typing.List[T]):
     __args__ = None
     __garg__: type
 
-    def get_spec(self):
-        return self.__ty_spec__
+    @classmethod
+    def get_spec(cls):
+        return cls.__ty_spec__
 
 
 TSLType: typing.Type[typing.Union[List, Struct, Cell]]
@@ -170,33 +172,10 @@ def type_map_spec(_):
 def type_map_spec(_):
     return PrimitiveTypeSpec("double", 'DOUBLE')
 
-
-# def _generic_type_map(typ_tuple):
-#     if not isinstance(typ_tuple, tuple):
-#         return type_map_spec(typ_tuple)
-#
-#     # only work for list generic
-#     return ListTypeSpec(_generic_type_map(typ_tuple[1]))
-
-
 @type_map_spec.case(List)
 def type_map_spec(typ: List):
     # noinspection PyUnresolvedReferences
     return ListTypeSpec(type_map_spec(typ.__garg__))
-
-
-#
-
-# """      # trees = typ._subs_tree()
-
-# if not isinstance(trees, tuple):
-
-#     raise TypeError("List without type params")
-
-# return _generic_type_map(trees)
-
-# """
-
 
 @type_map_spec.case('established_ty')
 def type_map_spec(typ: TSLType):
@@ -213,7 +192,7 @@ if __name__ == '__main__':
         a: int
 
 
-    class S(Struct):
+    class S(Cell):
         i: int
         a: 'A'
         c: List[List[A]]

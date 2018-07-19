@@ -39,5 +39,6 @@ class List(metaclass=_List_Ty_Annotate):
     __args__ = None
     __garg__: type
 
+    @classmethod
     def get_spec(self):
         return self.__ty_spec__

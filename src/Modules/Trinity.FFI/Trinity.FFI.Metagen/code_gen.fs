@@ -137,7 +137,7 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
                 let memb_ty = get_member_type field
                 [], "void*" // SGet always get 
             (** BNew takes no subject argument. **)
-            | BNew -> [], "void*"
+            | BNew -> [], "int32_t"
             | info -> failwith <| sprintf "NotImplemented verb %A on %s" info tydesc.TypeName
             |> function
             | pos_arg_types, ret_type ->
@@ -181,11 +181,10 @@ let code_gen (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
     let (decls, defs) = 
         [ 
         for (ty, verb_lst) in tsl_specs do
-            let ty_name = ty_recur_naming ty 
-            
+            let ty_name = ty_recur_naming ty
             for verb in verb_lst do
                 let (decl, generator) = generate ty verb
-
+                      
                 let native_fn =
                     CompileFunction { DeclaringType = ty; Verb = verb }
 

@@ -281,6 +281,7 @@ def make_class(ty: typing.Type[TSLType], method_tb, cls_tb):
 
 @make_class.case(True)
 def make_class(ty: Struct, method_tb, cls_tb):
+    ty.__slots__ = getattr(ty, '__slots__', ()) + ('__accessor__', )
     spec: StructTypeSpec = ty.get_spec()
     chain = type_spec_to_name(spec)
 
@@ -396,7 +397,6 @@ def make_class(ty: List, method_tb, cls_tb):
     def ref_get(self):
         method: const = method_tb['Unbox']
         return method(self.__accessor__)
-
     ty.ref_get = ref_get
 
     @feature(staging)
