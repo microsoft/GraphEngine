@@ -1,5 +1,5 @@
 import typing
-
+from Redy.Opt import feature, constexpr
 from GraphEngine.tsl.type.system import Struct, Cell, List, type_map_spec, TSLType
 from GraphEngine.tsl.type.method_export import make_class
 from GraphEngine.DotNet.env import Env, build_module
@@ -25,12 +25,13 @@ class TSL:
         self._root_types = {}
         self._module = None
 
-    def __call__(self, cls_def: TSLType):
-        if isinstance(cls_def, list):
-            tp = getattr(cls_def, ' __orig_bases__', None)
-            if not tp:
-                raise TypeError("Require a generic list type like `class MyLi(typing.List[T]): ...`")
-            lst_type = tp[0]
+    def __call__(self, cls_def: typing.Type[TSLType]):
+        if issubclass(cls_def, List):
+            mro = cls_def.__mro__
+            lst_types = tuple(ty for ty in mro if issubclass(ty, List))
+            if len(lst_types) is not 1:
+                raise TypeError("Invalid list bases: {}".format(', '.join(each.__name__ for each in lst_types)))
+            lst_type = lst_types[0]
             spec = type_map_spec(lst_type)
             cls_def.__ty_spec__ = spec
         self._root_types[repr(cls_def.get_spec())] = cls_def

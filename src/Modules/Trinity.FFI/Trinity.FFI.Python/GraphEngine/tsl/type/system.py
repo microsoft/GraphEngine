@@ -2,12 +2,26 @@ import abc
 import numpy as np
 import typing
 from GraphEngine.tsl.type.spec import *
-from Redy.Magic.Classic import discrete_cache
+from Redy.Magic.Classic import discrete_cache, execute, const_return
 from Redy.Magic.Pattern import Pattern
-from Redy.Magic.Classic import const_return
+from GraphEngine.tsl.type._system import NotDefinedYet
+
+T = typing.TypeVar('T')
 
 
-class TSLType(abc.ABC):
+def _remove_bases(cls: type):
+    return type(cls.__name__, (), {**cls.__dict__})
+
+
+class TSLTypeMeta(type):
+    def __instancecheck__(self, instance):
+        return isinstance(instance, (Struct, List))
+
+    def __subclasscheck__(self, subclass):
+        return issubclass(subclass, (Struct, List))
+
+
+class TSLType(metaclass=TSLTypeMeta):
     __accessor__: object
     __args__ = None
 
@@ -23,9 +37,11 @@ class TSLType(abc.ABC):
         raise NotImplemented
 
 
+@_remove_bases
 class Struct(TSLType):
-    __slots__ = ('__accessor__',)
     __ty_spec__: object
+    __accessor__: object
+    __args__ = None
 
     @classmethod
     @discrete_cache
@@ -34,31 +50,33 @@ class Struct(TSLType):
         return StructTypeSpec(cls.__name__, ImmutableDict((k, type_map_spec(v)) for k, v in annotations.items()))
 
 
-class Cell(Struct):
+class Cell:
 
     @classmethod
     @discrete_cache
     def get_spec(cls):
         annotations: dict = getattr(cls, '__annotations__', {})
+        # noinspection PyArgumentList
         return CellTypeSpec(cls.__name__, ImmutableDict((k, type_map_spec(v)) for k, v in annotations.items()))
 
 
-class List(TSLType):
+class List(typing.List[T]):
     __ty_spec__: object
+    __accessor__: object
+    __args__ = None
+    __garg__: type
 
     def get_spec(self):
         return self.__ty_spec__
 
 
-class NotDefinedYet:
-    def __init__(self, name):
-        self.name = name
+TSLType: typing.Type[typing.Union[List, Struct, Cell]]
 
-    def __repr__(self):
-        return self.name
 
-    def __str__(self):
-        raise NotImplemented
+@execute
+def __deep_dark_fantasy__():
+    from GraphEngine.tsl.type._system import List
+    globals()['List'] = List
 
 
 class Proxy:
@@ -78,11 +96,11 @@ def type_map_spec(ty) -> TypeSpec:
     # noinspection PyUnresolvedReferences,PyProtectedMember
     if isinstance(ty, str):
         return "not_defined_yet"
-    elif issubclass(ty, typing.List):
-        return list
+    elif issubclass(ty, List):
+        return List
     elif issubclass(ty, TSLType):
         return 'established_ty'
-    elif isinstance(ty, typing._ForwardRef):
+    elif isinstance(ty, NotDefinedYet):
         return None
     return ty
 
@@ -153,21 +171,31 @@ def type_map_spec(_):
     return PrimitiveTypeSpec("double", 'DOUBLE')
 
 
-def _generic_type_map(typ_tuple):
-    if not isinstance(typ_tuple, tuple):
-        return type_map_spec(typ_tuple)
+# def _generic_type_map(typ_tuple):
+#     if not isinstance(typ_tuple, tuple):
+#         return type_map_spec(typ_tuple)
+#
+#     # only work for list generic
+#     return ListTypeSpec(_generic_type_map(typ_tuple[1]))
 
-    # only work for list generic
-    return ListTypeSpec(_generic_type_map(typ_tuple[1]))
 
-
-@type_map_spec.case(list)
-def type_map_spec(typ: typing.List):
+@type_map_spec.case(List)
+def type_map_spec(typ: List):
     # noinspection PyUnresolvedReferences
-    trees = typ._subs_tree()
-    if not isinstance(trees, tuple):
-        raise TypeError("List without type params")
-    return _generic_type_map(trees)
+    return ListTypeSpec(type_map_spec(typ.__garg__))
+
+
+#
+
+# """      # trees = typ._subs_tree()
+
+# if not isinstance(trees, tuple):
+
+#     raise TypeError("List without type params")
+
+# return _generic_type_map(trees)
+
+# """
 
 
 @type_map_spec.case('established_ty')
@@ -177,7 +205,7 @@ def type_map_spec(typ: TSLType):
 
 @type_map_spec.case(None)
 def type_map_spec(typ):
-    return NotDefinedYet(typ.__forward_arg__)
+    return typ
 
 
 if __name__ == '__main__':
@@ -188,7 +216,11 @@ if __name__ == '__main__':
     class S(Struct):
         i: int
         a: 'A'
-        c: typing.List[typing.List[A]]
+        c: List[List[A]]
+
+
+    class L(List[A]):
+        pass
 
 
     print(S.get_spec(), A.get_spec(), sep='\n')

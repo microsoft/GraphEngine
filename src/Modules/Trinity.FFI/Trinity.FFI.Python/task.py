@@ -24,8 +24,15 @@ class C(Cell):
 @tsl
 class S(Struct):
     i: int
+    li: List[int]
+
+
+@tsl
+class L(List[int]):
+    pass
 
 
 tsl.bind()
 
-c = C()
+l = L()
+
