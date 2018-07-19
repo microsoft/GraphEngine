@@ -4,8 +4,9 @@ setup.py
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
 from Redy.Tools.Version import Version
-from os.path import relpath
-from os import environ
+from Redy.Tools.PathLib import Path 
+from os.path import relpath 
+import os
 
 version_filename = '${CMAKE_CURRENT_SOURCE_DIR}/next_version'
 
@@ -17,6 +18,7 @@ typesys   = relpath('${typesys}', build_dir)
 inc_ffi   = relpath('${TRINITY_FFI_NATIVE_DIR}', build_dir)
 inc_tri   = relpath('${TRINITY_C_INCLUDE_DIR}', build_dir)
 inc_jit   = relpath('${GRAPHENGINE_JIT_NATIVE_DIR}', build_dir)
+whl_dir   = relpath('dist', build_dir)
 
 with open(version_filename) as f:
     version = Version(f.read().strip())
@@ -47,7 +49,7 @@ setup(name='GraphEngine',
       include_package_data=True,
       install_requires=['toolz', 'Redy>=0.1.30', 'pythonnet'],
       package_dir={ '' : src_dir},
-      packages=['GraphEngine'],
+      packages=['GraphEngine', 'GraphEngine.tsl', 'GraphEngine.tsl.type', 'GraphEngine.DotNet'],
       ext_package='GraphEngine',
       ext_modules=[ge_module],
       # encoding='gbk',
@@ -65,6 +67,14 @@ setup(name='GraphEngine',
           'Programming Language :: Python :: 3.7',
           'Programming Language :: Python :: Implementation :: CPython'],
       zip_safe=False)
+lib_dir_path = Path(lib_dir)
+for each in Path(whl_dir).list_dir(lambda path: 
+            os.path.split(path)[-1].startswith(f"GraphEngine-{str(version)}") 
+            and 
+            path.endswith('.whl')):
+    with open(str(lib_dir_path.into(each.relative())), 'wb') as w, open(str(each), 'rb') as r:
+        w.write(r.read())
+    
 
 version.increment(version_number_idx=2, increment=1)
 if version[2] is 42:
@@ -74,3 +84,4 @@ if version[1] is 42:
 
 with open(version_filename, 'w') as f:
     f.write(str(version))
+

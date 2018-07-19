@@ -6,7 +6,7 @@ Remove-GraphEngineCache
 mkdir "$REPO_ROOT\build" -Force 
 Set-Location "$REPO_ROOT\build"
 cmake -G "Visual Studio 15 2017 Win64" --host=x64 $REPO_ROOT
-cmake --build . --config Release --target install
+cmake --build . --config Release
 
 New-Package -proj $TRINITY_CORE_SLN
 Register-LocalRepo
