@@ -5,11 +5,13 @@ from setuptools import setup, find_packages
 from setuptools.extension import Extension
 from Redy.Tools.Version import Version
 from os.path import relpath
+from os import environ
 
 version_filename = '${CMAKE_CURRENT_SOURCE_DIR}/next_version'
 
 build_dir = '${CMAKE_CURRENT_BINARY_DIR}'
 src_dir   = relpath('${CMAKE_CURRENT_SOURCE_DIR}', build_dir)
+lib_dir   = relpath('${TRINITY_OUTPUT_DIR}', build_dir)
 swigcxx   = relpath('${swigcxx}', build_dir)
 typesys   = relpath('${typesys}', build_dir)
 inc_ffi   = relpath('${TRINITY_FFI_NATIVE_DIR}', build_dir)
@@ -29,7 +31,7 @@ ge_module = Extension('_ffi',
                       sources=[swigcxx, typesys],
                       include_dirs=[inc_ffi, inc_tri, inc_jit ],
                       libraries=['trinity_ffi', 'Trinity', 'GraphEngine.Jit.Native'],
-                      library_dirs=['${TRINITY_OUTPUT_DIR}'],
+                      library_dirs=[lib_dir],
                       extra_compile_args=${ext_cxx_flags},
                       extra_link_args=${ext_linker_flags})
 
@@ -40,7 +42,7 @@ setup(name='GraphEngine',
       long_description=readme,
       license='MIT',
       url='https://github.com/Microsoft/GraphEngine',
-      author='Microsoft GraphEngine Engine Team',
+      author='Microsoft GraphEngine Team',
       author_email='graph@microsoft.com',
       include_package_data=True,
       install_requires=['toolz', 'Redy>=0.1.30', 'pythonnet'],

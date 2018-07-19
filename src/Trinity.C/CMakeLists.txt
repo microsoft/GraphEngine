@@ -28,11 +28,14 @@ IF(UNIX)
     TARGET_COMPILE_DEFINITIONS(Trinity PRIVATE -DCORECLR)
     TARGET_LINK_LIBRARIES(Trinity PRIVATE crypto;ssl)
 
+    POSTBUILD_COPY_OUTPUT(Trinity      "${TRINITY_LIB_DIR}/Trinity.dll")
+    POSTBUILD_COPY_OUTPUT(Trinity      "${TRINITY_LIB_DIR}/Trinity.C.dll")
+
     INSTALL(TARGETS Trinity 
-            DESTINATION ${TRINITY_OUTPUT_DIR})
+            LIBRARY DESTINATION ${TRINITY_INSTALL_DIR})
     INSTALL(FILES ${TRINITY_LIB_DIR}/Trinity.dll 
                   ${TRINITY_LIB_DIR}/Trinity.C.dll 
-            DESTINATION ${TRINITY_OUTPUT_DIR})
+            DESTINATION ${TRINITY_INSTALL_DIR})
 
 ELSEIF(WIN32)
 
@@ -51,11 +54,15 @@ ELSEIF(WIN32)
     TARGET_LINK_LIBRARIES(Trinity      PRIVATE Psapi.lib;ws2_32.lib;Dbghelp.lib;Synchronization.lib)
     TARGET_LINK_LIBRARIES(Trinity.C    PRIVATE Psapi.lib;ws2_32.lib;Dbghelp.lib;Synchronization.lib)
 
-    #INSTALL(TARGETS Trinity Trinity.C
-            #DESTINATION ${TRINITY_OUTPUT_DIR})
+    POSTBUILD_COPY_OUTPUT(Trinity      "${PROJECT_BINARY_DIR}/Trinity.pdb")
+    POSTBUILD_COPY_OUTPUT(Trinity      "${TRINITY_LIB_DIR}/libTrinity.so")
+    POSTBUILD_COPY_OUTPUT(Trinity.C    "${PROJECT_BINARY_DIR}/Trinity.C.pdb")
+
+    INSTALL(TARGETS Trinity Trinity.C
+            DESTINATION ${TRINITY_INSTALL_DIR})
     INSTALL(FILES ${PROJECT_BINARY_DIR}/Trinity.C.pdb 
                   ${PROJECT_BINARY_DIR}/Trinity.pdb 
                   ${TRINITY_LIB_DIR}/libTrinity.so 
-            DESTINATION ${TRINITY_OUTPUT_DIR})
+            DESTINATION ${TRINITY_INSTALL_DIR})
 
 ENDIF()

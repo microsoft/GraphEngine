@@ -6,6 +6,7 @@ FIND_PROGRAM(SWIG   "swig")
 
 SET(TRINITY_FFI_NATIVE_DIR     "${CMAKE_CURRENT_SOURCE_DIR}/../Trinity.FFI.Native")
 SET(GRAPHENGINE_JIT_NATIVE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../GraphEngine.Jit/GraphEngine.Jit.Native")
+SET(TRINITY_C_INCLUDE_DIR      "${TRINITY_C_DIR}/include")
 
 FILE(GLOB_RECURSE pysrc   "${CMAKE_CURRENT_SOURCE_DIR}/GraphEngine/*.py")
 FILE(GLOB         swigi   "${TRINITY_FFI_NATIVE_DIR}/Trinity.FFI.SWIG.i")
@@ -39,5 +40,5 @@ IF (PYTHON AND SWIG)
 
     ADD_CUSTOM_TARGET(target ALL DEPENDS ${OUTPUT})
 
-    # INSTALL(CODE "execute_process(COMMAND ${PYTHON} ${SETUP_PY} install)")
+    INSTALL(CODE "execute_process(COMMAND ${PYTHON} ${SETUP_PY} install)")
 ENDIF()
