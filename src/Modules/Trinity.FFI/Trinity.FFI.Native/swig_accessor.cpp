@@ -1,14 +1,46 @@
 #include "Trinity.h"
 #include "CellAccessor.h"
-DLL_EXPORT TrinityErrorCode LockCell(IN OUT CellAccessor& accessor, IN const int32_t options)
+
+typedef TrinityErrorCode (*construct_fp_t) (CellAccessor*);
+
+DLL_EXPORT TrinityErrorCode LockCell(IN OUT CellAccessor& accessor, IN const int32_t options, IN construct_fp_t construct)
 {
-    //TODO options are dishonored!
     char* ptr;
+    auto type = accessor.type;
     auto ret =  ::CGetLockedCellInfo4CellAccessor(accessor.cellId, accessor.size, accessor.type, ptr, accessor.entryIndex);
+
+    switch (ret)
+    {
+    case TrinityErrorCode::E_SUCCESS:
+        if (type != accessor.type)
+        {
+            ::CReleaseCellLock(accessor.cellId, accessor.entryIndex);
+            ret = TrinityErrorCode::E_WRONG_CELL_TYPE;
+        }
+        break;
+    case TrinityErrorCode::E_CELL_NOT_FOUND:
+        if (options & CellAccessOptions::CreateNewOnCellNotFound)
+        {
+            ret = construct(&accessor);
+            if (ret != TrinityErrorCode::E_SUCCESS)
+            {
+                break;
+            }
+            ptr = (char*)accessor.cellPtr;
+            ret = ::CGetLockedCellInfo4AddOrUseCell(accessor.cellId, accessor.size, accessor.type, ptr, accessor.entryIndex);
+            return ret;
+        }
+        break;
+
+    }
+
     accessor.cellPtr = (int64_t)ptr;
     accessor.isCell = 1;
     accessor.malloced = 0;
+
+finish:
     return ret;
+
 }
 
 DLL_EXPORT void UnlockCell(IN const CellAccessor& accessor)

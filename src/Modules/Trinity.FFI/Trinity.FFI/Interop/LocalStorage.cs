@@ -89,6 +89,24 @@ namespace Trinity.FFI.Interop
             return Global.LocalStorage.RemoveCell(cellId);
         }
 
+        [FFIExport]
+        public static TrinityErrorCode savestorage()
+        {
+            return Global.LocalStorage.SaveStorage();
+        }
+
+        [FFIExport]
+        public static TrinityErrorCode loadstorage()
+        {
+            return Global.LocalStorage.LoadStorage();
+        }
+
+        [FFIExport]
+        public static TrinityErrorCode resetstorage()
+        {
+            return Global.LocalStorage.ResetStorage();
+        }
+
         //IEnumerable<ICellAccessor> EnumerateGenericCellAccessors(LocalMemoryStorage storage){ }
         //IEnumerable<ICell> EnumerateGenericCells(LocalMemoryStorage storage){ }
     }

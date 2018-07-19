@@ -9,29 +9,6 @@ namespace Trinity.FFI.Interop
     [FFIPrefix("cloud_")]
     internal static class CloudStorage
     {
-        #region TODO networking
-        [FFIExport]
-        public static void sync_registry(int methodId, TRINITY_FFI_SYNC_HANDLER handler)
-        {
-        }
-
-        [FFIExport]
-        public static void async_registry(int methodId, TRINITY_FFI_ASYNC_HANDLER handler)
-        {
-        }
-
-        [FFIExport]
-        public static string sync_send(int partitionId, int methodId, string content)
-        {
-            return "";
-        }
-
-        [FFIExport]
-        public static void async_send(int partitionId, int methodId, string content)
-        {
-        }
-        #endregion
-
         [FFIExport]
         public static TrinityErrorCode loadcell(long cellId, ref IntPtr cell)
         {

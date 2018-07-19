@@ -20,15 +20,7 @@
 #define TRINITYFFINATIVE_API extern "C" __declspec(dllimport)
 #endif
 #include <TrinityErrorCode.h>
-
-enum CellAccessOptions: int32_t
-{
-    ThrowExceptionOnCellNotFound = 1,
-    ReturnNullOnCellNotFound = 2,
-    CreateNewOnCellNotFound = 4,
-    StrongLogAhead = 8,
-    WeakLogAhead = 16
-};
+#include "Trinity.h"
 
 typedef char* (*TRINITY_FFI_SYNC_HANDLER)(char*);
 typedef void  (*TRINITY_FFI_ASYNC_HANDLER)(char*);
@@ -47,10 +39,6 @@ typedef long (*TRINITY_FFI_CELL_HAS)(void*, char*);
 typedef void (*TRINITY_FFI_CELL_SET)(void*, char*, char*);
 typedef void (*TRINITY_FFI_CELL_APPEND)(void*, char*, char*);
 typedef void (*TRINITY_FFI_CELL_DELETE)(void*, char*);
-typedef void (*TRINITY_FFI_CLOUD_SYNC_REGISTRY)(long, TRINITY_FFI_SYNC_HANDLER);
-typedef void (*TRINITY_FFI_CLOUD_ASYNC_REGISTRY)(long, TRINITY_FFI_ASYNC_HANDLER);
-typedef char* (*TRINITY_FFI_CLOUD_SYNC_SEND)(long, long, char*);
-typedef void (*TRINITY_FFI_CLOUD_ASYNC_SEND)(long, long, char*);
 typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_LOADCELL)(long long, void**);
 typedef TrinityErrorCode (*TRINITY_FFI_CLOUD_SAVECELL)(long long, void*);
 typedef TrinityErrorCode (*TRINITY_FFI_ENUM_NEXT)(void*);
@@ -62,6 +50,9 @@ typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_2)(long long, CellAccessOp
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_3)(void*);
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVECELL_4)(CellAccessOptions, void*);
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_REMOVECELL)(long long);
+typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVESTORAGE)();
+typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_LOADSTORAGE)();
+typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_RESETSTORAGE)();
 typedef TrinityErrorCode (*TRINITY_FFI_SCHEMA_GET)(void**, long*);
 
 extern "C" struct TRINITY_INTERFACES
@@ -80,10 +71,6 @@ extern "C" struct TRINITY_INTERFACES
     TRINITY_FFI_CELL_SET cell_set;
     TRINITY_FFI_CELL_APPEND cell_append;
     TRINITY_FFI_CELL_DELETE cell_delete;
-    TRINITY_FFI_CLOUD_SYNC_REGISTRY cloud_sync_registry;
-    TRINITY_FFI_CLOUD_ASYNC_REGISTRY cloud_async_registry;
-    TRINITY_FFI_CLOUD_SYNC_SEND cloud_sync_send;
-    TRINITY_FFI_CLOUD_ASYNC_SEND cloud_async_send;
     TRINITY_FFI_CLOUD_LOADCELL cloud_loadcell;
     TRINITY_FFI_CLOUD_SAVECELL cloud_savecell;
     TRINITY_FFI_ENUM_NEXT enum_next;
@@ -95,6 +82,9 @@ extern "C" struct TRINITY_INTERFACES
     TRINITY_FFI_LOCAL_SAVECELL_3 local_savecell_3;
     TRINITY_FFI_LOCAL_SAVECELL_4 local_savecell_4;
     TRINITY_FFI_LOCAL_REMOVECELL local_removecell;
+    TRINITY_FFI_LOCAL_SAVESTORAGE local_savestorage;
+    TRINITY_FFI_LOCAL_LOADSTORAGE local_loadstorage;
+    TRINITY_FFI_LOCAL_RESETSTORAGE local_resetstorage;
     TRINITY_FFI_SCHEMA_GET schema_get;
 };
 

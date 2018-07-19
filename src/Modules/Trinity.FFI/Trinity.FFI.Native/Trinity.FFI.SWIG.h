@@ -84,6 +84,21 @@ std::vector<TypeDescriptor> GetCellDescriptors() {
     return __getarray<TypeDescriptor>(g_TrinityInterfaces->schema_get);
 }
 
+TrinityErrorCode LocalStorage_Load()
+{
+    return g_TrinityInterfaces->local_loadstorage();
+}
+
+TrinityErrorCode LocalStorage_Save()
+{
+    return g_TrinityInterfaces->local_savestorage();
+}
+
+TrinityErrorCode LocalStorage_Reset()
+{
+    return g_TrinityInterfaces->local_resetstorage();
+}
+
 Cell* LoadCell(long long cellId) {
     void* pcell = nullptr;
     if (TrinityErrorCode::E_SUCCESS == g_TrinityInterfaces->local_loadcell(cellId, &pcell)) {

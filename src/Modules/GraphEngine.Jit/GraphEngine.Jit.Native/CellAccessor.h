@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include "Trinity.h"
 #pragma pack(push,1)
 
 struct CellAccessor
@@ -13,7 +14,18 @@ struct CellAccessor
     uint8_t  malloced;
 
     CellAccessor() {}
-    ~CellAccessor() {}
+
+    inline void Release()
+    {
+        if (malloced)
+        {
+            free((void*)cellPtr);
+        }
+        else if(isCell)
+        {
+            ::CReleaseCellLock(cellId, entryIndex);
+        }
+    }
 };
 
 #pragma pack(pop)

@@ -31,10 +31,6 @@ namespace Trinity.FFI
     internal unsafe delegate void TRINITY_FFI_CELL_SET(IntPtr p0, String p1, String p2);
     internal unsafe delegate void TRINITY_FFI_CELL_APPEND(IntPtr p0, String p1, String p2);
     internal unsafe delegate void TRINITY_FFI_CELL_DELETE(IntPtr p0, String p1);
-    internal unsafe delegate void TRINITY_FFI_CLOUD_SYNC_REGISTRY(Int32 p0, TRINITY_FFI_SYNC_HANDLER p1);
-    internal unsafe delegate void TRINITY_FFI_CLOUD_ASYNC_REGISTRY(Int32 p0, TRINITY_FFI_ASYNC_HANDLER p1);
-    internal unsafe delegate String TRINITY_FFI_CLOUD_SYNC_SEND(Int32 p0, Int32 p1, String p2);
-    internal unsafe delegate void TRINITY_FFI_CLOUD_ASYNC_SEND(Int32 p0, Int32 p1, String p2);
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_CLOUD_LOADCELL(Int64 p0, ref IntPtr p1);
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_CLOUD_SAVECELL(Int64 p0, IntPtr p1);
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_ENUM_NEXT(IntPtr p0);
@@ -46,6 +42,9 @@ namespace Trinity.FFI
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_SAVECELL_3(IntPtr p0);
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_SAVECELL_4([MarshalAs(UnmanagedType.I4)]CellAccessOptions p0, IntPtr p1);
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_REMOVECELL(Int64 p0);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_SAVESTORAGE();
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_LOADSTORAGE();
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_RESETSTORAGE();
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_SCHEMA_GET(out NativeTypeDescriptor[] p0, out Int32 p1);
 
     internal struct TRINITY_INTERFACES
@@ -79,14 +78,6 @@ namespace Trinity.FFI
         [MarshalAs(UnmanagedType.FunctionPtr)]
         public TRINITY_FFI_CELL_DELETE cell_delete;
         [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CLOUD_SYNC_REGISTRY cloud_sync_registry;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CLOUD_ASYNC_REGISTRY cloud_async_registry;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CLOUD_SYNC_SEND cloud_sync_send;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public TRINITY_FFI_CLOUD_ASYNC_SEND cloud_async_send;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
         public TRINITY_FFI_CLOUD_LOADCELL cloud_loadcell;
         [MarshalAs(UnmanagedType.FunctionPtr)]
         public TRINITY_FFI_CLOUD_SAVECELL cloud_savecell;
@@ -108,6 +99,12 @@ namespace Trinity.FFI
         public TRINITY_FFI_LOCAL_SAVECELL_4 local_savecell_4;
         [MarshalAs(UnmanagedType.FunctionPtr)]
         public TRINITY_FFI_LOCAL_REMOVECELL local_removecell;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_LOCAL_SAVESTORAGE local_savestorage;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_LOCAL_LOADSTORAGE local_loadstorage;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_LOCAL_RESETSTORAGE local_resetstorage;
         [MarshalAs(UnmanagedType.FunctionPtr)]
         public TRINITY_FFI_SCHEMA_GET schema_get;
     };

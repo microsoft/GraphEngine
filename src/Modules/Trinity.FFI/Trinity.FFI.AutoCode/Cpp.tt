@@ -34,15 +34,7 @@
 #define TRINITYFFINATIVE_API extern "C" __declspec(dllimport)
 #endif
 #include <TrinityErrorCode.h>
-
-enum CellAccessOptions: int32_t
-{
-    ThrowExceptionOnCellNotFound = 1,
-    ReturnNullOnCellNotFound = 2,
-    CreateNewOnCellNotFound = 4,
-    StrongLogAhead = 8,
-    WeakLogAhead = 16
-};
+#include "Trinity.h"
 
 typedef char* (*TRINITY_FFI_SYNC_HANDLER)(char*);
 typedef void  (*TRINITY_FFI_ASYNC_HANDLER)(char*);

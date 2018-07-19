@@ -27,10 +27,6 @@ namespace Trinity.FFI
 			cell_set = Cell.set,
 			cell_append = Cell.append,
 			cell_delete = Cell.delete,
-			cloud_sync_registry = CloudStorage.sync_registry,
-			cloud_async_registry = CloudStorage.async_registry,
-			cloud_sync_send = CloudStorage.sync_send,
-			cloud_async_send = CloudStorage.async_send,
 			cloud_loadcell = CloudStorage.loadcell,
 			cloud_savecell = CloudStorage.savecell,
 			enum_next = Enumeration.next,
@@ -42,6 +38,9 @@ namespace Trinity.FFI
 			local_savecell_3 = LocalStorage.savecell_3,
 			local_savecell_4 = LocalStorage.savecell_4,
 			local_removecell = LocalStorage.removecell,
+			local_savestorage = LocalStorage.savestorage,
+			local_loadstorage = LocalStorage.loadstorage,
+			local_resetstorage = LocalStorage.resetstorage,
 			schema_get = Schema.get,
         };
 
