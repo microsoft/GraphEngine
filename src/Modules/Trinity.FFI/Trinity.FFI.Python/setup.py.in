@@ -6,18 +6,23 @@ from setuptools.extension import Extension
 from Redy.Tools.Version import Version
 from Redy.Tools.PathLib import Path
 from os.path import relpath
-import os
+import os.path
 
-version_filename = '${CMAKE_CURRENT_SOURCE_DIR}/next_version'
+# workaround: os.path.realpath does not follow symlinks on Windows
+# wrapping paths with r guarantees relpath to have paths on the same drive.
+def r(p):
+    return p if not os.path.islink(p) else os.readlink(p)
 
-build_dir = '${CMAKE_CURRENT_BINARY_DIR}'
-src_dir   = relpath('${CMAKE_CURRENT_SOURCE_DIR}', build_dir)
-lib_dir   = relpath('${TRINITY_OUTPUT_DIR}', build_dir)
-swigcxx   = relpath('${swigcxx}', build_dir)
-typesys   = relpath('${typesys}', build_dir)
-inc_ffi   = relpath('${TRINITY_FFI_NATIVE_DIR}', build_dir)
-inc_tri   = relpath('${TRINITY_C_INCLUDE_DIR}', build_dir)
-inc_jit   = relpath('${GRAPHENGINE_JIT_NATIVE_DIR}', build_dir)
+version_filename = r('${CMAKE_CURRENT_SOURCE_DIR}/next_version')
+build_dir = r('${CMAKE_CURRENT_BINARY_DIR}')
+print(build_dir)
+src_dir   = relpath(r('${CMAKE_CURRENT_SOURCE_DIR}'), build_dir)
+lib_dir   = relpath(r('${TRINITY_OUTPUT_DIR}'), build_dir)
+swigcxx   = relpath(r('${swigcxx}'), build_dir)
+typesys   = relpath(r('${typesys}'), build_dir)
+inc_ffi   = relpath(r('${TRINITY_FFI_NATIVE_DIR}'), build_dir)
+inc_tri   = relpath(r('${TRINITY_C_INCLUDE_DIR}'), build_dir)
+inc_jit   = relpath(r('${GRAPHENGINE_JIT_NATIVE_DIR}'), build_dir)
 whl_dir   = relpath('dist', build_dir)
 dep_path  = relpath(str(Path(src_dir, "GraphEngine", "DotNet", "Dependencies.csproj")), build_dir)
 
