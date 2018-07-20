@@ -20,10 +20,10 @@ fi
 # build Trinity.C
 build_trinity_c()
 {
-	echo "Building Trinity.C"
+	echo "Building native components"
 	mkdir -p "$REPO_ROOT/build" && pushd "$_" || exit -1
-	cmake "$REPO_ROOT/src" || exit -1
-	make install || exit -1
+	cmake "$REPO_ROOT" || exit -1
+	make -j || exit -1
 	popd
 }
 
@@ -41,7 +41,7 @@ build_trinity_core()
 # build LIKQ
 build_likq()
 {
-	echo "Building Trinity.Core"
+	echo "Building LIKQ"
 	pushd "$REPO_ROOT/src/Modules/LIKQ/FanoutSearch"
 	dotnet restore FanoutSearch.csproj || exit -1
 	dotnet build -c Release /p:TargetFrameworks=netstandard2.0 FanoutSearch.csproj || exit -1

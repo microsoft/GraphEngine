@@ -51,4 +51,6 @@ int GetLastError();
 #define TRINITY_COMPILER_WARNING(msg) _Pragma(_HELPER_1(_HELPER_2(msg)))
 #define ALIGNED(x) __attribute__ ((aligned(x)))
 #define DLL_EXPORT extern "C" __attribute__ ((visibility ("default")))
+#define DLL_IMPORT extern "C" __attribute__ ((visibility ("default")))
 #define THREAD_LOCAL thread_local
+#define _strdup strdup

@@ -15,9 +15,10 @@
 #ifdef TRINITYFFINATIVE_EXPORTS
 #include <cstdint>
 #include <os/os.h>
-#define TRINITYFFINATIVE_API extern "C" __declspec(dllexport)
+#define _PP(x) x
+#define TRINITYFFINATIVE_API _PP(DLL_EXPORT)
 #else
-#define TRINITYFFINATIVE_API extern "C" __declspec(dllimport)
+#define TRINITYFFINATIVE_API _PP(DLL_IMPORT)
 #endif
 #include <TrinityErrorCode.h>
 #include "Trinity.h"

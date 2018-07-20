@@ -711,7 +711,7 @@ namespace Storage
             return total;
         }
 
-        static uint64_t _CellCount_impl()
+        uint64_t _CellCount_impl()
         {
             uint64_t total = 0;
             for (int32_t i = 0; i < trunk_count; i++)

@@ -58,7 +58,7 @@ namespace Mixin
 
     template <typename K, typename T> static constexpr bool any()
     {
-        return K::value<T>();
+        return K::template value<T>();
     }
 
     template <typename K, typename T1, typename ... TS>
@@ -84,12 +84,12 @@ namespace Mixin
             return false;
         }
         template <typename T>
-        bool _GetArgs(typename const CSeq<HAS_GetArgs, T>::type & seq, std::vector<uint8_t> &args)
+        bool _GetArgs(const typename CSeq<HAS_GetArgs, T>::type & seq, std::vector<uint8_t> &args)
         {
             return T::GetArgs(seq, args);
         }
         template <typename T1, typename ... TS>
-        typename std::enable_if< (sizeof...(TS) > 0), bool>::type _GetArgs(typename const CSeq<HAS_GetArgs, T1, TS...>::type & seq, std::vector<uint8_t> &args)
+        typename std::enable_if< (sizeof...(TS) > 0), bool>::type _GetArgs(const typename CSeq<HAS_GetArgs, T1, TS...>::type & seq, std::vector<uint8_t> &args)
         {
             if (_GetArgs<T1>(seq, args)) return true;
             return _GetArgs<TS...>(seq, args);
@@ -101,19 +101,19 @@ namespace Mixin
             return false;
         }
         template <typename T>
-        bool _GetRetId(typename const CSeq<HAS_GetRetId, T>::type & seq, TypeId::Id &id)
+        bool _GetRetId(const typename CSeq<HAS_GetRetId, T>::type & seq, TypeId::Id &id)
         {
             return T::GetRetId(seq, id);
         }
         template <typename T1, typename ... TS>
-        typename std::enable_if< (sizeof...(TS) > 0), bool>::type _GetRetId(typename const CSeq<HAS_GetRetId, T1, TS...>::type & seq, TypeId::Id &id)
+        typename std::enable_if< (sizeof...(TS) > 0), bool>::type _GetRetId(const typename CSeq<HAS_GetRetId, T1, TS...>::type & seq, TypeId::Id &id)
         {
             if (_GetRetId<T1>(seq, id)) return true;
             else return _GetRetId<TS...>(seq, id);
         }
 
         template <typename T>
-        typename void _SequenceNext(VerbSequence& seq)
+        void _SequenceNext(VerbSequence& seq)
         {
             if (HAS_SequenceNext::value<T>()) T::SequenceNext(seq);
         }
@@ -144,7 +144,7 @@ namespace Mixin
         //template <typename Q1 = B1, typename QRest = BRest>
         //typename std::enable_if<any<HAS_GetArgs, Q1, QRest...>(), bool >::type GetArgs(const VerbSequence& seq, std::vector<uint8_t> &args)
         typename std::conditional<any<HAS_GetArgs, B1, BRest...>(), bool, void* >::type
-            GetArgs(typename const TSeq<HAS_GetArgs>::type &seq, std::vector<uint8_t> &args) 
+            GetArgs(const typename TSeq<HAS_GetArgs>::type &seq, std::vector<uint8_t> &args) 
         {
             print(__FUNCTION__);
             return _GetArgs<B1, BRest...>(seq, args);

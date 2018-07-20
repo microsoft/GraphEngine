@@ -8,8 +8,6 @@
 #include "TrinityCommon.h"
 #include "../src/Storage/LocalStorage/ThreadContext.h"
 
-#define DLL_IMPORT extern "C" __declspec(dllimport)
-
 typedef struct THREAD_CONTEXT* PTHREAD_CONTEXT;
 
 //====================== LocalMemoryStorage ==========================//
