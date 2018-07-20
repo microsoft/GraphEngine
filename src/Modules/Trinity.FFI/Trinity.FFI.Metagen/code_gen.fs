@@ -191,6 +191,23 @@ let code_gen (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
                 let addr = native_fn.CallSite.ToInt64()
 
                 yield (decl, generator addr)
+                match ty with 
+                | CELL _ -> 
+                    let lock_cell_decl = sprintf "void* use_%s(int64_t, int32_t);" ty_name 
+                    let lock_cell_body = 
+                        sprintf "\n
+void* use_%s(int64_t cellid, int32_t options)
+{
+    CellAccessor* accessor = new CellAccessor();
+    accessor->cellId = cellid;
+    auto errCode = LockCell(*accessor, options, %s_BNew);
+    if (errCode)
+        throw errCode;
+    return accessor;
+}
+                        " ty_name ty_name
+                    yield (lock_cell_decl, lock_cell_body)
+                | _ -> ()
 
             let initializer_decl = sprintf "static void* create_%s();" ty_name 
             let initializer_body = 
@@ -205,20 +222,7 @@ static void* create_%s(){
                 " ty_name ty_name
             yield (initializer_decl, initializer_body)
 
-        let lock_cell_decl = "void* UseCell(int64_t, int32_t);"
-        let lock_cell_body = 
-            sprintf "\n
-void* UseCell(int64_t cellid, int32_t options)
-{
-    CellAccessor* accessor = new CellAccessor();
-    accessor->cellId = cellid;
-    auto errCode = LockCell(*accessor, options);
-    if (errCode)
-    throw errCode;
-    return accessor;
-}
-            "
-        yield (lock_cell_decl, lock_cell_body)
+
 
         let basic_ref_get_decl = "void* Unbox(void*);"
         let basic_ref_get_body = "
@@ -228,6 +232,19 @@ void* Unbox(void* object)
 }
         "
         yield (basic_ref_get_decl, basic_ref_get_body)
+
+        let unlock_decl = "void unlock(void*);" 
+        let unlock_body = 
+            sprintf "void unlock(void* subject){\nreturn UnlockCell(*subject);\n}"
+        yield (unlock_delc, unlock_body)
+
+
+        // TODO: 
+        //   1. load and save cell. load cell might not require cellAcc.type.
+        //   2. link json deserialization method to init data
+        //   3. python method binding of above unfinished items.
+        
+
 
         ] |> List.unzip
         
