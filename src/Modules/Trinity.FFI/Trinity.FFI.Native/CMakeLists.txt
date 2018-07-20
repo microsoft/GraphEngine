@@ -5,11 +5,10 @@ SET(GRAPHENGINE_JIT_DIR ${TRINITY_SRC_DIR}/Modules/GraphEngine.Jit)
 
 INCLUDE_DIRECTORIES(
     ${TRINITY_C_DIR}/include
-    ${TRINITY_C_DIR}/src
     ${GRAPHENGINE_JIT_DIR}/GraphEngine.Jit.Native
 )
 
-FILE(GLOB SRCS swig_accessor.cpp Trinity.FFI.Native.cpp)
+FILE(GLOB SRCS *.cpp)
 ADD_LIBRARY(trinity_ffi SHARED ${SRCS})
 TARGET_COMPILE_DEFINITIONS(trinity_ffi PRIVATE -DTRINITYFFINATIVE_EXPORTS)
 TARGET_LINK_LIBRARIES(trinity_ffi Trinity)

@@ -10,7 +10,7 @@
 #include "Trinity/Configuration/TrinityConfig.h"
 #include "Memory/Memory.h"
 #include "CellEntry.h"
-#include "Threading/TrinityLock.h"
+#include "Trinity/Threading/TrinityLock.h"
 #include "Utility/HashHelper.h"
 #include "Trinity/Diagnostics/Log.h"
 #include "Storage/LocalStorage/ThreadContext.h"
@@ -41,11 +41,9 @@ namespace Storage
 {
     namespace LocalMemoryStorage
     {
-        enum   CellAccessOptions : int32_t;
         extern int32_t* dirty_flags;
     }
 
-    using LocalMemoryStorage::CellAccessOptions;
     class MemoryTrunk;
 
     struct MTHashAllocationInfo

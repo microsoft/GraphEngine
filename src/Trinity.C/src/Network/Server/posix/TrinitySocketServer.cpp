@@ -7,7 +7,7 @@
 #include <thread>
 #include <map>
 #include "os/platforms/posix.h"
-#include "Threading/TrinityLock.h"
+#include "Trinity/Threading/TrinityLock.h"
 #include "Trinity/Configuration/TrinityConfig.h"
 #include "Trinity/Hash/NonCryptographicHash.h"
 #include "Network/Server/posix/TrinitySocketServer.h"

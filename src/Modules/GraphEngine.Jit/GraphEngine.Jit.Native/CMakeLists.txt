@@ -7,7 +7,6 @@ FILE(GLOB_RECURSE asmjit_src ${ASMJIT_SOURCE_DIR}/*.cpp)
 
 INCLUDE_DIRECTORIES(
     ${TRINITY_C_DIR}/include
-    ${TRINITY_C_DIR}/src
     ${ASMJIT_SOURCE_DIR}
 )
 

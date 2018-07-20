@@ -19,7 +19,6 @@ namespace Trinity
 }
 
 /* Should only be reached from CLR*/
-//TODO if CLR not started, we should host our own
 DLL_EXPORT VOID __stdcall __INIT_TRINITY_C__(u16char* pAssemblyPath)
 {
 #ifdef TRINITY_PLATFORM_WINDOWS

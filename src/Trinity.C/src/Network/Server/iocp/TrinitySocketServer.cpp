@@ -7,7 +7,7 @@
 #include "TrinitySocketServer.h"
 #include <Trinity/Environment.h>
 #include "Network/Server/iocp/Common.h"
-#include "Threading/TrinityLock.h"
+#include "Trinity/Threading/TrinityLock.h"
 #include "Network/ProtocolConstants.h"
 #include "Network/Server/TrinityServer.h"
 #include "Network/SocketOptionsHelper.h"

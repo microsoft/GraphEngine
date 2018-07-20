@@ -7,7 +7,7 @@
 #ifdef TRINITY_PLATFORM_WINDOWS
 #include "Network/Server/iocp/Common.h"
 #include "Network/Server/TrinityServer.h"
-#include <Threading/TrinityLock.h>
+#include "Trinity/Threading/TrinityLock.h"
 #include <unordered_set>
 
 namespace Trinity

@@ -4,7 +4,7 @@
 //
 #pragma once
 #include "TrinityCommon.h"
-#include "Threading/TrinityLock.h"
+#include "Trinity/Threading/TrinityLock.h"
 #include "Storage/MTHash/MTHash.h"
 #include "Storage/MemoryTrunk/MemoryTrunk.h"
 #include "Storage/LocalStorage/ThreadContext.h"
@@ -19,32 +19,6 @@ namespace Storage
         enum Int32_Constants : int32_t
         {
             c_MaxTrunkCount = 256,
-        };
-
-        /**! Should be synchronized with Trinity.Core\TSL\Lib\Common.cs */
-        enum CellAccessOptions : int32_t
-        {
-            /// <summary>
-            /// No actions. This entry should not be used.
-            /// </summary>
-            None                         = 0x0,
-            /// <summary>
-            /// Throws an exception when a cell is not found.
-            /// </summary>
-            ThrowExceptionOnCellNotFound = 0x1,
-            /// <summary>
-            /// Creates a new cell when a cell is not found.
-            /// </summary>
-            CreateNewOnCellNotFound      = 0x2,
-            /// <summary>
-            /// Specifies that write-ahead-log should be performed with strong durability.
-            /// </summary>
-            StrongLogAhead               = 0x4,
-            /// <summary>
-            /// Specifies that write-ahead-log should be performed with weak durability. This option brings better performance,
-            /// but the durability may be degraded when this option is used.
-            /// </summary>
-            WeakLogAhead                 = 0x8,
         };
 
         extern std::atomic<bool> initialized;
