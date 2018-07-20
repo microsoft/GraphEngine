@@ -1,7 +1,7 @@
 ﻿#include <functional>
+#include <io>
 #include "GraphEngine.Hosting.h"
 #include "mscoree.h"
-#include "Trinity/IO/Path.h"
 
 using namespace Trinity;
 

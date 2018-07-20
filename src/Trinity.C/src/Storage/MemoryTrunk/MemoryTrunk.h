@@ -11,6 +11,7 @@
 #include "Storage/MTHash/CellEntry.h"
 #include <Trinity/Diagnostics/Log.h>
 #include <corelib>
+#include <io>
 
 /////////////////////// Forward declaration
 namespace Storage

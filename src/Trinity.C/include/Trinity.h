@@ -6,7 +6,6 @@
 
 #pragma once
 #include "TrinityCommon.h"
-#include "../src/Storage/LocalStorage/ThreadContext.h"
 
 typedef struct THREAD_CONTEXT* PTHREAD_CONTEXT;
 

@@ -5,6 +5,7 @@
 #include "TrinityCommon.h"
 #include <Trinity/Diagnostics/Log.h>
 #include <os/os.h>
+#include <io>
 #include "Memory/Memory.h"
 #if !defined(TRINITY_PLATFORM_WINDOWS)
 #include <sys/types.h>
