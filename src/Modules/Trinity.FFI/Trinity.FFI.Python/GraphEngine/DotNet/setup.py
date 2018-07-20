@@ -43,17 +43,24 @@ Collect: Collect
 
 def init_trinity_service() -> Module:
     module_dir = Path(__file__).parent()
+    graph_engine_config_path = Env.graph_engine_config_path
+    cs_proj_build_dir = graph_engine_config_path.into('Dependencies')
 
-    cs_proj_file = module_dir.into("Dependencies.csproj")
+    if not cs_proj_build_dir.exists() or not cs_proj_build_dir.into("Dependencies.csproj").exists():
 
-    cmd_patterns = ["dotnet", "restore", f'"{cs_proj_file}"', '--packages', f'"{Env.nuget_root}"']
+        cs_proj_build_dir.mkdir(warning=False)
+        cs_proj_file = module_dir.into("Dependencies.csproj")
+        cs_proj_file.move_to(cs_proj_build_dir)
+
+    cs_proj_file = cs_proj_build_dir.into('Dependencies.csproj')
+    cmd_patterns = ["dotnet", "restore", f'"{cs_proj_build_dir}"', '--packages', f'"{Env.nuget_root}"']
 
     # restore
     if call(cmd_patterns):
         raise EnvironmentError("DotNet restoring failed `{}`".format(' '.join(cmd_patterns).__repr__()))
 
     # search dlls
-    with open(str(cs_proj_file)) as file:
+    with cs_proj_file.open('rb') as file:
         deps = [Dependency(package_name=ref.attrs['include'],
                            version=ref.attrs["version"]
                            ).all()
@@ -79,7 +86,7 @@ def init_trinity_service() -> Module:
     for each_dep in deps:
         clr.AddReference(each_dep)
 
-    graph_engine_config_path = Env.graph_engine_config_path
+
     # TODO
     __Trinity = __import__('Trinity')
 
@@ -97,7 +104,6 @@ def init_trinity_service() -> Module:
     __ffi = __import__('ffi')
 
     __ffi.Init()
-
 
     __import__('Trinity.Storage')
     __import__('Trinity.Storage.Composite')
