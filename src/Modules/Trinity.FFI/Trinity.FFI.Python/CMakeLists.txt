@@ -29,7 +29,7 @@ IF (PYTHON AND SWIG)
         SET(ext_cxx_flags "['/Zi']")
         SET(ext_linker_flags "['/DEBUG']")
     ELSE()
-        SET(ext_cxx_flags "[]")
+        SET(ext_cxx_flags "['--std=c++14', '-fpermissive']")
         SET(ext_linker_flags "[]")
     ENDIF()
 

@@ -5,10 +5,10 @@
 
 typedef int32_t(*construct_rawfp_t)(void*);
 
-extern "C" __declspec(dllimport) int32_t LockCell(CellAccessor&, const int32_t, construct_rawfp_t);
-extern "C" __declspec(dllimport) void UnlockCell(const CellAccessor&);
-extern "C" __declspec(dllimport) int32_t SaveCell(CellAccessor&);
-extern "C" __declspec(dllimport) int32_t LoadCell(CellAccessor&);
+DLL_IMPORT int32_t LockCell(CellAccessor&, const int32_t, construct_rawfp_t);
+DLL_IMPORT void UnlockCell(const CellAccessor&);
+DLL_IMPORT int32_t SaveCell(CellAccessor&);
+DLL_IMPORT int32_t LoadCell(CellAccessor&);
 
 
 constexpr char* cast_object(char* object) {

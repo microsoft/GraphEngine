@@ -4,8 +4,8 @@ setup.py
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
 from Redy.Tools.Version import Version
-from Redy.Tools.PathLib import Path 
-from os.path import relpath 
+from Redy.Tools.PathLib import Path
+from os.path import relpath
 import os
 
 version_filename = '${CMAKE_CURRENT_SOURCE_DIR}/next_version'

@@ -12,13 +12,12 @@
 // that uses this DLL. This way any other project whose source files include this file see 
 // TRINITYFFINATIVE_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
-#ifdef TRINITYFFINATIVE_EXPORTS
-#include <cstdint>
 #include <os/os.h>
-#define _PP(x) x
-#define TRINITYFFINATIVE_API _PP(DLL_EXPORT)
+#include <cstdint>
+#ifdef TRINITYFFINATIVE_EXPORTS
+#define TRINITYFFINATIVE_API DLL_EXPORT
 #else
-#define TRINITYFFINATIVE_API _PP(DLL_IMPORT)
+#define TRINITYFFINATIVE_API DLL_IMPORT
 #endif
 #include <TrinityErrorCode.h>
 #include "Trinity.h"
