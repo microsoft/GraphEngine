@@ -60,6 +60,7 @@ ADD_SUBDIRECTORY(src/Trinity.C)
 ADD_SUBDIRECTORY(src/Modules/GraphEngine.Jit)
 ADD_SUBDIRECTORY(src/Modules/Trinity.FFI/Trinity.FFI.Native)
 ADD_SUBDIRECTORY(src/Modules/Trinity.FFI/Trinity.FFI.Python)
+ADD_SUBDIRECTORY(src/GraphEngine)
 
 #  DotNet components
 

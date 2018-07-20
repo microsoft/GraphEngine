@@ -3,7 +3,9 @@
 #
 cmake_minimum_required (VERSION 3.0)
 
-project ("GraphEngine")
+PROJECT ("GraphEngine")
+
+ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS -DUNICODE -D_UNICODE)
 
 # Include sub-projects.
 add_subdirectory ("trinity_host")
