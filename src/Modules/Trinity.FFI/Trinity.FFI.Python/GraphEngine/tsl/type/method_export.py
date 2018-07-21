@@ -281,9 +281,57 @@ def make_class(ty: typing.Type[TSLType], method_tb, cls_tb):
 
 @make_class.case(True)
 def make_class(ty: Struct, method_tb, cls_tb):
-    ty.__slots__ = getattr(ty, '__slots__', ()) + ('__accessor__', )
+    ty.__slots__ = getattr(ty, '__slots__', ()) + ('__accessor__',)
     spec: StructTypeSpec = ty.get_spec()
     chain = type_spec_to_name(spec)
+
+    if isinstance(ty, Cell):
+        # An accessor type of a cell is locked once it's created.
+        # So it don't require to lock one more when __enter__ is called.
+        acc_ty = type(ty.__name__, (CellAccessor, *ty.__bases__))
+        acc_ty.__enter__ = lambda _: _
+
+        @feature(staging)
+        def use(cell_id: int, cell_access_options: int):
+            method: const = method_tb[f'use_{chain}']
+            acc_ty_: const = acc_ty
+            new = acc_ty_.__new__(acc_ty_)
+            new.__accessor__ = method(cell_id, cell_access_options)
+            return new
+
+        ty.use = staticmethod(use)
+
+        @feature(staging)
+        def __enter__(self, cell_access_options: int):
+            method: const = method_tb[f'reuse_{chain}']
+            method(self.__accessor__, cell_access_options)
+            return self
+
+        ty.__enter__ = __enter__
+
+        @feature(staging)
+        def __exit__(self):
+            method: const = method_tb[f'unlock_{chain}']
+            method(self.__accessor__)
+
+        ty.__exit__ = __exit__
+
+        @feature(staging)
+        def save(self):
+            method: const = method_tb[f'save_cell']
+            method(self.__accessor__)
+
+        ty.save = save
+
+        @feature(staging)
+        def load(cell_id: int):
+            ty_: const = ty
+            method: const = method_tb[f'load_{chain}']
+            new = ty_.__new__(ty_)
+            new.__accessor__ = method(cell_id)
+            return new
+
+        ty.load = staticmethod(load)
 
     def __init__(self):
         method = method_tb[f'create_{chain}']
@@ -397,6 +445,7 @@ def make_class(ty: List, method_tb, cls_tb):
     def ref_get(self):
         method: const = method_tb['Unbox']
         return method(self.__accessor__)
+
     ty.ref_get = ref_get
 
     @feature(staging)

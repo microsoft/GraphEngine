@@ -1,4 +1,5 @@
-﻿module Trinity.FFI.MetaGen.code_gen
+﻿
+module Trinity.FFI.MetaGen.code_gen
 
 open GraphEngine.Jit.JitCompiler
 open GraphEngine.Jit.TypeSystem
@@ -165,7 +166,6 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
     // reversed
     let rev_typed_parameters =
         List.zip pos_arg_types parameters |> List.rev |> List.map (fun (ty_str, parameter) -> sprintf "%s %s" ty_str parameter)
-    
     let args_string : string = join parameters
     let typed_args_string : string = join rev_typed_parameters
     let private_fn_type = sprintf "%s (*)(%s)" ret_type <| join pos_arg_types
@@ -174,99 +174,134 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
         sprintf ("static %s %s(%s){\nreturn reinterpret_cast<%s>(0x%xll)(%s);\n}") ret_type name_sig typed_args_string private_fn_type addr args_string
     in (decl, generator)
 
-let code_gen (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
-    let tb = hashmap()
+let code_gen (typeid_map: (string, uint16) hashmap) (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
+    let tb = hashmap()  (** for caching *)
+
     let generate = single_method'code_gen tb
     let ty_recur_naming = ty_to_name true
-    let (decls, defs) = 
-        [ 
+    let (decls, defs) =
+        [
         for (ty, verb_lst) in tsl_specs do
             let ty_name = ty_recur_naming ty
             for verb in verb_lst do
                 let (decl, generator) = generate ty verb
-                      
                 let native_fn =
                     CompileFunction { DeclaringType = ty; Verb = verb }
 
                 let addr = native_fn.CallSite.ToInt64()
 
                 yield (decl, generator addr)
-                match ty with 
-                | CELL _ -> 
-                    let lock_cell_decl = sprintf "void* use_%s(int64_t, int32_t);" ty_name 
-                    let lock_cell_body = 
+                match ty.TypeCode with
+                | CELL _ ->
+                    match find typeid_map ty.QualifiedName with
+                    | None -> failwith "Impossible!"
+                    | Some(typeid) ->
+                    let lock_cell_from_existed_decl = sprintf "static void reuse_%s(void*, int32_t);" ty_name
+                    let lock_cell_from_existed_body =
                         sprintf "\n
-void* use_%s(int64_t cellid, int32_t options)
-{
-    CellAccessor* accessor = new CellAccessor();
-    accessor->cellId = cellid;
-    auto errCode = LockCell(*accessor, options, %s_BNew);
-    if (errCode)
-        throw errCode;
-    return accessor;
-}
+                        static void reuse_%s(void* subject, int32_t options)
+                        {
+                            auto accessor = reinterpret_cast<CellAccessor*>(subject);
+                            assessor -> Release();
+                            auto errCode = LockCell(*accessor, options, %s_BNew);
+                            if (errCode)
+                               throw errCode;
+                        }
                         " ty_name ty_name
+                    yield (lock_cell_from_existed_decl, lock_cell_from_existed_body)
+
+                    let lock_cell_decl = sprintf "static void* use_%s(int64_t, int32_t);" ty_name
+                    let lock_cell_body =
+                        sprintf "\n
+		                    static void* use_%s(int64_t cellid, int32_t options)
+	                      {
+                          CellAccessor* accessor = new CellAccessor();
+                          accessor -> cellId = cellid;
+                          accessor -> type = %u;
+                          auto errCode = LockCell(*accessor, options, %s_BNew);
+                          if (errCode)
+                             throw errCode;
+                          return accessor;
+                         }
+                        " ty_name typeid ty_name
                     yield (lock_cell_decl, lock_cell_body)
+
+                    let load_cell_decl = sprintf "static void* load_%s(int64_t cellid);" ty_name
+                    let load_cell_body =
+                      sprintf "\n
+                          static void* load_%s(int64_t cellid)
+                          {
+                            CellAccessor* accessor = new CellAcceesor();
+                            accessor -> cellId = cellid;
+                            accessor -> type = %u;
+                            auto errCode = LoadCell(*accessor);
+                            if (errCode)
+                              throw errCode;
+                            return accessor;
+                          }
+                          " ty_name typeid
+                    yield (load_cell_decl, load_cell_body)
                 | _ -> ()
 
-            let initializer_decl = sprintf "static void* create_%s();" ty_name 
-            let initializer_body = 
+            let initializer_decl = sprintf "static void* create_%s();" ty_name
+            let initializer_body =
                 sprintf "\n
-static void* create_%s(){ 
-    CellAccessor* accessor = new CellAccessor();
-    auto errCode = %s_BNew(accessor);
-    if(errCode) 
-        throw errCode;
-    return accessor;
-}
+                static void* create_%s(){
+                   CellAccessor* accessor = new CellAccessor();
+                   auto errCode = %s_BNew(accessor);
+                   if(errCode)
+                   throw errCode;
+                   return accessor;
+                }
                 " ty_name ty_name
             yield (initializer_decl, initializer_body)
 
-
-
-        let basic_ref_get_decl = "void* Unbox(void*);"
+        let basic_ref_get_decl = "static void* Unbox(void*);"
         let basic_ref_get_body = "
-void* Unbox(void* object)
-{
-  return cast_object(object);
-}
+          static void* Unbox(void* object)
+          {
+             return cast_object(object);
+          }
         "
         yield (basic_ref_get_decl, basic_ref_get_body)
 
-        let unlock_decl = "void unlock(void*);" 
-        let unlock_body = 
-            sprintf "void unlock(void* subject){\nreturn UnlockCell(*subject);\n}"
-        yield (unlock_delc, unlock_body)
+        let unlock_decl = "static void unlock(void*);"
+        let unlock_body =
+             "static void unlock(void* subject){\nreturn UnlockCell(*subject);\n}"
+        yield (unlock_decl, unlock_body)
 
-
-        // TODO: 
-        //   1. load and save cell. load cell might not require cellAcc.type.
+        let save_cell_decl = "static void save_cell(void*);";
+        let save_cell_"
+             static void save_cell(void* subject)
+             {
+                if(auto errCode = SaveCell(*subject))
+                    throw errCode;
+             }
+            "
+        yield (save_cell_decl, save_cell_body)
+        // TODO:
+        //   1. load and save cell. load cell might not require cellAcc.type(done)
         //   2. link json deserialization method to init data
-        //   3. python method binding of above unfinished items.
-        
-
+        //   3. python method binding of above unfinished items(done).
 
         ] |> List.unzip
-        
-    let (=>) a b = (a, b) 
-    let swig_template = 
+    let (=>) a b = (a, b)
+    let swig_template =
         "
-%module {moduleName}
-%include <stdint.i>
-%{{
-#include \"swig_accessor.h\"
-#include \"CellAccessor.h\"
-#define SWIG_FILE_WITH_INIT
-{decl}
-{source}
-%}}
-{decl}
+        %module {moduleName}
+        %include <stdint.i>
+        %{{
+        #include \"swig_accessor.h\"
+        #include \"CellAccessor.h\"
+        #define SWIG_FILE_WITH_INIT
+        {decl}
+        {source}
+        %}}
+        {decl}
         "
-    in PString.format swig_template 
+    in PString.format swig_template
                        ["moduleName" => module_name
                         "source"     => (defs       |> PString.str'concatBy "\n" )
                         "decl"       => (decls      |> PString.str'concatBy "\n")
                         ]
-    
-    
 
