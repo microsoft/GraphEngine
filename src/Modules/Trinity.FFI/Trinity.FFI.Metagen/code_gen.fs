@@ -175,8 +175,7 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
     in (decl, generator)
 
 let code_gen (typeid_map: (string, uint16) hashmap) (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
-    let tb = hashmap()
-
+    let tb = hashmap()  (** for caching *)
 
     let generate = single_method'code_gen tb
     let ty_recur_naming = ty_to_name true
@@ -192,10 +191,26 @@ let code_gen (typeid_map: (string, uint16) hashmap) (module_name) (tsl_specs : (
                 let addr = native_fn.CallSite.ToInt64()
 
                 yield (decl, generator addr)
-                match ty with
+                match ty.TypeCode with
                 | CELL _ ->
+                    match find typeid_map ty.QualifiedName with
+                    | None -> failwith "Impossible!"
+                    | Some(typeid) ->
+                    let lock_cell_from_existed_decl = sprintf "static void reuse_%s(void*, int32_t);" ty_name
+                    let lock_cell_from_existed_body =
+                        sprintf "\n
+                        static void reuse_%s(void* subject, int32_t options)
+                        {
+                            auto accessor = reinterpret_cast<CellAccessor*>(subject);
+                            assessor -> Release();
+                            auto errCode = LockCell(*accessor, options, %s_BNew);
+                            if (errCode)
+                               throw errCode;
+                        }
+                        " ty_name ty_name
+                    yield (lock_cell_from_existed_decl, lock_cell_from_existed_body)
+
                     let lock_cell_decl = sprintf "static void* use_%s(int64_t, int32_t);" ty_name
-                    let Some(typeid) = find typeid_map ty.QualifiedName
                     let lock_cell_body =
                         sprintf "\n
 		                    static void* use_%s(int64_t cellid, int32_t options)
@@ -210,7 +225,8 @@ let code_gen (typeid_map: (string, uint16) hashmap) (module_name) (tsl_specs : (
                          }
                         " ty_name typeid ty_name
                     yield (lock_cell_decl, lock_cell_body)
-                    let load_cell_decl = sprintf "static void* load_%s(int64_t cellid);"
+
+                    let load_cell_decl = sprintf "static void* load_%s(int64_t cellid);" ty_name
                     let load_cell_body =
                       sprintf "\n
                           static void* load_%s(int64_t cellid)
@@ -223,7 +239,7 @@ let code_gen (typeid_map: (string, uint16) hashmap) (module_name) (tsl_specs : (
                               throw errCode;
                             return accessor;
                           }
-                          "
+                          " ty_name typeid
                     yield (load_cell_decl, load_cell_body)
                 | _ -> ()
 
@@ -251,33 +267,39 @@ let code_gen (typeid_map: (string, uint16) hashmap) (module_name) (tsl_specs : (
 
         let unlock_decl = "static void unlock(void*);"
         let unlock_body =
-            sprintf "static void unlock(void* subject){\nreturn UnlockCell(*subject);\n}"
-        yield (unlock_delc, unlock_body)
+             "static void unlock(void* subject){\nreturn UnlockCell(*subject);\n}"
+        yield (unlock_decl, unlock_body)
 
-        let save_cell_decl = "static  int32_t save_cell(void*);";
-        let save_cell_body = "static  int32_t save_cell(void* subject){\nreturn SaveCell(*subject);\n}"
+        let save_cell_decl = "static void save_cell(void*);";
+        let save_cell_"
+             static void save_cell(void* subject)
+             {
+                if(auto errCode = SaveCell(*subject))
+                    throw errCode;
+             }
+            "
         yield (save_cell_decl, save_cell_body)
         // TODO:
         //   1. load and save cell. load cell might not require cellAcc.type(done)
         //   2. link json deserialization method to init data
-        //   3. python method binding of above unfinished items.
+        //   3. python method binding of above unfinished items(done).
 
         ] |> List.unzip
     let (=>) a b = (a, b)
     let swig_template =
         "
-%module {moduleName}
-%include <stdint.i>
-%{{
-#include \"swig_accessor.h\"
-#include \"CellAccessor.h\"
-#define SWIG_FILE_WITH_INIT
-{decl}
-{source}
-%}}
-{decl}
+        %module {moduleName}
+        %include <stdint.i>
+        %{{
+        #include \"swig_accessor.h\"
+        #include \"CellAccessor.h\"
+        #define SWIG_FILE_WITH_INIT
+        {decl}
+        {source}
+        %}}
+        {decl}
         "
-    in PString.format swig_template 
+    in PString.format swig_template
                        ["moduleName" => module_name
                         "source"     => (defs       |> PString.str'concatBy "\n" )
                         "decl"       => (decls      |> PString.str'concatBy "\n")

@@ -52,6 +52,26 @@ class Struct(TSLType):
 
 @_remove_bases
 class Cell(Struct, TSLType):
+    """
+    All methods here except `get_spec` is only for type hinting.
+    """
+
+    @classmethod
+    def load(cls, cell_id: int):
+        return cls()
+
+    @classmethod
+    def use(cls, cell_id: int):
+        return cls()
+
+    def save(self):
+        return
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        return
 
     @classmethod
     @discrete_cache
@@ -88,6 +108,12 @@ class Proxy:
 
     def __init__(self, acc, proxy_args):
         raise NotImplemented
+
+
+class CellAccessor:
+    """
+    This means the real accessor in Trinity Storage
+    """
 
 
 # noinspection PyTypeChecker
@@ -172,10 +198,12 @@ def type_map_spec(_):
 def type_map_spec(_):
     return PrimitiveTypeSpec("double", 'DOUBLE')
 
+
 @type_map_spec.case(List)
 def type_map_spec(typ: List):
     # noinspection PyUnresolvedReferences
     return ListTypeSpec(type_map_spec(typ.__garg__))
+
 
 @type_map_spec.case('established_ty')
 def type_map_spec(typ: TSLType):
