@@ -13,10 +13,11 @@ namespace Trinity.FFI
         internal static char ManglingCode => '_';
         public static string SwigGen(IStorageSchema schema, string ModuleName)
         {
-            var ty_descs = schema.CellDescriptors.Select(GraphEngine.Jit.TypeSystem.Make);
-            var collected_tydescs = MetaGen.analyzer.collect_type(ty_descs);
-            var chains = MetaGen.analyzer.generate_chaining_verb(collected_tydescs);
-            var result = MetaGen.code_gen.code_gen(ModuleName, chains);
+            var typeIdMap = schema.CellDescriptors.ToDictionary(it => it.Type.AssemblyQualifiedName, it => it.CellType);
+            var tyDescs = schema.CellDescriptors.Select(GraphEngine.Jit.TypeSystem.Make);
+            var collectedTydescs = MetaGen.analyzer.collect_type(tyDescs);
+            var chains = MetaGen.analyzer.generate_chaining_verb(collectedTydescs);
+            var result = MetaGen.code_gen.code_gen(typeIdMap, ModuleName, chains);
             return result;
         }
 
