@@ -113,6 +113,16 @@ namespace Trinity
                 return ret;
             }
 
+            inline String GetParent(const String& path)
+            {
+                String ret(path);
+                if (ret.Length() > 0 && *ret.rbegin() == DirectorySeparator)
+                {
+                    ret.PopBack();
+                }
+                return Path::GetDirectoryName(ret);
+            }
+
             inline String GetFileName(const String& path)
             {
                 size_t len = path.Length();

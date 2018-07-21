@@ -4,3 +4,6 @@
 [submodule "src/Modules/GraphEngine.Jit/asmjit"]
 	path = src/Modules/GraphEngine.Jit/asmjit
 	url = https://github.com/asmjit/asmjit.git
+[submodule "src/RxCpp"]
+	path = src/RxCpp
+	url = https://github.com/ReactiveX/RxCpp.git

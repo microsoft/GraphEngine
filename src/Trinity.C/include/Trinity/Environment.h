@@ -6,6 +6,7 @@
 #include "String.h"
 #include <cstdint>
 #include <os/os.h>
+#include <Trinity/Collections/List.h>
 
 #if !defined(TRINITY_PLATFORM_WINDOWS)
 #include <thread>
@@ -65,5 +66,26 @@ namespace Trinity
             return std::thread::hardware_concurrency();
 #endif
 		}
+
+        inline List<String> Run(const char* command)
+        {
+            List<String> ret;
+            Array<char>   lplinebuf(1024);
+            FILE*         pspipe = _popen(command, "r");
+
+            if (nullptr == pspipe)
+            {
+                return ret;
+            }
+
+            while (fgets(lplinebuf, lplinebuf.Length(), pspipe))
+            {
+                ret.push_back(String(lplinebuf));
+            }
+
+            _pclose(pspipe);
+
+            return ret;
+        }
 	}
 }

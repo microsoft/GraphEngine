@@ -54,3 +54,5 @@ int GetLastError();
 #define DLL_IMPORT extern "C" __attribute__ ((visibility ("default")))
 #define THREAD_LOCAL thread_local
 #define _strdup strdup
+#define _popen popen
+#define _pclose pclose

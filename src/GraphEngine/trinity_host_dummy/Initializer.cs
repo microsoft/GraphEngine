@@ -4,8 +4,11 @@ namespace Trinity.Hosting
 {
     public class Initializer
     {
-        public static void Main(string[] args)
+        public static int Init()
         {
+            Console.WriteLine("Hello from selfhost CLR!");
+            Console.ReadKey();
+            return 0;
         }
     }
 }

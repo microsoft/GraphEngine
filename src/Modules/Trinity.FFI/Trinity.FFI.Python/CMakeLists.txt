@@ -26,10 +26,10 @@ SET(DEPS                  ${pysrc} ${swigi} ${typesys} ${swigh} Trinity GraphEng
 
 IF (PYTHON AND SWIG)
     IF(WIN32)
-        SET(ext_cxx_flags "['/Zi']")
+        SET(ext_cxx_flags "['/Zi', '/D_CRT_SECURE_NO_WARNINGS', '/DUNICODE', '/D_UNICODE']")
         SET(ext_linker_flags "['/DEBUG']")
     ELSE()
-        SET(ext_cxx_flags "['--std=c++14', '-fpermissive']")
+        SET(ext_cxx_flags "['--std=c++14', '-fpermissive', '-D_CRT_SECURE_NO_WARNINGS', '-DUNICODE', '-D_UNICODE']")
         SET(ext_linker_flags "[]")
     ENDIF()
 

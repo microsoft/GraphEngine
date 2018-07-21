@@ -394,6 +394,8 @@ namespace Mixin
                 cc.mov(ret, imm(plan[0]));
             }
         }
+
+        return ret;
     }
 
     void seek(X86Compiler& cc, FuncCtx& ctx, Label& l_outofrange, Label& l_resize, X86Gp& idx, X86Gp& ptr, TypeCode tc, TypeId::Id tid, std::vector<int32_t> &plan)

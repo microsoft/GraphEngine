@@ -13,6 +13,7 @@ INCLUDE_DIRECTORIES(
 #  TODO handle coreclr vs netfx
 #  Now we just go with Trinity(coreclr)
 
+ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS -DUNICODE -D_UNICODE)
 ADD_LIBRARY(GraphEngine.Jit.Native SHARED ${jit_src} ${asmjit_src})
 TARGET_COMPILE_DEFINITIONS(GraphEngine.Jit.Native PRIVATE -DASMJIT_EMBED -DASMJIT_RELEASE -DGRAPHENGINEJITNATIVE_EXPORTS)
 TARGET_LINK_LIBRARIES(GraphEngine.Jit.Native Trinity)

@@ -2,7 +2,9 @@
 #include <io>
 #include "GraphEngine.Hosting.h"
 #include "mscoree.h"
+#include <linq.hpp>
 
+using namespace cpplinq;
 using namespace Trinity;
 
 #if defined(TRINITY_PLATFORM_WINDOWS)
@@ -21,7 +23,8 @@ static const String coreCLRDll("libcoreclr.dylib");
 String withstr(std::function<DWORD(const Array<u16char>&)> fn)
 {
     Array<u16char> charray(MAX_LONGPATH);
-    return String::FromWcharArray(charray, fn(charray));
+    auto len = fn(charray);
+    return String::FromWcharArray(charray, len);
 }
 
 // Encapsulates the environment that CoreCLR will run in, including the TPALIST
@@ -57,15 +60,50 @@ class HostEnvironment
     // The path to the directory that CoreCLR is in
     String m_coreCLRDirectoryPath;
 
+    List<String> GetCoreCLRPaths()
+    {
+        auto base_path =
+            from(Environment::Run("dotnet --info"))
+            .where([](auto &p) {return p.Contains("Base Path:"); })
+            .first_or_default();
+        auto idx = base_path.IndexOf(':');
+        if (idx == String::npos)
+        {
+            return {};
+        }
+        else
+        {
+            base_path = base_path.Substring(idx + 1).Trim();
+            if (base_path.Empty())
+            {
+                return {};
+            }
+
+            if (*base_path.rbegin() == Path::DirectorySeparator)
+            {
+                base_path.PopBack();
+            }
+
+            base_path = Path::GetParent(Path::GetParent(base_path));
+            base_path = Path::Combine(base_path, "shared", "Microsoft.NETCore.App");
+            return 
+                from(Directory::GetDirectories(base_path))
+                .select(Path::GetFileName)
+                // TODO proper version validation
+                .where([](auto& p) { return p.StartsWith("2."); })
+                .select([&](auto& p) { return Path::Combine(base_path, p); })
+                .to_vector();
+            //Path::GetDirectoryName
+        }
+    }
+
     // Attempts to load CoreCLR.dll from the given directory.
     // On success pins the dll, sets m_coreCLRDirectoryPath and returns the HMODULE.
     // On failure returns nullptr.
     HMODULE TryLoadCoreCLR(const String& directoryPath)
     {
-        String coreCLRPath(directoryPath);
-        coreCLRPath.Append(coreCLRDll);
-
-        HMODULE result = ::LoadLibraryExW(coreCLRPath.ToWcharArray(), NULL, 0);
+        String  coreCLRPath = Path::Combine(directoryPath, coreCLRDll);
+        HMODULE result      = ::LoadLibraryExW(coreCLRPath.ToWcharArray(), NULL, 0);
 
         if (!result)
         {
@@ -85,12 +123,19 @@ class HostEnvironment
     TrinityErrorCode _Init()
     {
         // Discover the path to this exe's module. All other files are expected to be in the same directory.
-        m_hostPath = withstr([](auto charray) { return ::GetModuleFileNameW(::GetModuleHandleW(nullptr), (LPWSTR)charray.data(), MAX_LONGPATH); });
+        m_hostPath = withstr([](const Array<u16char>& charray) { return ::GetModuleFileNameW(NULL, (LPWSTR)charray.data(), MAX_LONGPATH); });
         m_hostDirectoryPath = Path::GetDirectoryName(m_hostPath);
         m_hostExeName = Path::GetFileName(m_hostPath);
 
         //TODO guess coreclr path
-        m_coreCLRModule = TryLoadCoreCLR(m_hostDirectoryPath);
+        for (auto& coreCLRPath : GetCoreCLRPaths())
+        {
+            m_coreCLRModule = TryLoadCoreCLR(coreCLRPath);
+            if (m_coreCLRModule)
+            {
+                break;
+            }
+        }
 
         if (m_coreCLRModule)
         {
@@ -309,7 +354,7 @@ public:
                     IN const String& entryAsm,
                     IN const String& entryClass,
                     IN const String& entryMethod,
-                    OUT TrinityErrorCode& eresult) : 
+                    OUT TrinityErrorCode& eresult) :
         m_CLRRuntimeHost(nullptr),
         m_coreCLRModule(nullptr),
         m_appPaths(appPaths),
@@ -412,7 +457,7 @@ TrinityErrorCode GraphEngineInit_impl(
     OUT void*& lpenv)
 {
     TrinityErrorCode err;
-    String           apppaths     = String::Join(";", Array<String> (n_apppaths, [&](auto i) { return String::FromWcharArray(lp_apppaths[i], wcslen(lp_apppaths[i])); }));
+    String           apppaths     = String::Join(";", Array<String>(n_apppaths, [&](auto i) { return String::FromWcharArray(lp_apppaths[i], wcslen(lp_apppaths[i])); }));
     String           entry_asm    = String::FromWcharArray(lp_entry_asm, wcslen(lp_entry_asm));
     String           entry_class  = String::FromWcharArray(lp_entry_class, wcslen(lp_entry_class));
     String           entry_method = String::FromWcharArray(lp_entry_method, wcslen(lp_entry_method));
@@ -440,7 +485,7 @@ DLL_EXPORT TrinityErrorCode GraphEngineUninit(
     {
         return TrinityErrorCode::E_INVALID_ARGUMENTS;
     }
-    
+
     auto lpenv = reinterpret_cast<const HostEnvironment*>(_lpenv);
 
     ICLRRuntimeHost4* host = lpenv->GetCLRRuntimeHost();

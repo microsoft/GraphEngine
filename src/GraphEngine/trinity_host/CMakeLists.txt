@@ -5,9 +5,9 @@ cmake_minimum_required (VERSION 3.0.0)
 
 INCLUDE_DIRECTORIES(${TRINITY_C_DIR}/src)
 INCLUDE_DIRECTORIES(${TRINITY_C_DIR}/include)
+INCLUDE_DIRECTORIES(${IX_INCLUDE_DIR})
 FILE(GLOB_RECURSE SRCS *.cpp)
 FILE(DOWNLOAD https://raw.githubusercontent.com/dotnet/coreclr/master/src/pal/prebuilt/inc/mscoree.h ${CMAKE_CURRENT_SOURCE_DIR}/mscoree.h)
-ADD_DEFINITIONS(-DTRINITYC_EXPORTS)
 
 ADD_LIBRARY(trinity_host SHARED ${SRCS})
 TARGET_INCLUDE_DIRECTORIES(trinity_host PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
