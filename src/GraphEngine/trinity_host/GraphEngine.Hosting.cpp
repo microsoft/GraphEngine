@@ -39,13 +39,6 @@ class HostEnvironment
     // The name of this module, without the path
     String m_hostExeName;
 
-    // The path 
-    String m_entryAssembly;
-
-    String m_entryClass;
-
-    String m_entryMethod;
-
     String m_appPaths;
 
     // The list of paths to the assemblies that will be trusted by CoreCLR
@@ -86,7 +79,7 @@ class HostEnvironment
 
             base_path = Path::GetParent(Path::GetParent(base_path));
             base_path = Path::Combine(base_path, "shared", "Microsoft.NETCore.App");
-            return 
+            return
                 from(Directory::GetDirectories(base_path))
                 .select(Path::GetFileName)
                 // TODO proper version validation
@@ -148,8 +141,7 @@ class HostEnvironment
             return TrinityErrorCode::E_LOAD_FAIL;
         }
 
-        String managedAssemblyFullName = Path::GetFullPath(m_entryAssembly);
-        String appPath = Path::GetDirectoryName(managedAssemblyFullName);
+        String appPath = m_coreCLRDirectoryPath;
 
         if (!m_appPaths.Empty())
         {
@@ -157,11 +149,6 @@ class HostEnvironment
         }
 
         String appNiPath = appPath;
-
-        if (managedAssemblyFullName.Empty())
-        {
-            return TrinityErrorCode::E_INVALID_ARGUMENTS;
-        }
 
         // Construct native search directory paths
         String nativeDllSearchDirs = appPath + ";" + m_coreCLRDirectoryPath;
@@ -271,19 +258,8 @@ class HostEnvironment
             return TrinityErrorCode::E_FAILURE;
         }
 
+        return TrinityErrorCode::E_SUCCESS;
 
-        INT_PTR init_func;
-
-        hr = host->CreateDelegate(m_domainId, managedAssemblyFullName.ToWcharArray(), m_entryClass.ToWcharArray(), m_entryMethod.ToWcharArray(), &init_func);
-        //Environment::SetCurrentDirectory(Path::GetDirectoryName(managedAssemblyFullName));
-        //hr = host->CreateDelegate(m_domainId, Path::GetFileName(managedAssemblyFullName).ToWcharArray(), m_entryClass.ToWcharArray(), m_entryMethod.ToWcharArray(), &init_func);
-        //hr = host->ExecuteAssembly(m_domainId, managedAssemblyFullName.ToWcharArray(), argc, (argc) ? &(argv[0]) : NULL, &exitCode);
-        if (FAILED(hr))
-        {
-            return TrinityErrorCode::E_FAILURE;
-        }
-
-        return reinterpret_cast<TrinityErrorCode(*)()>(init_func)();
     }
 
     bool TPAListContainsFile(const String& fileNameWithoutExtension, const Array<String>& extensions)
@@ -359,16 +335,10 @@ class HostEnvironment
 public:
 
     HostEnvironment(IN const String& appPaths,
-                    IN const String& entryAsm,
-                    IN const String& entryClass,
-                    IN const String& entryMethod,
                     OUT TrinityErrorCode& eresult) :
         m_CLRRuntimeHost(nullptr),
         m_coreCLRModule(nullptr),
-        m_appPaths(appPaths),
-        m_entryAssembly(entryAsm),
-        m_entryClass(entryClass),
-        m_entryMethod(entryMethod)
+        m_appPaths(appPaths)
     {
         eresult = _Init();
     }
@@ -454,23 +424,46 @@ public:
     {
         return m_domainId;
     }
+
+    TrinityErrorCode GetFunction(
+        IN const String& assemblyName,
+        IN const String& className,
+        IN const String& methodName,
+        OUT INT_PTR& init_func) const
+    {
+        auto hr = m_CLRRuntimeHost->CreateDelegate(
+            m_domainId,
+            Path::GetFileNameWithoutExtension(assemblyName).ToWcharArray(),
+            className.ToWcharArray(),
+            methodName.ToWcharArray(),
+            &init_func);
+
+        if (FAILED(hr))
+        {
+            return TrinityErrorCode::E_FAILURE;
+        }
+
+        return TrinityErrorCode::E_SUCCESS;
+    }
 };
 
 TrinityErrorCode GraphEngineInit_impl(
     IN int n_apppaths,
     IN wchar_t** lp_apppaths,
-    IN wchar_t* lp_entry_asm,
-    IN wchar_t* lp_entry_class,
-    IN wchar_t* lp_entry_method,
     OUT void*& lpenv)
 {
-    TrinityErrorCode err;
-    String           apppaths     = String::Join(";", Array<String>(n_apppaths, [&](auto i) { return String::FromWcharArray(lp_apppaths[i], wcslen(lp_apppaths[i])); }));
-    String           entry_asm    = String::FromWcharArray(lp_entry_asm, wcslen(lp_entry_asm));
-    String           entry_class  = String::FromWcharArray(lp_entry_class, wcslen(lp_entry_class));
-    String           entry_method = String::FromWcharArray(lp_entry_method, wcslen(lp_entry_method));
+    if (n_apppaths < 0)
+    {
+        return TrinityErrorCode::E_INVALID_ARGUMENTS;
+    }
 
-    lpenv                         = new HostEnvironment(apppaths, entry_asm, entry_class, entry_method, err);
+    TrinityErrorCode err;
+    Array<String> apppaths(n_apppaths);
+    for (int i=0; i < n_apppaths; ++i)
+    {
+        apppaths[i] = lp_apppaths[i];
+    }
+    lpenv         = new HostEnvironment(String::Join(";", apppaths), err);
     return err;
 }
 
@@ -478,12 +471,34 @@ TrinityErrorCode GraphEngineInit_impl(
 DLL_EXPORT TrinityErrorCode GraphEngineInit(
     IN int n_apppaths,
     IN wchar_t** lp_apppaths,
+    OUT void*& lpenv)
+{
+    return GraphEngineInit_impl(n_apppaths, lp_apppaths, lpenv);
+}
+
+DLL_EXPORT TrinityErrorCode GraphEngineGetFunction(
+    IN const void* _lpenv,
     IN wchar_t* lp_entry_asm,
     IN wchar_t* lp_entry_class,
     IN wchar_t* lp_entry_method,
-    OUT void*& lpenv)
+    OUT void** lp_func
+)
 {
-    return GraphEngineInit_impl(n_apppaths, lp_apppaths, lp_entry_asm, lp_entry_class, lp_entry_method, lpenv);
+    if (nullptr == _lpenv)
+    {
+        return TrinityErrorCode::E_INVALID_ARGUMENTS;
+    }
+
+    INT_PTR iptr;
+
+    auto lpenv = reinterpret_cast<const HostEnvironment*>(_lpenv);
+    auto result = lpenv->GetFunction(String(lp_entry_asm),
+                                     String(lp_entry_class),
+                                     String(lp_entry_method),
+                                     iptr);
+
+    *lp_func = (void*)iptr;
+    return result;
 }
 
 DLL_EXPORT TrinityErrorCode GraphEngineUninit(

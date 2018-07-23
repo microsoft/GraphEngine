@@ -1,11 +1,16 @@
 ﻿using System;
+using Trinity;
 
-public class Initializer
+namespace Trinity.Hosting
 {
-    public static int Init()
+    public class Initializer
     {
-        Console.WriteLine("Hello from selfhost CLR!");
-        Console.ReadKey();
-        return 0;
+        public static int Init()
+        {
+            //Global.LocalStorage.LoadStorage();
+            Console.WriteLine("Hello from selfhost CLR!");
+            Console.ReadKey();
+            return 0;
+        }
     }
 }
