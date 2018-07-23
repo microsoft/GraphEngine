@@ -40,6 +40,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\..\..\..\bin\trinity_host.dll">
+      <PackagePath>runtimes\win-x64\native</PackagePath>
+    </Content>
     <Content Include="..\..\..\..\bin\trinity_ffi.dll">
       <PackagePath>runtimes\win-x64\native</PackagePath>
     </Content>
