@@ -280,26 +280,31 @@ def make_class(ty: typing.Type[TSLType], method_tb, cls_tb):
 
 
 @make_class.case(True)
-def make_class(ty: Struct, method_tb, cls_tb):
+def make_class(ty: typing.Type[Struct], method_tb, cls_tb):
     ty.__slots__ = getattr(ty, '__slots__', ()) + ('__accessor__',)
     spec: StructTypeSpec = ty.get_spec()
     chain = type_spec_to_name(spec)
 
-    if isinstance(ty, Cell):
+    if issubclass(ty, Cell):
         # An accessor type of a cell is locked once it's created.
         # So it don't require to lock one more when __enter__ is called.
-        acc_ty = type(ty.__name__, (CellAccessor, *ty.__bases__))
-        acc_ty.__enter__ = lambda _: _
 
         @feature(staging)
         def use(cell_id: int, cell_access_options: int):
             method: const = method_tb[f'use_{chain}']
-            acc_ty_: const = acc_ty
-            new = acc_ty_.__new__(acc_ty_)
+            acc_ty: const = ty
+            new = acc_ty.__new__(acc_ty)
             new.__accessor__ = method(cell_id, cell_access_options)
             return new
 
         ty.use = staticmethod(use)
+
+        @feature(staging)
+        def access(cell_id, cell_access_options: int):
+            acc_ty: const = ty
+            return FutureAccessor(cell_id, cell_access_options, acc_ty)
+
+        ty.access = staticmethod(access)
 
         @feature(staging)
         def __enter__(self, cell_access_options: int):
@@ -315,6 +320,7 @@ def make_class(ty: Struct, method_tb, cls_tb):
             method(self.__accessor__)
 
         ty.__exit__ = __exit__
+        ty.release = __exit__
 
         @feature(staging)
         def save(self):
