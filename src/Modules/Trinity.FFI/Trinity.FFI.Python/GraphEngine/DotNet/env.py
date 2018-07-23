@@ -76,7 +76,7 @@ def build_module(tsl_code, namespace: str):
             f"ext = Extension('_{namespace}',\n"
             f"                  sources=[r'{directory}/{namespace}_wrap.cxx'],\n"
             f"                  include_dirs=[r'{Env.meta_gen_include}'],\n"
-            "                   libraries=['trinity_ffi'],\n"
+            "                   libraries=['trinity_ffi', 'Trinity'],\n"
             f"                  library_dirs=[r'{Env.meta_gen_lib}'])\n"
             "\n"
             f"setup(name='{namespace}',\n"

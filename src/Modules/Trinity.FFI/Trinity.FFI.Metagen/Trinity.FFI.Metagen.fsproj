@@ -55,6 +55,9 @@
     <Content Include="..\..\..\..\bin\trinity_ffi.lib" Link="trinity_ffi.lib">
       <PackagePath>content\win-x64</PackagePath>
     </Content>
+    <Content Include="..\..\..\..\bin\Trinity.lib" Link="Trinity.lib">
+      <PackagePath>content\win-x64</PackagePath>
+    </Content>
     
     <Compile Include="Utils.fs" />
 
