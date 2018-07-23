@@ -271,7 +271,7 @@ let code_gen (typeid_map: (string, uint16) hashmap) (module_name) (tsl_specs : (
         yield (unlock_decl, unlock_body)
 
         let save_cell_decl = "static void save_cell(void*);";
-        let save_cell_"
+        let save_cell_body = "
              static void save_cell(void* subject)
              {
                 if(auto errCode = SaveCell(*subject))
