@@ -8,13 +8,44 @@ from Redy.Magic.Classic import singleton
 from Redy.Tools.TypeInterface import Module
 from subprocess import call
 import ctypes, sys
-from toolz import compose
+import typing
+from linq import Flow as seq
+from toolz import curry
+
+
+@curry(setattr, Path, '__hash__')
+def __hash__(self: Path):
+    return hash(self._path)
+
+
+
+try:
+    from Redy.Tools.Color import Green, Red
+except ModuleNotFoundError:
+    class _Colored:
+        Red = '\033[31m'
+        Green = '\033[32m'
+        Yellow = '\033[33m'
+        Blue = '\033[34m'
+        Purple = '\033[35m'
+        LightBlue = '\033[36m'
+        Clear = '\033[39m'
+        Purple2 = '\033[95m'
+
+    def _wrap_color(colored: str):
+        def func(*strings: str, sep=''):
+            strings = map(lambda each: f'{colored}{each}', strings)
+            return f'{sep.join(strings)}{_Colored.Clear}'
+        return func
+
+    Red = _wrap_color(_Colored.Red)
+    Green = _wrap_color(_Colored.Green)
 
 
 @singleton
 class Collect:
     def __init__(self):
-        self.fn = compose(Traversal.map_by(str), Traversal.flatten_to(Path))
+        self.fn = Traversal.flatten_to(Path)
 
     def __call__(self, collection):
         return self.fn(collection)
@@ -26,8 +57,8 @@ class Collect:
 @singleton
 class FilterDLL:
     def __init__(self):
-        def is_dll(x: str):
-            return x.lower().endswith('.dll')
+        def is_dll(x: Path):
+            return x.relative().lower().endswith('.dll')
 
         self.fn = Traversal.filter_by(is_dll)
 
@@ -78,39 +109,37 @@ def init_trinity_service() -> Module:
 
     sys.path.append(str(module_dir.parent()))
 
-    # TODO: native hosting
+    # TODO: optimize loading
+    paths_of_libs: seq[typing.Set[Path]] = seq(libs).concat(deps).to_set()
+    path_strs_of_libs : typing.Set[str] = paths_of_libs.map(str).to_set()._
 
-    libs = set(libs)
-    from rbnf.Color import Red, Green
-    while libs:
-        for each in libs.copy():
+    while path_strs_of_libs:
+        any_loaded = None
+
+        for each in path_strs_of_libs:
             try:
                 ctypes.cdll.LoadLibrary(each)
-                print(Green(f'load dll succeed: {each}.'))
-                libs.remove(each)
+                any_loaded = each
+                print(f'Loading {Green(each)}...')
                 break
-            except WindowsError:
-                print(f'load dll failed, reorder import path {Red(each)}.')
-                pass
-    #
-    # for each_lib in libs:
-    #     print(each_lib)
-    #     ctypes.cdll.LoadLibrary(each_lib)
+            except (OSError, ImportError):
+                continue
 
-    dirs = list({Path(each).parent().__str__() for each in deps})
+        if any_loaded:
+            path_strs_of_libs.remove(any_loaded)
+            continue
 
-    #for each_dep in deps:
-        #clr.AddReference(each_dep)
+        print('Cannot load dlls: {}'.format(Red(repr(path_strs_of_libs))))
+        break
 
-
-    # TODO
-    #__Trinity.TrinityConfig.StorageRoot = str(graph_engine_config_path.into('storage'))
-
-    # TODO
-    #__Trinity.TrinityConfig.LoadConfig(str(graph_engine_config_path.into("trinity.xml")))
-
+    dirs = paths_of_libs.map(Path.parent).map(str).to_set().to_list()._
     __ffi = __import__('ffi')
-    __ffi.InitCLR(len(dirs), dirs, str(graph_engine_config_path.into("trinity.xml")),
+    __ffi.InitCLR(len(dirs),
+                  dirs,
+                  str(graph_engine_config_path.into("trinity.xml")),
                   str(graph_engine_config_path.into('storage')))
+    __ffi.InitInterfaces()
+
+    sys.path.remove(str(module_dir.parent()))
     Env.ffi = __ffi
 

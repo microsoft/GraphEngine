@@ -1,4 +1,5 @@
 from Redy.Magic.Classic import discrete_cache
+import abc
 import copy
 
 
@@ -10,6 +11,22 @@ class NotDefinedYet:
         return self.name
 
     def __str__(self):
+        raise NotImplemented
+
+
+class TSLType:
+    __accessor__: object
+    __args__ = None
+
+    @classmethod
+    @abc.abstractmethod
+    def get_spec(cls):
+        raise NotImplemented
+
+    def ref_set(self, value: 'TSLType'):
+        raise NotImplemented
+
+    def ref_get(self):
         raise NotImplemented
 
 
@@ -33,7 +50,7 @@ class _List_Ty_Annotate(type):
         return hasattr(subclass, '__gbase__') and subclass.__gbase__ is List
 
 
-class List(metaclass=_List_Ty_Annotate):
+class List(TSLType, metaclass=_List_Ty_Annotate):
     __ty_spec__: object
     __accessor__: object
     __args__ = None

@@ -4,14 +4,14 @@ import typing
 from GraphEngine.tsl.type.spec import *
 from Redy.Magic.Classic import discrete_cache, execute, const_return, singleton
 from Redy.Magic.Pattern import Pattern
-from GraphEngine.tsl.type._system import NotDefinedYet
+from GraphEngine.tsl.type._system import NotDefinedYet, TSLType
 
 T = typing.TypeVar('T')
 
 
-def _remove_bases(cls: type):
-    return type(cls.__name__, tuple(each for each in cls.__bases__ if each is not TSLType), {**cls.__dict__})
-
+# def _remove_bases(cls: type):
+#     return type(cls.__name__, tuple(each for each in cls.__bases__ if each is not TSLType), {**cls.__dict__})
+#
 
 class TSLTypeMeta(type):
     def __instancecheck__(self, instance):
@@ -21,23 +21,7 @@ class TSLTypeMeta(type):
         return issubclass(subclass, (Struct, List))
 
 
-class TSLType(metaclass=TSLTypeMeta):
-    __accessor__: object
-    __args__ = None
-
-    @classmethod
-    @abc.abstractmethod
-    def get_spec(cls):
-        raise NotImplemented
-
-    def ref_set(self, value: 'TSLType'):
-        raise NotImplemented
-
-    def ref_get(self):
-        raise NotImplemented
-
-
-@_remove_bases
+# @_remove_bases
 class Struct(TSLType):
     __ty_spec__: object
     __accessor__: object
@@ -50,7 +34,7 @@ class Struct(TSLType):
         return StructTypeSpec(cls.__name__, ImmutableDict((k, type_map_spec(v)) for k, v in annotations.items()))
 
 
-@_remove_bases
+# @_remove_bases
 class Cell(Struct, TSLType):
     """
     All methods here except `get_spec` and `access` is only for type hinting.

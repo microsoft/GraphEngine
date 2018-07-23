@@ -182,7 +182,10 @@ let code_gen (typeid_map: (string, uint16) hashmap) (module_name) (tsl_specs : (
     let (decls, defs) =
         [
         for (ty, verb_lst) in tsl_specs do
+            
+            // for specific types
             let ty_name = ty_recur_naming ty
+
             for verb in verb_lst do
                 let (decl, generator) = generate ty verb
                 let native_fn =
@@ -191,90 +194,100 @@ let code_gen (typeid_map: (string, uint16) hashmap) (module_name) (tsl_specs : (
                 let addr = native_fn.CallSite.ToInt64()
 
                 yield (decl, generator addr)
-                match ty.TypeCode with
-                | CELL _ ->
-                    match find typeid_map ty.QualifiedName with
-                    | None -> failwith "Impossible!"
-                    | Some(typeid) ->
-                    let lock_cell_from_existed_decl = sprintf "static void reuse_%s(void*, int32_t);" ty_name
-                    let lock_cell_from_existed_body =
-                        sprintf "\n
-                        static void reuse_%s(void* subject, int32_t options)
-                        {
-                            auto accessor = reinterpret_cast<CellAccessor*>(subject);
-                            assessor -> Release();
-                            auto errCode = LockCell(*accessor, options, %s_BNew);
-                            if (errCode)
-                               throw errCode;
-                        }
-                        " ty_name ty_name
-                    yield (lock_cell_from_existed_decl, lock_cell_from_existed_body)
+            
+            match ty.TypeCode with
+            | CELL _ ->
+                // for cells
+                match find typeid_map ty.QualifiedName with
+                | None -> failwith "Impossible!"
+                | Some(typeid) ->
+                let lock_cell_from_existed_decl = sprintf "static void reuse_%s(void*, int32_t);" ty_name
+                let lock_cell_from_existed_body =
+                    sprintf "\n
+static void reuse_%s(void* subject, int32_t options)
+{
+    auto accessor = static_cast<CellAccessor*>(subject);
+    accessor -> Release();
+    auto errCode = LockCell(*accessor, options, %s_BNew);
+    if (errCode)
+        throw errCode;
+}                       " ty_name ty_name
+                yield (lock_cell_from_existed_decl, lock_cell_from_existed_body)
 
-                    let lock_cell_decl = sprintf "static void* use_%s(int64_t, int32_t);" ty_name
-                    let lock_cell_body =
-                        sprintf "\n
-		                    static void* use_%s(int64_t cellid, int32_t options)
-	                      {
-                          CellAccessor* accessor = new CellAccessor();
-                          accessor -> cellId = cellid;
-                          accessor -> type = %u;
-                          auto errCode = LockCell(*accessor, options, %s_BNew);
-                          if (errCode)
-                             throw errCode;
-                          return accessor;
-                         }
-                        " ty_name typeid ty_name
-                    yield (lock_cell_decl, lock_cell_body)
+                let lock_cell_decl = sprintf "static void* use_%s(int64_t, int32_t);" ty_name
+                let lock_cell_body =
+                    sprintf "\n
+static void* use_%s(int64_t cellid, int32_t options)
+{
+    CellAccessor* accessor = new CellAccessor();
+    accessor -> cellId = cellid;
+    accessor -> type = %u;
+    auto errCode = LockCell(*accessor, options, %s_BNew);
+    if (errCode)
+    throw errCode;
+    return accessor;
+}                       " ty_name typeid ty_name
+                yield (lock_cell_decl, lock_cell_body)
 
-                    let load_cell_decl = sprintf "static void* load_%s(int64_t cellid);" ty_name
-                    let load_cell_body =
-                      sprintf "\n
-                          static void* load_%s(int64_t cellid)
-                          {
-                            CellAccessor* accessor = new CellAcceesor();
-                            accessor -> cellId = cellid;
-                            accessor -> type = %u;
-                            auto errCode = LoadCell(*accessor);
-                            if (errCode)
-                              throw errCode;
-                            return accessor;
-                          }
-                          " ty_name typeid
-                    yield (load_cell_decl, load_cell_body)
-                | _ -> ()
+                let load_cell_decl = sprintf "static void* load_%s(int64_t cellid);" ty_name
+                let load_cell_body =
+                    sprintf "\n
+static void* load_%s(int64_t cellid)
+{
+CellAccessor* accessor = new CellAccessor();
+accessor -> cellId = cellid;
+accessor -> type = %u;
+auto errCode = LoadCell(*accessor);
+if (errCode)
+throw errCode;
+return accessor;
+}                       " ty_name typeid
+                yield (load_cell_decl, load_cell_body)
+            | _ -> ()
 
             let initializer_decl = sprintf "static void* create_%s();" ty_name
             let initializer_body =
                 sprintf "\n
-                static void* create_%s(){
-                   CellAccessor* accessor = new CellAccessor();
-                   auto errCode = %s_BNew(accessor);
-                   if(errCode)
-                   throw errCode;
-                   return accessor;
-                }" ty_name ty_name
+static void* create_%s()
+{
+    CellAccessor* accessor = new CellAccessor();
+    auto errCode = %s_BNew(accessor);
+    if(errCode)
+    throw errCode;
+    return accessor;
+}                " ty_name ty_name
             yield (initializer_decl, initializer_body)
-
+        
+        // not for specific types
         let basic_ref_get_decl = "static void* Unbox(void*);"
         let basic_ref_get_body = "\n
-          static void* Unbox(void* object)
-          {
-             return cast_object(object);
-          }"
+static void* Unbox(void* object)
+{
+    return cast_object(object);
+}
+          "
         yield (basic_ref_get_decl, basic_ref_get_body)
 
         let unlock_decl = "static void unlock(void*);"
         let unlock_body =
-             "static void unlock(void* subject){return UnlockCell(*subject);}"
+             "
+static void unlock(void* subject)
+{ 
+    auto accessor = static_cast<CellAccessor*>(subject);
+    UnlockCell(*accessor); 
+}
+                "
         yield (unlock_decl, unlock_body)
 
         let save_cell_decl = "static void save_cell(void*);";
         let save_cell_body = "
-             static void save_cell(void* subject)
-             {
-                if(auto errCode = SaveCell(*subject))
-                    throw errCode;
-             }
+static void save_cell(void* subject)
+{
+auto accessor = static_cast<CellAccessor*>(subject);
+auto errCode = SaveCell(*accessor);
+if(errCode)
+    throw errCode;
+}
             "
         yield (save_cell_decl, save_cell_body)
         // TODO:
@@ -283,6 +296,7 @@ let code_gen (typeid_map: (string, uint16) hashmap) (module_name) (tsl_specs : (
         //   3. python method binding of above unfinished items(done).
 
         ] |> List.unzip
+
     let (=>) a b = (a, b)
     let swig_template =
         "

@@ -42,6 +42,7 @@ class TSL:
 
     def bind(self):
         self._module = _AttrGetProxy(build_module(self.to_tsl, self._namespace))
+
         for each in self._root_types.values():
             make_class(each, self._module, self._root_types)
 

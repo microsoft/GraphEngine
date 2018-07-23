@@ -316,7 +316,7 @@ def make_class(ty: typing.Type[Struct], method_tb, cls_tb):
 
         @feature(staging)
         def __exit__(self):
-            method: const = method_tb[f'unlock_{chain}']
+            method: const = method_tb[f'unlock']
             method(self.__accessor__)
 
         ty.__exit__ = __exit__
