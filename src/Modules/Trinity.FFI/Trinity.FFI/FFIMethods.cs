@@ -42,6 +42,7 @@ namespace Trinity.FFI
 			local_savestorage = LocalStorage.savestorage,
 			local_loadstorage = LocalStorage.loadstorage,
 			local_resetstorage = LocalStorage.resetstorage,
+			rt_getfunction = Runtime.getfunction,
 			schema_get = Schema.get,
         };
 

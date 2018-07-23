@@ -46,6 +46,7 @@ namespace Trinity.FFI
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_SAVESTORAGE();
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_LOADSTORAGE();
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_LOCAL_RESETSTORAGE();
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_RT_GETFUNCTION(String p0, String p1, String p2, out IntPtr p3);
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_SCHEMA_GET(out NativeTypeDescriptor[] p0, out Int32 p1);
 
     internal struct TRINITY_INTERFACES
@@ -108,6 +109,8 @@ namespace Trinity.FFI
         public TRINITY_FFI_LOCAL_LOADSTORAGE local_loadstorage;
         [MarshalAs(UnmanagedType.FunctionPtr)]
         public TRINITY_FFI_LOCAL_RESETSTORAGE local_resetstorage;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_RT_GETFUNCTION rt_getfunction;
         [MarshalAs(UnmanagedType.FunctionPtr)]
         public TRINITY_FFI_SCHEMA_GET schema_get;
     };
