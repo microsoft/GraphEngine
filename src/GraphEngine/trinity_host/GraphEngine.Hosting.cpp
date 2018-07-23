@@ -210,6 +210,12 @@ class HostEnvironment
         // NATIVE_DLL_SEARCH_DIRECTORIES
         // - The list of paths that will be probed for native DLLs called by PInvoke
         //
+
+        auto _tpalist = GetTpaList().ToWcharArray();
+        auto _appPath = appPath.ToWcharArray();
+        auto _appNiPath = appNiPath.ToWcharArray();
+        auto _ndsd = nativeDllSearchDirs.ToWcharArray();
+
         const wchar_t *property_keys[] ={
             L"TRUSTED_PLATFORM_ASSEMBLIES",
             L"APP_PATHS",
@@ -218,13 +224,13 @@ class HostEnvironment
         };
         const wchar_t *property_values[] ={
             // TRUSTED_PLATFORM_ASSEMBLIES
-            GetTpaList().ToWcharArray(),
+            _tpalist,
             // APP_PATHS
-            appPath.ToWcharArray(),
+            _appPath,
             // APP_NI_PATHS
-            appNiPath.ToWcharArray(),
+            _appNiPath,
             // NATIVE_DLL_SEARCH_DIRECTORIES
-            nativeDllSearchDirs.ToWcharArray(),
+            _ndsd,
         };
 
 
@@ -268,7 +274,9 @@ class HostEnvironment
 
         INT_PTR init_func;
 
-        hr = host->CreateDelegate(m_domainId, m_entryAssembly.ToWcharArray(), m_entryClass.ToWcharArray(), m_entryMethod.ToWcharArray(), &init_func);
+        hr = host->CreateDelegate(m_domainId, managedAssemblyFullName.ToWcharArray(), m_entryClass.ToWcharArray(), m_entryMethod.ToWcharArray(), &init_func);
+        //Environment::SetCurrentDirectory(Path::GetDirectoryName(managedAssemblyFullName));
+        //hr = host->CreateDelegate(m_domainId, Path::GetFileName(managedAssemblyFullName).ToWcharArray(), m_entryClass.ToWcharArray(), m_entryMethod.ToWcharArray(), &init_func);
         //hr = host->ExecuteAssembly(m_domainId, managedAssemblyFullName.ToWcharArray(), argc, (argc) ? &(argv[0]) : NULL, &exitCode);
         if (FAILED(hr))
         {
@@ -313,7 +321,7 @@ class HostEnvironment
     {
         for (auto& ext : extensions)
         {
-            String pattern = targetPath + ext;
+            String pattern = Path::Combine(targetPath, ext);
             WIN32_FIND_DATA data;
             HANDLE findHandle = FindFirstFile(pattern.ToWcharArray(), &data);
 

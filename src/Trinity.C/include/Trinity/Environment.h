@@ -78,7 +78,7 @@ namespace Trinity
                 return ret;
             }
 
-            while (fgets(lplinebuf, lplinebuf.Length(), pspipe))
+            while (fgets(lplinebuf, (int)lplinebuf.Length(), pspipe))
             {
                 ret.push_back(String(lplinebuf));
             }
