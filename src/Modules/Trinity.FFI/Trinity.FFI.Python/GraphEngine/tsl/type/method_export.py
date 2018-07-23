@@ -1,6 +1,7 @@
 from GraphEngine.tsl.type.system import *
 from GraphEngine.tsl.type.mangling import *
 from Redy.Opt import feature, const, constexpr, Macro
+import json
 
 _internal_macro = Macro()
 staging = (const, constexpr)
@@ -339,10 +340,6 @@ def make_class(ty: typing.Type[Struct], method_tb, cls_tb):
 
         ty.load = staticmethod(load)
 
-    def __init__(self):
-        method = method_tb[f'create_{chain}']
-        self.__accessor__ = method()
-
     fields = spec.field_types.items()
 
     non_primitive_count = 0
@@ -423,6 +420,15 @@ def make_class(ty: typing.Type[Struct], method_tb, cls_tb):
 
     ty.__slots__ += tuple(f'__{i}' for i in range(non_primitive_count))
 
+    @feature(staging)
+    def __init__(self, data: object = None):
+        default_method: const = method_tb[f'create_{chain}']
+        valued_method: const = method_tb[f'create_{chain}_with_data']
+        if data is None:
+            self.__accessor__ = default_method()
+        else:
+            # not `constexpr[json.dumps], for the attribute `dumps` is not fixed.
+            self.__accessor__ = valued_method(constexpr[json].dumps(data))
     ty.__init__ = __init__
 
 
@@ -431,11 +437,7 @@ def make_class(ty: List, method_tb, cls_tb):
     spec: ListTypeSpec = ty.get_spec()
     chain = type_spec_to_name(spec)
 
-    def __init__(self):
-        method = method_tb[f'create_{chain}']
-        self.__accessor__ = method()
 
-    ty.__init__ = __init__
 
     # TODO: deepcopy
     # @feature(staging)
@@ -540,6 +542,16 @@ def make_class(ty: List, method_tb, cls_tb):
         method: const = method_tb[f'{chain}_LCount']
         return method(self.__accessor__)
 
+    @feature(staging)
+    def __init__(self, data: object = None):
+        default_method: const = method_tb[f'create_{chain}']
+        valued_method = method_tb[f'create_{chain}_with_data']
+        if data is None:
+            self.__accessor__ = default_method()
+        else:
+            # not `constexpr[json.dumps], for the attribute `dumps` is not fixed.
+            self.__accessor__ = valued_method(constexpr[json].dumps(data))
+
     ty.__init__ = __init__
     ty.insert = insert_at
     ty.__contains__ = __contains__
@@ -567,13 +579,10 @@ if __name__ == '__main__':
 
     class C(Cell):
         s: S
-        b: typing.List[S]
+        b: List[S]
 
 
     cls_tb = {'C': C, 'K': K, 'S': S}
     make_class(C, methods, cls_tb)
     print(C.__slots__)
     assert C.__slots__ == ('__accessor__', '__0', '__1')
-    assert Cell.__slots__ == ('__accessor__',)
-
-    # K = StructTypeSpec('K', ImmutableDict([('a', type_map_spec(int))]))  # S = StructTypeSpec("S", ImmutableDict([('i', type_map_spec(int)), ('k', K)]))  # S_ = create_cls(S, "cell_C_SGet_s", methods, 0)  # s = S_("acc", None)  # print(S_.__dict__.keys(), S_.__slots__)  # print(s.k)  # print(s.__dict__)  # print(s.k.a)

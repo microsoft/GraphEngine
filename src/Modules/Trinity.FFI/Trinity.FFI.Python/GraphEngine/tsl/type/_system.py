@@ -1,6 +1,5 @@
 from Redy.Magic.Classic import discrete_cache
 import abc
-import copy
 
 
 class NotDefinedYet:
@@ -36,9 +35,17 @@ class _List_Ty_Annotate(type):
     def __getitem__(self, item):
         if hasattr(self, '__garg__'):
             raise TypeError("Cannot generalise a concrete type.")
+
         if isinstance(item, str):
             item = NotDefinedYet(item)
-        new_ty = self.__class__(f'{self.__name__}<{item.__name__}>', self.__bases__, dict(self.__dict__))
+
+        if isinstance(item, type):
+            item_ty_name = item.__name__
+        else:
+            assert isinstance(item, NotDefinedYet)
+            item_ty_name = item.name
+
+        new_ty = self.__class__(f'{self.__name__}<{item_ty_name}>', self.__bases__, dict(self.__dict__))
         new_ty.__gbase__ = self
         new_ty.__garg__ = item
         return new_ty
@@ -47,6 +54,7 @@ class _List_Ty_Annotate(type):
         return any(issubclass(each, List) for each in instance.__class__.__mro__)
 
     def __subclasscheck__(self, subclass):
+        # noinspection PyUnresolvedReferences
         return hasattr(subclass, '__gbase__') and subclass.__gbase__ is List
 
 

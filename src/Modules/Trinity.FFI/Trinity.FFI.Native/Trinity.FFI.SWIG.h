@@ -166,10 +166,19 @@ Cell* NewCell_3(char* cellType, char* cellContent)
     }
 }
 
-char* Jit_SwigGen(char* p0, char* p1)
-{
-	return g_TrinityInterfaces->jitSwigGen(p0, p1);
+void json_cons_fn_ptr(char* cellType, char* cellContent, long long& cellId, long long& cellPtr) {
+	g_TrinityInterfaces->cell_tobinary(cellType, cellContent, &cellId, &cellPtr);
 }
+
+long long _json_cons_fn_ptr_getter() {
+	return (long long) &json_cons_fn_ptr;
+}
+
+char* Jit_SwigGen(char* directory, char* moduleName)
+{
+	return g_TrinityInterfaces->jitSwigGen(_json_cons_fn_ptr_getter(), directory, moduleName);
+}
+
 
 
 /*

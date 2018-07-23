@@ -174,13 +174,18 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
         sprintf ("static %s %s(%s){\nreturn reinterpret_cast<%s>(0x%xll)(%s);\n}") ret_type name_sig typed_args_string private_fn_type addr args_string
     in (decl, generator)
 
-let code_gen (typeid_map: (string, uint16) hashmap) (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
+let code_gen (json_cons_fn_ptr: int64) (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
     let tb = hashmap()  (** for caching *)
 
     let generate = single_method'code_gen tb
     let ty_recur_naming = ty_to_name true
     let (decls, defs) =
         [
+        let json_cons_method_body = 
+            sprintf "
+static void (*json_cons)(char*, char*, int64_t&, int64_t&) = reinterpret_cast<void(*)(char*, char*, int64_t&, int64_t&)>(0x%ull);
+                    " json_cons_fn_ptr
+        yield ("", json_cons_method_body)
         for (ty, verb_lst) in tsl_specs do
             
             // for specific types
@@ -196,11 +201,8 @@ let code_gen (typeid_map: (string, uint16) hashmap) (module_name) (tsl_specs : (
                 yield (decl, generator addr)
             
             match ty.TypeCode with
-            | CELL _ ->
+            | CELL typeid ->
                 // for cells
-                match find typeid_map ty.QualifiedName with
-                | None -> failwith "Impossible!"
-                | Some(typeid) ->
                 let lock_cell_from_existed_decl = sprintf "static void reuse_%s(void*, int32_t);" ty_name
                 let lock_cell_from_existed_body =
                     sprintf "\n
@@ -224,7 +226,7 @@ static void* use_%s(int64_t cellid, int32_t options)
     accessor -> type = %u;
     auto errCode = LockCell(*accessor, options, %s_BNew);
     if (errCode)
-    throw errCode;
+        throw errCode;
     return accessor;
 }                       " ty_name typeid ty_name
                 yield (lock_cell_decl, lock_cell_body)
@@ -234,31 +236,44 @@ static void* use_%s(int64_t cellid, int32_t options)
                     sprintf "\n
 static void* load_%s(int64_t cellid)
 {
-CellAccessor* accessor = new CellAccessor();
-accessor -> cellId = cellid;
-accessor -> type = %u;
-auto errCode = LoadCell(*accessor);
-if (errCode)
-throw errCode;
-return accessor;
+    CellAccessor* accessor = new CellAccessor();
+    accessor -> cellId = cellid;
+    accessor -> type = %u;
+    auto errCode = LoadCell(*accessor);
+    if (errCode)
+        throw errCode;
+    return accessor;
 }                       " ty_name typeid
                 yield (load_cell_decl, load_cell_body)
             | _ -> ()
 
-            let initializer_decl = sprintf "static void* create_%s();" ty_name
-            let initializer_body =
+            let default_initializer_decl = sprintf "static void* create_%s();" ty_name
+            let default_initializer_body =
                 sprintf "\n
 static void* create_%s()
 {
     CellAccessor* accessor = new CellAccessor();
     auto errCode = %s_BNew(accessor);
     if(errCode)
-    throw errCode;
+        throw errCode;
     return accessor;
 }                " ty_name ty_name
-            yield (initializer_decl, initializer_body)
+            yield (default_initializer_decl, default_initializer_body)
+
+            let valued_initializer_decl = sprintf "static void* create_%s_with_data(char*);" ty_name 
+            let valued_initializer_body = 
+                sprintf  "
+ static void* create_%s_with_data(char* content)
+ {
+        CellAccessor* accessor = static_cast<CellAccessor*>(create_%s());
+        json_cons(\"%s\", content, accessor -> cellId, accessor -> cellPtr);
+        return accessor;
+ }              
+                " ty_name ty_name ty.TypeName
+            yield (valued_initializer_decl, valued_initializer_body)
         
         // not for specific types
+        
         let basic_ref_get_decl = "static void* Unbox(void*);"
         let basic_ref_get_body = "\n
 static void* Unbox(void* object)

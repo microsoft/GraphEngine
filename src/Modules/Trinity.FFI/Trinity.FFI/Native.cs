@@ -17,7 +17,7 @@ namespace Trinity.FFI
     internal unsafe delegate string TRINITY_FFI_SYNC_HANDLER(string content);
     internal unsafe delegate void TRINITY_FFI_ASYNC_HANDLER(string content);
 
-    internal unsafe delegate String TRINITY_FFI_JITSWIGGEN(String p0, String p1);
+    internal unsafe delegate String TRINITY_FFI_JITSWIGGEN(Int64 p0, String p1, String p2);
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_ACCESSOR_USE_1(Int64 p0, ref IntPtr p1);
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_ACCESSOR_USE_2(Int64 p0, [MarshalAs(UnmanagedType.I4)]CellAccessOptions p1, ref IntPtr p2);
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_ACCESSOR_USE_3(Int64 p0, [MarshalAs(UnmanagedType.I4)]CellAccessOptions p1, ref IntPtr p2, String p3);

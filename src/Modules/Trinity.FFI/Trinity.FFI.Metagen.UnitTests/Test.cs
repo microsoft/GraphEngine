@@ -34,7 +34,6 @@ namespace Trinity.FFI.Metagen.UnitTests
         public void TestNewSwigGen()
         {
             var ty_descs = Schema.CellDescriptors.Select(TypeSystem.Make);
-            var typeIdMap = Schema.CellDescriptors.ToDictionary(it => it.Type.AssemblyQualifiedName, it => it.CellType);
             var all_type_collected = FFI.MetaGen.analyzer.collect_type(ty_descs);
 
             foreach(var e in all_type_collected)
@@ -56,7 +55,7 @@ namespace Trinity.FFI.Metagen.UnitTests
             //    Output.WriteLine("=====================");
             //}
             //Output.WriteLine($"Total method num: {num}");
-            var swig_code = FFI.MetaGen.code_gen.code_gen(typeIdMap, "", all_verbs);
+            var swig_code = FFI.MetaGen.code_gen.code_gen(100L, "", all_verbs);
             Output.WriteLine(swig_code);
             
 
