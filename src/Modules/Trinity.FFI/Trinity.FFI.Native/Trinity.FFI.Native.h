@@ -54,6 +54,7 @@ typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_REMOVECELL)(long long);
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_SAVESTORAGE)();
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_LOADSTORAGE)();
 typedef TrinityErrorCode (*TRINITY_FFI_LOCAL_RESETSTORAGE)();
+typedef TrinityErrorCode (*TRINITY_FFI_RT_GETFUNCTION)(char*, char*, char*, void**);
 typedef TrinityErrorCode (*TRINITY_FFI_SCHEMA_GET)(void**, long*);
 
 extern "C" struct TRINITY_INTERFACES
@@ -87,6 +88,7 @@ extern "C" struct TRINITY_INTERFACES
     TRINITY_FFI_LOCAL_SAVESTORAGE local_savestorage;
     TRINITY_FFI_LOCAL_LOADSTORAGE local_loadstorage;
     TRINITY_FFI_LOCAL_RESETSTORAGE local_resetstorage;
+    TRINITY_FFI_RT_GETFUNCTION rt_getfunction;
     TRINITY_FFI_SCHEMA_GET schema_get;
 };
 
