@@ -252,22 +252,20 @@ let code_gen (typeid_map: (string, uint16) hashmap) (module_name) (tsl_specs : (
                    if(errCode)
                    throw errCode;
                    return accessor;
-                }
-                " ty_name ty_name
+                }" ty_name ty_name
             yield (initializer_decl, initializer_body)
 
         let basic_ref_get_decl = "static void* Unbox(void*);"
-        let basic_ref_get_body = "
+        let basic_ref_get_body = "\n
           static void* Unbox(void* object)
           {
              return cast_object(object);
-          }
-        "
+          }"
         yield (basic_ref_get_decl, basic_ref_get_body)
 
         let unlock_decl = "static void unlock(void*);"
         let unlock_body =
-             "static void unlock(void* subject){\nreturn UnlockCell(*subject);\n}"
+             "static void unlock(void* subject){return UnlockCell(*subject);}"
         yield (unlock_decl, unlock_body)
 
         let save_cell_decl = "static void save_cell(void*);";
@@ -288,16 +286,16 @@ let code_gen (typeid_map: (string, uint16) hashmap) (module_name) (tsl_specs : (
     let (=>) a b = (a, b)
     let swig_template =
         "
-        %module {moduleName}
-        %include <stdint.i>
-        %{{
-        #include \"swig_accessor.h\"
-        #include \"CellAccessor.h\"
-        #define SWIG_FILE_WITH_INIT
-        {decl}
-        {source}
-        %}}
-        {decl}
+%module {moduleName}
+%include <stdint.i>
+%{{
+#include \"swig_accessor.h\"
+#include \"CellAccessor.h\"
+#define SWIG_FILE_WITH_INIT
+{decl}
+{source}
+%}}
+{decl}
         "
     in PString.format swig_template
                        ["moduleName" => module_name
