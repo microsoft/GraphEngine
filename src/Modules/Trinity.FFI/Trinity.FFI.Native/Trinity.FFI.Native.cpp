@@ -25,7 +25,7 @@ TRINITYFFINATIVE_API TRINITY_INTERFACES*  TRINITY_FFI_GET_INTERFACES()
     return &g_interfaces;
 }
 
-TRINITYFFINATIVE_API TrinityErrorCode TRINITY_FFI_INITIALIZE(int n_apppaths, wchar_t**)
+TRINITYFFINATIVE_API TrinityErrorCode TRINITY_FFI_INITIALIZE(int n_apppaths, wchar_t** lp_apppaths, char* config_path, char* storage_root)
 {
     /*
 
@@ -56,6 +56,37 @@ TRINITYFFINATIVE_API TrinityErrorCode TRINITY_FFI_INITIALIZE(int n_apppaths, wch
          from a crash. How this is coordinated is defined by a Reisen package.
 
     */
+
+	TrinityErrorCode eresult = TrinityErrorCode::E_SUCCESS;
+	TrinityErrorCode(*lpfunc)(char*, char*);
+
+	if (g_lp_clr_runtime != nullptr)
+	{
+		eresult = GraphEngineUninit(g_lp_clr_runtime);
+		if (eresult != TrinityErrorCode::E_SUCCESS)
+		{
+			return eresult;
+		}
+	}
+
+	eresult = GraphEngineInit(n_apppaths, lp_apppaths, g_lp_clr_runtime);
+	if (eresult != TrinityErrorCode::E_SUCCESS)
+	{
+		
+		return eresult;
+	}
+
+	eresult = GraphEngineGetFunction(g_lp_clr_runtime, L"Trinity.FFI", L"Trinity.FFI.Initializer", L"Initialize", (void**)&lpfunc);
+	if (eresult != TrinityErrorCode::E_SUCCESS)
+	{
+		return eresult;
+	}
+
+	eresult = lpfunc(config_path, storage_root);
+	if (eresult != TrinityErrorCode::E_SUCCESS)
+	{
+		return eresult;
+	}
 
     return TrinityErrorCode::E_SUCCESS;
 }

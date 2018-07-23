@@ -19,7 +19,7 @@ namespace Trinity.FFI.AutoCode
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+    #line 1 "C:\Users\v-wazhao\github\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
     public partial class Cpp : CppBase
     {
@@ -30,7 +30,7 @@ namespace Trinity.FFI.AutoCode
         public virtual string TransformText()
         {
             
-            #line 7 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 7 "C:\Users\v-wazhao\github\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
 
     Assembly ffi_asm   = typeof(FFIExportAttribute).Assembly;
     var export_methods = from type in ffi_asm.GetTypes()
@@ -71,7 +71,7 @@ typedef void  (*TRINITY_FFI_ASYNC_HANDLER)(char*);
 
 ");
             
-            #line 42 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 42 "C:\Users\v-wazhao\github\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
  
 	foreach(var m in export_methods)
 	{
@@ -80,28 +80,28 @@ typedef void  (*TRINITY_FFI_ASYNC_HANDLER)(char*);
             #line hidden
             this.Write("typedef ");
             
-            #line 45 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 45 "C:\Users\v-wazhao\github\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateReturnTypeCpp(m)));
             
             #line default
             #line hidden
             this.Write(" (*TRINITY_FFI_");
             
-            #line 45 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 45 "C:\Users\v-wazhao\github\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateName(m).ToUpper()));
             
             #line default
             #line hidden
             this.Write(")(");
             
-            #line 45 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 45 "C:\Users\v-wazhao\github\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateParameterListCpp(m)));
             
             #line default
             #line hidden
             this.Write(");\r\n");
             
-            #line 46 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 46 "C:\Users\v-wazhao\github\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
 
 	}
             
@@ -109,7 +109,7 @@ typedef void  (*TRINITY_FFI_ASYNC_HANDLER)(char*);
             #line hidden
             this.Write("\r\nextern \"C\" struct TRINITY_INTERFACES\r\n{\r\n");
             
-            #line 51 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 51 "C:\Users\v-wazhao\github\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
  
 foreach(var m in export_methods)
 	{
@@ -118,29 +118,29 @@ foreach(var m in export_methods)
             #line hidden
             this.Write("    TRINITY_FFI_");
             
-            #line 54 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 54 "C:\Users\v-wazhao\github\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateName(m).ToUpper()));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 54 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 54 "C:\Users\v-wazhao\github\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateName(m)));
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 55 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 55 "C:\Users\v-wazhao\github\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
 
 	}
             
             #line default
             #line hidden
             this.Write("};\r\n\r\nTRINITYFFINATIVE_API TrinityErrorCode    TRINITY_FFI_INITIALIZE(int n_apppa" +
-                    "ths, wchar_t** lp_apppaths);\r\nTRINITYFFINATIVE_API TRINITY_INTERFACES* TRINITY_F" +
-                    "FI_GET_INTERFACES();\r\n");
+                    "ths, wchar_t** lp_apppaths, char* config_path, char* storage_root);\r\nTRINITYFFIN" +
+                    "ATIVE_API TRINITY_INTERFACES* TRINITY_FFI_GET_INTERFACES();\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }

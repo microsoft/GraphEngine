@@ -7,12 +7,14 @@
 
 %include "attribute.i"
 %include "std_vector.i"
+%include "std_wstring.i"
 
 namespace std {
 	%template(tdesc_vec) vector<TypeDescriptor>;
 	%template(ptdesc_vec) vector<TypeDescriptor*>;
 	%template(pmdesc_vec) vector<MemberDescriptor*>;
 	%template(padesc_vec) vector<AttributeDescriptor*>;
+	%template(wstring_vec) vector<wstring>;
 };
 
 %newobject NewCell;

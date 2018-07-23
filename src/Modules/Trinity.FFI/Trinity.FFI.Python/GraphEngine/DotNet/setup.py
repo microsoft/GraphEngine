@@ -7,7 +7,7 @@ from Redy.Collections import Traversal
 from Redy.Magic.Classic import singleton
 from Redy.Tools.TypeInterface import Module
 from subprocess import call
-import ctypes, clr, sys
+import ctypes, sys
 from toolz import compose
 
 
@@ -80,35 +80,37 @@ def init_trinity_service() -> Module:
 
     # TODO: native hosting
 
-    for each_lib in libs:
-        ctypes.cdll.LoadLibrary(each_lib)
+    libs = set(libs)
+    from rbnf.Color import Red, Green
+    while libs:
+        for each in libs.copy():
+            try:
+                ctypes.cdll.LoadLibrary(each)
+                print(Green(f'load dll succeed: {each}.'))
+                libs.remove(each)
+                break
+            except WindowsError:
+                print(f'load dll failed, reorder import path {Red(each)}.')
+                pass
+    #
+    # for each_lib in libs:
+    #     print(each_lib)
+    #     ctypes.cdll.LoadLibrary(each_lib)
 
-    for each_dep in deps:
-        clr.AddReference(each_dep)
+    dirs = list({Path(each).parent().__str__() for each in deps})
+
+    #for each_dep in deps:
+        #clr.AddReference(each_dep)
 
 
     # TODO
-    __Trinity = __import__('Trinity')
+    #__Trinity.TrinityConfig.StorageRoot = str(graph_engine_config_path.into('storage'))
 
     # TODO
-    __Trinity.TrinityConfig.StorageRoot = str(graph_engine_config_path.into('storage'))
-
-    # __Trinity.TrinityConfig.LoggingLevel = __Trinity.Diagnostics.LogLevel.Info
-
-    # TODO
-    __Trinity.TrinityConfig.LoadConfig(str(graph_engine_config_path.into("trinity.xml")))
-
-    # TODO: hosting
-    __Trinity.Global.Initialize()
+    #__Trinity.TrinityConfig.LoadConfig(str(graph_engine_config_path.into("trinity.xml")))
 
     __ffi = __import__('ffi')
+    __ffi.InitCLR(len(dirs), dirs, str(graph_engine_config_path.into("trinity.xml")),
+                  str(graph_engine_config_path.into('storage')))
+    Env.ffi = __ffi
 
-    __ffi.Init()
-
-    __import__('Trinity.Storage')
-    __import__('Trinity.Storage.Composite')
-    __import__('Trinity.FFI')
-    __import__('Trinity.FFI.Metagen')
-
-    Env.Trinity = __Trinity
-    return __Trinity

@@ -13,6 +13,7 @@ namespace Trinity.FFI
     {
         private static TRINITY_INTERFACES s_interfaces = new TRINITY_INTERFACES
         {
+			jitSwigGen = JitTools.SwigGen,
 			accessor_use_1 = Accessor.use_1,
 			accessor_use_2 = Accessor.use_2,
 			accessor_use_3 = Accessor.use_3,

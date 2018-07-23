@@ -10,7 +10,7 @@ T = typing.TypeVar('T')
 
 
 def _remove_bases(cls: type):
-    return cls.__class__(cls.__name__, tuple(each for each in cls.__bases__ if each is not TSLType), {**cls.__dict__})
+    return type(cls.__name__, tuple(each for each in cls.__bases__ if each is not TSLType), {**cls.__dict__})
 
 
 class TSLTypeMeta(type):

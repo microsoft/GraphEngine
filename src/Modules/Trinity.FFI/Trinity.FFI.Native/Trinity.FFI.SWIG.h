@@ -6,9 +6,15 @@
 
 TRINITY_INTERFACES* g_TrinityInterfaces;
 
-void InitCLR(int n_apppaths, wchar_t** lp_apppaths)
+int InitCLR(int n_apppaths, const std::vector<std::wstring> & lp_apppaths, char* config_path, char* storage_root)
 {
-    TRINITY_FFI_INITIALIZE(n_apppaths, lp_apppaths);
+	wchar_t** _paths = new wchar_t*[lp_apppaths.size()];
+	wchar_t** _ppath  = _paths;
+	for (const auto &p : lp_apppaths)
+	{
+		*_ppath++ = _wcsdup(p.c_str());
+	}
+    return TRINITY_FFI_INITIALIZE(n_apppaths, _paths, config_path, storage_root);
 }
 
 void InitInterfaces()
@@ -89,17 +95,17 @@ std::vector<TypeDescriptor> GetCellDescriptors() {
     return __getarray<TypeDescriptor>(g_TrinityInterfaces->schema_get);
 }
 
-TrinityErrorCode LocalStorage_Load()
+int LocalStorage_Load()
 {
     return g_TrinityInterfaces->local_loadstorage();
 }
 
-TrinityErrorCode LocalStorage_Save()
+int LocalStorage_Save()
 {
     return g_TrinityInterfaces->local_savestorage();
 }
 
-TrinityErrorCode LocalStorage_Reset()
+int LocalStorage_Reset()
 {
     return g_TrinityInterfaces->local_resetstorage();
 }
@@ -158,6 +164,11 @@ Cell* NewCell_3(char* cellType, char* cellContent)
         delete pcell;
         return nullptr;
     }
+}
+
+char* Jit_SwigGen(char* p0, char* p1)
+{
+	return g_TrinityInterfaces->jitSwigGen(p0, p1);
 }
 
 

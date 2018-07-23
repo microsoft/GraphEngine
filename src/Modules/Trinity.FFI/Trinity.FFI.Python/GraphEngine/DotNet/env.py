@@ -11,7 +11,7 @@ import getpass, sys
 class Env:
     nuget_root = Path('~/.nuget/packages')
     graph_engine_config_path = Path("~", ".graphengine")
-    Trinity: Module
+    ffi: Module
 
     @staticmethod
     def target_framework(name: str) -> bool:
@@ -47,10 +47,7 @@ def build_module(tsl_code, namespace: str):
         tsl_file.write(tsl_code)
 
     # swig gen
-    # TODO
-    schema = Env.Trinity.Storage.Composite.CompositeStorage.AddStorageExtension(directory, namespace)
-    # TODO
-    swig_code = Env.Trinity.FFI.JitTools.SwigGen(schema, namespace)
+    swig_code = Env.ffi.Jit_SwigGen(directory, namespace)
 
     swig_interface_filename = str(new_path.into('{namespace}.i'.format(namespace=namespace)))
     with open(swig_interface_filename, 'w') as swig_file:

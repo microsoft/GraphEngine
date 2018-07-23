@@ -220,12 +220,11 @@ class HostEnvironment
             _ndsd,
         };
 
-
-        //log << W("Creating an AppDomain") << Logger::endl;
-        //log << W("TRUSTED_PLATFORM_ASSEMBLIES=") << property_values[0] << Logger::endl;
-        //log << W("APP_PATHS=") << property_values[1] << Logger::endl;
-        //log << W("APP_NI_PATHS=") << property_values[2] << Logger::endl;
-        //log << W("NATIVE_DLL_SEARCH_DIRECTORIES=") << property_values[3] << Logger::endl;
+		Console::WriteLine("Creating an AppDomain");
+		Console::WriteLine("TRUSTED_PLATFORM_ASSEMBLIES={0}", GetTpaList());
+		Console::WriteLine("APP_PATHS={0}", appPath);
+		Console::WriteLine("APP_NI_PATHS={0}", appNiPath);
+		Console::WriteLine("NATIVE_DLL_SEARCH_DIRECTORIES={0}", nativeDllSearchDirs);
 
         hr = host->CreateAppDomainWithManager(
             GetHostExeName().ToWcharArray(),   // The friendly name of the AppDomain
@@ -319,8 +318,7 @@ class HostEnvironment
                         // Add to the list if not already on it
                         if (!TPAListContainsFile(fileNameWithoutExtension, extensions))
                         {
-                            m_tpaList.Append(targetPath);
-                            m_tpaList.Append(fileName);
+                            m_tpaList.Append(Path::Combine(targetPath, fileName));
                             m_tpaList.Append(L';');
                         }
                     }
@@ -431,15 +429,24 @@ public:
         IN const String& methodName,
         OUT INT_PTR& init_func) const
     {
+		Console::WriteLine(
+			"GetFunction\n"
+			"assemblyName = {0}\n"
+			"className    = {1}\n"
+			"methodName   = {2}",
+			assemblyName, className, methodName);
+
+
         auto hr = m_CLRRuntimeHost->CreateDelegate(
             m_domainId,
-            Path::GetFileNameWithoutExtension(assemblyName).ToWcharArray(),
+            assemblyName.ToWcharArray(),
             className.ToWcharArray(),
             methodName.ToWcharArray(),
             &init_func);
 
         if (FAILED(hr))
         {
+			Console::WriteLine("GetFunction failed with code 0x{0:X}", hr);
             return TrinityErrorCode::E_FAILURE;
         }
 
@@ -461,7 +468,7 @@ TrinityErrorCode GraphEngineInit_impl(
     Array<String> apppaths(n_apppaths);
     for (int i=0; i < n_apppaths; ++i)
     {
-        apppaths[i] = lp_apppaths[i];
+        apppaths[i] = String(lp_apppaths[i]).Trim();
     }
     lpenv         = new HostEnvironment(String::Join(";", apppaths), err);
     return err;
