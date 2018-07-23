@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using Trinity.Core.Lib;
 using Trinity.Storage;
 
 namespace Trinity.FFI.Interop
@@ -68,6 +69,28 @@ namespace Trinity.FFI.Interop
         {
             ICell c = (ICell)GCHandle.FromIntPtr(cell).Target;
             return c.ToString();
+        }
+
+        [FFIExport]
+        public unsafe static TrinityErrorCode tobinary(string cellType, string cellContent, out long cellid, out long buffer)
+        {
+            //XXX performance
+            try
+            {
+                ICellAccessor cell = (ICellAccessor)Global.LocalStorage.NewGenericCell(cellType, cellContent);
+                byte[] content = cell.ToByteArray();
+                int len = content.Length;
+                cellid = cell.CellId;
+                buffer = (long)Memory.malloc((ulong)len);
+                Memory.Copy(content, (void*)buffer, len);
+                return TrinityErrorCode.E_SUCCESS;
+            }
+            catch
+            {
+                buffer = 0;
+                cellid = 0;
+                return TrinityErrorCode.E_FAILURE;
+            }
         }
 
         [FFIExport]

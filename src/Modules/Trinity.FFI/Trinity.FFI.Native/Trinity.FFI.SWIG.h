@@ -6,7 +6,12 @@
 
 TRINITY_INTERFACES* g_TrinityInterfaces;
 
-void Init()
+void InitCLR(int n_apppaths, wchar_t** lp_apppaths)
+{
+    TRINITY_FFI_INITIALIZE(n_apppaths, lp_apppaths);
+}
+
+void InitInterfaces()
 {
     g_TrinityInterfaces = TRINITY_FFI_GET_INTERFACES();
 }

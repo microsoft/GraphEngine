@@ -12,12 +12,12 @@
 // that uses this DLL. This way any other project whose source files include this file see 
 // TRINITYFFINATIVE_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
-#include <os/os.h>
-#include <cstdint>
 #ifdef TRINITYFFINATIVE_EXPORTS
-#define TRINITYFFINATIVE_API DLL_EXPORT
+#include <cstdint>
+#include <os/os.h>
+#define TRINITYFFINATIVE_API extern "C" __declspec(dllexport)
 #else
-#define TRINITYFFINATIVE_API DLL_IMPORT
+#define TRINITYFFINATIVE_API extern "C" __declspec(dllimport)
 #endif
 #include <TrinityErrorCode.h>
 #include "Trinity.h"
@@ -32,6 +32,7 @@ typedef TrinityErrorCode (*TRINITY_FFI_CELL_NEW_1)(char*, void**);
 typedef TrinityErrorCode (*TRINITY_FFI_CELL_NEW_2)(long long, char*, void**);
 typedef TrinityErrorCode (*TRINITY_FFI_CELL_NEW_3)(char*, char*, void**);
 typedef char* (*TRINITY_FFI_CELL_TOSTRING)(void*);
+typedef TrinityErrorCode (*TRINITY_FFI_CELL_TOBINARY)(char*, char*, long long*, long long*);
 typedef long long (*TRINITY_FFI_CELL_GETID)(void*);
 typedef void (*TRINITY_FFI_CELL_SETID)(void*, long long);
 typedef char* (*TRINITY_FFI_CELL_GET)(void*, char*);
@@ -64,6 +65,7 @@ extern "C" struct TRINITY_INTERFACES
     TRINITY_FFI_CELL_NEW_2 cell_new_2;
     TRINITY_FFI_CELL_NEW_3 cell_new_3;
     TRINITY_FFI_CELL_TOSTRING cell_tostring;
+    TRINITY_FFI_CELL_TOBINARY cell_tobinary;
     TRINITY_FFI_CELL_GETID cell_getid;
     TRINITY_FFI_CELL_SETID cell_setid;
     TRINITY_FFI_CELL_GET cell_get;
@@ -88,4 +90,5 @@ extern "C" struct TRINITY_INTERFACES
     TRINITY_FFI_SCHEMA_GET schema_get;
 };
 
+TRINITYFFINATIVE_API TrinityErrorCode    TRINITY_FFI_INITIALIZE(int n_apppaths, wchar_t** lp_apppaths);
 TRINITYFFINATIVE_API TRINITY_INTERFACES* TRINITY_FFI_GET_INTERFACES();

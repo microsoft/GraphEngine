@@ -20,6 +20,7 @@ namespace Trinity.FFI
 			cell_new_2 = Cell.new_2,
 			cell_new_3 = Cell.new_3,
 			cell_tostring = Cell.tostring,
+			cell_tobinary = Cell.tobinary,
 			cell_getid = Cell.getid,
 			cell_setid = Cell.setid,
 			cell_get = Cell.get,

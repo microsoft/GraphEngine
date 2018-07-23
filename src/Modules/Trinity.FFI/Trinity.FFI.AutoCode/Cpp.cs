@@ -64,22 +64,14 @@ namespace Trinity.FFI.AutoCode
 #define TRINITYFFINATIVE_API extern ""C"" __declspec(dllimport)
 #endif
 #include <TrinityErrorCode.h>
-
-enum CellAccessOptions: int32_t
-{
-    ThrowExceptionOnCellNotFound = 1,
-    ReturnNullOnCellNotFound = 2,
-    CreateNewOnCellNotFound = 4,
-    StrongLogAhead = 8,
-    WeakLogAhead = 16
-};
+#include ""Trinity.h""
 
 typedef char* (*TRINITY_FFI_SYNC_HANDLER)(char*);
 typedef void  (*TRINITY_FFI_ASYNC_HANDLER)(char*);
 
 ");
             
-            #line 50 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 42 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
  
 	foreach(var m in export_methods)
 	{
@@ -88,28 +80,28 @@ typedef void  (*TRINITY_FFI_ASYNC_HANDLER)(char*);
             #line hidden
             this.Write("typedef ");
             
-            #line 53 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 45 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateReturnTypeCpp(m)));
             
             #line default
             #line hidden
             this.Write(" (*TRINITY_FFI_");
             
-            #line 53 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 45 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateName(m).ToUpper()));
             
             #line default
             #line hidden
             this.Write(")(");
             
-            #line 53 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 45 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateParameterListCpp(m)));
             
             #line default
             #line hidden
             this.Write(");\r\n");
             
-            #line 54 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 46 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
 
 	}
             
@@ -117,7 +109,7 @@ typedef void  (*TRINITY_FFI_ASYNC_HANDLER)(char*);
             #line hidden
             this.Write("\r\nextern \"C\" struct TRINITY_INTERFACES\r\n{\r\n");
             
-            #line 59 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 51 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
  
 foreach(var m in export_methods)
 	{
@@ -126,27 +118,29 @@ foreach(var m in export_methods)
             #line hidden
             this.Write("    TRINITY_FFI_");
             
-            #line 62 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 54 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateName(m).ToUpper()));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 62 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 54 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Helper.GenerateName(m)));
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 63 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
+            #line 55 "D:\git\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.AutoCode\Cpp.tt"
 
 	}
             
             #line default
             #line hidden
-            this.Write("};\r\n\r\nTRINITYFFINATIVE_API TRINITY_INTERFACES* TRINITY_FFI_GET_INTERFACES();\r\n");
+            this.Write("};\r\n\r\nTRINITYFFINATIVE_API TrinityErrorCode    TRINITY_FFI_INITIALIZE(int n_apppa" +
+                    "ths, wchar_t** lp_apppaths);\r\nTRINITYFFINATIVE_API TRINITY_INTERFACES* TRINITY_F" +
+                    "FI_GET_INTERFACES();\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }

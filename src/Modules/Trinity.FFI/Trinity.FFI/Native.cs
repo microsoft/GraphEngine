@@ -24,6 +24,7 @@ namespace Trinity.FFI
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_CELL_NEW_2(Int64 p0, String p1, ref IntPtr p2);
     internal unsafe delegate TrinityErrorCode TRINITY_FFI_CELL_NEW_3(String p0, String p1, ref IntPtr p2);
     internal unsafe delegate String TRINITY_FFI_CELL_TOSTRING(IntPtr p0);
+    internal unsafe delegate TrinityErrorCode TRINITY_FFI_CELL_TOBINARY(String p0, String p1, out Int64 p2, out Int64 p3);
     internal unsafe delegate Int64 TRINITY_FFI_CELL_GETID(IntPtr p0);
     internal unsafe delegate void TRINITY_FFI_CELL_SETID(IntPtr p0, Int64 p1);
     internal unsafe delegate String TRINITY_FFI_CELL_GET(IntPtr p0, String p1);
@@ -63,6 +64,8 @@ namespace Trinity.FFI
         public TRINITY_FFI_CELL_NEW_3 cell_new_3;
         [MarshalAs(UnmanagedType.FunctionPtr)]
         public TRINITY_FFI_CELL_TOSTRING cell_tostring;
+        [MarshalAs(UnmanagedType.FunctionPtr)]
+        public TRINITY_FFI_CELL_TOBINARY cell_tobinary;
         [MarshalAs(UnmanagedType.FunctionPtr)]
         public TRINITY_FFI_CELL_GETID cell_getid;
         [MarshalAs(UnmanagedType.FunctionPtr)]

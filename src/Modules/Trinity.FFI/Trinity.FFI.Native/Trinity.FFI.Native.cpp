@@ -2,6 +2,7 @@
 //
 
 #include "Trinity.FFI.Native.h"
+#include "GraphEngine.Hosting.h"
 #include <cstring>
 #include "CellAccessor.h"
 
@@ -18,7 +19,7 @@ TRINITYFFINATIVE_API TRINITY_INTERFACES*  TRINITY_FFI_GET_INTERFACES()
 {
 	if (!g_init)
 	{
-		// TODO hosting
+        return nullptr;
 
         /*
         
@@ -52,4 +53,9 @@ TRINITYFFINATIVE_API TRINITY_INTERFACES*  TRINITY_FFI_GET_INTERFACES()
 	}
 
     return &g_interfaces;
+}
+
+TRINITYFFINATIVE_API TrinityErrorCode TRINITY_FFI_INITIALIZE(int n_apppaths, wchar_t** )
+{
+
 }

@@ -56,4 +56,5 @@ foreach(var m in export_methods)
 	}#>
 };
 
+TRINITYFFINATIVE_API TrinityErrorCode    TRINITY_FFI_INITIALIZE(int n_apppaths, wchar_t** lp_apppaths);
 TRINITYFFINATIVE_API TRINITY_INTERFACES* TRINITY_FFI_GET_INTERFACES();
