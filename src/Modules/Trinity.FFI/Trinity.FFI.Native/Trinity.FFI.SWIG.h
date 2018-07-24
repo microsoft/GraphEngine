@@ -8,12 +8,12 @@ TRINITY_INTERFACES* g_TrinityInterfaces;
 
 int InitCLR(int n_apppaths, const std::vector<std::wstring> & lp_apppaths, char* config_path, char* storage_root)
 {
-	wchar_t** _paths = new wchar_t*[lp_apppaths.size()];
-	wchar_t** _ppath  = _paths;
-	for (const auto &p : lp_apppaths)
-	{
-		*_ppath++ = _wcsdup(p.c_str());
-	}
+    wchar_t** _paths = new wchar_t*[lp_apppaths.size()];
+    wchar_t** _ppath  = _paths;
+    for (const auto &p : lp_apppaths)
+    {
+        *_ppath++ = _wcsdup(p.c_str());
+    }
     return TRINITY_FFI_INITIALIZE(n_apppaths, _paths, config_path, storage_root);
 }
 
@@ -167,16 +167,16 @@ Cell* NewCell_3(char* cellType, char* cellContent)
 }
 
 void json_cons_fn_ptr(char* cellType, char* cellContent, long long& cellId, long long& cellPtr) {
-	g_TrinityInterfaces->cell_tobinary(cellType, cellContent, &cellId, &cellPtr);
+    g_TrinityInterfaces->cell_tobinary(cellType, cellContent, &cellId, &cellPtr);
 }
 
 long long _json_cons_fn_ptr_getter() {
-	return (long long) &json_cons_fn_ptr;
+    return (long long) &json_cons_fn_ptr;
 }
 
 char* Jit_SwigGen(char* directory, char* moduleName)
 {
-	return g_TrinityInterfaces->jitSwigGen(_json_cons_fn_ptr_getter(), directory, moduleName);
+    return g_TrinityInterfaces->jitSwigGen(_json_cons_fn_ptr_getter(), directory, moduleName);
 }
 
 

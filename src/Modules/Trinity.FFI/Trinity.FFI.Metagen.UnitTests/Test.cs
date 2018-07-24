@@ -2,8 +2,10 @@ using System;
 using Xunit;
 using Xunit.Abstractions;
 using Trinity.FFI.Metagen;
+using Trinity.FFI;
 using Trinity.Storage.Composite;
 using System.Linq;
+
 using Trinity.Storage;
 using GraphEngine.Jit;
 using System.Runtime.InteropServices;
@@ -33,10 +35,11 @@ namespace Trinity.FFI.Metagen.UnitTests
         [Fact]
         public void TestNewSwigGen()
         {
+
             var ty_descs = Schema.CellDescriptors.Select(TypeSystem.Make);
             var all_type_collected = FFI.MetaGen.analyzer.collect_type(ty_descs);
 
-            foreach(var e in all_type_collected)
+            foreach (var e in all_type_collected)
             {
                 Output.WriteLine(e.TypeName);
             }
@@ -57,12 +60,14 @@ namespace Trinity.FFI.Metagen.UnitTests
             //Output.WriteLine($"Total method num: {num}");
             var swig_code = FFI.MetaGen.code_gen.code_gen(100L, "", all_verbs);
             Output.WriteLine(swig_code);
-            
+
 
         }
+
         public void Dispose()
         {
             Global.Uninitialize();
+            
         }
 
         

@@ -265,9 +265,9 @@ static void* create_%s()
                 sprintf  "
  static void* create_%s_with_data(char* content)
  {
-        CellAccessor* accessor = static_cast<CellAccessor*>(create_%s());
-        json_cons(\"%s\", content, accessor -> cellId, accessor -> cellPtr);
-        return accessor;
+    CellAccessor* accessor = static_cast<CellAccessor*>(create_%s());
+    json_cons(\"%s\", content, accessor -> cellId, accessor -> cellPtr);
+    return accessor;
  }              
                 " ty_name ty_name ty.TypeName
             yield (valued_initializer_decl, valued_initializer_body)
@@ -320,6 +320,7 @@ if(errCode)
 %{{
 #include \"swig_accessor.h\"
 #include \"CellAccessor.h\"
+#include \"stdio.h\"
 #define SWIG_FILE_WITH_INIT
 {decl}
 {source}
