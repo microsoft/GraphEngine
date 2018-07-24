@@ -7,11 +7,27 @@ from Redy.Tools.Version import Version
 from Redy.Tools.PathLib import Path
 from os.path import relpath
 import os.path
+from functools import reduce
 
 # workaround: os.path.realpath does not follow symlinks on Windows
 # wrapping paths with r guarantees relpath to have paths on the same drive.
+
 def r(p):
-    return p if not os.path.islink(p) else os.readlink(p)
+    if isinstance(p, str):
+        p = Path(p)
+
+    search_path = p
+    relatives = []
+    while search_path.parent() != search_path:
+
+        maybe_link_root = str(search_path)
+        if os.path.islink(maybe_link_root):
+            return str(reduce(lambda current, sub: current.into(sub), reversed(relatives), Path(os.readlink(maybe_link_root))))
+        search_path = search_path.parent()
+        relatives.append(search_path.relative())
+
+    return str(p)
+
 
 version_filename = r('${CMAKE_CURRENT_SOURCE_DIR}/next_version')
 build_dir = r('${CMAKE_CURRENT_BINARY_DIR}')

@@ -429,6 +429,7 @@ def make_class(ty: typing.Type[Struct], method_tb, cls_tb):
         else:
             # not `constexpr[json.dumps], for the attribute `dumps` is not fixed.
             self.__accessor__ = valued_method(constexpr[json].dumps(data))
+
     ty.__init__ = __init__
 
 
@@ -436,8 +437,6 @@ def make_class(ty: typing.Type[Struct], method_tb, cls_tb):
 def make_class(ty: List, method_tb, cls_tb):
     spec: ListTypeSpec = ty.get_spec()
     chain = type_spec_to_name(spec)
-
-
 
     # TODO: deepcopy
     # @feature(staging)

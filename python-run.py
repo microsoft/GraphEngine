@@ -7,6 +7,7 @@ class Test(unittest.TestCase):
 
     def setUp(self):
         init_trinity_service()
+        print('json cons addr: ', Env.ffi._json_cons_fn_ptr_getter())
         self.tsl = TSL()
 
     def test_definitions(self):
@@ -30,6 +31,7 @@ class Test(unittest.TestCase):
             pass
 
         tsl.bind()
+        print('json cons addr: ', Env.ffi._json_cons_fn_ptr_getter())
         self.assertIn('Jit_SwigGen', Env.ffi.__dict__,
                       'Build tsl module failed, no `Jit_SwigGen` found in `ffi` module.')
 
