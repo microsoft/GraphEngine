@@ -1,8 +1,9 @@
 from Redy.Tools.PathLib import Path
+import argparse
 import os
 
-os.system('pip uninstall GraphEngine -y')
 
+os.system('pip uninstall GraphEngine -y')
 nuget = Path(r"~/.nuget/packages")
 
 for each in ('graphengine.ffi', 'graphengine.ffi.metagen'):

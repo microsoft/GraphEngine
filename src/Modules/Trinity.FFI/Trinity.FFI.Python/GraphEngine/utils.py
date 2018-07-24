@@ -1,9 +1,12 @@
-import sys
 from typing import Mapping, TypeVar
-import operator
 from functools import reduce as _reduce
 from collections import OrderedDict
+from Redy.Tools.PathLib import Path
 import typing
+import sys
+import operator
+import hashlib
+
 
 def hash_from_stream(stream):
     return _reduce(operator.xor, stream)
@@ -76,3 +79,16 @@ class FrozenDict(Mapping[K, V]):
 
 
 ImmutableDict = FrozenDict
+
+
+def file_hash(path: Path, size=2 ** 16):
+    md5 = hashlib.md5()
+
+    with path.open('rb') as f:
+        while True:
+            bin = f.read(size)
+            if not bin:
+                break
+            md5.update(bin)
+
+    return md5.hexdigest()

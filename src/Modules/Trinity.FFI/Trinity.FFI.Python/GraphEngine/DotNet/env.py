@@ -3,7 +3,6 @@ from Redy.Magic.Classic import singleton, cast
 from Redy.Tools.TypeInterface import Module
 from subprocess import call
 from time import time
-from importlib import util
 import getpass, sys
 
 

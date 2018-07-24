@@ -1,6 +1,7 @@
 from .dep import Dependency
 from .lib import Library
 from .env import Env, build_module
+from ..utils import file_hash
 from bs4 import BeautifulSoup
 from Redy.Tools.PathLib import Path
 from Redy.Collections import Traversal
@@ -73,25 +74,25 @@ Collect: Collect
 
 
 def init_trinity_service() -> Module:
+
     module_dir = Path(__file__).parent()
     graph_engine_config_path = Env.graph_engine_config_path
     cs_proj_build_dir = graph_engine_config_path.into('Dependencies')
+    target_cs_proj_file = cs_proj_build_dir.into('Dependencies.csproj')
+    src_cs_proj_file = module_dir.into("Dependencies.csproj")
 
-    if not cs_proj_build_dir.exists() or not cs_proj_build_dir.into("Dependencies.csproj").exists():
+    if not cs_proj_build_dir.exists() or not target_cs_proj_file.exists() or file_hash(src_cs_proj_file) != file_hash(target_cs_proj_file):
+            cs_proj_build_dir.mkdir(warning=False)
+            src_cs_proj_file.move_to(cs_proj_build_dir)
 
-        cs_proj_build_dir.mkdir(warning=False)
-        cs_proj_file = module_dir.into("Dependencies.csproj")
-        cs_proj_file.move_to(cs_proj_build_dir)
-
-    cs_proj_file = cs_proj_build_dir.into('Dependencies.csproj')
-    cmd_patterns = ["dotnet", "restore", f'"{cs_proj_build_dir}"', '--packages', f'"{Env.nuget_root}"']
+    cmd_patterns = ["dotnet", "restore", f'"{target_cs_proj_file}"', '--packages', f'"{Env.nuget_root}"']
 
     # restore
     if call(cmd_patterns):
         raise EnvironmentError("DotNet restoring failed `{}`".format(' '.join(cmd_patterns).__repr__()))
 
     # search dlls
-    with cs_proj_file.open('rb') as file:
+    with target_cs_proj_file.open('rb') as file:
         deps = [Dependency(package_name=ref.attrs['include'],
                            version=ref.attrs["version"]
                            ).all()
