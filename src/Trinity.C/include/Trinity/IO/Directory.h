@@ -72,7 +72,11 @@ namespace Trinity
                 {
                     if (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
                     {
-                        ret.push_back(Path::Combine(path, String::FromWcharArray(find_data.cFileName, String::npos)));
+                        auto filename = String::FromWcharArray(find_data.cFileName, String::npos);
+                        if (filename != "." && filename != "..")
+                        {
+                            ret.push_back(Path::Combine(path, filename));
+                        }
                     }
                 } while (FindNextFile(hfind, &find_data) != 0);
                 FindClose(hfind);

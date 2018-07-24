@@ -143,6 +143,14 @@ class HostEnvironment
 
         String appPath = m_coreCLRDirectoryPath;
 
+        //  include subdirectories of anything in m_appPaths
+        //  usually the resource satellites are placed in these subdirectories.
+        auto split_entries = m_appPaths.Split(";", String::StringSplitOptions::RemoveEmptyEntries);
+        for (auto &p : from(split_entries).select_many(Directory::GetDirectories))
+        {
+            m_appPaths += ";" + p;
+        }
+
         if (!m_appPaths.Empty())
         {
             appPath += ";" + m_appPaths;
@@ -220,11 +228,11 @@ class HostEnvironment
             _ndsd,
         };
 
-		Console::WriteLine("Creating an AppDomain");
-		Console::WriteLine("TRUSTED_PLATFORM_ASSEMBLIES={0}", GetTpaList());
-		Console::WriteLine("APP_PATHS={0}", appPath);
-		Console::WriteLine("APP_NI_PATHS={0}", appNiPath);
-		Console::WriteLine("NATIVE_DLL_SEARCH_DIRECTORIES={0}", nativeDllSearchDirs);
+        Console::WriteLine("Creating an AppDomain");
+        Console::WriteLine("TRUSTED_PLATFORM_ASSEMBLIES={0}", GetTpaList());
+        Console::WriteLine("APP_PATHS={0}", appPath);
+        Console::WriteLine("APP_NI_PATHS={0}", appNiPath);
+        Console::WriteLine("NATIVE_DLL_SEARCH_DIRECTORIES={0}", nativeDllSearchDirs);
 
         hr = host->CreateAppDomainWithManager(
             GetHostExeName().ToWcharArray(),   // The friendly name of the AppDomain
@@ -429,12 +437,12 @@ public:
         IN const String& methodName,
         OUT INT_PTR& init_func) const
     {
-		Console::WriteLine(
-			"GetFunction\n"
-			"assemblyName = {0}\n"
-			"className    = {1}\n"
-			"methodName   = {2}",
-			assemblyName, className, methodName);
+        Console::WriteLine(
+            "GetFunction\n"
+            "assemblyName = {0}\n"
+            "className    = {1}\n"
+            "methodName   = {2}",
+            assemblyName, className, methodName);
 
 
         auto hr = m_CLRRuntimeHost->CreateDelegate(
@@ -446,7 +454,7 @@ public:
 
         if (FAILED(hr))
         {
-			Console::WriteLine("GetFunction failed with code 0x{0:X}", hr);
+            Console::WriteLine("GetFunction failed with code 0x{0:X}", hr);
             return TrinityErrorCode::E_FAILURE;
         }
 
