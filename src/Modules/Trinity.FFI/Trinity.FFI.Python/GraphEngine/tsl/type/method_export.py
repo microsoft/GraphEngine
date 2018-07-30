@@ -195,6 +195,19 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int, cl
             else:
                 return method(value, idx, self.__accessor__)
 
+        @feature(staging)
+        def __iter__(self):
+            method_len: const = method_tb[f'{chain}_LCount']
+            method_get: const = method_tb[f'{chain}_LGet_BGet']
+            acc = self.__accessor__
+            if constexpr[arg_num]:
+                args = constexpr[take_args](self.__args__)
+                for i in constexpr[range](method_len(*args, acc)):
+                    yield method_get(i, *args, acc)
+            else:
+                for i in constexpr[range](method_len(acc)):
+                    yield method_get(i, acc)
+
     else:
         chaining_getter = f'{chain}_LGet'
         elem_cls = create_cls(elem, chaining_getter, method_tb, arg_num + 1, cls_tb)
@@ -243,6 +256,23 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int, cl
             else:
                 return method(value.ref_get(), idx, self.__accessor__)
 
+        @feature(staging)
+        def __iter__(self):
+            method_len: const = method_tb[f'{chain}_LCount']
+            __args__: const = [None, None]
+            proxy: const = elem_cls(None, __args__)
+            proxy.__accessor__ = acc = self.__accessor__
+
+            if constexpr[arg_num]:
+                args = __args__[1] = self.__args__
+                for i in constexpr[range](method_len(*take_args(args), acc)):
+                    __args__[0] = i
+                    yield proxy
+            else:
+                for i in constexpr[range](method_len(acc)):
+                    __args__[0] = i
+                    yield proxy
+
     @feature(staging)
     def __delitem__(self, idx):
         method: const = method_tb[f'{chain}_LRemoveAt']
@@ -272,6 +302,7 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int, cl
     cls.__setitem__ = __setitem__
     cls.append = append
     cls.__getitem__ = __getitem__
+    cls.__iter__ = __iter__
     return cls
 
 
@@ -495,6 +526,14 @@ def make_class(ty: List, method_tb, cls_tb):
             method: const = method_tb[f'{chain}_LInsertAt']
             return method(value, idx, self.__accessor__)
 
+        @feature(staging)
+        def __iter__(self):
+            method_len: const = method_tb[f'{chain}_LCount']
+            method_get: const = method_tb[f'{chain}_LGet_BGet']
+            acc = self.__accessor__
+            for i in constexpr[range](method_len(acc)):
+                yield method_get(i, acc)
+
     else:
         chaining_getter = f'{chain}_LGet'
         elem_cls = create_cls(elem, chaining_getter, method_tb, 1, cls_tb)
@@ -531,6 +570,16 @@ def make_class(ty: List, method_tb, cls_tb):
             method: const = method_tb[f'{chain}_LInsertAt']
             return method(value.ref_get(), idx, self.__accessor__)
 
+        @feature(staging)
+        def __iter__(self):
+            method_len: const = method_tb[f'{chain}_LCount']
+            __args__: const = [None, None]
+            proxy: const = elem_cls(None, __args__)
+            proxy.__accessor__ = acc = self.__accessor__
+            for i in constexpr[range](method_len(acc)):
+                __args__[0] = i
+                yield proxy
+
     @feature(staging)
     def __delitem__(self, idx):
         method: const = method_tb[f'{chain}_LRemoveAt']
@@ -558,6 +607,7 @@ def make_class(ty: List, method_tb, cls_tb):
     ty.__delitem__ = __delitem__
     ty.__setitem__ = __setitem__
     ty.__getitem__ = __getitem__
+    ty.__iter__ = __iter__
     ty.append = append
 
 

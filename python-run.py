@@ -55,6 +55,7 @@ class Test(unittest.TestCase):
         self.assertEqual(fst.i, s.i)
 
         ls = c.ls
+        print([each.i for each in ls])
         s2 = S()
         s2.s = "5656"
         s2.i = 42

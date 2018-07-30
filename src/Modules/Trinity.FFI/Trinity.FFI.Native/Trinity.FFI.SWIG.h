@@ -3,6 +3,8 @@
 #include <vector>
 #include "Trinity.FFI.Native.h"
 #include "TypeSystem.h"
+#include <CellAccessor.h>
+#include <memory>
 
 TRINITY_INTERFACES* g_TrinityInterfaces;
 
