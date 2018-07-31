@@ -4,7 +4,6 @@ import unittest
 
 
 class Test(unittest.TestCase):
-
     def setUp(self):
         init_trinity_service()
         print('json cons addr: ', Env.ffi._json_cons_fn_ptr_getter())
@@ -32,8 +31,9 @@ class Test(unittest.TestCase):
 
         tsl.bind()
         print('json cons addr: ', Env.ffi._json_cons_fn_ptr_getter())
-        self.assertIn('Jit_SwigGen', Env.ffi.__dict__,
-                      'Build tsl module failed, no `Jit_SwigGen` found in `ffi` module.')
+        self.assertIn(
+            'Jit_SwigGen', Env.ffi.__dict__,
+            'Build tsl module failed, no `Jit_SwigGen` found in `ffi` module.')
 
         c = C()
         c.i = 1
@@ -64,6 +64,7 @@ class Test(unittest.TestCase):
 
         # here is something different from original python list
         self.assertEqual(fst.s, "5656")
+        print(fst.s)
         self.assertEqual(fst.i, 42)
         self.assertEqual(len(ls), 2)
         del ls[0]
@@ -71,8 +72,14 @@ class Test(unittest.TestCase):
         self.assertEqual(fst.i, s.i)
 
         c = C(dict(i=1, s=dict(i=1, s="555"), ls=[]))
+
+        print(list(C.json_to_bytes(dict(i=1, s=dict(i=1, s="555"), ls=[]))))
+
         self.assertEqual(c.s.i, 1)
+        print('++')
+        print(c.s.s)
         self.assertEqual(c.s.s, "555")
+        print('done!!!!!!! on my redy!')
 
 
 if __name__ == '__main__':

@@ -50,8 +50,8 @@ let ty_to_string tydesc =
     | F64 -> "double"
     | BOOL -> "bool"
     | CHAR -> "char"
-    | STRING -> "char*"
-    | U8STRING -> "wchar_t*"
+    | STRING -> "wchar_t*"
+    | U8STRING -> "char*"
     | _ -> "void*"
 
 let chaining_verb_to_name (verb : Verb) =
@@ -179,6 +179,8 @@ let code_gen (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
 
     let generate = single_method'code_gen tb
     let ty_recur_naming = ty_to_name true
+   
+
     let (decls, defs) =
         [
         for (ty, verb_lst) in tsl_specs do
@@ -260,11 +262,12 @@ static void* create_%s()
                 sprintf  "
  static void* create_%s_with_data(char* content)
  {
-    CellAccessor* accessor = static_cast<CellAccessor*>(create_%s());
-    accessor -> cellPtr = reinterpret_cast<int64_t>(&content);
+    void* accessor = create_%s();
+    void* buf = reinterpret_cast<void*>(content);
+    %s_BSet(buf, accessor);
     return accessor;
  }              
-                " ty_name ty_name
+                " ty_name ty_name ty_name
             yield (valued_initializer_decl, valued_initializer_body)
         
         // not for specific types
@@ -312,7 +315,8 @@ if(errCode)
         "
 %module {moduleName}
 %include <stdint.i>
-%{{
+%include <std_wstring.i>
+%begin %{{
 #include \"swig_accessor.h\"
 #include \"CellAccessor.h\"
 #include \"stdio.h\"
@@ -325,7 +329,7 @@ if(errCode)
         "
     in PString.format swig_template
                        ["moduleName" => module_name
-                        "source"     => (defs       |> PString.str'concatBy "\n" )
-                        "decl"       => (decls      |> PString.str'concatBy "\n")
+                        "source"     => (defs           |> PString.str'concatBy "\n" )
+                        "decl"       => (decls          |> PString.str'concatBy "\n")
                         ]
 

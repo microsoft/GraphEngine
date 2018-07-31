@@ -1,28 +1,11 @@
-﻿cell C1
+﻿struct S
 {
-	int i;
-	double x;
-	float y;
-	
+    int32 i;
+    string s;
 }
-
-
-struct S
+cell C
 {
-	int i;	
-
-}
-
-cell C2
-{
-	
-	int s;
-
-	List<int> ls;
-}
-
-cell C3{
-
-	S s;
-	int i;
+    int32 i;
+    List<S> ls;
+    S s;
 }

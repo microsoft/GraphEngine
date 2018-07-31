@@ -8,10 +8,10 @@ from GraphEngine.tsl.type._system import NotDefinedYet, TSLType
 
 T = typing.TypeVar('T')
 
-
 # def _remove_bases(cls: type):
 #     return type(cls.__name__, tuple(each for each in cls.__bases__ if each is not TSLType), {**cls.__dict__})
 #
+
 
 class TSLTypeMeta(type):
     def __instancecheck__(self, instance):
@@ -31,7 +31,10 @@ class Struct(TSLType):
     @discrete_cache
     def get_spec(cls):
         annotations: dict = getattr(cls, '__annotations__', {})
-        return StructTypeSpec(cls.__name__, ImmutableDict((k, type_map_spec(v)) for k, v in annotations.items()))
+        return StructTypeSpec(
+            cls.__name__,
+            ImmutableDict(
+                (k, type_map_spec(v)) for k, v in annotations.items()))
 
 
 # @_remove_bases
@@ -45,7 +48,8 @@ class Cell(Struct, TSLType):
         raise NotImplemented
 
     @classmethod
-    def use(cls: typing.Type['_TCell'], cell_id: int, cell_access_options: int) -> '_TCell':
+    def use(cls: typing.Type['_TCell'], cell_id: int,
+            cell_access_options: int) -> '_TCell':
         return NotImplemented
 
     @staticmethod
@@ -69,7 +73,10 @@ class Cell(Struct, TSLType):
     def get_spec(cls):
         annotations: dict = getattr(cls, '__annotations__', {})
         # noinspection PyArgumentList
-        return CellTypeSpec(cls.__name__, ImmutableDict((k, type_map_spec(v)) for k, v in annotations.items()))
+        return CellTypeSpec(
+            cls.__name__,
+            ImmutableDict(
+                (k, type_map_spec(v)) for k, v in annotations.items()))
 
 
 class List(typing.List[T]):
@@ -193,13 +200,13 @@ def type_map_spec(_):
 @type_map_spec.case.ret_pattern(str)
 @const_return
 def type_map_spec(_):
-    return PrimitiveTypeSpec('string', 'U8STRING')
+    return PrimitiveTypeSpec('string', 'STRING')
 
 
 @type_map_spec.case.ret_pattern(bytes)
 @const_return
 def type_map_spec(_):
-    return PrimitiveTypeSpec('char*', 'STRING')
+    return PrimitiveTypeSpec('List<char>', 'U8STRING')
 
 
 @type_map_spec.case.ret_pattern(bool)
@@ -207,10 +214,12 @@ def type_map_spec(_):
 def type_map_spec(_):
     return PrimitiveTypeSpec('bool', 'BOOL')
 
+
 @type_map_spec.case.ret_pattern(float)
 @const_return
 def type_map_spec(_):
     return PrimitiveTypeSpec("float", 'F32')
+
 
 @type_map_spec.case.ret_pattern(np.float64)
 @const_return
@@ -235,18 +244,16 @@ def type_map_spec(typ):
 
 
 if __name__ == '__main__':
+
     class A(Struct):
         a: int
-
 
     class S(Cell):
         i: int
         a: 'A'
         c: List[List[A]]
 
-
     class L(List[A]):
         pass
-
 
     print(S.get_spec(), A.get_spec(), sep='\n')

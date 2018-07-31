@@ -92,4 +92,3 @@ def build_module(tsl_code, namespace: str):
     module = __import__(namespace)
     sys.path.remove(directory)
     return module
-

@@ -5,7 +5,7 @@
 
 %{
 #define SWIG_FILE_WITH_INIT
-#define cc 
+#define SWIG_PYTHON_STRICT_BYTE_CHAR
 #include "Trinity.FFI.SWIG.h"
 %}
 

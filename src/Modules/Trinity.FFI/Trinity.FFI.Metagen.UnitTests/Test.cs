@@ -30,6 +30,8 @@ namespace Trinity.FFI.Metagen.UnitTests
             Schema = CompositeStorage.AddStorageExtension("../../../tsl", "Some");
         }
 
+
+
         public void Disp(ICellAccessor c)
         {
             c.ToByteArray().By(_ => String.Join(" ", _)).By(Output.WriteLine);
@@ -40,22 +42,24 @@ namespace Trinity.FFI.Metagen.UnitTests
         public void TestTSLBytes()
         {
 
-            var c = Trinity.Global.LocalStorage.UseGenericCell(10, TSL.Lib.CellAccessOptions.CreateNewOnCellNotFound, "C1");
-            c.SetField<int>("i", 1);
-            c.SetField<float>("y", 1.0f);
-            
+            var c = Trinity.Global.LocalStorage.UseGenericCell(10, TSL.Lib.CellAccessOptions.CreateNewOnCellNotFound, "C");
+
+
+            //c.SetField<int>("i", 1);
+            //c.SetField<double>("x", 500.0);
+
             Disp(c);
-         
 
 
-            var c2 = Trinity.Global.LocalStorage.UseGenericCell(12, TSL.Lib.CellAccessOptions.CreateNewOnCellNotFound, "C2");
-            c2.AppendToField<int>("ls", 2);
-            Disp(c2);
 
-            var c3 = Trinity.Global.LocalStorage.UseGenericCell(14, TSL.Lib.CellAccessOptions.CreateNewOnCellNotFound, "C3");
-            Disp(c3);
+            //var c2 = Trinity.Global.LocalStorage.UseGenericCell(12, TSL.Lib.CellAccessOptions.CreateNewOnCellNotFound, "C2");
+            //c2.AppendToField<int>("ls", 2);
+            //Disp(c2);
 
-         
+            //var c3 = Trinity.Global.LocalStorage.UseGenericCell(14, TSL.Lib.CellAccessOptions.CreateNewOnCellNotFound, "C3");
+            //Disp(c3);
+
+
 
 
         }

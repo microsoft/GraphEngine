@@ -1,8 +1,6 @@
 from Redy.Tools.PathLib import Path
 import argparse
 import os
-import GraphEngine.tsl
-from GraphEngine.DotNet.env import build_module
 
 os.system('pip uninstall GraphEngine -y')
 nuget = Path(r"~/.nuget/packages")

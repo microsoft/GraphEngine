@@ -110,3 +110,4 @@ ServiceFabricBackup
 tests/benchmarks/**/*Artifacts*
 **/.vim
 /*-build/
+/src/GraphEngine/trinity_host/mscoree.h

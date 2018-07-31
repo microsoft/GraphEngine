@@ -24,15 +24,16 @@ class StructTypeSpec(TypeSpec):
         return self.name
 
     def __str__(self):
-        return 'struct {}\n{{\n{}\n}}'.format(self.name, '\n'.join(
-                '    {!r} {};'.format(v, k) for k, v in self.field_types.items()))
+        return 'struct {}\n{{\n{}\n}}'.format(
+            self.name, '\n'.join('    {!r} {};'.format(v, k)
+                                 for k, v in self.field_types.items()))
 
 
 class CellTypeSpec(StructTypeSpec):
-
     def __str__(self):
-        return 'cell {}\n{{\n{}\n}}'.format(self.name,
-                                            '\n'.join('    {!r} {};'.format(v, k) for k, v in self.field_types.items()))
+        return 'cell {}\n{{\n{}\n}}'.format(
+            self.name, '\n'.join('    {!r} {};'.format(v, k)
+                                 for k, v in self.field_types.items()))
 
 
 @record
