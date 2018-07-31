@@ -46,10 +46,10 @@ def build_module(tsl_code, namespace: str):
         tsl_file.write(tsl_code)
 
     # swig gen
-    swig_code = Env.ffi.Jit_SwigGen(directory, namespace)
+    swig_code = Env.ffi.Jit_SwigGen(directory.encode(), namespace.encode())
 
     swig_interface_filename = str(new_path.into('{namespace}.i'.format(namespace=namespace)))
-    with open(swig_interface_filename, 'w') as swig_file:
+    with open(swig_interface_filename, 'wb') as swig_file:
         swig_file.write(swig_code)
 
     # swig build

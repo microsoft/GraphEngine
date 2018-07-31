@@ -70,9 +70,9 @@ class Test(unittest.TestCase):
         self.assertEqual(fst.s, s.s)
         self.assertEqual(fst.i, s.i)
 
-        s3 = S(dict(i=1, s="555"))
-        self.assertEqual(s3.i, 1)
-        self.assertEqual(s3.s, "555")
+        c = C(dict(i=1, s=dict(i=1, s="555"), ls=[]))
+        self.assertEqual(c.s.i, 1)
+        self.assertEqual(c.s.s, "555")
 
 
 if __name__ == '__main__':

@@ -14,13 +14,13 @@ namespace Trinity.FFI
         internal static char ManglingCode => '_';
 
         [FFIExport]
-        public static string SwigGen(Int64 json_cons_fn_ptr, string directory, string moduleName)
+        public static string SwigGen(string directory, string moduleName)
         {
             var schema = CompositeStorage.AddStorageExtension(directory, moduleName);
             var tyDescs = schema.CellDescriptors.Select(GraphEngine.Jit.TypeSystem.Make);
             var collectedTydescs = MetaGen.analyzer.collect_type(tyDescs);
             var chains = MetaGen.analyzer.generate_chaining_verb(collectedTydescs);
-            var result = MetaGen.code_gen.code_gen(json_cons_fn_ptr, moduleName, chains);
+            var result = MetaGen.code_gen.code_gen(moduleName, chains);
             return result;
         }
 

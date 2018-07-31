@@ -1,7 +1,11 @@
 %module ffi
+%include <stdint.i>
+%include <pybuffer.i>
+%pybuffer_mutable_string(char *str);
 
 %{
 #define SWIG_FILE_WITH_INIT
+#define cc 
 #include "Trinity.FFI.SWIG.h"
 %}
 

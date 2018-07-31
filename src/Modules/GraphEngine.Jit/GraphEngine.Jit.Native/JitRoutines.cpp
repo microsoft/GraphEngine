@@ -553,27 +553,27 @@ namespace Mixin
 
     void my_memcpy(void* dst, void* src, size_t len)
     {
-        print(__FUNCTION__);
+        // print(__FUNCTION__);
 
-        debug((int64_t)dst);
-        debug((char*)src);
-        debug(len);
+        // debug((int64_t)dst);
+        // debug((char*)src);
+        // debug(len);
 
-        wprintf(L"==============\n");
+        // wprintf(L"==============\n");
 
-        for (int i=-4; i < (int32_t)len; ++i)
-        {
-            wprintf(L"%2X  src=%2X  dst=%2X\n", i, ((uint8_t*)src)[i], ((uint8_t*)dst)[i]);
-        }
-        wprintf(L"==============\n");
+        // for (int i=-4; i < (int32_t)len; ++i)
+        // {
+        //     wprintf(L"%2X  src=%2X  dst=%2X\n", i, ((uint8_t*)src)[i], ((uint8_t*)dst)[i]);
+        // }
+        // wprintf(L"==============\n");
 
         memcpy(dst, src, len);
 
-        for (int i=-4; i < (int32_t)len; ++i)
-        {
-            wprintf(L"%2X  src=%2X  dst=%2X\n", i, ((uint8_t*)src)[i], ((uint8_t*)dst)[i]);
-        }
-        wprintf(L"==============\n");
+        // for (int i=-4; i < (int32_t)len; ++i)
+        // {
+        //     wprintf(L"%2X  src=%2X  dst=%2X\n", i, ((uint8_t*)src)[i], ((uint8_t*)dst)[i]);
+        // }
+        // wprintf(L"==============\n");
     }
 
     void assign(X86Compiler& cc, const Reg& from, const X86Gp& to, const X86Gp& size, TypeCode tc, TypeId::Id tid)

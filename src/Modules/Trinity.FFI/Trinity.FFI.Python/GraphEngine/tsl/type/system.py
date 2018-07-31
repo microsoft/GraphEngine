@@ -193,13 +193,13 @@ def type_map_spec(_):
 @type_map_spec.case.ret_pattern(str)
 @const_return
 def type_map_spec(_):
-    return PrimitiveTypeSpec('string', 'STRING')
+    return PrimitiveTypeSpec('string', 'U8STRING')
 
 
 @type_map_spec.case.ret_pattern(bytes)
 @const_return
 def type_map_spec(_):
-    return PrimitiveTypeSpec('byte[]', 'U8STRING')
+    return PrimitiveTypeSpec('char*', 'STRING')
 
 
 @type_map_spec.case.ret_pattern(bool)
@@ -207,11 +207,15 @@ def type_map_spec(_):
 def type_map_spec(_):
     return PrimitiveTypeSpec('bool', 'BOOL')
 
-
 @type_map_spec.case.ret_pattern(float)
 @const_return
 def type_map_spec(_):
-    return PrimitiveTypeSpec("double", 'DOUBLE')
+    return PrimitiveTypeSpec("float", 'F32')
+
+@type_map_spec.case.ret_pattern(np.float64)
+@const_return
+def type_map_spec(_):
+    return PrimitiveTypeSpec("double", 'F64')
 
 
 @type_map_spec.case(List)

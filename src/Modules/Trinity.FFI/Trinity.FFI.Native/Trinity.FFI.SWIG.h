@@ -4,7 +4,6 @@
 #include "Trinity.FFI.Native.h"
 #include "TypeSystem.h"
 #include <CellAccessor.h>
-#include <memory>
 
 TRINITY_INTERFACES* g_TrinityInterfaces;
 
@@ -169,7 +168,16 @@ Cell* NewCell_3(char* cellType, char* cellContent)
 }
 
 void json_cons_fn_ptr(char* cellType, char* cellContent, long long& cellId, long long& cellPtr) {
-    g_TrinityInterfaces->cell_tobinary(cellType, cellContent, &cellId, &cellPtr);
+	auto errCode = g_TrinityInterfaces->cell_tobinary(cellType, cellContent, &cellId, &cellPtr);
+	if (TrinityErrorCode::E_SUCCESS != errCode) {
+		throw errCode;
+	}
+}
+
+void test_it(char* cellType, char* cellContent) {
+	long long cellId = 0;
+	long long cellPtr = 0;
+	json_cons_fn_ptr(cellType, cellContent, cellId, cellPtr);
 }
 
 long long _json_cons_fn_ptr_getter() {
@@ -178,7 +186,7 @@ long long _json_cons_fn_ptr_getter() {
 
 char* Jit_SwigGen(char* directory, char* moduleName)
 {
-    return g_TrinityInterfaces->jitSwigGen(_json_cons_fn_ptr_getter(), directory, moduleName);
+    return g_TrinityInterfaces->jitSwigGen(directory, moduleName);
 }
 
 

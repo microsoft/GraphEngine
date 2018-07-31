@@ -77,8 +77,10 @@ namespace Trinity.FFI.Interop
             //XXX performance
             try
             {
-                ICellAccessor cell = (ICellAccessor)Global.LocalStorage.NewGenericCell(cellType, cellContent);
-                byte[] content = cell.ToByteArray();
+                Console.WriteLine($"calling to binary {cellType} {cellContent}");
+                var cell = Global.LocalStorage.NewGenericCell(cellType, cellContent);
+                Console.WriteLine("New cell succeeded");
+                byte[] content = ((ICellAccessor)cell).ToByteArray();
                 int len = content.Length;
                 cellid = cell.CellId;
                 buffer = (long)Memory.malloc((ulong)len);
@@ -87,8 +89,10 @@ namespace Trinity.FFI.Interop
             }
             catch
             {
+                Console.WriteLine("to binary failed");
                 buffer = 0;
                 cellid = 0;
+                
                 return TrinityErrorCode.E_FAILURE;
             }
         }

@@ -28,8 +28,9 @@ class TSLType:
     def ref_get(self):
         raise NotImplemented
 
+    # noinspection PyPep8Naming
 
-# noinspection PyPep8Naming
+
 class _List_Ty_Annotate(type):
     @discrete_cache
     def __getitem__(self, item):

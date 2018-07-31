@@ -1,6 +1,28 @@
 ﻿cell C1
 {
 	int i;
-	string str;
+	double x;
+	float y;
+	
 }
 
+
+struct S
+{
+	int i;	
+
+}
+
+cell C2
+{
+	
+	int s;
+
+	List<int> ls;
+}
+
+cell C3{
+
+	S s;
+	int i;
+}

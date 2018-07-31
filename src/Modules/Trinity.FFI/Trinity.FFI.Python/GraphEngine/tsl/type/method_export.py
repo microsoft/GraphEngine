@@ -593,7 +593,7 @@ def make_class(ty: List, method_tb, cls_tb):
     @feature(staging)
     def __init__(self, data: object = None):
         default_method: const = method_tb[f'create_{chain}']
-        valued_method = method_tb[f'create_{chain}_with_data']
+        valued_method: const = method_tb[f'create_{chain}_with_data']
         if data is None:
             self.__accessor__ = default_method()
         else:
