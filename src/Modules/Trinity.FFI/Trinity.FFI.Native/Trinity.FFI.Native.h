@@ -25,7 +25,7 @@
 typedef char* (*TRINITY_FFI_SYNC_HANDLER)(char*);
 typedef void  (*TRINITY_FFI_ASYNC_HANDLER)(char*);
 
-typedef char* (*TRINITY_FFI_JITSWIGGEN)(long long, char*, char*);
+typedef char* (*TRINITY_FFI_JITSWIGGEN)(char*, char*);
 typedef TrinityErrorCode (*TRINITY_FFI_ACCESSOR_USE_1)(long long, void**);
 typedef TrinityErrorCode (*TRINITY_FFI_ACCESSOR_USE_2)(long long, CellAccessOptions, void**);
 typedef TrinityErrorCode (*TRINITY_FFI_ACCESSOR_USE_3)(long long, CellAccessOptions, void**, char*);

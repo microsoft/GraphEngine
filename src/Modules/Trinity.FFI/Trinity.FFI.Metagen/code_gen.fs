@@ -50,8 +50,8 @@ let ty_to_string tydesc =
     | F64 -> "double"
     | BOOL -> "bool"
     | CHAR -> "char"
-    | STRING -> "char*"
-    | U8STRING -> "wchar_t*"
+    | STRING -> "wchar_t*"
+    | U8STRING -> "char*"
     | _ -> "void*"
 
 let chaining_verb_to_name (verb : Verb) =
@@ -174,18 +174,15 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
         sprintf ("static %s %s(%s){\nreturn reinterpret_cast<%s>(0x%xll)(%s);\n}") ret_type name_sig typed_args_string private_fn_type addr args_string
     in (decl, generator)
 
-let code_gen (json_cons_fn_ptr: int64) (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
+let code_gen (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
     let tb = hashmap()  (** for caching *)
 
     let generate = single_method'code_gen tb
     let ty_recur_naming = ty_to_name true
+   
+
     let (decls, defs) =
         [
-        let json_cons_method_body = 
-            sprintf "
-static void (*json_cons)(char*, char*, int64_t&, int64_t&) = reinterpret_cast<void(*)(char*, char*, int64_t&, int64_t&)>(0x%ull);
-                    " json_cons_fn_ptr
-        yield ("", json_cons_method_body)
         for (ty, verb_lst) in tsl_specs do
             
             // for specific types
@@ -265,11 +262,12 @@ static void* create_%s()
                 sprintf  "
  static void* create_%s_with_data(char* content)
  {
-    CellAccessor* accessor = static_cast<CellAccessor*>(create_%s());
-    json_cons(\"%s\", content, accessor -> cellId, accessor -> cellPtr);
+    void* accessor = create_%s();
+    void* buf = reinterpret_cast<void*>(content);
+    %s_BSet(buf, accessor);
     return accessor;
  }              
-                " ty_name ty_name ty.TypeName
+                " ty_name ty_name ty_name
             yield (valued_initializer_decl, valued_initializer_body)
         
         // not for specific types
@@ -317,11 +315,13 @@ if(errCode)
         "
 %module {moduleName}
 %include <stdint.i>
-%{{
+%include <std_wstring.i>
+%begin %{{
 #include \"swig_accessor.h\"
 #include \"CellAccessor.h\"
 #include \"stdio.h\"
 #define SWIG_FILE_WITH_INIT
+#define SWIG_PYTHON_STRICT_BYTE_CHAR
 {decl}
 {source}
 %}}
@@ -329,7 +329,7 @@ if(errCode)
         "
     in PString.format swig_template
                        ["moduleName" => module_name
-                        "source"     => (defs       |> PString.str'concatBy "\n" )
-                        "decl"       => (decls      |> PString.str'concatBy "\n")
+                        "source"     => (defs           |> PString.str'concatBy "\n" )
+                        "decl"       => (decls          |> PString.str'concatBy "\n")
                         ]
 

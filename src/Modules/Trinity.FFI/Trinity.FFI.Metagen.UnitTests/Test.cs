@@ -5,7 +5,6 @@ using Trinity.FFI.Metagen;
 using Trinity.FFI;
 using Trinity.Storage.Composite;
 using System.Linq;
-
 using Trinity.Storage;
 using GraphEngine.Jit;
 using System.Runtime.InteropServices;
@@ -31,6 +30,39 @@ namespace Trinity.FFI.Metagen.UnitTests
             Schema = CompositeStorage.AddStorageExtension("../../../tsl", "Some");
         }
 
+
+
+        public void Disp(ICellAccessor c)
+        {
+            c.ToByteArray().By(_ => String.Join(" ", _)).By(Output.WriteLine);
+            Output.WriteLine("");
+        }
+
+        [Fact]
+        public void TestTSLBytes()
+        {
+
+            var c = Trinity.Global.LocalStorage.UseGenericCell(10, TSL.Lib.CellAccessOptions.CreateNewOnCellNotFound, "C");
+
+
+            //c.SetField<int>("i", 1);
+            //c.SetField<double>("x", 500.0);
+
+            Disp(c);
+
+
+
+            //var c2 = Trinity.Global.LocalStorage.UseGenericCell(12, TSL.Lib.CellAccessOptions.CreateNewOnCellNotFound, "C2");
+            //c2.AppendToField<int>("ls", 2);
+            //Disp(c2);
+
+            //var c3 = Trinity.Global.LocalStorage.UseGenericCell(14, TSL.Lib.CellAccessOptions.CreateNewOnCellNotFound, "C3");
+            //Disp(c3);
+
+
+
+
+        }
 
         [Fact]
         public void TestNewSwigGen()
@@ -58,7 +90,7 @@ namespace Trinity.FFI.Metagen.UnitTests
             //    Output.WriteLine("=====================");
             //}
             //Output.WriteLine($"Total method num: {num}");
-            var swig_code = FFI.MetaGen.code_gen.code_gen(100L, "", all_verbs);
+            var swig_code = FFI.MetaGen.code_gen.code_gen("", all_verbs);
             Output.WriteLine(swig_code);
 
 

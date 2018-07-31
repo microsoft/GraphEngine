@@ -78,6 +78,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "type", "type", "{F6E86A1A-B
 		Trinity.FFI.Python\GraphEngine\TSL\type\system.py = Trinity.FFI.Python\GraphEngine\TSL\type\system.py
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryPlayGround", "BinaryPlayGround\BinaryPlayGround.csproj", "{C5C63B76-F4C8-485D-BA71-C283EB57E890}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -104,6 +106,10 @@ Global
 		{B27032C1-342B-40E1-AB59-E33E73EA8B70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B27032C1-342B-40E1-AB59-E33E73EA8B70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B27032C1-342B-40E1-AB59-E33E73EA8B70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5C63B76-F4C8-485D-BA71-C283EB57E890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5C63B76-F4C8-485D-BA71-C283EB57E890}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5C63B76-F4C8-485D-BA71-C283EB57E890}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5C63B76-F4C8-485D-BA71-C283EB57E890}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,7 @@
 from .dep import Dependency
 from .lib import Library
 from .env import Env, build_module
+from ..utils import file_hash
 from bs4 import BeautifulSoup
 from Redy.Tools.PathLib import Path
 from Redy.Collections import Traversal
@@ -10,7 +11,7 @@ from subprocess import call
 import ctypes, sys
 import typing
 from linq import Flow as seq
-from toolz import curry
+from toolz import curry, compose
 
 
 @curry(setattr, Path, '__hash__')
@@ -18,10 +19,10 @@ def __hash__(self: Path):
     return hash(self._path)
 
 
-
 try:
     from Redy.Tools.Color import Green, Red
 except ModuleNotFoundError:
+
     class _Colored:
         Red = '\033[31m'
         Green = '\033[32m'
@@ -36,6 +37,7 @@ except ModuleNotFoundError:
         def func(*strings: str, sep=''):
             strings = map(lambda each: f'{colored}{each}', strings)
             return f'{sep.join(strings)}{_Colored.Clear}'
+
         return func
 
     Red = _wrap_color(_Colored.Red)
@@ -76,42 +78,46 @@ def init_trinity_service() -> Module:
     module_dir = Path(__file__).parent()
     graph_engine_config_path = Env.graph_engine_config_path
     cs_proj_build_dir = graph_engine_config_path.into('Dependencies')
+    target_cs_proj_file = cs_proj_build_dir.into('Dependencies.csproj')
+    src_cs_proj_file = module_dir.into("Dependencies.csproj")
 
-    if not cs_proj_build_dir.exists() or not cs_proj_build_dir.into("Dependencies.csproj").exists():
-
+    if not cs_proj_build_dir.exists() or not target_cs_proj_file.exists(
+    ) or file_hash(src_cs_proj_file) != file_hash(target_cs_proj_file):
         cs_proj_build_dir.mkdir(warning=False)
-        cs_proj_file = module_dir.into("Dependencies.csproj")
-        cs_proj_file.move_to(cs_proj_build_dir)
+        src_cs_proj_file.move_to(cs_proj_build_dir)
 
-    cs_proj_file = cs_proj_build_dir.into('Dependencies.csproj')
-    cmd_patterns = ["dotnet", "restore", f'"{cs_proj_build_dir}"', '--packages', f'"{Env.nuget_root}"']
+    cmd_patterns = [
+        "dotnet", "restore", f'"{target_cs_proj_file}"', '--packages',
+        f'"{Env.nuget_root}"'
+    ]
 
     # restore
     if call(cmd_patterns):
-        raise EnvironmentError("DotNet restoring failed `{}`".format(' '.join(cmd_patterns).__repr__()))
+        raise EnvironmentError("DotNet restoring failed `{}`".format(
+            ' '.join(cmd_patterns).__repr__()))
 
     # search dlls
-    with cs_proj_file.open('rb') as file:
-        deps = [Dependency(package_name=ref.attrs['include'],
-                           version=ref.attrs["version"]
-                           ).all()
-                for ref in
-                BeautifulSoup(file, "lxml").select('packagereference')
-                ] | Collect | FilterDLL
+    with target_cs_proj_file.open('rb') as file:
+        deps = [
+            Dependency(
+                package_name=ref.attrs['include'],
+                version=ref.attrs["version"]).all()
+            for ref in BeautifulSoup(file, "lxml").select('packagereference')
+        ] | Collect | FilterDLL
 
-    libs = [Library('GraphEngine.{}'.format(module),
-                    version='2.0.9328',
-                    where='runtimes/win-x64/native'
-                    ).all()
-            for module in
-            ['Core', 'FFI', 'Jit']
-            ] | Collect | FilterDLL
+    libs = [
+        Library(
+            'GraphEngine.{}'.format(module),
+            version='2.0.9328',
+            where='runtimes/win-x64/native').all()
+        for module in ['Core', 'FFI', 'Jit']
+    ] | Collect | FilterDLL
 
     sys.path.append(str(module_dir.parent()))
 
     # TODO: optimize loading
     paths_of_libs: seq[typing.Set[Path]] = seq(libs).concat(deps).to_set()
-    path_strs_of_libs : typing.Set[str] = paths_of_libs.map(str).to_set()._
+    path_strs_of_libs: typing.Set[str] = paths_of_libs.map(str).to_set()._
 
     while path_strs_of_libs:
         any_loaded = None
@@ -132,14 +138,16 @@ def init_trinity_service() -> Module:
         print('Cannot load dlls: {}'.format(Red(repr(path_strs_of_libs))))
         break
 
+    # noinspection PyProtectedMember
     dirs = paths_of_libs.map(Path.parent).map(str).to_set().to_list()._
     __ffi = __import__('ffi')
-    __ffi.InitCLR(len(dirs),
-                  dirs,
-                  str(graph_engine_config_path.into("trinity.xml")),
-                  str(graph_engine_config_path.into('storage')))
+    p1 = str(graph_engine_config_path.into("trinity.xml")).encode('ascii')
+    p2 = str(graph_engine_config_path.into('storage')).encode(
+        'ascii', 'surrogateescape')
+
+    print(p1, p2)
+    __ffi.InitCLR(len(dirs), dirs, p1, p2)
     __ffi.InitInterfaces()
 
     sys.path.remove(str(module_dir.parent()))
     Env.ffi = __ffi
-

@@ -1,8 +1,8 @@
 from Redy.Tools.PathLib import Path
+import argparse
 import os
 
 os.system('pip uninstall GraphEngine -y')
-
 nuget = Path(r"~/.nuget/packages")
 
 for each in ('graphengine.ffi', 'graphengine.ffi.metagen'):
@@ -13,14 +13,17 @@ for each in ('graphengine.ffi', 'graphengine.ffi.metagen'):
 
 current = Path('.')
 bin = current.into('bin')
-
-for each in bin.list_dir(lambda it: 'FFI' in it):
-    try:
-        each.delete()
-    except FileNotFoundError:
-        pass
+try:
+    for each in bin.list_dir(lambda it: 'FFI' in it):
+        try:
+            each.delete()
+        except FileNotFoundError:
+            pass
+except OSError:
+    pass
 
 os.system(r"cd {}\build && cmake --build . --config Release".format(current))
+# os.system(r'cd {} && powershell -F build.ps1'.format(current.into('tools')))
 os.system(r'cd {0}\src\Modules\Trinity.FFI\Trinity.FFI '
           r'&& dotnet build Trinity.FFI.csproj '
           r'&& dotnet pack Trinity.FFI.csproj'

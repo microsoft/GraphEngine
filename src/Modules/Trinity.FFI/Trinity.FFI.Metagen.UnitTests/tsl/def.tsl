@@ -1,6 +1,11 @@
-﻿cell C1
+﻿struct S
 {
-	int i;
-	string str;
+    int32 i;
+    string s;
 }
-
+cell C
+{
+    int32 i;
+    List<S> ls;
+    S s;
+}
