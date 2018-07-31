@@ -7,7 +7,7 @@ from GraphEngine.tsl.type.system import (TSLType, Cell, List, StructTypeSpec,
 import struct
 import ast
 import typing
-# from rbnf._py_tools.unparse import Unparser
+from rbnf._py_tools.unparse import Unparser
 
 struct_pack = struct.pack
 
@@ -24,46 +24,24 @@ def float_to_bytes(value):
     return ast.Call(
         func=ast.Name(id='struct_pack', ctx=ast.Load()),
         keywords=[],
-        args=[ast.Str(s='=f'), value])
-
-
-def length_to_bytes(value):
-    length = ast.Call(
-        func=ast.Name(id='len', ctx=ast.Load()), keywords=[], args=[value])
-    return int_to_bytes(length, 4)
+        args=[ast.Str(s='>f'), value])
 
 
 def double_to_bytes(value):
     return ast.Call(
         func=ast.Name(id='struct_pack', ctx=ast.Load()),
         keywords=[],
-        args=[ast.Str(s='=d'), value])
+        args=[ast.Str(s='>d'), value])
 
 
 def str_to_bytes(value):
-    return ast.Subscript(
-        value=ast.Call(
-            func=ast.Attribute(value=value, attr='encode', ctx=ast.Load()),
-            keywords=[],
-            args=[ast.Str(s='utf-16')]),
-        slice=ast.Slice(lower=ast.Num(n=2), upper=None, step=None),
-        ctx=ast.Load())
-
-
-def assign(name, value):
-    return ast.Assign(
-        targets=[ast.Name(id=name, ctx=ast.Store())], value=value)
-
-
-def yield_value(value):
-    return ast.Expr(value=ast.Yield(value=value))
+    return ast.Call(
+        func=ast.Attribute(value=value, attr='encode', ctx=ast.Load()),
+        keywords=[],
+        args=[])
 
 
 def make_get_bytes(spec, lazy: dict, depth=0) -> typing.Callable:
-    """
-    # TODO: finally I found write bytecode directly is much more easy and even makes a higher performance.
-    # refactor after pre
-    """
     if isinstance(spec, NotDefinedYet):
         spec = lazy[spec.name]
 
@@ -73,46 +51,30 @@ def make_get_bytes(spec, lazy: dict, depth=0) -> typing.Callable:
 
         if isinstance(spec, PrimitiveTypeSpec):
             if spec.type_code == 'I8':
-                return yield_value(int_to_bytes(value, 1))
-
+                return ast.Expr(value=ast.Yield(value=int_to_bytes(value, 1)))
             if spec.type_code == 'I16':
-                return yield_value(int_to_bytes(value, 2))
-
+                return ast.Expr(value=ast.Yield(value=int_to_bytes(value, 2)))
             if spec.type_code == 'I32':
-                return yield_value(int_to_bytes(value, 4))
-
+                return ast.Expr(value=ast.Yield(value=int_to_bytes(value, 4)))
             if spec.type_code == 'I64':
-                return yield_value(int_to_bytes(value, 8))
+                return ast.Expr(value=ast.Yield(value=int_to_bytes(value, 8)))
 
             if spec.type_code == 'STRING':
-                bind = assign("tmp", str_to_bytes(value))
-                value = ast.Name(id='tmp', ctx=ast.Load())
-                return [
-                    bind,
-                    yield_value(length_to_bytes(value)),
-                    yield_value(value)
-                ]
+                return ast.Expr(value=ast.Yield(value=str_to_bytes(value)))
 
             if spec.type_code == 'U8STRING':
-                bind = assign("tmp", value)
-                value = ast.Name(id='tmp', ctx=ast.Load())
-
-                return [
-                    bind,
-                    yield_value(length_to_bytes(value)),
-                    yield_value(value)
-                ]
+                return ast.Expr(value=ast.Yield(value=value))
 
             if spec.type_code == 'F32':
-                return yield_value(float_to_bytes(value))
+                return ast.Expr(value=ast.Yield(value=float_to_bytes(value)))
 
             if spec.type_code == 'F64':
-                return yield_value(double_to_bytes(value))
+                return ast.Expr(value=ast.Yield(value=double_to_bytes(value)))
 
             raise TypeError
-
-        alias = assign(identifier, node)
         value = ast.Name(id=identifier, ctx=ast.Load())
+        alias = ast.Assign(
+            targets=[ast.Name(id=identifier, ctx=ast.Store())], value=node)
 
         if isinstance(spec, StructTypeSpec):
             ret = [alias]
@@ -131,31 +93,26 @@ def make_get_bytes(spec, lazy: dict, depth=0) -> typing.Callable:
 
         else:
             assert isinstance(spec, ListTypeSpec)
-
-            head_bytes = length_to_bytes(value)
-            iter_var_identifier = f'each{depth}'
-
+            length = ast.Call(
+                func=ast.Name(id='len', ctx=ast.Load()),
+                keywords=[],
+                args=[value])
+            head_bytes = int_to_bytes(length)
+            iter_var = ast.Name(id=f'each{depth}', ctx=ast.Store())
             return [
-                alias,
-                yield_value(head_bytes),
+                ast.Expr(value=ast.Yield(value=head_bytes)),
                 ast.For(
-                    target=ast.Name(id=iter_var_identifier, ctx=ast.Store()),
+                    target=iter_var,
                     iter=value,
-                    body=make_get_bytes(spec.elem_type, lazy,
-                                        depth + 1)(ast.Name(
-                                            id=iter_var_identifier,
-                                            ctx=ast.Load())),
-                    orelse=[],
-                )
+                    body=make_get_bytes(spec.elem_type, lazy, depth + 1))
             ]
 
     return call
 
 
-def make_fast_to_bytes_function(ty,
-                                lazy: dict) -> typing.Callable[[dict], bytes]:
+def make_fast_to_bytes_function(ty, lazy: dict):
     assert issubclass(ty, (Struct, List))
-    func_ast = make_get_bytes(ty.get_spec(), lazy)
+    f = make_get_bytes(ty.get_spec(), lazy)
     bind_struct_pack = ast.Assign(
         targets=[ast.Name(id="struct_pack", ctx=ast.Store())],
         value=ast.Attribute(
@@ -174,36 +131,26 @@ def make_fast_to_bytes_function(ty,
             defaults=[]),
         decorator_list=[],
         returns=None,
-        body=[bind_struct_pack, *func_ast(ast.Name(id='obj', ctx=ast.Load()))])
+        body=[bind_struct_pack, *f(ast.Name(id='obj', ctx=ast.Load()))])
     ast.fix_missing_locations(node)
-    # Unparser(node)
-    local = {'struct': struct}
-    exec(compile(ast.Module([node]), "<TSL compiling time>", "exec"), local)
+
+    local = {}
+    exec(
+        compile(ast.Module([node]), "<TSL compiling time>", "exec"), globals(),
+        local)
     return local['f']
 
 
 if __name__ == '__main__':
 
     class S(Struct):
-        i: int
-        s: str
+        b: int
 
     class C(Cell):
-        i: int
+        a: int
         s: S
-        ls: List[S]
 
-    class LS(List[S]):
         pass
 
-    fn = make_fast_to_bytes_function(C, {})
-    print(list(b''.join(fn(dict(i=1, s=dict(i=1, s="555"), ls=[])))))
-
-    print(list(b''.join(fn(dict(i=1, s=dict(i=1, s="555"), ls=[])))))
-    """
-    1 0 0 0 
-    0 0 0 0 
-    1 0 0 0 
-    6 0 0 0 
-    53 0 53 0 53 0
-    """
+    f = make_fast_to_bytes_function(C, {})
+    print(b''.join(f({'a': 1, 's': {'b': 2}})))

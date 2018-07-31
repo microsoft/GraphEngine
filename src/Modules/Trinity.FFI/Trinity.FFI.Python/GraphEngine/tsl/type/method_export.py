@@ -497,8 +497,13 @@ def make_class(ty: typing.Type[Struct], method_tb, cls_tb):
         if data is None:
             self.__accessor__ = default_method()
         else:
+<<<<<<< HEAD
             self.__accessor__ = valued_method(constexpr[b''.join](
                 constexpr[json_to_bytes](data)))
+=======
+            # not `constexpr[json.dumps], for the attribute `dumps` is not fixed.
+            self.__accessor__ = valued_method(constexpr[json_to_bytes](data))
+>>>>>>> 64c086d25852269df522686a3ddfbcddbe041b65
 
     ty.__init__ = __init__
 
@@ -642,8 +647,12 @@ def make_class(ty: List, method_tb, cls_tb):
             self.__accessor__ = default_method()
         else:
             # not `constexpr[json.dumps], for the attribute `dumps` is not fixed.
+<<<<<<< HEAD
             self.__accessor__ = valued_method(constexpr[b''.join](
                 constexpr[json_to_bytes](data)))
+=======
+            self.__accessor__ = valued_method(constexpr[json_to_bytes](data))
+>>>>>>> 64c086d25852269df522686a3ddfbcddbe041b65
 
     ty.__init__ = __init__
     ty.insert = insert_at
