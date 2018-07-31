@@ -474,6 +474,10 @@ namespace t_Namespace
             yield break;
         }
 
+        public ICellAccessor Serialize()
+        {
+            return (t_cell_name_Accessor)this;
+        }
         #endregion
 
         #region Other interfaces

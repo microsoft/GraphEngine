@@ -56,7 +56,31 @@ MACRO(POSTBUILD_COPY_OUTPUT target file)
         COMMAND ${CMAKE_COMMAND} -E copy ${file} "${TRINITY_OUTPUT_DIR}/")
 ENDMACRO()
 
-MACRO(ADD_DOTNET proj_name package_name)
+MACRO(ADD_DOTNET proj pkgname config arch)
+    FILE(GLOB_RECURSE dotnet_cs "*.cs")
+    FILE(GLOB_RECURSE dotnet_fs "*.fs")
+    FILE(GLOB_RECURSE dotnet_xaml "*.xaml")
+    FILE(GLOB_RECURSE dotnet_csproj "*.csproj")
+    FILE(GLOB_RECURSE dotnet_fsproj "*.fsproj")
+    ADD_CUSTOM_TARGET(
+        ${pkgname}
+        DEPENDS ${dotnet_cs} ${dotnet_fs} ${dotnet_xaml} ${dotnet_csproj} ${dotnet_fsproj}
+        COMMAND "dotnet pack ${proj} -c ${config} /p:Platform=${arch}"
+    )
+ENDMACRO()
+
+MACRO(ADD_MSBUILD proj pkgname config arch)
+    FILE(GLOB_RECURSE dotnet_cs "*.cs")
+    FILE(GLOB_RECURSE dotnet_fs "*.fs")
+    FILE(GLOB_RECURSE dotnet_xaml "*.xaml")
+    FILE(GLOB_RECURSE dotnet_csproj "*.csproj")
+    FILE(GLOB_RECURSE dotnet_fsproj "*.fsproj")
+    ADD_CUSTOM_TARGET(
+        ${pkgname}
+        # OUTPUT "${TRINITY_OUTPUT_DIR}/${pkgname}.nupkg"
+        DEPENDS ${dotnet_cs} ${dotnet_fs} ${dotnet_xaml} ${dotnet_csproj} ${dotnet_fsproj}
+        COMMAND "dotnet msbuild ${proj} /p:Configuration=${config};Platform=${arch}"
+    )
 ENDMACRO()
 
 PROJECT(GraphEngine VERSION 2.0.9328 LANGUAGES CXX)
