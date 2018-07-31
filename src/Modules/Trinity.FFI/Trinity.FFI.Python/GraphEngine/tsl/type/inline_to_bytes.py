@@ -26,18 +26,24 @@ def float_to_bytes(value):
         keywords=[],
         args=[ast.Str(s='>f'), value])
 
+
 def double_to_bytes(value):
-    return ast.Call(func=ast.Name(id='struct_pack', ctx=ast.Load()), keywords=[], args=[ast.Str(s='>d'), value])
+    return ast.Call(
+        func=ast.Name(id='struct_pack', ctx=ast.Load()),
+        keywords=[],
+        args=[ast.Str(s='>d'), value])
 
 
 def str_to_bytes(value):
-    return ast.Call(func=ast.Attribute(value=value, attr='encode', ctx=ast.Load()), keywords=[], args=[])
+    return ast.Call(
+        func=ast.Attribute(value=value, attr='encode', ctx=ast.Load()),
+        keywords=[],
+        args=[])
 
 
-def make_get_bytes(spec, lazy:dict, depth=0) -> typing.Callable:
+def make_get_bytes(spec, lazy: dict, depth=0) -> typing.Callable:
     if isinstance(spec, NotDefinedYet):
         spec = lazy[spec.name]
-
 
     def call(node: ast.AST):
         identifier = f'obj_{depth}'
@@ -45,7 +51,7 @@ def make_get_bytes(spec, lazy:dict, depth=0) -> typing.Callable:
 
         if isinstance(spec, PrimitiveTypeSpec):
             if spec.type_code == 'I8':
-                return ast.Expr(value = ast.Yield(value=int_to_bytes(value, 1)))
+                return ast.Expr(value=ast.Yield(value=int_to_bytes(value, 1)))
             if spec.type_code == 'I16':
                 return ast.Expr(value=ast.Yield(value=int_to_bytes(value, 2)))
             if spec.type_code == 'I32':
@@ -57,7 +63,7 @@ def make_get_bytes(spec, lazy:dict, depth=0) -> typing.Callable:
                 return ast.Expr(value=ast.Yield(value=str_to_bytes(value)))
 
             if spec.type_code == 'U8STRING':
-                return ast.Expr(value = ast.Yield(value=value))
+                return ast.Expr(value=ast.Yield(value=value))
 
             if spec.type_code == 'F32':
                 return ast.Expr(value=ast.Yield(value=float_to_bytes(value)))
@@ -70,14 +76,14 @@ def make_get_bytes(spec, lazy:dict, depth=0) -> typing.Callable:
         alias = ast.Assign(
             targets=[ast.Name(id=identifier, ctx=ast.Store())], value=node)
 
-
         if isinstance(spec, StructTypeSpec):
             ret = [alias]
             for name, field_spec in spec.field_types.items():
-                sub = make_get_bytes(field_spec, lazy, depth + 1)(ast.Subscript(
-                    value=value,
-                    slice=ast.Index(value=ast.Str(name)),
-                    ctx=ast.Load()))
+                sub = make_get_bytes(field_spec, lazy,
+                                     depth + 1)(ast.Subscript(
+                                         value=value,
+                                         slice=ast.Index(value=ast.Str(name)),
+                                         ctx=ast.Load()))
                 if isinstance(sub, list):
                     ret.extend(sub)
                 else:
@@ -85,10 +91,12 @@ def make_get_bytes(spec, lazy:dict, depth=0) -> typing.Callable:
 
             return ret
 
-
         else:
             assert isinstance(spec, ListTypeSpec)
-            length = ast.Call(func=ast.Name(id='len', ctx=ast.Load()), keywords=[], args=[value])
+            length = ast.Call(
+                func=ast.Name(id='len', ctx=ast.Load()),
+                keywords=[],
+                args=[value])
             head_bytes = int_to_bytes(length)
             iter_var = ast.Name(id=f'each{depth}', ctx=ast.Store())
             return [
@@ -100,15 +108,6 @@ def make_get_bytes(spec, lazy:dict, depth=0) -> typing.Callable:
             ]
 
     return call
-
-class S(Struct):
-    b: int
-
-class C(Cell):
-    a: int
-    s: S
-
-    pass
 
 
 def make_fast_to_bytes_function(ty, lazy: dict):
@@ -136,9 +135,22 @@ def make_fast_to_bytes_function(ty, lazy: dict):
     ast.fix_missing_locations(node)
 
     local = {}
-    exec(compile(ast.Module([node]), "<TSL compiling time>", "exec"), globals(), local)
+    exec(
+        compile(ast.Module([node]), "<TSL compiling time>", "exec"), globals(),
+        local)
     return local['f']
 
 
-f = make_fast_to_bytes_function(C, {})
-print(b''.join(f({'a': 1, 's': {'b': 2}})))
+if __name__ == '__main__':
+
+    class S(Struct):
+        b: int
+
+    class C(Cell):
+        a: int
+        s: S
+
+        pass
+
+    f = make_fast_to_bytes_function(C, {})
+    print(b''.join(f({'a': 1, 's': {'b': 2}})))

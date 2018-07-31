@@ -46,13 +46,15 @@ class _List_Ty_Annotate(type):
             assert isinstance(item, NotDefinedYet)
             item_ty_name = item.name
 
-        new_ty = self.__class__(f'{self.__name__}<{item_ty_name}>', self.__bases__, dict(self.__dict__))
+        new_ty = self.__class__(f'{self.__name__}<{item_ty_name}>',
+                                self.__bases__, dict(self.__dict__))
         new_ty.__gbase__ = self
         new_ty.__garg__ = item
         return new_ty
 
     def __instancecheck__(self, instance):
-        return any(issubclass(each, List) for each in instance.__class__.__mro__)
+        return any(
+            issubclass(each, List) for each in instance.__class__.__mro__)
 
     def __subclasscheck__(self, subclass):
         # noinspection PyUnresolvedReferences
