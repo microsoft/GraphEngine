@@ -3,6 +3,7 @@ using Xunit;
 using Xunit.Abstractions;
 using Trinity.FFI.Metagen;
 using Trinity.FFI;
+using Trinity.Utilities;
 using Trinity.Storage.Composite;
 using System.Linq;
 using Trinity.Storage;
@@ -27,7 +28,7 @@ namespace Trinity.FFI.Metagen.UnitTests
         {
             Global.Initialize();
             Output = output;
-            Schema = CompositeStorage.AddStorageExtension("../../../tsl", "Some");
+            Schema = CompositeStorage.AddStorageExtension(@"C:\Users\v-wazhao\github\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.Metagen.UnitTests\tsl", "Some");
         }
 
 
@@ -95,6 +96,39 @@ namespace Trinity.FFI.Metagen.UnitTests
 
 
         }
+
+        [Fact]
+        public void TestOnlyRootSwigGen()
+        {
+
+            var ty_descs = Schema.CellDescriptors.Select(TypeSystem.Make);
+            var all_type_collected = FFI.MetaGen.analyzer.collect_type(ty_descs);
+
+            foreach (var e in all_type_collected)
+            {
+                Output.WriteLine(e.TypeName);
+            }
+            Output.WriteLine("=====================");
+
+
+            var all_verbs = FFI.MetaGen.analyzer.generate_chaining_verb(all_type_collected);
+            //var num = 0;
+            //foreach (var e in all_verbs)
+            //{
+
+            //    //var len = e.Item2.Length;
+            //    //Output.WriteLine($"{e.Item1.TypeName}, method num: {len}");
+            //    //num += len;
+            //    e.Item2.Select(_ => _.ToString()).By(_ => String.Join("\n", _)).By(Output.WriteLine);
+            //    Output.WriteLine("=====================");
+            //}
+            //Output.WriteLine($"Total method num: {num}");
+            var swig_code = FFI.MetaGen.Factory.code_gen("", all_verbs);
+            Output.WriteLine(swig_code);
+
+
+        }
+
 
         public void Dispose()
         {

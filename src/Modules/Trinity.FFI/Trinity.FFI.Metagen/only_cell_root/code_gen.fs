@@ -1,4 +1,4 @@
-﻿module Trinity.FFI.MetaGen.Factory.code_gen
+﻿module Trinity.FFI.MetaGen.Factory
 
 open GraphEngine.Jit.JitCompiler
 open GraphEngine.Jit.TypeSystem
