@@ -39,8 +39,8 @@ typesys   = relpath(r('${typesys}'), build_dir)
 inc_ffi   = relpath(r('${TRINITY_FFI_NATIVE_DIR}'), build_dir)
 inc_tri   = relpath(r('${TRINITY_C_INCLUDE_DIR}'), build_dir)
 inc_jit   = relpath(r('${GRAPHENGINE_JIT_NATIVE_DIR}'), build_dir)
-whl_dir   = relpath('dist', build_dir)
-dep_path  = relpath(str(Path(src_dir, "GraphEngine", "DotNet", "Dependencies.csproj")), build_dir)
+whl_dir   = relpath(r('dist'), build_dir)
+dep_path  = relpath(r(str(Path(src_dir, "GraphEngine", "DotNet", "Dependencies.csproj"))), build_dir)
 
 with open(version_filename) as f:
     version = Version(f.read().strip())

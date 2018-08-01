@@ -38,7 +38,7 @@ u16char* tsl_getstring(int32_t* trinity_string_ptr)
     memcpy(buf, trinity_string_ptr + 1, len);
     buf[len / 2] = 0;
     debug(len);
-    wprintf(L"tsl_getstring = %s\n", buf);
+    // wprintf(L"tsl_getstring = %s\n", buf);
     return buf;
 }
 

@@ -44,12 +44,11 @@ class AsyncSocketServer(abc.ABC):
         raise exc
 
     @abc.abstractmethod
-    def client_processor(self, client):
+    def client_processor(self, client: socket.socket):
         raise NotImplemented
 
     def run_async(self):
         event_sources = []
-        running = True
         sock = self.sock
         sock.setblocking(False)
 
@@ -62,9 +61,10 @@ class AsyncSocketServer(abc.ABC):
                 event_sources.append(self.client_processor(client))
 
         def process_event_loop(loop):
-            while running:
+            _next = next
+            while True:
                 try:
-                    yield loop.send(None)
+                    yield _next(loop)
                 except Exception as e:
                     self.exception_handler(e)
                     sock.close()
@@ -72,13 +72,14 @@ class AsyncSocketServer(abc.ABC):
         @process_event_loop
         @execute
         def event_loop():
-            while running:
-                for each in tuple(event_sources):
+            _next = next
+            _tuple = tuple
+            while True:
+                for each in _tuple(event_sources):
                     try:
-                        each.send(None)
+                        yield _next(each)
                     except StopIteration:
                         event_sources.remove(each)
-                yield
 
         yield from event_loop
 

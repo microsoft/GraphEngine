@@ -7,7 +7,6 @@ from GraphEngine.tsl.type.system import (TSLType, Cell, List, StructTypeSpec,
 import struct
 import ast
 import typing
-from rbnf._py_tools.unparse import Unparser
 
 struct_pack = struct.pack
 

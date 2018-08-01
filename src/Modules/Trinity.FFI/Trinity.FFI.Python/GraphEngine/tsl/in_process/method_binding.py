@@ -1,7 +1,7 @@
 from GraphEngine.tsl.type.system import *
 from GraphEngine.tsl.type.mangling import *
 from Redy.Opt import feature, const, constexpr, Macro
-from GraphEngine.tsl.inline_to_bytes import make_fast_to_bytes_function
+from ..inline_to_bytes import make_fast_to_bytes_function
 
 _internal_macro = Macro()
 staging = (const, constexpr)
@@ -45,7 +45,8 @@ def create_cls(spec: StructTypeSpec, chain: str, method_tb, arg_num, cls_tb):
     def ref_get(self):
         method: const = method_tb[chain]
         if constexpr[arg_num]:
-            return method(*constexpr[take_args](self.__args__), self.__accessor__)
+            return method(*constexpr[take_args](self.__args__),
+                          self.__accessor__)
         else:
             return method(self.__accessor__)
 
@@ -60,12 +61,15 @@ def create_cls(spec: StructTypeSpec, chain: str, method_tb, arg_num, cls_tb):
         field_name_mangled = mangling(field_name)
         # very javascript here
         if isinstance(field_spec, PrimitiveTypeSpec):
+
             @property
             @feature(staging)
             def get_method(self):
-                method: const = method_tb[f'{chain}_SGet_{field_name_mangled}_BGet']
+                method: const = method_tb[
+                    f'{chain}_SGet_{field_name_mangled}_BGet']
                 if constexpr[arg_num]:
-                    return method(*constexpr[take_args](self.__args__), self.__accessor__)
+                    return method(*constexpr[take_args](self.__args__),
+                                  self.__accessor__)
                 else:
                     return method(self.__accessor__)
 
@@ -74,20 +78,23 @@ def create_cls(spec: StructTypeSpec, chain: str, method_tb, arg_num, cls_tb):
             def set_method(self, value):
                 method: const = method_tb[f'{chain}_SSet_{field_name_mangled}']
                 if constexpr[arg_num]:
-                    method(value, *constexpr[take_args](self.__args__), self.__accessor__)
+                    method(value, *constexpr[take_args](self.__args__),
+                           self.__accessor__)
                 else:
                     method(value, self.__accessor__)
 
         else:
             chaining_getter = f'{chain}_SGet_{field_name_mangled}'
-            field_cls = create_cls(field_spec, chaining_getter, method_tb, arg_num, cls_tb)
+            field_cls = create_cls(field_spec, chaining_getter, method_tb,
+                                   arg_num, cls_tb)
 
             _internal_macro.expr(f"def get_specific_field():\n"
                                  f"   return self.__{non_primitive_count}")
 
-            _internal_macro.stmt('def set_specific_field():\n'
-                                 f'    v = self.__{non_primitive_count} = constexpr[field_type](self.__accessor__, self.__args__)\n'
-                                 f'    return v')
+            _internal_macro.stmt(
+                'def set_specific_field():\n'
+                f'    v = self.__{non_primitive_count} = constexpr[field_type](self.__accessor__, self.__args__)\n'
+                f'    return v')
 
             get_specific_field: _internal_macro
             set_specific_field: _internal_macro
@@ -106,7 +113,9 @@ def create_cls(spec: StructTypeSpec, chain: str, method_tb, arg_num, cls_tb):
             def set_method(self, value):
                 method: const = method_tb[f'{chain}_SSet_{field_name_mangled}']
                 if constexpr[arg_num]:
-                    method(value.ref_get(), *constexpr[take_args](self.__args__), self.__accessor__)
+                    method(value.ref_get(),
+                           *constexpr[take_args](self.__args__),
+                           self.__accessor__)
                 else:
                     method(value.ref_get(), self.__accessor__)
 
@@ -114,7 +123,9 @@ def create_cls(spec: StructTypeSpec, chain: str, method_tb, arg_num, cls_tb):
             def ref_set(self, value):
                 method: const = method_tb[f'{chain}_SSet_{field_name_mangled}']
                 if constexpr[arg_num]:
-                    method(value.ref_get(), *constexpr[take_args](self.__args__), self.__accessor__)
+                    method(value.ref_get(),
+                           *constexpr[take_args](self.__args__),
+                           self.__accessor__)
                 else:
                     method(value.ref_get(), self.__accessor__)
 
@@ -132,7 +143,8 @@ def create_cls(spec: StructTypeSpec, chain: str, method_tb, arg_num, cls_tb):
 
 
 @create_cls.case(ListTypeSpec)
-def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int, cls_tb):
+def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int,
+               cls_tb):
     print(chain)
     bases = (List, Proxy)
     cls = type(repr(spec), bases, {'__slots__': ('__accessor__', '__args__')})
@@ -148,18 +160,21 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int, cl
     def ref_get(self):
         method: const = method_tb[chain]
         if constexpr[arg_num]:
-            return method(*constexpr[take_args](self.__args__), self.__accessor__)
+            return method(*constexpr[take_args](self.__args__),
+                          self.__accessor__)
         else:
             return method(self.__accessor__)
 
     cls.ref_get = ref_get
 
     if isinstance(elem, PrimitiveTypeSpec):
+
         @feature(staging)
         def append(self, value):
             method: const = method_tb[f'{chain}_LAppend']
             if constexpr[arg_num]:
-                return method(value, *constexpr[take_args](self.__args__), self.__accessor__)
+                return method(value, *constexpr[take_args](self.__args__),
+                              self.__accessor__)
             else:
                 return method(value, self.__accessor__)
 
@@ -167,7 +182,8 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int, cl
         def __getitem__(self, idx):
             method: const = method_tb[f'{chain}_LGet_BGet']
             if constexpr[arg_num]:
-                return method(idx, *constexpr[take_args](self.__args__), self.__accessor__)
+                return method(idx, *constexpr[take_args](self.__args__),
+                              self.__accessor__)
             else:
                 return method(idx, self.__accessor__)
 
@@ -175,7 +191,8 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int, cl
         def __setitem__(self, idx, value):
             method: const = method_tb[f'{chain}_LSet']
             if constexpr[arg_num]:
-                return method(value, idx, *constexpr[take_args](self.__args__), self.__accessor__)
+                return method(value, idx, *constexpr[take_args](self.__args__),
+                              self.__accessor__)
             else:
                 return method(value, idx, self.__accessor__)
 
@@ -183,7 +200,8 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int, cl
         def __contains__(self, value):
             method: const = method_tb[f'{chain}_LContains']
             if constexpr[arg_num]:
-                return method(value, *constexpr[take_args](self.__args__), self.__accessor__)
+                return method(value, *constexpr[take_args](self.__args__),
+                              self.__accessor__)
             else:
                 return method(value, self.__accessor__)
 
@@ -191,7 +209,8 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int, cl
         def insert_at(self, idx, value):
             method: const = method_tb[f'{chain}_LInsertAt']
             if constexpr[arg_num]:
-                return method(value, idx, *constexpr[take_args](self.__args__), self.__accessor__)
+                return method(value, idx, *constexpr[take_args](self.__args__),
+                              self.__accessor__)
             else:
                 return method(value, idx, self.__accessor__)
 
@@ -210,12 +229,14 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int, cl
 
     else:
         chaining_getter = f'{chain}_LGet'
-        elem_cls = create_cls(elem, chaining_getter, method_tb, arg_num + 1, cls_tb)
+        elem_cls = create_cls(elem, chaining_getter, method_tb, arg_num + 1,
+                              cls_tb)
 
         @feature(staging)
         def ref_set(self, value):
             method: const = method_tb[f'{chain}_LSet']
-            method(value.ref_get(), *constexpr[take_args](self.__args__), self.__accessor__)
+            method(value.ref_get(), *constexpr[take_args](self.__args__),
+                   self.__accessor__)
 
         elem_cls.ref_set = ref_set
 
@@ -223,7 +244,9 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int, cl
         def append(self, value):
             method: const = method_tb[f'{chain}_LAppend']
             if constexpr[arg_num]:
-                return method(value.ref_get(), *constexpr[take_args](self.__args__), self.__accessor__)
+                return method(value.ref_get(),
+                              *constexpr[take_args](self.__args__),
+                              self.__accessor__)
             else:
                 return method(value.ref_get(), self.__accessor__)
 
@@ -236,7 +259,9 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int, cl
         def __setitem__(self, idx, value):
             method: const = method_tb[f'{chain}_LSet']
             if constexpr[arg_num]:
-                return method(value.ref_get(), idx, *constexpr[take_args](self.__args__), self.__accessor__)
+                return method(value.ref_get(), idx,
+                              *constexpr[take_args](self.__args__),
+                              self.__accessor__)
             else:
                 return method(value.ref_get(), idx, self.__accessor__)
 
@@ -244,7 +269,9 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int, cl
         def __contains__(self, value):
             method: const = method_tb[f'{chain}_LContains']
             if constexpr[arg_num]:
-                return method(value.ref_get(), *constexpr[take_args](self.__args__), self.__accessor__)
+                return method(value.ref_get(),
+                              *constexpr[take_args](self.__args__),
+                              self.__accessor__)
             else:
                 return method(value.ref_get(), self.__accessor__)
 
@@ -252,7 +279,9 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int, cl
         def insert_at(self, idx, value):
             method: const = method_tb[f'{chain}_LInsertAt']
             if constexpr[arg_num]:
-                return method(value.ref_get(), idx, *constexpr[take_args](self.__args__), self.__accessor__)
+                return method(value.ref_get(), idx,
+                              *constexpr[take_args](self.__args__),
+                              self.__accessor__)
             else:
                 return method(value.ref_get(), idx, self.__accessor__)
 
@@ -277,7 +306,8 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int, cl
     def __delitem__(self, idx):
         method: const = method_tb[f'{chain}_LRemoveAt']
         if constexpr[arg_num]:
-            method(idx, *constexpr[take_args](self.__args__), self.__accessor__)
+            method(idx, *constexpr[take_args](self.__args__),
+                   self.__accessor__)
         else:
             method(idx, self.__accessor__)
 
@@ -285,7 +315,8 @@ def create_cls(spec: ListTypeSpec, chain: str, method_tb: dict, arg_num: int, cl
     def __len__(self):
         method: const = method_tb[f'{chain}_LCount']
         if constexpr[arg_num]:
-            return method(*constexpr[take_args](self.__args__), self.__accessor__)
+            return method(*constexpr[take_args](self.__args__),
+                          self.__accessor__)
         else:
             return method(self.__accessor__)
 
@@ -313,7 +344,7 @@ def make_class(ty: typing.Type[TSLType], method_tb, cls_tb):
 
 @make_class.case(True)
 def make_class(ty: typing.Type[Struct], method_tb, cls_tb):
-    ty.__slots__ = getattr(ty, '__slots__', ()) + ('__accessor__',)
+    ty.__slots__ = getattr(ty, '__slots__', ()) + ('__accessor__', )
     spec: StructTypeSpec = ty.get_spec()
     chain = type_spec_to_name(spec)
 
@@ -399,10 +430,12 @@ def make_class(ty: typing.Type[Struct], method_tb, cls_tb):
         field_name_mangled = mangling(field_name)
         # very javascript here
         if isinstance(field_spec, PrimitiveTypeSpec):
+
             @property
             @feature(staging)
             def get_method(self):
-                method: const = method_tb[f'{chain}_SGet_{field_name_mangled}_BGet']
+                method: const = method_tb[
+                    f'{chain}_SGet_{field_name_mangled}_BGet']
                 return method(self.__accessor__)
 
             @get_method.setter
@@ -413,14 +446,16 @@ def make_class(ty: typing.Type[Struct], method_tb, cls_tb):
 
         else:
             chaining_getter = f'{chain}_SGet_{field_name_mangled}'
-            field_cls = create_cls(field_spec, chaining_getter, method_tb, 0, cls_tb)
+            field_cls = create_cls(field_spec, chaining_getter, method_tb, 0,
+                                   cls_tb)
 
             _internal_macro.expr(f"def get_specific_field():\n"
                                  f"   return self.__{non_primitive_count}")
 
-            _internal_macro.stmt('def set_specific_field():\n'
-                                 f'    v = self.__{non_primitive_count} = constexpr[field_type](self.__accessor__, self.__args__)\n'
-                                 f'    return v')
+            _internal_macro.stmt(
+                'def set_specific_field():\n'
+                f'    v = self.__{non_primitive_count} = constexpr[field_type](self.__accessor__, self.__args__)\n'
+                f'    return v')
 
             get_specific_field: _internal_macro
             set_specific_field: _internal_macro
@@ -461,7 +496,8 @@ def make_class(ty: typing.Type[Struct], method_tb, cls_tb):
         if data is None:
             self.__accessor__ = default_method()
         else:
-            self.__accessor__ = valued_method(constexpr[b''.join](constexpr[json_to_bytes](data)))
+            self.__accessor__ = valued_method(constexpr[b''.join](
+                constexpr[json_to_bytes](data)))
 
     ty.__init__ = __init__
 
@@ -503,6 +539,7 @@ def make_class(ty: List, method_tb, cls_tb):
             raise NameError(f"No class named {elem.name}")
 
     if isinstance(elem, PrimitiveTypeSpec):
+
         @feature(staging)
         def append(self, value):
             method: const = method_tb[f'{chain}_LAppend']
@@ -603,7 +640,8 @@ def make_class(ty: List, method_tb, cls_tb):
         if data is None:
             self.__accessor__ = default_method()
         else:
-            self.__accessor__ = valued_method(constexpr[b''.join](constexpr[json_to_bytes](data)))
+            self.__accessor__ = valued_method(constexpr[b''.join](
+                constexpr[json_to_bytes](data)))
 
     ty.__init__ = __init__
     ty.insert = insert_at
@@ -621,20 +659,16 @@ if __name__ == '__main__':
 
     methods = defaultdict(lambda: lambda *args: print(args))
 
-
     class K(Struct):
         a: int
-
 
     class S(Struct):
         k: 'K'
         i: int
 
-
     class C(Cell):
         s: S
         b: List[S]
-
 
     cls_tb = {'C': C, 'K': K, 'S': S}
     make_class(C, methods, cls_tb)
