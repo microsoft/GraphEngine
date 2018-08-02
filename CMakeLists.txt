@@ -96,4 +96,6 @@ ADD_SUBDIRECTORY(src/Modules/Trinity.FFI/Trinity.FFI.Python)
 
 #  DotNet components
 
-#ADD_SUBDIRECTORY(src/Trinity.Core)
+ADD_DOTNET(src/Trinity.Core/Trinity.Core.csproj GraphEngine.Core Release AnyCPU)
+ADD_DOTNET(src/GraphEngine.DataImporter/GraphEngine.DataImporter.sln GraphEngine.DataImporter Release AnyCPU)
+ADD_DOTNET(src/Modules/GraphEngine.Client.sln GraphEngine.Client Release AnyCPU)

@@ -8,5 +8,5 @@ PROJECT ("GraphEngine")
 ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS -DUNICODE -D_UNICODE)
 
 # Include sub-projects.
-add_subdirectory ("trinity_host")
-add_subdirectory ("trinity_host_test")
+ADD_SUBDIRECTORY ("trinity_host")
+ADD_SUBDIRECTORY ("trinity_host_test")
