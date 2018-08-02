@@ -1,5 +1,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
 
+PROJECT(GraphEngine VERSION 2.0.9328 LANGUAGES CXX)
+SET(TRINITY_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+
 SET(CMAKE_CXX_STANDARD 14)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS OFF)
@@ -15,6 +18,7 @@ SET(TRINITY_LIB_DIR     ${TRINITY_REPO_ROOT}/lib)
 SET(TRINITY_SRC_DIR     ${TRINITY_REPO_ROOT}/src)
 SET(TRINITY_C_DIR       ${TRINITY_SRC_DIR}/Trinity.C)
 SET(TRINITY_NUGET_EXE   ${TRINITY_TOOLS_DIR}/NuGet.exe)
+SET(NUGET_CACHE_PATH    "~/.nuget/packages")
 
 SET(RXCPP_DIR           ${TRINITY_SRC_DIR}/RxCpp)
 SET(RX_INCLUDE_DIR      ${RXCPP_DIR}/RxCpp/Rx/v2/src/rxcpp)
@@ -134,8 +138,8 @@ FUNCTION(ADD_DOTNET DOTNET_PROJECT)
     FOREACH(pkg ${DOTNET_PACKAGES})
         ADD_CUSTOM_TARGET(
             DOTNET_PURGE_CACHE_${pkg}
-            COMMAND ${CMAKE_COMMAND} -E echo "=======[x] Purging nuget package cache for ${pkg}.${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.nupkg"
-            # COMMAND ${CMAKE_COMMAND} -E TODO purge the cache
+            COMMAND ${CMAKE_COMMAND} -E echo "=======[x] Purging nuget package cache for ${pkg}"
+            COMMAND ${CMAKE_COMMAND} -E remove_directory "${NUGET_CACHE_PATH}/${pkg}/${TRINITY_VERSION}"
             SOURCES ${DOTNET_deps}
         )
         ADD_DEPENDENCIES(BUILD_${DOTNET_PROJNAME} DOTNET_PURGE_CACHE_${pkg})
@@ -164,12 +168,11 @@ FUNCTION(ADD_MSBUILD DOTNET_PROJECT)
     ADD_CUSTOM_TARGET(
         MSBUILD_${DOTNET_PROJNAME}
         ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Clean
+        COMMAND ${TRINITY_NUGET_EXE} restore ${DOTNET_PROJPATH}
         COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build "/p:Platform=${DOTNET_PLATFORM};Configuration=${DOTNET_CONFIG}"
         SOURCES ${DOTNET_deps}
     )
 ENDFUNCTION()
-
-PROJECT(GraphEngine VERSION 2.0.9328 LANGUAGES CXX)
 
 #  Native components
 
@@ -195,7 +198,7 @@ ADD_DOTNET(
 )
 
 ADD_DOTNET(
-    src/Modules/GraphEngine.Client/Trinity.Client.sln
+    src/Modules/GraphEngine.Client/GraphEngine.Client.sln
     PACKAGE GraphEngine.Client
     DEPENDS GraphEngine.Core
 )
@@ -208,22 +211,24 @@ ADD_DOTNET(
         GraphEngine.Client
 )
 
-ADD_DOTNET(
-    src/Modules/GraphEngine.ServiceFabric/GraphEngine.ServiceFabric.sln 
-    PACKAGE 
-        GraphEngine.ServiceFabric.Infrastructure
-        GraphEngine.ServiceFabric.ListenerRuntime
-        GraphEngine.ServiceFabric.Remoting
-    DEPENDS
-        GraphEngine.Core
-        GraphEngine.Client
-        GraphEngine.Storage.Composite
-        GraphEngine.DynamicCluster
-        Trinity.Azure.Storage
-    X64
-)
+IF(WIN32)
+    ADD_MSBUILD(
+        src/Modules/GraphEngine.ServiceFabric/GraphEngine.ServiceFabric.sln 
+        PACKAGE 
+            GraphEngine.ServiceFabric.Infrastructure
+            GraphEngine.ServiceFabric.ListenerRuntime
+            GraphEngine.ServiceFabric.Remoting
+        DEPENDS
+            GraphEngine.Core
+            GraphEngine.Client
+            GraphEngine.Storage.Composite
+            GraphEngine.DynamicCluster
+            Trinity.Azure.Storage
+        X64
+    )
+ENDIF()
 
-ADD_DOTNET(
-    src/GraphEngine.DataImporter/GraphEngine.DataImporter.sln
-    PACKAGE GraphEngine.DataImporter
-    DEPENDS GraphEngine.Core)
+# ADD_DOTNET(
+#     src/GraphEngine.DataImporter/GraphEngine.DataImporter.sln
+#     PACKAGE GraphEngine.DataImporter
+#     DEPENDS GraphEngine.Core)

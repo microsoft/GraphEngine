@@ -5,6 +5,6 @@ ADD_SUBDIRECTORY(Trinity.FFI.Python)
 
 ADD_DOTNET(Trinity.FFI.sln 
     PACKAGE GraphEngine.FFI GraphEngine.FFI.MetaGen
-    DEPENDS GraphEngine.Core)
+    DEPENDS GraphEngine.Core GraphEngine.Jit)
 
-ADD_DEPENDENCIES(BUILD_Trinity.FFI trinity_ffi)
+ADD_DEPENDENCIES(BUILD_Trinity.FFI Trinity trinity_ffi trinity_host)

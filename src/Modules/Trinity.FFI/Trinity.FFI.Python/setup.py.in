@@ -23,8 +23,8 @@ def r(p):
         maybe_link_root = str(search_path)
         if os.path.islink(maybe_link_root):
             return str(reduce(lambda current, sub: current.into(sub), reversed(relatives), Path(os.readlink(maybe_link_root))))
-        search_path = search_path.parent()
         relatives.append(search_path.relative())
+        search_path = search_path.parent()
 
     return str(p)
 

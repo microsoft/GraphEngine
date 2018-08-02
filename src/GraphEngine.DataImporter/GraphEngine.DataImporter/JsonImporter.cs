@@ -80,7 +80,7 @@ namespace GraphEngine.DataImporter
             tree_imports.ForEach(_ => _());
 
             if (cellid == null) cellid = Global.LocalStorage.NewRandomCellID();
-            cell.CellID = cellid.Value;
+            cell.CellId = cellid.Value;
             if (parent_id != null)
             {
                 var parent_fd = cell_desc.GetFieldDescriptors().Where(fd => fd.GetAttributeValue(Consts.c_KW_TreeParent) != null).First();
