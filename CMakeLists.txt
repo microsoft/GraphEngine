@@ -32,6 +32,10 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${TRINITY_OUTPUT_DIR})
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${TRINITY_OUTPUT_DIR})
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${TRINITY_OUTPUT_DIR})
 
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${TRINITY_OUTPUT_DIR})
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO ${TRINITY_OUTPUT_DIR})
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO ${TRINITY_OUTPUT_DIR})
+
 FIND_PROGRAM(DOTNET_EXE dotnet)
 MESSAGE("-- Dotnet toolchain: ${DOTNET_EXE}")
 
@@ -51,61 +55,119 @@ ELSE()
     MESSAGE(FATAL_ERROR "Unsupported platform")
 ENDIF()
 
-MACRO(POSTBUILD_COPY_OUTPUT target file)
+FUNCTION(POSTBUILD_COPY_OUTPUT target file)
     ADD_CUSTOM_COMMAND(
         TARGET ${target}
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory "${TRINITY_OUTPUT_DIR}"
         COMMAND ${CMAKE_COMMAND} -E copy ${file} "${TRINITY_OUTPUT_DIR}/")
-ENDMACRO()
+ENDFUNCTION()
 
-MACRO(ADD_DOTNET proj pkgname config arch)
-    FILE(GLOB_RECURSE dotnet_cs     "*.cs")
-    FILE(GLOB_RECURSE dotnet_fs     "*.fs")
-    FILE(GLOB_RECURSE dotnet_xaml   "*.xaml")
-    FILE(GLOB_RECURSE dotnet_csproj "*.csproj")
-    FILE(GLOB_RECURSE dotnet_fsproj "*.fsproj")
-    GET_FILENAME_COMPONENT(abs_proj "${CMAKE_CURRENT_SOURCE_DIR}/${proj}" ABSOLUTE)
-    MESSAGE("-- Adding dotnet project ${abs_proj}")
-    ADD_CUSTOM_TARGET(
-        ${pkgname}
-        ${DOTNET_EXE} pack ${abs_proj} -c ${config} /p:Platform=${arch}
-        SOURCES ${dotnet_cs} ${dotnet_fs} ${dotnet_xaml} ${dotnet_csproj} ${dotnet_fsproj}
-    )
-ENDMACRO()
+FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
+    FILE(GLOB_RECURSE DOTNET_deps "*.cs;*.fs;*.xaml;*.csproj;*.fsproj")
+    CMAKE_PARSE_ARGUMENTS(
+        # prefix
+        _DN 
+        # options (flags)
+        "RELEASE;DEBUG;X86;X64;ANYCPU" 
+        # oneValueArgs
+        "CONFIG;PLATFORM;ARGUMENTS" 
+        # multiValueArgs
+        "PACKAGE;DEPENDS"
+        # the input arguments
+        ${arguments})
 
-MACRO(RUN_DOTNET proj pkgname args)
-    FILE(GLOB_RECURSE dotnet_cs     "*.cs")
-    FILE(GLOB_RECURSE dotnet_fs     "*.fs")
-    FILE(GLOB_RECURSE dotnet_xaml   "*.xaml")
-    FILE(GLOB_RECURSE dotnet_csproj "*.csproj")
-    FILE(GLOB_RECURSE dotnet_fsproj "*.fsproj")
-    GET_FILENAME_COMPONENT(abs_proj "${CMAKE_CURRENT_SOURCE_DIR}/${proj}" ABSOLUTE)
-    GET_FILENAME_COMPONENT(proj_dir "${CMAKE_CURRENT_SOURCE_DIR}/${proj}" DIRECTORY)
-    ADD_CUSTOM_TARGET(
-        DOTNET_RUN_${pkgname}
-        ${DOTNET_EXE} run ${abs_proj} ${args}
-        SOURCES ${dotnet_cs} ${dotnet_fs} ${dotnet_xaml} ${dotnet_csproj} ${dotnet_fsproj}
-        WORKING_DIRECTORY  ${proj_dir}
-    )
-    ADD_DEPENDENCIES(DOTNET_RUN_${pkgname} ${pkgname})
-ENDMACRO()
+    GET_FILENAME_COMPONENT(_DN_abs_proj "${CMAKE_CURRENT_SOURCE_DIR}/${_DN_PROJECT}" ABSOLUTE)
+    GET_FILENAME_COMPONENT(_DN_proj_dir "${CMAKE_CURRENT_SOURCE_DIR}/${_DN_PROJECT}" DIRECTORY)
+    GET_FILENAME_COMPONENT(_DN_projname "${DOTNET_PROJECT}" NAME)
+    STRING(REGEX REPLACE "\\.[^.]*$" "" _DN_projname_noext ${_DN_projname})
 
-MACRO(ADD_MSBUILD proj pkgname config arch)
-    FILE(GLOB_RECURSE dotnet_cs     "*.cs")
-    FILE(GLOB_RECURSE dotnet_fs     "*.fs")
-    FILE(GLOB_RECURSE dotnet_xaml   "*.xaml")
-    FILE(GLOB_RECURSE dotnet_csproj "*.csproj")
-    FILE(GLOB_RECURSE dotnet_fsproj "*.fsproj")
-    GET_FILENAME_COMPONENT(abs_proj "${CMAKE_CURRENT_SOURCE_DIR}/${proj}" ABSOLUTE)
-    MESSAGE("-- Adding MSBuild project ${abs_proj}")
+    IF(NOT _DN_CONFIG STREQUAL "")
+        SET(_DN_CONFIG "Release")
+    ENDIF()
+
+    IF(_DN_RELEASE)
+        SET(_DN_CONFIG "Release")
+    ELSEIF(_DN_DEBUG)
+        SET(_DN_CONFIG "Debug")
+    ENDIF()
+
+    IF(NOT _DN_PLATFORM STREQUAL "")
+        SET(_DN_PLATFORM "Any CPU")
+    ENDIF()
+
+    IF(_DN_X86)
+        SET(_DN_PLATFORM "x86")
+    ELSEIF(_DN_X64)
+        SET(_DN_PLATFORM "x64")
+    ELSEIF(_DN_ANYCPU)
+        SET(_DN_PLATFORM "Any CPU")
+    ENDIF()
+
+    SET(DOTNET_PACKAGES ${_DN_PACKAGE}  PARENT_SCOPE)
+    SET(DOTNET_CONFIG   ${_DN_CONFIG}   PARENT_SCOPE)
+    SET(DOTNET_PLATFORM ${_DN_PLATFORM} PARENT_SCOPE)
+    SET(DOTNET_DEPENDS  ${_DN_DEPENDS}  PARENT_SCOPE)
+    SET(DOTNET_PROJNAME ${_DN_projname_noext} PARENT_SCOPE)
+    SET(DOTNET_PROJPATH ${_DN_abs_proj} PARENT_SCOPE)
+    SET(DOTNET_PROJDIR  ${_DN_proj_dir} PARENT_SCOPE)
+    SET(DOTNET_ARGUMENTS ${_DN_ARGUMENTS} PARENT_SCOPE)
+ENDFUNCTION()
+
+FUNCTION(ADD_DOTNET DOTNET_PROJECT)
+    DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
+    MESSAGE("-- Adding dotnet project ${DOTNET_PROJPATH}")
     ADD_CUSTOM_TARGET(
-        ${pkgname}
-        ${DOTNET_EXE} msbuild ${abs_proj} /t:Clean
-        COMMAND ${DOTNET_EXE} msbuild ${abs_proj} /t:Build "/p:Platform=${arch};Configuration=${config}"
-        SOURCES ${dotnet_cs} ${dotnet_fs} ${dotnet_xaml} ${dotnet_csproj} ${dotnet_fsproj}
+        BUILD_${DOTNET_PROJNAME} ALL
+        ${CMAKE_COMMAND} -E echo "=======> Building .NET project ${DOTNET_PROJNAME} [${DOTNET_CONFIG}|${DOTNET_PLATFORM}]"
+        COMMAND ${DOTNET_EXE} clean ${DOTNET_PROJPATH}
+        COMMAND ${DOTNET_EXE} build ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} /p:Platform=${DOTNET_PLATFORM}
+        COMMAND ${DOTNET_EXE} pack ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} /p:Platform=${DOTNET_PLATFORM}
+        SOURCES ${DOTNET_deps}
     )
-ENDMACRO()
+
+    FOREACH(pkg_dep ${DOTNET_DEPENDS})
+        ADD_DEPENDENCIES(BUILD_${DOTNET_PROJNAME} PKG_${pkg_dep})
+        MESSAGE("==== ${DOTNET_PROJNAME} <- ${pkg_dep}")
+    ENDFOREACH()
+
+    FOREACH(pkg ${DOTNET_PACKAGES})
+        ADD_CUSTOM_TARGET(
+            DOTNET_PURGE_CACHE_${pkg}
+            COMMAND ${CMAKE_COMMAND} -E echo "=======[x] Purging nuget package cache for ${pkg}.${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.nupkg"
+            # COMMAND ${CMAKE_COMMAND} -E TODO purge the cache
+            SOURCES ${DOTNET_deps}
+        )
+        ADD_DEPENDENCIES(BUILD_${DOTNET_PROJNAME} DOTNET_PURGE_CACHE_${pkg})
+        # Add a target for the built package -- this can be referenced in
+        # another project.
+        ADD_CUSTOM_TARGET(PKG_${pkg})
+        ADD_DEPENDENCIES(PKG_${pkg} BUILD_${DOTNET_PROJNAME})
+        MESSAGE("==== ${DOTNET_PROJNAME} -> ${pkg}")
+    ENDFOREACH()
+ENDFUNCTION()
+
+FUNCTION(RUN_DOTNET DOTNET_PROJECT)
+    DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
+    ADD_CUSTOM_TARGET(
+        RUN_${DOTNET_PROJNAME} 
+        ${DOTNET_EXE} run ${DOTNET_ARGUMENTS}
+        SOURCES ${DOTNET_deps}
+        WORKING_DIRECTORY ${DOTNET_PROJDIR}
+    )
+    ADD_DEPENDENCIES(RUN_${DOTNET_PROJNAME} BUILD_${DOTNET_PROJNAME})
+ENDFUNCTION()
+
+FUNCTION(ADD_MSBUILD DOTNET_PROJECT)
+    DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
+    MESSAGE("-- Adding MSBuild project ${DOTNET_PROJPATH}")
+    ADD_CUSTOM_TARGET(
+        MSBUILD_${DOTNET_PROJNAME}
+        ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Clean
+        COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build "/p:Platform=${DOTNET_PLATFORM};Configuration=${DOTNET_CONFIG}"
+        SOURCES ${DOTNET_deps}
+    )
+ENDFUNCTION()
 
 PROJECT(GraphEngine VERSION 2.0.9328 LANGUAGES CXX)
 
@@ -113,11 +175,55 @@ PROJECT(GraphEngine VERSION 2.0.9328 LANGUAGES CXX)
 
 ADD_SUBDIRECTORY(src/Trinity.TSL)
 ADD_SUBDIRECTORY(src/Trinity.C)
+ADD_SUBDIRECTORY(src/Trinity.Core)
 ADD_SUBDIRECTORY(src/GraphEngine)
 ADD_SUBDIRECTORY(src/Modules/GraphEngine.Jit)
-ADD_SUBDIRECTORY(src/Modules/Trinity.FFI/Trinity.FFI.Native)
-ADD_SUBDIRECTORY(src/Modules/Trinity.FFI/Trinity.FFI.Python)
+ADD_SUBDIRECTORY(src/Modules/Trinity.FFI)
 
 #  DotNet components
 
-#ADD_SUBDIRECTORY(src/Trinity.Core)
+ADD_DOTNET(
+    src/Modules/GraphEngine.Storage.Composite/GraphEngine.Storage.Composite.sln
+    PACKAGE GraphEngine.Storage.Composite
+    DEPENDS GraphEngine.Core
+)
+
+ADD_DOTNET(
+    src/Modules/LIKQ/LIKQ.sln
+    PACKAGE GraphEngine.LIKQ
+    DEPENDS GraphEngine.Core
+)
+
+ADD_DOTNET(
+    src/Modules/GraphEngine.Client/Trinity.Client.sln
+    PACKAGE GraphEngine.Client
+    DEPENDS GraphEngine.Core
+)
+
+ADD_DOTNET(
+    src/Modules/GraphEngine.DynamicCluster/GraphEngine.DynamicCluster.sln 
+    PACKAGE GraphEngine.DynamicCluster Trinity.Azure.Storage
+    DEPENDS
+        GraphEngine.Core
+        GraphEngine.Client
+)
+
+ADD_DOTNET(
+    src/Modules/GraphEngine.ServiceFabric/GraphEngine.ServiceFabric.sln 
+    PACKAGE 
+        GraphEngine.ServiceFabric.Infrastructure
+        GraphEngine.ServiceFabric.ListenerRuntime
+        GraphEngine.ServiceFabric.Remoting
+    DEPENDS
+        GraphEngine.Core
+        GraphEngine.Client
+        GraphEngine.Storage.Composite
+        GraphEngine.DynamicCluster
+        Trinity.Azure.Storage
+    X64
+)
+
+ADD_DOTNET(
+    src/GraphEngine.DataImporter/GraphEngine.DataImporter.sln
+    PACKAGE GraphEngine.DataImporter
+    DEPENDS GraphEngine.Core)

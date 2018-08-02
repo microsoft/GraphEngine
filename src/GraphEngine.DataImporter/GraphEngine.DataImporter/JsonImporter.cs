@@ -63,7 +63,7 @@ namespace GraphEngine.DataImporter
                             ProcessCellIdOrCellIdListField(type, cell, fd, field_name, optional, field_content, (c, _) =>
                             {
                                 var sub_cell = ImportEntity(treeimport, c.ToString(), cellid);
-                                return sub_cell.CellID;
+                                return sub_cell.CellId;
                             });
                         });
                 }

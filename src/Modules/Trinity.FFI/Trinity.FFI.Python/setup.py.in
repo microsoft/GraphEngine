@@ -29,7 +29,6 @@ def r(p):
     return str(p)
 
 
-version_filename = r('${CMAKE_CURRENT_SOURCE_DIR}/next_version')
 build_dir = r('${CMAKE_CURRENT_BINARY_DIR}')
 print(build_dir)
 src_dir   = relpath(r('${CMAKE_CURRENT_SOURCE_DIR}'), build_dir)
@@ -39,11 +38,8 @@ typesys   = relpath(r('${typesys}'), build_dir)
 inc_ffi   = relpath(r('${TRINITY_FFI_NATIVE_DIR}'), build_dir)
 inc_tri   = relpath(r('${TRINITY_C_INCLUDE_DIR}'), build_dir)
 inc_jit   = relpath(r('${GRAPHENGINE_JIT_NATIVE_DIR}'), build_dir)
-whl_dir   = relpath('dist', build_dir)
-dep_path  = relpath(str(Path(src_dir, "GraphEngine", "DotNet", "Dependencies.csproj")), build_dir)
-
-with open(version_filename) as f:
-    version = Version(f.read().strip())
+whl_dir   = relpath(r('dist'), build_dir)
+dep_path  = relpath(r(str(Path(src_dir, "GraphEngine", "DotNet", "Dependencies.csproj"))), build_dir)
 
 try:
     with open('${CMAKE_CURRENT_SOURCE_DIR}/README.rst', encoding='utf-8') as f:
@@ -60,7 +56,7 @@ ge_module = Extension('_ffi',
                       extra_link_args=${ext_linker_flags})
 
 setup(name='GraphEngine',
-      version=str(version),
+      version='0.1',
       keywords='distributed, storage, cloud memory, graph computing',
       description='Trinity GraphEngine Engine interoperatibility',
       long_description=readme,
@@ -92,19 +88,9 @@ setup(name='GraphEngine',
       zip_safe=False)
 lib_dir_path = Path(lib_dir)
 for each in Path(whl_dir).list_dir(lambda path: 
-            os.path.split(path)[-1].startswith(f"GraphEngine-{str(version)}") 
+            os.path.split(path)[-1].startswith(f"GraphEngine-") 
             and 
             path.endswith('.whl')):
     with open(str(lib_dir_path.into(each.relative())), 'wb') as w, open(str(each), 'rb') as r:
         w.write(r.read())
     
-
-version.increment(version_number_idx=2, increment=1)
-if version[2] is 42:
-    version.increment(version_number_idx=1, increment=1)
-if version[1] is 42:
-    version.increment(version_number_idx=0, increment=1)
-
-with open(version_filename, 'w') as f:
-    f.write(str(version))
-

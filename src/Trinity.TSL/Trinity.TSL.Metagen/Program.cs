@@ -30,6 +30,8 @@ namespace Trinity.TSL.Metagen
                 s_force_process = true;
             }
 
+            Console.WriteLine($"Trinity.TSL.MetaGen: path = {args[0]}");
+
             s_root = Path.GetFullPath(args[0]);
             ProcessDirectory(s_root);
         }

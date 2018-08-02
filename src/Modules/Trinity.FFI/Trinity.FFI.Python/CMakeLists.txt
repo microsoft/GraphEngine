@@ -40,7 +40,7 @@ IF (PYTHON AND SWIG)
                        COMMAND ${CMAKE_COMMAND} -E copy ${swigpy} ${PYPACKAGE_DIR}
                        COMMAND ${PYTHON} ${SETUP_PY} bdist_wheel
                        COMMAND ${CMAKE_COMMAND} -E touch ${OUTPUT}
-                       DEPENDS ${DEPS})
+                       DEPENDS ${DEPS} trinity_ffi)
 
     ADD_CUSTOM_TARGET(target ALL DEPENDS ${OUTPUT})
 
