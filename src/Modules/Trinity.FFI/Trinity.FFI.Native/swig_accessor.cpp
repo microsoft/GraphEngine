@@ -1,4 +1,6 @@
 #include "Trinity.h"
+#include <vector>
+#include <stdint.h>
 #include "CellAccessor.h"
 
 typedef TrinityErrorCode (*construct_fp_t) (CellAccessor*);
