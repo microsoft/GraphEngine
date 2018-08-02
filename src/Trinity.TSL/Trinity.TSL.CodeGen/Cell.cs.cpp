@@ -713,6 +713,12 @@ source->append(R"::(
             }
             yield break;
         }
+        public ICellAccessor Serialize()
+        {
+            return ()::");
+source->append(Codegen::GetString(node->name));
+source->append(R"::(_Accessor)this;
+        }
         #endregion
         #region Other interfaces
         string ITypeDescriptor.TypeName
@@ -1943,6 +1949,10 @@ source->append(R"::(.GetAttributeValue(attributeKey);
 source->append(Codegen::GetString(node->name));
 source->append(R"::(;
             }
+        }
+        public ICellAccessor Serialize()
+        {
+            return this;
         }
         #endregion
         public ICell Deserialize()

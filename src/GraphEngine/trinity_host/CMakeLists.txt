@@ -10,4 +10,5 @@ FILE(GLOB_RECURSE SRCS *.cpp)
 FILE(DOWNLOAD https://raw.githubusercontent.com/dotnet/coreclr/master/src/pal/prebuilt/inc/mscoree.h ${CMAKE_CURRENT_SOURCE_DIR}/mscoree.h)
 
 ADD_LIBRARY(trinity_host SHARED ${SRCS})
+ADD_DEFINITIONS(-DTRINITYC_EXPORT)
 TARGET_INCLUDE_DIRECTORIES(trinity_host PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

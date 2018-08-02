@@ -1376,6 +1376,11 @@ namespace t_Namespace
                 return (ushort)CellType.t_cell_name;
             }
         }
+
+        public ICellAccessor Serialize()
+        {
+            return this;
+        }
         #endregion
 
         public ICell Deserialize()

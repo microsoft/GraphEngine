@@ -32,6 +32,9 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${TRINITY_OUTPUT_DIR})
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${TRINITY_OUTPUT_DIR})
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${TRINITY_OUTPUT_DIR})
 
+FIND_PROGRAM(DOTNET_EXE dotnet)
+MESSAGE("-- Dotnet toolchain: ${DOTNET_EXE}")
+
 IF(WIN32 AND NOT EXISTS ${TRINITY_NUGET_EXE})
     FILE(DOWNLOAD https://dist.nuget.org/win-x86-commandline/latest/nuget.exe ${TRINITY_NUGET_EXE})
 ENDIF()
@@ -57,29 +60,50 @@ MACRO(POSTBUILD_COPY_OUTPUT target file)
 ENDMACRO()
 
 MACRO(ADD_DOTNET proj pkgname config arch)
-    FILE(GLOB_RECURSE dotnet_cs "*.cs")
-    FILE(GLOB_RECURSE dotnet_fs "*.fs")
-    FILE(GLOB_RECURSE dotnet_xaml "*.xaml")
+    FILE(GLOB_RECURSE dotnet_cs     "*.cs")
+    FILE(GLOB_RECURSE dotnet_fs     "*.fs")
+    FILE(GLOB_RECURSE dotnet_xaml   "*.xaml")
     FILE(GLOB_RECURSE dotnet_csproj "*.csproj")
     FILE(GLOB_RECURSE dotnet_fsproj "*.fsproj")
+    GET_FILENAME_COMPONENT(abs_proj "${CMAKE_CURRENT_SOURCE_DIR}/${proj}" ABSOLUTE)
+    MESSAGE("-- Adding dotnet project ${abs_proj}")
     ADD_CUSTOM_TARGET(
         ${pkgname}
-        DEPENDS ${dotnet_cs} ${dotnet_fs} ${dotnet_xaml} ${dotnet_csproj} ${dotnet_fsproj}
-        COMMAND "dotnet pack ${proj} -c ${config} /p:Platform=${arch}"
+        ${DOTNET_EXE} pack ${abs_proj} -c ${config} /p:Platform=${arch}
+        SOURCES ${dotnet_cs} ${dotnet_fs} ${dotnet_xaml} ${dotnet_csproj} ${dotnet_fsproj}
     )
 ENDMACRO()
 
-MACRO(ADD_MSBUILD proj pkgname config arch)
-    FILE(GLOB_RECURSE dotnet_cs "*.cs")
-    FILE(GLOB_RECURSE dotnet_fs "*.fs")
-    FILE(GLOB_RECURSE dotnet_xaml "*.xaml")
+MACRO(RUN_DOTNET proj pkgname args)
+    FILE(GLOB_RECURSE dotnet_cs     "*.cs")
+    FILE(GLOB_RECURSE dotnet_fs     "*.fs")
+    FILE(GLOB_RECURSE dotnet_xaml   "*.xaml")
     FILE(GLOB_RECURSE dotnet_csproj "*.csproj")
     FILE(GLOB_RECURSE dotnet_fsproj "*.fsproj")
+    GET_FILENAME_COMPONENT(abs_proj "${CMAKE_CURRENT_SOURCE_DIR}/${proj}" ABSOLUTE)
+    GET_FILENAME_COMPONENT(proj_dir "${CMAKE_CURRENT_SOURCE_DIR}/${proj}" DIRECTORY)
+    ADD_CUSTOM_TARGET(
+        DOTNET_RUN_${pkgname}
+        ${DOTNET_EXE} run ${abs_proj} ${args}
+        SOURCES ${dotnet_cs} ${dotnet_fs} ${dotnet_xaml} ${dotnet_csproj} ${dotnet_fsproj}
+        WORKING_DIRECTORY  ${proj_dir}
+    )
+    ADD_DEPENDENCIES(DOTNET_RUN_${pkgname} ${pkgname})
+ENDMACRO()
+
+MACRO(ADD_MSBUILD proj pkgname config arch)
+    FILE(GLOB_RECURSE dotnet_cs     "*.cs")
+    FILE(GLOB_RECURSE dotnet_fs     "*.fs")
+    FILE(GLOB_RECURSE dotnet_xaml   "*.xaml")
+    FILE(GLOB_RECURSE dotnet_csproj "*.csproj")
+    FILE(GLOB_RECURSE dotnet_fsproj "*.fsproj")
+    GET_FILENAME_COMPONENT(abs_proj "${CMAKE_CURRENT_SOURCE_DIR}/${proj}" ABSOLUTE)
+    MESSAGE("-- Adding MSBuild project ${abs_proj}")
     ADD_CUSTOM_TARGET(
         ${pkgname}
-        # OUTPUT "${TRINITY_OUTPUT_DIR}/${pkgname}.nupkg"
-        DEPENDS ${dotnet_cs} ${dotnet_fs} ${dotnet_xaml} ${dotnet_csproj} ${dotnet_fsproj}
-        COMMAND "dotnet msbuild ${proj} /p:Configuration=${config};Platform=${arch}"
+        ${DOTNET_EXE} msbuild ${abs_proj} /t:Clean
+        COMMAND ${DOTNET_EXE} msbuild ${abs_proj} /t:Build "/p:Platform=${arch};Configuration=${config}"
+        SOURCES ${dotnet_cs} ${dotnet_fs} ${dotnet_xaml} ${dotnet_csproj} ${dotnet_fsproj}
     )
 ENDMACRO()
 
