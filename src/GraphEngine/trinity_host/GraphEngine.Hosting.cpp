@@ -8,19 +8,20 @@ using namespace Trinity;
 
 #if defined(TRINITY_PLATFORM_WINDOWS)
 
+#include "mscoree.h"
 static const String coreCLRDll("coreclr.dll");
 
 #elif defined(TRINITY_PLATFORM_LINUX)
 
+#include "coreclrhost.h"
 static const String coreCLRDll("libcoreclr.so");
 
 #elif defined(TRINITY_PLATFORM_DARWIN)
 
+#include "coreclrhost.h"
 static const String coreCLRDll("libcoreclr.dylib");
 
 #endif
-
-#include "mscoree.h"
 
 // sample host here: https://github.com/dotnet/samples/blob/master/core/hosting/host.cpp
 // actual host here: https://github.com/dotnet/coreclr/blob/release/2.0.0/src/coreclr/hosts/coreconsole/coreconsole.cpp
