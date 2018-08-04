@@ -51,7 +51,7 @@ let ty_to_string tydesc =
     | CHAR -> "char"
     | STRING -> "wchar_t*"
     | U8STRING -> "char*"
-    | _ -> "int64_t"
+    | _ -> "void*"
 
 let chaining_verb_to_name (verb : Verb) =
     match verb with
@@ -116,8 +116,8 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
                 [ arg_type ], null_type_string
             | LGet ->
                 let elem_ty = get_elem_type()
-                [ "int64_t" ], ty_to_string elem_ty
-            | LRemoveAt -> [ "int64_t" ], "bool"
+                [ "int32_t" ], ty_to_string elem_ty
+            | LRemoveAt -> [ "int32_t" ], "bool"
             | LContains ->
                 let elem_ty = get_elem_type()
                 [ ty_to_string elem_ty ], "bool"
@@ -126,18 +126,18 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
                 [ ty_to_string elem_ty ], null_type_string
             | LSet ->
                 let elem_ty = get_elem_type()
-                [ "int64_t"
+                [ "int32_t"
                   ty_to_string elem_ty ], null_type_string
             | LInsertAt ->
                 let elem_ty = get_elem_type()
-                [ "int64_t"
+                [ "int32_t"
                   ty_to_string elem_ty ], "bool"
             | (** argnum 0 *)
               BGet -> [], ty_to_string tydesc
-            | LCount -> [], "int64_t"
+            | LCount -> [], "int32_t"
             | SGet field ->
                 let memb_ty = get_member_type field
-                [], "void*" // SGet always get 
+                [], ty_to_string memb_ty // if primitive, for swig will do a more copy so without BGet is okay.
             (** BNew takes no subject argument. **)
             | BNew -> [], "int32_t"
             | info -> failwith <| sprintf "NotImplemented verb %A on %s" info tydesc.TypeName
@@ -160,64 +160,71 @@ let single_method'code_gen (tb : ((string * string), FuncInfo)hashmap) (tydesc :
     let join (lst : string list) = String.Join(", ", lst)
     let parameters =
         [ for i in 1..(pos_arg_types.Length) -> sprintf "arg%d" i ]
-    // reversed
     
     let (=>) a b = (a, b)
     if parameters.Length = 0 then 
         let private_fn_type = sprintf "%s (*)(void*)" ret_type
         let decl = sprintf "static %s %s(int64_t);" ret_type name_sig 
-        let template = 
-            "
-static {ret ty} _{fn name}(void*) = reinterpret_cast<{p fn type}>({{addr}});
+        
+        let generator (addr: int64) = 
+            let template = 
+                sprintf  "
+static {ret ty} (*_{fn name})(void*) = reinterpret_cast<{p fn type}>(0x%xll);
 static {ret ty} {fn name}(int64_t cellId)
 {{
     CellAccessor acc;
     acc.cellId = cellId;
     acc.type = {typeid};
     return _{fn name}(&acc);
-}}
-            " 
-        let template = 
-             PString.format 
-                    template 
-                    ["ret ty"    => ret_type
+}}                      " addr
+             in PString.format 
+                    template  
+                    [
+                     "ret ty"    => ret_type
                      "fn name"   => name_sig
                      "p fn type" => private_fn_type
                      "typeid"    => (sprintf "%u" typeid)
                     ]
-        let generator (addr: int64) = PString.format template ["addr" => sprintf "0x%xll" addr]
 
-        (decl, generator)
+        in (decl, generator)
     else
         let rev_typed_parameters =
-            List.zip pos_arg_types parameters |> List.rev |> List.map (fun (ty_str, parameter) -> sprintf "%s %s" ty_str parameter)
+            List.zip pos_arg_types parameters 
+            |> List.rev 
+            |> List.map (fun (ty_str, parameter) -> sprintf "%s %s" ty_str parameter)
+
         let args_string : string = join parameters
-        let typed_args_string : string = join rev_typed_parameters
+
+        // string formal of reversed typed arguemnts
+        let rev_targs_string : string = join rev_typed_parameters
+        
         let private_fn_type = sprintf "%s (*)(void*, %s)" ret_type <| join pos_arg_types
-        let decl = sprintf "static %s %s(int64_t, %s);" ret_type name_sig <| join (List.rev pos_arg_types)
-        let template = 
-            "
- static {ret ty} _{fn name}(void*, {pos arg types}) = reinterpret_cast<{p fn type}>({{addr}});
- static {ret ty} {fn name}({rev arg types}, int64_t cellId)
- {{
+        let decl = sprintf "static %s %s(%s, int64_t);" ret_type name_sig <| join (List.rev pos_arg_types)
+        let generator (addr: int64) = 
+            let template = 
+                sprintf  "
+static {ret ty} (*_{fn name})(void*, {pos arg types}) = reinterpret_cast<{p fn type}>(0x%xll);
+static {ret ty} {fn name}({rev targs string}, int64_t cellId)
+{{
     CellAccessor acc;
     acc.cellId = cellId;
     acc.type = {typeid};
-    return _{fn name}(&acc);
- }}
-            "
-        let template = 
+    return _{fn name}(&acc, {args string});
+}}
+                         " addr 
+            
             PString.format 
                     template 
-                       ["ret ty"  => ret_type
+                     [
+                        "ret ty"  => ret_type
                         "fn name" => name_sig
                         "pos arg types" => (join pos_arg_types)
                         "p fn type"     => private_fn_type
-                        "ret arg types" => (join <| List.rev pos_arg_types)
+                        "rev targs string" => rev_targs_string
+                        "args string" => args_string
                         "typeid" => (sprintf "%u" typeid)
-                       ]
-        let generator (addr: int64) = PString.format template ["addr" => sprintf "0x%xll" addr]
-        (decl, generator)
+                     ]
+        in (decl, generator)
 
 let code_gen (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
     let tb = hashmap()  (** for caching *)
@@ -231,6 +238,7 @@ let code_gen (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
         for (ty, verb_lst) in tsl_specs do
             // for specific types
             let ty_name = ty_recur_naming ty
+
             match ty.TypeCode with
             | CELL typeid ->
             for verb in verb_lst do
@@ -241,28 +249,28 @@ let code_gen (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
                 let addr = native_fn.CallSite.ToInt64()
 
                 yield (decl, generator addr)
-            
-                // for cells
-                let lock_cell_decl = sprintf "static void use_%s(int64_t, int32_t);" ty_name
-                let lock_cell_body =
+
+            let lock_cell_decl = sprintf "static void use_%s(int64_t, int32_t);" ty_name
+            let lock_cell_body =
                     sprintf "\n
+ 
+static NoArgCaller _use_%s(_%s_BNew);
 static void use_%s(int64_t cellId, int32_t options)
 {
     CellAccessor acc;
     acc.cellId = cellId;
     acc.type = %u;
-    auto errCode = LockCell(acc, options, %s_BNew);
+    auto errCode = LockCell(acc, options, _use_%s);
     if (errCode)
         throw errCode;    
-}                       " ty_name typeid ty_name
+}                       " ty_name ty_name ty_name typeid ty_name
 
-                yield (lock_cell_decl, lock_cell_body)
+            yield (lock_cell_decl, lock_cell_body)
 
-                let load_cell_decl = sprintf "%%cstring_output_allocate_size(char **trinity_loaded_content_buff, int *trinity_loaded_content_len, TRINITY_JUSTPASS);\nstatic char* load_%s(int64_t, char**, int*);" ty_name
-                let load_cell_body =
+            let load_cell_decl = sprintf "static void load_%s(int64_t, char** trinity_loaded_content_buff, int* trinity_loaded_content_len);" ty_name
+            let load_cell_body =
                     sprintf "\n
-%%cstring_output_allocate_size(char **trinity_loaded_content_buff, int *trinity_loaded_content_len, TRINITY_JUSTPASS);
-static char* load_%s(int64_t cellId, char** trinity_loaded_content_buff, int *trinity_loaded_content_len)
+static void load_%s(int64_t cellId, char** trinity_loaded_content_buff, int *trinity_loaded_content_len)
 {
     CellAccessor acc;
 
@@ -276,44 +284,44 @@ static char* load_%s(int64_t cellId, char** trinity_loaded_content_buff, int *tr
     *trinity_loaded_content_buff = reinterpret_cast<char*>(acc.cellPtr);
     *trinity_loaded_content_len = acc.size;
 }                       " ty_name typeid
-                yield (load_cell_decl, load_cell_body)
+            yield (load_cell_decl, load_cell_body)
 
-                let valued_initializer_decl = sprintf "static void use_%s_with_data(int64_t, char*);" ty_name 
-                let valued_initializer_body = 
+            let valued_initializer_decl = sprintf "static void use_%s_with_data(int64_t, char*);" ty_name 
+            let valued_initializer_body = 
                     sprintf  "
 static void use_%s_with_data(int64_t cellId, char* content)
 {
     CellAccessor acc;
     acc.cellId = cellId;
     acc.type = %u;
-        
-    std::function<void()> constructor = [cellId, &content](){
-            %s_BSet(content, cellId);
-    };
+      
+    OneArgCaller caller;
+    caller.data = reinterpret_cast<void*>(content);
+    caller.fn = _%s_BSet;
 
-    auto errCode = LockCell(acc, options, constructor);
+    auto errCode = LockCell(acc, _CreateNewOnCellNotFound, caller);
     if (errCode)
         throw errCode;
 }              
                     " ty_name typeid ty_name
-                yield (valued_initializer_decl, valued_initializer_body)
+            yield (valued_initializer_decl, valued_initializer_body)
 
-                let unlock_decl = "static void unlock(int64_t);"
-                let unlock_body =
+            let unlock_decl = sprintf "static void unlock_%s(int64_t);" ty_name
+            let unlock_body =
                      sprintf "
-static void unlock(int64_t cellId)
+static void unlock_%s(int64_t cellId)
 { 
     CellAccessor acc;
     acc.cellId = cellId;
     acc.type = %u;
     UnlockCell(acc); 
 }
-                        " typeid
-                yield (unlock_decl, unlock_body)
-                let save_cell_decl = "static void save_cell(int64_t, char*);";
-                let save_cell_body = 
+                        " ty_name typeid
+            yield (unlock_decl, unlock_body)
+            let save_cell_decl = sprintf "static void save_%s(int64_t, char*);" ty_name;
+            let save_cell_body = 
                     sprintf "
-static void save_cell(int64_t cellId, char* content)
+static void save_%s(int64_t cellId, char* content)
 {
     CellAccessor acc;
     acc.cellId = cellId;
@@ -323,16 +331,15 @@ static void save_cell(int64_t cellId, char* content)
     if(errCode)
         throw errCode;
 }
-                        " typeid
-                yield (save_cell_decl, save_cell_body)
-            | _ -> ()
+                        " ty_name typeid
+            yield (save_cell_decl, save_cell_body)    
 
             
+            
+                
+            | _ -> ()
         
         // not for specific types
-
-        
-
  
         // TODO:
         //   1. load and save cell. load cell might not require cellAcc.type(done)
@@ -348,11 +355,46 @@ static void save_cell(int64_t cellId, char* content)
 %include <stdint.i>
 %include <std_wstring.i>
 %include <cstring.i>
+%cstring_output_allocate_size(char **trinity_loaded_content_buff, int *trinity_loaded_content_len, TRINITY_JUSTPASS);
 %begin %{{
 #define TRINITY_JUSTPASS 
+
 #include \"swig_accessor.h\"
 #include \"CellAccessor.h\"
 #include \"stdio.h\"
+
+const int32_t _CreateNewOnCellNotFound = 2;
+class OneArgCaller : _CallingProxy
+{{
+    
+    void* data;
+    void (*fn)(void*, void*);
+
+    int32_t apply(void* acc_ptr) override
+    {{
+        fn(acc_ptr, data); 
+        return 0;
+    }};
+}};
+
+class NoArgCaller  : _CallingProxy
+{{
+    
+    int32_t (*fn)(void*);
+    
+    NoArgCaller(int32_t (*_fn)(void*))
+    {{
+       fn = _fn;
+    }}
+
+    int32_t apply(void* acc_ptr) override
+    {{
+        return fn(acc_ptr);
+    }};
+}};
+
+typedef int32_t (*_constructor_helper)(void*);
+
 #define SWIG_FILE_WITH_INIT
 #define SWIG_PYTHON_STRICT_BYTE_CHAR
 {decl}

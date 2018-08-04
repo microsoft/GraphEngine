@@ -3,9 +3,11 @@
 #include <stdint.h>
 #include "CellAccessor.h"
 
-typedef TrinityErrorCode (*construct_fp_t) (CellAccessor*);
+class DLL_EXPORT _CallingProxy {
+	virtual TrinityErrorCode apply(CellAccessor* acc) {};
+};
 
-DLL_EXPORT TrinityErrorCode LockCell(IN OUT CellAccessor& accessor, IN const int32_t options, IN construct_fp_t construct)
+DLL_EXPORT TrinityErrorCode LockCell(IN OUT CellAccessor& accessor, IN const int32_t options, IN _CallingProxy& _caller)
 {
     char* ptr;
     auto type = accessor.type;
@@ -23,7 +25,8 @@ DLL_EXPORT TrinityErrorCode LockCell(IN OUT CellAccessor& accessor, IN const int
     case TrinityErrorCode::E_CELL_NOT_FOUND:
         if (options & CellAccessOptions::CreateNewOnCellNotFound)
         {
-            ret = construct(&accessor);
+            ret = _caller.apply(&accessor);
+
             if (ret != TrinityErrorCode::E_SUCCESS)
             {
                 break;
@@ -94,3 +97,5 @@ cleanup:
     ::CReleaseCellLock(accessor.cellId, accessor.entryIndex);
     return ret;
 }
+
+

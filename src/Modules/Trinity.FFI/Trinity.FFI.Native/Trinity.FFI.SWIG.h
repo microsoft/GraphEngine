@@ -184,10 +184,16 @@ long long _json_cons_fn_ptr_getter() {
     return (long long) &json_cons_fn_ptr;
 }
 
-char* Jit_SwigGen(char* directory, char* moduleName)
+char* Jit_SwigGenInProcess(char* directory, char* moduleName)
 {
     return g_TrinityInterfaces->jitSwigGen(directory, moduleName);
 }
+
+char* Jit_SwigGenForServer(char* directory, char* moduleName)
+{
+	return g_TrinityInterfaces->jitSwigGenForServer(directory, moduleName);
+}
+
 
 
 

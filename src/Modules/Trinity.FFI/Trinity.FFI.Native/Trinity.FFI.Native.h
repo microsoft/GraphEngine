@@ -26,6 +26,7 @@ typedef char* (*TRINITY_FFI_SYNC_HANDLER)(char*);
 typedef void  (*TRINITY_FFI_ASYNC_HANDLER)(char*);
 
 typedef char* (*TRINITY_FFI_JITSWIGGEN)(char*, char*);
+typedef char* (*TRINITY_FFI_JITSWIGGENFORSERVER)(char*, char*);
 typedef TrinityErrorCode (*TRINITY_FFI_ACCESSOR_USE_1)(long long, void**);
 typedef TrinityErrorCode (*TRINITY_FFI_ACCESSOR_USE_2)(long long, CellAccessOptions, void**);
 typedef TrinityErrorCode (*TRINITY_FFI_ACCESSOR_USE_3)(long long, CellAccessOptions, void**, char*);
@@ -61,6 +62,7 @@ typedef TrinityErrorCode (*TRINITY_FFI_SCHEMA_GET)(void**, long*);
 extern "C" struct TRINITY_INTERFACES
 {
     TRINITY_FFI_JITSWIGGEN jitSwigGen;
+    TRINITY_FFI_JITSWIGGENFORSERVER jitSwigGenForServer;
     TRINITY_FFI_ACCESSOR_USE_1 accessor_use_1;
     TRINITY_FFI_ACCESSOR_USE_2 accessor_use_2;
     TRINITY_FFI_ACCESSOR_USE_3 accessor_use_3;
