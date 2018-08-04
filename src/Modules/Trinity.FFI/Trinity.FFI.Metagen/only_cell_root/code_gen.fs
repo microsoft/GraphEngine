@@ -253,13 +253,13 @@ let code_gen (module_name) (tsl_specs : (TypeDescriptor * Verb list) list) =
             let lock_cell_decl = sprintf "static void use_%s(int64_t, int32_t);" ty_name
             let lock_cell_body =
                     sprintf "\n
- 
-static NoArgCaller _use_%s(_%s_BNew);
+static std::function<int32_t(void*)> _use_%s = _%s_BNew;
 static void use_%s(int64_t cellId, int32_t options)
 {
     CellAccessor acc;
     acc.cellId = cellId;
     acc.type = %u;
+
     auto errCode = LockCell(acc, options, _use_%s);
     if (errCode)
         throw errCode;    
@@ -295,9 +295,10 @@ static void use_%s_with_data(int64_t cellId, char* content)
     acc.cellId = cellId;
     acc.type = %u;
       
-    OneArgCaller caller;
-    caller.data = reinterpret_cast<void*>(content);
-    caller.fn = _%s_BSet;
+    std::function<int32_t(void*)> caller = [&content](void* acc){
+        _%s_BSet(acc, reinterpret_cast<void*>(content));
+        return 0;
+    };
 
     auto errCode = LockCell(acc, _CreateNewOnCellNotFound, caller);
     if (errCode)
@@ -364,36 +365,6 @@ static void save_%s(int64_t cellId, char* content)
 #include \"stdio.h\"
 
 const int32_t _CreateNewOnCellNotFound = 2;
-class OneArgCaller : _CallingProxy
-{{
-    
-    void* data;
-    void (*fn)(void*, void*);
-
-    int32_t apply(void* acc_ptr) override
-    {{
-        fn(acc_ptr, data); 
-        return 0;
-    }};
-}};
-
-class NoArgCaller  : _CallingProxy
-{{
-    
-    int32_t (*fn)(void*);
-    
-    NoArgCaller(int32_t (*_fn)(void*))
-    {{
-       fn = _fn;
-    }}
-
-    int32_t apply(void* acc_ptr) override
-    {{
-        return fn(acc_ptr);
-    }};
-}};
-
-typedef int32_t (*_constructor_helper)(void*);
 
 #define SWIG_FILE_WITH_INIT
 #define SWIG_PYTHON_STRICT_BYTE_CHAR

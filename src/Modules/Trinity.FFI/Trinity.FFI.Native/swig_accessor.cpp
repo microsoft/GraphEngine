@@ -1,13 +1,11 @@
 #include "Trinity.h"
 #include <vector>
 #include <stdint.h>
+#include <functional>
 #include "CellAccessor.h"
+#include <stdio.h>
 
-class DLL_EXPORT _CallingProxy {
-	virtual TrinityErrorCode apply(CellAccessor* acc) {};
-};
-
-DLL_EXPORT TrinityErrorCode LockCell(IN OUT CellAccessor& accessor, IN const int32_t options, IN _CallingProxy& _caller)
+DLL_EXPORT TrinityErrorCode LockCell(IN OUT CellAccessor& accessor, IN const int32_t options, IN std::function<TrinityErrorCode(void*)> _caller)
 {
     char* ptr;
     auto type = accessor.type;
@@ -25,7 +23,8 @@ DLL_EXPORT TrinityErrorCode LockCell(IN OUT CellAccessor& accessor, IN const int
     case TrinityErrorCode::E_CELL_NOT_FOUND:
         if (options & CellAccessOptions::CreateNewOnCellNotFound)
         {
-            ret = _caller.apply(&accessor);
+			printf("try - calling!!!!!!");
+            ret = _caller(reinterpret_cast<void*>(&accessor));
 
             if (ret != TrinityErrorCode::E_SUCCESS)
             {
