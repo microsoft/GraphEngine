@@ -1,18 +1,26 @@
 ﻿#include <functional>
 #include <io>
 #include "GraphEngine.Hosting.h"
-#include "mscoree.h"
 #include <linq.hpp>
 
 using namespace cpplinq;
 using namespace Trinity;
 
 #if defined(TRINITY_PLATFORM_WINDOWS)
+
+#include "mscoree.h"
 static const String coreCLRDll("coreclr.dll");
+
 #elif defined(TRINITY_PLATFORM_LINUX)
+
+#include "coreclrhost.h"
 static const String coreCLRDll("libcoreclr.so");
+
 #elif defined(TRINITY_PLATFORM_DARWIN)
+
+#include "coreclrhost.h"
 static const String coreCLRDll("libcoreclr.dylib");
+
 #endif
 
 // sample host here: https://github.com/dotnet/samples/blob/master/core/hosting/host.cpp
@@ -30,25 +38,26 @@ String withstr(std::function<DWORD(const Array<u16char>&)> fn)
 // Encapsulates the environment that CoreCLR will run in, including the TPALIST
 class HostEnvironment
 {
-    // The path to this module
-    String m_hostPath;
-
-    // The path to the directory containing this module
-    String m_hostDirectoryPath;
-
-    // The name of this module, without the path
-    String m_hostExeName;
-
     String m_appPaths;
 
     // The list of paths to the assemblies that will be trusted by CoreCLR
     String m_tpaList;
 
-    ICLRRuntimeHost4* m_CLRRuntimeHost;
+#if defined(TRINITY_PLATFORM_WINDOWS)
+    const char* ppath_sep = "\\";
+    const char* penv_sep  = ";";
+    using pclrhost_t = ICLRRuntimeHost4*;
+    using pdll_t     = HMODULE;
+#else
+    const char* ppath_sep = "/";
+    const char* penv_sep  = ":";
+    using pclrhost_t = void*;
+    using pdll_t     = void*;
+#endif
 
-    HMODULE m_coreCLRModule;
-
-    DWORD m_domainId;
+    pclrhost_t m_CLRRuntimeHost;
+    pdll_t     m_coreCLRModule;
+    DWORD      m_domainId;
 
     // The path to the directory that CoreCLR is in
     String m_coreCLRDirectoryPath;
@@ -115,12 +124,6 @@ class HostEnvironment
 
     TrinityErrorCode _Init()
     {
-        // Discover the path to this exe's module. All other files are expected to be in the same directory.
-        m_hostPath = withstr([](const Array<u16char>& charray) { return ::GetModuleFileNameW(NULL, (LPWSTR)charray.data(), MAX_LONGPATH); });
-        m_hostDirectoryPath = Path::GetDirectoryName(m_hostPath);
-        m_hostExeName = Path::GetFileName(m_hostPath);
-
-        //TODO guess coreclr path
         for (auto& coreCLRPath : GetCoreCLRPaths())
         {
             m_coreCLRModule = TryLoadCoreCLR(coreCLRPath);
@@ -145,24 +148,24 @@ class HostEnvironment
 
         //  include subdirectories of anything in m_appPaths
         //  usually the resource satellites are placed in these subdirectories.
-        auto split_entries = m_appPaths.Split(";", String::StringSplitOptions::RemoveEmptyEntries);
+        auto split_entries = m_appPaths.Split(penv_sep, String::StringSplitOptions::RemoveEmptyEntries);
         for (auto &p : from(split_entries).select_many(Directory::GetDirectories))
         {
-            m_appPaths += ";" + p;
+            m_appPaths += penv_sep + p;
         }
 
         if (!m_appPaths.Empty())
         {
-            appPath += ";" + m_appPaths;
+            appPath += penv_sep + m_appPaths;
         }
 
         String appNiPath = appPath;
 
         // Construct native search directory paths
-        String nativeDllSearchDirs = appPath + ";" + m_coreCLRDirectoryPath;
+        String nativeDllSearchDirs = appPath + penv_sep + m_coreCLRDirectoryPath;
 
         // Start the CoreCLR
-        ICLRRuntimeHost4 *host = CreateCLRRuntimeHost();
+        pclrhost_t host = CreateCLRRuntimeHost();
         if (!host)
         {
             return TrinityErrorCode::E_FAILURE;
@@ -228,11 +231,13 @@ class HostEnvironment
             _ndsd,
         };
 
+/*
         Console::WriteLine("Creating an AppDomain");
         Console::WriteLine("TRUSTED_PLATFORM_ASSEMBLIES={0}", GetTpaList());
         Console::WriteLine("APP_PATHS={0}", appPath);
         Console::WriteLine("APP_NI_PATHS={0}", appNiPath);
         Console::WriteLine("NATIVE_DLL_SEARCH_DIRECTORIES={0}", nativeDllSearchDirs);
+*/
 
         hr = host->CreateAppDomainWithManager(
             GetHostExeName().ToWcharArray(),   // The friendly name of the AppDomain
@@ -273,7 +278,7 @@ class HostEnvironment
     {
         return std::any_of(extensions.begin(), extensions.end(), [&, this](auto &ext) {
             // Note, ext starts with '*' so skip it.
-            auto fileName = String("\\") + fileNameWithoutExtension + ext.Substring(1) + String(";");
+            auto fileName = String(ppath_sep) + fileNameWithoutExtension + ext.Substring(1) + String(penv_sep);
             return m_tpaList.Contains(fileName);
         });
     }
@@ -281,7 +286,7 @@ class HostEnvironment
     String RemoveExtensionAndNi(String fileName)
     {
         // Remove extension, if it exists
-        auto idx = fileName.IndexOf('.');
+        auto idx = fileName.LastIndexOf('.');
         if (idx != String::npos)
         {
             fileName = fileName.Substring(0, idx);
@@ -289,9 +294,9 @@ class HostEnvironment
             // Check for .ni
             size_t len = fileName.Length();
             if (len > 3 &&
-                fileName[len - 1] == L'i' &&
-                fileName[len - 2] == L'n' &&
-                fileName[len - 3] == L'.')
+                fileName[len - 1] == 'i' &&
+                fileName[len - 2] == 'n' &&
+                fileName[len - 3] == '.')
             {
                 fileName = fileName.Substring(0, len - 3);
             }
@@ -327,7 +332,7 @@ class HostEnvironment
                         if (!TPAListContainsFile(fileNameWithoutExtension, extensions))
                         {
                             m_tpaList.Append(Path::Combine(targetPath, fileName));
-                            m_tpaList.Append(L';');
+                            m_tpaList.Append(';');
                         }
                     }
                 } while (0 != FindNextFile(findHandle, &data));
@@ -379,26 +384,14 @@ public:
         return m_tpaList;
     }
 
-    // Returns the path to the host module
-    const String GetHostPath() const
-    {
-        return m_hostPath;
-    }
-
-    // Returns the path to the host module
-    const String GetHostExeName() const
-    {
-        return m_hostExeName;
-    }
-
     // Returns the ICLRRuntimeHost4 reference AS-IS. nullptr if uninitialized.
-    ICLRRuntimeHost4* GetCLRRuntimeHost() const
+    pclrhost_t GetCLRRuntimeHost() const
     {
         return m_CLRRuntimeHost;
     }
 
     // Returns the ICLRRuntimeHost4 instance, loading it from CoreCLR.dll if necessary, or nullptr on failure.
-    ICLRRuntimeHost4* CreateCLRRuntimeHost()
+    pclrhost_t CreateCLRRuntimeHost()
     {
         if (!m_CLRRuntimeHost)
         {
@@ -407,9 +400,9 @@ public:
                 return nullptr;
             }
 
+#if defined(TRINITY_PLATFORM_WINDOWS)
             FnGetCLRRuntimeHost pfnGetCLRRuntimeHost =
                 (FnGetCLRRuntimeHost)::GetProcAddress(m_coreCLRModule, "GetCLRRuntimeHost");
-
             if (!pfnGetCLRRuntimeHost)
             {
                 return nullptr;
@@ -420,6 +413,10 @@ public:
             {
                 return nullptr;
             }
+#else
+#error("TODO")
+#endif
+
         }
 
         return m_CLRRuntimeHost;
@@ -478,7 +475,7 @@ TrinityErrorCode GraphEngineInit_impl(
     {
         apppaths[i] = String(lp_apppaths[i]).Trim();
     }
-    lpenv         = new HostEnvironment(String::Join(";", apppaths), err);
+    lpenv         = new HostEnvironment(String::Join(penv_sep, apppaths), err);
     return err;
 }
 

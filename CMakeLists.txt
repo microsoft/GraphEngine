@@ -60,11 +60,14 @@ ELSE()
 ENDIF()
 
 FUNCTION(POSTBUILD_COPY_OUTPUT target file)
+    GET_FILENAME_COMPONENT(filename ${file} NAME)
     ADD_CUSTOM_COMMAND(
         TARGET ${target}
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory "${TRINITY_OUTPUT_DIR}"
-        COMMAND ${CMAKE_COMMAND} -E copy ${file} "${TRINITY_OUTPUT_DIR}/")
+        COMMAND ${CMAKE_COMMAND} -E copy ${file} "${TRINITY_OUTPUT_DIR}/"
+        BYPRODUCTS "${TRINITY_OUTPUT_DIR}/${filename}"
+    )
 ENDFUNCTION()
 
 FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
@@ -118,18 +121,7 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     SET(DOTNET_ARGUMENTS ${_DN_ARGUMENTS} PARENT_SCOPE)
 ENDFUNCTION()
 
-FUNCTION(ADD_DOTNET DOTNET_PROJECT)
-    DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
-    MESSAGE("-- Adding dotnet project ${DOTNET_PROJPATH}")
-    ADD_CUSTOM_TARGET(
-        BUILD_${DOTNET_PROJNAME} ALL
-        ${CMAKE_COMMAND} -E echo "=======> Building .NET project ${DOTNET_PROJNAME} [${DOTNET_CONFIG}|${DOTNET_PLATFORM}]"
-        COMMAND ${DOTNET_EXE} clean ${DOTNET_PROJPATH}
-        COMMAND ${DOTNET_EXE} build ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} /p:Platform=${DOTNET_PLATFORM}
-        COMMAND ${DOTNET_EXE} pack ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} /p:Platform=${DOTNET_PLATFORM}
-        SOURCES ${DOTNET_deps}
-    )
-
+MACRO(ADD_DOTNET_DEPENDENCY_TARGETS)
     FOREACH(pkg_dep ${DOTNET_DEPENDS})
         ADD_DEPENDENCIES(BUILD_${DOTNET_PROJNAME} PKG_${pkg_dep})
         MESSAGE("==== ${DOTNET_PROJNAME} <- ${pkg_dep}")
@@ -149,6 +141,20 @@ FUNCTION(ADD_DOTNET DOTNET_PROJECT)
         ADD_DEPENDENCIES(PKG_${pkg} BUILD_${DOTNET_PROJNAME})
         MESSAGE("==== ${DOTNET_PROJNAME} -> ${pkg}")
     ENDFOREACH()
+ENDMACRO()
+
+FUNCTION(ADD_DOTNET DOTNET_PROJECT)
+    DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
+    MESSAGE("-- Adding dotnet project ${DOTNET_PROJPATH}")
+    ADD_CUSTOM_TARGET(
+        BUILD_${DOTNET_PROJNAME} ALL
+        ${CMAKE_COMMAND} -E echo "=======> Building .NET project ${DOTNET_PROJNAME} [${DOTNET_CONFIG}|${DOTNET_PLATFORM}]"
+        COMMAND ${DOTNET_EXE} clean ${DOTNET_PROJPATH}
+        COMMAND ${DOTNET_EXE} build ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} /p:Platform=${DOTNET_PLATFORM}
+        COMMAND ${DOTNET_EXE} pack ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} /p:Platform=${DOTNET_PLATFORM}
+        SOURCES ${DOTNET_deps}
+    )
+    ADD_DOTNET_DEPENDENCY_TARGETS()
 ENDFUNCTION()
 
 FUNCTION(RUN_DOTNET DOTNET_PROJECT)
@@ -163,15 +169,20 @@ FUNCTION(RUN_DOTNET DOTNET_PROJECT)
 ENDFUNCTION()
 
 FUNCTION(ADD_MSBUILD DOTNET_PROJECT)
+    IF(NOT WIN32)
+        MESSAGE("-- Building non-Win32, skipping ${DOTNET_PROJECT}")
+    ENDIF()
+
     DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
     MESSAGE("-- Adding MSBuild project ${DOTNET_PROJPATH}")
     ADD_CUSTOM_TARGET(
-        MSBUILD_${DOTNET_PROJNAME}
+        BUILD_${DOTNET_PROJNAME}
         ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Clean
         COMMAND ${TRINITY_NUGET_EXE} restore ${DOTNET_PROJPATH}
         COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build "/p:Platform=${DOTNET_PLATFORM};Configuration=${DOTNET_CONFIG}"
         SOURCES ${DOTNET_deps}
     )
+    ADD_DOTNET_DEPENDENCY_TARGETS()
 ENDFUNCTION()
 
 #  Native components
@@ -211,22 +222,21 @@ ADD_DOTNET(
         GraphEngine.Client
 )
 
-IF(WIN32)
-    ADD_MSBUILD(
-        src/Modules/GraphEngine.ServiceFabric/GraphEngine.ServiceFabric.sln 
-        PACKAGE 
-            GraphEngine.ServiceFabric.Infrastructure
-            GraphEngine.ServiceFabric.ListenerRuntime
-            GraphEngine.ServiceFabric.Remoting
-        DEPENDS
-            GraphEngine.Core
-            GraphEngine.Client
-            GraphEngine.Storage.Composite
-            GraphEngine.DynamicCluster
-            Trinity.Azure.Storage
-        X64
-    )
-ENDIF()
+ADD_MSBUILD(
+    src/Modules/GraphEngine.ServiceFabric/GraphEngine.ServiceFabric.sln 
+    PACKAGE 
+        GraphEngine.ServiceFabric.Infrastructure
+        GraphEngine.ServiceFabric.ListenerRuntime
+        GraphEngine.ServiceFabric.Remoting
+    DEPENDS
+        GraphEngine.Core
+        GraphEngine.Client
+        GraphEngine.Storage.Composite
+        GraphEngine.DynamicCluster
+        Trinity.Azure.Storage
+    X64
+    CONFIG RelSkipSFApp
+)
 
 # ADD_DOTNET(
 #     src/GraphEngine.DataImporter/GraphEngine.DataImporter.sln
