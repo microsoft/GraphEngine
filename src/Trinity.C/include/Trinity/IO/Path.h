@@ -41,7 +41,6 @@ namespace Trinity
 #endif
 
 #pragma warning(pop)
-            inline String ChangeExtension(const String& path);
             inline bool IsUncPath(const String& path)
             {
                 if (path.Contains(UnixDirectorySeparator))
@@ -266,6 +265,8 @@ namespace Trinity
             }
 
 
+            /// Returns ".extension" if extension exists,
+            /// or "" if not.
             inline String GetExtension(String path)
             {
                 path = GetFileName(path);
@@ -328,7 +329,36 @@ namespace Trinity
             inline String GetRandomFileName();//P2
             inline String GetTempFileName();//P2
             inline String GetTempPath();//P2
-            inline bool HasExtension(const String& path);//P2
+
+            inline bool HasExtension(const String& path)
+            {
+                return GetExtension(path) != "";
+            }
+
+            inline bool HasExtension(const String& path, const String& ext)
+            {
+                return GetExtension(path) == ext;
+            }
+
+            inline String ChangeExtension(const String& path);//P2
+
+            inline String GetProcessPath()
+            {
+#if defined(TRINITY_PLATFORM_WINDOWS)
+                Array<u16char> lpFilename(1024);
+                GetModuleFileNameW(nullptr, lpFilename, static_cast<DWORD>(lpFilename.Length()));
+                lpFilename[lpFilename.Length() - 1] = 0;
+                return lpFilename;
+#else
+                char* filename_buf    = new char[1024];
+                int filename_buf_size = readlink("/proc/self/exe", filename_buf, 1024);
+                if (filename_buf_size < 0) { filename_buf_size = 0; }
+                filename_buf[filename_buf_size] = 0;
+                String ret(filename_buf);
+                delete[] filename_buf;
+                return ret;
+#endif
+            }
 
             inline String MyAssemblyPath()
             {
@@ -343,7 +373,7 @@ namespace Trinity
                 lpFilename[lpFilename.Length() - 1] = 0;
                 g_AssemblyPath = GetDirectoryName(GetFullPath(String::FromWcharArray(lpFilename, -1)));
                 return g_AssemblyPath;
-#elif defined(TRINITY_PLATFORM_LINUX)
+#else
                 // XXX does not make sense if MyAssemblyPath always point to the mono host...
                 char* filename_buf    = new char[1024];
                 int filename_buf_size = readlink("/proc/self/exe", filename_buf, 1024);
@@ -353,8 +383,6 @@ namespace Trinity
                 delete[] filename_buf;
                 g_AssemblyPath = GetDirectoryName(ret);
                 return g_AssemblyPath;
-#else
-#error Not supported
 #endif
             }
         }
