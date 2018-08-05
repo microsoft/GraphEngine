@@ -295,16 +295,30 @@ static void use_%s_with_data(int64_t cellId, char* content)
     acc.cellId = cellId;
     acc.type = %u;
       
-    std::function<int32_t(void*)> caller = [&content](void* acc){
-        _%s_BSet(acc, reinterpret_cast<void*>(content));
+    std::function<int32_t(void*)> caller = [&content](void* acc_ptr){
+        printf(\"BNew ing\");
+        auto errCode = _%s_BNew(acc_ptr);
+
+        printf(\"BNew done\");
+
+        if (errCode)
+            return errCode;
+        
+        printf(\"BSet ing\");
+        _%s_BSet(acc_ptr, reinterpret_cast<void*>(content));
+        printf(\"BSet done\");
+
         return 0;
     };
 
     auto errCode = LockCell(acc, _CreateNewOnCellNotFound, caller);
+
+    printf(\"Lock done\");
+
     if (errCode)
         throw errCode;
 }              
-                    " ty_name typeid ty_name
+                    " ty_name typeid ty_name ty_name
             yield (valued_initializer_decl, valued_initializer_body)
 
             let unlock_decl = sprintf "static void unlock_%s(int64_t);" ty_name

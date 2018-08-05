@@ -33,4 +33,4 @@ os.system(r'cd {0}\src\Modules\Trinity.FFI\Trinity.FFI '
 
 whl = sorted(map(str, bin.list_dir(lambda it: it.endswith(".whl"))))[-1]
 os.system(f"cd {bin} && pip install {whl}")
-os.system(r"cd {} && python a.py".format(current))
+os.system(r"cd {} && python python-run-test.py".format(current))

@@ -4,6 +4,7 @@
 #include <functional>
 #include "CellAccessor.h"
 #include <stdio.h>
+#include <iostream>
 
 DLL_EXPORT TrinityErrorCode LockCell(IN OUT CellAccessor& accessor, IN const int32_t options, IN std::function<TrinityErrorCode(void*)> _caller)
 {
@@ -31,6 +32,7 @@ DLL_EXPORT TrinityErrorCode LockCell(IN OUT CellAccessor& accessor, IN const int
                 break;
             }
             ptr = (char*)accessor.cellPtr;
+			std::cout << "cellId " << accessor.cellId << " size " << accessor.size << " type " << accessor.type << std::endl;
             ret = ::CGetLockedCellInfo4AddOrUseCell(accessor.cellId, accessor.size, accessor.type, ptr, accessor.entryIndex);
             return ret;
         }
