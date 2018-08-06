@@ -76,7 +76,7 @@ TRINITYFFINATIVE_API TrinityErrorCode TRINITY_FFI_INITIALIZE(int n_apppaths, cha
 		return eresult;
 	}
 
-	eresult = GraphEngineGetFunction(g_lp_clr_runtime, L"Trinity.FFI", L"Trinity.FFI.Initializer", L"Initialize", (void**)&lpfunc);
+	eresult = GraphEngineGetFunction(g_lp_clr_runtime, "Trinity.FFI", "Trinity.FFI.Initializer", "Initialize", (void**)&lpfunc);
 	if (eresult != TrinityErrorCode::E_SUCCESS)
 	{
 		return eresult;
