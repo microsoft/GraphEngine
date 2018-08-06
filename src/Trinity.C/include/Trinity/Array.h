@@ -6,7 +6,6 @@
 #include <cstring>
 #include <vector>
 #include <functional>
-#include "Collections/List.h"
 namespace Trinity
 {
     template<typename T> class Array
@@ -60,8 +59,8 @@ namespace Trinity
         Array& operator = (std::initializer_list<T>  il) { deallocate(); _copy_from(il.begin(), il.size()); return *this; }
         Array& operator = (_Myt && arr) { _move_from(std::forward<_Myt>(arr)); return *this; }
 
-        Collections::List<T> ToList() const { Collections::List<T> ret; ret.insert(ret.begin(), this->begin(), this->end()); return ret; }
-        Collections::List<T> ToList() { Collections::List<T> ret; ret.insert(ret.begin(), this->begin(), this->end()); return ret; }
+        std::vector<T> ToList() const { std::vector<T> ret; ret.insert(ret.begin(), this->begin(), this->end()); return ret; }
+        std::vector<T> ToList() { std::vector<T> ret; ret.insert(ret.begin(), this->begin(), this->end()); return ret; }
 
         inline size_t Length() const { return _length; }
 

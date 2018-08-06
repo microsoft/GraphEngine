@@ -5,7 +5,6 @@
 #include "Debugger.h"
 #if defined(TRINITY_PLATFORM_WINDOWS)
 
-#include <collections>
 #include <corelib>
 
 #include <Storage/LocalStorage/LocalMemoryStorage.h>
@@ -75,7 +74,7 @@ namespace Trinity{
             return true;
         }
 
-		List<DebuggerCommandTuple> g_cmd_list =
+		std::vector<DebuggerCommandTuple> g_cmd_list =
 		{
 			{ "k", StackTrace },
 			{ "~", ListThreads },

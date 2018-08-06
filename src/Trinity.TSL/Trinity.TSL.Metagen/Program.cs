@@ -65,7 +65,7 @@ namespace Trinity.TSL.Metagen
                     .Substring(s_root.Length)
                     .Trim(Path.DirectorySeparatorChar);
 
-                dir_path = Path.Combine(s_root, "", "Trinity.TSL.CodeGen", dir_path);
+                dir_path = Path.Combine(s_root, "..", "Trinity.TSL.CodeGen", dir_path);
 
                 string targetFilename = Path.Combine(dir_path, Path.GetFileName(filename)+".cpp");
                 bool needProcess      = (File.GetLastWriteTime(targetFilename) < File.GetLastWriteTime(filename));

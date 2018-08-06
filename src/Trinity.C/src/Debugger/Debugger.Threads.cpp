@@ -9,7 +9,6 @@
 
 #include "Debugger.h"
 #include <threading>
-#include <collections>
 #include <corelib>
 #include <io>
 
@@ -17,9 +16,9 @@ namespace Trinity
 {
 	namespace Debugger
 	{
-		List<THREADENTRY32> GetThreads(DWORD dwOwnerPID)
+		std::vector<THREADENTRY32> GetThreads(DWORD dwOwnerPID)
 		{
-			List<THREADENTRY32> ret;
+			std::vector<THREADENTRY32> ret;
 
 			HANDLE hThreadSnap = INVALID_HANDLE_VALUE;
 			THREADENTRY32 te32;

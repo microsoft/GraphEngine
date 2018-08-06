@@ -48,9 +48,9 @@ namespace Storage
             DEBUG_DUMP_DEC("TrinityConfig::ReadOnly", TrinityConfig::ReadOnly());
         }
 
-        static List<LPVOID> MemoryValidityCheck(char* from, char* to, bool should_be_valid)
+        static std::vector<LPVOID> MemoryValidityCheck(char* from, char* to, bool should_be_valid)
         {
-            List<LPVOID> ret;
+            std::vector<LPVOID> ret;
 
             //if (!FOUR_K_CHK("Memchk range begin address", (uint64_t)from))
             //	return ret;
@@ -132,7 +132,7 @@ namespace Storage
 
             Console::WriteLine(Console::ForegroundGreen, "trunkPtr:");
 
-            List<LPVOID> invalid_addr, leaked_addr, vec;
+            std::vector<LPVOID> invalid_addr, leaked_addr, vec;
 
             if (p_mt->head.committed_head > p_mt->committed_tail)
             {
@@ -315,7 +315,7 @@ namespace Storage
             CR;
             MSG("memory:");
             CR;
-            List<LPVOID> invalid_addr;
+            std::vector<LPVOID> invalid_addr;
             bool failure = false;
             bool inrange = false;
 

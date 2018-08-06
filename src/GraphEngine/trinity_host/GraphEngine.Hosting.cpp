@@ -73,7 +73,7 @@ class HostEnvironment
     // The path to the directory that CoreCLR is in
     String m_coreCLRDirectoryPath;
 
-    List<String> GetCoreCLRPaths()
+    std::vector<String> GetCoreCLRPaths()
     {
         auto base_path =
             from(Environment::Run("dotnet --info"))
@@ -374,7 +374,7 @@ public:
 
 #if defined(TRINITY_PLATFORM_WINDOWS)
             // Default startup flags
-            error_t hr = m_CLRRuntimeHost->SetStartupFlags((STARTUP_FLAGS)
+            hr = m_CLRRuntimeHost->SetStartupFlags((STARTUP_FLAGS)
                 (STARTUP_FLAGS::STARTUP_LOADER_OPTIMIZATION_SINGLE_DOMAIN |
                  STARTUP_FLAGS::STARTUP_SINGLE_APPDOMAIN |
                  STARTUP_FLAGS::STARTUP_CONCURRENT_GC |
@@ -541,7 +541,7 @@ public:
         //-------------------------------------------------------------
         // Stop the host
 
-        hr = host->Stop();
+        hr = m_CLRRuntimeHost->Stop();
 
         if (FAILED(hr))
         {
@@ -552,7 +552,7 @@ public:
 
         // Release the reference to the host
 
-        host->Release();
+        m_CLRRuntimeHost->Release();
 #else
         error_t st = m_pfshutdown(m_CLRRuntimeHost, m_domainId, &exitCode);
         if (!SUCCEEDED(st))

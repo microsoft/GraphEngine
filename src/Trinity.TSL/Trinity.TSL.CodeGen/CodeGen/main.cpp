@@ -18,7 +18,7 @@
 bool            c_debug;
 String          c_namespace;
 String 			c_project_root;
-List<String>    c_script_list;
+std::vector<String>    c_script_list;
 String 			c_output_path;
 bool            c_delay_sign;
 bool            c_no_warnings;

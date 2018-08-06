@@ -58,9 +58,9 @@ namespace Trinity
                 return Create(path);
             }
 
-            inline List<String> GetDirectories(const String& path)
+            inline std::vector<String> GetDirectories(const String& path)
             {
-                List<String> ret;
+                std::vector<String> ret;
 
 #if defined(TRINITY_PLATFORM_WINDOWS)
 
@@ -113,9 +113,9 @@ namespace Trinity
             }
 
             template<typename T>
-            inline List<String> GetFiles(const String& directory, const T& suffices)
+            inline std::vector<String> GetFiles(const String& directory, const T& suffices)
             {
-                List<String> ret;
+                std::vector<String> ret;
 
                 for (const String &suffix : suffices)
                 {
@@ -193,9 +193,9 @@ namespace Trinity
                 return ret;
             }
 
-            inline List<String> GetFiles(const String& directory)
+            inline std::vector<String> GetFiles(const String& directory)
             {
-                return GetFiles(directory, List<String>({ "" }));
+                return GetFiles(directory, std::vector<String>({ "" }));
             }
         }
     }

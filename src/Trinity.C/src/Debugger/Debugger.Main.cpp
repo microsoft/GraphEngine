@@ -9,7 +9,6 @@
 
 #include "Debugger.h"
 #include <threading>
-#include <collections>
 #include <corelib>
 #include <io>
 
@@ -18,7 +17,7 @@ namespace Trinity
 	namespace Debugger
 	{
 		static bool s_DebuggerStarted = false;
-		static Mutex s_DebuggerMutex;
+		static std::mutex s_DebuggerMutex;
 
 		void printError(char* msg)
 		{
@@ -44,7 +43,7 @@ namespace Trinity
 		}
 
 
-		extern List<DebuggerCommandTuple> g_cmd_list;
+		extern std::vector<DebuggerCommandTuple> g_cmd_list;
 
 		bool ExecuteDebuggerCommand(String& cmd, Array<String>& args)
 		{
