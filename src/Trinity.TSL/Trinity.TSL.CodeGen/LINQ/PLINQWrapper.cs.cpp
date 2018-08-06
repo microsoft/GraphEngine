@@ -25,6 +25,7 @@ namespace )::");
 source->append(Codegen::GetString(Trinity::Codegen::GetNamespace()));
 source->append(R"::(.Linq
 {
+    
     /// <summary>
     /// Provides a wrapper that redirects CellAccessorSelector.AsParallel().
     /// </summary>
@@ -54,9 +55,9 @@ source->append(R"::(.Linq
         /// <exception cref="System.ArgumentNullException">
         ///     source or func is null.
         /// </exception>
-        /)::");
-source->append(R"::(//
-        /// <exception cref="System.InvalidOperationException">
+        ///
+        /// <excepti)::");
+source->append(R"::(on cref="System.InvalidOperationException">
         ///     source contains no elements.
         /// </exception>
         /// 
@@ -82,9 +83,9 @@ source->append(R"::(//
         ///     The final accumulator value.
         /// </returns>
         /// 
-        /// <exception cref="System.Arg)::");
-source->append(R"::(umentNullException">
-        ///     source or func is null.
+        /// <exception cref="System.ArgumentNullException">
+        ///     source or fun)::");
+source->append(R"::(c is null.
         /// </exception>
         /// 
         public TAccumulate Aggregate<TAccumulate>(TAccumulate seed, Func<TAccumulate, TSource, TAccumulate> func)
@@ -109,10 +110,10 @@ source->append(R"::(umentNullException">
         /// <param name="resultSelector">
         ///     A function to transform the final accumulator value into the result value.
         /// </param>
-   )::");
-source->append(R"::(     ///
+        ///
         /// <typeparam name="TAccumulate">
-        ///     The type of the accumulator value.
+        ///     The type)::");
+source->append(R"::( of the accumulator value.
         /// </typeparam>
         /// 
         /// <typeparam name="TResult">
@@ -136,12 +137,12 @@ source->append(R"::(     ///
         /// </summary>
         /// 
         /// <param name="predicate">
-        ///     A func)::");
-source->append(R"::(tion to test each element for a condition.
+        ///     A function to test each element for a condition.
         /// </param>
         /// 
         /// <returns>
-        ///     true if every element of the source sequence passes the test in the specified
+   )::");
+source->append(R"::(     ///     true if every element of the source sequence passes the test in the specified
         ///     predicate, or if the sequence is empty; otherwise, false.
         /// </returns>
         /// 
@@ -165,12 +166,12 @@ source->append(R"::(tion to test each element for a condition.
         /// </exception>
         /// 
         public bool Any()
-       )::");
-source->append(R"::( {
+        {
             return m_accessor_selector.Any();
         }
         /// <summary>
-        ///     Determines whether any element of a sequence satisfies a condition.
+        ///     Determines whether any element of)::");
+source->append(R"::( a sequence satisfies a condition.
         /// </summary>
         /// 
         /// <param name="predicate">
@@ -194,11 +195,11 @@ source->append(R"::( {
         ///     Returns the input typed as <see cref="System.Collections.Generic.IEnumerable{T}"/>.
         /// </summary>
         /// <returns>
-        ///     The input)::");
-source->append(R"::( sequence typed as <see cref="System.Collections.Generic.IEnumerable{T}"/>.
+        ///     The input sequence typed as <see cref="System.Collections.Generic.IEnumerable{T}"/>.
         /// </returns>
         public IEnumerable<TSource> AsEnumerable()
-        {
+        )::");
+source->append(R"::({
             return m_accessor_selector.AsEnumerable();
         }
         /// <summary>
@@ -219,12 +220,12 @@ source->append(R"::( sequence typed as <see cref="System.Collections.Generic.IEn
         /// <exception cref="System.ArgumentNullException">
         ///     source or selector is null.
         /// </exception>
-        /// <exception cref="System)::");
-source->append(R"::(.OverflowException">
+        /// <exception cref="System.OverflowException">
         ///     The sum of the elements in the sequence is larger than System.Decimal.MaxValue.
         /// </exception>
         /// 
-        public decimal? Average(Func<TSource, decimal?> selector)
+        public decimal? Ave)::");
+source->append(R"::(rage(Func<TSource, decimal?> selector)
         {
             return m_accessor_selector.Average(selector);
         }
@@ -246,13 +247,13 @@ source->append(R"::(.OverflowException">
         ///     source or selector is null.
         /// </exception>
         /// 
-        /// <exception cref="System.InvalidOperationExcepti)::");
-source->append(R"::(on">
+        /// <exception cref="System.InvalidOperationException">
         ///     source contains no elements.
         /// </exception>
         ///
         /// <exception cref="System.OverflowException">
-        ///     The sum of the elements in the sequence is larger than System.Decimal.MaxValue.
+        ///     The sum of the elements in the sequence is large)::");
+source->append(R"::(r than System.Decimal.MaxValue.
         /// </exception>
         public decimal Average(Func<TSource, decimal> selector)
         {
@@ -272,15 +273,15 @@ source->append(R"::(on">
         /// <returns>
         ///     The average of the sequence of values, or null if the source sequence is
         ///     empty or contains only values that are null.
-        /// )::");
-source->append(R"::(</returns>
+        /// </returns>
         /// 
         /// <exception cref="System.ArgumentNullException">
         ///     source or selector is null.
         /// </exception>
         public double? Average(Func<TSource, double?> selector)
         {
-            return m_accessor_selector.Average(selector);
+     )::");
+source->append(R"::(       return m_accessor_selector.Average(selector);
         }
         /// 
         /// <summary>
@@ -300,8 +301,7 @@ source->append(R"::(</returns>
         ///     source or selector is null.
         /// </exception>
         /// 
-        /// <exception cref="System.InvalidOperationException")::");
-source->append(R"::(>
+        /// <exception cref="System.InvalidOperationException">
         ///     source contains no elements.
         /// </exception>
         public double Average(Func<TSource, double> selector)
@@ -310,7 +310,8 @@ source->append(R"::(>
         }
         ///
         /// <summary>
-        ///     Computes the average of a sequence of nullable System.Single values that
+        ///  )::");
+source->append(R"::(   Computes the average of a sequence of nullable System.Single values that
         ///     are obtained by invoking a transform function on each element of the input
         ///     sequence.
         /// </summary>
@@ -327,15 +328,15 @@ source->append(R"::(>
         /// <exception cref="System.ArgumentNullException">
         ///     source or selector is null.
         /// </exception>
-        public float? Average(Func<TSour)::");
-source->append(R"::(ce, float?> selector)
+        public float? Average(Func<TSource, float?> selector)
         {
             return m_accessor_selector.Average(selector);
         }
         /// 
         /// <summary>
         ///     Computes the average of a sequence of System.Single values that are obtained
-        ///     by invoking a transform function on each element of the input sequence.
+        ///     by invoking a transform function on each )::");
+source->append(R"::(element of the input sequence.
         /// </summary>
         /// 
         /// <param name="selector">
@@ -355,8 +356,7 @@ source->append(R"::(ce, float?> selector)
         /// </exception>
         public float Average(Func<TSource, float> selector)
         {
-            return m_accessor_selector.Average(select)::");
-source->append(R"::(or);
+            return m_accessor_selector.Average(selector);
         }
         ///
         /// <summary>
@@ -365,7 +365,8 @@ source->append(R"::(or);
         /// </summary>
         /// 
         /// <param name="selector">
-        ///     A transform function to apply to each element.
+  )::");
+source->append(R"::(      ///     A transform function to apply to each element.
         /// </param>
         /// 
         /// <returns>
@@ -381,8 +382,7 @@ source->append(R"::(or);
         ///     The sum of the elements in the sequence is larger than System.Int64.MaxValue.
         /// </exception>
         public double? Average(Func<TSource, int?> selector)
-      )::");
-source->append(R"::(  {
+        {
             return m_accessor_selector.Average(selector);
         }
         /// <summary>
@@ -390,7 +390,8 @@ source->append(R"::(  {
         ///     by invoking a transform function on each element of the input sequence.
         /// </summary>
         /// 
-        /// <param name="selector">
+        /// <param name="se)::");
+source->append(R"::(lector">
         ///     A transform function to apply to each element.
         /// </param>
         /// 
@@ -408,8 +409,7 @@ source->append(R"::(  {
         ///
         /// <exception cref="System.OverflowException">
         ///     The sum of the elements in the sequence is larger than System.Int64.MaxValue.
-    )::");
-source->append(R"::(    /// </exception>
+        /// </exception>
         public double Average(Func<TSource, int> selector)
         {
             return m_accessor_selector.Average(selector);
@@ -417,7 +417,8 @@ source->append(R"::(    /// </exception>
         ///
         /// <summary>
         ///     Computes the average of a sequence of nullable System.Int64 values that are
-        ///     obtained by invoking a transform function on each element of the input sequence.
+        ///     obtained by invoking a transform function on each element of th)::");
+source->append(R"::(e input sequence.
         /// </summary>
         /// 
         /// <param name="selector">
@@ -434,8 +435,7 @@ source->append(R"::(    /// </exception>
         }
         /// <summary>
         ///     Computes the average of a sequence of System.Int64 values that are obtained
-)::");
-source->append(R"::(        ///     by invoking a transform function on each element of the input sequence.
+        ///     by invoking a transform function on each element of the input sequence.
         /// </summary>
         /// 
         /// <param name="selector">
@@ -446,7 +446,8 @@ source->append(R"::(        ///     by invoking a transform function on each ele
         ///     The average of the sequence of values.
         /// </returns>
         /// 
-        /// <exception cref="System.ArgumentNullException">
+        /// <excep)::");
+source->append(R"::(tion cref="System.ArgumentNullException">
         ///     source or selector is null.
         /// </exception>
         /// 
@@ -462,8 +463,7 @@ source->append(R"::(        ///     by invoking a transform function on each ele
             return m_accessor_selector.Average(selector);
         }
         ///
-        /// <s)::");
-source->append(R"::(ummary>
+        /// <summary>
         ///     Casts the elements of an <see cref="System.Linq.ParallelQuery"/> to the specified
         ///     type.
         /// </summary>
@@ -473,7 +473,8 @@ source->append(R"::(ummary>
         /// </returns>
         /// 
         /// <exception cref="System.ArgumentNullException">
-        ///     source is null.
+     )::");
+source->append(R"::(   ///     source is null.
         /// </exception>
         /// 
         /// <exception cref="System.InvalidCastException">
@@ -489,8 +490,7 @@ source->append(R"::(ummary>
         ///     equality comparer.
         /// </summary>
         /// 
-        /// <pa)::");
-source->append(R"::(ram name="value">
+        /// <param name="value">
         ///     The value to locate in the sequence.
         /// </param>
         /// 
@@ -502,7 +502,8 @@ source->append(R"::(ram name="value">
         /// <exception cref="System.ArgumentNullException">
         ///     source is null.
         /// </exception>
-        public bool Contains(TSource value)
+        public bool Contains(TSo)::");
+source->append(R"::(urce value)
         {
             return m_accessor_selector.Contains(value);
         }
@@ -519,8 +520,7 @@ source->append(R"::(ram name="value">
         /// <param name="comparer">
         ///     An equality comparer to compare values.
         /// </param>
-  )::");
-source->append(R"::(      ///
+        ///
         /// <returns>
         ///     true if the source sequence contains an element that has the specified value;
         ///     otherwise, false.
@@ -531,7 +531,8 @@ source->append(R"::(      ///
         /// </exception>
         public bool Contains(TSource value, IEqualityComparer<TSource> comparer)
         {
-            return m_accessor_selector.Contains(value, comparer);
+            return m_accessor_selector.Contains(value, comparer);)::");
+source->append(R"::(
         }
         /// 
         /// <summary>
@@ -547,8 +548,7 @@ source->append(R"::(      ///
         /// 
         /// <exception cref="System.OverflowException">
         ///     The number of elements in source is larger than System.Int32.MaxValue.
-    )::");
-source->append(R"::(    /// </exception>
+        /// </exception>
         public int Count()
         {
             return m_accessor_selector.Count();
@@ -564,7 +564,8 @@ source->append(R"::(    /// </exception>
         /// </param>
         /// 
         /// <returns>
-        ///     A number that represents how many elements in the sequence satisfy the condition
+        ///     A numb)::");
+source->append(R"::(er that represents how many elements in the sequence satisfy the condition
         ///     in the predicate function.
         /// </returns>
         /// 
@@ -575,8 +576,7 @@ source->append(R"::(    /// </exception>
         /// <exception cref="System.OverflowException">
         ///     The number of elements in source is larger than System.Int32.MaxValue.
         /// </exception>
-        public int Count(Func<TSourc)::");
-source->append(R"::(e, bool> predicate) { return m_accessor_selector.Count(predicate); }
+        public int Count(Func<TSource, bool> predicate) { return m_accessor_selector.Count(predicate); }
         ///
         /// <summary>
         ///     Returns the first element of a sequence.
@@ -590,7 +590,8 @@ source->append(R"::(e, bool> predicate) { return m_accessor_selector.Count(predi
         /// </exception>
         /// 
         /// <exception cref="System.InvalidOperationException">
-        ///     The source sequence is empty.
+        ///     The source )::");
+source->append(R"::(sequence is empty.
         /// </exception>
         public TSource First()
         {
@@ -606,8 +607,7 @@ source->append(R"::(e, bool> predicate) { return m_accessor_selector.Count(predi
         /// </param>
         /// 
         /// <returns>
-      )::");
-source->append(R"::(  ///     The first element in the sequence that passes the test in the specified predicate
+        ///     The first element in the sequence that passes the test in the specified predicate
         ///     function.
         /// </returns>
         /// 
@@ -619,7 +619,8 @@ source->append(R"::(  ///     The first element in the sequence that passes the 
         ///     No element satisfies the condition in predicate.-or-The source sequence is
         /// </exception>
         ///     empty.
-        public TSource First(Func<TSource, bool> predicate)
+        public TSource First(Func<TSource, bool> pred)::");
+source->append(R"::(icate)
         {
             return m_accessor_selector.First(predicate);
         }
@@ -632,8 +633,7 @@ source->append(R"::(  ///     The first element in the sequence that passes the 
         ///     default(TSource) if source is empty; otherwise, the first element in source.
         /// </returns>
         /// 
-        /// <exception c)::");
-source->append(R"::(ref="System.ArgumentNullException">
+        /// <exception cref="System.ArgumentNullException">
         ///     source is null.
         /// </exception>
         public TSource FirstOrDefault()
@@ -650,7 +650,8 @@ source->append(R"::(ref="System.ArgumentNullException">
         ///     A function to test each element for a condition.
         /// </param>
         /// 
-        /// <returns>
+        /// )::");
+source->append(R"::(<returns>
         ///     default(TSource) if source is empty or if no element passes the test specified
         ///     by predicate; otherwise, the first element in source that passes the test
         ///     specified by predicate.
@@ -659,8 +660,7 @@ source->append(R"::(ref="System.ArgumentNullException">
         /// <exception cref="System.ArgumentNullException">
         ///     source or predicate is null.
         /// </exception>
-        public TSou)::");
-source->append(R"::(rce FirstOrDefault(Func<TSource, bool> predicate)
+        public TSource FirstOrDefault(Func<TSource, bool> predicate)
         {
             return m_accessor_selector.FirstOrDefault(predicate);
         }
@@ -677,7 +677,8 @@ source->append(R"::(rce FirstOrDefault(Func<TSource, bool> predicate)
         /// </exception>
         /// 
         /// <exception cref="System.InvalidOperationException">
-        ///     The source sequence is empty.
+        ///     The source seq)::");
+source->append(R"::(uence is empty.
         /// </exception>
         public TSource Last() { return m_accessor_selector.Last(); }
         ///
@@ -687,8 +688,7 @@ source->append(R"::(rce FirstOrDefault(Func<TSource, bool> predicate)
         /// 
         /// <param name="predicate">
         ///     A function to test each element for a condition.
-        /// </param)::");
-source->append(R"::(>
+        /// </param>
         /// 
         /// <returns>
         ///     The last element in the sequence that passes the test in the specified predicate
@@ -703,7 +703,8 @@ source->append(R"::(>
         ///     No element satisfies the condition in predicate.-or-The source sequence is
         /// </exception>
         ///     empty.
-        public TSource Last(Func<TSource, bool> predicate) { return m_accessor_selector.Last(predicate); }
+        public TSource Last(Func<TSource, bool> predicate) { return m_accessor_selector.)::");
+source->append(R"::(Last(predicate); }
         ///
         /// <summary>
         ///     Returns the last element of a sequence, or a default value if the sequence
@@ -711,8 +712,7 @@ source->append(R"::(>
         /// </summary>
         /// <returns>
         ///     default(TSource) if the source sequence is empty; otherwise, the last element
-        ///     in the Trinity.Index.LINQ.Parallel)::");
-source->append(R"::(Query{T}.
+        ///     in the Trinity.Index.LINQ.ParallelQuery{T}.
         /// </returns>
         /// 
         /// <exception cref="System.ArgumentNullException">
@@ -730,15 +730,15 @@ source->append(R"::(Query{T}.
         /// </param>
         /// 
         /// <returns>
-        ///     default(TSource) if the sequence is empty or if no elements pass the test
+        ///     default(TSou)::");
+source->append(R"::(rce) if the sequence is empty or if no elements pass the test
         ///     in the predicate function; otherwise, the last element that passes the test
         ///     in the predicate function.
         /// </returns>
         /// 
         /// <exception cref="System.ArgumentNullException">
         ///     source or predicate is null.
-        )::");
-source->append(R"::(/// </exception>
+        /// </exception>
         public TSource LastOrDefault(Func<TSource, bool> predicate)
         {
             return m_accessor_selector.LastOrDefault(predicate);
@@ -757,7 +757,8 @@ source->append(R"::(/// </exception>
         /// </exception>
         /// 
         /// <exception cref="System.OverflowException">
-        ///     The number of elements exceeds System.Int64.MaxValue.
+        ///     The number )::");
+source->append(R"::(of elements exceeds System.Int64.MaxValue.
         /// </exception>
         public long LongCount()
         {
@@ -766,8 +767,7 @@ source->append(R"::(/// </exception>
         ///
         /// <summary>
         ///     Returns an System.Int64 that represents how many elements in a sequence satisfy
-        ///     )::");
-source->append(R"::(a condition.
+        ///     a condition.
         /// </summary>
         /// 
         /// <param name="predicate">
@@ -786,15 +786,15 @@ source->append(R"::(a condition.
         /// <exception cref="System.OverflowException">
         ///     The number of matching elements exceeds System.Int64.MaxValue.
         /// </exception>
-        public long LongCount(Func<TSource, bool> predicate)
+        public long )::");
+source->append(R"::(LongCount(Func<TSource, bool> predicate)
         {
             return m_accessor_selector.LongCount(predicate);
         }
         ///
         /// <summary>
         ///     Invokes a transform function on each element of a sequence and returns the
-        ///     maximum nullable System.Decim)::");
-source->append(R"::(al value.
+        ///     maximum nullable System.Decimal value.
         /// </summary>
         /// 
         /// <param name="selector">
@@ -815,14 +815,14 @@ source->append(R"::(al value.
         }
         /// 
         /// <summary>
-        ///     Invokes a transform function on each element of a sequence and returns the
+        ///     Invokes a)::");
+source->append(R"::( transform function on each element of a sequence and returns the
         ///     maximum System.Decimal value.
         /// </summary>
         /// 
         /// <param name="selector">
         ///     A transform function to apply to each element.
-        /// </param)::");
-source->append(R"::(>
+        /// </param>
         /// 
         /// <returns>
         ///     The maximum value in the sequence.
@@ -845,14 +845,14 @@ source->append(R"::(>
         ///     maximum nullable System.Double value.
         /// </summary>
         /// 
-        /// <param name="selector">
+        /)::");
+source->append(R"::(// <param name="selector">
         ///     A transform function to apply to each element.
         /// </param>
         /// 
         /// <returns>
         ///     The value of type Nullable{Double} in C# or Nullable(Of Double) in Visual
- )::");
-source->append(R"::(       ///     Basic that corresponds to the maximum value in the sequence.
+        ///     Basic that corresponds to the maximum value in the sequence.
         /// </returns>
         /// 
         /// <exception cref="System.ArgumentNullException">
@@ -873,15 +873,15 @@ source->append(R"::(       ///     Basic that corresponds to the maximum value i
         /// </param>
         /// 
         /// <returns>
-        ///     The maximum value in the sequence.
+        ///     The maximum value in the sequence.)::");
+source->append(R"::(
         /// </returns>
         /// 
         /// <exception cref="System.ArgumentNullException">
         ///     source or selector is null.
         /// </exception>
         /// 
-        /// <exception cref="S)::");
-source->append(R"::(ystem.InvalidOperationException">
+        /// <exception cref="System.InvalidOperationException">
         ///     source contains no elements.
         /// </exception>
         public double Max(Func<TSource, double> selector)
@@ -903,12 +903,12 @@ source->append(R"::(ystem.InvalidOperationException">
         ///     Basic that corresponds to the maximum value in the sequence.
         /// </returns>
         /// 
-        /// <exception cref="System.ArgumentNullException">
+      )::");
+source->append(R"::(  /// <exception cref="System.ArgumentNullException">
         ///     source or selector is null.
         /// </exception>
         public float? Max(Func<TSource, float?> selector)
-  )::");
-source->append(R"::(      {
+        {
             return m_accessor_selector.Max(selector);
         }
         /// 
@@ -932,14 +932,14 @@ source->append(R"::(      {
         /// <exception cref="System.InvalidOperationException">
         ///     source contains no elements.
         /// </exception>
-        public float Max(Func<TSource, float> selector)
+        public float Max(Func<TSource, float)::");
+source->append(R"::(> selector)
         {
             return m_accessor_selector.Max(selector);
         }
         ///
         /// <summary>
-        ///     Invokes a transfo)::");
-source->append(R"::(rm function on each element of a sequence and returns the
+        ///     Invokes a transform function on each element of a sequence and returns the
         ///     maximum nullable System.Int32 value.
         /// </summary>
         /// 
@@ -961,13 +961,13 @@ source->append(R"::(rm function on each element of a sequence and returns the
         }
         /// 
         /// <summary>
-        ///     Invokes a transform function on each element of a sequence and returns the
+        ///     Invokes a transform function on each element of a sequence a)::");
+source->append(R"::(nd returns the
         ///     maximum System.Int32 value.
         /// </summary>
         /// 
         /// 
-        /// <param)::");
-source->append(R"::( name="selector">
+        /// <param name="selector">
         ///     A transform function to apply to each element.
         /// </param>
         ///
@@ -993,12 +993,12 @@ source->append(R"::( name="selector">
         /// </summary>
         /// 
         /// <param name="selector">
-        ///     A transform function to apply to each element.
+        ///     A trans)::");
+source->append(R"::(form function to apply to each element.
         /// </param>
         /// 
         /// <returns>
-)::");
-source->append(R"::(        ///     The value of type Nullable{Int64} in C# or Nullable(Of Int64) in Visual Basic
+        ///     The value of type Nullable{Int64} in C# or Nullable(Of Int64) in Visual Basic
         ///     that corresponds to the maximum value in the sequence.
         /// </returns>
         /// 
@@ -1023,9 +1023,9 @@ source->append(R"::(        ///     The value of type Nullable{Int64} in C# or N
         ///     The maximum value in the sequence.
         /// </returns>
         /// 
-        /// <exception cref="System.ArgumentNullException">
-        ///     source or sele)::");
-source->append(R"::(ctor is null.
+        /// <excepti)::");
+source->append(R"::(on cref="System.ArgumentNullException">
+        ///     source or selector is null.
         /// </exception>
         /// 
         /// <exception cref="System.InvalidOperationException">
@@ -1051,9 +1051,9 @@ source->append(R"::(ctor is null.
         /// </returns>
         /// 
         /// <exception cref="System.ArgumentNullException">
-        ///     source or selector is null.
-   )::");
-source->append(R"::(     /// </exception>
+    )::");
+source->append(R"::(    ///     source or selector is null.
+        /// </exception>
         public decimal? Min(Func<TSource, decimal?> selector)
         {
             return m_accessor_selector.Min(selector);
@@ -1081,8 +1081,8 @@ source->append(R"::(     /// </exception>
         /// </exception>
         public decimal Min(Func<TSource, decimal> selector)
         {
-            return m_accessor_selector.Min)::");
-source->append(R"::((selector);
+            return m_acces)::");
+source->append(R"::(sor_selector.Min(selector);
         }
         ///
         /// <summary>
@@ -1109,8 +1109,8 @@ source->append(R"::((selector);
         /// 
         /// <summary>
         ///     Invokes a transform function on each element of a sequence and returns the
-        ///  )::");
-source->append(R"::(   minimum System.Double value.
+        ///     minimum )::");
+source->append(R"::(System.Double value.
         /// </summary>
         /// 
         /// <param name="selector">
@@ -1139,9 +1139,9 @@ source->append(R"::(   minimum System.Double value.
         /// </summary>
         /// 
         /// <param name="selector">
-        ///     A transfor)::");
-source->append(R"::(m function to apply to each element.
-        /// </param>
+        ///     A transform function to apply to each element.
+   )::");
+source->append(R"::(     /// </param>
         /// 
         /// <returns>
         ///     The value of type Nullable{Single} in C# or Nullable(Of Single) in Visual
@@ -1168,9 +1168,9 @@ source->append(R"::(m function to apply to each element.
         /// <returns>
         ///     The minimum value in the sequence.
         /// </returns>
-   )::");
-source->append(R"::(     /// 
-        /// <exception cref="System.ArgumentNullException">
+        /// 
+        /// <exception cref="System.ArgumentNullException")::");
+source->append(R"::(>
         ///     source or selector is null.
         /// </exception>
         /// 
@@ -1196,10 +1196,10 @@ source->append(R"::(     ///
         ///     that corresponds to the minimum value in the sequence.
         /// </returns>
         /// 
-        ///)::");
-source->append(R"::( <exception cref="System.ArgumentNullException">
+        /// <exception cref="System.ArgumentNullException">
         ///     source or selector is null.
-        /// </exception>
+  )::");
+source->append(R"::(      /// </exception>
         public int? Min(Func<TSource, int?> selector)
         {
             return m_accessor_selector.Min(selector);
@@ -1225,13 +1225,13 @@ source->append(R"::( <exception cref="System.ArgumentNullException">
         /// <exception cref="System.InvalidOperationException">
         ///     source contains no elements.
         /// </exception>
-        public int Min(Fun)::");
-source->append(R"::(c<TSource, int> selector)
+        public int Min(Func<TSource, int> selector)
         {
             return m_accessor_selector.Min(selector);
         }
         ///
-        /// <summary>
+        ///)::");
+source->append(R"::( <summary>
         ///     Invokes a transform function on each element of a sequence and returns the
         ///     minimum nullable System.Int64 value.
         /// </summary>
@@ -1254,12 +1254,12 @@ source->append(R"::(c<TSource, int> selector)
         }
         /// 
         /// <summary>
-        ///     Invokes a transf)::");
-source->append(R"::(orm function on each element of a sequence and returns the
+        ///     Invokes a transform function on each element of a sequence and returns the
         ///     minimum System.Int64 value.
         /// </summary>
         /// 
-        /// <param name="selector">
+        /// )::");
+source->append(R"::(<param name="selector">
         ///     A transform function to apply to each element.
         /// </param>
         /// 
@@ -1284,11 +1284,11 @@ source->append(R"::(orm function on each element of a sequence and returns the
         ///     element's index.
         /// </summary>
         /// 
-        /// <param)::");
-source->append(R"::( name="selector">
+        /// <param name="selector">
         ///     A transform function to apply to each source element; the second parameter
         /// </param>
-        ///     of the function represents the index of the source element.
+        ///     of the function represents the ind)::");
+source->append(R"::(ex of the source element.
         /// 
         /// <typeparam name="TResult">
         ///     The type of the value returned by selector.
@@ -1309,15 +1309,15 @@ source->append(R"::( name="selector">
         /// 
         /// <summary>
         ///     Projects each element of a sequence into a new form.
-        /// </sum)::");
-source->append(R"::(mary>
+        /// </summary>
         /// 
         /// <param name="selector">
         ///     A transform function to apply to each element.
         /// </param>
         /// 
         /// <typeparam name="TResult">
-        ///     The type of the value returned by selector.
+        ///  )::");
+source->append(R"::(   The type of the value returned by selector.
         /// </typeparam>
         ///
         /// <returns>
@@ -1335,8 +1335,7 @@ source->append(R"::(mary>
         /// 
         /// <summary>
         ///     Projects each element of a sequence to an Trinity.Index.LINQ.ParallelQuery{T}
-        ///     and flattens the resulting sequences into one s)::");
-source->append(R"::(equence.
+        ///     and flattens the resulting sequences into one sequence.
         /// </summary>
         /// 
         /// <param name="selector">
@@ -1344,7 +1343,8 @@ source->append(R"::(equence.
         /// </param>
         /// 
         /// <typeparam name="TResult">
-        ///     The type of the elements of the sequence returned by selector.
+        /// )::");
+source->append(R"::(    The type of the elements of the sequence returned by selector.
         /// </typeparam>
         ///
         /// <returns>
@@ -1362,13 +1362,13 @@ source->append(R"::(equence.
         }
         /// 
         /// <summary>
-        ///     Projects each element of a sequenc)::");
-source->append(R"::(e to an Trinity.Index.LINQ.ParallelQuery{T},
+        ///     Projects each element of a sequence to an Trinity.Index.LINQ.ParallelQuery{T},
         ///     and flattens the resulting sequences into one sequence. The index of each
         ///     source element is used in the projected form of that element.
         /// </summary>
         /// 
-        /// <param name="selector">
+      )::");
+source->append(R"::(  /// <param name="selector">
         ///     A transform function to apply to each source element; the second parameter
         /// </param>
         ///     of the function represents the index of the source element.
@@ -1385,15 +1385,15 @@ source->append(R"::(e to an Trinity.Index.LINQ.ParallelQuery{T},
         /// 
         /// <exception cref="System.ArgumentNullException">
         ///     source or selector is null.
-     )::");
-source->append(R"::(   /// </exception>
+        /// </exception>
         public ParallelQuery<TResult> SelectMany<TResult>(Func<TSource, int, IEnumerable<TResult>> selector)
         {
             return m_accessor_selector.SelectMany(selector).AsParallel();
         }
         /// 
         /// <summary>
-        ///     Projects each element of a sequence to an Trinity.Index.LINQ.ParallelQuery{T},
+        ///     Pro)::");
+source->append(R"::(jects each element of a sequence to an Trinity.Index.LINQ.ParallelQuery{T},
         ///     flattens the resulting sequences into one sequence, and invokes a result
         ///     selector function on each element therein.
         /// </summary>
@@ -1408,8 +1408,7 @@ source->append(R"::(   /// </exception>
         /// </param>
         ///
         /// <typeparam name="TCollection">
-        ///     The type of the intermediate elements collected by <paramref n)::");
-source->append(R"::(ame="collectionSelector"/>.
+        ///     The type of the intermediate elements collected by <paramref name="collectionSelector"/>.
         /// </typeparam>
         ///
         /// <typeparam name="TResult">
@@ -1417,7 +1416,8 @@ source->append(R"::(ame="collectionSelector"/>.
         /// </typeparam>
         ///
         /// <returns>
-        ///     A System.Linq.ParallelQuery{T} whose elements are the result
+        ///     A System.Linq.ParallelQuery{T} whose elements are th)::");
+source->append(R"::(e result
         ///     of invoking the one-to-many transform function collectionSelector on each
         ///     element of source and then mapping each of those sequence elements and their
         ///     corresponding source element to a result element.
@@ -1428,14 +1428,14 @@ source->append(R"::(ame="collectionSelector"/>.
         /// </exception>
         public ParallelQuery<TResult> SelectMany<TCollection, TResult>(Func<TSource, IEnumerable<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> resultSelector)
         {
-            return m_accessor_selector.SelectMany(collectionSe)::");
-source->append(R"::(lector, resultSelector).AsParallel();
+            return m_accessor_selector.SelectMany(collectionSelector, resultSelector).AsParallel();
         }
         /// 
         /// <summary>
         ///     Projects each element of a sequence to an Trinity.Index.LINQ.ParallelQuery{T},
         ///     flattens the resulting sequences into one sequence, and invokes a result
-        ///     selector function on each element therein. The index of each source element
+        ///     selector function on each element t)::");
+source->append(R"::(herein. The index of each source element
         ///     is used in the intermediate projected form of that element.
         /// </summary>
         /// 
@@ -1449,8 +1449,7 @@ source->append(R"::(lector, resultSelector).AsParallel();
         /// </param>
         ///
         /// <typeparam name="TCollection">
-        ///     The type of the intermediate elements collected by collectio)::");
-source->append(R"::(nSelector.
+        ///     The type of the intermediate elements collected by collectionSelector.
         /// </typeparam>
         ///
         /// <typeparam name="TResult">
@@ -1459,7 +1458,8 @@ source->append(R"::(nSelector.
         ///
         /// <returns>
         ///     A System.Linq.ParallelQuery{T} whose elements are the result
-        ///     of invoking the one-to-many transform function collectionSelector on each
+        ///     of invoking the one-to-many tra)::");
+source->append(R"::(nsform function collectionSelector on each
         ///     element of source and then mapping each of those sequence elements and their
         ///     corresponding source element to a result element.
         /// </returns>
@@ -1469,15 +1469,15 @@ source->append(R"::(nSelector.
         /// </exception>
         public ParallelQuery<TResult> SelectMany<TCollection, TResult>(Func<TSource, int, IEnumerable<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> resultSelector)
         {
-            return m_accessor_selector.SelectMany(collectionSelector, resu)::");
-source->append(R"::(ltSelector).AsParallel();
+            return m_accessor_selector.SelectMany(collectionSelector, resultSelector).AsParallel();
         }
         /// 
         /// <summary>
         ///     Determines whether two sequences are equal by comparing their elements by
         ///     using a specified System.Collections.Generic.IEqualityComparer{T}.
         /// </summary>
-        public bool SequenceEqual(IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
+        public bool SequenceEqual(IEnumerable<TSource> second, IEqualityComparer<TSource>)::");
+source->append(R"::( comparer)
         {
             return m_accessor_selector.SequenceEqual(second, comparer);
         }
@@ -1494,8 +1494,7 @@ source->append(R"::(ltSelector).AsParallel();
         /// <summary>
         ///     Returns the only element of a sequence, and throws an exception if there
         ///     is not exactly one element in the sequence.
-)::");
-source->append(R"::(        /// </summary>
+        /// </summary>
         /// <returns>
         ///     The single element of the input sequence.
         /// </returns>
@@ -1505,7 +1504,8 @@ source->append(R"::(        /// </summary>
         /// </exception>
         /// 
         /// <exception cref="System.InvalidOperationException">
-        ///     The input sequence contains more than one element.-or-The input sequence
+        ///     The input sequence contains mor)::");
+source->append(R"::(e than one element.-or-The input sequence
         /// </exception>
         ///     is empty.
         public TSource Single()
@@ -1524,8 +1524,7 @@ source->append(R"::(        /// </summary>
         /// </param>
         ///
         /// <returns>
-        /// )::");
-source->append(R"::(    The single element of the input sequence that satisfies a condition.
+        ///     The single element of the input sequence that satisfies a condition.
         /// </returns>
         /// 
         /// <exception cref="System.ArgumentNullException">
@@ -1534,7 +1533,8 @@ source->append(R"::(    The single element of the input sequence that satisfies 
         /// 
         /// <exception cref="System.InvalidOperationException">
         ///     No element satisfies the condition in predicate.-or-More than one element
-        /// </exception>
+   )::");
+source->append(R"::(     /// </exception>
         ///     satisfies the condition in predicate.-or-The source sequence is empty.
         public TSource Single(Func<TSource, bool> predicate)
         {
@@ -1547,8 +1547,7 @@ source->append(R"::(    The single element of the input sequence that satisfies 
         ///     in the sequence.
         /// </summary>
         /// <returns>
-        ///     The single element of the input se)::");
-source->append(R"::(quence, or default(TSource) if the sequence
+        ///     The single element of the input sequence, or default(TSource) if the sequence
         ///     contains no elements.
         /// </returns>
         /// 
@@ -1559,7 +1558,8 @@ source->append(R"::(quence, or default(TSource) if the sequence
         /// <exception cref="System.InvalidOperationException">
         ///     The input sequence contains more than one element.
         /// </exception>
-        public TSource SingleOrDefault()
+        public TSource Sing)::");
+source->append(R"::(leOrDefault()
         {
             return m_accessor_selector.SingleOrDefault();
         }
@@ -1575,8 +1575,7 @@ source->append(R"::(quence, or default(TSource) if the sequence
         ///     A function to test an element for a condition.
         /// </param>
         ///
-      )::");
-source->append(R"::(  /// <returns>
+        /// <returns>
         ///     The single element of the input sequence that satisfies the condition, or
         ///     default(TSource) if no such element is found.
         /// </returns>
@@ -1586,7 +1585,8 @@ source->append(R"::(  /// <returns>
         /// </exception>
         public TSource SingleOrDefault(Func<TSource, bool> predicate)
         {
-            return m_accessor_selector.SingleOrDefault(predicate);
+            return m_accessor_selector.Singl)::");
+source->append(R"::(eOrDefault(predicate);
         }
         /// 
         /// <summary>
@@ -1601,8 +1601,7 @@ source->append(R"::(  /// <returns>
         ///
         /// <returns>
         ///     A Trinity.Index.LINQ.PLINQWrapper{T} that contains the elements that
-        ///     occur after the spec)::");
-source->append(R"::(ified index in the input sequence.
+        ///     occur after the specified index in the input sequence.
         /// </returns>
         /// 
         /// <exception cref="System.ArgumentNullException">
@@ -1615,7 +1614,8 @@ source->append(R"::(ified index in the input sequence.
         /// 
         /// <summary>
         ///     Bypasses elements in a sequence as long as a specified condition is true
-        ///     and then returns the remaining elements.
+        ///     and)::");
+source->append(R"::( then returns the remaining elements.
         /// </summary>
         /// 
         /// 
@@ -1628,8 +1628,7 @@ source->append(R"::(ified index in the input sequence.
         ///     A Trinity.Index.LINQ.PLINQWrapper{T} that contains the elements from
         ///     the input sequence starting at the first element in the linear series that
         ///     does not pass the test specified by predicate.
-        /// </return)::");
-source->append(R"::(s>
+        /// </returns>
         /// 
         /// <exception cref="System.ArgumentNullException">
         ///     source or predicate is null.
@@ -1641,7 +1640,8 @@ source->append(R"::(s>
         /// 
         /// <summary>
         ///     Bypasses elements in a sequence as long as a specified condition is true
-        ///     and then returns the remaining elements. The element's index is used in the
+        ///     and then returns the remaining elemen)::");
+source->append(R"::(ts. The element's index is used in the
         ///     logic of the predicate function.
         /// </summary>
         /// 
@@ -1653,8 +1653,7 @@ source->append(R"::(s>
         ///
         /// <returns>
         ///     A Trinity.Index.LINQ.PLINQWrapper{T} that contains the elements from
-        )::");
-source->append(R"::(///     the input sequence starting at the first element in the linear series that
+        ///     the input sequence starting at the first element in the linear series that
         ///     does not pass the test specified by predicate.
         /// </returns>
         /// 
@@ -1666,7 +1665,8 @@ source->append(R"::(///     the input sequence starting at the first element in 
             return new PLINQWrapper<TSource>(m_accessor_selector.SkipWhile(predicate));
         }
         /// 
-        /// <summary>
+        /// <summ)::");
+source->append(R"::(ary>
         ///     Computes the sum of the sequence of nullable System.Decimal values that are
         ///     obtained by invoking a transform function on each element of the input sequence.
         /// </summary>
@@ -1678,8 +1678,7 @@ source->append(R"::(///     the input sequence starting at the first element in 
         /// <returns>
         ///     The sum of the projected values.
         /// </returns>
-        //)::");
-source->append(R"::(/ 
+        /// 
         /// <exception cref="System.ArgumentNullException">
         ///     source or selector is null.
         /// </exception>
@@ -1694,33 +1693,8 @@ source->append(R"::(/
         ///
         /// <summary>
         ///     Computes the sum of the sequence of System.Decimal values that are obtained
-        ///     by invoking a transform function on each element of the input sequence.
-        /// </summary>
-        /// 
-        /// <param name="selector">
-        ///     A transform function to apply to each element.
-        /// </param>
-        /// 
-        /// <returns>
-        ///     The sum of the projected values.
-        /// </returns>
-        /// 
-        /// <exception cref="System.ArgumentNullException">
-        ///     sourc)::");
-source->append(R"::(e or selector is null.
-        /// </exception>
-        /// 
-        /// <exception cref="System.OverflowException">
-        ///     The sum is larger than System.Decimal.MaxValue.
-        /// </exception>
-        public decimal Sum(Func<TSource, decimal> selector)
-        {
-            return m_accessor_selector.Sum(selector);
-        }
-        ///
-        /// <summary>
-        ///     Computes the sum of the sequence of nullable System.Double values that are
-        ///     obtained by invoking a transform function on each element of the input sequence.
+     )::");
+source->append(R"::(   ///     by invoking a transform function on each element of the input sequence.
         /// </summary>
         /// 
         /// <param name="selector">
@@ -1734,8 +1708,33 @@ source->append(R"::(e or selector is null.
         /// <exception cref="System.ArgumentNullException">
         ///     source or selector is null.
         /// </exception>
-        public double? Sum(Fun)::");
-source->append(R"::(c<TSource, double?> selector)
+        /// 
+        /// <exception cref="System.OverflowException">
+        ///     The sum is larger than System.Decimal.MaxValue.
+        /// </exception>
+        public decimal Sum(Func<TSource, decimal> selector)
+        {
+            return m_accessor_selector.Sum(selector);
+        }
+        ///
+        /// <summary>
+        ///     Computes the sum of the sequence of nullable System.Double values that are
+        ///     obtained by invoking a transform function on each element of the input sequence.
+        /// </summary>)::");
+source->append(R"::(
+        /// 
+        /// <param name="selector">
+        ///     A transform function to apply to each element.
+        /// </param>
+        /// 
+        /// <returns>
+        ///     The sum of the projected values.
+        /// </returns>
+        /// 
+        /// <exception cref="System.ArgumentNullException">
+        ///     source or selector is null.
+        /// </exception>
+        public double? Sum(Func<TSource, double?> selector)
         {
             return m_accessor_selector.Sum(selector);
         }
@@ -1753,7 +1752,8 @@ source->append(R"::(c<TSource, double?> selector)
         ///     The sum of the projected values.
         /// </returns>
         /// 
-        /// <exception cref="System.ArgumentNullException">
+        /// <exce)::");
+source->append(R"::(ption cref="System.ArgumentNullException">
         ///     source or selector is null.
         /// </exception>
         public double Sum(Func<TSource, double> selector)
@@ -1763,8 +1763,7 @@ source->append(R"::(c<TSource, double?> selector)
         /// 
         /// <summary>
         ///     Computes the sum of the sequence of nullable System.Single values that are
-        ///    )::");
-source->append(R"::( obtained by invoking a transform function on each element of the input sequence.
+        ///     obtained by invoking a transform function on each element of the input sequence.
         /// </summary>
         /// 
         /// <param name="selector">
@@ -1783,7 +1782,8 @@ source->append(R"::( obtained by invoking a transform function on each element o
             return m_accessor_selector.Sum(selector);
         }
         /// 
-        /// <summary>
+       )::");
+source->append(R"::( /// <summary>
         ///     Computes the sum of the sequence of System.Single values that are obtained
         ///     by invoking a transform function on each element of the input sequence.
         /// </summary>
@@ -1791,8 +1791,7 @@ source->append(R"::( obtained by invoking a transform function on each element o
         /// <param name="selector">
         ///     A transform function to apply to each element.
         /// </param>
-        )::");
-source->append(R"::(/// 
+        /// 
         /// <returns>
         ///     The sum of the projected values.
         /// </returns>
@@ -1811,7 +1810,8 @@ source->append(R"::(///
         /// </summary>
         /// 
         /// <param name="selector">
-        ///     A transform function to apply to each element.
+ )::");
+source->append(R"::(       ///     A transform function to apply to each element.
         /// </param>
         /// 
         /// <returns>
@@ -1820,8 +1820,7 @@ source->append(R"::(///
         /// 
         /// <exception cref="System.ArgumentNullException">
         ///     source or selector is null.
-        /// </exception)::");
-source->append(R"::(>
+        /// </exception>
         /// 
         /// <exception cref="System.OverflowException">
         ///     The sum is larger than System.Int32.MaxValue.
@@ -1841,7 +1840,8 @@ source->append(R"::(>
         /// </param>
         /// 
         /// <returns>
-        ///     The sum of the projected values.
+     )::");
+source->append(R"::(   ///     The sum of the projected values.
         /// </returns>
         /// 
         /// <exception cref="System.ArgumentNullException">
@@ -1849,8 +1849,7 @@ source->append(R"::(>
         /// </exception>
         /// 
         /// <exception cref="System.OverflowException">
-        ///     The sum )::");
-source->append(R"::(is larger than System.Int32.MaxValue.
+        ///     The sum is larger than System.Int32.MaxValue.
         /// </exception>
         public int Sum(Func<TSource, int> selector)
         {
@@ -1870,15 +1869,15 @@ source->append(R"::(is larger than System.Int32.MaxValue.
         ///     The sum of the projected values.
         /// </returns>
         /// 
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="System.)::");
+source->append(R"::(ArgumentNullException">
         ///     source or selector is null.
         /// </exception>
         /// 
         /// <exception cref="System.OverflowException">
         ///     The sum is larger than System.Int64.MaxValue.
         /// </exception>
-        public long? Sum(F)::");
-source->append(R"::(unc<TSource, long?> selector)
+        public long? Sum(Func<TSource, long?> selector)
         {
             return m_accessor_selector.Sum(selector);
         }
@@ -1900,14 +1899,14 @@ source->append(R"::(unc<TSource, long?> selector)
         ///     source or selector is null.
         /// </exception>
         /// 
-        /// <exception cref="System.OverflowException">
+        /// <ex)::");
+source->append(R"::(ception cref="System.OverflowException">
         ///     The sum is larger than System.Int64.MaxValue.
         /// </exception>
         public long Sum(Func<TSource, long> selector)
         {
             return m_accessor_selector.Sum(selector);
- )::");
-source->append(R"::(       }
+        }
         ///
         /// <summary>
         ///     Returns a specified number of contiguous elements from the start of a sequence.
@@ -1929,14 +1928,14 @@ source->append(R"::(       }
         {
             return new PLINQWrapper<TSource>(m_accessor_selector.Take(count));
         }
-        /// 
+    )::");
+source->append(R"::(    /// 
         /// <summary>
         ///     Returns elements from a sequence as long as a specified condition is true.
         /// </summary>
         /// 
         /// <param name="predicate">
-        ///     A functi)::");
-source->append(R"::(on to test each element for a condition.
+        ///     A function to test each element for a condition.
         /// </param>
         /// 
         /// <returns>
@@ -1955,12 +1954,12 @@ source->append(R"::(on to test each element for a condition.
         /// 
         /// <summary>
         ///     Returns elements from a sequence as long as a specified condition is true.
-        ///     The element's index is used in the logic of the predicate function.
+        ///     The element')::");
+source->append(R"::(s index is used in the logic of the predicate function.
         /// </summary>
         /// 
         /// <param name="predicate">
-        ///     A function to test each source element for a condit)::");
-source->append(R"::(ion; the second parameter
+        ///     A function to test each source element for a condition; the second parameter
         /// </param>
         ///     of the function represents the index of the source element.
         /// 
@@ -1980,14 +1979,14 @@ source->append(R"::(ion; the second parameter
         /// 
         /// <summary>
         ///     Filters a sequence of values based on a predicate.
-        /// </summary>
+        /// )::");
+source->append(R"::(</summary>
         /// 
         /// <param name="predicate">
         ///     A function to test each element for a condition.
         /// </param>
         /// 
-        ///)::");
-source->append(R"::( <returns>
+        /// <returns>
         ///     A Trinity.Index.LINQ.PLINQWrapper{T} that contains elements from
         ///     the input sequence that satisfy the condition.
         /// </returns>
@@ -2007,12 +2006,12 @@ source->append(R"::( <returns>
         /// 
         /// <param name="predicate">
         ///     A function to test each source element for a condition; the second parameter
-        /// </param>
+ )::");
+source->append(R"::(       /// </param>
         ///     of the function represents the index of the source element.
         /// 
         /// <returns>
-        ///     )::");
-source->append(R"::(A Trinity.Index.LINQ.PLINQWrapper{T} that contains elements from
+        ///     A Trinity.Index.LINQ.PLINQWrapper{T} that contains elements from
         ///     the input sequence that satisfy the condition.
         /// </returns>
         /// 
@@ -2035,10 +2034,10 @@ source->append(R"::(A Trinity.Index.LINQ.PLINQWrapper{T} that contains elements 
         }
         ///
         /// <summary>
-        ///     Returns the elements of the specified sequence or the type parameter's default
+        ///     Returns the elements of the specified seque)::");
+source->append(R"::(nce or the type parameter's default
         ///     value in a singleton collection if the sequence is empty.
-        /// </s)::");
-source->append(R"::(ummary>
+        /// </summary>
         /// !NotImplemented
         public IEnumerable<TSource> DefaultIfEmpty() { throw new NotImplementedException(); }
         ///
@@ -2060,11 +2059,11 @@ source->append(R"::(ummary>
         }
         ///
         /// <summary>
-        ///     Sorts the elements of a sequence in ascending order according to a key.
+        ///     Sorts the elements of a sequence in as)::");
+source->append(R"::(cending order according to a key.
         /// </summary>
         /// !Not implemented
-        public I)::");
-source->append(R"::(OrderedEnumerable<TSource> OrderBy<TKey>(Func<TSource, TKey> keySelector)
+        public IOrderedEnumerable<TSource> OrderBy<TKey>(Func<TSource, TKey> keySelector)
         {
             throw new NotImplementedException();
         }
@@ -2089,9 +2088,9 @@ source->append(R"::(OrderedEnumerable<TSource> OrderBy<TKey>(Func<TSource, TKey>
         }
         ///
         /// <summary>
-        ///     Sorts the elements of a sequence in descending order by using a specified
-)::");
-source->append(R"::(        ///     comparer.
+        ///   )::");
+source->append(R"::(  Sorts the elements of a sequence in descending order by using a specified
+        ///     comparer.
         /// </summary>
         /// !Not implemented
         public IOrderedEnumerable<TSource> OrderByDescending<TKey>(Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
@@ -2119,8 +2118,8 @@ source->append(R"::(        ///     comparer.
         }
         ///
         /// <summary>
-        ///     Returns distinct elements from a sequence by using a specified System.Col)::");
-source->append(R"::(lections.Generic.IEqualityComparer{T}
+        ///     Returns distinct elemen)::");
+source->append(R"::(ts from a sequence by using a specified System.Collections.Generic.IEqualityComparer{T}
         ///     to compare values.
         /// </summary>
         public IEnumerable<TSource> Distinct(IEqualityComparer<TSource> comparer)
@@ -2148,8 +2147,8 @@ source->append(R"::(lections.Generic.IEqualityComparer{T}
         /// <summary>
         ///     Produces the set difference of two sequences by using the default equality
         ///     comparer to compare values.
-        /// </summary>)::");
-source->append(R"::(
+)::");
+source->append(R"::(        /// </summary>
         public IEnumerable<TSource> Except(IEnumerable<TSource> second)
         {
             throw new NotImplementedException();
@@ -2174,8 +2173,8 @@ source->append(R"::(
         ///
         /// <summary>
         ///     Groups the elements of a sequence according to a specified key selector function
- )::");
-source->append(R"::(       ///     and creates a result value from each group and its key.
+   )::");
+source->append(R"::(     ///     and creates a result value from each group and its key.
         /// </summary>
         public IEnumerable<TResult> GroupBy<TKey, TResult>(Func<TSource, TKey> keySelector, Func<TKey, IEnumerable<TSource>, TResult> resultSelector)
         {
@@ -2195,8 +2194,8 @@ source->append(R"::(       ///     and creates a result value from each group an
         ///     Groups the elements of a sequence according to a specified key selector function
         ///     and compares the keys by using a specified comparer.
         /// </summary>
-     )::");
-source->append(R"::(   public IEnumerable<IGrouping<TKey, TSource>> GroupBy<TKey>(Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
+        public IEnumerable<)::");
+source->append(R"::(IGrouping<TKey, TSource>> GroupBy<TKey>(Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
         {
             throw new NotImplementedException();
         }
@@ -2214,9 +2213,9 @@ source->append(R"::(   public IEnumerable<IGrouping<TKey, TSource>> GroupBy<TKey
         /// <summary>
         ///     Groups the elements of a sequence according to a specified key selector function
         ///     and creates a result value from each group and its key. The elements of each
-        ///     group are projected )::");
-source->append(R"::(by using a specified function.
-        /// </summary>
+        ///     group are projected by using a specified function.
+        /)::");
+source->append(R"::(// </summary>
         public IEnumerable<TResult> GroupBy<TKey, TElement, TResult>(Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, Func<TKey, IEnumerable<TElement>, TResult> resultSelector)
         {
             throw new NotImplementedException();
@@ -2234,8 +2233,8 @@ source->append(R"::(by using a specified function.
         ///
         /// <summary>
         ///     Groups the elements of a sequence according to a specified key selector function
-    )::");
-source->append(R"::(    ///     and creates a result value from each group and its key. Key values are compared
+        ///     and creates a result value from each group and )::");
+source->append(R"::(its key. Key values are compared
         ///     by using a specified comparer, and the elements of each group are projected
         ///     by using a specified function.
         /// </summary>
@@ -2248,10 +2247,10 @@ source->append(R"::(    ///     and creates a result value from each group and i
         ///     Correlates the elements of two sequences based on equality of keys and groups
         ///     the results. The default equality comparer is used to compare keys.
         /// </summary>
-        public IEnumerable<TResult> GroupJoin<TOuter, TInner, TKey, TResult>(IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, Func<TOuter, IEnumerable<TInner>, TResu)::");
-source->append(R"::(lt> resultSelector)
+        public IEnumerable<TResult> GroupJoin<TOuter, TInner, TKey, TResult>(IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, Func<TOuter, IEnumerable<TInner>, TResult> resultSelector)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedExcept)::");
+source->append(R"::(ion();
         }
         ///
         /// <summary>
@@ -2270,11 +2269,11 @@ source->append(R"::(lt> resultSelector)
         /// </summary>
         public IEnumerable<TSource> Intersect(IEnumerable<TSource> second)
         {
-            throw )::");
-source->append(R"::(new NotImplementedException();
+            throw new NotImplementedException();
         }
         /// <summary>
-        ///     Produces the set intersection of two sequences by using the specified System.Collections.Generic.IEqualityComparer{T}
+        ///     Produces the s)::");
+source->append(R"::(et intersection of two sequences by using the specified System.Collections.Generic.IEqualityComparer{T}
         ///     to compare values.
         /// </summary>
         public IEnumerable<TSource> Intersect(IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
@@ -2292,9 +2291,9 @@ source->append(R"::(new NotImplementedException();
         }
         ///
         /// <summary>
-        ///     Correlates the eleme)::");
-source->append(R"::(nts of two sequences based on matching keys. A specified
-        ///     System.Collections.Generic.IEqualityComparer{T} is used to compare keys.
+        ///     Correlates the elements of two sequences based on matching keys. A specified
+        ///     System.Collections.Generic.IEqualityCompa)::");
+source->append(R"::(rer{T} is used to compare keys.
         /// </summary>
         public IEnumerable<TResult> Join<TOuter, TInner, TKey, TResult>(IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, Func<TOuter, TInner, TResult> resultSelector, IEqualityComparer<TKey> comparer)
         {
@@ -2313,11 +2312,11 @@ source->append(R"::(nts of two sequences based on matching keys. A specified
         ///
         /// <summary>
         ///     Performs a subsequent ordering of the elements in a sequence in ascending
-        ///  )::");
-source->append(R"::(   order by using a specified comparer.
+        ///     order by using a specified comparer.
         /// </summary>
         /// !Not implemented
-        public IOrderedEnumerable<TSource> ThenBy<TKey>(Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
+        public IOrderedEnumerable<TSource>)::");
+source->append(R"::( ThenBy<TKey>(Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
         {
             throw new NotImplementedException();
         }
@@ -2337,14 +2336,14 @@ source->append(R"::(   order by using a specified comparer.
         ///     order by using a specified comparer.
         /// </summary>
         /// !Not implemented
-        public IOrderedEnumerable<TSource> ThenByDescending<TKey>(Func<TSource, TKey> keySelector, ICompare)::");
-source->append(R"::(r<TKey> comparer)
+        public IOrderedEnumerable<TSource> ThenByDescending<TKey>(Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
         {
             throw new NotImplementedException();
         }
         ///
         /// <summary>
-        ///     Creates an array from a System.Collections.Generic.IEnumerable{T}.
+        ///     Creates an array fro)::");
+source->append(R"::(m a System.Collections.Generic.IEnumerable{T}.
         /// </summary>
         /// !Not implemented
         public TSource[] ToArray()
@@ -2364,11 +2363,11 @@ source->append(R"::(r<TKey> comparer)
         ///
         /// <summary>
         ///     Creates a System.Collections.Generic.Dictionary{TKey,TValue} from an System.Collections.Generic.IEnumerable{T}
-        ///     according to specified)::");
-source->append(R"::( key selector and element selector functions.
+        ///     according to specified key selector and element selector functions.
         /// </summary>
         /// !Not implemented
-        public Dictionary<TKey, TElement> ToDictionary<TKey, TElement>(Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
+        public Dictionary<TKey, TElement> ToDictionary<TKey, TElement>(Func<TSource, )::");
+source->append(R"::(TKey> keySelector, Func<TSource, TElement> elementSelector)
         {
             throw new NotImplementedException();
         }
@@ -2385,12 +2384,12 @@ source->append(R"::( key selector and element selector functions.
         ///
         /// <summary>
         ///     Creates a System.Collections.Generic.Dictionary{TKey,TValue} from an System.Collections.Generic.IEnumerable{T}
-        ///     according to a specified )::");
-source->append(R"::(key selector function, a comparer, and an element
+        ///     according to a specified key selector function, a comparer, and an element
         ///     selector function.
         /// </summary>
         /// !Not implemented
-        public Dictionary<TKey, TElement> ToDictionary<TKey, TElement>(Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey> comparer)
+        public Dictionary<TKey, TElement> ToDictionary<TKey, TElem)::");
+source->append(R"::(ent>(Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey> comparer)
         {
             throw new NotImplementedException();
         }
@@ -2409,14 +2408,14 @@ source->append(R"::(key selector function, a comparer, and an element
         ///     according to a specified key selector function.
         /// </summary>
         /// !Not implemented
-        public ILookup<TKey, TSource> ToLookup<TKey)::");
-source->append(R"::(>(Func<TSource, TKey> keySelector)
+        public ILookup<TKey, TSource> ToLookup<TKey>(Func<TSource, TKey> keySelector)
         {
             throw new NotImplementedException();
         }
         ///
         /// <summary>
-        ///     Creates a System.Linq.Lookup{TKey,TElement} from an System.Collections.Generic.IEnumerable{T}
+        ///     Creates a System.Linq.Lookup{TKey,TElement} from an System.Collections.G)::");
+source->append(R"::(eneric.IEnumerable{T}
         ///     according to specified key selector and element selector functions.
         /// </summary>
         /// !Not implemented
@@ -2432,13 +2431,13 @@ source->append(R"::(>(Func<TSource, TKey> keySelector)
         /// !Not implemented
         public ILookup<TKey, TSource> ToLookup<TKey>(Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
         {
-    )::");
-source->append(R"::(        throw new NotImplementedException();
+            throw new NotImplementedException();
         }
         ///
         /// <summary>
         ///     Creates a System.Linq.Lookup{TKey,TElement} from an System.Collections.Generic.IEnumerable{T}
-        ///     according to a specified key selector function, a comparer and an element
+        ///     according to a specified key sele)::");
+source->append(R"::(ctor function, a comparer and an element
         ///     selector function.
         /// </summary>
         /// !Not implemented
@@ -2457,13 +2456,13 @@ source->append(R"::(        throw new NotImplementedException();
         }
         ///
         /// <summary>
-        ///     Produces th)::");
-source->append(R"::(e set union of two sequences by using a specified System.Collections.Generic.IEqualityComparer{T}.
+        ///     Produces the set union of two sequences by using a specified System.Collections.Generic.IEqualityComparer{T}.
         /// </summary>
         /// !Not implemented
         public IEnumerable<TSource> Union(IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
         {
-            throw new NotImplementedException();
+   )::");
+source->append(R"::(         throw new NotImplementedException();
         }
         ///
         /// <summary>

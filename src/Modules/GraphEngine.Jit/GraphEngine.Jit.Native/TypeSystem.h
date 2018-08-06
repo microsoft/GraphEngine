@@ -1,5 +1,6 @@
 #pragma once
 #include "TrinityCommon.h"
+#include <cstring>
 #include <algorithm>
 #include <vector>
 

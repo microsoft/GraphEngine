@@ -9,6 +9,7 @@
 #include <climits>
 #include <cstdio>
 #include <cstdint>
+#include <cstring>
 #include <cmath>
 #include <unistd.h>
 #include <sys/types.h>
@@ -53,6 +54,6 @@ int GetLastError();
 #define DLL_EXPORT extern "C" __attribute__ ((visibility ("default")))
 #define DLL_IMPORT extern "C" __attribute__ ((visibility ("default")))
 #define THREAD_LOCAL thread_local
-#define _strdup strdup
-#define _popen popen
-#define _pclose pclose
+inline char* _strdup(const char* s) { return strdup(s); }
+inline FILE* _popen(const char* command, const char* type) { return popen(command, type); }
+inline int _pclose(FILE* stream) { return pclose(stream); }
