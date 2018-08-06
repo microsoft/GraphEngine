@@ -7,20 +7,25 @@ using namespace cpplinq;
 using namespace Trinity;
 
 #if defined(TRINITY_PLATFORM_WINDOWS)
-
-#include "mscoree.h"
 static const String coreCLRDll("coreclr.dll");
-
 #elif defined(TRINITY_PLATFORM_LINUX)
-
-#include "coreclrhost.h"
 static const String coreCLRDll("libcoreclr.so");
-
 #elif defined(TRINITY_PLATFORM_DARWIN)
-
-#include "coreclrhost.h"
 static const String coreCLRDll("libcoreclr.dylib");
+#endif
 
+#if defined(TRINITY_PLATFORM_WINDOWS)
+#include "mscoree.h"
+    const char* ppath_sep = "\\";
+    const char* penv_sep  = ";";
+    using pclrhost_t = ICLRRuntimeHost4*;
+    using pdll_t     = HMODULE;
+#else
+#include "coreclrhost.h"
+    const char* ppath_sep = "/";
+    const char* penv_sep  = ":";
+    using pclrhost_t = void*;
+    using pdll_t     = void*;
 #endif
 
 // sample host here: https://github.com/dotnet/samples/blob/master/core/hosting/host.cpp
@@ -42,18 +47,6 @@ class HostEnvironment
 
     // The list of paths to the assemblies that will be trusted by CoreCLR
     String m_tpaList;
-
-#if defined(TRINITY_PLATFORM_WINDOWS)
-    const char* ppath_sep = "\\";
-    const char* penv_sep  = ";";
-    using pclrhost_t = ICLRRuntimeHost4*;
-    using pdll_t     = HMODULE;
-#else
-    const char* ppath_sep = "/";
-    const char* penv_sep  = ":";
-    using pclrhost_t = void*;
-    using pdll_t     = void*;
-#endif
 
     pclrhost_t m_CLRRuntimeHost;
     pdll_t     m_coreCLRModule;
@@ -240,7 +233,7 @@ class HostEnvironment
 */
 
         hr = host->CreateAppDomainWithManager(
-            GetHostExeName().ToWcharArray(),   // The friendly name of the AppDomain
+            Path::GetFileNameWithoutExtension(Path::GetProcessPath()).ToWcharArray(),   // The friendly name of the AppDomain
             // Flags:
             // APPDOMAIN_ENABLE_PLATFORM_SPECIFIC_APPS
             // - By default CoreCLR only allows platform neutral assembly to be run. To allow
@@ -286,7 +279,7 @@ class HostEnvironment
     String RemoveExtensionAndNi(String fileName)
     {
         // Remove extension, if it exists
-        auto idx = fileName.LastIndexOf('.');
+        auto idx = fileName.IndexOfLast('.');
         if (idx != String::npos)
         {
             fileName = fileName.Substring(0, idx);
