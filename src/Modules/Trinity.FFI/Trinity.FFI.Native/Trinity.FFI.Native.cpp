@@ -25,7 +25,7 @@ TRINITYFFINATIVE_API TRINITY_INTERFACES*  TRINITY_FFI_GET_INTERFACES()
     return &g_interfaces;
 }
 
-TRINITYFFINATIVE_API TrinityErrorCode TRINITY_FFI_INITIALIZE(int n_apppaths, wchar_t** lp_apppaths, char* config_path, char* storage_root)
+TRINITYFFINATIVE_API TrinityErrorCode TRINITY_FFI_INITIALIZE(int n_apppaths, char** lp_apppaths, char* config_path, char* storage_root)
 {
     /*
 

@@ -40,6 +40,12 @@ namespace Trinity
             static const char DirectorySeparator = UnixDirectorySeparator;
 #endif
 
+#if defined(TRINITY_PLATFORM_LINUX)
+            static const char* _procSelf = "/proc/self/exe";
+#elif defined(TRINITY_PLATFORM_DARWIN)
+            static const char* _procSelf = "/proc/curproc/exe";
+#endif
+
 #pragma warning(pop)
             inline bool IsUncPath(const String& path)
             {
@@ -365,7 +371,6 @@ namespace Trinity
                 if (g_AssemblyPath != "") return g_AssemblyPath;
 
 #if defined(TRINITY_PLATFORM_WINDOWS)
-                // XXX for CoreCLR, Trinity.C.dll is shared so multiple instances will get the same path for the assembly
                 Array<u16char> lpFilename(1024);
                 HMODULE        hmodule = GetModuleHandleW(L"Trinity.C.dll");
                 /* If Trinity.C.dll is absent, we default to the executing assembly (sending NULL into the API) */
@@ -374,9 +379,8 @@ namespace Trinity
                 g_AssemblyPath = GetDirectoryName(GetFullPath(String::FromWcharArray(lpFilename, -1)));
                 return g_AssemblyPath;
 #else
-                // XXX does not make sense if MyAssemblyPath always point to the mono host...
                 char* filename_buf    = new char[1024];
-                int filename_buf_size = readlink("/proc/self/exe", filename_buf, 1024);
+                int filename_buf_size = readlink(_procSelf, filename_buf, 1024);
                 if (filename_buf_size < 0) { filename_buf_size = 0; }
                 filename_buf[filename_buf_size] = 0;
                 String ret(filename_buf);

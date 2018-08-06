@@ -7,13 +7,13 @@
 
 TRINITY_INTERFACES* g_TrinityInterfaces;
 
-int InitCLR(int n_apppaths, const std::vector<std::wstring> & lp_apppaths, char* config_path, char* storage_root)
+int InitCLR(int n_apppaths, const std::vector<std::string> & lp_apppaths, char* config_path, char* storage_root)
 {
-    wchar_t** _paths = new wchar_t*[lp_apppaths.size()];
-    wchar_t** _ppath  = _paths;
+    char** _paths = new char*[lp_apppaths.size()];
+    char** _ppath  = _paths;
     for (const auto &p : lp_apppaths)
     {
-        *_ppath++ = _wcsdup(p.c_str());
+        *_ppath++ = _strdup(p.c_str());
     }
     return TRINITY_FFI_INITIALIZE(n_apppaths, _paths, config_path, storage_root);
 }
