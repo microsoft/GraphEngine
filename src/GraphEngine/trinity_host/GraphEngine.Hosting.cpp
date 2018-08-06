@@ -75,9 +75,10 @@ class HostEnvironment
 
     std::vector<String> GetCoreCLRPaths()
     {
+        auto dotnet_info = Environment::Run("dotnet --info");
         auto base_path =
-            from(Environment::Run("dotnet --info"))
-            .where([](auto &p) {return p.Contains("Base Path:"); })
+            from(dotnet_info)
+            .where([](const String &p) {return p.Contains("Base Path:"); })
             .first_or_default();
         auto idx = base_path.IndexOf(':');
         if (idx == String::npos)
@@ -99,12 +100,13 @@ class HostEnvironment
 
             base_path = Path::GetParent(Path::GetParent(base_path));
             base_path = Path::Combine(base_path, "shared", "Microsoft.NETCore.App");
+            auto dirs = Directory::GetDirectories(base_path);
             return
-                from(Directory::GetDirectories(base_path))
+                from(dirs)
                 .select(Path::GetFileName)
                 // TODO proper version validation
-                .where([](auto& p) { return p.StartsWith("2."); })
-                .select([&](auto& p) { return Path::Combine(base_path, p); })
+                .where([](const String& p) { return p.StartsWith("2."); })
+                .select([&](const String& p) { return Path::Combine(base_path, p); })
                 .to_vector();
             //Path::GetDirectoryName
         }
@@ -161,10 +163,13 @@ class HostEnvironment
 
         //  include subdirectories of anything in m_appPaths
         //  usually the resource satellites are placed in these subdirectories.
-        auto split_entries = m_appPaths.Split(penv_sep, String::StringSplitOptions::RemoveEmptyEntries);
-        for (auto &p : from(split_entries).select_many(Directory::GetDirectories))
+        std::vector<String> split_entries = m_appPaths.Split(penv_sep, String::StringSplitOptions::RemoveEmptyEntries).ToList();
+        for (const String& entry : split_entries)
         {
-            m_appPaths += penv_sep + p;
+            for (const String& p: Directory::GetDirectories(entry))
+            {
+                m_appPaths += penv_sep + p;
+            }
         }
 
         if (!m_appPaths.Empty())
