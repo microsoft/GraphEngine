@@ -11,8 +11,6 @@ ADD_DOTNET(GraphEngine.Jit/GraphEngine.Jit.fsproj
     PACKAGE GraphEngine.Jit
     DEPENDS GraphEngine.Core)
 
-# TODO xplat native components
-
 # TODO unit test
 
 ADD_DEPENDENCIES(BUILD_GraphEngine.Jit GraphEngine.Jit.Native)

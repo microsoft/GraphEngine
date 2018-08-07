@@ -47,6 +47,12 @@
     <Content Include="..\..\..\..\bin\trinity_ffi.dll">
       <PackagePath>runtimes\win-x64\native</PackagePath>
     </Content>
+    <Content Include="..\..\..\..\bin\libtrinity_host.so">
+      <PackagePath>runtimes\linux-x64\native</PackagePath>
+    </Content>
+    <Content Include="..\..\..\..\bin\libtrinity_ffi.so">
+      <PackagePath>runtimes\linux-x64\native</PackagePath>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

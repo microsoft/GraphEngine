@@ -42,7 +42,7 @@ IF (PYTHON AND SWIG)
                        COMMAND ${CMAKE_COMMAND} -E touch ${OUTPUT}
                        DEPENDS ${DEPS} trinity_ffi)
 
-    ADD_CUSTOM_TARGET(target ALL DEPENDS ${OUTPUT})
+    ADD_CUSTOM_TARGET(REISEN_PY ALL DEPENDS ${OUTPUT})
 
     INSTALL(CODE "execute_process(COMMAND ${PYTHON} ${SETUP_PY} install)")
 ENDIF()

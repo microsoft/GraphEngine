@@ -57,6 +57,11 @@
       <PackagePath>runtimes\win-x64\native</PackagePath>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Remove="$(ProjectDirectory)..\..\..\..\bin\libGraphEngine.Jit.Native.so" />
+    <Content Include="$(ProjectDirectory)..\..\..\..\bin\libGraphEngine.Jit.Native.so">
+      <PackagePath>runtimes\linux-x64\native</PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
