@@ -3,7 +3,6 @@ setup.py
 """
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
-from Redy.Tools.Version import Version
 from Redy.Tools.PathLib import Path
 from os.path import relpath
 import os.path
@@ -88,7 +87,7 @@ setup(name='GraphEngine',
       zip_safe=False)
 lib_dir_path = Path(lib_dir)
 for each in Path(whl_dir).list_dir(lambda path: 
-            os.path.split(path)[-1].startswith(f"GraphEngine-") 
+            os.path.split(path)[-1].startswith("GraphEngine-") 
             and 
             path.endswith('.whl')):
     with open(str(lib_dir_path.into(each.relative())), 'wb') as w, open(str(each), 'rb') as r:
