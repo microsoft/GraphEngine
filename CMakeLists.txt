@@ -100,25 +100,27 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     GET_FILENAME_COMPONENT(_DN_projname "${DOTNET_PROJECT}" NAME)
     STRING(REGEX REPLACE "\\.[^.]*$" "" _DN_projname_noext ${_DN_projname})
 
-    IF(NOT _DN_CONFIG STREQUAL "")
-        SET(_DN_CONFIG "Release")
-    ENDIF()
+    SET(_DN_PROPS "")
 
     IF(_DN_RELEASE)
-        SET(_DN_CONFIG "Release")
+        SET(_DN_CONFIG Release)
     ELSEIF(_DN_DEBUG)
-        SET(_DN_CONFIG "Debug")
+        SET(_DN_CONFIG Debug)
     ENDIF()
 
-    IF(NOT _DN_PLATFORM STREQUAL "")
-        SET(_DN_PLATFORM "Any CPU")
+    IF(NOT _DN_CONFIG)
+        SET(_DN_CONFIG Release)
     ENDIF()
 
     IF(_DN_X86)
-        SET(_DN_PLATFORM "x86")
+        SET(_DN_PLATFORM x86)
     ELSEIF(_DN_X64)
-        SET(_DN_PLATFORM "x64")
+        SET(_DN_PLATFORM x64)
     ELSEIF(_DN_ANYCPU)
+        SET(_DN_PLATFORM "Any CPU")
+    ENDIF()
+
+    IF(NOT _DN_PLATFORM)
         SET(_DN_PLATFORM "Any CPU")
     ENDIF()
 
@@ -132,11 +134,11 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     SET(DOTNET_ARGUMENTS ${_DN_ARGUMENTS} PARENT_SCOPE)
 
     IF(WIN32)
-        SET(DOTNET_BUILD_PROPERTIES "" PARENT_SCOPE)
+        SET(DOTNET_BUILD_PROPERTIES "Platform=\"${_DN_PLATFORM}\"" PARENT_SCOPE)
     ELSEIF(_DN_NETCOREAPP)
-        SET(DOTNET_BUILD_PROPERTIES "\;TargetFrameworks=netcoreapp2.0" PARENT_SCOPE)
+        SET(DOTNET_BUILD_PROPERTIES "Platform=\"${_DN_PLATFORM}\"\;TargetFrameworks=netcoreapp2.0" PARENT_SCOPE)
     ELSE()
-        SET(DOTNET_BUILD_PROPERTIES "\;TargetFrameworks=netstandard2.0" PARENT_SCOPE)
+        SET(DOTNET_BUILD_PROPERTIES "Platform=\"${_DN_PLATFORM}\"\;TargetFrameworks=netstandard2.0" PARENT_SCOPE)
     ENDIF()
 
 ENDFUNCTION()
@@ -150,7 +152,7 @@ MACRO(ADD_DOTNET_DEPENDENCY_TARGETS)
     FOREACH(pkg ${DOTNET_PACKAGES})
         ADD_CUSTOM_TARGET(
             DOTNET_PURGE_CACHE_${pkg}
-            COMMAND ${CMAKE_COMMAND} -E echo "=======[x] Purging nuget package cache for ${pkg}"
+            COMMAND ${CMAKE_COMMAND} -E echo "======= [x] Purging nuget package cache for ${pkg}"
             COMMAND ${CMAKE_COMMAND} -E remove_directory "${NUGET_CACHE_PATH}/${pkg}/${TRINITY_VERSION}"
             SOURCES ${DOTNET_deps}
         )
@@ -165,14 +167,15 @@ ENDMACRO()
 
 FUNCTION(ADD_DOTNET DOTNET_PROJECT)
     DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
+
     MESSAGE("-- Adding dotnet project ${DOTNET_PROJPATH}")
     ADD_CUSTOM_TARGET(
         BUILD_${DOTNET_PROJNAME} ALL
-        ${CMAKE_COMMAND} -E echo "=======> Building .NET project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
+        ${CMAKE_COMMAND} -E echo "=======> Building .NET project ${DOTNET_PROJNAME} (${DOTNET_CONFIG} ${DOTNET_PLATFORM})"
         COMMAND ${DOTNET_EXE} restore ${DOTNET_PROJPATH}
-        COMMAND ${DOTNET_EXE} clean ${DOTNET_PROJPATH} /p:Platform=${DOTNET_PLATFORM}${DOTNET_BUILD_PROPERTIES}
-        COMMAND ${DOTNET_EXE} build ${DOTNET_PROJPATH} -c "${DOTNET_CONFIG}" "/p:Platform=${DOTNET_PLATFORM}${DOTNET_BUILD_PROPERTIES}"
-        COMMAND ${DOTNET_EXE} pack ${DOTNET_PROJPATH} -c "${DOTNET_CONFIG}" "/p:Platform=${DOTNET_PLATFORM}${DOTNET_BUILD_PROPERTIES}"
+        COMMAND ${DOTNET_EXE} clean ${DOTNET_PROJPATH} ${DOTNET_BUILD_PROPERTIES}
+        COMMAND ${DOTNET_EXE} build ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES}
+        COMMAND ${DOTNET_EXE} pack ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES}
         SOURCES ${DOTNET_deps}
     )
     ADD_DOTNET_DEPENDENCY_TARGETS()
@@ -201,7 +204,7 @@ FUNCTION(ADD_MSBUILD DOTNET_PROJECT)
         BUILD_${DOTNET_PROJNAME}
         ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Clean
         COMMAND ${TRINITY_NUGET_EXE} restore ${DOTNET_PROJPATH}
-        COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build "/p:Platform=${DOTNET_PLATFORM};Configuration=${DOTNET_CONFIG}"
+        COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build "/p:Platform=\"${DOTNET_PLATFORM}\"\;Configuration=\"${DOTNET_CONFIG}\""
         SOURCES ${DOTNET_deps}
     )
     ADD_DOTNET_DEPENDENCY_TARGETS()

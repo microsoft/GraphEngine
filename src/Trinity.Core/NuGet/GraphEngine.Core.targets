@@ -43,7 +43,7 @@
           BeforeTargets="TslCompileCs"
           DependsOnTargets="TslCodegenPrepare"
           Condition="'@(TslCodegen)' != ''">
-    <Exec Command="&quot;$(TSL_CODEGEN_PATH)&quot; --ProjectRoot &quot;$(MSBuildProjectDirectory)&quot; --ScriptList &quot;@(TslCodegen)&quot; --RootNamespace $(RootNamespace) --OutputPath $(TslOutputPath) $(TslDebugArguments) $(TslAdditionalArguments)" />
+    <Exec Command="&quot;$(TSL_CODEGEN_PATH)&quot; --ProjectRoot &quot;$(MSBuildProjectDirectory)&quot; --ScriptList &quot;@(TslCodegen)&quot; --RootNamespace $(RootNamespace) --OutputPath &quot;$(TslOutputPath)&quot; $(TslDebugArguments) $(TslAdditionalArguments)" />
   </Target>
 
   <Target Name="TslCompileCs"
