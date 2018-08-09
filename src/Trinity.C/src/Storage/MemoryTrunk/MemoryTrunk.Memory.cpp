@@ -96,7 +96,7 @@ namespace Storage
         *      Committed region consists of two parts
         * */
 
-        uint32_t minimum_to_expand = ((head.append_head + minimum_size + Memory::PAGE_RANGE) & Memory::PAGE_MASK) - head.committed_head;
+        uint32_t minimum_to_expand = ((head.append_head + minimum_size + Memory::PAGE_RANGE_32) & Memory::PAGE_MASK_32) - head.committed_head;
         uint32_t CurrentVMAllocUnit = TrinityConfig::VMAllocUnit < minimum_to_expand ? minimum_to_expand : TrinityConfig::VMAllocUnit;
         bool ret = true;
         uint32_t available_space = 0;
@@ -251,7 +251,7 @@ namespace Storage
             return false;
         }
 
-        temp_head_group.committed_head = (temp_head_group.append_head + Memory::PAGE_RANGE) & Memory::PAGE_MASK;
+        temp_head_group.committed_head = (temp_head_group.append_head + Memory::PAGE_RANGE_32) & Memory::PAGE_MASK_32;
         committed_tail = 0;
 
         hashtable->ReleaseAllEntryLocksExceptArena();

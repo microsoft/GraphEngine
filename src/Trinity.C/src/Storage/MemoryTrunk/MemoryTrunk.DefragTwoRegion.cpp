@@ -199,27 +199,27 @@ namespace Storage
         uint64_t mem_to_decommit = 0;
         if (addressTable[fwd_index].offset >= committed_tail)
         {
-            mem_to_decommit = (uint64_t)(addressTable[fwd_index].offset - committed_tail) & Memory::PAGE_MASK;
+            mem_to_decommit = (uint64_t)(addressTable[fwd_index].offset - committed_tail) & Memory::PAGE_MASK_32;
             if (mem_to_decommit > 0 && committed_tail < TrunkLength)
                 BufferedDecommitMemory(trunkPtr + committed_tail, mem_to_decommit);
         }
         else
         {
-            mem_to_decommit = (TrunkLength - committed_tail) & Memory::PAGE_MASK;
+            mem_to_decommit = (TrunkLength - committed_tail) & Memory::PAGE_MASK_32;
 
             if (mem_to_decommit > 0)
                 BufferedDecommitMemory(trunkPtr + committed_tail, mem_to_decommit);
 
             //Console::WriteLine("Two Region Decommitted {0}", mem_to_decommit);
 
-            mem_to_decommit = (uint64_t)(addressTable[fwd_index].offset & Memory::PAGE_MASK);
+            mem_to_decommit = (uint64_t)(addressTable[fwd_index].offset & Memory::PAGE_MASK_32);
 
             if (mem_to_decommit > 0)
                 BufferedDecommitMemory(trunkPtr, mem_to_decommit);
             //Console::WriteLine("Two Region Decommitted {0}", mem_to_decommit);
         }
 
-        committed_tail = addressTable[fwd_index].offset & Memory::PAGE_MASK;
+        committed_tail = addressTable[fwd_index].offset & Memory::PAGE_MASK_32;
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }

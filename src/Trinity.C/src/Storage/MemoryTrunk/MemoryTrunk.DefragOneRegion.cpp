@@ -213,13 +213,13 @@ namespace Storage
         /*********************************************** Epilog ****************************************************/
     Defragment_Unlock_And_Exit:
         uint64_t mem_to_decommit = 0;
-        mem_to_decommit = (uint64_t)((addressTable[fwd_index].offset - committed_tail) & Memory::PAGE_MASK);
+        mem_to_decommit = (uint64_t)((addressTable[fwd_index].offset - committed_tail) & Memory::PAGE_MASK_32);
         if (mem_to_decommit > 0 && committed_tail < TrunkLength)
         {
             BufferedDecommitMemory(trunkPtr + committed_tail, mem_to_decommit);
             //Console::WriteLine("One Region Decommitted {0}", mem_to_decommit);
         }
-        committed_tail = addressTable[fwd_index].offset & Memory::PAGE_MASK;
+        committed_tail = addressTable[fwd_index].offset & Memory::PAGE_MASK_32;
         ////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }
