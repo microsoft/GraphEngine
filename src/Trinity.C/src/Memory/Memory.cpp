@@ -144,25 +144,31 @@ namespace Memory
 
     /***************************************
 
-    From MSDN:
-    An attempt to commit a page that is
-    already committed does not cause the
-    function to fail. This means that you
-    can commit pages without first determining
-    the current commitment state of each page.
+    MSDN:
+    An attempt to commit a page that is already committed does not cause 
+    the function to fail. This means that you can commit pages without 
+    first determining the current commitment state of each page.
 
-    MemoryCommit adds the specified address range
-    to the committed memory set with read-write
-    permissions, and then zeros the region.
+    MemoryCommit adds the specified address range to the committed memory 
+    set with read-write permissions, and then zeros the region.
 
-    ***************************************/
+    ------------------------------------------
+
+    LINUX MPROTECT(2):
+    Changes protection for the memory range [addr, addr+len-1]
+
+    Note, addr should be aligned to system page, and thus in our
+    case we should "overcommit" the range [ addr aligned to page, addr ].
+
+    *****************************************/
+
     void * MemoryCommit(void * buf, uint64_t size)
     {
 #if defined(TRINITY_PLATFORM_WINDOWS)
         //Commit the desired size, the actually allocated space will be larger(up to a whole page) than the desired size.
         return VirtualAlloc(buf, size, MEM_COMMIT, PAGE_READWRITE);
 #else
-        if (0 == mprotect(buf, size, PROT_READ | PROT_WRITE))
+        if (0 == mprotect(buf & PAGE_MASK_64, size + (buf & PAGE_RANGE_64), PROT_READ | PROT_WRITE))
         {
             memset(buf, 0, size);
             return buf;
@@ -176,12 +182,12 @@ namespace Memory
 
     char * ReserveAlloc(uint64_t reserved_size, uint64_t alloc_size)
     {
+        uint64_t size = RoundUpToPage_64(alloc_size);
 #if defined(TRINITY_PLATFORM_WINDOWS)
         void* buf = VirtualAlloc(NULL, reserved_size, MEM_RESERVE/* | MEM_LARGE_PAGES */, PAGE_READWRITE);
         if (buf == NULL)//allocation failed
             return NULL;
 
-        uint64_t size = (alloc_size + PAGE_RANGE) & PAGE_MASK;
         //Commit the desired size, the actually allocated space will be larger(up to a whole page) than the desired size.
         void* alloc_buf = VirtualAlloc(buf, size, MEM_COMMIT, PAGE_READWRITE);
         if (alloc_buf == NULL)
@@ -194,7 +200,6 @@ namespace Memory
         void * p = mmap(NULL, reserved_size, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
         if (MAP_FAILED == p)
             return NULL;
-        uint64_t size = (alloc_size + PAGE_RANGE) & PAGE_MASK;
         if (mprotect(p, size, PROT_READ | PROT_WRITE) == 0)
             return (char*)p;
         else

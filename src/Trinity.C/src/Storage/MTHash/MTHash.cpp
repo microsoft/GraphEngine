@@ -49,7 +49,7 @@ namespace Storage
         MTEntries = (MTEntry*)Memory::MemoryCommit(MTEntryPtr, (size_t)AllocatedEntryCount << 4);
 
         Buckets = (int*) Memory::MemoryCommit(BucketPtr, BucketCount << 2);
-        memset((char*) Buckets, -1, Memory::RoundUpToPage(BucketCount << 2));
+        memset((char*) Buckets, -1, Memory::RoundUpToPage_32(BucketCount << 2));
 
         if (!TrinityConfig::ReadOnly() && BucketLockers == nullptr)
             BucketLockers = (std::atomic<char>*)Memory::MemoryCommit(BucketLockersPtr, BucketCount);
@@ -148,7 +148,7 @@ namespace Storage
     uint64_t MTHash::CommittedMemorySize()
     {
         uint32_t entry_count = ExtendedInfo->EntryCount.load(std::memory_order_relaxed);
-        return Memory::RoundUpToPage(MTHash::BucketCount << 2) /* Buckets */ + Memory::RoundUpToPage(MTHash::BucketCount) /* Bucket Lock */ + Memory::RoundUpToPage(entry_count << 3) /* CellEntries */ + Memory::RoundUpToPage(entry_count << 4) /* MTEntries */;
+        return Memory::RoundUpToPage_32(MTHash::BucketCount << 2) /* Buckets */ + Memory::RoundUpToPage_32(MTHash::BucketCount) /* Bucket Lock */ + Memory::RoundUpToPage_32(entry_count << 3) /* CellEntries */ + Memory::RoundUpToPage_32(entry_count << 4) /* MTEntries */;
     }
 
     uint64_t MTHash::TotalCellSize()

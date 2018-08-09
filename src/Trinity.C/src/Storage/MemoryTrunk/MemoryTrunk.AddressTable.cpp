@@ -148,7 +148,7 @@ namespace Storage
             uint64_t mem_to_decommit = 0;
             if (AddressTableOneRegion)
             {
-                mem_to_decommit = (uint64_t) ((HeadGroupShadow.committed_head - committed_tail) & Memory::PAGE_MASK);
+                mem_to_decommit = (uint64_t) ((HeadGroupShadow.committed_head - committed_tail) & Memory::PAGE_MASK_32);
                 if (mem_to_decommit > 0 && committed_tail < TrunkLength)
                 {
                     BufferedDecommitMemory(trunkPtr + committed_tail, mem_to_decommit);
@@ -156,14 +156,14 @@ namespace Storage
             }
             else
             {
-                mem_to_decommit = (TrunkLength - committed_tail) & Memory::PAGE_MASK;
+                mem_to_decommit = (TrunkLength - committed_tail) & Memory::PAGE_MASK_32;
 
                 if (mem_to_decommit > 0)
                 {
                     BufferedDecommitMemory(trunkPtr + committed_tail, mem_to_decommit);
                 }
 
-                mem_to_decommit = (uint64_t) (HeadGroupShadow.committed_head & Memory::PAGE_MASK);
+                mem_to_decommit = (uint64_t) (HeadGroupShadow.committed_head & Memory::PAGE_MASK_32);
 
                 if (mem_to_decommit > 0)
                 {

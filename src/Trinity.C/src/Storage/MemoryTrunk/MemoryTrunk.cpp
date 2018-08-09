@@ -66,6 +66,9 @@ namespace Storage
     void MemoryTrunk::AllocateTrunk(void* mem_ptr, uint64_t size, bool LockPhysicalMemory)
     {
         size = size < (TrinityConfig::MemoryPoolSize >> 8) ? (TrinityConfig::MemoryPoolSize >> 8) : size;
+        // align size to system page
+        size = Memory::RoundUpToPage_64(size);
+
         trunkPtr = (char*)Memory::MemoryCommit(mem_ptr, size);
         if (trunkPtr == nullptr)
         {
