@@ -3,8 +3,7 @@ setup.py
 """
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
-from Redy.Tools.Version import Version
-from Redy.Tools.PathLib import Path
+from os import listdir
 from os.path import relpath
 import os.path
 from functools import reduce
@@ -13,20 +12,27 @@ from functools import reduce
 # wrapping paths with r guarantees relpath to have paths on the same drive.
 
 def r(p):
-    if isinstance(p, str):
-        p = Path(p)
 
     search_path = p
     relatives = []
-    while search_path.parent() != search_path:
+    while os.path.dirname(search_path) != search_path:
 
         maybe_link_root = str(search_path)
         if os.path.islink(maybe_link_root):
-            return str(reduce(lambda current, sub: current.into(sub), reversed(relatives), Path(os.readlink(maybe_link_root))))
-        relatives.append(search_path.relative())
-        search_path = search_path.parent()
+            p = reduce(os.path.join, reversed(relatives), os.readlink(maybe_link_root))
+            break
+        relatives.append(os.path.basename(search_path))
+        search_path = os.path.dirname(search_path)
 
-    return str(p)
+    return p
+
+
+# workaround: shellutils cp is not reliable. roll our own.
+
+def cp(source, target):
+
+    with open(target, 'wb') as w, open(source, 'rb') as r:
+        w.write(r.read())
 
 
 build_dir = r('${CMAKE_CURRENT_BINARY_DIR}')
@@ -39,7 +45,7 @@ inc_ffi   = relpath(r('${TRINITY_FFI_NATIVE_DIR}'), build_dir)
 inc_tri   = relpath(r('${TRINITY_C_INCLUDE_DIR}'), build_dir)
 inc_jit   = relpath(r('${GRAPHENGINE_JIT_NATIVE_DIR}'), build_dir)
 whl_dir   = relpath(r('dist'), build_dir)
-dep_path  = relpath(r(str(Path(src_dir, "GraphEngine", "DotNet", "Dependencies.csproj"))), build_dir)
+dep_path  = relpath(r(os.path.join(src_dir, "GraphEngine", "DotNet", "Dependencies.csproj")), build_dir)
 
 try:
     with open('${CMAKE_CURRENT_SOURCE_DIR}/README.rst', encoding='utf-8') as f:
@@ -86,11 +92,8 @@ setup(name='GraphEngine',
           'Programming Language :: Python :: 3.7',
           'Programming Language :: Python :: Implementation :: CPython'],
       zip_safe=False)
-lib_dir_path = Path(lib_dir)
-for each in Path(whl_dir).list_dir(lambda path: 
-            os.path.split(path)[-1].startswith(f"GraphEngine-") 
-            and 
-            path.endswith('.whl')):
-    with open(str(lib_dir_path.into(each.relative())), 'wb') as w, open(str(each), 'rb') as r:
-        w.write(r.read())
-    
+
+for f in listdir(whl_dir):
+    if f.startswith("GraphEngine-") and f.endswith('.whl'):
+        cp(os.path.join(whl_dir, f), os.path.join(lib_dir, f))
+

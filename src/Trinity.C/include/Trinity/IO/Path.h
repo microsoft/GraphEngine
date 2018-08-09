@@ -354,7 +354,7 @@ namespace Trinity
                 Array<u16char> lpFilename(1024);
                 GetModuleFileNameW(nullptr, lpFilename, static_cast<DWORD>(lpFilename.Length()));
                 lpFilename[lpFilename.Length() - 1] = 0;
-                return lpFilename;
+                return String(lpFilename.data());
 #else
                 char* filename_buf    = new char[1024];
                 int filename_buf_size = readlink("/proc/self/exe", filename_buf, 1024);

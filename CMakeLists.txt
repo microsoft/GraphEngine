@@ -100,24 +100,23 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     GET_FILENAME_COMPONENT(_DN_projname "${DOTNET_PROJECT}" NAME)
     STRING(REGEX REPLACE "\\.[^.]*$" "" _DN_projname_noext ${_DN_projname})
 
-    IF(NOT _DN_CONFIG STREQUAL "")
-        SET(_DN_CONFIG "Release")
-    ENDIF()
-
     IF(_DN_RELEASE)
-        SET(_DN_CONFIG "Release")
+        SET(_DN_CONFIG Release)
     ELSEIF(_DN_DEBUG)
-        SET(_DN_CONFIG "Debug")
+        SET(_DN_CONFIG Debug)
     ENDIF()
 
-    IF(NOT _DN_PLATFORM STREQUAL "")
-        SET(_DN_PLATFORM "Any CPU")
+    IF(NOT _DN_CONFIG)
+        SET(_DN_CONFIG Release)
     ENDIF()
+
+    # If platform is not specified, do not pass the Platform property.
+    # dotnet will pick the default Platform.
 
     IF(_DN_X86)
-        SET(_DN_PLATFORM "x86")
+        SET(_DN_PLATFORM x86)
     ELSEIF(_DN_X64)
-        SET(_DN_PLATFORM "x64")
+        SET(_DN_PLATFORM x64)
     ELSEIF(_DN_ANYCPU)
         SET(_DN_PLATFORM "Any CPU")
     ENDIF()
@@ -131,13 +130,18 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     SET(DOTNET_PROJDIR  ${_DN_proj_dir} PARENT_SCOPE)
     SET(DOTNET_ARGUMENTS ${_DN_ARGUMENTS} PARENT_SCOPE)
 
-    IF(WIN32)
-        SET(DOTNET_BUILD_PROPERTIES "" PARENT_SCOPE)
-    ELSEIF(_DN_NETCOREAPP)
-        SET(DOTNET_BUILD_PROPERTIES "\;TargetFrameworks=netcoreapp2.0" PARENT_SCOPE)
-    ELSE()
-        SET(DOTNET_BUILD_PROPERTIES "\;TargetFrameworks=netstandard2.0" PARENT_SCOPE)
+    IF(_DN_PLATFORM)
+        SET(_DN_PLATFORM_PROP /p:Platform=${_DN_PLATFORM})
     ENDIF()
+
+    IF(_DN_NETCOREAPP)
+        SET(_DN_TFMS_PROP /p:TargetFrameworks=netcoreapp2.0)
+    ELSEIF(UNIX)
+        # Unix builds default to netstandard2.0
+        SET(_DN_TFMS_PROP /p:TargetFrameworks=netstandard2.0)
+    ENDIF()
+
+    SET(DOTNET_BUILD_PROPERTIES ${_DN_PLATFORM_PROP} ${_DN_TFMS_PROP} PARENT_SCOPE)
 
 ENDFUNCTION()
 
@@ -150,7 +154,7 @@ MACRO(ADD_DOTNET_DEPENDENCY_TARGETS)
     FOREACH(pkg ${DOTNET_PACKAGES})
         ADD_CUSTOM_TARGET(
             DOTNET_PURGE_CACHE_${pkg}
-            COMMAND ${CMAKE_COMMAND} -E echo "=======[x] Purging nuget package cache for ${pkg}"
+            COMMAND ${CMAKE_COMMAND} -E echo "======= [x] Purging nuget package cache for ${pkg}"
             COMMAND ${CMAKE_COMMAND} -E remove_directory "${NUGET_CACHE_PATH}/${pkg}/${TRINITY_VERSION}"
             SOURCES ${DOTNET_deps}
         )
@@ -165,14 +169,15 @@ ENDMACRO()
 
 FUNCTION(ADD_DOTNET DOTNET_PROJECT)
     DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
+
     MESSAGE("-- Adding dotnet project ${DOTNET_PROJPATH}")
     ADD_CUSTOM_TARGET(
         BUILD_${DOTNET_PROJNAME} ALL
-        COMMAND ${CMAKE_COMMAND} "-E echo =======> Building .NET project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
+        ${CMAKE_COMMAND} -E echo "=======> Building .NET project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
         COMMAND ${DOTNET_EXE} restore ${DOTNET_PROJPATH}
-        COMMAND ${DOTNET_EXE} clean ${DOTNET_PROJPATH} /p:Platform=${DOTNET_PLATFORM}${DOTNET_BUILD_PROPERTIES}
-        COMMAND ${DOTNET_EXE} build ${DOTNET_PROJPATH} -c "${DOTNET_CONFIG}" "/p:Platform=${DOTNET_PLATFORM}${DOTNET_BUILD_PROPERTIES}"
-        COMMAND ${DOTNET_EXE} pack ${DOTNET_PROJPATH} -c "${DOTNET_CONFIG}" "/p:Platform=${DOTNET_PLATFORM}${DOTNET_BUILD_PROPERTIES}"
+        COMMAND ${DOTNET_EXE} clean ${DOTNET_PROJPATH} ${DOTNET_BUILD_PROPERTIES}
+        COMMAND ${DOTNET_EXE} build ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES}
+        COMMAND ${DOTNET_EXE} pack ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES}
         SOURCES ${DOTNET_deps}
     )
     ADD_DOTNET_DEPENDENCY_TARGETS()
@@ -198,51 +203,26 @@ FUNCTION(ADD_MSBUILD DOTNET_PROJECT)
     DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
     MESSAGE("-- Adding MSBuild project ${DOTNET_PROJPATH}")
     ADD_CUSTOM_TARGET(
-        BUILD_${DOTNET_PROJNAME}
-        ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Clean
+        BUILD_${DOTNET_PROJNAME} ALL
         COMMAND ${TRINITY_NUGET_EXE} restore ${DOTNET_PROJPATH}
-        COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build "/p:Platform=${DOTNET_PLATFORM};Configuration=${DOTNET_CONFIG}"
+        COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Clean /p:Configuration="${DOTNET_CONFIG}"
+        COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build ${DOTNET_BUILD_PROPERTIES} /p:Configuration="${DOTNET_CONFIG}"
+        COMMAND ${DOTNET_EXE} pack ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES}
         SOURCES ${DOTNET_deps}
     )
     ADD_DOTNET_DEPENDENCY_TARGETS()
 ENDFUNCTION()
 
-#  Native components
-
+ADD_SUBDIRECTORY(src/GraphEngine)
 ADD_SUBDIRECTORY(src/Trinity.TSL)
 ADD_SUBDIRECTORY(src/Trinity.C)
 ADD_SUBDIRECTORY(src/Trinity.Core)
-ADD_SUBDIRECTORY(src/GraphEngine)
 ADD_SUBDIRECTORY(src/Modules/GraphEngine.Jit)
 ADD_SUBDIRECTORY(src/Modules/Trinity.FFI)
-
-#  DotNet components
-
-ADD_DOTNET(
-    src/Modules/GraphEngine.Storage.Composite/GraphEngine.Storage.Composite.sln
-    PACKAGE GraphEngine.Storage.Composite
-    DEPENDS GraphEngine.Core
-)
-
-ADD_DOTNET(
-    src/Modules/LIKQ/LIKQ.sln
-    PACKAGE GraphEngine.LIKQ
-    DEPENDS GraphEngine.Core
-)
-
-ADD_DOTNET(
-    src/Modules/GraphEngine.Client/GraphEngine.Client.sln
-    PACKAGE GraphEngine.Client
-    DEPENDS GraphEngine.Core
-)
-
-ADD_DOTNET(
-    src/Modules/GraphEngine.DynamicCluster/GraphEngine.DynamicCluster.sln 
-    PACKAGE GraphEngine.DynamicCluster Trinity.Azure.Storage
-    DEPENDS
-        GraphEngine.Core
-        GraphEngine.Client
-)
+ADD_SUBDIRECTORY(src/Modules/LIKQ)
+ADD_SUBDIRECTORY(src/Modules/GraphEngine.Storage.Composite)
+ADD_SUBDIRECTORY(src/Modules/GraphEngine.Client)
+ADD_SUBDIRECTORY(src/Modules/GraphEngine.DynamicCluster)
 
 ADD_MSBUILD(
     src/Modules/GraphEngine.ServiceFabric/GraphEngine.ServiceFabric.sln 
@@ -255,7 +235,7 @@ ADD_MSBUILD(
         GraphEngine.Client
         GraphEngine.Storage.Composite
         GraphEngine.DynamicCluster
-        Trinity.Azure.Storage
+        GraphEngine.Azure.BlobStorage
     X64
     CONFIG RelSkipSFApp
 )
