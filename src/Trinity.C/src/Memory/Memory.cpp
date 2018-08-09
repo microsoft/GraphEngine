@@ -5,7 +5,6 @@
 #include "TrinityCommon.h"
 #include <Trinity/Diagnostics/Log.h>
 #include <os/os.h>
-#include <io>
 #include "Memory/Memory.h"
 #if !defined(TRINITY_PLATFORM_WINDOWS)
 #include <sys/types.h>
@@ -168,7 +167,10 @@ namespace Memory
         //Commit the desired size, the actually allocated space will be larger(up to a whole page) than the desired size.
         return VirtualAlloc(buf, size, MEM_COMMIT, PAGE_READWRITE);
 #else
-        if (0 == mprotect(buf & PAGE_MASK_64, size + (buf & PAGE_RANGE_64), PROT_READ | PROT_WRITE))
+        uint64_t makeup_size = PAGE_RANGE_64 & (uint64_t)buf;
+        void*    buf_aligned = (void*)(PAGE_MASK_64 & (uint64_t)buf);
+
+        if (0 == mprotect(buf_aligned , size + makeup_size, PROT_READ | PROT_WRITE))
         {
             memset(buf, 0, size);
             return buf;
