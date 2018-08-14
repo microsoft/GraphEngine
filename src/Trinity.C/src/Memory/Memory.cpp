@@ -303,7 +303,7 @@ namespace Memory
         memoryStatus.dwLength = sizeof(memoryStatus);
         if (!GlobalMemoryStatusEx(&memoryStatus))
         {
-            WriteLine("Get GlobalMemoryStatus: {0}\n", GetLastError());
+            WriteLine(LogLevel::Error, "Get GlobalMemoryStatus: {0}\n", GetLastError());
             return;
         }
 
@@ -313,7 +313,7 @@ namespace Memory
         {
             if (max_wsz <= WorkingSetDecreaseStep)
             {
-                WriteLine("Increasing working set size failed.\r\n");
+                WriteLine(LogLevel::Error, "Increasing working set size failed.\r\n");
                 break;
             }
 
