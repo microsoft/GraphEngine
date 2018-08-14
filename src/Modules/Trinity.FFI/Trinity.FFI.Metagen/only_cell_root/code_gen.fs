@@ -261,7 +261,7 @@ static void use_%s(int64_t cellId, int32_t options)
     acc.type = %u;
 
     auto errCode = LockCell(acc, options, _use_%s);
-    if (errCode)
+    if (TrinityErrorCode_FAILED(errCode))
         throw errCode;    
 }                       " ty_name ty_name ty_name typeid ty_name
 
@@ -278,7 +278,7 @@ static void load_%s(int64_t cellId, char** trinity_loaded_content_buff, int *tri
     acc.type = %u;
 
     auto errCode = LoadCell(acc);
-    if (errCode)
+    if (TrinityErrorCode_FAILED(errCode))
         throw errCode;
    
     *trinity_loaded_content_buff = reinterpret_cast<char*>(acc.cellPtr);
@@ -296,26 +296,19 @@ static void use_%s_with_data(int64_t cellId, char* content)
     acc.type = %u;
       
     std::function<int32_t(void*)> caller = [&content](void* acc_ptr){
-        printf(\"BNew ing\");
         auto errCode = _%s_BNew(acc_ptr);
 
-        printf(\"BNew done\");
-
-        if (errCode)
+        if (TrinityErrorCode_FAILED(errCode))
             return errCode;
-        
-        printf(\"BSet ing\");
+
         _%s_BSet(acc_ptr, reinterpret_cast<void*>(content));
-        printf(\"BSet done\");
 
         return 0;
     };
 
     auto errCode = LockCell(acc, _CreateNewOnCellNotFound, caller);
 
-    printf(\"Lock done\");
-
-    if (errCode)
+    if (TrinityErrorCode_FAILED(errCode))
         throw errCode;
 }              
                     " ty_name typeid ty_name ty_name
@@ -343,7 +336,7 @@ static void save_%s(int64_t cellId, char* content)
     acc.type = %u;
     acc.cellPtr = reinterpret_cast<int64_t>(content);
     auto errCode = SaveCell(acc);
-    if(errCode)
+    if(TrinityErrorCode_FAILED(errCode))
         throw errCode;
 }
                         " ty_name typeid
@@ -377,7 +370,7 @@ static void save_%s(int64_t cellId, char* content)
 #include \"swig_accessor.h\"
 #include \"CellAccessor.h\"
 #include \"stdio.h\"
-
+#define TrinityErrorCode_FAILED(x) (x != TrinityErrorCode::E_SUCCESS)
 const int32_t _CreateNewOnCellNotFound = 2;
 
 #define SWIG_FILE_WITH_INIT

@@ -35,6 +35,6 @@
     <PackageReference Include="System.Collections.Immutable" version="1.4.0" />
     <PackageReference Include="System.IO.Compression.ZipFile" version="4.3.0" />
     <PackageReference Include="System.Runtime.Numerics" version="4.3.0" />
-    <PackageReference Include="System.ValueTuple" version="4.4.0" />
+    <PackageReference Include="System.ValueTuple" version="4.5.0" />
   </ItemGroup>
 </Project>

@@ -37,7 +37,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="2.6.1" />
     <PackageReference Include="Serialize.Linq" Version="1.7.0" />
     <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
-    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0' OR '$(TargetFramework)'=='netcoreapp2.0'">

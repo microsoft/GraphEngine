@@ -160,7 +160,7 @@ def init_trinity_service() -> Module:
         break
 
     # noinspection PyProtectedMember
-    dirs = dll_asm_paths.map(Path.parent).map(str).to_set().to_list()._
+    dirs = dll_asm_paths.map(Path.parent).map(lambda it : str(it).encode()).to_set().to_list()._
 
     __ffi = __import__('ffi')
     p1 = str(graph_engine_config_path.into("trinity.xml")).encode('ascii')
