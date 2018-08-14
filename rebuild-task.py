@@ -2,7 +2,7 @@ from Redy.Tools.PathLib import Path
 import argparse
 import os
 
-os.system('pip uninstall GraphEngine -y')
+os.system('pip3 uninstall GraphEngine -y')
 nuget = Path(r"~/.nuget/packages")
 
 for each in ('graphengine.ffi', 'graphengine.ffi.metagen'):
@@ -22,8 +22,8 @@ try:
 except OSError:
     pass
 
-os.system(r"cd {}\build && cmake --build . --config Release".format(current))
-# os.system(r'cd {} && powershell -F build.ps1'.format(current.into('tools')))
+#os.system(r"cd {}\build && cmake --build . --config Release".format(current))
+os.system(r'cd {} && powershell -F build.ps1'.format(current.into('tools')))
 os.system(r'cd {0}\src\Modules\Trinity.FFI\Trinity.FFI '
           r'&& dotnet build Trinity.FFI.csproj '
           r'&& dotnet pack Trinity.FFI.csproj'
@@ -32,5 +32,5 @@ os.system(r'cd {0}\src\Modules\Trinity.FFI\Trinity.FFI '
           r'&& dotnet pack Trinity.FFI.MetaGen.fsproj'.format(current))
 
 whl = sorted(map(str, bin.list_dir(lambda it: it.endswith(".whl"))))[-1]
-os.system(f"cd {bin} && pip install {whl}")
+os.system(f"cd {bin} && pip3 install {whl} --user")
 os.system(r"cd {} && python python-run-test.py".format(current))

@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
 PROJECT(Trinity.FFI.Python)
 
-FIND_PROGRAM(PYTHON "python3")
-FIND_PROGRAM(SWIG   "swig")
+FIND_PACKAGE(PythonInterp 3)
+FIND_PACKAGE(SWIG 3.0.10)
 
 SET(TRINITY_FFI_NATIVE_DIR     "${CMAKE_CURRENT_SOURCE_DIR}/../Trinity.FFI.Native")
 SET(GRAPHENGINE_JIT_NATIVE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../GraphEngine.Jit/GraphEngine.Jit.Native")
@@ -24,7 +24,7 @@ SET(swigcxx               "${CMAKE_CURRENT_BINARY_DIR}/Trinity.FFI.SWIG_wrap.cxx
 
 SET(DEPS                  ${pysrc} ${swigi} ${typesys} ${swigh} Trinity GraphEngine.Jit.Native trinity_ffi)
 
-IF (PYTHON AND SWIG)
+IF (PYTHONINTERP_FOUND AND SWIG_FOUND)
     IF(WIN32)
         SET(ext_cxx_flags "['/Zi', '/D_CRT_SECURE_NO_WARNINGS', '/DUNICODE', '/D_UNICODE']")
         SET(ext_linker_flags "['/DEBUG']")
@@ -36,13 +36,15 @@ IF (PYTHON AND SWIG)
     CONFIGURE_FILE(${SETUP_PY_IN} ${SETUP_PY})
 
     ADD_CUSTOM_COMMAND(OUTPUT ${OUTPUT}
-                       COMMAND ${SWIG} -modern -c++ -builtin -outcurrentdir -python "${swigi}"
+        COMMAND ${SWIG_EXECUTABLE} -modern -c++ -builtin -outcurrentdir -python "${swigi}"
                        COMMAND ${CMAKE_COMMAND} -E copy ${swigpy} ${PYPACKAGE_DIR}
-                       COMMAND ${PYTHON} ${SETUP_PY} bdist_wheel
+                       COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} bdist_wheel
                        COMMAND ${CMAKE_COMMAND} -E touch ${OUTPUT}
                        DEPENDS ${DEPS} trinity_ffi)
 
     ADD_CUSTOM_TARGET(REISEN_PY ALL DEPENDS ${OUTPUT})
 
-    INSTALL(CODE "execute_process(COMMAND ${PYTHON} ${SETUP_PY} install)")
+    INSTALL(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} install)")
+ELSE()
+    MESSAGE("Python environment not setup, skipping build")
 ENDIF()
