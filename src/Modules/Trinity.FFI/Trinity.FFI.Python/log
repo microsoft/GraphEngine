@@ -1,12 +1,567 @@
-Test Name:	Trinity.FFI.Metagen.UnitTests.Test.TestTSLBytes
-Test FullName:	Trinity.FFI.Metagen.UnitTests.Test.TestTSLBytes
-Test Source:	R:\repo\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.Metagen.UnitTests\Test.cs : line 40
-Test Outcome:	Failed
-Test Duration:	0:00:00.001
+Test Name:	Trinity.FFI.Metagen.UnitTests.Test.TestOnlyCellRootSwigGen
+Test Outcome:	Passed
+Result StandardOutput:
+S
+List`1
+C
+=====================
 
-Result StackTrace:
-at Trinity.Storage.Composite.CompositeStorage.CodeGen(String srcDir, String rootNamespace, Int32 cellTypeOffset, String projDir)
-   at Trinity.Storage.Composite.CompositeStorage.AddStorageExtension(String tslSrcDir, String rootNamespace)
-   at Trinity.FFI.Metagen.UnitTests.Test..ctor(ITestOutputHelper output) in R:\repo\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.Metagen.UnitTests\Test.cs:line 30
-Result Message:	Trinity.Storage.Composite.TSLCodeGenException : Exception of type 'Trinity.Storage.Composite.TSLCodeGenException' was thrown.
+%module
+%include <stdint.i>
+%include <std_wstring.i>
+%include <cstring.i>
+%cstring_output_allocate_size(char **trinity_loaded_content_buff, int *trinity_loaded_content_len, TRINITY_JUSTPASS);
+%begin %{
+#define TRINITY_JUSTPASS
+
+#include "swig_accessor.h"
+#include "CellAccessor.h"
+#include "stdio.h"
+
+typedef int32_t (*_constructor_helper)(void*);
+
+#define SWIG_FILE_WITH_INIT
+#define SWIG_PYTHON_STRICT_BYTE_CHAR
+static int32_t cell_C_BNew(int64_t);
+static void* cell_C_BGet(int64_t);
+static void cell_C_BSet(int64_t, void*);
+static void cell_C_SSet_i(int64_t, int32_t);
+static int32_t cell_C_SGet_i(int64_t);
+static int32_t cell_C_SGet_i_BGet(int64_t);
+static void cell_C_SGet_i_BSet(int64_t, int32_t);
+static void cell_C_SSet_ls(int64_t, void*);
+static void* cell_C_SGet_ls(int64_t);
+static void* cell_C_SGet_ls_BGet(int64_t);
+static void cell_C_SGet_ls_BSet(int64_t, void*);
+static void cell_C_SGet_ls_LSet(int64_t, void*, int32_t);
+static bool cell_C_SGet_ls_LContains(int64_t, void*);
+static int32_t cell_C_SGet_ls_LCount(int64_t);
+static bool cell_C_SGet_ls_LInsertAt(int64_t, void*, int32_t);
+static bool cell_C_SGet_ls_LRemoveAt(int64_t, int32_t);
+static void cell_C_SGet_ls_LAppend(int64_t, void*);
+static void* cell_C_SGet_ls_LGet(int64_t, int32_t);
+static void* cell_C_SGet_ls_LGet_BGet(int64_t, int64_t);
+static void cell_C_SGet_ls_LGet_BSet(int64_t, void*, int64_t);
+static void cell_C_SGet_ls_LGet_SSet_i(int64_t, int32_t, int64_t);
+static int32_t cell_C_SGet_ls_LGet_SGet_i(int64_t, int64_t);
+static int32_t cell_C_SGet_ls_LGet_SGet_i_BGet(int64_t, int64_t);
+static void cell_C_SGet_ls_LGet_SGet_i_BSet(int64_t, int32_t, int64_t);
+static void cell_C_SGet_ls_LGet_SSet_s(int64_t, wchar_t*, int64_t);
+static wchar_t* cell_C_SGet_ls_LGet_SGet_s(int64_t, int64_t);
+static wchar_t* cell_C_SGet_ls_LGet_SGet_s_BGet(int64_t, int64_t);
+static void cell_C_SGet_ls_LGet_SGet_s_BSet(int64_t, wchar_t*, int64_t);
+static void cell_C_SSet_s(int64_t, void*);
+static void* cell_C_SGet_s(int64_t);
+static void* cell_C_SGet_s_BGet(int64_t);
+static void cell_C_SGet_s_BSet(int64_t, void*);
+static void cell_C_SGet_s_SSet_i(int64_t, int32_t);
+static int32_t cell_C_SGet_s_SGet_i(int64_t);
+static int32_t cell_C_SGet_s_SGet_i_BGet(int64_t);
+static void cell_C_SGet_s_SGet_i_BSet(int64_t, int32_t);
+static void cell_C_SGet_s_SSet_s(int64_t, wchar_t*);
+static wchar_t* cell_C_SGet_s_SGet_s(int64_t);
+static wchar_t* cell_C_SGet_s_SGet_s_BGet(int64_t);
+static void cell_C_SGet_s_SGet_s_BSet(int64_t, wchar_t*);
+static void use_cell_C(int64_t, int32_t);
+static void load_cell_C(int64_t, char** trinity_loaded_content_buff, int* trinity_loaded_content_len);
+static void use_cell_C_with_data(int64_t, char*);
+static void unlock_cell_C(int64_t);
+static void save_cell_C(int64_t, char*);
+
+constexpr static int32_t (*_cell_C_BNew)(void*) = reinterpret_cast<int32_t (*)(void*)>(0x28cbd960000ll);
+static int32_t cell_C_BNew(int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_BNew(&acc);
+}
+
+constexpr static void* (*_cell_C_BGet)(void*) = reinterpret_cast<void* (*)(void*)>(0x28cbd960040ll);
+static void* cell_C_BGet(int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_BGet(&acc);
+}
+
+constexpr static void (*_cell_C_BSet)(void*, void*) = reinterpret_cast<void (*)(void*, void*)>(0x28cbd960080ll);
+static void cell_C_BSet(void* arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_BSet(&acc, arg1);
+}
+
+
+constexpr static void (*_cell_C_SSet_i)(void*, int32_t) = reinterpret_cast<void (*)(void*, int32_t)>(0x28cbd960140ll);
+static void cell_C_SSet_i(int32_t arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SSet_i(&acc, arg1);
+}
+
+
+constexpr static int32_t (*_cell_C_SGet_i)(void*) = reinterpret_cast<int32_t (*)(void*)>(0x28cbd960180ll);
+static int32_t cell_C_SGet_i(int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_i(&acc);
+}
+
+constexpr static int32_t (*_cell_C_SGet_i_BGet)(void*) = reinterpret_cast<int32_t (*)(void*)>(0x28cbd9601c0ll);
+static int32_t cell_C_SGet_i_BGet(int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_i_BGet(&acc);
+}
+
+constexpr static void (*_cell_C_SGet_i_BSet)(void*, int32_t) = reinterpret_cast<void (*)(void*, int32_t)>(0x28cbd960200ll);
+static void cell_C_SGet_i_BSet(int32_t arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_i_BSet(&acc, arg1);
+}
+
+
+constexpr static void (*_cell_C_SSet_ls)(void*, void*) = reinterpret_cast<void (*)(void*, void*)>(0x28cbd960240ll);
+static void cell_C_SSet_ls(void* arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SSet_ls(&acc, arg1);
+}
+
+
+constexpr static void* (*_cell_C_SGet_ls)(void*) = reinterpret_cast<void* (*)(void*)>(0x28cbd960300ll);
+static void* cell_C_SGet_ls(int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls(&acc);
+}
+
+constexpr static void* (*_cell_C_SGet_ls_BGet)(void*) = reinterpret_cast<void* (*)(void*)>(0x28cbd960340ll);
+static void* cell_C_SGet_ls_BGet(int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_BGet(&acc);
+}
+
+constexpr static void (*_cell_C_SGet_ls_BSet)(void*, void*) = reinterpret_cast<void (*)(void*, void*)>(0x28cbd960380ll);
+static void cell_C_SGet_ls_BSet(void* arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_BSet(&acc, arg1);
+}
+
+
+constexpr static void (*_cell_C_SGet_ls_LSet)(void*, int32_t, void*) = reinterpret_cast<void (*)(void*, int32_t, void*)>(0x28cbd960440ll);
+static void cell_C_SGet_ls_LSet(void* arg2, int32_t arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_LSet(&acc, arg1, arg2);
+}
+
+
+constexpr static bool (*_cell_C_SGet_ls_LContains)(void*, void*) = reinterpret_cast<bool (*)(void*, void*)>(0x28cbd960540ll);
+static bool cell_C_SGet_ls_LContains(void* arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_LContains(&acc, arg1);
+}
+
+
+constexpr static int32_t (*_cell_C_SGet_ls_LCount)(void*) = reinterpret_cast<int32_t (*)(void*)>(0x28cbd960640ll);
+static int32_t cell_C_SGet_ls_LCount(int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_LCount(&acc);
+}
+
+constexpr static bool (*_cell_C_SGet_ls_LInsertAt)(void*, int32_t, void*) = reinterpret_cast<bool (*)(void*, int32_t, void*)>(0x28cbd960680ll);
+static bool cell_C_SGet_ls_LInsertAt(void* arg2, int32_t arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_LInsertAt(&acc, arg1, arg2);
+}
+
+
+constexpr static bool (*_cell_C_SGet_ls_LRemoveAt)(void*, int32_t) = reinterpret_cast<bool (*)(void*, int32_t)>(0x28cbd960780ll);
+static bool cell_C_SGet_ls_LRemoveAt(int32_t arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_LRemoveAt(&acc, arg1);
+}
+
+
+constexpr static void (*_cell_C_SGet_ls_LAppend)(void*, void*) = reinterpret_cast<void (*)(void*, void*)>(0x28cbd960840ll);
+static void cell_C_SGet_ls_LAppend(void* arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_LAppend(&acc, arg1);
+}
+
+
+constexpr static void* (*_cell_C_SGet_ls_LGet)(void*, int32_t) = reinterpret_cast<void* (*)(void*, int32_t)>(0x28cbd9608c0ll);
+static void* cell_C_SGet_ls_LGet(int32_t arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_LGet(&acc, arg1);
+}
+
+
+constexpr static void* (*_cell_C_SGet_ls_LGet_BGet)(void*, int64_t) = reinterpret_cast<void* (*)(void*, int64_t)>(0x28cbd960940ll);
+static void* cell_C_SGet_ls_LGet_BGet(int64_t arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_LGet_BGet(&acc, arg1);
+}
+
+
+constexpr static void (*_cell_C_SGet_ls_LGet_BSet)(void*, int64_t, void*) = reinterpret_cast<void (*)(void*, int64_t, void*)>(0x28cbd960a00ll);
+static void cell_C_SGet_ls_LGet_BSet(void* arg2, int64_t arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_LGet_BSet(&acc, arg1, arg2);
+}
+
+
+constexpr static void (*_cell_C_SGet_ls_LGet_SSet_i)(void*, int64_t, int32_t) = reinterpret_cast<void (*)(void*, int64_t, int32_t)>(0x28cbd960b00ll);
+static void cell_C_SGet_ls_LGet_SSet_i(int32_t arg2, int64_t arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_LGet_SSet_i(&acc, arg1, arg2);
+}
+
+
+constexpr static int32_t (*_cell_C_SGet_ls_LGet_SGet_i)(void*, int64_t) = reinterpret_cast<int32_t (*)(void*, int64_t)>(0x28cbd960b80ll);
+static int32_t cell_C_SGet_ls_LGet_SGet_i(int64_t arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_LGet_SGet_i(&acc, arg1);
+}
+
+
+constexpr static int32_t (*_cell_C_SGet_ls_LGet_SGet_i_BGet)(void*, int64_t) = reinterpret_cast<int32_t (*)(void*, int64_t)>(0x28cbd960c00ll);
+static int32_t cell_C_SGet_ls_LGet_SGet_i_BGet(int64_t arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_LGet_SGet_i_BGet(&acc, arg1);
+}
+
+
+constexpr static void (*_cell_C_SGet_ls_LGet_SGet_i_BSet)(void*, int64_t, int32_t) = reinterpret_cast<void (*)(void*, int64_t, int32_t)>(0x28cbd960c80ll);
+static void cell_C_SGet_ls_LGet_SGet_i_BSet(int32_t arg2, int64_t arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_LGet_SGet_i_BSet(&acc, arg1, arg2);
+}
+
+
+constexpr static void (*_cell_C_SGet_ls_LGet_SSet_s)(void*, int64_t, wchar_t*) = reinterpret_cast<void (*)(void*, int64_t, wchar_t*)>(0x28cbd960d00ll);
+static void cell_C_SGet_ls_LGet_SSet_s(wchar_t* arg2, int64_t arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_LGet_SSet_s(&acc, arg1, arg2);
+}
+
+
+constexpr static wchar_t* (*_cell_C_SGet_ls_LGet_SGet_s)(void*, int64_t) = reinterpret_cast<wchar_t* (*)(void*, int64_t)>(0x28cbd960e00ll);
+static wchar_t* cell_C_SGet_ls_LGet_SGet_s(int64_t arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_LGet_SGet_s(&acc, arg1);
+}
+
+
+constexpr static wchar_t* (*_cell_C_SGet_ls_LGet_SGet_s_BGet)(void*, int64_t) = reinterpret_cast<wchar_t* (*)(void*, int64_t)>(0x28cbd960e80ll);
+static wchar_t* cell_C_SGet_ls_LGet_SGet_s_BGet(int64_t arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_LGet_SGet_s_BGet(&acc, arg1);
+}
+
+
+constexpr static void (*_cell_C_SGet_ls_LGet_SGet_s_BSet)(void*, int64_t, wchar_t*) = reinterpret_cast<void (*)(void*, int64_t, wchar_t*)>(0x28cbd960f00ll);
+static void cell_C_SGet_ls_LGet_SGet_s_BSet(wchar_t* arg2, int64_t arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_ls_LGet_SGet_s_BSet(&acc, arg1, arg2);
+}
+
+
+constexpr static void (*_cell_C_SSet_s)(void*, void*) = reinterpret_cast<void (*)(void*, void*)>(0x28cbd961000ll);
+static void cell_C_SSet_s(void* arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SSet_s(&acc, arg1);
+}
+
+
+constexpr static void* (*_cell_C_SGet_s)(void*) = reinterpret_cast<void* (*)(void*)>(0x28cbd9610c0ll);
+static void* cell_C_SGet_s(int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_s(&acc);
+}
+
+constexpr static void* (*_cell_C_SGet_s_BGet)(void*) = reinterpret_cast<void* (*)(void*)>(0x28cbd961100ll);
+static void* cell_C_SGet_s_BGet(int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_s_BGet(&acc);
+}
+
+constexpr static void (*_cell_C_SGet_s_BSet)(void*, void*) = reinterpret_cast<void (*)(void*, void*)>(0x28cbd961140ll);
+static void cell_C_SGet_s_BSet(void* arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_s_BSet(&acc, arg1);
+}
+
+
+constexpr static void (*_cell_C_SGet_s_SSet_i)(void*, int32_t) = reinterpret_cast<void (*)(void*, int32_t)>(0x28cbd961200ll);
+static void cell_C_SGet_s_SSet_i(int32_t arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_s_SSet_i(&acc, arg1);
+}
+
+
+constexpr static int32_t (*_cell_C_SGet_s_SGet_i)(void*) = reinterpret_cast<int32_t (*)(void*)>(0x28cbd961240ll);
+static int32_t cell_C_SGet_s_SGet_i(int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_s_SGet_i(&acc);
+}
+
+constexpr static int32_t (*_cell_C_SGet_s_SGet_i_BGet)(void*) = reinterpret_cast<int32_t (*)(void*)>(0x28cbd961280ll);
+static int32_t cell_C_SGet_s_SGet_i_BGet(int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_s_SGet_i_BGet(&acc);
+}
+
+constexpr static void (*_cell_C_SGet_s_SGet_i_BSet)(void*, int32_t) = reinterpret_cast<void (*)(void*, int32_t)>(0x28cbd9612c0ll);
+static void cell_C_SGet_s_SGet_i_BSet(int32_t arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_s_SGet_i_BSet(&acc, arg1);
+}
+
+
+constexpr static void (*_cell_C_SGet_s_SSet_s)(void*, wchar_t*) = reinterpret_cast<void (*)(void*, wchar_t*)>(0x28cbd961300ll);
+static void cell_C_SGet_s_SSet_s(wchar_t* arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_s_SSet_s(&acc, arg1);
+}
+
+
+constexpr static wchar_t* (*_cell_C_SGet_s_SGet_s)(void*) = reinterpret_cast<wchar_t* (*)(void*)>(0x28cbd9613c0ll);
+static wchar_t* cell_C_SGet_s_SGet_s(int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_s_SGet_s(&acc);
+}
+
+constexpr static wchar_t* (*_cell_C_SGet_s_SGet_s_BGet)(void*) = reinterpret_cast<wchar_t* (*)(void*)>(0x28cbd961400ll);
+static wchar_t* cell_C_SGet_s_SGet_s_BGet(int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_s_SGet_s_BGet(&acc);
+}
+
+constexpr static void (*_cell_C_SGet_s_SGet_s_BSet)(void*, wchar_t*) = reinterpret_cast<void (*)(void*, wchar_t*)>(0x28cbd961440ll);
+static void cell_C_SGet_s_SGet_s_BSet(wchar_t* arg1, int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    return _cell_C_SGet_s_SGet_s_BSet(&acc, arg1);
+}
+
+
+
+static void use_cell_C(int64_t cellId, int32_t options)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    auto errCode = LockCell(acc, options, _cell_C_BNew);
+    if (errCode)
+        throw errCode;
+}
+
+
+static void load_cell_C(int64_t cellId, char** trinity_loaded_content_buff, int *trinity_loaded_content_len)
+{
+    CellAccessor acc;
+
+    acc.cellId = cellId;
+    acc.type = 1;
+
+    auto errCode = LoadCell(acc);
+    if (errCode)
+        throw errCode;
+
+    *trinity_loaded_content_buff = reinterpret_cast<char*>(acc.cellPtr);
+    *trinity_loaded_content_len = acc.size;
+}
+
+static void use_cell_C_with_data(int64_t cellId, char* content)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+
+    _constructor_helper constructor = [&content](void* arg){
+        return _cell_C_BSet(arg, reinterpret_cast<void*>(content));
+    };
+
+    auto errCode = LockCell(acc, options, constructor);
+    if (errCode)
+        throw errCode;
+}
+
+
+static void unlock_cell_C(int64_t cellId)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    UnlockCell(acc);
+}
+
+
+static void save_cell_C(int64_t cellId, char* content)
+{
+    CellAccessor acc;
+    acc.cellId = cellId;
+    acc.type = 1;
+    acc.cellPtr = reinterpret_cast<int64_t>(content);
+    auto errCode = SaveCell(acc);
+    if(errCode)
+        throw errCode;
+}
+
+%}
+static int32_t cell_C_BNew(int64_t);
+static void* cell_C_BGet(int64_t);
+static void cell_C_BSet(int64_t, void*);
+static void cell_C_SSet_i(int64_t, int32_t);
+static int32_t cell_C_SGet_i(int64_t);
+static int32_t cell_C_SGet_i_BGet(int64_t);
+static void cell_C_SGet_i_BSet(int64_t, int32_t);
+static void cell_C_SSet_ls(int64_t, void*);
+static void* cell_C_SGet_ls(int64_t);
+static void* cell_C_SGet_ls_BGet(int64_t);
+static void cell_C_SGet_ls_BSet(int64_t, void*);
+static void cell_C_SGet_ls_LSet(int64_t, void*, int32_t);
+static bool cell_C_SGet_ls_LContains(int64_t, void*);
+static int32_t cell_C_SGet_ls_LCount(int64_t);
+static bool cell_C_SGet_ls_LInsertAt(int64_t, void*, int32_t);
+static bool cell_C_SGet_ls_LRemoveAt(int64_t, int32_t);
+static void cell_C_SGet_ls_LAppend(int64_t, void*);
+static void* cell_C_SGet_ls_LGet(int64_t, int32_t);
+static void* cell_C_SGet_ls_LGet_BGet(int64_t, int64_t);
+static void cell_C_SGet_ls_LGet_BSet(int64_t, void*, int64_t);
+static void cell_C_SGet_ls_LGet_SSet_i(int64_t, int32_t, int64_t);
+static int32_t cell_C_SGet_ls_LGet_SGet_i(int64_t, int64_t);
+static int32_t cell_C_SGet_ls_LGet_SGet_i_BGet(int64_t, int64_t);
+static void cell_C_SGet_ls_LGet_SGet_i_BSet(int64_t, int32_t, int64_t);
+static void cell_C_SGet_ls_LGet_SSet_s(int64_t, wchar_t*, int64_t);
+static wchar_t* cell_C_SGet_ls_LGet_SGet_s(int64_t, int64_t);
+static wchar_t* cell_C_SGet_ls_LGet_SGet_s_BGet(int64_t, int64_t);
+static void cell_C_SGet_ls_LGet_SGet_s_BSet(int64_t, wchar_t*, int64_t);
+static void cell_C_SSet_s(int64_t, void*);
+static void* cell_C_SGet_s(int64_t);
+static void* cell_C_SGet_s_BGet(int64_t);
+static void cell_C_SGet_s_BSet(int64_t, void*);
+static void cell_C_SGet_s_SSet_i(int64_t, int32_t);
+static int32_t cell_C_SGet_s_SGet_i(int64_t);
+static int32_t cell_C_SGet_s_SGet_i_BGet(int64_t);
+static void cell_C_SGet_s_SGet_i_BSet(int64_t, int32_t);
+static void cell_C_SGet_s_SSet_s(int64_t, wchar_t*);
+static wchar_t* cell_C_SGet_s_SGet_s(int64_t);
+static wchar_t* cell_C_SGet_s_SGet_s_BGet(int64_t);
+static void cell_C_SGet_s_SGet_s_BSet(int64_t, wchar_t*);
+static void use_cell_C(int64_t, int32_t);
+static void load_cell_C(int64_t, char** trinity_loaded_content_buff, int* trinity_loaded_content_len);
+static void use_cell_C_with_data(int64_t, char*);
+static void unlock_cell_C(int64_t);
+static void save_cell_C(int64_t, char*);
 

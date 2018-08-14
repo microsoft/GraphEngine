@@ -1,3 +1,5 @@
+from functools import reduce
+
 from .dep import Dependency
 from .lib import Library
 from .env import Env, build_module
@@ -75,6 +77,17 @@ Collect: Collect
 
 
 def init_trinity_service() -> Module:
+    def call_system(*cmd):
+        shell = False
+        if len(cmd) is 1:
+            shell = True
+            cmd = cmd[0]
+        else:
+            cmd = list(cmd)
+        if call(cmd, shell=shell):
+            raise EnvironmentError("DotNet restoring failed "
+                                   "`{}`".format(repr(cmd)))
+
     module_dir = Path(__file__).parent()
     graph_engine_config_path = Env.graph_engine_config_path
     cs_proj_build_dir = graph_engine_config_path.into('Dependencies')
@@ -86,43 +99,51 @@ def init_trinity_service() -> Module:
         cs_proj_build_dir.mkdir(warning=False)
         src_cs_proj_file.move_to(cs_proj_build_dir)
 
-    cmd_patterns = [
-        "dotnet", "restore", f'"{target_cs_proj_file}"', '--packages',
-        f'"{Env.nuget_root}"'
-    ]
-
-    # restore
-    if call(cmd_patterns):
-        raise EnvironmentError("DotNet restoring failed `{}`".format(
-            ' '.join(cmd_patterns).__repr__()))
+    call_system("dotnet", "restore", f'"{target_cs_proj_file}"', '--packages',
+                f'"{Env.nuget_root}"')
 
     # search dlls
     with target_cs_proj_file.open('rb') as file:
+
         deps = [
             Dependency(
                 package_name=ref.attrs['include'],
-                version=ref.attrs["version"]).all()
+                version=ref.attrs["version"])
             for ref in BeautifulSoup(file, "lxml").select('packagereference')
-        ] | Collect | FilterDLL
+        ]
 
-    libs = [
-        Library(
-            'GraphEngine.{}'.format(module),
-            version='2.0.9328',
-            where='runtimes/win-x64/native').all()
-        for module in ['Core', 'FFI', 'Jit']
-    ] | Collect | FilterDLL
+    for dep in deps:
+        if not dep.any():
+            print(
+                'Dotnet restore failed, use `nuget` to get dependencies instead.'
+            )
+            cmd = [
+                'nuget', 'install', dep.package_name, '-Version', dep.version,
+                '-OutputDirectory', Env.nuget_root
+            ]
+            call_system(cmd)
 
+    # noinspection PyProtectedMember
+    dll_asm_paths = seq([dep.all() for dep in deps] | Collect
+                        | FilterDLL).concat((
+                            Library(
+                                'GraphEngine.{}'.format(module),
+                                version='2.0.9328',
+                                where='runtimes/win-x64/native').all()
+                            for module in ['Core', 'FFI', 'Jit'])
+                                            | Collect
+                                            | FilterDLL).to_tuple()
+
+    # noinspection PyProtectedMember
+    dll_asm_path_strs: typing.Set[str] = dll_asm_paths.map(str).to_set()._
     sys.path.append(str(module_dir.parent()))
 
     # TODO: optimize loading
-    paths_of_libs: seq[typing.Set[Path]] = seq(libs).concat(deps).to_set()
-    path_strs_of_libs: typing.Set[str] = paths_of_libs.map(str).to_set()._
 
-    while path_strs_of_libs:
+    while dll_asm_path_strs:
         any_loaded = None
 
-        for each in path_strs_of_libs:
+        for each in dll_asm_path_strs:
             try:
                 ctypes.cdll.LoadLibrary(each)
                 any_loaded = each
@@ -132,14 +153,15 @@ def init_trinity_service() -> Module:
                 continue
 
         if any_loaded:
-            path_strs_of_libs.remove(any_loaded)
+            dll_asm_path_strs.remove(any_loaded)
             continue
 
-        print('Cannot load dlls: {}'.format(Red(repr(path_strs_of_libs))))
+        print('Cannot load dlls: {}'.format(Red(repr(dll_asm_path_strs))))
         break
 
     # noinspection PyProtectedMember
-    dirs = paths_of_libs.map(Path.parent).map(str).to_set().to_list()._
+    dirs = dll_asm_paths.map(Path.parent).map(str).to_set().to_list()._
+
     __ffi = __import__('ffi')
     p1 = str(graph_engine_config_path.into("trinity.xml")).encode('ascii')
     p2 = str(graph_engine_config_path.into('storage')).encode(

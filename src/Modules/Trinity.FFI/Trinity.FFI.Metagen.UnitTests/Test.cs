@@ -28,7 +28,7 @@ namespace Trinity.FFI.Metagen.UnitTests
         {
             Global.Initialize();
             Output = output;
-            Schema = CompositeStorage.AddStorageExtension(@"C:\Users\v-wazhao\github\GraphEngine\src\Modules\Trinity.FFI\Trinity.FFI.Metagen.UnitTests\tsl", "Some");
+            Schema = CompositeStorage.AddStorageExtension(@"..\..\..\tsl", "Some");
         }
 
 
@@ -98,7 +98,7 @@ namespace Trinity.FFI.Metagen.UnitTests
         }
 
         [Fact]
-        public void TestOnlyRootSwigGen()
+        public void TestOnlyCellRootSwigGen()
         {
 
             var ty_descs = Schema.CellDescriptors.Select(TypeSystem.Make);

@@ -8,7 +8,6 @@ import operator
 
 @singleton
 class Version:
-
     def __init__(self, fns=()):
         self._fns: Tuple[Callable[[_Version], bool], ...] = fns
 
@@ -26,7 +25,7 @@ class Version:
     def compare(self, version, op):
         if not isinstance(version, _Version):
             version = _Version(version)
-        return self.__class__(self._fns + (lambda x: op(x, version),))
+        return self.__class__(self._fns + (lambda x: op(x, version), ))
 
     @compare(op=operator.lt)
     def __lt__(self, other):
@@ -50,7 +49,6 @@ class Version:
 
 
 class Dependency:
-
     def __init__(self, package_name, version, target_framework_check=None):
         self.package_name = package_name
         self.version = version
@@ -58,7 +56,12 @@ class Dependency:
 
     def all(self):
 
-        for each in Env.nuget_root.into("{}/{}/lib".format(self.package_name, self.version)).list_dir():
+        for each in Env.nuget_root.into("{}/{}/lib".format(
+                self.package_name, self.version)).list_dir():
             if each.is_dir() and self.target_framework_check(each[-1]):
                 return each.list_dir()
 
+    def any(self):
+        return any(
+            Env.nuget_root.into('{}/{}'.format(self.package_name,
+                                               self.version)).list_dir())

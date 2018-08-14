@@ -19,12 +19,14 @@ class Env:
     @property
     @cast(str)
     def meta_gen_include(self):
-        return self.nuget_root.into(r'graphengine.ffi.metagen\2.0.9328\content\include')
+        return self.nuget_root.into(
+            r'graphengine.ffi.metagen\2.0.9328\content\include')
 
     @property
     @cast(str)
     def meta_gen_lib(self):
-        return self.nuget_root.into(r'graphengine.ffi.metagen\2.0.9328\content\win-x64')
+        return self.nuget_root.into(
+            r'graphengine.ffi.metagen\2.0.9328\content\win-x64')
 
     @property
     def current_offset(self):
@@ -34,8 +36,11 @@ class Env:
 Env: Env
 
 
-def build_module(tsl_code, namespace: str):
-    new_path = Env.graph_engine_config_path.into("versions/{}.{}".format(namespace, str(time()).replace('.', '')))
+def build_module(tsl_code, namespace: str, in_process=True):
+
+    new_path = Env.graph_engine_config_path.into("versions/{}.{}".format(
+        namespace,
+        str(time()).replace('.', '')))
 
     new_path.mkdir()
 
@@ -46,24 +51,21 @@ def build_module(tsl_code, namespace: str):
         tsl_file.write(tsl_code)
 
     # swig gen
-    swig_code = Env.ffi.Jit_SwigGen(directory.encode(), namespace.encode())
+    swig_code = (Env.ffi.Jit_SwigGen if in_process else
+                 Env.ffi.Jit_SwigGenForServer)(directory.encode(),
+                                               namespace.encode())
 
-    swig_interface_filename = str(new_path.into('{namespace}.i'.format(namespace=namespace)))
+    swig_interface_filename = str(
+        new_path.into('{namespace}.i'.format(namespace=namespace)))
     with open(swig_interface_filename, 'wb') as swig_file:
         swig_file.write(swig_code)
 
     # swig build
     call([
-        "swig",
-        "-modern",
-        "-c++",
-        "-builtin",
-        "-python",
-        "-outdir",
-        directory,
-        "-o",
-        "{}/{}_wrap.cxx".format(directory, namespace),
-        str(swig_interface_filename)])
+        "swig", "-modern", "-c++", "-builtin", "-python", "-outdir", directory,
+        "-o", "{}/{}_wrap.cxx".format(directory, namespace),
+        str(swig_interface_filename)
+    ])
 
     # py setup
     py_setup_file = new_path.into('setup.py')
