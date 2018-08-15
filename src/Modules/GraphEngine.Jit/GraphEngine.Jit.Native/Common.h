@@ -8,8 +8,10 @@
 #include <io>
 using namespace asmjit;
 
-#define print(x) // std::wcout << x << std::endl
-#define debug(x) // std::wcout << #x << " = " << (x) << std::endl
+#define print(x) 
+// std::wcout << x << std::endl
+#define debug(x) 
+// std::wcout << #x << " = " << (x) << std::endl
 
 class ErrHandler : public ErrorHandler
 {

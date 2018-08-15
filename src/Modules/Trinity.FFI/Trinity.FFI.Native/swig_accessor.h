@@ -1,10 +1,11 @@
 #pragma once
 // User swig code shall include this file
 #include "CellAccessor.h"
-#include <functional>
 #include <type_traits>
 
-DLL_IMPORT int32_t LockCell(CellAccessor&, const int32_t, std::function<int32_t(void*)>);
+typedef int32_t(*construct_rawfp_t)(void*);
+
+DLL_IMPORT int32_t LockCell(CellAccessor&, const int32_t, construct_rawfp_t);
 DLL_IMPORT void UnlockCell(const CellAccessor&);
 DLL_IMPORT int32_t SaveCell(CellAccessor&);
 DLL_IMPORT int32_t LoadCell(CellAccessor&);

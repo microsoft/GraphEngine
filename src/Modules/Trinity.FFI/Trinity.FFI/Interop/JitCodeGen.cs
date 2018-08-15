@@ -27,12 +27,7 @@ namespace Trinity.FFI
         [FFIExport]
         public static string SwigGenForServer(string directory, string moduleName)
         {
-            var schema = CompositeStorage.AddStorageExtension(directory, moduleName);
-            var tyDescs = schema.CellDescriptors.Select(GraphEngine.Jit.TypeSystem.Make);
-            var collectedTydescs = MetaGen.analyzer.collect_type(tyDescs);
-            var chains = MetaGen.analyzer.generate_chaining_verb(collectedTydescs);
-            var result = MetaGen.Factory.code_gen(moduleName, chains);
-            return result;
+            throw new NotImplementedException();
         }
 
     }

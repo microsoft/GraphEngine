@@ -59,7 +59,6 @@
       <PackagePath>content\win-x64</PackagePath>
     </Content>
     
-    
     <Compile Include="Utils.fs" />
 
     <!-- Generation -->
@@ -70,9 +69,9 @@
 
     <Compile Include="CodeGen.fs" />
     <Compile Include="MetaGen.fs" />
-    <Compile Include="analyzer.fs" />
-    <Compile Include="code_gen.fs" />
-    <Compile Include="only_cell_root\code_gen.fs" />
+   <Compile Include="analyzer.fs" />
+  <Compile Include="code_gen.fs" />
+
   </ItemGroup>
 
   <ItemGroup>

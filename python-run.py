@@ -32,7 +32,7 @@ class Test(unittest.TestCase):
         tsl.bind()
         print('json cons addr: ', Env.ffi._json_cons_fn_ptr_getter())
         self.assertIn(
-            'Jit_SwigGen', Env.ffi.__dict__,
+            'Jit_SwigGenInProcess', Env.ffi.__dict__,
             'Build tsl module failed, no `Jit_SwigGen` found in `ffi` module.')
 
         c = C()

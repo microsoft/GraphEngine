@@ -32,5 +32,5 @@ os.system(r'cd {0}\src\Modules\Trinity.FFI\Trinity.FFI '
           r'&& dotnet pack Trinity.FFI.MetaGen.fsproj'.format(current))
 
 whl = sorted(map(str, bin.list_dir(lambda it: it.endswith(".whl"))))[-1]
-os.system(f"cd {bin} && pip3 install {whl} --user")
-os.system(r"cd {} && python python-run-test.py".format(current))
+os.system(f"cd {bin} && pip3 install {whl}")
+os.system(r"cd {} && python python-run.py".format(current))

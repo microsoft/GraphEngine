@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <vector>
 
-#define pdebug printf("%s, line %d, this=%llx\n", __FUNCTION__, __LINE__, this);
-#define pdebug_ printf("%s, line %d\n", __FUNCTION__, __LINE__);
+#define pdebug // printf("%s, line %d, this=%llx\n", __FUNCTION__, __LINE__, this);
+#define pdebug_ // printf("%s, line %d\n", __FUNCTION__, __LINE__);
 #pragma pack(push, 1)
 
 template<typename T> void __deepcopy(T* &dst, T* const &src)

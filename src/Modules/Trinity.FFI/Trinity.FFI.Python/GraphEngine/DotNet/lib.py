@@ -8,5 +8,4 @@ class Library:
         self.where = where
 
     def all(self):
-        return Env.nuget_root.into("{}/{}/{}".format(
-            self.package_name, self.version, self.where)).list_dir()
+        return Env.nuget_root.into("{}/{}/{}".format(self.package_name, self.version, self.where)).list_dir()

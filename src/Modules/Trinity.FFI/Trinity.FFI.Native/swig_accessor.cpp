@@ -1,12 +1,10 @@
 #include "Trinity.h"
 #include <vector>
 #include <stdint.h>
-#include <functional>
 #include "CellAccessor.h"
-#include <stdio.h>
-#include <iostream>
+typedef TrinityErrorCode(*construct_fp_t) (CellAccessor*);
 
-DLL_EXPORT TrinityErrorCode LockCell(IN OUT CellAccessor& accessor, IN const int32_t options, IN std::function<TrinityErrorCode(void*)> _caller)
+DLL_EXPORT TrinityErrorCode LockCell(IN OUT CellAccessor& accessor, IN const int32_t options, IN construct_fp_t construct)
 {
     char* ptr;
     auto type = accessor.type;
@@ -24,15 +22,13 @@ DLL_EXPORT TrinityErrorCode LockCell(IN OUT CellAccessor& accessor, IN const int
     case TrinityErrorCode::E_CELL_NOT_FOUND:
         if (options & CellAccessOptions::CreateNewOnCellNotFound)
         {
-			printf("try - calling!!!!!!");
-            ret = _caller(reinterpret_cast<void*>(&accessor));
+            ret = construct(&accessor);
 
             if (ret != TrinityErrorCode::E_SUCCESS)
             {
                 break;
             }
             ptr = (char*)accessor.cellPtr;
-			std::cout << "cellId " << accessor.cellId << " size " << accessor.size << " type " << accessor.type << std::endl;
             ret = ::CGetLockedCellInfo4AddOrUseCell(accessor.cellId, accessor.size, accessor.type, ptr, accessor.entryIndex);
 			if (ret == TrinityErrorCode::E_CELL_FOUND || ret == TrinityErrorCode::E_CELL_NOT_FOUND)
 			{
