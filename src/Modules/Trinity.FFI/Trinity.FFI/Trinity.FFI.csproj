@@ -53,6 +53,29 @@
     <Content Include="..\..\..\..\bin\libtrinity_ffi.so">
       <PackagePath>runtimes\linux-x64\native</PackagePath>
     </Content>
+
+    <Content Include="..\..\..\..\bin\trinity_ffi.lib" Link="trinity_ffi.lib">
+      <PackagePath>runtimes\win-x64\native</PackagePath>
+    </Content>
+    <Content Include="..\..\..\..\bin\Trinity.lib" Link="Trinity.lib">
+      <PackagePath>runtimes\win-x64\native</PackagePath>
+    </Content>
+
+    <Content Include="..\..\GraphEngine.Jit\GraphEngine.Jit.Native\CellAccessor.h" Link="CellAccessor.h">
+      <PackagePath>content\include</PackagePath>
+    </Content>
+    <Content Include="..\Trinity.FFI.Native\swig_accessor.h" Link="swig_accessor.h">
+      <PackagePath>content\include</PackagePath>
+    </Content>
+    <Content Include="..\..\..\Trinity.C\include\*.h">
+      <PackagePath>content\include</PackagePath>
+    </Content>
+    <Content Include="..\..\..\Trinity.C\include\os\**\*.h">
+      <PackagePath>content\include\os</PackagePath>
+    </Content>
+    <Content Include="..\..\..\Trinity.C\include\arch\**\*.h">
+      <PackagePath>content\include\arch</PackagePath>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

@@ -12,19 +12,23 @@ class Env:
     graph_engine_config_path = Path("~", ".graphengine")
     ffi: Module
 
+    #  TODO is_netstandard
     @staticmethod
     def target_framework(name: str) -> bool:
         return name.startswith('netstandard')
 
     @property
     @cast(str)
-    def meta_gen_include(self):
-        return self.nuget_root.into(r'graphengine.ffi.metagen\2.0.9328\content\include')
+    def include_path(self):
+        return self.nuget_root.into('graphengine.ffi/2.0.9328/content/include')
 
     @property
     @cast(str)
-    def meta_gen_lib(self):
-        return self.nuget_root.into(r'graphengine.ffi.metagen\2.0.9328\content\win-x64')
+    def lib_path(self):
+        platform = 'win-x64' #TODO
+        #  note, linux links to .so, no .lib needed
+        #  in the setup invocation, we specify lib name only
+        return self.nuget_root.into(f'graphengine.ffi/2.0.9328/runtime/{platform}/native')
 
     @property
     def current_offset(self):
@@ -74,9 +78,9 @@ def build_module(tsl_code, namespace: str):
             "from setuptools.extension import Extension\n"
             f"ext = Extension('_{namespace}',\n"
             f"                  sources=[r'{directory}/{namespace}_wrap.cxx'],\n"
-            f"                  include_dirs=[r'{Env.meta_gen_include}'],\n"
+            f"                  include_dirs=[r'{Env.include_path}'],\n"
             "                   libraries=['trinity_ffi', 'Trinity'],\n"
-            f"                  library_dirs=[r'{Env.meta_gen_lib}'])\n"
+            f"                  library_dirs=[r'{Env.lib_path}'])\n"
             "\n"
             f"setup(name='{namespace}',\n"
             "ext_modules=[ext],\n"
