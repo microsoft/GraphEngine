@@ -5,7 +5,7 @@
 *   (Dependencies are defined by GraphEngine.Core.props.  Be sure to import that first)
 *
 *   User-Defines:
-*     @TslCodegen         : A tsl file to compile
+*     @TslCodegen         : One or more tsl files to compile
 *     $TslOutputPath      : Output directory for the generated files, by default IntermediateOutputPath
 *
 -->
@@ -15,7 +15,8 @@
     <!--This property is used as OutputPath parameter in TSL_COMPILER_TASK-->
     <TslOutputPath Condition=" '$(TslOutputPath)' == '' ">$(IntermediateOutputPath)</TslOutputPath>
     <!--This property is used to specify the location of the genreated source code-->
-    <TslGeneratedCodePath Condition=" '$(TslGeneratedCodePath)' == '' ">$(TslOutputPath)GeneratedCode\</TslGeneratedCodePath>
+    <!--Note, generated code path is hardcoded as TslOutputPath/GeneratedCode in the codegen.-->
+    <TslGeneratedCodePath>$(TslOutputPath)\GeneratedCode\</TslGeneratedCodePath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TslDebugArguments)' == ''">
@@ -30,7 +31,7 @@
   <Target Name="TslCodegenPrepare"
           BeforeTargets="TslCodegenCs">
     <ItemGroup>
-      <OldGeneratedCode Include="$(TslGeneratedCodePath)**\*.cs" />
+      <OldGeneratedCode Include="$(TslGeneratedCodePath)\**\*.cs" />
     </ItemGroup>
     <MakeDir Directories="$(TslGeneratedCodePath)" ContinueOnError="true"/>
     <Delete Files="@(OldGeneratedCode)" ContinueOnError="true"/>
@@ -39,17 +40,13 @@
   
   <Target Name="TslCodegenCs"
           Inputs="@(TslCodegen)"
-          Outputs="$(TslGeneratedCodePath)\**\*.cs"
           BeforeTargets="TslCompileCs"
-          DependsOnTargets="TslCodegenPrepare"
           Condition="'@(TslCodegen)' != ''">
     <Exec Command="&quot;$(TSL_CODEGEN_PATH)&quot; --ProjectRoot &quot;$(MSBuildProjectDirectory)&quot; --ScriptList &quot;@(TslCodegen)&quot; --RootNamespace $(RootNamespace) --OutputPath &quot;$(TslOutputPath)&quot; $(TslDebugArguments) $(TslAdditionalArguments)" />
   </Target>
 
   <Target Name="TslCompileCs"
-          BeforeTargets="CoreCompile"
-          DependsOnTargets="TslCodegenCs"
-          Condition="'@(TslCodegen)' != ''">
+          BeforeTargets="CoreCompile" >
 
     <Error
       Text="A Graph Engine project cannot be built with Prefer32Bit option enabled. Please uncheck the toggle in project properties page, or edit the project file."
@@ -60,7 +57,7 @@
       Condition=" '$(Platform)' != 'AnyCPU' AND '$(Platform)' != 'anycpu' AND '$(Platform)' != 'x64' " />
 
     <ItemGroup>
-      <_TslGeneratedFiles Include="$(TslGeneratedCodePath)**\*.cs">
+      <_TslGeneratedFiles Include="$(TslGeneratedCodePath)\**\*.cs">
         <AutoGen>true</AutoGen>
       </_TslGeneratedFiles>
 
