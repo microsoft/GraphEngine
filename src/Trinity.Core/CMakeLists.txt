@@ -5,7 +5,4 @@ ADD_DOTNET(
     PACKAGE GraphEngine.Core)
 
 ADD_DEPENDENCIES(BUILD_Trinity.Core Trinity)
-IF(WIN32)
-    ADD_DEPENDENCIES(BUILD_Trinity.Core Trinity.C)
-ENDIF()
 ADD_DEPENDENCIES(BUILD_Trinity.Core Trinity.TSL.CodeGen)

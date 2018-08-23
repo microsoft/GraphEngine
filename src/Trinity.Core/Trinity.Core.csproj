@@ -49,8 +49,6 @@
     <Compile Remove="BuildNuGetPkg\**" />
     <EmbeddedResource Remove="BuildNuGetPkg\**" />
     <EmbeddedResource Include="Network\Http\index.html" />
-    <None Remove="..\..\bin\Trinity.dll" />
-    <None Remove="..\..\bin\libTrinity.so" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">

@@ -49,8 +49,8 @@ void help()
     Console::WriteLine("                        together with other files given in the ");
     Console::WriteLine("                        arguments.                             ");
     Console::WriteLine("    --NoWarning         Suppresses TSL transpiler warnings.    ");
-	Console::WriteLine("    --offset            Set TSL CellType offset use an integer.");
-	
+    Console::WriteLine("    --offset            Set TSL CellType offset use an integer.");
+
 }
 
 #ifdef TRINITY_PLATFORM_WINDOWS
@@ -77,7 +77,7 @@ bool get_parameters(int argc, char** argv)
                              OutputPath,
                              NoWarning,
                              Help,
-							 Offset);
+                             Offset);
 
     if (Help.value)
     {
@@ -87,11 +87,11 @@ bool get_parameters(int argc, char** argv)
 
     c_debug            = BuildDataModelingProjectWithDebugFeatures.set;
     c_namespace        = Namespace.set ? Namespace.value.Trim() : "Trinity.Extension";
-    c_project_root     = ProjectRoot.set ? ProjectRoot.value.Trim() : ".";
-    c_script_list      = ScriptFileList.value.Trim().Split(";").ToList();
-    c_output_path      = OutputPath.set ? OutputPath.value.Trim() : ".";
+    c_project_root     = ProjectRoot.set ? Path::RemoveInvalidChars(ProjectRoot.value.Trim()) : ".";
+    c_script_list      = Path::RemoveInvalidChars(ScriptFileList.value.Trim()).Split(";").ToList();
+    c_output_path      = OutputPath.set ? Path::RemoveInvalidChars(OutputPath.value.Trim()) : ".";
     c_no_warnings      = NoWarning.set;
-	c_offset           = Offset.set ? Offset.value : 0;
+    c_offset           = Offset.set ? Offset.value : 0;
 
 
     /* Append any other arguments to the file list. */
@@ -99,14 +99,13 @@ bool get_parameters(int argc, char** argv)
     {
         if (arg.StartsWith('-'))
         {
-            error("Unrecognized parameter: " + arg); 
+            error("Unrecognized parameter: " + arg);
             help();
             return false;
         }
         else
         {
-            //TODO check if arg is a valid filename
-            c_script_list.push_back(arg);
+            c_script_list.push_back(Path::RemoveInvalidChars(arg));
         }
     }
 
@@ -138,7 +137,6 @@ bool print_parameters()
     OUTPUT_PARAMETER(Debug, c_debug);
     OUTPUT_PARAMETER(Namespace, c_namespace);
     OUTPUT_PARAMETER(ProjectRoot, c_project_root);
-    //OUTPUT_PARAMETER(ScriptList, c_script_list);
     OUTPUT_PARAMETER(OutputPath, c_output_path);
     OUTPUT_PARAMETER(CellTypeOffset, c_offset);
 
@@ -201,7 +199,7 @@ int main(int argc, char** argv)
 
     QUIT_ON_ERROR(get_parameters(argc, argv));
     QUIT_ON_ERROR(print_parameters());
-	QUIT_ON_ERROR(parse_syntax_tree(unmanaged_syntax_tree));
+    QUIT_ON_ERROR(parse_syntax_tree(unmanaged_syntax_tree));
 
     QUIT_ON_ERROR(generate_source_files(unmanaged_syntax_tree));
     QUIT_ON_ERROR(reset_syntax_parser());

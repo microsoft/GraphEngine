@@ -32,6 +32,8 @@ namespace Trinity
             static const char WindowsDirectorySeparator = '\\';
             static const char UnixDirectorySeparator = '/';
             static const char *DirectorySeparators = "/\\";
+            // place \0 at the end to be able to use strchr
+            static const char InvalidPathChars[] ={ 34, 60, 62, 124, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 0 };
             extern String g_AssemblyPath;
 
 #if defined(TRINITY_PLATFORM_WINDOWS)
@@ -55,6 +57,7 @@ namespace Trinity
                     return true;
                 return false;
             }
+
             inline bool IsPathRooted(const String& path)
             {
                 /**
@@ -78,6 +81,7 @@ namespace Trinity
 #endif
                 return false;
             }
+
             /*
             True if and only if the path is root
             Note that for UNC paths, root path is of form:
@@ -388,6 +392,23 @@ namespace Trinity
                 g_AssemblyPath = GetDirectoryName(ret);
                 return g_AssemblyPath;
 #endif
+            }
+
+            inline String RemoveInvalidChars(const String& path)
+            {
+                auto _wchararray = path.ToWcharArray();
+                std::basic_string<u16char> strbuilder;
+                for (auto ch : _wchararray)
+                {
+                    if (ch == 0 || (ch <= CHAR_MAX && nullptr != strchr(InvalidPathChars, ch)))
+                    {
+                        continue;
+                    }
+
+                    strbuilder.push_back(ch);
+                }
+
+                return String(strbuilder.data());
             }
         }
     }

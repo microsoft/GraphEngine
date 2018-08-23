@@ -154,7 +154,7 @@ MACRO(ADD_DOTNET_DEPENDENCY_TARGETS)
         ADD_CUSTOM_TARGET(
             DOTNET_PURGE_CACHE_${pkg}
             COMMAND ${CMAKE_COMMAND} -E echo "======= [x] Purging nuget package cache for ${pkg}"
-            COMMAND ${CMAKE_COMMAND} -E remove_directory "${NUGET_CACHE_PATH}/${pkg}/${TRINITY_VERSION}"
+            COMMAND ${CMAKE_COMMAND} -E remove_directory "${NUGET_CACHE_PATH}/${pkg}"
             SOURCES ${DOTNET_deps}
         )
         ADD_DEPENDENCIES(BUILD_${DOTNET_PROJNAME} DOTNET_PURGE_CACHE_${pkg})

@@ -1,5 +1,8 @@
 #include "GraphEngine.Hosting.h"
 #include <cstdio>
+#include "TrinityCommon.h"
+#include <corelib>
+#include <io>
 
 int main(int argc, char** argv)
 {
