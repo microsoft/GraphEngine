@@ -151,10 +151,16 @@ MACRO(ADD_DOTNET_DEPENDENCY_TARGETS)
     ENDFOREACH()
 
     FOREACH(pkg ${DOTNET_PACKAGES})
+        SET(cache_path ${NUGET_CACHE_PATH}/${pkg})
+        IF(WIN32)
+            SET(rm_command powershell -NoLogo -NoProfile -NonInteractive -Command "Remove-Item -Recurse -Force -ErrorAction Ignore '${cache_path}'\; exit 0")
+        ELSE()
+            SET(rm_command rm -rf '${cache_path}')
+        ENDIF()
         ADD_CUSTOM_TARGET(
             DOTNET_PURGE_CACHE_${pkg}
             COMMAND ${CMAKE_COMMAND} -E echo "======= [x] Purging nuget package cache for ${pkg}"
-            COMMAND ${CMAKE_COMMAND} -E remove_directory "${NUGET_CACHE_PATH}/${pkg}"
+            COMMAND ${rm_command}
             SOURCES ${DOTNET_deps}
         )
         ADD_DEPENDENCIES(BUILD_${DOTNET_PROJNAME} DOTNET_PURGE_CACHE_${pkg})
