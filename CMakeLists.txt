@@ -151,11 +151,12 @@ MACRO(ADD_DOTNET_DEPENDENCY_TARGETS)
     ENDFOREACH()
 
     FOREACH(pkg ${DOTNET_PACKAGES})
-        SET(cache_path ${NUGET_CACHE_PATH}/${pkg})
+        STRING(TOLOWER ${pkg} pkg_lowercase)
+        SET(cache_path ${NUGET_CACHE_PATH}/${pkg_lowercase})
         IF(WIN32)
             SET(rm_command powershell -NoLogo -NoProfile -NonInteractive -Command "Remove-Item -Recurse -Force -ErrorAction Ignore '${cache_path}'\; exit 0")
         ELSE()
-            SET(rm_command rm -rf '${cache_path}')
+            SET(rm_command rm -rf ${cache_path})
         ENDIF()
         ADD_CUSTOM_TARGET(
             DOTNET_PURGE_CACHE_${pkg}
