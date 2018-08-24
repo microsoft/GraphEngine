@@ -376,8 +376,8 @@ namespace Trinity
 
 #if defined(TRINITY_PLATFORM_WINDOWS)
                 Array<u16char> lpFilename(1024);
-                HMODULE        hmodule = GetModuleHandleW(L"Trinity.C.dll");
-                /* If Trinity.C.dll is absent, we default to the executing assembly (sending NULL into the API) */
+                HMODULE        hmodule = GetModuleHandleW(L"Trinity.dll");
+                /* If Trinity.dll is absent, we default to the executing assembly (sending NULL into the API) */
                 GetModuleFileNameW(hmodule, lpFilename, static_cast<DWORD>(lpFilename.Length()));
                 lpFilename[lpFilename.Length() - 1] = 0;
                 g_AssemblyPath = GetDirectoryName(GetFullPath(String::FromWcharArray(lpFilename, -1)));
