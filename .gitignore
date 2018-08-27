@@ -109,4 +109,4 @@ tests/new_test.exe
 ServiceFabricBackup
 tests/benchmarks/**/*Artifacts*
 **/.vim
-/*-build/
+CMakeSettings.json
