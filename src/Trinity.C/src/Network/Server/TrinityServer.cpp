@@ -4,11 +4,8 @@
 //
 #include "os/os.h"
 #include "Network/Server/TrinityServer.h"
-#ifdef TRINITY_PLATFORM_WINDOWS
 #include "Network/Server/iocp/TrinitySocketServer.h"
-#else
 #include "Network/Server/posix/TrinitySocketServer.h"
-#endif
 
 #include <stdio.h>
 #include <string.h>

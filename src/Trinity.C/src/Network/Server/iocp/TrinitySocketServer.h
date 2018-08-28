@@ -4,7 +4,7 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 #include "os/os.h"
-#ifdef TRINITY_PLATFORM_WINDOWS
+#if defined(TRINITY_PLATFORM_WINDOWS)
 #include "Network/Server/iocp/Common.h"
 #include "Network/Server/TrinityServer.h"
 #include "Trinity/Threading/TrinityLock.h"

@@ -3,7 +3,7 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 #include <os/os.h>
-#ifndef TRINITY_PLATFORM_WINDOWS
+#if !defined(TRINITY_PLATFORM_WINDOWS)
 #include <thread>
 #include <map>
 #include "os/platforms/posix.h"
