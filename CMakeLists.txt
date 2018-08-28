@@ -1,5 +1,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
 
+LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+FIND_PACKAGE(dotnet 2.0 REQUIRED)
+
 PROJECT(GraphEngine VERSION 2.0.9328 LANGUAGES CXX)
 SET(TRINITY_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 
@@ -8,19 +11,12 @@ SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS OFF)
 
 SET(TRINITY_REPO_ROOT   ${CMAKE_CURRENT_LIST_DIR})
-SET(TRINITY_INSTALL_DIR ".")
 SET(TRINITY_OUTPUT_DIR  ${TRINITY_REPO_ROOT}/bin)
 SET(TRINITY_TEST_DIR    ${TRINITY_REPO_ROOT}/tests)
 SET(TRINITY_TOOLS_DIR   ${TRINITY_REPO_ROOT}/tools)
 SET(TRINITY_LIB_DIR     ${TRINITY_REPO_ROOT}/lib)
 SET(TRINITY_SRC_DIR     ${TRINITY_REPO_ROOT}/src)
-SET(TRINITY_C_DIR       ${TRINITY_SRC_DIR}/Trinity.C)
 SET(TRINITY_NUGET_EXE   ${TRINITY_TOOLS_DIR}/NuGet.exe)
-SET(NUGET_CACHE_PATH    "~/.nuget/packages")
-
-SET(RXCPP_DIR           ${TRINITY_SRC_DIR}/RxCpp)
-SET(RX_INCLUDE_DIR      ${RXCPP_DIR}/RxCpp/Rx/v2/src/rxcpp)
-SET(IX_INCLUDE_DIR      ${RXCPP_DIR}/Ix/CPP/src/cpplinq)
 
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${TRINITY_OUTPUT_DIR})
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${TRINITY_OUTPUT_DIR})
@@ -37,9 +33,6 @@ SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${TRINITY_OUTPUT_DIR})
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${TRINITY_OUTPUT_DIR})
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO ${TRINITY_OUTPUT_DIR})
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO ${TRINITY_OUTPUT_DIR})
-
-FIND_PROGRAM(DOTNET_EXE dotnet)
-MESSAGE("-- Dotnet toolchain: ${DOTNET_EXE}")
 
 IF(WIN32 AND NOT EXISTS ${TRINITY_NUGET_EXE})
     FILE(DOWNLOAD https://dist.nuget.org/win-x86-commandline/latest/nuget.exe ${TRINITY_NUGET_EXE})
@@ -68,156 +61,17 @@ FUNCTION(POSTBUILD_COPY_OUTPUT target file)
 ENDFUNCTION()
 
 FUNCTION(POSTBUILD_XPLAT_OUTPUT target)
-    INSTALL(TARGETS ${target} DESTINATION ${TRINITY_INSTALL_DIR})
+    INSTALL(TARGETS ${target} ARCHIVE DESTINATION lib)
     IF(UNIX)
         POSTBUILD_COPY_OUTPUT(${target} "${TRINITY_LIB_DIR}/${target}.dll")
         POSTBUILD_COPY_OUTPUT(${target} "${TRINITY_LIB_DIR}/${target}.lib")
-        INSTALL(FILES ${TRINITY_LIB_DIR}/${target}.dll DESTINATION ${TRINITY_INSTALL_DIR})
+        INSTALL(FILES ${TRINITY_LIB_DIR}/${target}.dll ARCHIVE DESTINATION lib)
     ELSEIF(WIN32)
         POSTBUILD_COPY_OUTPUT(${target} "${TRINITY_LIB_DIR}/lib${target}.so")
-        INSTALL(FILES ${TRINITY_LIB_DIR}/lib${target}.so DESTINATION ${TRINITY_INSTALL_DIR})
+        INSTALL(FILES ${TRINITY_LIB_DIR}/lib${target}.so ARCHIVE DESTINATION lib)
     # TODO debug symbol
     #    POSTBUILD_COPY_OUTPUT(GraphEngine.Jit.Native    "${PROJECT_BINARY_DIR}/GraphEngine.Jit.Native.pdb")
     ENDIF()
-ENDFUNCTION()
-
-FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
-    FILE(GLOB_RECURSE DOTNET_deps "*.cs;*.fs;*.xaml;*.csproj;*.fsproj")
-    CMAKE_PARSE_ARGUMENTS(
-        # prefix
-        _DN 
-        # options (flags)
-        "RELEASE;DEBUG;X86;X64;ANYCPU;NETCOREAPP" 
-        # oneValueArgs
-        "CONFIG;PLATFORM;ARGUMENTS" 
-        # multiValueArgs
-        "PACKAGE;DEPENDS"
-        # the input arguments
-        ${arguments})
-
-    GET_FILENAME_COMPONENT(_DN_abs_proj "${CMAKE_CURRENT_SOURCE_DIR}/${_DN_PROJECT}" ABSOLUTE)
-    GET_FILENAME_COMPONENT(_DN_proj_dir "${CMAKE_CURRENT_SOURCE_DIR}/${_DN_PROJECT}" DIRECTORY)
-    GET_FILENAME_COMPONENT(_DN_projname "${DOTNET_PROJECT}" NAME)
-    STRING(REGEX REPLACE "\\.[^.]*$" "" _DN_projname_noext ${_DN_projname})
-
-    IF(_DN_RELEASE)
-        SET(_DN_CONFIG Release)
-    ELSEIF(_DN_DEBUG)
-        SET(_DN_CONFIG Debug)
-    ENDIF()
-
-    IF(NOT _DN_CONFIG)
-        SET(_DN_CONFIG Release)
-    ENDIF()
-
-    # If platform is not specified, do not pass the Platform property.
-    # dotnet will pick the default Platform.
-
-    IF(_DN_X86)
-        SET(_DN_PLATFORM x86)
-    ELSEIF(_DN_X64)
-        SET(_DN_PLATFORM x64)
-    ELSEIF(_DN_ANYCPU)
-        SET(_DN_PLATFORM "Any CPU")
-    ENDIF()
-
-    SET(DOTNET_PACKAGES ${_DN_PACKAGE}  PARENT_SCOPE)
-    SET(DOTNET_CONFIG   ${_DN_CONFIG}   PARENT_SCOPE)
-    SET(DOTNET_PLATFORM ${_DN_PLATFORM} PARENT_SCOPE)
-    SET(DOTNET_DEPENDS  ${_DN_DEPENDS}  PARENT_SCOPE)
-    SET(DOTNET_PROJNAME ${_DN_projname_noext} PARENT_SCOPE)
-    SET(DOTNET_PROJPATH ${_DN_abs_proj} PARENT_SCOPE)
-    SET(DOTNET_PROJDIR  ${_DN_proj_dir} PARENT_SCOPE)
-    SET(DOTNET_ARGUMENTS ${_DN_ARGUMENTS} PARENT_SCOPE)
-
-    IF(_DN_PLATFORM)
-        SET(_DN_PLATFORM_PROP /p:Platform=${_DN_PLATFORM})
-    ENDIF()
-
-    IF(_DN_NETCOREAPP)
-        SET(_DN_TFMS_PROP /p:TargetFrameworks=netcoreapp2.0)
-    ELSEIF(UNIX)
-        # Unix builds default to netstandard2.0
-        SET(_DN_TFMS_PROP /p:TargetFrameworks=netstandard2.0)
-    ENDIF()
-
-    SET(DOTNET_BUILD_PROPERTIES ${_DN_PLATFORM_PROP} ${_DN_TFMS_PROP} PARENT_SCOPE)
-
-ENDFUNCTION()
-
-MACRO(ADD_DOTNET_DEPENDENCY_TARGETS)
-    FOREACH(pkg_dep ${DOTNET_DEPENDS})
-        ADD_DEPENDENCIES(BUILD_${DOTNET_PROJNAME} PKG_${pkg_dep})
-        MESSAGE("==== ${DOTNET_PROJNAME} <- ${pkg_dep}")
-    ENDFOREACH()
-
-    FOREACH(pkg ${DOTNET_PACKAGES})
-        STRING(TOLOWER ${pkg} pkg_lowercase)
-        SET(cache_path ${NUGET_CACHE_PATH}/${pkg_lowercase})
-        IF(WIN32)
-            SET(rm_command powershell -NoLogo -NoProfile -NonInteractive -Command "Remove-Item -Recurse -Force -ErrorAction Ignore '${cache_path}'\; exit 0")
-        ELSE()
-            SET(rm_command rm -rf ${cache_path})
-        ENDIF()
-        ADD_CUSTOM_TARGET(
-            DOTNET_PURGE_CACHE_${pkg}
-            COMMAND ${CMAKE_COMMAND} -E echo "======= [x] Purging nuget package cache for ${pkg}"
-            COMMAND ${rm_command}
-            SOURCES ${DOTNET_deps}
-        )
-        ADD_DEPENDENCIES(BUILD_${DOTNET_PROJNAME} DOTNET_PURGE_CACHE_${pkg})
-        # Add a target for the built package -- this can be referenced in
-        # another project.
-        ADD_CUSTOM_TARGET(PKG_${pkg})
-        ADD_DEPENDENCIES(PKG_${pkg} BUILD_${DOTNET_PROJNAME})
-        MESSAGE("==== ${DOTNET_PROJNAME} -> ${pkg}")
-    ENDFOREACH()
-ENDMACRO()
-
-FUNCTION(ADD_DOTNET DOTNET_PROJECT)
-    DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
-
-    MESSAGE("-- Adding dotnet project ${DOTNET_PROJPATH}")
-    ADD_CUSTOM_TARGET(
-        BUILD_${DOTNET_PROJNAME} ALL
-        ${CMAKE_COMMAND} -E echo "=======> Building .NET project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
-        COMMAND ${DOTNET_EXE} restore ${DOTNET_PROJPATH}
-        COMMAND ${DOTNET_EXE} clean ${DOTNET_PROJPATH} ${DOTNET_BUILD_PROPERTIES}
-        COMMAND ${DOTNET_EXE} build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES}
-        COMMAND ${DOTNET_EXE} pack --no-build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES}
-        SOURCES ${DOTNET_deps}
-    )
-    ADD_DOTNET_DEPENDENCY_TARGETS()
-ENDFUNCTION()
-
-FUNCTION(RUN_DOTNET DOTNET_PROJECT)
-    DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
-    ADD_CUSTOM_TARGET(
-        RUN_${DOTNET_PROJNAME} 
-        ${DOTNET_EXE} run ${DOTNET_ARGUMENTS}
-        SOURCES ${DOTNET_deps}
-        WORKING_DIRECTORY ${DOTNET_PROJDIR}
-    )
-    ADD_DEPENDENCIES(RUN_${DOTNET_PROJNAME} BUILD_${DOTNET_PROJNAME})
-ENDFUNCTION()
-
-FUNCTION(ADD_MSBUILD DOTNET_PROJECT)
-    IF(NOT WIN32)
-        MESSAGE("-- Building non-Win32, skipping ${DOTNET_PROJECT}")
-        RETURN()
-    ENDIF()
-
-    DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
-    MESSAGE("-- Adding MSBuild project ${DOTNET_PROJPATH}")
-    ADD_CUSTOM_TARGET(
-        BUILD_${DOTNET_PROJNAME} ALL
-        COMMAND ${TRINITY_NUGET_EXE} restore ${DOTNET_PROJPATH}
-        COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Clean /p:Configuration="${DOTNET_CONFIG}"
-        COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build ${DOTNET_BUILD_PROPERTIES} /p:Configuration="${DOTNET_CONFIG}"
-        COMMAND ${DOTNET_EXE} pack --no-build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES}
-        SOURCES ${DOTNET_deps}
-    )
-    ADD_DOTNET_DEPENDENCY_TARGETS()
 ENDFUNCTION()
 
 ADD_SUBDIRECTORY(src/GraphEngine)
@@ -251,3 +105,4 @@ ADD_MSBUILD(
 #     src/GraphEngine.DataImporter/GraphEngine.DataImporter.sln
 #     PACKAGE GraphEngine.DataImporter
 #     DEPENDS GraphEngine.Core)
+

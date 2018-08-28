@@ -29,6 +29,7 @@ Function Remove-And-Print ($item) {
 
 Function Remove-Build {
   Remove-And-Print "$REPO_ROOT\bin"
+  Remove-And-Print "$REPO_ROOT\build"
 }
 
 # Register local nuget source
