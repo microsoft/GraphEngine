@@ -1,6 +1,6 @@
-[submodule "src/Modules/GraphEngine.Jit/asmjit"]
-	path = src/Modules/GraphEngine.Jit/asmjit
+[submodule "ext/asmjit"]
+	path = ext/asmjit
 	url = https://github.com/asmjit/asmjit.git
-[submodule "src/RxCpp"]
-	path = src/RxCpp
-	url = https://github.com/ReactiveX/RxCpp.git
+[submodule "ext/RxCpp"]
+	path = ext/RxCpp
+	url = https://github.com/ReactiveX/RxCpp

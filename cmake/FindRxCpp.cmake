@@ -1,6 +1,6 @@
 # For building Trinity only.
 
-SET(RXCPP_DIR           ${TRINITY_SRC_DIR}/RxCpp)
+SET(RXCPP_DIR           ${TRINITY_REPO_ROOT}/ext/RxCpp)
 SET(RX_INCLUDE_DIR      ${RXCPP_DIR}/Rx/v2/src/rxcpp)
 SET(IX_INCLUDE_DIR      ${RXCPP_DIR}/Ix/CPP/src/cpplinq)
 
