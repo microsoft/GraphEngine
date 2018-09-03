@@ -41,5 +41,4 @@ setup_nuget_repo()
 	rm -rf ~/.nuget/packages/graphengine.*
 }
 
-setup_nuget_repo
 build_repo

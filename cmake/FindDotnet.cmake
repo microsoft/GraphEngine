@@ -8,6 +8,7 @@
 # 
 #   DOTNET_FOUND          - True if dotnet executable is found
 #   DOTNET_EXE            - Dotnet executable
+#   NUGET_EXE             - Nuget executable (WIN32 only)
 #   DOTNET_VERSION        - Dotnet version as reported by dotnet executable
 #   NUGET_CACHE_PATH      - Nuget package cache path
 # 
@@ -62,6 +63,35 @@ EXECUTE_PROCESS(
 
 MESSAGE("-- Found .NET toolchain: ${DOTNET_EXE} (version ${DOTNET_VERSION})")
 SET(DOTNET_FOUND TRUE)
+
+IF(WIN32)
+   FIND_PROGRAM(NUGET_EXE nuget PATHS ${CMAKE_BINARY_DIR}/tools)
+   IF(NUGET_EXE)
+       MESSAGE("-- Found nuget: ${NUGET_EXE}")
+   ELSE()
+        SET(NUGET_EXE ${CMAKE_BINARY_DIR}/tools/nuget.exe)
+        MESSAGE("-- Downloading nuget...")
+        FILE(DOWNLOAD https://dist.nuget.org/win-x86-commandline/latest/nuget.exe ${NUGET_EXE})
+        MESSAGE("nuget.exe downloaded and saved to ${NUGET_EXE}")
+   ENDIF()
+ENDIF()
+
+FUNCTION(DOTNET_REGISTER_LOCAL_REPOSITORY repo_name repo_path)
+	MESSAGE("-- Registering NuGet local repository '${repo_name}' at '${repo_path}'.")
+    GET_FILENAME_COMPONENT(repo_path ${repo_path} ABSOLUTE)
+    STRING(REPLACE "/" "\\" repo_path ${repo_path})
+    IF(WIN32)
+        EXECUTE_PROCESS(COMMAND ${NUGET_EXE} sources list OUTPUT_QUIET)
+        EXECUTE_PROCESS(COMMAND ${NUGET_EXE} sources Remove -Name "${repo_name}" OUTPUT_QUIET ERROR_QUIET)
+        EXECUTE_PROCESS(COMMAND ${NUGET_EXE} sources Add -Name "${repo_name}" -Source "${repo_path}" OUTPUT_QUIET)
+    ELSE()
+        EXECUTE_PROCESS(
+            COMMAND ${DOTNET_EXE} nuget locals all --list
+            COMMAND sed -i "/${repo_name}/d" ~/.nuget/NuGet/NuGet.Config
+            COMMAND sed -i "s#</packageSources>#    <add key=\"${repo_name}\" value=\"${repo_path}\" />\n  </packageSources>#g" ~/.nuget/NuGet/NuGet.Config
+        )
+    ENDIF()
+ENDFUNCTION()
 
 FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     FILE(GLOB_RECURSE DOTNET_deps "*.cs;*.fs;*.xaml;*.csproj;*.fsproj")
@@ -140,7 +170,7 @@ ENDFUNCTION()
 MACRO(ADD_DOTNET_DEPENDENCY_TARGETS)
     FOREACH(pkg_dep ${DOTNET_DEPENDS})
         ADD_DEPENDENCIES(BUILD_${DOTNET_PROJNAME} PKG_${pkg_dep})
-        MESSAGE("==== ${DOTNET_PROJNAME} <- ${pkg_dep}")
+        MESSAGE("     ${DOTNET_PROJNAME} <- ${pkg_dep}")
     ENDFOREACH()
 
     FOREACH(pkg ${DOTNET_PACKAGES})
@@ -240,7 +270,7 @@ FUNCTION(ADD_MSBUILD DOTNET_PROJECT)
             OUTPUT ${_DOTNET_BUILD_NUPKGS}
             DEPENDS ${DOTNET_deps}
             COMMAND ${CMAKE_COMMAND} -E echo "=======> Building msbuild project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
-            COMMAND ${TRINITY_NUGET_EXE} restore ${DOTNET_PROJPATH}
+            COMMAND ${NUGET_EXE} restore ${DOTNET_PROJPATH}
             COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Clean /p:Configuration="${DOTNET_CONFIG}"
             COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build ${DOTNET_BUILD_PROPERTIES} /p:Configuration="${DOTNET_CONFIG}"
             COMMAND ${DOTNET_EXE} pack --no-build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES}
@@ -255,7 +285,7 @@ FUNCTION(ADD_MSBUILD DOTNET_PROJECT)
         MESSAGE("-- Adding MSBuild project ${DOTNET_PROJPATH}")
         ADD_CUSTOM_TARGET(
             BUILD_${DOTNET_PROJNAME} ALL
-            COMMAND ${TRINITY_NUGET_EXE} restore ${DOTNET_PROJPATH}
+            COMMAND ${NUGET_EXE} restore ${DOTNET_PROJPATH}
             COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Clean /p:Configuration="${DOTNET_CONFIG}"
             COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build ${DOTNET_BUILD_PROPERTIES} /p:Configuration="${DOTNET_CONFIG}"
             COMMAND ${DOTNET_EXE} pack --no-build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES}

@@ -6,7 +6,6 @@ mkdir "$REPO_ROOT\build" -Force
 mkdir "$REPO_ROOT\bin"   -Force 
 Push-Location "$REPO_ROOT\build"
 
-Register-LocalRepo
 cmake -G "Visual Studio 15 2017 Win64" --host=x64 $REPO_ROOT
 cmake --build . --config Release
 Pop-Location
