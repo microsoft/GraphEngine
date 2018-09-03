@@ -388,6 +388,7 @@ public:
             // TODO should clean up host handle when disposing the reference
             if (FAILED(hr))
             {
+                Console::WriteLine("m_CLRRuntimeHost->SetStartupFlags() failed with code {0:X}", hr);
                 m_CLRRuntimeHost = nullptr;
                 return TrinityErrorCode::E_FAILURE;
             }
@@ -395,6 +396,7 @@ public:
             hr = m_CLRRuntimeHost->Start();
             if (FAILED(hr))
             {
+                Console::WriteLine("m_CLRRuntimeHost->Start() failed with code {0:X}", hr);
                 m_CLRRuntimeHost = nullptr;
                 return TrinityErrorCode::E_FAILURE;
             }
@@ -440,6 +442,8 @@ public:
             if (FAILED(hr))
             {
                 m_CLRRuntimeHost = nullptr;
+                Console::WriteLine("m_CLRRuntimeHost->CreateAppDomainWithManager failed with code {0:X}", hr);
+
                 return TrinityErrorCode::E_FAILURE;
             }
 

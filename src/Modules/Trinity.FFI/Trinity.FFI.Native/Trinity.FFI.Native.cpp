@@ -3,11 +3,14 @@
 
 #include "Trinity.FFI.Native.h"
 #include "GraphEngine.Hosting.h"
+#include "io"
 #include <cstring>
 
 static struct TRINITY_INTERFACES g_interfaces;
 static bool g_init = false;
 static void* g_lp_clr_runtime = nullptr;
+
+using Trinity::IO::Console::WriteLine;
 
 TRINITYFFINATIVE_API void TRINITY_FFI_SET_INTERFACES(const TRINITY_INTERFACES* interfaces)
 {
@@ -72,7 +75,6 @@ TRINITYFFINATIVE_API TrinityErrorCode TRINITY_FFI_INITIALIZE(int n_apppaths, cha
 	eresult = GraphEngineInit(n_apppaths, lp_apppaths, g_lp_clr_runtime);
 	if (eresult != TrinityErrorCode::E_SUCCESS)
 	{
-		
 		return eresult;
 	}
 
