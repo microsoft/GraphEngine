@@ -8,8 +8,8 @@
 # 
 #   DOTNET_FOUND          - True if dotnet executable is found
 #   DOTNET_EXE            - Dotnet executable
-#   NUGET_EXE             - Nuget executable (WIN32 only)
 #   DOTNET_VERSION        - Dotnet version as reported by dotnet executable
+#   NUGET_EXE             - Nuget executable (WIN32 only)
 #   NUGET_CACHE_PATH      - Nuget package cache path
 # 
 # The following functions are defined to add dotnet/msbuild projects:
@@ -40,15 +40,21 @@
 #            [PACKAGE output_nuget_packages... ]
 #            [DEPENDS depend_nuget_packages... ])
 # ```
+#
+# DOTNET_REGISTER_LOCAL_REPOSITORY -- register a local NuGet package repository.
+# 
+# ```
+# DOTNET_REGISTER_LOCAL_REPOSITORY(repo_name repo_path)
+# ```
 # 
 # For all the above functions, `RELEASE|DEBUG` overrides `CONFIG`, `X86|X64|ANYCPU` overrides PLATFORM.
 # For Unix systems, the target framework defaults to `netstandard2.0`, unless `NETCOREAPP` is specified.
 # For Windows, the project is built as-is, allowing multi-targeting.
 # 
 
-SET(NUGET_CACHE_PATH    "~/.nuget/packages")
-
+SET(NUGET_CACHE_PATH "~/.nuget/packages")
 FIND_PROGRAM(DOTNET_EXE dotnet)
+SET(DOTNET_MODULE_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 IF(NOT DOTNET_EXE)
     SET(DOTNET_FOUND FALSE)
@@ -162,7 +168,13 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
         SET(_DN_TFMS_PROP /p:TargetFrameworks=netstandard2.0)
     ENDIF()
 
-    SET(DOTNET_BUILD_PROPERTIES ${_DN_PLATFORM_PROP} ${_DN_TFMS_PROP} PARENT_SCOPE)
+    SET(_DN_IMPORT_PROP                   ${CMAKE_CURRENT_BINARY_DIR}/${_DN_projname}.imports.props)
+    SET(_DN_BASE_OUTPUT_PATH              ${CMAKE_BINARY_DIR})
+    SET(_DN_OUTPUT_PATH                   ${CMAKE_BINARY_DIR})
+    SET(_DN_BASE_INTERMEDIATE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/dotnet_obj/${_DN_projname})
+    CONFIGURE_FILE(${DOTNET_MODULE_DIR}/DotnetImports.props.in ${_DN_IMPORT_PROP})
+
+    SET(DOTNET_BUILD_PROPERTIES ${_DN_PLATFORM_PROP} ${_DN_TFMS_PROP} /p:DirectoryBuildPropsPath=${_DN_IMPORT_PROP} /p:OutputPath=${_DN_OUTPUT_PATH} PARENT_SCOPE)
 
 ENDFUNCTION()
 

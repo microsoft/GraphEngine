@@ -18,7 +18,6 @@
     <PackageId>GraphEngine.LIKQ</PackageId>
     <AssemblyName>GraphEngine.LIKQ</AssemblyName>
     <RootNamespace>GraphEngine.LIKQ</RootNamespace>
-    <OutputPath>..\..\..\..\bin</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0' OR '$(TargetFramework)'=='netcoreapp2.0'">

@@ -4,7 +4,6 @@
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <OutputType>library</OutputType>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <OutputPath>..\..\..\..\bin</OutputPath>
   </PropertyGroup>
   
   <ItemGroup>

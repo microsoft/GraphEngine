@@ -15,7 +15,6 @@
     <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
     <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
     <PackageId>GraphEngine.ServiceFabric.Remoting</PackageId>
-    <OutputPath>..\..\..\..\bin</OutputPath>
     <Platforms>x64</Platforms>
     <IsPackable>true</IsPackable>
     <Configurations>Debug;Release</Configurations>

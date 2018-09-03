@@ -21,6 +21,10 @@ FUNCTION(POSTBUILD_COPY_OUTPUT target file)
         SET(dir ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
     ENDIF()
 
+    IF(NOT dir)
+        SET(dir ${CMAKE_BINARY_DIR})
+    ENDIF()
+
     ADD_CUSTOM_COMMAND(
         TARGET ${target}
         POST_BUILD
@@ -38,10 +42,10 @@ FUNCTION(POSTBUILD_XPLAT_OUTPUT target xplat_dir)
         INSTALL(TARGETS ${target} RUNTIME DESTINATION bin)
         IF(UNIX)
             POSTBUILD_COPY_OUTPUT(${target} "${xplat_dir}/${target}.exe" RUNTIME)
-            INSTALL(FILES ${TRINITY_LIB_DIR}/${target}.exe RUNTIME DESTINATION bin)
+            INSTALL(FILES ${xplat_dir}/${target}.exe DESTINATION bin)
         ELSEIF(WIN32)
             POSTBUILD_COPY_OUTPUT(${target} "${xplat_dir}/${target}" RUNTIME)
-            INSTALL(FILES ${TRINITY_LIB_DIR}/${target} RUNTIME DESTINATION bin)
+            INSTALL(FILES ${xplat_dir}/${target} DESTINATION bin)
         ENDIF()
 
     ELSEIF(target_type STREQUAL "SHARED_LIBRARY")
@@ -50,10 +54,10 @@ FUNCTION(POSTBUILD_XPLAT_OUTPUT target xplat_dir)
         IF(UNIX)
             POSTBUILD_COPY_OUTPUT(${target} "${xplat_dir}/${target}.dll" LIBRARY)
             POSTBUILD_COPY_OUTPUT(${target} "${xplat_dir}/${target}.lib" LIBRARY)
-            INSTALL(FILES ${TRINITY_LIB_DIR}/${target}.dll LIBRARY DESTINATION lib)
+            INSTALL(FILES ${xplat_dir}/${target}.dll DESTINATION lib)
         ELSEIF(WIN32)
             POSTBUILD_COPY_OUTPUT(${target} "${xplat_dir}/lib${target}.so" LIBRARY)
-            INSTALL(FILES ${TRINITY_LIB_DIR}/lib${target}.so LIBRARY DESTINATION lib)
+            INSTALL(FILES ${xplat_dir}/lib${target}.so DESTINATION lib)
         ENDIF()
 
     ELSE()
@@ -66,6 +70,10 @@ FUNCTION(POSTBUILD_XPLAT_OUTPUT target xplat_dir)
 ENDFUNCTION()
 
 FUNCTION(SET_OUTPUT_DIRECTORY dir)
+
+    IF(OUTPUT_DIRECTORY_IS_SET)
+        RETURN()
+    ENDIF()
 
     SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${dir} PARENT_SCOPE)
     SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${dir} PARENT_SCOPE)
@@ -82,5 +90,7 @@ FUNCTION(SET_OUTPUT_DIRECTORY dir)
     SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${dir} PARENT_SCOPE)
     SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO ${dir} PARENT_SCOPE)
     SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO ${dir} PARENT_SCOPE)
+
+    SET(OTUPUT_DIRECTORY_IS_SET TRUE PARENT_SCOPE)
 
 ENDFUNCTION()

@@ -38,7 +38,7 @@ def cp(source, target):
 build_dir = r('${CMAKE_CURRENT_BINARY_DIR}')
 print(build_dir)
 src_dir   = relpath(r('${CMAKE_CURRENT_SOURCE_DIR}'), build_dir)
-lib_dir   = relpath(r('${TRINITY_OUTPUT_DIR}'), build_dir)
+lib_dir   = relpath(r('${CMAKE_BINARY_DIR}'), build_dir)
 swigcxx   = relpath(r('${swigcxx}'), build_dir)
 typesys   = relpath(r('${typesys}'), build_dir)
 inc_ffi   = relpath(r('${TRINITY_FFI_NATIVE_DIR}'), build_dir)

@@ -21,14 +21,6 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>..\..\..\..\bin</OutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\..\..\..\bin</OutputPath>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
     <PackageReference Include="GraphEngine.Jit" Version="2.0.9328" />
@@ -41,23 +33,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\..\..\..\bin\trinity_host.dll">
+    <Content Include="$(OutputPath)\trinity_host.dll">
       <PackagePath>runtimes\win-x64\native</PackagePath>
     </Content>
-    <Content Include="..\..\..\..\bin\trinity_ffi.dll">
+    <Content Include="$(OutputPath)\trinity_ffi.dll">
       <PackagePath>runtimes\win-x64\native</PackagePath>
     </Content>
-    <Content Include="..\..\..\..\bin\libtrinity_host.so">
+    <Content Include="$(OutputPath)\libtrinity_host.so">
       <PackagePath>runtimes\linux-x64\native</PackagePath>
     </Content>
-    <Content Include="..\..\..\..\bin\libtrinity_ffi.so">
+    <Content Include="$(OutputPath)\libtrinity_ffi.so">
       <PackagePath>runtimes\linux-x64\native</PackagePath>
     </Content>
 
-    <Content Include="..\..\..\..\bin\trinity_ffi.lib" Link="trinity_ffi.lib">
+    <Content Include="$(OutputPath)\trinity_ffi.lib" Link="trinity_ffi.lib">
       <PackagePath>runtimes\win-x64\native</PackagePath>
     </Content>
-    <Content Include="..\..\..\..\bin\Trinity.lib" Link="Trinity.lib">
+    <Content Include="$(OutputPath)\Trinity.lib" Link="Trinity.lib">
       <PackagePath>runtimes\win-x64\native</PackagePath>
     </Content>
 

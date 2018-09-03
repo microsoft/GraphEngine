@@ -9,7 +9,6 @@
     <RootNamespace>GraphEngine.Jit</RootNamespace>
     <OutputTypeEx>library</OutputTypeEx>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <OutputPath>..\..\..\..\bin</OutputPath>
     <ServerGarbageCollection>true</ServerGarbageCollection>
     <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
     <IsPackable>true</IsPackable>
@@ -52,13 +51,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="$(ProjectDirectory)..\..\..\..\bin\GraphEngine.Jit.Native.dll" />
-    <Content Include="$(ProjectDirectory)..\..\..\..\bin\GraphEngine.Jit.Native.dll">
+    <Content Include="$(OutputPath)\GraphEngine.Jit.Native.dll">
       <PackagePath>runtimes\win-x64\native</PackagePath>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Remove="$(ProjectDirectory)..\..\..\..\bin\libGraphEngine.Jit.Native.so" />
-    <Content Include="$(ProjectDirectory)..\..\..\..\bin\libGraphEngine.Jit.Native.so">
+    <Content Include="$(OutputPath)\libGraphEngine.Jit.Native.so">
       <PackagePath>runtimes\linux-x64\native</PackagePath>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

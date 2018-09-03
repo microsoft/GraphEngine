@@ -8,7 +8,6 @@
     <AssemblyName>Trinity.FFI.Metagen</AssemblyName>
     <RootNamespace>Trinity.FFI.Metagen</RootNamespace>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <OutputPath>..\..\..\..\bin</OutputPath>
     <IsPackable>true</IsPackable>
     <OutputType>Library</OutputType>
     <NoWarn>62</NoWarn>

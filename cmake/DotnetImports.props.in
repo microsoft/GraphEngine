@@ -1,0 +1,7 @@
+<Project>
+    <PropertyGroup>
+        <OutputPath>${_DN_OUTPUT_PATH}</OutputPath>
+        <!-- <BaseOutputPath>${_DN_BASE_OUTPUT_PATH}</BaseOutputPath> -->
+        <!-- <BaseIntermediateOutputPath>${_DN_BASE_INTERMEDIATE_OUTPUT_PATH}</BaseIntermediateOutputPath> -->
+    </PropertyGroup>
+</Project>
