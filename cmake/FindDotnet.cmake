@@ -79,17 +79,16 @@ ENDIF()
 FUNCTION(DOTNET_REGISTER_LOCAL_REPOSITORY repo_name repo_path)
 	MESSAGE("-- Registering NuGet local repository '${repo_name}' at '${repo_path}'.")
     GET_FILENAME_COMPONENT(repo_path ${repo_path} ABSOLUTE)
-    STRING(REPLACE "/" "\\" repo_path ${repo_path})
     IF(WIN32)
+        STRING(REPLACE "/" "\\" repo_path ${repo_path})
         EXECUTE_PROCESS(COMMAND ${NUGET_EXE} sources list OUTPUT_QUIET)
         EXECUTE_PROCESS(COMMAND ${NUGET_EXE} sources Remove -Name "${repo_name}" OUTPUT_QUIET ERROR_QUIET)
-        EXECUTE_PROCESS(COMMAND ${NUGET_EXE} sources Add -Name "${repo_name}" -Source "${repo_path}" OUTPUT_QUIET)
+        EXECUTE_PROCESS(COMMAND ${NUGET_EXE} sources Add -Name "${repo_name}" -Source "${repo_path}")
     ELSE()
-        EXECUTE_PROCESS(
-            COMMAND ${DOTNET_EXE} nuget locals all --list
-            COMMAND sed -i "/${repo_name}/d" ~/.nuget/NuGet/NuGet.Config
-            COMMAND sed -i "s#</packageSources>#    <add key=\"${repo_name}\" value=\"${repo_path}\" />\n  </packageSources>#g" ~/.nuget/NuGet/NuGet.Config
-        )
+        GET_FILENAME_COMPONENT(nuget_config ~/.nuget/NuGet/NuGet.Config ABSOLUTE)
+        EXECUTE_PROCESS(COMMAND ${DOTNET_EXE} nuget locals all --list OUTPUT_QUIET)
+        EXECUTE_PROCESS(COMMAND sed -i "/${repo_name}/d" "${nuget_config}")
+        EXECUTE_PROCESS(COMMAND sed -i "s#</packageSources>#  <add key=\\\"${repo_name}\\\" value=\\\"${repo_path}\\\" />\\n  </packageSources>#g" "${nuget_config}")
     ENDIF()
 ENDFUNCTION()
 
