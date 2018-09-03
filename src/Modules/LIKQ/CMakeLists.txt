@@ -3,6 +3,7 @@ PROJECT(GraphEngine.LIKQ)
 
 ADD_DOTNET(FanoutSearch/FanoutSearch.csproj
     PACKAGE GraphEngine.LIKQ
+    VERSION ${TRINITY_VERSION}
     DEPENDS GraphEngine.Core)
 
 # TODO unit test

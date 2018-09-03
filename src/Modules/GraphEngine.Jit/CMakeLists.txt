@@ -9,6 +9,7 @@ ADD_SUBDIRECTORY(GraphEngine.Jit.Native)
 
 ADD_DOTNET(GraphEngine.Jit/GraphEngine.Jit.fsproj
     PACKAGE GraphEngine.Jit
+    VERSION ${TRINITY_VERSION}
     DEPENDS GraphEngine.Core)
 
 # TODO unit test
