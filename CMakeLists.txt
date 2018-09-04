@@ -30,7 +30,6 @@ ELSE()
     MESSAGE(FATAL_ERROR "Unsupported platform")
 ENDIF()
 
-ADD_SUBDIRECTORY(src/GraphEngine)
 ADD_SUBDIRECTORY(src/Trinity.TSL)
 ADD_SUBDIRECTORY(src/Trinity.C)
 ADD_SUBDIRECTORY(src/Trinity.Core)
