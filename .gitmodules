@@ -1,6 +1,0 @@
-[submodule "ext/asmjit"]
-	path = ext/asmjit
-	url = https://github.com/asmjit/asmjit.git
-[submodule "ext/RxCpp"]
-	path = ext/RxCpp
-	url = https://github.com/ReactiveX/RxCpp
