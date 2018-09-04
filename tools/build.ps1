@@ -3,7 +3,6 @@ Write-Configuration
 Remove-Build
 
 mkdir "$REPO_ROOT\build" -Force 
-mkdir "$REPO_ROOT\bin"   -Force 
 Push-Location "$REPO_ROOT\build"
 
 cmake -G "Visual Studio 15 2017 Win64" --host=x64 $REPO_ROOT
