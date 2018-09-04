@@ -60,6 +60,7 @@ bool get_parameters(int argc, char** argv)
 #endif
 {
     auto args                                      = CommandLineTools::GetArguments(argc, argv);
+
     auto BuildDataModelingProjectWithDebugFeatures = CommandLineTools::DefineOption<bool>("g", "Debug");
     auto Namespace                                 = CommandLineTools::DefineOption<Trinity::String>("n", "RootNamespace");
     auto ProjectRoot                               = CommandLineTools::DefineOption<Trinity::String>("p", "ProjectRoot");

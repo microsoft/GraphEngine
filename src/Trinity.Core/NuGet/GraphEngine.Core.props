@@ -3,12 +3,19 @@
 
   <!-- Paths -->
   <PropertyGroup>
+    <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
+    <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
+    <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>
+
     <!-- Probe for a tools\ directory which will contain Trinity.TSL.Compiler.exe. -->
-    <TSL_PATH Condition="('$(TSL_PATH)' == '') And Exists('$(MSBuildThisFileDirectory)..\..\tools')">$(MSBuildThisFileDirectory)..\..\</TSL_PATH>
-    <TSL_PATH Condition="('$(TSL_PATH)' == '') And Exists('$(MSBuildThisFileDirectory)..\tools')">$(MSBuildThisFileDirectory)..\</TSL_PATH>
-    <TSL_PATH Condition="('$(TSL_PATH)' == '')">$(MSBuildThisFileDirectory)..\..\</TSL_PATH>
-    <TSL_CODEGEN_PATH Condition="'$(OS)' == 'Windows_NT'">$(TSL_PATH)tools\Trinity.TSL.CodeGen.exe</TSL_CODEGEN_PATH>
-    <TSL_CODEGEN_PATH Condition="'$(TSL_CODEGEN_PATH)' == ''">$(TSL_PATH)tools\Trinity.TSL.CodeGen</TSL_CODEGEN_PATH>
+    <TRINITY_PACKAGE_PATH Condition="('$(TRINITY_PACKAGE_PATH)' == '') And Exists('$(MSBuildThisFileDirectory)..\..\tools')">$(MSBuildThisFileDirectory)..\..\</TRINITY_PACKAGE_PATH>
+    <TRINITY_PACKAGE_PATH Condition="('$(TRINITY_PACKAGE_PATH)' == '') And Exists('$(MSBuildThisFileDirectory)..\tools')">$(MSBuildThisFileDirectory)..\</TRINITY_PACKAGE_PATH>
+    <TRINITY_PACKAGE_PATH Condition="('$(TRINITY_PACKAGE_PATH)' == '')">$(MSBuildThisFileDirectory)..\..\</TRINITY_PACKAGE_PATH>
+    <TSL_CODEGEN_PATH Condition="'$(IsWindows)' == 'true'">$(TRINITY_PACKAGE_PATH)tools\Trinity.TSL.CodeGen.exe</TSL_CODEGEN_PATH>
+    <TSL_CODEGEN_PATH Condition="'$(IsLinux)' == 'true'">$(TRINITY_PACKAGE_PATH)tools\Trinity.TSL.CodeGen</TSL_CODEGEN_PATH>
+
+    <TRINITY_NATIVE_LIB_PATH Condition="'$(IsWindows)' == 'true'">$(TRINITY_PACKAGE_PATH)runtimes\win-x64\native\Trinity.dll</TRINITY_NATIVE_LIB_PATH>
+    <TRINITY_NATIVE_LIB_PATH Condition="'$(IsLinux)' == 'true'">$(TRINITY_PACKAGE_PATH)runtimes\linux-x64\native\libTrinity.so</TRINITY_NATIVE_LIB_PATH>
   </PropertyGroup>
 
   <!-- Configurations -->

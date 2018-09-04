@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net451;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net451</TargetFrameworks>
     <AssemblyName>Trinity.Core</AssemblyName>
     <RootNamespace>Trinity</RootNamespace>
     <OutputTypeEx>library</OutputTypeEx>
@@ -48,12 +48,6 @@
     <Compile Remove="BuildNuGetPkg\**" />
     <EmbeddedResource Remove="BuildNuGetPkg\**" />
     <EmbeddedResource Include="Network\Http\index.html" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
-    <EmbeddedResource Include="$(OutputPath)\Trinity.dll">
-      <Link>Trinity.dll</Link>
-    </EmbeddedResource>
   </ItemGroup>
 
   <!-- Nuget package content -->

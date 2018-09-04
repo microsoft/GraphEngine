@@ -18,6 +18,7 @@ namespace Trinity
                     longOption = shortOption;
                 return OptionDescriptor < OptionValueType >(shortOption, longOption);
             }
+
             template<typename T>inline size_t Index(std::vector<String>& command, OptionDescriptor<T> descriptor)
             {
                 for (size_t i = 0, length = command.size(); i < length; ++i)
@@ -35,6 +36,7 @@ namespace Trinity
                 }
                 return String::npos;
             }
+
             inline void GetOpt(std::vector<String>& command, OptionDescriptor<bool>& descriptor)
             {
                 size_t idx = Index(command, descriptor);
@@ -46,6 +48,7 @@ namespace Trinity
                     command.erase(command.begin() + idx);
                 }
             }
+
             template<typename T>
             inline void GetOpt(std::vector<String>& command, OptionDescriptor<T>& descriptor)
             {
@@ -60,6 +63,7 @@ namespace Trinity
                     }
                 }
             }
+
             template<typename FirstArg, typename ...Args>
             inline void GetOpt(std::vector<String>& command, FirstArg& firstArg, Args& ...restArgs)
             {

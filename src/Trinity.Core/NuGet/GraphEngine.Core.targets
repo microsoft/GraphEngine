@@ -28,6 +28,13 @@
     <AvailableItemName Include="TslCodegen" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
+    <None Include="$(TRINITY_NATIVE_LIB_PATH)">
+      <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <Target Name="TslCodegenPrepare"
           BeforeTargets="TslCodegenCs">
     <ItemGroup>
@@ -42,7 +49,7 @@
           BeforeTargets="TslCompileCs"
           DependsOnTargets="TslCodegenPrepare"
           Condition="'@(TslCodegen)' != ''">
-    <Exec Command="&quot;$(TSL_CODEGEN_PATH)&quot; --ProjectRoot &quot;$(MSBuildProjectDirectory)&quot; --ScriptList &quot;@(TslCodegen)&quot; --RootNamespace $(RootNamespace) --OutputPath &quot;$(TslOutputPath)&quot; $(TslDebugArguments) $(TslAdditionalArguments)" />
+    <Exec Command="&quot;$(TSL_CODEGEN_PATH)&quot; --ProjectRoot &quot;$(MSBuildProjectDirectory)&quot; --ScriptList &quot;@(TslCodegen)&quot; --RootNamespace $(RootNamespace) --OutputPath &quot;$(TslOutputPath) &quot; $(TslDebugArguments) $(TslAdditionalArguments)" />
   </Target>
 
   <Target Name="TslCompileCs"

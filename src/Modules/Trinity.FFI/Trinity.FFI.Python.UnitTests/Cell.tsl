@@ -1,5 +1,0 @@
-﻿cell MyCell
-{
-	int a;
-	List<string> b;
-}

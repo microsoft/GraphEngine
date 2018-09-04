@@ -124,7 +124,7 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     ENDIF()
 
     IF(NOT _DN_CONFIG)
-        SET(_DN_CONFIG Release)
+        SET(_DN_CONFIG $<CONFIG>)
     ENDIF()
 
     # If platform is not specified, do not pass the Platform property.
@@ -215,7 +215,7 @@ FUNCTION(ADD_DOTNET DOTNET_PROJECT)
 
         SET(_DOTNET_BUILD_NUPKGS "")
         FOREACH(pkg ${DOTNET_PACKAGES})
-            LIST(APPEND _DOTNET_BUILD_NUPKGS ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${pkg}.${DOTNET_PACKAGE_VERSION}.nupkg)
+            LIST(APPEND _DOTNET_BUILD_NUPKGS ${pkg}.${DOTNET_PACKAGE_VERSION}.nupkg)
         ENDFOREACH()
 
         ADD_CUSTOM_COMMAND(
