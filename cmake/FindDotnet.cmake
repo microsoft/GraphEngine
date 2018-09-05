@@ -125,6 +125,9 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
 
     IF(NOT _DN_CONFIG)
         SET(_DN_CONFIG $<CONFIG>)
+        IF(_DN_CONFIG STREQUAL "RelWithDebInfo" OR _DN_CONFIG STREQUAL "RelMinSize")
+            SET(_DN_CONFIG "Release")
+        ENDIF()
     ENDIF()
 
     # If platform is not specified, do not pass the Platform property.
@@ -186,19 +189,19 @@ MACRO(ADD_DOTNET_DEPENDENCY_TARGETS)
 
     FOREACH(pkg ${DOTNET_PACKAGES})
         STRING(TOLOWER ${pkg} pkg_lowercase)
-        SET(cache_path ${NUGET_CACHE_PATH}/${pkg_lowercase})
+        GET_FILENAME_COMPONENT(cache_path ${NUGET_CACHE_PATH}/${pkg_lowercase} ABSOLUTE)
         IF(WIN32)
             SET(rm_command powershell -NoLogo -NoProfile -NonInteractive -Command "Remove-Item -Recurse -Force -ErrorAction Ignore '${cache_path}'\; exit 0")
         ELSE()
             SET(rm_command rm -rf ${cache_path})
         ENDIF()
         ADD_CUSTOM_TARGET(
-            DOTNET_PURGE_CACHE_${pkg}
+            DOTNET_PURGE_${pkg}
             COMMAND ${CMAKE_COMMAND} -E echo "======= [x] Purging nuget package cache for ${pkg}"
             COMMAND ${rm_command}
             SOURCES ${DOTNET_deps}
         )
-        ADD_DEPENDENCIES(BUILD_${DOTNET_PROJNAME} DOTNET_PURGE_CACHE_${pkg})
+        ADD_DEPENDENCIES(BUILD_${DOTNET_PROJNAME} DOTNET_PURGE_${pkg})
         # Add a target for the built package -- this can be referenced in
         # another project.
         ADD_CUSTOM_TARGET(PKG_${pkg})
