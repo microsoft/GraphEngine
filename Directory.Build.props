@@ -1,0 +1,7 @@
+<Project>
+    <!--  Note, DOTNET_PACKAGE_VERSION is overridden if the projects are built with cmake. -->
+    <!--  This file is only imported when building without cmake, i.e. Visual Studio, command line dotnet, msbuild, etc. -->
+    <PropertyGroup>
+        <DOTNET_PACKAGE_VERSION>2.0.9328</DOTNET_PACKAGE_VERSION>
+    </PropertyGroup>
+</Project>

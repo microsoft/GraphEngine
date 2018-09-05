@@ -2,10 +2,10 @@
   <PropertyGroup>
     <TargetFrameworks>net461</TargetFrameworks>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>2.0.9328.0</Version>
-    <FileVersion>2.0.9328.0</FileVersion>
-    <AssemblyVersion>2.0.9328.0</AssemblyVersion>
-    <PackageVersion>2.0.9328</PackageVersion>
+    <Version>$(DOTNET_PACKAGE_VERSION)</Version>
+    <FileVersion>$(DOTNET_PACKAGE_VERSION)</FileVersion>
+    <AssemblyVersion>$(DOTNET_PACKAGE_VERSION)</AssemblyVersion>
+    <PackageVersion>$(DOTNET_PACKAGE_VERSION)</PackageVersion>
     <Authors>Microsoft Graph Engine Team</Authors>
     <Company>Microsoft Corporation</Company>
     <Description>Provides GraphEngine-specific Service Fabric runtime support.</Description>
@@ -23,8 +23,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
-    <PackageReference Include="GraphEngine.DynamicCluster" Version="2.0.9328" />
+    <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.DynamicCluster" Version="$(DOTNET_PACKAGE_VERSION)" />
     <PackageReference Include="Microsoft.ServiceFabric" version="6.0.232" />
     <PackageReference Include="Microsoft.ServiceFabric.Data" version="2.8.232" />
     <PackageReference Include="Microsoft.ServiceFabric.Diagnostics.Internal" version="2.8.232" />

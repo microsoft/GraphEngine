@@ -7,6 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{7AA2B61D-82C7-4D46-8805-7342752949EB}</ProjectGuid>
     <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputPath>..\..\..\bin\</OutputPath>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Trinity.VSExtension</RootNamespace>
@@ -184,43 +185,33 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\bin\GraphEngine.Azure.BlobStorage.2.0.9328.nupkg">
-      <Link>Packages\GraphEngine.Azure.BlobStorage.2.0.9328.nupkg</Link>
+    <Content Include="$(OutputPath)GraphEngine.Azure.BlobStorage.$(DOTNET_PACKAGE_VERSION).nupkg">
+      <Link>Packages\GraphEngine.Azure.BlobStorage.$(DOTNET_PACKAGE_VERSION).nupkg</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
       <VSIXSubPath>Packages</VSIXSubPath>
     </Content>
-    <Content Include="..\..\..\bin\GraphEngine.Client.2.0.9328.nupkg">
-      <Link>Packages\GraphEngine.Client.2.0.9328.nupkg</Link>
+    <Content Include="$(OutputPath)GraphEngine.Client.$(DOTNET_PACKAGE_VERSION).nupkg">
+      <Link>Packages\GraphEngine.Client.$(DOTNET_PACKAGE_VERSION).nupkg</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
       <VSIXSubPath>Packages</VSIXSubPath>
     </Content>
-    <Content Include="..\..\..\bin\GraphEngine.Core.2.0.9328.nupkg">
-      <Link>Packages\GraphEngine.Core.2.0.9328.nupkg</Link>
+    <Content Include="$(OutputPath)GraphEngine.Core.$(DOTNET_PACKAGE_VERSION).nupkg">
+      <Link>Packages\GraphEngine.Core.$(DOTNET_PACKAGE_VERSION).nupkg</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
       <VSIXSubPath>Packages</VSIXSubPath>
     </Content>
-    <Content Include="..\..\..\bin\GraphEngine.DynamicCluster.2.0.9328.nupkg">
-      <Link>Packages\GraphEngine.DynamicCluster.2.0.9328.nupkg</Link>
+    <Content Include="$(OutputPath)GraphEngine.DynamicCluster.$(DOTNET_PACKAGE_VERSION).nupkg">
+      <Link>Packages\GraphEngine.DynamicCluster.$(DOTNET_PACKAGE_VERSION).nupkg</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
       <VSIXSubPath>Packages</VSIXSubPath>
     </Content>
-    <Content Include="..\..\..\bin\GraphEngine.FFI.2.0.9328.nupkg">
-      <Link>Packages\GraphEngine.FFI.2.0.9328.nupkg</Link>
+    <Content Include="$(OutputPath)GraphEngine.LIKQ.$(DOTNET_PACKAGE_VERSION).nupkg">
+      <Link>Packages\GraphEngine.LIKQ.$(DOTNET_PACKAGE_VERSION).nupkg</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
       <VSIXSubPath>Packages</VSIXSubPath>
     </Content>
-    <Content Include="..\..\..\bin\GraphEngine.FFI.Python.2.0.9328.nupkg">
-      <Link>Packages\GraphEngine.FFI.Python.2.0.9328.nupkg</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <VSIXSubPath>Packages</VSIXSubPath>
-    </Content>
-    <Content Include="..\..\..\bin\GraphEngine.LIKQ.2.0.9328.nupkg">
-      <Link>Packages\GraphEngine.LIKQ.2.0.9328.nupkg</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <VSIXSubPath>Packages</VSIXSubPath>
-    </Content>
-    <Content Include="..\..\..\bin\GraphEngine.Storage.Composite.2.0.9328.nupkg">
-      <Link>Packages\GraphEngine.Storage.Composite.2.0.9328.nupkg</Link>
+    <Content Include="$(OutputPath)GraphEngine.Storage.Composite.$(DOTNET_PACKAGE_VERSION).nupkg">
+      <Link>Packages\GraphEngine.Storage.Composite.$(DOTNET_PACKAGE_VERSION).nupkg</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
       <VSIXSubPath>Packages</VSIXSubPath>
     </Content>
@@ -315,7 +306,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>$(SolutionDir)..\..\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
@@ -324,7 +314,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>$(SolutionDir)..\..\bin\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>

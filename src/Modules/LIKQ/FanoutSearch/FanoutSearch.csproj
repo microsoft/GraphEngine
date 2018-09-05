@@ -3,10 +3,10 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>2.0.9328.0</Version>
-    <FileVersion>2.0.9328.0</FileVersion>
-    <AssemblyVersion>2.0.9328.0</AssemblyVersion>
-    <PackageVersion>2.0.9328</PackageVersion>
+    <Version>$(DOTNET_PACKAGE_VERSION)</Version>
+    <FileVersion>$(DOTNET_PACKAGE_VERSION)</FileVersion>
+    <AssemblyVersion>$(DOTNET_PACKAGE_VERSION)</AssemblyVersion>
+    <PackageVersion>$(DOTNET_PACKAGE_VERSION)</PackageVersion>
     <Authors>Microsoft Graph Engine Team</Authors>
     <Company>Microsoft Corporation</Company>
     <Description>Language Integrated Knowledge Query (LIKQ) -- a linear graph traversal language.</Description>
@@ -35,7 +35,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.6.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="2.6.1" />
     <PackageReference Include="Serialize.Linq" Version="1.7.0" />
-    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
+    <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 

@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net451</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net451;net461</TargetFrameworks>
     <AssemblyName>Trinity.Core</AssemblyName>
     <RootNamespace>Trinity</RootNamespace>
     <OutputTypeEx>library</OutputTypeEx>
@@ -23,10 +23,10 @@
     <Copyright>Copyright 2018</Copyright>
     <Company>Microsoft Corporation</Company>
 
-    <Version>2.0.9328</Version>
-    <AssemblyVersion>2.0.9328.0</AssemblyVersion>
-    <FileVersion>2.0.9328.0</FileVersion>
-    <PackageVersion>2.0.9328</PackageVersion>
+    <Version>$(DOTNET_PACKAGE_VERSION)</Version>
+    <AssemblyVersion>$(DOTNET_PACKAGE_VERSION)</AssemblyVersion>
+    <FileVersion>$(DOTNET_PACKAGE_VERSION)</FileVersion>
+    <PackageVersion>$(DOTNET_PACKAGE_VERSION)</PackageVersion>
 
     <PackageId>GraphEngine.Core</PackageId>
     <PackageTags>Graph Engine Trinity Core Runtime TSL Compiler</PackageTags>

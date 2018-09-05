@@ -14,6 +14,9 @@
     <ProvideDefaultName>true</ProvideDefaultName>
   </TemplateData>
   <TemplateContent>
+    <CustomParameters>
+      <CustomParameter Name="graphengine_version" Value="$(DOTNET_PROJECT_VERSION)"/>
+    </CustomParameters>
     <Project File="ProjectTemplate.csproj" ReplaceParameters="true">
       <ProjectItem ReplaceParameters="true" OpenInEditor="true">Class1.cs</ProjectItem>
     </Project>
