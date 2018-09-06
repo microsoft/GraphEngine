@@ -5,6 +5,7 @@
 #include <threading>
 #include "Trinity/Diagnostics/Log.h"
 #include "Trinity/Hash/NonCryptographicHash.h"
+#include "Runtime/Spinwait.h"
 
 #define SAME_CHECKSUM_TIMES_MAX 16384
 

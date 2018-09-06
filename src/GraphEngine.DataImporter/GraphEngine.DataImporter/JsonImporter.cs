@@ -63,7 +63,7 @@ namespace GraphEngine.DataImporter
                             ProcessCellIdOrCellIdListField(type, cell, fd, field_name, optional, field_content, (c, _) =>
                             {
                                 var sub_cell = ImportEntity(treeimport, c.ToString(), cellid);
-                                return sub_cell.CellID;
+                                return sub_cell.CellId;
                             });
                         });
                 }
@@ -80,7 +80,7 @@ namespace GraphEngine.DataImporter
             tree_imports.ForEach(_ => _());
 
             if (cellid == null) cellid = Global.LocalStorage.NewRandomCellID();
-            cell.CellID = cellid.Value;
+            cell.CellId = cellid.Value;
             if (parent_id != null)
             {
                 var parent_fd = cell_desc.GetFieldDescriptors().Where(fd => fd.GetAttributeValue(Consts.c_KW_TreeParent) != null).First();

@@ -3,7 +3,6 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 #include <os/os.h>
-#include "Trinity/Collections/List.h"
 #include "Trinity/Configuration/TrinityConfig.h"
 #include "BackgroundThread/BackgroundThread.h"
 #include "LogAutoFlushTask.h"

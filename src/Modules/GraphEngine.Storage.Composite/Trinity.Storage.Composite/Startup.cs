@@ -18,6 +18,7 @@ namespace Trinity.Storage.Composite
             Trinity.Global.LocalStorage.StorageSaved += CompositeStorage.SaveMetadata;
             //Trinity.Global.LocalStorage.StorageLoaded += LocalStorage_StorageLoaded;
             Trinity.Global.LocalStorage.StorageReset += CompositeStorage.ResetMetadata;
+            Log.WriteLine("Storage.Composite: extension loaded.");
         }
     }
 }

@@ -128,17 +128,17 @@ namespace GraphEngine.DataImporter
                  {
                      save_otherwise_dispose = true;
                      remote_cell = Global.LocalStorage.NewGenericCell(rfd.TargetCellType);
-                     remote_cell.CellID = target_id;
+                     remote_cell.CellId = target_id;
                  }
 
                  var fd = remote_cell.GetFieldDescriptors().First(_ => _.Name == rfd.TargetFieldName);
                  if (fd.IsOfType<long>() || fd.IsOfType<string>())
                  {
-                     remote_cell.AppendToField(rfd.TargetFieldName, cell.CellID);
+                     remote_cell.AppendToField(rfd.TargetFieldName, cell.CellId);
                  }
                  else if (fd.IsOfType<int>())
                  {
-                     remote_cell.AppendToField(rfd.TargetFieldName, (int)cell.CellID);
+                     remote_cell.AppendToField(rfd.TargetFieldName, (int)cell.CellId);
                  }
                  else
                  {

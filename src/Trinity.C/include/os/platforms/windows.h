@@ -22,4 +22,5 @@
 #define TRINITY_COMPILER_WARNING(msg) __pragma(message("Warning: "#msg))
 #define ALIGNED(x) __declspec(align(x))
 #define DLL_EXPORT extern "C" __declspec(dllexport)
+#define DLL_IMPORT extern "C" __declspec(dllimport)
 #define THREAD_LOCAL thread_local

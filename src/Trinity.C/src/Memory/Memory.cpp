@@ -12,6 +12,9 @@
 #include <sys/ptrace.h>
 #endif
 
+using Trinity::Diagnostics::LogLevel;
+using Trinity::Diagnostics::WriteLine;
+
 namespace Memory
 {
     uint64_t LargePageMinimum = 2097152; //2M
@@ -27,7 +30,7 @@ namespace Memory
         DWORD old = 0;
         if (!VirtualProtectEx(GetCurrentProcess(), targetPtr, sizeof(uint64_t), PAGE_READWRITE, &old))
         {
-            Console::WriteLine("Failed to change the memory page to PAGE_READWRITE\n");
+            WriteLine(LogLevel::Error, "Failed to change the memory page to PAGE_READWRITE\n");
             return FALSE;
         }
         if (WriteProcessMemory(GetCurrentProcess(), (LPVOID)targetPtr, (LPVOID)&targetValue, sizeof(LPVOID), &bytesWritten))
@@ -36,7 +39,7 @@ namespace Memory
         }
         else
         {
-            Console::WriteLine("Failed to write to process memory.\n");
+            WriteLine(LogLevel::Error, "Failed to write to process memory.\n");
             return FALSE;
         }
 #else
@@ -51,7 +54,7 @@ namespace Memory
         }
         else
         {
-            Console::WriteLine("Failed to change the memory page to PAGE_READWRITE\n");
+            WriteLine(LogLevel::Error, "Failed to change the memory page to PAGE_READWRITE\n");
             return FALSE;
         }
 #endif
@@ -300,7 +303,7 @@ namespace Memory
         memoryStatus.dwLength = sizeof(memoryStatus);
         if (!GlobalMemoryStatusEx(&memoryStatus))
         {
-            Console::WriteLine("Get GlobalMemoryStatus: {0}\n", GetLastError());
+            WriteLine(LogLevel::Error, "Get GlobalMemoryStatus: {0}\n", GetLastError());
             return;
         }
 
@@ -310,7 +313,7 @@ namespace Memory
         {
             if (max_wsz <= WorkingSetDecreaseStep)
             {
-                Console::WriteLine("Increasing working set size failed.\r\n");
+                WriteLine(LogLevel::Error, "Increasing working set size failed.\r\n");
                 break;
             }
 
@@ -362,7 +365,7 @@ namespace Memory
         DWORD WSFlag = 0;
 
         GetProcessWorkingSetSizeEx(::GetCurrentProcess(), &MinSize, &MaxSize, &WSFlag);
-        Console::WriteLine("%Iu, %Iu, %Iu", MinSize, MaxSize, WSFlag);*/
+        WriteLine("%Iu, %Iu, %Iu", MinSize, MaxSize, WSFlag);*/
 #endif
     }
 
@@ -378,7 +381,7 @@ namespace Memory
         {
             if (max_wsz <= WorkingSetDecreaseStep)
             {
-                Console::WriteLine("Increasing working set size failed.\r\n");
+                WriteLine(LogLevel::Error, "Increasing working set size failed.\r\n");
                 break;
             }
 
@@ -404,7 +407,7 @@ namespace Memory
     {
 #if defined(TRINITY_PLATFORM_WINDOWS)
         GetProcessWorkingSetSizeEx(::GetCurrentProcess(), &MinWorkingSet, &MaxWorkingSet, (PDWORD)&WorkingSetFlag);
-        //Console::WriteLine("MinWorkingSet: %Iu, MaxWorkingSet: %Iu, WorkingSetFlag: %Iu\n", MinWorkingSet, MaxWorkingSet, WorkingSetFlag);
+        //WriteLine("MinWorkingSet: %Iu, MaxWorkingSet: %Iu, WorkingSetFlag: %Iu\n", MinWorkingSet, MaxWorkingSet, WorkingSetFlag);
 #endif
     }
 
@@ -434,7 +437,7 @@ namespace Memory
         DWORD WSFlag = 0;
 
         GetProcessWorkingSetSizeEx(::GetCurrentProcess(), &MinSize, &MaxSize, &WSFlag);
-        Console::WriteLine("%Iu, %Iu, %Iu", MinSize, MaxSize, WSFlag);*/
+        WriteLine("%Iu, %Iu, %Iu", MinSize, MaxSize, WSFlag);*/
 #endif
     }
 
@@ -536,12 +539,12 @@ namespace Memory
 #if !defined(TRINITY_PLATFORM_WINDOWS)
     bool VirtualLock(void* addr, size_t size)
     {
-        Trinity::Diagnostics::WriteLine(Trinity::Diagnostics::LogLevel::Error, "VirtualLock: Windows only.");
+        WriteLine(LogLevel::Error, "VirtualLock: Windows only.");
         return false;
     }
     bool VirtualUnlock(void* addr, size_t size) 
     { 
-        Trinity::Diagnostics::WriteLine(Trinity::Diagnostics::LogLevel::Error, "VirtualUnlock: Windows only.");
+        WriteLine(LogLevel::Error, "VirtualUnlock: Windows only.");
         return false;
     }
 #endif

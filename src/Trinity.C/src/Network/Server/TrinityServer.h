@@ -23,6 +23,13 @@ namespace Trinity
             uint32_t BytesToSend;
         }MessageBuff;
 
+		typedef void(message_handler_t)(MessageBuff *);
+		
+		constexpr size_t MAX_HANDLERS_COUNT = 65536;
+		extern message_handler_t * s_message_handlers[MAX_HANDLERS_COUNT];
+
+		void dispatch_message(MessageBuff *);
+
         // Should be defined in an implementation.
         extern std::atomic<size_t> g_threadpool_size;
         // Should be defined in an implementation.
@@ -46,13 +53,11 @@ namespace Trinity
             --g_threadpool_size;
         }
 
-        void WorkerThreadProc(int tid);
+        DWORD RegisterMessageHandler (uint16_t msgId, message_handler_t * handler);
 
-        void MessageHandler(MessageBuff * msg);
+        DWORD StartWorkerThreadPool();
 
         void CheckHandshakeResult(PerSocketContextObject* pContext);
-
-        bool StartWorkerThreadPool(); //
 
 #pragma region Test purpose only
         int TrinityServerTestEntry();

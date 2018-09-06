@@ -4,6 +4,7 @@
 //
 #pragma once
 #include "TrinityCommon.h"
+#include <io>
 namespace Trinity
 {
     namespace FileIO

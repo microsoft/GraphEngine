@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Trinity.FFI.AutoCode": {
-      "commandName": "Project",
-      "workingDirectory": "."
-    }
-  }
-}

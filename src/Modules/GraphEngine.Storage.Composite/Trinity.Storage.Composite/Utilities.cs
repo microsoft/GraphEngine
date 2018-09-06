@@ -63,6 +63,12 @@ namespace Trinity.Storage.Composite
     {
         private const string s_session_flag_file = ".session.inprogress";
 
+        public static string MyAssemblyVersion()
+        {
+            var version = typeof(Utils).Assembly.GetName().Version;
+            return $"{version.Major}.{version.Minor}.{version.Build}";
+        }
+
         public static void Session(string path, Action start, Action<Exception> err, Action end, Action behavior, Action final = null)
         {
             Log.WriteLine(LogLevel.Verbose, $"{nameof(CompositeStorage)}: Begin I/O session.");

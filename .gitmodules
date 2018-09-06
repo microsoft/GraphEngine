@@ -1,6 +1,0 @@
-[submodule "src/Modules/Trinity.FFI/pythonnet"]
-	path = src/Modules/Trinity.FFI/pythonnet
-	url = https://github.com/dmitriyse/pythonnet.git
-[submodule "src/Modules/GraphEngine.Jit/asmjit"]
-	path = src/Modules/GraphEngine.Jit/asmjit
-	url = https://github.com/asmjit/asmjit.git

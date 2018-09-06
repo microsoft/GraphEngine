@@ -1,15 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <AssemblyName>Trinity.DynamicCluster</AssemblyName>
     <RootNamespace>Trinity.DynamicCluster</RootNamespace>
-    <OutputPath>..\..\..\..\bin</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Client" Version="2.0.9328" />
-    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
+    <PackageReference Include="GraphEngine.Client" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
     <PackageReference Include="Nito.AsyncEx.Coordination" Version="1.0.2" />
     <PackageReference Include="Nito.AsyncEx.Tasks" Version="1.1.0" />
     <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
@@ -34,10 +33,10 @@
     <Copyright>Copyright 2018</Copyright>
     <Company>Microsoft Corporation</Company>
 
-    <Version>2.0.9328</Version>
-    <AssemblyVersion>2.0.9328.0</AssemblyVersion>
-    <FileVersion>2.0.9328.0</FileVersion>
-    <PackageVersion>2.0.9328</PackageVersion>
+    <Version>$(DOTNET_PACKAGE_VERSION)</Version>
+    <AssemblyVersion>$(DOTNET_PACKAGE_VERSION)</AssemblyVersion>
+    <FileVersion>$(DOTNET_PACKAGE_VERSION)</FileVersion>
+    <PackageVersion>$(DOTNET_PACKAGE_VERSION)</PackageVersion>
 
     <PackageId>GraphEngine.DynamicCluster</PackageId>
     <Title>GraphEngine DynamicCluster</Title>

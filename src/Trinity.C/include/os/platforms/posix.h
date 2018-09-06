@@ -9,6 +9,7 @@
 #include <climits>
 #include <cstdio>
 #include <cstdint>
+#include <cstring>
 #include <cmath>
 #include <unistd.h>
 #include <sys/types.h>
@@ -51,4 +52,8 @@ int GetLastError();
 #define TRINITY_COMPILER_WARNING(msg) _Pragma(_HELPER_1(_HELPER_2(msg)))
 #define ALIGNED(x) __attribute__ ((aligned(x)))
 #define DLL_EXPORT extern "C" __attribute__ ((visibility ("default")))
+#define DLL_IMPORT extern "C" __attribute__ ((visibility ("default")))
 #define THREAD_LOCAL thread_local
+inline char* _strdup(const char* s) { return strdup(s); }
+inline FILE* _popen(const char* command, const char* type) { return popen(command, type); }
+inline int _pclose(FILE* stream) { return pclose(stream); }

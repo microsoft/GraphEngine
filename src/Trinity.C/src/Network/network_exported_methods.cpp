@@ -25,3 +25,5 @@ DLL_EXPORT void AwaitRequest(void*& pContext) { Network::AwaitRequest(pContext);
 DLL_EXPORT void SendResponse(void* pContext) { Network::SendResponse(pContext); }
 DLL_EXPORT void EnterSocketServerThreadPool() { Network::EnterSocketServerThreadPool(); }
 DLL_EXPORT void ExitSocketServerThreadPool() { Network::ExitSocketServerThreadPool(); }
+DLL_EXPORT bool StartWorkerThreadPool() { return Network::StartWorkerThreadPool(); }
+DLL_EXPORT bool RegisterMessageHandler(uint16_t msgId, void * handler) { return Network::RegisterMessageHandler(msgId, (Network::message_handler_t *)handler); }

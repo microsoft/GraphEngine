@@ -148,6 +148,13 @@ namespace Trinity.Storage
         /// <param name="attributeValue">Optionally, specifies the value of the attribute. When <paramref name="attributeKey"/> is <c>null</c>, this parameter is ignored.</param>
         /// <returns>A collection of elements matching the specified attribute.</returns>
         IEnumerable<T> EnumerateValues<T>(string attributeKey, string attributeValue = null);
+
+        /// <summary>
+        /// Converts a runtime object representation, backed by the 
+        /// cell type class, to a serialized buffer representation.
+        /// </summary>
+        /// <returns>The newly allocated & serialized accessor.</returns>
+        ICellAccessor Serialize(); // XXX currently only guarantees readable. Writing causes undefined behaviour.
     }
 
     /// <summary>

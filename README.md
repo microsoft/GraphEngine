@@ -52,7 +52,7 @@ Please submit bugs and feature requests in [GitHub Issues](https://github.com/Mi
 ## Building for Windows
 
 Install [Visual Studio 2017](https://www.visualstudio.com/).
-Install Windows 10 SDK (10.0.15063.0) for Desktop C++. 
+Install Windows 10 SDK (10.0.10586.0) for Desktop C++. 
 The Windows build will generate multi-targeting nuget packages for all
 the available modules, so make sure you also install `.NET Core SDK
 2.0`.  Additionally, to build the python FFI packages, make sure you

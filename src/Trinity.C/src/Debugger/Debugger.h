@@ -8,6 +8,7 @@
 #include <Windows.h>
 #include <TlHelp32.h>
 #include <corelib>
+#include <vector>
 
 namespace Trinity
 {
@@ -16,7 +17,7 @@ namespace Trinity
 		void EnableUnhandledExceptionFilter();
 		void TryStartDebugger(bool suspendOtherThreads);
 
-		List<THREADENTRY32> GetThreads(DWORD pid);
+		std::vector<THREADENTRY32> GetThreads(DWORD pid);
 		BOOL SuspendOtherThreads();
 
 		void printError(char* msg);

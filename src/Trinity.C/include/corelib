@@ -5,10 +5,9 @@
 #pragma once
 #include <Trinity/Array.h>
 #include <Trinity/Environment.h>
-#include <Trinity/Collections/List.h>
 #include <Trinity/String.h>
 #include <Trinity/Random.h>
 #include <Trinity/DateTime.h>
+#include <vector>
 
 using namespace Trinity;
-using Trinity::Collections::List;

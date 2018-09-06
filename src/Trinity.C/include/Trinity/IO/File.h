@@ -4,6 +4,7 @@
 //
 #pragma once
 #include <corelib>
+#include <vector>
 #include <os/os.h>
 #include <fstream>
 #include "StreamWriter.h"
@@ -72,11 +73,11 @@ namespace Trinity
                 return ret;
             }
 
-            inline List<String> ReadAllLines(const String& filename)
+            inline std::vector<String> ReadAllLines(const String& filename)
             {
                 static const size_t buf_size = 8192;
                 Array<char> buf(buf_size + 1);
-                List<String> ret;
+                std::vector<String> ret;
                 std::string linebuf;
                 std::ifstream stream(filename.c_str());
                 while (!stream.eof())

@@ -5,7 +5,7 @@
     <Description>A C# project for creating a Graph Engine Application.</Description>
     <Icon Package="{FAE04EC1-301F-11d3-BF4B-00C04F79EFBC}" ID="4548" />
     <ProjectType>CSharp</ProjectType>
-    <RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
+    <RequiredFrameworkVersion>4.5</RequiredFrameworkVersion>
     <SortOrder>1000</SortOrder>
     <TemplateID>ab396f47-8ab5-4fb7-a4bc-74992f6c538c</TemplateID>
     <CreateNewFolder>true</CreateNewFolder>
@@ -25,7 +25,7 @@
   </WizardExtension>
   <WizardData>
     <packages repository="extension" repositoryId="51a02fa7-9a83-4aa0-9236-599637c597c6">
-      <package id="GraphEngine.Core" version="2.0.9328" />
+      <package id="GraphEngine.Core" version="$(DOTNET_PACKAGE_VERSION)" />
     </packages>
   </WizardData>
 </VSTemplate>

@@ -3,11 +3,11 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 #include <os/os.h>
-#ifndef TRINITY_PLATFORM_WINDOWS
+#if !defined(TRINITY_PLATFORM_WINDOWS)
 #include <thread>
 #include <map>
 #include "os/platforms/posix.h"
-#include "Threading/TrinityLock.h"
+#include "Trinity/Threading/TrinityLock.h"
 #include "Trinity/Configuration/TrinityConfig.h"
 #include "Trinity/Hash/NonCryptographicHash.h"
 #include "Network/Server/posix/TrinitySocketServer.h"

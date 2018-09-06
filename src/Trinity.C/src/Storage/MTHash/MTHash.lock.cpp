@@ -5,6 +5,7 @@
 #include "Storage/MTHash/MTHash.h"
 #include "Storage/MemoryTrunk/MemoryTrunk.h"
 #include "Storage/LocalStorage/ThreadContext.h"
+#include "Runtime/Spinwait.h"
 #include <threading>
 
 #define COUNTER_THRESHOLD 4000

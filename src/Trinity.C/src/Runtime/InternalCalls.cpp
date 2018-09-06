@@ -14,7 +14,6 @@
 #include "Debugger/Debugger.h"
 #include "Trinity/Configuration/TrinityConfig.h"
 
-using Storage::CellAccessOptions;
 using Storage::PTHREAD_CONTEXT;
 
 //====================== CStdio ==========================//

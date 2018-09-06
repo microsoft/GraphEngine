@@ -16,6 +16,14 @@ namespace Trinity
     public enum TrinityErrorCode : int
     {
         /// <summary>
+        /// Indicates that an unload operation has failed.
+        /// </summary>
+        E_UNLOAD_FAIL           = -20,
+        /// <summary>
+        /// Indicates that a load operation has failed.
+        /// </summary>
+        E_LOAD_FAIL             = -19,
+        /// <summary>
         /// Indicates that a response message is too long.
         /// </summary>
         E_MSG_OVERFLOW          = -18,

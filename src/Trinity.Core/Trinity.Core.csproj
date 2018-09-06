@@ -10,7 +10,6 @@
     <RootNamespace>Trinity</RootNamespace>
     <OutputTypeEx>library</OutputTypeEx>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <OutputPath>..\..\bin</OutputPath>
     <ServerGarbageCollection>true</ServerGarbageCollection>
     <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
     <ThreadPoolMinThreads>20</ThreadPoolMinThreads>
@@ -24,10 +23,10 @@
     <Copyright>Copyright 2018</Copyright>
     <Company>Microsoft Corporation</Company>
 
-    <Version>2.0.9328</Version>
-    <AssemblyVersion>2.0.9328.0</AssemblyVersion>
-    <FileVersion>2.0.9328.0</FileVersion>
-    <PackageVersion>2.0.9328</PackageVersion>
+    <Version>$(DOTNET_PACKAGE_VERSION)</Version>
+    <AssemblyVersion>$(DOTNET_PACKAGE_VERSION)</AssemblyVersion>
+    <FileVersion>$(DOTNET_PACKAGE_VERSION)</FileVersion>
+    <PackageVersion>$(DOTNET_PACKAGE_VERSION)</PackageVersion>
 
     <PackageId>GraphEngine.Core</PackageId>
     <PackageTags>Graph Engine Trinity Core Runtime TSL Compiler</PackageTags>
@@ -49,14 +48,6 @@
     <Compile Remove="BuildNuGetPkg\**" />
     <EmbeddedResource Remove="BuildNuGetPkg\**" />
     <EmbeddedResource Include="Network\Http\index.html" />
-    <None Remove="..\..\bin\Trinity.dll" />
-    <None Remove="..\..\bin\libTrinity.so" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
-    <EmbeddedResource Include="..\..\bin\Trinity.dll">
-      <Link>Trinity.dll</Link>
-    </EmbeddedResource>
   </ItemGroup>
 
   <!-- Nuget package content -->
@@ -70,16 +61,16 @@
     <Content Include="Trinity\Configuration\TrinityConfig.Schema.xsd">
       <PackagePath>content</PackagePath>
     </Content>
-    <Content Include="..\..\bin\Trinity.TSL.CodeGen.exe">
+    <Content Include="$(XPLAT_LIB_DIR)\Trinity.TSL.CodeGen.exe">
       <PackagePath>tools</PackagePath>
     </Content>
-    <Content Include="..\..\bin\Trinity.TSL.CodeGen">
+    <Content Include="$(XPLAT_LIB_DIR)\Trinity.TSL.CodeGen">
       <PackagePath>tools</PackagePath>
     </Content>
-    <Content Include="..\..\bin\Trinity.dll">
+    <Content Include="$(XPLAT_LIB_DIR)\Trinity.dll">
       <PackagePath>runtimes\win-x64\native</PackagePath>
     </Content>
-    <Content Include="..\..\bin\libTrinity.so">
+    <Content Include="$(XPLAT_LIB_DIR)\libTrinity.so">
       <PackagePath>runtimes\linux-x64\native</PackagePath>
     </Content>
   </ItemGroup>
@@ -95,10 +86,6 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net451'">
     <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="1.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

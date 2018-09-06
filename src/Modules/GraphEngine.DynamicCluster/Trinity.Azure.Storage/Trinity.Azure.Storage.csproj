@@ -10,7 +10,6 @@
     <AssemblyName>Trinity.Azure.Storage</AssemblyName>
     <OutputTypeEx>library</OutputTypeEx>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <OutputPath>..\..\..\..\bin</OutputPath>
     <ServerGarbageCollection>true</ServerGarbageCollection>
     <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
     <ThreadPoolMinThreads>20</ThreadPoolMinThreads>
@@ -24,10 +23,10 @@
     <Copyright>Copyright 2018</Copyright>
     <Company>Microsoft Corporation</Company>
 
-    <Version>2.0.9328</Version>
-    <AssemblyVersion>2.0.9328.0</AssemblyVersion>
-    <FileVersion>2.0.9328.0</FileVersion>
-    <PackageVersion>2.0.9328</PackageVersion>
+    <Version>$(DOTNET_PACKAGE_VERSION)</Version>
+    <AssemblyVersion>$(DOTNET_PACKAGE_VERSION)</AssemblyVersion>
+    <FileVersion>$(DOTNET_PACKAGE_VERSION)</FileVersion>
+    <PackageVersion>$(DOTNET_PACKAGE_VERSION)</PackageVersion>
 
     <PackageId>GraphEngine.Azure.BlobStorage</PackageId>
     <PackageTags>Graph Engine Trinity Azure Blob Storage</PackageTags>
@@ -46,7 +45,7 @@
 
   <!-- Package dependencies -->
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Core" Version="2.0.9328" />
+    <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
     <PackageReference Include="System.Threading.Tasks.Dataflow" Version="4.8.0" />
     <PackageReference Include="WindowsAzure.Storage" Version="8.6.0" />
   </ItemGroup>

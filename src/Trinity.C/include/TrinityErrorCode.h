@@ -12,6 +12,8 @@
 
 enum TrinityErrorCode : int32_t
 {
+    E_UNLOAD_FAIL           = -20, //For example, if unloading AppDomain failed.
+    E_LOAD_FAIL             = -19, //For example, if LoadLibrary() failed.
     E_MSG_OVERFLOW          = -18,
     E_NETWORK_SHUTDOWN      = -17,
     E_CELL_LOCK_OVERFLOW    = -16,

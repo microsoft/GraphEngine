@@ -5,6 +5,7 @@
 #pragma once
 #include "TrinityCommon.h"
 #include "Utility/FileIO.h"
+#include <io>
 #include <sys/stat.h>
 #include <sys/types.h>
 

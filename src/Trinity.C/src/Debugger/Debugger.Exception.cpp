@@ -13,7 +13,7 @@ namespace Trinity
 {
 	namespace Debugger
 	{
-		Mutex g_ExceptionLock;
+		std::mutex g_ExceptionLock;
 
 		VOID PrintExceptionRecord(PEXCEPTION_RECORD pRecord)
 		{

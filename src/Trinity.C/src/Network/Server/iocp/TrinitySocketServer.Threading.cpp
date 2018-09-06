@@ -3,6 +3,7 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 #include <os/os.h>
+#include <io>
 #if defined(TRINITY_PLATFORM_WINDOWS)
 #include "TrinitySocketServer.h"
 #include <Trinity/Environment.h>

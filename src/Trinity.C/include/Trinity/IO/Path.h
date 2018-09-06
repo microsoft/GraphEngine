@@ -32,6 +32,8 @@ namespace Trinity
             static const char WindowsDirectorySeparator = '\\';
             static const char UnixDirectorySeparator = '/';
             static const char *DirectorySeparators = "/\\";
+            // place \0 at the end to be able to use strchr
+            static const char InvalidPathChars[] ={ 34, 60, 62, 124, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 0 };
             extern String g_AssemblyPath;
 
 #if defined(TRINITY_PLATFORM_WINDOWS)
@@ -40,8 +42,13 @@ namespace Trinity
             static const char DirectorySeparator = UnixDirectorySeparator;
 #endif
 
+#if defined(TRINITY_PLATFORM_LINUX)
+            static const char* _procSelf = "/proc/self/exe";
+#elif defined(TRINITY_PLATFORM_DARWIN)
+            static const char* _procSelf = "/proc/curproc/exe";
+#endif
+
 #pragma warning(pop)
-            inline String ChangeExtension(const String& path);
             inline bool IsUncPath(const String& path)
             {
                 if (path.Contains(UnixDirectorySeparator))
@@ -50,6 +57,7 @@ namespace Trinity
                     return true;
                 return false;
             }
+
             inline bool IsPathRooted(const String& path)
             {
                 /**
@@ -73,6 +81,7 @@ namespace Trinity
 #endif
                 return false;
             }
+
             /*
             True if and only if the path is root
             Note that for UNC paths, root path is of form:
@@ -111,6 +120,16 @@ namespace Trinity
                     return ret;
                 ret.PopBack();
                 return ret;
+            }
+
+            inline String GetParent(const String& path)
+            {
+                String ret(path);
+                if (ret.Length() > 0 && *ret.rbegin() == DirectorySeparator)
+                {
+                    ret.PopBack();
+                }
+                return Path::GetDirectoryName(ret);
             }
 
             inline String GetFileName(const String& path)
@@ -256,6 +275,8 @@ namespace Trinity
             }
 
 
+            /// Returns ".extension" if extension exists,
+            /// or "" if not.
             inline String GetExtension(String path)
             {
                 path = GetFileName(path);
@@ -318,34 +339,76 @@ namespace Trinity
             inline String GetRandomFileName();//P2
             inline String GetTempFileName();//P2
             inline String GetTempPath();//P2
-            inline bool HasExtension(const String& path);//P2
 
-            inline String MyAssemblyPath()
+            inline bool HasExtension(const String& path)
             {
-                if (g_AssemblyPath != "") return g_AssemblyPath;
+                return GetExtension(path) != "";
+            }
 
+            inline bool HasExtension(const String& path, const String& ext)
+            {
+                return GetExtension(path) == ext;
+            }
+
+            inline String ChangeExtension(const String& path);//P2
+
+            inline String GetProcessPath()
+            {
 #if defined(TRINITY_PLATFORM_WINDOWS)
-                // XXX for CoreCLR, Trinity.C.dll is shared so multiple instances will get the same path for the assembly
                 Array<u16char> lpFilename(1024);
-                HMODULE        hmodule = GetModuleHandleW(L"Trinity.C.dll");
-                /* If Trinity.C.dll is absent, we default to the executing assembly (sending NULL into the API) */
-                GetModuleFileNameW(hmodule, lpFilename, static_cast<DWORD>(lpFilename.Length()));
+                GetModuleFileNameW(nullptr, lpFilename, static_cast<DWORD>(lpFilename.Length()));
                 lpFilename[lpFilename.Length() - 1] = 0;
-                g_AssemblyPath = GetDirectoryName(GetFullPath(String::FromWcharArray(lpFilename, -1)));
-                return g_AssemblyPath;
-#elif defined(TRINITY_PLATFORM_LINUX)
-                // XXX does not make sense if MyAssemblyPath always point to the mono host...
+                return String(lpFilename.data());
+#else
                 char* filename_buf    = new char[1024];
                 int filename_buf_size = readlink("/proc/self/exe", filename_buf, 1024);
                 if (filename_buf_size < 0) { filename_buf_size = 0; }
                 filename_buf[filename_buf_size] = 0;
                 String ret(filename_buf);
                 delete[] filename_buf;
-                g_AssemblyPath = GetDirectoryName(ret);
+                return ret;
+#endif
+            }
+
+            inline String MyAssemblyPath()
+            {
+                if (g_AssemblyPath != "") return g_AssemblyPath;
+
+#if defined(TRINITY_PLATFORM_WINDOWS)
+                Array<u16char> lpFilename(1024);
+                HMODULE        hmodule = GetModuleHandleW(L"Trinity.dll");
+                /* If Trinity.dll is absent, we default to the executing assembly (sending NULL into the API) */
+                GetModuleFileNameW(hmodule, lpFilename, static_cast<DWORD>(lpFilename.Length()));
+                lpFilename[lpFilename.Length() - 1] = 0;
+                g_AssemblyPath = GetDirectoryName(GetFullPath(String::FromWcharArray(lpFilename, -1)));
                 return g_AssemblyPath;
 #else
-#error Not supported
+                char* filename_buf    = new char[1024];
+                int filename_buf_size = readlink(_procSelf, filename_buf, 1024);
+                if (filename_buf_size < 0) { filename_buf_size = 0; }
+                filename_buf[filename_buf_size] = 0;
+                String ret(filename_buf);
+                delete[] filename_buf;
+                g_AssemblyPath = GetDirectoryName(ret);
+                return g_AssemblyPath;
 #endif
+            }
+
+            inline String RemoveInvalidChars(const String& path)
+            {
+                auto _wchararray = path.ToWcharArray();
+                std::basic_string<u16char> strbuilder;
+                for (auto ch : _wchararray)
+                {
+                    if (ch == 0 || (ch <= CHAR_MAX && nullptr != strchr(InvalidPathChars, ch)))
+                    {
+                        continue;
+                    }
+
+                    strbuilder.push_back(ch);
+                }
+
+                return String(strbuilder.data());
             }
         }
     }

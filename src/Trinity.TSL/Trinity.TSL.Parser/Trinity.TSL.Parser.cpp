@@ -3,10 +3,8 @@
 #include "error.h"
 #include "debug.h"
 #include "flex_bison_common.h"
-#include "Trinity/Collections/List.h"
 #include "Trinity/String.h"
 using namespace std;
-using Trinity::Collections::List;
 using Trinity::String;
 
 #if YYDEBUG
@@ -22,7 +20,7 @@ void reset_parser()
     reset_filename_stack();
 }
 
-NTSL* start_parser(const List<String>& filelist)
+NTSL* start_parser(const std::vector<String>& filelist)
 {
     reset_parser();
     set_lex_nonstop_mode(false);

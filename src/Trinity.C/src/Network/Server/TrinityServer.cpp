@@ -4,29 +4,60 @@
 //
 #include "os/os.h"
 #include "Network/Server/TrinityServer.h"
-#ifdef TRINITY_PLATFORM_WINDOWS
 #include "Network/Server/iocp/TrinitySocketServer.h"
-#else
 #include "Network/Server/posix/TrinitySocketServer.h"
-#endif
 
 #include <stdio.h>
 #include <string.h>
+
+#include <iostream>
 
 namespace Trinity
 {
     namespace Network
     {
-        bool StartWorkerThreadPool()
-        {
-            int thread_count = std::thread::hardware_concurrency();
-            
-            for (int i = 0; i < thread_count; i++)
-            {
-                std::thread t = std::thread(WorkerThreadProc, i);
-                t.detach();
-            }
+        static message_handler_t * s_message_handlers[MAX_HANDLERS_COUNT];
 
+        DWORD RegisterMessageHandler(uint16_t msg_type, message_handler_t * handler)
+        {
+            s_message_handlers[msg_type] = handler;
+            return true;
+        }
+
+        void _default_handler(MessageBuff * buff)
+        {
+            buff->Buffer = (char *)malloc(sizeof(TrinityErrorCode));
+            buff->BytesToSend = sizeof(TrinityErrorCode);
+            *((TrinityErrorCode *)(buff->Buffer)) = TrinityErrorCode::E_RPC_EXCEPTION;
+        }
+
+        void _workerthread()
+        {
+            auto tid = std::this_thread::get_id();
+            Diagnostics::WriteLine(Diagnostics::Debug, "TrinityServer: Starting worker thread #{0}", tid);
+            EnterSocketServerThreadPool();
+            while (true)
+            {
+                void* _pContext = NULL;
+                AwaitRequest(_pContext);
+                if (_pContext == NULL) { break; }
+                MessageBuff* msg = (MessageBuff*)_pContext;
+                s_message_handlers[*(uint16_t *)msg->Buffer](msg);
+                SendResponse(_pContext);
+            }
+            Diagnostics::WriteLine(Diagnostics::Debug, "TrinityServer: Stopping worker thread #{0}", tid);
+            ExitSocketServerThreadPool();
+        }
+
+        DWORD StartWorkerThreadPool()
+        {
+            int thread_count = std::thread::hardware_concurrency() * 2;
+            std::fill_n(s_message_handlers, MAX_HANDLERS_COUNT, &_default_handler);
+            for(auto i = 0; i < thread_count; ++i ) 
+            {
+                std::thread(_workerthread).detach();
+            }
+            
             return true;
         }
 
@@ -35,42 +66,17 @@ namespace Trinity
             int sock_fd = StartSocketServer(5304);
             if (-1 == sock_fd)
             {
-                fwprintf(stderr, L"cannot start socket server\n");
+                fwprintf(stderr, L">>> cannot start socket server\n");
                 return -1;
             }
             StartWorkerThreadPool();
             while (true)
+            {
                 std::this_thread::sleep_for(std::chrono::seconds(5));
+            }
             return 0;
         }
 
-        // This is only a sample handler
-        void MessageHandler(MessageBuff * msg)
-        {
-            fwprintf(stderr, L"in message handler, message length: %d \n", msg->BytesReceived);
-            // TODO: do some user-specified logic
-            msg->Buffer = (char*)malloc(11);
-            memset(msg->Buffer, 0, 11);
-            *(uint32_t*)(msg->Buffer) = 7;
-            memcpy(msg->Buffer + 4, "hello\n", 6);
-            msg->BytesToSend = 11;
-        }
-
-        void WorkerThreadProc(int tid)
-        {
-            fprintf(stderr, "%d\n", tid);
-            EnterSocketServerThreadPool();
-            while (true)
-            {
-                void* _pContext = NULL;
-                AwaitRequest(_pContext);
-                if (_pContext == NULL) { break; }
-                PerSocketContextObject* pContext = (PerSocketContextObject*)_pContext;
-                MessageHandler((MessageBuff*)pContext);
-                SendResponse(pContext);
-            }
-            ExitSocketServerThreadPool();
-        }
 
         void CheckHandshakeResult(PerSocketContextObject* pContext)
         {
@@ -94,7 +100,7 @@ namespace Trinity
             SendResponse(pContext);
             return;
 
-        handshake_check_fail:
+handshake_check_fail:
             CloseClientConnection(pContext, false);
             return;
         }
