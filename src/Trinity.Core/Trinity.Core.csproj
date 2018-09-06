@@ -61,16 +61,16 @@
     <Content Include="Trinity\Configuration\TrinityConfig.Schema.xsd">
       <PackagePath>content</PackagePath>
     </Content>
-    <Content Include="$(OutputPath)\Trinity.TSL.CodeGen.exe">
+    <Content Include="$(XPLAT_LIB_DIR)\Trinity.TSL.CodeGen.exe">
       <PackagePath>tools</PackagePath>
     </Content>
-    <Content Include="$(OutputPath)\Trinity.TSL.CodeGen">
+    <Content Include="$(XPLAT_LIB_DIR)\Trinity.TSL.CodeGen">
       <PackagePath>tools</PackagePath>
     </Content>
-    <Content Include="$(OutputPath)\Trinity.dll">
+    <Content Include="$(XPLAT_LIB_DIR)\Trinity.dll">
       <PackagePath>runtimes\win-x64\native</PackagePath>
     </Content>
-    <Content Include="$(OutputPath)\libTrinity.so">
+    <Content Include="$(XPLAT_LIB_DIR)\libTrinity.so">
       <PackagePath>runtimes\linux-x64\native</PackagePath>
     </Content>
   </ItemGroup>

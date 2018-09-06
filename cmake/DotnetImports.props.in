@@ -1,7 +1,7 @@
 <Project>
     <PropertyGroup>
-        <OutputPath>${_DN_OUTPUT_PATH}</OutputPath>
-        <!-- <BaseOutputPath>${_DN_BASE_OUTPUT_PATH}</BaseOutputPath> -->
-        <!-- <BaseIntermediateOutputPath>${_DN_BASE_INTERMEDIATE_OUTPUT_PATH}</BaseIntermediateOutputPath> -->
+        <OutputPath>${_DN_OUTPUT_PATH}/</OutputPath>
+        <XPLAT_LIB_DIR>${XPLAT_LIB_DIR}/</XPLAT_LIB_DIR>
+        <DOTNET_PACKAGE_VERSION>${_DN_VERSION}</DOTNET_PACKAGE_VERSION>
     </PropertyGroup>
 </Project>

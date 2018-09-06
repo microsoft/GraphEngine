@@ -10,7 +10,6 @@
     <AssemblyName>Trinity.Azure.Storage</AssemblyName>
     <OutputTypeEx>library</OutputTypeEx>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <OutputPath>..\..\..\..\bin</OutputPath>
     <ServerGarbageCollection>true</ServerGarbageCollection>
     <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
     <ThreadPoolMinThreads>20</ThreadPoolMinThreads>

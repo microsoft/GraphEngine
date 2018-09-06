@@ -51,6 +51,9 @@
 # For Unix systems, the target framework defaults to `netstandard2.0`, unless `NETCOREAPP` is specified.
 # For Windows, the project is built as-is, allowing multi-targeting.
 # 
+# Require 3.5 for batch copy multiple files
+
+CMAKE_MINIMUM_REQUIRED(VERSION 3.5.0)
 
 SET(NUGET_CACHE_PATH "~/.nuget/packages")
 FIND_PROGRAM(DOTNET_EXE dotnet)
@@ -99,7 +102,7 @@ FUNCTION(DOTNET_REGISTER_LOCAL_REPOSITORY repo_name repo_path)
 ENDFUNCTION()
 
 FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
-    FILE(GLOB_RECURSE DOTNET_deps "*.cs;*.fs;*.xaml;*.csproj;*.fsproj")
+    FILE(GLOB_RECURSE DOTNET_deps *.cs *.fs *.xaml *.csproj *.fsproj *.tsl)
     CMAKE_PARSE_ARGUMENTS(
         # prefix
         _DN 
@@ -150,6 +153,8 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
         SET(_DN_VERSION "1.0.0")
     ENDIF()
 
+    GET_FILENAME_COMPONENT(_DN_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin ABSOLUTE)
+
     SET(DOTNET_PACKAGES ${_DN_PACKAGE}  PARENT_SCOPE)
     SET(DOTNET_CONFIG   ${_DN_CONFIG}   PARENT_SCOPE)
     SET(DOTNET_PLATFORM ${_DN_PLATFORM} PARENT_SCOPE)
@@ -159,6 +164,8 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     SET(DOTNET_PROJDIR  ${_DN_proj_dir} PARENT_SCOPE)
     SET(DOTNET_ARGUMENTS ${_DN_ARGUMENTS} PARENT_SCOPE)
     SET(DOTNET_PACKAGE_VERSION ${_DN_VERSION} PARENT_SCOPE)
+    SET(DOTNET_OUTPUT_PATH ${_DN_OUTPUT_PATH} PARENT_SCOPE)
+    SET(DOTNET_deps ${DOTNET_deps} PARENT_SCOPE)
 
     IF(_DN_PLATFORM)
         SET(_DN_PLATFORM_PROP /p:Platform=${_DN_PLATFORM})
@@ -171,13 +178,10 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
         SET(_DN_TFMS_PROP /p:TargetFrameworks=netstandard2.0)
     ENDIF()
 
-    SET(_DN_IMPORT_PROP                   ${CMAKE_CURRENT_BINARY_DIR}/${_DN_projname}.imports.props)
-    SET(_DN_BASE_OUTPUT_PATH              ${CMAKE_BINARY_DIR})
-    SET(_DN_OUTPUT_PATH                   ${CMAKE_BINARY_DIR})
-    SET(_DN_BASE_INTERMEDIATE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/dotnet_obj/${_DN_projname})
+    SET(_DN_IMPORT_PROP ${CMAKE_CURRENT_BINARY_DIR}/${_DN_projname}.imports.props)
     CONFIGURE_FILE(${DOTNET_MODULE_DIR}/DotnetImports.props.in ${_DN_IMPORT_PROP})
 
-    SET(DOTNET_BUILD_PROPERTIES ${_DN_PLATFORM_PROP} ${_DN_TFMS_PROP} /p:DirectoryBuildPropsPath=${_DN_IMPORT_PROP} /p:OutputPath=${_DN_OUTPUT_PATH} /p:DOTNET_PACKAGE_VERSION=${_DN_VERSION} PARENT_SCOPE)
+    SET(DOTNET_BUILD_PROPERTIES ${_DN_PLATFORM_PROP} ${_DN_TFMS_PROP} /p:DirectoryBuildPropsPath=${_DN_IMPORT_PROP} /p:DOTNET_PACKAGE_VERSION=${_DN_VERSION} PARENT_SCOPE)
 
 ENDFUNCTION()
 
@@ -199,7 +203,7 @@ MACRO(ADD_DOTNET_DEPENDENCY_TARGETS)
             DOTNET_PURGE_${pkg}
             COMMAND ${CMAKE_COMMAND} -E echo "======= [x] Purging nuget package cache for ${pkg}"
             COMMAND ${rm_command}
-            SOURCES ${DOTNET_deps}
+            DEPENDS ${DOTNET_deps}
         )
         ADD_DEPENDENCIES(BUILD_${DOTNET_PROJNAME} DOTNET_PURGE_${pkg})
         # Add a target for the built package -- this can be referenced in
@@ -210,58 +214,55 @@ MACRO(ADD_DOTNET_DEPENDENCY_TARGETS)
     ENDFOREACH()
 ENDMACRO()
 
-FUNCTION(ADD_DOTNET DOTNET_PROJECT)
-    DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
-
-    IF(NOT "${DOTNET_PACKAGES}" STREQUAL "")
-        MESSAGE("-- Adding dotnet project ${DOTNET_PROJPATH} (version ${DOTNET_PACKAGE_VERSION})")
-
-        SET(_DOTNET_BUILD_NUPKGS "")
-        FOREACH(pkg ${DOTNET_PACKAGES})
-            LIST(APPEND _DOTNET_BUILD_NUPKGS ${pkg}.${DOTNET_PACKAGE_VERSION}.nupkg)
-        ENDFOREACH()
-
-        ADD_CUSTOM_COMMAND(
-            OUTPUT ${_DOTNET_BUILD_NUPKGS}
-            DEPENDS ${DOTNET_deps}
+MACRO(DOTNET_BUILD_COMMANDS)
+    IF(${DOTNET_IS_MSBUILD})
+        SET(build_dotnet_cmds 
+            COMMAND ${CMAKE_COMMAND} -E echo "=======> Building msbuild project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
+            COMMAND ${NUGET_EXE} restore ${DOTNET_PROJPATH}
+            COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Clean /p:Configuration="${DOTNET_CONFIG}"
+            COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build ${DOTNET_BUILD_PROPERTIES} /p:Configuration="${DOTNET_CONFIG}")
+        SET(build_dotnet_type "dotnet")
+    ELSE()
+        SET(build_dotnet_cmds 
             COMMAND ${CMAKE_COMMAND} -E echo "=======> Building .NET project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
             COMMAND ${DOTNET_EXE} restore ${DOTNET_PROJPATH}
             COMMAND ${DOTNET_EXE} clean ${DOTNET_PROJPATH} ${DOTNET_BUILD_PROPERTIES}
-            COMMAND ${DOTNET_EXE} build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES}
-            COMMAND ${DOTNET_EXE} pack --no-build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES}
-            )
-
-        ADD_CUSTOM_TARGET(
-            BUILD_${DOTNET_PROJNAME} ALL
-            SOURCES ${_DOTNET_BUILD_NUPKGS}
-            )
-
-    ELSE()
-        MESSAGE("-- Adding dotnet project ${DOTNET_PROJPATH}")
-
-        ADD_CUSTOM_TARGET(
-            BUILD_${DOTNET_PROJNAME} ALL
-            ${CMAKE_COMMAND} -E echo "=======> Building .NET project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
-            COMMAND ${DOTNET_EXE} restore ${DOTNET_PROJPATH}
-            COMMAND ${DOTNET_EXE} clean ${DOTNET_PROJPATH} ${DOTNET_BUILD_PROPERTIES}
-            COMMAND ${DOTNET_EXE} build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES}
-            COMMAND ${DOTNET_EXE} pack --no-build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES}
-            SOURCES ${DOTNET_deps}
-            )
+            COMMAND ${DOTNET_EXE} build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES})
+        SET(build_dotnet_type "msbuild")
     ENDIF()
 
-    ADD_DOTNET_DEPENDENCY_TARGETS()
-ENDFUNCTION()
+    IF(NOT "${DOTNET_PACKAGES}" STREQUAL "")
+        MESSAGE("-- Adding ${build_dotnet_type} project ${DOTNET_PROJPATH} (version ${DOTNET_PACKAGE_VERSION})")
+        SET(_DOTNET_OUTPUTS "")
+        FOREACH(pkg ${DOTNET_PACKAGES})
+            LIST(APPEND _DOTNET_OUTPUTS ${DOTNET_OUTPUT_PATH}/${pkg}.${DOTNET_PACKAGE_VERSION}.nupkg)
+        ENDFOREACH()
+        LIST(APPEND build_dotnet_cmds COMMAND ${DOTNET_EXE} pack --no-build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES})
+        LIST(APPEND build_dotnet_cmds COMMAND ${CMAKE_COMMAND} -E copy ${_DOTNET_OUTPUTS} ${CMAKE_BINARY_DIR})
+        INSTALL(FILES ${_DOTNET_OUTPUTS} DESTINATION nupkgs)
+    ELSE()
 
-FUNCTION(RUN_DOTNET DOTNET_PROJECT)
-    DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
+        MESSAGE("-- Adding ${build_dotnet_type} project ${DOTNET_PROJPATH} (no nupkg)")
+        SET(_DOTNET_OUTPUTS ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.buildtimestamp)
+        LIST(APPEND build_dotnet_cmds COMMAND ${CMAKE_COMMAND} -E touch ${_DOTNET_OUTPUTS})
+    ENDIF()
+
+    ADD_CUSTOM_COMMAND(
+        OUTPUT ${_DOTNET_OUTPUTS}
+        DEPENDS ${DOTNET_deps}
+        ${build_dotnet_cmds}
+        )
     ADD_CUSTOM_TARGET(
-        RUN_${DOTNET_PROJNAME} 
-        ${DOTNET_EXE} run ${DOTNET_ARGUMENTS}
-        SOURCES ${DOTNET_deps}
-        WORKING_DIRECTORY ${DOTNET_PROJDIR}
-    )
-    ADD_DEPENDENCIES(RUN_${DOTNET_PROJNAME} BUILD_${DOTNET_PROJNAME})
+        BUILD_${DOTNET_PROJNAME} ALL
+        DEPENDS ${_DOTNET_OUTPUTS})
+
+ENDMACRO()
+
+FUNCTION(ADD_DOTNET DOTNET_PROJECT)
+    DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
+    SET(DOTNET_IS_MSBUILD FALSE)
+    DOTNET_BUILD_COMMANDS()
+    ADD_DOTNET_DEPENDENCY_TARGETS()
 ENDFUNCTION()
 
 FUNCTION(ADD_MSBUILD DOTNET_PROJECT)
@@ -271,41 +272,21 @@ FUNCTION(ADD_MSBUILD DOTNET_PROJECT)
     ENDIF()
 
     DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
-
-    IF(NOT "${DOTNET_PACKAGES}" STREQUAL "")
-        MESSAGE("-- Adding MSBuild project ${DOTNET_PROJPATH} (version ${DOTNET_PACKAGE_VERSION})")
-
-        SET(_DOTNET_BUILD_NUPKGS "")
-        FOREACH(pkg ${DOTNET_PACKAGES})
-            LIST(APPEND _DOTNET_BUILD_NUPKGS ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${pkg}.${DOTNET_PACKAGE_VERSION}.nupkg)
-        ENDFOREACH()
-
-        ADD_CUSTOM_COMMAND(
-            OUTPUT ${_DOTNET_BUILD_NUPKGS}
-            DEPENDS ${DOTNET_deps}
-            COMMAND ${CMAKE_COMMAND} -E echo "=======> Building msbuild project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
-            COMMAND ${NUGET_EXE} restore ${DOTNET_PROJPATH}
-            COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Clean /p:Configuration="${DOTNET_CONFIG}"
-            COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build ${DOTNET_BUILD_PROPERTIES} /p:Configuration="${DOTNET_CONFIG}"
-            COMMAND ${DOTNET_EXE} pack --no-build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES}
-            )
-
-        ADD_CUSTOM_TARGET(
-            BUILD_${DOTNET_PROJNAME} ALL
-            SOURCES ${_DOTNET_BUILD_NUPKGS}
-            )
-
-    ELSE()
-        MESSAGE("-- Adding MSBuild project ${DOTNET_PROJPATH}")
-        ADD_CUSTOM_TARGET(
-            BUILD_${DOTNET_PROJNAME} ALL
-            COMMAND ${NUGET_EXE} restore ${DOTNET_PROJPATH}
-            COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Clean /p:Configuration="${DOTNET_CONFIG}"
-            COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build ${DOTNET_BUILD_PROPERTIES} /p:Configuration="${DOTNET_CONFIG}"
-            COMMAND ${DOTNET_EXE} pack --no-build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES}
-            SOURCES ${DOTNET_deps}
-            )
-    ENDIF()
-
+    SET(DOTNET_IS_MSBUILD TRUE)
+    DOTNET_BUILD_COMMANDS()
     ADD_DOTNET_DEPENDENCY_TARGETS()
+ENDFUNCTION()
+
+FUNCTION(RUN_DOTNET DOTNET_PROJECT)
+    DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
+    ADD_CUSTOM_COMMAND(
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.runtimestamp
+        DEPENDS ${DOTNET_deps}
+        COMMAND ${DOTNET_EXE} run ${DOTNET_ARGUMENTS}
+        COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.runtimestamp
+        WORKING_DIRECTORY ${DOTNET_PROJDIR})
+    ADD_CUSTOM_TARGET(
+        RUN_${DOTNET_PROJNAME} 
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.runtimestamp)
+    ADD_DEPENDENCIES(RUN_${DOTNET_PROJNAME} BUILD_${DOTNET_PROJNAME})
 ENDFUNCTION()

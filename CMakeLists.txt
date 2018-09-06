@@ -8,7 +8,7 @@ EXECUTE_PROCESS(
     COMMAND ${DOTNET_EXE} run -p ${CMAKE_CURRENT_LIST_DIR}/tools/versioning/versioning.csproj
     OUTPUT_VARIABLE TRINITY_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
 SET(TRINITY_VERSION "2.0.${TRINITY_VERSION}")
-MESSAGE("GraphEngine version is now ${TRINITY_VERSION}")
+MESSAGE("-- GraphEngine version is now ${TRINITY_VERSION}")
 
 PROJECT(GraphEngine VERSION ${TRINITY_VERSION} LANGUAGES CXX)
 
@@ -47,7 +47,6 @@ ADD_MSBUILD(
     src/Modules/GraphEngine.ServiceFabric/GraphEngine.ServiceFabric.sln 
     PACKAGE 
         GraphEngine.ServiceFabric.Infrastructure
-        GraphEngine.ServiceFabric.ListenerRuntime
         GraphEngine.ServiceFabric.Remoting
     DEPENDS
         GraphEngine.Core

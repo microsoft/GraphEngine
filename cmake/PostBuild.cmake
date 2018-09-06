@@ -1,3 +1,11 @@
+#.rst
+# PostBuild
+# ---------
+#
+# Provides utility functions for copying output of cross-platform targets.
+# Set XPLAT_LIB_DIR variable to point to cross-platform lib directories.
+
+
 FUNCTION(POSTBUILD_COPY_OUTPUT target file)
     CMAKE_PARSE_ARGUMENTS(
         # prefix
@@ -30,8 +38,7 @@ FUNCTION(POSTBUILD_COPY_OUTPUT target file)
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory "${dir}"
         COMMAND ${CMAKE_COMMAND} -E copy ${file} "${dir}/${_PB_RENAME}"
-        BYPRODUCTS "${dir}/${filename}"
-    )
+        BYPRODUCTS "${dir}/${filename}")
 ENDFUNCTION()
 
 FUNCTION(POSTBUILD_XPLAT_OUTPUT target xplat_dir)

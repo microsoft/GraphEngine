@@ -6,7 +6,6 @@
     <AssemblyName>Trinity.Client</AssemblyName>
     <OutputType>library</OutputType>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <OutputPath>..\..\..\..\bin</OutputPath>
   </PropertyGroup>
   
   <ItemGroup>
