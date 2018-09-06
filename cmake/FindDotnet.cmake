@@ -103,6 +103,7 @@ ENDFUNCTION()
 
 FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     FILE(GLOB_RECURSE DOTNET_deps *.cs *.fs *.xaml *.csproj *.fsproj *.tsl)
+    LIST(FILTER DOTNET_deps EXCLUDE REGEX /obj/)
     CMAKE_PARSE_ARGUMENTS(
         # prefix
         _DN 
@@ -128,7 +129,7 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
 
     IF(NOT _DN_CONFIG)
         SET(_DN_CONFIG $<CONFIG>)
-        IF(_DN_CONFIG STREQUAL "RelWithDebInfo" OR _DN_CONFIG STREQUAL "RelMinSize")
+        IF(_DN_CONFIG STREQUAL "RelWithDebInfo" OR _DN_CONFIG STREQUAL "RelMinSize" OR NOT _DN_CONFIG)
             SET(_DN_CONFIG "Release")
         ENDIF()
     ENDIF()
@@ -168,20 +169,24 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     SET(DOTNET_deps ${DOTNET_deps} PARENT_SCOPE)
 
     IF(_DN_PLATFORM)
-        SET(_DN_PLATFORM_PROP /p:Platform=${_DN_PLATFORM})
+        SET(_DN_PLATFORM_PROP "/p:Platform=${_DN_PLATFORM}")
     ENDIF()
 
     IF(_DN_NETCOREAPP)
-        SET(_DN_TFMS_PROP /p:TargetFrameworks=netcoreapp2.0)
+        SET(_DN_BUILD_OPTIONS -f netcoreapp2.0)
+        SET(_DN_PACK_OPTIONS /p:TargetFrameworks=netcoreapp2.0)
     ELSEIF(UNIX)
         # Unix builds default to netstandard2.0
-        SET(_DN_TFMS_PROP /p:TargetFrameworks=netstandard2.0)
+        SET(_DN_BUILD_OPTIONS -f netstandard2.0)
+        SET(_DN_PACK_OPTIONS /p:TargetFrameworks=netstandard2.0)
     ENDIF()
 
     SET(_DN_IMPORT_PROP ${CMAKE_CURRENT_BINARY_DIR}/${_DN_projname}.imports.props)
     CONFIGURE_FILE(${DOTNET_MODULE_DIR}/DotnetImports.props.in ${_DN_IMPORT_PROP})
 
-    SET(DOTNET_BUILD_PROPERTIES ${_DN_PLATFORM_PROP} ${_DN_TFMS_PROP} /p:DirectoryBuildPropsPath=${_DN_IMPORT_PROP} /p:DOTNET_PACKAGE_VERSION=${_DN_VERSION} PARENT_SCOPE)
+    SET(DOTNET_BUILD_PROPERTIES ${_DN_PLATFORM_PROP} ${_DN_TFMS_PROP} "/p:DirectoryBuildPropsPath=${_DN_IMPORT_PROP}" "/p:DOTNET_PACKAGE_VERSION=${_DN_VERSION}" PARENT_SCOPE)
+    SET(DOTNET_BUILD_OPTIONS ${_DN_BUILD_OPTIONS} PARENT_SCOPE)
+    SET(DOTNET_PACK_OPTIONS  ${_DN_PACK_OPTIONS} PARENT_SCOPE)
 
 ENDFUNCTION()
 
@@ -221,14 +226,14 @@ MACRO(DOTNET_BUILD_COMMANDS)
             COMMAND ${NUGET_EXE} restore ${DOTNET_PROJPATH}
             COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Clean /p:Configuration="${DOTNET_CONFIG}"
             COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build ${DOTNET_BUILD_PROPERTIES} /p:Configuration="${DOTNET_CONFIG}")
-        SET(build_dotnet_type "dotnet")
+        SET(build_dotnet_type "msbuild")
     ELSE()
         SET(build_dotnet_cmds 
             COMMAND ${CMAKE_COMMAND} -E echo "=======> Building .NET project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
             COMMAND ${DOTNET_EXE} restore ${DOTNET_PROJPATH}
             COMMAND ${DOTNET_EXE} clean ${DOTNET_PROJPATH} ${DOTNET_BUILD_PROPERTIES}
-            COMMAND ${DOTNET_EXE} build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES})
-        SET(build_dotnet_type "msbuild")
+            COMMAND ${DOTNET_EXE} build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES} ${DOTNET_BUILD_OPTIONS})
+        SET(build_dotnet_type "dotnet")
     ENDIF()
 
     IF(NOT "${DOTNET_PACKAGES}" STREQUAL "")
@@ -237,7 +242,7 @@ MACRO(DOTNET_BUILD_COMMANDS)
         FOREACH(pkg ${DOTNET_PACKAGES})
             LIST(APPEND _DOTNET_OUTPUTS ${DOTNET_OUTPUT_PATH}/${pkg}.${DOTNET_PACKAGE_VERSION}.nupkg)
         ENDFOREACH()
-        LIST(APPEND build_dotnet_cmds COMMAND ${DOTNET_EXE} pack --no-build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES})
+        LIST(APPEND build_dotnet_cmds COMMAND ${DOTNET_EXE} pack --no-build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES} ${DOTNET_PACK_OPTIONS})
         LIST(APPEND build_dotnet_cmds COMMAND ${CMAKE_COMMAND} -E copy ${_DOTNET_OUTPUTS} ${CMAKE_BINARY_DIR})
         INSTALL(FILES ${_DOTNET_OUTPUTS} DESTINATION nupkgs)
     ELSE()
