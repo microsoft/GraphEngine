@@ -70,7 +70,7 @@ SET(metagen_out
 
 
 ADD_DOTNET(../Trinity.TSL.CodeTemplates/Trinity.TSL.CodeTemplates.csproj)
-ADD_DOTNET(../Trinity.TSL.Metagen/Trinity.TSL.Metagen.csproj)
+ADD_DOTNET(../Trinity.TSL.Metagen/Trinity.TSL.Metagen.csproj NETCOREAPP)
 RUN_DOTNET(../Trinity.TSL.Metagen/Trinity.TSL.Metagen.csproj
            ARGUMENTS ../Trinity.TSL.CodeTemplates ${CMAKE_CURRENT_BINARY_DIR}
            OUTPUT ${metagen_out})
