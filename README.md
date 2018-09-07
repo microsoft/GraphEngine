@@ -52,21 +52,20 @@ Please submit bugs and feature requests in [GitHub Issues](https://github.com/Mi
 ## Building for Windows
 
 Install [Visual Studio 2017](https://www.visualstudio.com/).
-Install Windows 10 SDK (10.0.10586.0) for Desktop C++. 
-The Windows build will generate multi-targeting nuget packages for all
-the available modules, so make sure you also install `.NET Core SDK
-2.0`.  Additionally, to build the python FFI packages, make sure you
-install a python3 environment, and the Visual Studio 2015 C++
-toolchain. All these dependencies can be installed with the visual
-studio 2017 installer (yes, including MSVC 2015 stuff).
+Make sure to install the following workloads and components:
 
-Run `tools/build.ps1` with `powershell`. 
+- .NET desktop development
+- Desktop development with C++
+- cmake
+- `.NET Core SDK 2.0` or above
 
-The Linux native assemblies will be automatically packaged, so the
+The Windows build will generate multi-targeting nuget packages for all the available modules.
+Run `tools/build.ps1` with `powershell`. It will setup a workspace folder `build`, and build with `cmake`.
+The Linux native assemblies will be automatically packaged (pre-built at `lib`), so the
 Windows build will also work for Linux `.Net Core`.
 
 Nuget packages will be built and put at
-`bin/GraphEngine**._version_.nupkg`. The folder `bin/` will be
+`build/GraphEngine**._version_.nupkg`. The folder `build/` will be
 registered as a local NuGet repository and the local package cache for
 `GraphEngine.**` will be cleared. After the packages are built, you
 can run `dotnet restore` to use the newly built package.
@@ -84,7 +83,7 @@ Linux build will also work for Windows .Net Core. Note, as targeting
 equivalent to their Windows builds, and will only support `.Net Core`.
 
 Nuget packages will be built and put at
-`bin/GraphEngine**._version_.nupkg`. The folder `bin/` will be
+`build/GraphEngine**._version_.nupkg`. The folder `build/` will be
 registered as a local NuGet repository and the local package cache for
 `GraphEngine.Core` will be cleared. After the packages are built, you
 can run `dotnet restore` to use the newly built package.
