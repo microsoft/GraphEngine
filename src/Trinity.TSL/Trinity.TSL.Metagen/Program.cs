@@ -21,19 +21,29 @@ namespace Trinity.TSL.Metagen
             ".",
             "..",
         };
-        static string s_root;
+        static string s_source_root;
+        static string s_dest_root;
 
         static void Main(string[] args)
         {
-            if (args.Length > 1 &&args[1] == "-force")
+            s_source_root = Path.GetFullPath(args[0]);
+            s_dest_root = Path.GetFullPath(Path.Combine(s_source_root, "..", "Trinity.TSL.CodeGen"));
+
+            if (args.Length > 1)
             {
-                s_force_process = true;
+                if(args[1] == "-force")
+                {
+                    s_force_process = true;
+                }
+                else
+                {
+                    s_dest_root = Path.GetFullPath(args[1]);
+                }
             }
 
-            Console.WriteLine($"Trinity.TSL.MetaGen: path = {args[0]}");
+            Console.WriteLine($"Trinity.TSL.MetaGen: \nSource = {s_source_root}\nDest = {s_dest_root}");
 
-            s_root = Path.GetFullPath(args[0]);
-            ProcessDirectory(s_root);
+            ProcessDirectory(s_source_root);
         }
 
         private static void ProcessDirectory(string directoryPath)
@@ -58,14 +68,11 @@ namespace Trinity.TSL.Metagen
             try
             {
                 filename              = Path.GetFullPath(filename);
-                String literal        = File.ReadAllText(filename);
+                string literal        = File.ReadAllText(filename);
                 string name           = Path.GetFileNameWithoutExtension(filename);
-                string dir_path       = filename
-                    .Substring(0, filename.Length - Path.GetFileName(filename).Length)
-                    .Substring(s_root.Length)
-                    .Trim(Path.DirectorySeparatorChar);
+                string dir_path       = Path.GetDirectoryName(filename).Substring(s_source_root.Length).Trim(Path.DirectorySeparatorChar);
 
-                dir_path = Path.Combine(s_root, "..", "Trinity.TSL.CodeGen", dir_path);
+                dir_path = Path.Combine(s_dest_root, dir_path);
 
                 string targetFilename = Path.Combine(dir_path, Path.GetFileName(filename)+".cpp");
                 bool needProcess      = (File.GetLastWriteTime(targetFilename) < File.GetLastWriteTime(filename));
@@ -73,12 +80,10 @@ namespace Trinity.TSL.Metagen
                 if (needProcess || s_force_process)
                 {
                     Console.Write("Processing     {0}", filename);
-                    var tokens            = GetTokens(ref literal);
+                    var tokens = GetTokens(ref literal);
                     try
                     {
-                        string codegen        = GenerateCodeGen(name, tokens);
-                        codegen = codegen.Replace("\r\n", "\n");
-
+                        string codegen = GenerateCodeGen(name, tokens).Replace("\r\n", "\n");
                         if (!Directory.Exists(dir_path))
                             Directory.CreateDirectory(dir_path);
 

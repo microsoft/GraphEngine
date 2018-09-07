@@ -25,10 +25,13 @@
 #            [DEPENDS depend_nuget_packages... ])
 # ```
 # 
-# RUN_DOTNET -- Run a project with `dotnet run`
+# RUN_DOTNET -- Run a project with `dotnet run`. The `OUTPUT` argument represents artifacts 
+#               produced by running the .NET program, and can be consumed from other build steps.
 # 
 # ```
-# RUN_DOTNET(<project_file> [ARGUMENTS program_args...])
+# RUN_DOTNET(<project_file> 
+#            [ARGUMENTS program_args...]
+#            [OUTPUT outputs...])
 # ```
 # 
 # ADD_MSBUILD -- add a project to be built by msbuild. Windows-only. When building in Unix systems, msbuild targets are skipped.
@@ -110,9 +113,9 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
         # options (flags)
         "RELEASE;DEBUG;X86;X64;ANYCPU;NETCOREAPP" 
         # oneValueArgs
-        "CONFIG;PLATFORM;ARGUMENTS;VERSION" 
+        "CONFIG;PLATFORM;VERSION" 
         # multiValueArgs
-        "PACKAGE;DEPENDS"
+        "PACKAGE;DEPENDS;ARGUMENTS;OUTPUT"
         # the input arguments
         ${arguments})
 
@@ -163,7 +166,8 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     SET(DOTNET_PROJNAME ${_DN_projname_noext} PARENT_SCOPE)
     SET(DOTNET_PROJPATH ${_DN_abs_proj} PARENT_SCOPE)
     SET(DOTNET_PROJDIR  ${_DN_proj_dir} PARENT_SCOPE)
-    SET(DOTNET_ARGUMENTS ${_DN_ARGUMENTS} PARENT_SCOPE)
+    SET(DOTNET_RUN_ARGUMENTS ${_DN_ARGUMENTS} PARENT_SCOPE)
+    SET(DOTNET_RUN_OUTPUT ${_DN_OUTPUT} PARENT_SCOPE)
     SET(DOTNET_PACKAGE_VERSION ${_DN_VERSION} PARENT_SCOPE)
     SET(DOTNET_OUTPUT_PATH ${_DN_OUTPUT_PATH} PARENT_SCOPE)
     SET(DOTNET_deps ${DOTNET_deps} PARENT_SCOPE)
@@ -285,13 +289,13 @@ ENDFUNCTION()
 FUNCTION(RUN_DOTNET DOTNET_PROJECT)
     DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
     ADD_CUSTOM_COMMAND(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.runtimestamp
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.runtimestamp ${DOTNET_RUN_OUTPUT}
         DEPENDS ${DOTNET_deps}
-        COMMAND ${DOTNET_EXE} run ${DOTNET_ARGUMENTS}
+        COMMAND ${DOTNET_EXE} run ${DOTNET_RUN_ARGUMENTS}
         COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.runtimestamp
         WORKING_DIRECTORY ${DOTNET_PROJDIR})
     ADD_CUSTOM_TARGET(
         RUN_${DOTNET_PROJNAME} 
-        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.runtimestamp)
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.runtimestamp ${DOTNET_RUN_OUTPUT})
     ADD_DEPENDENCIES(RUN_${DOTNET_PROJNAME} BUILD_${DOTNET_PROJNAME})
 ENDFUNCTION()
