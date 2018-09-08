@@ -98,7 +98,7 @@ namespace Trinity
 #if defined(TRINITY_PLATFORM_WINDOWS)
             SetEnvironmentVariable(name.ToWcharArray(), value.ToWcharArray());
 #else
-            setenv(name.Data(), value.Data());
+            setenv(name.Data(), value.Data(), 1);
 #endif
         }
 	}
