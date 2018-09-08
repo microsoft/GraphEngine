@@ -248,7 +248,6 @@ MACRO(DOTNET_BUILD_COMMANDS)
         ENDFOREACH()
         LIST(APPEND build_dotnet_cmds COMMAND ${DOTNET_EXE} pack --no-build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES} ${DOTNET_PACK_OPTIONS})
         LIST(APPEND build_dotnet_cmds COMMAND ${CMAKE_COMMAND} -E copy ${_DOTNET_OUTPUTS} ${CMAKE_BINARY_DIR})
-        INSTALL(FILES ${_DOTNET_OUTPUTS} DESTINATION nupkgs)
     ELSE()
 
         MESSAGE("-- Adding ${build_dotnet_type} project ${DOTNET_PROJPATH} (no nupkg)")

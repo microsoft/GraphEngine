@@ -87,5 +87,19 @@ namespace Trinity
 
             return ret;
         }
+
+        inline String GetVariable(const String& name)
+        {
+            return getenv(name.Data());
+        }
+
+        inline void SetVariable(const String& name, const String& value)
+        {
+#if defined(TRINITY_PLATFORM_WINDOWS)
+            SetEnvironmentVariable(name.ToWcharArray(), value.ToWcharArray());
+#else
+            setenv(name.Data(), value.Data());
+#endif
+        }
 	}
 }
