@@ -44,27 +44,28 @@ ENDFUNCTION()
 FUNCTION(POSTBUILD_XPLAT_OUTPUT target xplat_dir)
     GET_TARGET_PROPERTY(target_type ${target} TYPE)
 
+    # for windows builds, always output dlls to bin/ path.
+    # this makes it easier to load them at runtime.
     IF(target_type STREQUAL "EXECUTABLE")
 
         INSTALL(TARGETS ${target} RUNTIME DESTINATION bin)
         IF(UNIX)
             POSTBUILD_COPY_OUTPUT(${target} "${xplat_dir}/${target}.exe" RUNTIME)
-            INSTALL(FILES ${xplat_dir}/${target}.exe DESTINATION bin)
         ELSEIF(WIN32)
             POSTBUILD_COPY_OUTPUT(${target} "${xplat_dir}/${target}" RUNTIME)
-            INSTALL(FILES ${xplat_dir}/${target} DESTINATION bin)
+            INSTALL(FILES ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/${target}.pdb DESTINATION bin)
         ENDIF()
 
     ELSEIF(target_type STREQUAL "SHARED_LIBRARY")
 
-        INSTALL(TARGETS ${target} DESTINATION lib)
         IF(UNIX)
             POSTBUILD_COPY_OUTPUT(${target} "${xplat_dir}/${target}.dll" LIBRARY)
             POSTBUILD_COPY_OUTPUT(${target} "${xplat_dir}/${target}.lib" LIBRARY)
-            INSTALL(FILES ${xplat_dir}/${target}.dll DESTINATION lib)
+            INSTALL(TARGETS ${target} DESTINATION lib)
         ELSEIF(WIN32)
             POSTBUILD_COPY_OUTPUT(${target} "${xplat_dir}/lib${target}.so" LIBRARY)
-            INSTALL(FILES ${xplat_dir}/lib${target}.so DESTINATION lib)
+            INSTALL(TARGETS ${target} DESTINATION bin)
+            INSTALL(FILES ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/${target}.pdb DESTINATION bin)
         ENDIF()
 
     ELSE()
