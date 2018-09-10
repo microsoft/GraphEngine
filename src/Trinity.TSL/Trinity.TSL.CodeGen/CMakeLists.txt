@@ -71,8 +71,8 @@ SET(metagen_out
 
 ADD_DOTNET(../Trinity.TSL.CodeTemplates/Trinity.TSL.CodeTemplates.csproj)
 ADD_DOTNET(../Trinity.TSL.Metagen/Trinity.TSL.Metagen.csproj NETCOREAPP)
-RUN_DOTNET(../Trinity.TSL.Metagen/Trinity.TSL.Metagen.csproj
-           ARGUMENTS ../Trinity.TSL.CodeTemplates ${CMAKE_CURRENT_BINARY_DIR}
+RUN_DOTNET(${CMAKE_CURRENT_SOURCE_DIR}/../Trinity.TSL.Metagen/Trinity.TSL.Metagen.csproj
+           ARGUMENTS ${CMAKE_CURRENT_SOURCE_DIR}/../Trinity.TSL.CodeTemplates ${CMAKE_CURRENT_BINARY_DIR}
            OUTPUT ${metagen_out})
 
 # before transpilation, validate the templates by compiling the project
