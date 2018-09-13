@@ -16,6 +16,14 @@ namespace Trinity
     public enum TrinityErrorCode : int
     {
         /// <summary>
+        /// Indicates an entry-not-found failure.
+        /// </summary>
+        E_NOENTRY               = -23,
+        /// <summary>
+        /// Indicates a failure in module/component/etc. initialization.
+        /// </summary>
+        E_INIT_FAIL             = -22,
+        /// <summary>
         /// Indicates that a managed exception is thrown.
         /// Use this error code to propagate a managed exception
         /// to unmanaged code, which may not be able to directly

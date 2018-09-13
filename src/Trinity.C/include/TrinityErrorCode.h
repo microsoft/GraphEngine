@@ -8,6 +8,8 @@
 
 enum TrinityErrorCode : int32_t
 {
+    E_NOENTRY               = -23,  // General purpose ENOENT
+    E_INIT_FAIL             = -22,
     E_MANAGED_EXCEPTION     = -21,  // Exception propagated from managed runtime.
     E_UNLOAD_FAIL           = -20,  // For example, if unloading AppDomain failed.
     E_LOAD_FAIL             = -19,  // For example, if LoadLibrary() failed.
