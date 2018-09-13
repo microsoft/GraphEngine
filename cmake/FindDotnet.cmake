@@ -125,7 +125,12 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
         ${arguments})
 
     LIST(APPEND DOTNET_deps ${_DN_SOURCES})
-    LIST(FILTER DOTNET_deps EXCLUDE REGEX /obj/)
+    SET(_DN_deps "")
+    FOREACH(dep ${DOTNET_deps})
+        IF(NOT dep MATCHES /obj/)
+            LIST(APPEND _DN_deps ${dep})
+        ENDIF()
+    ENDFOREACH()
 
     GET_FILENAME_COMPONENT(_DN_abs_proj "${_DN_PROJECT}" ABSOLUTE)
     GET_FILENAME_COMPONENT(_DN_proj_dir "${_DN_PROJECT}" DIRECTORY)
@@ -178,7 +183,7 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     SET(DOTNET_RUN_OUTPUT ${_DN_OUTPUT} PARENT_SCOPE)
     SET(DOTNET_PACKAGE_VERSION ${_DN_VERSION} PARENT_SCOPE)
     SET(DOTNET_OUTPUT_PATH ${_DN_OUTPUT_PATH} PARENT_SCOPE)
-    SET(DOTNET_deps ${DOTNET_deps} PARENT_SCOPE)
+    SET(DOTNET_deps ${_DN_deps} PARENT_SCOPE)
 
     IF(_DN_PLATFORM)
         SET(_DN_PLATFORM_PROP "/p:Platform=${_DN_PLATFORM}")
@@ -248,29 +253,32 @@ MACRO(DOTNET_BUILD_COMMANDS)
         SET(build_dotnet_type "dotnet")
     ENDIF()
 
+    # DOTNET_OUTPUTS refer to artifacts produced, that the BUILD_proj_name target depends on.
+    SET(DOTNET_OUTPUTS "")
     IF(NOT "${DOTNET_PACKAGES}" STREQUAL "")
         MESSAGE("-- Adding ${build_dotnet_type} project ${DOTNET_PROJPATH} (version ${DOTNET_PACKAGE_VERSION})")
-        SET(_DOTNET_OUTPUTS "")
+        SET(_DN_OUTPUTS "")
         FOREACH(pkg ${DOTNET_PACKAGES})
-            LIST(APPEND _DOTNET_OUTPUTS ${DOTNET_OUTPUT_PATH}/${pkg}.${DOTNET_PACKAGE_VERSION}.nupkg)
+            LIST(APPEND _DN_OUTPUTS ${DOTNET_OUTPUT_PATH}/${pkg}.${DOTNET_PACKAGE_VERSION}.nupkg)
+            LIST(APPEND DOTNET_OUTPUTS ${CMAKE_BINARY_DIR}/${pkg}.${DOTNET_PACKAGE_VERSION}.nupkg)
         ENDFOREACH()
         LIST(APPEND build_dotnet_cmds COMMAND ${DOTNET_EXE} pack --no-build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES} ${DOTNET_PACK_OPTIONS})
-        LIST(APPEND build_dotnet_cmds COMMAND ${CMAKE_COMMAND} -E copy ${_DOTNET_OUTPUTS} ${CMAKE_BINARY_DIR})
+        LIST(APPEND build_dotnet_cmds COMMAND ${CMAKE_COMMAND} -E copy ${_DN_OUTPUTS} ${CMAKE_BINARY_DIR})
     ELSE()
 
         MESSAGE("-- Adding ${build_dotnet_type} project ${DOTNET_PROJPATH} (no nupkg)")
-        SET(_DOTNET_OUTPUTS ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.buildtimestamp)
-        LIST(APPEND build_dotnet_cmds COMMAND ${CMAKE_COMMAND} -E touch ${_DOTNET_OUTPUTS})
+        SET(DOTNET_OUTPUTS ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.buildtimestamp)
+        LIST(APPEND build_dotnet_cmds COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_OUTPUTS})
     ENDIF()
 
     ADD_CUSTOM_COMMAND(
-        OUTPUT ${_DOTNET_OUTPUTS}
+        OUTPUT ${DOTNET_OUTPUTS}
         DEPENDS ${DOTNET_deps}
         ${build_dotnet_cmds}
         )
     ADD_CUSTOM_TARGET(
         BUILD_${DOTNET_PROJNAME} ALL
-        DEPENDS ${_DOTNET_OUTPUTS})
+        DEPENDS ${DOTNET_OUTPUTS})
 
 ENDMACRO()
 
