@@ -158,7 +158,7 @@ namespace Trinity.Storage.Composite
                    $"#CellTypeIDs:{ctmap.Count}",
                    $"#StorageSchema:{schemas.Count}",
                    $"#GenericCellOperations:{gcops.Count}" }
-                   .Each(_ => Log.WriteLine(LogLevel.Verbose, $"{nameof(CompositeStorage)}: {{0}}", _));
+                   .Each(_ => Log.WriteLine(LogLevel.Debug, $"{nameof(CompositeStorage)}: {{0}}", _));
 
             var schema    = AssemblyUtility.GetAllClassInstances<IStorageSchema>(assembly: asm).FirstOrDefault();
             var cellOps   = AssemblyUtility.GetAllClassInstances<IGenericCellOperations>(assembly: asm).FirstOrDefault();

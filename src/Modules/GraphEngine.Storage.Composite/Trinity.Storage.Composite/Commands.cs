@@ -19,7 +19,7 @@ namespace Trinity.Storage.Composite
                 var tag = "global-packages: ";
                 var package_root = output.Substring(output.IndexOf(tag) + tag.Length).Trim();
                 Log.WriteLine("Package root = {0}", package_root);
-                var codegen = Path.Combine(package_root, $"GraphEngine.Core/{Utils.MyAssemblyVersion()}/tools/Trinity.TSL.CodeGen");
+                var codegen = Path.Combine(package_root, $"graphengine.graphengine/{Utils.MyAssemblyVersion()}/tools/Trinity.TSL.CodeGen");
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT) codegen += ".exe";
                 return codegen;
             }
