@@ -457,13 +457,13 @@ namespace Memory
         return (NULL != MemoryCommit(p, size_to_expand));
     }
 
-    void FreeMemoryRegion(char* trunkPtr, uint64_t size)
+    void FreeMemoryRegion(void* lpaddress, uint64_t size)
     {
 #if defined(TRINITY_PLATFORM_WINDOWS)
         /* size is unused */
-        VirtualFree(trunkPtr, 0, MEM_RELEASE);
+        VirtualFree(lpaddress, 0, MEM_RELEASE);
 #else
-        munmap(trunkPtr, size);
+        munmap(lpaddress, size);
 #endif
     }
 

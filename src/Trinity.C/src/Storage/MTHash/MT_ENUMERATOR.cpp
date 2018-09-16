@@ -51,14 +51,14 @@ namespace Storage
         }
     }
 
-    char* MT_ENUMERATOR::LOCellPtr()
+    char* MT_ENUMERATOR::LOCellPtr() const
     {
         if (m_CellEntryPtr->offset < 0)
             return m_LOPtr[-(m_CellEntryPtr->offset)];
         return nullptr;
     }
 
-    char* MT_ENUMERATOR::CellPtr()
+    char* MT_ENUMERATOR::CellPtr() const
     {
         if (m_CellEntryPtr->offset >= 0)
             return m_TrunkPtr + (m_CellEntryPtr->offset);
@@ -66,12 +66,12 @@ namespace Storage
             return m_LOPtr[-(m_CellEntryPtr->offset)];
     }
 
-    cellid_t MT_ENUMERATOR::CellId()
+    cellid_t MT_ENUMERATOR::CellId() const
     {
         return m_MTEntryPtr->Key;
     }
 
-    int32_t MT_ENUMERATOR::CellSize()
+    int32_t MT_ENUMERATOR::CellSize() const
     {
         if (m_CellEntryPtr->offset >= 0)
             return (m_CellEntryPtr->size) & 0xFFFFFF; // Max size = (16 M - 1)
@@ -79,17 +79,17 @@ namespace Storage
             return m_CellEntryPtr->size;
     }
 
-    uint16_t MT_ENUMERATOR::CellType()
+    uint16_t MT_ENUMERATOR::CellType() const
     {
         return m_MTEntryPtr->CellType;
     }
 
-    CellEntry* MT_ENUMERATOR::CellEntryPtr()
+    CellEntry* MT_ENUMERATOR::CellEntryPtr() const
     {
         return m_CellEntryPtr;
     }
 
-    inline bool MT_ENUMERATOR::currentEntryInvalid()
+    inline bool MT_ENUMERATOR::currentEntryInvalid() const
     {
         return (m_CellEntryPtr->location == -1) &&
             (m_CellEntryPtr < m_EndPtr);
