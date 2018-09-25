@@ -16,6 +16,7 @@ namespace Trinity.Client.TestServer
     {
         static void Main(string[] args)
         {
+            TrinityConfig.LoggingLevel = Diagnostics.LogLevel.Debug;
             TrinityServer server = new TrinityServer();
             server.RegisterCommunicationModule<TrinityClientModule.TrinityClientModule>();
             server.RegisterCommunicationModule<TrinityClientTestModule>();

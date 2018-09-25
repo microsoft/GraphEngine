@@ -56,13 +56,14 @@ namespace Trinity
 
         TrinityErrorCode RegisterMessageHandler(uint16_t msg_type, message_handler_t * handler)
         {
-            Diagnostics::WriteLine(Diagnostics::Debug, "TrinityServer: registering message handler, ID={0}, handler={1}", msg_type, (void*)handler);
+            Diagnostics::WriteLine(Diagnostics::Debug, "TrinityServer: Registering message handler, ID={0}, handler={1}", msg_type, (void*)handler);
             s_message_handlers[msg_type] = handler;
             return TrinityErrorCode::E_SUCCESS;
         }
 
         TrinityErrorCode ResetMessageHandlers()
         {
+            Diagnostics::WriteLine(Diagnostics::Debug, "TrinityServer: Resetting all message handlers");
             std::fill_n(s_message_handlers, MAX_HANDLERS_COUNT, &_default_handler);
             return TrinityErrorCode::E_SUCCESS;
         }

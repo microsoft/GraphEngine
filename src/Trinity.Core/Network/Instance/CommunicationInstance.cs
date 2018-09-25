@@ -365,6 +365,7 @@ namespace Trinity.Network
             set
             {
                 m_dispatcher = value;
+                GC.SuppressFinalize(m_dispatcher);
                 var pfn_dispatch = Marshal.GetFunctionPointerForDelegate(m_dispatcher);
                 for (ushort i = 0; i<(ushort)TrinityMessageType.MESSAGE_TYPE_MAX; ++i)
                 {

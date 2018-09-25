@@ -12,6 +12,7 @@ namespace Trinity.Client.TestClient
     {
         static void Main(string[] args)
         {
+            TrinityConfig.LoggingLevel = Diagnostics.LogLevel.Debug;
             TrinityClient client = new TrinityClient("localhost:5304");
             client.RegisterCommunicationModule<TrinityClientTestModule>();
             client.Start();
