@@ -12,17 +12,22 @@
 
 #include <iostream>
 
+class _handler_initializer
+{
+public:
+    _handler_initializer()
+    {
+        (void)Trinity::Network::ResetMessageHandlers();
+    }
+};
+
+static _handler_initializer s_hinit;
+
 namespace Trinity
 {
     namespace Network
     {
         static message_handler_t * s_message_handlers[MAX_HANDLERS_COUNT];
-
-        DWORD RegisterMessageHandler(uint16_t msg_type, message_handler_t * handler)
-        {
-            s_message_handlers[msg_type] = handler;
-            return true;
-        }
 
         void _default_handler(MessageBuff * buff)
         {
@@ -49,34 +54,38 @@ namespace Trinity
             ExitSocketServerThreadPool();
         }
 
-        DWORD StartWorkerThreadPool()
+        TrinityErrorCode RegisterMessageHandler(uint16_t msg_type, message_handler_t * handler)
+        {
+            Diagnostics::WriteLine(Diagnostics::Debug, "TrinityServer: registering message handler, ID={0}, handler={1}", msg_type, (void*)handler);
+            s_message_handlers[msg_type] = handler;
+            return TrinityErrorCode::E_SUCCESS;
+        }
+
+        TrinityErrorCode ResetMessageHandlers()
+        {
+            std::fill_n(s_message_handlers, MAX_HANDLERS_COUNT, &_default_handler);
+            return TrinityErrorCode::E_SUCCESS;
+        }
+
+        TrinityErrorCode StartWorkerThreadPool()
         {
             int thread_count = std::thread::hardware_concurrency() * 2;
-            std::fill_n(s_message_handlers, MAX_HANDLERS_COUNT, &_default_handler);
-            for(auto i = 0; i < thread_count; ++i ) 
-            {
-                std::thread(_workerthread).detach();
-            }
-            
-            return true;
-        }
 
-        int TrinityServerTestEntry()
-        {
-            int sock_fd = StartSocketServer(5304);
-            if (-1 == sock_fd)
+            try
             {
-                fwprintf(stderr, L">>> cannot start socket server\n");
-                return -1;
+                for (auto i = 0; i < thread_count; ++i)
+                {
+                    std::thread(_workerthread).detach();
+                }
             }
-            StartWorkerThreadPool();
-            while (true)
+            catch(...)
             {
-                std::this_thread::sleep_for(std::chrono::seconds(5));
+                Diagnostics::WriteLine(Diagnostics::Error, "TrinityServer: StartWorkerThreadPool: failed to spawn worker threads");
+                return TrinityErrorCode::E_FAILURE;
             }
-            return 0;
-        }
 
+            return TrinityErrorCode::E_SUCCESS;
+        }
 
         void CheckHandshakeResult(PerSocketContextObject* pContext)
         {
@@ -100,10 +109,25 @@ namespace Trinity
             SendResponse(pContext);
             return;
 
-handshake_check_fail:
+        handshake_check_fail:
             CloseClientConnection(pContext, false);
             return;
         }
 
+        int TrinityServerTestEntry()
+        {
+            int sock_fd = StartSocketServer(5304);
+            if (-1 == sock_fd)
+            {
+                fwprintf(stderr, L">>> cannot start socket server\n");
+                return -1;
+            }
+            StartWorkerThreadPool();
+            while (true)
+            {
+                std::this_thread::sleep_for(std::chrono::seconds(5));
+            }
+            return 0;
+        }
     }
 }

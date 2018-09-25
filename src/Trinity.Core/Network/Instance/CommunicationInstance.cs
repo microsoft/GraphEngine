@@ -47,7 +47,7 @@ namespace Trinity.Network
         private bool m_started = false;
         private object m_lock = new object();
         private ManualResetEventSlim m_module_init_signal = new ManualResetEventSlim(initialState: false);
-        private MessageDispatchProc m_Dispatcher = null;
+        private MessageDispatchProc m_dispatcher = null;
         // XXX ThreadStatic does not work well with async/await. Find a solution.
         [ThreadStatic]
         private static HttpListenerContext s_current_http_ctx = null;
@@ -361,14 +361,15 @@ namespace Trinity.Network
         /// </summary>
         public MessageDispatchProc MessageDispatcher
         {
-            get => m_Dispatcher;
-            internal set
+            get => m_dispatcher;
+            set
             {
-                // Register Preserved Handler
-                var preserved_handler = Marshal.GetFunctionPointerForDelegate(value);
-                for (ushort i = 0; i < (int)TrinityMessageType.MESSAGE_TYPE_MAX; ++i)
-                    CNativeNetwork.RegisterMessageHandler(i, preserved_handler);
-                m_Dispatcher = value;
+                m_dispatcher = value;
+                var pfn_dispatch = Marshal.GetFunctionPointerForDelegate(m_dispatcher);
+                for (ushort i = 0; i<(ushort)TrinityMessageType.MESSAGE_TYPE_MAX; ++i)
+                {
+                    CNativeNetwork.RegisterMessageHandler(i, pfn_dispatch);
+                }
             }
         }
 
