@@ -25,7 +25,7 @@ namespace Trinity.Storage
         /// <inheritdoc/>
         public void SendMessage(byte* message, int size)
         {
-            TrinityMessageType msgType = (TrinityMessageType)message[TrinityProtocol.MsgTypeOffset];
+            TrinityMessageType msgType = *(TrinityMessageType*)(message+TrinityProtocol.MsgTypeOffset);
             ushort msgId = *(ushort*)(message + TrinityProtocol.MsgIdOffset);
             TrinityErrorCode msgProcessResult;
 
@@ -86,7 +86,7 @@ namespace Trinity.Storage
         /// <inheritdoc/>
         public void SendMessage(byte* message, int size, out TrinityResponse response)
         {
-            TrinityMessageType msgType = (TrinityMessageType)message[TrinityProtocol.MsgTypeOffset];
+            TrinityMessageType msgType = *(TrinityMessageType*)(message+TrinityProtocol.MsgTypeOffset);
             ushort msgId = *(ushort*)(message+TrinityProtocol.MsgIdOffset);
             SynReqRspArgs sync_rsp_args;
             TrinityErrorCode msgProcessResult;
@@ -123,7 +123,7 @@ namespace Trinity.Storage
             int len;
             _serialize(message, sizes, count, out buf, out len);
 
-            TrinityMessageType msgType = (TrinityMessageType)buf[TrinityProtocol.MsgTypeOffset];
+            TrinityMessageType msgType = *(TrinityMessageType*)(buf + TrinityProtocol.MsgTypeOffset);
             ushort msgId = *(ushort*)(buf + TrinityProtocol.MsgIdOffset);
 
             // For async messages, we omit the buffer copy, use the serialized buffer directly.

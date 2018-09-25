@@ -133,8 +133,8 @@ namespace Trinity.Network
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte** buffers, int* sizes, int count)
         {
-            byte b_msg_type = PointerHelper.GetByte(buffers, sizes, TrinityProtocol.MsgTypeOffset);
-            PointerHelper.Add(buffers, sizes, TrinityProtocol.MsgIdOffset, m_MessageIdOffsets[b_msg_type]);
+            var e_msg_type = PointerHelper.GetUshort(buffers, sizes, TrinityProtocol.MsgTypeOffset);
+            PointerHelper.Add(buffers, sizes, TrinityProtocol.MsgIdOffset, m_MessageIdOffsets[e_msg_type]);
 
             endpoint.SendMessage(buffers, sizes, count);
         }
@@ -152,8 +152,8 @@ namespace Trinity.Network
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte** buffers, int* sizes, int count, out TrinityResponse response)
         {
-            byte b_msg_type = PointerHelper.GetByte(buffers, sizes, TrinityProtocol.MsgTypeOffset);
-            PointerHelper.Add(buffers, sizes, TrinityProtocol.MsgIdOffset, m_MessageIdOffsets[b_msg_type]);
+            var e_msg_type = PointerHelper.GetUshort(buffers, sizes, TrinityProtocol.MsgTypeOffset);
+            PointerHelper.Add(buffers, sizes, TrinityProtocol.MsgIdOffset, m_MessageIdOffsets[e_msg_type]);
 
             endpoint.SendMessage(buffers, sizes, count, out response);
         }
@@ -169,8 +169,8 @@ namespace Trinity.Network
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte* buffer, int size)
         {
-            byte b_msg_type = *(buffer + TrinityProtocol.MsgTypeOffset);
-            *(ushort*)(buffer + TrinityProtocol.MsgIdOffset) += m_MessageIdOffsets[b_msg_type];
+            var e_msg_type = *(TrinityMessageType*)(buffer + TrinityProtocol.MsgTypeOffset);
+            *(ushort*)(buffer + TrinityProtocol.MsgIdOffset) += m_MessageIdOffsets[(int)e_msg_type];
 
             endpoint.SendMessage(buffer, size);
         }
@@ -187,8 +187,8 @@ namespace Trinity.Network
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte* buffer, int size, out TrinityResponse response)
         {
-            byte b_msg_type = *(buffer + TrinityProtocol.MsgTypeOffset);
-            *(ushort*)(buffer + TrinityProtocol.MsgIdOffset) += m_MessageIdOffsets[b_msg_type];
+            var e_msg_type = *(TrinityMessageType*)(buffer + TrinityProtocol.MsgTypeOffset);
+            *(ushort*)(buffer + TrinityProtocol.MsgIdOffset) += m_MessageIdOffsets[(int)e_msg_type];
 
             endpoint.SendMessage(buffer, size, out response);
         }

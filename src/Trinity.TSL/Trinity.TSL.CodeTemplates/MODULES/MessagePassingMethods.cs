@@ -63,7 +63,7 @@ namespace t_Namespace
         {
             byte* bufferPtr = stackalloc byte[TrinityProtocol.MsgHeader];
             *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader;
-            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
+            *(TrinityMessageType*)(bufferPtr + TrinityProtocol.MsgTypeOffset) = __meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
             *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
             t_send_message(bufferPtr, TrinityProtocol.MsgHeader);
         }
@@ -72,7 +72,7 @@ namespace t_Namespace
         {
             byte* bufferPtr = msg.buffer;
             *(int*)(bufferPtr) = msg.Length + TrinityProtocol.TrinityMsgHeader;
-            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
+            *(TrinityMessageType*)(bufferPtr + TrinityProtocol.MsgTypeOffset) = __meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
             *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
             t_send_message(bufferPtr, msg.Length + TrinityProtocol.MsgHeader);
         }
@@ -81,7 +81,7 @@ namespace t_Namespace
         {
             byte* bufferPtr = stackalloc byte[TrinityProtocol.MsgHeader];
             *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader;
-            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
+            *(TrinityMessageType*)(bufferPtr + TrinityProtocol.MsgTypeOffset) = __meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
             *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
             TrinityResponse response;
             t_send_message(bufferPtr, TrinityProtocol.MsgHeader, out response);
@@ -92,7 +92,7 @@ namespace t_Namespace
         {
             byte* bufferPtr = msg.buffer;
             *(int*)(bufferPtr) = msg.Length + TrinityProtocol.TrinityMsgHeader;
-            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
+            *(TrinityMessageType*)(bufferPtr + TrinityProtocol.MsgTypeOffset) = __meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
             *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
             TrinityResponse response;
             t_send_message(bufferPtr, msg.Length + TrinityProtocol.MsgHeader, out response);
@@ -108,7 +108,7 @@ namespace t_Namespace
             *(int*)(bufferPtr + TrinityProtocol.MsgHeader) = token;
             *(int*)(bufferPtr + TrinityProtocol.MsgHeader + sizeof(int)) = Global.CloudStorage.MyInstanceId;
             *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
-            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
+            *(TrinityMessageType*)(bufferPtr + TrinityProtocol.MsgTypeOffset) = __meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
             *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
             t_send_message(bufferPtr, TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
             return task_source.Task;
@@ -129,7 +129,7 @@ namespace t_Namespace
             var task_source = new TaskCompletionSource<t_protocol_responseReader>();
             t_comm_nameBase.s_t_protocol_name_token_sources[token] = task_source;
             *(int*)(bufferPtr) = TrinityProtocol.TrinityMsgHeader + msg.Length + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
-            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)__meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
+            *(TrinityMessageType*)(bufferPtr + TrinityProtocol.MsgTypeOffset) = __meta.META_OUTPUT("get_comm_protocol_trinitymessagetype($t_protocol)"); ;
             *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name;
             *(int*)(bufferPtr + TrinityProtocol.MsgHeader) = token;
             *(int*)(bufferPtr + TrinityProtocol.MsgHeader + sizeof(int)) = Global.CloudStorage.MyInstanceId;

@@ -33,7 +33,7 @@ namespace Trinity.Network.Messaging
 
                 tupleList.Add(new TypeAsyncRequestHandlerTuple
                 {
-                    Id = (byte)RequestType.Shutdown,
+                    Id = (ushort)RequestType.Shutdown,
                     Handler = delegate(AsynReqArgs user_token)
                     {
                         System.Threading.Thread.Sleep(1000);

@@ -41,8 +41,8 @@ namespace Trinity.Network.Client
             TrinityC.Init();
             HeartbeatBuffer = (byte*)Memory.malloc(TrinityProtocol.MsgHeader);
             *(int*)HeartbeatBuffer = TrinityProtocol.TrinityMsgHeader;
-            *(HeartbeatBuffer + TrinityProtocol.MsgTypeOffset) = (byte)TrinityMessageType.PRESERVED_SYNC;
-            *(ushort*)(HeartbeatBuffer + TrinityProtocol.MsgIdOffset) = (ushort)RequestType.Heartbeat;
+            *(TrinityMessageType*)(HeartbeatBuffer + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.PRESERVED_SYNC;
+            *(RequestType*)(HeartbeatBuffer + TrinityProtocol.MsgIdOffset) = RequestType.Heartbeat;
         }
 
         public SynClient(IPEndPoint dest_ipe)

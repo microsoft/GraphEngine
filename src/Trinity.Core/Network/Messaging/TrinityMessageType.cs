@@ -16,7 +16,7 @@ namespace Trinity.Network.Messaging
     /**! Note, we assign SYNC, SYNC_WITH_RSP, ASYNC, ASYNC_WITH_RSP to first four values,
      *   So that in a comm module we use the type as an offset to locate the offset slot.
      */
-    public enum TrinityMessageType : byte
+    public enum TrinityMessageType : ushort
     {
         /// <summary>
         /// Synchronous message.

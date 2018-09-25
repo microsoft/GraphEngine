@@ -117,7 +117,7 @@ namespace t_Namespace
                 int from = *(int*)(args.Buffer + args.Offset + sizeof(int));
                 _t_protocol_name_CheckError(exception, token, from);
                 *(int*)(rsp.buffer) = TrinityProtocol.TrinityMsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength + rsp.Length;
-                *(rsp.buffer + TrinityProtocol.MsgTypeOffset) = (byte)TrinityMessageType.ASYNC_WITH_RSP;
+                *(TrinityMessageType*)(rsp.buffer + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.ASYNC_WITH_RSP;
                 *(ushort*)(rsp.buffer + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name__Response;
                 *(int*)(rsp.m_ptr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength) = token;
                 *(int*)(rsp.m_ptr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength + sizeof(int)) = 0;
@@ -143,7 +143,7 @@ namespace t_Namespace
                 int from = *(int*)(args.Buffer + args.Offset + sizeof(int));
                 _t_protocol_name_CheckError(exception, token, from);
                 *(int*)(rsp.buffer) = TrinityProtocol.TrinityMsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength + rsp.Length;
-                *(rsp.buffer + TrinityProtocol.MsgTypeOffset) = (byte)TrinityMessageType.ASYNC_WITH_RSP;
+                *(TrinityMessageType*)(rsp.buffer + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.ASYNC_WITH_RSP;
                 *(ushort*)(rsp.buffer + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name__Response;
                 *(int*)(rsp.m_ptr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength) = token;
                 *(int*)(rsp.m_ptr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength + sizeof(int)) = 0;
@@ -171,7 +171,7 @@ namespace t_Namespace
             fixed (byte* p = rsp)
             {
                 *(int*)(p) = TrinityProtocol.TrinityMsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
-                *(p + TrinityProtocol.MsgTypeOffset) = (byte)TrinityMessageType.ASYNC_WITH_RSP;
+                *(TrinityMessageType*)(p + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.ASYNC_WITH_RSP;
                 *(ushort*)(p + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name__Response;
                 *(int*)(p + TrinityProtocol.MsgHeader) = token;
                 *(int*)(p + TrinityProtocol.MsgHeader + sizeof(int)) = -1;

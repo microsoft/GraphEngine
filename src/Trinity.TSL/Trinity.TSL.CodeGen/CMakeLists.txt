@@ -68,11 +68,13 @@ SET(metagen_out
     ${CMAKE_CURRENT_BINARY_DIR}/MODULES/StructAccessorEqualOperator.cs.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/MODULES/ValueToAccessorFieldAssignment.cs.cpp)
 
+FILE(GLOB_RECURSE codetemplates ../Trinity.TSL.CodeTemplates/*.cs)
 
 ADD_DOTNET(../Trinity.TSL.CodeTemplates/Trinity.TSL.CodeTemplates.csproj)
 ADD_DOTNET(../Trinity.TSL.Metagen/Trinity.TSL.Metagen.csproj NETCOREAPP)
 RUN_DOTNET(${CMAKE_CURRENT_SOURCE_DIR}/../Trinity.TSL.Metagen/Trinity.TSL.Metagen.csproj
            ARGUMENTS ${CMAKE_CURRENT_SOURCE_DIR}/../Trinity.TSL.CodeTemplates ${CMAKE_CURRENT_BINARY_DIR}
+           SOURCES ${codetemplates}
            OUTPUT ${metagen_out})
 
 # before transpilation, validate the templates by compiling the project

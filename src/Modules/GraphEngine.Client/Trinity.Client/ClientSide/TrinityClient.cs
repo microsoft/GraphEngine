@@ -118,7 +118,7 @@ namespace Trinity.Client
             byte* buf                                       = (byte*)Memory.malloc((ulong)msglen);
             PointerHelper sp                                = PointerHelper.New(buf);
             *sp.ip                                          = msglen - TrinityProtocol.SocketMsgHeader;
-            *(sp.bp + TrinityProtocol.MsgTypeOffset)        = (byte)TrinityMessageType.SYNC_WITH_RSP;
+            *(TrinityMessageType*)(sp.bp + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.SYNC_WITH_RSP;
             *(ushort*)(sp.bp + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.PollEvents;
             sp.bp                                          += TrinityProtocol.MsgHeader;
             *sp.ip++                                        = myInstanceId;
@@ -182,7 +182,7 @@ namespace Trinity.Client
 
             PointerHelper sp                                = PointerHelper.New(buf);
             *sp.ip                                          = socket_header;
-            *(sp.bp + TrinityProtocol.MsgTypeOffset)        = (byte)TrinityMessageType.SYNC;
+            *(TrinityMessageType*)(sp.bp + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.SYNC;
             *(ushort*)(sp.bp + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqMessageType.PostResponse;
             sp.bp                                          += TrinityProtocol.MsgHeader;
             *sp.ip++                                        = m_id;

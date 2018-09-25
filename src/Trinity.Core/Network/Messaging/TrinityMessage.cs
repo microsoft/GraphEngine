@@ -37,7 +37,7 @@ namespace Trinity.Network.Messaging
             Size = TrinityProtocol.MsgHeader + size;
             Buffer = (byte*)CMemory.C_malloc((ulong)Size);
             *(int*)Buffer = TrinityProtocol.TrinityMsgHeader + size;
-            *(Buffer + TrinityProtocol.MsgTypeOffset) = (byte)msgType;
+            *(TrinityMessageType*)(Buffer + TrinityProtocol.MsgTypeOffset) = msgType;
             *(ushort*)(Buffer + TrinityProtocol.MsgIdOffset) = msgId;
         }
 

@@ -16,23 +16,23 @@ namespace Trinity.DynamicCluster.Storage
 
         public unsafe void SendMessage(byte* message, int size)
         {
-            byte msg_type = *(message + TrinityProtocol.MsgTypeOffset);
+            var msg_type = *(TrinityMessageType*)(message + TrinityProtocol.MsgTypeOffset);
             ushort msg_id = *(ushort*)(message + TrinityProtocol.MsgIdOffset);
-            int ms = ProtocolSemanticRegistry.s_protocolSemantics[msg_type, msg_id];
+            int ms = ProtocolSemanticRegistry.s_protocolSemantics[(int)msg_type, msg_id];
             m_smfuncs[ms](message, size);
         }
 
         public unsafe void SendMessage(byte* message, int size, out TrinityResponse response)
         {
-            byte msg_type = *(message + TrinityProtocol.MsgTypeOffset);
+            var msg_type = *(TrinityMessageType*)(message + TrinityProtocol.MsgTypeOffset);
             ushort msg_id = *(ushort*)(message + TrinityProtocol.MsgIdOffset);
-            int ms = ProtocolSemanticRegistry.s_protocolSemantics[msg_type, msg_id];
+            int ms = ProtocolSemanticRegistry.s_protocolSemantics[(int)msg_type, msg_id];
             response = m_smrfuncs[ms](message, size);
         }
 
         public unsafe void SendMessage(byte** message, int* sizes, int count)
         {
-            byte msg_type = PointerHelper.GetByte(message, sizes, TrinityProtocol.MsgTypeOffset);
+            var msg_type = PointerHelper.GetUshort(message, sizes, TrinityProtocol.MsgTypeOffset);
             ushort msg_id = PointerHelper.GetUshort(message, sizes, TrinityProtocol.MsgIdOffset);
             int ms = ProtocolSemanticRegistry.s_protocolSemantics[msg_type, msg_id];
             m_smmfuncs[ms](message, sizes, count);
@@ -40,7 +40,7 @@ namespace Trinity.DynamicCluster.Storage
 
         public unsafe void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
         {
-            byte msg_type = PointerHelper.GetByte(message, sizes, TrinityProtocol.MsgTypeOffset);
+            var msg_type = PointerHelper.GetUshort(message, sizes, TrinityProtocol.MsgTypeOffset);
             ushort msg_id = PointerHelper.GetUshort(message, sizes, TrinityProtocol.MsgIdOffset);
             int ms = ProtocolSemanticRegistry.s_protocolSemantics[msg_type, msg_id];
             response = m_smrmfuncs[ms](message, sizes, count);

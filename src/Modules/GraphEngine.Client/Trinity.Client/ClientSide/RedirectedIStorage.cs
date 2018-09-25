@@ -75,7 +75,7 @@ namespace Trinity.Client
 
             PointerHelper sp                                = PointerHelper.New(header);
             *sp.ip                                          = size + sizeof(int) + TrinityProtocol.TrinityMsgHeader;
-            *(sp.bp + TrinityProtocol.MsgTypeOffset)        = (byte)TrinityMessageType.SYNC;
+            *(TrinityMessageType*)(sp.bp + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.SYNC;
             *(ushort*)(sp.bp + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqMessageType.RedirectMessage;
             *(int*)(sp.bp + TrinityProtocol.MsgHeader)      = partitionId;
 
@@ -95,7 +95,7 @@ namespace Trinity.Client
 
             PointerHelper sp                                = PointerHelper.New(header);
             *sp.ip                                          = size + sizeof(int) + TrinityProtocol.TrinityMsgHeader;
-            *(sp.bp + TrinityProtocol.MsgTypeOffset)        = (byte)TrinityMessageType.SYNC_WITH_RSP;
+            *(TrinityMessageType*)(sp.bp + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.SYNC_WITH_RSP;
             *(ushort*)(sp.bp + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.RedirectMessageWithResponse;
             *(int*)(sp.bp + TrinityProtocol.MsgHeader)      = partitionId;
 
@@ -117,7 +117,7 @@ namespace Trinity.Client
 
             PointerHelper sp                                = PointerHelper.New(header);
             *sp.ip                                          = sizeof(int) + TrinityProtocol.TrinityMsgHeader + Utils._sum(_sizes, count);
-            *(sp.bp + TrinityProtocol.MsgTypeOffset)        = (byte)TrinityMessageType.SYNC;
+            *(TrinityMessageType*)(sp.bp + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.SYNC;
             *(ushort*)(sp.bp + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqMessageType.RedirectMessage;
             *(int*)(sp.bp + TrinityProtocol.MsgHeader)      = partitionId;
 
@@ -139,7 +139,7 @@ namespace Trinity.Client
 
             PointerHelper sp                                = PointerHelper.New(header);
             *sp.ip                                          = sizeof(int) + TrinityProtocol.TrinityMsgHeader + Utils._sum(_sizes, count);
-            *(sp.bp + TrinityProtocol.MsgTypeOffset)        = (byte)TrinityMessageType.SYNC_WITH_RSP;
+            *(TrinityMessageType*)(sp.bp + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.SYNC_WITH_RSP;
             *(ushort*)(sp.bp + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.RedirectMessageWithResponse;
             *(int*)(sp.bp + TrinityProtocol.MsgHeader)      = partitionId;
 

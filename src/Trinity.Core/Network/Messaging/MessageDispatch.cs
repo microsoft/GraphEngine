@@ -284,7 +284,7 @@ namespace Trinity.Network.Sockets
             byte* ByteArray = sendRecvBuff->Buffer;
             int Length = (int)sendRecvBuff->BytesReceived;
 
-            TrinityMessageType msgType = (TrinityMessageType)sendRecvBuff->Buffer[TrinityProtocol.TrinityMsgTypeOffset];
+            TrinityMessageType msgType = *(TrinityMessageType*)(sendRecvBuff->Buffer+TrinityProtocol.TrinityMsgTypeOffset);
             ushort msgId = *(ushort*)(ByteArray + TrinityProtocol.TrinityMsgIdOffset);
             TrinityErrorCode msgProcessResult;
 

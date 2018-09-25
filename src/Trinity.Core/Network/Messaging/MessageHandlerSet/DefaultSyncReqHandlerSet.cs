@@ -38,7 +38,7 @@ namespace Trinity.Network.Messaging
                 #region Heartbeat
                 tupleList.Add(new TypeSyncRequestHandlerTuple
                 {
-                    Id = (byte)RequestType.Heartbeat,
+                    Id = (ushort)RequestType.Heartbeat,
                     Handler = delegate(SynReqArgs args)
                     {
                     }
@@ -48,7 +48,7 @@ namespace Trinity.Network.Messaging
                 #region P2PBarrier
                 tupleList.Add(new TypeSyncRequestHandlerTuple
                 {
-                    Id = (byte)RequestType.P2PBarrier,
+                    Id = (ushort)RequestType.P2PBarrier,
                     Handler = BSP.P2PBarrierHandler
                 });
                 #endregion
@@ -56,7 +56,7 @@ namespace Trinity.Network.Messaging
                 #region ReportProxy
                 tupleList.Add(new TypeSyncRequestHandlerTuple
                 {
-                    Id = (byte)RequestType.ReportProxy,
+                    Id = (ushort)RequestType.ReportProxy,
                     Handler = delegate(SynReqArgs args)
                     {
                         //IPAddress(4)+Port(4)
@@ -74,7 +74,7 @@ namespace Trinity.Network.Messaging
                 #region LoadStorage
                 tupleList.Add(new TypeSyncRequestHandlerTuple
                 {
-                    Id = (byte)RequestType.LoadStorage,
+                    Id = (ushort)RequestType.LoadStorage,
                     Handler = delegate(SynReqArgs args)
                     {
                         Global.LocalStorage.LoadStorage();
@@ -85,7 +85,7 @@ namespace Trinity.Network.Messaging
                 #region SaveStorage
                 tupleList.Add(new TypeSyncRequestHandlerTuple
                 {
-                    Id = (byte)RequestType.SaveStorage,
+                    Id = (ushort)RequestType.SaveStorage,
                     Handler = delegate(SynReqArgs args)
                     {
                         Global.LocalStorage.SaveStorage();
@@ -96,7 +96,7 @@ namespace Trinity.Network.Messaging
                 #region ResetStorage
                 tupleList.Add(new TypeSyncRequestHandlerTuple
                 {
-                    Id = (byte)RequestType.ResetStorage,
+                    Id = (ushort)RequestType.ResetStorage,
                     Handler = delegate(SynReqArgs args)
                     {
                         Global.LocalStorage.ResetStorage();

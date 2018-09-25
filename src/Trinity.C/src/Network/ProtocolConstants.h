@@ -12,7 +12,7 @@ namespace Trinity
     {
         typedef long double float_t;
 
-        enum TrinityMessageType : uint8_t
+        enum TrinityMessageType : uint16_t
         {
             SYNC,
             SYNC_WITH_RSP,

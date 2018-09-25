@@ -157,7 +157,7 @@ namespace FanoutSearch
         {
             byte* body = bufferPtr + TrinityProtocol.MsgHeader;
 
-            *(bufferPtr + TrinityProtocol.MsgTypeOffset) = (byte)TrinityMessageType.ASYNC;
+            *(TrinityMessageType*)(bufferPtr + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.ASYNC;
             *(ushort*)(bufferPtr + TrinityProtocol.MsgIdOffset) = (ushort)global::FanoutSearch.Protocols.TSL.TSL.CommunicationModule.FanoutSearch.AsynReqMessageType.FanoutSearch_impl;
             *(int*)bufferPtr = msg_size - sizeof(int);
             *(int*)(body) = hop;
