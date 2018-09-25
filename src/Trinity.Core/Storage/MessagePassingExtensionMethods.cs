@@ -89,7 +89,9 @@ namespace Trinity.Storage
 
                 BitHelper.WriteString(moduleName, sp.bp);
                 TrinityResponse response;
-                storage.SendMessage(tm, out response);
+                try { storage.SendMessage(tm, out response); }
+                catch(System.IO.IOException) { return false; }
+
                 bool ret = (response.ErrorCode == TrinityErrorCode.E_SUCCESS);
                 if (ret)
                 {
