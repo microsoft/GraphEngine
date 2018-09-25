@@ -88,11 +88,18 @@ namespace Trinity.Storage
                 *sp.ip++         = moduleName.Length;
 
                 BitHelper.WriteString(moduleName, sp.bp);
-                TrinityResponse response;
-                try { storage.SendMessage(tm, out response); }
-                catch(System.IO.IOException) { return false; }
+                TrinityResponse response = null;
+                bool ret;
+                try 
+                { 
+                    storage.SendMessage(tm, out response); 
+                    ret = (response.ErrorCode == TrinityErrorCode.E_SUCCESS);
+                }
+                catch(System.IO.IOException) 
+                { 
+                    ret = false;
+                }
 
-                bool ret = (response.ErrorCode == TrinityErrorCode.E_SUCCESS);
                 if (ret)
                 {
                     sp.bp             = response.Buffer + response.Offset;
@@ -115,7 +122,7 @@ namespace Trinity.Storage
                 }
 
 
-                response.Dispose();
+                response?.Dispose();
                 return ret;
             }
         }
