@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Trinity.Network.Messaging;
 using Trinity.TSL.Lib;
 
 #pragma warning disable
@@ -82,6 +83,11 @@ namespace Trinity.TSL
         internal unsafe ResizeFunctionDelegate ResizeFunction = null;
         public unsafe t_field_type t_member_name;
         public t_data_type t_field_name;
+
+        public static implicit operator TrinityMessageType(t_field_type x)
+        {
+            return TrinityMessageType.ASYNC;
+        }
 
         public static implicit operator string(t_field_type x)
         {
