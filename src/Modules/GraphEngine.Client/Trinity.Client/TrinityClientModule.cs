@@ -271,5 +271,38 @@ namespace Trinity.Client.TrinityClientModule
         {
             if (!Global.CloudStorage.ResetStorage()) throw new IOException();
         }
+
+        #region overridden
+        public override void AddCellHandler(__CellIdStructReader request, ErrorCodeResponseWriter response)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void LoadCellHandler(__CellIdStructReader request, __CellIdStructWriter response)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SaveCellHandler(__CellIdStructReader request, ErrorCodeResponseWriter response)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void UpdateCellHandler(__CellIdStructReader request, ErrorCodeResponseWriter response)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        public override void ContainsHandler(__CellIdStructReader request, ErrorCodeResponseWriter response)
+        {
+            response.code = m_memorycloud.Contains(request.id) ? 1 : 0;
+        }
+
+        public override void RemoveCellHandler(__CellIdStructReader request, ErrorCodeResponseWriter response)
+        {
+            response.code = (int)m_memorycloud.RemoveCell(request.id);
+        }
+
     }
 }

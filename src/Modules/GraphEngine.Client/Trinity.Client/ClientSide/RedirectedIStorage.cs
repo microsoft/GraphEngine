@@ -33,17 +33,63 @@ namespace Trinity.Client
 
         public unsafe TrinityErrorCode AddCell(long cellId, byte* buff, int size, ushort cellType)
         {
-            throw new NotImplementedException();
+            //header: cellId, size, type
+            int    header_len = TrinityProtocol.MsgHeader + sizeof(long) + sizeof(int) + sizeof(ushort);
+            byte*  header = stackalloc byte[header_len];
+            byte** holder = stackalloc byte*[2];
+            int*   length = stackalloc int[2];
+            PointerHelper sp = PointerHelper.New(header);
+            *sp.ip++ = header_len + size;
+            *sp.sp++ = (short)TrinityMessageType.SYNC_WITH_RSP;
+            *sp.sp++ = (short)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.AddCell;
+            *sp.lp++ = cellId;
+            *sp.ip++ = size;
+            *sp.sp++ = (short)cellType;
+
+            holder[0] = header;
+            holder[1] = buff;
+
+            TrinityResponse rsp = null;
+            try
+            {
+                m_mod.SendMessage(m_ep, holder, length, 2, out rsp);
+                return *(TrinityErrorCode*)rsp.Buffer;
+            }
+            catch
+            {
+                return TrinityErrorCode.E_RPC_EXCEPTION;
+            }
+            finally
+            {
+                rsp?.Dispose();
+            }
         }
 
         public bool Contains(long cellId)
         {
-            throw new NotImplementedException();
+            using (var req = new __CellIdStructWriter(cellId))
+            using (var rsp = m_mod.AddCell(0, req))
+            {
+                return rsp.code == (int)TrinityErrorCode.E_CELL_FOUND;
+            }
         }
 
         public TrinityErrorCode GetCellType(long cellId, out ushort cellType)
         {
-            throw new NotImplementedException();
+            using (var req = new __CellIdStructWriter(cellId))
+            using (var rsp = m_mod.AddCell(0, req))
+            {
+                if (rsp.code >= 0)
+                {
+                    cellType = (ushort)rsp.code;
+                    return TrinityErrorCode.E_SUCCESS;
+                }
+                else
+                {
+                    cellType = 0;
+                    return (TrinityErrorCode)rsp.code;
+                }
+            }
         }
 
         public TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff, out ushort cellType)
