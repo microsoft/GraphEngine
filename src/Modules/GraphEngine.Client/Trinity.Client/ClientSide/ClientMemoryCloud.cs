@@ -13,6 +13,10 @@ namespace Trinity.Client
     [ExtensionPriority(-200)]
     internal partial class ClientMemoryCloud : MemoryCloud
     {
+        private static IMessagePassingEndpoint s_ep = null;
+        private static TrinityClient s_client = null;
+        private static IList<IStorage> s_redir_storages = null;
+
         private int m_partitionCount = -1;
         private int m_instanceId = -1;
         private int m_cookie = -1;
@@ -21,23 +25,24 @@ namespace Trinity.Client
         private IList<IStorage> m_redir_storages = null;
         private TrinityClientModule.TrinityClientModule m_cmod = null;
 
-        internal void BeginInitialize(IMessagePassingEndpoint ep, TrinityClient tc)
+        internal static void Initialize(IMessagePassingEndpoint ep, TrinityClient tc)
         {
-            m_ep = ep;
-            m_client = tc;
+            s_ep = ep;
+            s_client = tc;
 
-            //  during initialization, there's a single PassThroughIStorage 
-            //  in our storage table
-            SetPartitionMethod(id => 0);
-            m_redir_storages = new List<IStorage> { new PassThroughIStorage(ep) };
+            //  during initialization, there's a single 
+            //  PassThroughIStorage in our storage table.
+            s_redir_storages = new List<IStorage> { new PassThroughIStorage(ep) };
         }
 
-        internal void EndInitialize()
+        public void RegisterClient()
         {
+            //  copy from initialization result
+            m_client = s_client;
+            m_ep = s_ep;
+
             m_cmod = m_client.GetCommunicationModule<TrinityClientModule.TrinityClientModule>();
             m_cookie = m_cmod.MyCookie;
-
-            m_redir_storages = null;
 
             using (var req = new RegisterClientRequestWriter(m_cmod.MyCookie))
             using (var rsp = m_ep.RegisterClient(req))
@@ -48,7 +53,7 @@ namespace Trinity.Client
 
             //  after initialization, we switch from pass-through storage
             //  to redirecting storage.
-            SetPartitionMethod(StaticGetPartitionByCellId);
+            SetPartitionMethod(GetServerIdByCellIdDefault);
 
             m_redir_storages = Enumerable.Range(0, m_partitionCount).Select(p => new RedirectedIStorage(m_ep, m_client, p)).Cast<IStorage>().ToList();
         }
@@ -58,10 +63,6 @@ namespace Trinity.Client
         private unsafe int GetServerIdByCellIdDefault(long cellId)
         {
             return (*(((byte*)&cellId) + 1)) % m_partitionCount;
-        }
-
-        public ClientMemoryCloud()
-        {
         }
 
         public override int MyInstanceId => m_instanceId;
@@ -74,14 +75,15 @@ namespace Trinity.Client
 
         public override int PartitionCount => _GetRedirStorages().Count;
 
+        /// <summary>
+        /// The memory cloud is first accessed when querying remote host for module alignment.
+        /// This should happen after the client module has set up the passthrough storage.
+        /// Afterwards, when the memory cloud is started and we register the client, we
+        /// switch to redirected storages.
+        /// </summary>
         private IList<IStorage> _GetRedirStorages()
         {
-            IList<IStorage> ret = null;
-            while(null == (ret = m_redir_storages))
-            {
-                Thread.Sleep(1);
-            }
-            return ret;
+            return m_redir_storages ?? s_redir_storages;
         }
 
         public override int ProxyCount => throw new NotSupportedException();

@@ -176,6 +176,7 @@ module TrinityClientModule
 
     protocol AddCell;
     protocol Contains;
+    protocol GetCellType;
     protocol LoadCell;
     protocol RemoveCell;
     protocol SaveCell;

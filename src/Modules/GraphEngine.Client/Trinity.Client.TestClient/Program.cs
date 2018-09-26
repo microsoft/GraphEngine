@@ -18,8 +18,6 @@ namespace Trinity.Client.TestClient
             client.RegisterCommunicationModule<TrinityClientTestModule>();
             client.Start();
 
-            Console.WriteLine(Global.CloudStorage.LoadC1(0));
-
             while (true) Thread.Sleep(1000000);
         }
     }
