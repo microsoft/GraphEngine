@@ -12,9 +12,6 @@ namespace Storage
 {
     using namespace Trinity::Hash;
 
-    uint64_t MTHash::MTEntryOffset;
-    uint64_t MTHash::BucketMemoryOffset;
-    uint64_t MTHash::BucketLockerMemoryOffset;
     uint64_t MTHash::LookupLossyCounter = 0;
 
     MTHash::MTHash()
@@ -37,9 +34,9 @@ namespace Storage
     void MTHash::AllocateMTHash()
     {
         char* CellEntryPtr     = memory_trunk->trunkPtr + MemoryTrunk::TrunkLength;
-        char* MTEntryPtr       = CellEntryPtr + MTHash::MTEntryOffset;
-        char* BucketPtr        = CellEntryPtr + MTHash::BucketMemoryOffset;
-        char* BucketLockersPtr = CellEntryPtr + MTHash::BucketLockerMemoryOffset;
+        char* MTEntryPtr       = CellEntryPtr + MTHash::MTEntryOffset();
+        char* BucketPtr        = CellEntryPtr + MTHash::BucketMemoryOffset();
+        char* BucketLockersPtr = CellEntryPtr + MTHash::BucketLockerMemoryOffset();
 
         uint32_t AllocatedEntryCount = ExtendedInfo->EntryCount + UInt32_Contants::GuardedEntryCount;
 

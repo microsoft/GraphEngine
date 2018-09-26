@@ -61,6 +61,10 @@ namespace Trinity.Storage
         [SuppressUnmanagedCodeSecurity]
         internal static extern TrinityErrorCode CLoadStorage();
 
+        [DllImport(TrinityC.AssemblyName, CharSet = CharSet.Unicode)]
+        [SuppressUnmanagedCodeSecurity]
+        internal static extern TrinityErrorCode LoadIncrementalDiskImage(string trunkfile, string hashfile, string lofile);
+
 
         #region Cell operations
         // Non-logging cell operations

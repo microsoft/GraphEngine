@@ -35,7 +35,7 @@ namespace Memory
     bool ExpandMemoryFromCurrentPosition(void* p, uint64_t size_to_expand);
     bool ExpandMemoryRegion(char*, uint64_t, uint64_t);
     void ShrinkMemoryRegion(char* p, uint32_t current_size, uint32_t desired_size);
-    void FreeMemoryRegion(char* trunkPtr, uint64_t size);
+    void FreeMemoryRegion(void* lpaddress, uint64_t size);
     
     BOOL DecommitMemory(void* lpAddr, uint64_t size);
     void* LockedAlloc(uint64_t size);

@@ -21,7 +21,7 @@ namespace Storage
         char**          m_LOPtr;
         int32_t         m_CellEntryIndex;
 
-        bool currentEntryInvalid();
+        bool currentEntryInvalid() const;
 
     public:
         inline MT_ENUMERATOR(MTHash* mth) { Initialize(mth); }
@@ -30,11 +30,11 @@ namespace Storage
         TrinityErrorCode MoveNext();
 
         /// Returns the cellPtr if the current cell is a large object; otherwise, returns nullptr.
-        char*       LOCellPtr();
-        char*       CellPtr();
-        cellid_t    CellId();
-        int32_t     CellSize();
-        uint16_t    CellType();
-        CellEntry*  CellEntryPtr();
+        char*       LOCellPtr() const;
+        char*       CellPtr() const;
+        cellid_t    CellId() const;
+        int32_t     CellSize() const;
+        uint16_t    CellType() const;
+        CellEntry*  CellEntryPtr() const;
     };
 }

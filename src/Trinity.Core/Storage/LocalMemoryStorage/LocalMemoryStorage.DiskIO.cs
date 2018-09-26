@@ -24,6 +24,11 @@ namespace Trinity.Storage
 {
     public unsafe partial class LocalMemoryStorage
     {
+        public TrinityErrorCode ApplyDelta(string mpFilePath, string indexFilePath, string loFilePath)
+        {
+            return CLocalMemoryStorage.LoadIncrementalDiskImage(mpFilePath, indexFilePath, loFilePath);
+        }
+
         /// <summary>
         /// Loads Trinity key-value store from disk to main memory.
         /// </summary>
