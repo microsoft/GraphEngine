@@ -39,6 +39,13 @@ struct UnregisterClientRequest
 	int Cookie;
 }
 
+struct CellPayload
+{
+    CellId cellId;
+    List<byte> buff;
+    ushort cellType;
+}
+
 protocol RegisterClient
 {
 	Type: Syn;
@@ -81,6 +88,34 @@ protocol UnregisterClient
 	Response: void;
 }
 
+protocol LoadStorage
+{
+    Type:     Syn;
+    Request:  void;
+    Response: void;
+}
+
+protocol SaveStorage
+{
+    Type:     Syn;
+    Request:  void;
+    Response: void;
+}
+
+protocol ResetStorage
+{
+    Type:     Syn;
+    Request:  void;
+    Response: void;
+}
+
+protocol AddCell
+{
+    Type:     Syn;
+    Request:  CellPayload;
+    Response: ErrorCode;
+}
+
 module TrinityClientModule
 {
 	protocol RegisterClient;
@@ -89,4 +124,8 @@ module TrinityClientModule
 	protocol PostResponse;
 	protocol RedirectMessage;
 	protocol RedirectMessageWithResponse;
+
+    protocol LoadStorage;
+    protocol SaveStorage;
+    protocol ResetStorage;
 }

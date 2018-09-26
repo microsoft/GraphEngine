@@ -22,31 +22,33 @@ namespace Trinity.Client.TestServer
             server.RegisterCommunicationModule<TrinityClientTestModule>();
             server.Start();
 
+            Global.LocalStorage.SaveC1(0, "foo", 123);
+
             var cmod = server.GetCommunicationModule<TrinityClientModule.TrinityClientModule>();
             var tmod = server.GetCommunicationModule<TrinityClientTestModule>();
             int i = 0;
             while (true)
             {
-                var client = cmod.Clients.FirstOrDefault();
-                Console.WriteLine($"{cmod.Clients.Count()} clients");
-                if (client != null)
-                {
-                    try
-                    {
-                        using (var msg = new S1Writer("foo", i++))
-                            client.P1(msg).ContinueWith(t =>
-                            {
-                                using (var rsp = t.Result)
-                                {
-                                    Console.WriteLine($"Client responded: {rsp.foo}, {rsp.bar}");
-                                }
-                            }, TaskContinuationOptions.RunContinuationsAsynchronously);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
-                }
+                //var client = cmod.Clients.FirstOrDefault();
+                //Console.WriteLine($"{cmod.Clients.Count()} clients");
+                //if (client != null)
+                //{
+                //    try
+                //    {
+                //        using (var msg = new S1Writer("foo", i++))
+                //            client.P1(msg).ContinueWith(t =>
+                //            {
+                //                using (var rsp = t.Result)
+                //                {
+                //                    Console.WriteLine($"Client responded: {rsp.foo}, {rsp.bar}");
+                //                }
+                //            }, TaskContinuationOptions.RunContinuationsAsynchronously);
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        Console.WriteLine(ex.ToString());
+                //    }
+                //}
                 Thread.Sleep(1000);
             }
         }

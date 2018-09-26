@@ -15,3 +15,9 @@ module TrinityClientTestModule
 {
 	protocol P1;
 }
+
+cell C1
+{
+    string foo;
+    int bar;
+}

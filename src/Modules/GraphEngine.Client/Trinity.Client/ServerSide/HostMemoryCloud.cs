@@ -84,6 +84,7 @@ namespace Trinity.Client.ServerSide
         #endregion
     }
 
+    // TODO make FixedMemoryCloud a component instead of base -- and thus we can support other types of MCs
     [ExtensionPriority(-80)]
     public class HostMemoryCloud : FixedMemoryCloud, IClientRegistry
     {

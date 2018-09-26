@@ -11,6 +11,7 @@ using Trinity.Extension;
 using Trinity.Network.Messaging;
 using Trinity.Storage;
 using System.Runtime.CompilerServices;
+using System.IO;
 
 namespace Trinity.Client.TrinityClientModule
 {
@@ -254,6 +255,21 @@ namespace Trinity.Client.TrinityClientModule
         {
             if (m_client_storages.TryGetValue(cookie, out var storage) && instanceId == storage.InstanceId) return storage;
             throw new ClientInstanceNotFoundException();
+        }
+
+        public override void LoadStorageHandler()
+        {
+            if (!Global.CloudStorage.LoadStorage()) throw new IOException();
+        }
+
+        public override void SaveStorageHandler()
+        {
+            if (!Global.CloudStorage.SaveStorage()) throw new IOException();
+        }
+
+        public override void ResetStorageHandler()
+        {
+            if (!Global.CloudStorage.ResetStorage()) throw new IOException();
         }
     }
 }

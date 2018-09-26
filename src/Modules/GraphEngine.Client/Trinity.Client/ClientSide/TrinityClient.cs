@@ -68,7 +68,7 @@ namespace Trinity.Client
         {
             if (m_clientfactory == null) { ScanClientConnectionFactory(); }
             m_client = m_clientfactory.ConnectAsync(m_endpoint, this).Result;
-            ClientMemoryCloud.BeginInitialize(m_client, this);
+            (CloudStorage as ClientMemoryCloud).BeginInitialize(m_client, this);
             this.Started += StartPolling;
         }
 
@@ -87,7 +87,7 @@ namespace Trinity.Client
 
         private void RegisterClient()
         {
-            ClientMemoryCloud.EndInitialize();
+            (CloudStorage as ClientMemoryCloud).EndInitialize();
             m_tokensrc = new CancellationTokenSource();
             m_id = Global.CloudStorage.MyInstanceId;
             m_cookie = m_mod.MyCookie;

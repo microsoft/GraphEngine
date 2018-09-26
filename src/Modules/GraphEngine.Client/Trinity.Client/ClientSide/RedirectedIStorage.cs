@@ -10,6 +10,12 @@ using Trinity.Storage;
 
 namespace Trinity.Client
 {
+    /// <summary>
+    /// Redirected IStorage, each representing a remote partition.
+    /// Under the hood, it communicates with the remote cloud with
+    /// a shared message passing endpoint (the TrinityClient ep)
+    /// and speaks wrapped messages.
+    /// </summary>
     internal class RedirectedIStorage : IStorage
     {
         private IMessagePassingEndpoint m_ep;
@@ -35,17 +41,10 @@ namespace Trinity.Client
             throw new NotImplementedException();
         }
 
-        public void Dispose()
-        {
-        }
-
         public TrinityErrorCode GetCellType(long cellId, out ushort cellType)
         {
             throw new NotImplementedException();
         }
-
-        public T GetCommunicationModule<T>() where T : CommunicationModule
-            => m_comminst.GetCommunicationModule<T>();
 
         public TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff, out ushort cellType)
         {
@@ -61,6 +60,19 @@ namespace Trinity.Client
         {
             throw new NotImplementedException();
         }
+
+        public unsafe TrinityErrorCode UpdateCell(long cellId, byte* buff, int size)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            // note, do not dispose shared comm. endpoint and comm. instance.
+        }
+
+        public T GetCommunicationModule<T>() where T : CommunicationModule
+            => m_comminst.GetCommunicationModule<T>();
 
         public unsafe void SendMessage(byte* message, int size)
         {
@@ -144,11 +156,6 @@ namespace Trinity.Client
             *(int*)(sp.bp + TrinityProtocol.MsgHeader)      = partitionId;
 
             m_mod.SendMessage(m_ep, bufs, sizes, count + 1, out response);
-        }
-
-        public unsafe TrinityErrorCode UpdateCell(long cellId, byte* buff, int size)
-        {
-            throw new NotImplementedException();
         }
     }
 }
