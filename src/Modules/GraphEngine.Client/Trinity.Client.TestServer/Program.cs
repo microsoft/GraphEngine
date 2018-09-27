@@ -22,6 +22,8 @@ namespace Trinity.Client.TestServer
             server.RegisterCommunicationModule<TrinityClientTestModule>();
             server.Start();
 
+            Global.LocalStorage.SaveC1(0, "foo", 123);
+
             var cmod = server.GetCommunicationModule<TrinityClientModule.TrinityClientModule>();
             var tmod = server.GetCommunicationModule<TrinityClientTestModule>();
             int i = 0;

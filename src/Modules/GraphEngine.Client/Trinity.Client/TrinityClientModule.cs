@@ -11,6 +11,7 @@ using Trinity.Extension;
 using Trinity.Network.Messaging;
 using Trinity.Storage;
 using System.Runtime.CompilerServices;
+using System.IO;
 
 namespace Trinity.Client.TrinityClientModule
 {
@@ -23,12 +24,12 @@ namespace Trinity.Client.TrinityClientModule
         private IClientRegistry Registry => m_memorycloud as IClientRegistry;
         private ConcurrentDictionary<int, ClientIStorage> m_client_storages = new ConcurrentDictionary<int, ClientIStorage>();
         public IEnumerable<IStorage> Clients => m_client_storages.Values;
+        private CancellationTokenSource m_cancel_src;
+        private static readonly TimeSpan m_client_ttl = TimeSpan.FromSeconds(30);
         // ===== Client-side members =====
         private Lazy<int> m_client_cookie = new Lazy<int>(() => new Random().Next(int.MinValue, int.MaxValue));
         internal int MyCookie => m_client_cookie.Value;
         private Task m_ttl_proc = null;
-        private CancellationTokenSource m_cancel_src;
-        private static readonly TimeSpan m_client_ttl = TimeSpan.FromSeconds(30);
 
         public TrinityClientModule()
         {
@@ -38,6 +39,7 @@ namespace Trinity.Client.TrinityClientModule
 
         private async Task TTLProc(CancellationToken cancel)
         {
+            //TODO client should not start TTLProc
             while (!cancel.IsCancellationRequested)
             {
                 Log.WriteLine(LogLevel.Verbose, $"{nameof(TTLProc)}: scanning for timed-out clients.");
@@ -55,7 +57,7 @@ namespace Trinity.Client.TrinityClientModule
                 {
                     Log.WriteLine(LogLevel.Error, "{0}: {1}", nameof(TTLProc), ex.ToString());
                 }
-                await Task.Delay(10000);
+                await Task.Delay(10000, cancel);
             }
         }
 
@@ -78,7 +80,13 @@ namespace Trinity.Client.TrinityClientModule
             MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.PollEvents, PollEvents_impl);
             MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqMessageType.RedirectMessage, RedirectMessage_impl);
             MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.RedirectMessageWithResponse, RedirectMessageWithResponse_impl);
+
+            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.AddCell, AddCell_impl);
+            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.LoadCell, LoadCell_impl);
+            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.SaveCell, SaveCell_impl);
+            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.UpdateCell, UpdateCell_impl);
         }
+
 
         private unsafe void PostResponse_impl(SynReqArgs args)
         {
@@ -159,34 +167,34 @@ namespace Trinity.Client.TrinityClientModule
         {
             /******************************
              * Protocol: RedirectMessage
-             * Request: |4B InstanceId| TrinityMessage |
+             * Request: |4B PartitionId| TrinityMessage |
              * Response: VOID
              * 
              * Redirects the message to another instance.
              ******************************/
 
             PointerHelper sp = PointerHelper.New(args.Buffer + args.Offset);
-            int instanceId = *sp.ip++;
+            int partitionId = *sp.ip++;
 
-            TrinityMessage tm = new TrinityMessage(sp.bp, *sp.ip + sizeof(int));
-            m_memorycloud[instanceId].SendMessage(tm);
+            TrinityMessage tm = new TrinityMessage(sp.bp, (*sp.ip) + TrinityProtocol.SocketMsgHeader);
+            m_memorycloud[partitionId].SendMessage(tm);
         }
 
         private unsafe void RedirectMessageWithResponse_impl(SynReqRspArgs args)
         {
             /******************************
              * Protocol: RedirectMessage
-             * Request: |4B InstanceId| TrinityMessage |
+             * Request: |4B PartitionId| TrinityMessage |
              * Response: | TrinityResponse |
              * 
              * Redirects the message to another instance.
              ******************************/
 
             PointerHelper sp = PointerHelper.New(args.Buffer + args.Offset);
-            int instanceId = *sp.ip++;
+            int partitionId = *sp.ip++;
 
-            TrinityMessage tm = new TrinityMessage(sp.bp, *sp.ip + sizeof(int));
-            m_memorycloud[instanceId].SendMessage(tm, out var rsp);
+            TrinityMessage tm = new TrinityMessage(sp.bp, (*sp.ip) + TrinityProtocol.SocketMsgHeader);
+            m_memorycloud[partitionId].SendMessage(tm, out var rsp);
 
             int rsp_size = TrinityProtocol.MsgHeader + rsp.Size;
             byte* rsp_buf = (byte*)Memory.malloc((ulong)rsp_size);
@@ -214,6 +222,26 @@ namespace Trinity.Client.TrinityClientModule
         }
 
         public override void RedirectMessageWithResponseHandler(PostResponseRequestReader request, PostResponseRequestWriter response)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void AddCellHandler(__CellIdStructReader request, ErrorCodeResponseWriter response)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void LoadCellHandler(__CellIdStructReader request, __CellIdStructWriter response)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SaveCellHandler(__CellIdStructReader request, ErrorCodeResponseWriter response)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void UpdateCellHandler(__CellIdStructReader request, ErrorCodeResponseWriter response)
         {
             throw new NotImplementedException();
         }
@@ -254,6 +282,131 @@ namespace Trinity.Client.TrinityClientModule
         {
             if (m_client_storages.TryGetValue(cookie, out var storage) && instanceId == storage.InstanceId) return storage;
             throw new ClientInstanceNotFoundException();
+        }
+
+        public override void LoadStorageHandler()
+        {
+            if (!Global.CloudStorage.LoadStorage()) throw new IOException();
+        }
+
+        public override void SaveStorageHandler()
+        {
+            if (!Global.CloudStorage.SaveStorage()) throw new IOException();
+        }
+
+        public override void ResetStorageHandler()
+        {
+            if (!Global.CloudStorage.ResetStorage()) throw new IOException();
+        }
+
+        public override void ContainsHandler(__CellIdStructReader request, ErrorCodeResponseWriter response)
+        {
+            response.code = (int)(m_memorycloud.Contains(request.id) ? TrinityErrorCode.E_CELL_FOUND : TrinityErrorCode.E_CELL_NOT_FOUND);
+        }
+
+        public override void RemoveCellHandler(__CellIdStructReader request, ErrorCodeResponseWriter response)
+        {
+            response.code = (int)m_memorycloud.RemoveCell(request.id);
+        }
+
+        public override void GetCellTypeHandler(__CellIdStructReader request, ErrorCodeResponseWriter response)
+        {
+            var err = (int)m_memorycloud.GetCellType(request.id, out var cellType);
+            response.code = err < 0 ? err : cellType;
+        }
+
+        private unsafe void UpdateCell_impl(SynReqRspArgs args)
+        {
+            /******************************
+             * Protocol: UpdateCell
+             * Request: |8B CellId|4B Size| Payload |
+             * Response: [ 4B TrinityErrorCode header ]
+             ******************************/
+            var sp = PointerHelper.New(args.Buffer + args.Offset);
+            var id = *sp.lp++;
+            var size = *sp.ip++;
+
+            var err = (int)m_memorycloud.UpdateCell(id, sp.bp, size);
+            var buf = (byte*)Memory.malloc(TrinityProtocol.MsgHeader);
+            sp = PointerHelper.New(buf);
+            *sp.ip++ = TrinityProtocol.MsgHeader - TrinityProtocol.SocketMsgHeader;
+            *sp.ip = err;
+            args.Response = new TrinityMessage(buf, TrinityProtocol.MsgHeader);
+        }
+
+        private unsafe void SaveCell_impl(SynReqRspArgs args)
+        {
+            /******************************
+             * Protocol: SaveCell
+             * Request: |8B CellId|4B Size|2B CellType| Payload |
+             * Response: | 4B TrinityErrorCode |
+             ******************************/
+            var sp = PointerHelper.New(args.Buffer + args.Offset);
+            var id = *sp.lp++;
+            var size = *sp.ip++;
+            var type = (ushort)*sp.sp++;
+
+            var err = (int)m_memorycloud.SaveCell(id, sp.bp, size, type);
+            var buf = (byte*)Memory.malloc(TrinityProtocol.MsgHeader);
+            sp = PointerHelper.New(buf);
+            *sp.ip++ = TrinityProtocol.MsgHeader - TrinityProtocol.SocketMsgHeader;
+            *sp.ip = err;
+            args.Response = new TrinityMessage(buf, TrinityProtocol.MsgHeader);
+        }
+
+        private unsafe void AddCell_impl(SynReqRspArgs args)
+        {
+            /******************************
+             * Protocol: AddCell
+             * Request: |8B CellId|4B Size|2B CellType| Payload |
+             * Response: [ 4B TrinityErrorCode header ]
+             ******************************/
+            var sp = PointerHelper.New(args.Buffer + args.Offset);
+            var id = *sp.lp++;
+            var size = *sp.ip++;
+            var type = (ushort)*sp.sp++;
+
+            var err = (int)m_memorycloud.AddCell(id, sp.bp, size, type);
+            var buf = (byte*)Memory.malloc(TrinityProtocol.MsgHeader);
+            sp = PointerHelper.New(buf);
+            *sp.ip++ = TrinityProtocol.MsgHeader - TrinityProtocol.SocketMsgHeader;
+            *sp.ip = err;
+            args.Response = new TrinityMessage(buf, TrinityProtocol.MsgHeader);
+        }
+
+        private unsafe void LoadCell_impl(SynReqRspArgs args)
+        {
+            /******************************
+             * Protocol: LoadCell
+             * Request: |8B CellId|
+             * Response: [ 4B TrinityErrorCode header ] -- if success --> | 4B Size|2B CellType| Payload |
+             ******************************/
+            var id = *(long*)(args.Buffer + args.Offset);
+            var err = m_memorycloud.LoadCell(id, out var cellBuff, out var cellType);
+            if (err == TrinityErrorCode.E_SUCCESS)
+            {
+                var len = TrinityProtocol.MsgHeader + sizeof(int) + cellBuff.Length + sizeof(ushort);
+                var buf = (byte*)Memory.malloc((ulong)len);
+                var sp = PointerHelper.New(buf);
+                *sp.ip++ = len - TrinityProtocol.SocketMsgHeader;
+                *sp.ip++ = (int)err;
+                *sp.ip++ = cellBuff.Length;
+                *sp.sp++ = (short)cellType;
+                fixed(byte* p = cellBuff)
+                {
+                    Memory.memcpy(sp.bp, p, (ulong)cellBuff.Length);
+                }
+
+                args.Response = new TrinityMessage(buf, len);
+            }
+            else
+            {
+                var buf = (byte*)Memory.malloc(TrinityProtocol.MsgHeader);
+                var sp = PointerHelper.New(buf);
+                *sp.ip++ = TrinityProtocol.MsgHeader - TrinityProtocol.SocketMsgHeader;
+                *sp.ip = (int)err;
+                args.Response = new TrinityMessage(buf, TrinityProtocol.MsgHeader);
+            }
         }
     }
 }

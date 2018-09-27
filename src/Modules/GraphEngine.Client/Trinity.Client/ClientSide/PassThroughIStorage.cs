@@ -9,6 +9,12 @@ using Trinity.Storage;
 
 namespace Trinity.Client
 {
+    /// <summary>
+    /// Simple pass-through IStorage, used to conduct module offset probing etc.
+    /// during client startup sequence.
+    /// When the client is started and registered, the PassThroughIStorage is discarded,
+    /// and replaced by a number of RedirectedIStorage instances.
+    /// </summary>
     internal class PassThroughIStorage : IStorage
     {
         private IMessagePassingEndpoint m_ep;

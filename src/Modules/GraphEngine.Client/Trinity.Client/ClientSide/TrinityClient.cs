@@ -68,7 +68,7 @@ namespace Trinity.Client
         {
             if (m_clientfactory == null) { ScanClientConnectionFactory(); }
             m_client = m_clientfactory.ConnectAsync(m_endpoint, this).Result;
-            ClientMemoryCloud.BeginInitialize(m_client, this);
+            ClientMemoryCloud.Initialize(m_client, this);
             this.Started += StartPolling;
         }
 
@@ -87,7 +87,7 @@ namespace Trinity.Client
 
         private void RegisterClient()
         {
-            ClientMemoryCloud.EndInitialize();
+            (CloudStorage as ClientMemoryCloud).RegisterClient();
             m_tokensrc = new CancellationTokenSource();
             m_id = Global.CloudStorage.MyInstanceId;
             m_cookie = m_mod.MyCookie;
@@ -147,7 +147,7 @@ namespace Trinity.Client
                 }
                 if (errno != 0) { return; }
 
-                var pctx = *sp.lp++;
+                var pctx = *sp.lp++; // FIXME pctx is always 0!
                 var msg_len = *sp.ip++;
                 if (msg_len < 0) return; // no events
                 MessageBuff msg_buff = new MessageBuff{ Buffer = sp.bp, BytesReceived = (uint)msg_len };

@@ -39,6 +39,16 @@ struct UnregisterClientRequest
 	int Cookie;
 }
 
+struct __CellIdStruct 
+{ 
+    CellId id; 
+}
+
+struct ErrorCodeResponse
+{
+    int code;
+}
+
 protocol RegisterClient
 {
 	Type: Syn;
@@ -81,6 +91,76 @@ protocol UnregisterClient
 	Response: void;
 }
 
+protocol LoadStorage
+{
+    Type:     Syn;
+    Request:  void;
+    Response: void;
+}
+
+protocol SaveStorage
+{
+    Type:     Syn;
+    Request:  void;
+    Response: void;
+}
+
+protocol ResetStorage
+{
+    Type:     Syn;
+    Request:  void;
+    Response: void;
+}
+
+protocol AddCell
+{
+    Type: Syn;
+    Request: __CellIdStruct;
+    Response: ErrorCodeResponse;
+}
+
+protocol Contains
+{
+    Type: Syn;
+    Request: __CellIdStruct;
+    Response: ErrorCodeResponse;
+}
+
+protocol GetCellType
+{
+    Type: Syn;
+    Request: __CellIdStruct;
+    Response: ErrorCodeResponse;
+}
+
+protocol LoadCell
+{
+    Type: Syn;
+    Request: __CellIdStruct;
+    Response: __CellIdStruct;
+}
+
+protocol RemoveCell
+{
+    Type: Syn;
+    Request: __CellIdStruct;
+    Response: ErrorCodeResponse;
+}
+
+protocol SaveCell
+{
+    Type: Syn;
+    Request: __CellIdStruct;
+    Response: ErrorCodeResponse;
+}
+
+protocol UpdateCell
+{
+    Type: Syn;
+    Request: __CellIdStruct;
+    Response: ErrorCodeResponse;
+}
+
 module TrinityClientModule
 {
 	protocol RegisterClient;
@@ -89,4 +169,16 @@ module TrinityClientModule
 	protocol PostResponse;
 	protocol RedirectMessage;
 	protocol RedirectMessageWithResponse;
+
+    protocol LoadStorage;
+    protocol SaveStorage;
+    protocol ResetStorage;
+
+    protocol AddCell;
+    protocol Contains;
+    protocol GetCellType;
+    protocol LoadCell;
+    protocol RemoveCell;
+    protocol SaveCell;
+    protocol UpdateCell;
 }
