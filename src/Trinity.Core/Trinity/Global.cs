@@ -21,6 +21,7 @@ using Trinity.Diagnostics;
 using System.Runtime.CompilerServices;
 using Trinity.Extension;
 using Trinity.Configuration;
+using System.Runtime.InteropServices;
 
 namespace Trinity
 {
@@ -253,5 +254,12 @@ _return:
         {
             CommunicationInstanceStarted();
         }
+
+        [DllImport(TrinityC.AssemblyName)]
+        internal static extern TrinityErrorCode StartEventLoop();
+        [DllImport(TrinityC.AssemblyName)]
+        internal static extern TrinityErrorCode StopEventLoop();
+        [DllImport(TrinityC.AssemblyName)]
+        internal static extern TrinityErrorCode RegisterMessageHandler(ushort msgId, IntPtr handler);
     }
 }

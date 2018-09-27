@@ -18,7 +18,6 @@ namespace Trinity
     namespace Network
     {
         extern SOCKET socket;
-        extern HANDLE hIocp;
 
         void CheckResponse(PerSocketContextObject* pContext)
         {
@@ -27,94 +26,12 @@ namespace Trinity
             Console::WriteLine("ServerSocket: Response: {0} {1}", messageBody, bytesToSend);
         }
 
-        // P/Inovke
         void SendResponse(void* _pContext)
         {
             PerSocketContextObject* pContext = (PerSocketContextObject*)_pContext;
             pContext->BytesAlreadySent = 0;
             SendAsync(pContext);
         }
-
-        // P/Inovke
-        void AwaitRequest(void* &_pContext)
-        {
-            uint32_t opType;
-            uint32_t bytesTransferred;
-            while (true)
-            {
-                TrinityErrorCode eResult = AwaitIOCompletion(_pContext, opType, bytesTransferred);
-                if (TrinityErrorCode::E_SUCCESS == eResult && ProcessIOCompletion(_pContext, opType, bytesTransferred))
-                {
-                    break;
-                }
-                if (TrinityErrorCode::E_NETWORK_SHUTDOWN == eResult)
-                {
-                    break;
-                }
-            }
-        }
-
-        TrinityErrorCode AwaitIOCompletion(OUT void* &_pContext, OUT uint32_t &_opType, OUT uint32_t &_bytesTransferred)
-        {
-            DWORD bytesTransferred;
-            PerSocketContextObject* pContext;
-            LPWSAOVERLAPPED pOverlapped;
-            if (FALSE == GetQueuedCompletionStatus(hIocp, &bytesTransferred, (PULONG_PTR)&pContext, (LPOVERLAPPED *)&pOverlapped, INFINITE))
-            {
-                //Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ServerSocket: Errors occur during GetQueuedCompletionStatus with error code: {0}.", GetLastError());
-
-                if (pContext != NULL)
-                {
-                    CloseClientConnection(pContext, false);
-                }
-                return TrinityErrorCode::E_FAILURE;
-            }
-
-            OverlappedOpStruct* pOverlappedStruct = (OverlappedOpStruct*)pOverlapped;
-            _pContext = pContext;
-            _opType = pOverlappedStruct->OpType;
-            _bytesTransferred = bytesTransferred;
-
-            if (_opType == SocketAsyncOperation::Shutdown)
-            {
-                FreeOverlappedOpStruct(pOverlappedStruct);
-                _pContext = NULL;
-                return TrinityErrorCode::E_NETWORK_SHUTDOWN;
-            }
-
-            return TrinityErrorCode::E_SUCCESS;
-        }
-
-        // Return true if a message is received, and should be reported to the messaging system.
-        bool ProcessIOCompletion(void* _pContext, uint32_t opType, uint32_t bytesTransferred)
-        {
-            PerSocketContextObject* pContext = (PerSocketContextObject*)_pContext;
-            if (opType == (uint32_t)SocketAsyncOperation::Receive)
-            {
-                bool ret = ProcessRecv(pContext, bytesTransferred);
-                // If the handshake response is received, we examine the response in-place
-                // here without reporting to the messaging system.
-                if (ret && pContext->WaitingHandshakeMessage)
-                {
-                    CheckHandshakeResult(pContext);
-                    return false;
-                }
-                else
-                {
-                    return ret;
-                }
-            }
-
-            if (opType == (uint32_t)SocketAsyncOperation::Send)
-            {
-                ProcessSend(pContext, bytesTransferred);
-                return false;
-            }
-            Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ServerSocket: IOCompletion type {0} is not recognized.", opType);
-            return false;
-        }
-
-
 
         DWORD WINAPI SocketAcceptThreadProc(LPVOID lpParameter)
         {
@@ -157,15 +74,13 @@ namespace Trinity
                 PerSocketContextObject * pContext = AllocatePerSocketContextObject(acceptSocket);
 
                 // Add it to the client socket set
-                psco_spinlock.lock();
-                psco_set.insert(pContext);
-                psco_spinlock.unlock();
+                AddPerSocketContextObject(pContext);
 
                 // associate the accept socket with the previously created IOCP
-                if (NULL == CreateIoCompletionPort((HANDLE)acceptSocket, hIocp, (ULONG_PTR)pContext, 0))
+                if (TrinityErrorCode::E_SUCCESS != EnterEventMonitor(pContext))
                 {
-                    Diagnostics::WriteLine(Diagnostics::LogLevel::Fatal, "ServerSocket: Cannot create worker threads.");
-                    return ShutdownSocketServer();
+                    CloseClientConnection(pContext, false);
+                    continue;
                 }
 
                 // post the first async receive

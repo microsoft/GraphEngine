@@ -76,6 +76,11 @@ namespace Trinity
                 _ScanForStartupTasks();
                 s_master_init_flag = true;
                 BackgroundThread.Start();
+
+                if (TrinityErrorCode.E_SUCCESS != StartEventLoop())
+                {
+                    throw new Exception("Cannot start worker thread pool");
+                }
             }
             try
             {
@@ -114,6 +119,11 @@ namespace Trinity
                     {
                         cloud_storage.Dispose();
                         isCloudStorageInited = false;
+                    }
+
+                    if (TrinityErrorCode.E_SUCCESS != StopEventLoop())
+                    {
+                        throw new Exception("Cannot start worker thread pool");
                     }
 
                     // !Note, BackgroundThread.Stop may write log entries,

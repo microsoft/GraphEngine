@@ -7,6 +7,7 @@
 #ifdef TRINITY_PLATFORM_WINDOWS
 
 #include "TrinityCommon.h"
+#include "Events/Events.h"
 #include "Network/ProtocolConstants.h"
 #include "Network/Server/TrinityServer.h"
 #include <winsock2.h>
@@ -18,20 +19,10 @@ namespace Trinity
 {
     namespace Network
     {
-        enum SocketAsyncOperation : uint32_t
-        {
-            None,
-            Receive,
-            Send,
-            Shutdown,
-        };
-
-        /// Represents a context object associated with each asyn op,
-        /// use a separate structure for each request.
         struct OverlappedOpStruct
         {
             WSAOVERLAPPED Overlapped;
-            SocketAsyncOperation OpType; // record the op type when issuing an async op, e.g., WSARecv, WSASend
+            Events::worktype_t work; // record the work type when issuing an async op, e.g., WSARecv, WSASend
         };
 
         struct PerSocketContextObject// represents a context object associated with each socket
@@ -47,7 +38,7 @@ namespace Trinity
                     uint32_t RemainingBytesToSend;
                 };
 
-                MessageBuff SendRecvBuff;
+                Events::MessageBuff SendRecvBuff;
             }; // size: 16
 
             WSABUF wsaPrefixBuf;  // size: 16

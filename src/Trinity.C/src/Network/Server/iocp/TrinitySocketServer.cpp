@@ -5,26 +5,23 @@
 #include <os/os.h>
 #if defined(TRINITY_PLATFORM_WINDOWS)
 #include "TrinitySocketServer.h"
-#include <Trinity/Environment.h>
-#include "Network/Server/iocp/Common.h"
+#include "Trinity/Diagnostics/Log.h"
+#include "Trinity/Environment.h"
 #include "Trinity/Threading/TrinityLock.h"
-#include "Network/ProtocolConstants.h"
+#include "Network/Server/iocp/Common.h"
 #include "Network/Server/TrinityServer.h"
+#include "Network/ProtocolConstants.h"
 #include "Network/SocketOptionsHelper.h"
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <Mstcpip.h>
-#include <Trinity/Diagnostics/Log.h>
 #include <atomic>
 
 namespace Trinity
 {
     namespace Network
     {
-        std::atomic<size_t> g_threadpool_size;
-
         SOCKET socket;
-        HANDLE hIocp;
 
         TrinityLock spinlock;
         bool initialized = false;
@@ -42,7 +39,6 @@ namespace Trinity
                     return false;
                 }
 
-                g_threadpool_size = 0;
                 initialized = true;
             }
             spinlock.unlock();
@@ -51,20 +47,8 @@ namespace Trinity
 
         int StartSocketServer(uint16_t port)
         {
-
             if (!InitializeNetwork())
                 return -1;
-
-            /// Without further profiling, the best overall maximum value to pick for the concurrency value is the number of processors.
-            /// At the same time, a good rule of thumb is to have a minimum of twice as many threads in the thread pool as there are processors.
-            hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
-
-            if (NULL == hIocp)
-            {
-                Diagnostics::WriteLine(Diagnostics::LogLevel::Fatal, "Cannot create IoCompletionPort.");
-                ShutdownSocketServer();
-                return TrinityErrorCode::E_FAILURE;
-            }
 
             socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_IP, NULL, 0, WSA_FLAG_OVERLAPPED);
 
@@ -124,39 +108,13 @@ namespace Trinity
                 //  The accept thread will be interrupted, and quit after this call.
                 closesocket(socket);
 
-                //  Post shutdown messages to IOCP
-                for (uint64_t i=0, thread_pool_cnt = g_threadpool_size; i < thread_pool_cnt; ++i)
-                {
-                    LPOVERLAPPED pOverlapped = (LPOVERLAPPED)AllocateOverlappedOpStruct(SocketAsyncOperation::Shutdown);
-                    PostQueuedCompletionStatus(hIocp, 0, NULL, pOverlapped);
-                }
-
-                while (g_threadpool_size) { Sleep(100); }
-
-                //  Now, all threads in the thread pool are gone.
                 //  Proceed to close all existing client sockets.
-                psco_spinlock.lock();
-                auto psco_set_shadow = psco_set;
-                psco_spinlock.unlock();
-
-                for (auto& pctx : psco_set_shadow)
-                {
-                    CloseClientConnection(pctx, false);
-                }
+                CloseAllClientSockets();
 
                 //  All client sockets are shut down. We have no network activity now.
                 //  Proceed to bring down WSA.
                 WSACleanup();
 
-                //  Also bring down the IOCP.
-                if (CloseHandle(hIocp))
-                {
-                    hIocp = NULL;
-                }
-                else
-                {
-                    Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Cannot close IO completion port");
-                }
                 initialized = false;
             }
             spinlock.unlock();
@@ -177,9 +135,7 @@ namespace Trinity
             // More info: https://msdn.microsoft.com/en-us/library/windows/desktop/ms738547%28v=vs.85%29.aspx
 
             // Remove it from the client socket set
-            psco_spinlock.lock();
-            psco_set.erase(pContext);
-            psco_spinlock.unlock();
+            RemovePerSocketContextObject(pContext);
 
             if (!lingering)
             {
@@ -194,7 +150,6 @@ namespace Trinity
             pContext->socket = INVALID_SOCKET;
             FreePerSocketContextObject(pContext);
         }
-
     }
 }
 

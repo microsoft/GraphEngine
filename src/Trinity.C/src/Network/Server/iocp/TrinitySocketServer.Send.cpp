@@ -19,7 +19,7 @@ namespace Trinity
             pContext->wsaBodyBuf.buf = pContext->Message + pContext->BytesAlreadySent;
             pContext->wsaBodyBuf.len = bytesToSend;
 
-            ResetOverlappedStruct(pContext->pOverlapped, SocketAsyncOperation::Send);
+            ResetOverlappedStruct(pContext->pOverlapped, worktype_t::Send);
             int32_t statusCode = WSASend(pContext->socket, &(pContext->wsaBodyBuf), /*buffer_cnt*/1, /*bytes_sent*/NULL, /*flags*/0, (LPWSAOVERLAPPED)(pContext->pOverlapped), /*callback*/NULL);
             if (SOCKET_ERROR == statusCode &&
                 WSA_IO_PENDING != WSAGetLastError())

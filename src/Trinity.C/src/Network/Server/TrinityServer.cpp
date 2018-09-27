@@ -10,83 +10,44 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "Trinity/Threading/TrinityLock.h"
 #include <iostream>
-
-class _handler_initializer
-{
-public:
-    _handler_initializer()
-    {
-        (void)Trinity::Network::ResetMessageHandlers();
-    }
-};
-
-static _handler_initializer s_hinit;
+#include <unordered_set>
 
 namespace Trinity
 {
     namespace Network
     {
-        static message_handler_t * s_message_handlers[MAX_HANDLERS_COUNT];
+        TrinityLock psco_spinlock; // psco = per socket context object
+        std::unordered_set<PerSocketContextObject*> psco_set;
 
-        void _default_handler(MessageBuff * buff)
+#pragma region PerSocketContextObject management
+
+        void AddPerSocketContextObject(PerSocketContextObject * pContext)
         {
-            buff->Buffer = (char *)malloc(sizeof(TrinityErrorCode));
-            buff->BytesToSend = sizeof(TrinityErrorCode);
-            *((TrinityErrorCode *)(buff->Buffer)) = TrinityErrorCode::E_RPC_EXCEPTION;
+            psco_spinlock.lock();
+            psco_set.insert(pContext);
+            psco_spinlock.unlock();
+
         }
 
-        void _workerthread()
+        void RemovePerSocketContextObject(PerSocketContextObject* psco)
         {
-            auto tid = std::this_thread::get_id();
-            Diagnostics::WriteLine(Diagnostics::Debug, "TrinityServer: Starting worker thread #{0}", tid);
-            EnterSocketServerThreadPool();
-            while (true)
-            {
-                void* _pContext = NULL;
-                AwaitRequest(_pContext);
-                if (_pContext == NULL) { break; }
-                MessageBuff* msg = (MessageBuff*)_pContext;
-                s_message_handlers[*(uint16_t *)msg->Buffer](msg);
-                SendResponse(_pContext);
-            }
-            Diagnostics::WriteLine(Diagnostics::Debug, "TrinityServer: Stopping worker thread #{0}", tid);
-            ExitSocketServerThreadPool();
+            psco_spinlock.lock();
+            psco_set.erase(psco);
+            psco_spinlock.unlock();
         }
 
-        TrinityErrorCode RegisterMessageHandler(uint16_t msg_type, message_handler_t * handler)
+        void CloseAllClientSockets()
         {
-            Diagnostics::WriteLine(Diagnostics::Debug, "TrinityServer: Registering message handler, ID={0}, handler={1}", msg_type, (void*)handler);
-            s_message_handlers[msg_type] = handler;
-            return TrinityErrorCode::E_SUCCESS;
+            psco_spinlock.lock();
+            auto psco_set_shadow = psco_set;
+            psco_spinlock.unlock();
+
+            for (auto& pctx : psco_set_shadow) { CloseClientConnection(pctx, false); }
         }
 
-        TrinityErrorCode ResetMessageHandlers()
-        {
-            Diagnostics::WriteLine(Diagnostics::Debug, "TrinityServer: Resetting all message handlers");
-            std::fill_n(s_message_handlers, MAX_HANDLERS_COUNT, &_default_handler);
-            return TrinityErrorCode::E_SUCCESS;
-        }
-
-        TrinityErrorCode StartWorkerThreadPool()
-        {
-            int thread_count = std::thread::hardware_concurrency() * 2;
-
-            try
-            {
-                for (auto i = 0; i < thread_count; ++i)
-                {
-                    std::thread(_workerthread).detach();
-                }
-            }
-            catch(...)
-            {
-                Diagnostics::WriteLine(Diagnostics::Error, "TrinityServer: StartWorkerThreadPool: failed to spawn worker threads");
-                return TrinityErrorCode::E_FAILURE;
-            }
-
-            return TrinityErrorCode::E_SUCCESS;
-        }
+#pragma endregion
 
         void CheckHandshakeResult(PerSocketContextObject* pContext)
         {
@@ -115,20 +76,5 @@ namespace Trinity
             return;
         }
 
-        int TrinityServerTestEntry()
-        {
-            int sock_fd = StartSocketServer(5304);
-            if (-1 == sock_fd)
-            {
-                fwprintf(stderr, L">>> cannot start socket server\n");
-                return -1;
-            }
-            StartWorkerThreadPool();
-            while (true)
-            {
-                std::this_thread::sleep_for(std::chrono::seconds(5));
-            }
-            return 0;
-        }
     }
 }

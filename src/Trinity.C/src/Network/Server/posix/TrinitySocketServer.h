@@ -8,6 +8,7 @@
 #include "Trinity/Diagnostics/Log.h"
 #include "Network/Network.h"
 #include "Network/Server/TrinityServer.h"
+#include "Events/Events.h"
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -18,6 +19,8 @@ namespace Trinity
 {
     namespace Network
     {
+        using namespace Trinity::Events;
+
         union ContextObjectKey
         {
             uintptr_t ident;
@@ -52,23 +55,12 @@ namespace Trinity
             bool WaitingHandshakeMessage;
         };
 
-        PerSocketContextObject* AllocatePerSocketContextObject(int fd);
-        void                    FreePerSocketContextObject(PerSocketContextObject* p);
-        void                    ResetContextObjects(PerSocketContextObject * pContext);
-        void                    AddPerSocketContextObject(PerSocketContextObject * pContext);
-        void                    RemovePerSocketContextObject(int fd);
-        PerSocketContextObject* GetPerSocketContextObject(int fd);
-        void                    CloseClientConnection(PerSocketContextObject* pContext, bool lingering);
-        int                     AcceptConnection(int sock_fd);
-        bool                    ProcessRecv(PerSocketContextObject* pContext);
-        void                    CheckHandshakeResult(PerSocketContextObject* pContext);
-
-#pragma region Platform-specific routines
-        int                     InitializeEventMonitor();   // Initialize the event monitor, and start the accept thread
-        int                     UninitializeEventMonitor(); // Tear down the event monitor, and stop the accept thread; After call returns, there should be no more connections;
-        int                     EnterEventMonitor(PerSocketContextObject* pContext); // Puts a new connection into the event monitor
-        bool                    RearmFD(PerSocketContextObject* pContext); 
-#pragma endregion
+        void ResetContextObjects(PerSocketContextObject * pContext);
+        bool ProcessRecv(PerSocketContextObject* pContext);
+    }
+    namespace Events
+    {
+        bool RearmFD(Network::PerSocketContextObject* pContext);
     }
 }
 

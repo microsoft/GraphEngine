@@ -6,22 +6,20 @@
 #if defined(TRINITY_PLATFORM_WINDOWS)
 
 #include "TrinitySocketServer.h"
-#include <Trinity/Environment.h>
+#include "Trinity/Environment.h"
 #include "Trinity/Configuration/TrinityConfig.h"
+#include "Events/Events.h"
 #include <Mstcpip.h>
 
 namespace Trinity
 {
     namespace Network
     {
-        TrinityLock psco_spinlock; // psco = per socket context object
-        std::unordered_set<PerSocketContextObject*> psco_set;
-
-        OverlappedOpStruct* AllocateOverlappedOpStruct(SocketAsyncOperation opType)
+        OverlappedOpStruct* AllocateOverlappedOpStruct(worktype_t work)
         {
             OverlappedOpStruct* p = (OverlappedOpStruct*)malloc(sizeof(OverlappedOpStruct));
             memset(p, 0, sizeof(WSAOVERLAPPED));
-            p->OpType = opType;
+            p->work = work;
             return p;
         }
 
@@ -29,6 +27,13 @@ namespace Trinity
         {
             free(p);
         }
+
+        void ResetOverlappedStruct(OverlappedOpStruct* pOverlapped, worktype_t opType)
+        {
+            memset(pOverlapped, 0, sizeof(WSAOVERLAPPED));
+            pOverlapped->work = opType;
+        }
+
 
         void FreePerSocketContextObject(PerSocketContextObject* p)
         {
@@ -66,7 +71,7 @@ namespace Trinity
             p->RecvBufferLen = UInt32_Contants::RecvBufferSize; // RecvBufferLen should be read-only after being initialized
             p->avg_RecvBufferLen = UInt32_Contants::RecvBufferSize;
             
-            p->pOverlapped = AllocateOverlappedOpStruct(SocketAsyncOperation::Receive);
+            p->pOverlapped = AllocateOverlappedOpStruct(worktype_t::Receive);
             p->BodyLength = 0;
 
             p->wsaPrefixBuf.buf = p->MessagePrefix;
@@ -107,12 +112,6 @@ namespace Trinity
             pContext->BytesAlreadySent = 0;
 
             pContext->BodyLength = 0;
-        }
-
-        void ResetOverlappedStruct(OverlappedOpStruct* pOverlapped, SocketAsyncOperation opType)
-        {
-            memset(pOverlapped, 0, sizeof(WSAOVERLAPPED));
-            pOverlapped->OpType = opType;
         }
     }
 }

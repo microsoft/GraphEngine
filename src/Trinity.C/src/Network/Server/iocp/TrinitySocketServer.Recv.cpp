@@ -15,7 +15,7 @@ namespace Trinity
         void ReceiveAsync(PerSocketContextObject * pContext, bool receivePrefix)
         {
             DWORD flags = 0; // None flag
-            ResetOverlappedStruct(pContext->pOverlapped, SocketAsyncOperation::Receive);
+            ResetOverlappedStruct(pContext->pOverlapped, worktype_t::Receive);
             int wsaBufferCnt = receivePrefix ? 2 : 1;
             LPWSABUF pWSABufArray = receivePrefix ? &(pContext->wsaPrefixBuf) : &(pContext->wsaBodyBuf);
             int statusCode = WSARecv(pContext->socket, pWSABufArray /*A pointer to an array of WSABUF structures*/, wsaBufferCnt, NULL /*bytes_recvd*/, &flags, (LPWSAOVERLAPPED)(pContext->pOverlapped), NULL);

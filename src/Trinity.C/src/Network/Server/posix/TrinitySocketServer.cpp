@@ -4,15 +4,13 @@
 //
 #include <os/os.h>
 #if !defined(TRINITY_PLATFORM_WINDOWS)
-#include <thread>
-#include <map>
-#include "os/platforms/posix.h"
-#include "Trinity/Threading/TrinityLock.h"
+#include "TrinitySocketServer.h"
 #include "Trinity/Configuration/TrinityConfig.h"
 #include "Trinity/Hash/NonCryptographicHash.h"
-#include "Network/Server/posix/TrinitySocketServer.h"
 #include "Network/SocketOptionsHelper.h"
 #include "Network/ProtocolConstants.h"
+
+#include <thread>
 
 static bool make_nonblocking(int fd)
 {
@@ -29,34 +27,8 @@ namespace Trinity
 {
     namespace Network
     {
-        TrinityLock psco_spinlock; // psco = per socket context object
-        std::map<int, PerSocketContextObject*> psco_map;
-        std::atomic<size_t> g_threadpool_size;
         std::thread* socket_accept_thread = nullptr;
         int accept_sock; // accept socket
-
-#pragma region PerSocketContextObject management
-        void AddPerSocketContextObject(PerSocketContextObject * pContext)
-        {
-            psco_spinlock.lock();
-            psco_map.insert(std::pair<int, PerSocketContextObject*>(pContext->fd, pContext));
-            psco_spinlock.unlock();
-
-        }
-        void RemovePerSocketContextObject(int fd)
-        {
-            psco_spinlock.lock();
-            psco_map.erase(fd);
-            psco_spinlock.unlock();
-        }
-
-        PerSocketContextObject* GetPerSocketContextObject(int fd)
-        {
-            psco_spinlock.lock();
-            PerSocketContextObject* pContext = psco_map[fd];
-            psco_spinlock.unlock();
-            return pContext;
-        }
 
         PerSocketContextObject* AllocatePerSocketContextObject(int fd)
         {
@@ -97,7 +69,6 @@ namespace Trinity
                 pContext->RecvBuffer = (char*)malloc(pContext->RecvBufferLen);
             }
         }
-#pragma endregion
 
         void SocketAcceptThreadProc()
         {
@@ -128,7 +99,6 @@ namespace Trinity
 
         int StartSocketServer(uint16_t port)
         {
-            g_threadpool_size = 0;
             accept_sock = -1;
             struct addrinfo hints, *addrinfos, *addrinfop;
             memset(&hints, 0, sizeof(struct addrinfo));
@@ -171,13 +141,6 @@ namespace Trinity
                 return -1;
             }
 
-            if (0 != InitializeEventMonitor())
-            {
-                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Cannot initialize socket server event monitor.");
-                ShutdownSocketServer();
-                return -1;
-            }
-
             Diagnostics::WriteLine(Diagnostics::LogLevel::Info, "Listening endpoint :{0}", port);
 
             Diagnostics::WriteLine(Diagnostics::LogLevel::Info, "Waiting for client connection ...");
@@ -198,16 +161,9 @@ namespace Trinity
                 socket_accept_thread = nullptr;
             }
             close(accept_sock);
-            UninitializeEventMonitor();
 
-            while (g_threadpool_size > 0) { usleep(100000); }
-            /* Now, all WorkerThreadProc exit. Proceed to close all client sockets. */
-            psco_spinlock.lock();
-            std::vector<PerSocketContextObject*> psco_vec = std::vector<PerSocketContextObject*>(psco_map.size());
-            for (auto& psco : psco_map) { psco_vec.push_back(psco.second); }
-            psco_spinlock.unlock();
-
-            for (auto& psco : psco_vec) { CloseClientConnection(psco, false); }
+            /* Proceed to close all client sockets. */
+            CloseAllClientSockets();
 
             return 0;
         }
@@ -225,13 +181,6 @@ namespace Trinity
                 ssize_t bytes_read = read(fd, ((char*)&body_length) + p, bytes_left);
                 p += bytes_read;
                 bytes_left -= bytes_read;
-            }
-
-            if (pContext->WaitingHandshakeMessage && body_length != HANDSHAKE_MESSAGE_LENGTH)
-            {
-                Trinity::Diagnostics::WriteLine(Trinity::Diagnostics::LogLevel::Error, "ServerSocket: Incorrect client handshake sequence, Client = {0}", pContext);
-                CloseClientConnection(pContext, false);
-                return false;
             }
 
             /**
@@ -290,6 +239,7 @@ namespace Trinity
             }
         }
 
+        // TODO blocking everywhere...
         void SendResponse(void* _pContext)
         {
             PerSocketContextObject * pContext = (PerSocketContextObject*)_pContext;
@@ -311,12 +261,11 @@ namespace Trinity
 
         void CloseClientConnection(PerSocketContextObject* pContext, bool lingering)
         {
-            RemovePerSocketContextObject(pContext->fd);
+            RemovePerSocketContextObject(pContext);
             //TODO lingering
             close(pContext->fd);
             FreePerSocketContextObject(pContext);
         }
-
     }
 }
 #endif

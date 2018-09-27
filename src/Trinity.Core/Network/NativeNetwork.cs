@@ -86,11 +86,6 @@ namespace Trinity.Network
             {
                 throw new System.Net.Sockets.SocketException();
             }
-
-            if(TrinityErrorCode.E_SUCCESS != CNativeNetwork.StartWorkerThreadPool())
-            {
-                throw new Exception("Cannot start worker thread pool");
-            }
         }
 
         public static void StopTrinityServer()
