@@ -147,7 +147,7 @@ namespace Trinity.Client
             sizes[0]     = TrinityProtocol.MsgHeader + sizeof(int);
             sizes[1]     = size;
 
-            *(int*)header = sizeof(int) + TrinityProtocol.TrinityMsgHeader + size + sizeof(int);
+            *(int*)header = TrinityProtocol.TrinityMsgHeader + sizeof(int) + size;
             *(TrinityMessageType*)(header + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.SYNC;
             *(ushort*)(header + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqMessageType.RedirectMessage;
             *(int*)(header + TrinityProtocol.MsgHeader) = partitionId;
@@ -166,7 +166,7 @@ namespace Trinity.Client
             sizes[0]     = TrinityProtocol.MsgHeader + sizeof(int);
             sizes[1]     = size;
 
-            *(int*)header = sizeof(int) + TrinityProtocol.TrinityMsgHeader + size + sizeof(int);
+            *(int*)header = TrinityProtocol.TrinityMsgHeader + sizeof(int) + size;
             *(TrinityMessageType*)(header + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.SYNC_WITH_RSP;
             *(ushort*)(header + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.RedirectMessageWithResponse;
             *(int*)(header + TrinityProtocol.MsgHeader) = partitionId;
@@ -187,7 +187,7 @@ namespace Trinity.Client
             Memory.memcpy(bufs + 1, _bufs, bufs_len);
             Memory.memcpy(sizes + 1, _sizes, sizes_len);
 
-            *(int*)header = sizeof(int) + TrinityProtocol.TrinityMsgHeader + Utils._sum(_sizes, count);
+            *(int*)header = TrinityProtocol.TrinityMsgHeader + sizeof(int) + Utils._sum(_sizes, count);
             *(TrinityMessageType*)(header + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.SYNC;
             *(ushort*)(header + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqMessageType.RedirectMessage;
             *(int*)(header + TrinityProtocol.MsgHeader) = partitionId;
@@ -208,7 +208,7 @@ namespace Trinity.Client
             Memory.memcpy(bufs + 1, _bufs, bufs_len);
             Memory.memcpy(sizes + 1, _sizes, sizes_len);
 
-            *(int*)header = sizeof(int) + TrinityProtocol.TrinityMsgHeader + Utils._sum(_sizes, count);
+            *(int*)header = TrinityProtocol.TrinityMsgHeader + sizeof(int) + Utils._sum(_sizes, count);
             *(TrinityMessageType*)(header + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.SYNC_WITH_RSP;
             *(ushort*)(header + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.RedirectMessageWithResponse;
             *(int*)(header + TrinityProtocol.MsgHeader) = partitionId;
@@ -225,7 +225,7 @@ namespace Trinity.Client
             byte** holder = stackalloc byte*[2];
             int*   length = stackalloc int[2];
             PointerHelper sp = PointerHelper.New(header);
-            *sp.ip++ = header_len + size;
+            *sp.ip++ = header_len + size - TrinityProtocol.SocketMsgHeader;
             *sp.sp++ = (short)TrinityMessageType.SYNC_WITH_RSP;
             *sp.sp++ = msgId;
             *sp.lp++ = cellId;
@@ -238,6 +238,8 @@ namespace Trinity.Client
 
             holder[0] = header;
             holder[1] = buff;
+            length[0] = header_len;
+            length[1] = size;
 
             TrinityResponse rsp = null;
             try

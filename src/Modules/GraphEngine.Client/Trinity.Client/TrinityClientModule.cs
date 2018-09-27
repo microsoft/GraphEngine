@@ -24,12 +24,12 @@ namespace Trinity.Client.TrinityClientModule
         private IClientRegistry Registry => m_memorycloud as IClientRegistry;
         private ConcurrentDictionary<int, ClientIStorage> m_client_storages = new ConcurrentDictionary<int, ClientIStorage>();
         public IEnumerable<IStorage> Clients => m_client_storages.Values;
+        private CancellationTokenSource m_cancel_src;
+        private static readonly TimeSpan m_client_ttl = TimeSpan.FromSeconds(30);
         // ===== Client-side members =====
         private Lazy<int> m_client_cookie = new Lazy<int>(() => new Random().Next(int.MinValue, int.MaxValue));
         internal int MyCookie => m_client_cookie.Value;
         private Task m_ttl_proc = null;
-        private CancellationTokenSource m_cancel_src;
-        private static readonly TimeSpan m_client_ttl = TimeSpan.FromSeconds(30);
 
         public TrinityClientModule()
         {
@@ -39,6 +39,7 @@ namespace Trinity.Client.TrinityClientModule
 
         private async Task TTLProc(CancellationToken cancel)
         {
+            //TODO client should not start TTLProc
             while (!cancel.IsCancellationRequested)
             {
                 Log.WriteLine(LogLevel.Verbose, $"{nameof(TTLProc)}: scanning for timed-out clients.");
@@ -56,7 +57,7 @@ namespace Trinity.Client.TrinityClientModule
                 {
                     Log.WriteLine(LogLevel.Error, "{0}: {1}", nameof(TTLProc), ex.ToString());
                 }
-                await Task.Delay(10000);
+                await Task.Delay(10000, cancel);
             }
         }
 
@@ -166,34 +167,34 @@ namespace Trinity.Client.TrinityClientModule
         {
             /******************************
              * Protocol: RedirectMessage
-             * Request: |4B InstanceId| TrinityMessage |
+             * Request: |4B PartitionId| TrinityMessage |
              * Response: VOID
              * 
              * Redirects the message to another instance.
              ******************************/
 
             PointerHelper sp = PointerHelper.New(args.Buffer + args.Offset);
-            int instanceId = *sp.ip++;
+            int partitionId = *sp.ip++;
 
-            TrinityMessage tm = new TrinityMessage(sp.bp, *sp.ip + sizeof(int));
-            m_memorycloud[instanceId].SendMessage(tm);
+            TrinityMessage tm = new TrinityMessage(sp.bp, (*sp.ip) + TrinityProtocol.SocketMsgHeader);
+            m_memorycloud[partitionId].SendMessage(tm);
         }
 
         private unsafe void RedirectMessageWithResponse_impl(SynReqRspArgs args)
         {
             /******************************
              * Protocol: RedirectMessage
-             * Request: |4B InstanceId| TrinityMessage |
+             * Request: |4B PartitionId| TrinityMessage |
              * Response: | TrinityResponse |
              * 
              * Redirects the message to another instance.
              ******************************/
 
             PointerHelper sp = PointerHelper.New(args.Buffer + args.Offset);
-            int instanceId = *sp.ip++;
+            int partitionId = *sp.ip++;
 
-            TrinityMessage tm = new TrinityMessage(sp.bp, *sp.ip + sizeof(int));
-            m_memorycloud[instanceId].SendMessage(tm, out var rsp);
+            TrinityMessage tm = new TrinityMessage(sp.bp, (*sp.ip) + TrinityProtocol.SocketMsgHeader);
+            m_memorycloud[partitionId].SendMessage(tm, out var rsp);
 
             int rsp_size = TrinityProtocol.MsgHeader + rsp.Size;
             byte* rsp_buf = (byte*)Memory.malloc((ulong)rsp_size);
