@@ -4,7 +4,7 @@
 //
 #include "os/os.h"
 #if defined(TRINITY_PLATFORM_LINUX)
-#include "Network/Server/posix/TrinitySocketServer.h"
+#include "Network/Network.h"
 #include <sys/epoll.h>
 #include <sys/eventfd.h>
 
@@ -14,7 +14,7 @@ namespace Trinity
     namespace Events
     {
         int epoll_fd;
-        using Network::PerSocketContextObject;
+        using Network::sock_t;
 
         worktype_t AwaitRequest(void* &_pContext)
         {
@@ -109,7 +109,6 @@ namespace Trinity
         bool RearmFD(PerSocketContextObject* pContext)
         {
             epoll_event ep_event;
-            ep_event.data.fd = pContext->fd;
             ep_event.data.ptr = pContext;
             ep_event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
             return epoll_ctl(epoll_fd, EPOLL_CTL_MOD, pContext->fd, &ep_event) == 0;

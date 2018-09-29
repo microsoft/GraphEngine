@@ -47,6 +47,7 @@ namespace Trinity.Client.TestServer
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex.ToString());
+                        --i;
                     }
                 }
                 Thread.Sleep(1000);

@@ -15,7 +15,6 @@
 #include "Network/Network.h"
 
 #include "Trinity/Hash/NonCryptographicHash.h"
-#include "Network/ProtocolConstants.h"
 
 namespace Trinity
 {

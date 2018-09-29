@@ -2,13 +2,12 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
-#include <os/os.h>
+#include "os/os.h"
 #if !defined(TRINITY_PLATFORM_WINDOWS)
-#include "TrinitySocketServer.h"
+#include "Network.h"
+#include "SocketOptionsHelper.h"
 #include "Trinity/Configuration/TrinityConfig.h"
 #include "Trinity/Hash/NonCryptographicHash.h"
-#include "Network/SocketOptionsHelper.h"
-#include "Network/ProtocolConstants.h"
 
 #include <thread>
 
@@ -82,7 +81,7 @@ namespace Trinity
                 {
                     /* Break the loop if listening socket is shut down. */
                     if (EINVAL == errno) { break; }
-                    else { continue; } // XXX in the Windows side we shutdown the networking subsystem here
+                    else { continue; } 
                 }
 
                 if (NULL == inet_ntop(addr.sa_family, addr.sa_data, clientaddr, INET6_ADDRSTRLEN))
@@ -240,9 +239,8 @@ namespace Trinity
         }
 
         // TODO blocking everywhere...
-        void SendResponse(void* _pContext)
+        void SendResponse(PerSocketContextObject* pContext)
         {
-            PerSocketContextObject * pContext = (PerSocketContextObject*)_pContext;
             char* buf = pContext->Message;
             do
             {

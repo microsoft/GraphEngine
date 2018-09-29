@@ -9,38 +9,68 @@
 #include <atomic>
 #include "TrinityCommon.h"
 
+#if defined(TRINITY_PLATFORM_WINDOWS)
+#include <winsock2.h>
+#endif
+
 namespace Trinity
 {
     namespace Network
     {
-        struct PerSocketContextObject;
+        struct sock_t;
     }
     namespace Events
     {
-        typedef struct // This is for data exchange between unmanaged and managed worlds
-        {
-            char* Buffer; // allocate after receiving the message header
-            uint32_t BytesReceived;
-            uint32_t BytesToSend;
-        }MessageBuff;
-
         enum worktype_t : uint32_t
         {
             None,
             Receive,
             Send,
             Shutdown,
+            Wakeup,
+            Resume,
         };
 
-        typedef void(message_handler_t)(MessageBuff *);
+        // This is for data exchange between Events subsystem and message handlers.
+        struct message_t
+        {
+            // RECV: allocated after receiving the message header
+            // SEND: allocated by a message handler
+            char*    buf; 
+            uint32_t len;
+        };
+
+        struct work_t
+        {
+#if defined(TRINITY_PLATFORM_WINDOWS)
+            WSAOVERLAPPED Overlapped;
+#endif
+            /** 
+             * record the work type when issuing an async op, 
+             * e.g., Send, Recv, Wakeup, etc.
+             */
+            worktype_t type; // size: 4
+
+            union
+            {
+                Network::sock_t* psock;
+            };
+
+        };
+
+        typedef void(message_handler_t)(message_t*);
 
         extern std::atomic<size_t> g_threadpool_size;
 
-        worktype_t AwaitRequest(void* &pContext);
-        TrinityErrorCode ResetMessageHandlers();
-        TrinityErrorCode RegisterMessageHandler(uint16_t msgId, message_handler_t * handler);
-        TrinityErrorCode StartEventLoop();
-        TrinityErrorCode StopEventLoop();
-        TrinityErrorCode EnterEventMonitor(Network::PerSocketContextObject* key);
+        work_t* alloc_work(worktype_t work);
+        void    free_work(work_t* p);
+        void    reset_work(work_t* p, worktype_t work);
+        work_t* poll_work(OUT uint32_t& szwork);
+
+        TrinityErrorCode reset_handlers();
+        TrinityErrorCode register_handler(uint16_t msgId, message_handler_t * handler);
+        TrinityErrorCode start_eventloop();
+        TrinityErrorCode stop_eventloop();
+        TrinityErrorCode enter_eventloop(Network::sock_t *psock);
     }
 }

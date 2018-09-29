@@ -246,14 +246,14 @@ namespace Trinity.Network.Sockets
             {
                 // Response buffer will be freed in Trinity.C after it is sent
                 sendRecvBuff->Buffer                     = response.Buffer;
-                sendRecvBuff->BytesToSend                = (uint)response.Size;
+                sendRecvBuff->Length                     = (uint)response.Size;
             }
             else// TrinityErrorCode.E_RPC_EXCEPTION == msgProcessResult
             {
                 //  The client is expecting a reply payload, it will be notified because
                 //  the payload length is E_RPC_EXCEPTION;
                 sendRecvBuff->Buffer                     = (byte*)Memory.malloc(sizeof(TrinityErrorCode));
-                sendRecvBuff->BytesToSend                = sizeof(TrinityErrorCode);
+                sendRecvBuff->Length                     = sizeof(TrinityErrorCode);
                 *(TrinityErrorCode*)sendRecvBuff->Buffer = TrinityErrorCode.E_RPC_EXCEPTION;
             }
         }
@@ -265,7 +265,7 @@ namespace Trinity.Network.Sockets
             {
                 //  Response buffer will be freed in Trinity.C after it is sent
                 sendRecvBuff->Buffer                     = (byte*)Memory.malloc(sizeof(TrinityErrorCode));
-                sendRecvBuff->BytesToSend                = sizeof(TrinityErrorCode);
+                sendRecvBuff->Length                     = sizeof(TrinityErrorCode);
                 *(TrinityErrorCode*)sendRecvBuff->Buffer = TrinityErrorCode.E_SUCCESS;
             }
             else//  TrinityErrorCode.E_RPC_EXCEPTION == msgProcessResult
@@ -273,7 +273,7 @@ namespace Trinity.Network.Sockets
                 //  The client is expecting an ACK package, it will be notified because
                 //  the status code would be E_RPC_EXCEPTION or E_MSG_OVERFLOW;
                 sendRecvBuff->Buffer                     = (byte*)Memory.malloc(sizeof(TrinityErrorCode));
-                sendRecvBuff->BytesToSend                = sizeof(TrinityErrorCode);
+                sendRecvBuff->Length                     = sizeof(TrinityErrorCode);
                 *(TrinityErrorCode*)sendRecvBuff->Buffer = msgProcessResult;
             }
         }
@@ -282,7 +282,7 @@ namespace Trinity.Network.Sockets
         internal void DispatchMessage(MessageBuff* sendRecvBuff)
         {
             byte* ByteArray = sendRecvBuff->Buffer;
-            int Length = (int)sendRecvBuff->BytesReceived;
+            int Length = (int)sendRecvBuff->Length;
 
             TrinityMessageType msgType = *(TrinityMessageType*)(sendRecvBuff->Buffer+TrinityProtocol.TrinityMsgTypeOffset);
             ushort msgId = *(ushort*)(ByteArray + TrinityProtocol.TrinityMsgIdOffset);
