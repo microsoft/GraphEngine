@@ -3,11 +3,11 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 #pragma once
-#include <stdint.h>
+#include "TrinityCommon.h"
+#include <cstdint>
 #include <cstdlib>
 #include <thread>
 #include <atomic>
-#include "TrinityCommon.h"
 
 #if defined(TRINITY_PLATFORM_WINDOWS)
 #include <winsock2.h>

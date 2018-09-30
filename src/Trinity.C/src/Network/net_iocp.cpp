@@ -9,7 +9,6 @@
 #include "Trinity/Threading/TrinityLock.h"
 #include "Network/Network.h"
 #include "Network/SocketOptionsHelper.h"
-#include "Events/Events.h"
 #include <atomic>
 
 namespace Trinity

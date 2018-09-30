@@ -22,6 +22,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <fcntl.h>
 
 typedef int SOCKET;
 #define INVALID_SOCKET -1

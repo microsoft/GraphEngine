@@ -6,21 +6,8 @@
 #if !defined(TRINITY_PLATFORM_WINDOWS)
 #include "Network.h"
 #include "SocketOptionsHelper.h"
-#include "Trinity/Configuration/TrinityConfig.h"
-#include "Trinity/Hash/NonCryptographicHash.h"
 
 #include <thread>
-
-static bool make_nonblocking(int fd)
-{
-    int status_flags = fcntl(fd, F_GETFL, 0);
-    if (-1 == status_flags)
-        return false;
-    status_flags |= O_NONBLOCK;
-    if (-1 == fcntl(fd, F_SETFL, status_flags))
-        return false;
-    return true;
-}
 
 namespace Trinity
 {
@@ -28,46 +15,6 @@ namespace Trinity
     {
         std::thread* socket_accept_thread = nullptr;
         int accept_sock; // accept socket
-
-        PerSocketContextObject* AllocatePerSocketContextObject(int fd)
-        {
-            PerSocketContextObject* p = (PerSocketContextObject*)malloc(sizeof(PerSocketContextObject));
-
-            p->RecvBuffer = (char*)malloc(UInt32_Contants::RecvBufferSize);
-            p->RecvBufferLen = UInt32_Contants::RecvBufferSize;
-            p->avg_RecvBufferLen = UInt32_Contants::RecvBufferSize;
-
-            p->fd = fd;
-            p->WaitingHandshakeMessage = TrinityConfig::Handshake();
-
-            return p;
-        }
-
-        void FreePerSocketContextObject(PerSocketContextObject* p)
-        {
-            free(p->RecvBuffer);
-            free(p);
-        }
-
-        void ResetContextObjects(PerSocketContextObject * pContext)
-        {
-            free(pContext->Message);
-            pContext->Message = NULL;
-            pContext->ReceivedMessageBodyBytes = 0;
-            pContext->RemainingBytesToSend = 0;
-
-            // Calculate average received message length with a sliding window.
-            pContext->avg_RecvBufferLen = (uint32_t)(pContext->avg_RecvBufferLen * Float_Constants::AvgSlideWin_a + pContext->ReceivedMessageBodyBytes * Float_Constants::AvgSlideWin_b);
-            // Make sure that average received message length is capped above default value.
-            pContext->avg_RecvBufferLen = std::max(pContext->avg_RecvBufferLen, static_cast<uint32_t>(UInt32_Contants::RecvBufferSize));
-            // If the average received message length drops below half of current recv buf len, adjust it.
-            if (pContext->avg_RecvBufferLen < pContext->RecvBufferLen / Float_Constants::AvgSlideWin_r)
-            {
-                free(pContext->RecvBuffer);
-                pContext->RecvBufferLen = pContext->avg_RecvBufferLen;
-                pContext->RecvBuffer = (char*)malloc(pContext->RecvBufferLen);
-            }
-        }
 
         void SocketAcceptThreadProc()
         {
@@ -80,23 +27,39 @@ namespace Trinity
                 if (-1 == connected_sock_fd)
                 {
                     /* Break the loop if listening socket is shut down. */
-                    if (EINVAL == errno) { break; }
-                    else { continue; } 
+                    auto code = GetLastError();
+                    if (EINVAL == code)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Network: Cannot accept incoming connection, errno = {0}", code);
+                        continue;
+                    }
                 }
 
                 if (NULL == inet_ntop(addr.sa_family, addr.sa_data, clientaddr, INET6_ADDRSTRLEN))
                 {
                     strcpy(clientaddr, "Unknown address");
-                };
-                Diagnostics::WriteLine(Diagnostics::LogLevel::Debug, "ServerSocket: Incomming connection from {0}", String(clientaddr));
+                }
+                Diagnostics::WriteLine(Diagnostics::LogLevel::Debug, "Network: Incomming connection from {0}", String(clientaddr));
 
-                PerSocketContextObject * pContext = AllocatePerSocketContextObject(connected_sock_fd);
-                AddPerSocketContextObject(pContext);
-                EnterEventMonitor(pContext);
+                sock_t * p = alloc_socket(connected_sock_fd);
+                add_socket(p);
+
+                if (TrinityErrorCode::E_SUCCESS != Events::enter_eventloop(p))
+                {
+                    close_client_conn(p, false);
+                    continue;
+                }
+
+                // post the first async receive
+                recv_async(p);
             }
         }
 
-        int StartSocketServer(uint16_t port)
+        int start_socket_server(uint16_t port)
         {
             accept_sock = -1;
             struct addrinfo hints, *addrinfos, *addrinfop;
@@ -127,16 +90,15 @@ namespace Trinity
             if (addrinfop == NULL)
             {
                 Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Cannot bind the socket to an IP endpoint {0}.", port);
-                ShutdownSocketServer();
+                shutdown_socket_server();
                 return -1;
             }
-            //make_nonblocking(accept_sock);
             freeaddrinfo(addrinfos);
 
             if (-1 == listen(accept_sock, SOMAXCONN))
             {
                 Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Cannot turn the socket into listening state.");
-                ShutdownSocketServer();
+                shutdown_socket_server();
                 return -1;
             }
 
@@ -149,7 +111,7 @@ namespace Trinity
             return accept_sock;
         }
 
-        int ShutdownSocketServer()
+        int shutdown_socket_server()
         {
             /* signal the accept thread that we are shutting down */
             shutdown(accept_sock, SHUT_RD);
@@ -162,107 +124,23 @@ namespace Trinity
             close(accept_sock);
 
             /* Proceed to close all client sockets. */
-            CloseAllClientSockets();
+            close_all_client_conn();
 
             return 0;
         }
 
-        bool ProcessRecv(PerSocketContextObject* pContext)
+        void close_client_conn(sock_t* p, bool lingering)
         {
-            int fd = pContext->fd;
-            int32_t body_length;
-
-            /* Receive header */
-            uint32_t bytes_left = UInt32_Contants::MessagePrefixLength;
-            uint32_t p = 0;
-            while (bytes_left > 0)
+            remove_socket(p);
+            if (!lingering)
             {
-                ssize_t bytes_read = read(fd, ((char*)&body_length) + p, bytes_left);
-                p += bytes_read;
-                bytes_left -= bytes_read;
+                linger so_linger;
+                so_linger.l_onoff = 1;
+                so_linger.l_linger = 0;
+                setsockopt(p->socket, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger));
             }
-
-            /**
-             * Note: we cap the length to int32_t, because for a server's response, a negative
-             * length is regarded as an error code. So we should keep the lengths of client/server
-             * payloads unified.
-             */
-            if (body_length < 0)
-            {
-                Trinity::Diagnostics::WriteLine(Trinity::Diagnostics::LogLevel::Error, "ServerSocket: Incorrect message header received, Client = {0}", pContext);
-                CloseClientConnection(pContext, false);
-                return false;
-            }
-
-            if (((uint32_t)body_length) > pContext->RecvBufferLen)
-            {
-                pContext->RecvBuffer = (char*)realloc(pContext->RecvBuffer, body_length);
-                pContext->RecvBufferLen = body_length;
-                if (pContext->RecvBuffer == nullptr)
-                {
-                    Trinity::Diagnostics::FatalError("ServerSocket: Cannot allocate memory during message receiving.");
-                    CloseClientConnection(pContext, false);
-                    return false;
-                }
-            }
-
-            /* Receive body */
-            bytes_left = (uint32_t)body_length;
-            p = 0;
-            while (bytes_left > 0)
-            {
-                ssize_t bytes_read = read(fd, pContext->RecvBuffer + p, bytes_left);
-                if (bytes_read == 0 || (bytes_read == -1 && EAGAIN != errno))
-                {
-                    Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ServerSocket: Error reading from client socket {0}.", fd);
-                    CloseClientConnection(pContext, false);
-                    return false;
-                }
-                p += bytes_read;
-                bytes_left -= bytes_read;
-            }
-            pContext->Message = pContext->RecvBuffer;
-            pContext->ReceivedMessageBodyBytes = (uint32_t)body_length;
-
-            /* Body received. Check handshake. */
-            if (pContext->WaitingHandshakeMessage)
-            {
-                CheckHandshakeResult(pContext);
-                // handshake check either posts handshake succeed, or close the connection,
-                // so here we do not receive a real request.
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-        // TODO blocking everywhere...
-        void SendResponse(PerSocketContextObject* pContext)
-        {
-            char* buf = pContext->Message;
-            do
-            {
-                ssize_t bytesSent = write(pContext->fd, buf, pContext->RemainingBytesToSend);
-                if (-1 == bytesSent)
-                {
-                    Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ServerSocket: Errors occur during network send: Error code = {0}, socket = {1}", errno, pContext->fd);
-                    CloseClientConnection(pContext, false);
-                }
-                buf += bytesSent;
-                pContext->RemainingBytesToSend -= bytesSent;
-            } while (pContext->RemainingBytesToSend > 0);
-            ResetContextObjects(pContext);
-            RearmFD(pContext);
-        }
-
-        void CloseClientConnection(PerSocketContextObject* pContext, bool lingering)
-        {
-            RemovePerSocketContextObject(pContext);
-            //TODO lingering
-            close(pContext->fd);
-            FreePerSocketContextObject(pContext);
+            close(p->socket);
+            free_socket(p);
         }
     }
 }
