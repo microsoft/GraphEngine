@@ -60,10 +60,11 @@ namespace Trinity.Configuration
             public const string DIRECTORY                           = "Directory";
             public const string CONFIG_VERSION                      = "ConfigVersion";
             public const string ID                                  = "Id";
+            public const string RUNNINGMODE                         = "RunningMode";
             public const string TEMPLATE                            = "Template";
 
             public const string LOGGING_LEVEL                       = "LoggingLevel";
-            public const string LOGGING_DIRECTORY                    = "LogDirectory";
+            public const string LOGGING_DIRECTORY                   = "LogDirectory";
             public const string LOG_TO_FILE                         = "LogToFile";
             public const string ECHO_ON_CONSILE                     = "EchoOnConsole";
             public const string STORAGE_ROOT                        = "StorageRoot";
