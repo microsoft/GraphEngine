@@ -93,6 +93,17 @@ attribute `Id`.
 The cluster configuration identified by an Id can be retrieved by the Id later in the program. If omitted, the current Cluster configuration is then treated as the default one.
 </p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RunningMode</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Optional.
+Specifies the running mode of a cluster. For example, if the running mode of the default cluster
+is set to "Client", then Global.CloudStorage will regard all servers as remote, and will not try
+to initialize the local memory storage and designate it to a partition in the memory cloud.
+This attribute is overridden when a communication instance is started. For example, if a TrinityServer
+or a derived instance is started, the running mode will be automatically set to "Server".
+The value must be one of the following: <i>Client</i>, <i>Server</i>, <i>Proxy</i>, <i>Embedded</i>.
+</p></td>
+</tr>
 </tbody>
 </table>
 
