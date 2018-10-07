@@ -508,7 +508,7 @@ namespace Trinity
 
             /**
              * Like PushPointerFromVariable, but does not look inside a struct to access the fields.
-             * Instead it expcets the fields to be given as parameters.
+             * Instead it expects the fields to be given as parameters.
              *
              * Arguments:
              *  0. action: "push" for push-only; "assign" for assign-and-push
