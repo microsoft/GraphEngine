@@ -26,7 +26,7 @@ namespace t_Namespace
         private static readonly int SizeDimt_dim_idx = t_int;
         [END]
         /// <summary>
-        /// Gets the rank (number of dimentsions) of the Array.
+        /// Gets the rank (number of dimensions) of the Array.
         /// </summary>
         public static readonly int Rank = t_int_2;
         internal byte* m_ptr;
