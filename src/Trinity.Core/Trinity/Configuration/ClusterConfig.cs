@@ -98,7 +98,7 @@ namespace Trinity
         public List<AvailabilityGroup> Proxies { get; private set; }
 
         /// <summary>
-        /// Get all Server instatnce
+        /// Get all Server instance
         /// </summary>
         public List<ServerInfo> AllServerInstances
         {
