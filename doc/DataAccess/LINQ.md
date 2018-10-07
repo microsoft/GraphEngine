@@ -161,7 +161,7 @@ the next query operator(until it's supported).
 There is a limitation of `IEnumerable<T>`: `IDisposable` elements are
 not disposed along the enumeration. However, disposing a cell accessor
 after use is crucial in GE, and **a non-disposed cell
-accessor will result in the target cell being locked permanantly**.
+accessor will result in the target cell being locked permanently**.
 
 This has led to the design decision made in GE, that we actively
 dispose a cell accessor when the user code finishes using the accessor
