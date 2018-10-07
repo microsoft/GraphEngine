@@ -38,7 +38,7 @@ namespace Trinity
         * Returns the typestring of the given field.
         * The string can be directly embedded into generated code,
         * and will reference the correct type by CSC.
-        * Note that, for managed types(non-value types), we surpress
+        * Note that, for managed types(non-value types), we suppress
         * '?' at the end to prevent Nullable<ManagedType>.
         *
         * @param    n_field_type  Target type.

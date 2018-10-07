@@ -38,7 +38,7 @@ static void write_file(const String& target_path, const String& name, Func gen, 
         exit(-1);
     }
 
-    // supress warnings
+    // suppress warnings
     fprintf(fp, "#pragma warning disable 162,168,649,660,661,1522\n");
     fprintf(fp, "%s\n", content->c_str());
     fprintf(fp, "#pragma warning restore 162,168,649,660,661,1522\n");
