@@ -63,7 +63,7 @@ namespace Trinity
         std::string* IndexItem(NTSL* node);
         std::string* Searcher(NTSL* node);
 
-        std::string* ExpressionTreeRewritter(NTSL* node);
+        std::string* ExpressionTreeRewriter(NTSL* node);
         std::string* IndexQueryTreeExecutor(NTSL* node);
         std::string* IndexQueryTreeNode(NTSL* node);
         std::string* PLINQWrapper(NTSL* node);

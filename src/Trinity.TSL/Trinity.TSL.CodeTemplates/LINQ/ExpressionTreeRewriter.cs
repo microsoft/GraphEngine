@@ -91,7 +91,7 @@ namespace t_Namespace.Linq
         }
     }
 
-    internal class PredicateSubjectRewritter<T> : ExpressionVisitor
+    internal class PredicateSubjectRewriter<T> : ExpressionVisitor
     {
         private static readonly Type                s_type                  = typeof(T);
         private                 ParameterExpression m_parameter_expression  = null;

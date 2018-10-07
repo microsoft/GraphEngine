@@ -50,7 +50,7 @@ SET(metagen_out
     ${CMAKE_CURRENT_BINARY_DIR}/Libraries/StringAccessor.cs.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/Libraries/U8StringAccessor.cs.cpp
 
-    ${CMAKE_CURRENT_BINARY_DIR}/LINQ/ExpressionTreeRewritter.cs.cpp                                                                                                                                                                                                                     
+    ${CMAKE_CURRENT_BINARY_DIR}/LINQ/ExpressionTreeRewriter.cs.cpp                                                                                                                                                                                                                     
     ${CMAKE_CURRENT_BINARY_DIR}/LINQ/IndexQueryTreeExecutor.cs.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/LINQ/IndexQueryTreeNode.cs.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/LINQ/PLINQWrapper.cs.cpp

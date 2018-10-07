@@ -186,8 +186,8 @@ namespace FanoutSearch
 
         private void EvaluateQueryParameters()
         {
-            TraverseActionRewritter rewritter = new TraverseActionRewritter();
-            m_traverseActions = m_traverseActions.Select(_ => rewritter.Visit(_)).ToList();
+            TraverseActionRewriter rewriter = new TraverseActionRewriter();
+            m_traverseActions = m_traverseActions.Select(_ => rewriter.Visit(_)).ToList();
         }
 
         private void QueryExpressionSecurityCheck()

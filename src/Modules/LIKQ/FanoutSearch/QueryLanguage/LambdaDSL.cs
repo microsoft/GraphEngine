@@ -94,7 +94,7 @@ public static class FanoutSearchDescriptorEvaluator
             return obj as T;
         }
 
-        private class FanoutSearchActionRewritter : CSharpSyntaxRewriter
+        private class FanoutSearchActionRewriter : CSharpSyntaxRewriter
         {
             public override SyntaxNode VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
             {
@@ -318,7 +318,7 @@ public static class FanoutSearchDescriptorEvaluator
                 if (lambda_expression == null) goto throw_badtype;
 
                 // FanoutSearch.Action is ambiguous with with System.Action
-                var action_visitor = new FanoutSearchActionRewritter();
+                var action_visitor = new FanoutSearchActionRewriter();
                 lambda_expression = action_visitor.Visit(lambda_expression) as LambdaExpressionSyntax;
 
                 ScriptOptions scriptOptions = ScriptOptions.Default;

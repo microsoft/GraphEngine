@@ -491,7 +491,7 @@ namespace Trinity
                 write_file(substring_index_path, NF(IndexItem), tsl, files);
                 write_file(substring_index_path, NF(Searcher), tsl, files);
             }
-            write_file(linq_path, NF(ExpressionTreeRewritter), tsl, files);
+            write_file(linq_path, NF(ExpressionTreeRewriter), tsl, files);
             write_file(linq_path, NF(IndexQueryTreeExecutor), tsl, files);
             write_file(linq_path, NF(IndexQueryTreeNode), tsl, files);
             write_file(linq_path, NF(PLINQWrapper), tsl, files);
