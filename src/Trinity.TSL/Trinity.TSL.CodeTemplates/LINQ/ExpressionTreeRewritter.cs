@@ -10,7 +10,7 @@ using Trinity.TSL;
 namespace t_Namespace.Linq
 {
     [TARGET("NTSL")]
-    internal class RewrittableWhereCaluseVisitor<T> : ExpressionVisitor
+    internal class RewritableWhereCaluseVisitor<T> : ExpressionVisitor
     {
         private  List<MethodCallExpression> m_where_clauses         = new List<MethodCallExpression>();
         private  Expression                 m_expression;
@@ -19,18 +19,18 @@ namespace t_Namespace.Linq
         private  IQueryable<T>              m_queryable;
         private  Type                       m_constant_type; /* The type of target constant expression to be injected */
 
-        internal RewrittableWhereCaluseVisitor(Expression expression)
+        internal RewritableWhereCaluseVisitor(Expression expression)
         {
             m_expression = expression;
         }
 
         /// <summary>
-        /// Visits the expression and get a list of rewrittable where clauses.
-        /// We say a clause is rewrittable, if there's no select clause before
+        /// Visits the expression and get a list of rewritable where clauses.
+        /// We say a clause is rewritable, if there's no select clause before
         /// it in the call chain.
         /// !It is then the inner most where clauses that get packed into this list.
         /// </summary>
-        internal List<LambdaExpression> RewrittableWhereClauses
+        internal List<LambdaExpression> RewritableWhereClauses
         {
             get
             {

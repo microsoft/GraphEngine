@@ -319,8 +319,8 @@ namespace t_Namespace
 
         public TResult Execute<TResult>(Expression expression)
         {
-            var  visitor              = new RewrittableWhereCaluseVisitor<t_cell_name_Accessor>(expression);
-            var  where_clauses        = visitor.RewrittableWhereClauses;
+            var  visitor              = new RewritableWhereCaluseVisitor<t_cell_name_Accessor>(expression);
+            var  where_clauses        = visitor.RewritableWhereClauses;
             var  queryable            = m_accessor_enumerable.AsQueryable<t_cell_name_Accessor>();
             var  trimmed_expression   = visitor.InjectEnumerator(expression, queryable, typeof(t_cell_name_Accessor_local_selector));
 
@@ -419,8 +419,8 @@ namespace t_Namespace
 
         public TResult Execute<TResult>(Expression expression)
         {
-            var  visitor              = new RewrittableWhereCaluseVisitor<t_cell_name>(expression);
-            var  where_clauses        = visitor.RewrittableWhereClauses;
+            var  visitor              = new RewritableWhereCaluseVisitor<t_cell_name>(expression);
+            var  where_clauses        = visitor.RewritableWhereClauses;
             var  queryable            = s_cell_enumerable.AsQueryable<t_cell_name>();
             var  trimmed_expression   = visitor.InjectEnumerator(expression, queryable, typeof(t_cell_name_local_selector));
 
