@@ -55,7 +55,7 @@ namespace Trinity
         }
 
         /// <summary>
-        /// Return the main infomation of current configuration
+        /// Return the main information of current configuration
         /// </summary>
         /// <returns></returns>
         internal static string OutputCurrentConfig()
