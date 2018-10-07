@@ -87,7 +87,7 @@ namespace FanoutSearch
 
         private string GetCachedPredicateKey(string pred)
         {
-            return "prediate:" + pred;
+            return "predicate:" + pred;
         }
     }
 }
