@@ -90,7 +90,7 @@ namespace Storage
     typedef struct
     {
         //  A cell id that the current operation attempts to lock, 
-        //  or the lock is held, and the thread is resizeing the cell.
+        //  or the lock is held, and the thread is resizing the cell.
         //  This field is set by all local memory storage ops except
         //  the whole db operations.
         //  Note:
