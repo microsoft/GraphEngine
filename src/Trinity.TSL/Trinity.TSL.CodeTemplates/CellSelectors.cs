@@ -611,7 +611,7 @@ namespace t_Namespace
     #endregion//Public
     [END]
 
-    public static class LocalStorageCellSelectorExternsion
+    public static class LocalStorageCellSelectorExtension
     {
         [FOREACH]
         /// <summary>

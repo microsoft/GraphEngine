@@ -42,6 +42,6 @@ namespace Trinity.VSExtension
         ForwardTelephone = 214,//well that's what I see
         BackwardTelephone= 215,
         OptionalModifier = 217,
-        ExtentionMethod  = 220,
+        ExtensionMethod  = 220,
     }
 }
