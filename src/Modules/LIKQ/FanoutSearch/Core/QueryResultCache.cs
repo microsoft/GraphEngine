@@ -48,11 +48,11 @@ namespace FanoutSearch
             m_compiler = compiler;
 #if NETSTANDARD2_0
             m_memory_cache = new MemoryCache(new MemoryCacheOptions());
-            m_entry_option.SlidingExpiration = compiler.GetExperationTime();
+            m_entry_option.SlidingExpiration = compiler.GetExpirationTime();
 #else
             m_memory_cache = MemoryCache.Default;
             m_cache_policy = new CacheItemPolicy();
-            m_cache_policy.SlidingExpiration = compiler.GetExperationTime();
+            m_cache_policy.SlidingExpiration = compiler.GetExpirationTime();
 #endif
         }
 
