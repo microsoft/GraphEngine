@@ -30,7 +30,7 @@ namespace GraphEngine.DataImporter
         internal static int s_current_batch_cnt = 0;
         internal static CmdOptions g_opts;
         #endregion
-        internal static void InitlalizeSchema(string tslAssembly)
+        internal static void InitializeSchema(string tslAssembly)
         {
             Global.LoadTSLStorageExtension(tslAssembly, ignoreNonIncrementalStorageSchemaChanges: true);
             s_cellTypes = new Dictionary<string, ICellDescriptor>();
@@ -50,7 +50,7 @@ namespace GraphEngine.DataImporter
 
             Global.LocalStorage.ResetStorage();
             g_opts = options;
-            InitlalizeSchema(tslAssembly);
+            InitializeSchema(tslAssembly);
 
             foreach (var file in files)
             {
