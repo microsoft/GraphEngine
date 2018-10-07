@@ -69,7 +69,7 @@ namespace Trinity.Azure.Storage
 
         /// <summary>
         /// !Note UploadAsync must not report a complete status when the actual uploading
-        /// is not finished -- otherwise <code>FinishUploading</code> will be called prematurally.
+        /// is not finished -- otherwise <code>FinishUploading</code> will be called prematurely.
         /// </summary>
         /// <param name="payload"></param>
         /// <returns></returns>
