@@ -206,7 +206,7 @@ namespace t_Namespace
         /// </summary>
         /// <typeparam name="T">
         /// The desired type that the field is supposed 
-        /// to be intepreted as. Automatic type casting 
+        /// to be interpreted as. Automatic type casting 
         /// will be attempted if the desired type is not 
         /// implicitly convertible from the type of the field.
         /// </typeparam>
