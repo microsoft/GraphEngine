@@ -28,17 +28,10 @@ which is part of Microsoft Cognitive Services.
 
 Graph Engine is regularly released with bug fixes and feature enhancements.
 
-You can install Graph Engine Visual Studio Extension by searching
-"Graph Engine" in Visual Studio _Extensions and Updates_
-(recommended). It can also be downloaded from <a
-href="https://visualstudiogallery.msdn.microsoft.com/12835dd2-2d0e-4b8e-9e7e-9f505bb909b8" target="_blank">Visual
-Studio Gallery</a>.
-
-NuGet packages <a
-href="https://www.nuget.org/packages/GraphEngine.Core/"
-target="_blank">Graph Engine Core</a> and <a
-href="https://www.nuget.org/packages/GraphEngine.LIKQ/"
-target="_blank">LIKQ</a> are available in the NuGet Gallery.
+### Graph Engine SDK
+- Search "Graph Engine" in Visual Studio Extensions and Updates (Recommended).
+- Alternatively, download [Graph Engine VSExtension](https://visualstudiogallery.msdn.microsoft.com/12835dd2-2d0e-4b8e-9e7e-9f505bb909b8) from Visual Studio Gallery.
+- A NuGet package [Graph Engine Core](https://www.nuget.org/packages/GraphEngine.Core/) is available in NuGet Gallery.
 
 ## How to Contribute
 
