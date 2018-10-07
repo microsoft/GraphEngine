@@ -14,7 +14,7 @@
   <PropertyGroup>
     <!--This property is used as OutputPath parameter in TSL_COMPILER_TASK-->
     <TslOutputPath Condition=" '$(TslOutputPath)' == '' ">$(IntermediateOutputPath)</TslOutputPath>
-    <!--This property is used to specify the location of the genreated source code-->
+    <!--This property is used to specify the location of the generated source code-->
     <!--Note, generated code path is hardcoded as TslOutputPath/GeneratedCode in the codegen.-->
     <TslGeneratedCodePath>$(TslOutputPath)GeneratedCode\</TslGeneratedCodePath>
   </PropertyGroup>
