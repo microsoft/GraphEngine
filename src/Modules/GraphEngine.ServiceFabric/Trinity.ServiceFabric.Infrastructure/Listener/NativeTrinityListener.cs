@@ -20,7 +20,7 @@ namespace Trinity.ServiceFabric.Listener
 
         public override void Configure(int port, StatefulServiceContext _)
         {
-            // Let's configure the Trinity Server Configuration gotten from the Service Fabric Runtime Stateful-Service contexte
+            // Let's configure the Trinity Server Configuration gotten from the Service Fabric Runtime Stateful-Service context
             var groupOfAvailabilityServers = TrinityConfig.CurrentClusterConfig.Servers;
 
             // Clear out any default configure in place!
