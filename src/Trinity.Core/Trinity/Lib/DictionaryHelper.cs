@@ -15,6 +15,6 @@ namespace Trinity.Core.Lib
         {
             return (((int)key) ^ ((int)(key >> 0x20))) & 0x7FFFFFFF;
         }
-        public static readonly long InvaildKey = -1;
+        public static readonly long InvalidKey = -1;
     }
 }
