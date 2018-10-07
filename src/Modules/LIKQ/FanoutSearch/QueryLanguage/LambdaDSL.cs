@@ -174,7 +174,7 @@ public static class FanoutSearchDescriptorEvaluator
                     visitNode  = fs_callchain[idx];
                     if (visitNode.Method == s_LIKQ_FollowEdge)
                     {
-                        // two consequtive FollowEdge, use default traverse action.
+                        // two consecutive FollowEdge, use default traverse action.
                         --idx;
                         visitNode = null;
                     }
