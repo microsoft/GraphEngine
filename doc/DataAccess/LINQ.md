@@ -90,7 +90,7 @@ operators, and `S` denote the first `Select` operators in the chain.
 GE will overlook all query operators after `S` since after
 a `Select` operator the data is projected into something that is not
 defined in the TSL (projecting accessor to accessor is not allowed),
-and thus not available in any substring indicies defined in TSL. Now,
+and thus not available in any substring indices defined in TSL. Now,
 let `W_1,...,W_m` denote all the `Where` operators before `S` (not
 necessarily consecutive). These are all the conditional filters
 applied onto the native cells(without projection into other types), so
