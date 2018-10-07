@@ -194,9 +194,9 @@ namespace Storage
 
         auto                   batch_get_lock_action = [&](std::atomic<uint64_t>* ptr)
         {
-            uint64_t comprand = BUCKETLOCK_EIGHT_NOLOCKS;
+            uint64_t comparand = BUCKETLOCK_EIGHT_NOLOCKS;
             /* Opportunistic batch lock acquire, falling back to individual lock acquiring actions. */
-            if (!std::atomic_compare_exchange_strong(ptr, &comprand, uint64_t(BUCKETLOCK_EIGHT_LOCKS)))
+            if (!std::atomic_compare_exchange_strong(ptr, &comparand, uint64_t(BUCKETLOCK_EIGHT_LOCKS)))
             {
                 uint32_t bucket_idx = (uint32_t)(reinterpret_cast<std::atomic<char>*>(ptr) - BucketLockers);
                 for (uint32_t offset = 0; offset < sizeof(uint64_t); ++offset)
