@@ -100,7 +100,7 @@ aggregates `String.Contains` invocations on cell fields into a
 expression tree.  All the expressions under a `NOT` operator are
 ignored. This is because making a substring query then obtain its
 compliment set would usually yield too many results to process, in
-which case we would have better ignored this rewritting.
+which case we would have better ignored this rewriting.
 {% endcomment %}
 
 ### Language-Integrated Query (LINQ)
