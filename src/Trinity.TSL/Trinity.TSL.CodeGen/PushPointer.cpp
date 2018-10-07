@@ -476,7 +476,7 @@ namespace Trinity
             }
 
             /**
-             * Checks a variable, and parallely push the "targetPtr" pointer, optionally
+             * Checks a variable, and parallelly push the "targetPtr" pointer, optionally
              * also assign the value from the variable into targetPtr.
              *
              * Arguments:
