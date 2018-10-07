@@ -174,7 +174,7 @@ namespace Storage
      *  Takes all bucket locks and wait for all entry lock holders to exit.
      *  Returns E_SUCCESS when the hash table is successfully locked.
      *  Returns E_DEADLOCK when there're deadlocks.
-     *  It is guaranteed that, when this rountine returns, all bucket
+     *  It is guaranteed that, when this routine returns, all bucket
      *  locks are obtained.
      */
     ALLOC_THREAD_CTX TrinityErrorCode MTHash::Lock()
