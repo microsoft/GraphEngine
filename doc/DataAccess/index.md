@@ -11,7 +11,7 @@ binary blobs.  You can save a blob to the GE key-value
 store identified by a _key_ you specified and load it back into your
 program later. A _key_ is a 64-bit integer; and the only native way of
 referencing a GE data object (or a _cell_ in the jargon of
-GE) is through such a _key_. Neverthless, other type of
+GE) is through such a _key_. Nevertheless, other type of
 keys such as string keys can be easily realized by hashing the key to
 a 64-bit integer. Note each key can at most be associated with one
 blob _value_; saving two blob values with the same key will cause one
