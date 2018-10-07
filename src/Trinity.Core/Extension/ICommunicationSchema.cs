@@ -13,7 +13,7 @@ namespace Trinity.Network
     /// <summary>
     /// Specifies that a communication protocol group is associated with a communication schema.
     /// It is required that a communication protocol group is tagged with this attribute, so that the communication
-    /// subsystem can retrive the schema of a protocol group and perform communication schema verification and module discovery.
+    /// subsystem can retrieve the schema of a protocol group and perform communication schema verification and module discovery.
     /// </summary>
     public class CommunicationSchemaAttribute : Attribute
     {

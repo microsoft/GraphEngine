@@ -42,7 +42,7 @@ namespace Trinity.Utilities
             _coreAssemblyDependencyList = _coreAssemblyDependencyList.Distinct().ToList();
         }
         /// <summary>
-        /// Recursively retrive all dependencies ( including itself ) of an assembly.
+        /// Recursively retrieve all dependencies ( including itself ) of an assembly.
         /// </summary>
         /// <param name="asm">The given assembly</param>
         /// <param name="searchPath">The path to search.</param>
