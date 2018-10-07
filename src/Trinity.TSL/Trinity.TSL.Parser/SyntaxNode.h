@@ -201,7 +201,7 @@ public:
                 delete pstr;
             delete arrayInfo.array_dimension_list;
             delete arrayInfo.array_dimension_size;
-            //TODO FT_LIST delete, will break Trinity.TSL.CodeGen.Neo.cpp: unitialize()
+            //TODO FT_LIST delete, will break Trinity.TSL.CodeGen.Neo.cpp: uninitialize()
             break;
         }
     }
