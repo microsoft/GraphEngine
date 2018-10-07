@@ -198,7 +198,7 @@ namespace Trinity
          *
          * @param   type        The target type.
          * @param   type_list   A std::vector<NFieldType*>* containing all
-         *                      types involed in the current context.
+         *                      types involved in the current context.
          * @return  True if the type is:
          *         [
          *          1. non-optional or value type,
