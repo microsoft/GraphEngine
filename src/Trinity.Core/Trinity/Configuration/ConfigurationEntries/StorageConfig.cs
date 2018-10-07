@@ -84,7 +84,7 @@ namespace Trinity.Configuration
         }
 
         /// <summary>
-        /// Represents a value to specify whether the local memory storatge is read-only.
+        /// Represents a value to specify whether the local memory storage is read-only.
         /// if the value is true read-only mode is on and any changes in a cell is forbidden
         /// </summary>
         [ConfigSetting(Optional: true)]
