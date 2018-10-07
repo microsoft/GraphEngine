@@ -103,7 +103,7 @@ namespace FanoutSearch.UnitTest
             catch
             {
                 Console.WriteLine("Test6 throws expected exception.");
-                /* Expected to throw exception due to entangled lambda expressions and non-evaluatable parts. */
+                /* Expected to throw exception due to entangled lambda expressions and non-evaluable parts. */
             }
         }
         [Fact]
