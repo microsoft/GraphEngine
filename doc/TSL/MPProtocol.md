@@ -76,7 +76,7 @@ protocol mySynProtocol1
 {
     Type: Syn;
     Request: MyRequest;
-    Response: MyRespone;
+    Response: MyResponse;
 }
 
 protocol mySynProtocol2
@@ -176,7 +176,7 @@ protocol myHttpProtocol1
 {
     Type: Http;
     Request: MyRequest;
-    Response: MyRespone;
+    Response: MyResponse;
 }
 
 protocol myHttpProtocol2

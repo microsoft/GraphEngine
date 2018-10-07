@@ -109,7 +109,7 @@ namespace Trinity.Client.TrinityClientModule
              * Protocol: PollEvents
              * Request: |4B InstanceId|4B Cookie|
              * Response:[4B E_RESULT Header] - |8B p| TrinityMessage |
-             * Response.p != 0 if the resposne is a "request with response"
+             * Response.p != 0 if the response is a "request with response"
              * Response.TrinityMessage length header < 0 if there are no events
              * E_RESULT values:
              * 
