@@ -501,7 +501,7 @@ public:
                 return cell;
         return NULL;
     }
-    //was referenced by server inheritence code
+    //was referenced by server inheritance code
     //NProtocolGroup* find_protocol_group(std::string* protocol_group_name)
     //{
     //    for (auto server : *serverList)
