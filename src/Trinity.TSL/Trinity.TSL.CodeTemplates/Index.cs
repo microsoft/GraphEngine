@@ -218,7 +218,7 @@ namespace t_Namespace
         /// Performs a substring sequence query on <see cref="Trinity.Global.LocalStorage"/>. The semantics of
         /// this type of query is that, given a sequence of query strings <c>q_1, q_2,...,q_n</c> in 
         /// <paramref name="query"/>, the match condition on a target string is that all the strings in the sequence
-        /// are the substrings of the target string, and the order of the substring occurances should correspond
+        /// are the substrings of the target string, and the order of the substring occurrences should correspond
         /// strictly to that given by <paramref name="query"/>. For example (let <c>S</c> denote the target string):
         /// <example>
         /// <list type="bullet">
@@ -262,7 +262,7 @@ namespace t_Namespace
         /// Performs a substring sequence query on <see cref="Trinity.Global.LocalStorage"/>. The semantics of
         /// this type of query is that, given a sequence of query strings <c>q_1, q_2,...,q_n</c> in 
         /// <paramref name="query"/>, the match condition on a target string is that all the strings in the sequence
-        /// are the substrings of the target string, and the order of the substring occurances should correspond
+        /// are the substrings of the target string, and the order of the substring occurrences should correspond
         /// strictly to that given by <paramref name="query"/>. For example (let <c>S</c> denote the target string):
         /// <example>
         /// <list type="bullet">
