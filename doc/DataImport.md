@@ -276,7 +276,7 @@ storage. After sorting, the data set looks like:
 ...
 ```
 
-Now we can read a few consecutive lines to recostruct a data
+Now we can read a few consecutive lines to reconstruct a data
 object. Moreover, we can observe that the data modeling schema is
 self-contained: schema triples starting with 1 and 4 specify the data
 schemata; while data triples starting with 2 and 3 are ordinary data

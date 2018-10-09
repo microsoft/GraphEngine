@@ -55,7 +55,7 @@ namespace Trinity
         }
 
         /// <summary>
-        /// Return the main infomation of current configuration
+        /// Return the main information of current configuration
         /// </summary>
         /// <returns></returns>
         internal static string OutputCurrentConfig()
@@ -325,7 +325,7 @@ namespace Trinity
                 }
                 else if (config.RootConfigVersion == ConfigurationConstants.Values.CURRENTVER)
                 {
-                    LoadConfigCurrrentVer(config);
+                    LoadConfigCurrentVer(config);
                 }
                 else
                 {
@@ -372,7 +372,7 @@ namespace Trinity
             s_clusterConfigurations.Add(ConfigurationConstants.Values.DEFAULT_CLUSTER, s_current_cluster_config);
         }
 
-        private static void LoadConfigCurrrentVer(XmlConfiguration config)
+        private static void LoadConfigCurrentVer(XmlConfiguration config)
         {
             s_localConfigurationSection = new ConfigurationSection(config.LocalSection);
             var clusterSections = config.ClusterSections;

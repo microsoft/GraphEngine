@@ -46,7 +46,7 @@ namespace Trinity.Storage
                 /**!
                  * Note, unlike the methods, properties with getters only seem to be heavily optimized
                  * that it needs an extra wrapper method before it reaches the internal call stub.
-                 * Otherwise ECall security exception will be rised. Properties with getter/setter
+                 * Otherwise ECall security exception will be raised. Properties with getter/setter
                  * appear to be not affected.
                  */
                 return _CommitIndexMemoryWrapper();

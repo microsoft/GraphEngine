@@ -162,7 +162,7 @@ namespace freebase_likq
         /// a registered index service to retrieve vertices satisfying the constraints.
         /// The constraints are specified in the match object, which is a json object.
         /// LIKQ itself does not specify the DSL syntax for the match object so here
-        /// we eatablish a simple one, which accepts three types of queries:
+        /// we establish a simple one, which accepts three types of queries:
         /// 
         ///   1. Query by Freebase MID.
         ///   2. Query by type_object_name.

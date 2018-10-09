@@ -53,7 +53,7 @@ struct FanoutSearchMessagePackage
 
 protocol FanoutSearchQuery
 {
-	Type:Syn;//This message blocks till the server has responsed the quest.
+	Type:Syn;//This message blocks till the server has responded to the quest.
 	Request:FanoutQueryMessage;
 	Response:FanoutResultMessage;
 }

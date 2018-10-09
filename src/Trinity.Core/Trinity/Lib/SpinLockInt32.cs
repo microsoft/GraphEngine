@@ -47,7 +47,7 @@ namespace Trinity.Core.Lib
         private static readonly int COUNTER_THRESHOLD_FOR_AGGRESSIVE_METHOD = 200000000;
 
         /// <summary>
-        /// Accquires the lock in an aggressive manner.
+        /// Acquires the lock in an aggressive manner.
         /// </summary>
         /// <param name="spinlock">A 32-bit integer that represents the spinlock.</param>
         public static unsafe void GetLock_Aggressive(ref int spinlock)

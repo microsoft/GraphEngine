@@ -370,7 +370,7 @@ namespace Storage
     // Calculating checksum for a thread context during arbitration:
     // 
     // Arbitration retry count scales up when the same thread requests arbitration
-    // repeatidly without changing the thread context. This is likely to happen
+    // repeatedly without changing the thread context. This is likely to happen
     // when a deadlock is formed but the arbitrator fails to detect it due to
     // the retry count being too low. If so, different threads will request for
     // arbitration at different time, thus will never be aware of each other.
@@ -378,7 +378,7 @@ namespace Storage
     // two dead-locked threads (LOCKCELL vs. LOCKHASH) are finally aware of each other.
     // currently we have a linear increasing scheme for the retry max count. It scales
     // up from 128, which means that 225 arbitrations are requested...
-    // The solution: We detect whether a thread has repeatidly requested arbitration
+    // The solution: We detect whether a thread has repeatedly requested arbitration
     // without changing its state (that nothing new happened between arbitrations, to
     // this thread). To do so we calculate the checksum of a thread context and record
     // it. We also log down how many times it 'polled' arbitration in 

@@ -243,7 +243,7 @@ protocol myProtocol
 {
     Type: Syn;
     Request: MyRequest;
-    Response: MyRespone;
+    Response: MyResponse;
 }
 ```
 

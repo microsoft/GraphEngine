@@ -40,7 +40,7 @@ namespace FanoutSearch
 
         }
 
-        internal TimeSpan GetExperationTime()
+        internal TimeSpan GetExpirationTime()
         {
 #if NETSTANDARD2_0
             return m_entry_options.SlidingExpiration.Value; // it does have value here
@@ -87,7 +87,7 @@ namespace FanoutSearch
 
         private string GetCachedPredicateKey(string pred)
         {
-            return "prediate:" + pred;
+            return "predicate:" + pred;
         }
     }
 }

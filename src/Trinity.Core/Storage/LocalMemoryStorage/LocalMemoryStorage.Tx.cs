@@ -32,7 +32,7 @@ namespace Trinity.Storage
         public void ReleaseCellLock(long cellId, int entryIndex)
         {
             // TODO: in Trinity.C we should check whether the cell is locked by the current thread ctx.
-            // TODO: add error code. return E_CELL_NOT_FOUND when the cell is not posessed by the current
+            // TODO: add error code. return E_CELL_NOT_FOUND when the cell is not possessed by the current
             // thread.
             CLocalMemoryStorage.CReleaseCellLock(cellId, entryIndex);
         }

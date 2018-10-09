@@ -86,7 +86,7 @@ namespace Trinity.Storage
 
         ////////////////////////////////////////////
 
-        // Logging cell opeartions
+        // Logging cell operations
         [DllImport(TrinityC.AssemblyName)]
         [SuppressUnmanagedCodeSecurity]
         internal static extern TrinityErrorCode CLoggedSaveCell(long cellId, byte* buff, int size, ushort cellType, CellAccessOptions options);
@@ -244,7 +244,7 @@ namespace Trinity.Storage
 
         ////////////////////////////////////////////
 
-        // Logging cell opeartions
+        // Logging cell operations
         [DllImport(TrinityC.AssemblyName)]
         [SuppressUnmanagedCodeSecurity]
         internal static extern TrinityErrorCode TxCLoggedSaveCell(void* ctx, long cellId, byte* buff, int size, ushort cellType, CellAccessOptions options);

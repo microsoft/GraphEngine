@@ -130,7 +130,7 @@ namespace Trinity.Utilities
                 }
             }
 
-            #region Cleanning
+            #region Cleaning
             for (int i = 0; i < k; i++)
             {
                 br_array[i].Close();

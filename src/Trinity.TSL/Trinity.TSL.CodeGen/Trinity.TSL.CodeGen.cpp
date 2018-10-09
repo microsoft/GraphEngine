@@ -38,7 +38,7 @@ static void write_file(const String& target_path, const String& name, Func gen, 
         exit(-1);
     }
 
-    // supress warnings
+    // suppress warnings
     fprintf(fp, "#pragma warning disable 162,168,649,660,661,1522\n");
     fprintf(fp, "%s\n", content->c_str());
     fprintf(fp, "#pragma warning restore 162,168,649,660,661,1522\n");
@@ -491,7 +491,7 @@ namespace Trinity
                 write_file(substring_index_path, NF(IndexItem), tsl, files);
                 write_file(substring_index_path, NF(Searcher), tsl, files);
             }
-            write_file(linq_path, NF(ExpressionTreeRewritter), tsl, files);
+            write_file(linq_path, NF(ExpressionTreeRewriter), tsl, files);
             write_file(linq_path, NF(IndexQueryTreeExecutor), tsl, files);
             write_file(linq_path, NF(IndexQueryTreeNode), tsl, files);
             write_file(linq_path, NF(PLINQWrapper), tsl, files);

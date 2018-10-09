@@ -32,12 +32,12 @@ namespace Trinity.Storage.Composite
             foreach (var e in collection) { fn(e); }
             end?.Invoke();
         }
-        public static void Each<ElemType, State>(this IEnumerable<ElemType> colllection,
+        public static void Each<ElemType, State>(this IEnumerable<ElemType> collection,
                                                  Action<ElemType, State> fn,
                                                  Action<State> end = null) where State : new()
         {
             State s = new State();
-            foreach (var e in colllection) { fn(e, s); }
+            foreach (var e in collection) { fn(e, s); }
             end?.Invoke(s);
         }
         #endregion

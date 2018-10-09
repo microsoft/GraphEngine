@@ -20,7 +20,7 @@ namespace FanoutSearch
     ///       not accept a value that is not defined in the enumeration type, even if
     ///       the value is a combination of the flags defined in the type.
     /// </summary>
-    class TraverseActionRewritter : ExpressionVisitor
+    class TraverseActionRewriter : ExpressionVisitor
     {
         private static readonly Type s_compiler_generated_attr = typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute);
         private HashSet<Expression>  m_expressions_evaluated_as_constant = new HashSet<Expression>();

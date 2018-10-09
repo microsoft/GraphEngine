@@ -41,7 +41,7 @@ namespace Trinity.Storage
         public long CellId { get; internal set; }
 
         /// <summary>
-        /// The index of the underlying hash slot correspondig to the current cell.
+        /// The index of the underlying hash slot corresponding to the current cell.
         /// </summary>
         public int CellEntryIndex { get; internal set; }
         /// <summary>

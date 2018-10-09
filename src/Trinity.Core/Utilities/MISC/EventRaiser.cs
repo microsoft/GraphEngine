@@ -16,7 +16,7 @@ namespace Trinity.Utilities
                 try { listener.DynamicInvoke(); }
                 catch (Exception ex)
                 {
-                    Log.WriteLine(LogLevel.Error, $"An error oucurred in {handlerName}: {{0}}", ex.ToString());
+                    Log.WriteLine(LogLevel.Error, $"An error occurred in {handlerName}: {{0}}", ex.ToString());
                     ret = TrinityErrorCode.E_FAILURE;
                 }
             }

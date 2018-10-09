@@ -274,7 +274,7 @@ namespace Trinity.Configuration
             var loaded = LoadFile(filename);
             if (loaded.Version != RootConfigVersion)
             {
-                Log.WriteLine(LogLevel.Warning, "Ignoring file '" + filename + "' because of confliting config version:");
+                Log.WriteLine(LogLevel.Warning, "Ignoring file '" + filename + "' because of conflicting config version:");
                 Log.WriteLine(LogLevel.Warning, "Expected:" + RootConfigVersion + ", Found:" + loaded.Version + "");
                 return new ParseUnit();
             }

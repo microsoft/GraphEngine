@@ -90,7 +90,7 @@ operators, and `S` denote the first `Select` operators in the chain.
 GE will overlook all query operators after `S` since after
 a `Select` operator the data is projected into something that is not
 defined in the TSL (projecting accessor to accessor is not allowed),
-and thus not available in any substring indicies defined in TSL. Now,
+and thus not available in any substring indices defined in TSL. Now,
 let `W_1,...,W_m` denote all the `Where` operators before `S` (not
 necessarily consecutive). These are all the conditional filters
 applied onto the native cells(without projection into other types), so
@@ -100,7 +100,7 @@ aggregates `String.Contains` invocations on cell fields into a
 expression tree.  All the expressions under a `NOT` operator are
 ignored. This is because making a substring query then obtain its
 compliment set would usually yield too many results to process, in
-which case we would have better ignored this rewritting.
+which case we would have better ignored this rewriting.
 {% endcomment %}
 
 ### Language-Integrated Query (LINQ)
@@ -161,7 +161,7 @@ the next query operator(until it's supported).
 There is a limitation of `IEnumerable<T>`: `IDisposable` elements are
 not disposed along the enumeration. However, disposing a cell accessor
 after use is crucial in GE, and **a non-disposed cell
-accessor will result in the target cell being locked permanantly**.
+accessor will result in the target cell being locked permanently**.
 
 This has led to the design decision made in GE, that we actively
 dispose a cell accessor when the user code finishes using the accessor

@@ -476,7 +476,7 @@ namespace Trinity
             }
 
             /**
-             * Checks a variable, and parallely push the "targetPtr" pointer, optionally
+             * Checks a variable, and parallelly push the "targetPtr" pointer, optionally
              * also assign the value from the variable into targetPtr.
              *
              * Arguments:
@@ -508,7 +508,7 @@ namespace Trinity
 
             /**
              * Like PushPointerFromVariable, but does not look inside a struct to access the fields.
-             * Instead it expcets the fields to be given as parameters.
+             * Instead it expects the fields to be given as parameters.
              *
              * Arguments:
              *  0. action: "push" for push-only; "assign" for assign-and-push

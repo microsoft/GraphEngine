@@ -319,20 +319,20 @@ namespace t_Namespace
 
         public TResult Execute<TResult>(Expression expression)
         {
-            var  visitor              = new RewrittableWhereCaluseVisitor<t_cell_name_Accessor>(expression);
-            var  where_clauses        = visitor.RewrittableWhereClauses;
+            var  visitor              = new RewritableWhereCaluseVisitor<t_cell_name_Accessor>(expression);
+            var  where_clauses        = visitor.RewritableWhereClauses;
             var  queryable            = m_accessor_enumerable.AsQueryable<t_cell_name_Accessor>();
             var  trimmed_expression   = visitor.InjectEnumerator(expression, queryable, typeof(t_cell_name_Accessor_local_selector));
 
             if (where_clauses.Count != 0)
             {
-                var subject_rewritter           = new PredicateSubjectRewritter<t_cell_name_Accessor>();
-                Expression aggregated_predicate = subject_rewritter.Visit(where_clauses.First().Body);
+                var subject_rewriter           = new PredicateSubjectRewriter<t_cell_name_Accessor>();
+                Expression aggregated_predicate = subject_rewriter.Visit(where_clauses.First().Body);
 
                 foreach (var where_clause in where_clauses.Skip(1))
                 {
                     Expression predicate = where_clause.Body;
-                    aggregated_predicate = Expression.AndAlso(aggregated_predicate, subject_rewritter.Visit(predicate));
+                    aggregated_predicate = Expression.AndAlso(aggregated_predicate, subject_rewriter.Visit(predicate));
                 }
 
                 IndexQueryTreeGenerator<t_cell_name_Accessor> query_tree_gen       = new IndexQueryTreeGenerator<t_cell_name_Accessor>("t_cell_name", Index.s_AccessorSubstringIndexAccessMethod, is_cell: false);
@@ -346,7 +346,7 @@ namespace t_Namespace
                     m_accessor_enumerable.SetPositiveFiltering(query_tree_exec.Execute(query_tree));
                 }
 
-                m_accessor_enumerable.SetPredicate(aggregated_predicate, subject_rewritter.Parameter);
+                m_accessor_enumerable.SetPredicate(aggregated_predicate, subject_rewriter.Parameter);
             }
 
             if (trimmed_expression.NodeType == ExpressionType.Constant)
@@ -419,20 +419,20 @@ namespace t_Namespace
 
         public TResult Execute<TResult>(Expression expression)
         {
-            var  visitor              = new RewrittableWhereCaluseVisitor<t_cell_name>(expression);
-            var  where_clauses        = visitor.RewrittableWhereClauses;
+            var  visitor              = new RewritableWhereCaluseVisitor<t_cell_name>(expression);
+            var  where_clauses        = visitor.RewritableWhereClauses;
             var  queryable            = s_cell_enumerable.AsQueryable<t_cell_name>();
             var  trimmed_expression   = visitor.InjectEnumerator(expression, queryable, typeof(t_cell_name_local_selector));
 
             if (where_clauses.Count != 0)
             {
-                var subject_rewritter           = new PredicateSubjectRewritter<t_cell_name>();
-                Expression aggregated_predicate = subject_rewritter.Visit(where_clauses.First().Body);
+                var subject_rewriter           = new PredicateSubjectRewriter<t_cell_name>();
+                Expression aggregated_predicate = subject_rewriter.Visit(where_clauses.First().Body);
 
                 foreach (var where_clause in where_clauses.Skip(1))
                 {
                     Expression predicate = where_clause.Body;
-                    aggregated_predicate = Expression.AndAlso(aggregated_predicate, subject_rewritter.Visit(predicate));
+                    aggregated_predicate = Expression.AndAlso(aggregated_predicate, subject_rewriter.Visit(predicate));
                 }
 
                 IndexQueryTreeGenerator<t_cell_name> query_tree_gen       = new IndexQueryTreeGenerator<t_cell_name>("t_cell_name", Index.s_CellSubstringIndexAccessMethod, is_cell: true);
@@ -446,7 +446,7 @@ namespace t_Namespace
                     s_cell_enumerable.SetPositiveFiltering(query_tree_exec.Execute(query_tree));
                 }
 
-                s_cell_enumerable.SetPredicate(aggregated_predicate, subject_rewritter.Parameter);
+                s_cell_enumerable.SetPredicate(aggregated_predicate, subject_rewriter.Parameter);
             }
 
             if (trimmed_expression.NodeType == ExpressionType.Constant)
@@ -611,7 +611,7 @@ namespace t_Namespace
     #endregion//Public
     [END]
 
-    public static class LocalStorageCellSelectorExternsion
+    public static class LocalStorageCellSelectorExtension
     {
         [FOREACH]
         /// <summary>

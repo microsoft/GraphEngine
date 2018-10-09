@@ -97,14 +97,14 @@ namespace freebase_likq
             return ct;
         }
 
-        public static string ResolveMid(string originialMid)
+        public static string ResolveMid(string originalMid)
         {
             string resolved;
-            if (midResolveTable.TryGetValue(originialMid, out resolved))
+            if (midResolveTable.TryGetValue(originalMid, out resolved))
             {
                 return resolved;
             }
-            return originialMid;
+            return originalMid;
         }
 
         public static bool IsFreebaseEntity(string text)

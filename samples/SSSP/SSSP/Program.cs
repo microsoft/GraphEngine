@@ -114,10 +114,10 @@ namespace SSSP
                     HashSet<long> neighbors = new HashSet<long>();
                     for (int j = 0; j < 10; j++)
                     {
-                        long neighor = rand.Next(0, nodeCount);
-                        if (neighor != i)
+                        long neighhor = rand.Next(0, nodeCount);
+                        if (neighhor != i)
                         {
-                            neighbors.Add(neighor);
+                            neighbors.Add(neighhor);
                         }
                     }
                     Global.CloudStorage.SaveSSSPCell(i, distance: int.MaxValue, parent: -1, neighbors: neighbors.ToList());

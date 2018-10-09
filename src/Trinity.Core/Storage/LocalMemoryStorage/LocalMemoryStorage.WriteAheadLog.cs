@@ -492,7 +492,7 @@ load_success:
                 /* Only save storage when the log is not empty. */
                 if (record_cnt == 0 || TrinityErrorCode.E_SUCCESS == SaveStorage())
                 {
-                    /* Save storage succeded. Dropping old logs now. */
+                    /* Save storage succeeded. Dropping old logs now. */
                     try
                     {
                         File.Delete(path);

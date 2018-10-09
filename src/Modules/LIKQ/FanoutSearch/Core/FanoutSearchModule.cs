@@ -148,7 +148,7 @@ namespace FanoutSearch
             ExpressionSerializer.SetSerializerFactory(func);
         }
 
-        public static void RegisterQueryWhilelistType(Type t)
+        public static void RegisterQueryWhitelistType(Type t)
         {
             TraverseActionSecurityChecker.RegisterQueryWhitelistType(t);
         }

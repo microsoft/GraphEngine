@@ -204,7 +204,7 @@ namespace Trinity.VSExtension.EditorExtension.TSL
             CallWrappedParser(_span, out currentSnapshot, out is_globalParse, out tokenSpanList);
 
             ParseResult result = new ParseResult();
-            /* Note: Do not put BuildSyntaxSpans before BuildHighlighSpans,
+            /* Note: Do not put BuildSyntaxSpans before BuildHighlightSpans,
              * Since it will remove items from tokenList..
              */
             result.highlightSpans = BuildHighlightSpans(tokenSpanList);
@@ -446,7 +446,7 @@ namespace Trinity.VSExtension.EditorExtension.TSL
                 });
             #endregion
 
-            //TODO hierachical scanning, and formal description of rules
+            //TODO hierarchical scanning, and formal description of rules
 
             /* First round, scan {} blocks */
             for (cursor = 0; cursor < length; ++cursor)

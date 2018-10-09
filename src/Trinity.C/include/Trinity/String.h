@@ -521,7 +521,7 @@ namespace Trinity
             RemoveEmptyEntries,
             PreserveEmptyEntries,
         };
-        Array<String> Split(const char* seperators, StringSplitOptions option = StringSplitOptions::RemoveEmptyEntries)
+        Array<String> Split(const char* separators, StringSplitOptions option = StringSplitOptions::RemoveEmptyEntries)
         {
             std::vector<String> vec;
             size_t split_head = 0;
@@ -529,7 +529,7 @@ namespace Trinity
             bool non_empty_matched = false;//is the entry before last search_idx non-empty
             while (true)
             {
-                split_head = FindFirstNotOf(seperators, search_idx);
+                split_head = FindFirstNotOf(separators, search_idx);
                 bool split_head_found = (npos != split_head);
 
                 if (option == StringSplitOptions::PreserveEmptyEntries)
@@ -552,7 +552,7 @@ namespace Trinity
 
                 if (npos == split_head)
                     break;
-                search_idx = FindFirstOf(seperators, split_head);
+                search_idx = FindFirstOf(separators, split_head);
                 if (npos == search_idx)
                 {
                     vec.emplace_back(Substring(split_head, Length() - split_head));

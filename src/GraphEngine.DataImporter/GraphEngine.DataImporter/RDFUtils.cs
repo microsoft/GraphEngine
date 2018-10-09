@@ -195,9 +195,9 @@ namespace GraphEngine.DataImporter
             return true;
         }
 
-        internal static bool IsMID(string candiate)
+        internal static bool IsMID(string candidate)
         {
-            return candiate.StartsWith("m.");
+            return candidate.StartsWith("m.");
         }
 
         internal static string GetTslName(string name)

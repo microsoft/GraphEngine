@@ -90,7 +90,7 @@ namespace Storage
     typedef struct
     {
         //  A cell id that the current operation attempts to lock, 
-        //  or the lock is held, and the thread is resizeing the cell.
+        //  or the lock is held, and the thread is resizing the cell.
         //  This field is set by all local memory storage ops except
         //  the whole db operations.
         //  Note:
@@ -150,7 +150,7 @@ namespace Storage
         inline void SetLockReleased(const cellid_t cellId) { LockedCells.Remove(cellId); }
     }THREAD_CONTEXT, *PTHREAD_CONTEXT;
 
-    PTHREAD_CONTEXT              AllocateThreadContext(); // Note, AllocateThreadConatext will also set the thread context.
+    PTHREAD_CONTEXT              AllocateThreadContext(); // Note, AllocateThreadContext will also set the thread context.
     PTHREAD_CONTEXT              GetCurrentThreadContext();
     void                         DeallocateThreadContext(PTHREAD_CONTEXT ctx);
     void                         SetCurrentThreadContext(PTHREAD_CONTEXT ctx);

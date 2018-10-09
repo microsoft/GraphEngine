@@ -206,7 +206,7 @@ namespace t_Namespace
         /// </summary>
         /// <typeparam name="T">
         /// The desired type that the field is supposed 
-        /// to be intepreted as. Automatic type casting 
+        /// to be interpreted as. Automatic type casting 
         /// will be attempted if the desired type is not 
         /// implicitly convertible from the type of the field.
         /// </typeparam>
@@ -1458,7 +1458,7 @@ namespace t_Namespace
 
         #region LocalMemoryStorage Non-Tx accessors
         /// <summary>
-        /// Allocate a cell accessor on the specified cell, which inteprets
+        /// Allocate a cell accessor on the specified cell, which interprets
         /// the cell as a t_cell_name. Any changes done to the accessor
         /// are written to the storage immediately.
         /// If <c><see cref="Trinity.TrinityConfig.ReadOnly"/> == false</c>,
@@ -1475,7 +1475,7 @@ namespace t_Namespace
         }
 
         /// <summary>
-        /// Allocate a cell accessor on the specified cell, which inteprets
+        /// Allocate a cell accessor on the specified cell, which interprets
         /// the cell as a t_cell_name. Any changes done to the accessor
         /// are written to the storage immediately.
         /// If <c><see cref="Trinity.TrinityConfig.ReadOnly"/> == false</c>,
@@ -1549,7 +1549,7 @@ namespace t_Namespace
 
         #region LocalMemoryStorage Tx accessors
         /// <summary>
-        /// Allocate a cell accessor on the specified cell, which inteprets
+        /// Allocate a cell accessor on the specified cell, which interprets
         /// the cell as a t_cell_name. Any changes done to the accessor
         /// are written to the storage immediately.
         /// If <c><see cref="Trinity.TrinityConfig.ReadOnly"/> == false</c>,
@@ -1566,7 +1566,7 @@ namespace t_Namespace
         }
 
         /// <summary>
-        /// Allocate a cell accessor on the specified cell, which inteprets
+        /// Allocate a cell accessor on the specified cell, which interprets
         /// the cell as a t_cell_name. Any changes done to the accessor
         /// are written to the storage immediately.
         /// If <c><see cref="Trinity.TrinityConfig.ReadOnly"/> == false</c>,

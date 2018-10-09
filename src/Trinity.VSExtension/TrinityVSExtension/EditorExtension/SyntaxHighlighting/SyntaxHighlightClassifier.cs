@@ -17,7 +17,7 @@ namespace Trinity.VSExtension.EditorExtension.SyntaxHighlighting
 
     #region Classifier
     /// <summary>
-    /// Classifier that classifies all text as an instance of the OrinaryClassifierType
+    /// Classifier that classifies all text as an instance of the OrdinaryClassifierType
     /// </summary>
     class SyntaxHighlightClassifier : IClassifier
     {

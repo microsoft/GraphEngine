@@ -174,7 +174,7 @@ namespace Storage
      *  Takes all bucket locks and wait for all entry lock holders to exit.
      *  Returns E_SUCCESS when the hash table is successfully locked.
      *  Returns E_DEADLOCK when there're deadlocks.
-     *  It is guaranteed that, when this rountine returns, all bucket
+     *  It is guaranteed that, when this routine returns, all bucket
      *  locks are obtained.
      */
     ALLOC_THREAD_CTX TrinityErrorCode MTHash::Lock()
@@ -194,9 +194,9 @@ namespace Storage
 
         auto                   batch_get_lock_action = [&](std::atomic<uint64_t>* ptr)
         {
-            uint64_t comprand = BUCKETLOCK_EIGHT_NOLOCKS;
+            uint64_t comparand = BUCKETLOCK_EIGHT_NOLOCKS;
             /* Opportunistic batch lock acquire, falling back to individual lock acquiring actions. */
-            if (!std::atomic_compare_exchange_strong(ptr, &comprand, uint64_t(BUCKETLOCK_EIGHT_LOCKS)))
+            if (!std::atomic_compare_exchange_strong(ptr, &comparand, uint64_t(BUCKETLOCK_EIGHT_LOCKS)))
             {
                 uint32_t bucket_idx = (uint32_t)(reinterpret_cast<std::atomic<char>*>(ptr) - BucketLockers);
                 for (uint32_t offset = 0; offset < sizeof(uint64_t); ++offset)
