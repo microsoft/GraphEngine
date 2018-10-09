@@ -22,7 +22,7 @@ namespace Trinity.ServiceFabric.Remoting
         {
             fixed (byte* p = message)
             {
-                MessageBuff buff = new MessageBuff{ Buffer = p, BytesReceived = (uint)message.Length };
+                MessageBuff buff = new MessageBuff{ Buffer = p, Length = (uint)message.Length };
                 m_dispatcher(&buff);
                 try
                 {
@@ -43,7 +43,7 @@ namespace Trinity.ServiceFabric.Remoting
             fixed (byte* p = message)
             {
                 buff.Buffer = p;
-                buff.BytesReceived = (uint)message.Length;
+                buff.Length = (uint)message.Length;
                 m_dispatcher(&buff);
             }
 

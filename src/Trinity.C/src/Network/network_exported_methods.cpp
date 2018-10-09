@@ -3,7 +3,7 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 #include "Client/TrinityClient.h"
-#include "Server/TrinityServer.h"
+#include "Network.h"
 
 using namespace Trinity;
 
@@ -18,13 +18,5 @@ DLL_EXPORT TrinityErrorCode WaitForAckPackage(uint64_t socket) { return Network:
 DLL_EXPORT void CloseClientSocket(uint64_t socket) { Network::CloseClientSocket(socket); }
 
 // Server interfaces
-DLL_EXPORT int StartSocketServer(uint16_t port) { return Network::StartSocketServer(port); }
-DLL_EXPORT int StopSocketServer() { return Network::ShutdownSocketServer(); }
-DLL_EXPORT int ShutdownSocketServer() { return Network::ShutdownSocketServer(); }
-DLL_EXPORT void AwaitRequest(void*& pContext) { Network::AwaitRequest(pContext); }
-DLL_EXPORT void SendResponse(void* pContext) { Network::SendResponse(pContext); }
-DLL_EXPORT void EnterSocketServerThreadPool() { Network::EnterSocketServerThreadPool(); }
-DLL_EXPORT void ExitSocketServerThreadPool() { Network::ExitSocketServerThreadPool(); }
-DLL_EXPORT TrinityErrorCode StartWorkerThreadPool() { return Network::StartWorkerThreadPool(); }
-DLL_EXPORT TrinityErrorCode ResetMessageHandlers() { return Network::ResetMessageHandlers(); }
-DLL_EXPORT TrinityErrorCode RegisterMessageHandler(uint16_t msgId, void * handler) { return Network::RegisterMessageHandler(msgId, (Network::message_handler_t *)handler); }
+DLL_EXPORT int StartSocketServer(uint16_t port) { return Network::start_socket_server(port); }
+DLL_EXPORT int StopSocketServer() { return Network::shutdown_socket_server(); }

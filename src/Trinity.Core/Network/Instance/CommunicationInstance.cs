@@ -369,7 +369,7 @@ namespace Trinity.Network
                 var pfn_dispatch = Marshal.GetFunctionPointerForDelegate(m_dispatcher);
                 for (ushort i = 0; i<(ushort)TrinityMessageType.MESSAGE_TYPE_MAX; ++i)
                 {
-                    CNativeNetwork.RegisterMessageHandler(i, pfn_dispatch);
+                    Global.RegisterMessageHandler(i, pfn_dispatch);
                 }
             }
         }

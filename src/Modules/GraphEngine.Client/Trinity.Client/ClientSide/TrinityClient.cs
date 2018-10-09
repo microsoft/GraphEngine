@@ -147,10 +147,10 @@ namespace Trinity.Client
                 }
                 if (errno != 0) { return; }
 
-                var pctx = *sp.lp++; // FIXME pctx is always 0!
+                var pctx = *sp.lp++;
                 var msg_len = *sp.ip++;
                 if (msg_len < 0) return; // no events
-                MessageBuff msg_buff = new MessageBuff{ Buffer = sp.bp, BytesReceived = (uint)msg_len };
+                MessageBuff msg_buff = new MessageBuff{ Buffer = sp.bp, Length = (uint)msg_len };
                 MessageDispatcher(&msg_buff);
                 // !Note, void-response messages are not acknowledged. 
                 // Server would not be aware of client side error in this case.
@@ -169,14 +169,14 @@ namespace Trinity.Client
         private unsafe void _PostResponseImpl(long pctx, MessageBuff* messageBuff)
         {
             int header_len = TrinityProtocol.MsgHeader + sizeof(int) + sizeof(int) + sizeof(long);
-            int socket_header = header_len + (int)messageBuff->BytesToSend - TrinityProtocol.SocketMsgHeader;
+            int socket_header = header_len + (int)messageBuff->Length - TrinityProtocol.SocketMsgHeader;
 
             byte* buf = stackalloc byte[header_len];
             byte** bufs = stackalloc byte*[2];
             int* sizes = stackalloc int[2];
 
             sizes[0] = header_len;
-            sizes[1] = (int)messageBuff->BytesToSend;
+            sizes[1] = (int)messageBuff->Length;
             bufs[0] = buf;
             bufs[1] = messageBuff->Buffer;
 

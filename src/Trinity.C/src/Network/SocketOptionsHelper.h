@@ -100,6 +100,20 @@ namespace Trinity
             return socket;
 #endif
         }
+
+#if !defined(TRINITY_PLATFORM_WINDOWS)
+    static bool make_nonblocking(int fd)
+    {
+        int status_flags = fcntl(fd, F_GETFL, 0);
+        if (-1 == status_flags)
+            return false;
+        status_flags |= O_NONBLOCK;
+        if (-1 == fcntl(fd, F_SETFL, status_flags))
+            return false;
+        return true;
+    }
+
+#endif
     }
 }
 

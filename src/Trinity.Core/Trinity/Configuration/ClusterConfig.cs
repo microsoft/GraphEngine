@@ -48,6 +48,12 @@ namespace Trinity
             var IdAttr = config.Attribute(ConfigurationConstants.Attrs.ID);
             Id = IdAttr != null ? IdAttr.Value : null;
 
+            var RunningModeAttr = config.Attribute(ConfigurationConstants.Attrs.RUNNINGMODE);
+            if (RunningModeAttr != null && Enum.TryParse<RunningMode>(RunningModeAttr.Value, out var mode))
+            {
+                this.RunningMode = mode;
+            }
+
             var serverEntries = config.Elements().Where(_ => _.Name == ConfigurationConstants.Tags.SERVER);
             var proxyEntries = config.Elements().Where(_ => _.Name == ConfigurationConstants.Tags.PROXY);
 

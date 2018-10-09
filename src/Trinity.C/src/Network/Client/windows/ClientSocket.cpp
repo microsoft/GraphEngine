@@ -4,8 +4,8 @@
 //
 #include <os/os.h>
 #if defined(TRINITY_PLATFORM_WINDOWS)
-#include  "ClientSocket.h"
-#include "Network/Server/iocp/TrinitySocketServer.h"
+#include "ClientSocket.h"
+#include "Network/Network.h"
 #include "Network/SocketOptionsHelper.h"
 #include "Trinity/Configuration/TrinityConfig.h"
 #include <thread>
@@ -16,7 +16,7 @@ namespace Trinity
     {
         uint64_t CreateClientSocket()
         {
-            InitializeNetwork();
+            initialize_network();
 
             SOCKET clientsocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
