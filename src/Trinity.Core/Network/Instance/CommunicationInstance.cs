@@ -288,9 +288,6 @@ namespace Trinity.Network
                     RegisterMessageHandler();
                     MessageDispatcher = _MessageInitializationTrap;
 
-                    //  Bring up networking subsystems
-                    StartCommunicationListeners();
-
                     //  Initialize cloud storage
                     memory_cloud = Global.CloudStorage;
 
@@ -301,6 +298,9 @@ namespace Trinity.Network
                     //  Modules initialized, release pending messages from the trap
                     m_module_init_signal.Set();
                     MessageDispatcher = MessageHandlers.DefaultParser.DispatchMessage;
+
+                    //  Bring up networking subsystems
+                    StartCommunicationListeners();
 
                     Log.WriteLine("Working Directory: {0}", Global.MyAssemblyPath);
                     Log.WriteLines(TrinityConfig.OutputCurrentConfig());
