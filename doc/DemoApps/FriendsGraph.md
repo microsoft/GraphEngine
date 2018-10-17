@@ -137,7 +137,7 @@ _FriendsCell_ project. Now we can make the six guys _friends_ in our
 program.
 
 ```C#
-Friendship friend_ship = new Friendship();
+Friendship friend_ship = new Friendship(new List<long>());
 friend_ship.friends.Add(Rachel.CellID);
 friend_ship.friends.Add(Monica.CellID);
 friend_ship.friends.Add(Phoebe.CellID);
