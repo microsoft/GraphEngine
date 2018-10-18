@@ -38,6 +38,7 @@ namespace Trinity.Network
     {
         #region Fields
         private TrinityHttpServer m_HttpServer = null;
+        private bool m_hasHttpEndpointInCommunicationModules = false;
         private Dictionary<string, CommunicationModule> m_CommunicationModules = new Dictionary<string, CommunicationModule>();
         private ushort m_SynReqIdOffset;
         private ushort m_SynReqRspIdOffset;
@@ -119,6 +120,14 @@ namespace Trinity.Network
 
                     m_CommunicationModules[m.GetModuleName()] = m;
                     m.Initialize(this);
+
+                    /* Start http server if http endpoints found in communication modules and it not started yet */
+                    if (!HasHttpEndpoints() &&
+                        m.GetCommunicationSchema().HttpEndpointNames.Count() != 0)
+                    {
+                        m_hasHttpEndpointInCommunicationModules = true;
+                        StartHttpServer();
+                    }
 
                     foreach (var t in m.GetRegisteredCommunicationModuleTypes())
                     {
@@ -264,9 +273,9 @@ namespace Trinity.Network
 
         private bool HasHttpEndpoints()
         {
-            return
+            return 
                 (this.GetCommunicationSchema().HttpEndpointNames.Count() != 0) ||
-                (this.m_CommunicationModules.Values.Any(m => m.GetCommunicationSchema().HttpEndpointNames.Count() != 0));
+                m_hasHttpEndpointInCommunicationModules;
         }
 
         /// <summary>
@@ -288,6 +297,9 @@ namespace Trinity.Network
                     RegisterMessageHandler();
                     MessageDispatcher = _MessageInitializationTrap;
 
+                    //  Bring up networking subsystems
+                    StartCommunicationListeners();
+
                     //  Initialize cloud storage
                     memory_cloud = Global.CloudStorage;
 
@@ -298,9 +310,6 @@ namespace Trinity.Network
                     //  Modules initialized, release pending messages from the trap
                     m_module_init_signal.Set();
                     MessageDispatcher = MessageHandlers.DefaultParser.DispatchMessage;
-
-                    //  Bring up networking subsystems
-                    StartCommunicationListeners();
 
                     Log.WriteLine("Working Directory: {0}", Global.MyAssemblyPath);
                     Log.WriteLines(TrinityConfig.OutputCurrentConfig());
