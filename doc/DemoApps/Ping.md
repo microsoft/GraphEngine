@@ -112,7 +112,7 @@ namespace TestTrinity
             var my_server = new MyServer();
             my_server.Start(false);
             var synReq = new MyMessageWriter(1);
-            Global.CloudStorage.SynPingToServer(0, synReq);
+            Global.CloudStorage.SynPingToMyServer(0, synReq);
             Console.WriteLine();
             Console.ReadKey();
         }
