@@ -43,7 +43,10 @@ namespace Trinity
         {
             _copy_from(il.begin(), il.size());
         }
-        Array(_Myt&& arr) { _move_from(std::forward<_Myt>(arr)); }
+        Array(_Myt&& arr) 
+        { 
+            _move_from(std::forward<_Myt>(arr)); 
+        }
 
         ~Array()
         {
@@ -72,7 +75,24 @@ namespace Trinity
         operator T*() { return data(); }
         operator const T*() const{ return data(); }
         T&& move(size_t pos) { return std::move(_array[pos]); }
-		T* detach_data() { auto ret = _array; _array = nullptr; _length = 0; return ret; }
+        //!  Since our array buffer is produced with an allocator,
+        //   it does not make sense to pass out the raw pointer
+        //   as the allocator information would be lost.
+        //   As our primary usage is interop, it doesn't make sense
+        //   either to return std::unique_ptr.
+        //   Therefore the best thing to do is to malloc a new buffer, and move the elements
+        //   into the new buffer. 
+        T* detach_data() 
+        { 
+            auto len = _length * sizeof(T);
+            auto ret = (T*)malloc(len);
+
+            std::move(_array, _array + _length, ret);
+
+            _array = nullptr; 
+            _length = 0; 
+            return ret; 
+        }
 
         //since we're just simply arrays, we don't care much about the logic of iterator..
         typedef T *iterator;
