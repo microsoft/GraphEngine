@@ -58,7 +58,7 @@
 
     <Error
       Text="A Graph Engine project cannot be built with Prefer32Bit option enabled. Please uncheck the toggle in project properties page, or edit the project file."
-      Condition=" $(Prefer32Bit) == true " />
+      Condition=" $(Prefer32Bit) == true AND ('$(Platform)' == 'AnyCPU' OR '$(Platform)' == 'anycpu')" />
 
     <Error
       Text="A Graph Engine project should target AnyCPU or x64. Please change the platform in the project properties page, or edit the project file."
