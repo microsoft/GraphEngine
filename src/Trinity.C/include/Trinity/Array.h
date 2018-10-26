@@ -154,7 +154,7 @@ namespace Trinity
 
         inline void initialize()
         {
-            if constexpr(std::is_trivial<T>::value)
+            if (std::is_trivial<T>::value)
                 memset(_array, 0, sizeof(T) * _count);
             else
             {
@@ -166,7 +166,7 @@ namespace Trinity
 
         inline void destroy()
         {
-            if constexpr ((std::is_trivial<T>::value || std::is_trivially_destructible<T>::value))
+            if ((std::is_trivial<T>::value || std::is_trivially_destructible<T>::value))
             {
                 /*do nothing*/
             }
@@ -192,7 +192,7 @@ namespace Trinity
         {
             /* constructing from another array means deep copy */
             allocate(cnt);
-            if constexpr(std::is_trivially_copyable<T>::value)
+            if (std::is_trivially_copyable<T>::value)
             {
                 memcpy(_array, source, sizeof(T) * _count);
             }
