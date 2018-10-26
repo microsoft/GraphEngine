@@ -58,6 +58,8 @@ namespace Trinity
                 return Create(path);
             }
 
+#ifndef __cplusplus_cli
+
             inline std::vector<String> GetDirectories(const String& path)
             {
                 std::vector<String> ret;
@@ -197,6 +199,7 @@ namespace Trinity
             {
                 return GetFiles(directory, std::vector<String>({ "" }));
             }
+#endif // __cplusplus_cli
         }
     }
 }
