@@ -16,7 +16,7 @@ namespace Trinity
     public:
         typedef Array<T> _Myt;
 
-        Array() : _count(0), _array(NULL) {}
+        Array() : _array(NULL), _count(0) {}
 
         Array(size_t count)
         {
@@ -25,7 +25,6 @@ namespace Trinity
         }
 
         Array(size_t count, std::function<T&&(int)> generator)
-            :
         {
             allocate(count);
             int idx = 0;
@@ -142,8 +141,8 @@ namespace Trinity
 
         inline void allocate(size_t count) 
         { 
+            _array = _allocator.allocate(count); 
             _count = count;
-            _array = _allocator.allocate(_count); 
         }
 
         inline void deallocate() 
