@@ -201,7 +201,7 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     SET(_DN_IMPORT_PROP ${CMAKE_CURRENT_BINARY_DIR}/${_DN_projname}.imports.props)
     CONFIGURE_FILE(${DOTNET_MODULE_DIR}/DotnetImports.props.in ${_DN_IMPORT_PROP})
 
-    SET(DOTNET_BUILD_PROPERTIES ${_DN_PLATFORM_PROP} ${_DN_TFMS_PROP} "/p:DirectoryBuildPropsPath=${_DN_IMPORT_PROP}" "/p:DOTNET_PACKAGE_VERSION=${_DN_VERSION}" PARENT_SCOPE)
+    SET(DOTNET_BUILD_PROPERTIES ${_DN_PLATFORM_PROP} "/p:DirectoryBuildPropsPath=${_DN_IMPORT_PROP}" "/p:DOTNET_PACKAGE_VERSION=${_DN_VERSION}" PARENT_SCOPE)
     SET(DOTNET_BUILD_OPTIONS ${_DN_BUILD_OPTIONS} PARENT_SCOPE)
     SET(DOTNET_PACK_OPTIONS  ${_DN_PACK_OPTIONS} PARENT_SCOPE)
 
@@ -240,7 +240,7 @@ MACRO(DOTNET_BUILD_COMMANDS)
     IF(${DOTNET_IS_MSBUILD})
         SET(build_dotnet_cmds 
             COMMAND ${CMAKE_COMMAND} -E echo "=======> Building msbuild project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
-            COMMAND ${NUGET_EXE} restore ${DOTNET_PROJPATH}
+            COMMAND ${NUGET_EXE} restore ${DOTNET_PROJPATH} -PackagesDirectory packages
             COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Clean /p:Configuration="${DOTNET_CONFIG}"
             COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build ${DOTNET_BUILD_PROPERTIES} /p:Configuration="${DOTNET_CONFIG}")
         SET(build_dotnet_type "msbuild")

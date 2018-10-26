@@ -49,6 +49,8 @@ ADD_MSBUILD(
     VERSION ${TRINITY_VERSION}
 )
 
+ADD_SUBDIRECTORY(src/Trinity.VSExtension)
+
 # ADD_DOTNET(
 #     src/GraphEngine.DataImporter/GraphEngine.DataImporter.sln
 #     PACKAGE GraphEngine.DataImporter
