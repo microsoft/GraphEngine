@@ -29,6 +29,8 @@ namespace Trinity
             Shutdown,
             Wakeup,
             Resume,
+            Read,
+            Write,
         };
 
         // This is for data exchange between Events subsystem and message handlers.

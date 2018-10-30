@@ -182,3 +182,4 @@ namespace Trinity
 DLL_EXPORT TrinityErrorCode StartEventLoop() { return Trinity::Events::start_eventloop(); }
 DLL_EXPORT TrinityErrorCode StopEventLoop() { return Trinity::Events::stop_eventloop(); }
 DLL_EXPORT TrinityErrorCode RegisterMessageHandler(uint16_t msgId, void * handler) { return Trinity::Events::register_handler(msgId, (Trinity::Events::message_handler_t *)handler); }
+DLL_EXPORT void LocalSendMessage(Trinity::Events::message_t* message) { Trinity::Events::s_message_handlers[*(uint16_t*)message->buf](message); }
