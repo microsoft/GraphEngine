@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Trinity.Utilities
 {
@@ -13,21 +12,8 @@ namespace Trinity.Utilities
     {
         public static string ToString(ICollection<T> collection, int indent = 0, string separator = " ")
         {
-            string indent_space = "";
-            for (int i = 0; i < indent; i++)
-            {
-                indent_space += " ";
-            }
-            string ret = "";
-            foreach (T t in collection)
-            {
-                ret += indent_space + t.ToString() + separator;
-            }
-            if (ret.LastIndexOf(separator, StringComparison.Ordinal) != -1) //make sure the input is not an empty collection
-            {
-                ret = ret.Substring(0, ret.LastIndexOf(separator, StringComparison.Ordinal)); //remove the last separator
-            }
-            return ret;
+            var indentSpace = new string(' ', indent);
+            return string.Join(separator, collection.Select(t => indentSpace + t.ToString()));
         }
     }
 
