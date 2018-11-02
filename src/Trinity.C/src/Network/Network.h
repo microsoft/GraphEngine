@@ -24,6 +24,7 @@
 #include <netinet/in.h>
 #include <fcntl.h>
 
+typedef struct sockaddr_in SOCKADDR_IN;
 typedef int SOCKET;
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
@@ -135,5 +136,13 @@ namespace Trinity
 
         extern uint8_t  HANDSHAKE_MESSAGE_CONTENT[];
         extern int      HANDSHAKE_MESSAGE_LENGTH;
+
+        uint64_t client_socket();
+        bool client_connect(uint64_t clientsocket, uint32_t ip, uint16_t port);
+        bool client_send(uint64_t socket, char* buf, int32_t len);
+        bool client_send_multi(uint64_t socket, char** bufs, int32_t* lens, int32_t cnt);
+        TrinityErrorCode client_recv(uint64_t socket, OUT char* & buf, OUT int32_t & len);
+        TrinityErrorCode client_wait(uint64_t socket);
+        void client_close(uint64_t socket);
     }
 }

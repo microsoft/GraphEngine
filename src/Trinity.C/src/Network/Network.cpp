@@ -4,6 +4,7 @@
 //
 #include "os/os.h"
 #include "Network.h"
+#include "SocketOptionsHelper.h"
 #include "Trinity/Threading/TrinityLock.h"
 #include "Trinity/Diagnostics/Log.h"
 #include "Trinity/Configuration/TrinityConfig.h"
@@ -139,7 +140,7 @@ namespace Trinity
             }
 
             //free response buffer passed from handler, rearm at rx_buf
-            free(p->msg_buf - p->msg_len); 
+            free(p->msg_buf - p->msg_len);
             p->msg_buf = p->rx_buf;
             p->msg_len = 0;
             p->pending_len = p->rx_len;
@@ -237,7 +238,7 @@ namespace Trinity
                     }
 
                     // calculate average received message length with a sliding window.
-                    psock->avg_rx_len = (uint32_t)(psock->avg_rx_len * AvgSlideWin_a + 
+                    psock->avg_rx_len = (uint32_t)(psock->avg_rx_len * AvgSlideWin_a +
                                                    psock->msg_len * AvgSlideWin_b);
 
                     // Make sure that average received message length is capped above default value.
@@ -277,5 +278,208 @@ namespace Trinity
                 return false;
             }
         }
+
+#pragma region client implementation
+
+        bool client_handshake(uint64_t clientsocket)
+        {
+            // send handshake sequence
+
+            char* send_buff = (char*)malloc(HANDSHAKE_MESSAGE_LENGTH + sizeof(int32_t));
+            *(int32_t*)send_buff = HANDSHAKE_MESSAGE_LENGTH;
+            memcpy(send_buff + sizeof(int32_t), HANDSHAKE_MESSAGE_CONTENT, HANDSHAKE_MESSAGE_LENGTH);
+
+            if (!client_send(clientsocket, send_buff, sizeof(int32_t) + HANDSHAKE_MESSAGE_LENGTH))
+            {
+                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Server rejected handshake request message. Thread Id = {0}, Socket = {1}", std::this_thread::get_id(), clientsocket);
+                goto handshake_check_fail;
+            }
+
+            if (client_wait(clientsocket) != TrinityErrorCode::E_SUCCESS)
+            {
+                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Incorrect server handshake ACK message. Thread Id = {0}, Socket = {1}", std::this_thread::get_id(), clientsocket);
+                goto handshake_check_fail;
+            }
+
+            //handshake_check_success: cleanup and return now.
+            free(send_buff);
+            return true;
+
+        handshake_check_fail:
+            free(send_buff);
+            closesocket((SOCKET)clientsocket);
+            return false;
+
+        }
+
+        uint64_t client_socket()
+        {
+#if defined(TRINITY_PLATFORM_WINDOWS)
+            initialize_network();
+#endif
+
+            SOCKET clientsocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+            if (INVALID_SOCKET == clientsocket)
+            {
+                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Cannot create a client socket.");
+                closesocket(clientsocket);
+                return INVALID_SOCKET;
+            }
+
+            // The client side already have heartbeat packages. Don't enable keepalive messages.
+            return SetSocketOptions(clientsocket, /*enable_keepalive:*/ false, /*disable_sendbuf:*/TrinityConfig::ClientDisableSendBuffer());
+        }
+
+        bool client_connect(uint64_t clientsocket, uint32_t ip, uint16_t port)
+        {
+            SOCKADDR_IN ipe;
+
+            ipe.sin_family = AF_INET;
+            ipe.sin_port = htons(port); // converts a u_short from host to network byte order (big-endian)
+#if defined(TRINITY_PLATFORM_WINDOWS)
+            ipe.sin_addr.S_un.S_addr = ip;
+#else
+            ipe.sin_addr.s_addr = ip;
+#endif
+
+            if (SOCKET_ERROR == connect((SOCKET)clientsocket, (sockaddr*)&ipe, sizeof(SOCKADDR_IN)))
+            {
+                //Diagnostics::WriteLine(Diagnostics::LogLevel::Warning, "Cannot connect to an IP endpoint.");
+                closesocket((SOCKET)clientsocket);
+                return false;
+            }
+
+            if (TrinityConfig::Handshake())
+            {
+                return client_handshake(clientsocket);
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        bool client_send(uint64_t socket, char* buf, int32_t len)
+        {
+            do
+            {
+#if defined(TRINITY_PLATFORM_WINDOWS)
+                int32_t bytesSent = send((SOCKET)socket, buf, len, 0);
+#else
+                ssize_t bytesSent = write((int)socket, buf, len);
+#endif
+                if (SOCKET_ERROR == bytesSent)
+                {
+#if defined(TRINITY_PLATFORM_WINDOWS)
+                    int error_code = WSAGetLastError();
+#else
+                    int error_code = errno;
+#endif
+                    Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Errors occur during network send: {0} bytes to send. Error code = {1}, Thread Id = {2}", len, error_code, std::this_thread::get_id());
+
+                    if (INVALID_SOCKET == socket)
+                    {
+                        Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Provided socket for send is invalid.");
+                    }
+
+                    closesocket((SOCKET)socket);
+                    return false;
+                }
+                buf += bytesSent;
+                len -= bytesSent;
+            } while (len > 0);
+            return true;
+        }
+
+        bool client_send_multi(uint64_t socket, char** bufs, int32_t* lens, int32_t cnt)
+        {
+            for (; cnt > 0; --cnt)
+            {
+                if (!client_send(socket, *bufs, *lens)) return false;
+                ++bufs;
+                ++lens;
+            }
+            return true;
+        }
+
+        bool _do_recv(SOCKET socket, char* buf, int32_t len)
+        {
+            while (len)
+            {
+#if defined(TRINITY_PLATFORM_WINDOWS)
+                int32_t bytesRecvd = recv(socket, buf, len, 0);
+#else
+                ssize_t bytesRecvd = read(socket, buf, len);
+#endif
+                if (SOCKET_ERROR == bytesRecvd || 0 == bytesRecvd)
+                {
+#if defined(TRINITY_PLATFORM_WINDOWS)
+                    int error_code = WSAGetLastError();
+#else
+                    int error_code = errno;
+#endif
+                    Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Errors occur during network recv: Error code = {0}, Thread Id={1}", error_code, std::this_thread::get_id());
+                    closesocket((SOCKET)socket);
+                    return false;
+                }
+                buf += bytesRecvd;
+                len -= bytesRecvd;
+            }
+
+            return true;
+        }
+
+        TrinityErrorCode client_recv(uint64_t _socket, OUT char* & buf, OUT int32_t & len)
+        {
+            SOCKET socket = (SOCKET)_socket;
+            if (!_do_recv(socket, (char*)&len, sizeof(int32_t)))
+            {
+                return TrinityErrorCode::E_NETWORK_RECV_FAILURE;
+            }
+
+            if (len < 0) return (TrinityErrorCode)len;
+
+            buf = (char*)malloc(len); // will be freed by a C# message reader.
+            if (NULL == buf)
+            {
+                Trinity::Diagnostics::FatalError("ClientSocket: Cannot allocate memory in network Receive.");
+                return TrinityErrorCode::E_NOMEM;
+            }
+
+            if (!_do_recv(socket, buf, len))
+            {
+                return TrinityErrorCode::E_NETWORK_RECV_FAILURE;
+            }
+
+            return TrinityErrorCode::E_SUCCESS;
+        }
+
+        TrinityErrorCode client_wait(uint64_t _socket)
+        {
+            int32_t buf;
+            char *recvbuf = (char*)&buf;
+            SOCKET socket = (SOCKET)_socket;
+            if (!_do_recv(socket, recvbuf, sizeof(int32_t)))
+            {
+                return TrinityErrorCode::E_NETWORK_RECV_FAILURE;
+            }
+            else
+            {
+                return (TrinityErrorCode)buf;
+            }
+        }
+
+        void client_close(uint64_t socket)
+        {
+#if defined (TRINITY_PLATFORM_WINDOWS)
+            closesocket((SOCKET)socket);
+#else
+            shutdown((int)socket, SHUT_RDWR);
+            close((int)socket);
+#endif
+        }
+
+#pragma endregion
     }
 }
