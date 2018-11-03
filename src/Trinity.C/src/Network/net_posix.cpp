@@ -45,12 +45,11 @@ namespace Trinity
                 }
                 Diagnostics::WriteLine(Diagnostics::LogLevel::Debug, "Network: Incomming connection from {0}", String(clientaddr));
 
-                sock_t * p = alloc_socket(connected_sock_fd);
-                add_socket(p);
+                sock_t * p = alloc_incoming_socket(connected_sock_fd);
 
                 if (TrinityErrorCode::E_SUCCESS != Events::enter_eventloop(p))
                 {
-                    close_client_conn(p, false);
+                    close_incoming_conn(p, false);
                     continue;
                 }
 
@@ -124,23 +123,9 @@ namespace Trinity
             close(accept_sock);
 
             /* Proceed to close all client sockets. */
-            close_all_client_conn();
+            close_all_incoming_conn();
 
             return 0;
-        }
-
-        void close_client_conn(sock_t* p, bool lingering)
-        {
-            remove_socket(p);
-            if (!lingering)
-            {
-                linger so_linger;
-                so_linger.l_onoff = 1;
-                so_linger.l_linger = 0;
-                setsockopt(p->socket, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger));
-            }
-            close(p->socket);
-            free_socket(p);
         }
     }
 }

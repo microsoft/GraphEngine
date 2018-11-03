@@ -54,31 +54,19 @@ namespace Trinity
             }
         }
 
-        TrinityErrorCode await_iocp(OUT work_t* &pwork, OUT uint32_t &bytesTransferred)
+        TrinityErrorCode platform_poll(OUT work_t* &pwork, OUT uint32_t &bytesTransferred)
         {
             Network::sock_t* psock;
             if (FALSE == GetQueuedCompletionStatus(hIocp, (LPDWORD)&bytesTransferred, (PULONG_PTR)&psock, (LPOVERLAPPED *)&pwork, INFINITE))
             {
                 if (psock != NULL)
                 {
-                    Network::close_client_conn(psock, false);
+                    Network::close_incoming_conn(psock, false);
                 }
                 return TrinityErrorCode::E_FAILURE;
             }
 
             return TrinityErrorCode::E_SUCCESS;
-        }
-
-        work_t* poll_work(OUT uint32_t& szwork)
-        {
-            work_t* ret;
-            while (true)
-            {
-                if(TrinityErrorCode::E_SUCCESS == await_iocp(ret, szwork))
-                {
-                    return ret;
-                }
-            }
         }
 
         TrinityErrorCode enter_eventloop(Network::sock_t* key)
@@ -91,6 +79,20 @@ namespace Trinity
             }
             return TrinityErrorCode::E_SUCCESS;
         }
+
+        TrinityErrorCode platform_post_compute(work_t* pwork)
+        {
+            auto hr = PostQueuedCompletionStatus(hIocp, 0, NULL, (LPOVERLAPPED)pwork);
+            if (hr == FALSE)
+            {
+                auto err = GetLastError();
+                Diagnostics::WriteLine(Diagnostics::Error, "EventLoop: Cannot post compute workload to the completion port. Error code = {0}", err);
+                return TrinityErrorCode::E_FAILURE;
+            }
+
+            return TrinityErrorCode::E_SUCCESS;
+        }
+
     }
 }
 

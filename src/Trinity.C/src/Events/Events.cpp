@@ -27,6 +27,8 @@ namespace Trinity
 
         TrinityErrorCode platform_start_eventloop();
         TrinityErrorCode platform_stop_eventloop();
+        TrinityErrorCode platform_post_compute(work_t*);
+        TrinityErrorCode platform_poll(work_t*&, uint32_t&);
 
         void _default_handler(message_t * buff)
         {
@@ -43,8 +45,11 @@ namespace Trinity
 
             while (true)
             {
-                pwork = poll_work(OUT szwork);
-                psock = pwork->psock;
+                while (TrinityErrorCode::E_SUCCESS != platform_poll(pwork, szwork))
+                {
+                    // loop
+                }
+
                 switch (pwork->type)
                 {
                 case worktype_t::Shutdown:
@@ -52,6 +57,7 @@ namespace Trinity
                     return;
                 case worktype_t::Receive:
 
+                    psock = pwork->psock;
                     if (!Network::process_recv(psock, szwork))
                     {
                         break;
@@ -70,9 +76,11 @@ namespace Trinity
 
                     break;
                 case worktype_t::Send:
+
+                    psock = pwork->psock;
                     if (Network::process_send(psock, szwork))
                     {
-                        Network::reset_socket(psock);
+                        Network::reset_incoming_socket(psock);
                         Network::recv_async(psock);
                     }
                     else
@@ -80,6 +88,11 @@ namespace Trinity
                         Network::send_async(psock);
                     }
                     break;
+                case worktype_t::Compute:
+                    pwork->pcompute(pwork->pdata);
+                    free_work(pwork);
+                    break;
+
                 case worktype_t::None:
                     break;
                 default:
@@ -104,15 +117,13 @@ namespace Trinity
         work_t* alloc_work(worktype_t work)
         {
             work_t* p = (work_t*)malloc(sizeof(work_t));
-#if defined(TRINITY_PLATFORM_WINDOWS)
-            memset(p, 0, sizeof(WSAOVERLAPPED));
-#endif
-            p->type = work;
+            reset_work(p, work);
             return p;
         }
 
         void free_work(work_t* p)
         {
+            //TODO free compute resources
             free(p);
         }
 
@@ -174,6 +185,15 @@ namespace Trinity
         {
             Diagnostics::WriteLine(Diagnostics::Info, "EventLoop: Stopping.");
             return platform_stop_eventloop();
+        }
+
+        TrinityErrorCode post_compute(compute_handler_t* pcompute, void* pdata)
+        {
+            auto pwork = alloc_work(worktype_t::Compute);
+            pwork->pcompute = pcompute;
+            pwork->pdata    = pdata;
+
+            return platform_post_compute(pwork);
         }
     }
 }

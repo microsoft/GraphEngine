@@ -55,15 +55,13 @@ namespace Trinity
                     continue;
                 }
 
-                sock_t * p = alloc_socket(acceptSocket);
-
                 // Add it to the client socket set
-                add_socket(p);
+                sock_t * p = alloc_incoming_socket(acceptSocket);
 
                 // associate the accept socket with the previously created IOCP
                 if (TrinityErrorCode::E_SUCCESS != Events::enter_eventloop(p))
                 {
-                    close_client_conn(p, false);
+                    close_incoming_conn(p, false);
                     continue;
                 }
 
@@ -133,7 +131,7 @@ namespace Trinity
             closesocket(socket);
 
             //  Proceed to close all existing client sockets.
-            close_all_client_conn();
+            close_all_incoming_conn();
 
             return 0;
         }
@@ -159,7 +157,7 @@ namespace Trinity
                 /// WSARecv returns SOCKET_ERROR and indicates error code WSA_IO_PENDING.
                 /// If any overlapped function fails with WSA_IO_PENDING or immediately succeeds,
                 /// the completion event will always be signaled and the completion routine will be scheduled to run (if specified)
-                close_client_conn(p, false);
+                close_incoming_conn(p, false);
             }
             // otherwise, the receive operation has completed immediately or it is pending
         }
@@ -176,38 +174,8 @@ namespace Trinity
                 WSA_IO_PENDING != WSAGetLastError())
             {
                 Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ServerSocket: Errors occur during WSASend. Error code = {0}", WSAGetLastError());
-                close_client_conn(p, false);
+                close_incoming_conn(p, false);
             }
-        }
-
-        void close_client_conn(sock_t* p, bool lingering)
-        {
-            // closesocket deallocates socket handles and free up associated resources.
-            // closesocket function implicitly causes a shutdown sequence to occur if it has not already happened,
-            // we can use closesocket to both initiate the shutdown sequence and deallocate the socket handle.
-
-            // the sockets interface provides for controls by way of the socket option mechanism that
-            // allow us to indicate whether the implicit shutdown sequence should be graceful or abortive.
-            // and also whether the closesocket function should linger(that is not complete immediately) to
-            // allow time for a graceful shutdown sequence to complete.
-
-            // More info: https://msdn.microsoft.com/en-us/library/windows/desktop/ms738547%28v=vs.85%29.aspx
-
-            // Remove it from the client socket set
-            remove_socket(p);
-
-            if (!lingering)
-            {
-                LINGER _linger;
-                _linger.l_onoff = 1; //The socket will remain open for a specified amount of time.
-                _linger.l_linger = 0; //
-                setsockopt(p->socket, SOL_SOCKET, SO_LINGER, (char*)&_linger, sizeof(_linger));
-            }
-
-            // closesocket function implicitly causes a shutdown sequence
-            closesocket(p->socket);
-            p->socket = INVALID_SOCKET;
-            free_socket(p);
         }
     }
 }

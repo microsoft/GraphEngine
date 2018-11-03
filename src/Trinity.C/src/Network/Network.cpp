@@ -18,7 +18,7 @@ namespace Trinity
     namespace Network
     {
         TrinityLock psco_spinlock; // psco = per socket context object
-        std::unordered_set<sock_t*> psco_set;
+        std::unordered_set<sock_t*> incoming_psco_set;
         using Trinity::Events::work_t;
 
 #pragma region networking subsystem initialization
@@ -66,31 +66,49 @@ namespace Trinity
 
 #pragma region socket desc management
 
-        void add_socket(sock_t * pContext)
+        void close_all_incoming_conn()
         {
             psco_spinlock.lock();
-            psco_set.insert(pContext);
+            auto psco_set_shadow = incoming_psco_set;
             psco_spinlock.unlock();
+
+            for (auto& pctx : psco_set_shadow) { close_incoming_conn(pctx, false); }
         }
 
-        void remove_socket(sock_t* psco)
+        void close_incoming_conn(sock_t* p, bool lingering)
         {
+            // Remove it from the client socket set
+
             psco_spinlock.lock();
-            psco_set.erase(psco);
-            psco_spinlock.unlock();
-        }
-
-        void close_all_client_conn()
-        {
-            psco_spinlock.lock();
-            auto psco_set_shadow = psco_set;
+            incoming_psco_set.erase(p);
             psco_spinlock.unlock();
 
-            for (auto& pctx : psco_set_shadow) { close_client_conn(pctx, false); }
-        }
+            if (!lingering)
+            {
+                LINGER _linger;
+                _linger.l_onoff = 1; //The socket will remain open for a specified amount of time.
+                _linger.l_linger = 0; //
+                setsockopt(p->socket, SOL_SOCKET, SO_LINGER, (char*)&_linger, sizeof(_linger));
+            }
 
-        void free_socket(sock_t* p)
-        {
+#if defined(TRINITY_PLATFORM_WINDOWS)
+            // closesocket function implicitly causes a shutdown sequence
+            // closesocket deallocates socket handles and free up associated resources.
+            // closesocket function implicitly causes a shutdown sequence to occur if it has not already happened,
+            // we can use closesocket to both initiate the shutdown sequence and deallocate the socket handle.
+
+            // the sockets interface provides for controls by way of the socket option mechanism that
+            // allow us to indicate whether the implicit shutdown sequence should be graceful or abortive.
+            // and also whether the closesocket function should linger(that is not complete immediately) to
+            // allow time for a graceful shutdown sequence to complete.
+
+            // More info: https://msdn.microsoft.com/en-us/library/windows/desktop/ms738547%28v=vs.85%29.aspx
+            closesocket(p->socket);
+#else
+            shutdown(p->socket, SHUT_RDWR);
+            close(p->socket);
+#endif
+
             Events::free_work(p->work);
             free(p->rx_buf);
             // when not overlapped with rx_buf, msg_buf is a send buffer.
@@ -108,7 +126,7 @@ namespace Trinity
         /// [4B Len|SIGNATURE_BODY]
         /// Server checks the signature and reply:
         /// [4B TrinityErrorCode]/[Disconnect]
-        sock_t* alloc_socket(SOCKET socket)
+        sock_t* alloc_incoming_socket(SOCKET socket)
         {
             sock_t* p = (sock_t*)malloc(sizeof(sock_t));
             Diagnostics::WriteLine(Diagnostics::LogLevel::Verbose, "Network: sock_t {0} allocated. fd = {1}", p, socket);
@@ -124,12 +142,16 @@ namespace Trinity
             p->wait_handshake = TrinityConfig::Handshake();
             p->avg_rx_len     = p->rx_len;
 
+            psco_spinlock.lock();
+            incoming_psco_set.insert(p);
+            psco_spinlock.unlock();
+
             return p;
         }
 
         /// Resets context object so that it is ready for a receive operation.
         /// This routine is called after the buffer passed from C# is sent.
-        void reset_socket(sock_t * p)
+        void reset_incoming_socket(sock_t * p)
         {
             // If the average received message length drops below half of current recv buf len, adjust it.
             if (p->avg_rx_len < p->rx_len / AvgSlideWin_r)
@@ -170,7 +192,7 @@ namespace Trinity
             return;
 
         handshake_check_fail:
-            close_client_conn(psock, false);
+            close_incoming_conn(psock, false);
             return;
         }
 
@@ -187,7 +209,7 @@ namespace Trinity
         {
             if (bytesRecvd == 0)
             {
-                close_client_conn(psock, false);
+                close_incoming_conn(psock, false);
                 return false;
             }
 
@@ -206,14 +228,14 @@ namespace Trinity
                     if (psock->wait_handshake && psock->msg_len != HANDSHAKE_MESSAGE_LENGTH)
                     {
                         Trinity::Diagnostics::WriteLine(Trinity::Diagnostics::LogLevel::Error, "ServerSocket: Incorrect client handshake sequence, Client = {0}", psock);
-                        close_client_conn(psock, false);
+                        close_incoming_conn(psock, false);
                         return false;
                     }
 
                     if (psock->msg_len < 0)
                     {
                         Trinity::Diagnostics::WriteLine(Trinity::Diagnostics::LogLevel::Error, "ServerSocket: Incorrect message header received, Client = {0}", psock);
-                        close_client_conn(psock, false);
+                        close_incoming_conn(psock, false);
                         return false;
                     }
 
@@ -226,7 +248,7 @@ namespace Trinity
                         if (NULL == new_buf)
                         {
                             Diagnostics::WriteLine(Diagnostics::Error, "ServerSocket: Cannot allocate memory during message receiving.");
-                            close_client_conn(psock, false);
+                            close_incoming_conn(psock, false);
                             return false;
                         }
                         memcpy(new_buf + SOCKET_HEADER,
@@ -274,7 +296,7 @@ namespace Trinity
             else
             {
                 Diagnostics::WriteLine(Diagnostics::Error, "Network: receiving more than a complete message.");
-                close_client_conn(psock, false);
+                close_incoming_conn(psock, false);
                 return false;
             }
         }

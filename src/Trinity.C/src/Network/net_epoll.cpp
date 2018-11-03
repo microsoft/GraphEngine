@@ -28,7 +28,7 @@ namespace Trinity
             if (-1 == epoll_ctl(Events::epoll_fd, EPOLL_CTL_MOD, p->socket, &ep_event))
             {
                 Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Network: Errors occur during recv_async epoll_ctl. Error code = {0}", GetLastError());
-                close_client_conn(p, false);
+                close_incoming_conn(p, false);
             }
         }
 
@@ -42,7 +42,7 @@ namespace Trinity
             if (-1 == epoll_ctl(Events::epoll_fd, EPOLL_CTL_MOD, p->socket, &ep_event))
             {
                 Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Network: Errors occur during recv_async epoll_ctl. Error code = {0}", GetLastError());
-                close_client_conn(p, false);
+                close_incoming_conn(p, false);
             }
         }
     }

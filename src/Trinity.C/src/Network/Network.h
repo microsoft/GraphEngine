@@ -26,6 +26,7 @@
 
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef int SOCKET;
+typedef linger LINGER;
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
 #define closesocket close
@@ -91,15 +92,14 @@ namespace Trinity
         bool uninitialize_network();
 
         // socket management
-        sock_t* alloc_socket(SOCKET sock);
-        void free_socket(sock_t* p);
-        void add_socket(sock_t* p);
-        void remove_socket(sock_t* p);
-        void reset_socket(sock_t * p);
 
-        // close_client_conn will also call remove_sock
-        void close_client_conn(sock_t* p, bool lingering);
-        void close_all_client_conn();
+        // alloc_incoming_socket adds the psco to the incoming sock_t set.
+        sock_t* alloc_incoming_socket(SOCKET sock);
+        void reset_incoming_socket(sock_t * p);
+
+        // close_incoming_conn will also remove the psco from the set.
+        void close_incoming_conn(sock_t* p, bool lingering);
+        void close_all_incoming_conn();
 
         // I/O interfaces
 
