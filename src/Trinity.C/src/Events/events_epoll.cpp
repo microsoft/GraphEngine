@@ -33,7 +33,8 @@ namespace Trinity
                 pmaster_work = alloc_work(worktype_t::Compute);
                 pmaster_work->pdata = this;
 
-                evfd = eventfd(0, EFD_NONBLOCK);
+                // use semaphore semantic (each read decrements the counter by 1)
+                evfd = eventfd(0, EFD_NONBLOCK | EFD_SEMAPHORE);
                 epevent.data.ptr = pmaster_work;
                 epevent.events = EPOLLET | EPOLLONESHOT;
                 epoll_ctl(epoll_fd, EPOLL_CTL_ADD, evfd, &epevent);
@@ -56,6 +57,9 @@ namespace Trinity
                     pwork = work_queue.front();
                     work_queue.pop();
                 }
+                //  consume the signal
+                eventfd_t _unused;
+                eventfd_read(evfd, &_unused);
                 //  rearm the queue
                 epoll_ctl(epoll_fd, EPOLL_CTL_MOD, evfd, &epevent);
 
@@ -96,7 +100,7 @@ namespace Trinity
                  */
                 if (nullptr == pwork)
                 {
-                    /* Drain the evfd semaphore */
+                    /* do not drain the evfd semaphore */
                     break;
                 }
 

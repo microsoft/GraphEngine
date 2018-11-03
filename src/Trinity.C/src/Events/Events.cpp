@@ -123,7 +123,6 @@ namespace Trinity
 
         void free_work(work_t* p)
         {
-            //TODO free compute resources
             free(p);
         }
 
