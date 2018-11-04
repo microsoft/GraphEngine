@@ -30,11 +30,12 @@ namespace Trinity
         TrinityErrorCode platform_post_workitem(work_t*);
         TrinityErrorCode platform_poll(work_t*&, uint32_t&);
 
-        void _default_handler(message_t * buff)
+        work_t* _default_handler(message_t * buff)
         {
             buff->buf = (char *)malloc(sizeof(TrinityErrorCode));
             buff->len = sizeof(TrinityErrorCode);
             *(TrinityErrorCode *)buff->buf = TrinityErrorCode::E_RPC_EXCEPTION;
+            return nullptr;
         }
 
         const char* _sock_incoming_err(TrinityErrorCode eresult)
