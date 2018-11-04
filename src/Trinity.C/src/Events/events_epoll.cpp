@@ -197,7 +197,7 @@ namespace Trinity
             return TrinityErrorCode::E_SUCCESS;
         }
 
-        TrinityErrorCode platform_post_compute(work_t* pwork)
+        TrinityErrorCode platform_post_workitem(work_t* pwork)
         {
             auto idx = (compute_queue_idx++) % compute_queues.size();
             compute_queues[idx]->enqueue(pwork);

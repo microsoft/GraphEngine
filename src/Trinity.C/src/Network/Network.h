@@ -81,8 +81,11 @@ namespace Trinity
             Events::work_t* work; // size: 8
             // =============== 64 bytes ==============
 
+            //  wait_handshake is only enabled for incoming socket.
             uint32_t wait_handshake; //size:4
             uint32_t avg_rx_len; // size: 4
+
+            bool is_incoming;
         };
 
 
@@ -103,18 +106,18 @@ namespace Trinity
 
         // I/O interfaces
 
-        void send_async(sock_t* p);
-        void recv_async(sock_t* p);
+        TrinityErrorCode send_async(sock_t* p);
+        TrinityErrorCode recv_async(sock_t* p);
 
-        bool process_send(sock_t* p, uint32_t sz_sent);
-        bool process_recv(sock_t* p, uint32_t sz_recv);
+        TrinityErrorCode process_send(sock_t* p, uint32_t sz_sent);
+        TrinityErrorCode process_recv(sock_t* p, uint32_t sz_recv);
 
-        void check_handshake(sock_t* p);
+        TrinityErrorCode check_handshake(sock_t* p);
 
-        inline void send_rsp(sock_t* p)
+        inline TrinityErrorCode send_rsp(sock_t* p)
         {
             p->pending_len = p->msg_len;
-            send_async(p);
+            return send_async(p);
         }
 
         enum TrinityMessageType : uint16_t

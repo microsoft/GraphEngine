@@ -23,19 +23,20 @@ namespace Trinity
     {
         enum worktype_t : uint32_t
         {
-            None,
             Receive,
             Send,
             Shutdown,
             Compute,
+            Continuation,
         };
 
         // Forward definitions
         struct message_t;
         struct work_t;
 
-        typedef void(message_handler_t)(message_t*);
-        typedef void(compute_handler_t)(void*);
+        typedef work_t*(message_handler_t)(message_t* pmessage);
+        typedef work_t*(compute_handler_t)(void* pdata);
+        typedef work_t*(continuation_handler_t)(void* pdata, work_t* pcompleted);
 
         // This is for data exchange between Events subsystem and message handlers.
         struct message_t
@@ -59,16 +60,30 @@ namespace Trinity
 
             union
             {
-                Network::sock_t* psock;
+                struct
+                {
+                    Network::sock_t* psock;
+                    bool             bsock_incoming;
+                };
                 struct
                 {
                     compute_handler_t* pcompute;
-                    void*              pdata;
+                    void*              pcompute_data;
+                };
+                struct
+                {
+                    //  executed when dependency is completed (or null)
+                    continuation_handler_t* pcontinuation;
+                    //  associated data for pcontinuation
+                    void* pcontinuation_data;
+                    //  when non-null, should be executed before pcontinuation
+                    work_t* pdependency;
                 };
             };
+
+            //  when non-null, should be executed after the current work.
+            work_t* pwait_chain;
         };
-
-
 
         extern std::atomic<size_t> g_threadpool_size;
 
@@ -81,6 +96,5 @@ namespace Trinity
         TrinityErrorCode start_eventloop();
         TrinityErrorCode stop_eventloop();
         TrinityErrorCode enter_eventloop(Network::sock_t *psock);
-        TrinityErrorCode post_compute(compute_handler_t* pcompute, void* pdata);
     }
 }

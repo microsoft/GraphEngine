@@ -141,6 +141,7 @@ namespace Trinity
             p->work->psock    = p;
             p->wait_handshake = TrinityConfig::Handshake();
             p->avg_rx_len     = p->rx_len;
+            p->is_incoming    = true;
 
             psco_spinlock.lock();
             incoming_psco_set.insert(p);
@@ -169,18 +170,16 @@ namespace Trinity
         }
 #pragma endregion
 
-        void check_handshake(sock_t* psock)
+        TrinityErrorCode check_handshake(sock_t* psock)
         {
             if (psock->msg_len != HANDSHAKE_MESSAGE_LENGTH)
             {
-                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ServerSocket: Client {0} responds with invalid handshake message header.", psock);
-                goto handshake_check_fail;
+                return TrinityErrorCode::E_INIT_FAIL;
             }
 
             if (memcmp(psock->msg_buf, HANDSHAKE_MESSAGE_CONTENT, HANDSHAKE_MESSAGE_LENGTH) != 0)
             {
-                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ServerSocket: Client {0} responds with invalid handshake message.", psock);
-                goto handshake_check_fail;
+                return TrinityErrorCode::E_INIT_FAIL;
             }
 
             // handshake_check_success: acknowledge the handshake and then switch into recv mode
@@ -188,29 +187,36 @@ namespace Trinity
             psock->msg_buf = (char*)malloc(sizeof(int32_t));
             psock->msg_len = sizeof(int32_t);
             *(TrinityErrorCode*)psock->msg_buf = TrinityErrorCode::E_SUCCESS;
-            send_rsp(psock);
-            return;
-
-        handshake_check_fail:
-            close_incoming_conn(psock, false);
-            return;
+            return send_rsp(psock);
         }
 
         // return value indicates whether the whole message has been sent.
-        bool process_send(sock_t* p_sock, uint32_t bytesSent)
+        TrinityErrorCode process_send(sock_t* p_sock, uint32_t bytesSent)
         {
             p_sock->pending_len -= (int32_t)bytesSent;
             p_sock->msg_buf += (int32_t)bytesSent;
-            return p_sock->pending_len == 0;
+
+            if (p_sock->pending_len == 0)
+            {
+                return TrinityErrorCode::E_SUCCESS;
+            }
+
+            if (TrinityErrorCode::E_SUCCESS == Network::send_async(p_sock))
+            {
+                return TrinityErrorCode::E_RETRY;
+            }
+            else
+            {
+                return TrinityErrorCode::E_NETWORK_RECV_FAILURE;
+            }
         }
 
         // return value indicates whether the whole message is received
-        bool process_recv(sock_t * psock, uint32_t bytesRecvd)
+        TrinityErrorCode process_recv(sock_t * psock, uint32_t bytesRecvd)
         {
             if (bytesRecvd == 0)
             {
-                close_incoming_conn(psock, false);
-                return false;
+                return TrinityErrorCode::E_NOENTRY;
             }
 
             auto recv = psock->msg_buf - psock->rx_buf;
@@ -227,16 +233,12 @@ namespace Trinity
 
                     if (psock->wait_handshake && psock->msg_len != HANDSHAKE_MESSAGE_LENGTH)
                     {
-                        Trinity::Diagnostics::WriteLine(Trinity::Diagnostics::LogLevel::Error, "ServerSocket: Incorrect client handshake sequence, Client = {0}", psock);
-                        close_incoming_conn(psock, false);
-                        return false;
+                        return TrinityErrorCode::E_INIT_FAIL;
                     }
 
                     if (psock->msg_len < 0)
                     {
-                        Trinity::Diagnostics::WriteLine(Trinity::Diagnostics::LogLevel::Error, "ServerSocket: Incorrect message header received, Client = {0}", psock);
-                        close_incoming_conn(psock, false);
-                        return false;
+                        return TrinityErrorCode::E_RPC_EXCEPTION;
                     }
 
                     // Message prefix received into msg_len. Calibrate rx_buf now.
@@ -247,9 +249,7 @@ namespace Trinity
                         char* new_buf = (char*)malloc(new_len);
                         if (NULL == new_buf)
                         {
-                            Diagnostics::WriteLine(Diagnostics::Error, "ServerSocket: Cannot allocate memory during message receiving.");
-                            close_incoming_conn(psock, false);
-                            return false;
+                            return TrinityErrorCode::E_NOMEM;
                         }
                         memcpy(new_buf + SOCKET_HEADER,
                                psock->rx_buf + SOCKET_HEADER,
@@ -274,8 +274,7 @@ namespace Trinity
                 else
                 {
                     psock->msg_buf += bytesRecvd;
-                    Network::recv_async(psock);
-                    return false;
+                    return Network::recv_async(psock);
                 }
             }
 
@@ -284,20 +283,19 @@ namespace Trinity
                 // the whole message body is not yet completely received
                 psock->msg_buf     += bytesRecvd;
                 psock->pending_len -= bytesRecvd;
-                Network::recv_async(psock);
-                return false;
+
+                return Network::recv_async(psock);
             }
             else if (psock->pending_len == bytesRecvd)
             {
                 // we have the complete message.
                 psock->msg_buf = psock->rx_buf + SOCKET_HEADER;
-                return true;
+                return TrinityErrorCode::E_SUCCESS;
             }
             else
             {
-                Diagnostics::WriteLine(Diagnostics::Error, "Network: receiving more than a complete message.");
-                close_incoming_conn(psock, false);
-                return false;
+                // receiving more than a message
+                return TrinityErrorCode::E_MSG_OVERFLOW;
             }
         }
 
@@ -380,7 +378,7 @@ namespace Trinity
             {
                 return true;
             }
-        }
+            }
 
         bool client_send(uint64_t socket, char* buf, int32_t len)
         {
@@ -407,12 +405,12 @@ namespace Trinity
 
                     closesocket((SOCKET)socket);
                     return false;
-                }
+                    }
                 buf += bytesSent;
                 len -= bytesSent;
             } while (len > 0);
             return true;
-        }
+                }
 
         bool client_send_multi(uint64_t socket, char** bufs, int32_t* lens, int32_t cnt)
         {
@@ -475,7 +473,7 @@ namespace Trinity
             }
 
             return TrinityErrorCode::E_SUCCESS;
-        }
+            }
 
         TrinityErrorCode client_wait(uint64_t _socket)
         {
@@ -503,5 +501,5 @@ namespace Trinity
         }
 
 #pragma endregion
-    }
-}
+        }
+        }

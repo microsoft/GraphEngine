@@ -80,7 +80,7 @@ namespace Trinity
             return TrinityErrorCode::E_SUCCESS;
         }
 
-        TrinityErrorCode platform_post_compute(work_t* pwork)
+        TrinityErrorCode platform_post_workitem(work_t* pwork)
         {
             auto hr = PostQueuedCompletionStatus(hIocp, 0, NULL, (LPOVERLAPPED)pwork);
             if (hr == FALSE)

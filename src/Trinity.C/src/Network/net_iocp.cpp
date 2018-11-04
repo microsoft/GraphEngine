@@ -136,7 +136,7 @@ namespace Trinity
             return 0;
         }
 
-        void recv_async(sock_t* p)
+        TrinityErrorCode recv_async(sock_t* p)
         {
             // calibrate WSA buffer according to msg_buf & pending_len
             p->wsa_buf.buf = p->msg_buf;
@@ -149,7 +149,6 @@ namespace Trinity
             if (SOCKET_ERROR == statusCode &&
                 WSA_IO_PENDING != WSAGetLastError())
             {
-                /// initial recv operation
                 /// If an overlapped operation completes immediately,
                 /// WSARecv returns a value of zero and the lpNumberOfBytesRecvd parameter is updated
                 /// with the number of bytes received and the flag bits indicated by the lpFlags parameter are also updated.
@@ -157,12 +156,14 @@ namespace Trinity
                 /// WSARecv returns SOCKET_ERROR and indicates error code WSA_IO_PENDING.
                 /// If any overlapped function fails with WSA_IO_PENDING or immediately succeeds,
                 /// the completion event will always be signaled and the completion routine will be scheduled to run (if specified)
-                close_incoming_conn(p, false);
+                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Network: Errors occur during WSARecv. Error code = {0}, sock_t = {1}", WSAGetLastError(), p);
+                return TrinityErrorCode::E_NETWORK_RECV_FAILURE;
             }
             // otherwise, the receive operation has completed immediately or it is pending
+            return TrinityErrorCode::E_RETRY;
         }
 
-        void send_async(sock_t * p)
+        TrinityErrorCode send_async(sock_t * p)
         {
             // calibrate WSA buffer according to msg_buf & pending_len
             p->wsa_buf.buf = p->msg_buf;
@@ -173,9 +174,10 @@ namespace Trinity
             if (SOCKET_ERROR == statusCode &&
                 WSA_IO_PENDING != WSAGetLastError())
             {
-                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ServerSocket: Errors occur during WSASend. Error code = {0}", WSAGetLastError());
-                close_incoming_conn(p, false);
+                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Network: Errors occur during WSASend. Error code = {0}, sock_t = {1}", WSAGetLastError(), p);
+                return TrinityErrorCode::E_NETWORK_SEND_FAILURE;
             }
+            return TrinityErrorCode::E_RETRY;
         }
     }
 }
