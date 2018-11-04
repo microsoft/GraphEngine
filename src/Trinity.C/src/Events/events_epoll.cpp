@@ -31,7 +31,7 @@ namespace Trinity
             epoll_compute_queue_t()
             {
                 pmaster_work = alloc_work(worktype_t::Compute);
-                pmaster_work->pdata = this;
+                pmaster_work->pcompute_data = this;
 
                 // use semaphore semantic (each read decrements the counter by 1)
                 evfd = eventfd(0, EFD_NONBLOCK | EFD_SEMAPHORE);
@@ -75,6 +75,7 @@ namespace Trinity
                     work_queue.pop();
                 }
                 close(evfd);
+                free_work(pmaster_work);
             }
         };
 
@@ -106,7 +107,7 @@ namespace Trinity
 
                 if (pwork->type == worktype_t::Compute)
                 {
-                    pwork = reinterpret_cast<epoll_compute_queue_t*>(pwork->pdata)->dequeue();
+                    pwork = reinterpret_cast<epoll_compute_queue_t*>(pwork->pcompute_data)->dequeue();
                     return TrinityErrorCode::E_SUCCESS;
                 }
 
