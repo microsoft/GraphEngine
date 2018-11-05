@@ -3,7 +3,6 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 #include "Events.h"
-#include "Network/Network.h"
 #include "Trinity/Diagnostics/Log.h"
 
 class _handler_initializer
@@ -57,7 +56,8 @@ namespace Trinity
             }
         }
 
-        bool _sock_check_error(TrinityErrorCode eresult, Network::sock_t* psock)
+        // return true if further execution should be prevented
+        bool _work_check_error(TrinityErrorCode eresult, work_t* pwork)
         {
             if (TrinityErrorCode::E_SUCCESS == eresult)
             {
@@ -69,30 +69,35 @@ namespace Trinity
                 return true;
             }
 
-            if (psock->is_incoming)
+            if (pwork->type == worktype_t::Receive || pwork->type == worktype_t::Send)
             {
-                auto emsg = _sock_incoming_err(eresult);
-                if (emsg != nullptr)
+                if (pwork->psock->is_incoming)
                 {
-                    Diagnostics::WriteLine(Diagnostics::LogLevel::Error, emsg, psock);
+                    auto emsg = _sock_incoming_err(eresult);
+                    if (emsg != nullptr)
+                    {
+                        Diagnostics::WriteLine(Diagnostics::LogLevel::Error, emsg, pwork->psock);
+                    }
+
+                    close_incoming_conn(pwork->psock, false);
                 }
+                else
+                {
 
-                close_incoming_conn(psock, false);
-            }
-            else
-            {
-
+                }
             }
 
             return true;
         }
 
-        void _post_continuation(work_t* pcont, work_t* pwait)
+        //  Returns either E_SUCCESS or E_RETRY, with errors already handled
+        TrinityErrorCode post_continuation(work_t* pcont, work_t* pwait)
         {
+            assert(pcont->type == worktype_t::Continuation);
             assert(pcont->pcontinuation != nullptr);
 
             // chain it together so that the execution order is:
-            // ?dep -> continuation -> send_rsp(psock)
+            // ?dep -> continuation -> pwait
             pcont->pwait_chain = pwait;
             work_t* pexecute;
 
@@ -107,14 +112,18 @@ namespace Trinity
             {
                 // directly post the continuation.
                 pexecute = pcont;
-                platform_post_workitem(pcont);
             }
 
-            switch (pexecute->type)
+            auto eresult = post_work(pexecute);
+            if (_work_check_error(eresult, pexecute))
             {
-            case worktype_t::Send:
-                send_rsp(pexecute->psock);
-                break;
+                // execution underway. go back to drive the eventloop...
+                return TrinityErrorCode::E_RETRY;
+            }
+            else
+            {
+                // execution finished on this thread.
+                return TrinityErrorCode::E_SUCCESS;
             }
         }
 
@@ -129,10 +138,7 @@ namespace Trinity
             while (true)
             {
                 //  1. work polling
-                while (TrinityErrorCode::E_SUCCESS != platform_poll(pwork, szwork))
-                {
-                    // loop
-                }
+                while (TrinityErrorCode::E_SUCCESS != platform_poll(pwork, szwork)) { /* loop */ }
 
                 //  2. work processing
                 switch (pwork->type)
@@ -146,7 +152,7 @@ namespace Trinity
                     psock = pwork->psock;
                     eresult = Network::process_recv(psock, szwork);
 
-                    if (_sock_check_error(eresult, psock))
+                    if (_work_check_error(eresult, pwork))
                     {
                         continue;
                     }
@@ -164,27 +170,22 @@ namespace Trinity
                         {
                             message_t* msg = (message_t*)psock;
                             pcont = s_message_handlers[*(uint16_t *)msg->buf](msg);
+                            pwork->type = worktype_t::Send;
                             if (pcont != nullptr)
                             {
                                 // continue with sending the response
-                                pwork->type = worktype_t::Send;
-                                _post_continuation(pcont, pwork);
+                                eresult = _post_continuation(pcont, pwork);
                                 continue;
                             }
                             else
                             {
-                                eresult = Network::send_rsp(psock);
+                                eresult = post_work(psock);
                             }
                         }
                     }
                     else /* is_outgoing */
                     {
 
-                    }
-
-                    if (_sock_check_error(eresult, psock))
-                    {
-                        continue;
                     }
 
                     // breaks to continuation handling
@@ -202,40 +203,20 @@ namespace Trinity
                     if (psock->is_incoming)
                     {
                         assert(pwork->pcontinuation == nullptr);
-                        Network::reset_incoming_socket(psock);
-                        eresult = Network::recv_async(psock);
+                        pwork->type = worktype_t::Receive;
+                        eresult = _post_work(pwork);
                     }
                     else /* is_outgoing */
                     {
 
                     }
 
-                    if (_sock_check_error(eresult, psock))
-                    {
-                        continue;
-                    }
-
                     // breaks to continuation handling
                     break;
                 case worktype_t::Compute:
-
-                    pcont = pwork->pcompute(pwork->pcompute_data);
-                    if (pcont != nullptr)
-                    {
-                        _post_continuation(pcont, pwork->pwait_chain);
-                        continue;
-                    }
-
-                    // breaks to continuation handling
-                    break;
+                    /* FALLTHROUGH */
                 case worktype_t::Continuation:
-                    pcont = pwork->pcontinuation(pwork->pcontinuation_data, pwork->pdependency);
-                    if (pcont != nullptr)
-                    {
-                        _post_continuation(pcont, pwork->pwait_chain);
-                        continue;
-                    }
-
+                    eresult = post_work(pwork);
                     // breaks to continuation handling
                     break;
                 default:
@@ -244,6 +225,11 @@ namespace Trinity
                 }
 
                 //  3. wait chain processing
+                if (_work_check_error(eresult, pwork))
+                {
+                    continue;
+                }
+
             }
         }
 

@@ -4,6 +4,7 @@
 //
 #pragma once
 #include "TrinityCommon.h"
+#include "Network/Network.h"
 #include <cstdint>
 #include <cstdlib>
 #include <thread>
@@ -96,5 +97,41 @@ namespace Trinity
         TrinityErrorCode start_eventloop();
         TrinityErrorCode stop_eventloop();
         TrinityErrorCode enter_eventloop(Network::sock_t *psock);
+
+        TrinityErrorCode post_continuation(work_t* pcont, work_t* pwait);
+        inline TrinityErrorCode post_work(work_t* pwork)
+        {
+            work_t* pcont;
+            TrinityErrorCode eresult;
+            switch (pwork->type)
+            {
+            case worktype_t::Send:
+                return Network::send_message(pwork->psock);
+            case worktype_t::Receive:
+                return Network::recv_message(pwork->psock);
+            case worktype_t::Compute:
+                pcont = pwork->pcompute(pwork->pcompute_data);
+                break;
+            case worktype_t::Continuation:
+                pcont = pwork->pcontinuation(pwork->pcontinuation_data, pwork->pdependency);
+                break;
+            default:
+                return TrinityErrorCode::E_INVALID_ARGUMENTS;
+            }
+
+            if (pcont != nullptr)
+            {
+                eresult = post_continuation(pcont, pwork->pwait_chain);
+            }
+            else
+            {
+                // no new continuation posted.
+                // computation terminated.
+                eresult = TrinityErrorCode::E_SUCCESS;
+            }
+
+            free_work(pwork);
+            return eresult;
+        }
     }
 }

@@ -150,24 +150,6 @@ namespace Trinity
             return p;
         }
 
-        /// Resets context object so that it is ready for a receive operation.
-        /// This routine is called after the buffer passed from C# is sent.
-        void reset_incoming_socket(sock_t * p)
-        {
-            // If the average received message length drops below half of current recv buf len, adjust it.
-            if (p->avg_rx_len < p->rx_len / AvgSlideWin_r)
-            {
-                free(p->rx_buf);
-                p->rx_len = p->avg_rx_len;
-                p->rx_buf = (char*)malloc(p->rx_len);
-            }
-
-            //free response buffer passed from handler, rearm at rx_buf
-            free(p->msg_buf - p->msg_len);
-            p->msg_buf = p->rx_buf;
-            p->msg_len = 0;
-            p->pending_len = p->rx_len;
-        }
 #pragma endregion
 
         TrinityErrorCode check_handshake(sock_t* psock)
@@ -187,7 +169,7 @@ namespace Trinity
             psock->msg_buf = (char*)malloc(sizeof(int32_t));
             psock->msg_len = sizeof(int32_t);
             *(TrinityErrorCode*)psock->msg_buf = TrinityErrorCode::E_SUCCESS;
-            return send_rsp(psock);
+            return send_message(psock);
         }
 
         // return value indicates whether the whole message has been sent.

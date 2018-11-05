@@ -6,7 +6,6 @@
 
 #include "TrinityCommon.h"
 #include "os/os.h"
-#include "Events/Events.h"
 
 #include <cstdint>
 #include <cstdlib>
@@ -34,6 +33,10 @@ typedef linger LINGER;
 
 namespace Trinity
 {
+    namespace Events
+    {
+        struct work_t;
+    }
     namespace Network
     {
         /* Platform-specific socket descriptor, represents a context object associated with each socket */
@@ -98,7 +101,6 @@ namespace Trinity
 
         // alloc_incoming_socket adds the psco to the incoming sock_t set.
         sock_t* alloc_incoming_socket(SOCKET sock);
-        void reset_incoming_socket(sock_t * p);
 
         // close_incoming_conn will also remove the psco from the set.
         void close_incoming_conn(sock_t* p, bool lingering);
@@ -106,7 +108,11 @@ namespace Trinity
 
         // I/O interfaces
 
+        /// returns E_RETRY on success, indicates that the event
+        /// is queued, and should be polled again.
         TrinityErrorCode send_async(sock_t* p);
+        /// returns E_RETRY on success, indicates that the event
+        /// is queued, and should be polled again.
         TrinityErrorCode recv_async(sock_t* p);
 
         TrinityErrorCode process_send(sock_t* p, uint32_t sz_sent);
@@ -114,10 +120,46 @@ namespace Trinity
 
         TrinityErrorCode check_handshake(sock_t* p);
 
-        inline TrinityErrorCode send_rsp(sock_t* p)
+        /// Initiates sending a full message.
+        inline TrinityErrorCode send_message(sock_t* p)
         {
             p->pending_len = p->msg_len;
             return send_async(p);
+        }
+
+        /// Initiates receiving a full message.
+        inline TrinityErrorCode recv_message(sock_t* p)
+        {
+            // Calibrate the receive buffer
+            // If the average received message length drops below half of current recv buf len, adjust it.
+            if (p->avg_rx_len < p->rx_len / AvgSlideWin_r)
+            {
+                free(p->rx_buf);
+                p->rx_len = p->avg_rx_len;
+                p->rx_buf = (char*)malloc(p->rx_len);
+
+                if (p->rx_buf == nullptr)
+                {
+                    return TrinityErrorCode::E_NOMEM;
+                }
+            }
+
+            if (p->is_incoming)
+            {
+                // for incoming sock_t, recv_message always
+                // switch from a completed send (response)
+                // to a new receive. we should free response 
+                // buffer passed from handler.
+                free(p->msg_buf - p->msg_len);
+            }
+
+            // rearm at rx_buf
+            p->msg_buf = p->rx_buf;
+            p->msg_len = 0;
+            p->pending_len = p->rx_len;
+
+            // and begin transmission.
+            return recv_async(p);
         }
 
         enum TrinityMessageType : uint16_t
