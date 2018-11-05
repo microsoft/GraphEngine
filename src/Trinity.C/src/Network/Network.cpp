@@ -4,6 +4,7 @@
 //
 #include "os/os.h"
 #include "Network.h"
+#include "Events/Events.h"
 #include "SocketOptionsHelper.h"
 #include "Trinity/Threading/TrinityLock.h"
 #include "Trinity/Diagnostics/Log.h"
@@ -72,16 +73,18 @@ namespace Trinity
             auto psco_set_shadow = incoming_psco_set;
             psco_spinlock.unlock();
 
-            for (auto& pctx : psco_set_shadow) { close_incoming_conn(pctx, false); }
+            for (auto& pctx : psco_set_shadow) { close_conn(pctx, false); }
         }
 
-        void close_incoming_conn(sock_t* p, bool lingering)
+        void close_conn(sock_t* p, bool lingering)
         {
-            // Remove it from the client socket set
-
-            psco_spinlock.lock();
-            incoming_psco_set.erase(p);
-            psco_spinlock.unlock();
+            if (p->is_incoming)
+            {
+                // Remove it from the client socket set
+                psco_spinlock.lock();
+                incoming_psco_set.erase(p);
+                psco_spinlock.unlock();
+            }
 
             if (!lingering)
             {
@@ -108,50 +111,81 @@ namespace Trinity
             shutdown(p->socket, SHUT_RDWR);
             close(p->socket);
 #endif
-
-            Events::free_work(p->work);
-            free(p->rx_buf);
-            // when not overlapped with rx_buf, msg_buf is a send buffer.
-            if (p->msg_buf < p->rx_buf || p->msg_buf >= p->rx_buf + p->rx_len)
+            if (p->is_incoming)
             {
-                free(p->msg_buf + p->pending_len - p->msg_len);
+                Events::free_work(p->work);
+                free(p->rx_buf);
+                // when not overlapped with rx_buf, msg_buf is a send buffer.
+                if (p->msg_buf < p->rx_buf || p->msg_buf >= p->rx_buf + p->rx_len)
+                {
+                    free(p->msg_buf + p->pending_len - p->msg_len);
+                }
+            }
+            else
+            {
+                // detach the socket from the work entry.
+                // this way, the wait chain can be preserved,
+                // and continued into with a failure status.
+                p->work->psock = nullptr;
             }
 
             free(p);
         }
 
         /// Allocates a Per-socket context object(PSCO).
-        /// The handshake protocol:
-        /// Client sends handshake signature:
-        /// [4B Len|SIGNATURE_BODY]
-        /// Server checks the signature and reply:
-        /// [4B TrinityErrorCode]/[Disconnect]
-        sock_t* alloc_incoming_socket(SOCKET socket)
+        sock_t* alloc_sock_t(SOCKET socket, bool is_incoming)
         {
             sock_t* p = (sock_t*)malloc(sizeof(sock_t));
             Diagnostics::WriteLine(Diagnostics::LogLevel::Verbose, "Network: sock_t {0} allocated. fd = {1}", p, socket);
 
-            p->socket         = socket;
-            p->rx_buf         = (char*)malloc(RX_DEFAULT_LEN);
-            p->rx_len         = RX_DEFAULT_LEN;
-            p->pending_len    = p->rx_len;
-            p->msg_buf        = p->rx_buf;
-            p->msg_len        = 0;
-            p->work           = Events::alloc_work(Events::worktype_t::Receive);
-            p->work->psock    = p;
-            p->wait_handshake = TrinityConfig::Handshake();
-            p->avg_rx_len     = p->rx_len;
-            p->is_incoming    = true;
+            Events::worktype_t mode;
+            bool handshake;
 
-            psco_spinlock.lock();
-            incoming_psco_set.insert(p);
-            psco_spinlock.unlock();
+            if (is_incoming)
+            {
+                mode           = Events::worktype_t::Receive;
+                handshake      = TrinityConfig::Handshake();
+                p->rx_buf      = (char*)malloc(RX_DEFAULT_LEN);
+                p->pending_len = p->rx_len;
+                p->msg_buf     = p->rx_buf;
+                p->msg_len     = 0;
+            }
+            else
+            {
+                // send buffer will be supplied shortly after.
+                mode           = Events::worktype_t::Send;
+                handshake      = false;
+                p->rx_buf      = nullptr;
+                p->pending_len = 0;
+                p->msg_buf     = nullptr;
+                p->msg_len     = 0;
+            }
+
+            p->socket          = socket;
+            p->rx_len          = RX_DEFAULT_LEN;
+            p->work            = Events::alloc_work(mode);
+            p->work->psock     = p;
+            p->wait_handshake  = handshake;
+            p->avg_rx_len      = p->rx_len;
+            p->is_incoming     = is_incoming;
+
+            if (is_incoming)
+            {
+                psco_spinlock.lock();
+                incoming_psco_set.insert(p);
+                psco_spinlock.unlock();
+            }
 
             return p;
         }
 
 #pragma endregion
 
+        /// The handshake protocol:
+        /// Client sends handshake signature:
+        /// [4B Len|SIGNATURE_BODY]
+        /// Server checks the signature and reply:
+        /// [4B TrinityErrorCode]/[Disconnect]
         TrinityErrorCode check_handshake(sock_t* psock)
         {
             if (psock->msg_len != HANDSHAKE_MESSAGE_LENGTH)
@@ -201,7 +235,7 @@ namespace Trinity
                 return TrinityErrorCode::E_NOENTRY;
             }
 
-            auto recv = psock->msg_buf - psock->rx_buf;
+            auto recv = (uint32_t)(psock->msg_buf - psock->rx_buf);
 
             // Message prefix is not yet completely received
             if (recv < SOCKET_HEADER)
@@ -352,6 +386,7 @@ namespace Trinity
                 return false;
             }
 
+            // the initial
             if (TrinityConfig::Handshake())
             {
                 return client_handshake(clientsocket);
@@ -360,7 +395,7 @@ namespace Trinity
             {
                 return true;
             }
-            }
+        }
 
         bool client_send(uint64_t socket, char* buf, int32_t len)
         {
@@ -387,12 +422,12 @@ namespace Trinity
 
                     closesocket((SOCKET)socket);
                     return false;
-                    }
+        }
                 buf += bytesSent;
                 len -= bytesSent;
-            } while (len > 0);
-            return true;
-                }
+    } while (len > 0);
+    return true;
+}
 
         bool client_send_multi(uint64_t socket, char** bufs, int32_t* lens, int32_t cnt)
         {
@@ -424,7 +459,7 @@ namespace Trinity
                     Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Errors occur during network recv: Error code = {0}, Thread Id={1}", error_code, std::this_thread::get_id());
                     closesocket((SOCKET)socket);
                     return false;
-                }
+        }
                 buf += bytesRecvd;
                 len -= bytesRecvd;
             }
@@ -455,7 +490,7 @@ namespace Trinity
             }
 
             return TrinityErrorCode::E_SUCCESS;
-            }
+        }
 
         TrinityErrorCode client_wait(uint64_t _socket)
         {
@@ -483,5 +518,5 @@ namespace Trinity
         }
 
 #pragma endregion
-        }
-        }
+    }
+}

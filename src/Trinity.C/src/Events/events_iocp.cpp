@@ -32,7 +32,7 @@ namespace Trinity
         TrinityErrorCode platform_stop_eventloop()
         {
             //  Post shutdown messages to IOCP
-            for (int i=0, n = g_threadpool_size; i < n; ++i)
+            for (uint64_t i=0, n = g_threadpool_size; i < n; ++i)
             {
                 auto p = alloc_work(worktype_t::Shutdown);
                 PostQueuedCompletionStatus(hIocp, 0, NULL, (LPOVERLAPPED)p);
@@ -61,7 +61,7 @@ namespace Trinity
             {
                 if (psock != NULL)
                 {
-                    Network::close_incoming_conn(psock, false);
+                    Network::close_conn(psock, false);
                 }
                 return TrinityErrorCode::E_FAILURE;
             }

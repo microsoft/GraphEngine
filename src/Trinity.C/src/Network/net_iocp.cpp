@@ -8,6 +8,7 @@
 #include "Trinity/Environment.h"
 #include "Trinity/Threading/TrinityLock.h"
 #include "Network/Network.h"
+#include "Events/Events.h"
 #include "Network/SocketOptionsHelper.h"
 #include <atomic>
 
@@ -56,12 +57,12 @@ namespace Trinity
                 }
 
                 // Add it to the client socket set
-                sock_t * p = alloc_incoming_socket(acceptSocket);
+                sock_t * p = alloc_sock_t(acceptSocket, true);
 
                 // associate the accept socket with the previously created IOCP
                 if (TrinityErrorCode::E_SUCCESS != Events::enter_eventloop(p))
                 {
-                    close_incoming_conn(p, false);
+                    close_conn(p, false);
                     continue;
                 }
 

@@ -115,7 +115,7 @@ namespace Trinity
 
                 if ((ep_event.events & EPOLLERR) || (ep_event.events & EPOLLHUP))
                 {
-                    Network::close_incoming_conn(psock, false);
+                    Network::close_conn(psock, false);
                     return TrinityErrorCode::E_FAILURE;
                 }
                 else if ((ep_event.events & EPOLLIN) && pwork->type == worktype_t::Receive)
@@ -191,7 +191,7 @@ namespace Trinity
             if (-1 == epoll_ctl(epoll_fd, EPOLL_CTL_ADD, pContext->socket, &ep_event))
             {
                 Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Cannot register connected sock fd to epoll instance");
-                Network::close_incoming_conn(pContext, false);
+                Network::close_conn(pContext, false);
                 return TrinityErrorCode::E_FAILURE;
             }
 

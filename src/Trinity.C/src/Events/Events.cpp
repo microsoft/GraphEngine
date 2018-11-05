@@ -37,23 +37,23 @@ namespace Trinity
             return nullptr;
         }
 
-        const char* _sock_incoming_err(TrinityErrorCode eresult)
+        const char* _sock_err(TrinityErrorCode eresult, bool is_incoming)
         {
             switch (eresult)
             {
             case TrinityErrorCode::E_NOENTRY:
-                return "Network: Empty response, sock_t = {0}";
+                return "Network: Empty response";
             case TrinityErrorCode::E_INIT_FAIL:
-                return "Network: Incorrect client handshake sequence, sock_t = {0}";
+                if (is_incoming) { return "Network: Incorrect client handshake sequence."; }
+                else { return "Network: Target host rejected handshake request message."; }
             case TrinityErrorCode::E_RPC_EXCEPTION:
-                return "Network: Incorrect client request header. sock_t = {0}";
+                if (is_incoming) { return "Network: Incorrect client request header."; }
             case TrinityErrorCode::E_NOMEM:
-                return "Network: Cannot allocate memory during message receiving. sock_t = {0}";
+                return "Network: Cannot allocate memory for sock_t.";
             case TrinityErrorCode::E_MSG_OVERFLOW:
-                return "Network: Receiving more than a complete message. sock_t = {0}";
-            default:
-                return nullptr;
+                return "Network: Receiving more than a complete message.";
             }
+            return nullptr;
         }
 
         // return true if further execution should be prevented
@@ -71,33 +71,78 @@ namespace Trinity
 
             if (pwork->type == worktype_t::Receive || pwork->type == worktype_t::Send)
             {
+                auto emsg = _sock_err(eresult, pwork->psock->is_incoming);
+                if (emsg != nullptr)
+                {
+                    Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "{0} sock_t = {1}, thread id = {2}", emsg, pwork->psock, std::this_thread::get_id());
+                }
+
                 if (pwork->psock->is_incoming)
                 {
-                    auto emsg = _sock_incoming_err(eresult);
-                    if (emsg != nullptr)
-                    {
-                        Diagnostics::WriteLine(Diagnostics::LogLevel::Error, emsg, pwork->psock);
-                    }
 
-                    close_incoming_conn(pwork->psock, false);
+                    close_conn(pwork->psock, false);
                 }
                 else
                 {
-
+                    // E_RPC_EXCEPTION is recoverable, do not close the connection
+                    if (eresult != TrinityErrorCode::E_RPC_EXCEPTION)
+                    {
+                        close_conn(pwork->psock, false);
+                    }
+                    pwork->esock_op = eresult;
+                    // outgoing conn. transmission failed.
+                    // we should now wake up the wait chain, so
+                    // that the failure is propagated.
+                    return false;
                 }
+            }
+            else if (pwork->type == worktype_t::Compute || pwork->type == worktype_t::Continuation)
+            {
+                // queue failed. cleanup.
+                free_work(pwork);
             }
 
             return true;
         }
 
-        //  Returns either E_SUCCESS or E_RETRY, with errors already handled
-        TrinityErrorCode post_continuation(work_t* pcont, work_t* pwait)
+        // after each _post_work, call _work_check_error to clean up errors
+        TrinityErrorCode _post_work(work_t* pwork)
+        {
+            switch (pwork->type)
+            {
+            case worktype_t::Send:
+                return Network::send_message(pwork->psock);
+            case worktype_t::Receive:
+                return Network::recv_message(pwork->psock);
+            case worktype_t::Compute: /* FALLTHROUGH */
+            case worktype_t::Continuation:
+            {
+                // TODO calculate when to execute the work in-place
+                // for now we just queue the work.
+                auto eresult = platform_post_workitem(pwork);
+                if (TrinityErrorCode::E_SUCCESS == eresult)
+                {
+                    // computation successfully queued
+                    return TrinityErrorCode::E_RETRY;
+                }
+                else
+                {
+                    return eresult;
+                }
+            }
+            default:
+                return TrinityErrorCode::E_INVALID_ARGUMENTS;
+            }
+        }
+
+        void _post_continuation(work_t* pcont, work_t* pwait)
         {
             assert(pcont->type == worktype_t::Continuation);
             assert(pcont->pcontinuation != nullptr);
+            assert(pcont->pwait_chain == nullptr);
 
             // chain it together so that the execution order is:
-            // ?dep -> continuation -> pwait
+            // ?dep -> continuation -> ?pwait
             pcont->pwait_chain = pwait;
             work_t* pexecute;
 
@@ -114,18 +159,23 @@ namespace Trinity
                 pexecute = pcont;
             }
 
-            auto eresult = post_work(pexecute);
-            if (_work_check_error(eresult, pexecute))
-            {
-                // execution underway. go back to drive the eventloop...
-                return TrinityErrorCode::E_RETRY;
-            }
-            else
-            {
-                // execution finished on this thread.
-                return TrinityErrorCode::E_SUCCESS;
-            }
+            auto eresult = _post_work(pexecute);
+            _work_check_error(eresult, pexecute);
+            // execution underway (or failed, and then cleaned up).
+            // go back to drive the eventloop...
         }
+
+#define __try_post_continuation(C, W, E)         \
+    pcont = (C);                                 \
+    if (pcont != nullptr)                        \
+    {                                            \
+        _post_continuation(pcont, W);            \
+        continue;                                \
+    }                                            \
+    else                                         \
+    {                                            \
+        E                                        \
+    }                                            \
 
         void _eventloop()
         {
@@ -134,6 +184,7 @@ namespace Trinity
             work_t*           pcont;
             Network::sock_t*  psock;
             TrinityErrorCode  eresult;
+            work_t*           pwait = pwork->pwait_chain;
 
             while (true)
             {
@@ -144,7 +195,7 @@ namespace Trinity
                 switch (pwork->type)
                 {
                 case worktype_t::Shutdown:
-                    assert(pwork->pcontinuation == nullptr);
+                    assert(pwait == nullptr);
                     free_work(pwork);
                     return;
                 case worktype_t::Receive:
@@ -157,35 +208,36 @@ namespace Trinity
                         continue;
                     }
 
-                    if (psock->is_incoming)
+                    if (!psock->is_incoming)
                     {
-                        //  the definitive behavior after incoming recv is handshake/messageproc,
-                        //  so it cannot have a continuation.
-                        assert(pwork->pcontinuation == nullptr);
-                        if (psock->wait_handshake)
-                        {
-                            eresult = Network::check_handshake(psock);
-                        }
-                        else
-                        {
-                            message_t* msg = (message_t*)psock;
-                            pcont = s_message_handlers[*(uint16_t *)msg->buf](msg);
-                            pwork->type = worktype_t::Send;
-                            if (pcont != nullptr)
-                            {
-                                // continue with sending the response
-                                eresult = _post_continuation(pcont, pwork);
-                                continue;
-                            }
-                            else
-                            {
-                                eresult = post_work(psock);
-                            }
-                        }
+                        assert(pwait != nullptr);
+                        break;
                     }
-                    else /* is_outgoing */
-                    {
 
+                    /*  is_incoming is true  */
+                    //  the definitive behavior after incoming recv is handshake/messageproc,
+                    //  so it cannot have a wait chain.
+                    assert(pwait == nullptr);
+                    if (psock->wait_handshake)
+                    {
+                        eresult = Network::check_handshake(psock);
+                    }
+                    else
+                    {
+                        // switch to send mode
+                        pwork->type = worktype_t::Send;
+                        message_t* msg = (message_t*)psock;
+                        __try_post_continuation(
+                            s_message_handlers[*(uint16_t *)msg->buf](msg),
+                            /* continue with sending the response */
+                            pwork,
+                            { eresult = _post_work(pwork); }
+                        );
+                    }
+
+                    if (_work_check_error(eresult, pwork))
+                    {
+                        continue;
                     }
 
                     // breaks to continuation handling
@@ -195,29 +247,54 @@ namespace Trinity
                     psock = pwork->psock;
                     eresult = Network::process_send(psock, szwork);
 
-                    if (_sock_check_error(eresult, psock))
+                    if (_work_check_error(eresult, pwork))
                     {
                         continue;
                     }
 
                     if (psock->is_incoming)
                     {
-                        assert(pwork->pcontinuation == nullptr);
+                        assert(pwait == nullptr);
                         pwork->type = worktype_t::Receive;
                         eresult = _post_work(pwork);
                     }
                     else /* is_outgoing */
                     {
+                        // outgoing send finished.
+                        // just wait for pwait_chain to run.
+                        assert(pwait != nullptr);
+                    }
 
+                    if (_work_check_error(eresult, pwork))
+                    {
+                        continue;
                     }
 
                     // breaks to continuation handling
                     break;
                 case worktype_t::Compute:
-                    /* FALLTHROUGH */
+                    __try_post_continuation(
+                        pwork->pcompute(pwork->pcompute_data),
+                        pwork->pwait_chain,
+                        {
+                            // no new continuation posted.
+                            // computation terminated.
+                            eresult = TrinityErrorCode::E_SUCCESS;
+                        }
+                    );
+
+                    break;
                 case worktype_t::Continuation:
-                    eresult = post_work(pwork);
-                    // breaks to continuation handling
+                    __try_post_continuation(
+                        pwork->pcontinuation(pwork->pcontinuation_data, pwork->pdependency),
+                        pwork->pwait_chain,
+                        {
+                            // no new continuation posted.
+                            // computation terminated.
+                            eresult = TrinityErrorCode::E_SUCCESS;
+                        }
+                    );
+
                     break;
                 default:
                     Diagnostics::WriteLine(Diagnostics::Error, "EventLoop: Async work type {0} is not recognized.", pwork->type);
@@ -225,11 +302,11 @@ namespace Trinity
                 }
 
                 //  3. wait chain processing
-                if (_work_check_error(eresult, pwork))
+                if (pwait != nullptr)
                 {
-                    continue;
+                    eresult = _post_work(pwait);
+                    _work_check_error(eresult, pwait);
                 }
-
             }
         }
 
@@ -254,6 +331,10 @@ namespace Trinity
 
         void free_work(work_t* p)
         {
+            if (p->pwait_chain != nullptr)
+            {
+                free_work(p->pwait_chain);
+            }
             free(p);
         }
 
@@ -263,7 +344,7 @@ namespace Trinity
             memset(p, 0, sizeof(WSAOVERLAPPED));
 #endif
             p->type = opType;
-            p->pcontinuation = nullptr;
+            p->pwait_chain = nullptr;
         }
 
 

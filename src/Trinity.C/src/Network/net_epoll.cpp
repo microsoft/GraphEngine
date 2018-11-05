@@ -5,6 +5,7 @@
 #include "os/os.h"
 #if defined(TRINITY_PLATFORM_LINUX)
 #include "Network.h"
+#include "Events/Events.h"
 #include "SocketOptionsHelper.h"
 
 #include <sys/epoll.h>

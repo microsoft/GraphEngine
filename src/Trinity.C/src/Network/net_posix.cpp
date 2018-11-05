@@ -5,6 +5,7 @@
 #include "os/os.h"
 #if !defined(TRINITY_PLATFORM_WINDOWS)
 #include "Network.h"
+#include "Events/Events.h"
 #include "SocketOptionsHelper.h"
 
 #include <thread>
@@ -45,11 +46,11 @@ namespace Trinity
                 }
                 Diagnostics::WriteLine(Diagnostics::LogLevel::Debug, "Network: Incomming connection from {0}", String(clientaddr));
 
-                sock_t * p = alloc_incoming_socket(connected_sock_fd);
+                sock_t * p = alloc_sock_t(connected_sock_fd, true);
 
                 if (TrinityErrorCode::E_SUCCESS != Events::enter_eventloop(p))
                 {
-                    close_incoming_conn(p, false);
+                    close_conn(p, false);
                     continue;
                 }
 

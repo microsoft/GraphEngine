@@ -39,6 +39,13 @@ namespace Trinity
     }
     namespace Network
     {
+        const uint32_t RX_DEFAULT_LEN = 8192;
+        const uint32_t SOCKET_HEADER = 4;
+
+        const double AvgSlideWin_a = 0.85f;
+        const double AvgSlideWin_b = 0.15f;
+        const double AvgSlideWin_r = 2.15f;
+
         /* Platform-specific socket descriptor, represents a context object associated with each socket */
         struct sock_t
         {
@@ -99,11 +106,13 @@ namespace Trinity
 
         // socket management
 
-        // alloc_incoming_socket adds the psco to the incoming sock_t set.
-        sock_t* alloc_incoming_socket(SOCKET sock);
+        // alloc_sock_t allocates a sock_t and setups the buffers.
+        // if is_incoming is true, adds the psco to the incoming sock_t set, and
+        // enables handshake if appropriate.
+        sock_t* alloc_sock_t(SOCKET sock, bool is_incoming);
 
-        // close_incoming_conn will also remove the psco from the set.
-        void close_incoming_conn(sock_t* p, bool lingering);
+        // for incoming connection, close_conn will also remove it from the psco set.
+        void close_conn(sock_t* p, bool lingering);
         void close_all_incoming_conn();
 
         // I/O interfaces
@@ -130,17 +139,21 @@ namespace Trinity
         /// Initiates receiving a full message.
         inline TrinityErrorCode recv_message(sock_t* p)
         {
-            // Calibrate the receive buffer
-            // If the average received message length drops below half of current recv buf len, adjust it.
-            if (p->avg_rx_len < p->rx_len / AvgSlideWin_r)
+            if (p->is_incoming)
             {
-                free(p->rx_buf);
-                p->rx_len = p->avg_rx_len;
-                p->rx_buf = (char*)malloc(p->rx_len);
+                // Calibrate the receive buffer
+                // If the average received message length drops below half of current recv buf len, adjust it.
 
-                if (p->rx_buf == nullptr)
+                if (p->avg_rx_len < p->rx_len / AvgSlideWin_r)
                 {
-                    return TrinityErrorCode::E_NOMEM;
+                    free(p->rx_buf);
+                    p->rx_len = p->avg_rx_len;
+                    p->rx_buf = (char*)malloc(p->rx_len);
+
+                    if (p->rx_buf == nullptr)
+                    {
+                        return TrinityErrorCode::E_NOMEM;
+                    }
                 }
             }
 
@@ -171,13 +184,6 @@ namespace Trinity
             PRESERVED_SYNC_WITH_RSP,
             PRESERVED_ASYNC,
         };
-
-        const uint32_t RX_DEFAULT_LEN = 8192;
-        const uint32_t SOCKET_HEADER = 4;
-
-        const double AvgSlideWin_a = 0.85f;
-        const double AvgSlideWin_b = 0.15f;
-        const double AvgSlideWin_r = 2.15f;
 
         extern uint8_t  HANDSHAKE_MESSAGE_CONTENT[];
         extern int      HANDSHAKE_MESSAGE_LENGTH;
