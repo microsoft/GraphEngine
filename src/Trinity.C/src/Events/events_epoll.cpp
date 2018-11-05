@@ -5,6 +5,7 @@
 #include "os/os.h"
 #if defined(TRINITY_PLATFORM_LINUX)
 #include "Network/Network.h"
+#include "Events/Events.h"
 #include "Trinity/Diagnostics/Log.h"
 
 #include <sys/epoll.h>
