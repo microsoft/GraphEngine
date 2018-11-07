@@ -184,12 +184,12 @@ namespace Trinity
             work_t*           pcont;
             Network::sock_t*  psock;
             TrinityErrorCode  eresult;
-            work_t*           pwait = pwork->pwait_chain;
 
             while (true)
             {
                 //  1. work polling
                 while (TrinityErrorCode::E_SUCCESS != platform_poll(pwork, szwork)) { /* loop */ }
+                work_t* pwait = pwork->pwait_chain;
 
                 //  2. work processing
                 switch (pwork->type)
