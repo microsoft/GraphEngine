@@ -110,3 +110,4 @@ ServiceFabricBackup
 tests/benchmarks/**/*Artifacts*
 **/.vim
 CMakeSettings.json
+Directory.Build.props

@@ -170,7 +170,15 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
         SET(_DN_VERSION "1.0.0")
     ENDIF()
 
+    # Set the output path to the current binary directory.
+    # Separated output directories prevent overwriting.
+    # Later we then copy the outputs to the root binary directory.
+
     GET_FILENAME_COMPONENT(_DN_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin ABSOLUTE)
+
+    # In a cmake build, the XPLAT libraries are always copied over.
+    # Set the proper directory for .NET projects.
+    SET(_DN_XPLAT_LIB_DIR ${CMAKE_BINARY_DIR})
 
     SET(DOTNET_PACKAGES ${_DN_PACKAGE}  PARENT_SCOPE)
     SET(DOTNET_CONFIG   ${_DN_CONFIG}   PARENT_SCOPE)
