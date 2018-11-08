@@ -325,28 +325,26 @@ FUNCTION(RUN_DOTNET DOTNET_PROJECT)
     ADD_DEPENDENCIES(RUN_${DOTNET_PROJNAME} BUILD_${DOTNET_PROJNAME})
 ENDFUNCTION()
 
-FUNCTION(XUNIT_DOTNET DOTNET_PROJECT)
+FUNCTION(TEST_DOTNET DOTNET_PROJECT)
     DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
-    MESSAGE("-- Adding dotnet XUnit project ${DOTNET_PROJECT}")
+    MESSAGE("-- Adding dotnet test project ${DOTNET_PROJECT}")
     IF(WIN32)
-        SET(xunit_args "")
+        SET(test_framework_args "")
     ELSE()
-        SET(xunit_args -framework netcoreapp2.0)
+        SET(test_framework_args -f netcoreapp2.0)
     ENDIF()
 
     ADD_CUSTOM_COMMAND(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.xunittimestamp
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.testtimestamp
         DEPENDS ${DOTNET_deps}
-        COMMAND ${DOTNET_EXE} restore
-        # workaround: wrap xunit in `cmake -E chdir .` so that test failures do not fail the build
-        COMMAND ${CMAKE_COMMAND} -E chdir ${DOTNET_PROJDIR} ${DOTNET_EXE} xunit ${xunit_args} ${DOTNET_RUN_ARGUMENTS} -xml ${CMAKE_BINARY_DIR}/${DOTNET_PROJNAME}.xunit.xml
+        COMMAND ${DOTNET_EXE} test ${test_framework_args} --results-directory "${CMAKE_BINARY_DIR}" --logger trx ${DOTNET_RUN_ARGUMENTS}
         COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.xunittimestamp
         WORKING_DIRECTORY ${DOTNET_PROJDIR})
     ADD_CUSTOM_TARGET(
-        XUNIT_${DOTNET_PROJNAME}
+        TEST_${DOTNET_PROJNAME}
         ALL
-        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.xunittimestamp)
-    ADD_DOTNET_DEPENDENCY_TARGETS(XUNIT)
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.testtimestamp)
+    ADD_DOTNET_DEPENDENCY_TARGETS(TEST)
 ENDFUNCTION()
 
 FUNCTION(SMOKETEST_DOTNET DOTNET_PROJECT)

@@ -123,7 +123,7 @@ namespace Trinity
 
                     if (TrinityErrorCode.E_SUCCESS != StopEventLoop())
                     {
-                        throw new Exception("Cannot start worker thread pool");
+                        throw new Exception("Cannot stop worker thread pool");
                     }
 
                     // !Note, BackgroundThread.Stop may write log entries,
