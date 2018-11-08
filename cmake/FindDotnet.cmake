@@ -208,8 +208,10 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
 
     SET(_DN_IMPORT_PROP ${CMAKE_CURRENT_BINARY_DIR}/${_DN_projname}.imports.props)
     CONFIGURE_FILE(${DOTNET_MODULE_DIR}/DotnetImports.props.in ${_DN_IMPORT_PROP})
+    SET(_DN_IMPORT_ARGS "/p:DirectoryBuildPropsPath=${_DN_IMPORT_PROP}")
 
-    SET(DOTNET_BUILD_PROPERTIES ${_DN_PLATFORM_PROP} "/p:DirectoryBuildPropsPath=${_DN_IMPORT_PROP}" "/p:DOTNET_PACKAGE_VERSION=${_DN_VERSION}" PARENT_SCOPE)
+    SET(DOTNET_IMPORT_PROPERTIES ${_DN_IMPORT_ARGS} PARENT_SCOPE)
+    SET(DOTNET_BUILD_PROPERTIES ${_DN_PLATFORM_PROP} ${_DN_IMPORT_ARGS} PARENT_SCOPE)
     SET(DOTNET_BUILD_OPTIONS ${_DN_BUILD_OPTIONS} PARENT_SCOPE)
     SET(DOTNET_PACK_OPTIONS --include-symbols ${_DN_PACK_OPTIONS} PARENT_SCOPE)
 
@@ -255,7 +257,7 @@ MACRO(DOTNET_BUILD_COMMANDS)
     ELSE()
         SET(build_dotnet_cmds 
             COMMAND ${CMAKE_COMMAND} -E echo "=======> Building .NET project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
-            COMMAND ${DOTNET_EXE} restore ${DOTNET_PROJPATH}
+            COMMAND ${DOTNET_EXE} restore ${DOTNET_PROJPATH} ${DOTNET_IMPORT_PROPERTIES}
             COMMAND ${DOTNET_EXE} clean ${DOTNET_PROJPATH} ${DOTNET_BUILD_PROPERTIES}
             COMMAND ${DOTNET_EXE} build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES} ${DOTNET_BUILD_OPTIONS})
         SET(build_dotnet_type "dotnet")
@@ -326,12 +328,18 @@ ENDFUNCTION()
 FUNCTION(XUNIT_DOTNET DOTNET_PROJECT)
     DOTNET_GET_DEPS(${DOTNET_PROJECT} "${ARGN}")
     MESSAGE("-- Adding dotnet XUnit project ${DOTNET_PROJECT}")
+    IF(WIN32)
+        SET(xunit_args "")
+    ELSE()
+        SET(xunit_args -framework netcoreapp2.0)
+    ENDIF()
+
     ADD_CUSTOM_COMMAND(
         OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.xunittimestamp
         DEPENDS ${DOTNET_deps}
         COMMAND ${DOTNET_EXE} restore
         # workaround: wrap xunit in `cmake -E chdir .` so that test failures do not fail the build
-        COMMAND ${CMAKE_COMMAND} -E chdir ${DOTNET_PROJDIR} ${DOTNET_EXE} xunit ${DOTNET_RUN_ARGUMENTS} -xml ${CMAKE_BINARY_DIR}/${DOTNET_PROJNAME}.xunit.xml
+        COMMAND ${CMAKE_COMMAND} -E chdir ${DOTNET_PROJDIR} ${DOTNET_EXE} xunit ${xunit_args} ${DOTNET_RUN_ARGUMENTS} -xml ${CMAKE_BINARY_DIR}/${DOTNET_PROJNAME}.xunit.xml
         COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.xunittimestamp
         WORKING_DIRECTORY ${DOTNET_PROJDIR})
     ADD_CUSTOM_TARGET(
