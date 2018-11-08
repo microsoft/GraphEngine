@@ -16,5 +16,5 @@ FOREACH(smoke_test ${smoke_tests})
 ENDFOREACH()
 
 FOREACH(unit_test ${unit_tests})
-    TEST_DOTNET(${unit_test} DEPENDS GraphEngine.Core ARGUMENTS -- RunConfiguration.TargetPlatform=x64)
+    TEST_DOTNET(${unit_test} DEPENDS GraphEngine.Core ARGUMENTS -- RunConfiguration.TargetPlatform=x64 RunConfiguration.MaxCpuCount=1)
 ENDFOREACH()
