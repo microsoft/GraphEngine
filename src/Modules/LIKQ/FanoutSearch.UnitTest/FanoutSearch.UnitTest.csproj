@@ -4,7 +4,6 @@
     <!--<TargetFrameworks>netcoreapp2.0;net46</TargetFrameworks>-->
     <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
     <IsPackable>false</IsPackable>
-    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
    </PropertyGroup>
 
   <ItemGroup>
