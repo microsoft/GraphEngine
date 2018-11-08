@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
-    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
 
     <NoWarn>MSB4018</NoWarn>
     <IsPackable>false</IsPackable>
