@@ -68,6 +68,9 @@ namespace Trinity.Storage
                 TrinityErrorCode ret = CSynchronizeStorageRoot();
                 if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
 
+                ret = RaiseStorageEvent(StorageBeforeSave, nameof(StorageBeforeSave));
+                if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
+
                 ret = CLocalMemoryStorage.CSaveStorage();
                 if (TrinityErrorCode.E_SUCCESS != ret) { return ret; }
 
