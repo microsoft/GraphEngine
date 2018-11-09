@@ -6,6 +6,7 @@
 #include <Trinity/IO/Directory.h>
 #include <Trinity/IO/Path.h>
 
+using namespace Trinity;
 using namespace Trinity::IO;
 
 TEST_CASE("Trinity::IO::Path::Combine works", "[io]")

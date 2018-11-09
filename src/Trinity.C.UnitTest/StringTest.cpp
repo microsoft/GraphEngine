@@ -3,8 +3,8 @@
 #include <Trinity.h>
 #include <Trinity/String.h>
 #include <Trinity/Array.h>
-using Trinity::String;
-using Trinity::Array;
+
+using namespace Trinity;
 
 TEST_CASE("Replace works", "[string]")
 {
@@ -23,8 +23,9 @@ TEST_CASE("ToWCharArray works", "[string]")
     String s = "123";
     s.Clear();
     auto x = s.ToWcharArray();
+    auto p = L"";
 
-    REQUIRE(L"" == x);
+    REQUIRE(0 == wcscmp(x, p));
 }
 
 TEST_CASE("FromWCharArray works", "[string]")
