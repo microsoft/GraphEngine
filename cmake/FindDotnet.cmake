@@ -67,9 +67,6 @@ ENDIF()
 SET(NUGET_CACHE_PATH "~/.nuget/packages")
 FIND_PROGRAM(DOTNET_EXE dotnet)
 SET(DOTNET_MODULE_DIR ${CMAKE_CURRENT_LIST_DIR})
-ADD_CUSTOM_TARGET(ctest_dotnet
-    COMMAND ${CMAKE_COMMAND} -E echo "======= Testing .NET projects"
-)
 
 IF(NOT DOTNET_EXE)
     SET(DOTNET_FOUND FALSE)
@@ -337,17 +334,10 @@ FUNCTION(TEST_DOTNET DOTNET_PROJECT)
         SET(test_framework_args -f netcoreapp2.0)
     ENDIF()
 
-    ADD_CUSTOM_COMMAND(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.testtimestamp
-        DEPENDS ${DOTNET_deps}
-        COMMAND ${DOTNET_EXE} test ${test_framework_args} --results-directory "${CMAKE_BINARY_DIR}" --logger trx ${DOTNET_RUN_ARGUMENTS}
-        COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.xunittimestamp
-        WORKING_DIRECTORY ${DOTNET_PROJDIR})
-    ADD_CUSTOM_TARGET(
-        TEST_${DOTNET_PROJNAME}
-        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.testtimestamp)
-    ADD_DOTNET_DEPENDENCY_TARGETS(TEST)
-    ADD_DEPENDENCIES(ctest_dotnet TEST_${DOTNET_PROJNAME})
+    ADD_TEST(NAME              ${DOTNET_PROJNAME}
+             COMMAND           ${DOTNET_EXE} test ${test_framework_args} --results-directory "${CMAKE_BINARY_DIR}" --logger trx ${DOTNET_RUN_ARGUMENTS}
+             WORKING_DIRECTORY ${DOTNET_PROJDIR})
+
 ENDFUNCTION()
 
 FUNCTION(SMOKETEST_DOTNET DOTNET_PROJECT)

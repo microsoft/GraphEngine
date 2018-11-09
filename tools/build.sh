@@ -23,7 +23,7 @@ build_repo()
 	mkdir -p "$REPO_ROOT/build" && pushd "$_" || exit -1
 	cmake "$REPO_ROOT" -DCMAKE_BUILD_TYPE=Release || exit -1
 	make -j || exit -1
-    make ctest_dotnet
+    ctest -C Release
 	popd
 }
 
