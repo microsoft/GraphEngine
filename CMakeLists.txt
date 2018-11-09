@@ -27,6 +27,7 @@ ELSE()
 ENDIF()
 
 ADD_SUBDIRECTORY(src/Trinity.C)
+ADD_SUBDIRECTORY(src/Trinity.C.UnitTest)
 ADD_SUBDIRECTORY(src/Trinity.TSL)
 ADD_SUBDIRECTORY(src/Trinity.Core)
 ADD_SUBDIRECTORY(src/Modules/LIKQ)

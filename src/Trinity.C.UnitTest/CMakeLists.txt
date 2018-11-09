@@ -1,0 +1,16 @@
+macro(add_cpp_test test_name)
+    add_executable(${test_name} ${test_name}.cpp)
+    link_libraries(${test_name} Trinity)
+    target_include_directories(${test_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../Trinity.C/src)
+    add_test(${test_name} ${test_name})
+endmacro()
+
+# file(DOWNLOAD https://github.com/catchorg/Catch2/releases/download/v2.4.2/catch.hpp ${CMAKE_CURRENT_SOURCE_DIR}/catch.hpp)
+
+add_cpp_test(InitializeLocalMemoryStorage)
+add_cpp_test(DirectoryTest)
+add_cpp_test(LocalMemoryStorageTest)
+add_cpp_test(PaddingTest)
+add_cpp_test(PathTest)
+add_cpp_test(SizeTest)
+add_cpp_test(StringTest)
