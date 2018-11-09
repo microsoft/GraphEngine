@@ -7,6 +7,5 @@ Push-Location "$REPO_ROOT\build"
 
 cmake -G "Visual Studio 15 2017 Win64" --host=x64 $REPO_ROOT
 cmake --build . --config Release
-ctest -C Release
 
 Pop-Location
