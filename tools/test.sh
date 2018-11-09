@@ -10,15 +10,7 @@ then
 	exit -1
 fi
 
-if [ "$(command -v dotnet)" == "" ] ; 
-then 
-	echo "error: dotnet not found." 1>&2
-	echo "see: https://www.microsoft.com/net/download/linux"
-	exit -1
-fi
-
-# build
+# test
 mkdir -p "$REPO_ROOT/build" && pushd "$_" || exit -1
-cmake "$REPO_ROOT" -DCMAKE_BUILD_TYPE=Release || exit -1
-make -j || exit -1
+ctest -C Release
 popd
