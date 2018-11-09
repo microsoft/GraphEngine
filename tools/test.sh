@@ -14,3 +14,5 @@ fi
 mkdir -p "$REPO_ROOT/build" && pushd "$_" || exit -1
 ctest -C Release
 popd
+
+exit 0

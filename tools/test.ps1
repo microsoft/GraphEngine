@@ -3,3 +3,4 @@
 Push-Location "$REPO_ROOT\build"
 ctest -C Release
 Pop-Location
+exit 0
