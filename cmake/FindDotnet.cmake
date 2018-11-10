@@ -23,6 +23,7 @@
 #            [PACKAGE output_nuget_packages... ]
 #            [VERSION nuget_package_version]
 #            [DEPENDS depend_nuget_packages... ]
+#            [CUSTOM_BUILDPROPS <CustomProp>value</CustomProp>....]
 #            [SOURCES additional_file_dependencies... ])
 # ```
 # 
@@ -43,6 +44,7 @@
 #            [PLATFORM platform]
 #            [PACKAGE output_nuget_packages... ]
 #            [DEPENDS depend_nuget_packages... ]
+#            [CUSTOM_BUILDPROPS <CustomProp>value</CustomProp>....]
 #            [SOURCES additional_file_dependencies... ])
 # ```
 #
@@ -51,6 +53,30 @@
 # ```
 # DOTNET_REGISTER_LOCAL_REPOSITORY(repo_name repo_path)
 # ```
+#
+# TEST_DOTNET -- add a dotnet test project to ctest. The project will be run with `dotnet test`,
+# and trx test reports will be generated in the build directory. For Windows, all target frameworks
+# are tested against. For other platforms, only .NET Core App is tested against.
+# Test failures will not fail the build.
+# Tests are only run with `ctest -C <config>`, not with `cmake --build ...`
+#
+# ```
+# TEST_DOTNET(<project_file>
+#             [ARGUMENTS additional_dotnet_test_args...])
+# ```
+# 
+# SMOKETEST_DOTNET -- add a dotnet smoke test project to the build. The project will be run during a build,
+# and if the program fails to build or run, the build fails. Currently only .NET Core App framework is supported.
+# Multiple smoke tests will be run one-by-one to avoid global resource conflicts.
+#
+# SMOKETEST_DOTNET(<project_file> [RELEASE|DEBUG] [X86|X64|ANYCPU] [NETCOREAPP]
+#                 [CONFIG configuration]
+#                 [PLATFORM platform]
+#                 [PACKAGE output_nuget_packages... ]
+#                 [VERSION nuget_package_version]
+#                 [DEPENDS depend_nuget_packages... ]
+#                 [CUSTOM_BUILDPROPS <CustomProp>value</CustomProp>....]
+#                 [SOURCES additional_file_dependencies... ])
 # 
 # For all the above functions, `RELEASE|DEBUG` overrides `CONFIG`, `X86|X64|ANYCPU` overrides PLATFORM.
 # For Unix systems, the target framework defaults to `netstandard2.0`, unless `NETCOREAPP` is specified.
@@ -120,7 +146,7 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
         # oneValueArgs
         "CONFIG;PLATFORM;VERSION" 
         # multiValueArgs
-        "PACKAGE;DEPENDS;ARGUMENTS;OUTPUT;SOURCES"
+        "PACKAGE;DEPENDS;ARGUMENTS;OUTPUT;SOURCES;CUSTOM_BUILDPROPS"
         # the input arguments
         ${arguments})
 
@@ -340,6 +366,8 @@ FUNCTION(TEST_DOTNET DOTNET_PROJECT)
 
 ENDFUNCTION()
 
+SET(DOTNET_LAST_SMOKETEST "")
+
 FUNCTION(SMOKETEST_DOTNET DOTNET_PROJECT)
     IF(WIN32)
         ADD_DOTNET(${DOTNET_PROJECT} "${ARGN}")
@@ -356,6 +384,12 @@ FUNCTION(SMOKETEST_DOTNET DOTNET_PROJECT)
         ALL
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.runtimestamp)
     ADD_DOTNET_DEPENDENCY_TARGETS(SMOKETEST)
+    IF(DOTNET_LAST_SMOKETEST)
+        ADD_DEPENDENCIES(SMOKETEST_${DOTNET_PROJNAME} ${DOTNET_LAST_SMOKETEST})
+    ENDIF()
+    # Chain the smoke tests together so they are executed sequentially
+    SET(DOTNET_LAST_SMOKETEST SMOKETEST_${DOTNET_PROJNAME})
+
 ENDFUNCTION()
 
 MESSAGE("-- Found .NET toolchain: ${DOTNET_EXE} (version ${DOTNET_VERSION})")
