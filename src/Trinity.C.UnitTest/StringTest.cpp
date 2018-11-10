@@ -23,9 +23,12 @@ TEST_CASE("ToWCharArray works", "[string]")
     String s = "123";
     s.Clear();
     auto x = s.ToWcharArray();
+#if defined(TRINITY_PLATFORM_WINDOWS)
     auto p = L"";
 
     REQUIRE(0 == wcscmp(x, p));
+#endif
+    //TODO when wchar_t is u32char..
 }
 
 TEST_CASE("FromWCharArray works", "[string]")
