@@ -16,6 +16,10 @@ namespace Trinity
     public enum TrinityErrorCode : int
     {
         /// <summary>
+        /// Indicates that the operation is not supported.
+        /// </summary>
+        E_NOTSUPPORTED          = -24,
+        /// <summary>
         /// Indicates an entry-not-found failure.
         /// </summary>
         E_NOENTRY               = -23,
