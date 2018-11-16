@@ -9,6 +9,7 @@
 #include "Trinity/String.h"
 #include "Trinity/Log.h"
 #include "Trinity/Events.h"
+#include "Trinity/Storage.h"
 
 #if defined(Trinity_EXPORTS)
 #define TRINITY_API DLL_EXPORT
@@ -26,7 +27,7 @@ TRINITY_API void              CDispose();
 
 TRINITY_API BOOL              CSaveStorage();
 TRINITY_API BOOL              CLoadStorage();
-//TRINITY_API TrinityErrorCode  CGetTrinityImageSignature(Storage::LocalMemoryStorage::PTRINITY_IMAGE_SIGNATURE pSignature);
+TRINITY_API TrinityErrorCode  CGetTrinityImageSignature(Storage::LocalMemoryStorage::PTRINITY_IMAGE_SIGNATURE pSignature);
 /* Non-logging interfaces */
 TRINITY_API TrinityErrorCode  CSaveCell(cellid_t cellid, char* buf, int32_t size, uint16_t type);
 TRINITY_API TrinityErrorCode  CAddCell(cellid_t cellid, char* buf, int32_t size, uint16_t type);
@@ -39,8 +40,8 @@ TRINITY_API TrinityErrorCode  CLoggedUpdateCell(cellid_t cellid, char* buf, int3
 TRINITY_API TrinityErrorCode  CLoggedRemoveCell(cellid_t cellid, CellAccessOptions options);
 TRINITY_API void              CWriteAheadLog(cellid_t cellid, char* buf, int32_t size, uint16_t type, CellAccessOptions options);
 TRINITY_API void              CSetWriteAheadLogFile(FILE* fp);
-//TRINITY_API void              CWriteAheadLogComputeChecksum(Storage::LocalMemoryStorage::Logging::PLOG_RECORD_HEADER plog, char* buffer);
-//TRINITY_API BOOL              CWriteAheadLogValidateChecksum(Storage::LocalMemoryStorage::Logging::PLOG_RECORD_HEADER plog, char* buffer);
+TRINITY_API void              CWriteAheadLogComputeChecksum(Storage::LocalMemoryStorage::Logging::PLOG_RECORD_HEADER plog, char* buffer);
+TRINITY_API BOOL              CWriteAheadLogValidateChecksum(Storage::LocalMemoryStorage::Logging::PLOG_RECORD_HEADER plog, char* buffer);
 
 TRINITY_API TrinityErrorCode  CResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, char*& cell_ptr);
 TRINITY_API TrinityErrorCode  CGetCellType(cellid_t cellId, uint16_t& cellType);
