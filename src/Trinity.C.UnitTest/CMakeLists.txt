@@ -1,3 +1,7 @@
+IF(WIN32)
+    # TODO add_definitions(/DCATCH_CONFIG_NOSTDOUT)
+ENDIF()
+
 macro(add_cpp_test test_name)
     add_executable(${test_name} ${test_name}.cpp)
     target_link_libraries(${test_name} Trinity)
@@ -15,3 +19,4 @@ add_cpp_test(PaddingTest)
 add_cpp_test(PathTest)
 add_cpp_test(SizeTest)
 add_cpp_test(StringTest)
+add_cpp_test(Utf8Test)
