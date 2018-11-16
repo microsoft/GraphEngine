@@ -1,56 +1,60 @@
 #define CATCH_CONFIG_MAIN
-#include "catch.hpp"
+#include "catch_wrapper.hpp"
 #include <cstdio>
 #include <Trinity.h>
+#include <Trinity/IO/Console.h>
+
+using namespace Trinity;
+using namespace Trinity::IO;
 
 TEST_CASE("LocalMemoryStorage Disk I/O tests", "[io] [storage]")
 {
-    //CInitialize();
+    CInitialize();
 
-    //SECTION("Initialize - SaveCell - SaveStorage - LoadStorage sequence")
-    //{
-    //    Console::WriteLine("StorageRoot: {0}", TrinityConfig::StorageRoot());
-    //    Storage::LocalMemoryStorage::Initialize();
+    SECTION("Initialize - SaveCell - SaveStorage - LoadStorage sequence")
+    {
+        CInitialize();
 
-    //    char content[15];
+        char content[15];
 
-    //    for (int i=0; i < 4097; ++i)
-    //        Storage::LocalMemoryStorage::SaveCell(i, content, 15, 255);
+        for (int i=0; i < 4097; ++i)
+            CSaveCell(i, content, 15, 255);
 
-    //    Storage::LocalMemoryStorage::SaveStorage();
-    //    Storage::LocalMemoryStorage::LoadStorage();
+        CSaveStorage();
+        CLoadStorage();
 
-    //}
+    }
 
-    //SECTION("Load storage")
-    //{
-    //    Storage::LocalMemoryStorage::LoadStorage();
-    //}
+    SECTION("Load storage")
+    {
+        CLoadStorage();
+    }
 
-    //SECTION("Reset storage")
-    //{
-    //    Storage::LocalMemoryStorage::ResetStorage();
-    //}
+    SECTION("Reset storage")
+    {
+        CResetStorage();
+    }
 
-    //SECTION("CResetStorageAndSaveStorageTest")
-    //{
-    //    Storage::LocalMemoryStorage::ResetStorage();
-    //    Storage::LocalMemoryStorage::SaveStorage();
-    //}
+    SECTION("CResetStorageAndSaveStorageTest")
+    {
+        CResetStorage();
+        CSaveStorage();
+    }
 
-    //SECTION("CRemoveCell_loggedTest")
-    //{
-    //    Storage::LocalMemoryStorage::ResetStorage();
-    //    FILE* fp = fopen("log.dat", "wb");
-    //    Storage::LocalMemoryStorage::Logging::SetWriteAheadLogFile(fp);
+    SECTION("CRemoveCell_loggedTest")
+    {
+        //TODO
+        //CResetStorage();
+        //FILE* fp = fopen("log.dat", "wb");
+        //CSetWriteAheadLogFile(fp);
 
-    //    char buf[10];
+        //char buf[10];
 
-    //    Storage::LocalMemoryStorage::SaveCell(1, buf, 10, 0);
+        //CSaveCell(1, buf, 10, 0);
 
-    //    Storage::LocalMemoryStorage::RemoveCell(1, Storage::LocalMemoryStorage::CellAccessOptions::StrongLogAhead);
+        //CRemoveCell(1, Storage::LocalMemoryStorage::CellAccessOptions::StrongLogAhead);
 
 
-    //    fclose(fp);
-    //}
+        //fclose(fp);
+    }
 }

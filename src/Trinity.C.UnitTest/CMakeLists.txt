@@ -1,5 +1,5 @@
 IF(WIN32)
-    # TODO add_definitions(/DCATCH_CONFIG_NOSTDOUT)
+    add_definitions(/DCATCH_CONFIG_NOSTDOUT)
 ENDIF()
 
 macro(add_cpp_test test_name)
