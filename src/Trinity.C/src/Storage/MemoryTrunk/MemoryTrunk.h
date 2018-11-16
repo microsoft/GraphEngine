@@ -67,12 +67,6 @@ namespace Storage
         int32_t fwd_index;
     }AddressTableEndPoint;
 
-    typedef struct
-    {
-        int64_t LowBits;
-        int64_t HighBits;
-    }MD5_SIGNATURE, *PMD5_SIGNATURE;
-
     class MemoryTrunk
     {
     private:
