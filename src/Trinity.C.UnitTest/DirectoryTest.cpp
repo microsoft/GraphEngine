@@ -1,5 +1,5 @@
 #define CATCH_CONFIG_MAIN
-#include "catch.hpp"
+#include "catch_wrapper.hpp"
 #include <Trinity.h>
 #include <Trinity/IO/Path.h>
 #include <Trinity/Environment.h>

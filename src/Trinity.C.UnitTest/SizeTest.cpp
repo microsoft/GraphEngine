@@ -1,5 +1,5 @@
 #define CATCH_CONFIG_MAIN
-#include "catch.hpp"
+#include "catch_wrapper.hpp"
 #include <cstdio>
 #include "Storage/LocalStorage/LocalMemoryStorage.h"
 #include "Storage/MemoryTrunk/MemoryTrunk.h"
