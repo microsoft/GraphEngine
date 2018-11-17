@@ -43,18 +43,17 @@ TEST_CASE("LocalMemoryStorage Disk I/O tests", "[io] [storage]")
 
     SECTION("CRemoveCell_loggedTest")
     {
-        //TODO
-        //CResetStorage();
-        //FILE* fp = fopen("log.dat", "wb");
-        //CSetWriteAheadLogFile(fp);
+        CResetStorage();
+        FILE* fp = fopen("log.dat", "wb");
+        CSetWriteAheadLogFile(fp);
 
-        //char buf[10];
+        char buf[10];
 
-        //CSaveCell(1, buf, 10, 0);
+        CSaveCell(1, buf, 10, 0);
 
-        //CRemoveCell(1, Storage::LocalMemoryStorage::CellAccessOptions::StrongLogAhead);
+        CLoggedRemoveCell(1, CellAccessOptions::StrongLogAhead);
 
 
-        //fclose(fp);
+        fclose(fp);
     }
 }

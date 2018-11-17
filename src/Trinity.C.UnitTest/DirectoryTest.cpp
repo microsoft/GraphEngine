@@ -8,7 +8,7 @@ using namespace Trinity;
 
 TEST_CASE("Trinity::IO::Directory::Exists works", "[io]")
 {
-    String p = Environment::GetCurrentDirectoryW();
+    String p = Environment::GetCurrentDirectory();
     String subdir = IO::Path::Combine(p, "1", "2", "3", "4", "5");
 
     REQUIRE(true == IO::Directory::Exists(p));
