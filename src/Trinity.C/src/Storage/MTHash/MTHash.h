@@ -96,7 +96,7 @@ namespace Storage
             return BucketMemoryOffset() + TrinityConfig::MemoryReserveUnit() / sizeof(Buckets[0]);
         }
         static uint64_t LookupLossyCounter;
-        const  uint64_t LookupSlowPathThreshold = 8192;
+        static constexpr uint64_t LookupSlowPathThreshold() { return 8192; }
 
         /*****************************************************************/
         /**************************** 64-byte block **********************/
@@ -272,7 +272,7 @@ namespace Storage
                 }
             }
 
-            if (++LookupLossyCounter < LookupSlowPathThreshold)
+            if (++LookupLossyCounter < LookupSlowPathThreshold())
             {
                 goto start;
             }

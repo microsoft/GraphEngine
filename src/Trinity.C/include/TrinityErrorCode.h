@@ -8,6 +8,7 @@
 
 enum TrinityErrorCode : int32_t
 {
+    E_NOTSUPPORTED          = -24,
     E_NOENTRY               = -23,  // General purpose ENOENT
     E_INIT_FAIL             = -22,
     E_MANAGED_EXCEPTION     = -21,  // Exception propagated from managed runtime.

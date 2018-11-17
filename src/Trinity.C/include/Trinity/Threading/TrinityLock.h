@@ -11,13 +11,13 @@ class TrinityLock
 {
 private:
     volatile LONG m_spinlock;
-    const LONG c_available = 1;
-    const LONG c_acquired = 0;
+    constexpr LONG c_available() { return 1; }
+    constexpr LONG c_acquired() { return 0; }
 
 public:
     TrinityLock() 
     {
-        m_spinlock = c_available;
+        m_spinlock = c_available();
     }
 
     void lock()
@@ -25,7 +25,7 @@ public:
         while (true) 
         {
             auto val = InterlockedDecrement(&m_spinlock);
-            if (val == c_acquired) return;
+            if (val == c_acquired()) return;
             //  val is a negative integer, and when we
             //  wake a thread, m_spinlock is reset and
             //  we have to try again to grab the lock.
@@ -35,7 +35,7 @@ public:
 
     void unlock()
     {
-        m_spinlock = c_available;
+        m_spinlock = c_available();
         WakeByAddressSingle((PVOID)&m_spinlock);
     }
 
@@ -51,7 +51,7 @@ public:
     bool trylock()
     {
         auto val = InterlockedDecrement(&m_spinlock);
-        return (val == c_acquired);
+        return (val == c_acquired());
         //  we don't have to make up the value, because
         //  the unlocker will rearm the lock flag.
     }

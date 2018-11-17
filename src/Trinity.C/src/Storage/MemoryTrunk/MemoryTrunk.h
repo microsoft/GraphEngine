@@ -67,12 +67,6 @@ namespace Storage
         int32_t fwd_index;
     }AddressTableEndPoint;
 
-    typedef struct
-    {
-        int64_t LowBits;
-        int64_t HighBits;
-    }MD5_SIGNATURE, *PMD5_SIGNATURE;
-
     class MemoryTrunk
     {
     private:
@@ -145,7 +139,7 @@ namespace Storage
         TrinityErrorCode ExpandLargeObject(int32_t lo_index, int32_t original_size, int32_t new_size);
         TrinityErrorCode ShrinkLargeObject(int32_t lo_index, int32_t original_size, int32_t new_size);
         ////////////////////////////////////////////////////////
-        
+
         char* AllocateLargeObject(int32_t);
 
         int32_t ReloadImpl();
@@ -230,4 +224,4 @@ namespace Storage
         bool LoadLOFile(String lo_file = "");
         //////////////////////////////////////////////////////////////
     };
-    }
+}

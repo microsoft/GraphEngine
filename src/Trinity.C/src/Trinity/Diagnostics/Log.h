@@ -3,52 +3,13 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 #pragma once
-#define TRINITY_DEBUG
 #include "Trinity/String.h"
+#include "Trinity/Log.h"
 
 namespace Trinity
 {
     namespace Diagnostics
     {
-        /**! Should be synchronized with Log.cs */
-        enum LogLevel : int32_t
-        {
-            /// <summary>
-            /// No message is logged
-            /// </summary>
-            Off     = 0,
-
-            /// <summary>
-            /// Only unrecoverable system errors are logged
-            /// </summary>
-            Fatal   = 1,
-
-            /// <summary>
-            /// Unrecoverable system errors and application logLevel errors are logged
-            /// </summary>
-            Error   = 2,
-
-            /// <summary>
-            /// Fatal system error, application error and application warning are logged
-            /// </summary>
-            Warning = 3,
-
-            /// <summary>
-            /// All errors, warnings and notable application messages are logged
-            /// </summary>
-            Info    = 4,
-
-            /// <summary>
-            /// All errors, warnings, application messages and debugging messages are logged
-            /// </summary>
-            Debug   = 5,
-
-            /// <summary>
-            /// All messages are logged
-            /// </summary>
-            Verbose = 6,
-        };
-
         void InitializeLogger();
         void PrintCallStack(void);
         void SetLogLevel(LogLevel level);

@@ -69,6 +69,9 @@ namespace Trinity
                 BackgroundWhite = 0x00f0,
             };
 
+#ifdef TRINITY_PLATFORM_WINDOWS
+            static HANDLE handle = NULL;
+#endif
             class __ConsoleInitializer
             {
             public:
@@ -76,14 +79,13 @@ namespace Trinity
                 {
 #ifdef TRINITY_PLATFORM_WINDOWS
                     _setmode(_fileno(stdout), _O_U8TEXT);
+                    handle = GetStdHandle(STD_OUTPUT_HANDLE);
 #endif
                 }
             };
 
-#ifdef TRINITY_PLATFORM_WINDOWS
-            static HANDLE handle = NULL;
             static __ConsoleInitializer __initializer;
-#endif
+
             inline void _lock_console() {}
             inline void _unlock_console() {}
 
@@ -95,8 +97,6 @@ namespace Trinity
             inline void SetColor(ConsoleColor color)
             {
 #ifdef TRINITY_PLATFORM_WINDOWS
-                if (handle == NULL)
-                    handle = GetStdHandle(STD_OUTPUT_HANDLE);
                 SetConsoleTextAttribute(handle, (WORD)color);
 #else
                 TRINITY_COMPILER_WARNING("Console::SetColor not implemented")
@@ -111,8 +111,6 @@ namespace Trinity
             inline void ResetColor()
             {
 #ifdef TRINITY_PLATFORM_WINDOWS
-                if (handle == NULL)
-                    handle = GetStdHandle(STD_OUTPUT_HANDLE);
                 SetConsoleTextAttribute(handle, ForegroundGray);
 #endif
             }
@@ -122,7 +120,7 @@ namespace Trinity
             {
                 String content = String::Format(format, arguments...);
                 _lock_console();
-#ifdef TRINITY_PLATFORM_WINDOWS
+#if defined(TRINITY_PLATFORM_WINDOWS)
                 std::wcout << (u16char*)(content.ToWcharArray());
 #else
                 std::cout << content;
@@ -135,7 +133,7 @@ namespace Trinity
             {
                 String content = String::Format(format, arguments...);
                 _lock_console();
-#ifdef TRINITY_PLATFORM_WINDOWS
+#if defined(TRINITY_PLATFORM_WINDOWS)
                 std::wcout << (u16char*)(content.ToWcharArray()) << std::endl;
 #else
                 std::cout << content << std::endl;
