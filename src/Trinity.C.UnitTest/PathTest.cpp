@@ -38,8 +38,6 @@ TEST_CASE("Trinity::IO::Path::GetDirectoryName works", "[io]")
     p = Path::GetDirectoryName(p);
     REQUIRE("\\foo" == p);
     p = Path::GetDirectoryName(p);
-    REQUIRE("\\" == p);
-    p = Path::GetDirectoryName(p);
     REQUIRE("" == p);
     p = Path::GetDirectoryName(p);
     REQUIRE("" == p);
