@@ -431,3 +431,12 @@ DLL_EXPORT TrinityErrorCode PostCompute(Trinity::Events::compute_handler_t* pcom
 
     return Trinity::Events::platform_post_workitem(pwork);
 }
+
+DLL_EXPORT Trinity::Events::work_t* AllocContinuation(Trinity::Events::continuation_handler_t* pcontinuation, void* pdata, Trinity::Events::work_t* pdependency)
+{
+    auto pwork = Trinity::Events::alloc_work(Trinity::Events::worktype_t::Continuation);
+    pwork->pcontinuation = pcontinuation;
+    pwork->pcontinuation_data = pdata;
+    pwork->pdependency = pdependency;
+    return pwork;
+}

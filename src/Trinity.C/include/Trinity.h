@@ -148,3 +148,4 @@ TRINITY_API TrinityErrorCode StopEventLoop();
 TRINITY_API TrinityErrorCode RegisterMessageHandler(uint16_t msgId, void * handler);
 TRINITY_API void LocalSendMessage(Trinity::Events::message_t* message);
 TRINITY_API TrinityErrorCode PostCompute(Trinity::Events::compute_handler_t* pcompute, void* pdata);
+TRINITY_API Trinity::Events::work_t* AllocContinuation(Trinity::Events::continuation_handler_t* pcontinuation, void* pdata, Trinity::Events::work_t* pdependency);

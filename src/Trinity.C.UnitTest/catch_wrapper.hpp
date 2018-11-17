@@ -9,24 +9,24 @@
 class ostream_adapter_t : public std::streambuf, public std::ostream
 {
 private:
-    const size_t szbuf = 256;
+    const size_t szbuf = 64;
     char* pbuf;
 
     void _reset_buf()
     {
-        setp(pbuf, pbuf + szbuf - 3);
+        setp(pbuf, pbuf + szbuf - 1);
     }
 public:
-    ostream_adapter_t() : std::ostream(this) 
+    ostream_adapter_t() : std::ostream(this)
     {
-        pbuf = new char[szbuf];
-        pbuf[szbuf - 1] = 0;
+        pbuf = new char[szbuf + 1];
+        pbuf[szbuf] = 0;
         _reset_buf();
     }
 
     std::streambuf::int_type overflow(std::streambuf::int_type c) override
     {
-        pbuf[szbuf - 2] = c;
+        pbuf[szbuf - 1] = c;
         Trinity::IO::Console::Write("{0}", Trinity::String(pbuf));
         _reset_buf();
 
