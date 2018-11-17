@@ -28,11 +28,12 @@ namespace Trinity
         TrinityErrorCode platform_start_eventloop();
         TrinityErrorCode platform_stop_eventloop();
 
-        void _default_handler(message_t * buff)
+        work_t* _default_handler(message_t * buff)
         {
             buff->buf = (char *)malloc(sizeof(TrinityErrorCode));
             buff->len = sizeof(TrinityErrorCode);
             *(TrinityErrorCode *)buff->buf = TrinityErrorCode::E_RPC_EXCEPTION;
+            return nullptr;
         }
 
         void _eventloop()
