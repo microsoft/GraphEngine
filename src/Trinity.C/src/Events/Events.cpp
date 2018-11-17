@@ -80,8 +80,6 @@ namespace Trinity
                         Network::send_async(psock);
                     }
                     break;
-                case worktype_t::None:
-                    break;
                 default:
                     Diagnostics::WriteLine(Diagnostics::Error, "EventLoop: Async work type {0} is not recognized.", pwork->type);
                     break;
