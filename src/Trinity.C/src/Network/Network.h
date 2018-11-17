@@ -6,7 +6,6 @@
 
 #include "TrinityCommon.h"
 #include "os/os.h"
-#include "Events/Events.h"
 
 #include <cstdint>
 #include <cstdlib>
@@ -24,7 +23,9 @@
 #include <netinet/in.h>
 #include <fcntl.h>
 
+typedef struct sockaddr_in SOCKADDR_IN;
 typedef int SOCKET;
+typedef linger LINGER;
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
 #define closesocket close
@@ -32,8 +33,19 @@ typedef int SOCKET;
 
 namespace Trinity
 {
+    namespace Events
+    {
+        struct work_t;
+    }
     namespace Network
     {
+        const uint32_t RX_DEFAULT_LEN = 8192;
+        const uint32_t SOCKET_HEADER = 4;
+
+        const double AvgSlideWin_a = 0.85f;
+        const double AvgSlideWin_b = 0.15f;
+        const double AvgSlideWin_r = 2.15f;
+
         /* Platform-specific socket descriptor, represents a context object associated with each socket */
         struct sock_t
         {
@@ -79,8 +91,11 @@ namespace Trinity
             Events::work_t* work; // size: 8
             // =============== 64 bytes ==============
 
+            //  wait_handshake is only enabled for incoming socket.
             uint32_t wait_handshake; //size:4
             uint32_t avg_rx_len; // size: 4
+
+            bool is_incoming;
         };
 
 
@@ -90,30 +105,74 @@ namespace Trinity
         bool uninitialize_network();
 
         // socket management
-        sock_t* alloc_socket(SOCKET sock);
-        void free_socket(sock_t* p);
-        void add_socket(sock_t* p);
-        void remove_socket(sock_t* p);
-        void reset_socket(sock_t * p);
 
-        // close_client_conn will also call remove_sock
-        void close_client_conn(sock_t* p, bool lingering);
-        void close_all_client_conn();
+        // alloc_sock_t allocates a sock_t and setups the buffers.
+        // if is_incoming is true, adds the psco to the incoming sock_t set, and
+        // enables handshake if appropriate.
+        sock_t* alloc_sock_t(SOCKET sock, bool is_incoming);
+
+        // for incoming connection, close_conn will also remove it from the psco set.
+        void close_conn(sock_t* p, bool lingering);
+        void close_all_incoming_conn();
 
         // I/O interfaces
 
-        void send_async(sock_t* p);
-        void recv_async(sock_t* p);
+        /// returns E_RETRY on success, indicates that the event
+        /// is queued, and should be polled again.
+        TrinityErrorCode send_async(sock_t* p);
+        /// returns E_RETRY on success, indicates that the event
+        /// is queued, and should be polled again.
+        TrinityErrorCode recv_async(sock_t* p);
 
-        bool process_send(sock_t* p, uint32_t sz_sent);
-        bool process_recv(sock_t* p, uint32_t sz_recv);
+        TrinityErrorCode process_send(sock_t* p, uint32_t sz_sent);
+        TrinityErrorCode process_recv(sock_t* p, uint32_t sz_recv);
 
-        void check_handshake(sock_t* p);
+        TrinityErrorCode check_handshake(sock_t* p);
 
-        inline void send_rsp(sock_t* p)
+        /// Initiates sending a full message.
+        inline TrinityErrorCode send_message(sock_t* p)
         {
             p->pending_len = p->msg_len;
-            send_async(p);
+            return send_async(p);
+        }
+
+        /// Initiates receiving a full message.
+        inline TrinityErrorCode recv_message(sock_t* p)
+        {
+            if (p->is_incoming)
+            {
+                // Calibrate the receive buffer
+                // If the average received message length drops below half of current recv buf len, adjust it.
+
+                if (p->avg_rx_len < p->rx_len / AvgSlideWin_r)
+                {
+                    free(p->rx_buf);
+                    p->rx_len = p->avg_rx_len;
+                    p->rx_buf = (char*)malloc(p->rx_len);
+
+                    if (p->rx_buf == nullptr)
+                    {
+                        return TrinityErrorCode::E_NOMEM;
+                    }
+                }
+            }
+
+            if (p->is_incoming)
+            {
+                // for incoming sock_t, recv_message always
+                // switch from a completed send (response)
+                // to a new receive. we should free response 
+                // buffer passed from handler.
+                free(p->msg_buf - p->msg_len);
+            }
+
+            // rearm at rx_buf
+            p->msg_buf = p->rx_buf;
+            p->msg_len = 0;
+            p->pending_len = p->rx_len;
+
+            // and begin transmission.
+            return recv_async(p);
         }
 
         enum TrinityMessageType : uint16_t
@@ -126,14 +185,15 @@ namespace Trinity
             PRESERVED_ASYNC,
         };
 
-        const uint32_t RX_DEFAULT_LEN = 8192;
-        const uint32_t SOCKET_HEADER = 4;
-
-        const double AvgSlideWin_a = 0.85f;
-        const double AvgSlideWin_b = 0.15f;
-        const double AvgSlideWin_r = 2.15f;
-
         extern uint8_t  HANDSHAKE_MESSAGE_CONTENT[];
         extern int      HANDSHAKE_MESSAGE_LENGTH;
+
+        uint64_t client_socket();
+        bool client_connect(uint64_t clientsocket, uint32_t ip, uint16_t port);
+        bool client_send(uint64_t socket, char* buf, int32_t len);
+        bool client_send_multi(uint64_t socket, char** bufs, int32_t* lens, int32_t cnt);
+        TrinityErrorCode client_recv(uint64_t socket, OUT char* & buf, OUT int32_t & len);
+        TrinityErrorCode client_wait(uint64_t socket);
+        void client_close(uint64_t socket);
     }
 }

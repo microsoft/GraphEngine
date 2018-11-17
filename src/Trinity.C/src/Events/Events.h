@@ -20,7 +20,6 @@ namespace Trinity
         work_t* alloc_work(worktype_t work);
         void    free_work(work_t* p);
         void    reset_work(work_t* p, worktype_t work);
-        work_t* poll_work(OUT uint32_t& szwork);
 
         TrinityErrorCode reset_handlers();
         TrinityErrorCode register_handler(uint16_t msgId, message_handler_t * handler);
