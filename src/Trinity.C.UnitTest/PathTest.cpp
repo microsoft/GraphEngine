@@ -62,7 +62,7 @@ TEST_CASE("Trinity::IO::Path::GetFullPath works", "[io]")
     REQUIRE(Path::GetFullPath("D:\\\\\\") == Path::GetFullPath("D:/\\/\\"));
     REQUIRE(Path::GetFullPath("D:\\a\\b\\") == String("D:\\a\\b\\"));
 
-    auto my_path = Environment::GetCurrentDirectoryW();
+    auto my_path = Environment::GetCurrentDirectory();
 
     REQUIRE(Path::GetFullPath(".") == Path::GetFullPath(my_path));
     REQUIRE(Path::GetFullPath("..") == Path::GetFullPath(Path::Combine(Path::GetFullPath(my_path), "..")));
