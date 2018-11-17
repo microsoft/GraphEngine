@@ -59,60 +59,66 @@ Trinity::Events::work_t* compute_with_continuation_deps(void* pdata)
 
 void post_simple_1(int count)
 {
-    std::atomic<int32_t> counter = 0;
+    std::atomic<int32_t> counter;
+    counter.store(0);
     for (int i=0; i < count; ++i)
     {
         REQUIRE(TrinityErrorCode::E_SUCCESS == PostCompute(compute_simple, &counter));
     }
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    REQUIRE(count == counter);
+    REQUIRE(count == counter.load());
 }
 
 void post_simple_2(int count)
 {
-    std::atomic<int32_t> counter_1 = 0;
-    std::atomic<int32_t> counter_2 = 0;
+    std::atomic<int32_t> counter_1;
+    std::atomic<int32_t> counter_2;
+    counter_1.store(0);
+    counter_2.store(0);
     for (int i=0; i < count; ++i)
     {
         REQUIRE(TrinityErrorCode::E_SUCCESS == PostCompute(compute_simple, &counter_1));
         REQUIRE(TrinityErrorCode::E_SUCCESS == PostCompute(compute_simple, &counter_2));
     }
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    REQUIRE(count == counter_1);
-    REQUIRE(count == counter_2);
+    REQUIRE(count == counter_1.load());
+    REQUIRE(count == counter_2.load());
 }
 
 void post_w_cont_simple(int count)
 {
-    std::atomic<int32_t> counter = 0;
+    std::atomic<int32_t> counter;
+    counter.store(0);
     for (int i=0; i < count; ++i)
     {
         REQUIRE(TrinityErrorCode::E_SUCCESS == PostCompute(compute_with_continuation, &counter));
     }
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    REQUIRE(count * 2 == counter);
+    REQUIRE(count * 2 == counter.load());
 }
 
 void post_w_cont_chained(int count)
 {
-    std::atomic<int32_t> counter = 0;
+    std::atomic<int32_t> counter;
+    counter.store(0);
     for (int i=0; i < count; ++i)
     {
         REQUIRE(TrinityErrorCode::E_SUCCESS == PostCompute(compute_with_continuation_chained, &counter));
     }
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    REQUIRE(count * 3 == counter);
+    REQUIRE(count * 3 == counter.load());
 }
 
 void post_w_cont_deps(int count)
 {
-    std::atomic<int32_t> counter = 0;
+    std::atomic<int32_t> counter;
+    counter.store(0);
     for (int i=0; i < count; ++i)
     {
         REQUIRE(TrinityErrorCode::E_SUCCESS == PostCompute(compute_with_continuation_deps, &counter));
     }
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    REQUIRE(count * 5 == counter);
+    REQUIRE(count * 5 == counter.load());
 }
 
 TEST_CASE("PostCompute accepts simple work items", "[events]")
