@@ -13,28 +13,28 @@ TEST_CASE("Eventloop can be started / stopped successfully", "[events]")
 
 Trinity::Events::work_t* continuation_simple(void* pdata, Trinity::Events::work_t* pcompleted)
 {
-    auto pcounter = reinterpret_cast<std::atomic_int32_t*>(pdata);
+    auto pcounter = reinterpret_cast<std::atomic<int32_t>*>(pdata);
     ++*pcounter;
     return nullptr;
 }
 
 Trinity::Events::work_t* continuation_chained(void* pdata, Trinity::Events::work_t* pcompleted)
 {
-    auto pcounter = reinterpret_cast<std::atomic_int32_t*>(pdata);
+    auto pcounter = reinterpret_cast<std::atomic<int32_t>*>(pdata);
     ++*pcounter;
     return AllocContinuation(continuation_simple, pdata, nullptr);
 }
 
 Trinity::Events::work_t* compute_simple(void* pdata)
 {
-    auto pcounter = reinterpret_cast<std::atomic_int32_t*>(pdata);
+    auto pcounter = reinterpret_cast<std::atomic<int32_t>*>(pdata);
     ++*pcounter;
     return nullptr;
 }
 
 Trinity::Events::work_t* compute_with_continuation(void* pdata)
 {
-    auto pcounter = reinterpret_cast<std::atomic_int32_t*>(pdata);
+    auto pcounter = reinterpret_cast<std::atomic<int32_t>*>(pdata);
     ++*pcounter;
     auto cont = AllocContinuation(continuation_simple, pdata, nullptr);
     return cont;
@@ -42,7 +42,7 @@ Trinity::Events::work_t* compute_with_continuation(void* pdata)
 
 Trinity::Events::work_t* compute_with_continuation_chained(void* pdata)
 {
-    auto pcounter = reinterpret_cast<std::atomic_int32_t*>(pdata);
+    auto pcounter = reinterpret_cast<std::atomic<int32_t>*>(pdata);
     ++*pcounter;
     auto cont = AllocContinuation(continuation_chained, pdata, nullptr);
     return cont;
@@ -50,7 +50,7 @@ Trinity::Events::work_t* compute_with_continuation_chained(void* pdata)
 
 Trinity::Events::work_t* compute_with_continuation_deps(void* pdata)
 {
-    auto pcounter = reinterpret_cast<std::atomic_int32_t*>(pdata);
+    auto pcounter = reinterpret_cast<std::atomic<int32_t>*>(pdata);
     ++*pcounter;
     auto cont = AllocContinuation(continuation_chained, pdata, 
                     AllocContinuation(continuation_chained, pdata, nullptr));
@@ -59,7 +59,7 @@ Trinity::Events::work_t* compute_with_continuation_deps(void* pdata)
 
 void post_simple_1(int count)
 {
-    std::atomic_int32_t counter = 0;
+    std::atomic<int32_t> counter = 0;
     for (int i=0; i < count; ++i)
     {
         REQUIRE(TrinityErrorCode::E_SUCCESS == PostCompute(compute_simple, &counter));
@@ -70,8 +70,8 @@ void post_simple_1(int count)
 
 void post_simple_2(int count)
 {
-    std::atomic_int32_t counter_1 = 0;
-    std::atomic_int32_t counter_2 = 0;
+    std::atomic<int32_t> counter_1 = 0;
+    std::atomic<int32_t> counter_2 = 0;
     for (int i=0; i < count; ++i)
     {
         REQUIRE(TrinityErrorCode::E_SUCCESS == PostCompute(compute_simple, &counter_1));
@@ -84,7 +84,7 @@ void post_simple_2(int count)
 
 void post_w_cont_simple(int count)
 {
-    std::atomic_int32_t counter = 0;
+    std::atomic<int32_t> counter = 0;
     for (int i=0; i < count; ++i)
     {
         REQUIRE(TrinityErrorCode::E_SUCCESS == PostCompute(compute_with_continuation, &counter));
@@ -95,7 +95,7 @@ void post_w_cont_simple(int count)
 
 void post_w_cont_chained(int count)
 {
-    std::atomic_int32_t counter = 0;
+    std::atomic<int32_t> counter = 0;
     for (int i=0; i < count; ++i)
     {
         REQUIRE(TrinityErrorCode::E_SUCCESS == PostCompute(compute_with_continuation_chained, &counter));
@@ -106,7 +106,7 @@ void post_w_cont_chained(int count)
 
 void post_w_cont_deps(int count)
 {
-    std::atomic_int32_t counter = 0;
+    std::atomic<int32_t> counter = 0;
     for (int i=0; i < count; ++i)
     {
         REQUIRE(TrinityErrorCode::E_SUCCESS == PostCompute(compute_with_continuation_deps, &counter));
