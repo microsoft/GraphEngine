@@ -48,6 +48,24 @@
 #            [SOURCES additional_file_dependencies... ])
 # ```
 #
+# SMOKETEST_DOTNET -- add a dotnet smoke test project to the build. The project will be run during a build,
+# and if the program fails to build or run, the build fails. Currently only .NET Core App framework is supported.
+# Multiple smoke tests will be run one-by-one to avoid global resource conflicts.
+#
+# SMOKETEST_DOTNET(<project_file> [RELEASE|DEBUG] [X86|X64|ANYCPU] [NETCOREAPP]
+#                 [CONFIG configuration]
+#                 [PLATFORM platform]
+#                 [PACKAGE output_nuget_packages... ]
+#                 [VERSION nuget_package_version]
+#                 [DEPENDS depend_nuget_packages... ]
+#                 [CUSTOM_BUILDPROPS <CustomProp>value</CustomProp>....]
+#                 [SOURCES additional_file_dependencies... ])
+# 
+# For all the above functions, `RELEASE|DEBUG` overrides `CONFIG`, `X86|X64|ANYCPU` overrides PLATFORM.
+# For Unix systems, the target framework defaults to `netstandard2.0`, unless `NETCOREAPP` is specified.
+# For Windows, the project is built as-is, allowing multi-targeting.
+#
+#
 # DOTNET_REGISTER_LOCAL_REPOSITORY -- register a local NuGet package repository.
 # 
 # ```
@@ -65,22 +83,19 @@
 #             [ARGUMENTS additional_dotnet_test_args...])
 # ```
 # 
-# SMOKETEST_DOTNET -- add a dotnet smoke test project to the build. The project will be run during a build,
-# and if the program fails to build or run, the build fails. Currently only .NET Core App framework is supported.
-# Multiple smoke tests will be run one-by-one to avoid global resource conflicts.
+# GEN_DOTNET_PROPS -- Generates a Directory.Build.props file. The created file is populated with MSBuild properties:
+#  - DOTNET_PACKAGE_VERSION: a version string that can be referenced in the actual project file as $(DOTNET_PACKAGE_VERSION).
+#    The version string value can be set with PACKAGE_VERSION argument, and defaults to '1.0.0'.
+#  - XPLAT_LIB_DIR: points to the cmake build root directory.
+#  - OutputPath: Points to the cmake build root directory. Therefore, projects built without cmake will consistently output
+#    to the cmake build directory.
+#  - Custom properties can be injected with XML_INJECT argument, which injects an arbitrary string into the project XML file.
 #
-# SMOKETEST_DOTNET(<project_file> [RELEASE|DEBUG] [X86|X64|ANYCPU] [NETCOREAPP]
-#                 [CONFIG configuration]
-#                 [PLATFORM platform]
-#                 [PACKAGE output_nuget_packages... ]
-#                 [VERSION nuget_package_version]
-#                 [DEPENDS depend_nuget_packages... ]
-#                 [CUSTOM_BUILDPROPS <CustomProp>value</CustomProp>....]
-#                 [SOURCES additional_file_dependencies... ])
-# 
-# For all the above functions, `RELEASE|DEBUG` overrides `CONFIG`, `X86|X64|ANYCPU` overrides PLATFORM.
-# For Unix systems, the target framework defaults to `netstandard2.0`, unless `NETCOREAPP` is specified.
-# For Windows, the project is built as-is, allowing multi-targeting.
+# ```
+# GEN_DOTNET_PROPS(<target_props_file>
+#                  [PACKAGE_VERSION version]
+#                  [XML_INJECT xml_injection])
+# ```
 # 
 # Require 3.5 for batch copy multiple files
 
@@ -391,6 +406,39 @@ FUNCTION(SMOKETEST_DOTNET DOTNET_PROJECT)
     SET(DOTNET_LAST_SMOKETEST SMOKETEST_${DOTNET_PROJNAME})
 
 ENDFUNCTION()
+
+SET(DOTNET_IMPORTS_TEMPLATE ${CMAKE_CURRENT_LIST_DIR}/DotnetImports.props.in)
+
+FUNCTION(GEN_DOTNET_PROPS target_props_file)
+    CMAKE_PARSE_ARGUMENTS(
+        # prefix
+        _DNP
+        # options (flags)
+        "" 
+        # oneValueArgs
+        "PACKAGE_VERSION;XML_INJECT" 
+        # multiValueArgs
+        ""
+        # the input arguments
+        ${ARGN})
+
+    IF(NOT _DNP_PACKAGE_VERSION)
+        SET(_DNP_PACKAGE_VERSION 1.0.0)
+    ENDIF()
+
+    IF(_DNP_XML_INJECT)
+        SET(_DN_CUSTOM_BUILDPROPS ${_DNP_XML_INJECT})
+    ENDIF()
+
+    SET(_DN_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+    SET(_DN_XPLAT_LIB_DIR ${CMAKE_BINARY_DIR})
+    SET(_DN_VERSION ${_DNP_PACKAGE_VERSION})
+    CONFIGURE_FILE(${DOTNET_IMPORTS_TEMPLATE} ${target_props_file})
+    UNSET(_DN_OUTPUT_PATH)
+    UNSET(_DN_XPLAT_LIB_DIR)
+    UNSET(_DN_VERSION)
+ENDFUNCTION()
+
 
 MESSAGE("-- Found .NET toolchain: ${DOTNET_EXE} (version ${DOTNET_VERSION})")
 SET(DOTNET_FOUND TRUE)
