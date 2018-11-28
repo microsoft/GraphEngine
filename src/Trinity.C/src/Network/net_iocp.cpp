@@ -8,6 +8,7 @@
 #include "Trinity/Environment.h"
 #include "Trinity/Threading/TrinityLock.h"
 #include "Network/Network.h"
+#include "Events/Events.h"
 #include "Network/SocketOptionsHelper.h"
 #include <atomic>
 
@@ -55,15 +56,13 @@ namespace Trinity
                     continue;
                 }
 
-                sock_t * p = alloc_socket(acceptSocket);
-
                 // Add it to the client socket set
-                add_socket(p);
+                sock_t * p = alloc_sock_t(acceptSocket, true);
 
                 // associate the accept socket with the previously created IOCP
                 if (TrinityErrorCode::E_SUCCESS != Events::enter_eventloop(p))
                 {
-                    close_client_conn(p, false);
+                    close_conn(p, false);
                     continue;
                 }
 
@@ -133,12 +132,12 @@ namespace Trinity
             closesocket(socket);
 
             //  Proceed to close all existing client sockets.
-            close_all_client_conn();
+            close_all_incoming_conn();
 
             return 0;
         }
 
-        void recv_async(sock_t* p)
+        TrinityErrorCode recv_async(sock_t* p)
         {
             // calibrate WSA buffer according to msg_buf & pending_len
             p->wsa_buf.buf = p->msg_buf;
@@ -151,7 +150,6 @@ namespace Trinity
             if (SOCKET_ERROR == statusCode &&
                 WSA_IO_PENDING != WSAGetLastError())
             {
-                /// initial recv operation
                 /// If an overlapped operation completes immediately,
                 /// WSARecv returns a value of zero and the lpNumberOfBytesRecvd parameter is updated
                 /// with the number of bytes received and the flag bits indicated by the lpFlags parameter are also updated.
@@ -159,12 +157,14 @@ namespace Trinity
                 /// WSARecv returns SOCKET_ERROR and indicates error code WSA_IO_PENDING.
                 /// If any overlapped function fails with WSA_IO_PENDING or immediately succeeds,
                 /// the completion event will always be signaled and the completion routine will be scheduled to run (if specified)
-                close_client_conn(p, false);
+                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Network: Errors occur during WSARecv. Error code = {0}, sock_t = {1}", WSAGetLastError(), p);
+                return TrinityErrorCode::E_NETWORK_RECV_FAILURE;
             }
             // otherwise, the receive operation has completed immediately or it is pending
+            return TrinityErrorCode::E_RETRY;
         }
 
-        void send_async(sock_t * p)
+        TrinityErrorCode send_async(sock_t * p)
         {
             // calibrate WSA buffer according to msg_buf & pending_len
             p->wsa_buf.buf = p->msg_buf;
@@ -175,39 +175,10 @@ namespace Trinity
             if (SOCKET_ERROR == statusCode &&
                 WSA_IO_PENDING != WSAGetLastError())
             {
-                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ServerSocket: Errors occur during WSASend. Error code = {0}", WSAGetLastError());
-                close_client_conn(p, false);
+                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Network: Errors occur during WSASend. Error code = {0}, sock_t = {1}", WSAGetLastError(), p);
+                return TrinityErrorCode::E_NETWORK_SEND_FAILURE;
             }
-        }
-
-        void close_client_conn(sock_t* p, bool lingering)
-        {
-            // closesocket deallocates socket handles and free up associated resources.
-            // closesocket function implicitly causes a shutdown sequence to occur if it has not already happened,
-            // we can use closesocket to both initiate the shutdown sequence and deallocate the socket handle.
-
-            // the sockets interface provides for controls by way of the socket option mechanism that
-            // allow us to indicate whether the implicit shutdown sequence should be graceful or abortive.
-            // and also whether the closesocket function should linger(that is not complete immediately) to
-            // allow time for a graceful shutdown sequence to complete.
-
-            // More info: https://msdn.microsoft.com/en-us/library/windows/desktop/ms738547%28v=vs.85%29.aspx
-
-            // Remove it from the client socket set
-            remove_socket(p);
-
-            if (!lingering)
-            {
-                LINGER _linger;
-                _linger.l_onoff = 1; //The socket will remain open for a specified amount of time.
-                _linger.l_linger = 0; //
-                setsockopt(p->socket, SOL_SOCKET, SO_LINGER, (char*)&_linger, sizeof(_linger));
-            }
-
-            // closesocket function implicitly causes a shutdown sequence
-            closesocket(p->socket);
-            p->socket = INVALID_SOCKET;
-            free_socket(p);
+            return TrinityErrorCode::E_RETRY;
         }
     }
 }

@@ -7,3 +7,14 @@ ADD_DOTNET(
 
 ADD_DEPENDENCIES(BUILD_Trinity.Core Trinity)
 ADD_DEPENDENCIES(BUILD_Trinity.Core Trinity.TSL.CodeGen)
+
+FILE(GLOB_RECURSE smoke_tests ../Trinity.Core.SmokeTest/*.csproj)
+FILE(GLOB_RECURSE unit_tests ../Trinity.Core.UnitTest/*.csproj)
+
+FOREACH(smoke_test ${smoke_tests})
+    SMOKETEST_DOTNET(${smoke_test} DEPENDS GraphEngine.Core VERSION ${TRINITY_VERSION})
+ENDFOREACH()
+
+FOREACH(unit_test ${unit_tests})
+    TEST_DOTNET(${unit_test} DEPENDS GraphEngine.Core ARGUMENTS -- RunConfiguration.TargetPlatform=x64 RunConfiguration.MaxCpuCount=1)
+ENDFOREACH()

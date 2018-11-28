@@ -1,7 +1,3 @@
-IF(${TRINITY_VERSION})
-    RETURN()
-ENDIF()
-
 EXECUTE_PROCESS(
     COMMAND ${DOTNET_EXE} help # to avoid "FIRST RUN EXPERIENCE" leaking into our version string
     OUTPUT_QUIET

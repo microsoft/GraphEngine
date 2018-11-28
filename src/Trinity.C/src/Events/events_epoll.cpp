@@ -5,20 +5,86 @@
 #include "os/os.h"
 #if defined(TRINITY_PLATFORM_LINUX)
 #include "Network/Network.h"
+#include "Events/Events.h"
 #include "Trinity/Diagnostics/Log.h"
 
 #include <sys/epoll.h>
 #include <sys/eventfd.h>
 
+#include <queue>
+#include <mutex>
 
 namespace Trinity
 {
     namespace Events
     {
         int epoll_fd;
-        using Network::sock_t;
 
-        TrinityErrorCode await_epoll(OUT work_t* &pwork, OUT uint32_t &szwork)
+        class epoll_compute_queue_t
+        {
+            work_t* pmaster_work;
+            std::mutex lock;
+            std::queue<work_t*> work_queue;
+            int evfd;
+            epoll_event epevent;
+
+        public:
+            epoll_compute_queue_t()
+            {
+                pmaster_work = alloc_work(worktype_t::Compute);
+                pmaster_work->pcompute_data = this;
+
+                // use semaphore semantic (each read decrements the counter by 1)
+                evfd = eventfd(0, EFD_NONBLOCK | EFD_SEMAPHORE);
+                epevent.data.ptr = pmaster_work;
+                epevent.events = EPOLLET | EPOLLONESHOT;
+                epoll_ctl(epoll_fd, EPOLL_CTL_ADD, evfd, &epevent);
+            }
+
+            void enqueue(work_t* pwork)
+            {
+                {
+                    std::lock_guard<std::mutex> g(lock);
+                    work_queue.push(pwork);
+                }
+                eventfd_write(evfd, 1);
+            }
+
+            work_t* dequeue()
+            {
+                work_t* pwork;
+                {
+                    std::lock_guard<std::mutex> g(lock);
+                    pwork = work_queue.front();
+                    work_queue.pop();
+                }
+                //  consume the signal
+                eventfd_t _unused;
+                eventfd_read(evfd, &_unused);
+                //  rearm the queue
+                epoll_ctl(epoll_fd, EPOLL_CTL_MOD, evfd, &epevent);
+
+                return pwork;
+            }
+
+            ~epoll_compute_queue_t()
+            {
+                while (work_queue.size())
+                {
+                    //TODO finish the work?
+                    free_work(work_queue.front());
+                    work_queue.pop();
+                }
+                close(evfd);
+                free_work(pmaster_work);
+            }
+        };
+
+        using Network::sock_t;
+        std::vector<std::unique_ptr<epoll_compute_queue_t>> compute_queues;
+        size_t compute_queue_idx = 0;
+
+        TrinityErrorCode platform_poll(OUT work_t* &pwork, OUT uint32_t &szwork)
         {
             epoll_event ep_event;
             sock_t* psock;
@@ -36,15 +102,21 @@ namespace Trinity
                  */
                 if (nullptr == pwork)
                 {
-                    /* Drain the evfd semaphore */
+                    /* do not drain the evfd semaphore */
                     break;
+                }
+
+                if (pwork->type == worktype_t::Compute)
+                {
+                    pwork = reinterpret_cast<epoll_compute_queue_t*>(pwork->pcompute_data)->dequeue();
+                    return TrinityErrorCode::E_SUCCESS;
                 }
 
                 psock = pwork->psock;
 
                 if ((ep_event.events & EPOLLERR) || (ep_event.events & EPOLLHUP))
                 {
-                    Network::close_client_conn(psock, false);
+                    Network::close_conn(psock, false);
                     return TrinityErrorCode::E_FAILURE;
                 }
                 else if ((ep_event.events & EPOLLIN) && pwork->type == worktype_t::Receive)
@@ -75,18 +147,6 @@ namespace Trinity
             return TrinityErrorCode::E_SUCCESS;
         }
 
-        work_t* poll_work(OUT uint32_t& szwork)
-        {
-            work_t* ret;
-            while (true)
-            {
-                if (TrinityErrorCode::E_SUCCESS == await_epoll(ret, szwork))
-                {
-                    return ret;
-                }
-            }
-        }
-
         TrinityErrorCode platform_start_eventloop()
         {
             epoll_fd = epoll_create1(0);
@@ -95,6 +155,12 @@ namespace Trinity
                 Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Cannot create epoll set: {0}", errno);
                 return TrinityErrorCode::E_FAILURE;
             }
+
+            for (int i=0; i < std::thread::hardware_concurrency(); ++i)
+            {
+                compute_queues.push_back(std::make_unique<epoll_compute_queue_t>());
+            }
+
             return TrinityErrorCode::E_SUCCESS;
         }
 
@@ -102,18 +168,15 @@ namespace Trinity
         {
             int evfd = eventfd(0, EFD_NONBLOCK);
             epoll_event ep_event;
-            ep_event.data.fd = evfd;
             ep_event.data.ptr = NULL;
             // use level-trigger so that everyone is woke up when the semaphore is not drained
             ep_event.events = EPOLLIN;
             epoll_ctl(epoll_fd, EPOLL_CTL_ADD, evfd, &ep_event);
 
-            uint32_t thread_cnt = g_threadpool_size;
-            for (uint32_t i = 0; i < thread_cnt; ++i)
-            {
-                eventfd_write(evfd, 1);
-            }
+            eventfd_write(evfd, g_threadpool_size);
             while (g_threadpool_size > 0) { usleep(100000); }
+
+            compute_queues.clear();
 
             close(evfd);
             close(epoll_fd);
@@ -129,10 +192,17 @@ namespace Trinity
             if (-1 == epoll_ctl(epoll_fd, EPOLL_CTL_ADD, pContext->socket, &ep_event))
             {
                 Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Cannot register connected sock fd to epoll instance");
-                Network::close_client_conn(pContext, false);
+                Network::close_conn(pContext, false);
                 return TrinityErrorCode::E_FAILURE;
             }
 
+            return TrinityErrorCode::E_SUCCESS;
+        }
+
+        TrinityErrorCode platform_post_workitem(work_t* pwork)
+        {
+            auto idx = (compute_queue_idx++) % compute_queues.size();
+            compute_queues[idx]->enqueue(pwork);
             return TrinityErrorCode::E_SUCCESS;
         }
     }

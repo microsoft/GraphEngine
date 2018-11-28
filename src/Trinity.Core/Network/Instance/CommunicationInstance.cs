@@ -262,13 +262,6 @@ namespace Trinity.Network
         /// </summary>
         protected internal abstract RunningMode RunningMode { get; }
 
-        private bool HasHttpEndpoints()
-        {
-            return
-                (this.GetCommunicationSchema().HttpEndpointNames.Count() != 0) ||
-                (this.m_CommunicationModules.Values.Any(m => m.GetCommunicationSchema().HttpEndpointNames.Count() != 0));
-        }
-
         /// <summary>
         /// Starts a Trinity instance.
         /// </summary>
@@ -392,8 +385,7 @@ namespace Trinity.Network
             Log.WriteLine("My IPEndPoint: " + _my_ip + ":" + _config.ListeningPort);
 
             //  Initialize Http server
-            if (HasHttpEndpoints())
-                StartHttpServer();
+            StartHttpServer();
         }
 
         /// <summary>
@@ -401,8 +393,7 @@ namespace Trinity.Network
         /// </summary>
         protected virtual void StopCommunicationListeners()
         {
-            if (HasHttpEndpoints())
-                StopHttpServer();
+            StopHttpServer();
 
             //  Shutdown message passing networking
             NativeNetwork.StopTrinityServer();
