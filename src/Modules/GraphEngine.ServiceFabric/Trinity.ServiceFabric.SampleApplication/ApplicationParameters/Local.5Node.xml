@@ -4,6 +4,6 @@
     <Parameter Name="Trinity.ServiceFabric.GraphEngineRemotingClient_InstanceCount" Value="1" />
     <Parameter Name="Trinity.ServiceFabric.GraphEngineService_PartitionCount" Value="1" />
     <Parameter Name="Trinity.ServiceFabric.GraphEngineService_MinReplicaSetSize" Value="2" />
-    <Parameter Name="Trinity.ServiceFabric.GraphEngineService_TargetReplicaSetSize" Value="3" />
+    <Parameter Name="Trinity.ServiceFabric.GraphEngineService_TargetReplicaSetSize" Value="2" />
   </Parameters>
 </Application>
