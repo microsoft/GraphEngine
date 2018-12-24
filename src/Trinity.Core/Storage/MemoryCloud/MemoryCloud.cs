@@ -63,6 +63,11 @@ namespace Trinity.Storage
         {
             return GetStorageByCellId(cellId).LoadCell(cellId, out cellBuff, out cellType);
         }
+
+        public TrinityErrorCode LoadCell(long cellId, out byte* cellBuf, out int size, out ushort cellType)
+        {
+            return GetStorageByCellId(cellId).LoadCell(cellId, out cellBuf, out size, out cellType);
+        }
         
         /// <summary>
         /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.

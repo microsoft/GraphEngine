@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Trinity.Configuration;
 using Trinity.Storage;
+using Trinity.Core.Lib;
 
 namespace Trinity.DynamicCluster.Storage
 {
@@ -69,6 +70,69 @@ namespace Trinity.DynamicCluster.Storage
             {
                 cellBuff = tempBuffList[0]; cellType = tempTypeList[0]; return TrinityErrorCode.E_SUCCESS;
             }
+        }
+
+        public unsafe TrinityErrorCode LoadCell(long cellId, out byte* cellBuf, out int cellSize, out ushort cellType)
+        {
+            List<long> tempBuffList = new List<long>();
+            List<int> tempSizeList = new List<int>();
+            List<ushort> tempTypeList = new List<ushort>();
+            TrinityErrorCode eResult = TrinityErrorCode.E_SUCCESS;
+
+            foreach (IStorage s in PickStorages(cellId))
+            {
+                eResult = s.LoadCell(cellId, out cellBuf, out cellSize, out cellType);
+                if (eResult == TrinityErrorCode.E_SUCCESS)
+                {
+                    tempBuffList.Add((long)cellBuf);
+                    tempSizeList.Add(cellSize);
+                    tempTypeList.Add(cellType);
+                }
+                else break;
+            }
+
+            if (eResult == TrinityErrorCode.E_SUCCESS && tempBuffList.Count == 0) { eResult = TrinityErrorCode.E_CELL_NOT_FOUND; }
+
+            if (eResult == TrinityErrorCode.E_SUCCESS)
+            {
+                var tbuf = (byte*)tempBuffList[0];
+                var ts   = tempSizeList[0];
+                var tt   = tempTypeList[0];
+
+                for(int i = 1; i < tempBuffList.Count; ++i)
+                {
+                    if(ts != tempSizeList[i] || tt != tempTypeList[i] || 0 != Memory.memcmp(tbuf, (byte*)tempBuffList[i], (ulong)ts))
+                    {
+                        //TODO we need to decide new error type.
+                        eResult = TrinityErrorCode.E_FAILURE;
+                        break;
+                    }
+                }
+            }
+
+            if(eResult == TrinityErrorCode.E_SUCCESS)
+            {
+                cellBuf  = (byte*)tempBuffList[0];
+                cellSize = tempSizeList[0];
+                cellType = tempTypeList[0];
+
+                tempBuffList.RemoveAt(0);
+                tempSizeList.RemoveAt(0);
+                tempTypeList.RemoveAt(0);
+            }
+            else
+            {
+                cellBuf  = null;
+                cellSize = -1;
+                cellType = 0;
+            }
+
+            for(int i = 0; i < tempBuffList.Count; ++i)
+            {
+                Memory.free((byte*)tempBuffList[i]);
+            }
+
+            return eResult;
         }
 
         public TrinityErrorCode RemoveCell(long cellId)
