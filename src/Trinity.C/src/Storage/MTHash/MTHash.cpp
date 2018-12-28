@@ -44,7 +44,7 @@ namespace Storage
         memset((char*)CellEntries, -1, (AllocatedEntryCount * sizeof(CellEntries[0])));
 
         MTEntries = (MTEntry*)Memory::MemoryCommit(MTEntryPtr, (size_t)AllocatedEntryCount * sizeof(MTEntries[0]));
-        memset((char*)MTEntries, -1, (AllocatedEntryCount * sizeof(MTEntries[0])));
+        memset((char*)MTEntries, 0, (AllocatedEntryCount * sizeof(MTEntries[0])));
 
         Buckets = (int*) Memory::MemoryCommit(BucketPtr, BucketCount * sizeof(Buckets[0]));
         memset((char*) Buckets, -1, BucketCount * sizeof(Buckets[0]));
