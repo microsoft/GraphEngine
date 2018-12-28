@@ -44,24 +44,26 @@ namespace Storage
         memset((char*)CellEntries, -1, (AllocatedEntryCount * sizeof(CellEntries[0])));
 
         MTEntries = (MTEntry*)Memory::MemoryCommit(MTEntryPtr, (size_t)AllocatedEntryCount * sizeof(MTEntries[0]));
+        memset((char*)MTEntries, -1, (AllocatedEntryCount * sizeof(MTEntries[0])));
 
         Buckets = (int*) Memory::MemoryCommit(BucketPtr, BucketCount * sizeof(Buckets[0]));
-        memset((char*) Buckets, -1, Memory::RoundUpToPage_32(BucketCount * sizeof(Buckets[0])));
+        memset((char*) Buckets, -1, BucketCount * sizeof(Buckets[0]));
 
-        if (!TrinityConfig::ReadOnly() && BucketLockers == nullptr)
+        if (!TrinityConfig::ReadOnly())
         {
             BucketLockers = (std::atomic<char>*)Memory::MemoryCommit(BucketLockersPtr, BucketCount * sizeof(BucketLockers[0]));
+            memset((char*) BucketLockers, 0, BucketCount * sizeof(BucketLockers[0]));
         }
 
         if (MTHash::PhysicalMemoryLocking)
         {
-            if (!VirtualLock(CellEntryPtr, ((size_t)AllocatedEntryCount << 3)))
+            if (!VirtualLock(CellEntryPtr, ((size_t)AllocatedEntryCount * sizeof(CellEntries[0]))))
                 Trinity::Diagnostics::FatalError("Cannot lock the CellEntries of MTHash {0} into physical memory.", memory_trunk->TrunkId);
 
-            if (!VirtualLock(MTEntries, ((size_t)AllocatedEntryCount << 4)))
+            if (!VirtualLock(MTEntries, ((size_t)AllocatedEntryCount * sizeof(MTEntries[0]))))
                 Trinity::Diagnostics::FatalError("Cannot lock the MTEntries of MTHash {0} into physical memory.", memory_trunk->TrunkId);
 
-            if (!VirtualLock(BucketPtr, ((size_t) BucketCount << 2)))
+            if (!VirtualLock(BucketPtr, ((size_t) BucketCount * sizeof(BucketPtr[0]))))
                 Trinity::Diagnostics::FatalError("Cannot lock the Buckets of MTHash {0} into physical memory.", memory_trunk->TrunkId);
 
             if (!TrinityConfig::ReadOnly() && BucketLockers != nullptr)
@@ -77,22 +79,28 @@ namespace Storage
         uint32_t AllocatedEntryCount = ExtendedInfo->EntryCount + UInt32_Contants::GuardedEntryCount;
         if (PhysicalMemoryLocking)
         {
-            VirtualUnlock(CellEntries, (size_t)AllocatedEntryCount << 3);
-            VirtualUnlock(MTEntries, (size_t)AllocatedEntryCount << 4);
-            VirtualUnlock(Buckets, BucketCount << 2);
+            VirtualUnlock(CellEntries, (size_t)AllocatedEntryCount * sizeof(CellEntries[0]));
+            VirtualUnlock(MTEntries, (size_t)AllocatedEntryCount * sizeof(MTEntries[0]));
+            VirtualUnlock(Buckets, BucketCount * sizeof(Buckets[0]));
             if (BucketLockers != nullptr)
                 VirtualUnlock(BucketLockers, BucketCount);
         }
 
-        Memory::DecommitMemory(CellEntries, (size_t)AllocatedEntryCount << 3);
-        Memory::DecommitMemory(MTEntries, (size_t)AllocatedEntryCount << 4);
-        Memory::DecommitMemory(Buckets, BucketCount << 2);
+        Memory::DecommitMemory(CellEntries, (size_t)AllocatedEntryCount * sizeof(CellEntries[0]));
+        Memory::DecommitMemory(MTEntries, (size_t)AllocatedEntryCount * sizeof(MTEntries[0]));
+        Memory::DecommitMemory(Buckets, BucketCount * sizeof(Buckets[0]));
+
+        if (BucketLockers != nullptr)
+        {
+            Memory::DecommitMemory(BucketLockers, BucketCount * sizeof(BucketLockers[0]));
+        }
 
         ExtendedInfo->EntryCount = 0;
 
-        CellEntries  = nullptr;
-        MTEntries    = nullptr;
-        Buckets      = nullptr;
+        CellEntries   = nullptr;
+        MTEntries     = nullptr;
+        Buckets       = nullptr;
+        BucketLockers = nullptr;
     }
 
     void MTHash::InitMTHashAttributes(MemoryTrunk * mt)
@@ -147,7 +155,7 @@ namespace Storage
     uint64_t MTHash::CommittedMemorySize()
     {
         uint32_t entry_count = ExtendedInfo->EntryCount.load(std::memory_order_relaxed);
-        return Memory::RoundUpToPage_32(MTHash::BucketCount << 2) /* Buckets */ + Memory::RoundUpToPage_32(MTHash::BucketCount) /* Bucket Lock */ + Memory::RoundUpToPage_32(entry_count << 3) /* CellEntries */ + Memory::RoundUpToPage_32(entry_count << 4) /* MTEntries */;
+        return Memory::RoundUpToPage_32(MTHash::BucketCount * sizeof(Buckets[0])) /* Buckets */ + Memory::RoundUpToPage_32(MTHash::BucketCount * sizeof(BucketLockers[0])) /* Bucket Lock */ + Memory::RoundUpToPage_32(entry_count * sizeof(CellEntries[0])) /* CellEntries */ + Memory::RoundUpToPage_32(entry_count * sizeof(MTEntries[0])) /* MTEntries */;
     }
 
     uint64_t MTHash::TotalCellSize()

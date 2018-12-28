@@ -13,27 +13,26 @@ namespace Storage
         BinaryWriter bw(output_file);
         bool success = true;
 
-        success = success && bw.Write((char)VERSION);                  // 1B
-        success = success && bw.Write(ExtendedInfo->NonEmptyEntryCount);             // 4B
-        success = success && bw.Write(ExtendedInfo->FreeEntryCount);                 // 4B
-        success = success && bw.Write(ExtendedInfo->FreeEntryList);                  // 4B
-        success = success && bw.Write(BucketCount);                    // 4B
-        success = success && bw.Write(ExtendedInfo->EntryCount);                     // 4B
+        success = success && bw.Write((char)VERSION);                    // 1B
+        success = success && bw.Write(ExtendedInfo->NonEmptyEntryCount); // 4B
+        success = success && bw.Write(ExtendedInfo->FreeEntryCount);     // 4B
+        success = success && bw.Write(ExtendedInfo->FreeEntryList);      // 4B
+        success = success && bw.Write(BucketCount);                      // 4B
+        success = success && bw.Write(ExtendedInfo->EntryCount);         // 4B
 
-        int32_t mtentry_array_length = (int32_t)ExtendedInfo->EntryCount << 4;
-        int32_t long_array_length    = (int32_t)ExtendedInfo->EntryCount << 3;
-        int32_t int_array_length     = (int32_t)ExtendedInfo->EntryCount << 2;
-        int32_t ushort_array_length  = (int32_t)ExtendedInfo->EntryCount << 1;
+        int32_t mtentry_array_length   = (int32_t)ExtendedInfo->EntryCount * sizeof(MTEntries[0]);
+        int32_t cellentry_array_length = (int32_t)ExtendedInfo->EntryCount * sizeof(CellEntries[0]);
+        int32_t bucket_array_length    = (int32_t)BucketCount * sizeof(Buckets[0]);
 
-        uint32_t buffer_size = mtentry_array_length > (BucketCount << 2) ? mtentry_array_length : (BucketCount << 2);
+        uint32_t buffer_size = std::max({ mtentry_array_length, cellentry_array_length, bucket_array_length });
         char* buff = new char[buffer_size];
 
         // Write buckets array
-        memcpy(buff, Buckets, (int32_t)BucketCount << 2);
-        success = success && bw.Write(buff, 0, (int32_t)BucketCount << 2); // note here we write more
+        memcpy(buff, Buckets, bucket_array_length);
+        success = success && bw.Write(buff, 0, bucket_array_length); // note here we write more
 
         // Write entry array
-        memcpy(buff, CellEntries, long_array_length);
+        memcpy(buff, CellEntries, cellentry_array_length);
 #pragma region Modify the offset in the entries
         char* p = buff;
         if (memory_trunk->committed_tail < memory_trunk->head.committed_head ||
@@ -65,7 +64,7 @@ namespace Storage
         }
 
 #pragma endregion
-        success = success && bw.Write(buff, 0, long_array_length);
+        success = success && bw.Write(buff, 0, cellentry_array_length);
 
         memcpy(buff, MTEntries, mtentry_array_length);
         success = success && bw.Write(buff, 0, mtentry_array_length);
@@ -101,10 +100,9 @@ namespace Storage
 
         ExtendedInfo->EntryCount = br.ReadUInt32();
 
-        uint32_t mtentry_array_length = (uint32_t)ExtendedInfo->EntryCount << 4;
-        uint32_t long_array_length    = (uint32_t)ExtendedInfo->EntryCount << 3;
-        uint32_t int_array_length     = (uint32_t)ExtendedInfo->EntryCount << 2;
-        uint32_t ushort_array_length  = (uint32_t)ExtendedInfo->EntryCount << 1;
+        uint32_t mtentry_array_length = (uint32_t)ExtendedInfo->EntryCount * sizeof(MTEntries[0]);
+        uint32_t cellentry_array_length = (uint32_t)ExtendedInfo->EntryCount * sizeof(CellEntries[0]);
+        int32_t bucket_array_length    = (int32_t)BucketCount * sizeof(Buckets[0]);
         /////////////////////////////////////////////////////////
 
         AllocateMTHash();
@@ -115,11 +113,11 @@ namespace Storage
 
         // Read buckets array
         read_success = br.Read(buff, 0, (int32_t)BucketCount << 2) && read_success;
-        memcpy(Buckets, buff, (int32_t)BucketCount << 2);
+        memcpy(Buckets, buff, bucket_array_length);
 
         // Read entry array
-        read_success = br.Read(buff, 0, long_array_length) && read_success; 
-        memcpy(CellEntries, buff, long_array_length);
+        read_success = br.Read(buff, 0, cellentry_array_length) && read_success; 
+        memcpy(CellEntries, buff, cellentry_array_length);
 
         // Read entry array
         read_success = br.Read(buff, 0, mtentry_array_length) && read_success;
