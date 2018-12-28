@@ -83,17 +83,34 @@ namespace Storage
             GuardedEntryCount = 1024,
         };
 
+        ///  Memory trunk layout:
+        ///  ,-----------------------------,
+        ///  |                             |
+        ///  |  MemoryTrunk 2GB reserved   |
+        ///  |                             |
+        ///  |---------------+-------------|
+        ///  | r CellEntries | r MTEntries | 
+        ///  |---------------+--+----------|
+        ///  | b BucketPointers | b locks  |
+        ///  `------------------+----------'
+        ///  r = ReserveEntriesPerMTHash
+        ///  b = BucketCount
+
         static uint64_t MTEntryOffset()
         {
-            return TrinityConfig::MemoryReserveUnit() / sizeof(CellEntries[0]);
+            return TrinityConfig::ReserveEntriesPerMTHash() * sizeof(CellEntries[0]);
         }
         static uint64_t BucketMemoryOffset()
         {
-            return MTEntryOffset() + TrinityConfig::MemoryReserveUnit() / sizeof(MTEntries[0]);
+            return MTEntryOffset() + TrinityConfig::ReserveEntriesPerMTHash() * sizeof(MTEntries[0]);
         }
         static uint64_t BucketLockerMemoryOffset()
         {
-            return BucketMemoryOffset() + TrinityConfig::MemoryReserveUnit() / sizeof(Buckets[0]);
+            return BucketMemoryOffset() + BucketCount * sizeof(Buckets[0]);
+        }
+        static uint64_t MTHashReservedSpace()
+        {
+            return BucketLockerMemoryOffset() + BucketCount * sizeof(BucketLockers[0]);
         }
         static uint64_t LookupLossyCounter;
         static constexpr uint64_t LookupSlowPathThreshold() { return 8192; }

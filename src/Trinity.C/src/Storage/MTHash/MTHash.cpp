@@ -40,16 +40,18 @@ namespace Storage
 
         uint32_t AllocatedEntryCount = ExtendedInfo->EntryCount + UInt32_Contants::GuardedEntryCount;
 
-        CellEntries = (CellEntry*)Memory::MemoryCommit(CellEntryPtr, (size_t)(AllocatedEntryCount) << 3);
-        memset((char*)CellEntries, -1, (AllocatedEntryCount << 3));
+        CellEntries = (CellEntry*)Memory::MemoryCommit(CellEntryPtr, (size_t)(AllocatedEntryCount) * sizeof(CellEntries[0]));
+        memset((char*)CellEntries, -1, (AllocatedEntryCount * sizeof(CellEntries[0])));
 
-        MTEntries = (MTEntry*)Memory::MemoryCommit(MTEntryPtr, (size_t)AllocatedEntryCount << 4);
+        MTEntries = (MTEntry*)Memory::MemoryCommit(MTEntryPtr, (size_t)AllocatedEntryCount * sizeof(MTEntries[0]));
 
-        Buckets = (int*) Memory::MemoryCommit(BucketPtr, BucketCount << 2);
-        memset((char*) Buckets, -1, Memory::RoundUpToPage_32(BucketCount << 2));
+        Buckets = (int*) Memory::MemoryCommit(BucketPtr, BucketCount * sizeof(Buckets[0]));
+        memset((char*) Buckets, -1, Memory::RoundUpToPage_32(BucketCount * sizeof(Buckets[0])));
 
         if (!TrinityConfig::ReadOnly() && BucketLockers == nullptr)
-            BucketLockers = (std::atomic<char>*)Memory::MemoryCommit(BucketLockersPtr, BucketCount);
+        {
+            BucketLockers = (std::atomic<char>*)Memory::MemoryCommit(BucketLockersPtr, BucketCount * sizeof(BucketLockers[0]));
+        }
 
         if (MTHash::PhysicalMemoryLocking)
         {

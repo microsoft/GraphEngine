@@ -46,7 +46,7 @@ namespace Storage
     }
 
     MemoryTrunk::MemoryTrunk(int32_t id, void* mem_ptr) :
-        MemoryTrunk::MemoryTrunk(id, mem_ptr, TrinityConfig::MemoryPoolSize){}
+        MemoryTrunk::MemoryTrunk(id, mem_ptr, TrinityConfig::InitialMemoryPoolSize){}
 
     MemoryTrunk::~MemoryTrunk()
     {
@@ -65,7 +65,7 @@ namespace Storage
 
     void MemoryTrunk::AllocateTrunk(void* mem_ptr, uint64_t size, bool LockPhysicalMemory)
     {
-        size = size < (TrinityConfig::MemoryPoolSize >> 8) ? (TrinityConfig::MemoryPoolSize >> 8) : size;
+        size = size < (TrinityConfig::InitialMemoryPoolSize / TrinityConfig::MaxTrunkCount) ? (TrinityConfig::InitialMemoryPoolSize / TrinityConfig::MaxTrunkCount) : size;
         // align size to system page
         size = Memory::RoundUpToPage_64(size);
 

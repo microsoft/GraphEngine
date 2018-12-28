@@ -40,7 +40,7 @@ namespace Storage
 
             n_reserved = TrinityConfig::ReservedSpacePerTrunk();
             p_memory   = Memory::MemoryReserve(n_reserved);
-            p_trunk    = std::make_unique<MemoryTrunk>(-1, (char*)p_memory, TrinityConfig::MemoryPoolSize >> 8);
+            p_trunk    = std::make_unique<MemoryTrunk>(-1, (char*)p_memory, TrinityConfig::InitialMemoryPoolSize / TrinityConfig::MaxTrunkCount);
             p_hash     = std::make_unique<MTHash>();
 
             if (!p_hash->Initialize(hashimg, p_trunk.get()) || 

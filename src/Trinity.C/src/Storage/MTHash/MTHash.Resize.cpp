@@ -18,16 +18,16 @@ namespace Storage
             return;
         }
 
-        if ((CurrentEntryCount + UInt32_Contants::GuardedEntryCount) >= TrinityConfig::MaxEntryCount())
+        if ((CurrentEntryCount + UInt32_Contants::GuardedEntryCount) >= TrinityConfig::ReserveEntriesPerMTHash())
         {
 			//XXX should not exit here
             Trinity::Diagnostics::FatalError(1, "Memory Trunk {0} is out of Memory::", memory_trunk->TrunkId);
         }
 
         uint32_t expanded_entry_count = CurrentEntryCount + UInt32_Contants::EntryExpandUnit;
-        if ((expanded_entry_count + UInt32_Contants::GuardedEntryCount) >= TrinityConfig::MaxEntryCount())
+        if ((expanded_entry_count + UInt32_Contants::GuardedEntryCount) >= TrinityConfig::ReserveEntriesPerMTHash())
         {
-            expanded_entry_count = TrinityConfig::MaxEntryCount() - UInt32_Contants::GuardedEntryCount;
+            expanded_entry_count = TrinityConfig::ReserveEntriesPerMTHash() - UInt32_Contants::GuardedEntryCount;
         }
 
         uint64_t size_expanded = expanded_entry_count - CurrentEntryCount;
