@@ -95,22 +95,23 @@ namespace Storage
         ///  `------------------+----------'
         ///  r = ReserveEntriesPerMTHash
         ///  b = BucketCount
+        ///  all blocks shown in the chart shall be aligned up to page boundaries.
 
         static uint64_t MTEntryOffset()
         {
-            return TrinityConfig::ReserveEntriesPerMTHash() * sizeof(CellEntries[0]);
+            return Memory::RoundUpToPage_64(TrinityConfig::ReserveEntriesPerMTHash() * sizeof(CellEntries[0]));
         }
         static uint64_t BucketMemoryOffset()
         {
-            return MTEntryOffset() + TrinityConfig::ReserveEntriesPerMTHash() * sizeof(MTEntries[0]);
+            return Memory::RoundUpToPage_64(MTEntryOffset() + TrinityConfig::ReserveEntriesPerMTHash() * sizeof(MTEntries[0]));
         }
         static uint64_t BucketLockerMemoryOffset()
         {
-            return BucketMemoryOffset() + BucketCount * sizeof(Buckets[0]);
+            return Memory::RoundUpToPage_64(BucketMemoryOffset() + BucketCount * sizeof(Buckets[0]));
         }
         static uint64_t MTHashReservedSpace()
         {
-            return BucketLockerMemoryOffset() + BucketCount * sizeof(BucketLockers[0]);
+            return Memory::RoundUpToPage_64(BucketLockerMemoryOffset() + BucketCount * sizeof(BucketLockers[0]));
         }
         static uint64_t LookupLossyCounter;
         static constexpr uint64_t LookupSlowPathThreshold() { return 8192; }

@@ -64,6 +64,7 @@ namespace TrinityConfig
     const uint64_t InitialMTHashEntries = 0x2000; // 8K
     const uint64_t MaxTrunkCount     = 256ULL;
     const uint64_t TwoGigabytes      = 0x80000000ULL;
+    const uint64_t OneGigabyte       = 0x40000000ULL;
 
     extern uint32_t VMAllocUnit;
     extern int32_t MaxLargeObjectCount;
