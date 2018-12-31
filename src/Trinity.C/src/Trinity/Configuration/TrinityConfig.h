@@ -60,7 +60,11 @@ namespace TrinityConfig
 
     const uint16_t UndefinedCellType = 0;
     const uint16_t CellNotFound      = INT16_MAX;
-    const uint64_t MemoryPoolSize    = 0x10000000;
+    const uint64_t InitialMemoryPoolSize = 0x10000000ULL; // 256M
+    const uint64_t InitialMTHashEntries = 0x2000; // 8K
+    const uint64_t MaxTrunkCount     = 256ULL;
+    const uint64_t TwoGigabytes      = 0x80000000ULL;
+    const uint64_t OneGigabyte       = 0x40000000ULL;
 
     extern uint32_t VMAllocUnit;
     extern int32_t MaxLargeObjectCount;
@@ -94,14 +98,14 @@ namespace TrinityConfig
     /// </summary>
     extern StorageCapacityProfile CapacityProfile;
 
-    uint32_t MaxEntryCount();
-
-    uint64_t MemoryReserveUnit();
+    uint64_t ReserveEntriesPerMTHash();
 
     uint64_t TrinityReservedSpace();
 
     /// <summary>
-    /// Value = 2G + MemoryReserveUnit * 32
+    /// Total reserved space in bytes for a trunk =
+    /// TrunkLength (2GB) + ReserveEntriesPerMTHash * (CellEntry+MTEntry) + BucketCount * (Bucket+Lock)
+    /// Rounded up to page boundary.
     /// </summary>
     uint64_t ReservedSpacePerTrunk();
 

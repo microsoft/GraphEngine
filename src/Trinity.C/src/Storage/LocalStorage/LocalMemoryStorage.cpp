@@ -53,8 +53,8 @@ namespace Storage
 
 			for (int32_t i = 0; i < trunk_count; i++)
 			{
-				memory_trunks[i].Initialize(i, (char*)MemoryPtr + (TrinityConfig::ReservedSpacePerTrunk() * (uint64_t)i), TrinityConfig::MemoryPoolSize >> 8);
-				hashtables[i].Initialize((uint32_t)(TrinityConfig::MemoryPoolSize >> 15), memory_trunks + i); // Default capacity = 256M >> 15 = 8192
+				memory_trunks[i].Initialize(i, (char*)MemoryPtr + (TrinityConfig::ReservedSpacePerTrunk() * (uint64_t)i), TrinityConfig::InitialMemoryPoolSize / TrinityConfig::MaxTrunkCount);
+				hashtables[i].Initialize((uint32_t)(TrinityConfig::InitialMTHashEntries), memory_trunks + i);
 			}
 
             memset(dirty_flags, 0, sizeof(int32_t) * trunk_count);
@@ -485,8 +485,8 @@ namespace Storage
 				Trinity::Diagnostics::WriteLine(LogLevel::Verbose, "Resetting memory trunk #{0}", i);
 				memory_trunks[i].DeallocateTrunk();
 				hashtables[i].DeallocateMTHash();
-				memory_trunks[i].Initialize(i, (char*)MemoryPtr + (TrinityConfig::ReservedSpacePerTrunk() * (uint64_t)i), TrinityConfig::MemoryPoolSize >> 8);
-				hashtables[i].Initialize((uint32_t)(TrinityConfig::MemoryPoolSize >> 15), memory_trunks + i); // Default capacity = 256M >> 15 = 8192
+				memory_trunks[i].Initialize(i, (char*)MemoryPtr + (TrinityConfig::ReservedSpacePerTrunk() * (uint64_t)i), TrinityConfig::InitialMemoryPoolSize / TrinityConfig::MaxTrunkCount);
+				hashtables[i].Initialize((uint32_t)(TrinityConfig::InitialMTHashEntries), memory_trunks + i);
 			}
 			disposed.store(false);
 			initialized.store(true);
