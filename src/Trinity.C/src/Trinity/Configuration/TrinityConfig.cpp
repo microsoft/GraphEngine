@@ -159,11 +159,6 @@ namespace TrinityConfig
         return ReservedSpacePerTrunk() * TrunkCount();
     }
 
-    /// <summary>
-    /// Total reserved space in bytes for a trunk =
-    /// TrunkLength (2GB) + ReserveEntriesPerMTHash * (CellEntry+MTEntry) + BucketCount * (Bucket+Lock)
-    /// Rounded up to page boundary.
-    /// </summary>
     uint64_t ReservedSpacePerTrunk()
     {
         return Memory::RoundUpToPage_64(TrinityConfig::TwoGigabytes + Storage::MTHash::MTHashReservedSpace());

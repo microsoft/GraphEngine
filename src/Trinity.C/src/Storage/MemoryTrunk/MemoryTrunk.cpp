@@ -65,7 +65,7 @@ namespace Storage
 
     void MemoryTrunk::AllocateTrunk(void* mem_ptr, uint64_t size, bool LockPhysicalMemory)
     {
-        size = size < (TrinityConfig::InitialMemoryPoolSize / TrinityConfig::MaxTrunkCount) ? (TrinityConfig::InitialMemoryPoolSize / TrinityConfig::MaxTrunkCount) : size;
+        size = std::max(size, TrinityConfig::InitialMemoryPoolSize / TrinityConfig::MaxTrunkCount);
         // align size to system page
         size = Memory::RoundUpToPage_64(size);
 

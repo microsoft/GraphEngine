@@ -103,7 +103,9 @@ namespace TrinityConfig
     uint64_t TrinityReservedSpace();
 
     /// <summary>
-    /// Value = 2G + ReserveEntriesPerMTHash * 32
+    /// Total reserved space in bytes for a trunk =
+    /// TrunkLength (2GB) + ReserveEntriesPerMTHash * (CellEntry+MTEntry) + BucketCount * (Bucket+Lock)
+    /// Rounded up to page boundary.
     /// </summary>
     uint64_t ReservedSpacePerTrunk();
 
