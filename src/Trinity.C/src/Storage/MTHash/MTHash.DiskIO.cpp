@@ -20,18 +20,16 @@ namespace Storage
         success = success && bw.Write(BucketCount);                      // 4B
         success = success && bw.Write(ExtendedInfo->EntryCount);         // 4B
 
-        int32_t mtentry_array_length   = (int32_t)ExtendedInfo->EntryCount * sizeof(MTEntries[0]);
-        int32_t cellentry_array_length = (int32_t)ExtendedInfo->EntryCount * sizeof(CellEntries[0]);
-        int32_t bucket_array_length    = (int32_t)BucketCount * sizeof(Buckets[0]);
-
-        uint32_t buffer_size = std::max({ mtentry_array_length, cellentry_array_length, bucket_array_length });
-        char* buff = new char[buffer_size];
+        int32_t mtentry_array_length   = (int32_t)ExtendedInfo->EntryCount * szMTEntry();
+        int32_t cellentry_array_length = (int32_t)ExtendedInfo->EntryCount * szCellEntry();
+        int32_t bucket_array_length    = (int32_t)BucketCount * szBucket();
 
         // Write buckets array
-        memcpy(buff, Buckets, bucket_array_length);
-        success = success && bw.Write(buff, 0, bucket_array_length); // note here we write more
+        success = success && bw.Write((char*)Buckets, 0, bucket_array_length); // note here we write more
 
         // Write entry array
+
+        char* buff = new char[cellentry_array_length];
         memcpy(buff, CellEntries, cellentry_array_length);
 #pragma region Modify the offset in the entries
         char* p = buff;
@@ -65,10 +63,9 @@ namespace Storage
 
 #pragma endregion
         success = success && bw.Write(buff, 0, cellentry_array_length);
-
-        memcpy(buff, MTEntries, mtentry_array_length);
-        success = success && bw.Write(buff, 0, mtentry_array_length);
         delete[] buff;
+
+        success = success && bw.Write((char*)MTEntries, 0, mtentry_array_length);
 
         return success;
     }
@@ -100,29 +97,19 @@ namespace Storage
 
         ExtendedInfo->EntryCount = br.ReadUInt32();
 
-        uint32_t mtentry_array_length = (uint32_t)ExtendedInfo->EntryCount * sizeof(MTEntries[0]);
-        uint32_t cellentry_array_length = (uint32_t)ExtendedInfo->EntryCount * sizeof(CellEntries[0]);
-        int32_t bucket_array_length    = (int32_t)BucketCount * sizeof(Buckets[0]);
+        int32_t mtentry_array_length   = (int32_t)ExtendedInfo->EntryCount * szMTEntry();
+        int32_t cellentry_array_length = (int32_t)ExtendedInfo->EntryCount * szCellEntry();
+        int32_t bucket_array_length    = (int32_t)BucketCount * szBucket();
         /////////////////////////////////////////////////////////
 
         AllocateMTHash();
 
-        uint32_t buffer_size = mtentry_array_length > (BucketCount << 2) ? mtentry_array_length : (BucketCount << 2);
-        char* buff = new char[buffer_size];
-        bool  read_success = true;
+        bool read_success = true;
 
-        // Read buckets array
-        read_success = br.Read(buff, 0, (int32_t)BucketCount << 2) && read_success;
-        memcpy(Buckets, buff, bucket_array_length);
+        read_success = read_success && br.Read((char*)Buckets, 0, bucket_array_length);
+        read_success = read_success && br.Read((char*)CellEntries, 0, cellentry_array_length); 
+        read_success = read_success && br.Read((char*)MTEntries, 0, mtentry_array_length);
 
-        // Read entry array
-        read_success = br.Read(buff, 0, cellentry_array_length) && read_success; 
-        memcpy(CellEntries, buff, cellentry_array_length);
-
-        // Read entry array
-        read_success = br.Read(buff, 0, mtentry_array_length) && read_success;
-        memcpy(MTEntries, buff, mtentry_array_length);
-        delete[] buff;
-        return true;
+        return read_success;
     }
 }

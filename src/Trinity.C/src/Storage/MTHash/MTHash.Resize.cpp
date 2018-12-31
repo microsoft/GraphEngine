@@ -30,13 +30,13 @@ namespace Storage
             expanded_entry_count = (uint32_t) (TrinityConfig::ReserveEntriesPerMTHash() - UInt32_Contants::GuardedEntryCount);
         }
 
-        uint64_t size_expanded = expanded_entry_count - CurrentEntryCount;
+        uint64_t nrDelta = expanded_entry_count - CurrentEntryCount;
 		Trinity::Diagnostics::WriteLine(LogLevel::Verbose, "MemoryTrunk {0}: Expand: {1}->{2}", memory_trunk->TrunkId, CurrentEntryCount, expanded_entry_count);
 
-        Memory::ExpandMemoryFromCurrentPosition((char*)CellEntries + ((CurrentEntryCount + UInt32_Contants::GuardedEntryCount) * sizeof(CellEntries[0])), size_expanded * sizeof(CellEntries[0]));
-        memset((char*)CellEntries + ((CurrentEntryCount + UInt32_Contants::GuardedEntryCount) * sizeof(CellEntries[0])), -1, size_expanded * sizeof(CellEntries[0]));
+        Memory::ExpandMemoryFromCurrentPosition((char*)CellEntries + ((CurrentEntryCount + UInt32_Contants::GuardedEntryCount) * szCellEntry()), nrDelta * szCellEntry());
+        memset((char*)CellEntries + ((CurrentEntryCount + UInt32_Contants::GuardedEntryCount) * szCellEntry()), -1, nrDelta * szCellEntry());
 
-        Memory::ExpandMemoryFromCurrentPosition((char*)MTEntries + ((CurrentEntryCount + UInt32_Contants::GuardedEntryCount) * sizeof(MTEntries[0])), size_expanded * sizeof(MTEntries[0]));
+        Memory::ExpandMemoryFromCurrentPosition((char*)MTEntries + ((CurrentEntryCount + UInt32_Contants::GuardedEntryCount) * szMTEntry()), nrDelta * szMTEntry());
 
         ExtendedInfo->EntryCount.store(expanded_entry_count);
         EntryAllocLock->unlock();
