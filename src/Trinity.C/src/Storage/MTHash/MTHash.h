@@ -97,10 +97,10 @@ namespace Storage
         ///  b = BucketCount
         ///  all blocks shown in the chart shall be aligned up to page boundaries.
 
-        static constexpr uint64_t szCellEntry()  { return sizeof(new MTHash()->CellEntries[0]); }
-        static constexpr uint64_t szMTEntry()    { return sizeof(new MTHash()->MTEntries[0]); }
-        static constexpr uint64_t szBucket()     { return sizeof(new MTHash()->Buckets[0]); }
-        static constexpr uint64_t szBucketLock() { return sizeof(new MTHash()->BucketLockers[0]); }
+        static constexpr uint64_t szCellEntry()  { return sizeof((new MTHash())->CellEntries[0]); }
+        static constexpr uint64_t szMTEntry()    { return sizeof((new MTHash())->MTEntries[0]); }
+        static constexpr uint64_t szBucket()     { return sizeof((new MTHash())->Buckets[0]); }
+        static constexpr uint64_t szBucketLock() { return sizeof((new MTHash())->BucketLockers[0]); }
 
         static uint64_t MTEntryOffset()
         {
