@@ -96,7 +96,7 @@ namespace Trinity
             }
             bool Read(char* buffer, int32_t start, int32_t count)
             {
-                return (count == fread(buffer + start, count, 1, fp));
+                return (1 == fread(buffer + start, count, 1, fp));
             }
             inline bool Good()
             {
