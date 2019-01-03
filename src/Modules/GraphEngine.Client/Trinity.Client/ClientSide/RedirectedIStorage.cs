@@ -109,6 +109,46 @@ namespace Trinity.Client
             }
         }
 
+        public unsafe TrinityErrorCode LoadCell(long cellId, out byte* cellBuff, out int cellSize, out ushort cellType)
+        {
+            using (var req = new __CellIdStructWriter(cellId))
+            {
+                TrinityResponse rsp = null;
+                TrinityErrorCode errcode = TrinityErrorCode.E_RPC_EXCEPTION;
+
+                cellBuff = null;
+                cellType = 0;
+                cellSize = -1;
+
+                try
+                {
+                    var sp = PointerHelper.New(req.buffer);
+                    *sp.ip++ = TrinityProtocol.TrinityMsgHeader + sizeof(long);
+                    *sp.sp++ = (short)TrinityMessageType.SYNC_WITH_RSP;
+                    *sp.sp++ = (short)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.LoadCell;
+
+                    m_mod.SendMessage(m_ep, req.buffer, req.BufferLength, out rsp);
+
+                    sp = PointerHelper.New(rsp.Buffer);
+                    errcode = (TrinityErrorCode)(*sp.ip++);
+                    if (errcode == TrinityErrorCode.E_SUCCESS)
+                    {
+                        cellSize = *sp.ip++;
+                        cellType = (ushort)(*sp.sp++);
+                        cellBuff = (byte*)Memory.malloc((ulong)cellSize);
+                        Memory.memcpy(cellBuff, sp.bp, (ulong)cellSize);
+                    }
+                    /* otherwise, fails with returned error code */
+                }
+                finally
+                {
+                    rsp?.Dispose();
+                }
+
+                return errcode;
+            }
+        }
+
         public TrinityErrorCode RemoveCell(long cellId)
         {
             using (var req = new __CellIdStructWriter(cellId))

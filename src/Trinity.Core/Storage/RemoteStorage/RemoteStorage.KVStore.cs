@@ -40,6 +40,28 @@ namespace Trinity.Storage
             return sendSuccess ? eResult : TrinityErrorCode.E_NETWORK_SEND_FAILURE;
         }
 
+        public TrinityErrorCode LoadCell(long cellId, out byte* cellBuf, out int size, out ushort cellType)
+        {
+            TrinityMessage msg = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC_WITH_RSP, (ushort)RequestType.LoadCellWithType, sizeof(long));
+            *(long*)(msg.Buffer + TrinityMessage.Offset) = cellId;
+
+            TrinityResponse response;
+            Network.Client.SynClient sc = GetClient();
+            bool sendSuccess = (TrinityErrorCode.E_SUCCESS == sc.SendMessage(msg.Buffer, msg.Size, out response));
+            PutBackClient(sc);
+            msg.Dispose();
+
+            int payload_len = response.Size - response.Offset;
+            byte* payload_ptr = response.Buffer + response.Offset;
+            size = payload_len - sizeof(ushort);
+            cellBuf = (byte*)Memory.malloc((ulong)size);
+            var eResult = response.ErrorCode;
+            Memory.Copy(payload_ptr, 0, cellBuf, 0, size);
+            cellType = *(ushort*)(payload_ptr + size);
+            response.Dispose();
+            return sendSuccess ? eResult : TrinityErrorCode.E_NETWORK_SEND_FAILURE;
+        }
+
         public TrinityErrorCode SaveCell(long cell_id, byte* cellBytes, int cellSize, ushort cellType)
         {
             TrinityMessage msg = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC_WITH_RSP, (ushort)RequestType.SaveCell, cellSize + 14 /*cell_type(2)+ cell_id(8) +cell_size(4)*/);
