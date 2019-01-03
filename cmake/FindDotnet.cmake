@@ -305,7 +305,8 @@ MACRO(DOTNET_BUILD_COMMANDS)
     ENDIF()
 
     # DOTNET_OUTPUTS refer to artifacts produced, that the BUILD_proj_name target depends on.
-    SET(DOTNET_OUTPUTS "")
+    SET(DOTNET_OUTPUTS ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.buildtimestamp)
+    LIST(APPEND build_dotnet_cmds COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_OUTPUTS})
     IF(NOT "${DOTNET_PACKAGES}" STREQUAL "")
         MESSAGE("-- Adding ${build_dotnet_type} project ${DOTNET_PROJPATH} (version ${DOTNET_PACKAGE_VERSION})")
         SET(_DN_OUTPUTS "")
@@ -316,10 +317,7 @@ MACRO(DOTNET_BUILD_COMMANDS)
         LIST(APPEND build_dotnet_cmds COMMAND ${DOTNET_EXE} pack --no-build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES} ${DOTNET_PACK_OPTIONS})
         LIST(APPEND build_dotnet_cmds COMMAND ${CMAKE_COMMAND} -E copy ${_DN_OUTPUTS} ${CMAKE_BINARY_DIR})
     ELSE()
-
         MESSAGE("-- Adding ${build_dotnet_type} project ${DOTNET_PROJPATH} (no nupkg)")
-        SET(DOTNET_OUTPUTS ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.buildtimestamp)
-        LIST(APPEND build_dotnet_cmds COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_OUTPUTS})
     ENDIF()
 
     ADD_CUSTOM_COMMAND(
