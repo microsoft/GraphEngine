@@ -94,9 +94,9 @@ namespace Trinity
                 fread(buff, sizeof(double_t), 1, fp);
                 return *(double_t*) buff;
             }
-            bool Read(char* buffer, int32_t start, int32_t count)
+            bool Read(char* buffer, int32_t start, int32_t size)
             {
-                return (1 == fread(buffer + start, count, 1, fp));
+                return (1 == fread(buffer + start, size, 1, fp));
             }
             inline bool Good()
             {
