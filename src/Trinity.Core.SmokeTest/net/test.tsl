@@ -1,0 +1,23 @@
+struct RequestT
+{
+    int p0;
+    string p1;
+}
+
+struct ResponseT
+{
+    string p0;
+    int p1;
+}
+
+protocol TestProtocol
+{
+    type: Syn;
+    request: RequestT;
+    response: ResponseT;
+}
+
+server S
+{
+    protocol TestProtocol;
+}
