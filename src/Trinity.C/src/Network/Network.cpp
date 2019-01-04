@@ -486,6 +486,7 @@ namespace Trinity
 
             if (!_do_recv(socket, buf, len))
             {
+                free(buf);
                 return TrinityErrorCode::E_NETWORK_RECV_FAILURE;
             }
 
