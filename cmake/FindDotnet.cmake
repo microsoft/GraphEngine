@@ -159,7 +159,7 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
         # options (flags)
         "RELEASE;DEBUG;X86;X64;ANYCPU;NETCOREAPP" 
         # oneValueArgs
-        "CONFIG;PLATFORM;VERSION" 
+        "CONFIG;PLATFORM;VERSION;OUTPUT_PATH" 
         # multiValueArgs
         "PACKAGE;DEPENDS;ARGUMENTS;OUTPUT;SOURCES;CUSTOM_BUILDPROPS"
         # the input arguments
@@ -215,7 +215,11 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     # Separated output directories prevent overwriting.
     # Later we then copy the outputs to the root binary directory.
 
-    GET_FILENAME_COMPONENT(_DN_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin ABSOLUTE)
+    IF(NOT _DN_OUTPUT_PATH)
+        SET(_DN_OUTPUT_PATH ${_DN_projname_noext})
+    ENDIF()
+
+    GET_FILENAME_COMPONENT(_DN_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/${_DN_OUTPUT_PATH} ABSOLUTE)
 
     # In a cmake build, the XPLAT libraries are always copied over.
     # Set the proper directory for .NET projects.
@@ -290,14 +294,14 @@ ENDMACRO()
 MACRO(DOTNET_BUILD_COMMANDS)
     IF(${DOTNET_IS_MSBUILD})
         SET(build_dotnet_cmds 
-            COMMAND ${CMAKE_COMMAND} -E echo "=======> Building msbuild project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
+            COMMAND ${CMAKE_COMMAND} -E echo "======= Building msbuild project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
             COMMAND ${NUGET_EXE} restore ${DOTNET_PROJPATH} -PackagesDirectory packages
             COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Clean /p:Configuration="${DOTNET_CONFIG}"
             COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build ${DOTNET_BUILD_PROPERTIES} /p:Configuration="${DOTNET_CONFIG}")
         SET(build_dotnet_type "msbuild")
     ELSE()
         SET(build_dotnet_cmds 
-            COMMAND ${CMAKE_COMMAND} -E echo "=======> Building .NET project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
+            COMMAND ${CMAKE_COMMAND} -E echo "======= Building .NET project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
             COMMAND ${DOTNET_EXE} restore ${DOTNET_PROJPATH} ${DOTNET_IMPORT_PROPERTIES}
             COMMAND ${DOTNET_EXE} clean ${DOTNET_PROJPATH} ${DOTNET_BUILD_PROPERTIES}
             COMMAND ${DOTNET_EXE} build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES} ${DOTNET_BUILD_OPTIONS})
