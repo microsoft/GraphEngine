@@ -15,12 +15,13 @@ using System.Linq;
 namespace Trinity
 {
     /// <summary>
-    /// Specifies the running modes supported by Trinity. This is obsolete.
+    /// Specifies the running modes supported by Trinity
     /// </summary>
     public enum RunningMode : int
     {
         /// <summary>
-        ///Embedded (in-process) mode.
+        /// Embedded (in-process) mode. 
+        /// Enables message passing without starting the network subsystem.
         /// </summary>
         Embedded,
 

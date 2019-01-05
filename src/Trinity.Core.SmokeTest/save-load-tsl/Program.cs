@@ -3,7 +3,7 @@ using System.Linq;
 using Trinity;
 using Trinity.Diagnostics;
 
-namespace test
+namespace save_load_tsl
 {
     class Program
     {

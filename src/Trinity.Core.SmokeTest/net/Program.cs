@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Trinity;
 using Trinity.Diagnostics;
+using Trinity.Storage;
 
 namespace net
 {
@@ -19,7 +20,7 @@ namespace net
     {
         static void Main(string[] args)
         {
-            TrinityConfig.LoadConfig("trinity.xml");
+            Global.Initialize("trinity.xml");
             TrinityConfig.StorageRoot  = Environment.CurrentDirectory;
 
             if(args.Length > 0)
@@ -31,6 +32,7 @@ namespace net
                     if(rsp.p0 != "456" || rsp.p1 != 123){
                         throw new Exception("Child failure");
                     }
+                    Log.WriteLine("Server responded with correct data.");
                 }
             }
             else
@@ -44,16 +46,15 @@ namespace net
                 psi.CreateNoWindow = true;
                 psi.UseShellExecute = false;
                 psi.RedirectStandardError = true;
-                psi.RedirectStandardInput = true;
                 psi.RedirectStandardOutput = true;
                 proc.StartInfo = psi;
-                proc.BeginOutputReadLine();
-                proc.BeginErrorReadLine();
 
                 proc.OutputDataReceived += Show;
                 proc.ErrorDataReceived += Show;
 
                 proc.Start();
+                proc.BeginOutputReadLine();
+                proc.BeginErrorReadLine();
 
                 if(!proc.WaitForExit(10000))
                 {
@@ -67,6 +68,7 @@ namespace net
                 }
 
                 server.Stop();
+                Log.WriteLine("Done!");
             }
         }
 

@@ -160,7 +160,6 @@ FUNCTION(DOTNET_REGISTER_LOCAL_REPOSITORY repo_name repo_path)
 ENDFUNCTION()
 
 FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
-    FILE(GLOB_RECURSE DOTNET_deps *.cs *.fs *.xaml *.csproj *.fsproj *.tsl)
     CMAKE_PARSE_ARGUMENTS(
         # prefix
         _DN 
@@ -173,18 +172,30 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
         # the input arguments
         ${arguments})
 
+    GET_FILENAME_COMPONENT(_DN_abs_proj "${_DN_PROJECT}" ABSOLUTE)
+    GET_FILENAME_COMPONENT(_DN_proj_dir "${_DN_abs_proj}" DIRECTORY)
+    GET_FILENAME_COMPONENT(_DN_projname "${_DN_PROJECT}" NAME)
+    STRING(REGEX REPLACE "\\.[^.]*$" "" _DN_projname_noext ${_DN_projname})
+
+    FILE(GLOB_RECURSE DOTNET_deps 
+        ${_DN_proj_dir}/*.cs
+        ${_DN_proj_dir}/*.fs
+        ${_DN_proj_dir}/*.vb
+        ${_DN_proj_dir}/*.xaml
+        ${_DN_proj_dir}/*.resx
+        ${_DN_proj_dir}/*.xml
+        ${_DN_proj_dir}/*.*proj
+        ${_DN_proj_dir}/*.cs
+        ${_DN_proj_dir}/*.config)
     LIST(APPEND DOTNET_deps ${_DN_SOURCES})
     SET(_DN_deps "")
     FOREACH(dep ${DOTNET_deps})
-        IF(NOT dep MATCHES /obj/)
+        IF(NOT dep MATCHES /obj/ AND NOT dep MATCHES /bin/)
             LIST(APPEND _DN_deps ${dep})
+            MESSAGE("${_DN_proj_dir}: ${dep}")
         ENDIF()
     ENDFOREACH()
 
-    GET_FILENAME_COMPONENT(_DN_abs_proj "${_DN_PROJECT}" ABSOLUTE)
-    GET_FILENAME_COMPONENT(_DN_proj_dir "${_DN_PROJECT}" DIRECTORY)
-    GET_FILENAME_COMPONENT(_DN_projname "${_DN_PROJECT}" NAME)
-    STRING(REGEX REPLACE "\\.[^.]*$" "" _DN_projname_noext ${_DN_projname})
 
     IF(_DN_RELEASE)
         SET(_DN_CONFIG Release)
@@ -300,8 +311,8 @@ MACRO(DOTNET_BUILD_COMMANDS)
     IF(${DOTNET_IS_MSBUILD})
         SET(build_dotnet_cmds 
             COMMAND ${CMAKE_COMMAND} -E echo "======= Building msbuild project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
-            COMMAND ${NUGET_EXE} restore ${DOTNET_PROJPATH} -PackagesDirectory packages
-            COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Clean /p:Configuration="${DOTNET_CONFIG}"
+            COMMAND ${NUGET_EXE} restore -Force ${DOTNET_PROJPATH}
+            COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Clean ${DOTNET_BUILD_PROPERTIES} /p:Configuration="${DOTNET_CONFIG}"
             COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build ${DOTNET_BUILD_PROPERTIES} /p:Configuration="${DOTNET_CONFIG}")
         SET(build_dotnet_type "msbuild")
     ELSE()
@@ -366,7 +377,11 @@ FUNCTION(RUN_DOTNET DOTNET_PROJECT)
     ADD_CUSTOM_COMMAND(
         OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.runtimestamp ${DOTNET_RUN_OUTPUT}
         DEPENDS ${DOTNET_deps}
-        COMMAND ${DOTNET_EXE} run --project ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_OPTIONS} ${DOTNET_RUN_ARGUMENTS} 
+        COMMAND ${DOTNET_EXE} restore ${DOTNET_PROJPATH} ${DOTNET_IMPORT_PROPERTIES}
+        COMMAND ${DOTNET_EXE} clean ${DOTNET_PROJPATH} ${DOTNET_BUILD_PROPERTIES}
+        COMMAND ${DOTNET_EXE} build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES} ${DOTNET_BUILD_OPTIONS}
+        # XXX tfm
+        COMMAND ${DOTNET_EXE} ${DOTNET_OUTPUT_PATH}/netcoreapp2.0/${DOTNET_PROJNAME}.dll ${DOTNET_RUN_ARGUMENTS}
         COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.runtimestamp
         WORKING_DIRECTORY ${DOTNET_OUTPUT_PATH})
     ADD_CUSTOM_TARGET(

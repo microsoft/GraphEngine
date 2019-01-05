@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <TslCodegen Include="test.tsl" />
-    <Content Include="trinity.xml" />
+    <Content Include="trinity.xml" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
 </Project>

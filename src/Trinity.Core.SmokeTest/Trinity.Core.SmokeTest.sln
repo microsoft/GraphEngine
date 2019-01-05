@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "minimal-tsl", "minimal-tsl\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "net", "net\net.csproj", "{49858417-ECD7-4163-B9B7-796014A69113}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "save-load-tsl", "save-load-tsl\save-load-tsl.csproj", "{7C1A1671-FA3E-4EF7-9189-9F83DED9E56C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "save_load_tsl", "save-load-tsl\save_load_tsl.csproj", "{2C8EE23A-7201-434E-B5AF-AAEBDF129BAC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{49858417-ECD7-4163-B9B7-796014A69113}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49858417-ECD7-4163-B9B7-796014A69113}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49858417-ECD7-4163-B9B7-796014A69113}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7C1A1671-FA3E-4EF7-9189-9F83DED9E56C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7C1A1671-FA3E-4EF7-9189-9F83DED9E56C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7C1A1671-FA3E-4EF7-9189-9F83DED9E56C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7C1A1671-FA3E-4EF7-9189-9F83DED9E56C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C8EE23A-7201-434E-B5AF-AAEBDF129BAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C8EE23A-7201-434E-B5AF-AAEBDF129BAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C8EE23A-7201-434E-B5AF-AAEBDF129BAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C8EE23A-7201-434E-B5AF-AAEBDF129BAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
