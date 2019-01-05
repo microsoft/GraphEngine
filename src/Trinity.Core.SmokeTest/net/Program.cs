@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using Trinity;
+using Trinity.Diagnostics;
 
 namespace net
 {
@@ -19,6 +20,7 @@ namespace net
         static void Main(string[] args)
         {
             TrinityConfig.LoadConfig("trinity.xml");
+            TrinityConfig.StorageRoot  = Environment.CurrentDirectory;
 
             if(args.Length > 0)
             {
@@ -45,6 +47,12 @@ namespace net
                 psi.RedirectStandardInput = true;
                 psi.RedirectStandardOutput = true;
                 proc.StartInfo = psi;
+                proc.BeginOutputReadLine();
+                proc.BeginErrorReadLine();
+
+                proc.OutputDataReceived += Show;
+                proc.ErrorDataReceived += Show;
+
                 proc.Start();
 
                 if(!proc.WaitForExit(10000))
@@ -55,11 +63,16 @@ namespace net
 
                 if(proc.ExitCode != 0)
                 {
-                    throw new Exception("Child failure");
+                    throw new Exception($"Child failure, exit code = {proc.ExitCode}");
                 }
 
                 server.Stop();
             }
+        }
+
+        private static void Show(object sender, DataReceivedEventArgs e)
+        {
+            Log.WriteLine("[Child] {0}", e.Data);
         }
     }
 }

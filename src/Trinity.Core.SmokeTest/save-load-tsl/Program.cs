@@ -10,6 +10,7 @@ namespace test
         static void Main(string[] args)
         {
             TrinityConfig.LoggingLevel = LogLevel.Debug;
+            TrinityConfig.StorageRoot  = Environment.CurrentDirectory;
             foreach (var item in Enumerable.Range(0, 100))
             {
                 AddPerson(item, "person-" + item);
