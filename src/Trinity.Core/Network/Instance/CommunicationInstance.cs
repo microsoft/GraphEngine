@@ -29,7 +29,7 @@ namespace Trinity.Network
     /// The method signature for a message dispatching procedure.
     /// </summary>
     /// <param name="sendRecvBuff"></param>
-    public unsafe delegate void MessageDispatchProc(MessageBuff* sendRecvBuff);
+    public unsafe delegate void* MessageDispatchProc(MessageBuff* sendRecvBuff);
 
     /// <summary>
     /// Represents a Trinity instance that can be started and perform two-way communication with other instances.
@@ -309,10 +309,10 @@ namespace Trinity.Network
             }
         }
 
-        private unsafe void _MessageInitializationTrap(MessageBuff* sendRecvBuff)
+        private unsafe void* _MessageInitializationTrap(MessageBuff* sendRecvBuff)
         {
             m_module_init_signal.Wait();
-            MessageHandlers.DefaultParser.DispatchMessage(sendRecvBuff);
+            return MessageHandlers.DefaultParser.DispatchMessage(sendRecvBuff);
         }
 
         /// <summary>
