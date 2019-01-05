@@ -192,7 +192,6 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     FOREACH(dep ${DOTNET_deps})
         IF(NOT dep MATCHES /obj/ AND NOT dep MATCHES /bin/)
             LIST(APPEND _DN_deps ${dep})
-            MESSAGE("${_DN_proj_dir}: ${dep}")
         ENDIF()
     ENDFOREACH()
 
