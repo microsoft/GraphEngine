@@ -42,7 +42,7 @@ namespace Trinity
             switch (eresult)
             {
             case TrinityErrorCode::E_NOENTRY:
-                return "Network: Empty response";
+                return nullptr; // empty response indicates a disconnection
             case TrinityErrorCode::E_INIT_FAIL:
                 if (is_incoming) { return "Network: Incorrect client handshake sequence."; }
                 else { return "Network: Target host rejected handshake request message."; }
