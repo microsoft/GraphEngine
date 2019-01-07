@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Trinity;
 using Trinity.Diagnostics;
 using Trinity.Storage;
+using net.S;
 
 namespace net
 {
@@ -23,14 +24,6 @@ namespace net
             }
 
             AsynHandlerReachesServer = true;
-        }
-
-        public override void TestAsynRspHandler(RequestTReader request, ResponseTWriter response)
-        {
-            response.p0 = request.p1;
-            response.p1 = request.p0;
-
-            AsynWithRspHandlerReachesServer = true;
         }
 
         public override void TestSynHandler(RequestTReader request)
@@ -61,22 +54,20 @@ namespace net
         public static bool SynHandlerReachesServer = false;
         public static bool AsynHandlerReachesServer = false;
         public static bool SynWithRspHandlerReachesServer = false;
-        public static bool AsynWithRspHandlerReachesServer = false;
 
         internal static bool AllHandlersReached()
         {
             Log.WriteLine("SynHandlerReachesServer = {0}", SynHandlerReachesServer);
             Log.WriteLine("AsynHandlerReachesServer = {0}", AsynHandlerReachesServer);
             Log.WriteLine("SynWithRspHandlerReachesServer = {0}", SynWithRspHandlerReachesServer);
-            Log.WriteLine("AsynWithRspHandlerReachesServer = {0}", AsynWithRspHandlerReachesServer);
 
-            return SynHandlerReachesServer && SynWithRspHandlerReachesServer && AsynHandlerReachesServer && AsynWithRspHandlerReachesServer;
+            return SynHandlerReachesServer && SynWithRspHandlerReachesServer && AsynHandlerReachesServer;
         }
     }
 
     class Program
     {
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
             Global.Initialize("trinity.xml");
             TrinityConfig.StorageRoot  = Environment.CurrentDirectory;
@@ -87,11 +78,11 @@ namespace net
 
                 using(var req = new RequestTWriter(123, "456"))
                 {
-                    Global.CloudStorage.TestSynToS(0, req);
+                    Global.CloudStorage[0].TestSyn(req);
                 }
 
                 using(var req = new RequestTWriter(123, "456"))
-                using(var rsp = Global.CloudStorage.TestSynRspToS(0, req))
+                using(var rsp = Global.CloudStorage[0].TestSynRsp(req))
                 {
                     if(rsp.p0 != "456" || rsp.p1 != 123){
                         throw new Exception("Child failure");
@@ -101,16 +92,7 @@ namespace net
 
                 using(var req = new RequestTWriter(123, "456"))
                 {
-                    Global.CloudStorage.TestAsynToS(0, req);
-                }
-
-                using(var req = new RequestTWriter(123, "456"))
-                using(var rsp = await Global.CloudStorage.TestAsynRspToS(0, req))
-                {
-                    if(rsp.p0 != "456" || rsp.p1 != 123){
-                        throw new Exception("Child failure");
-                    }
-                    Log.WriteLine("Server responded with correct data.");
+                    Global.CloudStorage[0].TestAsyn(req);
                 }
             }
             else
@@ -134,7 +116,7 @@ namespace net
                 proc.BeginOutputReadLine();
                 proc.BeginErrorReadLine();
 
-                if(!proc.WaitForExit(10000))
+                if(!proc.WaitForExit(1000000))
                 {
                     proc.Kill();
                     throw new Exception("Child timeout");

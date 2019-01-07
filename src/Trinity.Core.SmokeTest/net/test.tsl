@@ -24,13 +24,6 @@ protocol TestSyn
     response: void;
 }
 
-protocol TestAsynRsp
-{
-    type: Asyn;
-    request: RequestT;
-    response: ResponseT;
-}
-
 protocol TestAsyn
 {
     type: Asyn;
@@ -42,6 +35,5 @@ server S
 {
     protocol TestSynRsp;
     protocol TestSyn;
-    protocol TestAsynRsp;
     protocol TestAsyn;
 }
