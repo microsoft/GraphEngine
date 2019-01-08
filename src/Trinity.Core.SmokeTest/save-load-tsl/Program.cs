@@ -3,13 +3,14 @@ using System.Linq;
 using Trinity;
 using Trinity.Diagnostics;
 
-namespace test
+namespace save_load_tsl
 {
     class Program
     {
         static void Main(string[] args)
         {
             TrinityConfig.LoggingLevel = LogLevel.Debug;
+            TrinityConfig.StorageRoot  = Environment.CurrentDirectory;
             foreach (var item in Enumerable.Range(0, 100))
             {
                 AddPerson(item, "person-" + item);

@@ -279,7 +279,7 @@ namespace Trinity.Network.Sockets
         }
         #endregion
 
-        internal void DispatchMessage(MessageBuff* sendRecvBuff)
+        internal void* DispatchMessage(MessageBuff* sendRecvBuff)
         {
             byte* ByteArray = sendRecvBuff->Buffer;
             int Length = (int)sendRecvBuff->Length;
@@ -299,7 +299,7 @@ namespace Trinity.Network.Sockets
                             sync_rsp_handlers[msgId]);
                         msgProcessResult = sync_rsp_args.MessageProcess();
                         _SetSendRecvBuff(msgProcessResult, sendRecvBuff, sync_rsp_args.Response);
-                        return;
+                        return null;
 
                     case TrinityMessageType.PRESERVED_SYNC_WITH_RSP:
                         SynReqRspArgs preserved_sync_rsp_args = new SynReqRspArgs(ByteArray,
@@ -308,7 +308,7 @@ namespace Trinity.Network.Sockets
                             preserved_sync_rsp_handlers[msgId]);
                         msgProcessResult = preserved_sync_rsp_args.MessageProcess();
                         _SetSendRecvBuff(msgProcessResult, sendRecvBuff, preserved_sync_rsp_args.Response);
-                        return;
+                        return null;
 
                     case TrinityMessageType.SYNC:
                         SynReqArgs sync_args = new SynReqArgs(ByteArray,
@@ -317,7 +317,7 @@ namespace Trinity.Network.Sockets
                             sync_handlers[msgId]);
                         msgProcessResult = sync_args.MessageProcess();
                         _SetSendRecvBuff(msgProcessResult, sendRecvBuff);
-                        return;
+                        return null;
                     case TrinityMessageType.PRESERVED_SYNC:
                         SynReqArgs preserved_sync_args = new SynReqArgs(ByteArray,
                             TrinityProtocol.TrinityMsgHeader,
@@ -325,7 +325,7 @@ namespace Trinity.Network.Sockets
                             preserved_sync_handlers[msgId]);
                         msgProcessResult = preserved_sync_args.MessageProcess();
                         _SetSendRecvBuff(msgProcessResult, sendRecvBuff);
-                        return;
+                        return null;
 
                     case TrinityMessageType.ASYNC:
                         AsynReqArgs async_args = new AsynReqArgs(ByteArray,
@@ -334,7 +334,7 @@ namespace Trinity.Network.Sockets
                             async_handlers[msgId]);
                         msgProcessResult = async_args.AsyncProcessMessage();
                         _SetSendRecvBuff(msgProcessResult, sendRecvBuff);
-                        return;
+                        return null;
                     case TrinityMessageType.PRESERVED_ASYNC:
                         AsynReqArgs preserved_async_args = new AsynReqArgs(ByteArray,
                             TrinityProtocol.TrinityMsgHeader,
@@ -342,7 +342,7 @@ namespace Trinity.Network.Sockets
                             preserved_async_handlers[msgId]);
                         msgProcessResult = preserved_async_args.AsyncProcessMessage();
                         _SetSendRecvBuff(msgProcessResult, sendRecvBuff);
-                        return;
+                        return null;
 
                     case TrinityMessageType.ASYNC_WITH_RSP:
                         AsynReqRspArgs async_rsp_args = new AsynReqRspArgs(ByteArray,
@@ -351,7 +351,7 @@ namespace Trinity.Network.Sockets
                             async_rsp_handlers[msgId]);
                         msgProcessResult = async_rsp_args.AsyncProcessMessage();
                         _SetSendRecvBuff(msgProcessResult, sendRecvBuff);
-                        return;
+                        return null;
 
                     default:
                         throw new Exception("Not recognized message type.");
@@ -365,7 +365,7 @@ namespace Trinity.Network.Sockets
                 Log.WriteLine(ex.Message);
                 Log.WriteLine(ex.StackTrace);
                 _SetSendRecvBuff(TrinityErrorCode.E_MSG_OVERFLOW, sendRecvBuff);
-                return;
+                return null;
             }
             catch (Exception ex)
             {
@@ -375,7 +375,7 @@ namespace Trinity.Network.Sockets
                 Log.WriteLine(ex.Message);
                 Log.WriteLine(ex.StackTrace);
                 _SetSendRecvBuff(TrinityErrorCode.E_RPC_EXCEPTION, sendRecvBuff);
-                return;
+                return null;
             }
         }
     }
