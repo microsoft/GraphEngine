@@ -28,13 +28,6 @@
     <AvailableItemName Include="TslCodegen" />
   </ItemGroup>
 
-  <ItemGroup Condition="!$(TargetFramework.Contains('netstandard')) and !$(TaragetFramework.Contains('netcoreapp'))">
-    <None Include="$(TRINITY_NATIVE_LIB_PATH)">
-      <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
   <Target Name="TslCodegenPrepare"
           BeforeTargets="TslCodegenCs">
     <ItemGroup>
@@ -55,6 +48,13 @@
   <Target Name="TslCompileCs"
           BeforeTargets="CoreCompile"
           DependsOnTargets="TslCodegenCs">
+
+    <ItemGroup Condition="!$(TargetFramework.Contains('netstandard')) and !$(TaragetFramework.Contains('netcoreapp'))">
+      <None Include="$(TRINITY_NATIVE_LIB_PATH)">
+        <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
 
     <Error
       Text="A Graph Engine project cannot be built with Prefer32Bit option enabled. Please uncheck the toggle in project properties page, or edit the project file."
