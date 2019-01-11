@@ -37,6 +37,13 @@
     <Delete Files="@(OldGeneratedCode)" ContinueOnError="true"/>
     <Exec Condition="'$(OS)' != 'Windows_NT' " Command="chmod u+x $(TSL_CODEGEN_PATH)" />
   </Target>
+
+  <ItemGroup Condition="!$(TargetFramework.Contains('netstandard')) and !$(TaragetFramework.Contains('netcoreapp'))">
+    <None Include="$(TRINITY_NATIVE_LIB_PATH)">
+      <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   
   <Target Name="TslCodegenCs"
           BeforeTargets="TslCompileCs"
@@ -48,13 +55,6 @@
   <Target Name="TslCompileCs"
           BeforeTargets="CoreCompile"
           DependsOnTargets="TslCodegenCs">
-
-    <ItemGroup Condition="!$(TargetFramework.Contains('netstandard')) and !$(TaragetFramework.Contains('netcoreapp'))">
-      <None Include="$(TRINITY_NATIVE_LIB_PATH)">
-        <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
 
     <Error
       Text="A Graph Engine project cannot be built with Prefer32Bit option enabled. Please uncheck the toggle in project properties page, or edit the project file."
