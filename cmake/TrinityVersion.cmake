@@ -3,7 +3,7 @@ IF(NOT TRINITY_VERSION)
         OUTPUT_QUIET)
 
     EXECUTE_PROCESS(
-        COMMAND ${DOTNET_EXE} run --nobuild --project ${CMAKE_CURRENT_LIST_DIR}/../tools/versioning/versioning.csproj -c Release
+        COMMAND ${DOTNET_EXE} run --no-build --project ${CMAKE_CURRENT_LIST_DIR}/../tools/versioning/versioning.csproj -c Release
         OUTPUT_VARIABLE TRINITY_VERSION
         OUTPUT_STRIP_TRAILING_WHITESPACE)
 
