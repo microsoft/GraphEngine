@@ -25,7 +25,9 @@
 #            [DEPENDS depend_nuget_packages... ]
 #            [OUTPUT_PATH output_path relative to cmake binary output dir]
 #            [CUSTOM_BUILDPROPS <CustomProp>value</CustomProp>....]
-#            [SOURCES additional_file_dependencies... ])
+#            [SOURCES additional_file_dependencies... ]
+#            [ARGUMENTS additional_build_args...]
+#            [PACK_ARGUMENTS additional_pack_args...])
 # ```
 # 
 # RUN_DOTNET -- Run a project with `dotnet run`. The `OUTPUT` argument represents artifacts 
@@ -52,7 +54,9 @@
 #            [PACKAGE output_nuget_packages... ]
 #            [DEPENDS depend_nuget_packages... ]
 #            [CUSTOM_BUILDPROPS <CustomProp>value</CustomProp>....]
-#            [SOURCES additional_file_dependencies... ])
+#            [SOURCES additional_file_dependencies... ]
+#            [ARGUMENTS additional_build_args...]
+#            [PACK_ARGUMENTS additional_pack_args...])
 # ```
 #
 # SMOKETEST_DOTNET -- add a dotnet smoke test project to the build. The project will be run during a build,
@@ -95,7 +99,7 @@
 #  - DOTNET_PACKAGE_VERSION: a version string that can be referenced in the actual project file as $(DOTNET_PACKAGE_VERSION).
 #    The version string value can be set with PACKAGE_VERSION argument, and defaults to '1.0.0'.
 #  - XPLAT_LIB_DIR: points to the cmake build root directory.
-#  - OutputPath: Points to the cmake build root directory (overridden by OUTPUT_PATH). Therefore, projects built without cmake will consistently output
+#  - OutputPath: Points to the cmake binary directory (overridden by OUTPUT_PATH, relatively). Therefore, projects built without cmake will consistently output
 #    to the cmake build directory.
 #  - Custom properties can be injected with XML_INJECT argument, which injects an arbitrary string into the project XML file.
 #
@@ -168,7 +172,7 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
         # oneValueArgs
         "CONFIG;PLATFORM;VERSION;OUTPUT_PATH" 
         # multiValueArgs
-        "PACKAGE;DEPENDS;ARGUMENTS;OUTPUT;SOURCES;CUSTOM_BUILDPROPS"
+        "PACKAGE;DEPENDS;ARGUMENTS;PACK_ARGUMENTS;OUTPUT;SOURCES;CUSTOM_BUILDPROPS"
         # the input arguments
         ${arguments})
 
@@ -203,7 +207,7 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     ENDIF()
 
     IF(NOT _DN_CONFIG)
-        SET(_DN_CONFIG Release)
+        SET(_DN_CONFIG "$<$<CONFIG:Debug>:Debug>$<$<NOT:$<CONFIG:Debug>>:Release>")
     ENDIF()
 
     # If platform is not specified, do not pass the Platform property.
@@ -214,7 +218,7 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     ELSEIF(_DN_X64)
         SET(_DN_PLATFORM x64)
     ELSEIF(_DN_ANYCPU)
-        SET(_DN_PLATFORM "Any CPU")
+        SET(_DN_PLATFORM "AnyCPU")
     ENDIF()
 
     # If package version is not set, first fallback to DOTNET_PACKAGE_VERSION
@@ -226,7 +230,7 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
         SET(_DN_VERSION "1.0.0")
     ENDIF()
 
-    # Set the output path to the current binary directory.
+    # Set the output path to the binary directory.
     # Build outputs in separated output directories prevent overwriting.
     # Later we then copy the outputs to the destination.
 
@@ -234,7 +238,7 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
         SET(_DN_OUTPUT_PATH ${_DN_projname_noext})
     ENDIF()
 
-    GET_FILENAME_COMPONENT(_DN_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/${_DN_OUTPUT_PATH} ABSOLUTE)
+    GET_FILENAME_COMPONENT(_DN_OUTPUT_PATH ${CMAKE_BINARY_DIR}/${_DN_OUTPUT_PATH} ABSOLUTE)
 
     # In a cmake build, the XPLAT libraries are always copied over.
     # Set the proper directory for .NET projects.
@@ -247,7 +251,7 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     SET(DOTNET_PROJNAME ${_DN_projname_noext} PARENT_SCOPE)
     SET(DOTNET_PROJPATH ${_DN_abs_proj} PARENT_SCOPE)
     SET(DOTNET_PROJDIR  ${_DN_proj_dir} PARENT_SCOPE)
-    SET(DOTNET_RUN_ARGUMENTS ${_DN_ARGUMENTS} PARENT_SCOPE)
+    SET(DOTNET_ARGUMENTS ${_DN_ARGUMENTS} PARENT_SCOPE)
     SET(DOTNET_RUN_OUTPUT ${_DN_OUTPUT} PARENT_SCOPE)
     SET(DOTNET_PACKAGE_VERSION ${_DN_VERSION} PARENT_SCOPE)
     SET(DOTNET_OUTPUT_PATH ${_DN_OUTPUT_PATH} PARENT_SCOPE)
@@ -273,7 +277,7 @@ FUNCTION(DOTNET_GET_DEPS _DN_PROJECT arguments)
     SET(DOTNET_IMPORT_PROPERTIES ${_DN_IMPORT_ARGS} PARENT_SCOPE)
     SET(DOTNET_BUILD_PROPERTIES ${_DN_PLATFORM_PROP} ${_DN_IMPORT_ARGS} PARENT_SCOPE)
     SET(DOTNET_BUILD_OPTIONS ${_DN_BUILD_OPTIONS} PARENT_SCOPE)
-    SET(DOTNET_PACK_OPTIONS --include-symbols ${_DN_PACK_OPTIONS} PARENT_SCOPE)
+    SET(DOTNET_PACK_OPTIONS --include-symbols ${_DN_PACK_OPTIONS} ${_DN_PACK_ARGUMENTS} PARENT_SCOPE)
 
 ENDFUNCTION()
 
@@ -312,35 +316,34 @@ MACRO(DOTNET_BUILD_COMMANDS)
             COMMAND ${CMAKE_COMMAND} -E echo "======= Building msbuild project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
             COMMAND ${NUGET_EXE} restore -Force ${DOTNET_PROJPATH}
             COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Clean ${DOTNET_BUILD_PROPERTIES} /p:Configuration="${DOTNET_CONFIG}"
-            COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build ${DOTNET_BUILD_PROPERTIES} /p:Configuration="${DOTNET_CONFIG}")
+            COMMAND ${DOTNET_EXE} msbuild ${DOTNET_PROJPATH} /t:Build ${DOTNET_BUILD_PROPERTIES} /p:Configuration="${DOTNET_CONFIG}" ${DOTNET_ARGUMENTS})
         SET(build_dotnet_type "msbuild")
     ELSE()
         SET(build_dotnet_cmds 
             COMMAND ${CMAKE_COMMAND} -E echo "======= Building .NET project ${DOTNET_PROJNAME} [${DOTNET_CONFIG} ${DOTNET_PLATFORM}]"
             COMMAND ${DOTNET_EXE} restore ${DOTNET_PROJPATH} ${DOTNET_IMPORT_PROPERTIES}
             COMMAND ${DOTNET_EXE} clean ${DOTNET_PROJPATH} ${DOTNET_BUILD_PROPERTIES}
-            COMMAND ${DOTNET_EXE} build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES} ${DOTNET_BUILD_OPTIONS})
+            COMMAND ${DOTNET_EXE} build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES} ${DOTNET_BUILD_OPTIONS} ${DOTNET_ARGUMENTS})
         SET(build_dotnet_type "dotnet")
     ENDIF()
 
     # DOTNET_OUTPUTS refer to artifacts produced, that the BUILD_proj_name target depends on.
-    SET(DOTNET_OUTPUTS ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.buildtimestamp)
-    LIST(APPEND build_dotnet_cmds COMMAND ${CMAKE_COMMAND} -E touch ${DOTNET_OUTPUTS})
+    SET(DOTNET_OUTPUTS "")
     IF(NOT "${DOTNET_PACKAGES}" STREQUAL "")
         MESSAGE("-- Adding ${build_dotnet_type} project ${DOTNET_PROJPATH} (version ${DOTNET_PACKAGE_VERSION})")
-        SET(_DN_OUTPUTS "")
         FOREACH(pkg ${DOTNET_PACKAGES})
-            LIST(APPEND _DN_OUTPUTS ${DOTNET_OUTPUT_PATH}/${pkg}.${DOTNET_PACKAGE_VERSION}.nupkg)
-            LIST(APPEND DOTNET_OUTPUTS ${CMAKE_BINARY_DIR}/${pkg}.${DOTNET_PACKAGE_VERSION}.nupkg)
-
-            LIST(APPEND _DN_OUTPUTS ${DOTNET_OUTPUT_PATH}/${pkg}.${DOTNET_PACKAGE_VERSION}.symbols.nupkg)
-            LIST(APPEND DOTNET_OUTPUTS ${CMAKE_BINARY_DIR}/${pkg}.${DOTNET_PACKAGE_VERSION}.symbols.nupkg)
+            LIST(APPEND DOTNET_OUTPUTS ${DOTNET_OUTPUT_PATH}/${pkg}.${DOTNET_PACKAGE_VERSION}.nupkg)
+            LIST(APPEND DOTNET_OUTPUTS ${DOTNET_OUTPUT_PATH}/${pkg}.${DOTNET_PACKAGE_VERSION}.symbols.nupkg)
+            LIST(APPEND build_dotnet_cmds COMMAND ${CMAKE_COMMAND} -E remove ${DOTNET_OUTPUT_PATH}/${pkg}.${DOTNET_PACKAGE_VERSION}.nupkg)
+            LIST(APPEND build_dotnet_cmds COMMAND ${CMAKE_COMMAND} -E remove ${DOTNET_OUTPUT_PATH}/${pkg}.${DOTNET_PACKAGE_VERSION}.symbols.nupkg)
         ENDFOREACH()
         LIST(APPEND build_dotnet_cmds COMMAND ${DOTNET_EXE} pack --no-build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES} ${DOTNET_PACK_OPTIONS})
-        LIST(APPEND build_dotnet_cmds COMMAND ${CMAKE_COMMAND} -E copy ${_DN_OUTPUTS} ${CMAKE_BINARY_DIR})
+        LIST(APPEND build_dotnet_cmds COMMAND ${CMAKE_COMMAND} -E copy ${DOTNET_OUTPUTS} ${CMAKE_BINARY_DIR})
     ELSE()
         MESSAGE("-- Adding ${build_dotnet_type} project ${DOTNET_PROJPATH} (no nupkg)")
     ENDIF()
+    LIST(APPEND DOTNET_OUTPUTS ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.buildtimestamp)
+    LIST(APPEND build_dotnet_cmds COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.buildtimestamp)
 
     ADD_CUSTOM_COMMAND(
         OUTPUT ${DOTNET_OUTPUTS}
@@ -383,7 +386,7 @@ FUNCTION(RUN_DOTNET DOTNET_PROJECT)
         COMMAND ${DOTNET_EXE} clean ${DOTNET_PROJPATH} ${DOTNET_BUILD_PROPERTIES}
         COMMAND ${DOTNET_EXE} build --no-restore ${DOTNET_PROJPATH} -c ${DOTNET_CONFIG} ${DOTNET_BUILD_PROPERTIES} ${DOTNET_BUILD_OPTIONS}
         # XXX tfm
-        COMMAND ${DOTNET_EXE} ${DOTNET_OUTPUT_PATH}/netcoreapp2.0/${DOTNET_PROJNAME}.dll ${DOTNET_RUN_ARGUMENTS}
+        COMMAND ${DOTNET_EXE} ${DOTNET_OUTPUT_PATH}/netcoreapp2.0/${DOTNET_PROJNAME}.dll ${DOTNET_ARGUMENTS}
         COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/${DOTNET_PROJNAME}.runtimestamp
         WORKING_DIRECTORY ${DOTNET_OUTPUT_PATH})
     ADD_CUSTOM_TARGET(
@@ -402,7 +405,7 @@ FUNCTION(TEST_DOTNET DOTNET_PROJECT)
     ENDIF()
 
     ADD_TEST(NAME              ${DOTNET_PROJNAME}
-             COMMAND           ${DOTNET_EXE} test ${test_framework_args} --results-directory "${CMAKE_BINARY_DIR}" --logger trx ${DOTNET_RUN_ARGUMENTS}
+             COMMAND           ${DOTNET_EXE} test ${test_framework_args} --results-directory "${CMAKE_BINARY_DIR}" --logger trx ${DOTNET_ARGUMENTS}
              WORKING_DIRECTORY ${DOTNET_OUTPUT_PATH})
 
 ENDFUNCTION()
