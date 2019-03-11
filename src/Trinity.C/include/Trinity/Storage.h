@@ -41,24 +41,5 @@ namespace Storage
 #pragma pack(pop)
         }
 
-        namespace Enumeration
-        {
-            typedef struct
-            {
-                /** Public members visible to C# */
-                char*       CellPtr;
-                cellid_t    CellId;
-                int32_t     CellEntryIndex;
-                uint16_t    CellType;
-                /**         CellSize should be obtained from mt_enumerator if necessary */
-                //////////////////////////////////
-                /** Internal members */
-                uint16_t             mt_enumerator_active; // TRUE if mt_enumerator is initialized; FALSE if mt_enumerator called Invalidate()
-                MTHash*              mt_hash;
-                MT_SHADOW_ENUMERATOR mt_enumerator;
-                //////////////////////////////////
-            }LOCAL_MEMORY_STORAGE_ENUMERATOR, *PLOCAL_MEMORY_STORAGE_ENUMERATOR;
-        }
-
     }
 }
