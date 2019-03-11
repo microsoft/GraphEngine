@@ -34,7 +34,14 @@ namespace Storage
             free_entry = ExtendedInfo->NonEmptyEntryCount.fetch_add(1, std::memory_order_relaxed);
             while (free_entry >= (int32_t)ExtendedInfo->EntryCount.load())
             {
-                Expand(false);
+                auto result = Expand(false);
+                if (result == TrinityErrorCode::E_NOMEM)
+                {
+                    // cancel the allocation and recover
+                    ExtendedInfo->NonEmptyEntryCount.fetch_sub(1, std::memory_order_relaxed);
+                    free_entry = -1;
+                    break;
+                }
             }
         }
 

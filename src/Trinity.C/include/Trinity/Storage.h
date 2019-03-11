@@ -40,5 +40,6 @@ namespace Storage
             }LOG_RECORD_HEADER, *PLOG_RECORD_HEADER;
 #pragma pack(pop)
         }
+
     }
 }

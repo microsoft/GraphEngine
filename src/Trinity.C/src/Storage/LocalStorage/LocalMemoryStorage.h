@@ -92,7 +92,6 @@ namespace Storage
         /////////////////////////////////////
 
         // DiskIO
-
         String GetPrimaryStorageSlot();
         String GetSecondaryStorageSlot();
 
@@ -101,7 +100,6 @@ namespace Storage
         ALLOC_THREAD_CTX TrinityErrorCode ResetStorage();
 
         // Write-ahead logging
-
         namespace Logging
         {
             void ComputeChecksum(PLOG_RECORD_HEADER plog, char* bufferPtr);

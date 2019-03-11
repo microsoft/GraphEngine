@@ -174,10 +174,19 @@ namespace Storage
 
         void MarkTrunkDirty();
 
-        void Expand(bool force);
+        // Resize and expand the entry arrays so that the current capacity
+        // is larger than the number of non-empty entries allocated.
+        // Returns E_SUCCESS if the expansion succeeds, or is unnecessary.
+        // Returns E_NOMEM if the MTHash is full.
+        TrinityErrorCode Expand(bool force);
 
         // Thread-safe
         void                         FreeEntry(int32_t entry_index);
+        // Finds a free entry from either the free 
+        // entry list, or freshly from the empty entries.
+        // The MTHash may need to expand to allocate more empty entries.
+        // Returns the index of the found entry.
+        // Returns -1 if the MTHash is full.
         int32_t                      FindFreeEntry();
         int32_t                      Count();
         // Lock-related

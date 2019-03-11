@@ -7,7 +7,7 @@
 
 namespace Storage
 {
-    void MTHash::Expand(bool force)
+    TrinityErrorCode MTHash::Expand(bool force)
     {
         EntryAllocLock->lock();
         uint32_t CurrentEntryCount = ExtendedInfo->EntryCount.load();
@@ -15,13 +15,13 @@ namespace Storage
         if ((!force) && ((uint32_t)ExtendedInfo->NonEmptyEntryCount.load() < CurrentEntryCount))
         {
             EntryAllocLock->unlock();
-            return;
+            return TrinityErrorCode::E_SUCCESS;
         }
 
         if ((CurrentEntryCount + UInt32_Contants::GuardedEntryCount) >= TrinityConfig::ReserveEntriesPerMTHash())
         {
-			//XXX should not exit here
-            Trinity::Diagnostics::FatalError(1, "Memory Trunk {0} is out of Memory::", memory_trunk->TrunkId);
+            WriteLine(LogLevel::Error, "Memory Trunk {0} is out of Memory", memory_trunk->TrunkId);
+            return TrinityErrorCode::E_NOMEM;
         }
 
         uint32_t expanded_entry_count = CurrentEntryCount + UInt32_Contants::EntryExpandUnit;
@@ -40,5 +40,7 @@ namespace Storage
 
         ExtendedInfo->EntryCount.store(expanded_entry_count);
         EntryAllocLock->unlock();
+
+        return TrinityErrorCode::E_SUCCESS;
     }
 }
