@@ -105,6 +105,9 @@ namespace Storage
         {
             // Add new cell
             int32_t free_entry = FindFreeEntry();
+            if (free_entry == -1)
+            { return TrinityErrorCode::E_NOMEM; }
+
             TrinityErrorCode eResult = TryGetEntryLock(free_entry);
             assert(eResult == TrinityErrorCode::E_SUCCESS);
 
@@ -161,6 +164,8 @@ namespace Storage
             [this, cellId, type, size, /* OUT */ &cellPtr, &entryIndex](const uint32_t bucket_index) 
         {
             int32_t free_entry = FindFreeEntry();
+            if (free_entry == -1)
+            { return TrinityErrorCode::E_NOMEM; }
             TrinityErrorCode eResult = TryGetEntryLock(free_entry);
             assert(eResult == TrinityErrorCode::E_SUCCESS);
 
@@ -312,6 +317,8 @@ namespace Storage
         {
 #pragma region add new cell
             int32_t free_entry = FindFreeEntry();
+            if (free_entry == -1)
+            { return TrinityErrorCode::E_NOMEM; }
             TrinityErrorCode eResult = TryGetEntryLock(free_entry);
             assert(eResult == TrinityErrorCode::E_SUCCESS);
 

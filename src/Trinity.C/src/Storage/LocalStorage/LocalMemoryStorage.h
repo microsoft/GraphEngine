@@ -92,7 +92,6 @@ namespace Storage
         /////////////////////////////////////
 
         // DiskIO
-
         String GetPrimaryStorageSlot();
         String GetSecondaryStorageSlot();
 
@@ -101,7 +100,6 @@ namespace Storage
         ALLOC_THREAD_CTX TrinityErrorCode ResetStorage();
 
         // Write-ahead logging
-
         namespace Logging
         {
             void ComputeChecksum(PLOG_RECORD_HEADER plog, char* bufferPtr);
@@ -119,22 +117,6 @@ namespace Storage
 
         namespace Enumeration
         {
-            typedef struct
-            {
-                /** Public members visible to C# */
-                char*       CellPtr;
-                cellid_t    CellId;
-                int32_t     CellEntryIndex;
-                uint16_t    CellType;
-                /**         CellSize should be obtained from mt_enumerator if necessary */
-                //////////////////////////////////
-                /** Internal members */
-                uint16_t             mt_enumerator_active; // TRUE if mt_enumerator is initialized; FALSE if mt_enumerator called Invalidate()
-                MTHash*              mt_hash;
-                MT_SHADOW_ENUMERATOR mt_enumerator;
-                //////////////////////////////////
-            }LOCAL_MEMORY_STORAGE_ENUMERATOR, *PLOCAL_MEMORY_STORAGE_ENUMERATOR;
-
             TrinityErrorCode Allocate(OUT PLOCAL_MEMORY_STORAGE_ENUMERATOR &pp_enum);
             TrinityErrorCode Deallocate(IN  PLOCAL_MEMORY_STORAGE_ENUMERATOR p_enum);
             TrinityErrorCode Reset(IN  PLOCAL_MEMORY_STORAGE_ENUMERATOR p_enum);
