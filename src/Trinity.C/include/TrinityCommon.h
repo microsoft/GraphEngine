@@ -27,13 +27,13 @@ enum CellAccessOptions : int32_t
     /// </summary>
     ThrowExceptionOnCellNotFound = 0x1,
     /// <summary>
-    /// Creates a new cell when a cell is not found.
-    /// </summary>
-    CreateNewOnCellNotFound      = 0x2,
-    /// <summary>
     /// Specifies that write-ahead-log should be performed with strong durability.
     /// </summary>
-    StrongLogAhead               = 0x4,
+    StrongLogAhead               = 0x2,
+    /// <summary>
+    /// Creates a new cell when a cell is not found.
+    /// </summary>
+    CreateNewOnCellNotFound      = 0x4,
     /// <summary>
     /// Specifies that write-ahead-log should be performed with weak durability. This option brings better performance,
     /// but the durability may be degraded when this option is used.

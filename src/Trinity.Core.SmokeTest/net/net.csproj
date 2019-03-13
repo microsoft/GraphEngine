@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TslCodegen Include="test.tsl" />
+    <Content Include="trinity.xml" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+</Project>

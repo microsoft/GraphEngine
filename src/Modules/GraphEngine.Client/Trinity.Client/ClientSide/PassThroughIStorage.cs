@@ -46,6 +46,11 @@ namespace Trinity.Client
             throw new NotImplementedException();
         }
 
+        public unsafe TrinityErrorCode LoadCell(long cellId, out byte* cellBuff, out int size, out ushort cellType)
+        {
+            throw new NotImplementedException();
+        }
+
         public TrinityErrorCode RemoveCell(long cellId)
         {
             throw new NotImplementedException();

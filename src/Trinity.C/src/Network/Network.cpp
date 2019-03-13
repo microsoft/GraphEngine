@@ -146,7 +146,7 @@ namespace Trinity
                 mode           = Events::worktype_t::Receive;
                 handshake      = TrinityConfig::Handshake();
                 p->rx_buf      = (char*)malloc(RX_DEFAULT_LEN);
-                p->pending_len = p->rx_len;
+                p->pending_len = RX_DEFAULT_LEN;
                 p->msg_buf     = p->rx_buf;
                 p->msg_len     = 0;
             }
@@ -166,7 +166,7 @@ namespace Trinity
             p->work            = Events::alloc_work(mode);
             p->work->psock     = p;
             p->wait_handshake  = handshake;
-            p->avg_rx_len      = p->rx_len;
+            p->avg_rx_len      = RX_DEFAULT_LEN;
             p->is_incoming     = is_incoming;
 
             if (is_incoming)
@@ -486,6 +486,7 @@ namespace Trinity
 
             if (!_do_recv(socket, buf, len))
             {
+                free(buf);
                 return TrinityErrorCode::E_NETWORK_RECV_FAILURE;
             }
 

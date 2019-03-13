@@ -1,0 +1,39 @@
+struct RequestT
+{
+    int p0;
+    string p1;
+}
+
+struct ResponseT
+{
+    string p0;
+    int p1;
+}
+
+protocol TestSynRsp
+{
+    type: Syn;
+    request: RequestT;
+    response: ResponseT;
+}
+
+protocol TestSyn
+{
+    type: Syn;
+    request: RequestT;
+    response: void;
+}
+
+protocol TestAsyn
+{
+    type: Asyn;
+    request: RequestT;
+    response: void;
+}
+
+server S
+{
+    protocol TestSynRsp;
+    protocol TestSyn;
+    protocol TestAsyn;
+}

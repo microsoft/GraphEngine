@@ -13,7 +13,7 @@ query language -- [Language Integrated Knowledge Query][likq] (LIKQ).
 
 Microsoft Graph Engine is a distributed
 in-memory data processing engine, underpinned by a strongly-typed
-in-memory key-value store and a general distributed computation
+in-memory key-value store and a general-purpose distributed computation
 engine.
 
 
@@ -22,8 +22,7 @@ is a versatile graph query language on top of Graph Engine that
 combines the capability of fast graph exploration with the flexibility
 of lambda expression. Server-side computations can be expressed in
 lambda expressions, embedded in LIKQ, and executed server side
-during graph traversal.  LIKQ is powering [Academic Graph Search
-API][academic-graph-search], part of Microsoft Cognitive Services.
+during graph traversal.
 
 ## How to Contribute
 
@@ -48,9 +47,9 @@ NuGet packages [Graph Engine Core][graph-engine-core] and [LIKQ][likq-nuget] are
 
 Graph Engine is regularly released with bug fixes and feature enhancements.
 
-### Building for Windows
+### Building on Windows
 
-Install [Visual Studio 2017][vs], making sure to include the following workloads and components:
+Install [Visual Studio 2017][vs], making sure to include the following components:
 
 - .NET desktop development
 - Desktop development with C++
@@ -69,7 +68,7 @@ registered as a local NuGet repository and the local package cache for
 `GraphEngine.**` will be cleared. After the packages are built, you
 can run `dotnet restore` to use the newly built package.
 
-### Building for Linux
+### Building on Linux
 
 Install `libunwind8`, `g++`, `cmake` and `libssl-dev`.
 Install the `dotnet` package following [the official guide][dotnet-guide].
@@ -89,7 +88,7 @@ registered as a local NuGet repository and the local package cache for
 can run `dotnet restore` to use the newly built package.
 
 
-**Note:** the build script currently only supports `Ubuntu 16.04`.
+**Note:** the build script is only tested for `Ubuntu 16.04`.
 
 ## License
 
@@ -102,7 +101,7 @@ Licensed under the [MIT][license] License.
 Links
 -->
 
-[graph-engine]: http://www.graphengine.io/
+[graph-engine]: https://www.graphengine.io/
 
 [likq]: https://www.graphengine.io/video/likq.video.html
 

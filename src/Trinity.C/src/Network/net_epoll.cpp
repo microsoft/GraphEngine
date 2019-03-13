@@ -44,7 +44,7 @@ namespace Trinity
             ep_event.events = EPOLLOUT | EPOLLET | EPOLLONESHOT;
             if (-1 == epoll_ctl(Events::epoll_fd, EPOLL_CTL_MOD, p->socket, &ep_event))
             {
-                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Network: Errors occur during recv_async epoll_ctl. Error code = {0}", GetLastError());
+                Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "Network: Errors occur during send_async epoll_ctl. Error code = {0}", GetLastError());
                 return TrinityErrorCode::E_NETWORK_SEND_FAILURE;
             }
 

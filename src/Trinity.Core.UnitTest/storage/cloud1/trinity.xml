@@ -1,0 +1,5 @@
+<Trinity ConfigVersion="2.0">
+    <Cluster>
+        <Server Endpoint="localhost:8134" />
+    </Cluster>
+</Trinity>

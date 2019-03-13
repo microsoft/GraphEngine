@@ -83,17 +83,40 @@ namespace Storage
             GuardedEntryCount = 1024,
         };
 
+        ///  Memory trunk layout:
+        ///  ,-----------------------------,
+        ///  |                             |
+        ///  |  MemoryTrunk 2GB reserved   |
+        ///  |                             |
+        ///  |---------------+-------------|
+        ///  | r CellEntries | r MTEntries | 
+        ///  |---------------+--+----------|
+        ///  | b BucketPointers | b locks  |
+        ///  `------------------+----------'
+        ///  r = ReserveEntriesPerMTHash
+        ///  b = BucketCount
+        ///  all blocks shown in the chart shall be aligned up to page boundaries.
+
+        static constexpr uint64_t szCellEntry()  { return sizeof((new MTHash())->CellEntries[0]); }
+        static constexpr uint64_t szMTEntry()    { return sizeof((new MTHash())->MTEntries[0]); }
+        static constexpr uint64_t szBucket()     { return sizeof((new MTHash())->Buckets[0]); }
+        static constexpr uint64_t szBucketLock() { return sizeof((new MTHash())->BucketLockers[0]); }
+
         static uint64_t MTEntryOffset()
         {
-            return TrinityConfig::MemoryReserveUnit() / sizeof(CellEntries[0]);
+            return Memory::RoundUpToPage_64(TrinityConfig::ReserveEntriesPerMTHash() * szCellEntry());
         }
         static uint64_t BucketMemoryOffset()
         {
-            return MTEntryOffset() + TrinityConfig::MemoryReserveUnit() / sizeof(MTEntries[0]);
+            return Memory::RoundUpToPage_64(MTEntryOffset() + TrinityConfig::ReserveEntriesPerMTHash() * szMTEntry());
         }
         static uint64_t BucketLockerMemoryOffset()
         {
-            return BucketMemoryOffset() + TrinityConfig::MemoryReserveUnit() / sizeof(Buckets[0]);
+            return Memory::RoundUpToPage_64(BucketMemoryOffset() + BucketCount * szBucket());
+        }
+        static uint64_t MTHashReservedSpace()
+        {
+            return Memory::RoundUpToPage_64(BucketLockerMemoryOffset() + BucketCount * szBucketLock());
         }
         static uint64_t LookupLossyCounter;
         static constexpr uint64_t LookupSlowPathThreshold() { return 8192; }
@@ -151,10 +174,19 @@ namespace Storage
 
         void MarkTrunkDirty();
 
-        void Expand(bool force);
+        // Resize and expand the entry arrays so that the current capacity
+        // is larger than the number of non-empty entries allocated.
+        // Returns E_SUCCESS if the expansion succeeds, or is unnecessary.
+        // Returns E_NOMEM if the MTHash is full.
+        TrinityErrorCode Expand(bool force);
 
         // Thread-safe
         void                         FreeEntry(int32_t entry_index);
+        // Finds a free entry from either the free 
+        // entry list, or freshly from the empty entries.
+        // The MTHash may need to expand to allocate more empty entries.
+        // Returns the index of the found entry.
+        // Returns -1 if the MTHash is full.
         int32_t                      FindFreeEntry();
         int32_t                      Count();
         // Lock-related
@@ -168,7 +200,7 @@ namespace Storage
         //  succeed, because others fail, and provide a time window for it).
         ALLOC_THREAD_CTX void GetAllEntryLocksExceptArena();
         ALLOC_THREAD_CTX void ReleaseAllEntryLocksExceptArena();
-        ALLOC_THREAD_CTX TrinityErrorCode Lock();                     // E_SUCCESS or E_DEADLOCK.
+        ALLOC_THREAD_CTX TrinityErrorCode Lock();                           // E_SUCCESS or E_DEADLOCK.
         TrinityErrorCode TryGetBucketLock(const uint32_t index);            // E_SUCCESS or E_TIMEOUT.
         TrinityErrorCode TryGetEntryLock(const int32_t index);              // E_SUCCESS or E_TIMEOUT.
         bool             TryGetEntryLockForDefragment(const int32_t index);

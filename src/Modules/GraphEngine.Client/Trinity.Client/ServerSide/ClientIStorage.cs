@@ -198,22 +198,30 @@ namespace Trinity.Client
         public bool Contains(long cellId) => false;
 
         public unsafe TrinityErrorCode AddCell(long cellId, byte* buff, int size, ushort cellType)
-            => TrinityErrorCode.E_FAILURE;
+            => TrinityErrorCode.E_NOTSUPPORTED;
 
         public unsafe TrinityErrorCode UpdateCell(long cellId, byte* buff, int size)
-            => TrinityErrorCode.E_FAILURE;
+            => TrinityErrorCode.E_NOTSUPPORTED;
 
         public TrinityErrorCode GetCellType(long cellId, out ushort cellType)
         {
             cellType = 0;
-            return TrinityErrorCode.E_FAILURE;
+            return TrinityErrorCode.E_NOTSUPPORTED;
         }
 
         public TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff, out ushort cellType)
         {
             cellBuff = null;
             cellType = 0;
-            return TrinityErrorCode.E_FAILURE;
+            return TrinityErrorCode.E_NOTSUPPORTED;
+        }
+
+        public unsafe TrinityErrorCode LoadCell(long cellId, out byte* cellBuff, out int cellSize, out ushort cellType)
+        {
+            cellBuff = null;
+            cellType = 0;
+            cellSize = 0;
+            return TrinityErrorCode.E_NOTSUPPORTED;
         }
 
         public TrinityErrorCode RemoveCell(long cellId)

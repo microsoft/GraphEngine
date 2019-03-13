@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "minimal", "minimal\minimal.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "minimal-tsl", "minimal-tsl\minimal-tsl.csproj", "{6FF630D7-76C3-4C6C-8699-B4C15E64A480}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "net", "net\net.csproj", "{49858417-ECD7-4163-B9B7-796014A69113}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "save_load_tsl", "save-load-tsl\save_load_tsl.csproj", "{2C8EE23A-7201-434E-B5AF-AAEBDF129BAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{6FF630D7-76C3-4C6C-8699-B4C15E64A480}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FF630D7-76C3-4C6C-8699-B4C15E64A480}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FF630D7-76C3-4C6C-8699-B4C15E64A480}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49858417-ECD7-4163-B9B7-796014A69113}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49858417-ECD7-4163-B9B7-796014A69113}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49858417-ECD7-4163-B9B7-796014A69113}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49858417-ECD7-4163-B9B7-796014A69113}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C8EE23A-7201-434E-B5AF-AAEBDF129BAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C8EE23A-7201-434E-B5AF-AAEBDF129BAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C8EE23A-7201-434E-B5AF-AAEBDF129BAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C8EE23A-7201-434E-B5AF-AAEBDF129BAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

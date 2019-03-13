@@ -66,6 +66,18 @@ namespace Trinity.Storage
          TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff, out ushort cellType);
 
         /// <summary>
+        /// Loads the bytes of the cell with the specified cell Id.
+        /// The content is stored in unmanaged heap, pointed by cellBuf, which must be
+        /// freed after use.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="size">The size of the cell.</param>
+        /// <param name="cellBuff">The bytes of the cell. An empty byte array is returned if the cell is not found.</param>
+        /// <param name="cellType">The type of the cell, represented with a 16-bit unsigned integer.</param>
+        /// <returns>true if saving succeeds; otherwise, false.</returns>
+         TrinityErrorCode LoadCell(long cellId, out byte* cellBuff, out int size, out ushort cellType);
+
+        /// <summary>
         /// Removes the cell with the specified cell Id from the key-value store.
         /// </summary>
         /// <param name="cellId">A 64-bit cell Id.</param>

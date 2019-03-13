@@ -98,7 +98,7 @@ DLL_EXPORT BOOL              CWriteAheadLogValidateChecksum(Storage::LocalMemory
 DLL_EXPORT TrinityErrorCode  CResizeCell(cellid_t cellId, int32_t cellEntryIndex, int32_t offset, int32_t delta, char*& cell_ptr) { return Storage::LocalMemoryStorage::ResizeCell(cellId, cellEntryIndex, offset, delta, cell_ptr); }
 DLL_EXPORT TrinityErrorCode  CGetCellType(cellid_t cellId, uint16_t& cellType) { return Storage::LocalMemoryStorage::GetCellType(cellId, cellType); }
 DLL_EXPORT void              CReleaseCellLock(cellid_t cellId, int32_t cellEntryIndex) { Storage::LocalMemoryStorage::ReleaseCellLock(cellId, cellEntryIndex); }
-DLL_EXPORT BOOL              CContains(cellid_t cellid) { return Storage::LocalMemoryStorage::Contains(cellid) ? TRUE : FALSE; }
+DLL_EXPORT TrinityErrorCode  CContains(cellid_t cellid) { return Storage::LocalMemoryStorage::Contains(cellid); }
 
 DLL_EXPORT TrinityErrorCode  CLocalMemoryStorageEnumeratorAllocate(Storage::LocalMemoryStorage::Enumeration::LOCAL_MEMORY_STORAGE_ENUMERATOR *& pp_enum) { return Storage::LocalMemoryStorage::Enumeration::Allocate(pp_enum); }
 DLL_EXPORT TrinityErrorCode  CLocalMemoryStorageEnumeratorDeallocate(Storage::LocalMemoryStorage::Enumeration::LOCAL_MEMORY_STORAGE_ENUMERATOR * p_enum) { return Storage::LocalMemoryStorage::Enumeration::Deallocate(p_enum); }
