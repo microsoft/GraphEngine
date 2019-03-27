@@ -66,9 +66,9 @@ namespace Trinity.Storage
             switch (mode)
             {
                 case RunningMode.Proxy:
-                return TrinityConfig.Proxies;
+                    return TrinityConfig.Proxies;
                 default:
-                return TrinityConfig.Servers;
+                    return TrinityConfig.Servers;
             }
         }
         #endregion
@@ -148,8 +148,16 @@ namespace Trinity.Storage
 
             StaticGetPartitionByCellId = this.GetServerIdByCellIdDefault;
 
-            if (!nonblocking) { CheckServerProtocolSignatures(); } // TODO should also check in nonblocking setup when any remote storage is connected
-            // else this.ServerConnected += (_, __) => {};
+            if (!nonblocking)
+            {
+                int my_server_id = (cluster_config.RunningMode == RunningMode.Server) ? MyPartitionId : -1;
+                var storage = StorageTable.Where((_, idx) => idx != my_server_id).FirstOrDefault() as RemoteStorage;
+                CheckServerProtocolSignatures(storage);
+            }
+            else
+            {
+                ServerConnected += (_, rs_ev) => CheckServerProtocolSignatures(rs_ev.RemoteStorage);
+            }
 
             return true;
         }
@@ -162,13 +170,13 @@ namespace Trinity.Storage
             return true;
         }
 
-        private void CheckServerProtocolSignatures()
+        private void CheckServerProtocolSignatures(RemoteStorage storage)
         {
-            Log.WriteLine("Checking {0}-Server protocol signatures...", cluster_config.RunningMode);
-            int my_server_id = (cluster_config.RunningMode == RunningMode.Server) ? MyPartitionId : -1;
-            var storage = StorageTable.Where((_, idx) => idx != my_server_id).FirstOrDefault() as RemoteStorage;
-
-            CheckProtocolSignatures_impl(storage, cluster_config.RunningMode, RunningMode.Server);
+            Task.Run(() =>
+            {
+                Log.WriteLine("Checking {0}-Server protocol signatures...", cluster_config.RunningMode);
+                CheckProtocolSignatures_impl(storage, cluster_config.RunningMode, RunningMode.Server);
+            });
         }
 
         private void CheckProxySignatures(IEnumerable<RemoteStorage> proxy_list)
