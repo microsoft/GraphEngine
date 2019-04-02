@@ -23,8 +23,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
-    <PackageReference Include="GraphEngine.DynamicCluster" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.9608" />
+    <PackageReference Include="GraphEngine.DynamicCluster" Version="2.0.9608" />
     <PackageReference Include="Microsoft.ServiceFabric" version="6.0.232" />
     <PackageReference Include="Microsoft.ServiceFabric.Data" version="2.8.232" />
     <PackageReference Include="Microsoft.ServiceFabric.Diagnostics.Internal" version="2.8.232" />

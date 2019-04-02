@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="Trinity.ServiceFabric.SampleApplicationType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="Trinity.ServiceFabric.SampleApplicationType" ApplicationTypeVersion="2.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
     <Parameter Name="Trinity.ServiceFabric.GraphEngineRemotingClient_InstanceCount" DefaultValue="-1" />
     <Parameter Name="Trinity.ServiceFabric.GraphEngineService_MinReplicaSetSize" DefaultValue="2" />
@@ -10,11 +10,11 @@
        should match the Name and Version attributes of the ServiceManifest element defined in the 
        ServiceManifest.xml file. -->
   <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="Trinity.ServiceFabric.GraphEngineRemotingClientPkg" ServiceManifestVersion="1.0.0" />
+    <ServiceManifestRef ServiceManifestName="Trinity.ServiceFabric.GraphEngineRemotingClientPkg" ServiceManifestVersion="2.0.0" />
     <ConfigOverrides />
   </ServiceManifestImport>
   <ServiceManifestImport>
-    <ServiceManifestRef ServiceManifestName="Trinity.ServiceFabric.GraphEngineServicePkg" ServiceManifestVersion="1.0.0" />
+    <ServiceManifestRef ServiceManifestName="Trinity.ServiceFabric.GraphEngineServicePkg" ServiceManifestVersion="2.0.0" />
     <ConfigOverrides />
   </ServiceManifestImport>
   <DefaultServices>
