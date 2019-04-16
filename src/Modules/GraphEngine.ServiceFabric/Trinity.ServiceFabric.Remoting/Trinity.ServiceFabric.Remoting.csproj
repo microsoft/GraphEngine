@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net461</TargetFrameworks>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -21,8 +21,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Core" Version="2.0.9608" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services.Remoting" Version="2.8.232" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.9858" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services.Remoting" Version="3.3.644" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="Trinity.ServiceFabric.SampleApplicationType" ApplicationTypeVersion="2.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
+    <Parameter Name="InKnowWorks.ServiceFabric.HelloWorldService_MinReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="InKnowWorks.ServiceFabric.HelloWorldService_PartitionCount" DefaultValue="1" />
+    <Parameter Name="InKnowWorks.ServiceFabric.HelloWorldService_TargetReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="InKnowWorks.ServiceFabric.HelloWorldService_MinReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="InKnowWorks.ServiceFabric.HelloWorldService_PartitionCount" DefaultValue="1" />
+    <Parameter Name="InKnowWorks.ServiceFabric.HelloWorldService_TargetReplicaSetSize" DefaultValue="3" />
     <Parameter Name="Trinity.ServiceFabric.GraphEngineRemotingClient_InstanceCount" DefaultValue="-1" />
     <Parameter Name="Trinity.ServiceFabric.GraphEngineService_MinReplicaSetSize" DefaultValue="2" />
     <Parameter Name="Trinity.ServiceFabric.GraphEngineService_PartitionCount" DefaultValue="1" />
@@ -9,6 +15,14 @@
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
        ServiceManifest.xml file. -->
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="InKnowWorks.ServiceFabric.HelloWorldServicePkg" ServiceManifestVersion="1.0.0" />
+    <ConfigOverrides />
+  </ServiceManifestImport>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="InKnowWorks.ServiceFabric.HelloWorldServicePkg" ServiceManifestVersion="1.0.0" />
+    <ConfigOverrides />
+  </ServiceManifestImport>
   <ServiceManifestImport>
     <ServiceManifestRef ServiceManifestName="Trinity.ServiceFabric.GraphEngineRemotingClientPkg" ServiceManifestVersion="2.0.0" />
     <ConfigOverrides />
@@ -23,6 +37,16 @@
          ServiceFabric PowerShell module.
          
          The attribute ServiceTypeName below must match the name defined in the imported ServiceManifest.xml file. -->
+    <Service Name="InKnowWorks.ServiceFabric.HelloWorldService" ServicePackageActivationMode="ExclusiveProcess">
+      <StatefulService ServiceTypeName="InKnowWorks.ServiceFabric.HelloWorldServiceType" TargetReplicaSetSize="[InKnowWorks.ServiceFabric.HelloWorldService_TargetReplicaSetSize]" MinReplicaSetSize="[InKnowWorks.ServiceFabric.HelloWorldService_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[InKnowWorks.ServiceFabric.HelloWorldService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      </StatefulService>
+    </Service>
+    <Service Name="InKnowWorks.ServiceFabric.HelloWorldService" ServicePackageActivationMode="ExclusiveProcess">
+      <StatefulService ServiceTypeName="InKnowWorks.ServiceFabric.HelloWorldServiceType" TargetReplicaSetSize="[InKnowWorks.ServiceFabric.HelloWorldService_TargetReplicaSetSize]" MinReplicaSetSize="[InKnowWorks.ServiceFabric.HelloWorldService_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[InKnowWorks.ServiceFabric.HelloWorldService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      </StatefulService>
+    </Service>
     <Service Name="Trinity.ServiceFabric.GraphEngineRemotingClient" ServicePackageActivationMode="ExclusiveProcess">
       <StatelessService ServiceTypeName="Trinity.ServiceFabric.GraphEngineRemotingClientType" InstanceCount="[Trinity.ServiceFabric.GraphEngineRemotingClient_InstanceCount]">
         <SingletonPartition />
