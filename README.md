@@ -70,7 +70,8 @@ can run `dotnet restore` to use the newly built package.
 
 ### Building on Linux
 
-Install `libunwind8`, `g++`, `cmake` and `libssl-dev`.
+Install `libunwind8`, `g++`, `cmake` and `libssl-dev`. For example, if you are using Ubuntu, run `sudo apt install libunwind8 g++ cmake libssl-dev`.
+
 Install the `dotnet` package following [the official guide][dotnet-guide].
 
 Execute `tools/build.sh`.
