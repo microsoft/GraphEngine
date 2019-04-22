@@ -54,6 +54,7 @@ Install [Visual Studio 2017][vs], making sure to include the following component
 - .NET desktop development
     - .NET Framework 4 -- 4.6 development tools
 - Desktop development with C++
+    - Windows 10 SDK
     - Windows 8.1 SDK and UCRT SDK
 - Visual Studio extension development
 - `.NET Core SDK 2.0` or above
