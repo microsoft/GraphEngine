@@ -238,6 +238,9 @@ namespace freebase_likq
         #endregion
 
         #region ICell Members
+
+        public ICellAccessor Serialize() { return this;}
+
         public long CellId
         {
             get
