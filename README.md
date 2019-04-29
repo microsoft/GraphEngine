@@ -52,9 +52,15 @@ Graph Engine is regularly released with bug fixes and feature enhancements.
 Install [Visual Studio 2017][vs], making sure to include the following components:
 
 - .NET desktop development
+    - .NET Framework 4 -- 4.6 development tools
 - Desktop development with C++
-- cmake
+    - Windows 10 SDK
+    - Windows 8.1 SDK and UCRT SDK
+- Visual Studio extension development
 - `.NET Core SDK 2.0` or above
+- cmake
+
+[.NET Core SDK][dotnet-download] and [cmake][cmake-download] can also be installed using their standalone installers.
 
 The Windows build will generate multi-targeting nuget packages for all the available modules.
 Run `tools/build.ps1` with `powershell` to setup a workspace folder `build`, and build using `cmake`.
@@ -70,8 +76,9 @@ can run `dotnet restore` to use the newly built package.
 
 ### Building on Linux
 
-Install `libunwind8`, `g++`, `cmake` and `libssl-dev`.
-Install the `dotnet` package following [the official guide][dotnet-guide].
+Install `libunwind8`, `g++`, `cmake` and `libssl-dev`. For example, if you are using Ubuntu, run `sudo apt install libunwind8 g++ cmake libssl-dev`.
+
+Install the `dotnet` package following [the official guide][dotnet-download].
 
 Execute `tools/build.sh`.
 
@@ -87,8 +94,7 @@ registered as a local NuGet repository and the local package cache for
 `GraphEngine.Core` will be cleared. After the packages are built, you
 can run `dotnet restore` to use the newly built package.
 
-
-**Note:** the build script is only tested for `Ubuntu 16.04`.
+**Note:** the build script is only tested for `Ubuntu 16.04` and `Ubuntu 18.04`.
 
 ## License
 
@@ -117,5 +123,8 @@ Links
 
 [vs]: https://www.visualstudio.com/
 
-[dotnet-guide]: https://www.microsoft.com/net/learn/get-started/linuxubuntu
+[dotnet-download]: https://dotnet.microsoft.com/download/
+
+[cmake-download]: https://cmake.org/download/
+
 [license]: LICENSE.md
