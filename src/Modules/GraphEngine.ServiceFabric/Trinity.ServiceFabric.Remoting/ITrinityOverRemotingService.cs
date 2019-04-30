@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Trinity.Network.Messaging;
 
-[assembly: FabricTransportServiceRemotingProvider(RemotingListener = RemotingListener.V2Listener, RemotingClient = RemotingClient.V2Client)]
+[assembly: FabricTransportServiceRemotingProvider(RemotingListenerVersion = RemotingListenerVersion.V2, RemotingClientVersion = RemotingClientVersion.V2)]
 namespace Trinity.ServiceFabric.Remoting
 {
     public interface ITrinityOverRemotingService : IService
