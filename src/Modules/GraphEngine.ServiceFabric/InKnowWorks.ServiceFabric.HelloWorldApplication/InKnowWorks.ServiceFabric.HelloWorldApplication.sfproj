@@ -1,13 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" InitialTargets=";ValidateMSBuildFiles">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.7\build\Microsoft.VisualStudio.Azure.Fabric.Application.props" Condition="Exists('..\packages\Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.7\build\Microsoft.VisualStudio.Azure.Fabric.Application.props')" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>0f44632e-1a7f-463f-954c-a84a7b1a4f69</ProjectGuid>
-    <ProjectVersion>2.0</ProjectVersion>
+    <ProjectGuid>ffa15bd2-c9f8-450c-8d1f-62a4aea5227c</ProjectGuid>
+    <ProjectVersion>2.5</ProjectVersion>
     <MinToolsVersion>1.5</MinToolsVersion>
-    <SupportedMSBuildNuGetPackageVersion>1.6.6</SupportedMSBuildNuGetPackageVersion>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <IsPackable>False</IsPackable>
+    <SupportedMSBuildNuGetPackageVersion>1.6.7</SupportedMSBuildNuGetPackageVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
   </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -30,11 +29,10 @@
     <None Include="Scripts\Deploy-FabricApplication.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Trinity.ServiceFabric.GraphEngineRemotingClient\Trinity.ServiceFabric.GraphEngineRemotingClient.csproj" />
-    <ProjectReference Include="..\Trinity.ServiceFabric.GraphEngineService\Trinity.ServiceFabric.GraphEngineService.csproj" />
+    <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <ProjectReference Include="..\InKnowWorks.ServiceFabric.HelloWorldGraphService\InKnowWorks.ServiceFabric.HelloWorldGraphService.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
   <PropertyGroup>

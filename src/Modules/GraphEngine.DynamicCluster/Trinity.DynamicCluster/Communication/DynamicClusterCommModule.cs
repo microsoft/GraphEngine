@@ -178,7 +178,7 @@ namespace Trinity.DynamicCluster.Communication
 
         public override void AnnounceMasterHandler(StorageInformationReader request, ErrnoResponseWriter response)
         {
-            (m_memorycloud as DynamicMemoryCloud).m_cloudidx.SetMaster(request.partition, request.id);
+            (m_memorycloud as DynamicMemoryCloud)?.m_cloudidx.SetMaster(request.partition, request.id);
             response.errno = Errno.E_OK;
         }
 
@@ -186,7 +186,7 @@ namespace Trinity.DynamicCluster.Communication
         {
             try
             {
-                (m_memorycloud as DynamicMemoryCloud).m_backupctl.RestoreCurrentPartition(request.task_id, request.version, EventArgs.Empty).Wait();
+                (m_memorycloud as DynamicMemoryCloud)?.m_backupctl.RestoreCurrentPartition(request.task_id, request.version, EventArgs.Empty).Wait();
                 response.errno = Errno.E_OK;
             }
             catch
@@ -199,7 +199,7 @@ namespace Trinity.DynamicCluster.Communication
         {
             try
             {
-                (m_memorycloud as DynamicMemoryCloud).m_backupctl.BackupCurrentPartition(request.task_id, request.version, EventArgs.Empty).Wait();
+                (m_memorycloud as DynamicMemoryCloud)?.m_backupctl.BackupCurrentPartition(request.task_id, request.version, EventArgs.Empty).Wait();
                 response.errno = Errno.E_OK;
             }
             catch
@@ -215,14 +215,7 @@ namespace Trinity.DynamicCluster.Communication
 
         public override void QueryPartitionHealthHandler(ErrnoResponseWriter response)
         {
-            if ((m_memorycloud as DynamicMemoryCloud).m_healthmon.IsPartitionHealthy())
-            {
-                response.errno = Errno.E_OK;
-            }
-            else
-            {
-                response.errno = Errno.E_FAIL;
-            }
+            response.errno = ((DynamicMemoryCloud) m_memorycloud).m_healthmon.IsPartitionHealthy() ? Errno.E_OK : Errno.E_FAIL;
         }
     }
 }

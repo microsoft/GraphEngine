@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net461</TargetFrameworks>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -23,12 +23,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
-    <PackageReference Include="GraphEngine.DynamicCluster" Version="$(DOTNET_PACKAGE_VERSION)" />
-    <PackageReference Include="Microsoft.ServiceFabric" version="6.4.654" />
-    <PackageReference Include="Microsoft.ServiceFabric.Data" version="3.3.654" />
-    <PackageReference Include="Microsoft.ServiceFabric.Diagnostics.Internal" version="3.3.654" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" version="3.3.654" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.9858" />
+    <PackageReference Include="GraphEngine.DynamicCluster" Version="2.0.9858" />
+    <PackageReference Include="Microsoft.ServiceFabric" version="6.4.644" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data" version="3.3.644" />
+    <PackageReference Include="Microsoft.ServiceFabric.Diagnostics.Internal" version="3.3.644" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" version="3.3.644" />
     <PackageReference Include="Nito.AsyncEx.Tasks" version="5.0.0" />
     <PackageReference Include="Nito.Disposables" version="2.0.0" />
     <PackageReference Include="System.Collections.Immutable" version="1.5.0" />
