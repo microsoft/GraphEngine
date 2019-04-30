@@ -4,8 +4,7 @@
     <!-- In this demo application we use Trinity.LIKQ as our graph query language. -->
     <Trinity.LIKQ Timeout="10000"/>
     <!-- In this demo application we use Azure blob storage as our persistent storage. -->
-    <Trinity.Azure.Storage ConnectionString="DefaultEndpointsProtocol=https;AccountName=ikwstorage;AccountKey=tYAAfASvWRU7AjRAHoAwBd08WnUW3uimR3KIdOVCOC55cfSrCJNx7tEbz3jmbEwWWN6fRbYI0U6MY3UPXhRZ8A==;EndpointSuffix=core.windows.net" ContainerName="graphenginestoragespace 
-"/>
+    <Trinity.Azure.Storage ConnectionString="your_connection_string" ContainerName="graphengine"/>
     <!-- We use a simple replication scheme: 2 replicas each partition, fully mirrored. -->
     <Trinity.DynamicCluster MinimumReplica="2" ReplicationMode="Mirroring"/>
     <!-- 
