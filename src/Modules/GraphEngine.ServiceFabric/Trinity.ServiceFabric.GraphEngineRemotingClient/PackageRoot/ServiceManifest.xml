@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceManifest Name="Trinity.ServiceFabric.GraphEngineRemotingClientPkg"
-                 Version="1.0.0"
+                 Version="2.0.0"
                  xmlns="http://schemas.microsoft.com/2011/01/fabric"
                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -11,7 +11,7 @@
   </ServiceTypes>
 
   <!-- Code package is your service executable. -->
-  <CodePackage Name="Code" Version="1.0.0">
+  <CodePackage Name="Code" Version="2.0.0">
     <EntryPoint>
       <ExeHost>
         <Program>Trinity.ServiceFabric.GraphEngineRemotingClient.exe</Program>
@@ -21,7 +21,7 @@
 
   <!-- Config package is the contents of the Config directory under PackageRoot that contains an 
        independently-updateable and versioned set of custom configuration settings for your service. -->
-  <ConfigPackage Name="Config" Version="1.0.0" />
+  <ConfigPackage Name="Config" Version="2.0.0" />
 
   <Resources>
     <Endpoints>

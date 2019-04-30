@@ -332,9 +332,9 @@ namespace Trinity
                     throw new TrinityConfigException("Unrecognized " + ConfigurationConstants.Attrs.CONFIG_VERSION);
                 }
 
-                ApplyConfigurationSettings(GetLocalConfiguration());
-
                 is_config_loaded = true;
+
+                ApplyConfigurationSettings(GetLocalConfiguration());
             }
         }
 

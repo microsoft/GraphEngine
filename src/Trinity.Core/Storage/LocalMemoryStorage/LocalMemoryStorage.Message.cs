@@ -30,8 +30,8 @@ namespace Trinity.Storage
         public void SendMessage(byte* message, int size)
         {
             MessageBuff buff = new MessageBuff();
-            buff.Buffer = message;
-            buff.Length = (uint)size;
+            buff.Buffer = message + TrinityProtocol.SocketMsgHeader;
+            buff.Length = (uint)size - TrinityProtocol.SocketMsgHeader;
 
             LocalSendMessage(&buff);
 
@@ -52,8 +52,8 @@ namespace Trinity.Storage
         public void SendMessage(byte* message, int size, out TrinityResponse response)
         {
             MessageBuff buff = new MessageBuff();
-            buff.Buffer = message;
-            buff.Length = (uint)size;
+            buff.Buffer = message + TrinityProtocol.SocketMsgHeader;
+            buff.Length = (uint)size - TrinityProtocol.SocketMsgHeader;
 
             LocalSendMessage(&buff);
 

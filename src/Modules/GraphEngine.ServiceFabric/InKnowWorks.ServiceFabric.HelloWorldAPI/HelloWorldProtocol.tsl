@@ -1,0 +1,22 @@
+﻿struct HelloWorldRequest
+{
+	string RequestMessage;
+}
+
+struct HelloWorldResponse
+{
+	string MessageResponse;
+}
+
+protocol HelloWorldProtocol
+{
+	Type: Syn;
+	Request: HelloWorldRequest;
+	Response: HelloWorldResponse;
+}
+
+module HelloWorkdAPIModule
+{
+	protocol HelloWorldProtocol;
+
+}
