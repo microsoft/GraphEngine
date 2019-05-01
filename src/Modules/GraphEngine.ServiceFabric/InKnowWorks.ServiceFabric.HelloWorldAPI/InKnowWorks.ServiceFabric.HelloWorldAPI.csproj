@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFrameworks>netstandard2.1;net472</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
