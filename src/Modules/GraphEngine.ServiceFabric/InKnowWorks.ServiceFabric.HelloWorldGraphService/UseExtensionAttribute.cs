@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Trinity.SampleApplication.ServiceFabric
+namespace InKnowWorks.ServiceFabric.HelloWorldGraphService
 {
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     internal class UseExtensionAttribute : Attribute

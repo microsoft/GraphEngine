@@ -10,7 +10,6 @@ using Trinity.Azure.Storage;
 using Trinity.DynamicCluster.Storage;
 using Trinity.ServiceFabric;
 using Trinity.Diagnostics;
-using Trinity.SampleApplication.ServiceFabric;
 using Trinity.ServiceFabric.Remoting;
 
 namespace InKnowWorks.ServiceFabric.HelloWorldGraphService
