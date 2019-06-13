@@ -17,9 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.Sampl
 EndProject
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "InKnowWorks.ServiceFabric.HelloWorldApplication", "InKnowWorks.ServiceFabric.HelloWorldApplication\InKnowWorks.ServiceFabric.HelloWorldApplication.sfproj", "{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InKnowWorks.ServiceFabric.HelloWorldGraphService", "InKnowWorks.ServiceFabric.HelloWorldGraphService\InKnowWorks.ServiceFabric.HelloWorldGraphService.csproj", "{F9D72710-7900-4F29-B0AC-21467C9F6B5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InKnowWorks.ServiceFabric.HelloWorldAPI", "InKnowWorks.ServiceFabric.HelloWorldAPI\InKnowWorks.ServiceFabric.HelloWorldAPI.csproj", "{6AF60710-4901-4F2D-A894-6398C60B3C74}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InKnowWorks.ServiceFabric.HelloWorldAPI", "InKnowWorks.ServiceFabric.HelloWorldAPI\InKnowWorks.ServiceFabric.HelloWorldAPI.csproj", "{6AF60710-4901-4F2D-A894-6398C60B3C74}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IKW Graph Engine Utility API Definition", "IKW Graph Engine Utility API Definition", "{3BA4A153-7A6E-4882-BBF5-8FC1C2185F45}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -109,16 +109,6 @@ Global
 		{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}.RelSkipSFApp|x64.ActiveCfg = Release|x64
 		{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}.RelSkipSFApp|x64.Build.0 = Release|x64
 		{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}.RelSkipSFApp|x64.Deploy.0 = Release|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.Debug|x64.ActiveCfg = Debug|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.Debug|x64.Build.0 = Debug|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.Release|Any CPU.ActiveCfg = Release|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.Release|x64.ActiveCfg = Release|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.Release|x64.Build.0 = Release|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.RelSkipSFApp|Any CPU.ActiveCfg = Release|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.RelSkipSFApp|Any CPU.Build.0 = Release|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.RelSkipSFApp|x64.ActiveCfg = Release|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.RelSkipSFApp|x64.Build.0 = Release|x64
 		{6AF60710-4901-4F2D-A894-6398C60B3C74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6AF60710-4901-4F2D-A894-6398C60B3C74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AF60710-4901-4F2D-A894-6398C60B3C74}.Debug|x64.ActiveCfg = Debug|Any CPU

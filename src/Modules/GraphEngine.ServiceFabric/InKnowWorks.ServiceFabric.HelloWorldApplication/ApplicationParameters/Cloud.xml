@@ -1,6 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Application xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="fabric:/InKnowWorks.ServiceFabric.HelloWorldApplication" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
+    <Parameter Name="InKnowWorks.GraphEngine.ServiceFabric.GEUtilityAPI_PartitionCount" Value="1" />
+    <Parameter Name="InKnowWorks.GraphEngine.ServiceFabric.GEUtilityAPI_MinReplicaSetSize" Value="3" />
+    <Parameter Name="InKnowWorks.GraphEngine.ServiceFabric.GEUtilityAPI_TargetReplicaSetSize" Value="3" />
+    <Parameter Name="InKnowWorks.ServiceFabric.HelloGWWorldApplication_PartitionCount" Value="1" />
+    <Parameter Name="InKnowWorks.ServiceFabric.HelloGWWorldApplication_MinReplicaSetSize" Value="3" />
+    <Parameter Name="InKnowWorks.ServiceFabric.HelloGWWorldApplication_TargetReplicaSetSize" Value="3" />
     <Parameter Name="InKnowWorks.ServiceFabric.HelloWorldGraphService_PartitionCount" Value="1" />
     <Parameter Name="InKnowWorks.ServiceFabric.HelloWorldGraphService_MinReplicaSetSize" Value="3" />
     <Parameter Name="InKnowWorks.ServiceFabric.HelloWorldGraphService_TargetReplicaSetSize" Value="3" />

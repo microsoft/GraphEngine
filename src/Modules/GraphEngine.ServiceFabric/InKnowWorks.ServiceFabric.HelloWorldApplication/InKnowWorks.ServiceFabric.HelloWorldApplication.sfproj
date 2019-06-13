@@ -32,7 +32,7 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\InKnowWorks.ServiceFabric.HelloWorldGraphService\InKnowWorks.ServiceFabric.HelloWorldGraphService.csproj" />
+    <ProjectReference Include="..\InKnowWorks.GraphEngine.ServiceFabric.GEUtilityAPI\InKnowWorks.GraphEngine.ServiceFabric.GEUtilityAPI.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
   <PropertyGroup>
