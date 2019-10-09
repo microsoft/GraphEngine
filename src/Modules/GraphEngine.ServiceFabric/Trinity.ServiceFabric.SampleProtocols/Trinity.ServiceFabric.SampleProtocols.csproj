@@ -6,9 +6,9 @@
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="GraphEngine.Core" Version="2.0.9886" />
-    <TslCodegen Include="protocols.tsl" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
+        <TslCodegen Include="protocols.tsl" />
+    </ItemGroup>
 
 </Project>

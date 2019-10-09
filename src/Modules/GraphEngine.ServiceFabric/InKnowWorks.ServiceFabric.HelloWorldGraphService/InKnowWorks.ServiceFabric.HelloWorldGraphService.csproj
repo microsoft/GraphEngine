@@ -10,17 +10,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="2.0.9886" />
-    <PackageReference Include="GraphEngine.Core" Version="2.0.9886" />
-    <PackageReference Include="GraphEngine.LIKQ" Version="2.0.9886" />
-    <PackageReference Include="GraphEngine.ServiceFabric.Infrastructure" Version="2.0.9886" />
-    <PackageReference Include="GraphEngine.Storage.Composite" Version="2.0.9886" />
-    <PackageReference Include="Microsoft.ServiceFabric" version="6.4.644" targetFramework="net472" />
-    <PackageReference Include="Microsoft.ServiceFabric.Data" version="3.3.644" targetFramework="net472" />
-    <PackageReference Include="Microsoft.ServiceFabric.Data.Extensions" version="1.4.644" targetFramework="net472" />
-    <PackageReference Include="Microsoft.ServiceFabric.Data.Interfaces" version="3.3.644" targetFramework="net472" />
-    <PackageReference Include="Microsoft.ServiceFabric.Diagnostics.Internal" version="3.3.644" targetFramework="net472" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" version="3.3.644" targetFramework="net472" />
+    <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.LIKQ" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Infrastructure" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.Storage.Composite" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="Microsoft.ServiceFabric" version="6.5.664" targetFramework="net472" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data" version="3.4.664" targetFramework="net472" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data.Extensions" version="3.4.664" targetFramework="net472" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data.Interfaces" version="3.4.664" targetFramework="net472" />
+    <PackageReference Include="Microsoft.ServiceFabric.Diagnostics.Internal" version="3.4.664" targetFramework="net472" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" version="3.4.664" targetFramework="net472" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,7 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InKnowWorks.ServiceFabric.HelloWorldAPI\InKnowWorks.ServiceFabric.HelloWorldAPI.csproj" />
     <ProjectReference Include="..\Trinity.ServiceFabric.Remoting\Trinity.ServiceFabric.Remoting.csproj" />
   </ItemGroup>
 

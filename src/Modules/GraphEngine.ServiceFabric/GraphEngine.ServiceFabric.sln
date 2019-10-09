@@ -15,12 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.Graph
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.SampleProtocols", "Trinity.ServiceFabric.SampleProtocols\Trinity.ServiceFabric.SampleProtocols.csproj", "{392DBC03-10D2-4CC4-9C11-FB85D0588076}"
 EndProject
-Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "InKnowWorks.ServiceFabric.HelloWorldApplication", "InKnowWorks.ServiceFabric.HelloWorldApplication\InKnowWorks.ServiceFabric.HelloWorldApplication.sfproj", "{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InKnowWorks.ServiceFabric.HelloWorldGraphService", "InKnowWorks.ServiceFabric.HelloWorldGraphService\InKnowWorks.ServiceFabric.HelloWorldGraphService.csproj", "{F9D72710-7900-4F29-B0AC-21467C9F6B5C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InKnowWorks.ServiceFabric.HelloWorldAPI", "InKnowWorks.ServiceFabric.HelloWorldAPI\InKnowWorks.ServiceFabric.HelloWorldAPI.csproj", "{6AF60710-4901-4F2D-A894-6398C60B3C74}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,42 +89,6 @@ Global
 		{392DBC03-10D2-4CC4-9C11-FB85D0588076}.RelSkipSFApp|Any CPU.Build.0 = Release|Any CPU
 		{392DBC03-10D2-4CC4-9C11-FB85D0588076}.RelSkipSFApp|x64.ActiveCfg = Release|Any CPU
 		{392DBC03-10D2-4CC4-9C11-FB85D0588076}.RelSkipSFApp|x64.Build.0 = Release|Any CPU
-		{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}.Debug|x64.ActiveCfg = Debug|x64
-		{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}.Debug|x64.Build.0 = Debug|x64
-		{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}.Debug|x64.Deploy.0 = Debug|x64
-		{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}.Release|Any CPU.ActiveCfg = Release|x64
-		{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}.Release|x64.ActiveCfg = Release|x64
-		{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}.Release|x64.Build.0 = Release|x64
-		{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}.Release|x64.Deploy.0 = Release|x64
-		{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}.RelSkipSFApp|Any CPU.ActiveCfg = Release|x64
-		{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}.RelSkipSFApp|Any CPU.Build.0 = Release|x64
-		{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}.RelSkipSFApp|Any CPU.Deploy.0 = Release|x64
-		{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}.RelSkipSFApp|x64.ActiveCfg = Release|x64
-		{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}.RelSkipSFApp|x64.Build.0 = Release|x64
-		{FFA15BD2-C9F8-450C-8D1F-62A4AEA5227C}.RelSkipSFApp|x64.Deploy.0 = Release|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.Debug|x64.ActiveCfg = Debug|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.Debug|x64.Build.0 = Debug|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.Release|Any CPU.ActiveCfg = Release|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.Release|x64.ActiveCfg = Release|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.Release|x64.Build.0 = Release|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.RelSkipSFApp|Any CPU.ActiveCfg = Release|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.RelSkipSFApp|Any CPU.Build.0 = Release|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.RelSkipSFApp|x64.ActiveCfg = Release|x64
-		{F9D72710-7900-4F29-B0AC-21467C9F6B5C}.RelSkipSFApp|x64.Build.0 = Release|x64
-		{6AF60710-4901-4F2D-A894-6398C60B3C74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6AF60710-4901-4F2D-A894-6398C60B3C74}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6AF60710-4901-4F2D-A894-6398C60B3C74}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{6AF60710-4901-4F2D-A894-6398C60B3C74}.Debug|x64.Build.0 = Debug|Any CPU
-		{6AF60710-4901-4F2D-A894-6398C60B3C74}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6AF60710-4901-4F2D-A894-6398C60B3C74}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6AF60710-4901-4F2D-A894-6398C60B3C74}.Release|x64.ActiveCfg = Release|Any CPU
-		{6AF60710-4901-4F2D-A894-6398C60B3C74}.Release|x64.Build.0 = Release|Any CPU
-		{6AF60710-4901-4F2D-A894-6398C60B3C74}.RelSkipSFApp|Any CPU.ActiveCfg = Release|Any CPU
-		{6AF60710-4901-4F2D-A894-6398C60B3C74}.RelSkipSFApp|Any CPU.Build.0 = Release|Any CPU
-		{6AF60710-4901-4F2D-A894-6398C60B3C74}.RelSkipSFApp|x64.ActiveCfg = Release|Any CPU
-		{6AF60710-4901-4F2D-A894-6398C60B3C74}.RelSkipSFApp|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
