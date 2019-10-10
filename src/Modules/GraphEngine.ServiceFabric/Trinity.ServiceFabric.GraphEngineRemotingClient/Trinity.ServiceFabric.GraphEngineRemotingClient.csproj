@@ -18,8 +18,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="2.0.10056" />
-  </ItemGroup>
-
 </Project>
