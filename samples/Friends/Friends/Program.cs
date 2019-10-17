@@ -15,7 +15,7 @@ namespace Friends
 {
     class Friends
     {
-        public unsafe static void Main(string[] args)
+        public static unsafe void Main(string[] args)
         {
             // Characters
             Character Rachel = new Character(Name: "Rachel Green", Gender: 0, Married: true);
@@ -34,39 +34,39 @@ namespace Friends
             Performer David = new Performer(Name: "David Schwimmer", Age: 45, Characters: new List<long>());
 
             // Portrayal Relationship
-            Rachel.Performer = Jennifer.CellID;
-            Jennifer.Characters.Add(Rachel.CellID);
+            Rachel.Performer = Jennifer.CellId;
+            Jennifer.Characters.Add(Rachel.CellId);
 
-            Monica.Performer = Courteney.CellID;
-            Courteney.Characters.Add(Monica.CellID);
+            Monica.Performer = Courteney.CellId;
+            Courteney.Characters.Add(Monica.CellId);
 
-            Phoebe.Performer = Lisa.CellID;
-            Lisa.Characters.Add(Phoebe.CellID);
+            Phoebe.Performer = Lisa.CellId;
+            Lisa.Characters.Add(Phoebe.CellId);
 
-            Joey.Performer = Matt.CellID;
-            Matt.Characters.Add(Joey.CellID);
+            Joey.Performer = Matt.CellId;
+            Matt.Characters.Add(Joey.CellId);
 
-            Chandler.Performer = Matthew.CellID;
-            Matthew.Characters.Add(Chandler.CellID);
+            Chandler.Performer = Matthew.CellId;
+            Matthew.Characters.Add(Chandler.CellId);
 
-            Ross.Performer = David.CellID;
-            David.Characters.Add(Ross.CellID);
+            Ross.Performer = David.CellId;
+            David.Characters.Add(Ross.CellId);
 
             // Marriage relationship
-            Monica.Spouse = Chandler.CellID;
-            Chandler.Spouse = Monica.CellID;
+            Monica.Spouse = Chandler.CellId;
+            Chandler.Spouse = Monica.CellId;
 
-            Rachel.Spouse = Ross.CellID;
-            Ross.Spouse = Rachel.CellID;
+            Rachel.Spouse = Ross.CellId;
+            Ross.Spouse = Rachel.CellId;
 
             // Friendship
             Friendship friend_ship = new Friendship(new List<long>());
-            friend_ship.friends.Add(Rachel.CellID);
-            friend_ship.friends.Add(Monica.CellID);
-            friend_ship.friends.Add(Phoebe.CellID);
-            friend_ship.friends.Add(Joey.CellID);
-            friend_ship.friends.Add(Chandler.CellID);
-            friend_ship.friends.Add(Ross.CellID);
+            friend_ship.friends.Add(Rachel.CellId);
+            friend_ship.friends.Add(Monica.CellId);
+            friend_ship.friends.Add(Phoebe.CellId);
+            friend_ship.friends.Add(Joey.CellId);
+            friend_ship.friends.Add(Chandler.CellId);
+            friend_ship.friends.Add(Ross.CellId);
             Global.LocalStorage.SaveFriendship(friend_ship);
 
             // Save Runtime cells to Trinity memory storage
@@ -101,7 +101,7 @@ namespace Friends
             Console.WriteLine();
 
             long spouse_id = -1;
-            using (var cm = Global.LocalStorage.UseCharacter(Monica.CellID))
+            using (var cm = Global.LocalStorage.UseCharacter(Monica.CellId))
             {
                 if (cm.Married)
                     spouse_id = cm.Spouse;
