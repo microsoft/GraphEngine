@@ -13,4 +13,8 @@
     <PackageReference Include="Microsoft.ServiceFabric.Services" Version="3.4.676" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.ServiceFabric.ContactsProtocols\Trinity.ServiceFabric.ContactsProtocols.csproj" />
+  </ItemGroup>
+
 </Project>
