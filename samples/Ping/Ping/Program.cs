@@ -13,7 +13,7 @@ using Trinity.Storage;
 
 namespace Ping
 {
-    class MyServer : MyServerBase
+    class MyPingServer : MyServerBase
     {
         public override void SynPingHandler(MyMessageReader request)
         {
@@ -37,17 +37,17 @@ namespace Ping
     {
         static void Main(string[] args)
         {
-            var server = new MyServer();
+            var server = new MyPingServer();
             server.Start();
 
-            var synReq = new MyMessageWriter(1);
+            var synReq = new MyMessageWriter(0, 1);
 
             Global.CloudStorage.SynPingToMyServer(0, synReq);
 
-            var asynReq = new MyMessageWriter(2);
+            var asynReq = new MyMessageWriter(0,2);
             Global.CloudStorage.AsynPingToMyServer(0, asynReq);
 
-            var synReqRsp = new MyMessageWriter(3);
+            var synReqRsp = new MyMessageWriter(0,3);
             Console.WriteLine("Response of EchoPing: {0}", Global.CloudStorage.SynEchoPingToMyServer(0, synReqRsp).sn);
 
             Console.WriteLine("Done.");

@@ -1,4 +1,9 @@
-﻿cell MyCell
+﻿cell struct ContactRecord
 {
-	int A;
+	Guid ContactId;
+	string GivenNane;
+	string MiddleName;
+	string FamilyName;
+	optional List<CellId> FamilyMembers;
+	optional List<CellId> Friends;
 }
