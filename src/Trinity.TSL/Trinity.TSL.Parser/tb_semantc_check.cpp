@@ -42,6 +42,8 @@ inline string get_key(NProtocolProperty* target)
     case PT_STRUCT_RESPONSE:
         return "NProtocolProperty::ResponseType";
         break;
+      case PT_UNDEFINED: break;
+      default: ;
     }
     throw "get_key: should never reach here!";
     return "";
