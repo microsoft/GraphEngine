@@ -13,7 +13,7 @@ using Trinity.Network.Messaging;
 
 namespace SSSP
 {
-    class SSSPServer : SSSPServerBase
+    class SSSPServerImpl : SSSPServerBase
     {
         public override void DistanceUpdatingHandler(DistanceUpdatingMessageReader request)
         {
@@ -31,7 +31,7 @@ namespace SSSP
 
                         for (int i = 0; i < Global.ServerCount; i++)
                         {
-                            DistanceUpdatingMessageWriter msg = new DistanceUpdatingMessageWriter(cell.CellID.Value,
+                            DistanceUpdatingMessageWriter msg = new DistanceUpdatingMessageWriter(cell.CellId,
                                 cell.distance, sorter.GetCellRecipientList(i));
                             Global.CloudStorage.DistanceUpdatingToSSSPServer(i, msg);
                         }
@@ -53,7 +53,7 @@ namespace SSSP
 
                     for (int i = 0; i < Global.ServerCount; i++)
                     {
-                        DistanceUpdatingMessageWriter msg = new DistanceUpdatingMessageWriter(rootCell.CellID.Value, 0, sorter.GetCellRecipientList(i));
+                        DistanceUpdatingMessageWriter msg = new DistanceUpdatingMessageWriter(rootCell.CellId, 0, sorter.GetCellRecipientList(i));
                         Global.CloudStorage.DistanceUpdatingToSSSPServer(i, msg);
                     }
                 }
@@ -69,7 +69,7 @@ namespace SSSP
 
             if (args.Length >= 1 && args[0].StartsWith("-s"))
             {
-                SSSPServer server = new SSSPServer();
+                SSSPServerImpl server = new SSSPServerImpl();
                 server.Start();
             }
 
@@ -92,12 +92,12 @@ namespace SSSP
                 TrinityConfig.CurrentRunningMode = RunningMode.Client;
                 var cell = Global.CloudStorage.LoadSSSPCell(int.Parse(args[1]));
                 Console.WriteLine("Current vertex is {0}, the distance to the source vertex is {1}.",
-                    cell.CellID, cell.distance);
+                    cell.CellId, cell.distance);
                 while (cell.distance > 0)
                 {
                     cell = Global.CloudStorage.LoadSSSPCell(cell.parent);
                     Console.WriteLine("Current vertex is {0}, the distance to the source vertex is {1}.",
-                        cell.CellID, cell.distance);
+                        cell.CellId, cell.distance);
                 }
 
             }

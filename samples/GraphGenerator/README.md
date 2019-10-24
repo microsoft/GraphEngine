@@ -1,3 +1,4 @@
 # Graph Generator
 
 Document: http://www.graphengine.io/docs/manual/DemoApps/GraphGenerator.html
+Make sure to first run `REPO_ROOT/tools/build.ps1` to build required nuget packages.
