@@ -18,7 +18,7 @@ namespace DistributedHashtable
     {
         internal static int GetServerIdByKey(string key)
         {
-            return Global.CloudStorage.GetServerIdByCellId(HashHelper.HashString2Int64(key));
+            return Global.CloudStorage.GetPartitionIdByCellId(HashHelper.HashString2Int64(key));
         }
         public override void GetHandler(GetMessageReader request, GetResponseWriter response)
         {

@@ -13,7 +13,7 @@ using Trinity.Network.Messaging;
 
 namespace SSSP
 {
-    class MySSSPServer : SSSPServerBase
+    class SSSPServerImpl : SSSPServerBase
     {
         public override void DistanceUpdatingHandler(DistanceUpdatingMessageReader request)
         {
@@ -69,7 +69,7 @@ namespace SSSP
 
             if (args.Length >= 1 && args[0].StartsWith("-s"))
             {
-                MySSSPServer server = new MySSSPServer();
+                SSSPServerImpl server = new SSSPServerImpl();
                 server.Start();
             }
 

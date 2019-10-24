@@ -9,7 +9,7 @@ IF(VSWHERE_EXE)
 ELSE()
     SET(VSWHERE_EXE ${CMAKE_BINARY_DIR}/tools/vswhere.exe)
     MESSAGE("-- Downloading vswhere...")
-    FILE(DOWNLOAD https://github.com/Microsoft/vswhere/releases/download/2.5.2/vswhere.exe ${VSWHERE_EXE})
+	FILE(DOWNLOAD https://github.com/Microsoft/vswhere/releases/download/2.6.7/vswhere.exe ${VSWHERE_EXE})
     MESSAGE("vswhere.exe downloaded and saved to ${VSWHERE_EXE}")
 ENDIF()
 
@@ -22,7 +22,11 @@ EXECUTE_PROCESS(
 FIND_PROGRAM(MSBUILD_EXE msbuild PATHS "${VS_PATH}/MSBuild/15.0/Bin")
 
 IF(NOT MSBUILD_EXE)
-    MESSAGE(FATAL_ERROR "msbuild not found.")
+	FIND_PROGRAM(MSBUILD_EXE msbuild PATHS "${VS_PATH}/MSBuild/Current/Bin")
+ENDIF()
+
+IF(NOT MSBUILD_EXE)
+	MESSAGE(FATAL_ERROR "msbuild not found.")
 ENDIF()
 
 MESSAGE("-- Visual Studio path: ${VS_PATH}")

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Trinity;
 using Trinity.Core.Lib;
@@ -30,6 +31,9 @@ namespace DistributedHashtable
             {
                 DistributedHashtableServer server = new DistributedHashtableServer();
                 server.Start();
+                while(true) {
+                  Thread.Sleep(1000);
+                }
             }
 
             if (args[0].Trim().ToLower().StartsWith("-c"))
