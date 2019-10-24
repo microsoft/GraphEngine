@@ -1,6 +1,7 @@
 # Single Source Shortest Paths 
 
 Document: http://www.graphengine.io/docs/manual/DemoApps/SSSP.html
+Make sure to first run `REPO_ROOT/tools/build.ps1` to build required nuget packages.
 
 ### Running the application
 
