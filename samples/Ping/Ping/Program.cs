@@ -2,6 +2,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
+using Ping.MyServer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ using Trinity.Storage;
 
 namespace Ping
 {
-    class MyServer : MyServerBase
+    class MyServerImpl : MyServerBase
     {
         public override void SynPingHandler(MyMessageReader request)
         {
@@ -37,18 +38,18 @@ namespace Ping
     {
         static void Main(string[] args)
         {
-            var server = new MyServer();
+            var server = new MyServerImpl();
             server.Start();
 
-            var synReq = new MyMessageWriter(1);
+            var synReq = new MyMessageWriter(sn: 1);
 
             Global.CloudStorage.SynPingToMyServer(0, synReq);
 
-            var asynReq = new MyMessageWriter(2);
+            var asynReq = new MyMessageWriter(sn: 2);
             Global.CloudStorage.AsynPingToMyServer(0, asynReq);
 
-            var synReqRsp = new MyMessageWriter(3);
-            Console.WriteLine("Response of EchoPing: {0}", Global.CloudStorage.SynEchoPingToMyServer(0, synReqRsp).sn);
+            var synReqRsp = new MyMessageWriter(sn: 3);
+            Console.WriteLine("Response of EchoPing: {0}", Global.CloudStorage[0].SynEchoPing(synReqRsp).sn);
 
             Console.WriteLine("Done.");
             Console.WriteLine("Press any key to exit ...");
