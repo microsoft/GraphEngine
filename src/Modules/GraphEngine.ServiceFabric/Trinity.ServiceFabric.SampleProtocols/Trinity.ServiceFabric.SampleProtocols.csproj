@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <!--<TargetFramework>net461</TargetFramework>-->
+    <TargetFrameworks>net461</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>

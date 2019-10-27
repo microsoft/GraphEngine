@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net461</TargetFramework>
+    <!--<TargetFrameworks>net461;netcoreapp2.0</TargetFrameworks>-->
     <Platforms>x64</Platforms>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <IsPackable>false</IsPackable>
@@ -12,6 +13,7 @@
   <ItemGroup>
     <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="$(DOTNET_PACKAGE_VERSION)" />
     <PackageReference Include="GraphEngine.LIKQ" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Infrastructure" Version="2.0.10068" />
   </ItemGroup>
 
   <ItemGroup>
