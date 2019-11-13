@@ -19,9 +19,32 @@ namespace GraphEngine.DataImporter
         static void Main(string[] args)
         {
             CmdOptions opts = new CmdOptions();
-            if (CommandLine.Parser.Default.ParseArguments(args, opts))
+
+            var optsType = typeof(CmdOptions);
+
+            args = new string[]
             {
-                List<string> files = new List<string>(opts.ExplicitFiles.Select(_ => _.Trim()));
+                "-g",
+                @"L:\Documents\California Realtor Licensed CurrList.csv"
+            };
+
+            var myCmdOptions = CommandLine.Parser.Default.ParseArguments<CmdOptions>(args);
+
+            if (CommandLine.Parser.Default.ParseArguments<CmdOptions>(args) != null)
+            {
+                //List<string> files = new List<string>(opts.ExplicitFiles.Select(_ => _.Trim()));
+
+                var files = new List<string> {@"L:\Documents\California Realtor Licensed CurrList.csv"};
+
+                opts.ExplicitFiles = files;
+                opts.GenerateTSL   = false;
+                opts.FileFormat = "csv";
+                opts.Delimiter = ",".ToCharArray()[0];
+                opts.InputDirectory = @"L:\Documents\";
+                opts.TSL = null;
+                opts.Output = @"I:\IKW-GraphEngine\src\GraphEngine.DataImporter\GraphEngine.DataImporter\obj";
+                opts.TSLAssembly = null;
+
                 if (opts.InputDirectory != null)
                 {
                   //  Log.WriteLine("Including files from directory {0}", Path.GetFullPath(opts.InputDirectory));

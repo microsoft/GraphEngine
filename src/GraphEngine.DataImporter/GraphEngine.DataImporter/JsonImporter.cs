@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Trinity;
+using Trinity.Core.Lib;
 using Trinity.Diagnostics;
 using Trinity.Storage;
 
@@ -79,7 +80,7 @@ namespace GraphEngine.DataImporter
 
             tree_imports.ForEach(_ => _());
 
-            if (cellid == null) cellid = Global.LocalStorage.NewRandomCellID();
+            if (cellid == null) cellid = CellIdFactory.NewCellId();
             cell.CellId = cellid.Value;
             if (parent_id != null)
             {

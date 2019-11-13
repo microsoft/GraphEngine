@@ -17,6 +17,7 @@ namespace Friends
     {
         public static unsafe void Main(string[] args)
         {
+            TrinityConfig.CurrentRunningMode = RunningMode.Embedded;
             // Characters
             Character Rachel = new Character(Name: "Rachel Green", Gender: 0, Married: true);
             Character Monica = new Character(Name: "Monica Geller", Gender: 0, Married: true);
