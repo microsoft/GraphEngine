@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrinityVSExtension", "TrinityVSExtension\TrinityVSExtension.csproj", "{7AA2B61D-82C7-4D46-8805-7342752949EB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrinityVSExtension", "TrinityVSExtension\TrinityVSExtension.VS2019.csproj", "{7AA2B61D-82C7-4D46-8805-7342752949EB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TslDataModel", "TslDataModel\TslDataModel.csproj", "{59B8C7D5-96FC-4010-B9D0-7CA0B8FF1C6D}"
 EndProject
