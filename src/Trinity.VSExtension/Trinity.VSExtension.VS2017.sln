@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrinityVSExtension", "TrinityVSExtension\TrinityVSExtension.csproj", "{7AA2B61D-82C7-4D46-8805-7342752949EB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Trinity.TSL.ManagedWrapper", "Trinity.TSL.ManagedWrapper\Trinity.TSL.ManagedWrapper.VS2017.vcxproj", "{22AB6CD5-F29D-4A45-A9B2-6D5229CE674E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TslDataModel", "TslDataModel\TslDataModel.csproj", "{59B8C7D5-96FC-4010-B9D0-7CA0B8FF1C6D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TslProtocol", "TslProtocol\TslProtocol.csproj", "{0B677CAC-FC2A-46D7-B17C-D330AFC58FE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpNetFxApp", "CSharpNetFxApp\CSharpNetFxApp.csproj", "{81ECA9CB-C161-40E0-B253-734C73F64169}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpNetCoreApp", "CSharpNetCoreApp\CSharpNetCoreApp.csproj", "{39E5F924-2AF2-4203-A8DA-1FC5C337F031}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpNetFxLib", "CSharpNetFxLib\CSharpNetFxLib.csproj", "{8403B91C-817F-4313-8027-1654D538D567}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7AA2B61D-82C7-4D46-8805-7342752949EB}.Debug|x86.ActiveCfg = Debug|x86
+		{7AA2B61D-82C7-4D46-8805-7342752949EB}.Debug|x86.Build.0 = Debug|x86
+		{7AA2B61D-82C7-4D46-8805-7342752949EB}.Release|x86.ActiveCfg = Release|x86
+		{7AA2B61D-82C7-4D46-8805-7342752949EB}.Release|x86.Build.0 = Release|x86
+		{22AB6CD5-F29D-4A45-A9B2-6D5229CE674E}.Debug|x86.ActiveCfg = Debug|Win32
+		{22AB6CD5-F29D-4A45-A9B2-6D5229CE674E}.Debug|x86.Build.0 = Debug|Win32
+		{22AB6CD5-F29D-4A45-A9B2-6D5229CE674E}.Release|x86.ActiveCfg = Release|Win32
+		{22AB6CD5-F29D-4A45-A9B2-6D5229CE674E}.Release|x86.Build.0 = Release|Win32
+		{59B8C7D5-96FC-4010-B9D0-7CA0B8FF1C6D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{59B8C7D5-96FC-4010-B9D0-7CA0B8FF1C6D}.Debug|x86.Build.0 = Debug|Any CPU
+		{59B8C7D5-96FC-4010-B9D0-7CA0B8FF1C6D}.Release|x86.ActiveCfg = Release|Any CPU
+		{59B8C7D5-96FC-4010-B9D0-7CA0B8FF1C6D}.Release|x86.Build.0 = Release|Any CPU
+		{0B677CAC-FC2A-46D7-B17C-D330AFC58FE3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0B677CAC-FC2A-46D7-B17C-D330AFC58FE3}.Debug|x86.Build.0 = Debug|Any CPU
+		{0B677CAC-FC2A-46D7-B17C-D330AFC58FE3}.Release|x86.ActiveCfg = Release|Any CPU
+		{0B677CAC-FC2A-46D7-B17C-D330AFC58FE3}.Release|x86.Build.0 = Release|Any CPU
+		{81ECA9CB-C161-40E0-B253-734C73F64169}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{81ECA9CB-C161-40E0-B253-734C73F64169}.Debug|x86.Build.0 = Debug|Any CPU
+		{81ECA9CB-C161-40E0-B253-734C73F64169}.Release|x86.ActiveCfg = Release|Any CPU
+		{81ECA9CB-C161-40E0-B253-734C73F64169}.Release|x86.Build.0 = Release|Any CPU
+		{39E5F924-2AF2-4203-A8DA-1FC5C337F031}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{39E5F924-2AF2-4203-A8DA-1FC5C337F031}.Debug|x86.Build.0 = Debug|Any CPU
+		{39E5F924-2AF2-4203-A8DA-1FC5C337F031}.Release|x86.ActiveCfg = Release|Any CPU
+		{39E5F924-2AF2-4203-A8DA-1FC5C337F031}.Release|x86.Build.0 = Release|Any CPU
+		{8403B91C-817F-4313-8027-1654D538D567}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8403B91C-817F-4313-8027-1654D538D567}.Debug|x86.Build.0 = Debug|Any CPU
+		{8403B91C-817F-4313-8027-1654D538D567}.Release|x86.ActiveCfg = Release|Any CPU
+		{8403B91C-817F-4313-8027-1654D538D567}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DD8282FC-19AC-4FFD-8FF3-D60D306269B8}
+	EndGlobalSection
+EndGlobal

@@ -41,12 +41,18 @@ SET(_DN_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 SET(_DN_VERSION ${TRINITY_VERSION})
 SET(_DN_IMPORT_PROP ${CMAKE_CURRENT_BINARY_DIR}/${_DN_projname}.imports.props)
 CONFIGURE_FILE(${DOTNET_MODULE_DIR}/DotnetImports.props.in ${_DN_IMPORT_PROP})
+
+IF (MSVC_TOOLSET_VERSION EQUAL 142)
+  SET(vsext_sln ${CMAKE_CURRENT_LIST_DIR}/Trinity.VSExtension.VS2019.sln)
+ELSEIF(MSVC_TOOLSET_VERSION EQUAL 141)
+  SET(vsext_sln ${CMAKE_CURRENT_LIST_DIR}/Trinity.VSExtension.VS2017.sln)
+ENDIF()
     
 ADD_CUSTOM_COMMAND(
     OUTPUT ${vsext_output}
-    COMMAND ${NUGET_EXE} restore ${CMAKE_CURRENT_LIST_DIR}/Trinity.VSExtension.sln
-    COMMAND ${MSBUILD_EXE} ${CMAKE_CURRENT_LIST_DIR}/Trinity.VSExtension.sln /t:Clean /p:Configuration=Release
-    COMMAND ${MSBUILD_EXE} ${CMAKE_CURRENT_LIST_DIR}/Trinity.VSExtension.sln /t:Build "/p:DirectoryBuildPropsPath=${_DN_IMPORT_PROP}" /p:Configuration=Release /p:Platform=x86
+    COMMAND ${NUGET_EXE} restore ${vsext_sln}
+    COMMAND ${MSBUILD_EXE} ${vsext_sln} /t:Clean /p:Configuration=Release
+    COMMAND ${MSBUILD_EXE} ${vsext_sln} /t:Build "/p:DirectoryBuildPropsPath=${_DN_IMPORT_PROP}" /p:Configuration=Release /p:Platform=x86
     DEPENDS ${vsext_src}
 )
 
