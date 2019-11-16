@@ -164,11 +164,9 @@ namespace GraphGenerator
         void CreateGraphNodeThreadProc(object par)
         {
             NodeCreationThreadObject p = (NodeCreationThreadObject)par;
-
             long start = -1;
             long end = -1;
             long ele = nodeCount / p.threadCount;
-
             if (p.threadCount != p.threadIndex + 1)
             {
                 start = p.threadIndex * ele + 1;
@@ -181,7 +179,6 @@ namespace GraphGenerator
             }
 
             int loopTimes = (int)Math.Log(nodeCount, 2);
-
             for (long i = start; i < end; i++)
             {
                 long begin = 1;
@@ -189,7 +186,6 @@ namespace GraphGenerator
                 long capacity = edgeCount;
                 double up = p1 + p2;
                 double down = p3 + p4;
-
                 for (int j = 0; j < loopTimes; j++)
                 {
                     if (i >= begin && i <= finish - ((finish - begin + 1) / 2))
@@ -203,20 +199,15 @@ namespace GraphGenerator
                         capacity = (long)(capacity * down);
                     }
                 }
-
                 List<long> reservationList = new List<long>((int)capacity);
-
                 reservationList.AddRange(Enumerable.Range(-(int)(capacity + 1), (int)capacity).Select(x => (long)x));
-
                 index = randomArray[p.threadIndex].Next(0, labelSet.Count);
-
                 GraphNode node = new GraphNode(i, 0, labelSet[index], reservationList);
-
                 Global.LocalStorage.SaveGraphNode(node);
             }
         }
 
-        public void CreateGraph()
+        public void CreatGraph()
         {
             int threadCount = Environment.ProcessorCount;
             Thread[] threadNum = new Thread[threadCount];

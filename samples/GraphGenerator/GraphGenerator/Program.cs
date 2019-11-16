@@ -15,7 +15,7 @@ namespace GraphGenerator
         static void Main(string[] args)
         {
             GraphGen gg = new GraphGen(1 << 20, 16, 100);
-            gg.CreateGraph();
+            gg.CreatGraph();
         }
     }
 }

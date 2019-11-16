@@ -72,7 +72,7 @@ Trinity::TSL::WrappedTokenList::WrappedTokenList(
     System::Collections::Generic::List<System::String^>^ bufferLines,
     System::Collections::Generic::List<int>^ lineOffsets)
 {
-  const auto utf8_buffer = ManagedStringToUTF8String(buffer);
+    auto utf8_buffer = ManagedStringToUTF8String(buffer);
     TokenList unmanagedList(utf8_buffer.c_str());
     this->tokens = gcnew System::Collections::Generic::List<WrappedTokenInfo^>();
     for (auto &token : unmanagedList.tokens)
