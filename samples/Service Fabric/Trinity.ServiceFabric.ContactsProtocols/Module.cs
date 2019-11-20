@@ -2,7 +2,16 @@
 
 namespace Trinity.ServiceFabric.ContactsProtocols
 {
-    public class Class1
+    public class ContactCommunicationsModuleImpl : ContactCommunicationsModuleBase
     {
+        public override string GetModuleName()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void CreateContactHandler(CreateContactRequestReader request, CreateContactResponseWriter response)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

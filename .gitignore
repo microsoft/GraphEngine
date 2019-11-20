@@ -113,3 +113,8 @@ CMakeSettings.json
 Directory.Build.props
 .ionide
 launchSettings.json
+/out/build/x64-Debug/.cmake/api/v1/reply
+/out/build/x64-Debug/src
+/out/build/x64-Debug/tools
+/out/build/x64-Debug/.cmake/api/v1/query/client-MicrosoftVS
+/out/build/x64-Debug

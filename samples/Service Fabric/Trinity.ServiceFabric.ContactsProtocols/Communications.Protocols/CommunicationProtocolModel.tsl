@@ -2,9 +2,7 @@
 // This file defines the coommunicatioons RPC protocol API set
 
 // TSL Structs are used to define the message that flow between the GE Client and Server comoponents
-
 // Define a request to Create a new Contact
-
 // We use Wkipedia to define field names: see: http://
 
 enum OperationResponseCode
@@ -27,6 +25,13 @@ struct QueryContactByIdRequest
 	Guid ContactId;		
 }
 
+struct QueryContactByNameRequest
+{
+	string GivenName;
+	string NickName;
+	string FamilyName;
+}
+
 struct CreateContactResponse
 {
    OperationResponseCode ReponseCode;
@@ -39,15 +44,11 @@ struct QueryContactByIdResponse
 	string MiddleName;
 	string SirName;
 }
-struct MyProtocolResponse
-{
-	string B;
-}
 
-// Create Contact API - Synchronous, blocking
+// Create Contact API - Asynchronous, non-blocking
 protocol CreateContact
 {
-	Type: Syn;
+	Type: Asyn;
 	Request: CreateContactRequest;
 	Response: CreateContactResponse;
 }
