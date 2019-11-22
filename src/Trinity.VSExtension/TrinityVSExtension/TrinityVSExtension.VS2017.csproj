@@ -12,7 +12,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Trinity.VSExtension</RootNamespace>
     <AssemblyName>GraphEngineVSExtension</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -267,6 +267,10 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
+    <ProjectReference Include="..\Trinity.TSL.ManagedWrapper\Trinity.TSL.ManagedWrapper.VS2017.vcxproj">
+      <Project>{22ab6cd5-f29d-4a45-a9b2-6d5229ce674e}</Project>
+      <Name>Trinity.TSL.ManagedWrapper</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TslDataModel\TslDataModel.csproj">
       <Project>{59B8C7D5-96FC-4010-B9D0-7CA0B8FF1C6D}</Project>
       <Name>TslDataModel</Name>
@@ -280,10 +284,6 @@
       <VSIXSubPath>ItemTemplates</VSIXSubPath>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-    </ProjectReference>
-    <ProjectReference Include="..\Trinity.TSL.ManagedWrapper\Trinity.TSL.ManagedWrapper.vcxproj">
-      <Project>{22ab6cd5-f29d-4a45-a9b2-6d5229ce674e}</Project>
-      <Name>Trinity.TSL.ManagedWrapper</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
