@@ -7,11 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.WPF.TestClient", "T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.Client.TestProtocols", "Trinity.Client.TestProtocols\Trinity.Client.TestProtocols.csproj", "{E067E4BB-C1C7-4631-968B-8DAF0AC92F62}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IKW.Trinity.TripleStore.TestSever.Client", "IKW.Trinity.TripleStore.TestSever.Client\IKW.Trinity.TripleStore.TestSever.Client.csproj", "{D2188620-2C04-44C7-9747-D0CC676F1A01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.TripleStore.TestSever.Client", "IKW.Trinity.TripleStore.TestSever.Client\Trinity.TripleStore.TestSever.Client.csproj", "{D2188620-2C04-44C7-9747-D0CC676F1A01}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IKW.RDFTriple.DemoData", "IKW.RDFTriple.DemoData\IKW.RDFTriple.DemoData.csproj", "{136A2F87-1D02-4BC3-9E05-8B1641EA3C74}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RDFTriple.DemoData", "IKW.RDFTriple.DemoData\RDFTriple.DemoData.csproj", "{136A2F87-1D02-4BC3-9E05-8B1641EA3C74}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IKW.Trinity.TripleStore.TestServer", "IKW.Trinity.TripleStore.TestServer\IKW.Trinity.TripleStore.TestServer.csproj", "{CF7A9717-99AE-489C-8DDC-EF20E8DD7D25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.TripleStore.TestServer", "IKW.Trinity.TripleStore.TestServer\Trinity.TripleStore.TestServer.csproj", "{CF7A9717-99AE-489C-8DDC-EF20E8DD7D25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

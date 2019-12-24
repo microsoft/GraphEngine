@@ -246,7 +246,9 @@ namespace Trinity.Client.TestProtocols
                     {
                         using var tripleStoreSavedToMemoryCloudTask = Task.Factory.StartNew(function: async () =>
                             {
-                                await Task.Delay(0).ConfigureAwait(false);
+                                await Task.Yield();
+
+                                // await Task.Delay(0).ConfigureAwait(false);
 
                                 var (cellIdOnTriple, newTripleStore) = sourceTripleStore;
 

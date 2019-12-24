@@ -28,7 +28,7 @@ namespace Trinity.WPF.TestClient
     /// </summary>
     public partial class MainWindow : Window
     {
-        private TrinityClient client = new TrinityClient("localhost:5304");
+        private readonly TrinityClient client = new TrinityClient("localhost:5304");
 
         public MainWindow()
         {
@@ -55,22 +55,22 @@ namespace Trinity.WPF.TestClient
                 using var reactiveGraphEngineResponseTask = Task.Factory.StartNew(async () =>
                 {
                     await Task.Factory.StartNew(() =>
-                        {
-                            NameSpaceTB.Text  = DateTime.Now.ToString(CultureInfo.InvariantCulture);
-                            SubjectTB.Text    = tripleObjectFromServer.Subject;
-                            PredicateTB.Text  = tripleObjectFromServer.Predicate;
-                            ObjectTB.Text     = tripleObjectFromServer.Object;
+                                                {
+                                                    NameSpaceTB.Text =
+                                                        DateTime.Now.ToString(CultureInfo.InvariantCulture);
+                                                    SubjectTB.Text   = tripleObjectFromServer.Subject;
+                                                    PredicateTB.Text = tripleObjectFromServer.Predicate;
+                                                    ObjectTB.Text    = tripleObjectFromServer.Object;
 
-                        }, token, 
-                           TaskCreationOptions.None, 
-                           uiSyncContext).ConfigureAwait(false);
-
+                                                }, token,
+                                                TaskCreationOptions.None,
+                                                uiSyncContext);
                 }).ContinueWith(_ =>
-                    {
-                        ResponseTextBlock.Items.Add("Task ExternalTripleReceivedAction Complete...");
-                    }, uiSyncContext);
+                {
+                    ResponseTextBlock.Items.Add("Task ExternalTripleReceivedAction Complete...");
+                }, uiSyncContext);
 
-                var upDateOnUITread = reactiveGraphEngineResponseTask.ConfigureAwait(false);
+                var upDateOnUITread = reactiveGraphEngineResponseTask;
 
                 await upDateOnUITread;
             });
@@ -80,33 +80,36 @@ namespace Trinity.WPF.TestClient
                 using var retrieveTripleStoreFromMemoryCloudTask = Task.Factory.StartNew(async () =>
                 {
                     await Task.Factory.StartNew(() =>
-                        {
-                            foreach (var tripleNode in Global.LocalStorage.TripleStore_Selector())
-                            {
-                                if (tripleStoreMemoryContext.CellId != tripleNode.CellId) continue;
+                                                {
+                                                    foreach (var tripleNode in
+                                                        Global.LocalStorage.TripleStore_Selector())
+                                                    {
+                                                        if (tripleStoreMemoryContext.CellId != tripleNode.CellId)
+                                                            continue;
 
-                                var node          = tripleNode.TripleCell;
-                                var subjectNode   = node.Subject;
-                                var predicateNode = node.Predicate;
-                                var objectNode    = node.Object;
+                                                        var node          = tripleNode.TripleCell;
+                                                        var subjectNode   = node.Subject;
+                                                        var predicateNode = node.Predicate;
+                                                        var objectNode    = node.Object;
 
-                                ResponseTextBlock.Items.Add($"Triple CellId in MemoryCloud: {tripleNode.CellId}");
-                                ResponseTextBlock.Items.Add($"Subject Node: {subjectNode}");
-                                ResponseTextBlock.Items.Add($"Predicate Node: {predicateNode}");
-                                ResponseTextBlock.Items.Add($"Object Node: {objectNode}");
+                                                        ResponseTextBlock
+                                                           .Items
+                                                           .Add($"Triple CellId in MemoryCloud: {tripleNode.CellId}");
+                                                        ResponseTextBlock.Items.Add($"Subject Node: {subjectNode}");
+                                                        ResponseTextBlock.Items.Add($"Predicate Node: {predicateNode}");
+                                                        ResponseTextBlock.Items.Add($"Object Node: {objectNode}");
 
-                                break;
-                            }
-                        }, token, 
-                           TaskCreationOptions.None, 
-                           uiSyncContext).ConfigureAwait(false);
-
+                                                        break;
+                                                    }
+                                                }, token,
+                                                TaskCreationOptions.None,
+                                                uiSyncContext);
                 }).ContinueWith(_ =>
-                    {
-                        ResponseTextBlock.Items.Add("Task ExternalTripleSavedToMemoryAction Complete...");
-                    }, uiSyncContext);
+                {
+                    ResponseTextBlock.Items.Add("Task ExternalTripleSavedToMemoryAction Complete...");
+                }, uiSyncContext);
 
-                var upDateOnUITread = retrieveTripleStoreFromMemoryCloudTask.ConfigureAwait(false);
+                var upDateOnUITread = retrieveTripleStoreFromMemoryCloudTask;
 
                 await upDateOnUITread;
             });
@@ -120,26 +123,25 @@ namespace Trinity.WPF.TestClient
 
             Task graphEngineRPCTask = Task.Factory.StartNew(async () =>
             {
-                await Task.Yield();
+                //await Task.Yield();
 
                 var message = new TripleStreamWriter(triples);
 
-                var rsp = await client.PostTriplesToServer(message).ConfigureAwait(false);
+                var rsp = await client.PostTriplesToServer(message);
 
                 var token = Task.Factory.CancellationToken;
 
-                await Task.Factory.StartNew(() =>
-                {
-                    this.ResponseTextBlock.Items.Add($"GE Server Response: {rsp.errno}");
-                },
-                    token, TaskCreationOptions.None, uiSyncContext).ConfigureAwait(false);
+                await
+                    Task.Factory
+                        .StartNew(() => { this.ResponseTextBlock.Items.Add($"GE Server Response: {rsp.errno}"); },
+                                  token, TaskCreationOptions.None, uiSyncContext);
             }).ContinueWith(_ => 
-            {
-                ResponseTextBlock.Items.Add("Task graphEngineRPCTask Complete...");
-            }
-            , uiSyncContext);
+                            {
+                                ResponseTextBlock.Items.Add("Task graphEngineRPCTask Complete...");
+                            }
+                          , uiSyncContext);
 
-            var taskResult = graphEngineRPCTask.ConfigureAwait(false);
+            var taskResult = graphEngineRPCTask;
 
             await taskResult;
         }
