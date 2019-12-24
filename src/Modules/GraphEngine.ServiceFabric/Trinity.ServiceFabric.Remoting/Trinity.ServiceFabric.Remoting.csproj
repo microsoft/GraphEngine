@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services.Remoting" Version="3.4.676" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services.Remoting" Version="4.0.457" />
   </ItemGroup>
 
   <ItemGroup>
