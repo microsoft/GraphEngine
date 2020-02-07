@@ -1,0 +1,41 @@
+﻿protocol StreamTriplesAsync
+{
+	Type: Asyn;
+	Request: TripleStream;
+	Response: ErrorCodeResponse;
+}
+
+protocol PostTriplesToServer
+{
+	Type: Asyn;
+	Request: TripleStream;
+	Response: ErrorCodeResponse;
+}
+
+module TripleServer
+{
+	protocol StreamTriplesAsync;
+	protocol PostTriplesToServer;
+}
+
+// Declare Second Server Module
+
+protocol WriteTripleAsync
+{
+	Type: Asyn;
+	Request: Triple;
+	Response: ErrorCodeResponse;
+}
+
+protocol FetchTripleAsync
+{
+	Type: Asyn;
+	Request: Triple;
+	Response: ErrorCodeResponse;
+}
+
+module TripleStoreDemoServer
+{
+  protocol FetchTripleAsync;
+  protocol WriteTripleAsync;
+}

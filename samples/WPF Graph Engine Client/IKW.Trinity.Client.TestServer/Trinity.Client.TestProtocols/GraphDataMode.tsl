@@ -24,23 +24,3 @@ cell struct TripleStore
 {
 	Triple TripleCell;
 }
-
-protocol StreamTriplesAsync
-{
-	Type: Asyn;
-	Request: TripleStream;
-	Response: ErrorCodeResponse;
-}
-
-protocol PostTriplesToServer
-{
-	Type: Asyn;
-	Request: TripleStream;
-	Response: ErrorCodeResponse;
-}
-
-module TripleServer
-{
-	protocol StreamTriplesAsync;
-	protocol PostTriplesToServer;
-}
