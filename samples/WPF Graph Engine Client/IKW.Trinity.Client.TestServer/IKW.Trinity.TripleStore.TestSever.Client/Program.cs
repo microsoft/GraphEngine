@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
-using Trinity;
-using Trinity.Client;
-using Trinity.Client.TestProtocols;
-using Trinity.Client.TestProtocols.TripleServer;
-using Trinity.Diagnostics;
-
-namespace IKW.Trinity.TripleStore.TestSever.Client
+﻿namespace Trinity.TripleStore.TestSever.Client
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Diagnostics;
+    using Trinity;
+    using Trinity.Client;
+    using Trinity.Client.TestProtocols;
+    using Trinity.Client.TestProtocols.TripleServer;
+
     class Program
     {
         private static TrinityClient TrinityTripleModuleClient = null;
@@ -44,12 +44,12 @@ namespace IKW.Trinity.TripleStore.TestSever.Client
                     creationOptions: TaskCreationOptions.HideScheduler,
                     scheduler: TaskScheduler.Current).Unwrap().ContinueWith(async _ =>
                 {
-                    await Task.Delay(0).ConfigureAwait(false);
+                    await Task.Delay(0);
 
                     Console.WriteLine("Task ExternalTripleReceivedAction Complete...");
                 }, cancellationToken: CancellationToken.None);
 
-                var writeToConsoleTask = reactiveGraphEngineResponseTask.ConfigureAwait(false);
+                var writeToConsoleTask = reactiveGraphEngineResponseTask;
 
                 await writeToConsoleTask;
             });
@@ -85,12 +85,12 @@ namespace IKW.Trinity.TripleStore.TestSever.Client
                     creationOptions: TaskCreationOptions.HideScheduler,
                     scheduler: TaskScheduler.Current).Unwrap().ContinueWith(async _ =>
                 {
-                    await Task.Delay(0).ConfigureAwait(false);
+                    await Task.Delay(0);
 
                     Console.WriteLine("Task ExternalTripleSavedToMemoryAction Complete...");
                 }, cancellationToken: CancellationToken.None);
 
-                var storeFromMemoryCloudTask = retrieveTripleStoreFromMemoryCloudTask.ConfigureAwait(false);
+                var storeFromMemoryCloudTask = retrieveTripleStoreFromMemoryCloudTask;
 
                 await storeFromMemoryCloudTask;
             });
@@ -111,7 +111,7 @@ namespace IKW.Trinity.TripleStore.TestSever.Client
                             using var tripleStreamWriter = new TripleStreamWriter(sampleTriple);
 
                             var responseReader =
-                                await TrinityTripleModuleClient.PostTriplesToServer(tripleStreamWriter).ConfigureAwait(false);
+                                await TrinityTripleModuleClient.PostTriplesToServer(tripleStreamWriter);
 
                             Console.WriteLine($"Server responses with rsp code={responseReader.errno}");
 
@@ -119,7 +119,7 @@ namespace IKW.Trinity.TripleStore.TestSever.Client
                         creationOptions: TaskCreationOptions.HideScheduler,
                         scheduler: TaskScheduler.Current).Unwrap();
 
-                    var mainLoopTask = trinityClientProcessingLoopTask.ConfigureAwait(false);
+                    var mainLoopTask = trinityClientProcessingLoopTask;
 
                     await mainLoopTask;
                 }
@@ -154,7 +154,7 @@ namespace IKW.Trinity.TripleStore.TestSever.Client
                 creationOptions: TaskCreationOptions.HideScheduler,
                 scheduler: TaskScheduler.Current).Unwrap();
 
-            var taskAwaitable = trinityLogIOTask.ConfigureAwait(false);
+            var taskAwaitable = trinityLogIOTask;
 
             await taskAwaitable;
         }

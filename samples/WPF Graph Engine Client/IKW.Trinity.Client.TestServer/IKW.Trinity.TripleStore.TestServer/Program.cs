@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Trinity;
-using Trinity.Client;
-using Trinity.Client.TestProtocols;
-using Trinity.Client.TestProtocols.TripleServer;
-using Trinity.Client.TrinityClientModule;
-using Trinity.Diagnostics;
-using Trinity.Network;
-
-namespace IKW.Trinity.TripleStore.TestServer
+﻿namespace Trinity.TripleStore.TestServer
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Client.TestProtocols;
+    using Client.TestProtocols.TripleServer;
+    using Client.TrinityClientModule;
+    using Diagnostics;
+    using Network;
+    using Trinity;
+
     class Program
     {
         private static TripleModule GraphEngineTripleModuleImpl { get; set; }
