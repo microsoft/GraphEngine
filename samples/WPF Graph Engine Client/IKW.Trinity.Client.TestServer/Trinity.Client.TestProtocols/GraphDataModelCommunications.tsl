@@ -20,22 +20,22 @@ module TripleServer
 
 // Declare Second Server Module
 
-protocol WriteTripleAsync
-{
-	Type: Asyn;
-	Request: Triple;
-	Response: ErrorCodeResponse;
-}
+//protocol WriteTripleAsync
+//{
+//	Type: Asyn;
+//	Request: Triple;
+//	Response: ErrorCodeResponse;
+//}
 
-protocol FetchTripleAsync
-{
-	Type: Asyn;
-	Request: Triple;
-	Response: ErrorCodeResponse;
-}
+//protocol FetchTripleAsync
+//{
+//	Type: Asyn;
+//	Request: Triple;
+//	Response: ErrorCodeResponse;
+//}
 
-module TripleStoreDemoServer
-{
-  protocol FetchTripleAsync;
-  protocol WriteTripleAsync;
-}
+//module TripleStoreDemoServer
+//{
+//  protocol FetchTripleAsync;
+//  protocol WriteTripleAsync;
+//}

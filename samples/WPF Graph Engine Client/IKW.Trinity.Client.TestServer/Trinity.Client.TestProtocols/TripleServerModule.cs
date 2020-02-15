@@ -254,7 +254,9 @@ namespace Trinity.Client.TestProtocols
 
                                 if (Global.CloudStorage.IsLocalCell(cellIdOnTriple)) return;
 
-                                Global.LocalStorage.SaveTripleStore(newTripleStore);
+                                Global.CloudStorage.SaveTripleStore(newTripleStore);
+
+                                //Global.LocalStorage.SaveTripleStore(newTripleStore);
 
                                 // Let the Client know we have saved a New TripleStore to the MemoryCloud
 

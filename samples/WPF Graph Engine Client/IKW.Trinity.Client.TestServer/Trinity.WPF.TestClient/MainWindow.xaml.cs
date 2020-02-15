@@ -28,7 +28,7 @@ namespace Trinity.WPF.TestClient
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly TrinityClient client = new TrinityClient("localhost:5304");
+        private readonly TrinityClient client = new TrinityClient("localhost:9898");
 
         public MainWindow()
         {
@@ -125,7 +125,7 @@ namespace Trinity.WPF.TestClient
             {
                 //await Task.Yield();
 
-                var message = new TripleStreamWriter(triples);
+                using var message = new TripleStreamWriter(triples);
 
                 var rsp = await client.PostTriplesToServer(message);
 
