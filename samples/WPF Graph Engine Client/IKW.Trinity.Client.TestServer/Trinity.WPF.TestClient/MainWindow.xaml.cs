@@ -1,25 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
+
 using Trinity.Client;
 using Trinity.Client.TestProtocols;
 using Trinity.Client.TestProtocols.TripleServer;
-using Trinity.Diagnostics;
-using ErrorCodeResponseReader = Trinity.Client.TestProtocols.ErrorCodeResponseReader;
 
 namespace Trinity.WPF.TestClient
 {
@@ -28,12 +15,12 @@ namespace Trinity.WPF.TestClient
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly TrinityClient client = new TrinityClient("localhost:5304");
+        private readonly TrinityClient client = new TrinityClient("localhost:9898");
 
         public MainWindow()
         {
-            InitializeComponent(); 
-            
+            InitializeComponent();
+
             TrinityConfig.CurrentRunningMode = RunningMode.Client;
 
             client.RegisterCommunicationModule<TripleModule>();
@@ -58,9 +45,9 @@ namespace Trinity.WPF.TestClient
                                                 {
                                                     NameSpaceTB.Text =
                                                         DateTime.Now.ToString(CultureInfo.InvariantCulture);
-                                                    SubjectTB.Text   = tripleObjectFromServer.Subject;
+                                                    SubjectTB.Text = tripleObjectFromServer.Subject;
                                                     PredicateTB.Text = tripleObjectFromServer.Predicate;
-                                                    ObjectTB.Text    = tripleObjectFromServer.Object;
+                                                    ObjectTB.Text = tripleObjectFromServer.Object;
 
                                                 }, token,
                                                 TaskCreationOptions.None,
@@ -87,10 +74,10 @@ namespace Trinity.WPF.TestClient
                                                         if (tripleStoreMemoryContext.CellId != tripleNode.CellId)
                                                             continue;
 
-                                                        var node          = tripleNode.TripleCell;
-                                                        var subjectNode   = node.Subject;
+                                                        var node = tripleNode.TripleCell;
+                                                        var subjectNode = node.Subject;
                                                         var predicateNode = node.Predicate;
-                                                        var objectNode    = node.Object;
+                                                        var objectNode = node.Object;
 
                                                         ResponseTextBlock
                                                            .Items
@@ -119,13 +106,11 @@ namespace Trinity.WPF.TestClient
         {
             var uiSyncContext = TaskScheduler.FromCurrentSynchronizationContext();
 
-            List<Triple> triples = new List<Triple> {new Triple {Subject = "WPF-GraphEngineClient", Predicate = "isA", Object = "Success"}};
+            List<Triple> triples = new List<Triple> { new Triple { Subject = "WPF-GraphEngineClient", Predicate = "isA", Object = "Success" } };
 
             Task graphEngineRPCTask = Task.Factory.StartNew(async () =>
             {
-                //await Task.Yield();
-
-                var message = new TripleStreamWriter(triples);
+                using var message = new TripleStreamWriter(triples);
 
                 var rsp = await client.PostTriplesToServer(message);
 
@@ -135,7 +120,7 @@ namespace Trinity.WPF.TestClient
                     Task.Factory
                         .StartNew(() => { this.ResponseTextBlock.Items.Add($"GE Server Response: {rsp.errno}"); },
                                   token, TaskCreationOptions.None, uiSyncContext);
-            }).ContinueWith(_ => 
+            }).ContinueWith(_ =>
                             {
                                 ResponseTextBlock.Items.Add("Task graphEngineRPCTask Complete...");
                             }

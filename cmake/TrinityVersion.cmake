@@ -12,5 +12,5 @@ IF(NOT TRINITY_VERSION)
     ENDIF()
 
     SET(TRINITY_VERSION "2.0.${TRINITY_VERSION}")
-    MESSAGE("-- GraphEngine version is now ${TRINITY_VERSION}")
+    MESSAGE("-- IKW GraphEngine version is now ${TRINITY_VERSION}")
 ENDIF()

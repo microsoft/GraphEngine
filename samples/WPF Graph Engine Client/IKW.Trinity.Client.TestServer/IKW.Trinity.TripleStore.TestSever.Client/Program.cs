@@ -22,7 +22,7 @@
 
             Log.LogsWritten += Log_LogsWritten;
 
-            TrinityTripleModuleClient = new TrinityClient("localhost:5304");
+            TrinityTripleModuleClient = new TrinityClient("localhost:9898");
 
             TrinityTripleModuleClient.RegisterCommunicationModule<TripleModule>();
             TrinityTripleModuleClient.Start();
@@ -33,7 +33,9 @@
             {
                 using var reactiveGraphEngineResponseTask = Task.Factory.StartNew(async () =>
                     {
-                        await Task.Yield();
+                        //await Task.Yield();
+
+                        await Task.Delay(0).ConfigureAwait(false);
 
                         Console.WriteLine($"Processing Timestamp: {DateTime.Now.ToString(CultureInfo.InvariantCulture)}");
                         Console.WriteLine($"Triple Subject Node: {tripleObjectFromServer.Subject}");
@@ -58,7 +60,8 @@
             {
                 using var retrieveTripleStoreFromMemoryCloudTask = Task.Factory.StartNew(async () =>
                     {
-                        await Task.Yield();
+                        //await Task.Yield();
+                        await Task.Delay(0).ConfigureAwait(false);
 
                         Console.WriteLine("Try locate the Triple in the TripleStore MemoryCloud");
 

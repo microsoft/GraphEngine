@@ -15,14 +15,16 @@
     class Program
     {
         private static TripleModule GraphEngineTripleModuleImpl { get; set; }
+        //private static TripleStoreDemoServerModule GraphEngineTripleStoreDemoServerImpl { get; set; }
         private static TrinityClientModule TrinityClientModuleRuntime { get; set; }
         private static TrinityServer TripleStoreServer { get; set; } 
 
         private static async Task Main(string[] args)
         {
             TrinityConfig.CurrentRunningMode = RunningMode.Server;
+            TrinityConfig.AddServer(new ServerInfo("localhost", 9898, string.Empty, LogLevel.Verbose));
             TrinityConfig.LogEchoOnConsole   = true;
-            TrinityConfig.LoggingLevel       = LogLevel.Info;
+            TrinityConfig.LoggingLevel       = LogLevel.Verbose;
             TrinityConfig.StorageRoot        = @"C:\GE-TripleStore-Storage";
 
             Log.LogsWritten += Log_LogsWritten;
@@ -31,6 +33,8 @@
 
             TripleStoreServer.RegisterCommunicationModule<TrinityClientModule>();
             TripleStoreServer.RegisterCommunicationModule<TripleModule>();
+            //TripleStoreServer.RegisterCommunicationModule<TripleStoreDemoServerModule>();
+
             TripleStoreServer.Start();
 
             TrinityClientModuleRuntime  = TripleStoreServer.GetCommunicationModule<TrinityClientModule>();
@@ -39,31 +43,48 @@
 
             GraphEngineTripleModuleImpl = TripleStoreServer.GetCommunicationModule<TripleModule>();
 
+            //GraphEngineTripleStoreDemoServerImpl =
+            //    TripleStoreServer.GetCommunicationModule<TripleStoreDemoServerModule>();
+
             while (true)
             {
                 // Each time we pass through the look check to see how many active clients are connected
 
-                var tripleStoreClients = TrinityClientModuleRuntime.Clients.ToList();
-
-                Console.WriteLine($"The number of real-time Connected TripleStore Client: {tripleStoreClients.Count}.");
-
-                foreach (var connectedTripleStoreClient in tripleStoreClients.Where(connectedTripleStoreClient => connectedTripleStoreClient != null))
+                if (TrinityClientModuleRuntime.Clients != null)
                 {
-                    try
+                    var tripleStoreClients = TrinityClientModuleRuntime.Clients.ToList();
+
+                    Console.WriteLine($"The number of real-time Connected TripleStore Client: {tripleStoreClients.Count}.");
+
+                    foreach (var connectedTripleStoreClient in tripleStoreClients.Where(connectedTripleStoreClient => connectedTripleStoreClient != null))
                     {
-                        List<Triple> triples = new List<Triple>{ new Triple { Subject = "foo", Predicate = "is", Object = "bar" } };
+                        try
+                        {
+                            List<Triple> triples = new List<Triple>{ new Triple { Subject = "foo", Predicate = "is", Object = "bar" } };
 
-                        // New-up the Request Message!
+                            // New-up the Request Message!
 
-                        using var message = new TripleStreamWriter(triples);
+                            using var message = new TripleStreamWriter(triples);
 
-                        // Push a triple to the Client
+                            // Push a triple to the Client
 
-                        using var rsp = await connectedTripleStoreClient.StreamTriplesAsync(message).ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
+                            using var rsp = await connectedTripleStoreClient.StreamTriplesAsync(message).ConfigureAwait(false);
+
+                            //var writeMessage = new TripleWriter()
+                            //                   {
+                            //                       Namespace = "http://www.inknowworks.com/semanticweb/graphengine.io",
+                            //                       Subject   = "Dr. Barry Smith",
+                            //                       Predicate = "BFO-Creator",
+                            //                       Object    = "Ph.D Advisory"
+                            //                   };
+
+                            //using var rpcOp = await connectedTripleStoreClient
+                            //                       .WriteTripleAsync(writeMessage).ConfigureAwait(false);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+                        }
                     }
                 }
 
