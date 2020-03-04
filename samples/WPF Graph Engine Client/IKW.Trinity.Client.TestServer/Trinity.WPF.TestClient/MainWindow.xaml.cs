@@ -110,6 +110,11 @@ namespace Trinity.WPF.TestClient
 
             Task graphEngineRPCTask = Task.Factory.StartNew(async () =>
             {
+<<<<<<< HEAD
+=======
+                //await Task.Yield();
+
+>>>>>>> 69080e55788caa75dd3166e5ac68809647b7c8b3
                 using var message = new TripleStreamWriter(triples);
 
                 var rsp = await client.PostTriplesToServer(message);
