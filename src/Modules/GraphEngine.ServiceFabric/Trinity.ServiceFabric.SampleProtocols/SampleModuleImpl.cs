@@ -12,6 +12,12 @@ namespace Trinity.ServiceFabric.SampleProtocols
     {
         public override string GetModuleName() => "SampleModuleImpl";
 
+        private string stateMsg = string.Empty;
+
+        public SampleModuleImpl()
+        {
+            stateMsg = "Tracing";
+        }
         public override void PingHandler()
         {
             Log.WriteLine("Ping received!");

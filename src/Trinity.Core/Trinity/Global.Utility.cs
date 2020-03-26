@@ -200,8 +200,12 @@ namespace Trinity
             }
             fixed (byte* p = PEBuffer)
             {
+
                 DateTime t = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(*(int*)(p + *(int*)(p + 60) + 8));
-                return t.AddHours(TimeZone.CurrentTimeZone.GetUtcOffset(t).Hours);
+                var adjustedTimeZone = TimeZoneInfo.Local.GetUtcOffset(t).Hours;
+                // return t.AddHours(TimeZone.CurrentTimeZone.GetUtcOffset(t).Hours);
+                return t.AddHours(adjustedTimeZone);
+
             }
         }
     }

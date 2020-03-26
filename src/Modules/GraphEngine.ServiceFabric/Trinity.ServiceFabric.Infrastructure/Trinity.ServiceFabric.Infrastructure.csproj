@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net461</TargetFrameworks>
-    <!--<TargetFrameworks>net461;netcoreapp2.0</TargetFrameworks>-->
+    <!--<TargetFrameworks>net461</TargetFrameworks>-->
+    <TargetFrameworks>net461;netcoreapp2.0</TargetFrameworks>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Version>$(DOTNET_PACKAGE_VERSION)</Version>
     <FileVersion>$(DOTNET_PACKAGE_VERSION)</FileVersion>
@@ -26,10 +26,10 @@
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
     <PackageReference Include="GraphEngine.DynamicCluster" Version="$(DOTNET_PACKAGE_VERSION)" />
-    <PackageReference Include="Microsoft.ServiceFabric" version="7.0.457" />
-    <PackageReference Include="Microsoft.ServiceFabric.Data" version="4.0.457" />
-    <PackageReference Include="Microsoft.ServiceFabric.Diagnostics.Internal" version="4.0.457" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" version="4.0.457" />
+    <PackageReference Include="Microsoft.ServiceFabric" version="7.0.470" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data" version="4.0.470" />
+    <PackageReference Include="Microsoft.ServiceFabric.Diagnostics.Internal" version="4.0.470" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" version="4.0.470" />
     <PackageReference Include="Nito.AsyncEx.Tasks" version="5.0.0" />
     <PackageReference Include="Nito.Disposables" version="2.0.1" />
     <PackageReference Include="System.Collections.Immutable" version="1.7.0" />

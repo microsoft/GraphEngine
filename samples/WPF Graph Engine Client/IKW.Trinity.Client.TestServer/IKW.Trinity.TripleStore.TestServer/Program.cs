@@ -60,7 +60,7 @@
                     {
                         try
                         {
-                            List<Triple> triples = new List<Triple>{ new Triple { Subject = "foo", Predicate = "is", Object = "bar" } };
+                            List<Triple> triples = new List<Triple>{ new Triple { Subject = "GraphEngineServer", Predicate = "is",  Object = "Running" } };
 
                             // New-up the Request Message!
 

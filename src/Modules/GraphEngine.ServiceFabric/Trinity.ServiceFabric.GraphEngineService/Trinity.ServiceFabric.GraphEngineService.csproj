@@ -13,7 +13,6 @@
   <ItemGroup>
     <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="$(DOTNET_PACKAGE_VERSION)" />
     <PackageReference Include="GraphEngine.LIKQ" Version="$(DOTNET_PACKAGE_VERSION)" />
-    <PackageReference Include="GraphEngine.ServiceFabric.Infrastructure" Version="2.0.10068" />
   </ItemGroup>
 
   <ItemGroup>

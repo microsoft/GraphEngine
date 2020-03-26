@@ -109,7 +109,7 @@
                             //await Task.Yield();
 
                             var sampleTriple = new List<Triple>
-                                {new Triple {Subject = "foo", Predicate = "is", Object = "bar"}};
+                                {new Triple {Subject = "Test-GraphEngineClient", Predicate = "is", Object = "Running"}};
 
                             using var tripleStreamWriter = new TripleStreamWriter(sampleTriple);
 
