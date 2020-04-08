@@ -25,6 +25,7 @@ namespace Trinity.Client
         private IMessagePassingEndpoint m_client;
         private CancellationTokenSource m_tokensrc;
         private TrinityClientModule.TrinityClientModule m_mod;
+        private long m_partitionKey = 0L;
         private Task m_polltask;
         private readonly string m_endpoint;
         private int m_id;
@@ -34,11 +35,20 @@ namespace Trinity.Client
             : this(endpoint, null)
         { }
 
-        public TrinityClient(string endpoint, IClientConnectionFactory clientConnectionFactory)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="endpoint"></param>
+        /// <param name="clientConnectionFactory"></param>
+        /// <param name="userPartitionKey"></param>
+        public TrinityClient(string endpoint, IClientConnectionFactory clientConnectionFactory, long userPartitionKey = -1L)
         {
-            m_endpoint = endpoint;
+            m_endpoint      = endpoint;
             m_clientfactory = clientConnectionFactory;
+            m_partitionKey  = userPartitionKey;
+
             RegisterCommunicationModule<TrinityClientModule.TrinityClientModule>();
+
             ExtensionConfig.Instance.Priority.Add(new ExtensionPriority { Name = typeof(ClientMemoryCloud).AssemblyQualifiedName, Priority = int.MaxValue });
             ExtensionConfig.Instance.Priority.Add(new ExtensionPriority { Name = typeof(HostMemoryCloud).AssemblyQualifiedName, Priority = int.MinValue });
             ExtensionConfig.Instance.Priority = ExtensionConfig.Instance.Priority; // trigger update of priority table
@@ -87,7 +97,7 @@ namespace Trinity.Client
 
         private void RegisterClient()
         {
-            (CloudStorage as ClientMemoryCloud).RegisterClient();
+            if (CloudStorage is ClientMemoryCloud clientMemoryCloud) clientMemoryCloud.RegisterClient();
             m_tokensrc = new CancellationTokenSource();
             m_id = Global.CloudStorage.MyInstanceId;
             m_cookie = m_mod.MyCookie;

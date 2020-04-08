@@ -12,20 +12,40 @@ using Trinity.Storage;
 
 namespace Trinity.ServiceFabric.Remoting
 {
+    using Microsoft.ServiceFabric.Services.Client;
+
     internal class ServiceFabricRemotingClientConnection : IMessagePassingEndpoint
     {
         private ICommunicationModuleRegistry m_modules;
         private ITrinityOverRemotingService m_svcProxy;
+        private ServicePartitionKey m_userSuppliedPartitionKey = null;
 
         public ServiceFabricRemotingClientConnection(string serviceUrl, ICommunicationModuleRegistry mods)
         {
             this.m_modules = mods;
-            var proxyFactory = new ServiceProxyFactory(c => new FabricTransportServiceRemotingClientFactory());
+            var proxyFactory = new ServiceProxyFactory(createServiceRemotingClientFactory: c => new FabricTransportServiceRemotingClientFactory());
             var rng = new Random();
             this.m_svcProxy = proxyFactory.CreateServiceProxy<ITrinityOverRemotingService>(
                 new Uri(serviceUrl),
                 new Microsoft.ServiceFabric.Services.Client.ServicePartitionKey(rng.Next()),
                 listenerName: Constants.c_RemotingListenerName);
+        }
+
+        // Overloaded Service Fabric RemRemoting Client Connection so that the user can
+        // supply their own partition key.
+        public ServiceFabricRemotingClientConnection(string serviceUrl, 
+                                                     ICommunicationModuleRegistry mods, 
+                                                     ServicePartitionKey userPartitionKey = null)
+        {
+            m_userSuppliedPartitionKey = userPartitionKey ?? new ServicePartitionKey(new Random().Next());
+
+            this.m_modules = mods;
+
+            var proxyFactory = new ServiceProxyFactory(createServiceRemotingClientFactory: c => new FabricTransportServiceRemotingClientFactory());
+
+            this.m_svcProxy = proxyFactory.CreateServiceProxy<ITrinityOverRemotingService>(new Uri(serviceUrl),
+                                                                                           m_userSuppliedPartitionKey,
+                                                                                           listenerName: Constants.c_RemotingListenerName);
         }
 
         public T GetCommunicationModule<T>() where T : CommunicationModule => m_modules.GetCommunicationModule<T>();

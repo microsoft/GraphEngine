@@ -16,6 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.LIKQ" Version="$(DOTNET_PACKAGE_VERSION)" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
 

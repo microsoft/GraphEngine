@@ -11,6 +11,8 @@ using Trinity.ServiceFabric.SampleProtocols.ServiceFabricSampleModule;
 
 namespace Trinity.ServiceFabric.GraphEngineRemotingClient
 {
+    using Microsoft.ServiceFabric.Services.Client;
+
     /// <summary>
     /// An instance of this class is created for each service instance by the Service Fabric runtime.
     /// </summary>
@@ -21,7 +23,8 @@ namespace Trinity.ServiceFabric.GraphEngineRemotingClient
         public GraphEngineRemotingClient(StatelessServiceContext context)
             : base(context)
         {
-            m_trinity = new TrinityClient("fabric:/Trinity.ServiceFabric.SampleApplication/Trinity.ServiceFabric.GraphEngineService");
+            TrinityClient trinityClient = new TrinityClient("fabric:/Trinity.ServiceFabric.SampleApplication/Trinity.ServiceFabric.GraphEngineService");
+            m_trinity = trinityClient;
             m_trinity.Start();
         }
 
