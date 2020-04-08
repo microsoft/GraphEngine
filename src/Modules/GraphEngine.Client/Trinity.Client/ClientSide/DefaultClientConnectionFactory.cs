@@ -18,9 +18,16 @@ namespace Trinity.Client
             return Task.FromResult(DefaultClientConnection.New(ep[0], port, modules));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="endpoint"></param>
+        /// <param name="modules"></param>
+        /// <param name="userSuppliedPartitionKey"></param>
+        /// <returns></returns>
         public Task<IMessagePassingEndpoint> ConnectAsync(string endpoint,
                                                           ICommunicationModuleRegistry modules,
-                                                          ServicePartitionKey userSuppliedPartitionKey = null)
+                                                          ServicePartitionKey userSuppliedPartitionKey)
         {
             string[] ep = endpoint.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
             int port = int.Parse(ep[1]);

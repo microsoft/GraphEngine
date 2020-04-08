@@ -12,7 +12,7 @@ namespace Trinity.ServiceFabric.Remoting
     using Microsoft.ServiceFabric.Services.Client;
 
     [ExtensionPriority(100)]
-    class ServiceFabricRemotingConnectionClientFactory : IClientConnectionFactory
+    public class ServiceFabricRemotingConnectionClientFactory : IClientConnectionFactory
     {
         public Task<IMessagePassingEndpoint> ConnectAsync(string connectionString, ICommunicationModuleRegistry modules)
         {

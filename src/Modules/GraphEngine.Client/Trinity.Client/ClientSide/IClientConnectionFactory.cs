@@ -15,7 +15,16 @@ namespace Trinity.Client
         /// Connects to a server asynchronously
         /// </summary>
         /// <param name="connectionString">The connection string of the server.</param>
+        /// <param name="modules"></param>
         Task<IMessagePassingEndpoint> ConnectAsync(string connectionString, ICommunicationModuleRegistry modules);
+
+        /// <summary>
+        /// Connect to a server asynchronously using the ServicePartitionKey 
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <param name="modules"></param>
+        /// <param name="userSuppliedPartitionKey"></param>
+        /// <returns></returns>
         Task<IMessagePassingEndpoint> ConnectAsync(string connectionString, ICommunicationModuleRegistry modules, ServicePartitionKey userSuppliedPartitionKey = null);
 
         /// <summary>

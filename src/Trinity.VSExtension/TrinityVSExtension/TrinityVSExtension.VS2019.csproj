@@ -5,7 +5,8 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
-    <DeployExtension Condition="'$(DeployExtension)' == ''">true</DeployExtension>
+    <DeployExtension>False</DeployExtension>
+    <DeployExtension Condition="'$(DeployExtension)' == ''">False</DeployExtension>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{7AA2B61D-82C7-4D46-8805-7342752949EB}</ProjectGuid>

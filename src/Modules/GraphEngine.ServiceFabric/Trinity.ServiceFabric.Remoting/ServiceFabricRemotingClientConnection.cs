@@ -23,11 +23,12 @@ namespace Trinity.ServiceFabric.Remoting
         public ServiceFabricRemotingClientConnection(string serviceUrl, ICommunicationModuleRegistry mods)
         {
             this.m_modules = mods;
+
             var proxyFactory = new ServiceProxyFactory(createServiceRemotingClientFactory: c => new FabricTransportServiceRemotingClientFactory());
             var rng = new Random();
             this.m_svcProxy = proxyFactory.CreateServiceProxy<ITrinityOverRemotingService>(
                 new Uri(serviceUrl),
-                new Microsoft.ServiceFabric.Services.Client.ServicePartitionKey(rng.Next()),
+                new ServicePartitionKey(rng.Next()),
                 listenerName: Constants.c_RemotingListenerName);
         }
 

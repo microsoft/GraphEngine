@@ -25,18 +25,23 @@ namespace Trinity.Client
         private IMessagePassingEndpoint m_client;
         private CancellationTokenSource m_tokensrc;
         private TrinityClientModule.TrinityClientModule m_mod;
+        // Tavi Truman: Added m_partitionKey in support of custom changes to the 
         private long m_partitionKey = 0L;
         private Task m_polltask;
         private readonly string m_endpoint;
         private int m_id;
         private int m_cookie;
 
-        public TrinityClient(string endpoint)
-            : this(endpoint, null)
+        /// <summary>
+        /// Most common constructor 
+        /// </summary>
+        /// <param name="endpoint"></param>
+        public TrinityClient(string endpoint) : this(endpoint, null)
         { }
 
         /// <summary>
-        /// 
+        /// Extended constructor where we can pass-in a custom Connection Factory and we take a default value for the service
+        /// fabric partition key
         /// </summary>
         /// <param name="endpoint"></param>
         /// <param name="clientConnectionFactory"></param>
@@ -47,14 +52,18 @@ namespace Trinity.Client
             m_clientfactory = clientConnectionFactory;
             m_partitionKey  = userPartitionKey;
 
+            // We register the TrinityClientModule runtime
+
             RegisterCommunicationModule<TrinityClientModule.TrinityClientModule>();
+
+            // We can make changes to the TrinityConfig here .. 
 
             ExtensionConfig.Instance.Priority.Add(new ExtensionPriority { Name = typeof(ClientMemoryCloud).AssemblyQualifiedName, Priority = int.MaxValue });
             ExtensionConfig.Instance.Priority.Add(new ExtensionPriority { Name = typeof(HostMemoryCloud).AssemblyQualifiedName, Priority = int.MinValue });
             ExtensionConfig.Instance.Priority = ExtensionConfig.Instance.Priority; // trigger update of priority table
         }
 
-        protected override sealed RunningMode RunningMode => RunningMode.Client;
+        protected sealed override RunningMode RunningMode => RunningMode.Client;
 
         public unsafe void SendMessage(byte* message, int size)
             => m_client.SendMessage(message, size);
@@ -68,16 +77,26 @@ namespace Trinity.Client
         public unsafe void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
             => m_client.SendMessage(message, sizes, count, out response);
 
-        protected override sealed void DispatchHttpRequest(HttpListenerContext ctx, string handlerName, string url)
+        protected sealed override void DispatchHttpRequest(HttpListenerContext ctx, string handlerName, string url)
             => throw new NotSupportedException();
 
-        protected override sealed void RootHttpHandler(HttpListenerContext ctx)
+        protected sealed override void RootHttpHandler(HttpListenerContext ctx)
             => throw new NotSupportedException();
 
+        /// <summary>
+        /// Start the Client-side communications listener
+        /// Extended the UniformInt64Partition
+        /// </summary>
         protected override void StartCommunicationListeners()
         {
-            if (m_clientfactory == null) { ScanClientConnectionFactory(); }
+            if (m_clientfactory == null)
+            {
+                // look for and load any assembly derived from IClientConnectionFactory
+                ScanClientConnectionFactory();
+            }
+
             m_client = m_clientfactory.ConnectAsync(m_endpoint, this).Result;
+
             ClientMemoryCloud.Initialize(m_client, this);
             this.Started += StartPolling;
         }
@@ -205,12 +224,16 @@ namespace Trinity.Client
         {
             Log.WriteLine(LogLevel.Info, $"{nameof(TrinityClient)}: scanning for client connection factory.");
             var rank = ExtensionConfig.Instance.ResolveTypePriorities();
-            Func<Type, int> rank_func = t =>
+
+            int RankFunc(Type t)
             {
-                if(rank.TryGetValue(t, out var r)) return r;
-                else return 0;
-            };
-            m_clientfactory = AssemblyUtility.GetBestClassInstance<IClientConnectionFactory, DefaultClientConnectionFactory>(null, rank_func);
+                if (rank.TryGetValue(t, out var r))
+                    return r;
+                else
+                    return 0;
+            }
+
+            m_clientfactory = AssemblyUtility.GetBestClassInstance<IClientConnectionFactory, DefaultClientConnectionFactory>(null, RankFunc);
         }
 
         protected override void StopCommunicationListeners()
