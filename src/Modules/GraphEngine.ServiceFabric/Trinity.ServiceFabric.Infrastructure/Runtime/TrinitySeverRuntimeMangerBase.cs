@@ -57,6 +57,10 @@ namespace Trinity.ServiceFabric.Infrastructure
             set => m_trinityServer = value;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="runtimeContext"></param>
         protected TrinitySeverRuntimeMangerBase(ref (List<System.Fabric.Query.Partition> Partitions,
                                                 int PartitionCount,
                                                 int PartitionId,

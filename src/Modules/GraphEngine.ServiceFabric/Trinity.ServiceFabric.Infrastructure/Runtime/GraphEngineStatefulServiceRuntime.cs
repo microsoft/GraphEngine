@@ -122,7 +122,6 @@ namespace Trinity.ServiceFabric.Infrastructure
                 Thread.Sleep(5000);
                 throw new InvalidOperationException("Graph Engine Service requires all partitions to be int64-ranged.");
             }
-
         }
 
         public Guid GetInstanceId()

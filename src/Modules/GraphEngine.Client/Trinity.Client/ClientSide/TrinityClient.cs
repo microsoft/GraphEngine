@@ -19,6 +19,8 @@ using Trinity.Utilities;
 
 namespace Trinity.Client
 {
+    using Microsoft.ServiceFabric.Services.Client;
+
     public class TrinityClient : CommunicationInstance, IMessagePassingEndpoint
     {
         private IClientConnectionFactory m_clientfactory = null;
@@ -95,9 +97,16 @@ namespace Trinity.Client
                 ScanClientConnectionFactory();
             }
 
-            m_client = m_clientfactory.ConnectAsync(m_endpoint, this).Result;
+            if (m_partitionKey == -1L)
+                m_client = m_clientfactory.ConnectAsync(m_endpoint, this).Result;
+            else
+            {
+                ServicePartitionKey userServicePartitionKey = new ServicePartitionKey(m_partitionKey);
+                m_client = m_clientfactory.ConnectAsync(m_endpoint, this, userServicePartitionKey).Result;
+            }
 
             ClientMemoryCloud.Initialize(m_client, this);
+
             this.Started += StartPolling;
         }
 

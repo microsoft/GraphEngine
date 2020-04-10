@@ -32,6 +32,8 @@ namespace Trinity.SampleApplication.ServiceFabric
             // started.
             GraphEngineService.StartServiceAsync("Trinity.ServiceFabric.GraphEngineServiceType").GetAwaiter().GetResult();
 
+
+
             // Also, pay attention that, only *master replicas of the partitions* reach here.
             // When the cluster is shutting down, it is possible that the secondary replicas
             // become the master. However, these "transient" masters will be blocked, and

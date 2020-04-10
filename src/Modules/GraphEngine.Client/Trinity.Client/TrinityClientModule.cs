@@ -249,16 +249,31 @@ namespace Trinity.Client.TrinityClientModule
 
         public override void RegisterClientHandler(RegisterClientRequestReader request, RegisterClientResponseWriter response)
         {
-            response.PartitionCount = m_memorycloud.PartitionCount;
-            var cstg = m_client_storages.AddOrUpdate(request.Cookie, _ =>
+            if (m_memorycloud != null)
             {
-                ClientIStorage stg = new ClientIStorage(m_memorycloud);
-                stg.Pulse = DateTime.Now;
-                int new_id = Registry.RegisterClient(stg);
-                stg.InstanceId = new_id;
-                return stg;
-            }, (_, stg) => stg);
-            response.InstanceId = cstg.InstanceId;
+                response.PartitionCount = m_memorycloud.PartitionCount;
+
+                ClientIStorage cstg = null;
+
+                try
+                {
+                    if (request != null && !m_client_storages.ContainsKey(request.Cookie))
+                        cstg = m_client_storages.AddOrUpdate(request.Cookie, _ =>
+                        {
+                            if (m_memorycloud == null) return null;
+
+                            ClientIStorage stg    = new ClientIStorage(m_memorycloud) {Pulse = DateTime.Now};
+
+                            int            new_id = Registry.RegisterClient(stg);
+                            stg.InstanceId = new_id;
+                            return stg;
+                        }, (_, stg) => stg);
+                }
+                finally
+                {
+                    if (cstg != null) response.InstanceId = cstg.InstanceId;
+                }
+            }
         }
 
         public override void UnregisterClientHandler(UnregisterClientRequestReader request)

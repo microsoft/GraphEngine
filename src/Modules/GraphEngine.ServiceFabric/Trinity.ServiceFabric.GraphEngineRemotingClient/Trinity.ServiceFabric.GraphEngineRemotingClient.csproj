@@ -25,4 +25,8 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="C:\Users\Tavi\.nuget\packages\graphengine.core\2.0.10376\build\..\runtimes\win-x64\native\Trinity.dll" Link="PackageRoot\Trinity.dll" />
+  </ItemGroup>
+
 </Project>
