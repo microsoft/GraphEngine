@@ -15,7 +15,7 @@ namespace Trinity.ServiceFabric.Listener
     {
         public static IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners(StatefulServiceContext context) => 
             AssemblyUtility.GetAllClassInstances<GraphEngineListenerBase>()
-            .Select(l => l._Setup(context))
-            .Select(l=> new ServiceReplicaListener( ctx => l, l.ListenerName, l.ListenOnSecondaries));
+            .Select(graphEngineListenerBase => graphEngineListenerBase._Setup(context))
+            .Select(graphEngineListenerBase=> new ServiceReplicaListener( ctx => graphEngineListenerBase, graphEngineListenerBase.ListenerName, graphEngineListenerBase.ListenOnSecondaries));
     }
 }

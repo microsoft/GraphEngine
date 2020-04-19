@@ -9,6 +9,8 @@ using Trinity.ServiceFabric.Infrastructure;
 
 namespace Trinity.ServiceFabric.Listener
 {
+    // Design notes: Tavi Truman
+    // This class 
     public abstract class GraphEngineListenerBase : ICommunicationListener
     {
         public abstract string EndpointName { get; }
@@ -35,23 +37,37 @@ namespace Trinity.ServiceFabric.Listener
             return this;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Default or Base behavior calls the GraphEngine Stateful Service runtime to call into the
+        /// Trinity Server Network stack to Stop.
+        /// </summary>
         public virtual void Abort()
         {
             GraphEngineStatefulServiceRuntime.Instance.TrinityServerRuntime.Stop();
         }
 
+        /// <summary>
+        /// Makes an asynchronous call into the Trinity Server Networking stack to stop the Trinity TCP server
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public virtual Task CloseAsync(CancellationToken cancellationToken)
         {
             GraphEngineStatefulServiceRuntime.Instance.TrinityServerRuntime.Stop();
             return Task.FromResult(0);
         }
 
+        /// <summary>
+        /// Default behavior will call up to the Trinity Server Network stack to make an
+        /// asynchronous call to start the TrinityServer native TCP networking.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public virtual async Task<string> OpenAsync(CancellationToken cancellationToken)
         {
-            var rt = GraphEngineStatefulServiceRuntime.Instance;
-            await Task.Factory.StartNew(() => rt.TrinityServerRuntime.Start(), TaskCreationOptions.RunContinuationsAsynchronously).ConfigureAwait(false);
-            return $"tcp://{rt.TrinityServerRuntime.Address}:{m_port}";
+            var statefulServiceRuntime = GraphEngineStatefulServiceRuntime.Instance;
+            var trinityErrorCode = await Task.Factory.StartNew(() => statefulServiceRuntime.TrinityServerRuntime.Start(), TaskCreationOptions.RunContinuationsAsynchronously).ConfigureAwait(false);
+            return $"tcp://{statefulServiceRuntime.TrinityServerRuntime.Address}:{m_port}";
         }
     }
 }

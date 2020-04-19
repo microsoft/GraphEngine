@@ -1,9 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net461</TargetFramework>
-    <!--<TargetFrameworks>net461;netcoreapp3.0</TargetFrameworks>-->
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <Platforms>x64</Platforms>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <IsPackable>false</IsPackable>
@@ -19,14 +17,15 @@
     <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
     <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="$(DOTNET_PACKAGE_VERSION)" />
     <PackageReference Include="GraphEngine.LIKQ" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="$(DOTNET_PACKAGE_VERSION)" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <None Update="C:\Users\Tavi\.nuget\packages\graphengine.core\2.0.10376\build\..\runtimes\win-x64\native\Trinity.dll" Link="PackageRoot\Trinity.dll" />
-  </ItemGroup>
+  </ItemGroup>-->
 
 </Project>

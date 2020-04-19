@@ -2,8 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net461</TargetFramework>
-    <!--<TargetFrameworks>net461;netcoreapp2.0</TargetFrameworks>-->
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <Platforms>x64</Platforms>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <IsPackable>false</IsPackable>

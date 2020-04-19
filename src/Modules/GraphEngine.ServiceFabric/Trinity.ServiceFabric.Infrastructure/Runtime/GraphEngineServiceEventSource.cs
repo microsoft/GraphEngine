@@ -17,12 +17,12 @@ namespace Trinity.ServiceFabric.Infrastructure
     {
         public static readonly GraphEngineStatefulServiceEventSource Current = new GraphEngineStatefulServiceEventSource();
 
-        static GraphEngineStatefulServiceEventSource()
-        {
-            // A workaround for the problem where ETW activities do not get tracked until Tasks infrastructure is initialized.
-            // This problem will be fixed in .NET Framework 4.6.2.
-            Task.Run(() => { });
-        }
+        //static GraphEngineStatefulServiceEventSource()
+        //{
+        //    // A workaround for the problem where ETW activities do not get tracked until Tasks infrastructure is initialized.
+        //    // This problem will be fixed in .NET Framework 4.6.2.
+        //    Task.Run(() => { });
+        //}
 
         private Dictionary<LogLevel, Action<string>> m_logprocs = null;
         private string m_logheader = null;
@@ -83,6 +83,8 @@ namespace Trinity.ServiceFabric.Infrastructure
         public static class Keywords
         {
             public const EventKeywords GraphEngineLog = (EventKeywords)0x1L;
+            public const EventKeywords Requests              = (EventKeywords)0x2L;
+            public const EventKeywords ServiceInitialization = (EventKeywords)0x3L;
         }
         #endregion
 

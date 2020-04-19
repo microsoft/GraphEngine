@@ -57,7 +57,7 @@ namespace Trinity.ServiceFabric.Remoting
 
             this.m_modules = mods;
 
-            var proxyFactory = new ServiceProxyFactory(createServiceRemotingClientFactory: c => new FabricTransportServiceRemotingClientFactory());
+            ServiceProxyFactory proxyFactory = new ServiceProxyFactory(serviceRemotingFactory => new FabricTransportServiceRemotingClientFactory());
 
             this.m_svcProxy = proxyFactory.CreateServiceProxy<ITrinityOverRemotingService>(new Uri(serviceUrl),
                                                                                            m_userSuppliedPartitionKey,

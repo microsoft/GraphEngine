@@ -13,9 +13,9 @@ using Trinity.ServiceFabric.Listener;
 namespace Trinity.ServiceFabric.Remoting
 {
     [ExtensionPriority(100)]
-    class RemotingGraphEngineListener : GraphEngineListenerBase
+    internal class RemotingGraphEngineListener : GraphEngineListenerBase
     {
-        //TODO configurable endpoint name
+        //TODO configurable endpoint name         +
         public override string EndpointName => Constants.c_RemotingEndpointName;
 
         public override string ListenerName => Constants.c_RemotingListenerName;

@@ -23,9 +23,9 @@ namespace Trinity.ServiceFabric.GraphEngineRemotingClient
         public GraphEngineRemotingClient(StatelessServiceContext context)
             : base(context)
         {
-            //TrinityClient trinityClient = new TrinityClient("fabric:/Trinity.ServiceFabric.SampleApplication/Trinity.ServiceFabric.GraphEngineService", null, 0L);
+            TrinityClient trinityClient = new TrinityClient("fabric:/Trinity.ServiceFabric.SampleApplication/Trinity.ServiceFabric.GraphEngineService", null, 1L);
 
-            TrinityClient trinityClient = new TrinityClient("fabric:/Trinity.ServiceFabric.SampleApplication/Trinity.ServiceFabric.GraphEngineService");
+            //TrinityClient trinityClient = new TrinityClient("fabric:/Trinity.ServiceFabric.SampleApplication/Trinity.ServiceFabric.GraphEngineService");
 
             m_trinity = trinityClient;
             m_trinity.Start();
