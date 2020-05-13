@@ -46,7 +46,7 @@
   <!-- Package dependencies -->
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
-    <PackageReference Include="System.Threading.Tasks.Dataflow" Version="4.10.0" />
+    <PackageReference Include="System.Threading.Tasks.Dataflow" Version="4.11.1" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>
   <ItemGroup>
