@@ -166,7 +166,7 @@ namespace Trinity
         /// <summary>
         /// Gets the IPEndPoint bound to current Trinity proxy.
         /// </summary>
-        public unsafe static long MyProxyIPEndPoint
+        public static unsafe long MyProxyIPEndPoint
         {
             get
             {
@@ -190,7 +190,7 @@ namespace Trinity
             }
         }
 
-        internal unsafe static DateTime GetBuildTime()
+        internal static unsafe DateTime GetBuildTime()
         {
             // TODO test CoreCLR
             byte[] PEBuffer = new byte[2048];
@@ -200,12 +200,8 @@ namespace Trinity
             }
             fixed (byte* p = PEBuffer)
             {
-
                 DateTime t = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(*(int*)(p + *(int*)(p + 60) + 8));
-                var adjustedTimeZone = TimeZoneInfo.Local.GetUtcOffset(t).Hours;
-                // return t.AddHours(TimeZone.CurrentTimeZone.GetUtcOffset(t).Hours);
-                return t.AddHours(adjustedTimeZone);
-
+                return t.AddHours(TimeZone.CurrentTimeZone.GetUtcOffset(t).Hours);
             }
         }
     }

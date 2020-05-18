@@ -20,7 +20,7 @@ namespace Trinity.Network.Messaging
         private static List<TypeAsyncRequestHandlerTuple> tupleList;
         private static bool initialized = false;
 
-        internal static unsafe List<TypeAsyncRequestHandlerTuple> MessageHandlerList
+        internal unsafe static List<TypeAsyncRequestHandlerTuple> MessageHandlerList
         {
             get
             {

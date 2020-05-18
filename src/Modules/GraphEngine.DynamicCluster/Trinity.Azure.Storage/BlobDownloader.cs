@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.WindowsAzure.Storage.Blob;
 using Trinity.DynamicCluster.Persistency;
 using Trinity.Storage;
 using System.Threading;
 using System.Threading.Tasks.Dataflow;
 using Newtonsoft.Json;
 using System.IO;
+using Microsoft.Azure.Storage.Blob;
 using Trinity.Diagnostics;
 using Trinity.DynamicCluster.Config;
 

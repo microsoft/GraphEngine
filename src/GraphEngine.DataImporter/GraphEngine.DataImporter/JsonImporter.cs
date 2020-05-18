@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Trinity;
+using Trinity.Core.Lib;
 using Trinity.Diagnostics;
 using Trinity.Storage;
 
@@ -79,13 +80,12 @@ namespace GraphEngine.DataImporter
 
             tree_imports.ForEach(_ => _());
 
-            if (cellid == null) cellid = Global.LocalStorage.NewRandomCellID();
+            if (cellid == null) cellid = CellIdFactory.NewCellId();
             cell.CellId = cellid.Value;
             if (parent_id != null)
             {
                 var parent_fd = cell_desc.GetFieldDescriptors().Where(fd => fd.GetAttributeValue(Consts.c_KW_TreeParent) != null).First();
             }
-
             // TODO check for duplicate records.
             // TODO in a distributed setting we cannot save to local storage like this.
             Global.LocalStorage.SaveGenericCell(cell);

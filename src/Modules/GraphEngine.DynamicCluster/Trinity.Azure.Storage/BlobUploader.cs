@@ -1,4 +1,4 @@
-﻿using Microsoft.WindowsAzure.Storage.Blob;
+﻿//using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Trinity.DynamicCluster.Persistency;
 using Trinity.Storage;
 using System.Threading;
+using Microsoft.Azure.Storage.Blob;
 using Trinity.Diagnostics;
 using Trinity.DynamicCluster.Config;
 

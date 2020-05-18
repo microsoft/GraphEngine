@@ -27,7 +27,7 @@ namespace Trinity.Network.Messaging
         private static List<TypeSyncRequestResponseHandlerTuple> tupleList;
         private static bool initialized = false;
 
-        internal static unsafe List<TypeSyncRequestResponseHandlerTuple> MessageHandlerList
+        internal unsafe static List<TypeSyncRequestResponseHandlerTuple> MessageHandlerList
         {
             get
             {

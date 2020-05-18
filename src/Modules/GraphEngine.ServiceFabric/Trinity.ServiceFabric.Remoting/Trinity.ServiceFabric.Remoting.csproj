@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net461</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.0;netstandard2.0</TargetFrameworks>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Version>$(DOTNET_PACKAGE_VERSION)</Version>
     <FileVersion>$(DOTNET_PACKAGE_VERSION)</FileVersion>
@@ -15,11 +15,15 @@
     <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
     <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
     <PackageId>GraphEngine.ServiceFabric.Remoting</PackageId>
+    <PlatformTarget>x64</PlatformTarget>
     <Platforms>x64</Platforms>
     <IsPackable>true</IsPackable>
     <Configurations>Debug;Release</Configurations>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
+
+	<!--<Target Name="CopyPackage" AfterTargets="Pack">
+		<Copy SourceFiles="$(OutputPath)..\$(PackageId).$(PackageVersion).nupkg" DestinationFolder="$(DOTNET_OUTPUT_PATH)" />
+	</Target>-->
 
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />

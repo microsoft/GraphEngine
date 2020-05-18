@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Linq;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
 using Trinity.DynamicCluster.Persistency;
 using System.Threading;
 using Trinity.Diagnostics;
 using LogLevel = Trinity.Diagnostics.LogLevel;
 using Trinity.DynamicCluster;
-using Microsoft.WindowsAzure.Storage.RetryPolicies;
 using Trinity.DynamicCluster.Config;
 using System.Collections;
 using System.Collections.Generic;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Blob;
 
 namespace Trinity.Azure.Storage
 {
@@ -34,16 +33,25 @@ namespace Trinity.Azure.Storage
 
         private async Task EnsureContainer()
         {
-            if (BlobStorageConfig.Instance.ContainerName == null) Log.WriteLine(LogLevel.Error, $"{nameof(BlobStoragePersistentStorage)}: container name is not specified");
-            if (BlobStorageConfig.Instance.ConnectionString == null) Log.WriteLine(LogLevel.Error, $"{nameof(BlobStoragePersistentStorage)}: connection string is not specified");
-            if (BlobStorageConfig.Instance.ContainerName != BlobStorageConfig.Instance.ContainerName.ToLower()) Log.WriteLine(LogLevel.Error, $"{nameof(BlobStoragePersistentStorage)}: invalid container name");
+            if (BlobStorageConfig.Instance.ContainerName == null)
+                Log.WriteLine(LogLevel.Error,
+                    $"{nameof(BlobStoragePersistentStorage)}: container name is not specified");
+            if (BlobStorageConfig.Instance.ConnectionString == null)
+                Log.WriteLine(LogLevel.Error,
+                    $"{nameof(BlobStoragePersistentStorage)}: connection string is not specified");
+            if (BlobStorageConfig.Instance.ContainerName != null && BlobStorageConfig.Instance.ContainerName !=
+                BlobStorageConfig.Instance.ContainerName.ToLower())
+                Log.WriteLine(LogLevel.Error, $"{nameof(BlobStoragePersistentStorage)}: invalid container name");
+
             Log.WriteLine(LogLevel.Debug, $"{nameof(BlobStoragePersistentStorage)}: Initializing.");
-            m_storageAccount = CloudStorageAccount.Parse(BlobStorageConfig.Instance.ConnectionString);
-            m_client = m_storageAccount.CreateCloudBlobClient();
-            m_container = m_client.GetContainerReference(BlobStorageConfig.Instance.ContainerName);
+
+            m_storageAccount          = CloudStorageAccount.Parse(BlobStorageConfig.Instance.ConnectionString);
+            m_client                  = m_storageAccount.CreateCloudBlobClient();
+            m_container               = m_client.GetContainerReference(BlobStorageConfig.Instance.ContainerName);
             m_cancellationTokenSource = new CancellationTokenSource();
-            m_cancel = m_cancellationTokenSource.Token;
-            m_helper = new StorageHelper(m_cancel);
+            m_cancel                  = m_cancellationTokenSource.Token;
+            m_helper                  = new StorageHelper(m_cancel);
+
             await m_helper.CreateIfNotExistsAsync(m_container);
         }
 

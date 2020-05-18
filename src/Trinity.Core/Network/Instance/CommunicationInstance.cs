@@ -51,10 +51,6 @@ namespace Trinity.Network
         // XXX ThreadStatic does not work well with async/await. Find a solution.
         [ThreadStatic]
         private static HttpListenerContext s_current_http_ctx = null;
-        // Added new static field to replace ThreadStatic use
-
-        //private static AsyncLocal<HttpListenerContext> s_asyncLocalCurrentHttpContext = new AsyncLocal<HttpListenerContext>();
-
         #endregion
 
         /// <summary>
@@ -207,7 +203,6 @@ namespace Trinity.Network
         {
             //  Record the context into the thread-static storage
             s_current_http_ctx = context;
-            //s_asyncLocalCurrentHttpContext.Value = context;
 
             //  The raw url will be starting with "/", trimming all authority part.
             var url = Uri.UnescapeDataString(context.Request.RawUrl);
@@ -259,7 +254,6 @@ namespace Trinity.Network
             cleanup:
             //  Erase the context as it is not being processed anymore.
             s_current_http_ctx = null;
-            //s_asyncLocalCurrentHttpContext.Value = null;
         }
         #endregion
 
