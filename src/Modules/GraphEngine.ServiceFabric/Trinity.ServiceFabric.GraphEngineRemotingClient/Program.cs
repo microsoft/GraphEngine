@@ -28,7 +28,7 @@ namespace Trinity.ServiceFabric.GraphEngineRemotingClient
                 ServiceRuntime.RegisterServiceAsync("Trinity.ServiceFabric.GraphEngineRemotingClientType",
                     context => new GraphEngineRemotingClient(context)).GetAwaiter().GetResult();
 
-                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(GraphEngineRemotingClient).Name);
+                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, nameof(GraphEngineRemotingClient));
 
                 // Prevents this host process from terminating so services keep running.
                 Thread.Sleep(Timeout.Infinite);

@@ -82,9 +82,9 @@ namespace Trinity.ServiceFabric.Infrastructure
         // Keywords must be defined as a public class named 'Keywords' inside EventSource that uses them.
         public static class Keywords
         {
-            public const EventKeywords GraphEngineLog = (EventKeywords)0x1L;
-            public const EventKeywords Requests              = (EventKeywords)0x2L;
-            public const EventKeywords ServiceInitialization = (EventKeywords)0x3L;
+            public const EventKeywords GraphEngineLog        = (EventKeywords)0x1L;
+            public const EventKeywords Requests              = (EventKeywords)0x4L;
+            public const EventKeywords ServiceInitialization = (EventKeywords)0x2L;
         }
         #endregion
 
@@ -97,42 +97,73 @@ namespace Trinity.ServiceFabric.Infrastructure
         // Put [NonEvent] attribute on all methods that do not define an event.
         // For more information see https://msdn.microsoft.com/en-us/library/system.diagnostics.tracing.eventsource.aspx
 
-        private const int GraphEngineLogInfoEventId = 1;
+        private const int ServiceTypeRegisteredEventId = 3;
+        [Event(ServiceTypeRegisteredEventId, Level = EventLevel.Informational, Message = "Service host process {0} registered service type {1}", Keywords = Keywords.ServiceInitialization)]
+        public void ServiceTypeRegistered(int hostProcessId, string serviceType)
+        {
+            WriteEvent(ServiceTypeRegisteredEventId, hostProcessId, serviceType);
+        }
+
+        private const int ServiceHostInitializationFailedEventId = 4;
+        [Event(ServiceHostInitializationFailedEventId, Level = EventLevel.Error, Message = "Service host initialization failed", Keywords = Keywords.ServiceInitialization)]
+        public void ServiceHostInitializationFailed(string exception)
+        {
+            WriteEvent(ServiceHostInitializationFailedEventId, exception);
+        }
+
+        // A pair of events sharing the same name prefix with a "Start"/"Stop" suffix implicitly marks boundaries of an event tracing activity.
+        // These activities can be automatically picked up by debugging and profiling tools, which can compute their execution time, child activities,
+        // and other statistics.
+        private const int ServiceRequestStartEventId = 5;
+        [Event(ServiceRequestStartEventId, Level = EventLevel.Informational, Message = "Service request '{0}' started", Keywords = Keywords.Requests)]
+        public void ServiceRequestStart(string requestTypeName)
+        {
+            WriteEvent(ServiceRequestStartEventId, requestTypeName);
+        }
+
+        private const int ServiceRequestStopEventId = 6;
+        [Event(ServiceRequestStopEventId, Level = EventLevel.Informational, Message = "Service request '{0}' finished", Keywords = Keywords.Requests)]
+        public void ServiceRequestStop(string requestTypeName, string exception = "")
+        {
+            WriteEvent(ServiceRequestStopEventId, requestTypeName, exception);
+        }
+
+        private const int GraphEngineLogInfoEventId = 8;
         [Event(GraphEngineLogInfoEventId, Level = EventLevel.Informational, Message = "{0}", Keywords = Keywords.GraphEngineLog)]
         public void GraphEngineLogInfo(string message)
         {
             WriteEvent(GraphEngineLogInfoEventId, message);
         }
 
-        private const int GraphEngineLogWarnEventId = 2;
+        private const int GraphEngineLogWarnEventId = 9;
         [Event(GraphEngineLogWarnEventId, Level = EventLevel.Warning, Message = "{0}", Keywords = Keywords.GraphEngineLog)]
         public void GraphEngineLogWarn(string message)
         {
             WriteEvent(GraphEngineLogWarnEventId, message);
         }
 
-        private const int GraphEngineLogErrEventId = 3;
+        private const int GraphEngineLogErrEventId = 10;
         [Event(GraphEngineLogErrEventId, Level = EventLevel.Error, Message = "{0}", Keywords = Keywords.GraphEngineLog)]
         public void GraphEngineLogErr(string message)
         {
             WriteEvent(GraphEngineLogErrEventId, message);
         }
 
-        private const int GraphEngineLogDebugEventId = 4;
+        private const int GraphEngineLogDebugEventId = 11;
         [Event(GraphEngineLogDebugEventId, Level = EventLevel.Verbose, Message = "{0}", Keywords = Keywords.GraphEngineLog)]
         public void GraphEngineLogDebug(string message)
         {
             WriteEvent(GraphEngineLogDebugEventId, message);
         }
 
-        private const int GraphEngineLogFatalEventId = 5;
+        private const int GraphEngineLogFatalEventId = 12;
         [Event(GraphEngineLogFatalEventId, Level = EventLevel.Critical, Message = "{0}", Keywords = Keywords.GraphEngineLog)]
         public void GraphEngineLogFatal(string message)
         {
             WriteEvent(GraphEngineLogFatalEventId, message);
         }
 
-        private const int GraphEngineLogVerboseEventId = 6;
+        private const int GraphEngineLogVerboseEventId = 13;
         [Event(GraphEngineLogVerboseEventId, Level = EventLevel.Verbose, Message = "{0}", Keywords = Keywords.GraphEngineLog)]
         public void GraphEngineLogVerbose(string message)
         {

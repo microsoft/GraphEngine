@@ -23,6 +23,7 @@ namespace Trinity.Storage.Composite
         public unsafe ICell LoadGenericCell(IKeyValueStore storage, long cellId)
         {
             var err = storage.LoadCell(cellId, out byte[] buff, out ushort type);
+
             if (err != Trinity.TrinityErrorCode.E_SUCCESS)
             {
                 switch (err)
@@ -35,6 +36,7 @@ namespace Trinity.Storage.Composite
                         throw new Exception("Cannot access the cell. Error code: " + err.ToString());
                 }
             }
+
             int seg = CompositeStorage.GetIntervalIndexByCellTypeID(type);
 
             fixed (byte* p = buff)

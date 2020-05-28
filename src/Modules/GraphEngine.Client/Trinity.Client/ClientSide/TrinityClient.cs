@@ -34,7 +34,7 @@ namespace Trinity.Client
             : this(endpoint, null)
         { }
 
-        public TrinityClient(string endpoint, IClientConnectionFactory clientConnectionFactory)
+        private TrinityClient(string endpoint, IClientConnectionFactory clientConnectionFactory)
         {
             m_endpoint = endpoint;
             m_clientfactory = clientConnectionFactory;
@@ -44,7 +44,7 @@ namespace Trinity.Client
             ExtensionConfig.Instance.Priority = ExtensionConfig.Instance.Priority; // trigger update of priority table
         }
 
-        protected override sealed RunningMode RunningMode => RunningMode.Client;
+        protected sealed override RunningMode RunningMode => RunningMode.Client;
 
         public unsafe void SendMessage(byte* message, int size)
             => m_client.SendMessage(message, size);
@@ -58,12 +58,15 @@ namespace Trinity.Client
         public unsafe void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
             => m_client.SendMessage(message, sizes, count, out response);
 
-        protected override sealed void DispatchHttpRequest(HttpListenerContext ctx, string handlerName, string url)
+        protected sealed override void DispatchHttpRequest(HttpListenerContext ctx, string handlerName, string url)
             => throw new NotSupportedException();
 
-        protected override sealed void RootHttpHandler(HttpListenerContext ctx)
+        protected sealed override void RootHttpHandler(HttpListenerContext ctx)
             => throw new NotSupportedException();
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected override void StartCommunicationListeners()
         {
             if (m_clientfactory == null) { ScanClientConnectionFactory(); }
@@ -191,16 +194,20 @@ namespace Trinity.Client
             m_mod.SendMessage(m_client, bufs, sizes, 2);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void ScanClientConnectionFactory()
         {
             Log.WriteLine(LogLevel.Info, $"{nameof(TrinityClient)}: scanning for client connection factory.");
             var rank = ExtensionConfig.Instance.ResolveTypePriorities();
-            Func<Type, int> rank_func = t =>
+
+            int RankFunc(Type t)
             {
-                if(rank.TryGetValue(t, out var r)) return r;
-                else return 0;
-            };
-            m_clientfactory = AssemblyUtility.GetBestClassInstance<IClientConnectionFactory, DefaultClientConnectionFactory>(null, rank_func);
+                return rank.TryGetValue(t, out var r) ? r : 0;
+            }
+
+            m_clientfactory = AssemblyUtility.GetBestClassInstance<IClientConnectionFactory, DefaultClientConnectionFactory>(null, RankFunc);
         }
 
         protected override void StopCommunicationListeners()

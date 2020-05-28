@@ -170,15 +170,15 @@ module TrinityClientModule
 	protocol RedirectMessage;
 	protocol RedirectMessageWithResponse;
 
-    protocol LoadStorage;
-    protocol SaveStorage;
-    protocol ResetStorage;
+  protocol LoadStorage;
+  protocol SaveStorage;
+  protocol ResetStorage;
 
-    protocol AddCell;
-    protocol Contains;
-    protocol GetCellType;
-    protocol LoadCell;
-    protocol RemoveCell;
-    protocol SaveCell;
-    protocol UpdateCell;
+  protocol AddCell;
+  protocol Contains;
+  protocol GetCellType;
+  protocol LoadCell;
+  protocol RemoveCell;
+  protocol SaveCell;
+  protocol UpdateCell;
 }
