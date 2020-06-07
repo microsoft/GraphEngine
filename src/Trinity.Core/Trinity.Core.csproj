@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net451;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <AssemblyName>Trinity.Core</AssemblyName>
     <RootNamespace>Trinity</RootNamespace>
     <OutputTypeEx>library</OutputTypeEx>
@@ -77,11 +77,11 @@
 
   <!-- Package dependencies -->
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'net451'">
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="3.1.4" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net451'">
