@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Blob;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.RetryPolicies;
 using Trinity.DynamicCluster.Persistency;
 
 namespace Trinity.Azure.Storage.Test
@@ -52,7 +52,7 @@ retry2:
             }
         }
 
-        private static async Task DeleteContainer(Microsoft.WindowsAzure.Storage.Blob.CloudBlobContainer container)
+        private static async Task DeleteContainer(CloudBlobContainer container)
         {
             await container.DeleteIfExistsAsync();
             do
