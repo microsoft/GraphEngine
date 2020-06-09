@@ -1,5 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="TrinityServiceFabric.NativeClusterRemoting.ApplicationType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+<ApplicationManifest 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	ApplicationTypeName="TrinityServiceFabric.NativeClusterRemoting.ApplicationType" 
+	ApplicationTypeVersion="1.0.0" 
+	xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
     <Parameter Name="Trinity.ServiceFabric.GraphEngine.RemotingClient_InstanceCount" DefaultValue="-1" />
     <Parameter Name="Trinity.ServiceFabric.GraphEngine.GraphDataService_MinReplicaSetSize" DefaultValue="5" />
@@ -29,8 +34,12 @@
       </StatelessService>
     </Service>
     <Service Name="Trinity.ServiceFabric.GraphEngine.GraphDataService" ServicePackageActivationMode="ExclusiveProcess">
-      <StatefulService ServiceTypeName="Trinity.ServiceFabric.GraphEngine.GraphDataServiceType" TargetReplicaSetSize="[Trinity.ServiceFabric.GraphEngine.GraphDataService_TargetReplicaSetSize]" MinReplicaSetSize="[Trinity.ServiceFabric.GraphEngine.GraphDataService_MinReplicaSetSize]">
-        <UniformInt64Partition PartitionCount="[Trinity.ServiceFabric.GraphEngine.GraphDataService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      <StatefulService ServiceTypeName="Trinity.ServiceFabric.GraphEngine.GraphDataServiceType" 
+                       TargetReplicaSetSize="[Trinity.ServiceFabric.GraphEngine.GraphDataService_TargetReplicaSetSize]" 
+                       MinReplicaSetSize="[Trinity.ServiceFabric.GraphEngine.GraphDataService_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[Trinity.ServiceFabric.GraphEngine.GraphDataService_PartitionCount]" 
+                               LowKey="-9223372036854775808" 
+                               HighKey="9223372036854775807" />
       </StatefulService>
     </Service>
   </DefaultServices>

@@ -5,11 +5,11 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsServiceFabricServiceProject>True</IsServiceFabricServiceProject>
     <ServerGarbageCollection>True</ServerGarbageCollection>
-    <!--<RuntimeIdentifier>win7-x64</RuntimeIdentifier>-->
-	  <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-	  <IsPackable>false</IsPackable>
-	  <!--<Configurations>Debug;Release</Configurations>-->
+	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	<IsPackable>false</IsPackable>
+	<Configurations>Debug;Release</Configurations>
     <TargetLatestRuntimePatch>False</TargetLatestRuntimePatch>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

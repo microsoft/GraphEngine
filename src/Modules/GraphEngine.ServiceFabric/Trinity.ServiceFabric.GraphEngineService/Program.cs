@@ -21,7 +21,6 @@ namespace Trinity.SampleApplication.ServiceFabric
     [UseExtension(typeof(SampleModuleImpl))]
     internal static class Program
     {
-
         private static SampleModuleImpl sampleModule = null;
         /// <summary>
         /// This is the entry point of the service host process.
@@ -52,12 +51,13 @@ namespace Trinity.SampleApplication.ServiceFabric
                 sampleModule.Ping(p);
             }
 
-
             // Also, pay attention that, only *master replicas of the partitions* reach here.
             // When the cluster is shutting down, it is possible that the secondary replicas
             // become the master. However, these "transient" masters will be blocked, and
             // do not reach this point.
+
             Log.WriteLine("Hello world from GE-SF integration!");
+
             var memcloud = Global.CloudStorage as DynamicMemoryCloud;
 
             // Prevents this host process from terminating so services keep running.

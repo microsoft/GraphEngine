@@ -17,15 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.Sampl
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Graph-Engine Service Fabic Test", "Graph-Engine Service Fabic Test", "{47E22223-AB0D-4042-883E-F75B4BDCCA91}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphEngine.ServiceFabric.RemotingClient", "GE-SF Test\GraphEngine.ServiceFabric.RemotingClient\GraphEngine.ServiceFabric.RemotingClient.csproj", "{BD8BCB63-C32D-4077-BF3F-0BF85F2D91DA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphEngine.ServiceFabric.GraphDataService", "GE-SF Test\GraphEngine.ServiceFabric.GraphDataService\GraphEngine.ServiceFabric.GraphDataService.csproj", "{0D7BEC66-F83D-40FD-A8DB-D26F46C91487}"
-EndProject
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "TrinityServiceFabric.NativeClusterRemoting.Application", "GE-SF Test\TrinityServiceFabric.NativeClusterRemoting.Application\TrinityServiceFabric.NativeClusterRemoting.Application.sfproj", "{469D15F6-9EFF-4944-9F48-2C0ED72E4932}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.ServiceFabric.GraphEngine.GraphDataService", "GE-SF Test\Trinity.ServiceFabric.GraphEngine.GraphDataService\Trinity.ServiceFabric.GraphEngine.GraphDataService.csproj", "{02621A25-C6A5-493D-9EB5-D8E46092128B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.GraphEngine.GraphDataService", "GE-SF Test\Trinity.ServiceFabric.GraphEngine.GraphDataService\Trinity.ServiceFabric.GraphEngine.GraphDataService.csproj", "{02621A25-C6A5-493D-9EB5-D8E46092128B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.ServiceFabric.GraphEngine.RemotingClient", "GE-SF Test\Trinity.ServiceFabric.GraphEngine.RemotingClient\Trinity.ServiceFabric.GraphEngine.RemotingClient.csproj", "{24415675-B5C9-48B3-A63E-8C96DB92A863}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.GraphEngine.RemotingClient", "GE-SF Test\Trinity.ServiceFabric.GraphEngine.RemotingClient\Trinity.ServiceFabric.GraphEngine.RemotingClient.csproj", "{24415675-B5C9-48B3-A63E-8C96DB92A863}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -99,30 +95,6 @@ Global
 		{392DBC03-10D2-4CC4-9C11-FB85D0588076}.RelSkipSFApp|Any CPU.Build.0 = Release|x64
 		{392DBC03-10D2-4CC4-9C11-FB85D0588076}.RelSkipSFApp|x64.ActiveCfg = Release|x64
 		{392DBC03-10D2-4CC4-9C11-FB85D0588076}.RelSkipSFApp|x64.Build.0 = Release|x64
-		{BD8BCB63-C32D-4077-BF3F-0BF85F2D91DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BD8BCB63-C32D-4077-BF3F-0BF85F2D91DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BD8BCB63-C32D-4077-BF3F-0BF85F2D91DA}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{BD8BCB63-C32D-4077-BF3F-0BF85F2D91DA}.Debug|x64.Build.0 = Debug|Any CPU
-		{BD8BCB63-C32D-4077-BF3F-0BF85F2D91DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BD8BCB63-C32D-4077-BF3F-0BF85F2D91DA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BD8BCB63-C32D-4077-BF3F-0BF85F2D91DA}.Release|x64.ActiveCfg = Release|Any CPU
-		{BD8BCB63-C32D-4077-BF3F-0BF85F2D91DA}.Release|x64.Build.0 = Release|Any CPU
-		{BD8BCB63-C32D-4077-BF3F-0BF85F2D91DA}.RelSkipSFApp|Any CPU.ActiveCfg = Release|Any CPU
-		{BD8BCB63-C32D-4077-BF3F-0BF85F2D91DA}.RelSkipSFApp|Any CPU.Build.0 = Release|Any CPU
-		{BD8BCB63-C32D-4077-BF3F-0BF85F2D91DA}.RelSkipSFApp|x64.ActiveCfg = Release|Any CPU
-		{BD8BCB63-C32D-4077-BF3F-0BF85F2D91DA}.RelSkipSFApp|x64.Build.0 = Release|Any CPU
-		{0D7BEC66-F83D-40FD-A8DB-D26F46C91487}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D7BEC66-F83D-40FD-A8DB-D26F46C91487}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D7BEC66-F83D-40FD-A8DB-D26F46C91487}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{0D7BEC66-F83D-40FD-A8DB-D26F46C91487}.Debug|x64.Build.0 = Debug|Any CPU
-		{0D7BEC66-F83D-40FD-A8DB-D26F46C91487}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D7BEC66-F83D-40FD-A8DB-D26F46C91487}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0D7BEC66-F83D-40FD-A8DB-D26F46C91487}.Release|x64.ActiveCfg = Release|Any CPU
-		{0D7BEC66-F83D-40FD-A8DB-D26F46C91487}.Release|x64.Build.0 = Release|Any CPU
-		{0D7BEC66-F83D-40FD-A8DB-D26F46C91487}.RelSkipSFApp|Any CPU.ActiveCfg = Release|Any CPU
-		{0D7BEC66-F83D-40FD-A8DB-D26F46C91487}.RelSkipSFApp|Any CPU.Build.0 = Release|Any CPU
-		{0D7BEC66-F83D-40FD-A8DB-D26F46C91487}.RelSkipSFApp|x64.ActiveCfg = Release|Any CPU
-		{0D7BEC66-F83D-40FD-A8DB-D26F46C91487}.RelSkipSFApp|x64.Build.0 = Release|Any CPU
 		{469D15F6-9EFF-4944-9F48-2C0ED72E4932}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{469D15F6-9EFF-4944-9F48-2C0ED72E4932}.Debug|x64.ActiveCfg = Debug|x64
 		{469D15F6-9EFF-4944-9F48-2C0ED72E4932}.Debug|x64.Build.0 = Debug|x64
@@ -139,8 +111,8 @@ Global
 		{469D15F6-9EFF-4944-9F48-2C0ED72E4932}.RelSkipSFApp|x64.Deploy.0 = Release|x64
 		{02621A25-C6A5-493D-9EB5-D8E46092128B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{02621A25-C6A5-493D-9EB5-D8E46092128B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{02621A25-C6A5-493D-9EB5-D8E46092128B}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{02621A25-C6A5-493D-9EB5-D8E46092128B}.Debug|x64.Build.0 = Debug|Any CPU
+		{02621A25-C6A5-493D-9EB5-D8E46092128B}.Debug|x64.ActiveCfg = Debug|x64
+		{02621A25-C6A5-493D-9EB5-D8E46092128B}.Debug|x64.Build.0 = Debug|x64
 		{02621A25-C6A5-493D-9EB5-D8E46092128B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02621A25-C6A5-493D-9EB5-D8E46092128B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{02621A25-C6A5-493D-9EB5-D8E46092128B}.Release|x64.ActiveCfg = Release|Any CPU
@@ -151,8 +123,8 @@ Global
 		{02621A25-C6A5-493D-9EB5-D8E46092128B}.RelSkipSFApp|x64.Build.0 = Release|Any CPU
 		{24415675-B5C9-48B3-A63E-8C96DB92A863}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{24415675-B5C9-48B3-A63E-8C96DB92A863}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{24415675-B5C9-48B3-A63E-8C96DB92A863}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{24415675-B5C9-48B3-A63E-8C96DB92A863}.Debug|x64.Build.0 = Debug|Any CPU
+		{24415675-B5C9-48B3-A63E-8C96DB92A863}.Debug|x64.ActiveCfg = Debug|x64
+		{24415675-B5C9-48B3-A63E-8C96DB92A863}.Debug|x64.Build.0 = Debug|x64
 		{24415675-B5C9-48B3-A63E-8C96DB92A863}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24415675-B5C9-48B3-A63E-8C96DB92A863}.Release|Any CPU.Build.0 = Release|Any CPU
 		{24415675-B5C9-48B3-A63E-8C96DB92A863}.Release|x64.ActiveCfg = Release|Any CPU
@@ -166,8 +138,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{BD8BCB63-C32D-4077-BF3F-0BF85F2D91DA} = {47E22223-AB0D-4042-883E-F75B4BDCCA91}
-		{0D7BEC66-F83D-40FD-A8DB-D26F46C91487} = {47E22223-AB0D-4042-883E-F75B4BDCCA91}
 		{469D15F6-9EFF-4944-9F48-2C0ED72E4932} = {47E22223-AB0D-4042-883E-F75B4BDCCA91}
 		{02621A25-C6A5-493D-9EB5-D8E46092128B} = {47E22223-AB0D-4042-883E-F75B4BDCCA91}
 		{24415675-B5C9-48B3-A63E-8C96DB92A863} = {47E22223-AB0D-4042-883E-F75B4BDCCA91}

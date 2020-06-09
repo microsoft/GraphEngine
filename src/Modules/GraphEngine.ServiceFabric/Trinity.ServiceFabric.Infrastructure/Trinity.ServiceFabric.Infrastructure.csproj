@@ -22,9 +22,9 @@
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
-	<Target Name="CopyPackage" AfterTargets="Pack">
+	<!--<Target Name="CopyPackage" AfterTargets="Pack">
 		<Copy SourceFiles="$(OutputPath)..\$(PackageId).$(PackageVersion).nupkg" DestinationFolder="$(DOTNET_OUTPUT_PATH)" />
-	</Target>
+	</Target>-->
 
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
@@ -34,7 +34,7 @@
     <PackageReference Include="Microsoft.ServiceFabric.Diagnostics.Internal" version="4.1.416" />
     <PackageReference Include="Microsoft.ServiceFabric.Services" version="4.1.416" />
     <PackageReference Include="Nito.AsyncEx.Tasks" version="5.0.0" />
-    <PackageReference Include="Nito.Disposables" version="2.0.1" />
+    <PackageReference Include="Nito.Disposables" version="2.1.0" />
     <PackageReference Include="System.Collections.Immutable" version="1.7.1" />
     <PackageReference Include="System.IO.Compression.ZipFile" version="4.3.0" />
     <PackageReference Include="System.Runtime.Numerics" version="4.3.0" />
