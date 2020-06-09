@@ -27,9 +27,6 @@
                                FindValue="450109BE90165DDCD463A15F2012520CEB969243"
                                StoreLocation="CurrentUser"
                                StoreName="My" />
-  <ApplicationParameterFile Path="..\ApplicationParameters\Local.5Node.xml" />
+  <ApplicationParameterFile Path="..\ApplicationParameters\Cloud.xml" />
   <CopyPackageParameters CompressPackage="true" />
-  <UpgradeDeployment Mode="Monitored" Enabled="true">
-    <Parameters FailureAction="Rollback" Force="True" />
-  </UpgradeDeployment>
 </PublishProfile>

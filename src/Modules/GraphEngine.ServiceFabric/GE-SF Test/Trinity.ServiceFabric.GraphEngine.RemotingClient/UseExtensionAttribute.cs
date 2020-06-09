@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Trinity.ServiceFabric.GraphEngineService
+namespace Trinity.ServiceFabric.GraphEngine.RemotingClient
 {
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     internal class UseExtensionAttribute : Attribute

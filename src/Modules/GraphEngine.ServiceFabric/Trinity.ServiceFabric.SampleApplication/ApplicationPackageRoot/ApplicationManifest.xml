@@ -2,9 +2,9 @@
 <ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="Trinity.ServiceFabric.SampleApplicationType" ApplicationTypeVersion="2.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
     <Parameter Name="Trinity.ServiceFabric.GraphEngineRemotingClient_InstanceCount" DefaultValue="-1" />
-    <Parameter Name="Trinity.ServiceFabric.GraphEngineService_MinReplicaSetSize" DefaultValue="2" />
-    <Parameter Name="Trinity.ServiceFabric.GraphEngineService_PartitionCount" DefaultValue="1" />
-    <Parameter Name="Trinity.ServiceFabric.GraphEngineService_TargetReplicaSetSize" DefaultValue="2" />
+    <Parameter Name="Trinity.ServiceFabric.GraphEngineService_MinReplicaSetSize" DefaultValue="5" />
+    <Parameter Name="Trinity.ServiceFabric.GraphEngineService_PartitionCount" DefaultValue="2" />
+    <Parameter Name="Trinity.ServiceFabric.GraphEngineService_TargetReplicaSetSize" DefaultValue="5" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 

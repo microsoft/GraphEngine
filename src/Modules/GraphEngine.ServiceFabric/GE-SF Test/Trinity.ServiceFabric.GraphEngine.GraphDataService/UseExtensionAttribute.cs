@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Trinity.ServiceFabric.GraphEngineService
+namespace Trinity.ServiceFabric.GraphEngine.GraphDataService
 {
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     internal class UseExtensionAttribute : Attribute

@@ -1,18 +1,16 @@
-﻿using FanoutSearch;
+﻿using System.Linq;
 using System.Threading;
+using FanoutSearch;
+using Trinity;
 using Trinity.Azure.Storage;
 using Trinity.Diagnostics;
 using Trinity.DynamicCluster.Storage;
 using Trinity.ServiceFabric;
-using Trinity.ServiceFabric.GraphEngineService;
 using Trinity.ServiceFabric.Remoting;
 using Trinity.ServiceFabric.SampleProtocols;
-using Trinity.ServiceFabric.SampleProtocols.ServiceFabricSampleModule;
 
-namespace Trinity.SampleApplication.ServiceFabric
+namespace GraphEngine.ServiceFabric.GraphDataService
 {
-    using System.Linq;
-
     // Workaround: extension assembly will be removed by the
     // compiler if it is not explicitly used in the code.
     [UseExtension(typeof(BlobStoragePersistentStorage))]
@@ -37,7 +35,7 @@ namespace Trinity.SampleApplication.ServiceFabric
             // is fully operational, and Global.CommunicationInstance is successfully
             // started.
 
-            GraphEngineService.StartServiceAsync("Trinity.ServiceFabric.GraphEngineServiceType").GetAwaiter().GetResult();
+            GraphEngineService.StartServiceAsync("GraphEngine.ServiceFabric.GraphDataServiceType").GetAwaiter().GetResult();
 
             // Global.Communications runtime is ready
 
