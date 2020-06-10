@@ -10,9 +10,7 @@
 	<TargetLatestRuntimePatch>False</TargetLatestRuntimePatch>
   </PropertyGroup>
 
-  <!--<Import Project="$(MSBuildBinPath)\Microsoft.Common.targets" />-->
-
-  <ItemGroup>
+	<ItemGroup>
     <ProjectReference Include="..\Trinity.ServiceFabric.Remoting\Trinity.ServiceFabric.Remoting.csproj" />
     <ProjectReference Include="..\Trinity.ServiceFabric.SampleProtocols\Trinity.ServiceFabric.SampleProtocols.csproj" />
   </ItemGroup>

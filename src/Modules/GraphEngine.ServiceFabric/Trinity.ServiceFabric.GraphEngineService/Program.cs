@@ -4,7 +4,6 @@ using Trinity.Azure.Storage;
 using Trinity.Diagnostics;
 using Trinity.DynamicCluster.Storage;
 using Trinity.ServiceFabric;
-using Trinity.ServiceFabric.GraphEngineService;
 using Trinity.ServiceFabric.Remoting;
 using Trinity.ServiceFabric.SampleProtocols;
 using Trinity.ServiceFabric.SampleProtocols.ServiceFabricSampleModule;
