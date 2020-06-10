@@ -10,6 +10,10 @@
 	<TargetLatestRuntimePatch>False</TargetLatestRuntimePatch>
   </PropertyGroup>
 
+	<PropertyGroup>
+		<AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies>
+	</PropertyGroup>
+
 	<ItemGroup>
     <ProjectReference Include="..\Trinity.ServiceFabric.Remoting\Trinity.ServiceFabric.Remoting.csproj" />
     <ProjectReference Include="..\Trinity.ServiceFabric.SampleProtocols\Trinity.ServiceFabric.SampleProtocols.csproj" />
