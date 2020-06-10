@@ -22,9 +22,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <ProjectReference Include="..\..\Trinity.ServiceFabric.Infrastructure\Trinity.ServiceFabric.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Trinity.ServiceFabric.Remoting\Trinity.ServiceFabric.Remoting.csproj" />
-    <ProjectReference Include="..\..\Trinity.ServiceFabric.SampleProtocols\Trinity.ServiceFabric.SampleProtocols.csproj" />
+    <ProjectReference Include="..\Trinity.ServiceFabric.Infrastructure\Trinity.ServiceFabric.Infrastructure.csproj" />
+    <ProjectReference Include="..\Trinity.ServiceFabric.Remoting\Trinity.ServiceFabric.Remoting.csproj" />
+    <ProjectReference Include="..\Trinity.ServiceFabric.SampleProtocols\Trinity.ServiceFabric.SampleProtocols.csproj" />
   </ItemGroup>
 
 </Project>

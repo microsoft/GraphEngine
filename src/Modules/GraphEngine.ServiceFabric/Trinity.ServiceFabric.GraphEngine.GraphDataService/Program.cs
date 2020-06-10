@@ -71,23 +71,24 @@ namespace Trinity.ServiceFabric.GraphEngine.GraphDataService
 
             // Global.Communications runtime is ready
 
-            var sampleModuleImplementation = Global.CommunicationInstance;
+            //var sampleModuleImplementation = Global.CommunicationInstance;
 
-            var graphEngineModules = Global.CommunicationInstance.GetRegisteredCommunicationModuleTypes();
+            //var graphEngineModules = Global.CommunicationInstance.GetRegisteredCommunicationModuleTypes();
 
-            foreach (var _ in graphEngineModules.Where(module => module.Assembly.FullName == nameof(SampleModuleImpl)).Select(module => new { }))
-            {
-                var p = Global.CommunicationInstance.CloudStorage.MyPartitionId;
-                sampleModule = Global.CommunicationInstance.GetCommunicationModule<SampleModuleImpl>();
-                sampleModule.Ping(p);
-            }
-
+            //foreach (var _ in graphEngineModules.Where(module => module.Assembly.FullName == nameof(SampleModuleImpl)).Select(module => new { }))
+            //{
+            //    var p = Global.CommunicationInstance.CloudStorage.MyPartitionId;
+            //    sampleModule = Global.CommunicationInstance.GetCommunicationModule<SampleModuleImpl>();
+            //    sampleModule.Ping(p);
+            //}
 
             // Also, pay attention that, only *master replicas of the partitions* reach here.
             // When the cluster is shutting down, it is possible that the secondary replicas
             // become the master. However, these "transient" masters will be blocked, and
             // do not reach this point.
-            Log.WriteLine("Hello world from GE-SF integration!");
+
+            Log.WriteLine(nameof(SampleModuleImpl) + " is Up, Ready and Active");
+
             var memcloud = Global.CloudStorage as DynamicMemoryCloud;
 
             // Prevents this host process from terminating so services keep running.

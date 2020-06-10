@@ -50,9 +50,9 @@ namespace Trinity.ServiceFabric.GraphEngine.RemotingClient
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                ServiceEventSource.Current.ServiceMessage(this.Context, "Working-{0}", ++iterations);
+                ServiceEventSource.Current.ServiceMessage(this.Context, "GraphEngine Remoting Client Working-{0}", ++iterations);
 
-                m_trinity?.Ping();
+                if (m_trinity != null) m_trinity?.Ping();
 
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }
