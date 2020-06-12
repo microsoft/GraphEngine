@@ -20,7 +20,7 @@ namespace Trinity.ServiceFabric.SampleProtocols
         }
         public override void PingHandler()
         {
-            Log.WriteLine("Ping received!");
+            Log.WriteLine("Ping received from Graph Engine Remoting Client!");
         }
     }
 }

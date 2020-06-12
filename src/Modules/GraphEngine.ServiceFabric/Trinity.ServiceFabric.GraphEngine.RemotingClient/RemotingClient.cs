@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Trinity.Client;
+using Trinity.ServiceFabric.SampleProtocols;
 using Trinity.ServiceFabric.SampleProtocols.ServiceFabricSampleModule;
 
 namespace Trinity.ServiceFabric.GraphEngine.RemotingClient
@@ -50,9 +51,9 @@ namespace Trinity.ServiceFabric.GraphEngine.RemotingClient
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                ServiceEventSource.Current.ServiceMessage(this.Context, "GraphEngine Remoting Client Working-{0}", ++iterations);
+                ServiceEventSource.Current.ServiceMessage(this.Context, "GraphEngine Remoting Client Working-{0}. Execute PING!", ++iterations);
 
-                if (m_trinity != null) m_trinity?.Ping();
+                m_trinity?.Ping();
 
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }

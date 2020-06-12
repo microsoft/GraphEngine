@@ -4,9 +4,13 @@ using System.Fabric;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Services.Runtime;
+using Trinity.ServiceFabric.Remoting;
+using Trinity.ServiceFabric.SampleProtocols;
 
 namespace Trinity.ServiceFabric.GraphEngine.RemotingClient
 {
+    [UseExtension(typeof(ITrinityOverRemotingService))]
+    [UseExtension(typeof(SampleModuleImpl))]
     internal static class Program
     {
         /// <summary>
