@@ -74,11 +74,29 @@ namespace Trinity.DynamicCluster.Replication
                 var rep_tasks = plan.OfType<ReplicatorTask>();
                 var shr_tasks = plan.OfType<ShrinkDataTask>();
                 var chain = new List<ITask>();
-                if (rep_tasks.Any()) chain.Add(new GroupedTask(rep_tasks, ReplicatorTask.Guid));
-                if (shr_tasks.Any()) chain.Add(new GroupedTask(shr_tasks, ShrinkDataTask.Guid));
-                if (!chain.Any()) return;
+
+                var repTasks = rep_tasks.ToList();
+
+                if (repTasks.Any())
+                {
+                    chain.Add(new GroupedTask(repTasks, ReplicatorTask.Guid));
+                }
+
+                var shrinkDataTasks = shr_tasks.ToList();
+
+                if (shrinkDataTasks.Any())
+                {
+                    chain.Add(new GroupedTask(shrinkDataTasks, ShrinkDataTask.Guid));
+                }
+
+                bool any = chain.Any();
+
+                if (!any) return;
+
                 var ctask = new ChainedTasks(chain, ReplicatorTask.Guid);
+
                 await m_taskqueue.PostTask(ctask);
+
                 return;
             }
 
@@ -88,7 +106,9 @@ namespace Trinity.DynamicCluster.Replication
         private bool ClusterInitInProgress(List<(ReplicaInformation rep, IEnumerable<Chunk> cks)> replica_chunks)
         {
             // no rep is initialized, and the required minimum rep count is not reached.
-            return !replica_chunks.Any(tup => tup.cks.Any()) && replica_chunks.Count < m_minreplicas;
+            bool any = replica_chunks.Any(tup => tup.cks.Any());
+
+            return !any && replica_chunks.Count < m_minreplicas;
         }
 
         private bool NeedRepartition(IEnumerable<(ReplicaInformation rep, IEnumerable<Chunk> cks)> replica_chunks)
@@ -98,7 +118,7 @@ namespace Trinity.DynamicCluster.Replication
 
         public void Dispose()
         {
-            m_partitionerproc.Wait();
+            m_partitionerproc.Wait(m_cancel);
         }
     }
 }

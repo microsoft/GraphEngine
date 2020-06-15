@@ -181,7 +181,10 @@ namespace Trinity.DynamicCluster.Health
                     if (results.All(_ => _ == Errno.E_OK)) cloud_healthy = true;
                 }
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
 
             if (cloud_healthy)
             {
@@ -205,9 +208,9 @@ namespace Trinity.DynamicCluster.Health
 
         public void Dispose()
         {
-            m_cloudhealthproc.Wait();
+            m_cloudhealthproc.Wait(m_cancel);
             m_cloud_ev.Reset();
-            m_rephealthproc.Wait();
+            m_rephealthproc.Wait(m_cancel);
             m_parthealthproc.Wait();
             m_part_ev.Reset();
         }

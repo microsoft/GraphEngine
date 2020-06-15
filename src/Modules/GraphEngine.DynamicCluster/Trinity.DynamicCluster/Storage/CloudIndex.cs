@@ -14,7 +14,7 @@ using Trinity.Storage;
 namespace Trinity.DynamicCluster.Storage
 {
     /// <summary>
-    /// Provides information about chunks, storages and replicas.
+    /// Provides information about chunks, storage and replicas.
     /// </summary>
     internal class CloudIndex : IDisposable
     {

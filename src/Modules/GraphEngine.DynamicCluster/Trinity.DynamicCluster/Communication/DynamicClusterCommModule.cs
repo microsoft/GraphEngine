@@ -84,7 +84,7 @@ namespace Trinity.DynamicCluster.Communication
             chunks.Sort((x, y) => Math.Sign(x.lowKey - y.lowKey));
             var target_replica = (Guid)request.to.id;
             var task_id        = (Guid)request.task_id;
-            var thres          = DynamicClusterConfig.Instance.BatchSaveSizeThreshold;
+            var thres       = DynamicClusterConfig.Instance.BatchSaveSizeThreshold;
             var to_storage     = DynamicMemoryCloud.Instance.MyPartition.OfType<DynamicRemoteStorage>()
                                 .First(_ => _.ReplicaInformation.Id == target_replica);
             var signal_c       = new SemaphoreSlim(4);

@@ -22,11 +22,11 @@ using System.Collections.Immutable;
 namespace Trinity.DynamicCluster.Storage
 {
     /// <summary>
-    /// A Partition represent multiple storages scattered across the cluster,
+    /// A Partition represent multiple storage scattered across the cluster,
     /// which add up to a complete availability group (aka partition). Hence, it
-    /// is both a storage, and a list of storages.
+    /// is both a storage, and a list of storage.
     /// </summary>
-    public partial class Partition : IStorage, IEnumerable<IStorage>
+    public sealed partial class Partition : IStorage, IEnumerable<IStorage>
     {
         internal unsafe delegate void SendMessageFunc(byte* message, int size);
         internal unsafe delegate void SendMessageMultiFunc(byte** message, int* sizes, int count);
@@ -147,7 +147,7 @@ namespace Trinity.DynamicCluster.Storage
         #region IDisposable Support
         private bool disposedValue = false;
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (!disposedValue)
             {

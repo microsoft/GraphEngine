@@ -9,7 +9,7 @@ using Trinity.Storage;
 
 namespace Trinity.DynamicCluster.Storage
 {
-    public partial class Partition
+    public sealed partial class Partition
     {
         /// <summary>
         /// Broadcasts a message to all message passing endpoints in the partition.
@@ -42,7 +42,17 @@ namespace Trinity.DynamicCluster.Storage
                 catch (Exception ex) { exs[i] = ex; }
                 return Task.FromResult(0);
             })).Wait();
-            if (!exs.Any(_ => _!= null)) return vals;
+            bool any = false;
+            foreach (var unknown in exs)
+            {
+                if (unknown != null)
+                {
+                    any = true;
+                    break;
+                }
+            }
+
+            if (!any) return vals;
             else throw new BroadcastException<TResponse>(stgs.ZipWith(exs), stgs.ZipWith(vals));
         }
 
@@ -59,7 +69,17 @@ namespace Trinity.DynamicCluster.Storage
                 catch (Exception ex) { exs[i] = ex; }
             }));
 
-            if (!exs.Any(_ => _!= null)) return vals;
+            bool any = false;
+            foreach (var unknown in exs)
+            {
+                if (unknown != null)
+                {
+                    any = true;
+                    break;
+                }
+            }
+
+            if (!any) return vals;
             else throw new BroadcastException<TResponse>(stgs.ZipWith(exs), stgs.ZipWith(vals));
         }
 
