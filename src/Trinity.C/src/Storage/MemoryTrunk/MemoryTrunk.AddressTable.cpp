@@ -137,11 +137,11 @@ namespace Storage
         HeadGroupShadow.head_group.store(head.head_group.load(std::memory_order_relaxed));
         CommittedTailShadow = committed_tail;
 
-        if (CommittedTailShadow == 0 && HeadGroupShadow.committed_head == 0)
-            goto exit;
-
         bool  AddressTableOneRegion = (CommittedTailShadow < HeadGroupShadow.committed_head) ||
             (CommittedTailShadow == HeadGroupShadow.committed_head && CommittedTailShadow == 0);
+
+        if (CommittedTailShadow == 0 && HeadGroupShadow.committed_head == 0)
+            goto exit;
 
         if (hashtable->ExtendedInfo->FreeEntryCount != 0 && hashtable->ExtendedInfo->FreeEntryCount == hashtable->ExtendedInfo->NonEmptyEntryCount) // Double checking
         {
