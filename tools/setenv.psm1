@@ -8,7 +8,8 @@ Function Init-Configuration {
 
     if (![System.IO.File]::Exists($NUGET_EXE)){
         Write-Output "Downloading NuGet package manager."
-            Invoke-WebRequest https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile $NUGET_EXE
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+              Invoke-WebRequest -Uri https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile $NUGET_EXE
     }
 
     New-Item -Path "$TRINITY_OUTPUT_DIR" -ItemType Directory -ErrorAction SilentlyContinue
