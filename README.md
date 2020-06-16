@@ -57,7 +57,7 @@ Install [Visual Studio 2017][vs], making sure to include the following component
     - Windows 10 SDK
     - Windows 8.1 SDK and UCRT SDK
 - Visual Studio extension development
-- `.NET Core SDK 2.0` or above
+- `.NET Core SDK 3.1
 - cmake
 
 [.NET Core SDK][dotnet-download] and [cmake][cmake-download] can also be installed using their standalone installers.
