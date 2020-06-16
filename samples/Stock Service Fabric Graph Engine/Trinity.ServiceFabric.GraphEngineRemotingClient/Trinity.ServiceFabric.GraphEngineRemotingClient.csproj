@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+	  <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
     <Platforms>x64</Platforms>
 	<RuntimeIdentifier>win7-x64</RuntimeIdentifier>
     <IsPackable>false</IsPackable>
@@ -10,9 +10,9 @@
 	<TargetLatestRuntimePatch>False</TargetLatestRuntimePatch>
   </PropertyGroup>
 
-	<PropertyGroup>
+	<!--<PropertyGroup>
 		<AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies>
-	</PropertyGroup>
+	</PropertyGroup>-->
 
 	<ItemGroup>
     <ProjectReference Include="..\Trinity.ServiceFabric.Remoting\Trinity.ServiceFabric.Remoting.csproj" />

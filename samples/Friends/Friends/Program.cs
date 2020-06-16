@@ -15,7 +15,7 @@ namespace Friends
 {
     class Friends
     {
-        public static unsafe void Main(string[] args)
+        public unsafe static void Main(string[] args)
         {
             // Characters
             Character Rachel = new Character(Name: "Rachel Green", Gender: 0, Married: true);

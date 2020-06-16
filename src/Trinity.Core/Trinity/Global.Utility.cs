@@ -166,7 +166,7 @@ namespace Trinity
         /// <summary>
         /// Gets the IPEndPoint bound to current Trinity proxy.
         /// </summary>
-        public static unsafe long MyProxyIPEndPoint
+        public unsafe static long MyProxyIPEndPoint
         {
             get
             {
@@ -190,7 +190,7 @@ namespace Trinity
             }
         }
 
-        internal static unsafe DateTime GetBuildTime()
+        internal unsafe static DateTime GetBuildTime()
         {
             // TODO test CoreCLR
             byte[] PEBuffer = new byte[2048];

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0;netstandard2.0</TargetFrameworks>
+	<TargetFrameworks>netcoreapp2.1</TargetFrameworks>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Version>$(DOTNET_PACKAGE_VERSION)</Version>
     <FileVersion>$(DOTNET_PACKAGE_VERSION)</FileVersion>
@@ -18,7 +18,9 @@
     <PlatformTarget>x64</PlatformTarget>
     <Platforms>x64</Platforms>
     <IsPackable>true</IsPackable>
-    <Configurations>Debug;Release</Configurations>
+	<Configurations>Debug;Release</Configurations>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
 	<!--<Target Name="CopyPackage" AfterTargets="Pack">

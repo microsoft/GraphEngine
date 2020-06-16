@@ -5,23 +5,7 @@ VisualStudioVersion = 16.0.28729.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.Infrastructure", "Trinity.ServiceFabric.Infrastructure\Trinity.ServiceFabric.Infrastructure.csproj", "{1C1B605C-403D-44D7-A52C-C994F7ACAE59}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.GraphEngineService", "Trinity.ServiceFabric.GraphEngineService\Trinity.ServiceFabric.GraphEngineService.csproj", "{96669A46-1FB2-4E92-8583-15DBA444BEF5}"
-EndProject
-Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "Trinity.ServiceFabric.SampleApplication", "Trinity.ServiceFabric.SampleApplication\Trinity.ServiceFabric.SampleApplication.sfproj", "{0F44632E-1A7F-463F-954C-A84A7B1A4F69}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.Remoting", "Trinity.ServiceFabric.Remoting\Trinity.ServiceFabric.Remoting.csproj", "{9DFAE3CC-D446-4A93-984B-F5E0FB840C84}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.GraphEngineRemotingClient", "Trinity.ServiceFabric.GraphEngineRemotingClient\Trinity.ServiceFabric.GraphEngineRemotingClient.csproj", "{99D397F0-BC95-4CD0-A146-9E9986496CD7}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.SampleProtocols", "Trinity.ServiceFabric.SampleProtocols\Trinity.ServiceFabric.SampleProtocols.csproj", "{392DBC03-10D2-4CC4-9C11-FB85D0588076}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Graph-Engine Service Fabic Test", "Graph-Engine Service Fabic Test", "{47E22223-AB0D-4042-883E-F75B4BDCCA91}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.GraphEngine.GraphDataService", "Trinity.ServiceFabric.GraphEngine.GraphDataService\Trinity.ServiceFabric.GraphEngine.GraphDataService.csproj", "{8E9D5D40-A8E0-445B-8A7B-E69D8D0334DE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.GraphEngine.RemotingClient", "Trinity.ServiceFabric.GraphEngine.RemotingClient\Trinity.ServiceFabric.GraphEngine.RemotingClient.csproj", "{E987A06A-2D65-4FC1-B947-CCE498FE5FB8}"
-EndProject
-Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "TrinityServiceFabric.NativeClusterRemoting.Application", "TrinityServiceFabric.NativeClusterRemoting.Application\TrinityServiceFabric.NativeClusterRemoting.Application.sfproj", "{469D15F6-9EFF-4944-9F48-2C0ED72E4932}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,28 +27,6 @@ Global
 		{1C1B605C-403D-44D7-A52C-C994F7ACAE59}.RelSkipSFApp|Any CPU.Build.0 = Release|x64
 		{1C1B605C-403D-44D7-A52C-C994F7ACAE59}.RelSkipSFApp|x64.ActiveCfg = Release|x64
 		{1C1B605C-403D-44D7-A52C-C994F7ACAE59}.RelSkipSFApp|x64.Build.0 = Release|x64
-		{96669A46-1FB2-4E92-8583-15DBA444BEF5}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{96669A46-1FB2-4E92-8583-15DBA444BEF5}.Debug|x64.ActiveCfg = Debug|x64
-		{96669A46-1FB2-4E92-8583-15DBA444BEF5}.Debug|x64.Build.0 = Debug|x64
-		{96669A46-1FB2-4E92-8583-15DBA444BEF5}.Release|Any CPU.ActiveCfg = Release|x64
-		{96669A46-1FB2-4E92-8583-15DBA444BEF5}.Release|x64.ActiveCfg = Release|x64
-		{96669A46-1FB2-4E92-8583-15DBA444BEF5}.Release|x64.Build.0 = Release|x64
-		{96669A46-1FB2-4E92-8583-15DBA444BEF5}.RelSkipSFApp|Any CPU.ActiveCfg = Release|x64
-		{96669A46-1FB2-4E92-8583-15DBA444BEF5}.RelSkipSFApp|Any CPU.Build.0 = Release|x64
-		{96669A46-1FB2-4E92-8583-15DBA444BEF5}.RelSkipSFApp|x64.ActiveCfg = Release|x64
-		{96669A46-1FB2-4E92-8583-15DBA444BEF5}.RelSkipSFApp|x64.Build.0 = Release|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|x64.ActiveCfg = Debug|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|x64.Build.0 = Debug|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|x64.Deploy.0 = Debug|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Release|Any CPU.ActiveCfg = Release|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Release|x64.ActiveCfg = Release|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Release|x64.Build.0 = Release|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Release|x64.Deploy.0 = Release|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.RelSkipSFApp|Any CPU.ActiveCfg = Release|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.RelSkipSFApp|Any CPU.Build.0 = Release|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.RelSkipSFApp|Any CPU.Deploy.0 = Release|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.RelSkipSFApp|x64.ActiveCfg = Release|x64
 		{9DFAE3CC-D446-4A93-984B-F5E0FB840C84}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{9DFAE3CC-D446-4A93-984B-F5E0FB840C84}.Debug|x64.ActiveCfg = Debug|x64
 		{9DFAE3CC-D446-4A93-984B-F5E0FB840C84}.Debug|x64.Build.0 = Debug|x64
@@ -75,68 +37,9 @@ Global
 		{9DFAE3CC-D446-4A93-984B-F5E0FB840C84}.RelSkipSFApp|Any CPU.Build.0 = Release|x64
 		{9DFAE3CC-D446-4A93-984B-F5E0FB840C84}.RelSkipSFApp|x64.ActiveCfg = Release|x64
 		{9DFAE3CC-D446-4A93-984B-F5E0FB840C84}.RelSkipSFApp|x64.Build.0 = Release|x64
-		{99D397F0-BC95-4CD0-A146-9E9986496CD7}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{99D397F0-BC95-4CD0-A146-9E9986496CD7}.Debug|x64.ActiveCfg = Debug|x64
-		{99D397F0-BC95-4CD0-A146-9E9986496CD7}.Debug|x64.Build.0 = Debug|x64
-		{99D397F0-BC95-4CD0-A146-9E9986496CD7}.Release|Any CPU.ActiveCfg = Release|x64
-		{99D397F0-BC95-4CD0-A146-9E9986496CD7}.Release|x64.ActiveCfg = Release|x64
-		{99D397F0-BC95-4CD0-A146-9E9986496CD7}.Release|x64.Build.0 = Release|x64
-		{99D397F0-BC95-4CD0-A146-9E9986496CD7}.RelSkipSFApp|Any CPU.ActiveCfg = Release|x64
-		{99D397F0-BC95-4CD0-A146-9E9986496CD7}.RelSkipSFApp|Any CPU.Build.0 = Release|x64
-		{99D397F0-BC95-4CD0-A146-9E9986496CD7}.RelSkipSFApp|x64.ActiveCfg = Release|x64
-		{99D397F0-BC95-4CD0-A146-9E9986496CD7}.RelSkipSFApp|x64.Build.0 = Release|x64
-		{392DBC03-10D2-4CC4-9C11-FB85D0588076}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{392DBC03-10D2-4CC4-9C11-FB85D0588076}.Debug|x64.ActiveCfg = Debug|x64
-		{392DBC03-10D2-4CC4-9C11-FB85D0588076}.Debug|x64.Build.0 = Debug|x64
-		{392DBC03-10D2-4CC4-9C11-FB85D0588076}.Release|Any CPU.ActiveCfg = Release|x64
-		{392DBC03-10D2-4CC4-9C11-FB85D0588076}.Release|x64.ActiveCfg = Release|x64
-		{392DBC03-10D2-4CC4-9C11-FB85D0588076}.Release|x64.Build.0 = Release|x64
-		{392DBC03-10D2-4CC4-9C11-FB85D0588076}.RelSkipSFApp|Any CPU.ActiveCfg = Release|x64
-		{392DBC03-10D2-4CC4-9C11-FB85D0588076}.RelSkipSFApp|Any CPU.Build.0 = Release|x64
-		{392DBC03-10D2-4CC4-9C11-FB85D0588076}.RelSkipSFApp|x64.ActiveCfg = Release|x64
-		{392DBC03-10D2-4CC4-9C11-FB85D0588076}.RelSkipSFApp|x64.Build.0 = Release|x64
-		{8E9D5D40-A8E0-445B-8A7B-E69D8D0334DE}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{8E9D5D40-A8E0-445B-8A7B-E69D8D0334DE}.Debug|x64.ActiveCfg = Debug|x64
-		{8E9D5D40-A8E0-445B-8A7B-E69D8D0334DE}.Debug|x64.Build.0 = Debug|x64
-		{8E9D5D40-A8E0-445B-8A7B-E69D8D0334DE}.Release|Any CPU.ActiveCfg = Release|x64
-		{8E9D5D40-A8E0-445B-8A7B-E69D8D0334DE}.Release|x64.ActiveCfg = Release|x64
-		{8E9D5D40-A8E0-445B-8A7B-E69D8D0334DE}.Release|x64.Build.0 = Release|x64
-		{8E9D5D40-A8E0-445B-8A7B-E69D8D0334DE}.RelSkipSFApp|Any CPU.ActiveCfg = Release|x64
-		{8E9D5D40-A8E0-445B-8A7B-E69D8D0334DE}.RelSkipSFApp|Any CPU.Build.0 = Release|x64
-		{8E9D5D40-A8E0-445B-8A7B-E69D8D0334DE}.RelSkipSFApp|x64.ActiveCfg = Release|x64
-		{8E9D5D40-A8E0-445B-8A7B-E69D8D0334DE}.RelSkipSFApp|x64.Build.0 = Release|x64
-		{E987A06A-2D65-4FC1-B947-CCE498FE5FB8}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{E987A06A-2D65-4FC1-B947-CCE498FE5FB8}.Debug|x64.ActiveCfg = Debug|x64
-		{E987A06A-2D65-4FC1-B947-CCE498FE5FB8}.Debug|x64.Build.0 = Debug|x64
-		{E987A06A-2D65-4FC1-B947-CCE498FE5FB8}.Release|Any CPU.ActiveCfg = Release|x64
-		{E987A06A-2D65-4FC1-B947-CCE498FE5FB8}.Release|x64.ActiveCfg = Release|x64
-		{E987A06A-2D65-4FC1-B947-CCE498FE5FB8}.Release|x64.Build.0 = Release|x64
-		{E987A06A-2D65-4FC1-B947-CCE498FE5FB8}.RelSkipSFApp|Any CPU.ActiveCfg = Release|x64
-		{E987A06A-2D65-4FC1-B947-CCE498FE5FB8}.RelSkipSFApp|Any CPU.Build.0 = Release|x64
-		{E987A06A-2D65-4FC1-B947-CCE498FE5FB8}.RelSkipSFApp|x64.ActiveCfg = Release|x64
-		{E987A06A-2D65-4FC1-B947-CCE498FE5FB8}.RelSkipSFApp|x64.Build.0 = Release|x64
-		{469D15F6-9EFF-4944-9F48-2C0ED72E4932}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{469D15F6-9EFF-4944-9F48-2C0ED72E4932}.Debug|x64.ActiveCfg = Debug|x64
-		{469D15F6-9EFF-4944-9F48-2C0ED72E4932}.Debug|x64.Build.0 = Debug|x64
-		{469D15F6-9EFF-4944-9F48-2C0ED72E4932}.Debug|x64.Deploy.0 = Debug|x64
-		{469D15F6-9EFF-4944-9F48-2C0ED72E4932}.Release|Any CPU.ActiveCfg = Release|x64
-		{469D15F6-9EFF-4944-9F48-2C0ED72E4932}.Release|x64.ActiveCfg = Release|x64
-		{469D15F6-9EFF-4944-9F48-2C0ED72E4932}.Release|x64.Build.0 = Release|x64
-		{469D15F6-9EFF-4944-9F48-2C0ED72E4932}.Release|x64.Deploy.0 = Release|x64
-		{469D15F6-9EFF-4944-9F48-2C0ED72E4932}.RelSkipSFApp|Any CPU.ActiveCfg = Release|x64
-		{469D15F6-9EFF-4944-9F48-2C0ED72E4932}.RelSkipSFApp|Any CPU.Build.0 = Release|x64
-		{469D15F6-9EFF-4944-9F48-2C0ED72E4932}.RelSkipSFApp|Any CPU.Deploy.0 = Release|x64
-		{469D15F6-9EFF-4944-9F48-2C0ED72E4932}.RelSkipSFApp|x64.ActiveCfg = Release|x64
-		{469D15F6-9EFF-4944-9F48-2C0ED72E4932}.RelSkipSFApp|x64.Build.0 = Release|x64
-		{469D15F6-9EFF-4944-9F48-2C0ED72E4932}.RelSkipSFApp|x64.Deploy.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{8E9D5D40-A8E0-445B-8A7B-E69D8D0334DE} = {47E22223-AB0D-4042-883E-F75B4BDCCA91}
-		{E987A06A-2D65-4FC1-B947-CCE498FE5FB8} = {47E22223-AB0D-4042-883E-F75B4BDCCA91}
-		{469D15F6-9EFF-4944-9F48-2C0ED72E4932} = {47E22223-AB0D-4042-883E-F75B4BDCCA91}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9DA4374E-7E56-45CC-9721-7F084B757457}

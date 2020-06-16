@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0;netstandard2.0</TargetFrameworks>
+	<TargetFrameworks>netcoreapp2.1</TargetFrameworks>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Version>$(DOTNET_PACKAGE_VERSION)</Version>
     <FileVersion>$(DOTNET_PACKAGE_VERSION)</FileVersion>
@@ -20,6 +20,7 @@
     <Platforms>x64</Platforms>
     <IsPackable>true</IsPackable>
     <Configurations>Debug;Release</Configurations>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
 	<!--<Target Name="CopyPackage" AfterTargets="Pack">
@@ -31,6 +32,7 @@
     <PackageReference Include="GraphEngine.DynamicCluster" Version="$(DOTNET_PACKAGE_VERSION)" />
     <PackageReference Include="Microsoft.ServiceFabric" version="7.1.416" />
     <PackageReference Include="Microsoft.ServiceFabric.Data" version="4.1.416" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data.Interfaces" Version="4.1.416" />
     <PackageReference Include="Microsoft.ServiceFabric.Diagnostics.Internal" version="4.1.416" />
     <PackageReference Include="Microsoft.ServiceFabric.Services" version="4.1.416" />
     <PackageReference Include="Nito.AsyncEx.Tasks" version="5.0.0" />
