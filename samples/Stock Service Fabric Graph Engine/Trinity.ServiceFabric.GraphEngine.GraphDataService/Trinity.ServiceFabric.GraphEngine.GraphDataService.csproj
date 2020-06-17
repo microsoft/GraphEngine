@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsServiceFabricServiceProject>True</IsServiceFabricServiceProject>
     <ServerGarbageCollection>True</ServerGarbageCollection>
 	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
@@ -13,8 +13,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="GraphEngine.ServiceFabric.Infrastructure" Version="2.0.10448" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="2.0.10448" />
     <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.416" />
   </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.416" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="GraphEngine.Azure.BlobStorage" Version="$(DOTNET_PACKAGE_VERSION)" />
@@ -22,8 +28,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <ProjectReference Include="..\Trinity.ServiceFabric.Infrastructure\Trinity.ServiceFabric.Infrastructure.csproj" />
-    <ProjectReference Include="..\Trinity.ServiceFabric.Remoting\Trinity.ServiceFabric.Remoting.csproj" />
     <ProjectReference Include="..\Trinity.ServiceFabric.SampleProtocols\Trinity.ServiceFabric.SampleProtocols.csproj" />
   </ItemGroup>
 

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-	  <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+	  <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <Platforms>x64</Platforms>
 	<RuntimeIdentifier>win7-x64</RuntimeIdentifier>
     <IsPackable>false</IsPackable>
@@ -15,12 +15,16 @@
 	</PropertyGroup>-->
 
 	<ItemGroup>
-    <ProjectReference Include="..\Trinity.ServiceFabric.Remoting\Trinity.ServiceFabric.Remoting.csproj" />
     <ProjectReference Include="..\Trinity.ServiceFabric.SampleProtocols\Trinity.ServiceFabric.SampleProtocols.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.Client" Version="2.0.10448" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="2.0.10448" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-	  <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+	  <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <Platforms>x64</Platforms>
 	  <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
     <IsPackable>false</IsPackable>
@@ -17,11 +17,10 @@
 	<ItemGroup>
     <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="$(DOTNET_PACKAGE_VERSION)" />
     <PackageReference Include="GraphEngine.LIKQ" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="2.0.10448" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Trinity.ServiceFabric.Infrastructure\Trinity.ServiceFabric.Infrastructure.csproj" />
-    <ProjectReference Include="..\Trinity.ServiceFabric.Remoting\Trinity.ServiceFabric.Remoting.csproj" />
     <ProjectReference Include="..\Trinity.ServiceFabric.SampleProtocols\Trinity.ServiceFabric.SampleProtocols.csproj" />
   </ItemGroup>
 

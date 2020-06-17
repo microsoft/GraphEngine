@@ -11,6 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="GraphEngine.ServiceFabric.Infrastructure" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="$(DOTNET_PACKAGE_VERSION)" />
     <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.416" />
   </ItemGroup>
 	
@@ -18,11 +20,9 @@
 		<PackageReference Include="GraphEngine.Azure.BlobStorage" Version="$(DOTNET_PACKAGE_VERSION)" />
 		<PackageReference Include="GraphEngine.LIKQ" Version="$(DOTNET_PACKAGE_VERSION)" />
 	</ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Trinity.ServiceFabric.Infrastructure\Trinity.ServiceFabric.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Trinity.ServiceFabric.Remoting\Trinity.ServiceFabric.Remoting.csproj" />
-    <ProjectReference Include="..\..\Trinity.ServiceFabric.SampleProtocols\Trinity.ServiceFabric.SampleProtocols.csproj" />
-  </ItemGroup>
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\Trinity.ServiceFabric.SampleProtocols\Trinity.ServiceFabric.SampleProtocols.csproj" />
+	</ItemGroup>
 
 </Project>
