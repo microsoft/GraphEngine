@@ -30,11 +30,11 @@
   <ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
     <PackageReference Include="GraphEngine.DynamicCluster" Version="$(DOTNET_PACKAGE_VERSION)" />
-    <PackageReference Include="Microsoft.ServiceFabric" version="7.1.416" />
-    <PackageReference Include="Microsoft.ServiceFabric.Data" version="4.1.416" />
-    <PackageReference Include="Microsoft.ServiceFabric.Data.Interfaces" Version="4.1.416" />
-    <PackageReference Include="Microsoft.ServiceFabric.Diagnostics.Internal" version="4.1.416" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" version="4.1.416" />
+    <PackageReference Include="Microsoft.ServiceFabric" version="7.1.417" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data" version="4.1.417" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data.Interfaces" Version="4.1.417" />
+    <PackageReference Include="Microsoft.ServiceFabric.Diagnostics.Internal" version="4.1.417" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" version="4.1.417" />
     <PackageReference Include="Nito.AsyncEx.Tasks" version="5.0.0" />
     <PackageReference Include="Nito.Disposables" version="2.1.0" />
     <PackageReference Include="System.Collections.Immutable" version="1.7.1" />
