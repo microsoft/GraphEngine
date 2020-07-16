@@ -8,11 +8,12 @@
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
     <TargetLatestRuntimePatch>False</TargetLatestRuntimePatch>
 	  <Configurations>Debug;Release</Configurations>
+	  <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Client" Version="2.0.10448" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.416" />
+    <PackageReference Include="GraphEngine.Client" Version="2.0.10473" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.417" />
   </ItemGroup>
 
   <ItemGroup>

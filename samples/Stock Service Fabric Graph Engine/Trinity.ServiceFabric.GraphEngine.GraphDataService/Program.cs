@@ -67,6 +67,8 @@ namespace Trinity.ServiceFabric.GraphEngine.GraphDataService
             // is fully operational, and Global.CommunicationInstance is successfully
             // started.
 
+            TrinityConfig.LoggingLevel = LogLevel.Debug;
+
             GraphEngineService.StartServiceAsync("Trinity.ServiceFabric.GraphEngine.GraphDataServiceType").GetAwaiter().GetResult();
 
             // Global.Communications runtime is ready

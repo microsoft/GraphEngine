@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="fabric:/GraphEngine.ServiceFabric.TripleStoreApplication" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+  <Parameters>
+    <Parameter Name="Stateful.TripleStore.GraphDataService_PartitionCount" Value="1" />
+    <Parameter Name="Stateful.TripleStore.GraphDataService_MinReplicaSetSize" Value="5" />
+    <Parameter Name="Stateful.TripleStore.GraphDataService_TargetReplicaSetSize" Value="5" />
+  </Parameters>
+</Application>

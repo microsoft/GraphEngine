@@ -20,8 +20,15 @@ namespace Trinity.Client.TrinityClientModule
     {
         public override string GetModuleName() => "TrinityClient";
 
+        private IClientRegistry _clientRegistry;
+
         // ===== Server-side members =====
-        private IClientRegistry Registry => m_memorycloud as IClientRegistry;
+        private IClientRegistry Registry
+        {
+            get => m_memorycloud as IClientRegistry;
+            set => m_memorycloud = value as MemoryCloud;
+        }
+
         private ConcurrentDictionary<int, ClientIStorage> m_client_storages = new ConcurrentDictionary<int, ClientIStorage>();
         public IEnumerable<IStorage> Clients => m_client_storages.Values;
         private CancellationTokenSource m_cancel_src;
@@ -29,6 +36,13 @@ namespace Trinity.Client.TrinityClientModule
         // ===== Client-side members =====
         private Lazy<int> m_client_cookie = new Lazy<int>(() => new Random().Next(int.MinValue, int.MaxValue));
         internal int MyCookie => m_client_cookie.Value;
+
+        private IClientRegistry ClientRegistry
+        {
+            get => _clientRegistry = m_memorycloud as IClientRegistry;
+            set => _clientRegistry = value;
+        }
+
         private Task m_ttl_proc = null;
 
         public TrinityClientModule()
@@ -249,16 +263,27 @@ namespace Trinity.Client.TrinityClientModule
 
         public override void RegisterClientHandler(RegisterClientRequestReader request, RegisterClientResponseWriter response)
         {
-            response.PartitionCount = m_memorycloud.PartitionCount;
-            var cstg = m_client_storages.AddOrUpdate(request.Cookie, _ =>
+            if (m_memorycloud != null)
             {
-                ClientIStorage stg = new ClientIStorage(m_memorycloud);
-                stg.Pulse = DateTime.Now;
-                int new_id = Registry.RegisterClient(stg);
-                stg.InstanceId = new_id;
-                return stg;
-            }, (_, stg) => stg);
-            response.InstanceId = cstg.InstanceId;
+                response.PartitionCount = m_memorycloud.PartitionCount;
+
+                if (ClientRegistry is null)
+                    ClientRegistry = m_memorycloud as IClientRegistry;
+
+                var cstg = m_client_storages.AddOrUpdate(request.Cookie, _ =>
+                {
+                    ClientIStorage stg = new ClientIStorage(m_memorycloud) {Pulse = DateTime.Now};
+
+                    if (ClientRegistry != null)
+                    {
+                        int new_id = ClientRegistry.RegisterClient(stg);
+                        stg.InstanceId = new_id;
+                    }
+
+                    return stg;
+                }, (_, stg) => stg);
+                response.InstanceId = cstg.InstanceId;
+            }
         }
 
         public override void UnregisterClientHandler(UnregisterClientRequestReader request)
@@ -272,7 +297,7 @@ namespace Trinity.Client.TrinityClientModule
             if (m_client_storages.TryRemove(cookie, out _))
             {
                 // no responses come in from clients now
-                Registry.UnregisterClient(stg.InstanceId);
+                ClientRegistry.UnregisterClient(stg.InstanceId);
                 // no requests come in from servers now, safe to dispose
                 stg.Dispose();
             }

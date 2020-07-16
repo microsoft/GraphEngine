@@ -7,10 +7,11 @@
     <ServerGarbageCollection>True</ServerGarbageCollection>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
     <TargetLatestRuntimePatch>False</TargetLatestRuntimePatch>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.416" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.417" />
   </ItemGroup>
 
 </Project>

@@ -15,7 +15,7 @@ namespace Trinity.WPF.TestClient
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly TrinityClient client = new TrinityClient("localhost:9898");
+        private readonly TrinityClient client = new TrinityClient("GenNexusPrime.inknowworks.dev.net:9898");
 
         public MainWindow()
         {
@@ -37,7 +37,7 @@ namespace Trinity.WPF.TestClient
 
             // Setup Reactive Processing .. 
 
-            tripleModule.ExternalTripleReceivedAction.Subscribe(onNext: async tripleObjectFromServer =>
+            tripleModule.TripleObjectStreamedFromServerReceivedAction.Subscribe(onNext: async tripleObjectFromServer =>
             {
                 using var reactiveGraphEngineResponseTask = Task.Factory.StartNew(async () =>
                 {
@@ -54,7 +54,7 @@ namespace Trinity.WPF.TestClient
                                                 uiSyncContext);
                 }).ContinueWith(_ =>
                 {
-                    ResponseTextBlock.Items.Add("Task ExternalTripleReceivedAction Complete...");
+                    ResponseTextBlock.Items.Add("Task TripleObjectStreamedFromServerReceivedAction Complete...");
                 }, uiSyncContext);
 
                 var upDateOnUITread = reactiveGraphEngineResponseTask;
@@ -62,7 +62,7 @@ namespace Trinity.WPF.TestClient
                 await upDateOnUITread;
             });
 
-            tripleModule.ExternalTripleSavedToMemoryAction.Subscribe(onNext: async tripleStoreMemoryContext =>
+            tripleModule.ClientPostedTripleSavedToMemoryCloudAction.Subscribe(onNext: async tripleStoreMemoryContext =>
             {
                 using var retrieveTripleStoreFromMemoryCloudTask = Task.Factory.StartNew(async () =>
                 {
@@ -93,7 +93,7 @@ namespace Trinity.WPF.TestClient
                                                 uiSyncContext);
                 }).ContinueWith(_ =>
                 {
-                    ResponseTextBlock.Items.Add("Task ExternalTripleSavedToMemoryAction Complete...");
+                    ResponseTextBlock.Items.Add("Task ClientPostedTripleSavedToMemoryCloudAction Complete...");
                 }, uiSyncContext);
 
                 var upDateOnUITread = retrieveTripleStoreFromMemoryCloudTask;

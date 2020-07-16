@@ -29,10 +29,10 @@
     <None Include="Scripts\Deploy-FabricApplication.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <ProjectReference Include="..\SemanticTriple.GraphEngine.Service\SemanticTriple.GraphEngine.Service.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SemanticTriple.GraphEngine.Service\SemanticTriple.GraphEngine.Service.csproj" />
+    <Content Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
   <PropertyGroup>

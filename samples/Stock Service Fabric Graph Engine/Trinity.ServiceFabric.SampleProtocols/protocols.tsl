@@ -1,11 +1,37 @@
-﻿protocol Ping
+﻿struct PingMessagePayload
+{
+		string PingMessage;	
+}
+
+struct PingMessageResponsePayload
+{
+		string PingMessage;	
+}
+
+protocol Ping
 {
 	Type: Syn;
 	Request: void;
 	Response: void;
 }
 
+protocol ExternalClientPing
+{
+	Type: Syn;
+	Request: PingMessagePayload;
+	Response: void;
+}
+
+protocol ExternalClientPingAsync
+{
+	Type: Asyn;
+	Request: PingMessagePayload;
+	Response: PingMessageResponsePayload;
+}
+
 module ServiceFabricSampleModule
 {
 	protocol Ping;
+	protocol ExternalClientPing;
+	protocol ExternalClientPingAsync;
 }

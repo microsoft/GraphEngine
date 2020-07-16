@@ -10,6 +10,17 @@ struct Triple
 	//metadata etc.
 }
 
+struct TripleGetRequest
+{
+  long TripleCellId;
+	string Subject;
+	string Predicate;
+	string Object;
+
+	string Namespace;
+	//metadata etc.
+}
+
 struct TripleStream
 {
 	List<Triple> triples;

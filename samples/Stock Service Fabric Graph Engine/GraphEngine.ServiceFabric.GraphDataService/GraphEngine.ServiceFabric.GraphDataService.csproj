@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,18 +8,16 @@
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
     <TargetLatestRuntimePatch>False</TargetLatestRuntimePatch>
 	  <Configurations>Debug;Release</Configurations>
+	  <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.ServiceFabric.Infrastructure" Version="$(DOTNET_PACKAGE_VERSION)" />
-    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="$(DOTNET_PACKAGE_VERSION)" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.416" />
+    <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="2.0.10473" />
+    <PackageReference Include="GraphEngine.LIKQ" Version="2.0.10473" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Infrastructure" Version="2.0.10473" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="2.0.10473" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data" Version="4.1.417" />
   </ItemGroup>
-	
-	<ItemGroup>
-		<PackageReference Include="GraphEngine.Azure.BlobStorage" Version="$(DOTNET_PACKAGE_VERSION)" />
-		<PackageReference Include="GraphEngine.LIKQ" Version="$(DOTNET_PACKAGE_VERSION)" />
-	</ItemGroup>
 	
 	<ItemGroup>
 	  <ProjectReference Include="..\Trinity.ServiceFabric.SampleProtocols\Trinity.ServiceFabric.SampleProtocols.csproj" />

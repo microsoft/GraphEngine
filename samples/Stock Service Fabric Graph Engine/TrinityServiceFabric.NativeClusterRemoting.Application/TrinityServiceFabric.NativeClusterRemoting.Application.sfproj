@@ -30,11 +30,11 @@
     <None Include="Scripts\Deploy-FabricApplication.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Trinity.ServiceFabric.GraphEngine.GraphDataService\Trinity.ServiceFabric.GraphEngine.GraphDataService.csproj" />
     <ProjectReference Include="..\Trinity.ServiceFabric.GraphEngine.RemotingClient\Trinity.ServiceFabric.GraphEngine.RemotingClient.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
   <PropertyGroup>

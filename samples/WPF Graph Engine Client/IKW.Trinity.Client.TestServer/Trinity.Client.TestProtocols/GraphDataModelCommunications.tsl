@@ -1,21 +1,46 @@
 ﻿protocol StreamTriplesAsync
 {
-	Type: Asyn;
-	Request: TripleStream;
-	Response: ErrorCodeResponse;
+	  Type: Asyn;
+	  Request: TripleStream;
+	  Response: ErrorCodeResponse;
 }
 
 protocol PostTriplesToServer
 {
-	Type: Asyn;
-	Request: TripleStream;
-	Response: ErrorCodeResponse;
+	  Type: Asyn;
+	  Request: TripleStream;
+	  Response: ErrorCodeResponse;
+}
+
+protocol GetTripleByCellId
+{
+		Type: Asyn;
+		Request: TripleGetRequest;
+		Response: ErrorCodeResponse;
+}
+
+protocol GetTripleSubject
+{
+		Type: Asyn;
+		Request: TripleGetRequest;
+		Response: ErrorCodeResponse;
+}
+
+// Server-side Push/Publish to Client
+protocol PushTripleToClient
+{
+		Type: Asyn;
+		Request: TripleGetRequest;
+		Response: ErrorCodeResponse;
 }
 
 module TripleServer
 {
 	protocol StreamTriplesAsync;
 	protocol PostTriplesToServer;
+	protocol GetTripleByCellId;
+	protocol GetTripleSubject;
+	protocol PushTripleToClient;
 }
 
 // Declare Second Server Module
