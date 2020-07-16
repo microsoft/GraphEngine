@@ -2,39 +2,33 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
+using Microsoft.Win32.SafeHandles;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net.Sockets;
 using System.Net;
-using System.IO;
-
-using Trinity;
-using Trinity.Core.Lib;
-using Trinity.Storage;
-using Trinity.Network.Messaging;
-using Trinity.Utilities;
-using Trinity.Diagnostics;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using Trinity.Daemon;
-using Trinity.FaultTolerance;
-using System.Diagnostics;
 using System.Threading;
 using Trinity.Configuration;
+using Trinity.Core.Lib;
+using Trinity.FaultTolerance;
+using Trinity.Network.Messaging;
 
 namespace Trinity.Network.Client
 {
     unsafe partial class SynClient : IDisposable
     {
+        private static byte* HeartbeatBuffer;
+        private static int HeartbeatBufferLen;
+
         public UInt64 socket = NativeNetwork.INVALID_SOCKET;
+        private ThreadPoolBoundHandle threadPoolBoundHandle;
         internal IPEndPoint ipe;
         internal bool sock_connected = false;
         internal int ServerId;
         private int m_connect_retry = NetworkConfig.Instance.ClientReconnectRetry;
+        private byte* intBuff;
 
-        bool disposed = false;
-        static byte* HeartbeatBuffer;
+        private bool disposed = false;
 
         static SynClient()
         {
@@ -48,6 +42,7 @@ namespace Trinity.Network.Client
         public SynClient(IPEndPoint dest_ipe)
         {
             this.ipe = dest_ipe;
+            this.intBuff = (byte*)Memory.malloc(sizeof(int));
 
             DoConnect(TrinityConfig.MaxSocketReconnectNum);//TODO not configurable
             ServerId = -1;
@@ -65,6 +60,8 @@ namespace Trinity.Network.Client
             for (int i = 0; i < retry; i++)
             {
                 socket = CNativeNetwork.CreateClientSocket();
+                using (var socketHandle = new SocketSafeHandle((IntPtr)socket))
+                    threadPoolBoundHandle = ThreadPoolBoundHandle.BindHandle(socketHandle);
                 if (NativeNetwork.INVALID_SOCKET != socket && CNativeNetwork.ClientSocketConnect(socket, BitConverter.ToUInt32(ipe.Address.GetAddressBytes(), 0), (ushort)ipe.Port))
                 {
                     sock_connected = true;
@@ -85,11 +82,18 @@ namespace Trinity.Network.Client
         {
             if (sock_connected)
             {
+                if (threadPoolBoundHandle != null)
+                {
+                    threadPoolBoundHandle.Dispose();
+                    threadPoolBoundHandle = null;
+                }
+
                 if (socket != NativeNetwork.INVALID_SOCKET)
                 {
                     CNativeNetwork.CloseClientSocket(socket);
                     socket = NativeNetwork.INVALID_SOCKET;
                 }
+
                 sock_connected = false;
             }
         }
@@ -104,7 +108,12 @@ namespace Trinity.Network.Client
         {
             if (!this.disposed)
             {
-                Close();
+                if (disposing)
+                {
+                    Close();
+                }
+
+                Memory.free(this.intBuff);
                 this.disposed = true;
             }
         }
@@ -112,6 +121,20 @@ namespace Trinity.Network.Client
         ~SynClient()
         {
             Dispose(false);
+        }
+
+        private class SocketSafeHandle : SafeHandleZeroOrMinusOneIsInvalid
+        {
+            public SocketSafeHandle(IntPtr handle)
+                : base(false)
+            {
+                this.SetHandle(handle);
+            }
+
+            protected override bool ReleaseHandle()
+            {
+                throw new InvalidOperationException();
+            }
         }
     }
 }

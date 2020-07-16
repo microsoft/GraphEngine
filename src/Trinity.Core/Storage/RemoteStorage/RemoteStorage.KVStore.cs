@@ -3,66 +3,81 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
-using Trinity;
-using Trinity.Network;
+using System.Threading.Tasks;
 using Trinity.Network.Messaging;
 using Trinity.Core.Lib;
-using System.IO;
-using Trinity.Configuration;
 
 namespace Trinity.Storage
 {
-    public unsafe partial class RemoteStorage : IStorage, IDisposable
+    public partial class RemoteStorage : IStorage, IDisposable
     {
-        public TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff, out ushort cellType)
+        public unsafe Task<LoadCellResponse> LoadCellAsync(long cellId)
         {
             TrinityMessage msg = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC_WITH_RSP, (ushort)RequestType.LoadCellWithType, sizeof(long));
             *(long*)(msg.Buffer + TrinityMessage.Offset) = cellId;
 
-            TrinityResponse response;
             Network.Client.SynClient sc = GetClient();
-            bool sendSuccess = (TrinityErrorCode.E_SUCCESS == sc.SendMessage(msg.Buffer, msg.Size, out response));
-            PutBackClient(sc);
-            msg.Dispose();
+            return sc.SendRecvMessageAsync(msg.Buffer, msg.Size)
+                     .ContinueWith(
+                        t =>
+                        {
+                            var result = t.Result;
+                            bool sendSuccess = (TrinityErrorCode.E_SUCCESS == result.ErrorCode);
+                            PutBackClient(sc);
+                            msg.Dispose();
 
-            int payload_len = response.Size - response.Offset;
-            byte* payload_ptr = response.Buffer + response.Offset;
-            int cell_len = payload_len - sizeof(ushort);
-            cellBuff = new byte[cell_len];
-            var eResult = response.ErrorCode;
-            Memory.Copy(payload_ptr, 0, cellBuff, 0, cell_len);
-            cellType = *(ushort*)(payload_ptr + cell_len);
-            response.Dispose();
-            return sendSuccess ? eResult : TrinityErrorCode.E_NETWORK_SEND_FAILURE;
+                            TrinityResponse response = result.Response;
+                            int payload_len = response.Size - response.Offset;
+                            byte* payload_ptr = response.Buffer + response.Offset;
+                            int cell_len = payload_len - sizeof(ushort);
+                            byte[] cellBuff = new byte[cell_len];
+                            var eResult = response.ErrorCode;
+                            Memory.Copy(payload_ptr, 0, cellBuff, 0, cell_len);
+                            ushort cellType = *(ushort*)(payload_ptr + cell_len);
+                            response.Dispose();
+                            return new LoadCellResponse(
+                                sendSuccess ? eResult : TrinityErrorCode.E_NETWORK_SEND_FAILURE,
+                                cellBuff,
+                                cellType);
+                        },
+                        TaskContinuationOptions.ExecuteSynchronously);
         }
 
-        public TrinityErrorCode LoadCell(long cellId, out byte* cellBuf, out int size, out ushort cellType)
+        public unsafe Task<LoadCellUnsafeResponse> LoadCellUnsafeAsync(long cellId)
         {
             TrinityMessage msg = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC_WITH_RSP, (ushort)RequestType.LoadCellWithType, sizeof(long));
             *(long*)(msg.Buffer + TrinityMessage.Offset) = cellId;
 
-            TrinityResponse response;
             Network.Client.SynClient sc = GetClient();
-            bool sendSuccess = (TrinityErrorCode.E_SUCCESS == sc.SendMessage(msg.Buffer, msg.Size, out response));
-            PutBackClient(sc);
-            msg.Dispose();
 
-            int payload_len = response.Size - response.Offset;
-            byte* payload_ptr = response.Buffer + response.Offset;
-            size = payload_len - sizeof(ushort);
-            cellBuf = (byte*)Memory.malloc((ulong)size);
-            var eResult = response.ErrorCode;
-            Memory.Copy(payload_ptr, 0, cellBuf, 0, size);
-            cellType = *(ushort*)(payload_ptr + size);
-            response.Dispose();
-            return sendSuccess ? eResult : TrinityErrorCode.E_NETWORK_SEND_FAILURE;
+            return sc.SendRecvMessageAsync(msg.Buffer, msg.Size)
+                     .ContinueWith(
+                        t =>
+                        {
+                            var result = t.Result;
+                            bool sendSuccess = (TrinityErrorCode.E_SUCCESS == result.ErrorCode);
+                            PutBackClient(sc);
+                            msg.Dispose();
+
+                            TrinityResponse response = result.Response;
+                            int payload_len = response.Size - response.Offset;
+                            byte* payload_ptr = response.Buffer + response.Offset;
+                            int size = payload_len - sizeof(ushort);
+                            byte* cellBuf = (byte*)Memory.malloc((ulong)size);
+                            var eResult = response.ErrorCode;
+                            Memory.Copy(payload_ptr, 0, cellBuf, 0, size);
+                            ushort cellType = *(ushort*)(payload_ptr + size);
+                            response.Dispose();
+                            return new LoadCellUnsafeResponse(
+                                sendSuccess ? eResult : TrinityErrorCode.E_NETWORK_SEND_FAILURE,
+                                cellBuf,
+                                size,
+                                cellType);
+                        },
+                        TaskContinuationOptions.ExecuteSynchronously);
         }
 
-        public TrinityErrorCode SaveCell(long cell_id, byte* cellBytes, int cellSize, ushort cellType)
+        public unsafe Task<TrinityErrorCode> SaveCellAsync(long cell_id, byte* cellBytes, int cellSize, ushort cellType)
         {
             TrinityMessage msg = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC_WITH_RSP, (ushort)RequestType.SaveCell, cellSize + 14 /*cell_type(2)+ cell_id(8) +cell_size(4)*/);
             byte* p = msg.Buffer + TrinityMessage.Offset;
@@ -77,79 +92,106 @@ namespace Trinity.Storage
 
             Memory.Copy(cellBytes, p, cellSize);
 
-            TrinityResponse response;
             Network.Client.SynClient sc = GetClient();
-            bool sendSuccess = (TrinityErrorCode.E_SUCCESS == sc.SendMessage(msg.Buffer, msg.Size, out response));
-            PutBackClient(sc);
-            msg.Dispose();
+            return sc.SendRecvMessageAsync(msg.Buffer, msg.Size)
+                     .ContinueWith(
+                        t =>
+                        {
+                            var result = t.Result;
+                            bool sendSuccess = (TrinityErrorCode.E_SUCCESS == result.ErrorCode);
+                            PutBackClient(sc);
+                            msg.Dispose();
 
-            var eResult = response.ErrorCode;
-            response.Dispose();
-            return sendSuccess ? eResult : TrinityErrorCode.E_NETWORK_SEND_FAILURE;
+                            TrinityResponse response = result.Response;
+                            var eResult = response.ErrorCode;
+                            response.Dispose();
+                            return sendSuccess ? eResult : TrinityErrorCode.E_NETWORK_SEND_FAILURE;
+                        },
+                        TaskContinuationOptions.ExecuteSynchronously);
         }
 
-        public TrinityErrorCode RemoveCell(long cell_id)
+        public unsafe Task<TrinityErrorCode> RemoveCellAsync(long cell_id)
         {
             TrinityMessage msg = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC_WITH_RSP, (ushort)RequestType.RemoveCell, sizeof(long));
             *(long*)(msg.Buffer + TrinityMessage.Offset) = cell_id;
 
-            TrinityResponse response;
             Network.Client.SynClient sc = GetClient();
-            bool sendSuccess = (TrinityErrorCode.E_SUCCESS == sc.SendMessage(msg.Buffer, msg.Size, out response));
-            PutBackClient(sc);
-            msg.Dispose();
+            return sc.SendRecvMessageAsync(msg.Buffer, msg.Size)
+                     .ContinueWith(
+                        t =>
+                        {
+                            var result = t.Result;
+                            bool sendSuccess = (TrinityErrorCode.E_SUCCESS == result.ErrorCode);
+                            PutBackClient(sc);
+                            msg.Dispose();
 
-            var eResult = response.ErrorCode;
-            response.Dispose();
+                            TrinityResponse response = result.Response;
+                            var eResult = response.ErrorCode;
+                            response.Dispose();
 
-            return sendSuccess ? eResult : TrinityErrorCode.E_NETWORK_SEND_FAILURE;
+                            return sendSuccess ? eResult : TrinityErrorCode.E_NETWORK_SEND_FAILURE;
+                        },
+                        TaskContinuationOptions.ExecuteSynchronously);
         }
 
-        public bool Contains(long cellId)
+        public unsafe Task<bool> ContainsAsync(long cellId)
         {
             TrinityMessage request;
-            TrinityResponse response;
-            TrinityErrorCode eResult;
-            bool contains = false;
-
             request = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC_WITH_RSP, (ushort)RequestType.Contains, sizeof(long));
             *(long*)(request.Buffer + TrinityMessage.Offset) = cellId;
             Network.Client.SynClient sc = GetClient();
-            eResult = sc.SendMessage(request.Buffer, request.Size, out response);
-            PutBackClient(sc);
+            return sc.SendRecvMessageAsync(request.Buffer, request.Size)
+                     .ContinueWith(
+                        t =>
+                        {
+                            var result = t.Result;
+                            PutBackClient(sc);
 
-            if (eResult == TrinityErrorCode.E_SUCCESS)
-            {
-                //returns E_CELL_FOUND or E_CELL_NOTFOUND
-                contains = (response.ErrorCode == TrinityErrorCode.E_CELL_FOUND);
-            }
+                            bool contains = false;
+                            TrinityErrorCode eResult = result.ErrorCode;
+                            TrinityResponse response = result.Response;
 
-            request.Dispose();
-            response.Dispose();
+                            if (eResult == TrinityErrorCode.E_SUCCESS)
+                            {
+                                //returns E_CELL_FOUND or E_CELL_NOTFOUND
+                                contains = (response.ErrorCode == TrinityErrorCode.E_CELL_FOUND);
+                            }
 
-            _error_check(eResult);
-            return contains;
+                            request.Dispose();
+                            response.Dispose();
+
+                            _error_check(eResult);
+                            return contains;
+                        },
+                        TaskContinuationOptions.ExecuteSynchronously);
         }
 
-        public TrinityErrorCode GetCellType(long cellId, out ushort cellType)
+        public unsafe Task<(TrinityErrorCode ErrorCode, ushort CellType)> GetCellTypeAsync(long cellId)
         {
             TrinityMessage msg = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC_WITH_RSP, (ushort)RequestType.GetCellType, sizeof(long));
             *(long*)(msg.Buffer + TrinityMessage.Offset) = cellId;
 
-            TrinityResponse response;
             Network.Client.SynClient sc = GetClient();
-            bool sendSuccess = (TrinityErrorCode.E_SUCCESS == sc.SendMessage(msg.Buffer, msg.Size, out response));
-            PutBackClient(sc);
-            msg.Dispose();
+            return sc.SendRecvMessageAsync(msg.Buffer, msg.Size)
+                     .ContinueWith(
+                        t =>
+                        {
+                            var result = t.Result;
+                            bool sendSuccess = (TrinityErrorCode.E_SUCCESS == result.ErrorCode);
+                            PutBackClient(sc);
+                            msg.Dispose();
 
-            cellType = *(ushort*)(response.Buffer + response.Offset);
-            var eResult = response.ErrorCode;
-            response.Dispose();
+                            TrinityResponse response = result.Response;
+                            ushort cellType = *(ushort*)(response.Buffer + response.Offset);
+                            var eResult = response.ErrorCode;
+                            response.Dispose();
 
-            return sendSuccess ? eResult : TrinityErrorCode.E_NETWORK_SEND_FAILURE;
+                            return (sendSuccess ? eResult : TrinityErrorCode.E_NETWORK_SEND_FAILURE, cellType);
+                        },
+                        TaskContinuationOptions.ExecuteSynchronously);
         }
 
-        public TrinityErrorCode AddCell(long cellId, byte* cellBytes, int cellSize, ushort cellType)
+        public unsafe Task<TrinityErrorCode> AddCellAsync(long cellId, byte* cellBytes, int cellSize, ushort cellType)
         {
             TrinityMessage msg = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC_WITH_RSP, (ushort)RequestType.AddCell, cellSize + 14/*cell_type(2)+ cell_id(8) +cell_size(4)*/);
             byte* p = msg.Buffer + TrinityMessage.Offset;
@@ -165,18 +207,25 @@ namespace Trinity.Storage
 
             Memory.Copy(cellBytes, p, cellSize);
 
-            TrinityResponse response;
             Network.Client.SynClient sc = GetClient();
-            bool sendSuccess = (TrinityErrorCode.E_SUCCESS == sc.SendMessage(msg.Buffer, msg.Size, out response));
-            PutBackClient(sc);
-            msg.Dispose();
+            return sc.SendRecvMessageAsync(msg.Buffer, msg.Size)
+                     .ContinueWith(
+                        t =>
+                        {
+                            var result = t.Result;
+                            bool sendSuccess = (TrinityErrorCode.E_SUCCESS == result.ErrorCode);
+                            PutBackClient(sc);
+                            msg.Dispose();
 
-            var eResult = response.ErrorCode;
-            response.Dispose();
-            return sendSuccess ? eResult : TrinityErrorCode.E_NETWORK_SEND_FAILURE;
+                            TrinityResponse response = result.Response;
+                            var eResult = response.ErrorCode;
+                            response.Dispose();
+                            return sendSuccess ? eResult : TrinityErrorCode.E_NETWORK_SEND_FAILURE;
+                        },
+                        TaskContinuationOptions.ExecuteSynchronously);
         }
 
-        public TrinityErrorCode UpdateCell(long cellId, byte* cellPtr, int length)
+        public unsafe Task<TrinityErrorCode> UpdateCellAsync(long cellId, byte* cellPtr, int length)
         {
             TrinityMessage msg = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC_WITH_RSP, (ushort)RequestType.UpdateCell, length + 12/*cell_id(8) +cell_size(4)*/);
             byte* p = msg.Buffer + TrinityMessage.Offset;
@@ -189,15 +238,22 @@ namespace Trinity.Storage
 
             Memory.Copy(cellPtr, p, length);
 
-            TrinityResponse response;
             Network.Client.SynClient sc = GetClient();
-            bool sendSuccess = (TrinityErrorCode.E_SUCCESS == sc.SendMessage(msg.Buffer, msg.Size, out response));
-            PutBackClient(sc);
-            msg.Dispose();
+            return sc.SendRecvMessageAsync(msg.Buffer, msg.Size)
+                     .ContinueWith(
+                        t =>
+                        {
+                            var result = t.Result;
+                            bool sendSuccess = (TrinityErrorCode.E_SUCCESS == result.ErrorCode);
+                            PutBackClient(sc);
+                            msg.Dispose();
 
-            var eResult = response.ErrorCode;
-            response.Dispose();
-            return sendSuccess ? eResult : TrinityErrorCode.E_NETWORK_SEND_FAILURE;
+                            TrinityResponse response = result.Response;
+                            var eResult = response.ErrorCode;
+                            response.Dispose();
+                            return sendSuccess ? eResult : TrinityErrorCode.E_NETWORK_SEND_FAILURE;
+                        },
+                        TaskContinuationOptions.ExecuteSynchronously);
         }
     }
 }

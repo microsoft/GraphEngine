@@ -4,18 +4,10 @@
 //
 //#define _TWO_PHASE_CELL_MANIPULATION_
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Net;
-
-using Trinity;
 using System.Runtime.CompilerServices;
-using Trinity.Core.Lib;
+using System.Threading.Tasks;
 using Trinity.Configuration;
+using Trinity.Core.Lib;
 
 namespace Trinity.Storage
 {
@@ -120,14 +112,36 @@ namespace Trinity.Storage
         /// </summary>
         /// <param name="cellId">A 64-bit cell Id.</param>
         /// <param name="buff">A memory buffer that contains the cell content.</param>
+        /// <param name="cellType">Indicates the cell type.</param>
+        /// <returns><c>TrinityErrorCode.E_SUCCESS</c> if saving succeeds; otherwise, an error code.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public TrinityErrorCode SaveCell(long cellId, byte[] buff, ushort cellType)
+        {
+            fixed (byte* p = buff)
+            {
+                return SaveCell(cellId, p, buff.Length, cellType);
+            }
+        }
+
+        /// <summary>
+        /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
+        /// </summary>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="buff">A memory buffer that contains the cell content.</param>
         /// <param name="cellSize">The size of the cell.</param>
         /// <param name="cellType">Indicates the cell type.</param>
         /// <returns><c>TrinityErrorCode.E_SUCCESS</c> if saving succeeds; otherwise, an error code.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode SaveCell(long cellId, byte* buff, int cellSize, ushort cellType)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CSaveCell(cellId, buff, cellSize, cellType);
+            TrinityErrorCode eResult = CLocalMemoryStorage.CSaveCell(cellId, buff, cellSize, cellType);
             return eResult;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Task<TrinityErrorCode> SaveCellAsync(long cellId, byte* buff, int cellSize, ushort cellType)
+        {
+            return Task.FromResult(SaveCell(cellId, buff, cellSize, cellType));
         }
 
         /// <summary>
@@ -141,8 +155,14 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode AddCell(long cellId, byte* buff, int cellSize, ushort cellType)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CAddCell(cellId, buff, cellSize, cellType);
+            TrinityErrorCode eResult = CLocalMemoryStorage.CAddCell(cellId, buff, cellSize, cellType);
             return eResult;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Task<TrinityErrorCode> AddCellAsync(long cellId, byte* buff, int cellSize, ushort cellType)
+        {
+            return Task.FromResult(AddCell(cellId, buff, cellSize, cellType));
         }
 
         /// <summary>
@@ -155,10 +175,15 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode UpdateCell(long cellId, byte* buff, int cellSize)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CUpdateCell(cellId, buff, cellSize);
+            TrinityErrorCode eResult = CLocalMemoryStorage.CUpdateCell(cellId, buff, cellSize);
             return eResult;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Task<TrinityErrorCode> UpdateCellAsync(long cellId, byte* buff, int cellSize)
+        {
+            return Task.FromResult(UpdateCell(cellId, buff, cellSize));
+        }
 
         /// <summary>
         /// Loads the bytes of the cell with the specified cell Id.
@@ -168,21 +193,29 @@ namespace Trinity.Storage
         /// <param name="cellType">The type of the cell, represented with a 16-bit unsigned integer.</param>
         /// <returns>A Trinity error code. Possible values are E_SUCCESS and E_NOT_FOUND.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff, out ushort cellType)
+        public LoadCellResponse LoadCell(long cellId)
         {
+            byte[] cellBuff;
+            ushort cellType;
             int index, cellSize;
             byte* cellPtr = null;
-            TrinityErrorCode eResult= CLocalMemoryStorage.CGetLockedCellInfo4CellAccessor(cellId, out cellSize, out cellType, out cellPtr, out index);
+            TrinityErrorCode eResult = CLocalMemoryStorage.CGetLockedCellInfo4CellAccessor(cellId, out cellSize, out cellType, out cellPtr, out index);
             if (eResult == TrinityErrorCode.E_CELL_NOT_FOUND)
             {
-                cellBuff = new byte[0];
+                cellBuff = Array.Empty<byte>();
                 cellType = StorageConfig.c_UndefinedCellType;
-                return eResult;
+                return new LoadCellResponse(eResult, cellBuff, cellType);
             }
             cellBuff = new byte[cellSize];
             Memory.Copy(cellPtr, 0, cellBuff, 0, cellSize);
             CLocalMemoryStorage.CReleaseCellLock(cellId, index);
-            return TrinityErrorCode.E_SUCCESS;
+            return new LoadCellResponse(TrinityErrorCode.E_SUCCESS, cellBuff, cellType);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Task<LoadCellResponse> LoadCellAsync(long cellId)
+        {
+            return Task.FromResult(LoadCell(cellId));
         }
 
         /// <summary>
@@ -193,22 +226,31 @@ namespace Trinity.Storage
         /// <param name="cellType">The type of the cell, represented with a 16-bit unsigned integer.</param>
         /// <returns>A Trinity error code. Possible values are E_SUCCESS and E_NOT_FOUND.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TrinityErrorCode LoadCell(long cellId, out byte* cellBuff, out int size, out ushort cellType)
+        public LoadCellUnsafeResponse LoadCellUnsafe(long cellId)
         {
+            byte* cellBuff;
+            int size;
+            ushort cellType;
             int index;
             byte* cellPtr = null;
-            TrinityErrorCode eResult= CLocalMemoryStorage.CGetLockedCellInfo4CellAccessor(cellId, out size, out cellType, out cellPtr, out index);
+            TrinityErrorCode eResult = CLocalMemoryStorage.CGetLockedCellInfo4CellAccessor(cellId, out size, out cellType, out cellPtr, out index);
             if (eResult == TrinityErrorCode.E_CELL_NOT_FOUND)
             {
                 cellBuff = null;
                 size = -1;
                 cellType = StorageConfig.c_UndefinedCellType;
-                return eResult;
+                return new LoadCellUnsafeResponse(eResult, cellBuff, size, cellType);
             }
             cellBuff = (byte*)Memory.malloc((ulong)size);
             Memory.Copy(cellPtr, 0, cellBuff, 0, size);
             CLocalMemoryStorage.CReleaseCellLock(cellId, index);
-            return TrinityErrorCode.E_SUCCESS;
+            return new LoadCellUnsafeResponse(TrinityErrorCode.E_SUCCESS, cellBuff, size, cellType);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Task<LoadCellUnsafeResponse> LoadCellUnsafeAsync(long cellId)
+        {
+            return Task.FromResult(LoadCellUnsafe(cellId));
         }
 
         /// <summary>
@@ -221,6 +263,12 @@ namespace Trinity.Storage
         {
             TrinityErrorCode eResult = CLocalMemoryStorage.CRemoveCell(cellId);
             return eResult;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Task<TrinityErrorCode> RemoveCellAsync(long cellId)
+        {
+            return Task.FromResult(RemoveCell(cellId));
         }
 
         /// <summary>
@@ -236,6 +284,13 @@ namespace Trinity.Storage
             return eResult;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Task<(TrinityErrorCode ErrorCode, ushort CellType)> GetCellTypeAsync(long cellId)
+        {
+            TrinityErrorCode eResult = GetCellType(cellId, out ushort cellType);
+            return Task.FromResult((eResult, cellType));
+        }
+
         /// <summary>
         /// Determines whether there is a cell with the specified cell Id in Trinity key-value store.
         /// </summary>
@@ -244,7 +299,7 @@ namespace Trinity.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(long cellId)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CContains(cellId);
+            TrinityErrorCode eResult = CLocalMemoryStorage.CContains(cellId);
             switch (eResult)
             {
                 case TrinityErrorCode.E_CELL_FOUND:
@@ -255,6 +310,12 @@ namespace Trinity.Storage
                 default:
                     return false;
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Task<bool> ContainsAsync(long cellId)
+        {
+            return Task.FromResult(Contains(cellId));
         }
 
         /// <summary>

@@ -105,19 +105,19 @@ namespace FanoutSearch
         }
 
         #region Handlers
-        public override void GetNodesInfoHandler(GetNodesInfoRequest request, System.Net.HttpListenerResponse response)
+        public override async Task GetNodesInfoHandlerAsync(GetNodesInfoRequest request, System.Net.HttpListenerResponse response)
         {
             var writers = Enumerable.Range(0, Global.CloudStorage.PartitionCount).Select(i => new GetNodesInfoRequestWriter(fields: new List<string> {  "type_object_name" })).ToArray();
 
             foreach (var id in request.ids)
                 writers[Global.CloudStorage.GetPartitionIdByCellId(id)].ids.Add(id);
 
-            var readers = writers.Select((writer, server) => _GetNodesInfo_impl(server, writer)).ToArray();
+            var readers = writers.Select(async (writer, server) => await _GetNodesInfo_implAsync(server, writer)).ToArray();
 
             var results = readers.Aggregate(
                 (IEnumerable<NodeInfo>)new List<NodeInfo>(),
                 (_, reader) =>
-                    Enumerable.Concat(_, reader.infoList.Select(infoAccessor => (NodeInfo)infoAccessor)));
+                    Enumerable.Concat(_, reader.Result.infoList.Select(infoAccessor => (NodeInfo)infoAccessor)));
 
             string result_string = "[" + string.Join(",", results.Select(_ =>
                                             string.Format(CultureInfo.InvariantCulture, @"{{""CellId"": {0}, ""type_object_name"": {1}}}",
@@ -130,7 +130,7 @@ namespace FanoutSearch
             }
         }
 
-        public override void JsonQueryHandler(HttpListenerRequest request, HttpListenerResponse response)
+        public override Task JsonQueryHandlerAsync(HttpListenerRequest request, HttpListenerResponse response)
         {
             const string queryPath_prefix = "/JsonQuery";
             string       queryPath;
@@ -147,6 +147,8 @@ namespace FanoutSearch
                 }
 
                 _WriteResults(response, queryResultPaths);
+
+                return Task.CompletedTask;
             }
             catch (FanoutSearch.FanoutSearchQueryTimeoutException timeout)
             {
@@ -163,7 +165,7 @@ namespace FanoutSearch
             }
         }
 
-        public override void LambdaQueryHandler(LambdaQueryInput request, HttpListenerResponse response)
+        public override Task LambdaQueryHandlerAsync(LambdaQueryInput request, HttpListenerResponse response)
         {
             Log.WriteLine(LogLevel.Info, "Processing lambda query.");
 
@@ -176,6 +178,7 @@ namespace FanoutSearch
             {
                 var queryResultPaths = _LambdaQuery_impl(request.lambda);
                 _WriteResults(response, queryResultPaths);
+                return Task.CompletedTask;
             }
             catch (FanoutSearch.FanoutSearchQueryTimeoutException timeout)
             {

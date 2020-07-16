@@ -28,10 +28,10 @@ namespace Trinity.DynamicCluster.Storage
     /// </summary>
     public partial class Partition : IStorage, IEnumerable<IStorage>
     {
-        internal unsafe delegate void SendMessageFunc(byte* message, int size);
-        internal unsafe delegate void SendMessageMultiFunc(byte** message, int* sizes, int count);
-        internal unsafe delegate TrinityResponse SendMessageWithRspFunc(byte* message, int size);
-        internal unsafe delegate TrinityResponse SendMessageWithRspMultiFunc(byte** message, int* sizes, int count);
+        internal unsafe delegate Task SendMessageFunc(byte* message, int size);
+        internal unsafe delegate Task SendMessageMultiFunc(byte** message, int* sizes, int count);
+        internal unsafe delegate Task<TrinityResponse> SendMessageWithRspFunc(byte* message, int size);
+        internal unsafe delegate Task<TrinityResponse> SendMessageWithRspMultiFunc(byte** message, int* sizes, int count);
 
         private ImmutableDictionary<IStorage, IEnumerable<Chunk>> m_storages = null;
         private object                                            m_syncroot = new object();
@@ -53,31 +53,31 @@ namespace Trinity.DynamicCluster.Storage
             m_smrfuncs  = new SendMessageWithRspFunc[(int)ProtocolSemantic.ProtocolSemanticEND];
             m_smrmfuncs = new SendMessageWithRspMultiFunc[(int)ProtocolSemantic.ProtocolSemanticEND];
 
-            m_smfuncs[(int)ProtocolSemantic.FirstAvailable] = (msg, size) => FirstAvailable(ep => ep.SendMessage(msg, size));
-            m_smfuncs[(int)ProtocolSemantic.RoundRobin] = (msg, size) => RoundRobin(ep => ep.SendMessage(msg, size));
-            m_smfuncs[(int)ProtocolSemantic.UniformRandom] = (msg, size) => UniformRandom(ep => ep.SendMessage(msg, size));
-            m_smfuncs[(int)ProtocolSemantic.Broadcast] = (msg, size) => Broadcast(ep => ep.SendMessage(msg, size));
-            m_smfuncs[(int)ProtocolSemantic.Vote] = (msg, size) => Vote(ep => ep.SendMessage(msg, size), m_storages.Count);
+            m_smfuncs[(int)ProtocolSemantic.FirstAvailable] = (msg, size) => FirstAvailable(ep => ep.SendMessageAsync(msg, size));
+            m_smfuncs[(int)ProtocolSemantic.RoundRobin] = (msg, size) => RoundRobin(ep => ep.SendMessageAsync(msg, size));
+            m_smfuncs[(int)ProtocolSemantic.UniformRandom] = (msg, size) => UniformRandom(ep => ep.SendMessageAsync(msg, size));
+            m_smfuncs[(int)ProtocolSemantic.Broadcast] = (msg, size) => Broadcast(ep => ep.SendMessageAsync(msg, size));
+            m_smfuncs[(int)ProtocolSemantic.Vote] = (msg, size) => Vote(ep => ep.SendMessageAsync(msg, size), m_storages.Count);
 
-            m_smrfuncs[(int)ProtocolSemantic.FirstAvailable] = (msg, size) => FirstAvailable(ep => { ep.SendMessage(msg, size, out var rsp); return rsp; });
-            m_smrfuncs[(int)ProtocolSemantic.RoundRobin] = (msg, size) => RoundRobin(ep => { ep.SendMessage(msg, size, out var rsp); return rsp; });
-            m_smrfuncs[(int)ProtocolSemantic.UniformRandom] = (msg, size) => UniformRandom(ep => { ep.SendMessage(msg, size, out var rsp); return rsp; });
+            m_smrfuncs[(int)ProtocolSemantic.FirstAvailable] = (msg, size) => FirstAvailable(ep => ep.SendRecvMessageAsync(msg, size));
+            m_smrfuncs[(int)ProtocolSemantic.RoundRobin] = (msg, size) => RoundRobin(ep => ep.SendRecvMessageAsync(msg, size));
+            m_smrfuncs[(int)ProtocolSemantic.UniformRandom] = (msg, size) => UniformRandom(ep => ep.SendRecvMessageAsync(msg, size));
             //BROADCAST WITH RSP NOT SUPPORTED -- USE THE API METHOD INSTEAD
             //m_smrfuncs[(int)ProtocolSemantic.Broadcast] = (msg, size) => Broadcast(ep => { ep.SendMessage(msg, size, out var rsp); return rsp; });
-            m_smrfuncs[(int)ProtocolSemantic.Vote] = (msg, size) => Vote(ep => { ep.SendMessage(msg, size, out var rsp); return rsp; }, m_storages.Count);
+            m_smrfuncs[(int)ProtocolSemantic.Vote] = (msg, size) => Vote(ep => ep.SendRecvMessageAsync(msg, size), m_storages.Count);
 
-            m_smmfuncs[(int)ProtocolSemantic.FirstAvailable] = (msg, size, count) => FirstAvailable(ep => ep.SendMessage(msg, size, count));
-            m_smmfuncs[(int)ProtocolSemantic.RoundRobin] = (msg, size, count) => RoundRobin(ep => ep.SendMessage(msg, size, count));
-            m_smmfuncs[(int)ProtocolSemantic.UniformRandom] = (msg, size, count) => UniformRandom(ep => ep.SendMessage(msg, size, count));
-            m_smmfuncs[(int)ProtocolSemantic.Broadcast] = (msg, size, count) => Broadcast(ep => ep.SendMessage(msg, size, count));
-            m_smmfuncs[(int)ProtocolSemantic.Vote] = (msg, size, count) => Vote(ep => ep.SendMessage(msg, size, count), m_storages.Count);
+            m_smmfuncs[(int)ProtocolSemantic.FirstAvailable] = (msg, size, count) => FirstAvailable(ep => ep.SendMessageAsync(msg, size, count));
+            m_smmfuncs[(int)ProtocolSemantic.RoundRobin] = (msg, size, count) => RoundRobin(ep => ep.SendMessageAsync(msg, size, count));
+            m_smmfuncs[(int)ProtocolSemantic.UniformRandom] = (msg, size, count) => UniformRandom(ep => ep.SendMessageAsync(msg, size, count));
+            m_smmfuncs[(int)ProtocolSemantic.Broadcast] = (msg, size, count) => Broadcast(ep => ep.SendMessageAsync(msg, size, count));
+            m_smmfuncs[(int)ProtocolSemantic.Vote] = (msg, size, count) => Vote(ep => ep.SendMessageAsync(msg, size, count), m_storages.Count);
 
-            m_smrmfuncs[(int)ProtocolSemantic.FirstAvailable] = (msg, size, count) => FirstAvailable(ep => { ep.SendMessage(msg, size, count, out var rsp); return rsp; });
-            m_smrmfuncs[(int)ProtocolSemantic.RoundRobin] = (msg, size, count) => RoundRobin(ep => { ep.SendMessage(msg, size, count, out var rsp); return rsp; });
-            m_smrmfuncs[(int)ProtocolSemantic.UniformRandom] = (msg, size, count) => UniformRandom(ep => { ep.SendMessage(msg, size, count, out var rsp); return rsp; });
+            m_smrmfuncs[(int)ProtocolSemantic.FirstAvailable] = (msg, size, count) => FirstAvailable(ep => ep.SendRecvMessageAsync(msg, size, count));
+            m_smrmfuncs[(int)ProtocolSemantic.RoundRobin] = (msg, size, count) => RoundRobin(ep => ep.SendRecvMessageAsync(msg, size, count));
+            m_smrmfuncs[(int)ProtocolSemantic.UniformRandom] = (msg, size, count) => UniformRandom(ep => ep.SendRecvMessageAsync(msg, size, count));
             //BROADCAST WITH RSP NOT SUPPORTED -- USE THE API METHOD INSTEAD
             //m_smrfuncs[(int)ProtocolSemantic.Broadcast] = (msg, size, count) => Broadcast(ep => { ep.SendMessage(msg, size, out var rsp); return rsp; });
-            m_smrmfuncs[(int)ProtocolSemantic.Vote] = (msg, size, count) => Vote(ep => { ep.SendMessage(msg, size, count, out var rsp); return rsp; }, m_storages.Count);
+            m_smrmfuncs[(int)ProtocolSemantic.Vote] = (msg, size, count) => Vote(ep => ep.SendRecvMessageAsync(msg, size, count), m_storages.Count);
         }
 
         internal TrinityErrorCode Mount(IStorage storage, IEnumerable<Chunk> cc)

@@ -4,21 +4,12 @@
 //
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
-
-using Trinity;
+using System.Threading.Tasks;
 using Trinity.Core.Lib;
-using Trinity.Utilities;
-using Trinity.Network.Messaging;
-using System.Reflection;
-using Trinity.Storage;
 using Trinity.Diagnostics;
-using Trinity.Network.Sockets;
 using Trinity.FaultTolerance;
+using Trinity.Network.Sockets;
+using Trinity.Storage;
 
 namespace Trinity.Network.Messaging
 {
@@ -58,6 +49,7 @@ namespace Trinity.Network.Messaging
                             Memory.memcpy(args.Response.Buffer + TrinityMessage.Offset, cellPtr, (ulong)cellSize);
                         }
                         CLocalMemoryStorage.CReleaseCellLock(cellId, index);
+                        return Task.CompletedTask;
                     }
                 });
                 #endregion
@@ -84,6 +76,7 @@ namespace Trinity.Network.Messaging
                             *(ushort*)(args.Response.Buffer + TrinityMessage.Offset + cellSize) = cellType;
                         }
                         CLocalMemoryStorage.CReleaseCellLock(cellId, index);
+                        return Task.CompletedTask;
                     }
                 });
                 #endregion
@@ -94,8 +87,14 @@ namespace Trinity.Network.Messaging
                     Id = (ushort)RequestType.RemoveCell,
                     Handler = delegate(SynReqRspArgs args)
                     {
-                        var eResult = Global.LocalStorage.RemoveCell(*(long*)(args.Buffer + args.Offset));
-                        args.Response = new TrinityMessage(eResult);
+                        return Global.LocalStorage.RemoveCellAsync(*(long*)(args.Buffer + args.Offset))
+                                                  .ContinueWith(
+                                                        t =>
+                                                        {
+                                                            var eResult = t.Result;
+                                                            args.Response = new TrinityMessage(eResult);
+                                                        },
+                                                        TaskContinuationOptions.ExecuteSynchronously);
                     }
                 });
                 #endregion
@@ -107,11 +106,18 @@ namespace Trinity.Network.Messaging
                     Handler = delegate(SynReqRspArgs args)
                     {
                         //cell_type(2) + cell_id(8) +cell_size(4) + cell_bytes (8 + 4 +cell_bytes)
-                        var eResult = Global.LocalStorage.SaveCell(*(long*)(args.Buffer + args.Offset + 2),
-                            args.Buffer + args.Offset + 14,
-                            *(int*)(args.Buffer + args.Offset + 10),
-                            *(UInt16*)(args.Buffer + args.Offset));
-                        args.Response = new TrinityMessage(eResult);
+                        return Global.LocalStorage.SaveCellAsync(
+                                                        *(long*)(args.Buffer + args.Offset + 2),
+                                                        args.Buffer + args.Offset + 14,
+                                                        *(int*)(args.Buffer + args.Offset + 10),
+                                                        *(UInt16*)(args.Buffer + args.Offset))
+                                                  .ContinueWith(
+                                                        t =>
+                                                        {
+                                                            var eResult = t.Result;
+                                                            args.Response = new TrinityMessage(eResult);
+                                                        },
+                                                        TaskContinuationOptions.ExecuteSynchronously);
                     }
                 });
                 #endregion
@@ -123,11 +129,18 @@ namespace Trinity.Network.Messaging
                     Handler = delegate(SynReqRspArgs args)
                     {
                         //cell_type(2) + cell_id(8) +cell_size(4) + cell_bytes (8 + 4 +cell_bytes)
-                        var eResult = Global.LocalStorage.AddCell(*(long*)(args.Buffer + args.Offset + 2),
-                            args.Buffer + args.Offset + 14,
-                            *(int*)(args.Buffer + args.Offset + 10),
-                            *(UInt16*)(args.Buffer + args.Offset));
-                        args.Response = new TrinityMessage(eResult);
+                        return Global.LocalStorage.AddCellAsync(
+                                                        *(long*)(args.Buffer + args.Offset + 2),
+                                                        args.Buffer + args.Offset + 14,
+                                                        *(int*)(args.Buffer + args.Offset + 10),
+                                                        *(UInt16*)(args.Buffer + args.Offset))
+                                                  .ContinueWith(
+                                                        t =>
+                                                        {
+                                                            var eResult = t.Result;
+                                                            args.Response = new TrinityMessage(eResult);
+                                                        },
+                                                        TaskContinuationOptions.ExecuteSynchronously);
                     }
                 });
                 #endregion
@@ -139,11 +152,17 @@ namespace Trinity.Network.Messaging
                     Handler = delegate(SynReqRspArgs args)
                     {
                         //cell_id(8) +cell_size(4) + cell_bytes (8 + 4 +cell_bytes)
-                        var eResult = Global.LocalStorage.UpdateCell(*(long*)(args.Buffer + args.Offset),
-                            args.Buffer + args.Offset + 12,
-                            *(int*)(args.Buffer + args.Offset + 8));
-
-                        args.Response = new TrinityMessage(eResult);
+                        return Global.LocalStorage.UpdateCellAsync(
+                                                        *(long*)(args.Buffer + args.Offset),
+                                                        args.Buffer + args.Offset + 12,
+                                                        *(int*)(args.Buffer + args.Offset + 8))
+                                                  .ContinueWith(
+                                                        t =>
+                                                        {
+                                                            var eResult = t.Result;
+                                                            args.Response = new TrinityMessage(eResult);
+                                                        },
+                                                        TaskContinuationOptions.ExecuteSynchronously);
                     }
                 });
                 #endregion
@@ -189,6 +208,8 @@ namespace Trinity.Network.Messaging
                                 p += sizeof(long);
                             }
                         }
+
+                        return Task.CompletedTask;
                     }
                 });
                 #endregion
@@ -200,6 +221,7 @@ namespace Trinity.Network.Messaging
                     Handler = delegate(SynReqRspArgs args)
                     {
                         args.Response = new TrinityMessage(args.Buffer, args.Offset, args.Size);
+                        return Task.CompletedTask;
                     }
                 });
                 #endregion
@@ -211,6 +233,7 @@ namespace Trinity.Network.Messaging
                     Handler = delegate(SynReqRspArgs args)
                     {
                         DefaultFailureHandler.FailureNotificationMessageHandler(ref args);
+                        return Task.CompletedTask;
                     }
                 });
                 #endregion
@@ -234,6 +257,8 @@ namespace Trinity.Network.Messaging
                         sp.cp            += name_str.Length;
                         *sp.ip++          = protocols_str.Length;
                         BitHelper.WriteString(protocols_str, sp.bp);
+
+                        return Task.CompletedTask;
                     }
                 });
                 #endregion
@@ -274,6 +299,7 @@ namespace Trinity.Network.Messaging
                         *rsp_sp.ip++           = asyn_req_id;
                         *rsp_sp.ip++           = asyn_req_rsp_id;
 
+                        return Task.CompletedTask;
                     }
                 });
                 #endregion
@@ -284,14 +310,21 @@ namespace Trinity.Network.Messaging
                     Id = (ushort)RequestType.Contains,
                     Handler = delegate(SynReqRspArgs args)
                     {
-                        if (Global.LocalStorage.Contains(*(long*)(args.Buffer + args.Offset)))
-                        {
-                            args.Response = new TrinityMessage(TrinityErrorCode.E_CELL_FOUND);
-                        }
-                        else
-                        {
-                            args.Response = new TrinityMessage(TrinityErrorCode.E_CELL_NOT_FOUND);
-                        }
+                        return Global.LocalStorage.ContainsAsync(*(long*)(args.Buffer + args.Offset))
+                                                  .ContinueWith(
+                                                        t =>
+                                                        {
+                                                            bool contains = t.Result;
+                                                            if (contains)
+                                                            {
+                                                                args.Response = new TrinityMessage(TrinityErrorCode.E_CELL_FOUND);
+                                                            }
+                                                            else
+                                                            {
+                                                                args.Response = new TrinityMessage(TrinityErrorCode.E_CELL_NOT_FOUND);
+                                                            }
+                                                        },
+                                                        TaskContinuationOptions.ExecuteSynchronously);
                     }
                 });
                 #endregion
@@ -302,10 +335,16 @@ namespace Trinity.Network.Messaging
                     Id = (ushort)RequestType.GetCellType,
                     Handler = delegate(SynReqRspArgs args)
                     {
-                        ushort cellType;
-                        var eResult = Global.LocalStorage.GetCellType(*(long*)(args.Buffer + args.Offset), out cellType);
-                        args.Response = new TrinityMessage(eResult, sizeof(ushort));
-                        *(ushort*)(args.Response.Buffer + TrinityProtocol.MsgHeader) = cellType;
+                        return Global.LocalStorage.GetCellTypeAsync(*(long*)(args.Buffer + args.Offset))
+                                                  .ContinueWith(
+                                                        t =>
+                                                        {
+                                                            var eResult = t.Result.ErrorCode;
+                                                            ushort cellType = t.Result.CellType;
+                                                            args.Response = new TrinityMessage(eResult, sizeof(ushort));
+                                                            *(ushort*)(args.Response.Buffer + TrinityProtocol.MsgHeader) = cellType;
+                                                        },
+                                                        TaskContinuationOptions.ExecuteSynchronously);
                     }
                 });
                 #endregion
@@ -314,11 +353,12 @@ namespace Trinity.Network.Messaging
                 tupleList.Add(new TypeSyncRequestResponseHandlerTuple
                 {
                     Id = (ushort)RequestType.QueryMemoryWorkingSet,
-                    Handler = (args) =>
-                        {
-                            args.Response = new TrinityMessage(TrinityProtocol.MsgHeader + sizeof(long));
-                            *(long*)(args.Response.Buffer + TrinityProtocol.MsgHeader) = PerformanceMonitor.GetMemoryWorkingSet();
-                        }
+                    Handler = delegate(SynReqRspArgs args)
+                    {
+                        args.Response = new TrinityMessage(TrinityProtocol.MsgHeader + sizeof(long));
+                        *(long*)(args.Response.Buffer + TrinityProtocol.MsgHeader) = PerformanceMonitor.GetMemoryWorkingSet();
+                        return Task.CompletedTask;
+                    }
                 });
                 #endregion
 

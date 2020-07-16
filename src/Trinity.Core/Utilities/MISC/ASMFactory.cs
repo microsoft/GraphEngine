@@ -15,7 +15,7 @@ namespace Trinity.Utilities
 {
     internal class ASMFactory
     {
-#if !CORECLR
+#if NETFRAMEWORK
         static ASMFactory()
         {
             Log.WriteLine(LogLevel.Verbose, "ASMFactory", "ASM factory initializing.");

@@ -11,13 +11,14 @@ namespace Trinity.DynamicCluster.Storage
 {
     public partial class Partition
     {
-        public void Vote(Action<IMessagePassingEndpoint> sendFunc, int threshold)
+        public Task Vote(Func<IMessagePassingEndpoint, Task> sendFunc, int threshold)
         {
             var replicas = this.ToList();
-            var tasks = replicas.Select(replica => Task.Run(() => sendFunc(replica)));
-            CollectConsensusResults(tasks, threshold);
+            var tasks = replicas.Select(replica => sendFunc(replica));
+            return CollectConsensusResults(tasks, threshold);
         }
 
+        /*
         public TResponse Vote<TResponse>(Func<IMessagePassingEndpoint, TResponse> sendFunc, int threshold)
             where TResponse : IAccessor, IDisposable
         {
@@ -25,6 +26,7 @@ namespace Trinity.DynamicCluster.Storage
             var tasks = replicas.Select(replica => Task.Run(() => sendFunc(replica)));
             return CollectConsensusResults(tasks, threshold).Result;
         }
+        */
 
         public async Task<TResponse> Vote<TResponse>(Func<IMessagePassingEndpoint, Task<TResponse>> sendFunc, int threshold)
             where TResponse : IAccessor, IDisposable
@@ -59,13 +61,13 @@ namespace Trinity.DynamicCluster.Storage
            .OrderByDescending(_ => _.Item2)
            .FirstOrDefault();
 
-        private void CollectConsensusResults(IEnumerable<Task> tasks, int threshold)
+        private async Task CollectConsensusResults(IEnumerable<Task> tasks, int threshold)
         {
             var task_array = Utils.SortByCompletion(tasks);
             int wait_idx = threshold - 1;
             foreach (var t in task_array.Skip(threshold - 1))
             {
-                t.Wait();
+                await t;
                 if (task_array.Take(wait_idx + 1).Count(_ => _.IsCompleted) >= threshold) return;
                 ++wait_idx;
             }

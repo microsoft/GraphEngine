@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net461</TargetFrameworks>
     <RootNamespace>Trinity.Azure.Storage</RootNamespace>
     <AssemblyName>Trinity.Azure.Storage</AssemblyName>
     <OutputTypeEx>library</OutputTypeEx>
@@ -36,11 +36,6 @@
     <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/Microsoft/GraphEngine</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-  </PropertyGroup>
-
-  <!-- Conditional compilation flags -->
-  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
-    <DefineConstants>CORECLR</DefineConstants>
   </PropertyGroup>
 
   <!-- Package dependencies -->

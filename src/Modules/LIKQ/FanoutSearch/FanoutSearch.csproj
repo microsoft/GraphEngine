@@ -20,10 +20,6 @@
     <RootNamespace>GraphEngine.LIKQ</RootNamespace>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0' OR '$(TargetFramework)'=='netcoreapp3.1'">
-    <DefineConstants>NETSTANDARD2_0</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
     <TslCodeGen Include="TSL\Core.tsl"></TslCodeGen>
     <TslCodeGen Include="TSL\Module.tsl"></TslCodeGen>

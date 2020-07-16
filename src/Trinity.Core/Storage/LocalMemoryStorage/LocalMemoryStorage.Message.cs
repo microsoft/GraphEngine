@@ -2,22 +2,13 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Net;
-
-using Trinity;
-using Trinity.Network.Messaging;
-using Trinity.Network.Sockets;
-using Trinity.Core.Lib;
-using Trinity.Network;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using Trinity.Core.Lib;
+using Trinity.Network;
+using Trinity.Network.Messaging;
 
 namespace Trinity.Storage
 {
@@ -27,7 +18,7 @@ namespace Trinity.Storage
         private static extern void LocalSendMessage(MessageBuff* lpmsg);
 
         /// <inheritdoc/>
-        public void SendMessage(byte* message, int size)
+        public Task SendMessageAsync(byte* message, int size)
         {
             MessageBuff buff = new MessageBuff();
             buff.Buffer = message + TrinityProtocol.SocketMsgHeader;
@@ -46,10 +37,12 @@ namespace Trinity.Storage
             {
                 throw new IOException("Local message handler throws an exception.");
             }
+
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public void SendMessage(byte* message, int size, out TrinityResponse response)
+        public Task<TrinityResponse> SendRecvMessageAsync(byte* message, int size)
         {
             MessageBuff buff = new MessageBuff();
             buff.Buffer = message + TrinityProtocol.SocketMsgHeader;
@@ -65,28 +58,26 @@ namespace Trinity.Storage
             else
             {
                 TrinityMessage rsp_message = new TrinityMessage(buff.Buffer, (int)buff.Length);
-                response = new TrinityResponse(rsp_message);
+                return Task.FromResult(new TrinityResponse(rsp_message));
             }
         }
 
         /// <inheritdoc/>
-        public void SendMessage(byte** message, int* sizes, int count)
+        public Task SendMessageAsync(byte** message, int* sizes, int count)
         {
             byte* buf;
             int len;
             _serialize(message, sizes, count, out buf, out len);
-            SendMessage(buf, len);
-            CMemory.C_free(buf);
+            return SendMessageAsync(buf, len).ContinueWith(t => CMemory.C_free(buf), TaskContinuationOptions.ExecuteSynchronously);
         }
 
         /// <inheritdoc/>
-        public void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
+        public Task<TrinityResponse> SendRecvMessageAsync(byte** message, int* sizes, int count)
         {
             byte* buf;
             int len;
             _serialize(message, sizes, count, out buf, out len);
-            SendMessage(buf, len, out response);
-            CMemory.C_free(buf);
+            return SendRecvMessageAsync(buf, len).ContinueWith(t => { CMemory.C_free(buf); return t.Result; }, TaskContinuationOptions.ExecuteSynchronously);
         }
 
         /// <inheritdoc/>

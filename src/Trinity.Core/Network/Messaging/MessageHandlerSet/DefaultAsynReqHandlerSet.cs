@@ -2,15 +2,8 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Trinity;
-using Trinity.Core.Lib;
-using Trinity.Utilities; using Trinity.Diagnostics;
-using Trinity.Network.Messaging;
+using System.Threading.Tasks;
 using Trinity.Network.Sockets;
 
 namespace Trinity.Network.Messaging
@@ -36,8 +29,7 @@ namespace Trinity.Network.Messaging
                     Id = (ushort)RequestType.Shutdown,
                     Handler = delegate(AsynReqArgs user_token)
                     {
-                        System.Threading.Thread.Sleep(1000);
-                        Global.Exit(0);
+                        return Task.Delay(1000).ContinueWith(t => Global.Exit(0));
                     }
                 });
 

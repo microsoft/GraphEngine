@@ -422,12 +422,37 @@ namespace Trinity
 
                     closesocket((SOCKET)socket);
                     return false;
+                }
+                        buf += bytesSent;
+                        len -= bytesSent;
+            } while (len > 0);
+            return true;
         }
-                buf += bytesSent;
-                len -= bytesSent;
-    } while (len > 0);
-    return true;
-}
+
+#if defined(TRINITY_PLATFORM_WINDOWS)
+        int begin_client_send(uint64_t socket, char* buf, int32_t len, OVERLAPPED* overlapped)
+        {
+            WSABUF buffer;
+            buffer.buf = buf;
+            buffer.len = len;
+
+            int statusCode = WSASend((SOCKET)socket, &buffer, 1, NULL, 0, overlapped, NULL);
+
+            if (SOCKET_ERROR == statusCode)
+            {
+                int error_code = WSAGetLastError();
+                if (WSA_IO_PENDING != error_code)
+                {
+                    Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Errors occur during network send. Error code = {0}, Thread Id = {1}", error_code, std::this_thread::get_id());
+                    closesocket((SOCKET)socket);
+                }
+
+                return error_code;
+            }
+
+            return ERROR_SUCCESS;
+        }
+#endif
 
         bool client_send_multi(uint64_t socket, char** bufs, int32_t* lens, int32_t cnt)
         {
@@ -439,6 +464,36 @@ namespace Trinity
             }
             return true;
         }
+
+#if defined(TRINITY_PLATFORM_WINDOWS)
+        int begin_client_send_multi(uint64_t socket, char** bufs, int32_t* lens, int32_t cnt, OVERLAPPED* overlapped)
+        {
+            WSABUF* pBuffers = new WSABUF[cnt];
+            for (int32_t i = 0; i < cnt; i++)
+            {
+                pBuffers[i].buf = *bufs;
+                pBuffers[i].len = *lens;
+                bufs++;
+                lens++;
+            }
+
+            int statusCode = WSASend((SOCKET)socket, pBuffers, cnt, NULL, 0, overlapped, NULL);
+
+            if (SOCKET_ERROR == statusCode)
+            {
+                int error_code = WSAGetLastError();
+                if (WSA_IO_PENDING != error_code)
+                {
+                    Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Errors occur during network send. Error code = {0}, Thread Id = {1}", error_code, std::this_thread::get_id());
+                    closesocket((SOCKET)socket);
+                }
+
+                return error_code;
+            }
+
+            return ERROR_SUCCESS;
+        }
+#endif
 
         bool _do_recv(SOCKET socket, char* buf, int32_t len)
         {
@@ -467,6 +522,32 @@ namespace Trinity
             return true;
         }
 
+#if defined(TRINITY_PLATFORM_WINDOWS)
+        int _begin_recv(SOCKET socket, char* buf, int32_t len, WSAOVERLAPPED* overlapped)
+        {
+            WSABUF buffer;
+            buffer.buf = buf;
+            buffer.len = len;
+            DWORD flags = 0;
+
+            int statusCode = WSARecv(socket, &buffer, 1, NULL, &flags, overlapped, NULL);
+
+            if (SOCKET_ERROR == statusCode)
+            {
+                int error_code = WSAGetLastError();
+                if (WSA_IO_PENDING != error_code)
+                {
+                    Diagnostics::WriteLine(Diagnostics::LogLevel::Error, "ClientSocket: Errors occur during network recv. Error code = {0}, Thread Id = {1}", error_code, std::this_thread::get_id());
+                    closesocket((SOCKET)socket);
+                }
+
+                return error_code;
+            }
+
+            return ERROR_SUCCESS;
+        }
+#endif
+
         TrinityErrorCode client_recv(uint64_t _socket, OUT char* & buf, OUT int32_t & len)
         {
             SOCKET socket = (SOCKET)_socket;
@@ -492,6 +573,13 @@ namespace Trinity
 
             return TrinityErrorCode::E_SUCCESS;
         }
+
+#if defined(TRINITY_PLATFORM_WINDOWS)
+        int begin_client_recv(uint64_t socket, char* buf, int32_t len, OVERLAPPED* overlapped)
+        {
+            return _begin_recv((SOCKET)socket, buf, len, overlapped);
+        }
+#endif
 
         TrinityErrorCode client_wait(uint64_t _socket)
         {

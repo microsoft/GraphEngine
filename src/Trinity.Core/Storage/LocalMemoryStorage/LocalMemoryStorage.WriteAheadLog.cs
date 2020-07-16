@@ -445,7 +445,7 @@ namespace Trinity.Storage
                                 goto load_fail;
                             }
 
-                            this.SaveCell(record_header.CELL_ID, p_buff, record_header.CONTENT_LEN, record_header.CELL_TYPE);
+                            this.SaveCellAsync(record_header.CELL_ID, p_buff, record_header.CONTENT_LEN, record_header.CELL_TYPE).Wait();
                         }
                     }
                     else /* if (record_header.CONTENT_LEN < 0) */
@@ -455,7 +455,7 @@ namespace Trinity.Storage
                             Log.WriteLine(LogLevel.Fatal, "Checksum mismatch for log record #{0}", record_cnt);
                             goto load_fail;
                         }
-                        this.RemoveCell(record_header.CELL_ID);
+                        this.RemoveCellAsync(record_header.CELL_ID).Wait();
                     }
 
                     ++record_cnt;
@@ -575,7 +575,7 @@ load_fail:
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TrinityErrorCode SaveCell(CellAccessOptions writeAheadLogOptions, long cellId, byte* buff, int cellSize, ushort cellType)
         {
-            TrinityErrorCode eResult= CLocalMemoryStorage.CLoggedSaveCell(cellId, buff, cellSize, cellType, writeAheadLogOptions);
+            TrinityErrorCode eResult = CLocalMemoryStorage.CLoggedSaveCell(cellId, buff, cellSize, cellType, writeAheadLogOptions);
             return eResult;
         }
 

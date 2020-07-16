@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Runtime;
-#if !CORECLR
+#if NETFRAMEWORK
 using System.Runtime.ConstrainedExecution;
 #endif
 
@@ -35,7 +35,7 @@ namespace Trinity.Core.Lib
             }
         }
 
-#if !CORECLR
+#if NETFRAMEWORK
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
 #endif
         internal static void UnLock(ref int spinlock)

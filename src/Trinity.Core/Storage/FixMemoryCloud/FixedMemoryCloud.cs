@@ -25,7 +25,7 @@ namespace Trinity.Storage
     /// Provides methods for interacting with the distributed memory store.
     /// </summary>
     [ExtensionPriority(-100)]
-    public unsafe partial class FixedMemoryCloud : MemoryCloud
+    public partial class FixedMemoryCloud : MemoryCloud
     {
         private int server_count = -1;
         private int my_partition_id = -1;
@@ -172,20 +172,17 @@ namespace Trinity.Storage
 
         private void CheckServerProtocolSignatures(RemoteStorage storage)
         {
-            Task.Run(() =>
-            {
-                Log.WriteLine("Checking {0}-Server protocol signatures...", cluster_config.RunningMode);
-                CheckProtocolSignatures_impl(storage, cluster_config.RunningMode, RunningMode.Server);
-            });
+            Log.WriteLine("Checking {0}-Server protocol signatures...", cluster_config.RunningMode);
+            Task fireAndForget = CheckProtocolSignatures_impl_Async(storage, cluster_config.RunningMode, RunningMode.Server);
         }
 
-        private void CheckProxySignatures(IEnumerable<RemoteStorage> proxy_list)
+        private Task CheckProxySignaturesAsync(IEnumerable<RemoteStorage> proxy_list)
         {
             Log.WriteLine("Checking {0}-Proxy protocol signatures...", cluster_config.RunningMode);
             int my_proxy_id = (cluster_config.RunningMode == RunningMode.Proxy) ? MyProxyId : -1;
             var storage = proxy_list.Where((_, idx) => idx != my_proxy_id).FirstOrDefault();
 
-            CheckProtocolSignatures_impl(storage, cluster_config.RunningMode, RunningMode.Proxy);
+            return CheckProtocolSignatures_impl_Async(storage, cluster_config.RunningMode, RunningMode.Proxy);
         }
 
         internal int GetServerIdByIPE(IPEndPoint ipe)
@@ -205,7 +202,7 @@ namespace Trinity.Storage
         /// <param name="cellId">A 64-bit cell Id.</param>
         /// <returns>The Id of the server containing the specified cell.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int GetServerIdByCellIdDefault(long cellId)
+        private unsafe int GetServerIdByCellIdDefault(long cellId)
         {
             return (*(((byte*)&cellId) + 1)) % server_count;
         }

@@ -106,7 +106,7 @@ namespace Trinity.DynamicCluster.Health
                 try
                 {
                     CancellationTokenSource timeout_src = new CancellationTokenSource(10000);
-                    using (var rsp = await replica.QueryReplicaHealth().WaitAsync(timeout_src.Token))
+                    using (var rsp = await replica.QueryReplicaHealthAsync().WaitAsync(timeout_src.Token))
                     {
                         if (rsp.errno != Errno.E_OK) { throw new NoSuitableReplicaException(); }
                         await m_healthmgr.ReportReplicaStatus(HealthStatus.Healthy, repid, $"Replica is healthy");
@@ -172,7 +172,7 @@ namespace Trinity.DynamicCluster.Health
             try
             {
                 var rsps = m_mc.m_cloudidx.GetMasters()
-                    .Select(_ => _.QueryPartitionHealth())
+                    .Select(_ => _.QueryPartitionHealthAsync())
                     .Select(t => t.ContinueWith(_ExtractErrno));
 
                 using (var tsrc = new CancellationTokenSource(60000))

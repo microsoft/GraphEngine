@@ -157,78 +157,62 @@ namespace Trinity.Client
             return (ptr, msg, tsrc);
         }
 
-        public unsafe void SendMessage(byte* message, int size)
+        public unsafe Task SendMessageAsync(byte* message, int size)
         {
             void* p = Memory.malloc((ulong)size);
             Memory.memcpy(p, message, (ulong)size);
-            QueueMessage(p, size).Wait();
+            return QueueMessage(p, size);
         }
 
-        public unsafe void SendMessage(byte* message, int size, out TrinityResponse response)
+        public unsafe Task<TrinityResponse> SendRecvMessageAsync(byte* message, int size)
         {
             void* p = Memory.malloc((ulong)size);
             Memory.memcpy(p, message, (ulong)size);
-            var (treq, trsp) = QueueMessageWithRsp(p, size);
-            treq.Wait();
-            response = trsp.Result;
+            return QueueMessageWithRsp(p, size).Item2;
         }
 
-        public unsafe void SendMessage(byte** message, int* sizes, int count)
+        public unsafe Task SendMessageAsync(byte** message, int* sizes, int count)
         {
             int size = Utils._sum(sizes, count);
             void* p = Memory.malloc((ulong)size);
             Utils._copy((byte*)p, message, sizes, count);
-            QueueMessage(p, size).Wait();
+            return QueueMessage(p, size);
         }
 
-        public unsafe void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
+        public unsafe Task<TrinityResponse> SendRecvMessageAsync(byte** message, int* sizes, int count)
         {
             int size = Utils._sum(sizes, count);
             void* p = Memory.malloc((ulong)size);
             Utils._copy((byte*)p, message, sizes, count);
-            var (treq, trsp) = QueueMessageWithRsp(p, size);
-            treq.Wait();
-            response = trsp.Result;
+            return QueueMessageWithRsp(p, size).Item2;
         }
 
         private unsafe Action<Task<bool>> _free(void* p) => _ => { Memory.free(p); };
 
 
         #region Unsupported storage interfaces
-        public bool Contains(long cellId) => false;
+        public Task<bool> ContainsAsync(long cellId) => Task.FromResult(false);
 
-        public unsafe TrinityErrorCode AddCell(long cellId, byte* buff, int size, ushort cellType)
-            => TrinityErrorCode.E_NOTSUPPORTED;
+        public unsafe Task<TrinityErrorCode> AddCellAsync(long cellId, byte* buff, int size, ushort cellType)
+            => Task.FromResult(TrinityErrorCode.E_NOTSUPPORTED);
 
-        public unsafe TrinityErrorCode UpdateCell(long cellId, byte* buff, int size)
-            => TrinityErrorCode.E_NOTSUPPORTED;
+        public unsafe Task<TrinityErrorCode> UpdateCellAsync(long cellId, byte* buff, int size)
+            => Task.FromResult(TrinityErrorCode.E_NOTSUPPORTED);
 
-        public TrinityErrorCode GetCellType(long cellId, out ushort cellType)
-        {
-            cellType = 0;
-            return TrinityErrorCode.E_NOTSUPPORTED;
-        }
+        public Task<(TrinityErrorCode, ushort)> GetCellTypeAsync(long cellId)
+            => Task.FromResult((TrinityErrorCode.E_NOTSUPPORTED, (ushort)0));
 
-        public TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff, out ushort cellType)
-        {
-            cellBuff = null;
-            cellType = 0;
-            return TrinityErrorCode.E_NOTSUPPORTED;
-        }
+        public Task<LoadCellResponse> LoadCellAsync(long cellId)
+            => Task.FromResult(new LoadCellResponse(TrinityErrorCode.E_NOTSUPPORTED, null, 0));
 
-        public unsafe TrinityErrorCode LoadCell(long cellId, out byte* cellBuff, out int cellSize, out ushort cellType)
-        {
-            cellBuff = null;
-            cellType = 0;
-            cellSize = 0;
-            return TrinityErrorCode.E_NOTSUPPORTED;
-        }
+        public unsafe Task<LoadCellUnsafeResponse> LoadCellUnsafeAsync(long cellId)
+            => Task.FromResult(new LoadCellUnsafeResponse(TrinityErrorCode.E_NOTSUPPORTED, null, 0, 0));
 
-        public TrinityErrorCode RemoveCell(long cellId)
-            => TrinityErrorCode.E_FAILURE;
+        public Task<TrinityErrorCode> RemoveCellAsync(long cellId)
+            => Task.FromResult(TrinityErrorCode.E_FAILURE);
 
-        public unsafe TrinityErrorCode SaveCell(long cellId, byte* buff, int size, ushort cellType)
-            => TrinityErrorCode.E_FAILURE;
+        public unsafe Task<TrinityErrorCode> SaveCellAsync(long cellId, byte* buff, int size, ushort cellType)
+            => Task.FromResult(TrinityErrorCode.E_FAILURE);
         #endregion
     }
 }

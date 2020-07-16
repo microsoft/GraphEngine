@@ -1,18 +1,19 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Trinity;
-using Trinity.TSL;
 using Trinity.Core.Lib;
 using Trinity.Network;
 using Trinity.Network.Messaging;
-using System.Collections.Concurrent;
-using System.Runtime.CompilerServices;
-using System.Runtime.ExceptionServices;
 using Trinity.Storage;
+using Trinity.TSL;
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/
 namespace t_Namespace
@@ -85,32 +86,32 @@ namespace t_Namespace
     {
         public static class MessagePassingExtension
         {
-            internal static void t_protocol_name(IMessagePassingEndpoint messagePassingEndpoint)
+            internal static Task t_protocol_nameAsync(IMessagePassingEndpoint messagePassingEndpoint)
             {
                 throw new NotImplementedException();
             }
 
-            internal static void t_protocol_name(IMessagePassingEndpoint messagePassingEndpoint, t_protocol_requestWriter msg)
+            internal static Task t_protocol_nameAsync(IMessagePassingEndpoint messagePassingEndpoint, t_protocol_requestWriter msg)
             {
                 throw new NotImplementedException();
             }
 
-            internal static t_protocol_responseReader t_protocol_name_2(IMessagePassingEndpoint messagePassingEndpoint)
+            internal static Task<t_protocol_responseReader> t_protocol_name_2Async(IMessagePassingEndpoint messagePassingEndpoint)
             {
                 throw new NotImplementedException();
             }
 
-            internal static t_protocol_responseReader t_protocol_name_2(IMessagePassingEndpoint messagePassingEndpoint, t_protocol_requestWriter msg)
+            internal static Task<t_protocol_responseReader> t_protocol_name_2Async(IMessagePassingEndpoint messagePassingEndpoint, t_protocol_requestWriter msg)
             {
                 throw new NotImplementedException();
             }
 
-            internal static Task<t_protocol_responseReader> t_protocol_name_3(IMessagePassingEndpoint messagePassingEndpoint)
+            internal static Task<t_protocol_responseReader> t_protocol_name_3Async(IMessagePassingEndpoint messagePassingEndpoint)
             {
                 throw new NotImplementedException();
             }
 
-            internal static Task<t_protocol_responseReader> t_protocol_name_3(IMessagePassingEndpoint messagePassingEndpoint, t_protocol_requestWriter msg)
+            internal static Task<t_protocol_responseReader> t_protocol_name_3Async(IMessagePassingEndpoint messagePassingEndpoint, t_protocol_requestWriter msg)
             {
                 throw new NotImplementedException();
             }

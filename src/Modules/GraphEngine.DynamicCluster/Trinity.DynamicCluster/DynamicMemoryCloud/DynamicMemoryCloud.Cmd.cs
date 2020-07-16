@@ -24,9 +24,9 @@ namespace Trinity.DynamicCluster.Storage
         /// Dumps memory storages to disk files on all Trinity servers.
         /// </summary>
         /// <returns>true if saving succeeds; otherwise, false.</returns>
-        public override bool SaveStorage()
+        public override async Task<bool> SaveStorageAsync()
         {
-            m_backupctl.Backup().Wait();
+            await m_backupctl.Backup();
             return true;
         }
 
@@ -34,9 +34,9 @@ namespace Trinity.DynamicCluster.Storage
         /// Loads Trinity key-value store from disk to main memory on all Trinity servers.
         /// </summary>
         /// <returns>true if loading succeeds; otherwise, false.</returns>
-        public override bool LoadStorage()
+        public override async Task<bool> LoadStorageAsync()
         {
-            m_backupctl.Restore().Wait();
+            await m_backupctl.Restore();
             return true;
         }
 
@@ -44,12 +44,12 @@ namespace Trinity.DynamicCluster.Storage
         /// Resets local memory storage to the initial state on all Trinity servers. The content in the memory storage will be cleared. And the memory storage will be shrunk to the initial size.
         /// </summary>
         /// <returns>true if resetting succeeds; otherwise, false.</returns>
-        public override bool ResetStorage()
+        public override Task<bool> ResetStorageAsync()
         {
             throw new NotImplementedException();
         }
 
-        public override long GetTotalMemoryUsage()
+        public override Task<long> GetTotalMemoryUsageAsync()
         {
             throw new NotImplementedException();
         }

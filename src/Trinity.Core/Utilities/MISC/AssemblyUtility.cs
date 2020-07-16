@@ -37,7 +37,7 @@ namespace Trinity.Utilities
         {
             get
             {
-#if CORECLR
+#if NETSTANDARD || NETCOREAPP
                 if (my_assembly_path == null)
                 {
                     //  primary heuristics: find the assembly that calls into Trinity

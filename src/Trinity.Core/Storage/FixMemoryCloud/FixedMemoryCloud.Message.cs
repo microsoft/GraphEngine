@@ -4,23 +4,12 @@
 //
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Diagnostics;
-
-using Trinity;
-using Trinity.Core.Lib;
-using Trinity.Network.Messaging;
-using Trinity.Network;
 using System.Globalization;
 using static Trinity.Configuration.ConfigurationConstants;
 
 namespace Trinity.Storage
 {
-    public unsafe partial class FixedMemoryCloud
+    public partial class FixedMemoryCloud
     {
         #region Internal
         internal bool _canSendAsynRspMessage()
@@ -64,7 +53,7 @@ namespace Trinity.Storage
 
                             proxy_list = new_proxy_list;
 
-                            CheckProxySignatures(proxy_list);
+                            CheckProxySignaturesAsync(proxy_list).Wait();
                         }
                     }
                 }

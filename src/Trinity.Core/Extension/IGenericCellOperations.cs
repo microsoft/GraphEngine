@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Trinity.Extension;
 using Trinity.TSL.Lib;
@@ -19,7 +17,7 @@ namespace Trinity.Storage
         /// <param name="storage">A <see cref="Trinity.Storage.IKeyValueStore"/> object to load from.</param>
         /// <param name="cellId">A 64-bit cell Id.</param>
         /// <returns>An generic cell instance that implements <see cref="Trinity.Storage.ICell"/> interfaces.</returns>
-        ICell LoadGenericCell(IKeyValueStore storage, long cellId);
+        Task<ICell> LoadGenericCellAsync(IKeyValueStore storage, long cellId);
 
         /// <summary>
         /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
@@ -27,7 +25,7 @@ namespace Trinity.Storage
         /// </summary>
         /// <param name="storage">A <see cref="Trinity.Storage.IKeyValueStore"/> object.</param>
         /// <param name="cell">The cell to be saved.</param>
-        void SaveGenericCell(IKeyValueStore storage, ICell cell);
+        Task SaveGenericCellAsync(IKeyValueStore storage, ICell cell);
 
         /// <summary>
         /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
@@ -37,7 +35,7 @@ namespace Trinity.Storage
         /// <param name="cellId">A 64-bit cell id.</param>
         /// <param name="storage">A <see cref="Trinity.Storage.IKeyValueStore"/> object.</param>
         /// <param name="cell">The cell to be saved.</param>
-        void SaveGenericCell(IKeyValueStore storage, long cellId, ICell cell);
+        Task SaveGenericCellAsync(IKeyValueStore storage, long cellId, ICell cell);
 
         /// <summary>
         /// Instantiate a new generic cell with the specified type.
@@ -63,6 +61,24 @@ namespace Trinity.Storage
         ICell NewGenericCell(string cellType, string content);
 
         #region LocalMemoryStorage specialized operations
+        /// <summary>
+        /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
+        /// Note that the generic cell will be saved as a strongly typed cell. It can then be loaded into either a strongly-typed cell or a generic cell.
+        /// </summary>
+        /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> object.</param>
+        /// <param name="cell">The cell to be saved.</param>
+        void SaveGenericCell(LocalMemoryStorage storage, ICell cell);
+
+        /// <summary>
+        /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
+        /// Note that the generic cell will be saved as a strongly typed cell. It can then be loaded into either a strongly-typed cell or a generic cell.
+        /// The <paramref name="cellId"/> overrides the cell id in <paramref name="cell"/>.
+        /// </summary>
+        /// <param name="storage">A <see cref="Trinity.Storage.LocalMemoryStorage"/> object.</param>
+        /// <param name="cellId">A 64-bit cell id.</param>
+        /// <param name="cell">The cell to be saved.</param>
+        void SaveGenericCell(LocalMemoryStorage storage, long cellId, ICell cell);
+
         /// <summary>
         /// Adds a new cell to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists.
         /// Note that the generic cell will be saved as a strongly typed cell. It can then be loaded into either a strongly-typed cell or a generic cell.
@@ -183,7 +199,7 @@ namespace Trinity.Storage
             throw new NotImplementedException();
         }
 
-        public ICell LoadGenericCell(IKeyValueStore storage, long cellId)
+        public Task<ICell> LoadGenericCellAsync(IKeyValueStore storage, long cellId)
         {
             throw new NotImplementedException();
         }
@@ -208,12 +224,22 @@ namespace Trinity.Storage
             throw new NotImplementedException();
         }
 
-        public void SaveGenericCell(IKeyValueStore storage, ICell cell)
+        public Task SaveGenericCellAsync(IKeyValueStore storage, ICell cell)
         {
             throw new NotImplementedException();
         }
 
-        public void SaveGenericCell(IKeyValueStore storage, long cellId, ICell cell)
+        public Task SaveGenericCellAsync(IKeyValueStore storage, long cellId, ICell cell)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SaveGenericCell(LocalMemoryStorage storage, ICell cell)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SaveGenericCell(LocalMemoryStorage storage, long cellId, ICell cell)
         {
             throw new NotImplementedException();
         }

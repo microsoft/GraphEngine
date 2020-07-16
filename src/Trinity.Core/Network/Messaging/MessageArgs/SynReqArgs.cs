@@ -2,13 +2,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using System.Threading;
-using Trinity.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Trinity.Network.Messaging
 {
@@ -44,18 +38,22 @@ namespace Trinity.Network.Messaging
         /// E_SUCCESS:        The message is successfully processed.
         /// E_RPC_EXCEPTION:  The message handler throws an exception.
         /// </returns>
-        internal TrinityErrorCode MessageProcess()
+        internal Task<TrinityErrorCode> MessageProcessAsync()
         {
-            try
-            {
-                RequestHandler(this);
-                return TrinityErrorCode.E_SUCCESS;
-            }
-            catch (Exception e)
-            {
-                CommunicationInstance._RaiseUnhandledExceptionEvents(this, new MessagingUnhandledExceptionEventArgs(this, e));
-                return TrinityErrorCode.E_RPC_EXCEPTION;
-            }
+            return RequestHandler(this).ContinueWith(
+                t => 
+                {
+                    if (t.Status == TaskStatus.RanToCompletion)
+                    {
+                        return TrinityErrorCode.E_SUCCESS;
+                    }
+                    else
+                    {
+                        CommunicationInstance._RaiseUnhandledExceptionEvents(this, new MessagingUnhandledExceptionEventArgs(this, t.Exception));
+                        return TrinityErrorCode.E_RPC_EXCEPTION;
+                    }
+                },
+                TaskContinuationOptions.ExecuteSynchronously);
         }
     }
 }

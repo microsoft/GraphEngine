@@ -3,22 +3,11 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
-
-using Trinity.Network.Messaging;
-using Trinity.Utilities;
-using Trinity;
-using Trinity.Network.Sockets;
-using Trinity.Diagnostics;
-using System.Diagnostics;
-using Trinity.Core.Lib;
 using System.Runtime.CompilerServices;
-
+using System.Threading.Tasks;
+using Trinity.Core.Lib;
+using Trinity.Diagnostics;
+using Trinity.Network.Messaging;
 
 namespace Trinity.Network.Sockets
 {
@@ -136,8 +125,8 @@ namespace Trinity.Network.Sockets
             }
             catch (Exception ex)
             {
-                Trinity.Diagnostics.Log.WriteLine(ex.Message);
-                Trinity.Diagnostics.Log.WriteLine(ex.StackTrace);
+                Log.WriteLine(ex.Message);
+                Log.WriteLine(ex.StackTrace);
                 return false;
             }
         }
@@ -152,8 +141,8 @@ namespace Trinity.Network.Sockets
             }
             catch (Exception ex)
             {
-                Trinity.Diagnostics.Log.WriteLine(ex.Message);
-                Trinity.Diagnostics.Log.WriteLine(ex.StackTrace);
+                Log.WriteLine(ex.Message);
+                Log.WriteLine(ex.StackTrace);
                 return false;
             }
         }
@@ -168,8 +157,8 @@ namespace Trinity.Network.Sockets
             }
             catch (Exception ex)
             {
-                Trinity.Diagnostics.Log.WriteLine(ex.Message);
-                Trinity.Diagnostics.Log.WriteLine(ex.StackTrace);
+                Log.WriteLine(ex.Message);
+                Log.WriteLine(ex.StackTrace);
                 return false;
             }
         }
@@ -184,8 +173,8 @@ namespace Trinity.Network.Sockets
             }
             catch (Exception ex)
             {
-                Trinity.Diagnostics.Log.WriteLine(ex.Message);
-                Trinity.Diagnostics.Log.WriteLine(ex.StackTrace);
+                Log.WriteLine(ex.Message);
+                Log.WriteLine(ex.StackTrace);
                 return false;
             }
         }
@@ -200,8 +189,8 @@ namespace Trinity.Network.Sockets
             }
             catch (Exception ex)
             {
-                Trinity.Diagnostics.Log.WriteLine(ex.Message);
-                Trinity.Diagnostics.Log.WriteLine(ex.StackTrace);
+                Log.WriteLine(ex.Message);
+                Log.WriteLine(ex.StackTrace);
                 return false;
             }
         }
@@ -216,8 +205,8 @@ namespace Trinity.Network.Sockets
             }
             catch (Exception ex)
             {
-                Trinity.Diagnostics.Log.WriteLine(ex.Message);
-                Trinity.Diagnostics.Log.WriteLine(ex.StackTrace);
+                Log.WriteLine(ex.Message);
+                Log.WriteLine(ex.StackTrace);
                 return false;
             }
         }
@@ -232,8 +221,8 @@ namespace Trinity.Network.Sockets
             }
             catch (Exception ex)
             {
-                Trinity.Diagnostics.Log.WriteLine(ex.Message);
-                Trinity.Diagnostics.Log.WriteLine(ex.StackTrace);
+                Log.WriteLine(ex.Message);
+                Log.WriteLine(ex.StackTrace);
                 return false;
             }
         }
@@ -279,7 +268,7 @@ namespace Trinity.Network.Sockets
         }
         #endregion
 
-        internal void* DispatchMessage(MessageBuff* sendRecvBuff)
+        internal Task DispatchMessageAsync(MessageBuff* sendRecvBuff)
         {
             byte* ByteArray = sendRecvBuff->Buffer;
             int Length = (int)sendRecvBuff->Length;
@@ -297,35 +286,84 @@ namespace Trinity.Network.Sockets
                             TrinityProtocol.TrinityMsgHeader,
                             Length - TrinityProtocol.TrinityMsgHeader,
                             sync_rsp_handlers[msgId]);
-                        msgProcessResult = sync_rsp_args.MessageProcess();
-                        _SetSendRecvBuff(msgProcessResult, sendRecvBuff, sync_rsp_args.Response);
-                        return null;
+                        return sync_rsp_args.MessageProcessAsync()
+                                            .ContinueWith(
+                                                t =>
+                                                {
+                                                    if (t.Status == TaskStatus.RanToCompletion)
+                                                    {
+                                                        msgProcessResult = t.Result;
+                                                        _SetSendRecvBuff(msgProcessResult, sendRecvBuff, sync_rsp_args.Response);
+                                                    }
+                                                    else
+                                                    {
+                                                        _HandleException(t.Exception, msgType, msgId, sendRecvBuff);
+                                                    }
+                                                },
+                                                TaskContinuationOptions.ExecuteSynchronously);
 
                     case TrinityMessageType.PRESERVED_SYNC_WITH_RSP:
                         SynReqRspArgs preserved_sync_rsp_args = new SynReqRspArgs(ByteArray,
                             TrinityProtocol.TrinityMsgHeader,
                             Length - TrinityProtocol.TrinityMsgHeader,
                             preserved_sync_rsp_handlers[msgId]);
-                        msgProcessResult = preserved_sync_rsp_args.MessageProcess();
-                        _SetSendRecvBuff(msgProcessResult, sendRecvBuff, preserved_sync_rsp_args.Response);
-                        return null;
+                        return preserved_sync_rsp_args.MessageProcessAsync()
+                                                      .ContinueWith(
+                                                            t =>
+                                                            {
+                                                                if (t.Status == TaskStatus.RanToCompletion)
+                                                                {
+                                                                    msgProcessResult = t.Result;
+                                                                    _SetSendRecvBuff(msgProcessResult, sendRecvBuff, preserved_sync_rsp_args.Response);
+                                                                }
+                                                                else
+                                                                {
+                                                                    _HandleException(t.Exception, msgType, msgId, sendRecvBuff);
+                                                                }
+                                                            },
+                                                            TaskContinuationOptions.ExecuteSynchronously);
 
                     case TrinityMessageType.SYNC:
                         SynReqArgs sync_args = new SynReqArgs(ByteArray,
                             TrinityProtocol.TrinityMsgHeader,
                             Length - TrinityProtocol.TrinityMsgHeader,
                             sync_handlers[msgId]);
-                        msgProcessResult = sync_args.MessageProcess();
-                        _SetSendRecvBuff(msgProcessResult, sendRecvBuff);
-                        return null;
+                        return sync_args.MessageProcessAsync()
+                                        .ContinueWith(
+                                            t =>
+                                            {
+                                                if (t.Status == TaskStatus.RanToCompletion)
+                                                {
+                                                    msgProcessResult = t.Result;
+                                                    _SetSendRecvBuff(msgProcessResult, sendRecvBuff);
+                                                }
+                                                else
+                                                {
+                                                    _HandleException(t.Exception, msgType, msgId, sendRecvBuff);
+                                                }
+                                            },
+                                            TaskContinuationOptions.ExecuteSynchronously);
+
                     case TrinityMessageType.PRESERVED_SYNC:
                         SynReqArgs preserved_sync_args = new SynReqArgs(ByteArray,
                             TrinityProtocol.TrinityMsgHeader,
                             Length - TrinityProtocol.TrinityMsgHeader,
                             preserved_sync_handlers[msgId]);
-                        msgProcessResult = preserved_sync_args.MessageProcess();
-                        _SetSendRecvBuff(msgProcessResult, sendRecvBuff);
-                        return null;
+                        return preserved_sync_args.MessageProcessAsync()
+                                                  .ContinueWith(
+                                                        t =>
+                                                        {
+                                                            if (t.Status == TaskStatus.RanToCompletion)
+                                                            {
+                                                                msgProcessResult = t.Result;
+                                                                _SetSendRecvBuff(msgProcessResult, sendRecvBuff);
+                                                            }
+                                                            else
+                                                            {
+                                                                _HandleException(t.Exception, msgType, msgId, sendRecvBuff);
+                                                            }
+                                                        },
+                                                        TaskContinuationOptions.ExecuteSynchronously);
 
                     case TrinityMessageType.ASYNC:
                         AsynReqArgs async_args = new AsynReqArgs(ByteArray,
@@ -335,6 +373,7 @@ namespace Trinity.Network.Sockets
                         msgProcessResult = async_args.AsyncProcessMessage();
                         _SetSendRecvBuff(msgProcessResult, sendRecvBuff);
                         return null;
+
                     case TrinityMessageType.PRESERVED_ASYNC:
                         AsynReqArgs preserved_async_args = new AsynReqArgs(ByteArray,
                             TrinityProtocol.TrinityMsgHeader,
@@ -357,7 +396,16 @@ namespace Trinity.Network.Sockets
                         throw new Exception("Not recognized message type.");
                 }
             }
-            catch (MessageTooLongException ex)
+            catch (Exception ex)
+            {
+                _HandleException(ex, msgType, msgId, sendRecvBuff);
+                return Task.CompletedTask;
+            }
+        }
+
+        private void _HandleException(Exception ex, TrinityMessageType msgType, ushort msgId, MessageBuff* sendRecvBuff)
+        {
+            if (ex is MessageTooLongException)
             {
                 Log.WriteLine("Message Type: " + msgType);
                 Log.WriteLine("Message SN: " + msgId);
@@ -365,9 +413,8 @@ namespace Trinity.Network.Sockets
                 Log.WriteLine(ex.Message);
                 Log.WriteLine(ex.StackTrace);
                 _SetSendRecvBuff(TrinityErrorCode.E_MSG_OVERFLOW, sendRecvBuff);
-                return null;
             }
-            catch (Exception ex)
+            else if (ex != null)
             {
                 Log.WriteLine("Message Type: " + msgType);
                 Log.WriteLine("Message SN: " + msgId);
@@ -375,7 +422,6 @@ namespace Trinity.Network.Sockets
                 Log.WriteLine(ex.Message);
                 Log.WriteLine(ex.StackTrace);
                 _SetSendRecvBuff(TrinityErrorCode.E_RPC_EXCEPTION, sendRecvBuff);
-                return null;
             }
         }
     }

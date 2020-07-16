@@ -3,13 +3,8 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace Trinity.Network
 {
@@ -37,6 +32,16 @@ namespace Trinity.Network
         internal static extern TrinityErrorCode WaitForAckPackage(UInt64 socket);
         [DllImport(TrinityC.AssemblyName)]
         internal static extern void CloseClientSocket(UInt64 socket);
+
+        [DllImport(TrinityC.AssemblyName)]
+        internal static extern Int32 BeginClientSend(UInt64 socket, byte* buf, Int32 len, NativeOverlapped* overlapped);
+        [DllImport(TrinityC.AssemblyName)]
+        internal static extern Int32 BeginClientSendMulti(UInt64 socket, byte** bufs, Int32* lens, Int32 count, NativeOverlapped* overlapped);
+        [DllImport(TrinityC.AssemblyName)]
+        internal static extern Int32 BeginClientReceive(UInt64 socket, byte* buf, Int32 len, NativeOverlapped* overlapped);
+
+        internal const Int32 ERROR_SUCCESS = 0;
+        internal const Int32 ERROR_IO_PENDING = 997;
         #endregion
     }
 }

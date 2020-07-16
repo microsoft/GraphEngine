@@ -70,35 +70,35 @@ namespace t_Namespace
         #endregion
 
         [IF("!$t_protocol->has_request() && !$t_protocol->has_response()")]
-        public unsafe /*IF("node->type() != PGT_MODULE")*/ static /*END*/ void t_method_name([META_OUTPUT("%arg_extension_method_target")] int partitionId)
+        public unsafe /*IF("node->type() != PGT_MODULE")*/ static /*END*/ Task t_method_nameAsync([META_OUTPUT("%arg_extension_method_target")] int partitionId)
         {
-            t_comm_name.MessagePassingExtension.t_protocol_name(t_storage[partitionId]);
+            return t_comm_name.MessagePassingExtension.t_protocol_nameAsync(t_storage[partitionId]);
         }
         [ELIF("$t_protocol->has_request() && !$t_protocol->has_response()")]
-        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ void t_method_name([META_OUTPUT("%arg_extension_method_target")] int partitionId, t_protocol_requestWriter msg)
+        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ Task t_method_nameAsync([META_OUTPUT("%arg_extension_method_target")] int partitionId, t_protocol_requestWriter msg)
         {
-            t_comm_name.MessagePassingExtension.t_protocol_name(t_storage[partitionId], msg);
+            return t_comm_name.MessagePassingExtension.t_protocol_nameAsync(t_storage[partitionId], msg);
         }
         [ELIF("!$t_protocol->has_request() && $t_protocol->is_syn_req_rsp_protocol()")]
-        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ t_protocol_responseReader t_method_name_2([META_OUTPUT("%arg_extension_method_target")] int partitionId)
+        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ Task<t_protocol_responseReader> t_method_name_2Async([META_OUTPUT("%arg_extension_method_target")] int partitionId)
         {
-            return t_comm_name.MessagePassingExtension.t_protocol_name_2(t_storage[partitionId]);
+            return t_comm_name.MessagePassingExtension.t_protocol_name_2Async(t_storage[partitionId]);
         }
         [ELIF("$t_protocol->has_request() && $t_protocol->is_syn_req_rsp_protocol()")]
-        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ t_protocol_responseReader t_method_name_2([META_OUTPUT("%arg_extension_method_target")] int partitionId, t_protocol_requestWriter msg)
+        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ Task<t_protocol_responseReader> t_method_name_2Async([META_OUTPUT("%arg_extension_method_target")] int partitionId, t_protocol_requestWriter msg)
         {
-            return t_comm_name.MessagePassingExtension.t_protocol_name_2(t_storage[partitionId], msg);
+            return t_comm_name.MessagePassingExtension.t_protocol_name_2Async(t_storage[partitionId], msg);
         }
         [ELIF("!$t_protocol->has_request() && $t_protocol->is_asyn_req_rsp_protocol()")]
-        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ Task<t_protocol_responseReader> t_method_name_3([META_OUTPUT("%arg_extension_method_target")] int partitionId)
+        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ Task<t_protocol_responseReader> t_method_name_3Async([META_OUTPUT("%arg_extension_method_target")] int partitionId)
         {
-            return t_comm_name.MessagePassingExtension.t_protocol_name_3(t_storage[partitionId]);
+            return t_comm_name.MessagePassingExtension.t_protocol_name_3Async(t_storage[partitionId]);
         }
         [ELSE]
         //("$t_protocol->has_request() && $t_protocol->is_asyn_req_rsp_protocol()")
-        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ Task<t_protocol_responseReader> t_method_name_3([META_OUTPUT("%arg_extension_method_target")] int partitionId, t_protocol_requestWriter msg)
+        public unsafe/*IF("node->type() != PGT_MODULE")*/ static/*END*/ Task<t_protocol_responseReader> t_method_name_3Async([META_OUTPUT("%arg_extension_method_target")] int partitionId, t_protocol_requestWriter msg)
         {
-            return t_comm_name.MessagePassingExtension.t_protocol_name_3(t_storage[partitionId], msg);
+            return t_comm_name.MessagePassingExtension.t_protocol_name_3Async(t_storage[partitionId], msg);
         }
         [END]
 

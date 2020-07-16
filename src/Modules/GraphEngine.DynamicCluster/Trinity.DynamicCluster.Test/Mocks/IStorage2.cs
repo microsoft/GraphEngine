@@ -12,12 +12,12 @@ namespace Trinity.DynamicCluster.Test.Mocks
 {
     class IStorage2 : IStorage
     {
-        public unsafe TrinityErrorCode AddCell(long cellId, byte* buff, int size, ushort cellType)
+        public unsafe Task<TrinityErrorCode> AddCellAsync(long cellId, byte* buff, int size, ushort cellType)
         {
             throw new NotImplementedException();
         }
 
-        public bool Contains(long cellId)
+        public Task<bool> ContainsAsync(long cellId)
         {
             throw new NotImplementedException();
         }
@@ -26,7 +26,7 @@ namespace Trinity.DynamicCluster.Test.Mocks
         {
         }
 
-        public TrinityErrorCode GetCellType(long cellId, out ushort cellType)
+        public Task<(TrinityErrorCode ErrorCode, ushort CellType)> GetCellTypeAsync(long cellId)
         {
             throw new NotImplementedException();
         }
@@ -36,42 +36,47 @@ namespace Trinity.DynamicCluster.Test.Mocks
             throw new NotImplementedException();
         }
 
-        public TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff, out ushort cellType)
+        public Task<LoadCellResponse> LoadCellAsync(long cellId)
         {
             throw new NotImplementedException();
         }
 
-        public TrinityErrorCode RemoveCell(long cellId)
+        public Task<LoadCellUnsafeResponse> LoadCellUnsafeAsync(long cellId)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe TrinityErrorCode SaveCell(long cellId, byte* buff, int size, ushort cellType)
+        public Task<TrinityErrorCode> RemoveCellAsync(long cellId)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void SendMessage(byte* message, int size)
+        public unsafe Task<TrinityErrorCode> SaveCellAsync(long cellId, byte* buff, int size, ushort cellType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe Task SendMessageAsync(byte* message, int size)
         {
             throw new IOException();
         }
 
-        public unsafe void SendMessage(byte* message, int size, out TrinityResponse response)
+        public unsafe Task SendMessageAsync(byte** message, int* sizes, int count)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe Task<TrinityResponse> SendRecvMessageAsync(byte* message, int size)
         {
             throw new IOException();
         }
 
-        public unsafe void SendMessage(byte** message, int* sizes, int count)
+        public unsafe Task<TrinityResponse> SendRecvMessageAsync(byte** message, int* sizes, int count)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
-        {
-            throw new NotImplementedException();
-        }
-
-        public unsafe TrinityErrorCode UpdateCell(long cellId, byte* buff, int size)
+        public unsafe Task<TrinityErrorCode> UpdateCellAsync(long cellId, byte* buff, int size)
         {
             throw new NotImplementedException();
         }

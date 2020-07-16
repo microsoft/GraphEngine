@@ -41,7 +41,7 @@ namespace t_Namespace
         [FOREACH]
         [USE_LIST("t_protocol")]
         [IF("$t_protocol->is_http_protocol()")]
-        public abstract void t_protocol_nameHandler(/*META_OUTPUT("get_http_handler_parameters($t_protocol)")*/);
+        public abstract Task t_protocol_nameHandlerAsync(/*META_OUTPUT("get_http_handler_parameters($t_protocol)")*/);
         [END]//IF
         [END]//FOREACH
 
@@ -52,12 +52,12 @@ namespace t_Namespace
         /// Override this method to get custom behaviors.
         /// </summary>
         /// <param name="ctx">A <see cref="HttpListenerContext"/> object.</param>
-        protected override void RootHttpHandler(HttpListenerContext ctx)
+        protected override Task RootHttpHandlerAsync(HttpListenerContext ctx)
         {
-            CommonHttpHandlers.ListAvailableEndpoints(ctx, s_HttpHandlerLookupTable.Keys, this.GetType());
+            return CommonHttpHandlers.ListAvailableEndpointsAsync(ctx, s_HttpHandlerLookupTable.Keys, this.GetType());
         }
 
-        protected override void DispatchHttpRequest(HttpListenerContext context, string endpoint_name, string url)
+        protected override async Task DispatchHttpRequestAsync(HttpListenerContext context, string endpoint_name, string url)
         {
             var method          = context.Request.HttpMethod;
             uint handler_id     = 0;
@@ -65,7 +65,7 @@ namespace t_Namespace
             if (!s_HttpHandlerLookupTable.TryGetValue(endpoint_name, out handler_id))
             {
                 CommonHttpHandlers.PageNotFound(context);
-                RootHttpHandler(context);
+                await RootHttpHandlerAsync(context);
                 return;
             }
 
@@ -92,7 +92,7 @@ namespace t_Namespace
                         else if (method == "POST")
                         {
                             using (var sr = new System.IO.StreamReader(context.Request.InputStream))
-                                json_string = sr.ReadToEnd();
+                                json_string = await sr.ReadToEndAsync();
                         }
                         else
                         {
@@ -111,7 +111,7 @@ namespace t_Namespace
                         t_struct_name   response_struct /*MUTE*/ = null /*MUTE_END*/;
                         END();
 
-                        t_protocol_nameHandler(/*META_OUTPUT("get_http_handler_calling_parameters($t_protocol)")*/);
+                        await t_protocol_nameHandlerAsync(/*META_OUTPUT("get_http_handler_calling_parameters($t_protocol)")*/);
 
                         IF("$t_protocol->pt_response == PT_STRUCT_RESPONSE");
 
@@ -123,20 +123,16 @@ namespace t_Namespace
                         {
                             if (jsonp_callback != null)
                             {
-                                sw.Write("{0}(", jsonp_callback);
-                                sw.Write(Serializer.ToString(response_struct));
-                                sw.Write(");", jsonp_callback);
+                                await sw.WriteAsync(string.Format("{0}({1});", jsonp_callback, Serializer.ToString(response_struct)));
                             }
                             else if (iframe_callback != null)
                             {
                                 context.Response.ContentType = "text/html";
-                                sw.Write("<script language=\"javascript\" type=\"text/javascript\">window.top.window.{0}(", iframe_callback);
-                                sw.Write(Serializer.ToString(response_struct));
-                                sw.Write(");</script>");
+                                await sw.WriteAsync(string.Format("<script language=\"javascript\" type=\"text/javascript\">window.top.window.{0}({1});</script>", iframe_callback, Serializer.ToString(response_struct)));
                             }
                             else
                             {
-                                sw.Write(Serializer.ToString(response_struct));
+                                await sw.WriteAsync(Serializer.ToString(response_struct));
                             }
                         }
                         END();

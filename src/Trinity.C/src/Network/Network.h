@@ -195,5 +195,11 @@ namespace Trinity
         TrinityErrorCode client_recv(uint64_t socket, OUT char* & buf, OUT int32_t & len);
         TrinityErrorCode client_wait(uint64_t socket);
         void client_close(uint64_t socket);
+
+#if defined(TRINITY_PLATFORM_WINDOWS)
+        int begin_client_send(uint64_t socket, char* buf, int32_t len, OVERLAPPED* overlapped);
+        int begin_client_send_multi(uint64_t socket, char** bufs, int32_t* lens, int32_t cnt, OVERLAPPED* overlapped);
+        int begin_client_recv(uint64_t socket, char* buf, int32_t len, OVERLAPPED* overlapped);
+#endif
     }
 }

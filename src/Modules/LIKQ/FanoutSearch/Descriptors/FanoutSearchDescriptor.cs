@@ -156,7 +156,7 @@ namespace FanoutSearch
             var query = Serialize();
             using (var query_msg = new Protocols.TSL.FanoutQueryMessageWriter(query.maxHop, query.origin, query.originQuery, query.predicates, query.edge_types, query.return_selection, query.skip_count, query.take_count))
             {
-                var results = Global.CloudStorage[0].FanoutSearchQuery(query_msg);
+                var results = Global.CloudStorage[0].FanoutSearchQueryAsync(query_msg).Result;
 
                 switch (results.transaction_id)
                 {

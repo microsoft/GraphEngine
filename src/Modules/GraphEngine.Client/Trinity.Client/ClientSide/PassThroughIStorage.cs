@@ -19,19 +19,19 @@ namespace Trinity.Client
     {
         private IMessagePassingEndpoint m_ep;
         #region Unsupported
-        public unsafe TrinityErrorCode AddCell(long cellId, byte* buff, int size, ushort cellType)
+        public unsafe Task<TrinityErrorCode> AddCellAsync(long cellId, byte* buff, int size, ushort cellType)
         {
             throw new NotImplementedException();
         }
 
-        public bool Contains(long cellId)
+        public Task<bool> ContainsAsync(long cellId)
         {
             throw new NotImplementedException();
         }
 
         public void Dispose() { }
 
-        public TrinityErrorCode GetCellType(long cellId, out ushort cellType)
+        public Task<(TrinityErrorCode, ushort)> GetCellTypeAsync(long cellId)
         {
             throw new NotImplementedException();
         }
@@ -41,27 +41,27 @@ namespace Trinity.Client
             throw new NotImplementedException();
         }
 
-        public TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff, out ushort cellType)
+        public Task<LoadCellResponse> LoadCellAsync(long cellId)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe TrinityErrorCode LoadCell(long cellId, out byte* cellBuff, out int size, out ushort cellType)
+        public Task<LoadCellUnsafeResponse> LoadCellUnsafeAsync(long cellId)
         {
             throw new NotImplementedException();
         }
 
-        public TrinityErrorCode RemoveCell(long cellId)
+        public Task<TrinityErrorCode> RemoveCellAsync(long cellId)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe TrinityErrorCode SaveCell(long cellId, byte* buff, int size, ushort cellType)
+        public unsafe Task<TrinityErrorCode> SaveCellAsync(long cellId, byte* buff, int size, ushort cellType)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe TrinityErrorCode UpdateCell(long cellId, byte* buff, int size)
+        public unsafe Task<TrinityErrorCode> UpdateCellAsync(long cellId, byte* buff, int size)
         {
             throw new NotImplementedException();
         }
@@ -72,16 +72,16 @@ namespace Trinity.Client
             this.m_ep = ep;
         }
 
-        public unsafe void SendMessage(byte* message, int size)
-            => m_ep.SendMessage(message, size);
+        public unsafe Task SendMessageAsync(byte* message, int size)
+            => m_ep.SendMessageAsync(message, size);
 
-        public unsafe void SendMessage(byte* message, int size, out TrinityResponse response)
-            => m_ep.SendMessage(message, size, out response);
+        public unsafe Task<TrinityResponse> SendRecvMessageAsync(byte* message, int size)
+            => m_ep.SendRecvMessageAsync(message, size);
 
-        public unsafe void SendMessage(byte** message, int* sizes, int count)
-            => m_ep.SendMessage(message, sizes, count);
+        public unsafe Task SendMessageAsync(byte** message, int* sizes, int count)
+            => m_ep.SendMessageAsync(message, sizes, count);
 
-        public unsafe void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
-            => m_ep.SendMessage(message, sizes, count, out response);
+        public unsafe Task<TrinityResponse> SendRecvMessageAsync(byte** message, int* sizes, int count)
+            => m_ep.SendRecvMessageAsync(message, sizes, count);
     }
 }

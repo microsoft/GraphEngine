@@ -62,33 +62,33 @@ namespace Trinity.Client.TrinityClientModule
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected internal unsafe new void SendMessage(IMessagePassingEndpoint ep, byte** bufs, int* sizes, int cnt)
-            => base.SendMessage(ep, bufs, sizes, cnt);
+        protected internal unsafe new Task SendMessageAsync(IMessagePassingEndpoint ep, byte** bufs, int* sizes, int cnt)
+            => base.SendMessageAsync(ep, bufs, sizes, cnt);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected internal unsafe new void SendMessage(IMessagePassingEndpoint ep, byte** bufs, int* sizes, int cnt, out TrinityResponse rsp)
-            => base.SendMessage(ep, bufs, sizes, cnt, out rsp);
+        protected internal unsafe new Task<TrinityResponse> SendRecvMessageAsync(IMessagePassingEndpoint ep, byte** bufs, int* sizes, int cnt)
+            => base.SendRecvMessageAsync(ep, bufs, sizes, cnt);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected internal unsafe new void SendMessage(IMessagePassingEndpoint ep, byte* buf, int size, out TrinityResponse rsp)
-            => base.SendMessage(ep, buf, size, out rsp);
+        protected internal unsafe new Task<TrinityResponse> SendRecvMessageAsync(IMessagePassingEndpoint ep, byte* buf, int size)
+            => base.SendRecvMessageAsync(ep, buf, size);
 
         protected override void RegisterMessageHandler()
         {
             base.RegisterMessageHandler();
-            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqMessageType.PostResponse, PostResponse_impl);
-            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.PollEvents, PollEvents_impl);
-            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqMessageType.RedirectMessage, RedirectMessage_impl);
-            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.RedirectMessageWithResponse, RedirectMessageWithResponse_impl);
+            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqMessageType.PostResponse, PostResponse_impl_Async);
+            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.PollEvents, PollEvents_impl_Async);
+            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqMessageType.RedirectMessage, RedirectMessage_impl_Async);
+            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.RedirectMessageWithResponse, RedirectMessageWithResponse_impl_Async);
 
-            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.AddCell, AddCell_impl);
-            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.LoadCell, LoadCell_impl);
-            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.SaveCell, SaveCell_impl);
-            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.UpdateCell, UpdateCell_impl);
+            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.AddCell, AddCell_impl_Async);
+            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.LoadCell, LoadCell_impl_Async);
+            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.SaveCell, SaveCell_impl_Async);
+            MessageRegistry.RegisterMessageHandler((ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.UpdateCell, UpdateCell_impl_Async);
         }
 
 
-        private unsafe void PostResponse_impl(SynReqArgs args)
+        private unsafe Task PostResponse_impl_Async(SynReqArgs args)
         {
             /******************************
              * Protocol: PostResponse
@@ -101,9 +101,10 @@ namespace Trinity.Client.TrinityClientModule
             long p = *sp.lp++;
             var stg = CheckInstanceCookie(cookie, instanceId);
             stg.PostResponse_impl(p, sp.bp, args.Size - sizeof(int) * 2 - sizeof(long));
+            return Task.CompletedTask;
         }
 
-        private unsafe void PollEvents_impl(SynReqRspArgs args)
+        private unsafe Task PollEvents_impl_Async(SynReqRspArgs args)
         {
             /******************************
              * Protocol: PollEvents
@@ -161,9 +162,10 @@ namespace Trinity.Client.TrinityClientModule
                 *(int*)(outer_buf + TrinityProtocol.SocketMsgHeader) = 0;
             }
             args.Response = new TrinityMessage(outer_buf, outer_len);
+            return Task.CompletedTask;
         }
 
-        private unsafe void RedirectMessage_impl(SynReqArgs args)
+        private unsafe Task RedirectMessage_impl_Async(SynReqArgs args)
         {
             /******************************
              * Protocol: RedirectMessage
@@ -177,10 +179,10 @@ namespace Trinity.Client.TrinityClientModule
             int partitionId = *sp.ip++;
 
             TrinityMessage tm = new TrinityMessage(sp.bp, (*sp.ip) + TrinityProtocol.SocketMsgHeader);
-            m_memorycloud[partitionId].SendMessage(tm);
+            return m_memorycloud[partitionId].SendMessageAsync(tm);
         }
 
-        private unsafe void RedirectMessageWithResponse_impl(SynReqRspArgs args)
+        private unsafe Task RedirectMessageWithResponse_impl_Async(SynReqRspArgs args)
         {
             /******************************
              * Protocol: RedirectMessage
@@ -194,60 +196,64 @@ namespace Trinity.Client.TrinityClientModule
             int partitionId = *sp.ip++;
 
             TrinityMessage tm = new TrinityMessage(sp.bp, (*sp.ip) + TrinityProtocol.SocketMsgHeader);
-            m_memorycloud[partitionId].SendMessage(tm, out var rsp);
+            return m_memorycloud[partitionId].SendRecvMessageAsync(tm).ContinueWith(
+                t => 
+                {
+                    var rsp = t.Result;
 
-            int rsp_size = TrinityProtocol.MsgHeader + rsp.Size;
-            byte* rsp_buf = (byte*)Memory.malloc((ulong)rsp_size);
-            *(int*)rsp_buf = rsp_size - TrinityProtocol.SocketMsgHeader;
-            Memory.Copy(rsp.Buffer, rsp.Offset, rsp_buf, TrinityProtocol.MsgHeader, rsp.Size);
-            rsp.Dispose();
+                    int rsp_size = TrinityProtocol.MsgHeader + rsp.Size;
+                    byte* rsp_buf = (byte*)Memory.malloc((ulong)rsp_size);
+                    *(int*)rsp_buf = rsp_size - TrinityProtocol.SocketMsgHeader;
+                    Memory.Copy(rsp.Buffer, rsp.Offset, rsp_buf, TrinityProtocol.MsgHeader, rsp.Size);
+                    rsp.Dispose();
 
-            args.Response = new TrinityMessage(rsp_buf, rsp_size);
+                    args.Response = new TrinityMessage(rsp_buf, rsp_size);
+                });
         }
 
         #region not used
-        public override void PollEventsHandler(PollEventsRequestReader request, PollEventsResponseWriter response)
+        public override Task PollEventsHandlerAsync(PollEventsRequestReader request, PollEventsResponseWriter response)
         {
             throw new NotImplementedException();
         }
 
-        public override void PostResponseHandler(PostResponseRequestReader request)
+        public override Task PostResponseHandlerAsync(PostResponseRequestReader request)
         {
             throw new NotImplementedException();
         }
 
-        public override void RedirectMessageHandler(PostResponseRequestReader request)
+        public override Task RedirectMessageHandlerAsync(PostResponseRequestReader request)
         {
             throw new NotImplementedException();
         }
 
-        public override void RedirectMessageWithResponseHandler(PostResponseRequestReader request, PostResponseRequestWriter response)
+        public override Task RedirectMessageWithResponseHandlerAsync(PostResponseRequestReader request, PostResponseRequestWriter response)
         {
             throw new NotImplementedException();
         }
 
-        public override void AddCellHandler(__CellIdStructReader request, ErrorCodeResponseWriter response)
+        public override Task AddCellHandlerAsync(__CellIdStructReader request, ErrorCodeResponseWriter response)
         {
             throw new NotImplementedException();
         }
 
-        public override void LoadCellHandler(__CellIdStructReader request, __CellIdStructWriter response)
+        public override Task LoadCellHandlerAsync(__CellIdStructReader request, __CellIdStructWriter response)
         {
             throw new NotImplementedException();
         }
 
-        public override void SaveCellHandler(__CellIdStructReader request, ErrorCodeResponseWriter response)
+        public override Task SaveCellHandlerAsync(__CellIdStructReader request, ErrorCodeResponseWriter response)
         {
             throw new NotImplementedException();
         }
 
-        public override void UpdateCellHandler(__CellIdStructReader request, ErrorCodeResponseWriter response)
+        public override Task UpdateCellHandlerAsync(__CellIdStructReader request, ErrorCodeResponseWriter response)
         {
             throw new NotImplementedException();
         }
         #endregion
 
-        public override void RegisterClientHandler(RegisterClientRequestReader request, RegisterClientResponseWriter response)
+        public override Task RegisterClientHandlerAsync(RegisterClientRequestReader request, RegisterClientResponseWriter response)
         {
             response.PartitionCount = m_memorycloud.PartitionCount;
             var cstg = m_client_storages.AddOrUpdate(request.Cookie, _ =>
@@ -259,12 +265,14 @@ namespace Trinity.Client.TrinityClientModule
                 return stg;
             }, (_, stg) => stg);
             response.InstanceId = cstg.InstanceId;
+            return Task.CompletedTask;
         }
 
-        public override void UnregisterClientHandler(UnregisterClientRequestReader request)
+        public override Task UnregisterClientHandlerAsync(UnregisterClientRequestReader request)
         {
             var stg = CheckInstanceCookie(request.Cookie, request.InstanceId);
             RemoveClient(request.Cookie, stg);
+            return Task.CompletedTask;
         }
 
         private void RemoveClient(int cookie, ClientIStorage stg)
@@ -284,38 +292,39 @@ namespace Trinity.Client.TrinityClientModule
             throw new ClientInstanceNotFoundException();
         }
 
-        public override void LoadStorageHandler()
+        public override async Task LoadStorageHandlerAsync()
         {
-            if (!Global.CloudStorage.LoadStorage()) throw new IOException();
+            if (!await Global.CloudStorage.LoadStorageAsync()) throw new IOException();
         }
 
-        public override void SaveStorageHandler()
+        public override async Task SaveStorageHandlerAsync()
         {
-            if (!Global.CloudStorage.SaveStorage()) throw new IOException();
+            if (!await Global.CloudStorage.SaveStorageAsync()) throw new IOException();
         }
 
-        public override void ResetStorageHandler()
+        public override async Task ResetStorageHandlerAsync()
         {
-            if (!Global.CloudStorage.ResetStorage()) throw new IOException();
+            if (!await Global.CloudStorage.ResetStorageAsync()) throw new IOException();
         }
 
-        public override void ContainsHandler(__CellIdStructReader request, ErrorCodeResponseWriter response)
+        public override async Task ContainsHandlerAsync(__CellIdStructReader request, ErrorCodeResponseWriter response)
         {
-            response.code = (int)(m_memorycloud.Contains(request.id) ? TrinityErrorCode.E_CELL_FOUND : TrinityErrorCode.E_CELL_NOT_FOUND);
+            response.code = (int)(await m_memorycloud.ContainsAsync(request.id) ? TrinityErrorCode.E_CELL_FOUND : TrinityErrorCode.E_CELL_NOT_FOUND);
         }
 
-        public override void RemoveCellHandler(__CellIdStructReader request, ErrorCodeResponseWriter response)
+        public override async Task RemoveCellHandlerAsync(__CellIdStructReader request, ErrorCodeResponseWriter response)
         {
-            response.code = (int)m_memorycloud.RemoveCell(request.id);
+            response.code = (int)await m_memorycloud.RemoveCellAsync(request.id);
         }
 
-        public override void GetCellTypeHandler(__CellIdStructReader request, ErrorCodeResponseWriter response)
+        public override async Task GetCellTypeHandlerAsync(__CellIdStructReader request, ErrorCodeResponseWriter response)
         {
-            var err = (int)m_memorycloud.GetCellType(request.id, out var cellType);
-            response.code = err < 0 ? err : cellType;
+            var result = await m_memorycloud.GetCellTypeAsync(request.id);
+            var err = (int)result.ErrorCode;
+            response.code = err < 0 ? err : result.CellType;
         }
 
-        private unsafe void UpdateCell_impl(SynReqRspArgs args)
+        private unsafe Task UpdateCell_impl_Async(SynReqRspArgs args)
         {
             /******************************
              * Protocol: UpdateCell
@@ -326,15 +335,19 @@ namespace Trinity.Client.TrinityClientModule
             var id = *sp.lp++;
             var size = *sp.ip++;
 
-            var err = (int)m_memorycloud.UpdateCell(id, sp.bp, size);
-            var buf = (byte*)Memory.malloc(TrinityProtocol.MsgHeader);
-            sp = PointerHelper.New(buf);
-            *sp.ip++ = TrinityProtocol.MsgHeader - TrinityProtocol.SocketMsgHeader;
-            *sp.ip = err;
-            args.Response = new TrinityMessage(buf, TrinityProtocol.MsgHeader);
+            return m_memorycloud.UpdateCellAsync(id, sp.bp, size).ContinueWith(
+                t =>
+                {
+                    var err = (int)t.Result;
+                    var buf = (byte*)Memory.malloc(TrinityProtocol.MsgHeader);
+                    sp = PointerHelper.New(buf);
+                    *sp.ip++ = TrinityProtocol.MsgHeader - TrinityProtocol.SocketMsgHeader;
+                    *sp.ip = err;
+                    args.Response = new TrinityMessage(buf, TrinityProtocol.MsgHeader);
+                });
         }
 
-        private unsafe void SaveCell_impl(SynReqRspArgs args)
+        private unsafe Task SaveCell_impl_Async(SynReqRspArgs args)
         {
             /******************************
              * Protocol: SaveCell
@@ -346,15 +359,19 @@ namespace Trinity.Client.TrinityClientModule
             var size = *sp.ip++;
             var type = (ushort)*sp.sp++;
 
-            var err = (int)m_memorycloud.SaveCell(id, sp.bp, size, type);
-            var buf = (byte*)Memory.malloc(TrinityProtocol.MsgHeader);
-            sp = PointerHelper.New(buf);
-            *sp.ip++ = TrinityProtocol.MsgHeader - TrinityProtocol.SocketMsgHeader;
-            *sp.ip = err;
-            args.Response = new TrinityMessage(buf, TrinityProtocol.MsgHeader);
+            return m_memorycloud.SaveCellAsync(id, sp.bp, size, type).ContinueWith(
+                t =>
+                {
+                    var err = (int)t.Result;
+                    var buf = (byte*)Memory.malloc(TrinityProtocol.MsgHeader);
+                    sp = PointerHelper.New(buf);
+                    *sp.ip++ = TrinityProtocol.MsgHeader - TrinityProtocol.SocketMsgHeader;
+                    *sp.ip = err;
+                    args.Response = new TrinityMessage(buf, TrinityProtocol.MsgHeader);
+                });
         }
 
-        private unsafe void AddCell_impl(SynReqRspArgs args)
+        private unsafe Task AddCell_impl_Async(SynReqRspArgs args)
         {
             /******************************
              * Protocol: AddCell
@@ -366,15 +383,19 @@ namespace Trinity.Client.TrinityClientModule
             var size = *sp.ip++;
             var type = (ushort)*sp.sp++;
 
-            var err = (int)m_memorycloud.AddCell(id, sp.bp, size, type);
-            var buf = (byte*)Memory.malloc(TrinityProtocol.MsgHeader);
-            sp = PointerHelper.New(buf);
-            *sp.ip++ = TrinityProtocol.MsgHeader - TrinityProtocol.SocketMsgHeader;
-            *sp.ip = err;
-            args.Response = new TrinityMessage(buf, TrinityProtocol.MsgHeader);
+            return m_memorycloud.AddCellAsync(id, sp.bp, size, type).ContinueWith(
+                t =>
+                {
+                    var err = (int)t.Result;
+                    var buf = (byte*)Memory.malloc(TrinityProtocol.MsgHeader);
+                    sp = PointerHelper.New(buf);
+                    *sp.ip++ = TrinityProtocol.MsgHeader - TrinityProtocol.SocketMsgHeader;
+                    *sp.ip = err;
+                    args.Response = new TrinityMessage(buf, TrinityProtocol.MsgHeader);
+                });
         }
 
-        private unsafe void LoadCell_impl(SynReqRspArgs args)
+        private unsafe Task LoadCell_impl_Async(SynReqRspArgs args)
         {
             /******************************
              * Protocol: LoadCell
@@ -382,31 +403,37 @@ namespace Trinity.Client.TrinityClientModule
              * Response: [ 4B TrinityErrorCode header ] -- if success --> | 4B Size|2B CellType| Payload |
              ******************************/
             var id = *(long*)(args.Buffer + args.Offset);
-            var err = m_memorycloud.LoadCell(id, out var cellBuff, out var cellType);
-            if (err == TrinityErrorCode.E_SUCCESS)
-            {
-                var len = TrinityProtocol.MsgHeader + sizeof(int) + cellBuff.Length + sizeof(ushort);
-                var buf = (byte*)Memory.malloc((ulong)len);
-                var sp = PointerHelper.New(buf);
-                *sp.ip++ = len - TrinityProtocol.SocketMsgHeader;
-                *sp.ip++ = (int)err;
-                *sp.ip++ = cellBuff.Length;
-                *sp.sp++ = (short)cellType;
-                fixed(byte* p = cellBuff)
+            return m_memorycloud.LoadCellAsync(id).ContinueWith(
+                t =>
                 {
-                    Memory.memcpy(sp.bp, p, (ulong)cellBuff.Length);
-                }
+                    var err = t.Result.ErrorCode;
+                    if (err == TrinityErrorCode.E_SUCCESS)
+                    {
+                        var cellBuff = t.Result.CellBuff;
+                        var cellType = t.Result.CellType;
+                        var len = TrinityProtocol.MsgHeader + sizeof(int) + cellBuff.Length + sizeof(ushort);
+                        var buf = (byte*)Memory.malloc((ulong)len);
+                        var sp = PointerHelper.New(buf);
+                        *sp.ip++ = len - TrinityProtocol.SocketMsgHeader;
+                        *sp.ip++ = (int)err;
+                        *sp.ip++ = cellBuff.Length;
+                        *sp.sp++ = (short)cellType;
+                        fixed (byte* p = cellBuff)
+                        {
+                            Memory.memcpy(sp.bp, p, (ulong)cellBuff.Length);
+                        }
 
-                args.Response = new TrinityMessage(buf, len);
-            }
-            else
-            {
-                var buf = (byte*)Memory.malloc(TrinityProtocol.MsgHeader);
-                var sp = PointerHelper.New(buf);
-                *sp.ip++ = TrinityProtocol.MsgHeader - TrinityProtocol.SocketMsgHeader;
-                *sp.ip = (int)err;
-                args.Response = new TrinityMessage(buf, TrinityProtocol.MsgHeader);
-            }
+                        args.Response = new TrinityMessage(buf, len);
+                    }
+                    else
+                    {
+                        var buf = (byte*)Memory.malloc(TrinityProtocol.MsgHeader);
+                        var sp = PointerHelper.New(buf);
+                        *sp.ip++ = TrinityProtocol.MsgHeader - TrinityProtocol.SocketMsgHeader;
+                        *sp.ip = (int)err;
+                        args.Response = new TrinityMessage(buf, TrinityProtocol.MsgHeader);
+                    }
+                });
         }
     }
 }

@@ -1402,13 +1402,14 @@ namespace t_Namespace
         /// <param name="storage"/>A <see cref="Trinity.Storage.IKeyValueStore"/> instance.</param>
         /// <param name="cellId">A 64-bit cell Id.</param>
         /// <returns>true if saving succeeds; otherwise, false.</returns>
-        public unsafe static bool Savet_cell_name(this IKeyValueStore storage, long cellId/*FOREACH*/, t_field_type t_field_name = default(t_field_type)/*END*/)
+        public unsafe static Task<bool> Savet_cell_nameAsync(this IKeyValueStore storage, long cellId/*FOREACH*/, t_field_type t_field_name = default(t_field_type)/*END*/)
         {
             __meta.MUTE();
             byte[] tmpcell = null;
             __meta.MUTE_END();
             __meta.MODULE_CALL("SerializeParametersToBuffer", "node", "\"cell\"");
-            return storage.SaveCell(cellId, tmpcell, (ushort)CellType.t_cell_name) == TrinityErrorCode.E_SUCCESS;
+            return storage.SaveCellAsync(cellId, tmpcell, (ushort)CellType.t_cell_name)
+                          .ContinueWith(t => t.Result == TrinityErrorCode.E_SUCCESS, TaskContinuationOptions.ExecuteSynchronously);
         }
 
         /// <summary>
@@ -1418,9 +1419,9 @@ namespace t_Namespace
         /// <param name="cellId">A 64-bit cell Id.</param>
         /// <param name="cellContent">The content of the cell.</param>
         /// <returns>true if saving succeeds; otherwise, false.</returns>
-        public unsafe static bool Savet_cell_name(this IKeyValueStore storage, long cellId, t_cell_name cellContent)
+        public unsafe static Task<bool> Savet_cell_nameAsync(this IKeyValueStore storage, long cellId, t_cell_name cellContent)
         {
-            return Savet_cell_name(storage, cellId /*FOREACH*/ , cellContent.t_field_name /*END*/);
+            return Savet_cell_nameAsync(storage, cellId /*FOREACH*/ , cellContent.t_field_name /*END*/);
         }
 
         /// <summary>
@@ -1429,9 +1430,9 @@ namespace t_Namespace
         /// <param name="storage"/>A <see cref="Trinity.Storage.IKeyValueStore"/> instance.</param>
         /// <param name="cellContent">The content of the cell.</param>
         /// <returns>true if saving succeeds; otherwise, false.</returns>
-        public unsafe static bool Savet_cell_name(this IKeyValueStore storage, t_cell_name cellContent)
+        public unsafe static Task<bool> Savet_cell_nameAsync(this IKeyValueStore storage, t_cell_name cellContent)
         {
-            return Savet_cell_name(storage, cellContent.CellId /*FOREACH*/ , cellContent.t_field_name /*END*/);
+            return Savet_cell_nameAsync(storage, cellContent.CellId /*FOREACH*/ , cellContent.t_field_name /*END*/);
         }
 
         /// <summary>
@@ -1439,20 +1440,29 @@ namespace t_Namespace
         /// the content object is saved back into the storage.
         /// <param name="storage"/>A <see cref="Trinity.Storage.IKeyValueStore"/> instance.</param>
         /// </summary>
-        public unsafe static t_cell_name Loadt_cell_name(this IKeyValueStore storage, long cellId)
+        public unsafe static Task<t_cell_name> Loadt_cell_nameAsync(this IKeyValueStore storage, long cellId)
         {
-            if (TrinityErrorCode.E_SUCCESS == storage.LoadCell(cellId, out var buff))
-            {
-                fixed (byte* p = buff)
-                {
-                    return t_cell_name_Accessor._get()._Setup(cellId, p, -1, 0);
-                }
-            }
-            else
-            {
-                Throw.cell_not_found();
-                throw new Exception();
-            }
+            return storage.LoadCellAsync(cellId)
+                          .ContinueWith(
+                            t =>
+                            {
+                                var result = t.Result;
+                                var err = result.ErrorCode;
+                                var buff = result.CellBuff;
+                                if (TrinityErrorCode.E_SUCCESS == err)
+                                {
+                                    fixed (byte* p = buff)
+                                    {
+                                        return (t_cell_name)t_cell_name_Accessor._get()._Setup(cellId, p, -1, 0);
+                                    }
+                                }
+                                else
+                                {
+                                    Throw.cell_not_found();
+                                    throw new Exception();
+                                }
+                            },
+                            TaskContinuationOptions.ExecuteSynchronously);
         }
         #endregion
 
@@ -1494,6 +1504,44 @@ namespace t_Namespace
 
         #region LocalStorage Non-Tx logging
         /// <summary>
+        /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The parameter <paramref name="cellId"/> overrides the cell id in the content object.
+        /// </summary>
+        /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <param name="cellContent">The content of the cell.</param>
+        /// <returns>true if saving succeeds; otherwise, false.</returns>
+        public unsafe static bool Savet_cell_name(this Trinity.Storage.LocalMemoryStorage storage, long cellId, t_cell_name cellContent)
+        {
+            return Savet_cell_name(storage, cellId /*FOREACH*/ , cellContent.t_field_name /*END*/);
+        }
+
+        /// <summary>
+        /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. Cell Id is specified by the CellId field in the content object.
+        /// </summary>
+        /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// <param name="cellContent">The content of the cell.</param>
+        /// <returns>true if saving succeeds; otherwise, false.</returns>
+        public unsafe static bool Savet_cell_name(this Trinity.Storage.LocalMemoryStorage storage, t_cell_name cellContent)
+        {
+            return Savet_cell_name(storage, cellContent.CellId /*FOREACH*/ , cellContent.t_field_name /*END*/);
+        }
+
+        /// <summary>
+        /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The value of the cell is specified in the method parameters.
+        /// </summary>
+        /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
+        /// <param name="cellId">A 64-bit cell Id.</param>
+        /// <returns>true if saving succeeds; otherwise, false.</returns>
+        public unsafe static bool Savet_cell_name(this Trinity.Storage.LocalMemoryStorage storage, long cellId/*FOREACH*/, t_field_type t_field_name = default(t_field_type)/*END*/)
+        {
+            __meta.MUTE();
+            byte[] tmpcell = null;
+            __meta.MUTE_END();
+            __meta.MODULE_CALL("SerializeParametersToBuffer", "node", "\"cell\"");
+            return storage.SaveCell(cellId, tmpcell, (ushort)CellType.t_cell_name) == TrinityErrorCode.E_SUCCESS;
+        }
+
+        /// <summary>
         /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The value of the cell is specified in the method parameters.
         /// </summary>
         /// <param name="storage"/>A <see cref="Trinity.Storage.LocalMemoryStorage"/> instance.</param>
@@ -1508,6 +1556,7 @@ namespace t_Namespace
             __meta.MODULE_CALL("SerializeParametersToBuffer", "node", "\"cell\"");
             return storage.SaveCell(options, cellId, tmpcell, 0, tmpcell.Length, (ushort)CellType.t_cell_name) == TrinityErrorCode.E_SUCCESS;
         }
+
         /// <summary>
         /// Adds a new cell of type t_cell_name to the key-value store if the cell Id does not exist, or updates an existing cell in the key-value store if the cell Id already exists. The parameter <paramref name="cellId"/> overrides the cell id in the content object.
         /// </summary>

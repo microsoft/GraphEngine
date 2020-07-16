@@ -46,22 +46,22 @@ namespace Trinity.Client
 
         protected override sealed RunningMode RunningMode => RunningMode.Client;
 
-        public unsafe void SendMessage(byte* message, int size)
-            => m_client.SendMessage(message, size);
+        public unsafe Task SendMessageAsync(byte* message, int size)
+            => m_client.SendMessageAsync(message, size);
 
-        public unsafe void SendMessage(byte* message, int size, out TrinityResponse response)
-            => m_client.SendMessage(message, size, out response);
+        public unsafe Task<TrinityResponse> SendRecvMessageAsync(byte* message, int size)
+            => m_client.SendRecvMessageAsync(message, size);
 
-        public unsafe void SendMessage(byte** message, int* sizes, int count)
-            => m_client.SendMessage(message, sizes, count);
+        public unsafe Task SendMessageAsync(byte** message, int* sizes, int count)
+            => m_client.SendMessageAsync(message, sizes, count);
 
-        public unsafe void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
-            => m_client.SendMessage(message, sizes, count, out response);
+        public unsafe Task<TrinityResponse> SendRecvMessageAsync(byte** message, int* sizes, int count)
+            => m_client.SendRecvMessageAsync(message, sizes, count);
 
-        protected override sealed void DispatchHttpRequest(HttpListenerContext ctx, string handlerName, string url)
+        protected override sealed Task DispatchHttpRequestAsync(HttpListenerContext ctx, string handlerName, string url)
             => throw new NotSupportedException();
 
-        protected override sealed void RootHttpHandler(HttpListenerContext ctx)
+        protected override sealed Task RootHttpHandlerAsync(HttpListenerContext ctx)
             => throw new NotSupportedException();
 
         protected override void StartCommunicationListeners()
@@ -69,25 +69,25 @@ namespace Trinity.Client
             if (m_clientfactory == null) { ScanClientConnectionFactory(); }
             m_client = m_clientfactory.ConnectAsync(m_endpoint, this).Result;
             ClientMemoryCloud.Initialize(m_client, this);
-            this.Started += StartPolling;
+            this.Started += StartPollingAsync;
         }
 
-        private void StartPolling()
+        private async Task StartPollingAsync()
         {
             m_mod = GetCommunicationModule<TrinityClientModule.TrinityClientModule>();
-            RegisterClient();
+            await RegisterClientAsync();
             m_polltask = PollProc(m_tokensrc.Token);
         }
 
-        private void RestartPolling()
+        private async Task RestartPollingAsync()
         {
             m_tokensrc.Cancel();
-            StartPolling();
+            await StartPollingAsync();
         }
 
-        private void RegisterClient()
+        private async Task RegisterClientAsync()
         {
-            (CloudStorage as ClientMemoryCloud).RegisterClient();
+            await (CloudStorage as ClientMemoryCloud).RegisterClientAsync();
             m_tokensrc = new CancellationTokenSource();
             m_id = Global.CloudStorage.MyInstanceId;
             m_cookie = m_mod.MyCookie;
@@ -100,7 +100,7 @@ namespace Trinity.Client
             {
                 try
                 {
-                    _PollImpl(poll_req);
+                    await _PollImplAsync(poll_req);
                     await Task.Delay(100);
                 }
                 catch (Exception ex)
@@ -126,47 +126,66 @@ namespace Trinity.Client
             return new TrinityMessage(buf, msglen);
         }
 
-        private unsafe void _PollImpl(TrinityMessage poll_req)
+        private unsafe Task _PollImplAsync(TrinityMessage poll_req)
         {
-            m_mod.SendMessage(m_client, poll_req.Buffer, poll_req.Size, out var poll_rsp);
-            var sp = PointerHelper.New(poll_rsp.Buffer + poll_rsp.Offset);
-            //HexDump.Dump(poll_rsp.ToByteArray());
-            //Console.WriteLine($"poll_rsp.Size = {poll_rsp.Size}");
-            //Console.WriteLine($"poll_rsp.Offset = {poll_rsp.Offset}");
-            var payload_len = poll_rsp.Size - TrinityProtocol.TrinityMsgHeader;
-            if (payload_len < sizeof(long) + sizeof(int)) { throw new IOException("Poll response corrupted."); }
-            var errno = *(sp.ip - 1);
-
-            try
-            {
-                if (errno == 2)
+            return m_mod.SendRecvMessageAsync(m_client, poll_req.Buffer, poll_req.Size).ContinueWith(
+                t =>
                 {
-                    Log.WriteLine(LogLevel.Warning, $"{nameof(TrinityClient)}: server drops our connection. Registering again.");
-                    RestartPolling();
-                    return;
-                }
-                if (errno != 0) { return; }
+                    Task task;
+                    var poll_rsp = t.Result;
 
-                var pctx = *sp.lp++;
-                var msg_len = *sp.ip++;
-                if (msg_len < 0) return; // no events
-                MessageBuff msg_buff = new MessageBuff{ Buffer = sp.bp, Length = (uint)msg_len };
-                MessageDispatcher(&msg_buff);
-                // !Note, void-response messages are not acknowledged. 
-                // Server would not be aware of client side error in this case.
-                // This is by-design and an optimization to reduce void-response
-                // message delivery latency. In streaming use cases this will be
-                // very useful.
-                try { if (pctx != 0) _PostResponseImpl(pctx, &msg_buff); }
-                finally { Memory.free(msg_buff.Buffer); }
-            }
-            finally
-            {
-                poll_rsp.Dispose();
-            }
+                    var sp = PointerHelper.New(poll_rsp.Buffer + poll_rsp.Offset);
+                    //HexDump.Dump(poll_rsp.ToByteArray());
+                    //Console.WriteLine($"poll_rsp.Size = {poll_rsp.Size}");
+                    //Console.WriteLine($"poll_rsp.Offset = {poll_rsp.Offset}");
+                    var payload_len = poll_rsp.Size - TrinityProtocol.TrinityMsgHeader;
+                    if (payload_len < sizeof(long) + sizeof(int)) { throw new IOException("Poll response corrupted."); }
+                    var errno = *(sp.ip - 1);
+
+                    try
+                    {
+                        if (errno == 2)
+                        {
+                            Log.WriteLine(LogLevel.Warning, $"{nameof(TrinityClient)}: server drops our connection. Registering again.");
+                            return RestartPollingAsync();
+                        }
+                        if (errno != 0) { return Task.CompletedTask; }
+
+                        var pctx = *sp.lp++;
+                        var msg_len = *sp.ip++;
+                        if (msg_len < 0) return Task.CompletedTask; // no events
+                        MessageBuff msg_buff = new MessageBuff { Buffer = sp.bp, Length = (uint)msg_len };
+                        MessageDispatcher(&msg_buff);
+                        // !Note, void-response messages are not acknowledged. 
+                        // Server would not be aware of client side error in this case.
+                        // This is by-design and an optimization to reduce void-response
+                        // message delivery latency. In streaming use cases this will be
+                        // very useful.
+                        if (pctx == 0)
+                        {
+                            Memory.free(msg_buff.Buffer);
+                            return Task.CompletedTask;
+                        }
+
+                        task = _PostResponseImplAsync(pctx, &msg_buff);
+                    }
+                    catch
+                    {
+                        Memory.free(sp.bp);
+                        poll_rsp.Dispose();
+                        throw;
+                    }
+
+                    return task.ContinueWith(
+                            _ =>
+                            {
+                                Memory.free(sp.bp);
+                                poll_rsp.Dispose();
+                            });
+                });
         }
 
-        private unsafe void _PostResponseImpl(long pctx, MessageBuff* messageBuff)
+        private unsafe Task _PostResponseImplAsync(long pctx, MessageBuff* messageBuff)
         {
             int header_len = TrinityProtocol.MsgHeader + sizeof(int) + sizeof(int) + sizeof(long);
             int socket_header = header_len + (int)messageBuff->Length - TrinityProtocol.SocketMsgHeader;
@@ -188,7 +207,7 @@ namespace Trinity.Client
             *sp.ip++                                        = m_id;
             *sp.ip++                                        = m_cookie;
             *sp.lp++                                        = pctx;
-            m_mod.SendMessage(m_client, bufs, sizes, 2);
+            return m_mod.SendMessageAsync(m_client, bufs, sizes, 2);
         }
 
         private void ScanClientConnectionFactory()

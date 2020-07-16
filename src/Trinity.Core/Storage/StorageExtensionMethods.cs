@@ -1,84 +1,87 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Trinity.Configuration;
 
 namespace Trinity.Storage
 {
-    public unsafe static class StorageExtensionMethods
+    public static unsafe class StorageExtensionMethods
     {
-        public static TrinityErrorCode LoadCell(this IKeyValueStore storage, long cell_id, out byte[] buff)
+        public static Task<TrinityErrorCode> SaveCellAsync(this IKeyValueStore storage, long cell_id, byte[] cellBytes)
         {
-            return storage.LoadCell(cell_id, out buff, out _);
+            GCHandle gch = GCHandle.Alloc(cellBytes, GCHandleType.Pinned);
+            byte* p = (byte*)gch.AddrOfPinnedObject();
+            return storage.SaveCellAsync(cell_id, p, cellBytes.Length, StorageConfig.c_UndefinedCellType)
+                          .ContinueWith(t => { gch.Free(); return t.Result; }, TaskContinuationOptions.ExecuteSynchronously);
         }
-        public static TrinityErrorCode SaveCell(this IKeyValueStore storage, long cell_id, byte[] cellBytes)
+
+        public static Task<TrinityErrorCode> SaveCellAsync(this IKeyValueStore storage, long cell_id, byte[] cellBytes, int startIndex, int cellSize)
         {
-            fixed(byte* p = cellBytes)
-            {
-                return storage.SaveCell(cell_id, p, cellBytes.Length, StorageConfig.c_UndefinedCellType);
-            }
+            GCHandle gch = GCHandle.Alloc(cellBytes, GCHandleType.Pinned);
+            byte* p = (byte*)gch.AddrOfPinnedObject();
+            return storage.SaveCellAsync(cell_id, p + startIndex, cellSize, StorageConfig.c_UndefinedCellType)
+                          .ContinueWith(t => { gch.Free(); return t.Result; }, TaskContinuationOptions.ExecuteSynchronously);
         }
-        public static TrinityErrorCode SaveCell(this IKeyValueStore storage, long cell_id, byte[] cellBytes, int startIndex, int cellSize)
+
+        public static Task<TrinityErrorCode> SaveCellAsync(this IKeyValueStore storage, long cell_id, byte[] cellBytes, int startIndex, int cellSize, ushort cellType)
         {
-            fixed(byte* p = cellBytes)
-            {
-                return storage.SaveCell(cell_id, p + startIndex, cellSize, StorageConfig.c_UndefinedCellType);
-            }
+            GCHandle gch = GCHandle.Alloc(cellBytes, GCHandleType.Pinned);
+            byte* p = (byte*)gch.AddrOfPinnedObject();
+            return storage.SaveCellAsync(cell_id, p + startIndex, cellSize, cellType)
+                          .ContinueWith(t => { gch.Free(); return t.Result; }, TaskContinuationOptions.ExecuteSynchronously);
         }
-        public static TrinityErrorCode SaveCell(this IKeyValueStore storage, long cell_id, byte[] cellBytes, int startIndex, int cellSize, ushort cellType)
+
+        public static Task<TrinityErrorCode> SaveCellAsync(this IKeyValueStore storage, long cell_id, byte[] cellBytes, ushort cellType)
         {
-            fixed(byte* p = cellBytes)
-            {
-                return storage.SaveCell(cell_id, p + startIndex, cellSize, cellType);
-            }
+            GCHandle gch = GCHandle.Alloc(cellBytes, GCHandleType.Pinned);
+            byte* p = (byte*)gch.AddrOfPinnedObject();
+            return storage.SaveCellAsync(cell_id, p, cellBytes.Length, cellType)
+                          .ContinueWith(t => { gch.Free(); return t.Result; }, TaskContinuationOptions.ExecuteSynchronously);
         }
-        public static TrinityErrorCode SaveCell(this IKeyValueStore storage, long cell_id, byte[] cellBytes, ushort cellType)
+
+        public static Task<TrinityErrorCode> SaveCellAsync(this IKeyValueStore storage, long cell_id, byte* cellPtr, int length)
         {
-            fixed(byte* p = cellBytes)
-            {
-                return storage.SaveCell(cell_id, p, cellBytes.Length, cellType);
-            }
+            return storage.SaveCellAsync(cell_id, cellPtr, length, StorageConfig.c_UndefinedCellType);
         }
-        public static TrinityErrorCode SaveCell(this IKeyValueStore storage, long cell_id, byte* cellPtr, int length)
+
+        public static Task<TrinityErrorCode> AddCellAsync(this IKeyValueStore storage, long cell_id, byte[] cellBytes)
         {
-            return storage.SaveCell(cell_id, cellPtr, length, StorageConfig.c_UndefinedCellType);
+            GCHandle gch = GCHandle.Alloc(cellBytes, GCHandleType.Pinned);
+            byte* p = (byte*)gch.AddrOfPinnedObject();
+            return storage.AddCellAsync(cell_id, p, cellBytes.Length, StorageConfig.c_UndefinedCellType)
+                          .ContinueWith(t => { gch.Free(); return t.Result; }, TaskContinuationOptions.ExecuteSynchronously);
         }
-        public static TrinityErrorCode AddCell(this IKeyValueStore storage, long cell_id, byte[] cellBytes)
+
+        public static Task<TrinityErrorCode> AddCellAsync(this IKeyValueStore storage, long cell_id, byte[] cellBytes, int startIndex, int length)
         {
-            fixed(byte* p = cellBytes)
-            {
-                return storage.AddCell(cell_id, p, cellBytes.Length, StorageConfig.c_UndefinedCellType);
-            }
+            GCHandle gch = GCHandle.Alloc(cellBytes, GCHandleType.Pinned);
+            byte* p = (byte*)gch.AddrOfPinnedObject();
+            return storage.AddCellAsync(cell_id, p + startIndex, length, StorageConfig.c_UndefinedCellType)
+                          .ContinueWith(t => { gch.Free(); return t.Result; }, TaskContinuationOptions.ExecuteSynchronously);
         }
-        public static TrinityErrorCode AddCell(this IKeyValueStore storage, long cell_id, byte[] cellBytes, int startIndex, int length)
+
+        public static Task<TrinityErrorCode> AddCellAsync(this IKeyValueStore storage, long cell_id, byte[] cellBytes, int startIndex, int length, ushort cellType)
         {
-            fixed(byte* p = cellBytes)
-            {
-                return storage.AddCell(cell_id, p + startIndex, length, StorageConfig.c_UndefinedCellType);
-            }
+            GCHandle gch = GCHandle.Alloc(cellBytes, GCHandleType.Pinned);
+            byte* p = (byte*)gch.AddrOfPinnedObject();
+            return storage.AddCellAsync(cell_id, p + startIndex, length, cellType)
+                          .ContinueWith(t => { gch.Free(); return t.Result; }, TaskContinuationOptions.ExecuteSynchronously);
         }
-        public static TrinityErrorCode AddCell(this IKeyValueStore storage, long cell_id, byte[] cellBytes, int startIndex, int length, ushort cellType)
+
+        public static Task<TrinityErrorCode> UpdateCellAsync(this IKeyValueStore storage, long cell_id, byte[] cellBytes)
         {
-            fixed(byte* p = cellBytes)
-            {
-                return storage.AddCell(cell_id, p + startIndex, length, cellType);
-            }
+            GCHandle gch = GCHandle.Alloc(cellBytes, GCHandleType.Pinned);
+            byte* p = (byte*)gch.AddrOfPinnedObject();
+            return storage.UpdateCellAsync(cell_id, p, cellBytes.Length)
+                          .ContinueWith(t => { gch.Free(); return t.Result; }, TaskContinuationOptions.ExecuteSynchronously);
         }
-        public static TrinityErrorCode UpdateCell(this IKeyValueStore storage, long cell_id, byte[] cellBytes)
+
+        public static Task<TrinityErrorCode> UpdateCellAsync(this IKeyValueStore storage, long cell_id, byte[] cellBytes, int startIndex, int length)
         {
-            fixed(byte* p = cellBytes)
-            {
-                return storage.UpdateCell(cell_id, p, cellBytes.Length);
-            }
-        }
-        public static TrinityErrorCode UpdateCell(this IKeyValueStore storage, long cell_id, byte[] cellBytes, int startIndex, int length)
-        {
-            fixed(byte* p = cellBytes)
-            {
-                return storage.UpdateCell(cell_id, p + startIndex, length);
-            }
+            GCHandle gch = GCHandle.Alloc(cellBytes, GCHandleType.Pinned);
+            byte* p = (byte*)gch.AddrOfPinnedObject();
+            return storage.UpdateCellAsync(cell_id, p + startIndex, length)
+                          .ContinueWith(t => { gch.Free(); return t.Result; }, TaskContinuationOptions.ExecuteSynchronously);
         }
     }
 }

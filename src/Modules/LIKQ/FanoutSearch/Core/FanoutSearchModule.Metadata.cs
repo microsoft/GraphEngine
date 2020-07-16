@@ -32,12 +32,14 @@ namespace FanoutSearch
             }
         }
 
-        public override void GetEdgeTypeHandler(EdgeStructReader request, StringStructWriter response)
+        public override Task GetEdgeTypeHandlerAsync(EdgeStructReader request, StringStructWriter response)
         {
             using (var cell = s_useICellFunc(request.from))
             {
                 response.queryString = ToJsonArray(_GetEdgeType(cell, request.to));
             }
+
+            return Task.CompletedTask;
         }
 
         private NodeInfo _GetNodeInfo(long id, List<string> fields, long secondary_id)
@@ -70,7 +72,7 @@ namespace FanoutSearch
             }
         }
 
-        public override void _GetNodesInfo_implHandler(GetNodesInfoRequestReader request, GetNodesInfoResponseWriter response)
+        public override Task _GetNodesInfo_implHandlerAsync(GetNodesInfoRequestReader request, GetNodesInfoResponseWriter response)
         {
             List<string> fields = request.fields;
             IEnumerable<long> secondary_ids = request.Contains_secondary_ids ? request.secondary_ids : Enumerable.Repeat(0L, request.ids.Count);
@@ -84,14 +86,16 @@ namespace FanoutSearch
                     msg_approx_len += info.values.Sum(_ => _.Length);
                     if (msg_approx_len > FanoutSearchModule.s_max_rsp_size)
                     {
-                        throw new MessageTooLongException($"{nameof(_GetNodesInfo_implHandler)}: Message too long");
+                        throw new MessageTooLongException($"{nameof(_GetNodesInfo_implHandlerAsync)}: Message too long");
                     }
                     response.infoList.Add(info);
                 }
+
+                return Task.CompletedTask;
             }
             catch (AccessorResizeException ex)
             {
-                throw new MessageTooLongException($"{nameof(_GetNodesInfo_implHandler)}: Message too long", ex);
+                throw new MessageTooLongException($"{nameof(_GetNodesInfo_implHandlerAsync)}: Message too long", ex);
             }
         }
 

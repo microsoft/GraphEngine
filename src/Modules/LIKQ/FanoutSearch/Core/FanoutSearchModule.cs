@@ -56,7 +56,7 @@ namespace FanoutSearch
 
         public FanoutSearchModule()
         {
-            this.Started += OnStart;
+            this.Started += OnStartAsync;
 
             m_compiler = new QueryPredicateCompiler();
             m_cache    = new QueryResultCache(m_compiler);
@@ -73,7 +73,7 @@ namespace FanoutSearch
         {
             base.RegisterMessageHandler();
             // then, override FanoutSearch_impl
-            MessageRegistry.RegisterMessageHandler((ushort)(this.AsynReqIdOffset + (ushort)global::FanoutSearch.Protocols.TSL.TSL.CommunicationModule.FanoutSearch.AsynReqMessageType.FanoutSearch_impl), FanoutSearch_impl_Recv);
+            MessageRegistry.RegisterMessageHandler((ushort)(this.AsynReqIdOffset + (ushort)global::FanoutSearch.Protocols.TSL.TSL.CommunicationModule.FanoutSearch.AsynReqMessageType.FanoutSearch_impl), FanoutSearch_impl_Recv_Async);
         }
 
         public override string GetModuleName()
@@ -105,7 +105,7 @@ namespace FanoutSearch
         }
 
 
-        private void OnStart()
+        private Task OnStartAsync()
         {
             if (s_useICellFunc == null)
                 s_useICellFunc = Global.LocalStorage.UseGenericCell;
@@ -126,6 +126,8 @@ namespace FanoutSearch
                     Log.Flush();
                 }
             }).Start();
+
+            return Task.CompletedTask;
         }
 
         public static void RegisterUseICellOperationMethod(Func<long, ICellAccessor> func)

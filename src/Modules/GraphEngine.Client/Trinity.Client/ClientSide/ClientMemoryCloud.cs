@@ -5,8 +5,9 @@ using Trinity.Client;
 using Trinity.Extension;
 using Trinity.Storage;
 using Trinity.Client.TrinityClientModule;
-using System.Threading;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Trinity.Client
 {
@@ -35,7 +36,7 @@ namespace Trinity.Client
             s_redir_storages = new List<IStorage> { new PassThroughIStorage(ep) };
         }
 
-        public void RegisterClient()
+        public async Task RegisterClientAsync()
         {
             //  copy from initialization result
             m_client = s_client;
@@ -45,7 +46,7 @@ namespace Trinity.Client
             m_cookie = m_cmod.MyCookie;
 
             using (var req = new RegisterClientRequestWriter(m_cmod.MyCookie))
-            using (var rsp = m_ep.RegisterClient(req))
+            using (var rsp = await m_ep.RegisterClientAsync(req))
             {
                 m_partitionCount = rsp.PartitionCount;
                 m_instanceId = rsp.InstanceId;
@@ -92,7 +93,7 @@ namespace Trinity.Client
 
         protected override IList<IStorage> StorageTable => _GetRedirStorages();
 
-        public override long GetTotalMemoryUsage()
+        public override Task<long> GetTotalMemoryUsageAsync()
         {
             throw new NotImplementedException();
         }
@@ -100,11 +101,11 @@ namespace Trinity.Client
         public override bool IsLocalCell(long cellId)
             => false;
 
-        public override bool LoadStorage()
+        public override async Task<bool> LoadStorageAsync()
         {
             try
             {
-                m_ep.LoadStorage();
+                await m_ep.LoadStorageAsync();
                 return true;
             }
             catch
@@ -115,11 +116,11 @@ namespace Trinity.Client
 
         public override bool Open(ClusterConfig config, bool nonblocking) => true;
 
-        public override bool ResetStorage()
+        public override async Task<bool> ResetStorageAsync()
         {
             try
             {
-                m_ep.ResetStorage();
+                await m_ep.ResetStorageAsync();
                 return true;
             }
             catch
@@ -128,11 +129,11 @@ namespace Trinity.Client
             }
         }
 
-        public override bool SaveStorage()
+        public override async Task<bool> SaveStorageAsync()
         {
             try
             {
-                m_ep.SaveStorage();
+                await m_ep.SaveStorageAsync();
                 return true;
             }
             catch

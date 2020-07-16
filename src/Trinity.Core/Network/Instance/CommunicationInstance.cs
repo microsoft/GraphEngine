@@ -4,24 +4,20 @@
 //
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
-using System.Threading;
-
-using Trinity;
-using Trinity.Network;
-using Trinity.Network.Sockets;
-using Trinity.Diagnostics;
-using Trinity.Network.Http;
-using Trinity.Storage;
-using System.Runtime.CompilerServices;
-using System.Globalization;
-using Trinity.Network.Messaging;
 using System.Diagnostics;
-using Trinity.Utilities;
-using Trinity.Extension;
+using System.Globalization;
+using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
+using Trinity.Diagnostics;
+using Trinity.Extension;
+using Trinity.Network.Http;
+using Trinity.Network.Messaging;
+using Trinity.Network.Sockets;
+using Trinity.Storage;
+using Trinity.Utilities;
 
 namespace Trinity.Network
 {
@@ -48,9 +44,6 @@ namespace Trinity.Network
         private object m_lock = new object();
         private ManualResetEventSlim m_module_init_signal = new ManualResetEventSlim(initialState: false);
         private MessageDispatchProc m_dispatcher = null;
-        // XXX ThreadStatic does not work well with async/await. Find a solution.
-        [ThreadStatic]
-        private static HttpListenerContext s_current_http_ctx = null;
         #endregion
 
         /// <summary>
@@ -75,16 +68,6 @@ namespace Trinity.Network
         internal sealed override CommunicationInstance GetCommunicationInstance()
         {
             return this;
-        }
-
-        internal HttpListenerContext _GetCurrentHttpListenerContext_impl()
-        {
-            if (s_current_http_ctx == null)
-            {
-                throw new InvalidOperationException("Could not get the current HttpListenerContext. It is likely that the method is called from outside an Http handler.");
-            }
-
-            return s_current_http_ctx;
         }
 
         private void _InitializeModules()
@@ -136,9 +119,9 @@ namespace Trinity.Network
         /// This method can be overridden for custom behaviors.
         /// </summary>
         /// <param name="ctx">The context object.</param>
-        protected override void RootHttpHandler(HttpListenerContext ctx)
+        protected override Task RootHttpHandlerAsync(HttpListenerContext ctx)
         {
-            CommonHttpHandlers.ListAvailableEndpoints(ctx, new List<string> { }, this.GetType());
+            return CommonHttpHandlers.ListAvailableEndpointsAsync(ctx, new List<string> { }, this.GetType());
         }
 
         /// <summary>
@@ -151,9 +134,9 @@ namespace Trinity.Network
         /// <param name="ctx">The context object.</param>
         /// <param name="handlerName">The name of the handler.</param>
         /// <param name="url"></param>
-        protected override void DispatchHttpRequest(HttpListenerContext ctx, string handlerName, string url)
+        protected override Task DispatchHttpRequestAsync(HttpListenerContext ctx, string handlerName, string url)
         {
-            RootHttpHandler(ctx);
+            return RootHttpHandlerAsync(ctx);
         }
 
         private void StartHttpServer()
@@ -164,14 +147,14 @@ namespace Trinity.Network
                 if (http_port <= UInt16.MinValue || http_port > UInt16.MaxValue) { return; }
 
                 List<string> endpoints = new List<string> { string.Format(CultureInfo.InvariantCulture, "http://+:{0}/", http_port) };
-                m_HttpServer = new TrinityHttpServer(_HttpHandler, endpoints);
+                m_HttpServer = new TrinityHttpServer(_HttpHandlerAsync, endpoints);
 
                 if (RunningMode == Trinity.RunningMode.Server)
                     m_HttpServer.SetInstanceList(TrinityConfig.Servers);
                 else if (RunningMode == Trinity.RunningMode.Proxy)
                     m_HttpServer.SetInstanceList(TrinityConfig.Proxies);
 
-                m_HttpServer.Listen();
+                Task fireAndForget = m_HttpServer.ListenAsync();
                 Log.WriteLine(LogLevel.Info, "HTTP server listening on port {0}", http_port);
             }
             catch
@@ -199,11 +182,8 @@ namespace Trinity.Network
         /// <summary>
         /// The primary http handler that routes the request to the proper handler.
         /// </summary>
-        private void _HttpHandler(HttpListenerContext context)
+        private Task _HttpHandlerAsync(HttpListenerContext context)
         {
-            //  Record the context into the thread-static storage
-            s_current_http_ctx = context;
-
             //  The raw url will be starting with "/", trimming all authority part.
             var url = Uri.UnescapeDataString(context.Request.RawUrl);
             var separator_idx = url.IndexOf('/', 1);
@@ -212,8 +192,7 @@ namespace Trinity.Network
             //  it means that the request is pointing to the root endpoint.
             if (url.Length < 2 || url[1] == '?' || separator_idx == -1)
             {
-                RootHttpHandler(context);
-                goto cleanup;
+                return RootHttpHandlerAsync(context);
             }
 
             var endpoint_name = url.Substring(1, separator_idx - 1);
@@ -223,8 +202,7 @@ namespace Trinity.Network
             if (UInt32.TryParse(endpoint_name, out instance_id))
             {
                 //  In this case, we relay this message to the desired instance. 
-                m_HttpServer.RelayRequest((int)instance_id, context);
-                goto cleanup;
+                return m_HttpServer.RelayRequestAsync((int)instance_id, context);
             }
 
             //  This request might be of the form "/{module_name}/..."
@@ -237,23 +215,17 @@ namespace Trinity.Network
 
                 if (url.Length < 2 || url[1] == '?' || separator_idx == -1)
                 {
-                    module.GetRootHttpHandler()(context);
+                    return module.GetRootHttpHandler()(context);
                 }
                 else
                 {
                     endpoint_name = url.Substring(1, separator_idx - 1);
-                    module.GetHttpRequestDispatcher()(context, endpoint_name, url.Substring(separator_idx + 1));
+                    return module.GetHttpRequestDispatcher()(context, endpoint_name, url.Substring(separator_idx + 1));
                 }
-
-                goto cleanup;
             }
 
             //  Otherwise, this request should be dispatched by
-            DispatchHttpRequest(context, endpoint_name, url.Substring(separator_idx + 1));
-
-            cleanup:
-            //  Erase the context as it is not being processed anymore.
-            s_current_http_ctx = null;
+            return DispatchHttpRequestAsync(context, endpoint_name, url.Substring(separator_idx + 1));
         }
         #endregion
 
@@ -279,7 +251,7 @@ namespace Trinity.Network
                     //  Initialize message handlers
                     MessageHandlers.Initialize();
                     RegisterMessageHandler();
-                    MessageDispatcher = _MessageInitializationTrap;
+                    MessageDispatcher = (_) => { _MessageInitializationTrapAsync(_); return null; };
 
                     //  Bring up networking subsystems
                     StartCommunicationListeners();
@@ -293,14 +265,14 @@ namespace Trinity.Network
 
                     //  Modules initialized, release pending messages from the trap
                     m_module_init_signal.Set();
-                    MessageDispatcher = MessageHandlers.DefaultParser.DispatchMessage;
+                    MessageDispatcher = (_) => { MessageHandlers.DefaultParser.DispatchMessageAsync(_); return null; };
 
                     Log.WriteLine("Working Directory: {0}", Global.MyAssemblyPath);
                     Log.WriteLines(TrinityConfig.OutputCurrentConfig());
 
                     m_started = true;
                     Log.WriteLine("{0} {1} is successfully started.", RunningMode, memory_cloud.MyInstanceId);
-                    _RaiseStartedEvents();
+                    _RaiseStartedEventsAsync().Wait();
                 }
                 catch (Exception ex)
                 {
@@ -309,10 +281,10 @@ namespace Trinity.Network
             }
         }
 
-        private unsafe void* _MessageInitializationTrap(MessageBuff* sendRecvBuff)
+        private unsafe Task _MessageInitializationTrapAsync(MessageBuff* sendRecvBuff)
         {
             m_module_init_signal.Wait();
-            return MessageHandlers.DefaultParser.DispatchMessage(sendRecvBuff);
+            return MessageHandlers.DefaultParser.DispatchMessageAsync(sendRecvBuff);
         }
 
         /// <summary>
@@ -408,11 +380,11 @@ namespace Trinity.Network
             }
         }
 
-        private void _RaiseStartedEvents()
+        private async Task _RaiseStartedEventsAsync()
         {
-            this._RaiseStartedEvent();
+            await this._RaiseStartedEventAsync();
             foreach (var module in m_CommunicationModules.Values)
-                module._RaiseStartedEvent();
+                await module._RaiseStartedEventAsync();
             Global._RaiseCommunicationInstanceStarted();
         }
 

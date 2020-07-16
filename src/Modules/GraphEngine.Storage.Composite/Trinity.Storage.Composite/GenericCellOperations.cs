@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading.Tasks;
 using Trinity.Extension;
 using Trinity.TSL.Lib;
 
@@ -20,9 +20,13 @@ namespace Trinity.Storage.Composite
             return CompositeStorage.s_GenericCellOperations.SelectMany(cellOps => cellOps.EnumerateGenericCells(storage));
         }
 
-        public unsafe ICell LoadGenericCell(IKeyValueStore storage, long cellId)
+        public async Task<ICell> LoadGenericCellAsync(IKeyValueStore storage, long cellId)
         {
-            var err = storage.LoadCell(cellId, out byte[] buff, out ushort type);
+            var result = await storage.LoadCellAsync(cellId);
+            var err = result.ErrorCode;
+            byte[] buff = result.CellBuff;
+            ushort type = result.CellType;
+
             if (err != Trinity.TrinityErrorCode.E_SUCCESS)
             {
                 switch (err)
@@ -37,9 +41,14 @@ namespace Trinity.Storage.Composite
             }
             int seg = CompositeStorage.GetIntervalIndexByCellTypeID(type);
 
+            return UseGenericCell(cellId, buff, type, seg);
+        }
+
+        private static unsafe ICell UseGenericCell(long cellId, byte[] buff, ushort type, int seg)
+        {
             fixed (byte* p = buff)
             {
-                return CompositeStorage.s_GenericCellOperations[seg].UseGenericCell(cellId, p, -1, type); 
+                return CompositeStorage.s_GenericCellOperations[seg].UseGenericCell(cellId, p, -1, type);
             }
         }
 
@@ -74,13 +83,25 @@ namespace Trinity.Storage.Composite
             return CompositeStorage.s_GenericCellOperations[seg].NewGenericCell(cellType, content);
         }
 
-        public void SaveGenericCell(IKeyValueStore storage, ICell cell)
+        public Task SaveGenericCellAsync(IKeyValueStore storage, ICell cell)
+        {
+            int seg = CompositeStorage.GetIntervalIndexByCellTypeID(cell.CellType);
+            return CompositeStorage.s_GenericCellOperations[seg].SaveGenericCellAsync(storage, cell);
+        }
+
+        public Task SaveGenericCellAsync(IKeyValueStore storage, long cellId, ICell cell)
+        {
+            int seg = CompositeStorage.GetIntervalIndexByCellTypeID(cell.CellType);
+            return CompositeStorage.s_GenericCellOperations[seg].SaveGenericCellAsync(storage, cellId, cell);
+        }
+
+        public void SaveGenericCell(LocalMemoryStorage storage, ICell cell)
         {
             int seg = CompositeStorage.GetIntervalIndexByCellTypeID(cell.CellType);
             CompositeStorage.s_GenericCellOperations[seg].SaveGenericCell(storage, cell);
         }
 
-        public void SaveGenericCell(IKeyValueStore storage, long cellId, ICell cell)
+        public void SaveGenericCell(LocalMemoryStorage storage, long cellId, ICell cell)
         {
             int seg = CompositeStorage.GetIntervalIndexByCellTypeID(cell.CellType);
             CompositeStorage.s_GenericCellOperations[seg].SaveGenericCell(storage, cellId, cell);

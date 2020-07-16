@@ -6,9 +6,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
-using Trinity.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 
 namespace Trinity.Storage

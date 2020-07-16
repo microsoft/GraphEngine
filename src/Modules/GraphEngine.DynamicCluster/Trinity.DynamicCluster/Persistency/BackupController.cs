@@ -98,7 +98,7 @@ namespace Trinity.DynamicCluster.Storage
 
             using (var req = new BackupTaskInformationWriter(task_id, version))
             {
-                var rsps = await masters.Select(m => m.PersistedLoadPartition(req)).Unwrap();
+                var rsps = await masters.Select(m => m.PersistedLoadPartitionAsync(req)).Unwrap();
                 bool fail = false;
                 foreach (var rsp in rsps)
                 {
@@ -119,7 +119,7 @@ namespace Trinity.DynamicCluster.Storage
             {
                 using (var req = new BackupTaskInformationWriter(task_id, version))
                 {
-                    var rsps = await masters.Select(m => m.PersistedSavePartition(req)).Unwrap();
+                    var rsps = await masters.Select(m => m.PersistedSavePartitionAsync(req)).Unwrap();
                     bool fail = false;
                     foreach (var rsp in rsps)
                     {

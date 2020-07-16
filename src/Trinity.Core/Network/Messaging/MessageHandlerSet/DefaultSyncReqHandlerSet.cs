@@ -2,19 +2,11 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
-
-using Trinity;
+using System.Threading.Tasks;
 using Trinity.Core.Lib;
-using Trinity.Utilities;
 using Trinity.Diagnostics;
-using Trinity.Network.Messaging;
 using Trinity.Network.Sockets;
 
 namespace Trinity.Network.Messaging
@@ -41,6 +33,7 @@ namespace Trinity.Network.Messaging
                     Id = (ushort)RequestType.Heartbeat,
                     Handler = delegate(SynReqArgs args)
                     {
+                        return Task.CompletedTask;
                     }
                 });
                 #endregion
@@ -49,7 +42,11 @@ namespace Trinity.Network.Messaging
                 tupleList.Add(new TypeSyncRequestHandlerTuple
                 {
                     Id = (ushort)RequestType.P2PBarrier,
-                    Handler = BSP.P2PBarrierHandler
+                    Handler = delegate(SynReqArgs args)
+                    {
+                        BSP.P2PBarrierHandler(args);
+                        return Task.CompletedTask;
+                    }
                 });
                 #endregion
 
@@ -67,6 +64,8 @@ namespace Trinity.Network.Messaging
                         {
                             Global.ProxyTable[si.EndPoint] = new Storage.RemoteStorage(si, TrinityConfig.ClientMaxConn);
                         }
+
+                        return Task.CompletedTask;
                     }
                 });
                 #endregion
@@ -78,6 +77,7 @@ namespace Trinity.Network.Messaging
                     Handler = delegate(SynReqArgs args)
                     {
                         Global.LocalStorage.LoadStorage();
+                        return Task.CompletedTask;
                     }
                 });
                 #endregion
@@ -89,6 +89,7 @@ namespace Trinity.Network.Messaging
                     Handler = delegate(SynReqArgs args)
                     {
                         Global.LocalStorage.SaveStorage();
+                        return Task.CompletedTask;
                     }
                 });
                 #endregion
@@ -100,6 +101,7 @@ namespace Trinity.Network.Messaging
                     Handler = delegate(SynReqArgs args)
                     {
                         Global.LocalStorage.ResetStorage();
+                        return Task.CompletedTask;
                     }
                 });
                 #endregion

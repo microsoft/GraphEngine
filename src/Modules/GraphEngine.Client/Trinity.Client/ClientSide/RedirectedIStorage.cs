@@ -34,138 +34,141 @@ namespace Trinity.Client
             m_mod = GetCommunicationModule<TrinityClientModule.TrinityClientModule>();
         }
 
-        public unsafe TrinityErrorCode AddCell(long cellId, byte* buff, int size, ushort cellType)
+        public unsafe Task<TrinityErrorCode> AddCellAsync(long cellId, byte* buff, int size, ushort cellType)
         {
-            return _SendCellPayload(cellId, buff, size, cellType, (short)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.AddCell);
+            return _SendCellPayloadAsync(cellId, buff, size, cellType, (short)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.AddCell);
         }
 
-        public bool Contains(long cellId)
+        public async Task<bool> ContainsAsync(long cellId)
         {
             using (var req = new __CellIdStructWriter(cellId))
-            using (var rsp = m_mod.AddCell(0, req))
+            using (var rsp = await m_mod.AddCellAsync(0, req))
             {
                 // remote returns E_CELL_FOUND or E_CELL_NOT_FOUND
                 return rsp.code == (int)TrinityErrorCode.E_CELL_FOUND;
             }
         }
 
-        public TrinityErrorCode GetCellType(long cellId, out ushort cellType)
+        public async Task<(TrinityErrorCode, ushort)> GetCellTypeAsync(long cellId)
         {
             using (var req = new __CellIdStructWriter(cellId))
-            using (var rsp = m_mod.GetCellType(0, req))
+            using (var rsp = await m_mod.GetCellTypeAsync(0, req))
             {
                 if (rsp.code >= 0)
                 {
-                    cellType = (ushort)rsp.code;
-                    return TrinityErrorCode.E_SUCCESS;
+                    return (TrinityErrorCode.E_SUCCESS, (ushort)rsp.code);
                 }
                 else
                 {
-                    cellType = 0;
-                    return (TrinityErrorCode)rsp.code;
+                    return ((TrinityErrorCode)rsp.code, 0);
                 }
             }
         }
 
-        public unsafe TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff, out ushort cellType)
+        public unsafe Task<LoadCellResponse> LoadCellAsync(long cellId)
         {
-            using (var req = new __CellIdStructWriter(cellId))
-            {
-                TrinityResponse rsp = null;
-                TrinityErrorCode errcode = TrinityErrorCode.E_RPC_EXCEPTION;
+            var req = new __CellIdStructWriter(cellId);
 
-                cellBuff = null;
-                cellType = 0;
+            var sp = PointerHelper.New(req.buffer);
+            *sp.ip++ = TrinityProtocol.TrinityMsgHeader + sizeof(long);
+            *sp.sp++ = (short)TrinityMessageType.SYNC_WITH_RSP;
+            *sp.sp++ = (short)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.LoadCell;
 
-                try
+            return m_mod.SendRecvMessageAsync(m_ep, req.buffer, req.BufferLength).ContinueWith(
+                t =>
                 {
-                    var sp = PointerHelper.New(req.buffer);
-                    *sp.ip++ = TrinityProtocol.TrinityMsgHeader + sizeof(long);
-                    *sp.sp++ = (short)TrinityMessageType.SYNC_WITH_RSP;
-                    *sp.sp++ = (short)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.LoadCell;
+                    TrinityResponse rsp = null;;
+                    byte[] cellBuff = null;
+                    ushort cellType = 0;
 
-                    m_mod.SendMessage(m_ep, req.buffer, req.BufferLength, out rsp);
-
-                    sp = PointerHelper.New(rsp.Buffer);
-                    errcode = (TrinityErrorCode)(*sp.ip++);
-                    if (errcode == TrinityErrorCode.E_SUCCESS)
+                    try
                     {
-                        var length = *sp.ip++;
-                        cellType = (ushort)(*sp.sp++);
-                        cellBuff = new byte[length];
-                        fixed (byte* p = cellBuff)
+                        rsp = t.Result;
+                        TrinityErrorCode errcode = TrinityErrorCode.E_RPC_EXCEPTION;
+                        sp = PointerHelper.New(rsp.Buffer);
+                        errcode = (TrinityErrorCode)(*sp.ip++);
+                        if (errcode == TrinityErrorCode.E_SUCCESS)
                         {
-                            Memory.memcpy(p, sp.bp, (ulong)length);
+                            var length = *sp.ip++;
+                            cellType = (ushort)(*sp.sp++);
+                            cellBuff = new byte[length];
+                            fixed (byte* p = cellBuff)
+                            {
+                                Memory.memcpy(p, sp.bp, (ulong)length);
+                            }
                         }
+                        /* otherwise, fails with returned error code */
+
+                        return Task.FromResult(new LoadCellResponse(errcode, cellBuff, cellType));
                     }
-                    /* otherwise, fails with returned error code */
-                }
-                finally
-                {
-                    rsp?.Dispose();
-                }
-
-                return errcode;
-            }
-        }
-
-        public unsafe TrinityErrorCode LoadCell(long cellId, out byte* cellBuff, out int cellSize, out ushort cellType)
-        {
-            using (var req = new __CellIdStructWriter(cellId))
-            {
-                TrinityResponse rsp = null;
-                TrinityErrorCode errcode = TrinityErrorCode.E_RPC_EXCEPTION;
-
-                cellBuff = null;
-                cellType = 0;
-                cellSize = -1;
-
-                try
-                {
-                    var sp = PointerHelper.New(req.buffer);
-                    *sp.ip++ = TrinityProtocol.TrinityMsgHeader + sizeof(long);
-                    *sp.sp++ = (short)TrinityMessageType.SYNC_WITH_RSP;
-                    *sp.sp++ = (short)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.LoadCell;
-
-                    m_mod.SendMessage(m_ep, req.buffer, req.BufferLength, out rsp);
-
-                    sp = PointerHelper.New(rsp.Buffer);
-                    errcode = (TrinityErrorCode)(*sp.ip++);
-                    if (errcode == TrinityErrorCode.E_SUCCESS)
+                    finally
                     {
-                        cellSize = *sp.ip++;
-                        cellType = (ushort)(*sp.sp++);
-                        cellBuff = (byte*)Memory.malloc((ulong)cellSize);
-                        Memory.memcpy(cellBuff, sp.bp, (ulong)cellSize);
+                        req?.Dispose();
+                        rsp?.Dispose();
                     }
-                    /* otherwise, fails with returned error code */
-                }
-                finally
-                {
-                    rsp?.Dispose();
-                }
-
-                return errcode;
-            }
+                }).Unwrap();
         }
 
-        public TrinityErrorCode RemoveCell(long cellId)
+        public unsafe Task<LoadCellUnsafeResponse> LoadCellUnsafeAsync(long cellId)
+        {
+            var req = new __CellIdStructWriter(cellId);
+
+            var sp = PointerHelper.New(req.buffer);
+            *sp.ip++ = TrinityProtocol.TrinityMsgHeader + sizeof(long);
+            *sp.sp++ = (short)TrinityMessageType.SYNC_WITH_RSP;
+            *sp.sp++ = (short)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.LoadCell;
+
+            return m_mod.SendRecvMessageAsync(m_ep, req.buffer, req.BufferLength).ContinueWith(
+                t =>
+                {
+                    TrinityResponse rsp = null;
+                    TrinityErrorCode errcode = TrinityErrorCode.E_RPC_EXCEPTION;
+
+                    byte* cellBuff = null;
+                    ushort cellType = 0;
+                    int cellSize = -1;
+
+                    try
+                    {
+                        rsp = t.Result;
+                        sp = PointerHelper.New(rsp.Buffer);
+                        errcode = (TrinityErrorCode)(*sp.ip++);
+                        if (errcode == TrinityErrorCode.E_SUCCESS)
+                        {
+                            cellSize = *sp.ip++;
+                            cellType = (ushort)(*sp.sp++);
+                            cellBuff = (byte*)Memory.malloc((ulong)cellSize);
+                            Memory.memcpy(cellBuff, sp.bp, (ulong)cellSize);
+                        }
+                        /* otherwise, fails with returned error code */
+
+                        return Task.FromResult(new LoadCellUnsafeResponse(errcode, cellBuff, cellSize, cellType));
+                    }
+                    finally
+                    {
+                        req?.Dispose();
+                        rsp?.Dispose();
+                    }
+                }).Unwrap();
+        }
+
+        public async Task<TrinityErrorCode> RemoveCellAsync(long cellId)
         {
             using (var req = new __CellIdStructWriter(cellId))
-            using (var rsp = m_mod.RemoveCell(0, req))
+            using (var rsp = await m_mod.RemoveCellAsync(0, req))
             {
                 return (TrinityErrorCode)rsp.code;
             }
         }
 
-        public unsafe TrinityErrorCode SaveCell(long cellId, byte* buff, int size, ushort cellType)
+        public unsafe Task<TrinityErrorCode> SaveCellAsync(long cellId, byte* buff, int size, ushort cellType)
         {
-            return _SendCellPayload(cellId, buff, size, cellType, (short)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.SaveCell);
+            return _SendCellPayloadAsync(cellId, buff, size, cellType, (short)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.SaveCell);
         }
 
-        public unsafe TrinityErrorCode UpdateCell(long cellId, byte* buff, int size)
+        public unsafe Task<TrinityErrorCode> UpdateCellAsync(long cellId, byte* buff, int size)
         {
-            return _SendCellPayload(cellId, buff, size, null, (short)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.UpdateCell);
+            return _SendCellPayloadAsync(cellId, buff, size, null, (short)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.UpdateCell);
         }
 
         public void Dispose()
@@ -176,7 +179,7 @@ namespace Trinity.Client
         public T GetCommunicationModule<T>() where T : CommunicationModule
             => m_comminst.GetCommunicationModule<T>();
 
-        public unsafe void SendMessage(byte* message, int size)
+        public unsafe Task SendMessageAsync(byte* message, int size)
         {
             byte* header = stackalloc byte[TrinityProtocol.MsgHeader + sizeof(int)];
             byte** bufs  = stackalloc byte*[2];
@@ -192,10 +195,10 @@ namespace Trinity.Client
             *(ushort*)(header + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqMessageType.RedirectMessage;
             *(int*)(header + TrinityProtocol.MsgHeader) = partitionId;
 
-            m_mod.SendMessage(m_ep, bufs, sizes, 2);
+            return m_mod.SendMessageAsync(m_ep, bufs, sizes, 2);
         }
 
-        public unsafe void SendMessage(byte* message, int size, out TrinityResponse response)
+        public unsafe Task<TrinityResponse> SendRecvMessageAsync(byte* message, int size)
         {
             byte* header = stackalloc byte[TrinityProtocol.MsgHeader + sizeof(int)];
             byte** bufs  = stackalloc byte*[2];
@@ -211,10 +214,10 @@ namespace Trinity.Client
             *(ushort*)(header + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.RedirectMessageWithResponse;
             *(int*)(header + TrinityProtocol.MsgHeader) = partitionId;
 
-            m_mod.SendMessage(m_ep, bufs, sizes, 2, out response);
+            return m_mod.SendRecvMessageAsync(m_ep, bufs, sizes, 2);
         }
 
-        public unsafe void SendMessage(byte** _bufs, int* _sizes, int count)
+        public unsafe Task SendMessageAsync(byte** _bufs, int* _sizes, int count)
         {
             byte* header     = stackalloc byte[TrinityProtocol.MsgHeader + sizeof(int)];
             ulong  bufs_len  = (ulong)(sizeof(byte*) * (count + 1));
@@ -232,10 +235,10 @@ namespace Trinity.Client
             *(ushort*)(header + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqMessageType.RedirectMessage;
             *(int*)(header + TrinityProtocol.MsgHeader) = partitionId;
 
-            m_mod.SendMessage(m_ep, bufs, sizes, count + 1);
+            return m_mod.SendMessageAsync(m_ep, bufs, sizes, count + 1);
         }
 
-        public unsafe void SendMessage(byte** _bufs, int* _sizes, int count, out TrinityResponse response)
+        public unsafe Task<TrinityResponse> SendRecvMessageAsync(byte** _bufs, int* _sizes, int count)
         {
             byte* header     = stackalloc byte[TrinityProtocol.MsgHeader + sizeof(int)];
             ulong  bufs_len  = (ulong)(sizeof(byte*) * (count + 1));
@@ -253,11 +256,11 @@ namespace Trinity.Client
             *(ushort*)(header + TrinityProtocol.MsgIdOffset) = (ushort)TSL.CommunicationModule.TrinityClientModule.SynReqRspMessageType.RedirectMessageWithResponse;
             *(int*)(header + TrinityProtocol.MsgHeader) = partitionId;
 
-            m_mod.SendMessage(m_ep, bufs, sizes, count + 1, out response);
+            return m_mod.SendRecvMessageAsync(m_ep, bufs, sizes, count + 1);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe TrinityErrorCode _SendCellPayload(long cellId, byte* buff, int size, ushort? cellType, short msgId)
+        private unsafe Task<TrinityErrorCode> _SendCellPayloadAsync(long cellId, byte* buff, int size, ushort? cellType, short msgId)
         {
             //header: cellId, size, type
             int    header_len = TrinityProtocol.MsgHeader + sizeof(long) + sizeof(int) + (cellType.HasValue? sizeof(ushort): 0);
@@ -281,16 +284,20 @@ namespace Trinity.Client
             length[0] = header_len;
             length[1] = size;
 
-            TrinityResponse rsp = null;
-            try
-            {
-                m_mod.SendMessage(m_ep, holder, length, 2, out rsp);
-                return *(TrinityErrorCode*)(rsp.Buffer);
-            }
-            finally
-            {
-                rsp?.Dispose();
-            }
+            return m_mod.SendRecvMessageAsync(m_ep, holder, length, 2).ContinueWith(
+                t =>
+                {
+                    TrinityResponse rsp = null;
+                    try
+                    {
+                        rsp = t.Result;
+                        return *(TrinityErrorCode*)(rsp.Buffer);
+                    }
+                    finally
+                    {
+                        rsp?.Dispose();
+                    }
+                });
         }
     }
 }

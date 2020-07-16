@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
+using System.Threading.Tasks;
 using Trinity;
 using Trinity.Storage;
 using Trinity.TSL;
@@ -21,6 +22,32 @@ namespace t_Namespace
     internal class GenericCellOperations : IGenericCellOperations
     {
         #region LocalMemoryStorage operations
+        /// <inheritdoc/>
+        public void SaveGenericCell(Trinity.Storage.LocalMemoryStorage storage, ICell cell)
+        {
+            switch ((CellType)cell.CellType)
+            {
+                /*FOREACH*/
+                case CellType.t_cell_name:
+                    storage.Savet_cell_name((t_cell_name)cell);
+                    break;
+                    /*END*/
+            }
+        }
+
+        /// <inheritdoc/>
+        public void SaveGenericCell(Trinity.Storage.LocalMemoryStorage storage, long cellId, ICell cell)
+        {
+            switch ((CellType)cell.CellType)
+            {
+                /*FOREACH*/
+                case CellType.t_cell_name:
+                    storage.Savet_cell_name(cellId, (t_cell_name)cell);
+                    break;
+                    /*END*/
+            }
+        }
+
         /// <inheritdoc/>
         public void SaveGenericCell(Trinity.Storage.LocalMemoryStorage storage, CellAccessOptions writeAheadLogOptions, ICell cell)
         {
@@ -279,55 +306,66 @@ namespace t_Namespace
         #region IKeyValueStore operations
 
         /// <inheritdoc/>
-        public void SaveGenericCell(IKeyValueStore storage, ICell cell)
+        public Task SaveGenericCellAsync(IKeyValueStore storage, ICell cell)
         {
             switch ((CellType)cell.CellType)
             {
                 /*FOREACH*/
                 case CellType.t_cell_name:
-                storage.Savet_cell_name((t_cell_name)cell);
+                return storage.Savet_cell_nameAsync((t_cell_name)cell);
                 break;
                 /*END*/
             }
+
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public void SaveGenericCell(IKeyValueStore storage, long cellId, ICell cell)
+        public Task SaveGenericCellAsync(IKeyValueStore storage, long cellId, ICell cell)
         {
             switch ((CellType)cell.CellType)
             {
                 /*FOREACH*/
                 case CellType.t_cell_name:
-                storage.Savet_cell_name(cellId, (t_cell_name)cell);
+                storage.Savet_cell_nameAsync(cellId, (t_cell_name)cell);
                 break;
                 /*END*/
             }
+
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public unsafe ICell LoadGenericCell(IKeyValueStore storage, long cellId)
+        public unsafe Task<ICell> LoadGenericCellAsync(IKeyValueStore storage, long cellId)
         {
-            ushort type;
-            byte[] buff;
-            var err = storage.LoadCell(cellId, out buff, out type);
-            if (err != TrinityErrorCode.E_SUCCESS)
-            {
-                switch (err)
-                {
-                    case TrinityErrorCode.E_CELL_NOT_FOUND:
-                    throw new CellNotFoundException("Cannot access the cell.");
-                    case TrinityErrorCode.E_NETWORK_SEND_FAILURE:
-                    throw new System.IO.IOException("Network error while accessing the cell.");
-                    default:
-                    throw new Exception("Cannot access the cell. Error code: " + err.ToString());
-                }
-            }
+            return storage.LoadCellAsync(cellId)
+                          .ContinueWith(
+                                t =>
+                                {
+                                    var result = t.Result;
+                                    var err = result.ErrorCode;
+                                    var buff = result.CellBuff;
+                                    var type = result.CellType;
+                                    if (err != TrinityErrorCode.E_SUCCESS)
+                                    {
+                                        switch (err)
+                                        {
+                                            case TrinityErrorCode.E_CELL_NOT_FOUND:
+                                                throw new CellNotFoundException("Cannot access the cell.");
+                                            case TrinityErrorCode.E_NETWORK_SEND_FAILURE:
+                                                throw new System.IO.IOException("Network error while accessing the cell.");
+                                            default:
+                                                throw new Exception("Cannot access the cell. Error code: " + err.ToString());
+                                        }
+                                    }
 
-            fixed (byte* p = buff)
-            {
-                var accessor = UseGenericCell(cellId, p, -1, type);
-                return accessor.Deserialize();
-            }
+                                    fixed (byte* p = buff)
+                                    {
+                                        var accessor = UseGenericCell(cellId, p, -1, type);
+                                        return accessor.Deserialize();
+                                    }
+                                },
+                                TaskContinuationOptions.ExecuteSynchronously);
         }
 
         /// <inheritdoc/>

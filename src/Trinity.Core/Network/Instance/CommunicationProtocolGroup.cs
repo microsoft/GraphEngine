@@ -6,14 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
-using Trinity.Diagnostics;
-using Trinity.Network.Http;
 
 namespace Trinity.Network
 {
-    internal delegate void HttpRequestDispatcher(HttpListenerContext context, string rawUrl, string handlerName);
+    internal delegate Task HttpRequestDispatcher(HttpListenerContext context, string rawUrl, string handlerName);
     /// <summary>
     /// Represents a group of communication protocols.
     /// </summary>
@@ -27,24 +24,14 @@ namespace Trinity.Network
         /// <summary>
         /// Raised when the host communication instance is started.
         /// </summary>
-        public event Action Started = delegate { };
+        public event Func<Task> Started = delegate { return Task.CompletedTask; };
         #endregion
-        internal void _RaiseStartedEvent()
+        internal Task _RaiseStartedEventAsync()
         {
-            Started();
+            return Started();
         }
 
         internal abstract CommunicationInstance GetCommunicationInstance();
-
-        /// <summary>
-        /// Gets the HttpListenerContext that is being handled in a handler.
-        /// Note that this method should only be called within an Http handler.
-        /// </summary>
-        /// <returns>The context being handled.</returns>
-        protected HttpListenerContext GetCurrentHttpListenerContext()
-        {
-            return GetCommunicationInstance()._GetCurrentHttpListenerContext_impl();
-        }
 
         /// <summary>
         /// Register user-defined message handlers.
@@ -55,7 +42,7 @@ namespace Trinity.Network
         /// Handles requests on the root endpoint.
         /// </summary>
         /// <param name="ctx">A <see cref="HttpListenerContext"/> object.</param>
-        protected abstract void RootHttpHandler(HttpListenerContext ctx);
+        protected abstract Task RootHttpHandlerAsync(HttpListenerContext ctx);
 
         /// <summary>
         /// Dispatches a HTTP request to a non-root handler.
@@ -63,7 +50,7 @@ namespace Trinity.Network
         /// <param name="ctx"></param>
         /// <param name="endpointName">The name of the endpoint.</param>
         /// <param name="url"></param>
-        protected abstract void DispatchHttpRequest(HttpListenerContext ctx, string endpointName, string url);
+        protected abstract Task DispatchHttpRequestAsync(HttpListenerContext ctx, string endpointName, string url);
 
         #region Public
         /// <summary>

@@ -3,22 +3,13 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Text;
-using System.Net;
-using System.IO;
-using System.Diagnostics;
-using System.Reflection;
 using System.Linq;
-
-using Trinity;
+using System.Reflection;
+using System.Threading;
 using Trinity.Daemon;
+using Trinity.Diagnostics;
 using Trinity.Network;
 using Trinity.Storage;
-using Trinity.Utilities;
-using Trinity.Diagnostics;
-using System.Runtime.CompilerServices;
 
 namespace Trinity
 {

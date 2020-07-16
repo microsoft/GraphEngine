@@ -306,7 +306,7 @@ namespace Trinity.Network.Http
         /// <param name="ctx">The HTTP request context.</param>
         /// <param name="availableEndpointNames">The list of available endpoints.</param>
         /// <param name="serverType">The type of the TrinityServer or TrinityProxy.</param>
-        public static void ListAvailableEndpoints(HttpListenerContext ctx, IEnumerable<string> availableEndpointNames, Type serverType)
+        public static async Task ListAvailableEndpointsAsync(HttpListenerContext ctx, IEnumerable<string> availableEndpointNames, Type serverType)
         {
             string url_root = ctx.Request.Url.GetLeftPart(UriPartial.Authority);
             if (typeof(CommunicationModule).IsAssignableFrom(serverType))
@@ -332,15 +332,15 @@ namespace Trinity.Network.Http
                     using (var html_stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Trinity.Network.Http.index.html"))
                     using (var stream_reader = new StreamReader(html_stream))
                     {
-                        string html_tmpl = stream_reader.ReadToEnd();
-                        sw.WriteLine(html_tmpl.Replace(@"//%AVAILABLE_ENDPOINTS%", "var available_endpoints = " + rsp_json + ";"));
+                        string html_tmpl = await stream_reader.ReadToEndAsync();
+                        await sw.WriteLineAsync(html_tmpl.Replace(@"//%AVAILABLE_ENDPOINTS%", "var available_endpoints = " + rsp_json + ";"));
                     }
                 }
                 #endregion
                 else
                 {
                     ctx.Response.ContentType = "application/json";
-                    sw.WriteLine(rsp_json);
+                    await sw.WriteLineAsync(rsp_json);
                 }
             }
         }

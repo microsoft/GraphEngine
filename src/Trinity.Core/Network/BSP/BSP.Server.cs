@@ -2,12 +2,8 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Trinity.Core.Lib;
 using Trinity.Diagnostics;
@@ -19,13 +15,13 @@ namespace Trinity.Network
     /// <summary>
     /// Provides methods for global bulk synchronization.
     /// </summary>
-    public unsafe static partial class BSP
+    public static partial class BSP
     {
         static volatile int default_task_sn = 1073741823; // Int32.MaxValue >> 1
         static Dictionary<int, int> BSPCheckInCount = new Dictionary<int, int>();
 
         static volatile int spin_lock = 0;
-        internal static void P2PBarrierHandler(SynReqArgs args)
+        internal unsafe static void P2PBarrierHandler(SynReqArgs args)
         {
             int taskId;
 
@@ -49,7 +45,7 @@ namespace Trinity.Network
         /// <param name="taskId">A user-specified task Id used to differentiate different barrier synchronization tasks.</param>
         public static void BarrierSync(this Trinity.Storage.MemoryCloud storage, int taskId)
         {
-            storage.P2PBarrierRequest(taskId);
+            storage.P2PBarrierRequestAsync(taskId).Wait();
         }
 
         /// <summary>
@@ -57,12 +53,12 @@ namespace Trinity.Network
         /// </summary>
         public static void BarrierSync(this Trinity.Storage.MemoryCloud storage)
         {
-            storage.P2PBarrierRequest(default_task_sn);
+            storage.P2PBarrierRequestAsync(default_task_sn).Wait();
             default_task_sn++;
         }
 
         //TODO in a multi-replica partition, the semantic of the BSP message should be configured to BROADCAST
-        internal static void P2PBarrierRequest(this Trinity.Storage.MemoryCloud storage, int taskId)
+        internal unsafe static Task P2PBarrierRequestAsync(this Trinity.Storage.MemoryCloud storage, int taskId)
         {
             TrinityMessage msg = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC, (ushort)RequestType.P2PBarrier, sizeof(int));
             *(int*)(msg.Buffer + TrinityMessage.Offset) = taskId;
@@ -78,15 +74,21 @@ namespace Trinity.Network
             }
             SpinLockInt32.ReleaseLock(ref spin_lock);
 
-            Parallel.For(0, Global.ServerCount, i =>
+            List<Task> tasks = new List<Task>();
+            for (int i = 0; i < Global.ServerCount; i++)
+            {
+                if (i != Global.MyPartitionId)
                 {
-                    if (i != Global.MyPartitionId)
-                    {
-                        storage[i].SendMessage(msg.Buffer, msg.Size);
-                    }
+                    Task task = storage[i].SendMessageAsync(msg.Buffer, msg.Size);
+                    tasks.Add(task);
                 }
-            );
+            }
 
+            return Task.WhenAll(tasks).ContinueWith(_ => P2PBarrierResponseAsync(taskId)).Unwrap();
+        }
+
+        private static async Task P2PBarrierResponseAsync(int taskId)
+        {
             int retry = 2048;
             while (true)
             {
@@ -101,9 +103,9 @@ namespace Trinity.Network
                 if (--retry < 1024)
                 {
                     if (retry > 0)
-                        Thread.Yield();
+                        await Task.Yield();
                     else
-                        Thread.Sleep(1);
+                        await Task.Delay(1);
                 }
             }
         }

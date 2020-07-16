@@ -16,6 +16,12 @@ DLL_EXPORT TrinityErrorCode ClientReceive(uint64_t socket, char* &buf, int32_t &
 DLL_EXPORT TrinityErrorCode WaitForAckPackage(uint64_t socket) { return Network::client_wait(socket); }
 DLL_EXPORT void CloseClientSocket(uint64_t socket) { Network::client_close(socket); }
 
+#if defined(TRINITY_PLATFORM_WINDOWS)
+DLL_EXPORT int32_t BeginClientSend(uint64_t socket, char* buf, int32_t len, OVERLAPPED* overlapped) { return Network::begin_client_send(socket, buf, len, overlapped); }
+DLL_EXPORT int32_t BeginClientSendMulti(uint64_t socket, char** bufs, int32_t* lens, int32_t cnt, OVERLAPPED* overlapped) { return Network::begin_client_send_multi(socket, bufs, lens, cnt, overlapped); }
+DLL_EXPORT int32_t BeginClientReceive(uint64_t socket, char* buf, int32_t len, OVERLAPPED* overlapped) { return Network::begin_client_recv(socket, buf, len, overlapped); }
+#endif
+
 // Server interfaces
 DLL_EXPORT int StartSocketServer(uint16_t port) { return Network::start_socket_server(port); }
 DLL_EXPORT int StopSocketServer() { return Network::shutdown_socket_server(); }

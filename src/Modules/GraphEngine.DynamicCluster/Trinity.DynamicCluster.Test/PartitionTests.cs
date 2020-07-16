@@ -50,7 +50,7 @@ namespace Trinity.DynamicCluster.Test
             using (var p = new Partition())
             {
                 p.Mount(stg, cks);
-                p.SendMessage(tm);
+                p.SendMessageAsync(tm).Wait();
             }
             Assert.IsTrue(stg.SendMessageCalledOnce);
         }
@@ -64,7 +64,7 @@ namespace Trinity.DynamicCluster.Test
                 foreach (var s in stgs) p.Mount(s, cks);
                 for (int i = 0; i<5; ++i)
                 {
-                    p.RoundRobin(_ => _.SendMessage(tm));
+                    p.RoundRobin(_ => _.SendMessageAsync(tm)).Wait();
                 }
             }
             Assert.IsTrue(stgs.All(_ => _.SendMessageCalledOnce));
@@ -79,7 +79,7 @@ namespace Trinity.DynamicCluster.Test
                 foreach (var s in stgs) p.Mount(s, cks);
                 for (int i = 0; i<5; ++i)
                 {
-                    p.RoundRobin(_ => { _.SendMessage(tm, out var tr); return tr; });
+                    p.RoundRobin(_ => _.SendRecvMessageAsync(tm)).Wait();
                 }
             }
             Assert.IsTrue(stgs.All(_ => _.SendMessageCalledOnce));
@@ -94,7 +94,7 @@ namespace Trinity.DynamicCluster.Test
                 foreach (var s in stgs) p.Mount(s, cks);
                 for (int i = 0; i<5; ++i)
                 {
-                    p.RoundRobin(_ => { _.SendMessage(tm, out var rsp); return Task.FromResult(rsp); });
+                    p.RoundRobin(_ => _.SendRecvMessageAsync(tm)).Wait();
                 }
             }
             Assert.IsTrue(stgs.All(_ => _.SendMessageCalledOnce));
@@ -109,7 +109,7 @@ namespace Trinity.DynamicCluster.Test
                 foreach (var s in stgs) p.Mount(s, cks);
                 for (int i = 0; i < 5; ++i)
                 {
-                    p.FirstAvailable(_ => { _.SendMessage(tm, out var rsp); return Task.FromResult(rsp); });
+                    p.FirstAvailable(_ => _.SendRecvMessageAsync(tm)).Wait();
                 }
             }
             Assert.IsTrue(stgs.Any(_ => _.cnt == 5));
@@ -124,13 +124,13 @@ namespace Trinity.DynamicCluster.Test
                 foreach (var s in stgs) p.Mount(s, cks);
                 for (int i = 0; i < 3; ++i)
                 {
-                    p.FirstAvailable(_ => { _.SendMessage(tm, out var rsp); return Task.FromResult(rsp); });
+                    p.FirstAvailable(_ => _.SendRecvMessageAsync(tm)).Wait();
                 }
                 int idx = stgs.FindIndex(_ => _.cnt == 3);
                 p.Unmount(stgs[idx]);
                 for (int i = 0; i < 2; ++i)
                 {
-                    p.FirstAvailable(_ => { _.SendMessage(tm, out var rsp); return Task.FromResult(rsp); });
+                    p.FirstAvailable(_ => _.SendRecvMessageAsync(tm)).Wait();
                 }
 
             }
@@ -147,13 +147,13 @@ namespace Trinity.DynamicCluster.Test
                 foreach (var s in stgs) p.Mount(s, cks);
                 for (int i = 0; i < 3; ++i)
                 {
-                    p.FirstAvailable(_ => { _.SendMessage(tm, out var rsp); return Task.FromResult(rsp); });
+                    p.FirstAvailable(_ => _.SendRecvMessageAsync(tm)).Wait();
                 }
                 int idx = stgs.FindIndex(_ => _.cnt != 3);
                 p.Unmount(stgs[idx]);
                 for (int i = 0; i < 2; ++i)
                 {
-                    p.FirstAvailable(_ => { _.SendMessage(tm, out var rsp); return Task.FromResult(rsp); });
+                    p.FirstAvailable(_ => _.SendRecvMessageAsync(tm)).Wait();
                 }
 
             }
@@ -169,7 +169,7 @@ namespace Trinity.DynamicCluster.Test
                 foreach (var s in stgs) p.Mount(s, cks);
                 for (int i = 0; i < 5; ++i)
                 {
-                    p.FirstAvailable(_ => { _.SendMessage(tm, out var rsp); return rsp; });
+                    p.FirstAvailable(_ => _.SendRecvMessageAsync(tm)).Wait();
                 }
             }
             Assert.IsTrue(stgs.Any(_ => _.cnt == 5));
@@ -184,7 +184,7 @@ namespace Trinity.DynamicCluster.Test
                 foreach (var s in stgs) p.Mount(s, cks);
                 for (int i = 0; i < 5; ++i)
                 {
-                    p.FirstAvailable(_ => _.SendMessage(tm));
+                    p.FirstAvailable(_ => _.SendMessageAsync(tm)).Wait();
                 }
             }
             Assert.IsTrue(stgs.Any(_ => _.cnt == 5));
@@ -199,7 +199,7 @@ namespace Trinity.DynamicCluster.Test
                 foreach (var s in stgs) p.Mount(s, cks);
                 for (int i = 0; i < 1024; ++i)
                 {
-                    p.UniformRandom(_ => _.SendMessage(tm));
+                    p.UniformRandom(_ => _.SendMessageAsync(tm)).Wait();
                 }
             }
             Assert.AreEqual(204.8, stgs.Average(_ => (double)_.cnt));
@@ -214,7 +214,7 @@ namespace Trinity.DynamicCluster.Test
                 foreach (var s in stgs) p.Mount(s, cks);
                 for (int i = 0; i < 1024; ++i)
                 {
-                    p.UniformRandom(_ => { _.SendMessage(tm, out var rsp); return rsp; });
+                    p.UniformRandom(_ => _.SendRecvMessageAsync(tm)).Wait();
                 }
             }
             Assert.AreEqual(204.8, stgs.Average(_ => (double)_.cnt));
@@ -229,7 +229,7 @@ namespace Trinity.DynamicCluster.Test
                 foreach (var s in stgs) p.Mount(s, cks);
                 for (int i = 0; i < 1024; ++i)
                 {
-                    p.UniformRandom(_ => { _.SendMessage(tm, out var rsp); return Task.FromResult(rsp); });
+                    p.UniformRandom(_ => _.SendRecvMessageAsync(tm)).Wait();
                 }
             }
             Assert.AreEqual(204.8, stgs.Average(_ => (double)_.cnt));
@@ -243,12 +243,12 @@ namespace Trinity.DynamicCluster.Test
             using (var p = new Partition())
             {
                 foreach (var s in stg1s) p.Mount(s, cks);
-                p.Broadcast(_ => _.SendMessage(tm));
+                p.Broadcast(_ => _.SendMessageAsync(tm)).Wait();
                 Assert.IsTrue(stg1s.All(_ => _.cnt == 1));
                 foreach (var s in stg2s) p.Mount(s, cks);
                 try
                 {
-                    p.Broadcast(_ => _.SendMessage(tm));
+                    p.Broadcast(_ => _.SendMessageAsync(tm)).Wait();
                     Assert.Fail();
                 }
                 catch (BroadcastException ex) { }
@@ -264,12 +264,12 @@ namespace Trinity.DynamicCluster.Test
             using (var p = new Partition())
             {
                 foreach (var s in stg1s) p.Mount(s, cks);
-                p.Broadcast(_ => { _.SendMessage(tm, out var rsp); return rsp; });
+                p.Broadcast(_ => _.SendRecvMessageAsync(tm)).Wait();
                 Assert.IsTrue(stg1s.All(_ => _.cnt == 1));
                 foreach (var s in stg2s) p.Mount(s, cks);
                 try
                 {
-                    p.Broadcast(_ => { _.SendMessage(tm, out var rsp); return rsp; });
+                    p.Broadcast(_ => _.SendRecvMessageAsync(tm)).Wait();
                     Assert.Fail();
                 }
                 catch (BroadcastException<TrinityResponse> bex)
@@ -291,12 +291,12 @@ namespace Trinity.DynamicCluster.Test
             using (var p = new Partition())
             {
                 foreach (var s in stg1s) p.Mount(s, cks);
-                await p.Broadcast(_ => { _.SendMessage(tm, out var rsp); return Task.FromResult(rsp); });
+                await p.Broadcast(_ => _.SendRecvMessageAsync(tm));
                 Assert.IsTrue(stg1s.All(_ => _.cnt == 1));
                 foreach (var s in stg2s) p.Mount(s, cks);
                 try
                 {
-                    await p.Broadcast(_ => { _.SendMessage(tm, out var rsp); return Task.FromResult(rsp); });
+                    await p.Broadcast(_ => _.SendRecvMessageAsync(tm));
                     Assert.Fail();
                 }
                 catch (BroadcastException<TrinityResponse> bex)

@@ -45,7 +45,7 @@ namespace Trinity.DynamicCluster.Tasks
             using (var msg = new ShrinkDataTaskInformationWriter(
                        task_id: m_guid,
                        remove_target: m_plan.Select(_ => _diff(_.from, _.to)).ToList()))
-            using (var rsp = await mod.ShrinkData(target_id, msg))
+            using (var rsp = await mod.ShrinkDataAsync(target_id, msg))
             {
                 if (rsp.errno != Errno.E_OK) throw new Exception();
             }

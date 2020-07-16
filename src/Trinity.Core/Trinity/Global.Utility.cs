@@ -15,6 +15,7 @@ using Trinity;
 using Trinity.Core.Lib;
 using Trinity.Utilities;
 using Trinity.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Trinity
 {
@@ -158,9 +159,9 @@ namespace Trinity
         /// Gets the total memory usage of all Trinity servers.
         /// </summary>
         /// <returns>Working set size in bytes.</returns>
-        public static long GetTotalMemoryUsage()
+        public static Task<long> GetTotalMemoryUsageAsync()
         {
-            return CloudStorage.GetTotalMemoryUsage();
+            return CloudStorage.GetTotalMemoryUsageAsync();
         }
 
         /// <summary>

@@ -20,17 +20,17 @@ namespace t_Namespace.MODULES
 
         }
 
-        protected unsafe void SendMessage(IMessagePassingEndpoint messagePassingEndpoint, byte* buffer, int v)
+        protected unsafe Task SendMessageAsync(IMessagePassingEndpoint messagePassingEndpoint, byte* buffer, int v)
         {
             throw new NotImplementedException();
         }
 
-        protected virtual void RootHttpHandler(HttpListenerContext context)
+        protected virtual Task RootHttpHandlerAsync(HttpListenerContext context)
         {
             throw new NotImplementedException();
         }
 
-        protected abstract void DispatchHttpRequest(HttpListenerContext ctx, string handler_name, string url);
+        protected abstract Task DispatchHttpRequestAsync(HttpListenerContext ctx, string handler_name, string url);
 
     }
 }

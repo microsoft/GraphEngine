@@ -150,7 +150,7 @@ namespace Trinity.DynamicCluster.Storage
             {
                 var rsps = await Utils.Integers(m_nameservice.PartitionCount)
                                 .Select(i => m_partitions(i)
-                                .Broadcast(p => p.AnnounceMaster(req)))
+                                .Broadcast(p => p.AnnounceMasterAsync(req)))
                                 .Unwrap();
                 rsps.SelectMany(_ => _).ForEach(_ => _.Dispose());
             }
@@ -203,7 +203,7 @@ namespace Trinity.DynamicCluster.Storage
         private async Task<IEnumerable<Chunk>> _GetChunks(IStorage storage)
         {
             List<Chunk> chunks = new List<Chunk>();
-            using (var rsp = await storage.GetChunks())
+            using (var rsp = await storage.GetChunksAsync())
             {
                 foreach(var ci in rsp.chunk_info)
                 {

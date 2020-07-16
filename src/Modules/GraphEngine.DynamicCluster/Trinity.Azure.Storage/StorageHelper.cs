@@ -74,7 +74,7 @@ namespace Trinity.Azure.Storage
         }
 
         public Task<string> DownloadTextAsync(CloudBlockBlob file) =>
-#if CORECLR
+#if NETSTANDARD || NETCOREAPP
             file.DownloadTextAsync(Encoding.UTF8, new AccessCondition(), m_reqops_download, m_opctx, m_cancel);
 #else
             file.DownloadTextAsync(m_cancel);
@@ -107,7 +107,7 @@ namespace Trinity.Azure.Storage
         public Task<bool> ExistsAsync(CloudBlob file) => file.ExistsAsync(m_reqops_download, m_opctx, m_cancel);
 
         public Task UploadDataAsync(CloudBlockBlob blob, byte[] data) =>
-#if CORECLR
+#if NETSTANDARD || NETCOREAPP
             blob.UploadFromByteArrayAsync(data, 0, data.Length, new AccessCondition(), m_reqops_upload, m_opctx, m_cancel);
 #else
             blob.UploadFromByteArrayAsync(data, 0, data.Length, cancellationToken: m_cancel);
@@ -115,7 +115,7 @@ namespace Trinity.Azure.Storage
 
         public async Task DeleteAsync(CloudBlob file)
         {
-#if CORECLR
+#if NETSTANDARD || NETCOREAPP
             await file.DeleteIfExistsAsync(DeleteSnapshotsOption.None, new AccessCondition(), m_reqops_upload, m_opctx, m_cancel);
 #else
             await file.DeleteIfExistsAsync(m_cancel);

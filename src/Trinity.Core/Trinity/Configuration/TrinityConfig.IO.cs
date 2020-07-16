@@ -3,18 +3,16 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 using System;
-using System.IO;
-using System.Net;
-using Trinity.Utilities;
-using Trinity.Diagnostics;
-using System.Reflection;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 using Trinity.Configuration;
-using System.Collections.ObjectModel;
-using System.Xml;
+using Trinity.Diagnostics;
 using Trinity.Network;
+using Trinity.Utilities;
+
 namespace Trinity
 {
     public static partial class TrinityConfig

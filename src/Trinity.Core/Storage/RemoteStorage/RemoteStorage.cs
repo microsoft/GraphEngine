@@ -3,26 +3,16 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
-using System.Threading;
-
-using Trinity;
-using Trinity.Network;
-using Trinity.Utilities;
-using Trinity.Diagnostics;
-using Trinity.Win32;
-using Trinity.Core.Lib;
-using Trinity.Daemon;
-using Trinity.Network.Messaging;
-using Trinity.FaultTolerance;
-using System.Threading.Tasks;
-using System.Runtime.ExceptionServices;
 using System.Collections.Concurrent;
-using Trinity.Network.Client;
+using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
+using System.Threading;
+using System.Threading.Tasks;
 using Trinity.Configuration;
+using Trinity.Daemon;
+using Trinity.Diagnostics;
+using Trinity.Network;
+using Trinity.Network.Client;
 
 namespace Trinity.Storage
 {
@@ -109,7 +99,7 @@ namespace Trinity.Storage
         private int Heartbeat()
         {
             Network.Client.SynClient sc = GetClient();
-            TrinityErrorCode eResult = sc.Heartbeat();
+            TrinityErrorCode eResult = sc.HeartbeatAsync().Result;
             PutBackClient(sc);
 
             if (TrinityErrorCode.E_SUCCESS == eResult)

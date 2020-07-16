@@ -36,7 +36,7 @@ namespace Trinity.Client.TestServer
                     try
                     {
                         using (var msg = new S1Writer("foo", i++))
-                            client.P1(msg).ContinueWith(t =>
+                            client.P1Async(msg).ContinueWith(t =>
                             {
                                 using (var rsp = t.Result)
                                 {

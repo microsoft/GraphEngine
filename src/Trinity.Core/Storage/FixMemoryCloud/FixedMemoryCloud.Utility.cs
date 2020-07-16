@@ -3,69 +3,63 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.IO;
-using System.Net;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Diagnostics;
-
-using Trinity;
 using Trinity.Core.Lib;
-using Trinity.Network.Messaging;
-using Trinity.Network;
-using Trinity.Utilities;
-using Trinity.Diagnostics;
 using Trinity.Daemon;
+using Trinity.Diagnostics;
+using Trinity.Network.Messaging;
 
 namespace Trinity.Storage
 {
-    public unsafe partial class FixedMemoryCloud
+    public partial class FixedMemoryCloud
     {
-        internal unsafe string EchoPing(int serverId, string msg)
+        internal unsafe Task<string> EchoPingAsync(int serverId, string msg)
         {
             TrinityMessage trinity_msg = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC_WITH_RSP, (ushort)RequestType.EchoPing, msg.Length << 1);
             BitHelper.WriteString(msg, trinity_msg.Buffer + TrinityMessage.Offset);
 
-            TrinityResponse response;
-            StorageTable[serverId].SendMessage(trinity_msg.Buffer, trinity_msg.Size, out response);
-
-            return BitHelper.GetString(response.Buffer + response.Offset, response.Size);
-
+            return StorageTable[serverId].SendRecvMessageAsync(trinity_msg.Buffer, trinity_msg.Size)
+                                         .ContinueWith(
+                                            t =>
+                                            {
+                                                TrinityResponse response = t.Result;
+                                                return BitHelper.GetString(response.Buffer + response.Offset, response.Size);
+                                            },
+                                            TaskContinuationOptions.ExecuteSynchronously);
         }
 
         /// <summary>
         /// Shutdown the server with the specified serverId.
         /// </summary>
         /// <param name="serverId">The id of the server.</param>
-        public unsafe void ShutDown(int serverId)
+        public unsafe Task ShutDownAsync(int serverId)
         {
             byte[] message_bytes = new byte[TrinityProtocol.MsgHeader];
 
-            fixed (byte* byte_p = message_bytes)
-            {
-                byte* p = byte_p;
-                *(int*)p = TrinityProtocol.TrinityMsgHeader;
+            GCHandle gch = GCHandle.Alloc(message_bytes, GCHandleType.Pinned);
+            byte* byte_p = (byte*)gch.AddrOfPinnedObject();
+            byte* p = byte_p;
+            *(int*)p = TrinityProtocol.TrinityMsgHeader;
 
-                *(TrinityMessageType*)(p + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.PRESERVED_ASYNC;
-                *(RequestType*)(p + TrinityProtocol.MsgIdOffset) = RequestType.Shutdown;
-                StorageTable[serverId].SendMessage(byte_p, message_bytes.Length);
-            }
-
+            *(TrinityMessageType*)(p + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.PRESERVED_ASYNC;
+            *(RequestType*)(p + TrinityProtocol.MsgIdOffset) = RequestType.Shutdown;
+            return StorageTable[serverId].SendMessageAsync(byte_p, message_bytes.Length)
+                                         .ContinueWith(t => gch.Free(), TaskContinuationOptions.ExecuteSynchronously);
         }
 
-        internal unsafe void ShutDownProxy(RemoteStorage proxy)
+        internal unsafe Task ShutDownProxyAsync(RemoteStorage proxy)
         {
             TrinityMessage msg = new TrinityMessage(TrinityMessageType.PRESERVED_ASYNC, (ushort)RequestType.Shutdown, 0);
-            proxy.SendMessage(msg.Buffer, msg.Size);
+            return proxy.SendMessageAsync(msg.Buffer, msg.Size);
         }
 
         /// <summary>
         /// Shutdown all running Trinity servers. This only works in the Client mode.
         /// </summary>
-        public unsafe void ShutDown()
+        public async Task ShutDownAsync()
         {
             //TODO should be IDisposable, not ShutDown
             //TODO move this to base implementation;
@@ -75,18 +69,19 @@ namespace Trinity.Storage
                 {
                     // Trigger the initialization if not initialized yet
                     var proxies = ProxyList;
+                    Task[] tasks;
 
                     BackgroundThread.ClearAllTasks(); // To disable heartbeat
-                    Parallel.For(0, PartitionCount, i =>
-                        {
-                            ShutDown(i);
-                        }
-                        );
-                    Parallel.ForEach<RemoteStorage>(proxies, proxy =>
-                        {
-                            ShutDownProxy(proxy);
-                            proxy.Dispose();
-                        });
+
+                    tasks = Enumerable.Range(0, PartitionCount)
+                                      .Select(i => ShutDownAsync(i))
+                                      .ToArray();
+                    await Task.WhenAll(tasks);
+
+                    tasks = proxies.Select(proxy => ShutDownProxyAsync(proxy).ContinueWith(t => proxy.Dispose(), TaskContinuationOptions.ExecuteSynchronously))
+                                   .ToArray();
+                    await Task.WhenAll(tasks);
+
                     Dispose();
                     Thread.MemoryBarrier();
                 }
@@ -98,17 +93,29 @@ namespace Trinity.Storage
             }
         }
 
-        public override long GetTotalMemoryUsage()
+        public override unsafe Task<long> GetTotalMemoryUsageAsync()
         {
             TrinityMessage tm = new TrinityMessage(TrinityMessageType.PRESERVED_SYNC_WITH_RSP, (ushort)RequestType.QueryMemoryWorkingSet, 0);
-            long[] memUsage = new long[PartitionCount];
-            Parallel.For(0, PartitionCount, sid =>
-                {
-                    TrinityResponse response;
-                    StorageTable[sid].SendMessage(tm.Buffer, tm.Size, out response);
-                    memUsage[sid] = *(long*)(response.Buffer + response.Offset);
-                });
-            return memUsage.Sum();
+            Task<TrinityResponse>[] tasks = new Task<TrinityResponse>[PartitionCount];
+
+            for (int sid = 0; sid < PartitionCount; sid++)
+            {
+                Task<TrinityResponse> task = StorageTable[sid].SendRecvMessageAsync(tm.Buffer, tm.Size);
+                tasks[sid] = task;
+            }
+
+            return Task.WhenAll(tasks)
+                       .ContinueWith(
+                            _ =>
+                            {
+                                return tasks.Sum(
+                                    t =>
+                                    {
+                                        TrinityResponse response = t.Result;
+                                        return *(long*)(response.Buffer + response.Offset);
+                                    });
+                            },
+                            TaskContinuationOptions.ExecuteSynchronously);
         }
     }
 }

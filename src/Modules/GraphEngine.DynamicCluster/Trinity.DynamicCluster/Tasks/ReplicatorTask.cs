@@ -56,7 +56,7 @@ namespace Trinity.DynamicCluster.Tasks
                 task_id: m_guid,
                 to: new StorageInformation { id = m_to.Id, partition = m_to.PartitionId },
                 range: m_range.Select(_ => new ChunkInformation { id = _.Id, highKey = _.HighKey, lowKey = _.LowKey }).ToList()))
-            using (var rsp = await mod.Replication(from_id, msg))
+            using (var rsp = await mod.ReplicationAsync(from_id, msg))
             {
                 if (rsp.errno != Errno.E_OK) throw new Exception();
             }

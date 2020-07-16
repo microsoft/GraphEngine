@@ -4,20 +4,20 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
 using System.Threading;
 
 using Trinity;
 using Trinity.Win32;
-using System.Globalization;
 
 namespace Trinity.Diagnostics
 {
     internal class PerformanceMonitor
     {
-#if !CORECLR
+#if !NETSTANDARD && !NETCOREAPP
         static PerformanceCounter TotalCPUCounter = new PerformanceCounter( "Processor", "% Processor Time", "_Total" );
         static PerformanceCounter TotalRAMCounter = new PerformanceCounter( "Memory", "Committed Bytes" );
 

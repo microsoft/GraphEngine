@@ -3,11 +3,8 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using Trinity.Diagnostics;
 using Trinity.Network.Http;
@@ -29,7 +26,7 @@ namespace Trinity.Network
         /// It is guaranteed that CloudStorage can be accessed (native server started)
         /// before an instance calls module Initialize() method.
         /// </summary>
-        internal unsafe void Initialize(CommunicationInstance instance)
+        internal void Initialize(CommunicationInstance instance)
         {
             if (instance.RunningMode == RunningMode.Client)
             {
@@ -68,7 +65,7 @@ namespace Trinity.Network
         /// It is guaranteed that CloudStorage can be accessed (server started)
         /// before a client calls module ClientInitialize() method.
         /// </summary>
-        public unsafe void ClientInitialize(RunningMode remoteRunningMode)
+        public void ClientInitialize(RunningMode remoteRunningMode)
         {
             ClientInitialize(remoteRunningMode, Global.CloudStorage);
         }
@@ -77,7 +74,7 @@ namespace Trinity.Network
         /// It is guaranteed that CloudStorage can be accessed (server started)
         /// before a client calls module ClientInitialize() method.
         /// </summary>
-        public unsafe void ClientInitialize(RunningMode remoteRunningMode, MemoryCloud mc)
+        public void ClientInitialize(RunningMode remoteRunningMode, MemoryCloud mc)
         {
             m_memorycloud = mc;
             string moduleName = GetModuleName();
@@ -92,12 +89,8 @@ namespace Trinity.Network
                 throw new InvalidOperationException(msg);
             }
 
-            ushort synReqOffset;
-            ushort synReqRspOffset;
-            ushort asynReqOffset;
-            ushort asynReqRspOffset;
-
-            if (!rs.GetCommunicationModuleOffset(moduleName, out synReqOffset, out synReqRspOffset, out asynReqOffset, out asynReqRspOffset))
+            var offsets = rs.GetCommunicationModuleOffsetAsync(moduleName).Result;
+            if (!offsets.Succeeded)
             {
                 string msg = "CommunicationModule " + moduleName + " not found on the remote side.";
                 Log.WriteLine(LogLevel.Error, msg);
@@ -105,10 +98,10 @@ namespace Trinity.Network
             }
             else
             {
-                this.SynReqIdOffset = synReqOffset;
-                this.SynReqRspIdOffset = synReqRspOffset;
-                this.AsynReqIdOffset = asynReqOffset;
-                this.AsynReqRspIdOffset = asynReqRspOffset;
+                this.SynReqIdOffset = offsets.SynReqOffset;
+                this.SynReqRspIdOffset = offsets.SynReqRspOffset;
+                this.AsynReqIdOffset = offsets.AsynReqOffset;
+                this.AsynReqRspIdOffset = offsets.AsynReqRspOffset;
             }
         }
 
@@ -131,12 +124,12 @@ namespace Trinity.Network
         /// <param name="sizes">The size of the message.</param>
         /// <param name="count">The number of buffers.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected internal unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte** buffers, int* sizes, int count)
+        protected internal unsafe Task SendMessageAsync(IMessagePassingEndpoint endpoint, byte** buffers, int* sizes, int count)
         {
             var e_msg_type = PointerHelper.GetUshort(buffers, sizes, TrinityProtocol.MsgTypeOffset);
             PointerHelper.Add(buffers, sizes, TrinityProtocol.MsgIdOffset, m_MessageIdOffsets[e_msg_type]);
 
-            endpoint.SendMessage(buffers, sizes, count);
+            return endpoint.SendMessageAsync(buffers, sizes, count);
         }
 
         /// <summary>
@@ -150,12 +143,12 @@ namespace Trinity.Network
         /// <param name="count">The number of buffers.</param>
         /// <param name="response">The TrinityResponse object returned by the remote module.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected internal unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte** buffers, int* sizes, int count, out TrinityResponse response)
+        protected internal unsafe Task<TrinityResponse> SendRecvMessageAsync(IMessagePassingEndpoint endpoint, byte** buffers, int* sizes, int count)
         {
             var e_msg_type = PointerHelper.GetUshort(buffers, sizes, TrinityProtocol.MsgTypeOffset);
             PointerHelper.Add(buffers, sizes, TrinityProtocol.MsgIdOffset, m_MessageIdOffsets[e_msg_type]);
 
-            endpoint.SendMessage(buffers, sizes, count, out response);
+            return endpoint.SendRecvMessageAsync(buffers, sizes, count);
         }
 
         /// <summary>
@@ -167,12 +160,12 @@ namespace Trinity.Network
         /// <param name="buffer">A binary message buffer.</param>
         /// <param name="size">The size of the message.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected internal unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte* buffer, int size)
+        protected internal unsafe Task SendMessageAsync(IMessagePassingEndpoint endpoint, byte* buffer, int size)
         {
             var e_msg_type = *(TrinityMessageType*)(buffer + TrinityProtocol.MsgTypeOffset);
             *(ushort*)(buffer + TrinityProtocol.MsgIdOffset) += m_MessageIdOffsets[(int)e_msg_type];
 
-            endpoint.SendMessage(buffer, size);
+            return endpoint.SendMessageAsync(buffer, size);
         }
 
         /// <summary>
@@ -185,17 +178,17 @@ namespace Trinity.Network
         /// <param name="size">The size of the message.</param>
         /// <param name="response">The TrinityResponse object returned by the remote module.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected internal unsafe void SendMessage(IMessagePassingEndpoint endpoint, byte* buffer, int size, out TrinityResponse response)
+        protected internal unsafe Task<TrinityResponse> SendRecvMessageAsync(IMessagePassingEndpoint endpoint, byte* buffer, int size)
         {
             var e_msg_type = *(TrinityMessageType*)(buffer + TrinityProtocol.MsgTypeOffset);
             *(ushort*)(buffer + TrinityProtocol.MsgIdOffset) += m_MessageIdOffsets[(int)e_msg_type];
 
-            endpoint.SendMessage(buffer, size, out response);
+            return endpoint.SendRecvMessageAsync(buffer, size);
         }
         #endregion
 
-        internal HttpHandler GetRootHttpHandler() { return this.RootHttpHandler; }
-        internal HttpRequestDispatcher GetHttpRequestDispatcher() { return this.DispatchHttpRequest; }
+        internal HttpAsyncHandler GetRootHttpHandler() { return this.RootHttpHandlerAsync; }
+        internal HttpRequestDispatcher GetHttpRequestDispatcher() { return this.DispatchHttpRequestAsync; }
 
         #region Public
         /// <summary>

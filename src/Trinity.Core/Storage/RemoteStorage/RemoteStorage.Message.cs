@@ -3,23 +3,15 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
-using System.Net.Sockets;
 using System.IO;
-
-using Trinity;
+using System.Threading.Tasks;
 using Trinity.Network;
 using Trinity.Network.Client;
 using Trinity.Network.Messaging;
-using System.Diagnostics;
-using Trinity.Core.Lib;
 
 namespace Trinity.Storage
 {
-    public unsafe partial class RemoteStorage : IStorage, IDisposable
+    public partial class RemoteStorage : IStorage, IDisposable
     {
         /// <summary>
         /// Checks for possible errors that occur during message passing, 
@@ -45,45 +37,64 @@ namespace Trinity.Storage
         /// Get a SynClient and apply the function. Intended for SendMessage calls.
         /// Will retry if the function returns neither E_SUCCESS nor E_RPC_EXCEPTION.
         /// </summary>
-        private void _use_synclient(Func<SynClient, TrinityErrorCode> func)
+        private async Task _use_synclient(Func<SynClient, Task<TrinityErrorCode>> func)
         {
             TrinityErrorCode err = TrinityErrorCode.E_SUCCESS;
             for (int i = 0; i < m_send_retry; i++)
             {
                 SynClient sc = GetClient();
-                err = func(sc);
+                err = await func(sc);
                 PutBackClient(sc);
                 _error_check(err);
                 if (err == TrinityErrorCode.E_SUCCESS) break;
             }
         }
 
-        /// <inheritdoc/>
-        public void SendMessage(byte* message, int size)
+        /// <summary>
+        /// Get a SynClient and apply the function. Intended for SendMessage calls.
+        /// Will retry if the function returns neither E_SUCCESS nor E_RPC_EXCEPTION.
+        /// </summary>
+        private async Task<TrinityResponse> _use_synclient(Func<SynClient, Task<(TrinityErrorCode ErrorCode, TrinityResponse Response)>> func)
         {
-            _use_synclient(sc => sc.SendMessage(message, size));
+            TrinityErrorCode err = TrinityErrorCode.E_SUCCESS;
+            for (int i = 0; i < m_send_retry; i++)
+            {
+                SynClient sc = GetClient();
+                var result = await func(sc);
+                err = result.ErrorCode;
+                PutBackClient(sc);
+                _error_check(err);
+                if (err == TrinityErrorCode.E_SUCCESS)
+                {
+                    return result.Response;
+                }
+            }
+
+            return null;
         }
 
         /// <inheritdoc/>
-        public void SendMessage(byte* message, int size, out TrinityResponse response)
+        public unsafe Task SendMessageAsync(byte* message, int size)
         {
-            TrinityResponse _rsp = null;
-            _use_synclient(sc => sc.SendMessage(message, size, out _rsp));
-            response = _rsp;
+            return _use_synclient(sc => sc.SendMessageAsync(message, size));
         }
 
         /// <inheritdoc/>
-        public void SendMessage(byte** message, int* sizes, int count)
+        public unsafe Task<TrinityResponse> SendRecvMessageAsync(byte* message, int size)
         {
-            _use_synclient(sc => sc.SendMessage(message, sizes, count));
+            return _use_synclient(sc => sc.SendRecvMessageAsync(message, size));
         }
 
         /// <inheritdoc/>
-        public void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
+        public unsafe Task SendMessageAsync(byte** message, int* sizes, int count)
         {
-            TrinityResponse _rsp = null;
-            _use_synclient(sc => sc.SendMessage(message, sizes, count, out _rsp));
-            response = _rsp;
+            return _use_synclient(sc => sc.SendMessageAsync(message, sizes, count));
+        }
+
+        /// <inheritdoc/>
+        public unsafe Task<TrinityResponse> SendRecvMessageAsync(byte** message, int* sizes, int count)
+        {
+            return _use_synclient(sc => sc.SendRecvMessageAsync(message, sizes, count));
         }
 
         /// <inheritdoc />

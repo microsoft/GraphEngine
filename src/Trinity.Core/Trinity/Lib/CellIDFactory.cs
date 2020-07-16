@@ -3,7 +3,7 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 using System;
-#if !CORECLR
+#if NETFRAMEWORK
 using System.Runtime.ConstrainedExecution;
 #endif
 using System.Threading;
@@ -30,7 +30,7 @@ namespace Trinity.Core.Lib
             }
         }
 
-#if !CORECLR
+#if NETFRAMEWORK
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
 #endif
         private void UnLock()

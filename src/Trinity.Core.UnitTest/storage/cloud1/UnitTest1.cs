@@ -14,7 +14,7 @@ namespace cloud1
             var server = new TrinityServer();
             server.Start();
 
-            var contains = Global.CloudStorage.Contains(0);
+            var contains = Global.CloudStorage.ContainsAsync(0).Result;
 
             Assert.False(contains);
         }

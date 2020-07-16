@@ -48,16 +48,16 @@ namespace Trinity.DynamicCluster.Storage
         internal Partition MyPartition => PartitionTable(MyPartitionId);
         internal static DynamicMemoryCloud Instance => Global.CloudStorage as DynamicMemoryCloud;
 
-        private void CheckServerProtocolSignatures(DynamicRemoteStorage rs)
+        private Task CheckServerProtocolSignaturesAsync(DynamicRemoteStorage rs)
         {
             Log.WriteLine(LogLevel.Debug, $"Checking protocol signatures with '{rs.NickName}' ({rs.ReplicaInformation})...");
 
-            CheckProtocolSignatures_impl(rs, m_cluster_config.RunningMode, RunningMode.Server);
+            return CheckProtocolSignatures_impl_Async(rs, m_cluster_config.RunningMode, RunningMode.Server);
         }
 
-        internal void OnStorageJoin(DynamicRemoteStorage remoteStorage)
+        internal async Task OnStorageJoinAsync(DynamicRemoteStorage remoteStorage)
         {
-            CheckServerProtocolSignatures(remoteStorage);
+            await CheckServerProtocolSignaturesAsync(remoteStorage);
             m_storageTable.AddInstance(GetInstanceId(remoteStorage.ReplicaInformation.Id), remoteStorage);
             Log.WriteLine($"{nameof(DynamicCluster)}: Connected to '{remoteStorage.NickName}' ({remoteStorage.ReplicaInformation.Id})");
         }
@@ -137,14 +137,15 @@ namespace Trinity.DynamicCluster.Storage
             m_backupctl = new BackupController(m_cancelSrc.Token, m_backupmgr, m_nameservice, m_persistent_storage, m_taskqueue);
 
             Log.WriteLine($"{nameof(DynamicMemoryCloud)}: Partition {MyPartitionId}: Instance '{NickName}' {InstanceGuid} opened.");
-            Global.CommunicationInstance.Started += InitModule;
+            Global.CommunicationInstance.Started += InitModuleAsync;
 
             return true;
         }
 
-        private void InitModule()
+        private Task InitModuleAsync()
         {
             m_module = GetCommunicationModule<DynamicClusterCommModule>();
+            return Task.CompletedTask;
         }
 
         public void Close()
@@ -159,7 +160,7 @@ namespace Trinity.DynamicCluster.Storage
                {
                    int id = GetInstanceId(s.ReplicaInformation.Id);
                    using (var request = new StorageInformationWriter(MyPartitionId, m_nameservice.InstanceId))
-                   { m_module.NotifyRemoteStorageOnLeaving(id, request); }
+                   { m_module.NotifyRemoteStorageOnLeavingAsync(id, request).Wait(); }
                }
                catch { }
            });
@@ -183,7 +184,7 @@ namespace Trinity.DynamicCluster.Storage
         protected override void OnConnected(RemoteStorageEventArgs e)
         {
             base.OnConnected(e);
-            OnStorageJoin(e.RemoteStorage as DynamicRemoteStorage);
+            OnStorageJoinAsync(e.RemoteStorage as DynamicRemoteStorage).Wait();
         }
 
         protected override void OnDisconnected(RemoteStorageEventArgs e)

@@ -26,7 +26,7 @@ namespace Storage
 
 namespace Storage
 {
-    union HeadGroup
+    typedef union
     {
 #if defined(TRINITY_PLATFORM_WINDOWS)
         struct
@@ -51,8 +51,7 @@ namespace Storage
         std::atomic<int64_t> head_group;
 #define committed_head ______committed_head_struct______.committed_head
 #endif
-        HeadGroup() {}
-    };
+    }HeadGroup;
 
     typedef struct
     {

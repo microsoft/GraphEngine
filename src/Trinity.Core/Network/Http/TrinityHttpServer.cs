@@ -8,11 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using Trinity.Configuration;
 using Trinity.Diagnostics;
 using Trinity.TSL.Lib;
 
@@ -22,7 +18,7 @@ namespace Trinity.Network.Http
     /// Represents an HTTP request handler.
     /// </summary>
     /// <param name="context">An context object that provides access to the request and response objects.</param>
-    public delegate void HttpHandler(HttpListenerContext context);
+    public delegate Task HttpAsyncHandler(HttpListenerContext context);
 
     /// <summary>
     /// Represents an HTTP server.
@@ -30,7 +26,7 @@ namespace Trinity.Network.Http
     public class TrinityHttpServer : IDisposable
     {
         private HttpListener m_HttpServer                   = null;
-        private HttpHandler  m_HttpHandler                  = null;
+        private HttpAsyncHandler  m_HttpAsyncHandler        = null;
         private List<AvailabilityGroup> m_RelayInstanceList = null;
         private List<int>    m_RelayRoundRobinTable         = null;
         private bool         m_AllowCrossDomainRequest      = true;
@@ -40,9 +36,9 @@ namespace Trinity.Network.Http
         /// </summary>
         /// <param name="primaryHandler">An HTTP request handler.</param>
         /// <param name="serviceEndpoints">A list of Uniform Resource Identifier (URI) prefixes handled by this HTTP server.</param>
-        public TrinityHttpServer(HttpHandler primaryHandler, List<string> serviceEndpoints)
+        public TrinityHttpServer(HttpAsyncHandler primaryHandler, List<string> serviceEndpoints)
         {
-            m_HttpHandler = primaryHandler;
+            m_HttpAsyncHandler = primaryHandler;
             m_HttpServer  = new HttpListener();
             foreach (var prefix in serviceEndpoints)
             {
@@ -67,7 +63,7 @@ namespace Trinity.Network.Http
         }
 
         /// <summary>
-        /// Sets the instance list. This is required for <see cref="Trinity.Network.Http.TrinityHttpServer.RelayRequest"/> to function properly.
+        /// Sets the instance list. This is required for <see cref="Trinity.Network.Http.TrinityHttpServer.RelayRequestAsync"/> to function properly.
         /// This method will be called by TSL-generated code upon server start up.
         /// </summary>
         /// <param name="list">The server list.</param>
@@ -80,25 +76,27 @@ namespace Trinity.Network.Http
         /// <summary>
         /// Starts listening for incoming HTTP requests.
         /// </summary>
-        public void Listen()
+        public async Task ListenAsync()
         {
-            ThreadPool.QueueUserWorkItem((o) =>
+            while (m_HttpServer.IsListening)
             {
+                HttpListenerContext context;
+
                 try
                 {
-                    while (m_HttpServer.IsListening)
-                    {
-                        ThreadPool.QueueUserWorkItem((context) =>
-                        {
-                            ProcessHttpRequest(context as HttpListenerContext);
-                        }, m_HttpServer.GetContext());
-                    }
+                    context = await m_HttpServer.GetContextAsync();
+                    if (context == null) break;
+
+                    Task fireAndForget = Task.Factory.StartNew(() => ProcessHttpRequestAsync(context));
                 }
-                catch (Exception) { }
-            });
+                catch (Exception)
+                {
+                    break;
+                }
+            }
         }
 
-        private void ProcessHttpRequest(HttpListenerContext ctx)
+        private async Task ProcessHttpRequestAsync(HttpListenerContext ctx)
         {
             // Error handling: Microsoft OneAPI Guidelines section 7.10.2
             try
@@ -113,17 +111,17 @@ namespace Trinity.Network.Http
                     ctx.Response.AddHeader("Access-Control-Allow-Credentials", "true");
                 }
 
-                m_HttpHandler(ctx);
+                await m_HttpAsyncHandler(ctx);
             }
             catch (BadRequestException ex)
             {
-                WriteResponseForBadRequest(ex, ctx);
+                await WriteResponseForBadRequestAsync(ex, ctx);
                 try { Log.WriteLine(LogLevel.Warning, "Bad http request: " + ex.Code + ": " + ex.ToString()); }
                 catch { }
             }
             catch (Exception ex)
             {
-                WriteResponseForInternalServerError(ctx);
+                await WriteResponseForInternalServerErrorAsync(ctx);
                 try { Log.WriteLine(LogLevel.Error, ex.ToString()); }
                 catch { }
             }
@@ -137,12 +135,12 @@ namespace Trinity.Network.Http
             }
         }
 
-        private void WriteResponseForInternalServerError(HttpListenerContext ctx)
+        private async Task WriteResponseForInternalServerErrorAsync(HttpListenerContext ctx)
         {
             ctx.Response.StatusCode  = (int)HttpStatusCode.InternalServerError;
             using (var writer = new StreamWriter(ctx.Response.OutputStream))
             {
-                writer.Write(@"{
+                await writer.WriteAsync(@"{
   ""error"": {
     ""code"": ""Unspecified"",
     ""message"": ""Internal server error""
@@ -151,12 +149,12 @@ namespace Trinity.Network.Http
             }
         }
 
-        private void WriteResponseForBadRequest(BadRequestException ex, HttpListenerContext ctx)
+        private async Task WriteResponseForBadRequestAsync(BadRequestException ex, HttpListenerContext ctx)
         {
             ctx.Response.StatusCode  = (int)HttpStatusCode.BadRequest;
             using (var writer = new StreamWriter(ctx.Response.OutputStream))
             {
-                writer.Write(@"{
+                await writer.WriteAsync(@"{
   ""error"": {
     ""code"": " + JsonStringProcessor.escape(ex.Code) + @",
     ""message"": " + JsonStringProcessor.escape(ex.Message) + @"
@@ -165,7 +163,7 @@ namespace Trinity.Network.Http
             }
         }
 
-        private static void _RelayRequest(HttpListenerContext context, AvailabilityGroup ag, int idx)
+        private static async Task _RelayRequestAsync(HttpListenerContext context, AvailabilityGroup ag, int idx)
         {
             ServerInfo        s          = ag.Instances[idx];
             int               port       = context.Request.LocalEndPoint.Port;
@@ -186,7 +184,7 @@ namespace Trinity.Network.Http
                 context.Request.InputStream.CopyTo(relayStream);
             }
 
-            WebResponse relayResponse = relayRequest.GetResponse();
+            WebResponse relayResponse = await relayRequest.GetResponseAsync();
             context.Response.ContentType = relayResponse.ContentType;
             relayResponse.GetResponseStream().CopyTo(context.Response.OutputStream);
             relayResponse.Dispose();
@@ -197,7 +195,7 @@ namespace Trinity.Network.Http
         /// </summary>
         /// <param name="instance_id">The server id.</param>
         /// <param name="context">The context of the request to relay.</param>
-        public void RelayRequest(int instance_id, HttpListenerContext context)
+        public async Task RelayRequestAsync(int instance_id, HttpListenerContext context)
         {
             if (instance_id < 0 || instance_id >= m_RelayInstanceList.Count)
             {
@@ -208,7 +206,7 @@ namespace Trinity.Network.Http
 
             AvailabilityGroup ag  = m_RelayInstanceList[instance_id];
             int               idx = m_RelayRoundRobinTable[instance_id] = (m_RelayRoundRobinTable[instance_id] + 1) % ag.Instances.Count;
-            _RelayRequest(context, ag, idx);
+            await _RelayRequestAsync(context, ag, idx);
         }
 
         public void Dispose()

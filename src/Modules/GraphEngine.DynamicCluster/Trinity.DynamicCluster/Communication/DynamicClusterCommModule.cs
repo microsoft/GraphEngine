@@ -31,13 +31,14 @@ namespace Trinity.DynamicCluster.Communication
             return "DynamicClusterCommModule";
         }
 
-        public override void NotifyRemoteStorageOnLeavingHandler(StorageInformationReader request)
+        public override Task NotifyRemoteStorageOnLeavingHandlerAsync(StorageInformationReader request)
         {
             var dmc = DynamicMemoryCloud.Instance;
             dmc.OnStorageLeave(request.partition, request.id);
+            return Task.CompletedTask;
         }
 
-        public override void PersistedDownloadHandler(PersistedSliceReader request, ErrnoResponseWriter response)
+        public override async Task PersistedDownloadHandlerAsync(PersistedSliceReader request, ErrnoResponseWriter response)
         {
             var dmc        = DynamicMemoryCloud.Instance;
             var downloader = dmc.m_persistent_storage.Download(request.version, dmc.MyPartitionId, request.lowkey, request.highkey).Result;
@@ -49,14 +50,14 @@ namespace Trinity.DynamicCluster.Communication
                 // start new download while we load it into memory storage
                 var ndtask = downloader.DownloadAsync();
                 foreach (var cell in data)
-                { Global.LocalStorage.SaveCell(cell.CellId, cell.Buffer, cell.Offset, cell.Length, cell.CellType); }
+                { await Global.LocalStorage.SaveCellAsync(cell.CellId, cell.Buffer, cell.Offset, cell.Length, cell.CellType); }
                 dtask = ndtask;
             }
 
             response.errno = Errno.E_OK;
         }
 
-        public override void PersistedUploadHandler(PersistedSliceReader request, ErrnoResponseWriter response)
+        public override async Task PersistedUploadHandlerAsync(PersistedSliceReader request, ErrnoResponseWriter response)
         {
             var dmc        = DynamicMemoryCloud.Instance;
             var uploader   = dmc.m_persistent_storage.Upload(request.version, dmc.MyPartitionId, request.lowkey, request.highkey).Result;
@@ -65,20 +66,20 @@ namespace Trinity.DynamicCluster.Communication
             var tx_rsps    = Global.LocalStorage
                             .Where(cell => _Covered(chunks, cell.CellId))
                             .Segment(thres, cell => cell.CellSize + sizeof(long) + sizeof(int) + sizeof(ushort))
-                            .Select(_ => _Upload(_, uploader, thres));
+                            .Select(_ => _UploadAsync(_, uploader, thres));
 
-            Task.WhenAll(tx_rsps).Wait();
+            await Task.WhenAll(tx_rsps);
 
             response.errno = Errno.E_OK;
         }
 
-        private unsafe Task _Upload(IEnumerable<CellInfo> cells, IPersistentUploader uploader, long estimated_size)
+        private unsafe Task _UploadAsync(IEnumerable<CellInfo> cells, IPersistentUploader uploader, long estimated_size)
         {
             var payload_chunk = InMemoryDataChunk.New(cells, (int)estimated_size);
             return uploader.UploadAsync(payload_chunk);
         }
 
-        public override void ReplicationHandler(ReplicationTaskInformationReader request, ErrnoResponseWriter response)
+        public override async Task ReplicationHandlerAsync(ReplicationTaskInformationReader request, ErrnoResponseWriter response)
         {
             var chunks         = request.range.Cast<ChunkInformation>().ToList();
             chunks.Sort((x, y) => Math.Sign(x.lowKey - y.lowKey));
@@ -95,14 +96,14 @@ namespace Trinity.DynamicCluster.Communication
                                 .Where(cell => _Covered(chunks, cell.CellId))
                                 .Segment(thres, cell => cell.CellSize + sizeof(long) + sizeof(int) + sizeof(ushort))
                                 .Select(_ => _BuildBatch(_, task_id))
-                                .Select(_ => _SendBatch(_, to_storage, signal_c, signal_t));
+                                .Select(_ => _SendBatchAsync(_, to_storage, signal_c, signal_t));
 
-            Task.WhenAll(batch_rsps).Wait();
+            await Task.WhenAll(batch_rsps);
 
             response.errno = Errno.E_OK;
         }
 
-        public override void ShrinkDataHandler(ShrinkDataTaskInformationReader request, ErrnoResponseWriter response)
+        public override Task ShrinkDataHandlerAsync(ShrinkDataTaskInformationReader request, ErrnoResponseWriter response)
         {
             var task_id        = (Guid)request.task_id;
             var remove_tgt     = request.remove_target.Cast<ChunkInformation>().ToList();
@@ -115,9 +116,10 @@ namespace Trinity.DynamicCluster.Communication
             }
 
             response.errno = Errno.E_OK;
+            return Task.CompletedTask;
         }
 
-        private async Task _SendBatch(BatchCellsWriter batch, DynamicRemoteStorage storage, SemaphoreSlim signal_c, ManualResetEventSlim signal_t)
+        private async Task _SendBatchAsync(BatchCellsWriter batch, DynamicRemoteStorage storage, SemaphoreSlim signal_c, ManualResetEventSlim signal_t)
         {
             await signal_c.WaitAsync();
             while (signal_t.IsSet) await Task.Delay(1);
@@ -125,12 +127,12 @@ namespace Trinity.DynamicCluster.Communication
             {
                 using (batch)
                 {
-                    using (var reader = await storage.BatchSaveCells(batch))
+                    using (var reader = await storage.BatchSaveCellsAsync(batch))
                     {
                         if (reader.throttle)
                         {
                             signal_t.Set();
-                            Log.WriteLine($"{nameof(_SendBatch)}: throttled by remote storage {storage.ReplicaInformation.Id}");
+                            Log.WriteLine($"{nameof(_SendBatchAsync)}: throttled by remote storage {storage.ReplicaInformation.Id}");
                             await Task.Delay(1000);
                             signal_t.Reset();
                         }
@@ -156,7 +158,7 @@ namespace Trinity.DynamicCluster.Communication
             return chunks.Any(_ => _.lowKey <= cellId && cellId <= _.highKey);
         }
 
-        public unsafe override void BatchSaveCellsHandler(BatchCellsReader request, ThrottleResponseWriter response)
+        public unsafe override Task BatchSaveCellsHandlerAsync(BatchCellsReader request, ThrottleResponseWriter response)
         {
             foreach (var cell in request.cells)
             {
@@ -164,9 +166,10 @@ namespace Trinity.DynamicCluster.Communication
             }
             //TODO throttle
             response.throttle = false;
+            return Task.CompletedTask;
         }
 
-        public override void GetChunksHandler(GetChunksResponseWriter response)
+        public override Task GetChunksHandlerAsync(GetChunksResponseWriter response)
         {
             var dmc = m_memorycloud as DynamicMemoryCloud;
             var chunks = dmc.m_chunktable.GetChunks(dmc.InstanceGuid).Result;
@@ -174,15 +177,17 @@ namespace Trinity.DynamicCluster.Communication
             {
                 response.chunk_info.Add(new ChunkInformation(chunk.LowKey, chunk.HighKey, chunk.Id));
             }
+            return Task.CompletedTask;
         }
 
-        public override void AnnounceMasterHandler(StorageInformationReader request, ErrnoResponseWriter response)
+        public override Task AnnounceMasterHandlerAsync(StorageInformationReader request, ErrnoResponseWriter response)
         {
             (m_memorycloud as DynamicMemoryCloud).m_cloudidx.SetMaster(request.partition, request.id);
             response.errno = Errno.E_OK;
+            return Task.CompletedTask;
         }
 
-        public override void PersistedLoadPartitionHandler(BackupTaskInformationReader request, ErrnoResponseWriter response)
+        public override Task PersistedLoadPartitionHandlerAsync(BackupTaskInformationReader request, ErrnoResponseWriter response)
         {
             try
             {
@@ -193,9 +198,10 @@ namespace Trinity.DynamicCluster.Communication
             {
                 response.errno = Errno.E_FAIL;
             }
+            return Task.CompletedTask;
         }
 
-        public override void PersistedSavePartitionHandler(BackupTaskInformationReader request, ErrnoResponseWriter response)
+        public override Task PersistedSavePartitionHandlerAsync(BackupTaskInformationReader request, ErrnoResponseWriter response)
         {
             try
             {
@@ -206,14 +212,16 @@ namespace Trinity.DynamicCluster.Communication
             {
                 response.errno = Errno.E_FAIL;
             }
+            return Task.CompletedTask;
         }
 
-        public override void QueryReplicaHealthHandler(ErrnoResponseWriter response)
+        public override Task QueryReplicaHealthHandlerAsync(ErrnoResponseWriter response)
         {
             response.errno = Errno.E_OK;
+            return Task.CompletedTask;
         }
 
-        public override void QueryPartitionHealthHandler(ErrnoResponseWriter response)
+        public override Task QueryPartitionHealthHandlerAsync(ErrnoResponseWriter response)
         {
             if ((m_memorycloud as DynamicMemoryCloud).m_healthmon.IsPartitionHealthy())
             {
@@ -223,6 +231,7 @@ namespace Trinity.DynamicCluster.Communication
             {
                 response.errno = Errno.E_FAIL;
             }
+            return Task.CompletedTask;
         }
     }
 }

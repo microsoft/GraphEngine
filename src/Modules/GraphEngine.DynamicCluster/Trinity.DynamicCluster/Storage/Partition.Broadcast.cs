@@ -16,20 +16,21 @@ namespace Trinity.DynamicCluster.Storage
         /// The delivery of the message to a particular endpoint will not be affected
         /// if the delivery to another results in an exception.
         /// </summary>
-        public void Broadcast(Action<IMessagePassingEndpoint> sendFunc)
+        public async Task Broadcast(Func<IMessagePassingEndpoint, Task> sendFunc)
         {
             var stgs = this.ToList();
             var exs  = new Exception[stgs.Count];
-            Task.WhenAll(stgs.Select((stg, i) =>
+            await Task.WhenAll(stgs.Select(async (stg, i) =>
             {
-                try { sendFunc(stg); }
+                try { await sendFunc(stg); }
                 catch (Exception ex) { exs[i] = ex; }
                 return Task.FromResult(0);
-            })).Wait();
+            }));
             if (!exs.Any(_ => _!= null)) return;
             else throw new BroadcastException(stgs.ZipWith(exs));
         }
 
+        /*
         public IEnumerable<TResponse> Broadcast<TResponse>(Func<IMessagePassingEndpoint, TResponse> sendFunc)
             where TResponse : IDisposable
         {
@@ -45,6 +46,7 @@ namespace Trinity.DynamicCluster.Storage
             if (!exs.Any(_ => _!= null)) return vals;
             else throw new BroadcastException<TResponse>(stgs.ZipWith(exs), stgs.ZipWith(vals));
         }
+        */
 
         public async Task<TResponse[]> Broadcast<TResponse>(Func<IMessagePassingEndpoint, Task<TResponse>> sendFunc)
             where TResponse : IDisposable

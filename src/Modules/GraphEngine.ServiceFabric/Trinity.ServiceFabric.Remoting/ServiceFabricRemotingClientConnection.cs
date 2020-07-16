@@ -30,7 +30,7 @@ namespace Trinity.ServiceFabric.Remoting
 
         public T GetCommunicationModule<T>() where T : CommunicationModule => m_modules.GetCommunicationModule<T>();
 
-        public unsafe void SendMessage(byte* message, int size)
+        public unsafe Task SendMessageAsync(byte* message, int size)
         {
             try
             {
@@ -39,27 +39,7 @@ namespace Trinity.ServiceFabric.Remoting
 
                 byte[] buf = new byte[size];
                 fixed (byte* p = buf) { Memory.memcpy(p, message, (uint)size); }
-                m_svcProxy.SendMessageAsync(buf).Wait();
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(LogLevel.Error, "{0}", ex.ToString());
-            }
-        }
-
-        public unsafe void SendMessage(byte* message, int size, out TrinityResponse response)
-        {
-            try
-            {
-                message += TrinityProtocol.SocketMsgHeader;
-                size -= TrinityProtocol.SocketMsgHeader;
-
-                byte[] buf = new byte[size];
-                fixed (byte* p = buf) { Memory.memcpy(p, message, (uint)size); }
-                var result = m_svcProxy.SendMessageWithResponseAsync(buf).Result;
-                byte* rsp = (byte*)Memory.malloc((uint)result.Length);
-                fixed (byte* p = result) { Memory.memcpy(rsp, p, (uint)result.Length); }
-                response = new TrinityResponse(rsp, result.Length);
+                return m_svcProxy.SendMessageAsync(buf);
             }
             catch (Exception ex)
             {
@@ -68,24 +48,33 @@ namespace Trinity.ServiceFabric.Remoting
             }
         }
 
-        public unsafe void SendMessage(byte** message, int* sizes, int count)
+        public unsafe Task<TrinityResponse> SendRecvMessageAsync(byte* message, int size)
         {
-            int len = 0;
-            for (int i = 0; i<count; ++i) { len += sizes[i]; }
-            byte[] buf = new byte[len];
-            fixed (byte* p = buf)
+            try
             {
-                byte* pp = p;
-                for (int i = 0; i<count; ++i)
-                {
-                    Memory.memcpy(pp, message[i], (uint)sizes[i]);
-                    pp += sizes[i];
-                }
+                message += TrinityProtocol.SocketMsgHeader;
+                size -= TrinityProtocol.SocketMsgHeader;
+
+                byte[] buf = new byte[size];
+                fixed (byte* p = buf) { Memory.memcpy(p, message, (uint)size); }
+                return m_svcProxy.SendMessageWithResponseAsync(buf).ContinueWith(
+                    t =>
+                    {
+                        var result = t.Result;
+                        byte* rsp = (byte*)Memory.malloc((uint)result.Length);
+                        fixed (byte* p = result) { Memory.memcpy(rsp, p, (uint)result.Length); }
+                        return new TrinityResponse(rsp, result.Length);
+                    },
+                    TaskContinuationOptions.ExecuteSynchronously);
             }
-            m_svcProxy.SendMessageAsync(buf).Wait();
+            catch (Exception ex)
+            {
+                Log.WriteLine(LogLevel.Error, "{0}", ex.ToString());
+                throw;
+            }
         }
 
-        public unsafe void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
+        public unsafe Task SendMessageAsync(byte** message, int* sizes, int count)
         {
             int len = 0;
             for (int i = 0; i<count; ++i) { len += sizes[i]; }
@@ -99,10 +88,32 @@ namespace Trinity.ServiceFabric.Remoting
                     pp += sizes[i];
                 }
             }
-            var result = m_svcProxy.SendMessageWithResponseAsync(buf).Result;
-            byte* rsp = (byte*)Memory.malloc((uint)result.Length);
-            fixed (byte* p = result) { Memory.memcpy(rsp, p, (uint)result.Length); }
-            response = new TrinityResponse(rsp, result.Length);
+            return m_svcProxy.SendMessageAsync(buf);
+        }
+
+        public unsafe Task<TrinityResponse> SendRecvMessageAsync(byte** message, int* sizes, int count)
+        {
+            int len = 0;
+            for (int i = 0; i<count; ++i) { len += sizes[i]; }
+            byte[] buf = new byte[len];
+            fixed (byte* p = buf)
+            {
+                byte* pp = p;
+                for (int i = 0; i<count; ++i)
+                {
+                    Memory.memcpy(pp, message[i], (uint)sizes[i]);
+                    pp += sizes[i];
+                }
+            }
+            return m_svcProxy.SendMessageWithResponseAsync(buf).ContinueWith(
+                t =>
+                {
+                    var result = t.Result;
+                    byte* rsp = (byte*)Memory.malloc((uint)result.Length);
+                    fixed (byte* p = result) { Memory.memcpy(rsp, p, (uint)result.Length); }
+                    return new TrinityResponse(rsp, result.Length);
+                },
+                TaskContinuationOptions.ExecuteSynchronously);
         }
     }
 }

@@ -3,63 +3,152 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net.Sockets;
-using System.Net;
 using System.IO;
-
-using Trinity;
-using Trinity.Core.Lib;
-using Trinity.Storage;
-using Trinity.Network.Messaging;
-using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Runtime.InteropServices;
-using Trinity.Diagnostics;
+using Trinity.Core.Lib;
 using Trinity.FaultTolerance;
+using Trinity.Network.Messaging;
 
 namespace Trinity.Network.Client
 {
     unsafe partial class SynClient : IDisposable
     {
-        private bool DoSend(byte* buf, int len)
-        {
-            if (!sock_connected && !DoConnect(m_connect_retry)) // cannot connect
-                return false;
+        private delegate int AsyncOperation(UInt64 socket, byte* buf, int len, NativeOverlapped* overlapped);
 
-            if (CNativeNetwork.ClientSend(socket, buf, len))
+        private class AsyncOperationClosure
+        {
+            private readonly SynClient _client;
+            private readonly AsyncOperation _action;
+            private byte* _buf;
+            private int _len;
+            public TaskCompletionSource<bool> _taskCompletionSource;
+
+            public AsyncOperationClosure(SynClient client, byte* buf, int len, AsyncOperation action)
             {
-                return true;
+                this._client = client;
+                this._action = action;
+                this._buf = buf;
+                this._len = len;
+                this._taskCompletionSource = new TaskCompletionSource<bool>();
             }
-            else
+
+            private void Callback(uint errorCode, uint numBytes, NativeOverlapped* pOVERLAP)
             {
-                // ClientSend failed.
-                sock_connected = false;
-                return false;
+                this._client.threadPoolBoundHandle.FreeNativeOverlapped(pOVERLAP);
+
+                bool succeeded = errorCode == CNativeNetwork.ERROR_SUCCESS;
+                if (!succeeded) this._client.sock_connected = false;
+
+                if (numBytes == this._len)
+                {
+                    this._taskCompletionSource.TrySetResult(succeeded);
+                }
+                else
+                {
+                    this._len -= (int)numBytes;
+                    if (this._buf != null) this._buf += numBytes;
+
+                    this.BeginInvoke();
+                }
+            }
+
+            public Task<bool> BeginInvoke()
+            {
+                NativeOverlapped* overlapped = this._client.threadPoolBoundHandle.AllocateNativeOverlapped(this.Callback, null, null);
+
+                int err = this._action(this._client.socket, this._buf, this._len, overlapped);
+                if (err != CNativeNetwork.ERROR_SUCCESS &&
+                    err != CNativeNetwork.ERROR_IO_PENDING)
+                {
+                    // error, complete the task with false
+                    this._client.threadPoolBoundHandle.FreeNativeOverlapped(overlapped);
+                    this._taskCompletionSource.TrySetResult(false);
+                }
+
+                return this._taskCompletionSource.Task;
             }
         }
 
-        /// <summary>
-        /// Send multiple buffers sequentially
-        /// </summary>
-        private bool DoSend(byte** bufs, int* lens, int cnt)
+        private Task<bool> DoSendAsync(byte* buf, int len)
         {
             if (!sock_connected && !DoConnect(m_connect_retry)) // cannot connect
-                return false;
+                return Task.FromResult(false);
 
-            if (CNativeNetwork.ClientSendMulti(socket, bufs, lens, cnt))
+            AsyncOperationClosure send_op = new AsyncOperationClosure(this, buf, len, CNativeNetwork.BeginClientSend);
+            return send_op.BeginInvoke();
+        }
+
+        private Task<bool> DoSendAsync(byte** bufs, int* lens, int cnt)
+        {
+            if (!sock_connected && !DoConnect(m_connect_retry)) // cannot connect
+                return Task.FromResult(false);
+
+            var taskCompletionSource = new TaskCompletionSource<bool>();
+            NativeOverlapped* overlapped = threadPoolBoundHandle.AllocateNativeOverlapped(
+                (errorCode, numBytes, pOVERLAP) =>
+                {
+                    threadPoolBoundHandle.FreeNativeOverlapped(pOVERLAP);
+                    bool succeeded = errorCode == CNativeNetwork.ERROR_SUCCESS;
+                    if (!succeeded) sock_connected = false;
+                    taskCompletionSource.TrySetResult(succeeded);
+                },
+                null,
+                null);
+
+            int err = CNativeNetwork.BeginClientSendMulti(socket, bufs, lens, cnt, overlapped);
+            if (err != CNativeNetwork.ERROR_SUCCESS &&
+                err != CNativeNetwork.ERROR_IO_PENDING)
             {
-                return true;
+                threadPoolBoundHandle.FreeNativeOverlapped(overlapped);
+                taskCompletionSource.TrySetResult(false);
             }
-            else
-            {
-                // ClientSend failed.
-                sock_connected = false;
-                return false;
-            }
+
+            return taskCompletionSource.Task;
+        }
+
+        private Task<(TrinityErrorCode, TrinityResponse)> DoRecvAsync()
+        {
+            int data_len = 0;
+            byte* data_buf = null;
+
+            AsyncOperationClosure len_recv_op = new AsyncOperationClosure(
+                this,
+                intBuff,
+                sizeof(int),
+                CNativeNetwork.BeginClientReceive);
+            return len_recv_op.BeginInvoke()
+                              .ContinueWith(
+                                t =>
+                                {
+                                    if (!t.Result)
+                                    {
+                                        return Task.FromResult(false);
+                                    }
+
+                                    data_len = Marshal.ReadInt32((IntPtr)intBuff);
+                                    data_buf = (byte*)Memory.malloc((ulong)data_len);
+                                    AsyncOperationClosure data_recv_op = new AsyncOperationClosure(
+                                        this,
+                                        data_buf,
+                                        data_len,
+                                        CNativeNetwork.BeginClientReceive);
+                                    return data_recv_op.BeginInvoke();
+                                })
+                              .Unwrap()
+                              .ContinueWith(
+                                t =>
+                                {
+                                    if (!t.Result)
+                                    {
+                                        if (data_buf != null) Memory.free(data_buf);
+                                        return (TrinityErrorCode.E_NETWORK_RECV_FAILURE, null);
+                                    }
+
+                                    return (TrinityErrorCode.E_SUCCESS, new TrinityResponse(data_buf, data_len));
+                                },
+                                TaskContinuationOptions.ExecuteSynchronously);
         }
 
         /// <returns>
@@ -69,23 +158,27 @@ namespace Trinity.Network.Client
         /// E_NETWORK_SEND_FAILURE: Heartbeat could not be sent.
         /// E_RPC_EXCEPTION:        The remote handler throw an exception.
         /// </returns>
-        internal TrinityErrorCode Heartbeat()
+        internal Task<TrinityErrorCode> HeartbeatAsync()
         {
             // Heartbeat() connects only once regardless of reconnect setting.
-            if (!sock_connected && !DoConnect(1))  // cannot connect
-                return TrinityErrorCode.E_FAILURE; // TODO error code for connection error
+            if (!sock_connected && !DoConnect(1)) // cannot connect
+                return Task.FromResult(TrinityErrorCode.E_FAILURE); // TODO error code for connection error
 
-            if (CNativeNetwork.ClientSend(socket, HeartbeatBuffer, 8))
-            {
-                return WaitForAckPackage();
-            }
-            else
-            {
-                // ClientSend failed.
-                FailureHandlerRegistry.MachineFailover(ipe);
-                sock_connected = false;
-                return TrinityErrorCode.E_NETWORK_SEND_FAILURE;
-            }
+            return DoSendAsync(HeartbeatBuffer, HeartbeatBufferLen).ContinueWith(
+                t =>
+                {
+                    if (t.Result)
+                    {
+                        return WaitForAckPackageAsync();
+                    }
+                    else
+                    {
+                        // ClientSend failed.
+                        FailureHandlerRegistry.MachineFailover(ipe);
+                        sock_connected = false;
+                        return Task.FromResult(TrinityErrorCode.E_NETWORK_SEND_FAILURE);
+                    }
+                }).Unwrap();
         }
 
         /// <summary>
@@ -97,17 +190,21 @@ namespace Trinity.Network.Client
         /// E_NETWORK_SEND_FAILURE: Failed to send message.
         /// E_RPC_EXCEPTION:        The remote handler throw an exception.
         /// </returns>
-        public TrinityErrorCode SendMessage(byte** message, int* sizes, int count)
+        public Task<TrinityErrorCode> SendMessageAsync(byte** message, int* sizes, int count)
         {
-            if (DoSend(message, sizes, count))
-            {
-                return WaitForAckPackage();
-            }
-            else
-            {
-                sock_connected = false;
-                return TrinityErrorCode.E_NETWORK_SEND_FAILURE;
-            }
+            return DoSendAsync(message, sizes, count).ContinueWith(
+                t =>
+                {
+                    if (t.Result)
+                    {
+                        return WaitForAckPackageAsync();
+                    }
+                    else
+                    {
+                        sock_connected = false;
+                        return Task.FromResult(TrinityErrorCode.E_NETWORK_SEND_FAILURE);
+                    }
+                }).Unwrap();
         }
 
         /// <summary>
@@ -120,35 +217,23 @@ namespace Trinity.Network.Client
         /// E_NOMEM:                Failed to allocate memory for response message.
         /// E_RPC_EXCEPTION:        The remote handler throw an exception.
         /// </returns>
-        public TrinityErrorCode SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
+        public Task<(TrinityErrorCode ErrorCode, TrinityResponse Response)> SendRecvMessageAsync(byte** message, int* sizes, int count)
         {
-            response = null;
-            if (DoSend(message, sizes, count))
-            {
-                byte* buf;
-                int len;
-                TrinityErrorCode recv_err = CNativeNetwork.ClientReceive(socket, out buf, out len);
-                if (recv_err == TrinityErrorCode.E_SUCCESS)
+            return DoSendAsync(message, sizes, count).ContinueWith(
+                t =>
                 {
-                    // will be freed by a message reader
-                    response = new TrinityResponse(buf, len); 
-                }
-                else if (recv_err == TrinityErrorCode.E_NETWORK_RECV_FAILURE)
-                {
-                    // recv fail
-                    sock_connected = false;
-                }
-
-                return recv_err;
-            }
-            else
-            {
-                // send fail
-                sock_connected = false;
-                return TrinityErrorCode.E_NETWORK_SEND_FAILURE;
-            }
+                    if (t.Result)
+                    {
+                        return DoRecvAsync();
+                    }
+                    else
+                    {
+                        // send fail
+                        sock_connected = false;
+                        return Task.FromResult<(TrinityErrorCode, TrinityResponse)>((TrinityErrorCode.E_NETWORK_SEND_FAILURE, null));
+                    }
+                }).Unwrap();
         }
-
 
         /// <returns>
         /// E_SUCCESS:              SendMessage success.
@@ -156,17 +241,21 @@ namespace Trinity.Network.Client
         /// E_NETWORK_SEND_FAILURE: Failed to send message.
         /// E_RPC_EXCEPTION:        The remote handler throw an exception.
         /// </returns>
-        public TrinityErrorCode SendMessage(byte* message, int size)
+        public Task<TrinityErrorCode> SendMessageAsync(byte* message, int size)
         {
-            if (DoSend(message, size))
-            {
-                return WaitForAckPackage();
-            }
-            else
-            {
-                sock_connected = false;
-                return TrinityErrorCode.E_NETWORK_SEND_FAILURE;
-            }
+            return DoSendAsync(message, size).ContinueWith(
+                t =>
+                {
+                    if (t.Result)
+                    {
+                        return WaitForAckPackageAsync();
+                    }
+                    else
+                    {
+                        sock_connected = false;
+                        return Task.FromResult(TrinityErrorCode.E_NETWORK_SEND_FAILURE);
+                    }
+                }).Unwrap();
         }
 
         /// <returns>
@@ -177,33 +266,22 @@ namespace Trinity.Network.Client
         /// E_RPC_EXCEPTION:        The remote handler throw an exception.
         /// E_MSG_OVERFLOW:         The response is too long to fit in a single TrinityResponse.
         /// </returns>
-        public TrinityErrorCode SendMessage(byte* message, int size, out TrinityResponse response)
+        public Task<(TrinityErrorCode ErrorCode, TrinityResponse Response)> SendRecvMessageAsync(byte* message, int size)
         {
-            response = null;
-            if (DoSend(message, size))
-            {
-                byte* buf;
-                int len;
-                TrinityErrorCode recv_err = CNativeNetwork.ClientReceive(socket, out buf, out len);
-                if (recv_err == TrinityErrorCode.E_SUCCESS)
+            return DoSendAsync(message, size).ContinueWith(
+                t =>
                 {
-                    // will be freed by a message reader
-                    response = new TrinityResponse(buf, len); 
-                }
-                else if (recv_err == TrinityErrorCode.E_NETWORK_RECV_FAILURE)
-                {
-                    // recv fail
-                    sock_connected = false;
-                }
-
-                return recv_err;
-            }
-            else
-            {
-                // send fail
-                sock_connected = false;
-                return TrinityErrorCode.E_NETWORK_SEND_FAILURE;
-            }
+                    if (t.Result)
+                    {
+                        return DoRecvAsync();
+                    }
+                    else
+                    {
+                        // send fail
+                        sock_connected = false;
+                        return Task.FromResult<(TrinityErrorCode, TrinityResponse)>((TrinityErrorCode.E_NETWORK_SEND_FAILURE, null));
+                    }
+                }).Unwrap();
         }
 
         /// <returns>
@@ -211,12 +289,25 @@ namespace Trinity.Network.Client
         /// E_NETWORK_RECV_FAILURE: AckPackage cannot be received.
         /// E_RPC_EXCEPTION:        The remote handler throw an exception.
         /// </returns>
-        private TrinityErrorCode WaitForAckPackage()
+        private Task<TrinityErrorCode> WaitForAckPackageAsync()
         {
-            TrinityErrorCode ret = CNativeNetwork.WaitForAckPackage(socket);
-            if (ret == TrinityErrorCode.E_NETWORK_RECV_FAILURE)
-                sock_connected = false;
-            return ret;
+            AsyncOperationClosure wait_op = new AsyncOperationClosure(
+                this,
+                intBuff,
+                sizeof(int),
+                CNativeNetwork.BeginClientReceive);
+            return wait_op.BeginInvoke()
+                          .ContinueWith(
+                            t =>
+                            {
+                                if (!t.Result)
+                                {
+                                    return TrinityErrorCode.E_NETWORK_RECV_FAILURE;
+                                }
+
+                                return (TrinityErrorCode)Marshal.ReadInt32((IntPtr)intBuff);
+                            },
+                            TaskContinuationOptions.ExecuteSynchronously);
         }
     }
 }

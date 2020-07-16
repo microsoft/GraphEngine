@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
-#if !CORECLR
+#if NETFRAMEWORK
 using System.Runtime.ConstrainedExecution;
 #endif
 using System.Runtime;

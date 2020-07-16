@@ -61,19 +61,21 @@ namespace FanoutSearch
         }
 
         #region Handlers
-        public override void GetTransactionIdHandler(TransactionIdMessageWriter response)
+        public override Task GetTransactionIdHandlerAsync(TransactionIdMessageWriter response)
         {
             response.transaction_id = Interlocked.Increment(ref m_globalTransactionId);
+            return Task.CompletedTask;
         }
 
-        public override void QueryInitializationHandler(QueryInitializationMessageReader request)
+        public override Task QueryInitializationHandlerAsync(QueryInitializationMessageReader request)
         {
             Log.WriteLine(LogLevel.Debug, "Initializing query #{0}", request.transaction_id);
             RegisterQuery(request.message, request.transaction_id, request.aggregate_server_id);
             Log.WriteLine(LogLevel.Debug, "Finished initializing query #{0}", request.transaction_id);
+            return Task.CompletedTask;
         }
 
-        public override void QueryUninitializationHandler(TransactionIdMessageReader request)
+        public override Task QueryUninitializationHandlerAsync(TransactionIdMessageReader request)
         {
             Log.WriteLine(LogLevel.Debug, "Uninitializing query #{0}", request.transaction_id);
             AggregationObject aggregation_obj;
@@ -81,12 +83,13 @@ namespace FanoutSearch
                 aggregation_obj.Dispose();
 
             Log.WriteLine(LogLevel.Debug, "Finished uninitializing query #{0}", request.transaction_id);
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// The main query handler.
         /// </summary>
-        public override void FanoutSearchQueryHandler(FanoutQueryMessageReader request, FanoutResultMessageWriter response)
+        public override async Task FanoutSearchQueryHandlerAsync(FanoutQueryMessageReader request, FanoutResultMessageWriter response)
         {
             int my_transaction = -1;
             List<ResultPathDescriptor> rpaths = null;
@@ -96,7 +99,7 @@ namespace FanoutSearch
             int eresult = FanoutSearchErrorCode.OK;
 
             //obtain a transaction id atomically
-            using (var _transaction = Global.CloudStorage[c_master_server_id].GetTransactionId())
+            using (var _transaction = await Global.CloudStorage[c_master_server_id].GetTransactionIdAsync())
             {
                 my_transaction = _transaction.transaction_id;
             }
@@ -107,12 +110,12 @@ namespace FanoutSearch
             if (s_cache_enabled) { aggregation_obj = m_cache.GetCachedQueryResult(request); }
 
             if (aggregation_obj != null) { cached = true; }
-            else { aggregation_obj = _DoFanoutSearch(my_transaction, request); }
+            else { aggregation_obj = await _DoFanoutSearchAsync(my_transaction, request); }
 
             if (aggregation_obj == null) { eresult = FanoutSearchErrorCode.Error; }
             if (aggregation_obj != null && aggregation_obj.timed_out && !s_timeout_return_partial_results) { eresult = FanoutSearchErrorCode.Timeout; aggregation_obj = null; }
 
-            if (aggregation_obj != null) { rpaths = _PullSelectionsAndAssembleResults(my_transaction, request, aggregation_obj); }
+            if (aggregation_obj != null) { rpaths = await _PullSelectionsAndAssembleResultsAsync(my_transaction, request, aggregation_obj); }
             else { rpaths = new List<ResultPathDescriptor>(); }
 
             try
@@ -135,7 +138,7 @@ namespace FanoutSearch
             Log.WriteLine("Transaction #{0} finished. Time = {1}ms.", my_transaction, query_timer.ElapsedMilliseconds);
         }
 
-        private AggregationObject _DoFanoutSearch(int transaction_id, FanoutQueryMessageReader request)
+        private async Task<AggregationObject> _DoFanoutSearchAsync(int transaction_id, FanoutQueryMessageReader request)
         {
             AggregationObject aggregation_obj = null;
             Stopwatch fanout_timer = new Stopwatch();
@@ -152,13 +155,15 @@ namespace FanoutSearch
                 }
 
                 //  Broadcast initialization message
-                Parallel.For(0, Global.ServerCount, i =>
-                {
-                    using (var init_msg = new QueryInitializationMessageWriter(request, transaction_id, Global.MyServerID))
-                    {
-                        QueryInitialization(i, init_msg);
-                    }
-                });
+                await Task.WhenAll(
+                    Enumerable.Range(0, Global.ServerCount)
+                              .Select(i =>
+                                {
+                                    using (var init_msg = new QueryInitializationMessageWriter(request, transaction_id, Global.MyServerID))
+                                    {
+                                        return QueryInitializationAsync(i, init_msg);
+                                    }
+                                }));
 
                 /* From this point on, we cannot abort this query without uninitializing our peers. */
                 Log.WriteLine(LogLevel.Debug, "Transaction #{0} initialization synchronization complete, time = {1}ms.", transaction_id, fanout_timer.ElapsedMilliseconds);
@@ -185,13 +190,15 @@ namespace FanoutSearch
             // Query complete. Clean it up.
             if (query_registered)
             {
-                Parallel.For(0, Global.ServerCount, i =>
-                {
-                    using (var uninit_msg = new TransactionIdMessageWriter(transaction_id))
-                    {
-                        QueryUninitialization(i, uninit_msg);
-                    }
-                });
+                await Task.WhenAll(
+                    Enumerable.Range(0, Global.ServerCount)
+                              .Select(i =>
+                                {
+                                    using (var uninit_msg = new TransactionIdMessageWriter(transaction_id))
+                                    {
+                                        return QueryUninitializationAsync(i, uninit_msg);
+                                    }
+                                }));
             }
 
             fanout_timer.Stop();
@@ -294,7 +301,7 @@ namespace FanoutSearch
             return minimum_result_count;
         }
 
-        private List<ResultPathDescriptor> _PullSelectionsAndAssembleResults(int transaction_id, FanoutQueryMessageReader request, AggregationObject aggregation_obj)
+        private async Task<List<ResultPathDescriptor>> _PullSelectionsAndAssembleResultsAsync(int transaction_id, FanoutQueryMessageReader request, AggregationObject aggregation_obj)
         {
             int result_set_capacity;
             IEnumerable<FanoutPathDescriptor> result_set;
@@ -383,7 +390,9 @@ namespace FanoutSearch
 
                 try
                 {
-                    Parallel.For(0, hop_count, (i, state) =>
+                    await Task.WhenAll(
+                        Enumerable.Range(0, hop_count)
+                                  .Select(async i =>
                     {
                         if (has_return_selections[i])
                         {
@@ -415,12 +424,14 @@ namespace FanoutSearch
                                 }
 
                                 //  dispatch msg
-                                Parallel.For(0, Global.ServerCount, j =>
-                                    {
-                                        var reader = _GetNodesInfo_impl(j, node_info_writers[i, j]);
-                                        node_info_readers[i, j] = reader;
-                                        reader.Dispose();
-                                    });
+                                await Task.WhenAll(
+                                    Enumerable.Range(0, Global.ServerCount)
+                                              .Select(async j =>
+                                                {
+                                                    var reader = await _GetNodesInfo_implAsync(j, node_info_writers[i, j]);
+                                                    node_info_readers[i, j] = reader;
+                                                    reader.Dispose();
+                                                }));
 
                                 //  consume msg
                                 foreach (var rpath in rpaths)
@@ -453,7 +464,7 @@ namespace FanoutSearch
                                 }
                             }
                         }
-                    });
+                    }));
                 }
                 catch (AggregateException ex) when (ex.InnerExceptions.Any(_ => _ is MessageTooLongException || _ is AccessorResizeException))
                 {
@@ -466,14 +477,14 @@ namespace FanoutSearch
             return rpaths;
         }
 
-        internal unsafe void FanoutSearch_impl_Send(int moduleId, byte* bufferPtr, int length)
+        internal unsafe Task FanoutSearch_impl_Send(int moduleId, byte* bufferPtr, int length)
         {
-            this.m_memorycloud[moduleId].SendMessage(
+            return this.m_memorycloud[moduleId].SendMessageAsync(
                 bufferPtr,
                 length);
         }
 
-        public override void FanoutSearch_implHandler(FanoutSearchMessagePackageReader request)
+        public override Task FanoutSearch_implHandlerAsync(FanoutSearchMessagePackageReader request)
         {
             throw new NotImplementedException("Overridden by raw handler");
         }
@@ -492,7 +503,7 @@ namespace FanoutSearch
         //  - or -
         //  (AsynReqArgs.Size - 8)/8/(hop+1)
 
-        private unsafe void FanoutSearch_impl_Recv(AsynReqArgs request_args)
+        private unsafe Task FanoutSearch_impl_Recv_Async(AsynReqArgs request_args)
         {
             int request_size = request_args.Size;
             byte* request_buffer = request_args.Buffer + request_args.Offset;
@@ -512,7 +523,7 @@ namespace FanoutSearch
             if (!this.m_aggregationObjects.TryGetValue(request_transaction_id, out aggregation_obj)
                 ||
                 _CheckTimeout(aggregation_obj))
-            { /* Timeout. */ return; }
+            { /* Timeout. */ return Task.CompletedTask; }
 
             var predicate = current_hop == 0 ?
                 p => Action.Continue :
@@ -545,7 +556,7 @@ namespace FanoutSearch
 
                 var results = result_indices.Select(i => GetPathDescriptor(&request_paths_ptr[i * single_path_len], current_hop)).ToList();
                 CommitAggregationResults(request_transaction_id, aggregation_obj, results);
-                return;
+                return Task.CompletedTask;
             }
 
             var edgeType_list = aggregation_obj.edgeTypes[current_hop];
@@ -610,12 +621,14 @@ namespace FanoutSearch
                 {
                     using (var intermediate_results = new FanoutAggregationMessageWriter(intermediate_result_paths.Value, request_transaction_id))
                     {
-                        IntermediateResult(aggregation_obj.aggregationServer, intermediate_results);
+                        IntermediateResultAsync(aggregation_obj.aggregationServer, intermediate_results).Wait();
                     }
                 }
 
                 dispatcher.Dispatch();
             }
+
+            return Task.CompletedTask;
         }
 
         private static unsafe bool _CheckTimeout(AggregationObject aggregation_obj)
@@ -643,7 +656,7 @@ namespace FanoutSearch
                     {
                         using (var result_msg = new FanoutAggregationMessageWriter(aggregation_obj.results, transaction_id, packaged_message_cnt: aggregation_obj.remote_packedMessageCount))
                         {
-                            AggregateResult(aggregation_obj.aggregationServer, result_msg);
+                            AggregateResultAsync(aggregation_obj.aggregationServer, result_msg).Wait();
                         }
                         Log.WriteLine(LogLevel.Debug, "Sending {0} packed messages", aggregation_obj.remote_packedMessageCount);
                         aggregation_obj.results.Clear();
@@ -654,7 +667,7 @@ namespace FanoutSearch
             }
         }
 
-        public override void AggregateResultHandler(FanoutAggregationMessageReader request)
+        public override Task AggregateResultHandlerAsync(FanoutAggregationMessageReader request)
         {
             AggregationObject obj;
 
@@ -669,9 +682,11 @@ namespace FanoutSearch
             }
             // !if we don't get aggregate object, it means time out. we don't want
             // incomplete results in our cache, so we ignore.
+
+            return Task.CompletedTask;
         }
 
-        public override void IntermediateResultHandler(FanoutAggregationMessageReader request)
+        public override Task IntermediateResultHandlerAsync(FanoutAggregationMessageReader request)
         {
             AggregationObject obj;
 
@@ -679,6 +694,8 @@ namespace FanoutSearch
             {
                 obj.AddPathDescs(request);
             };
+
+            return Task.CompletedTask;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

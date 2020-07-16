@@ -11,7 +11,7 @@ namespace net
 {
     class S_impl : SBase
     {
-        public override void TestAsynHandler(RequestTReader request)
+        public override Task TestAsynHandlerAsync(RequestTReader request)
         {
             if(request.p0 == 123 && request.p1 == "456")
             {
@@ -24,9 +24,11 @@ namespace net
             }
 
             AsynHandlerReachesServer = true;
+
+            return Task.CompletedTask;
         }
 
-        public override void TestSynHandler(RequestTReader request)
+        public override Task TestSynHandlerAsync(RequestTReader request)
         {
             if(request.p0 == 123 && request.p1 == "456")
             {
@@ -39,14 +41,18 @@ namespace net
             }
 
             SynHandlerReachesServer = true;
+
+            return Task.CompletedTask;
         }
 
-        public override void TestSynRspHandler(RequestTReader request, ResponseTWriter response)
+        public override Task TestSynRspHandlerAsync(RequestTReader request, ResponseTWriter response)
         {
             response.p0 = request.p1;
             response.p1 = request.p0;
 
             SynWithRspHandlerReachesServer = true;
+
+            return Task.CompletedTask;
         }
 
         public static bool TestSuccess = true;
@@ -78,11 +84,11 @@ namespace net
 
                 using(var req = new RequestTWriter(123, "456"))
                 {
-                    Global.CloudStorage[0].TestSyn(req);
+                    Global.CloudStorage[0].TestSynAsync(req).Wait();
                 }
 
                 using(var req = new RequestTWriter(123, "456"))
-                using(var rsp = Global.CloudStorage[0].TestSynRsp(req))
+                using(var rsp = Global.CloudStorage[0].TestSynRspAsync(req).Result)
                 {
                     if(rsp.p0 != "456" || rsp.p1 != 123){
                         throw new Exception("Child failure");
@@ -92,7 +98,7 @@ namespace net
 
                 using(var req = new RequestTWriter(123, "456"))
                 {
-                    Global.CloudStorage[0].TestAsyn(req);
+                    Global.CloudStorage[0].TestAsynAsync(req).Wait();
                 }
             }
             else

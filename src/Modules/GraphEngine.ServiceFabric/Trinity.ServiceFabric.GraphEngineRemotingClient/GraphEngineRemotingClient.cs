@@ -51,7 +51,7 @@ namespace Trinity.ServiceFabric.GraphEngineRemotingClient
 
                 ServiceEventSource.Current.ServiceMessage(this.Context, "Working-{0}", ++iterations);
 
-                m_trinity.Ping();
+                await m_trinity.PingAsync();
 
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }

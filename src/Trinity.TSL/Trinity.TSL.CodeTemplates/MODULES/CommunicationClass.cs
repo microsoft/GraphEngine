@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,19 +39,19 @@ namespace t_Namespace
             IF("$t_protocol->is_asyn_req_rsp_protocol()");
             {
                 IF("node->type() == PGT_MODULE");
-                MessageRegistry.RegisterMessageHandler((ushort)(this.t_protocol_typeIdOffset + (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name), _t_protocol_name_4Handler);
-                MessageRegistry.RegisterMessageHandler((ushort)(this.t_protocol_typeIdOffset + (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name__Response), _t_protocol_name_ResponseHandler);
+                MessageRegistry.RegisterMessageHandler((ushort)(this.t_protocol_typeIdOffset + (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name), _t_protocol_name_4HandlerAsync);
+                MessageRegistry.RegisterMessageHandler((ushort)(this.t_protocol_typeIdOffset + (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name__Response), _t_protocol_name_ResponseHandlerAsync);
                 ELSE();
-                MessageRegistry.RegisterMessageHandler((ushort)(ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name, _t_protocol_name_4Handler);
-                MessageRegistry.RegisterMessageHandler((ushort)(ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name__Response, _t_protocol_name_ResponseHandler);
+                MessageRegistry.RegisterMessageHandler((ushort)(ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name, _t_protocol_name_4HandlerAsync);
+                MessageRegistry.RegisterMessageHandler((ushort)(ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name__Response, _t_protocol_name_ResponseHandlerAsync);
                 END();
             }
             ELSE();
             {
                 IF("node->type() == PGT_MODULE");
-                MessageRegistry.RegisterMessageHandler((ushort)(this.t_protocol_typeIdOffset + (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name), _t_protocol_name_4Handler);
+                MessageRegistry.RegisterMessageHandler((ushort)(this.t_protocol_typeIdOffset + (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name), _t_protocol_name_4HandlerAsync);
                 ELSE();
-                MessageRegistry.RegisterMessageHandler((ushort)(ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name, _t_protocol_name_4Handler);
+                MessageRegistry.RegisterMessageHandler((ushort)(ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name, _t_protocol_name_4HandlerAsync);
                 END();
             }
             END();//IF
@@ -58,7 +59,7 @@ namespace t_Namespace
         }
 
         [MUTE]
-        void _t_protocol_name_4Handler(SynReqArgs args) { }
+        Task _t_protocol_name_4HandlerAsync(SynReqArgs args) { return Task.CompletedTask; }
         [MUTE_END]
 
         [FOREACH]
@@ -66,125 +67,144 @@ namespace t_Namespace
 
         [IF("!$t_protocol->has_response()")]
         //SYNC and ASYNC, no response;
-        private unsafe void _t_protocol_nameHandler(t_protocol_typeArgs args)
+        private unsafe Task _t_protocol_nameHandlerAsync(t_protocol_typeArgs args)
         {
             IF("$t_protocol->has_request()");
-            t_protocol_nameHandler(new t_protocol_requestReader(args.Buffer, args.Offset));
+            return t_protocol_nameHandlerAsync(new t_protocol_requestReader(args.Buffer, args.Offset));
             ELSE();
-            t_protocol_nameHandler();
+            return t_protocol_nameHandlerAsync();
             END();
         }
 
         [IF("$t_protocol->has_request()")]
-        public abstract void t_protocol_nameHandler(t_protocol_requestReader request);
+        public abstract Task t_protocol_nameHandlerAsync(t_protocol_requestReader request);
         [ELSE]
-        public abstract void t_protocol_nameHandler();
+        public abstract Task t_protocol_nameHandlerAsync();
         [END]
 
         //NO RESPONSE END
         [ELIF("$t_protocol->has_request() && $t_protocol->is_syn_req_rsp_protocol()")]
         //SYNC_WITH_RSP, request is not void
-        private unsafe void _t_protocol_name_2Handler(t_protocol_typeArgs args)
+        private unsafe Task _t_protocol_name_2HandlerAsync(t_protocol_typeArgs args)
         {
             var rsp = new t_protocol_responseWriter();
-            t_protocol_nameHandler(new t_protocol_requestReader(args.Buffer, args.Offset), rsp);
-            *(int*)(rsp.m_ptr - TrinityProtocol.MsgHeader) = rsp.Length + TrinityProtocol.TrinityMsgHeader;
-            args.Response = new TrinityMessage(rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader);
+            return t_protocol_nameHandlerAsync(new t_protocol_requestReader(args.Buffer, args.Offset), rsp).ContinueWith(
+                t =>
+                {
+                    *(int*)(rsp.m_ptr - TrinityProtocol.MsgHeader) = rsp.Length + TrinityProtocol.TrinityMsgHeader;
+                    args.Response = new TrinityMessage(rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader);
+                },
+                TaskContinuationOptions.ExecuteSynchronously);
         }
 
-        public abstract void t_protocol_nameHandler(t_protocol_requestReader request, t_protocol_responseWriter response);
+        public abstract Task t_protocol_nameHandlerAsync(t_protocol_requestReader request, t_protocol_responseWriter response);
         [ELIF("!$t_protocol->has_request() && $t_protocol->is_syn_req_rsp_protocol()")]
-        private unsafe void _t_protocol_name_3Handler(t_protocol_typeArgs args)
+        private unsafe Task _t_protocol_name_3HandlerAsync(t_protocol_typeArgs args)
         {
             var rsp = new t_protocol_responseWriter();
-            t_protocol_nameHandler(rsp);
-            *(int*)(rsp.m_ptr - TrinityProtocol.MsgHeader) = rsp.Length + TrinityProtocol.TrinityMsgHeader;
-            args.Response = new TrinityMessage(rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader);
+            return t_protocol_nameHandlerAsync(rsp).ContinueWith(
+                t =>
+                {
+                    *(int*)(rsp.m_ptr - TrinityProtocol.MsgHeader) = rsp.Length + TrinityProtocol.TrinityMsgHeader;
+                    args.Response = new TrinityMessage(rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader);
+                },
+                TaskContinuationOptions.ExecuteSynchronously);
         }
 
-        public abstract void t_protocol_nameHandler(t_protocol_responseWriter response);
+        public abstract Task t_protocol_nameHandlerAsync(t_protocol_responseWriter response);
         [ELIF("$t_protocol->has_request() && $t_protocol->is_asyn_req_rsp_protocol()")]
         //ASYNC_WITH_RSP, request is not void
-        private unsafe void _t_protocol_name_4Handler(t_protocol_typeArgs args)
+        private unsafe Task _t_protocol_name_4HandlerAsync(t_protocol_typeArgs args)
         {
-            using (var rsp = new t_protocol_responseWriter(asyncRspHeaderLength: TrinityProtocol.AsyncWithRspAdditionalHeaderLength))
-            {
-                Exception exception = null;
-                var req = new t_protocol_requestReader(args.Buffer, args.Offset + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
-                try { t_protocol_nameHandler(req, rsp); }
-                catch (Exception ex) { exception = ex; }
-                int token = *(int*)(args.Buffer + args.Offset);
-                int from = *(int*)(args.Buffer + args.Offset + sizeof(int));
-                _t_protocol_name_CheckError(exception, token, from);
-                *(int*)(rsp.buffer) = TrinityProtocol.TrinityMsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength + rsp.Length;
-                *(TrinityMessageType*)(rsp.buffer + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.ASYNC_WITH_RSP;
-                *(ushort*)(rsp.buffer + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name__Response;
-                *(int*)(rsp.m_ptr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength) = token;
-                *(int*)(rsp.m_ptr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength + sizeof(int)) = 0;
-                IF("node->type() == PGT_MODULE");
-                this.SendMessage(m_memorycloud[from], rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
-                ELSE();
-                Global.CloudStorage[from].SendMessage(rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
-                END();
-            }
+            var rsp = new t_protocol_responseWriter(asyncRspHeaderLength: TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+            var req = new t_protocol_requestReader(args.Buffer, args.Offset + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+            return t_protocol_nameHandlerAsync(req, rsp)
+                .ContinueWith(
+                    t =>
+                    {
+                        Exception exception = t.Exception;
+                        int token = *(int*)(args.Buffer + args.Offset);
+                        int from = *(int*)(args.Buffer + args.Offset + sizeof(int));
+                        if (exception != null) return _t_protocol_name_CheckErrorAsync(exception, token, from);
+                        *(int*)(rsp.buffer) = TrinityProtocol.TrinityMsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength + rsp.Length;
+                        *(TrinityMessageType*)(rsp.buffer + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.ASYNC_WITH_RSP;
+                        *(ushort*)(rsp.buffer + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name__Response;
+                        *(int*)(rsp.m_ptr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength) = token;
+                        *(int*)(rsp.m_ptr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength + sizeof(int)) = 0;
+                        IF("node->type() == PGT_MODULE");
+                        return this.SendMessageAsync(m_memorycloud[from], rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+                        ELSE();
+                        return Global.CloudStorage[from].SendMessageAsync(rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+                        END();
+                    })
+                .Unwrap()
+                .ContinueWith(t => rsp?.Dispose(), TaskContinuationOptions.ExecuteSynchronously);
         }
 
-        public abstract void t_protocol_name_2Handler(t_protocol_requestReader request, t_protocol_responseWriter response);
+        public abstract Task t_protocol_name_2HandlerAsync(t_protocol_requestReader request, t_protocol_responseWriter response);
         [ELSE]
         //("!$t_protocol->has_request() && $t_protocol->is_asyn_req_rsp_protocol()")
-        private unsafe void _t_protocol_name_5Handler(t_protocol_typeArgs args)
+        private unsafe Task _t_protocol_name_5HandlerAsync(t_protocol_typeArgs args)
         {
-            using (var rsp = new t_protocol_responseWriter(asyncRspHeaderLength: TrinityProtocol.AsyncWithRspAdditionalHeaderLength))
-            {
-                Exception exception = null;
-                try { t_protocol_nameHandler(rsp); }
-                catch (Exception ex) { exception = ex; }
-                int token = *(int*)(args.Buffer + args.Offset);
-                int from = *(int*)(args.Buffer + args.Offset + sizeof(int));
-                _t_protocol_name_CheckError(exception, token, from);
-                *(int*)(rsp.buffer) = TrinityProtocol.TrinityMsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength + rsp.Length;
-                *(TrinityMessageType*)(rsp.buffer + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.ASYNC_WITH_RSP;
-                *(ushort*)(rsp.buffer + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name__Response;
-                *(int*)(rsp.m_ptr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength) = token;
-                *(int*)(rsp.m_ptr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength + sizeof(int)) = 0;
-                IF("node->type() == PGT_MODULE");
-                this.SendMessage(m_memorycloud[from], rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
-                ELSE();
-                Global.CloudStorage[from].SendMessage(rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
-                END();
-            }
+            var rsp = new t_protocol_responseWriter(asyncRspHeaderLength: TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+            return t_protocol_nameHandlerAsync(rsp)
+                .ContinueWith(
+                    t =>
+                    {
+                        Exception exception = t.Exception;
+                        int token = *(int*)(args.Buffer + args.Offset);
+                        int from = *(int*)(args.Buffer + args.Offset + sizeof(int));
+                        if (exception != null) return _t_protocol_name_CheckErrorAsync(exception, token, from);
+                        *(int*)(rsp.buffer) = TrinityProtocol.TrinityMsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength + rsp.Length;
+                        *(TrinityMessageType*)(rsp.buffer + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.ASYNC_WITH_RSP;
+                        *(ushort*)(rsp.buffer + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name__Response;
+                        *(int*)(rsp.m_ptr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength) = token;
+                        *(int*)(rsp.m_ptr - TrinityProtocol.AsyncWithRspAdditionalHeaderLength + sizeof(int)) = 0;
+                        IF("node->type() == PGT_MODULE");
+                        return this.SendMessageAsync(m_memorycloud[from], rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+                        ELSE();
+                        return Global.CloudStorage[from].SendMessageAsync(rsp.buffer, rsp.Length + TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+                        END();
+                    })
+                .Unwrap()
+                .ContinueWith(t => rsp?.Dispose(), TaskContinuationOptions.ExecuteSynchronously);
         }
 
-        public abstract void t_protocol_name_2Handler(t_protocol_responseWriter response);
+        public abstract Task t_protocol_name_2HandlerAsync(t_protocol_responseWriter response);
         [END]//METHOD HANDLER
 
         [IF("$t_protocol->is_asyn_req_rsp_protocol()")]
         #region AsyncWithRsp
         internal static int s_t_protocol_name_token_counter = 0;
-        internal static ConcurrentDictionary<int, TaskCompletionSource<t_protocol_responseReader>> s_t_protocol_name_token_sources = new ConcurrentDictionary<int, TaskCompletionSource<t_protocol_responseReader>>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe void _t_protocol_name_CheckError(Exception exception, int token, int from)
+        private unsafe Task _t_protocol_name_CheckErrorAsync(Exception exception, int token, int from)
         {
-            if (exception == null) return;
+            if (exception == null) return Task.CompletedTask;
             byte[] rsp = new byte[TrinityProtocol.MsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength];
-            fixed (byte* p = rsp)
-            {
-                *(int*)(p) = TrinityProtocol.TrinityMsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
-                *(TrinityMessageType*)(p + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.ASYNC_WITH_RSP;
-                *(ushort*)(p + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name__Response;
-                *(int*)(p + TrinityProtocol.MsgHeader) = token;
-                *(int*)(p + TrinityProtocol.MsgHeader + sizeof(int)) = -1;
-                IF("node->type() == PGT_MODULE");
-                this.SendMessage(m_memorycloud[from], p, rsp.Length);
-                ELSE();
-                Global.CloudStorage[from].SendMessage(p, rsp.Length);
-                END();
-            }
-            ExceptionDispatchInfo.Capture(exception).Throw();
+            GCHandle gch = GCHandle.Alloc(rsp, GCHandleType.Pinned);
+            byte* p = (byte*)gch.AddrOfPinnedObject();
+            *(int*)(p) = TrinityProtocol.TrinityMsgHeader + TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
+            *(TrinityMessageType*)(p + TrinityProtocol.MsgTypeOffset) = TrinityMessageType.ASYNC_WITH_RSP;
+            *(ushort*)(p + TrinityProtocol.MsgIdOffset) = (ushort)global::t_Namespace.TSL.t_base_class_name.t_comm_name.t_protocol_typeMessageType.t_protocol_name__Response;
+            *(int*)(p + TrinityProtocol.MsgHeader) = token;
+            *(int*)(p + TrinityProtocol.MsgHeader + sizeof(int)) = -1;
+            Task task;
+            IF("node->type() == PGT_MODULE");
+            task = this.SendMessageAsync(m_memorycloud[from], p, rsp.Length);
+            ELSE();
+            task = Global.CloudStorage[from].SendMessageAsync(p, rsp.Length);
+            END();
+            return task.ContinueWith(
+                t =>
+                {
+                    gch.Free();
+                    ExceptionDispatchInfo.Capture(exception).Throw();
+                },
+                TaskContinuationOptions.ExecuteSynchronously);
         }
 
-        internal unsafe void _t_protocol_name_ResponseHandler(AsynReqRspArgs args)
+        internal unsafe Task<t_protocol_responseReader> _t_protocol_name_ResponseHandlerAsync(AsynReqRspArgs args)
         {
             byte* buffer = args.Buffer + args.Offset;
             int size = args.Size - TrinityProtocol.AsyncWithRspAdditionalHeaderLength;
@@ -195,21 +215,23 @@ namespace t_Namespace
             // the token should be at the frontmost position
             int token = *(int*)buffer;
             int error = *(int*)(buffer + sizeof(int));
-            if (!s_t_protocol_name_token_sources.TryRemove(token, out var src))
-            {
-                throw new ArgumentException("Async task completion token not found while processing a AsyncWithResponse message.");
-            }
             if (error != 0)
             {
-                src.SetException(new Exception("AsyncWithResponse remote handler failed."));
-                return;
+                throw new Exception("AsyncWithResponse remote handler failed.");
             }
 
             byte* buffer_clone = (byte*)Memory.malloc((ulong)(args.Size));
             Memory.Copy(buffer, buffer_clone, args.Size);
-            var reader = new t_protocol_responseReader(buffer_clone, TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
-            try { src.SetResult(reader); }
-            catch { Memory.free(buffer_clone); throw; }
+            try
+            {
+                var reader = new t_protocol_responseReader(buffer_clone, TrinityProtocol.AsyncWithRspAdditionalHeaderLength);
+                return Task.FromResult(reader);
+            }
+            catch
+            {
+                Memory.free(buffer_clone);
+                throw;
+            }
         }
         #endregion
         [END]

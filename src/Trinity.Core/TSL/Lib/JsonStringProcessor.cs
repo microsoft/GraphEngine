@@ -96,7 +96,7 @@ namespace Trinity.TSL.Lib
                     ushort char_val;
                     if (!hex_map.TryGetValue(ch, out char_val))
                         throw new ArgumentOutOfRangeException("Invalid unicode escape sequence.");
-                    utf_value = (ushort)((utf_value << 4) | (ushort)ch);
+                    utf_value = (ushort)((utf_value << 4) | char_val);
                     --utf_sequence;
                     if (utf_sequence == 0)
                         s_stringBuilder.Append((char)utf_value);

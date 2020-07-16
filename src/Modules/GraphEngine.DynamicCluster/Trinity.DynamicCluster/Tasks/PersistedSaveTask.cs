@@ -35,7 +35,7 @@ namespace Trinity.DynamicCluster.Tasks
             var mod = dmc.GetCommunicationModule<DynamicClusterCommModule>();
             int id = dmc.GetInstanceId(r.Id);
             using (var cmd = new PersistedSliceWriter(s.version, s.lowkey, s.highkey))
-            using (var rsp = await mod.PersistedUpload(id, cmd))
+            using (var rsp = await mod.PersistedUploadAsync(id, cmd))
             {
                 if (rsp.errno != Errno.E_OK) throw new Exception();
             }

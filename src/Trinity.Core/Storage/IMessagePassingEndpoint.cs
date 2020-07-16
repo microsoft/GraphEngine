@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Trinity.Network;
 using Trinity.Network.Messaging;
@@ -13,9 +10,9 @@ namespace Trinity.Storage
     /// </summary>
     public unsafe interface IMessagePassingEndpoint : ICommunicationModuleRegistry
     {
-        void SendMessage(byte* message, int size);
-        void SendMessage(byte* message, int size, out TrinityResponse response);
-        void SendMessage(byte** message, int* sizes, int count);
-        void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response);
+        Task SendMessageAsync(byte* message, int size);
+        Task<TrinityResponse> SendRecvMessageAsync(byte* message, int size);
+        Task SendMessageAsync(byte** message, int* sizes, int count);
+        Task<TrinityResponse> SendRecvMessageAsync(byte** message, int* sizes, int count);
     }
 }

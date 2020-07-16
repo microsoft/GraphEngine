@@ -2,13 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Trinity.Diagnostics;
 using Trinity.Network;
-using Trinity.Network.Messaging;
 
 namespace Trinity.Storage
 {
@@ -38,9 +35,9 @@ namespace Trinity.Storage
         /// </summary>
         public abstract int PartitionCount { get; }
         public abstract bool IsLocalCell(long cellId);
-        public abstract bool LoadStorage();
-        public abstract bool SaveStorage();
-        public abstract bool ResetStorage();
+        public abstract Task<bool> LoadStorageAsync();
+        public abstract Task<bool> SaveStorageAsync();
+        public abstract Task<bool> ResetStorageAsync();
         /// <summary>
         /// Gets the number of proxies in the cluster.
         /// </summary>
@@ -59,14 +56,14 @@ namespace Trinity.Storage
         /// <param name="cellBuff">The bytes of the cell. An empty byte array is returned if the cell is not found.</param>
         /// <param name="cellType">The type of the cell, represented with a 16-bit unsigned integer.</param>
         /// <returns>A Trinity error code. Possible values are E_SUCCESS and E_NOT_FOUND.</returns>
-        public TrinityErrorCode LoadCell(long cellId, out byte[] cellBuff, out ushort cellType)
+        public Task<LoadCellResponse> LoadCellAsync(long cellId)
         {
-            return GetStorageByCellId(cellId).LoadCell(cellId, out cellBuff, out cellType);
+            return GetStorageByCellId(cellId).LoadCellAsync(cellId);
         }
 
-        public TrinityErrorCode LoadCell(long cellId, out byte* cellBuf, out int size, out ushort cellType)
+        public Task<LoadCellUnsafeResponse> LoadCellUnsafeAsync(long cellId)
         {
-            return GetStorageByCellId(cellId).LoadCell(cellId, out cellBuf, out size, out cellType);
+            return GetStorageByCellId(cellId).LoadCellUnsafeAsync(cellId);
         }
         
         /// <summary>
@@ -77,9 +74,9 @@ namespace Trinity.Storage
         /// <param name="size">The size of the cell.</param>
         /// <param name="cellType">The type of the cell, represented with a 16-bit unsigned integer.</param>
         /// <returns>true if saving succeeds; otherwise, false.</returns>
-        public unsafe TrinityErrorCode SaveCell(long cellId, byte* buff, int size, ushort cellType)
+        public unsafe Task<TrinityErrorCode> SaveCellAsync(long cellId, byte* buff, int size, ushort cellType)
         {
-            return GetStorageByCellId(cellId).SaveCell(cellId, buff, size, cellType);
+            return GetStorageByCellId(cellId).SaveCellAsync(cellId, buff, size, cellType);
         }
 
         /// <summary>
@@ -90,9 +87,9 @@ namespace Trinity.Storage
         /// <param name="size">The size of the cell.</param>
         /// <param name="cellType">The type of the cell, represented with a 16-bit unsigned integer.</param>
         /// <returns>true if adding succeeds; otherwise, false.</returns>
-        public unsafe TrinityErrorCode AddCell(long cellId, byte* buff, int size, ushort cellType)
+        public unsafe Task<TrinityErrorCode> AddCellAsync(long cellId, byte* buff, int size, ushort cellType)
         {
-            return GetStorageByCellId(cellId).AddCell(cellId, buff, size, cellType);
+            return GetStorageByCellId(cellId).AddCellAsync(cellId, buff, size, cellType);
         }
 
         /// <summary>
@@ -100,9 +97,9 @@ namespace Trinity.Storage
         /// </summary>
         /// <param name="cellId">A 64-bit cell Id.</param>
         /// <returns>true if removing succeeds; otherwise, false.</returns>
-        public TrinityErrorCode RemoveCell(long cellId)
+        public Task<TrinityErrorCode> RemoveCellAsync(long cellId)
         {
-            return GetStorageByCellId(cellId).RemoveCell(cellId);
+            return GetStorageByCellId(cellId).RemoveCellAsync(cellId);
         }
         
         /// <summary>
@@ -111,9 +108,9 @@ namespace Trinity.Storage
         /// <param name="cellId">A 64-bit cell Id.</param>
         /// <param name="cellType">The type of the cell specified by cellId.</param>
         /// <returns>A Trinity error code. Possible values are E_SUCCESS and E_NOT_FOUND.</returns>
-        public unsafe TrinityErrorCode GetCellType(long cellId, out ushort cellType)
+        public Task<(TrinityErrorCode ErrorCode, ushort CellType)> GetCellTypeAsync(long cellId)
         {
-            return GetStorageByCellId(cellId).GetCellType(cellId, out cellType);
+            return GetStorageByCellId(cellId).GetCellTypeAsync(cellId);
         }
 
         /// <summary>
@@ -121,9 +118,9 @@ namespace Trinity.Storage
         /// </summary>
         /// <param name="cellId">A 64-bit cell Id.</param>
         /// <returns>true if a cell whose Id is cellId is found; otherwise, false.</returns>
-        public unsafe bool Contains(long cellId)
+        public Task<bool> ContainsAsync(long cellId)
         {
-            return GetStorageByCellId(cellId).Contains(cellId);
+            return GetStorageByCellId(cellId).ContainsAsync(cellId);
         }
 
         /// <summary>
@@ -133,14 +130,15 @@ namespace Trinity.Storage
         /// <param name="buff">A memory buffer that contains the cell content.</param>
         /// <param name="size">The size of the cell.</param>
         /// <returns>true if updating succeeds; otherwise, false.</returns>
-        public unsafe TrinityErrorCode UpdateCell(long cellId, byte* buff, int size)
+        public unsafe Task<TrinityErrorCode> UpdateCellAsync(long cellId, byte* buff, int size)
         {
-            return GetStorageByCellId(cellId).UpdateCell(cellId, buff, size);
+            return GetStorageByCellId(cellId).UpdateCellAsync(cellId, buff, size);
         }
         #endregion
+
         #region Base implementation
-        private Action<MemoryCloud, ICell> m_SaveGenericCell_ICell;
-        private Func<MemoryCloud, long, ICell> m_LoadGenericCell_long;
+        private Func<MemoryCloud, ICell, Task> m_SaveGenericCellAsync_ICell;
+        private Func<MemoryCloud, long, Task<ICell>> m_LoadGenericCellAsync_long;
         private Func<string, ICell> m_NewGenericCell_string;
         private Func<long, string, ICell> m_NewGenericCell_long_string;
         private Func<string, string, ICell> m_NewGenericCell_string_string;
@@ -206,9 +204,9 @@ namespace Trinity.Storage
         /// </summary>
         /// <param name="cellId">A 64-bit cell Id.</param>
         /// <returns>An generic cell instance that implements <see cref="Trinity.Storage.ICell"/> interfaces.</returns>
-        public ICell LoadGenericCell(long cellId)
+        public Task<ICell> LoadGenericCellAsync(long cellId)
         {
-            return m_LoadGenericCell_long(this, cellId);
+            return m_LoadGenericCellAsync_long(this, cellId);
         }
 
         /// <summary>
@@ -216,9 +214,9 @@ namespace Trinity.Storage
         /// Note that the generic cell will be saved as a strongly typed cell. It can then be loaded into either a strongly-typed cell or a generic cell.
         /// </summary>
         /// <param name="cell">The cell to be saved.</param>
-        public void SaveGenericCell(ICell cell)
+        public Task SaveGenericCellAsync(ICell cell)
         {
-            m_SaveGenericCell_ICell(this, cell);
+            return m_SaveGenericCellAsync_ICell(this, cell);
         }
 
         /// <summary>
@@ -255,72 +253,76 @@ namespace Trinity.Storage
 
         internal void RegisterGenericOperationsProvider(IGenericCellOperations cloud_operations)
         {
-            m_SaveGenericCell_ICell = cloud_operations.SaveGenericCell;
-            m_LoadGenericCell_long = cloud_operations.LoadGenericCell;
+            m_SaveGenericCellAsync_ICell = cloud_operations.SaveGenericCellAsync;
+            m_LoadGenericCellAsync_long = cloud_operations.LoadGenericCellAsync;
             m_NewGenericCell_string = cloud_operations.NewGenericCell;
             m_NewGenericCell_long_string = cloud_operations.NewGenericCell;
             m_NewGenericCell_string_string = cloud_operations.NewGenericCell;
         }
 
-        protected unsafe void CheckProtocolSignatures_impl(RemoteStorage storage, RunningMode from, RunningMode to)
+        protected unsafe Task CheckProtocolSignatures_impl_Async(RemoteStorage storage, RunningMode from, RunningMode to)
         {
             if (storage == null)
-                return;
+                return Task.CompletedTask;
 
-            string my_schema_name;
-            string my_schema_signature;
-            string remote_schema_name;
-            string remote_schema_signature;
-            ICommunicationSchema my_schema;
-
-            storage.GetCommunicationSchema(out remote_schema_name, out remote_schema_signature);
-
-            if (from != to)// Asymmetrical checking, need to scan for matching local comm schema first.
-            {
-                var local_candidate_schemas = Global.ScanForTSLCommunicationSchema(to);
-
-                /* If local or remote is default, we skip the verification. */
-
-                if (local_candidate_schemas.Count() == 0)
+            return storage.GetCommunicationSchemaAsync()
+                          .ContinueWith(
+                t =>
                 {
-                    Log.WriteLine(LogLevel.Info, "{0}-{1}: Local instance has default communication capabilities.", from, to);
-                    return;
-                }
+                    string my_schema_name;
+                    string my_schema_signature;
+                    ICommunicationSchema my_schema;
 
-                if (remote_schema_name == DefaultCommunicationSchema.GetName() || remote_schema_signature == "{[][][]}")
-                {
-                    Log.WriteLine(LogLevel.Info, "{0}-{1}: Remote cluster has default communication capabilities.", from, to);
-                    return;
-                }
+                    string remote_schema_name = t.Result.Name;
+                    string remote_schema_signature = t.Result.Signature;
 
-                /* Both local and remote are not default instances. */
+                    if (from != to)// Asymmetrical checking, need to scan for matching local comm schema first.
+                    {
+                        var local_candidate_schemas = Global.ScanForTSLCommunicationSchema(to);
 
-                my_schema = local_candidate_schemas.FirstOrDefault(_ => _.Name == remote_schema_name);
+                        /* If local or remote is default, we skip the verification. */
 
-                if (my_schema == null)
-                {
-                    Log.WriteLine(LogLevel.Fatal, "No candidate local communication schema signature matches the remote one.\r\n\tName: {0}\r\n\tSignature: {1}", remote_schema_name, remote_schema_signature);
-                    Global.Exit(-1);
-                }
-            }
-            else
-            {
-                my_schema = Global.CommunicationSchema;
-            }
+                        if (local_candidate_schemas.Count() == 0)
+                        {
+                            Log.WriteLine(LogLevel.Info, "{0}-{1}: Local instance has default communication capabilities.", from, to);
+                            return;
+                        }
 
-            my_schema_name = my_schema.Name;
-            my_schema_signature = CommunicationSchemaSerializer.SerializeProtocols(my_schema);
+                        if (remote_schema_name == DefaultCommunicationSchema.GetName() || remote_schema_signature == "{[][][]}")
+                        {
+                            Log.WriteLine(LogLevel.Info, "{0}-{1}: Remote cluster has default communication capabilities.", from, to);
+                            return;
+                        }
 
-            if (my_schema_name != remote_schema_name)
-            {
-                Log.WriteLine(LogLevel.Error, "Local communication schema name not matching the remote one.\r\n\tLocal: {0}\r\n\tRemote: {1}", my_schema_name, remote_schema_name);
-            }
+                        /* Both local and remote are not default instances. */
 
-            if (my_schema_signature != remote_schema_signature)
-            {
-                Log.WriteLine(LogLevel.Fatal, "Local communication schema signature not matching the remote one.\r\n\tLocal: {0}\r\n\tRemote: {1}", my_schema_signature, remote_schema_signature);
-                throw new InvalidOperationException();
-            }
+                        my_schema = local_candidate_schemas.FirstOrDefault(_ => _.Name == remote_schema_name);
+
+                        if (my_schema == null)
+                        {
+                            Log.WriteLine(LogLevel.Fatal, "No candidate local communication schema signature matches the remote one.\r\n\tName: {0}\r\n\tSignature: {1}", remote_schema_name, remote_schema_signature);
+                            Global.Exit(-1);
+                        }
+                    }
+                    else
+                    {
+                        my_schema = Global.CommunicationSchema;
+                    }
+
+                    my_schema_name = my_schema.Name;
+                    my_schema_signature = CommunicationSchemaSerializer.SerializeProtocols(my_schema);
+
+                    if (my_schema_name != remote_schema_name)
+                    {
+                        Log.WriteLine(LogLevel.Error, "Local communication schema name not matching the remote one.\r\n\tLocal: {0}\r\n\tRemote: {1}", my_schema_name, remote_schema_name);
+                    }
+
+                    if (my_schema_signature != remote_schema_signature)
+                    {
+                        Log.WriteLine(LogLevel.Fatal, "Local communication schema signature not matching the remote one.\r\n\tLocal: {0}\r\n\tRemote: {1}", my_schema_signature, remote_schema_signature);
+                        throw new InvalidOperationException();
+                    }
+                });
         }
 
         /// <summary>
@@ -413,7 +415,7 @@ namespace Trinity.Storage
         /// <summary>
         /// Gets the total memory usage.
         /// </summary>
-        public abstract long GetTotalMemoryUsage();
+        public abstract Task<long> GetTotalMemoryUsageAsync();
 
         #endregion
     }

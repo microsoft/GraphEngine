@@ -12,9 +12,10 @@ namespace Trinity.ServiceFabric.SampleProtocols
     {
         public override string GetModuleName() => "SampleModuleImpl";
 
-        public override void PingHandler()
+        public override Task PingHandlerAsync()
         {
             Log.WriteLine("Ping received!");
+            return Task.CompletedTask;
         }
     }
 }
