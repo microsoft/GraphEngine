@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="2.0.10473" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="2.0.10480" />
     <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.417" />
   </ItemGroup>
 

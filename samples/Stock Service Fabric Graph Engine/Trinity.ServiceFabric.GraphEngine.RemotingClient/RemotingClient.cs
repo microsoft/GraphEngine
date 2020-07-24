@@ -55,7 +55,7 @@ namespace Trinity.ServiceFabric.GraphEngine.RemotingClient
 
                 m_trinity?.Ping();
 
-                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+                await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
             }
         }
     }

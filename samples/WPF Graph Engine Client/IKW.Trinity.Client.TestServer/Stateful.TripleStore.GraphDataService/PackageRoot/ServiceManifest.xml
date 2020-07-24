@@ -19,7 +19,7 @@
     </EntryPoint>
   </CodePackage>
 
-  <!-- Config package is the contents of the Config directoy under PackageRoot that contains an 
+  <!-- Config package is the contents of the Config directory under PackageRoot that contains an 
        independently-updateable and versioned set of custom configuration settings for your service. -->
   <ConfigPackage Name="Config" Version="1.0.0" />
 
@@ -30,8 +30,8 @@
           <!-- This endpoint is used by the communication listener to obtain the port on which to 
            listen. Please note that if your service is partitioned, this port is shared with 
            replicas of different partitions that are placed in your code. -->
-          <Endpoint Name="TrinityProtocolEndpoint" Protocol="tcp" Port="8898"/>
-          <Endpoint Name="TrinityHttpEndpoint" Protocol="tcp" Port="8899"/>
+          <Endpoint Name="TrinityProtocolEndpoint" Protocol="tcp" Port="8800"/>
+          <Endpoint Name="TrinityHttpEndpoint" Protocol="tcp" Port="9800"/>
 
           <!-- This endpoint is used by the replicator for replicating the state of your service.
            This endpoint is configured through a ReplicatorSettings config section in the Settings.xml

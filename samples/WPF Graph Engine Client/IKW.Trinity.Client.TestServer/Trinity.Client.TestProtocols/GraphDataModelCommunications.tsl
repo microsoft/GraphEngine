@@ -29,7 +29,7 @@ protocol GetTripleSubject
 // Server-side Push/Publish to Client
 protocol PushTripleToClient
 {
-		Type: Asyn;
+		Type: Syn;
 		Request: TripleGetRequest;
 		Response: ErrorCodeResponse;
 }

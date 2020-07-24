@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Client" Version="2.0.10473" />
-    <PackageReference Include="GraphEngine.Core" Version="2.0.10473" />
+    <PackageReference Include="GraphEngine.Client" Version="2.0.10480" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.10480" />
   </ItemGroup>
 
   <ItemGroup>

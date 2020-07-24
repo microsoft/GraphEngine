@@ -25,10 +25,10 @@ namespace Trinity.ServiceFabric.GraphEngine.RemotingClient
                 // When Service Fabric creates an instance of this service type,
                 // an instance of the class is created in this host process.
 
-                ServiceRuntime.RegisterServiceAsync("Trinity.ServiceFabric.GraphEngine.RemotingClientType",
-                    context => new RemotingClient(context)).GetAwaiter().GetResult();
+                //ServiceRuntime.RegisterServiceAsync("Trinity.ServiceFabric.GraphEngine.RemotingClientType",
+                //    context => new RemotingClient(context)).GetAwaiter().GetResult();
 
-                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(RemotingClient).Name);
+                //ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(RemotingClient).Name);
 
                 // Prevents this host process from terminating so services keep running.
                 Thread.Sleep(Timeout.Infinite);
