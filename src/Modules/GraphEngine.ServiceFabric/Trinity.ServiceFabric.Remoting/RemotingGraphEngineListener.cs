@@ -28,6 +28,7 @@ namespace Trinity.ServiceFabric.Remoting
         public override void Configure(int port, StatefulServiceContext ctx)
         {
             Log.WriteLine(LogLevel.Info, $"{nameof(RemotingGraphEngineListener)}: Listening on port {port}.");
+
             m_trinityProxy = new TrinityOverRemotingService();
             m_fabListener = new FabricTransportServiceRemotingListener(
                 ctx,

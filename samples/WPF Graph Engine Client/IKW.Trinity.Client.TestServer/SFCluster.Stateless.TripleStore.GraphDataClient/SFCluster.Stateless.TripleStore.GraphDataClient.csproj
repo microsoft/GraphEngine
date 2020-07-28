@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <OutputType>Exe</OutputType>
+	  <TargetFramework>netcoreapp3.1</TargetFramework>
+	  <IsServiceFabricServiceProject>True</IsServiceFabricServiceProject>
+	  <ServerGarbageCollection>True</ServerGarbageCollection>
+	  <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+	  <TargetLatestRuntimePatch>False</TargetLatestRuntimePatch>
+	  <Configurations>Debug;Release</Configurations>
+	  <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.Client" Version="2.0.10487" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.10487" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.428" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.Client.TestProtocols\Trinity.Client.TestProtocols.csproj" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="taskkill /IM ServiceHub.DataWarehouseHost.exe /F 2&gt;nul 1&gt;nul &#xD;&#xA;Exit 0" />
+  </Target>
+
+</Project>

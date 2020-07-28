@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <IsServiceFabricServiceProject>True</IsServiceFabricServiceProject>
+    <ServerGarbageCollection>True</ServerGarbageCollection>
+    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+    <TargetLatestRuntimePatch>False</TargetLatestRuntimePatch>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.Client" Version="2.0.10491" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.10491" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.428" />
+    <PackageReference Include="ReactiveProperty" Version="7.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.Client.TestProtocols\Trinity.Client.TestProtocols.csproj" />
+  </ItemGroup>
+
+</Project>

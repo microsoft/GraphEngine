@@ -53,7 +53,8 @@ namespace Trinity.Client
             => m_client.SendMessage(message, size, out response);
 
         public unsafe void SendMessage(byte** message, int* sizes, int count)
-            => m_client.SendMessage(message, sizes, count);
+            => 
+            m_client.SendMessage(message, sizes, count);
 
         public unsafe void SendMessage(byte** message, int* sizes, int count, out TrinityResponse response)
             => m_client.SendMessage(message, sizes, count, out response);

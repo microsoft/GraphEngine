@@ -5,16 +5,16 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsServiceFabricServiceProject>True</IsServiceFabricServiceProject>
     <ServerGarbageCollection>True</ServerGarbageCollection>
-    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+	  <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <TargetLatestRuntimePatch>False</TargetLatestRuntimePatch>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="2.0.10487" />
-    <PackageReference Include="GraphEngine.LIKQ" Version="2.0.10487" />
-    <PackageReference Include="GraphEngine.ServiceFabric.Infrastructure" Version="2.0.10487" />
-    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="2.0.10487" />
+    <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="2.0.10492" />
+    <PackageReference Include="GraphEngine.LIKQ" Version="2.0.10492" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Infrastructure" Version="2.0.10492" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="2.0.10492" />
     <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.428" />
   </ItemGroup>
 

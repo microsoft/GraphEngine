@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <IsServiceFabricServiceProject>True</IsServiceFabricServiceProject>
+    <ServerGarbageCollection>True</ServerGarbageCollection>
+    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+    <TargetLatestRuntimePatch>False</TargetLatestRuntimePatch>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="GraphDataClient.cs" />
+    <Compile Remove="ServiceEventSource.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="2.0.10487" />
+    <PackageReference Include="GraphEngine.Client" Version="2.0.10487" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.10487" />
+    <PackageReference Include="GraphEngine.DynamicCluster" Version="2.0.10487" />
+    <PackageReference Include="GraphEngine.LIKQ" Version="2.0.10487" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Infrastructure" Version="2.0.10487" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="2.0.10487" />
+    <PackageReference Include="GraphEngine.Storage.Composite" Version="2.0.10487" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.428" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.Client.TestProtocols\Trinity.Client.TestProtocols.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="PackageRoot\Data\TrinityConfig.Schema.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+
+</Project>

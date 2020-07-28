@@ -11,7 +11,7 @@ namespace Trinity.ServiceFabric.Remoting
 {
     class TrinityOverRemotingService : ITrinityOverRemotingService
     {
-        private MessageDispatchProc m_dispatcher;
+        private readonly MessageDispatchProc m_dispatcher;
 
         public TrinityOverRemotingService()
         {

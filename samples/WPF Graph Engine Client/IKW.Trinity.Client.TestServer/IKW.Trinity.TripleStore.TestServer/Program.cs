@@ -41,6 +41,7 @@ namespace Trinity.TripleStore.TestServer
             TripleStoreServer.RegisterCommunicationModule<TrinityClientModule>();
             TripleStoreServer.RegisterCommunicationModule<TripleModule>();
 
+            TripleStoreServer.Started += TripleStoreServer_Started; 
             //TripleStoreServer.RegisterCommunicationModule<TripleStoreDemoServerModule>();
 
             TripleStoreServer.Start();
@@ -390,6 +391,14 @@ namespace Trinity.TripleStore.TestServer
 
                 await mainLoopTask;
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private static void TripleStoreServer_Started()
+        {
+            Log.WriteLine($"{nameof(TripleStoreServer)} is update and running.");
         }
 
         /// <summary>

@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+	  <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+	  <Version>$(DOTNET_PACKAGE_VERSION)</Version>
+	  <FileVersion>$(DOTNET_PACKAGE_VERSION)</FileVersion>
+	  <AssemblyVersion>$(DOTNET_PACKAGE_VERSION)</AssemblyVersion>
+	  <PackageVersion>$(DOTNET_PACKAGE_VERSION)</PackageVersion>
+	  <Authors>InKnowWorks Graph Engine Team</Authors>
+	  <Company>InKnowworks, Corp</Company>
+	  <Description>Provides GraphEngine-specific Service Fabric runtime support.</Description>
+	  <Copyright>Copyright 2020</Copyright>
+	  <Title>Trinity Graph Engine Native Client Communication Remoting</Title>
+	  <PackageTags>Graph Engine Trinity Service Fabric Inegration Framework</PackageTags>
+	  <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
+	  <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
+	  <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
+	  <PackageId>Trinity.ServiceFabric.NativeClient.Remoting</PackageId>
+	  <PlatformTarget>x64</PlatformTarget>
+	  <Platforms>x64</Platforms>
+	  <IsPackable>true</IsPackable>
+	  <Configurations>Debug;Release</Configurations>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.Client" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.416" />
+  </ItemGroup>
+
+</Project>

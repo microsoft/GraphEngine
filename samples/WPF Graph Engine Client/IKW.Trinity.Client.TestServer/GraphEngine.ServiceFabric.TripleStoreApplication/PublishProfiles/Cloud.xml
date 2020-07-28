@@ -29,9 +29,9 @@
                                StoreName="My" />-->
   <ClusterConnectionParameters ConnectionEndpoint="GenNexusPrime.inknowworks.dev.net:19000"
                                X509Credential="true"
-                               ServerCertThumbprint="de4fb04660f60c80710b141b9cd2eb9d81bc65cd"
+                               ServerCertThumbprint="6A402194B4D2E46C37806F23EAE83CB875B7DF7F"
                                FindType="FindByThumbprint"
-                               FindValue="de4fb04660f60c80710b141b9cd2eb9d81bc65cd"
+                               FindValue="6A402194B4D2E46C37806F23EAE83CB875B7DF7F"
                                StoreLocation="CurrentUser"
                                StoreName="My" />
   <ApplicationParameterFile Path="..\ApplicationParameters\Cloud.xml" />

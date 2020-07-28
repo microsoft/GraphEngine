@@ -40,7 +40,7 @@ namespace Trinity.ServiceFabric.Remoting
         /// <returns></returns>
         public Task<IMessagePassingEndpoint> ConnectAsync(string connectionString, ICommunicationModuleRegistry modules, ServicePartitionKey userServicePartitionKey)
         {
-            // this is a down-level call from the TrinityClient object making a call into the service fabric runtime to connect to a remote service cluster
+            // this is a down-level call from the TrinityClient object making a call into the service fabric runtime to connect to a service cluster node
             return Task.FromResult<IMessagePassingEndpoint>(new ServiceFabricRemotingClientConnection(connectionString, modules, userServicePartitionKey));
         }
 
