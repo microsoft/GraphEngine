@@ -343,6 +343,8 @@ namespace Stateful.TripleStore.GraphDataService
 
                 //Console.ReadLine();
 
+                await Task.Delay(0).ConfigureAwait(false);
+
                 Thread.Sleep(Timeout.Infinite);
 
                 //GraphEngineTripleStoreDemoServerImpl =
@@ -394,6 +396,7 @@ namespace Stateful.TripleStore.GraphDataService
             }
             catch (Exception ex)
             {
+                Log.WriteLine(ex.Message);
             }
         }
 

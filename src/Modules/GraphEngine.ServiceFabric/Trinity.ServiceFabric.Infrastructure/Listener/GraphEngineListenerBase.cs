@@ -66,7 +66,11 @@ namespace Trinity.ServiceFabric.Listener
         public virtual async Task<string> OpenAsync(CancellationToken cancellationToken)
         {
             var statefulServiceRuntime = GraphEngineStatefulServiceRuntime.Instance;
-            var trinityErrorCode = await Task.Factory.StartNew(() => statefulServiceRuntime.TrinityServerRuntime.Start(), TaskCreationOptions.RunContinuationsAsynchronously).ConfigureAwait(false);
+
+            var trinityErrorCode = await Task.Factory
+                .StartNew(() => statefulServiceRuntime.TrinityServerRuntime.Start(),
+                    TaskCreationOptions.RunContinuationsAsynchronously).ConfigureAwait(false);
+
             return $"tcp://{statefulServiceRuntime.TrinityServerRuntime.Address}:{m_port}";
         }
     }

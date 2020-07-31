@@ -28,21 +28,21 @@
                                StoreLocation="CurrentUser" 
                                StoreName="My" />                                    
   -->
-  <!--<ClusterConnectionParameters ConnectionEndpoint="GenNexusPrime.inknowworks.dev.net:19000"
+  <ClusterConnectionParameters ConnectionEndpoint="GenNexusPrime.inknowworks.dev.net:19000"
                                X509Credential="true"
-                               ServerCertThumbprint="e895189a73dffd47f98f8c6417df0d60edf1a135"
+                               ServerCertThumbprint="6A402194B4D2E46C37806F23EAE83CB875B7DF7F"
                                FindType="FindByThumbprint"
-                               FindValue="e895189a73dffd47f98f8c6417df0d60edf1a135"
+                               FindValue="6A402194B4D2E46C37806F23EAE83CB875B7DF7F"
                                StoreLocation="CurrentUser"
-                               StoreName="My" />-->
+                               StoreName="My" />
 
-  <ClusterConnectionParameters ConnectionEndpoint="testcluster100.southcentralus.cloudapp.azure.com:19000" 
+  <!--<ClusterConnectionParameters ConnectionEndpoint="testcluster100.southcentralus.cloudapp.azure.com:19000" 
                                X509Credential="true" 
                                ServerCertThumbprint="15155637E5FA1E87A7160579071A168C9CB896C7" 
                                FindType="FindByThumbprint" 
                                FindValue="15155637E5FA1E87A7160579071A168C9CB896C7" 
                                StoreLocation="CurrentUser" 
-                               StoreName="My" />
+                               StoreName="My" />-->
   <ApplicationParameterFile Path="..\ApplicationParameters\Cloud.xml" />
   <CopyPackageParameters CompressPackage="true" />
 </PublishProfile>

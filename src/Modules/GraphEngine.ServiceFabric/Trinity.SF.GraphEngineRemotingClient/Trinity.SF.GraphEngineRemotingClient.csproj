@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <IsServiceFabricServiceProject>True</IsServiceFabricServiceProject>
+    <ServerGarbageCollection>True</ServerGarbageCollection>
+    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+    <TargetLatestRuntimePatch>False</TargetLatestRuntimePatch>
+	  <Version>$(DOTNET_PACKAGE_VERSION)</Version>
+	  <FileVersion>$(DOTNET_PACKAGE_VERSION)</FileVersion>
+	  <AssemblyVersion>$(DOTNET_PACKAGE_VERSION)</AssemblyVersion>
+	  <PackageVersion>$(DOTNET_PACKAGE_VERSION)</PackageVersion>
+	  <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.428" />
+    <PackageReference Include="ReactiveProperty" Version="7.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Shared.Binaries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.Client.TestProtocols\Trinity.Client.TestProtocols.csproj" />
+    <ProjectReference Include="..\Trinity.ServiceFabric.Remoting\Trinity.ServiceFabric.Remoting.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Trinity.Azure.Storage">
+      <HintPath>Shared.Binaries\Trinity.Azure.Storage.dll</HintPath>
+    </Reference>
+    <Reference Include="Trinity.Client">
+      <HintPath>Shared.Binaries\Trinity.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Trinity.DynamicCluster">
+      <HintPath>Shared.Binaries\Trinity.DynamicCluster.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

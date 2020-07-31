@@ -15,7 +15,7 @@ namespace Trinity.WPF.TestClient
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly TrinityClient client = new TrinityClient("GenNexusPrime.inknowworks.dev.net:9898");
+        private readonly TrinityClient client = new TrinityClient("GenNexusPrime.inknowworks.dev.net:8800");
 
         public MainWindow()
         {
@@ -71,8 +71,8 @@ namespace Trinity.WPF.TestClient
                                                     foreach (var tripleNode in
                                                         Global.LocalStorage.TripleStore_Selector())
                                                     {
-                                                        if (tripleStoreMemoryContext.CellId != tripleNode.CellId)
-                                                            continue;
+                                                        //if (tripleStoreMemoryContext.CellId != tripleNode.CellId)
+                                                        //    continue;
 
                                                         var node = tripleNode.TripleCell;
                                                         var subjectNode = node.Subject;

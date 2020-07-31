@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <IsServiceFabricServiceProject>True</IsServiceFabricServiceProject>
+    <ServerGarbageCollection>True</ServerGarbageCollection>
+    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+    <TargetLatestRuntimePatch>False</TargetLatestRuntimePatch>
+	  <Version>$(DOTNET_PACKAGE_VERSION)</Version>
+	  <FileVersion>$(DOTNET_PACKAGE_VERSION)</FileVersion>
+	  <AssemblyVersion>$(DOTNET_PACKAGE_VERSION)</AssemblyVersion>
+	  <PackageVersion>$(DOTNET_PACKAGE_VERSION)</PackageVersion>
+	  <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.LIKQ" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.428" />
+    <PackageReference Include="ReactiveProperty" Version="7.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Trinity.Client.TestProtocols\Trinity.Client.TestProtocols.csproj" />
+    <ProjectReference Include="..\Trinity.ServiceFabric.Infrastructure\Trinity.ServiceFabric.Infrastructure.csproj" />
+    <ProjectReference Include="..\Trinity.ServiceFabric.NativeClient.Remoting\Trinity.ServiceFabric.NativeClient.Remoting.csproj" />
+    <ProjectReference Include="..\Trinity.ServiceFabric.Remoting\Trinity.ServiceFabric.Remoting.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Trinity.Azure.Storage">
+      <HintPath>..\Trinity.SF.GraphEngineRemotingClient\Shared.Binaries\Trinity.Azure.Storage.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

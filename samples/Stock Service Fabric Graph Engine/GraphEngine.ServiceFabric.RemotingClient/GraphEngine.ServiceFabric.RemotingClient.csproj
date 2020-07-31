@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -12,8 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Client" Version="2.0.10480" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.417" />
+    <PackageReference Include="GraphEngine.Client" Version="2.0.10494" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.428" />
   </ItemGroup>
 
   <ItemGroup>

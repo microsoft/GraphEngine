@@ -11,13 +11,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.10493" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.console" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

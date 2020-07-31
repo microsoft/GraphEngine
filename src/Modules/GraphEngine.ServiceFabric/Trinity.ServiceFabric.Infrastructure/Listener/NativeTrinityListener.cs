@@ -36,13 +36,10 @@ namespace Trinity.ServiceFabric.Listener
 
             Log.WriteLine(LogLevel.Info, $"{nameof(NativeTrinityListener)}: Listening on port {port}.");
 
-            m_trinityProxy = new TrinityOverNativeTCPCommunicationService();
-
         }
 
         public override void Abort()
         {
-            //m_fabListener.Abort();
             base.Abort();
         }
 
@@ -54,8 +51,15 @@ namespace Trinity.ServiceFabric.Listener
 
         public override async Task<string> OpenAsync(CancellationToken cancellationToken)
         {
-            return await base.OpenAsync(cancellationToken);
-            //return await m_fabListener.OpenAsync(cancellationToken);
+            var result = await base.OpenAsync(cancellationToken).ConfigureAwait(false);
+
+            //if (Global.CommunicationInstance != null)
+            //{
+            //    m_trinityProxy = new TrinityOverNativeTCPCommunicationService();
+            //}
+
+            return result;
+
         }
     }
 }

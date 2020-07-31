@@ -22,6 +22,7 @@
 	  <IsPackable>true</IsPackable>
 	  <Configurations>Debug;Release</Configurations>
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	  <PackageReleaseNotes>Beta-Release of a new capability that allows external Trinity Graph Engine Clients connect and establish connectivity to RemoteStorage.</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -31,7 +32,7 @@
   <ItemGroup>
     <PackageReference Include="GraphEngine.Client" Version="$(DOTNET_PACKAGE_VERSION)" />
     <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.416" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.428" />
   </ItemGroup>
 
 </Project>

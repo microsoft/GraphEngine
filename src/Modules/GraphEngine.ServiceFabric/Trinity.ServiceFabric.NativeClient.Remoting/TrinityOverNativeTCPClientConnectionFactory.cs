@@ -10,7 +10,7 @@ namespace Trinity.ServiceFabric.NativeClient.Remoting
     /// <summary>
     /// TrinityOverNativeTCPClientConnectionFactory is dynamically discovered and it methods called via reflection
     /// </summary>
-    [ExtensionPriority(200)]
+    [ExtensionPriority(90)]
     public class TrinityOverNativeTCPClientConnectionFactory : IClientConnectionFactory
     {
         /// <summary>

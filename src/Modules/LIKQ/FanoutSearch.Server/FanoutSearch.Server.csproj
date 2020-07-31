@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.10494" />
   </ItemGroup>
 
   <ItemGroup>

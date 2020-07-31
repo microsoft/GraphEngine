@@ -8,7 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Core" Version="2.0.10480" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.10494" />
+  </ItemGroup>
+
+  <ItemGroup>
     <TslCodegen Include="protocols.tsl" />
   </ItemGroup>
 
