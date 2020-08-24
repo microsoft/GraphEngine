@@ -19,13 +19,13 @@ namespace Trinity.ServiceFabric.Infrastructure.Interfaces
 
         private HealthState _hstate(HealthStatus hstatus)
         {
-            return hstatus switch
+            switch (hstatus)
             {
-                HealthStatus.Error => HealthState.Error,
-                HealthStatus.Warning => HealthState.Warning,
-                HealthStatus.Healthy => HealthState.Ok,
-                _ => HealthState.Unknown
-            };
+                case HealthStatus.Error: return HealthState.Error;
+                case HealthStatus.Warning: return HealthState.Warning;
+                case HealthStatus.Healthy: return HealthState.Ok;
+                default: return HealthState.Unknown;
+            }
         }
 
         public void Dispose()
@@ -48,7 +48,8 @@ namespace Trinity.ServiceFabric.Infrastructure.Interfaces
             {
                 Description = message
             };
-            m_fclient.HealthManager.ReportHealth(new ServiceHealthReport(m_svruri, hi));
+            m_fclient.HealthManager.ReportHealth(
+                new ServiceHealthReport(m_svruri, hi));
         }
 
         public async Task ReportModuleStatus(HealthStatus health, string moduleName, string message)

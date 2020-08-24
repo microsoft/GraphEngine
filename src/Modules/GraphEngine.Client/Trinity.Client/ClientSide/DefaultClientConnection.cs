@@ -16,9 +16,9 @@ namespace Trinity.Client
             m_modules = modules;
         }
 
-        internal static IMessagePassingEndpoint New(string host, int port, ICommunicationModuleRegistry moudles)
+        internal static IMessagePassingEndpoint New(string host, int port, ICommunicationModuleRegistry modules)
         {
-            return new DefaultClientConnection(new ServerInfo(host, port, null, LogLevel.Info), moudles);
+            return new DefaultClientConnection(new ServerInfo(host, port, null, LogLevel.Info), modules);
         }
 
         public override T GetCommunicationModule<T>() => m_modules.GetCommunicationModule<T>();

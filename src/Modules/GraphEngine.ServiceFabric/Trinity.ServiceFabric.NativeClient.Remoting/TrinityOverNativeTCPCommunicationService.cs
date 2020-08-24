@@ -1,5 +1,8 @@
-﻿using System.IO;
+﻿using System.Fabric;
+using System.IO;
 using System.Threading.Tasks;
+using Microsoft.ServiceFabric.Services.Remoting.FabricTransport.Runtime;
+using Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Runtime;
 using Trinity.Core.Lib;
 using Trinity.Network;
 using Trinity.Network.Messaging;
@@ -9,11 +12,24 @@ namespace Trinity.ServiceFabric.NativeClient.Remoting
 {
     public class TrinityOverNativeTCPCommunicationService : ITrinityOverNativeTCPCommunicationService
     {
-        private MessageDispatchProc m_dispatcher;
+        private MessageDispatchProc TrinityMessageDispatcher { get; }
+        private StatefulServiceContext GraphEngineServiceContext { get; }
 
-        public TrinityOverNativeTCPCommunicationService()
+        private FabricTransportServiceRemotingListener m_fabListener = null;
+        //ivate TrinityOverRemotingService m_trinityProxy = null;
+
+        public TrinityOverNativeTCPCommunicationService(StatefulServiceContext graphEngineStatefulContext)
         {
-            m_dispatcher = Global.CommunicationInstance.MessageDispatcher;
+            GraphEngineServiceContext = graphEngineStatefulContext;
+            TrinityMessageDispatcher  = Global.CommunicationInstance.MessageDispatcher;
+
+            //m_fabListener = new FabricTransportServiceRemotingListener(graphEngineStatefulContext,
+            //    this,
+            //    new FabricTransportRemotingListenerSettings
+            //    {
+            //        EndpointResourceName = Constants.c_TrinityNativeEndpointName,
+            //        //TODO security stuff
+            //    });
         }
 
         /// <summary>
@@ -26,7 +42,7 @@ namespace Trinity.ServiceFabric.NativeClient.Remoting
             fixed (byte* p = message)
             {
                 MessageBuff buff = new MessageBuff { Buffer = p, Length = (uint)message.Length };
-                m_dispatcher(&buff);
+                TrinityMessageDispatcher(&buff);
                 try
                 {
                     int errorCode = *(int*)buff.Buffer;
@@ -52,7 +68,7 @@ namespace Trinity.ServiceFabric.NativeClient.Remoting
             {
                 buff.Buffer = p;
                 buff.Length = (uint)message.Length;
-                m_dispatcher(&buff);
+                TrinityMessageDispatcher(&buff);
             }
 
             try

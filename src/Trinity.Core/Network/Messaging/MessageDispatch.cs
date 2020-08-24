@@ -115,7 +115,7 @@ namespace Trinity.Network.Sockets
             for (int i = 0; i < DefaultSyncReqRspHandlerSet.MessageHandlerList.Count; ++i)
             {
                 preserved_sync_rsp_handlers[DefaultSyncReqRspHandlerSet.MessageHandlerList[i].Id] = DefaultSyncReqRspHandlerSet.MessageHandlerList[i].Handler;
-                Log.WriteLine(LogLevel.Debug, "Preserved sync (rsp) message " + (RequestType)DefaultSyncReqRspHandlerSet.MessageHandlerList[i].Id + " is registered.");
+                Log.WriteLine(LogLevel.Debug, "Preserved sync (response) message " + (RequestType)DefaultSyncReqRspHandlerSet.MessageHandlerList[i].Id + " is registered.");
             }
 
             //install default asynchronous request handlers
@@ -131,7 +131,10 @@ namespace Trinity.Network.Sockets
             try
             {
                 sync_rsp_handlers[msgId] = message_handler;
-                Log.WriteLine(LogLevel.Debug, "Sync (rsp) message " + msgId + " is registered.");
+
+                var messageHandlerMethodName = message_handler.Method.Name;
+
+                Log.WriteLine(LogLevel.Debug, $"Sync (response) Message Handler: {messageHandlerMethodName}. MessageID: {msgId.ToString()} is registered.");
                 return true;
             }
             catch (Exception ex)
@@ -147,7 +150,10 @@ namespace Trinity.Network.Sockets
             try
             {
                 preserved_sync_rsp_handlers[msgId] = message_handler;
-                Log.WriteLine(LogLevel.Debug, "Preserved sync (rsp) message " + msgId + " is registered.");
+
+                var messageHandlerMethodName = message_handler.Method.Name;
+
+                Log.WriteLine(LogLevel.Debug, $"Preserved Sync (response) Message Handler: {messageHandlerMethodName}. MessageID: {msgId.ToString()} is registered.");
                 return true;
             }
             catch (Exception ex)
@@ -163,7 +169,10 @@ namespace Trinity.Network.Sockets
             try
             {
                 sync_handlers[msgId] = message_handler;
-                Log.WriteLine(LogLevel.Debug, "Sync message " + msgId + " is registered.");
+
+                var messageHandlerMethodName = message_handler.Method.Name;
+
+                Log.WriteLine(LogLevel.Debug, $"Sync (response) Message Handler: {messageHandlerMethodName}. MessageID: {msgId.ToString()} is registered.");
                 return true;
             }
             catch (Exception ex)
@@ -179,7 +188,11 @@ namespace Trinity.Network.Sockets
             try
             {
                 preserved_sync_handlers[msgId] = message_handler;
-                Log.WriteLine(LogLevel.Debug, "Preserved sync message " + msgId + " is registered.");
+
+                var messageHandlerMethodName = message_handler.Method.Name;
+
+                Log.WriteLine(LogLevel.Debug, $"Preserved Sync (response) Message Handler: {messageHandlerMethodName}. MessageID: {msgId.ToString()} is registered.");
+
                 return true;
             }
             catch (Exception ex)
@@ -195,7 +208,11 @@ namespace Trinity.Network.Sockets
             try
             {
                 async_handlers[msgId] = request_handler;
-                Log.WriteLine(LogLevel.Debug, "Async message " + msgId + " is registered.");
+
+                var messageHandlerMethodName = request_handler.Method.Name;
+
+                Log.WriteLine(LogLevel.Debug, $"Async (request) Message Handler: {messageHandlerMethodName}. MessageID: {msgId.ToString()} is registered.");
+
                 return true;
             }
             catch (Exception ex)
@@ -211,7 +228,11 @@ namespace Trinity.Network.Sockets
             try
             {
                 preserved_async_handlers[msgId] = request_handler;
-                Log.WriteLine(LogLevel.Debug, "Preserved async message " + msgId + " is registered.");
+
+                var messageHandlerMethodName = request_handler.Method.Name;
+
+                Log.WriteLine(LogLevel.Debug, $"Preserved Async (request) Message Handler: {messageHandlerMethodName}. MessageID: {msgId.ToString()} is registered.");
+
                 return true;
             }
             catch (Exception ex)
@@ -227,7 +248,11 @@ namespace Trinity.Network.Sockets
             try
             {
                 async_rsp_handlers[msgId] = request_handler;
-                Log.WriteLine(LogLevel.Debug, "Async with response message " + msgId + " is registered.");
+
+                var messageHandlerMethodName = request_handler.Method.Name;
+
+                Log.WriteLine(LogLevel.Debug, $"Async (request) Message Handler: {messageHandlerMethodName}. MessageID: {msgId.ToString()} is registered.");
+
                 return true;
             }
             catch (Exception ex)

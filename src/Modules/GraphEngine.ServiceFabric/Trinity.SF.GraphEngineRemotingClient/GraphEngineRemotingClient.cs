@@ -6,19 +6,20 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FanoutSearch;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
+using Trinity.Azure.Storage;
 using Trinity.Client;
 using Trinity.Client.TestProtocols;
-using Trinity.Client.TestProtocols.TripleServer;
 using Trinity.Diagnostics;
 using Trinity.Network.Messaging;
+using Trinity.ServiceFabric.NativeClient.Remoting.Interfaces;
+using Trinity.ServiceFabric.Remoting;
+using Trinity.Client.TestProtocols.TripleServer;
 
 namespace Trinity.SF.GraphEngineRemotingClient
 {
-    /// <summary>
-    /// An instance of this class is created for each service instance by the Service Fabric runtime.
-    /// </summary>
     internal sealed class GraphEngineRemotingClient : StatelessService
     {
         private readonly TrinityClient m_trinity;
@@ -28,17 +29,19 @@ namespace Trinity.SF.GraphEngineRemotingClient
         public GraphEngineRemotingClient(StatelessServiceContext context)
             : base(context)
         {
-            TrinityConfig.LoadConfig();
+            //TrinityConfig.LoadConfig();
 
-            TrinityConfig.CurrentRunningMode = RunningMode.Client;
+            //TrinityConfig.CurrentRunningMode = RunningMode.Client;
             TrinityConfig.LogEchoOnConsole = false;
             TrinityConfig.LoggingLevel = LogLevel.Verbose;
 
-            TrinityConfig.SaveConfig();
+            //TrinityConfig.SaveConfig();
 
             Log.LogsWritten += Log_LogsWritten;
 
             TrinityTripleModuleClient = new TrinityClient("fabric:/Trinity.ServiceFabric.TestHarnes.Application/Trinity.SF.GraphEngineDataService");
+
+            //TrinityTripleModuleClient = new TrinityClient("GenNexusPrime.inknowworks.dev.net:8800");
 
             TrinityTripleModuleClient.UnhandledException += TrinityTripleModuleClient_UnhandledException;
             TrinityTripleModuleClient.Started += TrinityTripleModuleClientStarted;

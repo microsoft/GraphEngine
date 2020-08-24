@@ -5,6 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Client;
+using Microsoft.ServiceFabric.Services.Remoting.Client;
+using Microsoft.ServiceFabric.Services.Remoting.V2.FabricTransport.Client;
 using Trinity.Core.Lib;
 using Trinity.Diagnostics;
 using Trinity.Network;
@@ -15,8 +17,8 @@ using Trinity.Storage;
 
 namespace Trinity.ServiceFabric.NativeClient.Remoting
 {
-    internal class TrinityOverNativeTCPClientConnection<TrinityOverNativeTCPCommunicationClient> : CommunicationClientFactoryBase<TrinityOverNativeTCPCommunicationClient>, IMessagePassingEndpoint 
-        where TrinityOverNativeTCPCommunicationClient : ICommunicationClient
+    internal class TrinityOverNativeTCPClientConnection<TrinityOverNativeTCPClientProxy> : CommunicationClientFactoryBase<TrinityOverNativeTCPClientProxy>, IMessagePassingEndpoint 
+        where TrinityOverNativeTCPClientProxy : ICommunicationClient
     {
         private ICommunicationModuleRegistry m_modules;
         private ITrinityOverNativeTCPCommunicationService m_svcProxy;
@@ -31,14 +33,14 @@ namespace Trinity.ServiceFabric.NativeClient.Remoting
         {
             this.m_modules = mods;
 
-            var proxyFactory = new TrinityOverNativeTCPClientConnectionFactory();
+            //var proxyFactory = new ServiceProxyFactory(createServiceRemotingClientFactory: c => new FabricTransportServiceRemotingClientFactory());
 
-            var rng = new Random();
+            //var rng = new Random();
 
-            //this.m_svcProxy = proxyFactory.
-                //new Uri(serviceUrl),
-                //new ServicePartitionKey(rng.Next()),
-                //listenerName: Constants.c_trinityNativeListenerName);
+            //this.m_svcProxy = proxyFactory.CreateServiceProxy<ITrinityOverNativeTCPCommunicationService>(
+            //    new Uri(serviceUrl),
+            //    new ServicePartitionKey(rng.Next()),
+            //    listenerName: Constants.c_trinityNativeListenerName);
         }
 
         // Overloaded Service Fabric RemRemoting Client Connection so that the user can
@@ -166,24 +168,25 @@ namespace Trinity.ServiceFabric.NativeClient.Remoting
             response = new TrinityResponse(rsp, result.Length);
         }
 
-        protected override bool ValidateClient(TrinityOverNativeTCPCommunicationClient client)
+        protected override bool ValidateClient(TrinityOverNativeTCPClientProxy client)
         {
             throw new NotImplementedException();
         }
 
-        protected override bool ValidateClient(string endpoint, TrinityOverNativeTCPCommunicationClient client)
+        protected override bool ValidateClient(string endpoint, TrinityOverNativeTCPClientProxy client)
         {
             throw new NotImplementedException();
         }
 
-        protected override Task<TrinityOverNativeTCPCommunicationClient> CreateClientAsync(string endpoint, CancellationToken cancellationToken)
+        protected override Task<TrinityOverNativeTCPClientProxy> CreateClientAsync(string endpoint, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        protected override void AbortClient(TrinityOverNativeTCPCommunicationClient client)
+        protected override void AbortClient(TrinityOverNativeTCPClientProxy client)
         {
             throw new NotImplementedException();
         }
+
     }
 }

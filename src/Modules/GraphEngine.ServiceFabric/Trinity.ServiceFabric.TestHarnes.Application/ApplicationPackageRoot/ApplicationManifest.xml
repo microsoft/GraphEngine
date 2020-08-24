@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="Trinity.ServiceFabric.TestHarnes.ApplicationType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
-    <Parameter Name="Trinity.SF.GraphEngineDataService_MinReplicaSetSize" DefaultValue="5" />
-    <Parameter Name="Trinity.SF.GraphEngineDataService_PartitionCount" DefaultValue="1" />
-    <Parameter Name="Trinity.SF.GraphEngineDataService_TargetReplicaSetSize" DefaultValue="5" />
-    <Parameter Name="Trinity.SF.GraphEngineRemotingClient_InstanceCount" DefaultValue="-1" />
+    <Parameter Name="Trinity.SF.GraphEngineDataServicegraphEngineStatefulContextMinReplicaSetSize" DefaultValue="5" />
+    <Parameter Name="Trinity.SF.GraphEngineDataServicegraphEngineStatefulContextPartitionCount" DefaultValue="1" />
+    <Parameter Name="Trinity.SF.GraphEngineDataServicegraphEngineStatefulContextTargetReplicaSetSize" DefaultValue="5" />
+    <Parameter Name="Trinity.SF.GraphEngineRemotingClientgraphEngineStatefulContextInstanceCount" DefaultValue="-1" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
@@ -24,12 +24,12 @@
          
          The attribute ServiceTypeName below must match the name defined in the imported ServiceManifest.xml file. -->
     <Service Name="Trinity.SF.GraphEngineDataService" ServicePackageActivationMode="ExclusiveProcess">
-      <StatefulService ServiceTypeName="Trinity.SF.GraphEngineDataServiceType" TargetReplicaSetSize="[Trinity.SF.GraphEngineDataService_TargetReplicaSetSize]" MinReplicaSetSize="[Trinity.SF.GraphEngineDataService_MinReplicaSetSize]">
-        <UniformInt64Partition PartitionCount="[Trinity.SF.GraphEngineDataService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      <StatefulService ServiceTypeName="Trinity.SF.GraphEngineDataServiceType" TargetReplicaSetSize="[Trinity.SF.GraphEngineDataServicegraphEngineStatefulContextTargetReplicaSetSize]" MinReplicaSetSize="[Trinity.SF.GraphEngineDataServicegraphEngineStatefulContextMinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[Trinity.SF.GraphEngineDataServicegraphEngineStatefulContextPartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
       </StatefulService>
     </Service>
     <Service Name="Trinity.SF.GraphEngineRemotingClient" ServicePackageActivationMode="ExclusiveProcess">
-      <StatelessService ServiceTypeName="Trinity.SF.GraphEngineRemotingClientType" InstanceCount="[Trinity.SF.GraphEngineRemotingClient_InstanceCount]">
+      <StatelessService ServiceTypeName="Trinity.SF.GraphEngineRemotingClientType" InstanceCount="[Trinity.SF.GraphEngineRemotingClientgraphEngineStatefulContextInstanceCount]">
         <SingletonPartition />
       </StatelessService>
     </Service>

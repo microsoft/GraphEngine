@@ -132,7 +132,7 @@ namespace Trinity.Client
 
         private unsafe void _PollImpl(TrinityMessage poll_req)
         {
-            m_mod.SendMessage(m_client, poll_req.Buffer, poll_req.Size, out var poll_rsp);
+             m_mod.SendMessage(m_client, poll_req.Buffer, poll_req.Size, out var poll_rsp);
             var sp = PointerHelper.New(poll_rsp.Buffer + poll_rsp.Offset);
             //HexDump.Dump(poll_rsp.ToByteArray());
             //Console.WriteLine($"poll_rsp.Size = {poll_rsp.Size}");

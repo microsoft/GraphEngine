@@ -16,7 +16,14 @@ namespace Trinity.ServiceFabric.Infrastructure
 {
     public abstract class TrinitySeverRuntimeMangerBase : ITrinityServerRuntimeManager
     {
+        private TrinityServer m_trinityServer;
+
         // We manage and treat this groping of data as immutable
+        private readonly (List<System.Fabric.Query.Partition> Partitions,
+                          int PartitionCount,
+                          int PartitionId,
+                          string IPAddress,
+                          StatefulServiceContext Context) m_serviceFabricRuntimeContext;
 
         public static TrinitySeverRuntimeMangerBase Instance = null;
         private static readonly object m_singletonLockObject = new object();
@@ -38,18 +45,18 @@ namespace Trinity.ServiceFabric.Infrastructure
 
         public StatefulServiceContext Context => ServiceFabricRuntimeContext.Context;
 
-        private (List<Partition> Partitions, 
-                 int PartitionCount, 
-                 int PartitionId, 
-                 string IPAddress, 
-                 StatefulServiceContext Context) ServiceFabricRuntimeContext { get; }
+        protected internal (List<Partition> Partitions, 
+                            int PartitionCount, 
+                            int PartitionId, 
+                            string IPAddress, 
+                            StatefulServiceContext Context) ServiceFabricRuntimeContext => m_serviceFabricRuntimeContext;
 
-        internal TrinityServer ServiceFabricTrinityServerInstance { get; set; }
+        internal TrinityServer ServiceFabricTrinityServerInstance
+        {
+            get => m_trinityServer;
+            set => m_trinityServer = value;
+        }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="runtimeContext"></param>
         protected TrinitySeverRuntimeMangerBase(ref (List<System.Fabric.Query.Partition> Partitions,
                                                 int PartitionCount,
                                                 int PartitionId,
@@ -63,7 +70,7 @@ namespace Trinity.ServiceFabric.Infrastructure
             LoadTrinityConfiguration(runtimeContext.Context);
 
             // load a reference pointer so that we can get to this data from a different place in STAP
-            ServiceFabricRuntimeContext = runtimeContext;
+            m_serviceFabricRuntimeContext = runtimeContext;
 
             Log.WriteLine("{0}: {1}", nameof(Trinity.ServiceFabric), $"WorkingDirectory={runtimeContext.Context.CodePackageActivationContext.WorkDirectory}");
 

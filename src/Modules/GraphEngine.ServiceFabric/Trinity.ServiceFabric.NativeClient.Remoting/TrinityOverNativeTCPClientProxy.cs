@@ -6,7 +6,7 @@ using Microsoft.ServiceFabric.Services.Communication.Client;
 
 namespace Trinity.ServiceFabric.NativeClient.Remoting
 {
-    public class TrinityOverNativeTCPCommunicationClient: ICommunicationClient
+    public class TrinityOverNativeTCPClientProxy: ICommunicationClient
     {
         public ResolvedServicePartition ResolvedServicePartition { get; set; }
         public string ListenerName { get; set; }
@@ -15,7 +15,7 @@ namespace Trinity.ServiceFabric.NativeClient.Remoting
         /// <summary>
         /// 
         /// </summary>
-        public TrinityOverNativeTCPCommunicationClient()
+        public TrinityOverNativeTCPClientProxy()
         {
             
         }

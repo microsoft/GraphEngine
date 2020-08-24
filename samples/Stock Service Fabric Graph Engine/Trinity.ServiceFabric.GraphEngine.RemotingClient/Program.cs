@@ -4,12 +4,14 @@ using System.Fabric;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Services.Runtime;
+using Trinity.ServiceFabric.NativeClient.Remoting.Interfaces;
 using Trinity.ServiceFabric.Remoting;
 using Trinity.ServiceFabric.SampleProtocols;
 
 namespace Trinity.ServiceFabric.GraphEngine.RemotingClient
 {
     [UseExtension(typeof(ITrinityOverRemotingService))]
+    [UseExtension(typeof(ITrinityOverNativeTCPCommunicationService))]
     [UseExtension(typeof(SampleModuleImpl))]
     internal static class Program
     {
@@ -28,7 +30,7 @@ namespace Trinity.ServiceFabric.GraphEngine.RemotingClient
                 ServiceRuntime.RegisterServiceAsync("Trinity.ServiceFabric.GraphEngine.RemotingClientType",
                     context => new RemotingClient(context)).GetAwaiter().GetResult();
 
-                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(RemotingClient).Name);
+                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, nameof(RemotingClient));
 
                 // Prevents this host process from terminating so services keep running.
                 Thread.Sleep(Timeout.Infinite);

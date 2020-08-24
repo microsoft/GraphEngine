@@ -3,10 +3,19 @@ using System.Diagnostics;
 using System.Fabric;
 using System.Threading;
 using System.Threading.Tasks;
+using FanoutSearch;
 using Microsoft.ServiceFabric.Services.Runtime;
+using Trinity.Azure.Storage;
+using Trinity.Client.TestProtocols;
+using Trinity.ServiceFabric.NativeClient.Remoting.Interfaces;
+using Trinity.ServiceFabric.Remoting;
 
 namespace Trinity.SF.GraphEngineRemotingClient
 {
+    // Workaround: extension assembly will be removed by the
+    // compiler if it is not explicitly used in the code.
+    [UseExtension(typeof(ITrinityOverRemotingService))]
+    [UseExtension(typeof(TripleModule))]
     internal static class Program
     {
         /// <summary>
@@ -24,7 +33,7 @@ namespace Trinity.SF.GraphEngineRemotingClient
                 ServiceRuntime.RegisterServiceAsync("Trinity.SF.GraphEngineRemotingClientType",
                     context => new GraphEngineRemotingClient(context)).GetAwaiter().GetResult();
 
-                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(GraphEngineRemotingClient).Name);
+                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, nameof(GraphEngineRemotingClient));
 
                 // Prevents this host process from terminating so services keep running.
                 Thread.Sleep(Timeout.Infinite);

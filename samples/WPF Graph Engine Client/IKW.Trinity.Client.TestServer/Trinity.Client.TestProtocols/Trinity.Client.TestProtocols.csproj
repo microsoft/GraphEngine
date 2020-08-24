@@ -23,9 +23,9 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Client" Version="$(DOTNET_PACKAGE_VERSION)" />
-    <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
-    <PackageReference Include="ReactiveProperty" Version="7.1.0" />
+    <PackageReference Include="GraphEngine.Client" Version="2.0.10519" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.10519" />
+    <PackageReference Include="ReactiveProperty" Version="7.2.0" />
   </ItemGroup>
 
 </Project>

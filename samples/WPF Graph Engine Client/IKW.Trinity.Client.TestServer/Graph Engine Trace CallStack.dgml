@@ -1,0 +1,570 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph DataVirtualized="True" Layout="Sugiyama" ZoomLevel="-1" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+    <Node Id="(@19 Namespace=Trinity.Network Type=CommunicationModule Member=(Name=ClientInitialize OverloadingParameters=[(@19 Namespace=Trinity Type=RunningMode),(@19 Namespace=Trinity.Storage Type=MemoryCloud)]))" Category="CodeSchema_Method" Bounds="491.676666666667,671.520000000001,109.863333333333,25.96" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPublic="True" CommonLabel="ClientInitialize" Icon="CodeSchema_Method" Label="ClientInitialize" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Trinity.Core/Network/Instance/CommunicationModule.cs StartLineNumber=74 StartCharacterOffset=0 EndLineNumber=74 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="(@20 Namespace=Trinity.Client Type=TrinityClientModuleBase @31)" Category="CodeSchema_Method" Bounds="294,727.48,167.216666666667,25.96" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsProtected="True" CommonLabel="RegisterMessageHandler" Icon="CodeSchema_Method" IsOverloaded="True" Label="RegisterMessageHandler" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.Client/Trinity.Client/obj/Release/netstandard2.0/GeneratedCode/Lib/Protocols.cs StartLineNumber=27 StartCharacterOffset=0 EndLineNumber=27 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="(@20 Namespace=Trinity.Client.TrinityClientModule Type=TrinityClientModule Member=.ctor)" Category="CodeSchema_Method" Bounds="161.05,839.400000000001,139.116666666667,25.96" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPublic="True" CommonLabel="TrinityClientModule" Icon="CodeSchema_Method" Label="TrinityClientModule" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.Client/Trinity.Client/TrinityClientModule.cs StartLineNumber=34 StartCharacterOffset=0 EndLineNumber=34 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="(@28 Namespace=Stateful.TripleStore.GraphDataService Type=Program Member=Main)" Category="CodeSchema_Method" Bounds="1116.44166666667,55.96,62.5799999999999,25.96" CodeSchemaProperty_IsPrivate="True" CodeSchemaProperty_IsStatic="True" CommonLabel="Main" Icon="CodeSchema_Method" Label="Main" SourceLocation="(Assembly=&quot;file:///G:/IKW-GraphEngine/samples/WPF Graph Engine Client/IKW.Trinity.Client.TestServer/Stateful.TripleStore.GraphDataService/Program.cs&quot; StartLineNumber=62 StartCharacterOffset=0 EndLineNumber=62 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="(@30 Namespace=Trinity.DynamicCluster Type=DynamicClusterBase @31)" Category="CodeSchema_Method" Bounds="0,671.52,167.216666666667,25.96" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsProtected="True" CommonLabel="RegisterMessageHandler" Icon="CodeSchema_Method" IsOverloaded="True" Label="RegisterMessageHandler" SourceLocation="(Assembly=file:///C:/Users/tavi.INKNOWWORKS/AppData/Local/JetBrains/Shared/vAny/DecompilerCache/decompiler/DCAC4113-1C9E-4BF1-BAE9-C5DAFA1C800F/2e/60e38bc4/DynamicClusterBase.cs StartLineNumber=71 StartCharacterOffset=0 EndLineNumber=71 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="(@33 Namespace=Trinity.Client.TestProtocols Type=TripleServerBase @31)" Category="CodeSchema_Method" Bounds="632,671.52,167.216666666667,25.96" CodeSchemaProperty_IsProtected="True" CommonLabel="RegisterMessageHandler" Icon="CodeSchema_Method" IsOverloaded="True" Label="RegisterMessageHandler" SourceLocation="(Assembly=&quot;file:///G:/IKW-GraphEngine/samples/WPF Graph Engine Client/IKW.Trinity.Client.TestServer/Trinity.Client.TestProtocols/obj/x64/Debug/netcoreapp3.1/GeneratedCode/Lib/Protocols.cs&quot; StartLineNumber=27 StartCharacterOffset=0 EndLineNumber=27 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="(Name=Stateful.TripleStore.GraphDataService.Program.&lt;Main&gt; @8 @6 @2)" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1006.53,0,282.403333333333,25.96" Label="Stateful.TripleStore.GraphDataService.Program.">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="(Name=System.Threading._ThreadPoolWaitCallback.PerformWaitCallback @1 Type=bool @2)" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="639.678333333333,0,145.86,25.96" Label="PerformWaitCallback">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="(Name=Trinity.Network.Client.SynClient.DoSend @9 Type=bool OverloadingParameters=[(Type=byte* Name=buf),(Type=int Name=len)] @2)" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="858.633367919922,1283.49887865397,77.95,25.96" Label="DoSend" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Trinity.Core/Network/Client/SynClient.Message.cs StartLineNumber=31 StartCharacterOffset=0 EndLineNumber=31 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="(Name=Trinity.TripleStore.TestSever.Client.Program.&lt;Main&gt; @36 @6 OverloadingParameters=[(Type=&quot;string[]&quot; Name=args)] @2)" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="340.423333333333,447.68,262.37,25.96" Label="Trinity.TripleStore.TestSever.Client.Program.">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@10" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="481.405,615.56,130.406666666667,25.96" Label="_InitializeModules" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Trinity.Core/Network/Instance/CommunicationInstance.cs StartLineNumber=120 StartCharacterOffset=0 EndLineNumber=120 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@11" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="642.445,615.56,140.326666666667,25.96" Label="_RaiseStartedEvents" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Trinity.Core/Network/Instance/CommunicationInstance.cs StartLineNumber=413 StartCharacterOffset=0 EndLineNumber=413 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@12" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="829.991640218099,667.937778653971,135.233333333333,25.96" Label="_RaiseStartedEvent" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Trinity.Core/Network/Instance/CommunicationProtocolGroup.cs StartLineNumber=34 StartCharacterOffset=0 EndLineNumber=34 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@14" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="843.076670735677,779.857978653971,109.063333333333,25.96" Label="RegisterClient" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.Client/Trinity.Client/ClientSide/TrinityClient.cs StartLineNumber=94 StartCharacterOffset=0 EndLineNumber=94 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@15" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="849.466670735677,723.897878653971,96.2833333333333,25.96" Label="StartPolling" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.Client/Trinity.Client/ClientSide/TrinityClient.cs StartLineNumber=82 StartCharacterOffset=0 EndLineNumber=82 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@18" Category="CodeSchema_Method" Bounds="589.318333333333,503.64,62.5799999999999,25.96" CodeSchemaProperty_IsPrivate="True" CodeSchemaProperty_IsStatic="True" CommonLabel="Main" Icon="CodeSchema_Method" Label="Main" SourceLocation="(Assembly=&quot;file:///G:/IKW-GraphEngine/samples/WPF Graph Engine Client/IKW.Trinity.Client.TestServer/IKW.Trinity.TripleStore.TestSever.Client/Program.cs&quot; StartLineNumber=44 StartCharacterOffset=0 EndLineNumber=44 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@21" Category="CodeSchema_Method" Bounds="843.076670735677,891.778178653971,109.063333333333,25.96" CodeSchemaProperty_IsExtension="True" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="RegisterClient" Icon="CodeSchema_Method" Label="RegisterClient" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.Client/Trinity.Client/obj/Release/netstandard2.0/GeneratedCode/Lib/Protocols.cs StartLineNumber=277 StartCharacterOffset=0 EndLineNumber=277 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@23" Category="CodeSchema_Method" Bounds="197.676666666667,671.52,65.8633333333332,25.96" CodeSchemaProperty_IsExtension="True" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="ToList" Icon="CodeSchema_Method" Label="ToList">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@24" Category="CodeSchema_Method" Bounds="151.686666666667,783.440000000001,157.843333333333,25.96" CodeSchemaProperty_IsAnonymous="True" CodeSchemaProperty_IsExternal="True" Label="AnonymousMethod__0" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Trinity.Core/Network/Instance/CommunicationInstance.cs StartLineNumber=108 StartCharacterOffset=0 EndLineNumber=108 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@26" Category="CodeSchema_Method" Bounds="633.686666666667,447.68,157.843333333333,25.96" CodeSchemaProperty_IsAnonymous="True" CodeSchemaProperty_IsExternal="True" Label="AnonymousMethod__0" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.ServiceFabric/Trinity.ServiceFabric.Infrastructure/Listener/GraphEngineListenerBase.cs StartLineNumber=52 StartCharacterOffset=0 EndLineNumber=52 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@27" Category="CodeSchema_Method" Bounds="818.686640218099,1171.57867865397,157.843333333333,25.96" CodeSchemaProperty_IsAnonymous="True" CodeSchemaProperty_IsExternal="True" Label="AnonymousMethod__0" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Trinity.Core/Storage/RemoteStorage/RemoteStorage.Message.cs StartLineNumber=70 StartCharacterOffset=0 EndLineNumber=70 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@29" Category="CodeSchema_Method" Bounds="843.076670735677,835.818078653971,109.063333333333,25.96" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPublic="True" CommonLabel="RegisterClient" Icon="CodeSchema_Method" Label="RegisterClient" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.Client/Trinity.Client/ClientSide/ClientMemoryCloud.cs StartLineNumber=47 StartCharacterOffset=0 EndLineNumber=47 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@3" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="671.621666666667,55.96,81.9733333333334,25.96" Label="Dispatch">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@32" Category="CodeSchema_Method" Bounds="294,671.52,167.216666666667,25.96" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsProtected="True" CommonLabel="RegisterMessageHandler" Icon="CodeSchema_Method" IsOverloaded="True" Label="RegisterMessageHandler" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.Client/Trinity.Client/TrinityClientModule.cs StartLineNumber=74 StartCharacterOffset=0 EndLineNumber=74 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@34" Category="CodeSchema_Method" Bounds="682.408333333333,559.6,60.4000000000001,25.96" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPublic="True" CommonLabel="Start" Icon="CodeSchema_Method" Label="Start" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Trinity.Core/Network/Instance/CommunicationInstance.cs StartLineNumber=302 StartCharacterOffset=0 EndLineNumber=302 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@35" Category="CodeSchema_Method" Bounds="682.408333333333,503.64,60.4000000000001,25.96" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPublic="True" CommonLabel="Start" Icon="CodeSchema_Method" IsOverloaded="True" Label="Start" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.ServiceFabric/Trinity.ServiceFabric.Infrastructure/Runtime/TrinityServerRuntimeManager.cs StartLineNumber=44 StartCharacterOffset=0 EndLineNumber=44 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@37" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="842.458306884766,1115.61857865397,110.3,25.96" Label="_use_synclient" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Trinity.Core/Storage/RemoteStorage/RemoteStorage.Message.cs StartLineNumber=53 StartCharacterOffset=0 EndLineNumber=53 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@38" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="621.491666666667,335.76,182.233333333333,25.96" Label="AnonymousMethod__274_0">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@39" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="642.756666666667,167.88,139.703333333333,25.96" Label="ExecuteEntryUnsafe">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@40" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="630.671666666667,111.92,163.873333333333,25.9600000000001" Label="ExecuteFromThreadPool">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@41" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="629.888333333333,223.84,165.44,25.96" Label="ExecuteWithThreadLocal">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@42" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="843.01000406901,1227.53877865397,109.196666666667,25.96" Label="SendMessage" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Trinity.Core/Network/Client/SynClient.Message.cs StartLineNumber=182 StartCharacterOffset=0 EndLineNumber=182 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@43" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="843.01000406901,1059.65847865397,109.196666666667,25.96" Label="SendMessage" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Trinity.Core/Storage/RemoteStorage/RemoteStorage.Message.cs StartLineNumber=71 StartCharacterOffset=0 EndLineNumber=71 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@44" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="843.01000406901,1003.69837865397,109.196666666667,25.9599999999999" Label="SendMessage" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Trinity.Core/Network/Instance/CommunicationModule.cs StartLineNumber=193 StartCharacterOffset=0 EndLineNumber=193 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@45" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="843.01000406901,947.738278653971,109.196666666667,25.96" Label="SendMessage" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Trinity.Core/Storage/MessagePassingExtensionMethods.cs StartLineNumber=33 StartCharacterOffset=0 EndLineNumber=33 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@46" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="604.19,279.8,216.836666666667,25.96" Label="RunFromThreadPoolDispatchLoop">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@5" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="197.676666666667,727.48,65.8633333333332,25.96" Label="ToList">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@7" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="663.496666666667,391.72,98.2233333333334,25.96" Label="InnerInvoke">
+      <Category Ref="CallStackEntry" />
+    </Node>
+  </Nodes>
+  <Links>
+    <Link Source="(Name=Stateful.TripleStore.GraphDataService.Program.&lt;Main&gt; @8 @6 @2)" Target="(@28 Namespace=Stateful.TripleStore.GraphDataService Type=Program Member=Main)" Category="CallStackDirectCall" Bounds="1147.73168945313,25.9599990844727,0,21" />
+    <Link Source="(Name=System.Threading._ThreadPoolWaitCallback.PerformWaitCallback @1 Type=bool @2)" Target="@3" Category="CallStackDirectCall" Bounds="712.608337402344,25.9599990844727,0,21" />
+    <Link Source="(Name=Trinity.TripleStore.TestSever.Client.Program.&lt;Main&gt; @36 @6 OverloadingParameters=[(Type=&quot;string[]&quot; Name=args)] @2)" Target="@18" Category="CallStackDirectCall" Bounds="506.169097900391,473.640014648438,75.1850891113281,28.2373046875" />
+    <Link Source="@10" Target="(@19 Namespace=Trinity.Network Type=CommunicationModule Member=(Name=ClientInitialize OverloadingParameters=[(@19 Namespace=Trinity Type=RunningMode),(@19 Namespace=Trinity.Storage Type=MemoryCloud)]))" Category="CallStackDirectCall" Bounds="546.608337402344,641.52001953125,0,21" />
+    <Link Source="@10" Target="(@30 Namespace=Trinity.DynamicCluster Type=DynamicClusterBase @31)" Category="CallStackDirectCall" Bounds="176.117279052734,636.329895019531,305.287719726563,36.6546630859375" />
+    <Link Source="@10" Target="(@33 Namespace=Trinity.Client.TestProtocols Type=TripleServerBase @31)" Category="CallStackDirectCall" Bounds="585.80810546875,641.52001953125,82.056640625,27.1708984375" />
+    <Link Source="@10" Target="@23" Category="CallStackDirectCall" Bounds="272.296264648438,638.632019042969,209.11083984375,34.9854736328125" />
+    <Link Source="@10" Target="@32" Category="CallStackDirectCall" Bounds="425.351928710938,641.52001953125,82.0566101074219,27.1708984375" />
+    <Link Source="@11" Target="@12" Category="CallStackDirectCall" Bounds="758.454527795025,641.520480053711,84.6479651155441,23.965580952069" />
+    <Link Source="@12" Target="@15" Category="CallStackDirectCall" Bounds="897.608313963348,693.897778653971,1.14523060119609E-05,21.0001000000015" />
+    <Link Source="@14" Target="@29" Category="CallStackDirectCall" Bounds="897.608337402344,805.817978653971,0,21.0001" />
+    <Link Source="@15" Target="@14" Category="CallStackDirectCall" Bounds="897.608337402344,749.857878653971,0,21.0000999999999" />
+    <Link Source="@18" Target="@34" Category="CallStackDirectCall" Bounds="641.947875976563,529.599975585938,41.6316528320313,25.3229370117188" />
+    <Link Source="@21" Target="@45" Category="CallStackDirectCall" Bounds="897.608337402344,917.738178653971,0,21.0001000000002" />
+    <Link Source="@23" Target="@5" Category="CallStackDirectCall" Bounds="230.608337402344,697.47998046875,0,21" />
+    <Link Source="@24" Target="(@20 Namespace=Trinity.Client.TrinityClientModule Type=TrinityClientModule Member=.ctor)" Category="CallStackIndirectCall" Bounds="230.608337402344,809.400024414063,0,21" />
+    <Link Source="@26" Target="@35" Category="CallStackDirectCall" Bounds="712.608337402344,473.640014648438,0,21" />
+    <Link Source="@27" Target="@42" Category="CallStackDirectCall" Bounds="897.608313963348,1197.53867865397,1.14523060119609E-05,21.0001000000013" />
+    <Link Source="@29" Target="@21" Category="CallStackDirectCall" Bounds="897.608337402344,861.778078653971,0,21.0001000000002" />
+    <Link Source="@3" Target="@40" Category="CallStackDirectCall" Bounds="712.608337402344,81.9199981689453,0,21" />
+    <Link Source="@32" Target="(@20 Namespace=Trinity.Client Type=TrinityClientModuleBase @31)" Category="CallStackDirectCall" Bounds="377.608337402344,697.47998046875,0,21" />
+    <Link Source="@34" Target="@10" Category="CallStackDirectCall" Bounds="593.640686035156,582.758483886719,88.7742309570313,29.926513671875" />
+    <Link Source="@34" Target="@11" Category="CallStackDirectCall" Bounds="712.608337402344,585.559997558594,0,21" />
+    <Link Source="@35" Target="@34" Category="CallStackDirectCall" Bounds="712.608337402344,529.599975585938,0,21" />
+    <Link Source="@37" Target="@27" Category="CallStackDirectCall" Bounds="897.608306884766,1141.57857865397,0,21.0001" />
+    <Link Source="@38" Target="@7" Category="CallStackDirectCall" Bounds="712.608337402344,361.720001220703,0,21" />
+    <Link Source="@39" Target="@41" Category="CallStackDirectCall" Bounds="712.608337402344,193.839996337891,0,21" />
+    <Link Source="@40" Target="@39" Category="CallStackDirectCall" Bounds="712.608337402344,137.880004882813,0,21" />
+    <Link Source="@41" Target="@46" Category="CallStackDirectCall" Bounds="712.608337402344,249.800003051758,0,20.9999847412109" />
+    <Link Source="@42" Target="(Name=Trinity.Network.Client.SynClient.DoSend @9 Type=bool OverloadingParameters=[(Type=byte* Name=buf),(Type=int Name=len)] @2)" Category="CallStackDirectCall" Bounds="897.608344480926,1253.49877865397,1.14523060119609E-05,21.0001000000013" />
+    <Link Source="@43" Target="@37" Category="CallStackDirectCall" Bounds="897.608318871456,1085.61847865397,1.14523061256477E-05,21.0001000000013" />
+    <Link Source="@44" Target="@43" Category="CallStackDirectCall" Bounds="897.608337402344,1029.65837865397,1.13686837721616E-13,21.0001000000002" />
+    <Link Source="@45" Target="@44" Category="CallStackDirectCall" Bounds="897.608337402344,973.698278653971,0,21.0001" />
+    <Link Source="@46" Target="@38" Category="CallStackDirectCall" Bounds="712.608337402344,305.760009765625,0,21" />
+    <Link Source="@5" Target="@24" Category="CallStackDirectCall" Bounds="230.608337402344,753.440002441406,0,21" />
+    <Link Source="@7" Target="@26" Category="CallStackDirectCall" Bounds="712.608337402344,417.679992675781,0,21" />
+  </Links>
+  <Categories>
+    <Category Id="CallStackDirectCall" Label="Call Stack direct call" CanBeDataDriven="True" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Call Stack direct call" OutgoingActionLabel="Call Stack direct call" />
+    <Category Id="CallStackEntry" Label="Call Stack Entry" CanBeDataDriven="True" IsProviderRoot="False" NavigationActionLabel="Call Stack Entry" />
+    <Category Id="CallStackIndirectCall" Label="Call Stack indirect call" CanBeDataDriven="True" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Call Stack indirect call" OutgoingActionLabel="Call Stack indirect call" />
+    <Category Id="CodeSchema_CallStackUnresolvedMethod" Label="Unresolved Method" CanBeDataDriven="True" DefaultAction="Microsoft.AllOutBoundLinks" IsProviderRoot="False" NavigationActionLabel="Unresolved Method" />
+    <Category Id="CodeSchema_Member" Label="Member" CanBeDataDriven="True" DefaultAction="Microsoft.Contains" Icon="CodeSchema_Field" NavigationActionLabel="Members" />
+    <Category Id="CodeSchema_Method" Label="Method" BasedOn="CodeSchema_Member" CanBeDataDriven="True" DefaultAction="Link:Forward:CodeSchema_Calls" Icon="CodeSchema_Method" NavigationActionLabel="Methods" />
+    <Category Id="CodeSchema_SourceLocation" Label="Source Location" Icon="File" />
+    <Category Id="ExternalCallStackEntry" Label="External Call Stack Entry" CanBeDataDriven="True" IsProviderRoot="False" NavigationActionLabel="External Call Stack Entry" />
+  </Categories>
+  <Properties>
+    <Property Id="Bounds" DataType="System.Windows.Rect" />
+    <Property Id="CanBeDataDriven" Label="CanBeDataDriven" Description="CanBeDataDriven" DataType="System.Boolean" />
+    <Property Id="CanLinkedNodesBeDataDriven" Label="CanLinkedNodesBeDataDriven" Description="CanLinkedNodesBeDataDriven" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsAnonymous" Label="Is Anonymous" Description="Flag indicating if this delegate, type, or method is anonymous" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsConstructor" Label="Is Constructor" Description="Flag to indicate the method is a constructor" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsExtension" Label="Is Extension" Description="Flag indicating if the method is an extension method" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsExternal" Label="Is External" Description="Flag indicating whether this node is considered external" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsPrivate" Label="Is Private" Description="Flag to indicate the scope is Private" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsProtected" Label="Is Protected" Description="Flag to indicate the scope is Protected" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsPublic" Label="Is Public" Description="Flag to indicate the scope is Public" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsStatic" Label="Is Static" Description="Flag to indicate the member is a static member" DataType="System.Boolean" />
+    <Property Id="CommonLabel" DataType="System.String" />
+    <Property Id="DataVirtualized" Label="Data Virtualized" Description="If true, the graph can contain nodes and links that represent data for virtualized nodes/links (i.e. not actually created in the graph)." DataType="System.Boolean" />
+    <Property Id="DefaultAction" Label="DefaultAction" Description="DefaultAction" DataType="System.String" />
+    <Property Id="Expression" DataType="System.String" />
+    <Property Id="GroupLabel" DataType="System.String" />
+    <Property Id="Icon" Label="Icon" DataType="System.String" />
+    <Property Id="IncomingActionLabel" Label="IncomingActionLabel" Description="IncomingActionLabel" DataType="System.String" />
+    <Property Id="IsEnabled" DataType="System.Boolean" />
+    <Property Id="IsOverloaded" Label="IsOverloaded" Description="IsOverloaded" DataType="System.Boolean" />
+    <Property Id="IsProviderRoot" Label="IsProviderRoot" Description="IsProviderRoot" DataType="System.Boolean" />
+    <Property Id="Label" Label="Label" Description="Displayable label of an Annotatable object" DataType="System.String" />
+    <Property Id="Layout" DataType="System.String" />
+    <Property Id="NavigationActionLabel" Label="NavigationActionLabel" Description="NavigationActionLabel" DataType="System.String" />
+    <Property Id="OutgoingActionLabel" Label="OutgoingActionLabel" Description="OutgoingActionLabel" DataType="System.String" />
+    <Property Id="SourceLocation" Label="Start Line Number" DataType="Microsoft.VisualStudio.GraphModel.CodeSchema.SourceLocation" />
+    <Property Id="TargetType" DataType="System.Type" />
+    <Property Id="Value" DataType="System.String" />
+    <Property Id="ValueLabel" DataType="System.String" />
+    <Property Id="Visibility" Label="Visibility" Description="Defines whether a node in the graph is visible or not" DataType="System.Windows.Visibility" />
+    <Property Id="ZoomLevel" DataType="System.String" />
+  </Properties>
+  <QualifiedNames>
+    <Name Id="ArrayRank" Label="Array Rank" ValueType="System.String" />
+    <Name Id="Assembly" Label="Assembly" ValueType="Uri" />
+    <Name Id="GenericArguments" Label="Generic Arguments" ValueType="Microsoft.VisualStudio.GraphModel.GraphNodeIdCollection" />
+    <Name Id="GenericParameterCount" Label="Generic Parameter Count" ValueType="System.String" />
+    <Name Id="IsUnresolved" Label="Is Unresolved" ValueType="System.String" />
+    <Name Id="Member" Label="Member" ValueType="System.Object" />
+    <Name Id="Name" Label="Name" ValueType="System.String" />
+    <Name Id="Namespace" Label="Namespace" ValueType="System.String" />
+    <Name Id="OverloadingParameters" Label="Parameter" ValueType="Microsoft.VisualStudio.GraphModel.GraphNodeIdCollection" Formatter="NameValueNoEscape" />
+    <Name Id="ParameterIdentifier" Label="Parameter Identifier" ValueType="System.String" />
+    <Name Id="ParentType" Label="Parent Type" ValueType="System.Object" />
+    <Name Id="Type" Label="Type" ValueType="System.Object" />
+  </QualifiedNames>
+  <IdentifierAliases>
+    <Alias n="1" Uri="Assembly=System.Private.CoreLib.dll" />
+    <Alias n="2" Id="IsUnresolved=True" />
+    <Alias n="3" Id="(Name=System.Threading.ThreadPoolWorkQueue.Dispatch @1 Type=bool @2)" />
+    <Alias n="4" Uri="Assembly=System.Linq.dll" />
+    <Alias n="5" Id="(Name=&quot;System.Linq.Enumerable.SelectEnumerableIterator&lt;System.Type, Trinity.Network.CommunicationModule&gt;.ToList&quot; @4 Type=System.Collections.Generic.List&lt;Trinity.Network.CommunicationModule&gt; @2)" />
+    <Alias n="6" Id="Type=void" />
+    <Alias n="7" Id="(Name=System.Threading.Tasks.Task&lt;Trinity.TrinityErrorCode&gt;.InnerInvoke @1 @6 @2)" />
+    <Alias n="8" Uri="Assembly=Stateful.TripleStore.GraphDataService.dll" />
+    <Alias n="9" Uri="Assembly=Trinity.Core.dll" />
+    <Alias n="10" Id="(Name=Trinity.Network.CommunicationInstance._InitializeModules @9 @6 @2)" />
+    <Alias n="11" Id="(Name=Trinity.Network.CommunicationInstance._RaiseStartedEvents @9 @6 @2)" />
+    <Alias n="12" Id="(Name=Trinity.Network.CommunicationProtocolGroup._RaiseStartedEvent @9 @6 @2)" />
+    <Alias n="13" Uri="Assembly=Trinity.Client.dll" />
+    <Alias n="14" Id="(Name=Trinity.Client.TrinityClient.RegisterClient @13 @6 @2)" />
+    <Alias n="15" Id="(Name=Trinity.Client.TrinityClient.StartPolling @13 @6 @2)" />
+    <Alias n="16" Uri="Assembly=$(d2188620-2c04-44c7-9747-d0cc676f1a01.OutputPathUri)" />
+    <Alias n="17" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/netcoreapp3.1/System.Runtime.dll" />
+    <Alias n="18" Id="(@16 Namespace=Trinity.TripleStore.TestSever.Client Type=Program Member=(Name=Main OverloadingParameters=[(@17 Namespace=System Type=(Name=String ArrayRank=1 ParentType=String))]))" />
+    <Alias n="19" Uri="Assembly=file:///C:/Users/tavi.INKNOWWORKS/.nuget/packages/graphengine.core/2.0.10519/lib/netstandard2.0/Trinity.Core.dll" />
+    <Alias n="20" Uri="Assembly=file:///C:/Users/tavi.INKNOWWORKS/.nuget/packages/graphengine.client/2.0.10519/lib/netstandard2.0/Trinity.Client.dll" />
+    <Alias n="21" Id="(@20 Namespace=Trinity.Client.TrinityClientModule Type=MessagePassingExtension Member=(Name=RegisterClient OverloadingParameters=[(@19 Namespace=Trinity.Storage Type=IMessagePassingEndpoint),(@20 Namespace=Trinity.Client Type=RegisterClientRequestWriter)]))" />
+    <Alias n="22" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/netcoreapp3.1/System.Linq.dll" />
+    <Alias n="23" Id="(@22 Namespace=System.Linq Type=Enumerable Member=(Name=ToList GenericParameterCount=1 OverloadingParameters=[(@17 Namespace=System.Collections.Generic Type=(Name=IEnumerable GenericParameterCount=1 GenericArguments=[(ParameterIdentifier=0)]))]))" />
+    <Alias n="24" Id="(@19 Namespace=Trinity.Network Type=CommunicationInstance Member=AnonymousMethod__0)" />
+    <Alias n="25" Uri="Assembly=file:///C:/Users/tavi.INKNOWWORKS/.nuget/packages/graphengine.servicefabric.infrastructure/2.0.10519/lib/netcoreapp3.1/Trinity.ServiceFabric.Infrastructure.dll" />
+    <Alias n="26" Id="(@25 Namespace=Trinity.ServiceFabric.Listener Type=GraphEngineListenerBase Member=AnonymousMethod__0)" />
+    <Alias n="27" Id="(@19 Namespace=Trinity.Storage Type=RemoteStorage Member=AnonymousMethod__0)" />
+    <Alias n="28" Uri="Assembly=$(68c92d2e-9520-4904-a46b-cd20ae600583.OutputPathUri)" />
+    <Alias n="29" Id="(@20 Namespace=Trinity.Client Type=ClientMemoryCloud Member=RegisterClient)" />
+    <Alias n="30" Uri="Assembly=file:///C:/Users/tavi.INKNOWWORKS/.nuget/packages/graphengine.dynamiccluster/2.0.10519/lib/netstandard2.0/Trinity.DynamicCluster.dll" />
+    <Alias n="31" Id="Member=RegisterMessageHandler" />
+    <Alias n="32" Id="(@20 Namespace=Trinity.Client.TrinityClientModule Type=TrinityClientModule @31)" />
+    <Alias n="33" Uri="Assembly=$(e067e4bb-c1c7-4631-968b-8daf0ac92f62.OutputPathUri)" />
+    <Alias n="34" Id="(@19 Namespace=Trinity.Network Type=CommunicationInstance Member=Start)" />
+    <Alias n="35" Id="(@25 Namespace=Trinity.ServiceFabric.Infrastructure Type=TrinityServerRuntimeManager Member=Start)" />
+    <Alias n="36" Uri="Assembly=Trinity.TripleStore.TestSever.Client.dll" />
+    <Alias n="37" Id="(Name=Trinity.Storage.RemoteStorage._use_synclient @9 @6 OverloadingParameters=[(Type=&quot;System.Func&lt;Trinity.Network.Client.SynClient, Trinity.TrinityErrorCode&gt;&quot; Name=func)] @2)" />
+    <Alias n="38" Id="(Name=System.Threading.Tasks.Task..cctor.AnonymousMethod__274_0 @1 @6 OverloadingParameters=[(Type=object Name=obj)] @2)" />
+    <Alias n="39" Id="(Name=System.Threading.Tasks.Task.ExecuteEntryUnsafe @1 @6 OverloadingParameters=[(Type=System.Threading.Thread Name=threadPoolThread)] @2)" />
+    <Alias n="40" Id="(Name=System.Threading.Tasks.Task.ExecuteFromThreadPool @1 @6 OverloadingParameters=[(Type=System.Threading.Thread Name=threadPoolThread)] @2)" />
+    <Alias n="41" Id="(Name=System.Threading.Tasks.Task.ExecuteWithThreadLocal @1 @6 OverloadingParameters=[(Type=&quot;System.Threading.Tasks.Task {System.Threading.Tasks.Task&lt;Trinity.TrinityErrorCode&gt;}&quot; Name=currentTaskSlot),(Type=System.Threading.Thread Name=threadPoolThread)] @2)" />
+    <Alias n="42" Id="(Name=Trinity.Network.Client.SynClient.SendMessage @9 Type=Trinity.TrinityErrorCode OverloadingParameters=[(Type=byte* Name=message),(Type=int Name=size),(Type=Trinity.Network.Messaging.TrinityResponse Name=response)] @2)" />
+    <Alias n="43" Id="(Name=Trinity.Storage.RemoteStorage.SendMessage @9 @6 OverloadingParameters=[(Type=byte* Name=message),(Type=int Name=size),(Type=Trinity.Network.Messaging.TrinityResponse Name=response)] @2)" />
+    <Alias n="44" Id="(Name=Trinity.Network.CommunicationModule.SendMessage @9 @6 OverloadingParameters=[(Type=&quot;Trinity.Storage.IMessagePassingEndpoint {Trinity.Client.DefaultClientConnection}&quot; Name=endpoint),(Type=byte* Name=buffer),(Type=int Name=size),(Type=Trinity.Network.Messaging.TrinityResponse Name=response)] @2)" />
+    <Alias n="45" Id="(Name=Trinity.Storage.MessagePassingExtensionMethods.SendMessage&lt;Trinity.Client.TrinityClientModuleBase&gt; @9 @6 OverloadingParameters=[(Type=&quot;Trinity.Storage.IMessagePassingEndpoint {Trinity.Client.DefaultClientConnection}&quot; Name=storage),(Type=byte* Name=message),(Type=int Name=size),(Type=Trinity.Network.Messaging.TrinityResponse Name=response)] @2)" />
+    <Alias n="46" Id="(Name=System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop @1 @6 OverloadingParameters=[(Type=System.Threading.Thread Name=threadPoolThread),(Type=System.Threading.ExecutionContext Name=executionContext),(Type=System.Threading.ContextCallback Name=callback),(Type=object Name=state)] @2)" />
+  </IdentifierAliases>
+  <Styles>
+    <Style TargetType="Link" GroupLabel="Current Call Stack Link" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="HasCategory('CurrentCallStackCall')" />
+      <Setter Property="Stroke" Value="#FFD93701" />
+      <Setter Property="Weight" Value="1" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Call Stack Indirect Link" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="HasCategory('CallStackIndirectCall')" />
+      <Setter Property="Stroke" Value="#FFB8B8B8" />
+      <Setter Property="StrokeDashArray" Value="4 1" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Call Stack Direct Link" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="HasCategory('CallStackDirectCall')" />
+      <Setter Property="Stroke" Value="#FFB8B8B8" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Current Call Stack (no source)" ValueLabel="True">
+      <Condition Expression="HasCategory('CurrentCallStackEntry') And !HasCategory('CodeSchema_SourceLocation')" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="#FFA5A5A5" />
+      <Setter Property="Stroke" Value="#FF0072C6" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="External And Current" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="HasCategory('ExternalCallStackEntry') And HasCategory('CurrentCallStackEntry')" />
+      <Setter Property="Background" Value="#FFFFF8F0" />
+      <Setter Property="Stroke" Value="#FFCE5100" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Current Call Stack (source)" ValueLabel="True">
+      <Condition Expression="HasCategory('CurrentCallStackEntry') And !HasCategory('QueryResult')" />
+      <Setter Property="Background" Value="#FFFFE3C6" />
+      <Setter Property="Stroke" Value="#FFD93701" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="External Call Stack" ValueLabel="True">
+      <Condition Expression="HasCategory('ExternalCallStackEntry')" />
+      <Setter Property="Background" Value="#FFF7F7F7" />
+      <Setter Property="StrokeDashArray" Value="1 3" />
+      <Setter Property="Foreground" Value="#FF717171" />
+      <Setter Property="Stroke" Value="#FFA5A5A5" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Results" ValueLabel="True">
+      <Condition Expression="HasCategory('QueryResult')" />
+      <Setter Property="Background" Value="#FFBCFFBE" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Test Project" ValueLabel="Test Project">
+      <Condition Expression="HasCategory('CodeMap_TestProject')" />
+      <Setter Property="Icon" Value="CodeMap_TestProject" />
+      <Setter Property="Background" Value="#FF307A69" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Web Project" ValueLabel="Web Project">
+      <Condition Expression="HasCategory('CodeMap_WebProject')" />
+      <Setter Property="Icon" Value="CodeMap_WebProject" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Windows Store Project" ValueLabel="Windows Store Project">
+      <Condition Expression="HasCategory('CodeMap_WindowsStoreProject')" />
+      <Setter Property="Icon" Value="CodeMap_WindowsStoreProject" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Phone Project" ValueLabel="Phone Project">
+      <Condition Expression="HasCategory('CodeMap_PhoneProject')" />
+      <Setter Property="Icon" Value="CodeMap_PhoneProject" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Portable Library" ValueLabel="Portable Library">
+      <Condition Expression="HasCategory('CodeMap_PortableLibraryProject')" />
+      <Setter Property="Icon" Value="CodeMap_PortableLibraryProject" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="WPF Project" ValueLabel="WPF Project">
+      <Condition Expression="HasCategory('CodeMap_WpfProject')" />
+      <Setter Property="Icon" Value="CodeMap_WpfProject" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="VSIX Project" ValueLabel="VSIX Project">
+      <Condition Expression="HasCategory('CodeMap_VsixProject')" />
+      <Setter Property="Icon" Value="CodeMap_VsixProject" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Modeling Project" ValueLabel="Modeling Project">
+      <Condition Expression="HasCategory('CodeMap_ModelingProject')" />
+      <Setter Property="Icon" Value="CodeMap_ModelingProject" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Assembly" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Assembly')" />
+      <Setter Property="Background" Value="#FF094167" />
+      <Setter Property="Stroke" Value="#FF094167" />
+      <Setter Property="Icon" Value="CodeSchema_Assembly" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Namespace" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Namespace')" />
+      <Setter Property="Background" Value="#FF0E619A" />
+      <Setter Property="Stroke" Value="#FF0E619A" />
+      <Setter Property="Icon" Value="CodeSchema_Namespace" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Interface" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Interface')" />
+      <Setter Property="Background" Value="#FF1382CE" />
+      <Setter Property="Stroke" Value="#FF1382CE" />
+      <Setter Property="Icon" Value="CodeSchema_Interface" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Struct" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Struct')" />
+      <Setter Property="Background" Value="#FF1382CE" />
+      <Setter Property="Stroke" Value="#FF1382CE" />
+      <Setter Property="Icon" Value="CodeSchema_Struct" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Enumeration" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Enum')" />
+      <Setter Property="Background" Value="#FF1382CE" />
+      <Setter Property="Stroke" Value="#FF1382CE" />
+      <Setter Property="Icon" Value="CodeSchema_Enum" />
+      <Setter Property="LayoutSettings" Value="List" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Delegate" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Delegate')" />
+      <Setter Property="Background" Value="#FF1382CE" />
+      <Setter Property="Stroke" Value="#FF1382CE" />
+      <Setter Property="Icon" Value="CodeSchema_Delegate" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Class" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Type')" />
+      <Setter Property="Background" Value="#FF0E70C0" />
+      <Setter Property="Stroke" Value="#FF0E70C0" />
+      <Setter Property="Icon" Value="CodeSchema_Class" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Property" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Property')" />
+      <Setter Property="Background" Value="#FFE0E0E0" />
+      <Setter Property="Stroke" Value="#FFE0E0E0" />
+      <Setter Property="Icon" Value="CodeSchema_Property" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Method" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Method') Or HasCategory('CodeSchema_CallStackUnresolvedMethod')" />
+      <Setter Property="Background" Value="#FFE0E0E0" />
+      <Setter Property="Stroke" Value="#FFE0E0E0" />
+      <Setter Property="Icon" Value="CodeSchema_Method" />
+      <Setter Property="LayoutSettings" Value="List" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Event" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Event')" />
+      <Setter Property="Background" Value="#FFE0E0E0" />
+      <Setter Property="Stroke" Value="#FFE0E0E0" />
+      <Setter Property="Icon" Value="CodeSchema_Event" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Field" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Field')" />
+      <Setter Property="Background" Value="#FFE0E0E0" />
+      <Setter Property="Stroke" Value="#FFE0E0E0" />
+      <Setter Property="Icon" Value="CodeSchema_Field" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Out Parameter" ValueLabel="Has category">
+      <Condition Expression="CodeSchemaProperty_IsOut = 'True'" />
+      <Setter Property="Icon" Value="CodeSchema_OutParameter" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Parameter" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_Parameter')" />
+      <Setter Property="Icon" Value="CodeSchema_Parameter" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Local Variable" ValueLabel="Has category">
+      <Condition Expression="HasCategory('CodeSchema_LocalExpression')" />
+      <Setter Property="Icon" Value="CodeSchema_LocalExpression" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Externals" ValueLabel="Has category">
+      <Condition Expression="HasCategory('Externals')" />
+      <Setter Property="Background" Value="#FF424242" />
+      <Setter Property="Stroke" Value="#FF424242" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Inherits From" ValueLabel="True">
+      <Condition Expression="HasCategory('InheritsFrom')" />
+      <Setter Property="Stroke" Value="#FF00A600" />
+      <Setter Property="StrokeDashArray" Value="2 0" />
+      <Setter Property="DrawArrow" Value="true" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Implements" ValueLabel="True">
+      <Condition Expression="HasCategory('Implements')" />
+      <Setter Property="Stroke" Value="#8000A600" />
+      <Setter Property="StrokeDashArray" Value="2 2" />
+      <Setter Property="DrawArrow" Value="true" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Calls" ValueLabel="True">
+      <Condition Expression="HasCategory('CodeSchema_Calls')" />
+      <Setter Property="Stroke" Value="#FFFF00FF" />
+      <Setter Property="StrokeDashArray" Value="2 0" />
+      <Setter Property="DrawArrow" Value="true" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Function Pointer" ValueLabel="True">
+      <Condition Expression="HasCategory('CodeSchema_FunctionPointer')" />
+      <Setter Property="Stroke" Value="#FFFF00FF" />
+      <Setter Property="StrokeDashArray" Value="2 2" />
+      <Setter Property="DrawArrow" Value="true" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Field Read" ValueLabel="True">
+      <Condition Expression="HasCategory('CodeSchema_FieldRead')" />
+      <Setter Property="Stroke" Value="#FF00AEEF" />
+      <Setter Property="StrokeDashArray" Value="2 2" />
+      <Setter Property="DrawArrow" Value="true" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Field Write" ValueLabel="True">
+      <Condition Expression="HasCategory('CodeSchema_FieldWrite')" />
+      <Setter Property="Stroke" Value="#FF00AEEF" />
+      <Setter Property="DrawArrow" Value="true" />
+      <Setter Property="IsHidden" Value="false" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Inherits From" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="HasCategory('InheritsFrom') And Target.HasCategory('CodeSchema_Class')" />
+      <Setter Property="TargetDecorator" Value="OpenArrow" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Implements" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="HasCategory('Implements') And Target.HasCategory('CodeSchema_Interface')" />
+      <Setter Property="TargetDecorator" Value="OpenArrow" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Comment Link" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="Source.HasCategory('Comment')" />
+      <Setter Property="Stroke" Value="#FFE5C365" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Cursor Location Changed" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="IsCursorLocation" />
+      <Setter Property="IndicatorWest" Value="WestIndicator" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Disabled Breakpoint Location Changed" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="DisabledBreakpointCount" />
+      <Setter Property="IndicatorWest" Value="WestIndicator" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Enabled Breakpoint Location Changed" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="EnabledBreakpointCount" />
+      <Setter Property="IndicatorWest" Value="WestIndicator" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Instruction Pointer Location Changed" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="IsInstructionPointerLocation" />
+      <Setter Property="IndicatorWest" Value="WestIndicator" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Current Callstack Changed" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="IsCurrentCallstackFrame" />
+      <Setter Property="IndicatorWest" Value="WestIndicator" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Return" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="HasCategory('CodeSchema_ReturnTypeLink')" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="References" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="HasCategory('References')" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Uses Attribute" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="HasCategory('CodeSchema_AttributeUse')" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Solution Folder" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="HasCategory('CodeMap_SolutionFolder')" />
+      <Setter Property="Background" Value="#FFDEBA83" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Project Reference" ValueLabel="Project Reference">
+      <Condition Expression="HasCategory('CodeMap_ProjectReference')" />
+      <Setter Property="Stroke" Value="#9A9A9A" />
+      <Setter Property="StrokeDashArray" Value="2 2" />
+      <Setter Property="DrawArrow" Value="true" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="External Reference" ValueLabel="External Reference">
+      <Condition Expression="HasCategory('CodeMap_ExternalReference')" />
+      <Setter Property="Stroke" Value="#9A9A9A" />
+      <Setter Property="StrokeDashArray" Value="2 2" />
+      <Setter Property="DrawArrow" Value="true" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Comment" ValueLabel="Has comment">
+      <Condition Expression="HasCategory('Comment')" />
+      <Setter Property="Background" Value="#FFFFFACD" />
+      <Setter Property="Stroke" Value="#FFE5C365" />
+      <Setter Property="StrokeThickness" Value="1" />
+      <Setter Property="NodeRadius" Value="2" />
+      <Setter Property="MaxWidth" Value="250" />
+    </Style>
+  </Styles>
+  <Paths>
+    <Path Id="68c92d2e-9520-4904-a46b-cd20ae600583.OutputPath" Value="G:\IKW-GraphEngine\build\netcoreapp3.1\win-x64\Stateful.TripleStore.GraphDataService.dll" />
+    <Path Id="68c92d2e-9520-4904-a46b-cd20ae600583.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/netcoreapp3.1/win-x64/Stateful.TripleStore.GraphDataService.dll" />
+    <Path Id="d2188620-2c04-44c7-9747-d0cc676f1a01.OutputPath" Value="G:\IKW-GraphEngine\samples\WPF Graph Engine Client\IKW.Trinity.Client.TestServer\IKW.Trinity.TripleStore.TestSever.Client\bin\Debug\netcoreapp3.1\Trinity.TripleStore.TestSever.Client.dll" />
+    <Path Id="d2188620-2c04-44c7-9747-d0cc676f1a01.OutputPathUri" Value="file:///G:/IKW-GraphEngine/samples/WPF Graph Engine Client/IKW.Trinity.Client.TestServer/IKW.Trinity.TripleStore.TestSever.Client/bin/Debug/netcoreapp3.1/Trinity.TripleStore.TestSever.Client.dll" />
+    <Path Id="e067e4bb-c1c7-4631-968b-8daf0ac92f62.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/netcoreapp3.1/Trinity.Client.TestProtocols.dll" />
+  </Paths>
+</DirectedGraph>

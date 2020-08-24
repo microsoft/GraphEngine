@@ -1,103 +1,563 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<DirectedGraph DataVirtualized="True" Layout="Sugiyama" ZoomLevel="-1" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+<DirectedGraph DataVirtualized="True" Layout="Sugiyama" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
   <Nodes>
-    <Node Id="@10" Category="CodeSchema_Method" Bounds="139.568325805664,120.000003890921,110.9,25.96" CodeSchemaProperty_IsFinal="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsVirtual="True" CommonLabel="ConnectAsync" DelayedCrossGroupLinksState="Fetched" Icon="CodeSchema_Method" Label="ConnectAsync" />
-    <Node Id="@12" Category="CodeSchema_Method" Bounds="71.5883258056641,347.880003890921,246.86,25.96" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsSpecialName="True" CommonLabel="ServiceFabricRemotingClientConnection" DelayedCrossGroupLinksState="Fetched" Icon="CodeSchema_Method" Label="ServiceFabricRemotingClientConnection" />
-    <Node Id="@13" Category="CodeSchema_Method" Bounds="139.568325805664,175.960003890921,110.9,25.96" CodeSchemaProperty_IsPublic="True" CommonLabel="ConnectAsync" DelayedCrossGroupLinksState="Fetched" Icon="CodeSchema_Method" Label="ConnectAsync" />
-    <Node Id="@2" Category="CodeSchema_Assembly" AssemblyTimestamp="07/28/2020 02:41:54" Bounds="-7.52766931100268E-06,3.89092116392931E-06,390.036666666667,433.84" CodeSchemaProperty_StrongName="Trinity.ServiceFabric.Remoting, Version=2.0.10491.0, Culture=neutral, PublicKeyToken=null" CommonLabel="Trinity.ServiceFabric.Remoting" DelayedChildNodesState="Incomplete" DelayedCrossGroupLinksState="Fetched" FilePath="$(9dfae3cc-d446-4a93-984b-f5e0fb840c84.OutputPath)" Group="Expanded" Label="Trinity.ServiceFabric.Remoting.dll" UseManualLocation="True" />
-    <Node Id="@4" Category="CodeSchema_Namespace" Bounds="19.9999924723307,40.0000038909212,350.036666666667,373.84" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="Trinity.ServiceFabric.Remoting" DelayedChildNodesState="Incomplete" DelayedCrossGroupLinksState="Fetched" Group="Expanded" Label="Trinity.ServiceFabric.Remoting" />
-    <Node Id="@5" Category="CodeSchema_Class" Bounds="51.5883258056641,251.920003890921,286.86,141.92" CodeSchemaProperty_IsInternal="True" CommonLabel="ServiceFabricRemotingClientConnection" DelayedChildNodesState="Incomplete" DelayedCrossGroupLinksState="Fetched" Group="Expanded" Icon="CodeSchema_Class" Label="ServiceFabricRemotingClientConnection" />
-    <Node Id="@6" Category="CodeSchema_Class" Bounds="39.9999924723307,80.0000038909212,310.036666666667,141.92" CodeSchemaProperty_IsPublic="True" CommonLabel="ServiceFabricRemotingConnectionClientFactory" DelayedChildNodesState="Incomplete" DelayedCrossGroupLinksState="Fetched" Group="Expanded" Icon="CodeSchema_Class" Label="ServiceFabricRemotingConnectionClientFactory" />
-    <Node Id="@9" Category="CodeSchema_Method" Bounds="71.5883258056641,291.920003890921,246.86,25.96" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsSpecialName="True" CommonLabel="ServiceFabricRemotingClientConnection" DelayedCrossGroupLinksState="Fetched" Icon="CodeSchema_Method" Label="ServiceFabricRemotingClientConnection" />
+    <Node Id="(@21 @22 Type=ServiceHelper @59)" Category="CodeSchema_Method" Bounds="969.088333333333,461.18,157.843333333333,25.96" CodeSchemaProperty_IsAnonymous="True" CodeSchemaProperty_IsExternal="True" Label="AnonymousMethod__0">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="(@36 @37 Type=(Name=TrinityOverNativeTCPClientConnection @48) Member=(@38 OverloadingParameters=[(@23 @43 Type=String),(@44 Namespace=Trinity.Network Type=ICommunicationModuleRegistry)]))" Category="CodeSchema_Method" Bounds="297.946666666667,763.690000000001,238.126666666667,25.96" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsPublic="True" CommonLabel="TrinityOverNativeTCPClientConnection" Icon="CodeSchema_Method" Label="TrinityOverNativeTCPClientConnection" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.ServiceFabric/Trinity.ServiceFabric.NativeClient.Remoting/TrinityOverNativeTCPClientConnection.cs StartLineNumber=33 StartCharacterOffset=0 EndLineNumber=33 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="(@36 @37 Type=TrinityOverNativeTCPCommunicationService Member=(@38 OverloadingParameters=[(@39 @40 Type=StatefulServiceContext)]))" Category="CodeSchema_Method" Bounds="2073.99833333333,244.8625,268.456666666667,25.96" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsPublic="True" CommonLabel="TrinityOverNativeTCPCommunicationService" Icon="CodeSchema_Method" Label="TrinityOverNativeTCPCommunicationService" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.ServiceFabric/Trinity.ServiceFabric.NativeClient.Remoting/TrinityOverNativeTCPCommunicationService.cs StartLineNumber=22 StartCharacterOffset=0 EndLineNumber=22 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="(@36 @37 Type=TrinityOverNativeTCPCommunicationService Member=.ctor)" Category="CodeSchema_Method" Bounds="1774.99833333333,244.8625,268.456666666667,25.96" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsPublic="True" CommonLabel="TrinityOverNativeTCPCommunicationService" Icon="CodeSchema_Method" Label="TrinityOverNativeTCPCommunicationService" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.ServiceFabric/Trinity.ServiceFabric.NativeClient.Remoting/TrinityOverNativeTCPCommunicationService.cs StartLineNumber=15 StartCharacterOffset=0 EndLineNumber=15 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="(@39 @40 Type=ServiceFactoryBroker Member=(Name=CreateInstance OverloadingParameters=[(@23 @43 Type=IntPtr),(@23 @43 Type=IntPtr),(@23 @43 Type=UInt32),(@23 @43 Type=IntPtr),(@23 @43 Type=Guid),(@23 @43 Type=Int64)]))" Category="CodeSchema_Method" Bounds="796.915,230.59,114.19,25.96" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPublic="True" CommonLabel="CreateInstance" Icon="CodeSchema_Method" Label="CreateInstance">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="(@42 Namespace=Trinity.Client Type=TrinityClient Member=(@38 OverloadingParameters=[(@23 @43 Type=String)]))" Category="CodeSchema_Method" Bounds="726.875,590.7475,98.27,25.96" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPublic="True" CommonLabel="TrinityClient" Icon="CodeSchema_Method" Label="TrinityClient" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.Client/Trinity.Client/ClientSide/TrinityClient.cs StartLineNumber=23 StartCharacterOffset=0 EndLineNumber=23 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="(@44 @45 @46 @59)" Category="CodeSchema_Method" Bounds="575.088333333334,1167.2225,157.843333333333,25.96" CodeSchemaProperty_IsAnonymous="True" CodeSchemaProperty_IsExternal="True" Label="AnonymousMethod__0" SourceLocation="(Assembly=file:///C:/Users/tavi.INKNOWWORKS/AppData/Local/JetBrains/Shared/vAny/DecompilerCache/decompiler/8355E653-6A29-450C-8CC2-6AB5714D767F/85/14c8ddd4/AssemblyUtility.cs StartLineNumber=203 StartCharacterOffset=0 EndLineNumber=203 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="(@44 Namespace=Trinity.Storage Type=MessagePassingExtensionMethods Member=(Name=SendMessage @48 OverloadingParameters=[(@44 Namespace=Trinity.Storage Type=IMessagePassingEndpoint),(@23 @43 Type=(Name=Byte Indirection=2)),(@23 @43 Type=(Name=Int32 Indirection=1)),(@23 @43 Type=Int32)]))" Category="CodeSchema_Method" Bounds="1379.41166666667,763.690000000001,109.196666666667,25.96" CodeSchemaProperty_IsExtension="True" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="SendMessage" Icon="CodeSchema_Method" Label="SendMessage" SourceLocation="(Assembly=file:///C:/Users/tavi.INKNOWWORKS/AppData/Local/JetBrains/Shared/vAny/DecompilerCache/decompiler/8355E653-6A29-450C-8CC2-6AB5714D767F/21/b7410427/MessagePassingExtensionMethods.cs StartLineNumber=47 StartCharacterOffset=0 EndLineNumber=47 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="(@49 Namespace=Trinity.ServiceFabric.Remoting Type=ServiceFabricRemotingConnectionClientFactory Member=(Name=ConnectAsync OverloadingParameters=[(@23 @43 Type=String),(@44 Namespace=Trinity.Network Type=ICommunicationModuleRegistry)]))" Category="CodeSchema_Method" Bounds="220.56,706.042500000001,110.9,25.96" CodeSchemaProperty_IsPublic="True" CommonLabel="ConnectAsync" Icon="CodeSchema_Method" Label="ConnectAsync" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.ServiceFabric/Trinity.ServiceFabric.Remoting/ServiceFabricRemotingClientConnectionFactory.cs StartLineNumber=28 StartCharacterOffset=0 EndLineNumber=28 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="(@60 Namespace=Trinity.DynamicCluster.Storage Type=DynamicMemoryCloud @59)" Category="CodeSchema_Method" Bounds="1139.08833333333,763.690000000001,157.843333333333,25.96" CodeSchemaProperty_IsAnonymous="True" CodeSchemaProperty_IsExternal="True" Label="AnonymousMethod__0">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="(@69 Namespace=Trinity.SF.GraphEngineDataService Type=Program Member=Main)" Category="CodeSchema_Method" Bounds="1876.89833333333,356.7825,62.5799999999999,25.96" CodeSchemaProperty_IsPrivate="True" CodeSchemaProperty_IsStatic="True" CommonLabel="Main" Icon="CodeSchema_Method" Label="Main" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.ServiceFabric/Trinity.SF.GraphEngineDataService/Program.cs StartLineNumber=121 StartCharacterOffset=0 EndLineNumber=121 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="(Name=&quot;[Async] System.Fabric.Interop.AsyncTaskCallInAdapter..ctor.AnonymousMethod__9_0&quot; @78 @9 OverloadingParameters=[(@76 Name=t)] @3)" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="2123.58,0,169.293333333334,25.96" Label="AnonymousMethod__9_0">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="(Name=System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw @1 @9 @3)" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1573.53333333333,763.690000000001,68.9533333333334,25.96" Label="Throw">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="(Name=System.Threading._ThreadPoolWaitCallback.PerformWaitCallback @1 @2 @3)" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1163.08,0,145.86,25.96" Label="PerformWaitCallback">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="(Name=Trinity.Client.ClientMemoryCloud.Initialize @19 @9 OverloadingParameters=[(Type=&quot;Trinity.Storage.IMessagePassingEndpoint {Trinity.ServiceFabric.NativeClient.Remoting.TrinityOverNativeTCPClientConnection&lt;Trinity.ServiceFabric.NativeClient.Remoting.TrinityOverNativeTCPClientProxy&gt;}&quot; Name=ep),(Type=Trinity.Client.TrinityClient Name=tc)] @3)" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="503.266666666667,706.042500000001,79.4866666666668,25.96" Label="Initialize" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.Client/Trinity.Client/ClientSide/ClientMemoryCloud.cs StartLineNumber=22 StartCharacterOffset=0 EndLineNumber=22 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="(Name=Trinity.Client.TrinityClient.ScanClientConnectionFactory.__RankFunc|0 @19 Type=int OverloadingParameters=[(Type=&quot;System.Type {System.RuntimeType}&quot; Name=t)] @3)" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="41.8500000000004,1167.2225,106.32,25.96" Label="__RankFunc|0" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.Client/Trinity.Client/ClientSide/TrinityClient.cs StartLineNumber=207 StartCharacterOffset=0 EndLineNumber=207 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="(Name=Trinity.Network.CommunicationInstance._ScanForAutoRegisteredModules @15 @9 @3)" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="940.783333333334,648.395,210.453333333333,25.96" Label="_ScanForAutoRegisteredModules" SourceLocation="(Assembly=file:///C:/Users/tavi.INKNOWWORKS/AppData/Local/JetBrains/Shared/vAny/DecompilerCache/decompiler/8355E653-6A29-450C-8CC2-6AB5714D767F/68/d90cf028/CommunicationInstance.cs StartLineNumber=287 StartCharacterOffset=0 EndLineNumber=287 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="(Name=Trinity.SF.GraphEngineDataService.Program.&lt;Main&gt; @14 @9 @3)" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1774.99833333333,300.8225,266.38,25.96" Label="Trinity.SF.GraphEngineDataService.Program.">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="(Name=Trinity.ServiceFabric.NativeClient.Remoting.TrinityOverNativeTCPClientConnection&lt;Trinity.ServiceFabric.NativeClient.Remoting.TrinityOverNativeTCPClientProxy&gt;.SendMessage @94 @9 OverloadingParameters=[(Type=byte* Name=message),(Type=int Name=size),(Type=Trinity.Network.Messaging.TrinityResponse Name=response)] @3)" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="823.411666666667,936.632500000001,109.196666666667,25.96" Label="SendMessage" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.ServiceFabric/Trinity.ServiceFabric.NativeClient.Remoting/TrinityOverNativeTCPClientConnection.cs StartLineNumber=108 StartCharacterOffset=0 EndLineNumber=108 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@10" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1437.74166666667,590.7475,86.5366666666666,25.96" Label="GetResult">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@100" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="801.241666666667,288.2375,105.536666666667,25.96" Label="CreateHelper">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@11" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1057.89833333333,403.5325,98.2233333333334,25.96" Label="InnerInvoke">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@12" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1315.89833333333,403.5325,98.2233333333334,25.96" Label="InnerInvoke">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@13" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1186.89833333333,403.5325,98.2233333333334,25.96" Label="InnerInvoke">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@16" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1100.90666666667,706.0425,234.206666666667,25.96" Label="_RaiseCommunicationInstanceStarted" SourceLocation="(Assembly=file:///C:/Users/tavi.INKNOWWORKS/AppData/Local/JetBrains/Shared/vAny/DecompilerCache/decompiler/8355E653-6A29-450C-8CC2-6AB5714D767F/cd/14ca8ada/Global.cs StartLineNumber=209 StartCharacterOffset=0 EndLineNumber=209 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@17" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="779.806666666667,648.395,130.406666666667,25.96" Label="_InitializeModules" SourceLocation="(Assembly=file:///C:/Users/tavi.INKNOWWORKS/AppData/Local/JetBrains/Shared/vAny/DecompilerCache/decompiler/8355E653-6A29-450C-8CC2-6AB5714D767F/68/d90cf028/CommunicationInstance.cs StartLineNumber=84 StartCharacterOffset=0 EndLineNumber=84 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@18" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1181.84666666667,648.395,140.326666666667,25.96" Label="_RaiseStartedEvents" SourceLocation="(Assembly=file:///C:/Users/tavi.INKNOWWORKS/AppData/Local/JetBrains/Shared/vAny/DecompilerCache/decompiler/8355E653-6A29-450C-8CC2-6AB5714D767F/68/d90cf028/CommunicationInstance.cs StartLineNumber=300 StartCharacterOffset=0 EndLineNumber=300 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@20" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="0,706.042500000001,190.02,25.96" Label="ScanClientConnectionFactory" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.Client/Trinity.Client/ClientSide/TrinityClient.cs StartLineNumber=204 StartCharacterOffset=0 EndLineNumber=204 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@24" Category="CodeSchema_Method" Bounds="946.82,590.7475,460.38,25.96" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPrivate="True" CommonLabel="Microsoft.ServiceFabric.Services.Runtime.IStatelessUserServiceInstance.RunAsync" Icon="CodeSchema_Method" Label="Microsoft.ServiceFabric.Services.Runtime.IStatelessUserServiceInstance.RunAsync">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@26" Category="CodeSchema_Method" Bounds="2160.15666666667,187.215,96.1399999999999,25.96" CodeSchemaProperty_IsPublic="True" CommonLabel="OpenAsync" Icon="CodeSchema_Method" IsOverloaded="True" Label="OpenAsync" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.ServiceFabric/Trinity.ServiceFabric.Infrastructure/Listener/NativeTrinityListener.cs StartLineNumber=59 StartCharacterOffset=0 EndLineNumber=59 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@28" Category="CodeSchema_Method" Bounds="1353.145,648.395,87.73,25.96" CodeSchemaProperty_IsProtected="True" CommonLabel="RunAsync" Icon="CodeSchema_Method" IsOverloaded="True" Label="RunAsync" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.ServiceFabric/Trinity.SF.GraphEngineRemotingClient/GraphEngineRemotingClient.cs StartLineNumber=451 StartCharacterOffset=0 EndLineNumber=451 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@4" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1195.02333333333,57.6475,81.9733333333334,25.96" Label="Dispatch">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@41" Category="CodeSchema_Method" Bounds="761.043333333334,518.8275,185.933333333333,25.96" CodeSchemaProperty_IsConstructor="True" CodeSchemaProperty_IsPublic="True" CommonLabel="GraphEngineRemotingClient" Icon="CodeSchema_Method" Label="GraphEngineRemotingClient" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.ServiceFabric/Trinity.SF.GraphEngineRemotingClient/GraphEngineRemotingClient.cs StartLineNumber=59 StartCharacterOffset=0 EndLineNumber=59 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@47" Category="CodeSchema_Method" Bounds="614.34,878.985000000001,79.3399999999999,25.96" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="GetType" Icon="CodeSchema_Method" Label="GetType" SourceLocation="(Assembly=file:///C:/Users/tavi.INKNOWWORKS/AppData/Local/JetBrains/Shared/vAny/DecompilerCache/decompiler/8355E653-6A29-450C-8CC2-6AB5714D767F/85/14c8ddd4/AssemblyUtility.cs StartLineNumber=203 StartCharacterOffset=0 EndLineNumber=203 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@50" Category="CodeSchema_Method" Bounds="361.56,706.042500000001,110.9,25.96" CodeSchemaProperty_IsPublic="True" CommonLabel="ConnectAsync" Icon="CodeSchema_Method" Label="ConnectAsync" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.ServiceFabric/Trinity.ServiceFabric.NativeClient.Remoting/TrinityOverNativeTCPClientConnectionFactory.cs StartLineNumber=24 StartCharacterOffset=0 EndLineNumber=24 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@52" Category="CodeSchema_Method" Bounds="790.078333333334,706.042500000001,109.863333333333,25.96" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPublic="True" CommonLabel="ClientInitialize" Icon="CodeSchema_Method" Label="ClientInitialize" SourceLocation="(Assembly=file:///C:/Users/tavi.INKNOWWORKS/AppData/Local/JetBrains/Shared/vAny/DecompilerCache/decompiler/8355E653-6A29-450C-8CC2-6AB5714D767F/23/c2e82a4f/CommunicationModule.cs StartLineNumber=60 StartCharacterOffset=0 EndLineNumber=60 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@54" Category="CodeSchema_Method" Bounds="1365.36666666667,706.0425,137.286666666667,25.96" CodeSchemaProperty_IsExtension="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="PostTriplesToServer" Icon="CodeSchema_Method" Label="PostTriplesToServer" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.ServiceFabric/Trinity.Client.TestProtocols/obj/x64/Debug/netcoreapp3.1/GeneratedCode/Lib/Protocols.cs StartLineNumber=406 StartCharacterOffset=0 EndLineNumber=406 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@55" Category="CodeSchema_Method" Bounds="696.326666666667,403.5325,315.366666666667,25.96" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPrivate="True" CommonLabel="System.Fabric.IStatelessServiceFactory.CreateInstance" Icon="CodeSchema_Method" Label="System.Fabric.IStatelessServiceFactory.CreateInstance">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@57" Category="CodeSchema_Method" Bounds="599.191666666667,936.632500000001,109.636666666667,25.96" CodeSchemaProperty_IsExtension="True" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="FirstOrDefault" Icon="CodeSchema_Method" Label="FirstOrDefault">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@58" Category="CodeSchema_Method" Bounds="21.3183333333334,763.690000000001,147.383333333333,25.96" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="GetBestClassInstance" Icon="CodeSchema_Method" Label="GetBestClassInstance" SourceLocation="(Assembly=file:///C:/Users/tavi.INKNOWWORKS/AppData/Local/JetBrains/Shared/vAny/DecompilerCache/decompiler/8355E653-6A29-450C-8CC2-6AB5714D767F/85/14c8ddd4/AssemblyUtility.cs StartLineNumber=303 StartCharacterOffset=0 EndLineNumber=303 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@6" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="608.681666666667,1051.9275,90.6566666666668,25.96" Label="MoveNext">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@61" Category="CodeSchema_Method" Bounds="1157.08833333333,461.18,157.843333333333,25.96" CodeSchemaProperty_IsAnonymous="True" Label="AnonymousMethod__0" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.ServiceFabric/Trinity.ServiceFabric.Infrastructure/Listener/GraphEngineListenerBase.cs StartLineNumber=70 StartCharacterOffset=0 EndLineNumber=70 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@62" Category="CodeSchema_Method" Bounds="775.088333333333,345.885,157.843333333333,25.96" CodeSchemaProperty_IsAnonymous="True" CodeSchemaProperty_IsExternal="True" Label="AnonymousMethod__0">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@63" Category="CodeSchema_Method" Bounds="1345.08833333333,461.18,157.843333333333,25.96" CodeSchemaProperty_IsAnonymous="True" CodeSchemaProperty_IsExternal="True" Label="AnonymousMethod__0">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@64" Category="CodeSchema_Method" Bounds="769.363333333334,461.18,169.293333333333,25.96" CodeSchemaProperty_IsAnonymous="True" Label="AnonymousMethod__0_0" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.ServiceFabric/Trinity.SF.GraphEngineRemotingClient/Program.cs StartLineNumber=36 StartCharacterOffset=0 EndLineNumber=36 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@65" Category="CodeSchema_Method" Bounds="16.0883333333336,1109.575,157.843333333333,25.96" CodeSchemaProperty_IsAnonymous="True" CodeSchemaProperty_IsExternal="True" Label="AnonymousMethod__2" SourceLocation="(Assembly=file:///C:/Users/tavi.INKNOWWORKS/AppData/Local/JetBrains/Shared/vAny/DecompilerCache/decompiler/8355E653-6A29-450C-8CC2-6AB5714D767F/85/14c8ddd4/AssemblyUtility.cs StartLineNumber=302 StartCharacterOffset=0 EndLineNumber=302 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@66" Category="CodeSchema_Method" Bounds="566.128333333334,763.690000000001,175.763333333333,25.96" CodeSchemaProperty_IsAnonymous="True" CodeSchemaProperty_IsExternal="True" Label="AnonymousMethod__28_2">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@67" Category="CodeSchema_Method" Bounds="612.88,706.042500000001,142.26,25.96" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="CreateCloudStorage" Icon="CodeSchema_Method" Label="CreateCloudStorage" SourceLocation="(Assembly=file:///C:/Users/tavi.INKNOWWORKS/AppData/Local/JetBrains/Shared/vAny/DecompilerCache/decompiler/8355E653-6A29-450C-8CC2-6AB5714D767F/cd/14ca8ada/Global.cs StartLineNumber=303 StartCharacterOffset=0 EndLineNumber=303 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@68" Category="CodeSchema_Method" Bounds="618.85,648.395,130.32,25.96" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPropertyGet="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="get_CloudStorage" Icon="CodeSchema_Method" Label="get_CloudStorage" SourceLocation="(Assembly=file:///C:/Users/tavi.INKNOWWORKS/AppData/Local/JetBrains/Shared/vAny/DecompilerCache/decompiler/8355E653-6A29-450C-8CC2-6AB5714D767F/cd/14ca8ada/Global.cs StartLineNumber=377 StartCharacterOffset=0 EndLineNumber=377 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@7" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="608.681666666667,1109.575,90.6566666666668,25.96" Label="MoveNext">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@70" Category="CodeSchema_Method" Bounds="580.423333333334,821.337500000001,147.173333333333,25.96" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPublic="True" CommonLabel="ResolveTypePriorities" Icon="CodeSchema_Method" Label="ResolveTypePriorities" SourceLocation="(Assembly=file:///C:/Users/tavi.INKNOWWORKS/AppData/Local/JetBrains/Shared/vAny/DecompilerCache/decompiler/8355E653-6A29-450C-8CC2-6AB5714D767F/c5/9c01d866/ExtensionConfig.cs StartLineNumber=71 StartCharacterOffset=0 EndLineNumber=71 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@71" Category="CodeSchema_Method" Bounds="855.81,590.7475,60.4,25.96" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsPublic="True" CommonLabel="Start" Icon="CodeSchema_Method" Label="Start" SourceLocation="(Assembly=file:///C:/Users/tavi.INKNOWWORKS/AppData/Local/JetBrains/Shared/vAny/DecompilerCache/decompiler/8355E653-6A29-450C-8CC2-6AB5714D767F/68/d90cf028/CommunicationInstance.cs StartLineNumber=208 StartCharacterOffset=0 EndLineNumber=208 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@72" Category="CodeSchema_Method" Bounds="977.81,518.8275,60.4,25.96" CodeSchemaProperty_IsPublic="True" CommonLabel="Start" Icon="CodeSchema_Method" IsOverloaded="True" Label="Start" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.ServiceFabric/Trinity.ServiceFabric.Infrastructure/Runtime/TrinityServerRuntimeManager.cs StartLineNumber=45 StartCharacterOffset=0 EndLineNumber=45 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@73" Category="CodeSchema_Method" Bounds="321.615,648.395000000001,190.79,25.96" CodeSchemaProperty_IsExternal="True" CodeSchemaProperty_IsProtected="True" CommonLabel="StartCommunicationListeners" Icon="CodeSchema_Method" IsOverloaded="True" Label="StartCommunicationListeners" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.Client/Trinity.Client/ClientSide/TrinityClient.cs StartLineNumber=73 StartCharacterOffset=0 EndLineNumber=73 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+      <Category Ref="ExternalCallStackEntry" />
+    </Node>
+    <Node Id="@74" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1144.89333333333,345.885,182.233333333334,25.96" Label="AnonymousMethod__274_0">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@77" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1416.88,518.8275,128.26,25.96" Label="ExecuteRunAsync">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@79" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1471.02166666667,648.395,273.976666666667,25.96" Label="HandleNonSuccessAndDebuggerNotification">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@8" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="36.8150000000003,878.985000000001,116.39,25.96" Label="GetEnumerator">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@80" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1533.24666666667,706.042500000001,149.526666666667,25.96" Label="ThrowForNonSuccess">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@82" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1166.15833333333,172.9425,139.703333333333,25.96" Label="ExecuteEntryUnsafe">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@83" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1154.07333333333,115.295,163.873333333333,25.96" Label="ExecuteFromThreadPool">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@84" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="2142.99,57.6475,130.473333333333,25.96" Label="ChangeRoleAsync">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@85" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="2094.96166666667,115.295,226.53,25.96" Label="OpenCommunicationListenersAsync">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@86" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="40.5500000000004,994.280000000001,108.92,25.9600000000002" Label="ComputeMap">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@87" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="66.1883333333337,936.632500000001,57.6433333333333,25.96" Label="Sort">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@88" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="40.5283333333339,1051.9275,108.963333333333,25.96" Label="ComputeKeys">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@89" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="608.06,994.280000000001,91.9000000000001,25.9599999999999" Label="TryGetFirst">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@90" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="957.29,230.59,165.44,25.96" Label="ExecuteWithThreadLocal">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@91" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1349.29,230.59,165.44,25.96" Label="ExecuteWithThreadLocal">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@92" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1153.29,230.59,165.44,25.96" Label="ExecuteWithThreadLocal">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@93" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="823.411666666667,821.337500000001,109.196666666667,25.96" Label="SendMessage" SourceLocation="(Assembly=file:///C:/Users/tavi.INKNOWWORKS/AppData/Local/JetBrains/Shared/vAny/DecompilerCache/decompiler/8355E653-6A29-450C-8CC2-6AB5714D767F/21/b7410427/MessagePassingExtensionMethods.cs StartLineNumber=20 StartCharacterOffset=0 EndLineNumber=20 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@95" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="823.411666666667,878.985000000001,109.196666666667,25.96" Label="SendMessage" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.Client/Trinity.Client/ClientSide/PassThroughIStorage.cs StartLineNumber=76 StartCharacterOffset=0 EndLineNumber=76 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@96" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="18.6100000000004,821.337500000001,152.8,25.96" Label="GetAllClassTypes_impl" SourceLocation="(Assembly=file:///C:/Users/tavi.INKNOWWORKS/AppData/Local/JetBrains/Shared/vAny/DecompilerCache/decompiler/8355E653-6A29-450C-8CC2-6AB5714D767F/85/14c8ddd4/AssemblyUtility.cs StartLineNumber=170 StartCharacterOffset=0 EndLineNumber=170 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
+    <Node Id="@97" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="1127.59166666667,288.2375,216.836666666667,25.96" Label="RunFromThreadPoolDispatchLoop">
+      <Category Ref="CallStackEntry" />
+    </Node>
+    <Node Id="@99" Category="CodeSchema_CallStackUnresolvedMethod" Bounds="772.268333333334,763.690000000001,211.483333333333,25.96" Label="GetCommunicationModuleOffset" SourceLocation="(Assembly=file:///C:/Users/tavi.INKNOWWORKS/AppData/Local/JetBrains/Shared/vAny/DecompilerCache/decompiler/8355E653-6A29-450C-8CC2-6AB5714D767F/21/b7410427/MessagePassingExtensionMethods.cs StartLineNumber=114 StartCharacterOffset=0 EndLineNumber=114 EndCharacterOffset=0)">
+      <Category Ref="CallStackEntry" />
+      <Category Ref="CodeSchema_SourceLocation" />
+    </Node>
   </Nodes>
   <Links>
-    <Link Source="@10" Target="@5" Bounds="195.018326066405,145.959756751939,1.94772979966729E-06,96.9604500000001" />
-    <Link Source="@10" Target="@9" Category="CodeSchema_Calls" Weight="1" />
-    <Link Source="@13" Target="@12" Category="CodeSchema_Calls" Weight="1" />
-    <Link Source="@13" Target="@5" Bounds="195.018326175342,201.919856751939,1.16771326474918E-06,41.00035" />
-    <Link Source="@2" Target="@4" Category="Contains" FetchingParent="@2" />
-    <Link Source="@4" Target="@2" Bounds="370.036651611328,226.919998168945,29,6.25190734863281" />
-    <Link Source="@4" Target="@5" Category="Contains" FetchingParent="@4" />
-    <Link Source="@4" Target="@6" Category="Contains" FetchingParent="@4" />
-    <Link Source="@5" Target="@12" Category="Contains" FetchingParent="@5" />
-    <Link Source="@5" Target="@9" Category="Contains" FetchingParent="@5" />
-    <Link Source="@6" Target="@10" Category="Contains" FetchingParent="@6" />
-    <Link Source="@6" Target="@13" Category="Contains" FetchingParent="@6" />
+    <Link Source="(@39 @40 Type=ServiceFactoryBroker Member=(Name=CreateInstance OverloadingParameters=[(@23 @43 Type=IntPtr),(@23 @43 Type=IntPtr),(@23 @43 Type=UInt32),(@23 @43 Type=IntPtr),(@23 @43 Type=Guid),(@23 @43 Type=Int64)]))" Target="@100" Category="CallStackDirectCall" Bounds="854.010009765625,256.549987792969,0,22.6875" />
+    <Link Source="(Name=&quot;[Async] System.Fabric.Interop.AsyncTaskCallInAdapter..ctor.AnonymousMethod__9_0&quot; @78 @9 OverloadingParameters=[(@76 Name=t)] @3)" Target="@84" Category="CallStackDirectCall" Bounds="2208.2265625,25.9599990844727,0,22.6875" />
+    <Link Source="(Name=System.Threading._ThreadPoolWaitCallback.PerformWaitCallback @1 @2 @3)" Target="@4" Category="CallStackDirectCall" Bounds="1236.01000976563,25.9599990844727,0,22.6875" />
+    <Link Source="(Name=Trinity.SF.GraphEngineDataService.Program.&lt;Main&gt; @14 @9 @3)" Target="(@69 Namespace=Trinity.SF.GraphEngineDataService Type=Program Member=Main)" Category="CallStackDirectCall" Bounds="1908.18835449219,326.782501220703,0,21" />
+    <Link Source="@10" Target="@79" Category="CallStackDirectCall" Bounds="1509.60546875,616.70751953125,61.61376953125,27.967529296875" />
+    <Link Source="@100" Target="@62" Category="CallStackDirectCall" Bounds="854.010009765625,314.197509765625,0,22.6875" />
+    <Link Source="@11" Target="(@21 @22 Type=ServiceHelper @59)" Category="CallStackDirectCall" Bounds="1067.73181152344,429.492492675781,25.99365234375,25.3977661132813" />
+    <Link Source="@12" Target="@63" Category="CallStackDirectCall" Bounds="1378.29455566406,429.492492675781,25.99365234375,25.3977661132813" />
+    <Link Source="@13" Target="@61" Category="CallStackDirectCall" Bounds="1236.01000976563,429.492492675781,0,22.6875" />
+    <Link Source="@16" Target="(@60 Namespace=Trinity.DynamicCluster.Storage Type=DynamicMemoryCloud @59)" Category="CallStackDirectCall" Bounds="1218.01000976563,732.002502441406,0,22.6875" />
+    <Link Source="@17" Target="@52" Category="CallStackDirectCall" Bounds="845.010009765625,674.35498046875,0,22.6875" />
+    <Link Source="@18" Target="@16" Category="CallStackDirectCall" Bounds="1230.23767089844,674.35498046875,14.1168212890625,23.9353637695313" />
+    <Link Source="@20" Target="@58" Category="CallStackDirectCall" Bounds="95.0100021362305,732.002502441406,0,22.6875" />
+    <Link Source="@24" Target="@28" Category="CallStackDirectCall" Bounds="1226.54553222656,616.70751953125,118.2509765625,30.9857788085938" />
+    <Link Source="@26" Target="(@36 @37 Type=TrinityOverNativeTCPCommunicationService Member=(@38 OverloadingParameters=[(@39 @40 Type=StatefulServiceContext)]))" Category="CallStackDirectCall" Bounds="2208.2265625,213.175003051758,0,22.6875" />
+    <Link Source="@26" Target="(@36 @37 Type=TrinityOverNativeTCPCommunicationService Member=.ctor)" Category="CallStackDirectCall" Bounds="1985.38720703125,209.462951660156,174.76953125,33.6957244873047" />
+    <Link Source="@28" Target="@54" Category="CallStackDirectCall" Bounds="1405.34094238281,674.35498046875,15.476806640625,24.1134033203125" />
+    <Link Source="@4" Target="@83" Category="CallStackDirectCall" Bounds="1236.01000976563,83.6074981689453,0,22.6875" />
+    <Link Source="@4" Target="@90" Category="CallStackDirectCall" Bounds="1051.97692871094,81.0730056762695,143.082763671875,141.717918395996" />
+    <Link Source="@4" Target="@91" Category="CallStackDirectCall" Bounds="1276.96032714844,81.0730056762695,143.082763671875,141.717918395996" />
+    <Link Source="@41" Target="(@42 Namespace=Trinity.Client Type=TrinityClient Member=(@38 OverloadingParameters=[(@23 @43 Type=String)]))" Category="CallStackDirectCall" Bounds="796.703918457031,544.787475585938,43.228759765625,39.8591918945313" />
+    <Link Source="@41" Target="@71" Category="CallStackDirectCall" Bounds="859.785278320313,544.787475585938,16.790771484375,37.7372436523438" />
+    <Link Source="@47" Target="@57" Category="CallStackDirectCall" Bounds="654.010009765625,904.945007324219,0,22.6875" />
+    <Link Source="@50" Target="(@36 @37 Type=(Name=TrinityOverNativeTCPClientConnection @48) Member=(@38 OverloadingParameters=[(@23 @43 Type=String),(@44 Namespace=Trinity.Network Type=ICommunicationModuleRegistry)]))" Category="CallStackDirectCall" Bounds="417.010009765625,732.002502441406,0,22.6875" />
+    <Link Source="@52" Target="@99" Category="CallStackDirectCall" Bounds="852.440307617188,732.002502441406,13.6681518554688,23.876708984375" />
+    <Link Source="@54" Target="(@44 Namespace=Trinity.Storage Type=MessagePassingExtensionMethods Member=(Name=SendMessage @48 OverloadingParameters=[(@44 Namespace=Trinity.Storage Type=IMessagePassingEndpoint),(@23 @43 Type=(Name=Byte Indirection=2)),(@23 @43 Type=(Name=Int32 Indirection=1)),(@23 @43 Type=Int32)]))" Category="CallStackDirectCall" Bounds="1434.01000976563,732.002502441406,0,22.6875" />
+    <Link Source="@55" Target="@64" Category="CallStackDirectCall" Bounds="854.010009765625,429.492492675781,0,22.6875" />
+    <Link Source="@57" Target="@89" Category="CallStackDirectCall" Bounds="654.010009765625,962.592529296875,0,22.6875" />
+    <Link Source="@58" Target="@96" Category="CallStackDirectCall" Bounds="95.0100021362305,789.650024414063,0,22.6875" />
+    <Link Source="@6" Target="@7" Category="CallStackDirectCall" Bounds="654.010009765625,1077.88745117188,0,22.6875" />
+    <Link Source="@61" Target="@72" Category="CallStackDirectCall" Bounds="1046.93542480469,487.140014648438,137.73779296875,34.8255615234375" />
+    <Link Source="@62" Target="@55" Category="CallStackDirectCall" Bounds="854.010009765625,371.845001220703,0,22.6875" />
+    <Link Source="@63" Target="@77" Category="CallStackDirectCall" Bounds="1436.84423828125,487.140014648438,25.003662109375,25.2876586914063" />
+    <Link Source="@64" Target="@41" Category="CallStackDirectCall" Bounds="854.010009765625,487.140014648438,0,22.6875" />
+    <Link Source="@65" Target="(Name=Trinity.Client.TrinityClient.ScanClientConnectionFactory.__RankFunc|0 @19 Type=int OverloadingParameters=[(Type=&quot;System.Type {System.RuntimeType}&quot; Name=t)] @3)" Category="CallStackDirectCall" Bounds="95.0100021362305,1135.53503417969,0,22.6875" />
+    <Link Source="@66" Target="@70" Category="CallStackDirectCall" Bounds="654.010009765625,789.650024414063,0,22.6875" />
+    <Link Source="@67" Target="@66" Category="CallStackDirectCall" Bounds="664.919555664063,732.002502441406,12.3355712890625,23.703857421875" />
+    <Link Source="@68" Target="@67" Category="CallStackDirectCall" Bounds="684.010009765625,674.35498046875,0,22.6875" />
+    <Link Source="@7" Target="(@44 @45 @46 @59)" Category="CallStackDirectCall" Bounds="654.010009765625,1135.53503417969,0,22.6875" />
+    <Link Source="@70" Target="@47" Category="CallStackDirectCall" Bounds="654.010009765625,847.297485351563,0,22.6875" />
+    <Link Source="@71" Target="(Name=Trinity.Network.CommunicationInstance._ScanForAutoRegisteredModules @15 @9 @3)" Category="CallStackDirectCall" Bounds="916.085266113281,614.563537597656,85.4317016601563,30.78076171875" />
+    <Link Source="@71" Target="@17" Category="CallStackDirectCall" Bounds="859.457885742188,616.70751953125,17.3204956054688,24.353271484375" />
+    <Link Source="@71" Target="@18" Category="CallStackDirectCall" Bounds="916.210021972656,613.002685546875,256.932922363281,35.9501953125" />
+    <Link Source="@71" Target="@68" Category="CallStackDirectCall" Bounds="738.147094726563,612.346069335938,117.662902832031,33.5791015625" />
+    <Link Source="@71" Target="@73" Category="CallStackDirectCall" Bounds="521.368041992188,614.061767578125,334.462951660156,37.8255004882813" />
+    <Link Source="@72" Target="@71" Category="CallStackDirectCall" Bounds="915.781433105469,544.787475585938,70.210205078125,41.3895263671875" />
+    <Link Source="@73" Target="(@49 Namespace=Trinity.ServiceFabric.Remoting Type=ServiceFabricRemotingConnectionClientFactory Member=(Name=ConnectAsync OverloadingParameters=[(@23 @43 Type=String),(@44 Namespace=Trinity.Network Type=ICommunicationModuleRegistry)]))" Category="CallStackDirectCall" Bounds="316.088409423828,674.35498046875,69.173828125,28.2815551757813" />
+    <Link Source="@73" Target="(Name=Trinity.Client.ClientMemoryCloud.Initialize @19 @9 OverloadingParameters=[(Type=&quot;Trinity.Storage.IMessagePassingEndpoint {Trinity.ServiceFabric.NativeClient.Remoting.TrinityOverNativeTCPClientConnection&lt;Trinity.ServiceFabric.NativeClient.Remoting.TrinityOverNativeTCPClientProxy&gt;}&quot; Name=ep),(Type=Trinity.Client.TrinityClient Name=tc)] @3)" Category="CallStackDirectCall" Bounds="445.380340576172,674.35498046875,61.0751953125,27.943115234375" />
+    <Link Source="@73" Target="@20" Category="CallStackDirectCall" Bounds="176.371154785156,674.35498046875,168.136840820313,30.1015014648438" />
+    <Link Source="@73" Target="@50" Category="CallStackDirectCall" Bounds="417.010009765625,674.35498046875,0,22.6875" />
+    <Link Source="@74" Target="@11" Category="CallStackDirectCall" Bounds="1144.27270507813,371.845001220703,62.69140625,28.0155639648438" />
+    <Link Source="@74" Target="@12" Category="CallStackDirectCall" Bounds="1265.05578613281,371.845001220703,62.6915283203125,28.0155639648438" />
+    <Link Source="@74" Target="@13" Category="CallStackDirectCall" Bounds="1236.01000976563,371.845001220703,0,22.6875" />
+    <Link Source="@77" Target="@10" Category="CallStackIndirectCall" Bounds="1481.01000976563,544.787475585938,0,36.9600219726563" Label="Async Call" LabelBounds="1427.4,559.7875,53.6100000000001,15.96" />
+    <Link Source="@77" Target="@24" Category="CallStackDirectCall" Bounds="1240.63366699219,544.787475585938,185.510986328125,43.8880004882813" />
+    <Link Source="@77" Target="@79" Category="CallStackIndirectCall" Bounds="1526.85144042969,544.787475585938,81.1585693359375,94.6075439453125" Label="Async Call" LabelBounds="1554.4,595.7475,53.6099999999999,15.96" />
+    <Link Source="@79" Target="@80" Category="CallStackDirectCall" Bounds="1608.01000976563,674.35498046875,0,22.6875" />
+    <Link Source="@8" Target="@87" Category="CallStackDirectCall" Bounds="95.0100021362305,904.945007324219,0,22.6875" />
+    <Link Source="@80" Target="(Name=System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw @1 @9 @3)" Category="CallStackDirectCall" Bounds="1608.01000976563,732.002502441406,0,22.6875" />
+    <Link Source="@82" Target="@90" Category="CallStackDirectCall" Bounds="1100.07153320313,198.902496337891,99.011962890625,29.4786071777344" />
+    <Link Source="@82" Target="@91" Category="CallStackDirectCall" Bounds="1272.48620605469,198.902496337891,99.00732421875,29.4966278076172" />
+    <Link Source="@82" Target="@92" Category="CallStackDirectCall" Bounds="1236.01000976563,198.902496337891,0,22.6875" />
+    <Link Source="@83" Target="@82" Category="CallStackDirectCall" Bounds="1236.01000976563,141.255004882813,0,22.6875" />
+    <Link Source="@84" Target="@85" Category="CallStackDirectCall" Bounds="2208.2265625,83.6074981689453,0,22.6875" />
+    <Link Source="@85" Target="@26" Category="CallStackIndirectCall" Bounds="2208.2265625,141.255004882813,0,36.9599914550781" Label="Async Call" LabelBounds="2154.61666666667,156.255,53.6100000000006,15.96" />
+    <Link Source="@86" Target="@88" Category="CallStackDirectCall" Bounds="95.0100021362305,1020.23999023438,0,22.6875" />
+    <Link Source="@87" Target="@86" Category="CallStackDirectCall" Bounds="95.0100021362305,962.592529296875,0,22.6875" />
+    <Link Source="@88" Target="@65" Category="CallStackDirectCall" Bounds="95.0100021362305,1077.88745117188,0,22.6875" />
+    <Link Source="@89" Target="@6" Category="CallStackDirectCall" Bounds="654.010009765625,1020.23999023438,0,22.6875" />
+    <Link Source="@90" Target="@97" Category="CallStackDirectCall" Bounds="1084.1416015625,256.549987792969,99.1024169921875,29.1480102539063" />
+    <Link Source="@91" Target="@97" Category="CallStackDirectCall" Bounds="1288.77600097656,256.549987792969,99.102294921875,29.1480102539063" />
+    <Link Source="@92" Target="@97" Category="CallStackDirectCall" Bounds="1236.01000976563,256.549987792969,0,22.6875" />
+    <Link Source="@93" Target="@95" Category="CallStackDirectCall" Bounds="878.010009765625,847.297485351563,0,22.6875" />
+    <Link Source="@95" Target="(Name=Trinity.ServiceFabric.NativeClient.Remoting.TrinityOverNativeTCPClientConnection&lt;Trinity.ServiceFabric.NativeClient.Remoting.TrinityOverNativeTCPClientProxy&gt;.SendMessage @94 @9 OverloadingParameters=[(Type=byte* Name=message),(Type=int Name=size),(Type=Trinity.Network.Messaging.TrinityResponse Name=response)] @3)" Category="CallStackDirectCall" Bounds="878.010009765625,904.945007324219,0,22.6875" />
+    <Link Source="@96" Target="@8" Category="CallStackDirectCall" Bounds="95.0100021362305,847.297485351563,0,22.6875" />
+    <Link Source="@97" Target="@11" Category="CallStackDirectCall" Bounds="1107.01000976563,314.197509765625,70.9083251953125,80.3349914550781" />
+    <Link Source="@97" Target="@12" Category="CallStackDirectCall" Bounds="1290.94946289063,314.197509765625,72.2835693359375,80.3643493652344" />
+    <Link Source="@97" Target="@74" Category="CallStackDirectCall" Bounds="1236.01000976563,314.197509765625,0,22.6875" />
+    <Link Source="@99" Target="@93" Category="CallStackDirectCall" Bounds="878.010009765625,789.650024414063,0,22.6875" />
   </Links>
   <Categories>
-    <Category Id="CodeSchema_Assembly" Label="Assembly" BasedOn="File" CanBeDataDriven="True" DefaultAction="Microsoft.Contains" Icon="CodeSchema_Assembly" NavigationActionLabel="Assemblies" />
-    <Category Id="CodeSchema_Calls" Label="Calls" CanBeDataDriven="True" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Called By" OutgoingActionLabel="Calls" />
-    <Category Id="CodeSchema_Class" Label="Class" BasedOn="CodeSchema_Type" CanBeDataDriven="True" DefaultAction="Node:Both:CodeSchema_Member" Icon="CodeSchema_Class" NavigationActionLabel="Classes" />
+    <Category Id="CallStackDirectCall" Label="Call Stack direct call" CanBeDataDriven="True" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Call Stack direct call" OutgoingActionLabel="Call Stack direct call" />
+    <Category Id="CallStackEntry" Label="Call Stack Entry" CanBeDataDriven="True" IsProviderRoot="False" NavigationActionLabel="Call Stack Entry" />
+    <Category Id="CallStackIndirectCall" Label="Call Stack indirect call" CanBeDataDriven="True" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Call Stack indirect call" OutgoingActionLabel="Call Stack indirect call" />
+    <Category Id="CodeSchema_CallStackUnresolvedMethod" Label="Unresolved Method" CanBeDataDriven="True" DefaultAction="Microsoft.AllOutBoundLinks" IsProviderRoot="False" NavigationActionLabel="Unresolved Method" />
     <Category Id="CodeSchema_Member" Label="Member" CanBeDataDriven="True" DefaultAction="Microsoft.Contains" Icon="CodeSchema_Field" NavigationActionLabel="Members" />
     <Category Id="CodeSchema_Method" Label="Method" BasedOn="CodeSchema_Member" CanBeDataDriven="True" DefaultAction="Link:Forward:CodeSchema_Calls" Icon="CodeSchema_Method" NavigationActionLabel="Methods" />
-    <Category Id="CodeSchema_Namespace" Label="Namespace" CanBeDataDriven="True" DefaultAction="Node:Both:CodeSchema_Type" Icon="CodeSchema_Namespace" NavigationActionLabel="Namespaces" />
-    <Category Id="CodeSchema_Type" Label="Type" CanBeDataDriven="True" DefaultAction="Node:Both:CodeSchema_Member" Icon="CodeSchema_Class" NavigationActionLabel="Types" />
-    <Category Id="Contains" Label="Contains" Description="Whether the source of the link contains the target object" CanBeDataDriven="False" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Contained By" IsContainment="True" OutgoingActionLabel="Contains" />
-    <Category Id="File" Label="File" CanBeDataDriven="True" DefaultAction="Microsoft.Contains" Icon="File" NavigationActionLabel="Files" />
+    <Category Id="CodeSchema_SourceLocation" Label="Source Location" Icon="File" />
+    <Category Id="ExternalCallStackEntry" Label="External Call Stack Entry" CanBeDataDriven="True" IsProviderRoot="False" NavigationActionLabel="External Call Stack Entry" />
   </Categories>
   <Properties>
-    <Property Id="AssemblyTimestamp" DataType="System.DateTime" />
     <Property Id="Bounds" DataType="System.Windows.Rect" />
     <Property Id="CanBeDataDriven" Label="CanBeDataDriven" Description="CanBeDataDriven" DataType="System.Boolean" />
     <Property Id="CanLinkedNodesBeDataDriven" Label="CanLinkedNodesBeDataDriven" Description="CanLinkedNodesBeDataDriven" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsAnonymous" Label="Is Anonymous" Description="Flag indicating if this delegate, type, or method is anonymous" DataType="System.Boolean" />
     <Property Id="CodeSchemaProperty_IsConstructor" Label="Is Constructor" Description="Flag to indicate the method is a constructor" DataType="System.Boolean" />
-    <Property Id="CodeSchemaProperty_IsFinal" Label="Is Final" Description="Flag to indicate the member is 'Final' and cannot be derived from" DataType="System.Boolean" />
-    <Property Id="CodeSchemaProperty_IsInternal" Label="Is Internal" Description="Flag to indicate the method is 'Internal'" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsExtension" Label="Is Extension" Description="Flag indicating if the method is an extension method" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsExternal" Label="Is External" Description="Flag indicating whether this node is considered external" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsPrivate" Label="Is Private" Description="Flag to indicate the scope is Private" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsPropertyGet" Label="Is Property Get" Description="Flag to indicate the frame is a Property Get" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsProtected" Label="Is Protected" Description="Flag to indicate the scope is Protected" DataType="System.Boolean" />
     <Property Id="CodeSchemaProperty_IsPublic" Label="Is Public" Description="Flag to indicate the scope is Public" DataType="System.Boolean" />
-    <Property Id="CodeSchemaProperty_IsSpecialName" Label="Is Special Name" Description="Flag to indicate the method is treated in a special way by some compilers" DataType="System.Boolean" />
     <Property Id="CodeSchemaProperty_IsStatic" Label="Is Static" Description="Flag to indicate the member is a static member" DataType="System.Boolean" />
-    <Property Id="CodeSchemaProperty_IsVirtual" Label="Is Virtual" Description="Flag to indicate the method can be overridden" DataType="System.Boolean" />
-    <Property Id="CodeSchemaProperty_StrongName" Label="StrongName" Description="StrongName" DataType="System.String" />
     <Property Id="CommonLabel" DataType="System.String" />
     <Property Id="DataVirtualized" Label="Data Virtualized" Description="If true, the graph can contain nodes and links that represent data for virtualized nodes/links (i.e. not actually created in the graph)." DataType="System.Boolean" />
     <Property Id="DefaultAction" Label="DefaultAction" Description="DefaultAction" DataType="System.String" />
-    <Property Id="DelayedChildNodesState" Label="Delayed Child Nodes State" Description="Unspecified if the delayed child nodes state is not specified. NotFetched if the group contains child nodes that are not fetched into the graph yet. Fetched if the group has all its delayed child nodes already fetched." DataType="Microsoft.VisualStudio.GraphModel.DelayedDataState" />
-    <Property Id="DelayedCrossGroupLinksState" Label="Delayed Cross-Group Links State" Description="Unspecified if the delayed cross-group links state is not specified. NotFetched if delayed cross-group links on this node are not fetched into the graph yet. Fetched if all delayed cross-group links have already fetched." DataType="Microsoft.VisualStudio.GraphModel.DelayedDataState" />
     <Property Id="Expression" DataType="System.String" />
-    <Property Id="FetchingParent" DataType="Microsoft.VisualStudio.GraphModel.GraphNodeId" />
-    <Property Id="FilePath" Label="File Path" Description="File Path" DataType="System.String" />
-    <Property Id="Group" Label="Group" Description="Display the node as a group" DataType="Microsoft.VisualStudio.GraphModel.GraphGroupStyle" />
     <Property Id="GroupLabel" DataType="System.String" />
     <Property Id="Icon" Label="Icon" DataType="System.String" />
     <Property Id="IncomingActionLabel" Label="IncomingActionLabel" Description="IncomingActionLabel" DataType="System.String" />
-    <Property Id="IsContainment" DataType="System.Boolean" />
     <Property Id="IsEnabled" DataType="System.Boolean" />
+    <Property Id="IsOverloaded" Label="IsOverloaded" Description="IsOverloaded" DataType="System.Boolean" />
+    <Property Id="IsProviderRoot" Label="IsProviderRoot" Description="IsProviderRoot" DataType="System.Boolean" />
     <Property Id="Label" Label="Label" Description="Displayable label of an Annotatable object" DataType="System.String" />
+    <Property Id="LabelBounds" DataType="System.Windows.Rect" />
     <Property Id="Layout" DataType="System.String" />
     <Property Id="NavigationActionLabel" Label="NavigationActionLabel" Description="NavigationActionLabel" DataType="System.String" />
     <Property Id="OutgoingActionLabel" Label="OutgoingActionLabel" Description="OutgoingActionLabel" DataType="System.String" />
+    <Property Id="SourceLocation" Label="Start Line Number" DataType="Microsoft.VisualStudio.GraphModel.CodeSchema.SourceLocation" />
     <Property Id="TargetType" DataType="System.Type" />
-    <Property Id="UseManualLocation" DataType="System.Boolean" />
     <Property Id="Value" DataType="System.String" />
     <Property Id="ValueLabel" DataType="System.String" />
     <Property Id="Visibility" Label="Visibility" Description="Defines whether a node in the graph is visible or not" DataType="System.Windows.Visibility" />
-    <Property Id="Weight" Label="Weight" Description="Weight" DataType="System.Double" />
-    <Property Id="ZoomLevel" DataType="System.String" />
   </Properties>
   <QualifiedNames>
+    <Name Id="ArrayRank" Label="Array Rank" ValueType="System.String" />
     <Name Id="Assembly" Label="Assembly" ValueType="Uri" />
+    <Name Id="GenericArguments" Label="Generic Arguments" ValueType="Microsoft.VisualStudio.GraphModel.GraphNodeIdCollection" />
+    <Name Id="GenericParameterCount" Label="Generic Parameter Count" ValueType="System.String" />
+    <Name Id="Indirection" Label="Indirection" ValueType="System.String" />
+    <Name Id="IsUnresolved" Label="Is Unresolved" ValueType="System.String" />
     <Name Id="Member" Label="Member" ValueType="System.Object" />
     <Name Id="Name" Label="Name" ValueType="System.String" />
     <Name Id="Namespace" Label="Namespace" ValueType="System.String" />
     <Name Id="OverloadingParameters" Label="Parameter" ValueType="Microsoft.VisualStudio.GraphModel.GraphNodeIdCollection" Formatter="NameValueNoEscape" />
+    <Name Id="ParameterIdentifier" Label="Parameter Identifier" ValueType="System.String" />
+    <Name Id="ParentType" Label="Parent Type" ValueType="System.Object" />
     <Name Id="Type" Label="Type" ValueType="System.Object" />
   </QualifiedNames>
   <IdentifierAliases>
-    <Alias n="1" Uri="Assembly=$(9dfae3cc-d446-4a93-984b-f5e0fb840c84.OutputPathUri)" />
-    <Alias n="2" Id="(@1)" />
-    <Alias n="3" Id="Namespace=Trinity.ServiceFabric.Remoting" />
-    <Alias n="4" Id="(@1 @3)" />
-    <Alias n="5" Id="(@1 @3 Type=ServiceFabricRemotingClientConnection)" />
-    <Alias n="6" Id="(@1 @3 Type=ServiceFabricRemotingConnectionClientFactory)" />
-    <Alias n="7" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/netcoreapp3.1/System.Runtime.dll" />
-    <Alias n="8" Uri="Assembly=file:///C:/Users/tavi.INKNOWWORKS/.nuget/packages/graphengine.core/2.0.10491/lib/netstandard2.0/Trinity.Core.dll" />
-    <Alias n="9" Id="(@1 @3 Type=ServiceFabricRemotingClientConnection Member=(Name=.ctor OverloadingParameters=[(@7 Namespace=System Type=String),(@8 Namespace=Trinity.Network Type=ICommunicationModuleRegistry)]))" />
-    <Alias n="10" Id="(@1 @3 Type=ServiceFabricRemotingConnectionClientFactory Member=(Name=ConnectAsync OverloadingParameters=[(@7 Namespace=System Type=String),(@8 Namespace=Trinity.Network Type=ICommunicationModuleRegistry)]))" />
-    <Alias n="11" Uri="Assembly=file:///C:/Users/tavi.INKNOWWORKS/.nuget/packages/microsoft.servicefabric.services/4.1.428/lib/netstandard2.0/Microsoft.ServiceFabric.Services.dll" />
-    <Alias n="12" Id="(@1 @3 Type=ServiceFabricRemotingClientConnection Member=(Name=.ctor OverloadingParameters=[(@7 Namespace=System Type=String),(@8 Namespace=Trinity.Network Type=ICommunicationModuleRegistry),(@11 Namespace=Microsoft.ServiceFabric.Services.Client Type=ServicePartitionKey)]))" />
-    <Alias n="13" Id="(@1 @3 Type=ServiceFabricRemotingConnectionClientFactory Member=(Name=ConnectAsync OverloadingParameters=[(@7 Namespace=System Type=String),(@8 Namespace=Trinity.Network Type=ICommunicationModuleRegistry),(@11 Namespace=Microsoft.ServiceFabric.Services.Client Type=ServicePartitionKey)]))" />
+    <Alias n="1" Uri="Assembly=System.Private.CoreLib.dll" />
+    <Alias n="2" Id="Type=bool" />
+    <Alias n="3" Id="IsUnresolved=True" />
+    <Alias n="4" Id="(Name=System.Threading.ThreadPoolWorkQueue.Dispatch @1 @2 @3)" />
+    <Alias n="5" Uri="Assembly=System.Linq.dll" />
+    <Alias n="6" Id="(Name=System.Linq.Enumerable.ConcatIterator&lt;System.Type&gt;.MoveNext @5 @2 @3)" />
+    <Alias n="7" Id="(Name=System.Linq.Enumerable.WhereListIterator&lt;System.Type&gt;.MoveNext @5 @2 @3)" />
+    <Alias n="8" Id="(Name=System.Linq.OrderedEnumerable&lt;System.Type&gt;.GetEnumerator @5 Type=System.Collections.Generic.IEnumerator&lt;System.Type&gt; @3)" />
+    <Alias n="9" Id="Type=void" />
+    <Alias n="10" Id="(Name=System.Runtime.CompilerServices.TaskAwaiter.GetResult @1 @9 @3)" />
+    <Alias n="11" Id="(Name=System.Threading.Tasks.Task.InnerInvoke @1 @9 @3)" />
+    <Alias n="12" Id="(Name=System.Threading.Tasks.Task&lt;System.Threading.Tasks.Task&gt;.InnerInvoke @1 @9 @3)" />
+    <Alias n="13" Id="(Name=System.Threading.Tasks.Task&lt;Trinity.TrinityErrorCode&gt;.InnerInvoke @1 @9 @3)" />
+    <Alias n="14" Uri="Assembly=Trinity.SF.GraphEngineDataService.dll" />
+    <Alias n="15" Uri="Assembly=Trinity.Core.dll" />
+    <Alias n="16" Id="(Name=Trinity.Global._RaiseCommunicationInstanceStarted @15 @9 @3)" />
+    <Alias n="17" Id="(Name=Trinity.Network.CommunicationInstance._InitializeModules @15 @9 @3)" />
+    <Alias n="18" Id="(Name=Trinity.Network.CommunicationInstance._RaiseStartedEvents @15 @9 @3)" />
+    <Alias n="19" Uri="Assembly=Trinity.Client.dll" />
+    <Alias n="20" Id="(Name=Trinity.Client.TrinityClient.ScanClientConnectionFactory @19 @9 @3)" />
+    <Alias n="21" Uri="Assembly=file:///C:/Users/tavi.INKNOWWORKS/.nuget/packages/microsoft.servicefabric.services/4.1.428/lib/netstandard2.0/Microsoft.ServiceFabric.Services.dll" />
+    <Alias n="22" Id="Namespace=Microsoft.ServiceFabric.Services.Runtime" />
+    <Alias n="23" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/netcoreapp3.1/System.Runtime.dll" />
+    <Alias n="24" Id="(@21 @22 Type=StatelessService Member=(Name=Microsoft.ServiceFabric.Services.Runtime.IStatelessUserServiceInstance.RunAsync OverloadingParameters=[(@23 Namespace=System.Threading Type=CancellationToken)]))" />
+    <Alias n="25" Uri="Assembly=$(1c1b605c-403d-44d7-a52c-c994f7acae59.OutputPathUri)" />
+    <Alias n="26" Id="(@25 Namespace=Trinity.ServiceFabric.Listener Type=NativeTrinityListener Member=(Name=OpenAsync OverloadingParameters=[(@23 Namespace=System.Threading Type=CancellationToken)]))" />
+    <Alias n="27" Uri="Assembly=$(8b619b1f-1ef0-43f2-b716-b4a6ad3b8c43.OutputPathUri)" />
+    <Alias n="28" Id="(@27 Namespace=Trinity.SF.GraphEngineRemotingClient Type=GraphEngineRemotingClient Member=(Name=RunAsync OverloadingParameters=[(@23 Namespace=System.Threading Type=CancellationToken)]))" />
+    <Alias n="36" Uri="Assembly=$(2c2668c2-167f-4c7d-a125-96fcec3ad135.OutputPathUri)" />
+    <Alias n="37" Id="Namespace=Trinity.ServiceFabric.NativeClient.Remoting" />
+    <Alias n="38" Id="Name=.ctor" />
+    <Alias n="39" Uri="Assembly=file:///C:/Users/tavi.INKNOWWORKS/.nuget/packages/microsoft.servicefabric/7.1.428/lib/netstandard2.0/System.Fabric.dll" />
+    <Alias n="40" Id="Namespace=System.Fabric" />
+    <Alias n="41" Id="(@27 Namespace=Trinity.SF.GraphEngineRemotingClient Type=GraphEngineRemotingClient Member=(@38 OverloadingParameters=[(@39 @40 Type=StatelessServiceContext)]))" />
+    <Alias n="42" Uri="Assembly=file:///C:/Users/tavi.INKNOWWORKS/.nuget/packages/graphengine.client/2.0.10502/lib/netstandard2.0/Trinity.Client.dll" />
+    <Alias n="43" Id="Namespace=System" />
+    <Alias n="44" Uri="Assembly=file:///C:/Users/tavi.INKNOWWORKS/.nuget/packages/graphengine.core/2.0.10502/lib/netstandard2.0/Trinity.Core.dll" />
+    <Alias n="45" Id="Namespace=Trinity.Utilities" />
+    <Alias n="46" Id="Type=AssemblyUtility" />
+    <Alias n="47" Id="(@44 @45 @46 Member=(Name=GetType OverloadingParameters=[(@23 @43 Type=String)]))" />
+    <Alias n="48" Id="GenericParameterCount=1" />
+    <Alias n="49" Uri="Assembly=$(9dfae3cc-d446-4a93-984b-f5e0fb840c84.OutputPathUri)" />
+    <Alias n="50" Id="(@36 @37 Type=TrinityOverNativeTCPClientConnectionFactory Member=(Name=ConnectAsync OverloadingParameters=[(@23 @43 Type=String),(@44 Namespace=Trinity.Network Type=ICommunicationModuleRegistry)]))" />
+    <Alias n="51" Id="Namespace=Trinity" />
+    <Alias n="52" Id="(@44 Namespace=Trinity.Network Type=CommunicationModule Member=(Name=ClientInitialize OverloadingParameters=[(@44 @51 Type=RunningMode),(@44 Namespace=Trinity.Storage Type=MemoryCloud)]))" />
+    <Alias n="53" Uri="Assembly=$(829ba52b-bdc9-4f74-bb5b-0f9ea74d44df.OutputPathUri)" />
+    <Alias n="54" Id="(@53 Namespace=Trinity.Client.TestProtocols.TripleServer Type=MessagePassingExtension Member=(Name=PostTriplesToServer OverloadingParameters=[(@44 Namespace=Trinity.Storage Type=IMessagePassingEndpoint),(@53 Namespace=Trinity.Client.TestProtocols Type=TripleStreamWriter)]))" />
+    <Alias n="55" Id="(@21 @22 Type=StatelessServiceInstanceFactory Member=(Name=System.Fabric.IStatelessServiceFactory.CreateInstance OverloadingParameters=[(@23 @43 Type=String),(@23 @43 Type=Uri),(@23 @43 Type=(Name=Byte ArrayRank=1 ParentType=Byte)),(@23 @43 Type=Guid),(@23 @43 Type=Int64)]))" />
+    <Alias n="56" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/netcoreapp3.1/System.Linq.dll" />
+    <Alias n="57" Id="(@56 Namespace=System.Linq Type=Enumerable Member=(Name=FirstOrDefault @48 OverloadingParameters=[(@23 Namespace=System.Collections.Generic Type=(Name=IEnumerable @48 GenericArguments=[(ParameterIdentifier=0)]))]))" />
+    <Alias n="58" Id="(@44 @45 @46 Member=(Name=GetBestClassInstance GenericParameterCount=2 OverloadingParameters=[(@23 @43 Type=(Name=Func GenericParameterCount=2 GenericArguments=[(@23 @43 Type=Type),(ParameterIdentifier=0)])),(@23 @43 Type=(Name=Func GenericParameterCount=2 GenericArguments=[(@23 @43 Type=Type),(@23 @43 Type=Int32)]))]))" />
+    <Alias n="59" Id="Member=AnonymousMethod__0" />
+    <Alias n="60" Uri="Assembly=file:///C:/Users/tavi.INKNOWWORKS/.nuget/packages/graphengine.dynamiccluster/2.0.10502/lib/netstandard2.0/Trinity.DynamicCluster.dll" />
+    <Alias n="61" Id="(@25 Namespace=Trinity.ServiceFabric.Listener Type=GraphEngineListenerBase @59)" />
+    <Alias n="62" Id="(@39 @40 Type=ServiceFactoryBroker @59)" />
+    <Alias n="63" Id="(@21 @22 Type=StatelessServiceInstanceAdapter @59)" />
+    <Alias n="64" Id="(@27 Namespace=Trinity.SF.GraphEngineRemotingClient Type=Program Member=AnonymousMethod__0_0)" />
+    <Alias n="65" Id="(@44 @45 @46 Member=AnonymousMethod__2)" />
+    <Alias n="66" Id="(@44 @51 Type=Global Member=AnonymousMethod__28_2)" />
+    <Alias n="67" Id="(@44 @51 Type=Global Member=CreateCloudStorage)" />
+    <Alias n="68" Id="(@44 @51 Type=Global Member=get_CloudStorage)" />
+    <Alias n="69" Uri="Assembly=$(3fd5f9ef-38f2-40a0-b9e4-912a373fe9a8.OutputPathUri)" />
+    <Alias n="70" Id="(@44 Namespace=Trinity.Configuration Type=ExtensionConfig Member=ResolveTypePriorities)" />
+    <Alias n="71" Id="(@44 Namespace=Trinity.Network Type=CommunicationInstance Member=Start)" />
+    <Alias n="72" Id="(@25 Namespace=Trinity.ServiceFabric.Infrastructure Type=TrinityServerRuntimeManager Member=Start)" />
+    <Alias n="73" Id="(@42 Namespace=Trinity.Client Type=TrinityClient Member=StartCommunicationListeners)" />
+    <Alias n="74" Id="(Name=System.Threading.Tasks.Task..cctor.AnonymousMethod__274_0 @1 @9 OverloadingParameters=[(Type=object Name=obj)] @3)" />
+    <Alias n="75" Uri="Assembly=Microsoft.ServiceFabric.Services.dll" />
+    <Alias n="76" Id="Type=System.Threading.Tasks.Task" />
+    <Alias n="77" Id="(Name=Microsoft.ServiceFabric.Services.Runtime.StatelessServiceInstanceAdapter.ExecuteRunAsync @75 @76 OverloadingParameters=[(Type=System.Threading.CancellationToken Name=runAsyncCancellationToken)] @3)" />
+    <Alias n="78" Uri="Assembly=System.Fabric.dll" />
+    <Alias n="79" Id="(Name=System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification @1 @9 OverloadingParameters=[(@76 Name=task)] @3)" />
+    <Alias n="80" Id="(Name=System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess @1 @9 OverloadingParameters=[(@76 Name=task)] @3)" />
+    <Alias n="81" Id="(Type=System.Threading.Thread Name=threadPoolThread)" />
+    <Alias n="82" Id="(Name=System.Threading.Tasks.Task.ExecuteEntryUnsafe @1 @9 OverloadingParameters=[@81] @3)" />
+    <Alias n="83" Id="(Name=System.Threading.Tasks.Task.ExecuteFromThreadPool @1 @9 OverloadingParameters=[@81] @3)" />
+    <Alias n="84" Id="(Name=&quot;[Async] Microsoft.ServiceFabric.Services.Runtime.StatefulServiceReplicaAdapter.System.Fabric.IStatefulServiceReplica.ChangeRoleAsync&quot; @75 Type=System.Threading.Tasks.Task&lt;string&gt; OverloadingParameters=[(Type=System.Fabric.ReplicaRole Name=newRole),(Type=System.Threading.CancellationToken Name=cancellationToken)] @3)" />
+    <Alias n="85" Id="(Name=&quot;[Async] Microsoft.ServiceFabric.Services.Runtime.StatefulServiceReplicaAdapter.OpenCommunicationListenersAsync&quot; @75 Type=System.Threading.Tasks.Task&lt;Microsoft.ServiceFabric.Services.Communication.ServiceEndpointCollection&gt; OverloadingParameters=[(Type=System.Fabric.ReplicaRole Name=replicaRole),(Type=System.Threading.CancellationToken Name=cancellationToken)] @3)" />
+    <Alias n="86" Id="(Name=System.Linq.EnumerableSorter&lt;System.__Canon&gt;.ComputeMap @5 Type=&quot;int[]&quot; OverloadingParameters=[(Type=&quot;System.__Canon[]&quot; Name=elements),(Type=int Name=count)] @3)" />
+    <Alias n="87" Id="(Name=System.Linq.EnumerableSorter&lt;System.Type&gt;.Sort @5 Type=&quot;int[]&quot; OverloadingParameters=[(Type=&quot;System.Type[]&quot; Name=elements),(Type=int Name=count)] @3)" />
+    <Alias n="88" Id="(Name=&quot;System.Linq.EnumerableSorter&lt;System.Type, int&gt;.ComputeKeys&quot; @5 @9 OverloadingParameters=[(Type=&quot;System.Type[]&quot; Name=elements),(Type=int Name=count)] @3)" />
+    <Alias n="89" Id="(Name=System.Linq.Enumerable.TryGetFirst&lt;System.Type&gt; @5 Type=System.Type OverloadingParameters=[(Type=System.Collections.Generic.IEnumerable&lt;System.Type&gt; Name=source),(@2 Name=found)] @3)" />
+    <Alias n="90" Id="(Name=System.Threading.Tasks.Task.ExecuteWithThreadLocal @1 @9 OverloadingParameters=[(@76 Name=currentTaskSlot),@81] @3)" />
+    <Alias n="91" Id="(Name=System.Threading.Tasks.Task.ExecuteWithThreadLocal @1 @9 OverloadingParameters=[(Type=&quot;System.Threading.Tasks.Task {System.Threading.Tasks.Task&lt;System.Threading.Tasks.Task&gt;}&quot; Name=currentTaskSlot),@81] @3)" />
+    <Alias n="92" Id="(Name=System.Threading.Tasks.Task.ExecuteWithThreadLocal @1 @9 OverloadingParameters=[(Type=&quot;System.Threading.Tasks.Task {System.Threading.Tasks.Task&lt;Trinity.TrinityErrorCode&gt;}&quot; Name=currentTaskSlot),@81] @3)" />
+    <Alias n="93" Id="(Name=Trinity.Storage.MessagePassingExtensionMethods.SendMessage @15 @9 OverloadingParameters=[(Type=&quot;Trinity.Storage.IMessagePassingEndpoint {Trinity.Client.PassThroughIStorage}&quot; Name=storage),(Type=Trinity.Network.Messaging.TrinityMessage Name=message),(Type=Trinity.Network.Messaging.TrinityResponse Name=response)] @3)" />
+    <Alias n="94" Uri="Assembly=Trinity.ServiceFabric.NativeClient.Remoting.dll" />
+    <Alias n="95" Id="(Name=Trinity.Client.PassThroughIStorage.SendMessage @19 @9 OverloadingParameters=[(Type=byte* Name=message),(Type=int Name=size),(Type=Trinity.Network.Messaging.TrinityResponse Name=response)] @3)" />
+    <Alias n="96" Id="(Name=Trinity.Utilities.AssemblyUtility.GetAllClassTypes_impl @15 Type=System.Collections.Generic.List&lt;System.Type&gt; OverloadingParameters=[(Type=System.Reflection.Assembly Name=assembly),(Type=&quot;System.Func&lt;System.Type, bool&gt;&quot; Name=typePredicate),(Type=&quot;System.Func&lt;System.Type, int&gt;&quot; Name=typeRanking)] @3)" />
+    <Alias n="97" Id="(Name=System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop @1 @9 OverloadingParameters=[@81,(Type=System.Threading.ExecutionContext Name=executionContext),(Type=System.Threading.ContextCallback Name=callback),(Type=object Name=state)] @3)" />
+    <Alias n="98" Id="Type=ushort" />
+    <Alias n="99" Id="(Name=Trinity.Storage.MessagePassingExtensionMethods.GetCommunicationModuleOffset @15 @2 OverloadingParameters=[(Type=&quot;Trinity.Storage.IMessagePassingEndpoint {Trinity.Client.PassThroughIStorage}&quot; Name=storage),(Type=string Name=moduleName),(@98 Name=synReqOffset),(@98 Name=synReqRspOffset),(@98 Name=asynReqOffset),(@98 Name=asynReqRspOffset)] @3)" />
+    <Alias n="100" Id="(Name=&quot;System.Fabric.ServiceFactoryBroker.CreateHelper&lt;System.Fabric.IStatelessServiceFactory, System.Fabric.IStatelessServiceInstance&gt;&quot; @78 Type=System.Fabric.IStatelessServiceInstance OverloadingParameters=[(Type=System.IntPtr Name=nativeServiceType),(Type=System.IntPtr Name=nativeServiceName),(Type=uint Name=initializationDataLength),(Type=System.IntPtr Name=nativeInitializationData),(Type=System.Guid Name=partitionId),(Type=&quot;System.Func&lt;System.Fabric.IStatelessServiceFactory, System.Fabric.ServiceInitializationParameters, System.Fabric.IStatelessServiceInstance&gt;&quot; Name=creationFunc),(Type=&quot;System.Action&lt;System.Fabric.IStatelessServiceInstance, System.Fabric.ServiceInitializationParameters&gt;&quot; Name=initializationFunc),(Type=&quot;System.Fabric.ServiceInitializationParameters {System.Fabric.StatelessServiceInitializationParameters}&quot; Name=initializationParameters)] @3)" />
   </IdentifierAliases>
   <Styles>
+    <Style TargetType="Link" GroupLabel="Current Call Stack Link" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="HasCategory('CurrentCallStackCall')" />
+      <Setter Property="Stroke" Value="#FFD93701" />
+      <Setter Property="Weight" Value="1" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Call Stack Indirect Link" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="HasCategory('CallStackIndirectCall')" />
+      <Setter Property="Stroke" Value="#FFB8B8B8" />
+      <Setter Property="StrokeDashArray" Value="4 1" />
+    </Style>
+    <Style TargetType="Link" GroupLabel="Call Stack Direct Link" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="HasCategory('CallStackDirectCall')" />
+      <Setter Property="Stroke" Value="#FFB8B8B8" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Current Call Stack (no source)" ValueLabel="True">
+      <Condition Expression="HasCategory('CurrentCallStackEntry') And !HasCategory('CodeSchema_SourceLocation')" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="#FFA5A5A5" />
+      <Setter Property="Stroke" Value="#FF0072C6" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="External And Current" ValueLabel="True" Visibility="Hidden">
+      <Condition Expression="HasCategory('ExternalCallStackEntry') And HasCategory('CurrentCallStackEntry')" />
+      <Setter Property="Background" Value="#FFFFF8F0" />
+      <Setter Property="Stroke" Value="#FFCE5100" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Current Call Stack (source)" ValueLabel="True">
+      <Condition Expression="HasCategory('CurrentCallStackEntry') And !HasCategory('QueryResult')" />
+      <Setter Property="Background" Value="#FFFFE3C6" />
+      <Setter Property="Stroke" Value="#FFD93701" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="External Call Stack" ValueLabel="True">
+      <Condition Expression="HasCategory('ExternalCallStackEntry')" />
+      <Setter Property="Background" Value="#FFF7F7F7" />
+      <Setter Property="StrokeDashArray" Value="1 3" />
+      <Setter Property="Foreground" Value="#FF717171" />
+      <Setter Property="Stroke" Value="#FFA5A5A5" />
+    </Style>
     <Style TargetType="Node" GroupLabel="Results" ValueLabel="True">
       <Condition Expression="HasCategory('QueryResult')" />
       <Setter Property="Background" Value="#FFBCFFBE" />
@@ -313,9 +773,21 @@
       <Setter Property="StrokeDashArray" Value="2 2" />
       <Setter Property="DrawArrow" Value="true" />
     </Style>
+    <Style TargetType="Node" GroupLabel="Comment" ValueLabel="Has comment">
+      <Condition Expression="HasCategory('Comment')" />
+      <Setter Property="Background" Value="#FFFFFACD" />
+      <Setter Property="Stroke" Value="#FFE5C365" />
+      <Setter Property="StrokeThickness" Value="1" />
+      <Setter Property="NodeRadius" Value="2" />
+      <Setter Property="MaxWidth" Value="250" />
+    </Style>
   </Styles>
   <Paths>
-    <Path Id="9dfae3cc-d446-4a93-984b-f5e0fb840c84.OutputPath" Value="G:\IKW-GraphEngine\build\netcoreapp3.1\Trinity.ServiceFabric.Remoting.dll" />
+    <Path Id="1c1b605c-403d-44d7-a52c-c994f7acae59.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/netcoreapp3.1/Trinity.ServiceFabric.Infrastructure.dll" />
+    <Path Id="2c2668c2-167f-4c7d-a125-96fcec3ad135.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/netcoreapp3.1/Trinity.ServiceFabric.NativeClient.Remoting.dll" />
+    <Path Id="3fd5f9ef-38f2-40a0-b9e4-912a373fe9a8.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/netcoreapp3.1/win7-x64/Trinity.SF.GraphEngineDataService.dll" />
+    <Path Id="829ba52b-bdc9-4f74-bb5b-0f9ea74d44df.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/netcoreapp3.1/Trinity.Client.TestProtocols.dll" />
+    <Path Id="8b619b1f-1ef0-43f2-b716-b4a6ad3b8c43.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/netcoreapp3.1/win7-x64/Trinity.SF.GraphEngineRemotingClient.dll" />
     <Path Id="9dfae3cc-d446-4a93-984b-f5e0fb840c84.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/netcoreapp3.1/Trinity.ServiceFabric.Remoting.dll" />
   </Paths>
 </DirectedGraph>

@@ -18,6 +18,7 @@ using Trinity.Diagnostics;
 using Trinity.Extension;
 using Trinity.Network;
 using Trinity.ServiceFabric;
+using Trinity.ServiceFabric.NativeClient.Remoting.Interfaces;
 using Trinity.ServiceFabric.Remoting;
 
 namespace Stateful.TripleStore.GraphDataService
@@ -26,6 +27,7 @@ namespace Stateful.TripleStore.GraphDataService
     // compiler if it is not explicitly used in the code.
     [UseExtension(typeof(BlobStoragePersistentStorage))]
     [UseExtension(typeof(ITrinityOverRemotingService))]
+    //[UseExtension(typeof(ITrinityOverNativeTCPCommunicationService))]
     [UseExtension(typeof(FanoutSearchModule))]
     [UseExtension(typeof(TripleModule))]
     internal static class Program
@@ -45,7 +47,7 @@ namespace Stateful.TripleStore.GraphDataService
         {
             try
             {
-                TrinityConfig.LogEchoOnConsole = false;
+                //TrinityConfig.LogEchoOnConsole = false;
                 TrinityConfig.LoggingLevel = LogLevel.Debug;
                 //TrinityConfig.StorageRoot = @"C:\GE-TripleStore-Storage";
 
@@ -61,7 +63,8 @@ namespace Stateful.TripleStore.GraphDataService
 
                 // Global.Communications runtime is ready
 
-                TripleStoreServer = Global.CommunicationInstance as TrinityServer;
+                if (Global.CommunicationInstance != null)
+                    TripleStoreServer = Global.CommunicationInstance as TrinityServer;
 
                 if (TripleStoreServer != null)
                 {
@@ -287,7 +290,7 @@ namespace Stateful.TripleStore.GraphDataService
                                 {
                                     await Task.Delay(0);
 
-                                    Console.WriteLine("Task TripleByCellIdReceivedAction Complete...");
+                                    Log.WriteLine("Task TripleByCellIdReceivedAction Complete...");
                                 }, cancellationToken: CancellationToken.None);
 
                             var writeToConsoleTask = getTripleBySubjectTask;
@@ -331,7 +334,7 @@ namespace Stateful.TripleStore.GraphDataService
                                 {
                                     await Task.Delay(0);
 
-                                    Console.WriteLine("Task ClientPostedTripleSavedToMemoryCloudAction Complete...");
+                                    Log.WriteLine("Task ClientPostedTripleSavedToMemoryCloudAction Complete...");
                                 }, cancellationToken: CancellationToken.None);
 
                             var storeFromMemoryCloudTask = reactToTriplePostedSavedToMemoryCloudTask;
@@ -360,7 +363,7 @@ namespace Stateful.TripleStore.GraphDataService
                 //        {
                 //            var tripleStoreClients = TrinityClientModuleRuntime.Clients.ToList();
 
-                //            Console.WriteLine($"The number of real-time Connected TripleStore Client: {tripleStoreClients.Count}.");
+                //            Log.WriteLine($"The number of real-time Connected TripleStore Client: {tripleStoreClients.Count}.");
 
                 //            foreach (var connectedTripleStoreClient in tripleStoreClients.Where(connectedTripleStoreClient => connectedTripleStoreClient != null))
                 //            {

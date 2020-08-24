@@ -14,22 +14,27 @@
 	  <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="GraphEngine.LIKQ" Version="$(DOTNET_PACKAGE_VERSION)" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.428" />
-    <PackageReference Include="ReactiveProperty" Version="7.1.0" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.456" />
+    <PackageReference Include="ReactiveProperty" Version="7.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Trinity.Client.TestProtocols\Trinity.Client.TestProtocols.csproj" />
     <ProjectReference Include="..\Trinity.ServiceFabric.Infrastructure\Trinity.ServiceFabric.Infrastructure.csproj" />
-    <ProjectReference Include="..\Trinity.ServiceFabric.NativeClient.Remoting\Trinity.ServiceFabric.NativeClient.Remoting.csproj" />
     <ProjectReference Include="..\Trinity.ServiceFabric.Remoting\Trinity.ServiceFabric.Remoting.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Trinity.Azure.Storage">
-      <HintPath>..\Trinity.SF.GraphEngineRemotingClient\Shared.Binaries\Trinity.Azure.Storage.dll</HintPath>
+      <HintPath>..\..\..\..\build\Trinity.Azure.Storage\netstandard2.0\Trinity.Azure.Storage.dll</HintPath>
+    </Reference>
+    <Reference Include="Trinity.DynamicCluster">
+      <HintPath>..\..\..\..\build\Trinity.Azure.Storage\netstandard2.0\Trinity.DynamicCluster.dll</HintPath>
     </Reference>
   </ItemGroup>
 

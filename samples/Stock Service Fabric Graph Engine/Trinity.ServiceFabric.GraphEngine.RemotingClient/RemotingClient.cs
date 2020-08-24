@@ -23,7 +23,6 @@ namespace Trinity.ServiceFabric.GraphEngine.RemotingClient
             : base(context)
         {
             m_trinity = new TrinityClient("fabric:/TrinityServiceFabric.NativeClusterRemoting.Application/Trinity.ServiceFabric.GraphEngine.GraphDataService");
-
             m_trinity.Start();
         }
 
@@ -54,6 +53,7 @@ namespace Trinity.ServiceFabric.GraphEngine.RemotingClient
                 ServiceEventSource.Current.ServiceMessage(this.Context, "GraphEngine Remoting Client Working-{0}. Execute PING!", ++iterations);
 
                 m_trinity?.Ping();
+                //m_trinity?.ExternalClientPing(new PingMessagePayloadWriter("Hello"));
 
                 await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
             }

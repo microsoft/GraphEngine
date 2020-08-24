@@ -13,10 +13,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="2.0.10494" />
-    <PackageReference Include="GraphEngine.LIKQ" Version="2.0.10494" />
-    <PackageReference Include="GraphEngine.ServiceFabric.Infrastructure" Version="2.0.10494" />
+    <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="2.0.10517" />
+    <PackageReference Include="GraphEngine.Client" Version="2.0.10517" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.10517" />
+    <PackageReference Include="GraphEngine.LIKQ" Version="2.0.10517" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Infrastructure" Version="2.0.10517" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="2.0.10517" />
     <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.428" />
+    <PackageReference Include="Trinity.ServiceFabric.NativeClient.Remoting" Version="2.0.10517" />
   </ItemGroup>
 
   <ItemGroup>

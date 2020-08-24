@@ -20,15 +20,8 @@ namespace Trinity.Client.TrinityClientModule
     {
         public override string GetModuleName() => "TrinityClient";
 
-        private IClientRegistry _clientRegistry;
-
         // ===== Server-side members =====
-        private IClientRegistry Registry
-        {
-            get => m_memorycloud as IClientRegistry;
-            set => m_memorycloud = value as MemoryCloud;
-        }
-
+        private IClientRegistry Registry => m_memorycloud as IClientRegistry;
         private ConcurrentDictionary<int, ClientIStorage> m_client_storages = new ConcurrentDictionary<int, ClientIStorage>();
         public IEnumerable<IStorage> Clients => m_client_storages.Values;
         private CancellationTokenSource m_cancel_src;
@@ -36,13 +29,6 @@ namespace Trinity.Client.TrinityClientModule
         // ===== Client-side members =====
         private Lazy<int> m_client_cookie = new Lazy<int>(() => new Random().Next(int.MinValue, int.MaxValue));
         internal int MyCookie => m_client_cookie.Value;
-
-        private IClientRegistry ClientRegistry
-        {
-            get => _clientRegistry = m_memorycloud as IClientRegistry;
-            set => _clientRegistry = value;
-        }
-
         private Task m_ttl_proc = null;
 
         public TrinityClientModule()
@@ -76,15 +62,15 @@ namespace Trinity.Client.TrinityClientModule
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected internal new unsafe void SendMessage(IMessagePassingEndpoint ep, byte** bufs, int* sizes, int cnt)
+        protected internal unsafe new void SendMessage(IMessagePassingEndpoint ep, byte** bufs, int* sizes, int cnt)
             => base.SendMessage(ep, bufs, sizes, cnt);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected internal new unsafe void SendMessage(IMessagePassingEndpoint ep, byte** bufs, int* sizes, int cnt, out TrinityResponse rsp)
+        protected internal unsafe new void SendMessage(IMessagePassingEndpoint ep, byte** bufs, int* sizes, int cnt, out TrinityResponse rsp)
             => base.SendMessage(ep, bufs, sizes, cnt, out rsp);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected internal new unsafe void SendMessage(IMessagePassingEndpoint ep, byte* buf, int size, out TrinityResponse rsp)
+        protected internal unsafe new void SendMessage(IMessagePassingEndpoint ep, byte* buf, int size, out TrinityResponse rsp)
             => base.SendMessage(ep, buf, size, out rsp);
 
         protected override void RegisterMessageHandler()
@@ -261,29 +247,28 @@ namespace Trinity.Client.TrinityClientModule
         }
         #endregion
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="response"></param>
         public override void RegisterClientHandler(RegisterClientRequestReader request, RegisterClientResponseWriter response)
         {
-            if (m_memorycloud != null)
+            response.PartitionCount = m_memorycloud.PartitionCount;
+            var cstg = m_client_storages.AddOrUpdate(request.Cookie, addValueFactory: AddValueFactory, (int _, ClientIStorage stg) =>
             {
-                response.PartitionCount = m_memorycloud.PartitionCount;
+                if (_ <= 0) throw new ArgumentOutOfRangeException(nameof(_));
+                return stg;
+            });
+            response.InstanceId = cstg.InstanceId;
+        }
 
-                if (ClientRegistry is null)
-                    ClientRegistry = m_memorycloud as IClientRegistry;
-
-                var cstg = m_client_storages.AddOrUpdate(request.Cookie, _ =>
-                {
-                    ClientIStorage stg = new ClientIStorage(m_memorycloud) {Pulse = DateTime.Now};
-
-                    if (ClientRegistry != null)
-                    {
-                        int new_id = ClientRegistry.RegisterClient(stg);
-                        stg.InstanceId = new_id;
-                    }
-
-                    return stg;
-                }, (_, stg) => stg);
-                response.InstanceId = cstg.InstanceId;
-            }
+        private ClientIStorage AddValueFactory(int _)
+        {
+            ClientIStorage stg = new ClientIStorage(m_memorycloud) { Pulse = DateTime.Now };
+            int new_id = Registry.RegisterClient(stg);
+            stg.InstanceId = new_id;
+            return stg;
         }
 
         public override void UnregisterClientHandler(UnregisterClientRequestReader request)
@@ -297,7 +282,7 @@ namespace Trinity.Client.TrinityClientModule
             if (m_client_storages.TryRemove(cookie, out _))
             {
                 // no responses come in from clients now
-                ClientRegistry.UnregisterClient(stg.InstanceId);
+                Registry.UnregisterClient(stg.InstanceId);
                 // no requests come in from servers now, safe to dispose
                 stg.Dispose();
             }
@@ -417,7 +402,7 @@ namespace Trinity.Client.TrinityClientModule
                 *sp.ip++ = (int)err;
                 *sp.ip++ = cellBuff.Length;
                 *sp.sp++ = (short)cellType;
-                fixed(byte* p = cellBuff)
+                fixed (byte* p = cellBuff)
                 {
                     Memory.memcpy(sp.bp, p, (ulong)cellBuff.Length);
                 }

@@ -10,7 +10,7 @@ namespace Trinity.ServiceFabric.NativeClient.Remoting
     /// <summary>
     /// TrinityOverNativeTCPClientConnectionFactory is dynamically discovered and it methods called via reflection
     /// </summary>
-    [ExtensionPriority(90)]
+    [ExtensionPriority(99)]
     public class TrinityOverNativeTCPClientConnectionFactory : IClientConnectionFactory
     {
         /// <summary>
@@ -23,7 +23,7 @@ namespace Trinity.ServiceFabric.NativeClient.Remoting
         public Task<IMessagePassingEndpoint> ConnectAsync(string connectionString, ICommunicationModuleRegistry modules)
         {
             // Make a service-to-server in a node-to-node cluster environment
-            return Task.FromResult<IMessagePassingEndpoint>(new TrinityOverNativeTCPClientConnection<TrinityOverNativeTCPCommunicationClient>(connectionString, modules));
+            return Task.FromResult<IMessagePassingEndpoint>(new TrinityOverNativeTCPClientConnection<TrinityOverNativeTCPClientProxy>(connectionString, modules));
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Trinity.ServiceFabric.NativeClient.Remoting
         public Task<IMessagePassingEndpoint> ConnectAsync(string connectionString, ICommunicationModuleRegistry modules, ServicePartitionKey userServicePartitionKey)
         {
             // this is a down-level call from the TrinityClient object making a call into the service fabric runtime to connect to a remote service cluster
-            return Task.FromResult<IMessagePassingEndpoint>(new TrinityOverNativeTCPClientConnection<TrinityOverNativeTCPCommunicationClient>(connectionString, modules, userServicePartitionKey));
+            return Task.FromResult<IMessagePassingEndpoint>(new TrinityOverNativeTCPClientConnection<TrinityOverNativeTCPClientProxy>(connectionString, modules, userServicePartitionKey));
         }
 
         /// <summary>

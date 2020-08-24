@@ -97,7 +97,7 @@ retry:
                         return chunks;
                     }
                 }
-                catch (TimeoutException) { await Task.Delay(1000, m_cancel); goto retry; }
+                catch (TimeoutException) { await Task.Delay(1000); goto retry; }
                 catch (Exception ex) { Log.WriteLine(LogLevel.Error, "{0}", $"ServiceFabricChunkTable: {ex.ToString()}"); }
                 finally { await tx.CommitAsync(); }
             }

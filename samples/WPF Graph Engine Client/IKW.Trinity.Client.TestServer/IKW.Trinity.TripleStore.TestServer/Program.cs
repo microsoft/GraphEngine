@@ -1,75 +1,86 @@
 ﻿using System.Globalization;
 using System.Reactive.Linq;
+using Trinity.Client.TrinityClientModule;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Trinity;
+using Trinity.Client.TestProtocols;
+using Trinity.Client.TestProtocols.TripleServer;
+using Trinity.Diagnostics;
+using Trinity.Network;
 
 namespace Trinity.TripleStore.TestServer
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Client.TestProtocols;
-    using Client.TestProtocols.TripleServer;
-    using Client.TrinityClientModule;
-    using Diagnostics;
-    using Network;
-    using Trinity;
-
-    class Program
+    internal static class Program
     {
-        private static TripleModule GraphEngineTripleModuleImpl { get; set; }
+        private static TripleModule GraphEngineTripleServerAPI { get; set; }
         //private static TripleStoreDemoServerModule GraphEngineTripleStoreDemoServerImpl { get; set; }
-        private static TrinityClientModule TrinityClientModuleRuntime { get; set; }
+        private static TrinityClientModule GraphEngineTripleClientAPI { get; set; }
         private static TrinityServer TripleStoreServer { get; set; }
 
         private static ServerInfo TripleStoreServerInfo { get; } =
-            new ServerInfo("localhost", 9898, String.Empty, LogLevel.Debug);
+            new ServerInfo("GenNexusPrime.inknowworks.dev.net", 9898, String.Empty, LogLevel.Debug);
 
         private static string TripleStoreStorageRoot { get; } = @"C:\GE-TripleStore-Storage";
 
         private static async Task Main(string[] args)
         {
-            TrinityConfig.CurrentRunningMode   = RunningMode.Server;
+            TrinityConfig.LoggingLevel         = LogLevel.Debug;
+            //TrinityConfig.CurrentRunningMode   = RunningMode.Server;
             TrinityConfig.AddServer(TripleStoreServerInfo);
-            TrinityConfig.LogEchoOnConsole     = false;
+            //TrinityConfig.LogEchoOnConsole   = false;
             TrinityConfig.StorageRoot          = TripleStoreStorageRoot;
 
-            Log.LogsWritten += Log_LogsWritten;
+            //Log.LogsWritten += Log_LogsWritten;
 
             TripleStoreServer = new TrinityServer();
 
-            TripleStoreServer.RegisterCommunicationModule<TrinityClientModule>();
-            TripleStoreServer.RegisterCommunicationModule<TripleModule>();
+            var registeredModuleTypes = TripleStoreServer.GetRegisteredCommunicationModuleTypes();
 
-            TripleStoreServer.Started += TripleStoreServer_Started; 
+            var moduleTypes = registeredModuleTypes as Type[] ?? registeredModuleTypes.ToArray();
+
+            if (!moduleTypes.Contains(typeof(TrinityClientModule)))
+            {
+                TripleStoreServer.RegisterCommunicationModule<TrinityClientModule>();
+            }
+
+            if (!moduleTypes.Contains(typeof(TripleModule)))
+            {
+                TripleStoreServer.RegisterCommunicationModule<TripleModule>();
+            }
+
+            //TripleStoreServer.Started += TripleStoreServer_Started; 
             //TripleStoreServer.RegisterCommunicationModule<TripleStoreDemoServerModule>();
 
             TripleStoreServer.Start();
 
-            Global.CloudStorage.ResetStorage();
-            Global.LocalStorage.ResetStorage();
+            //Global.CloudStorage.ResetStorage();
+            //Global.LocalStorage.ResetStorage();
 
             //Global.LocalStorage.LoadStorage();
 
-            TrinityClientModuleRuntime  = TripleStoreServer.GetCommunicationModule<TrinityClientModule>();
+            GraphEngineTripleClientAPI  = TripleStoreServer.GetCommunicationModule<TrinityClientModule>();
 
             // We inject an instance of the TripleModule class object so that we hook-up to our custom sever-side code
 
-            GraphEngineTripleModuleImpl = TripleStoreServer.GetCommunicationModule<TripleModule>();
+            GraphEngineTripleServerAPI = TripleStoreServer.GetCommunicationModule<TripleModule>();
 
-            if (GraphEngineTripleModuleImpl != null)
+            if (GraphEngineTripleServerAPI != null)
             {
                 Log.WriteLine("Setup Reactive Event Stream Processing!");
 
-                GraphEngineTripleModuleImpl.TriplePostedToServerReceivedAction
-                    .ObserveOn(GraphEngineTripleModuleImpl.ObserverOnNewThreadScheduler)
+                GraphEngineTripleServerAPI.TriplePostedToServerReceivedAction
+                    .ObserveOn(GraphEngineTripleServerAPI.ObserverOnNewThreadScheduler)
                     .Do(onNext: subscriberSource =>
                     {
                         var msg = "TriplePostedToServerReceivedAction-1";
-                        Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                        Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
 
                     })
-                    .SubscribeOn(GraphEngineTripleModuleImpl.SubscribeOnEventLoopScheduler)
+                    .SubscribeOn(GraphEngineTripleServerAPI.SubscribeOnEventLoopScheduler)
                     .Subscribe(onNext: async tripleFromClient =>
                     {
                         using var graphEngineResponseTask = Task.Factory.StartNew(async () =>
@@ -89,7 +100,7 @@ namespace Trinity.TripleStore.TestServer
                         {
                             await Task.Delay(0);
 
-                            Console.WriteLine("Task TriplePostedToServerReceivedAction Complete...");
+                            Log.WriteLine("Task TriplePostedToServerReceivedAction Complete...");
                         }, cancellationToken: CancellationToken.None);
 
                         var writeToConsoleTask = graphEngineResponseTask;
@@ -101,15 +112,15 @@ namespace Trinity.TripleStore.TestServer
                 // Description: Setup Reactive Subscription on Cold Observable. Logic is trigger/executed whenever
                 // a client call RPC Method "PostTripleToServer."
 
-                GraphEngineTripleModuleImpl.ServerStreamedTripleSavedToMemoryCloudAction
-                    .ObserveOn(GraphEngineTripleModuleImpl.ObserverOnNewThreadScheduler)
+                GraphEngineTripleServerAPI.ServerStreamedTripleSavedToMemoryCloudAction
+                    .ObserveOn(GraphEngineTripleServerAPI.ObserverOnNewThreadScheduler)
                     .Do(onNext: subscriberSource =>
                     {
                         var msg = "ServerStreamedTripleSavedToMemoryCloudAction-1";
-                        Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg,
+                        Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg,
                             Thread.CurrentThread.ManagedThreadId);
                     })
-                    .SubscribeOn(GraphEngineTripleModuleImpl.SubscribeOnEventLoopScheduler)
+                    .SubscribeOn(GraphEngineTripleServerAPI.SubscribeOnEventLoopScheduler)
                     .Subscribe(onNext: async savedTriple =>
                     {
                         using var graphEngineResponseTask = Task.Factory.StartNew(async () =>
@@ -129,7 +140,7 @@ namespace Trinity.TripleStore.TestServer
                         {
                             await Task.Delay(0);
 
-                            Console.WriteLine("Task ServerStreamedTripleSavedToMemoryCloudAction Complete...");
+                            Log.WriteLine("Task ServerStreamedTripleSavedToMemoryCloudAction Complete...");
                         }, cancellationToken: CancellationToken.None);
 
                         var writeToConsoleTask = graphEngineResponseTask;
@@ -139,15 +150,15 @@ namespace Trinity.TripleStore.TestServer
 
                 // ClientPostedTripleStoreReadyInMemoryCloudAction
 
-                GraphEngineTripleModuleImpl.ClientPostedTripleStoreReadyInMemoryCloudAction
-                    .ObserveOn(GraphEngineTripleModuleImpl.ObserverOnNewThreadScheduler)
+                GraphEngineTripleServerAPI.ClientPostedTripleStoreReadyInMemoryCloudAction
+                    .ObserveOn(GraphEngineTripleServerAPI.ObserverOnNewThreadScheduler)
                     .Do(onNext: subscriberSource =>
                     {
                         var msg = "ClientPostedTripleStoreReadyInMemoryCloudAction-1";
-                        Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg,
+                        Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg,
                             Thread.CurrentThread.ManagedThreadId);
                     })
-                    .SubscribeOn(GraphEngineTripleModuleImpl.SubscribeOnEventLoopScheduler)
+                    .SubscribeOn(GraphEngineTripleServerAPI.SubscribeOnEventLoopScheduler)
                     .Synchronize()
                     .Subscribe(onNext: async tripleObject =>
                     {
@@ -173,7 +184,7 @@ namespace Trinity.TripleStore.TestServer
 
                                 Log.WriteLine($"Make Client-Side call from Server-side: GetTripleByCellId.");
 
-                                await GraphEngineTripleModuleImpl.GetTripleByCellId(0, getRequest).ConfigureAwait(false);
+                                await GraphEngineTripleServerAPI.GetTripleByCellId(0, getRequest).ConfigureAwait(false);
                             }
                         }, cancellationToken: CancellationToken.None,
                            creationOptions: TaskCreationOptions.HideScheduler,
@@ -181,7 +192,7 @@ namespace Trinity.TripleStore.TestServer
                         {
                             await Task.Delay(0);
 
-                            Console.WriteLine("Task ClientPostedTripleStoreReadyInMemoryCloudAction Complete...");
+                            Log.WriteLine("Task ClientPostedTripleStoreReadyInMemoryCloudAction Complete...");
                         }, cancellationToken: CancellationToken.None);
 
                         var writeToConsoleTask = getTripleByCellIdTask;
@@ -191,15 +202,15 @@ namespace Trinity.TripleStore.TestServer
 
                 // Reactive: ClientPostedTripleStoreReadyInMemoryCloudHotAction
 
-                GraphEngineTripleModuleImpl.ClientPostedTripleStoreReadyInMemoryCloudHotAction
-                    .ObserveOn(GraphEngineTripleModuleImpl.HotObservableSchedulerContext)
+                GraphEngineTripleServerAPI.ClientPostedTripleStoreReadyInMemoryCloudHotAction
+                    .ObserveOn(GraphEngineTripleServerAPI.HotObservableSchedulerContext)
                     .Do(onNext: subscriberSource =>
                     {
                         var msg = "ClientPostedTripleStoreReadyInMemoryCloudHotAction-1";
-                        Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg,
+                        Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg,
                             Thread.CurrentThread.ManagedThreadId);
                     })
-                    .SubscribeOn(GraphEngineTripleModuleImpl.HotObservableSchedulerContext)
+                    .SubscribeOn(GraphEngineTripleServerAPI.HotObservableSchedulerContext)
                     .Synchronize()
                     .Subscribe(onNext: async tripleObject =>
                     {
@@ -217,7 +228,7 @@ namespace Trinity.TripleStore.TestServer
                                 //    Object = tripleObject.TripleCell.Object
                                 //};
 
-                                //await GraphEngineTripleModuleImpl.GetTripleByCellId(0, getRequest).ConfigureAwait(false);
+                                //await GraphEngineTripleServerAPI.GetTripleByCellId(0, getRequest).ConfigureAwait(false);
 
                                 var isLocalCell = Global.CloudStorage.IsLocalCell(tripleObject.CellId);
 
@@ -236,7 +247,7 @@ namespace Trinity.TripleStore.TestServer
 
                                     Log.WriteLine($"Make Client-Side call from Server-side: GetTripleByCellId.");
 
-                                    await GraphEngineTripleModuleImpl
+                                    await GraphEngineTripleServerAPI
                                           .GetTripleByCellId(0, getRequest).ConfigureAwait(false);
                                 }
 
@@ -246,7 +257,7 @@ namespace Trinity.TripleStore.TestServer
                         {
                             await Task.Delay(0);
 
-                            Console.WriteLine("Task ClientPostedTripleStoreReadyInMemoryCloudHotAction Complete...");
+                            Log.WriteLine("Task ClientPostedTripleStoreReadyInMemoryCloudHotAction Complete...");
                         }, cancellationToken: CancellationToken.None);
 
                         var writeToConsoleTask = getTripleByCellIdTask;
@@ -254,17 +265,17 @@ namespace Trinity.TripleStore.TestServer
                         await writeToConsoleTask;
                     });
 
-                GraphEngineTripleModuleImpl.ClientPostedTripleStoreReadyInMemoryCloudHotAction.Connect();
+                GraphEngineTripleServerAPI.ClientPostedTripleStoreReadyInMemoryCloudHotAction.Connect();
 
-                GraphEngineTripleModuleImpl.TripleByCellIdReceivedAction
-                    .ObserveOn(GraphEngineTripleModuleImpl.ObserverOnNewThreadScheduler)
+                GraphEngineTripleServerAPI.TripleByCellIdReceivedAction
+                    .ObserveOn(GraphEngineTripleServerAPI.ObserverOnNewThreadScheduler)
                     .Do(onNext: subscriberSource =>
                     {
                         var msg = "TripleByCellIdReceivedAction-1";
-                        Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg,
+                        Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg,
                             Thread.CurrentThread.ManagedThreadId);
                     })
-                    .SubscribeOn(GraphEngineTripleModuleImpl.SubscribeOnEventLoopScheduler)
+                    .SubscribeOn(GraphEngineTripleServerAPI.SubscribeOnEventLoopScheduler)
                     .Synchronize()
                     .Subscribe(onNext: async tripleObjectFromGetRequest =>
                     {
@@ -275,12 +286,12 @@ namespace Trinity.TripleStore.TestServer
                             await Task.Delay(0).ConfigureAwait(false);
 
 
-                            Console.WriteLine("Reactive Async - Server-Side Get Request on behalf of the Client.");
-                            Console.WriteLine($"Processing Timestamp: {DateTime.Now.ToString(CultureInfo.InvariantCulture)}");
-                            Console.WriteLine($"Triple Object CellID : {tripleObjectFromGetRequest.CellId}.");
-                            Console.WriteLine($"Triple Subject Node  : {tripleObjectFromGetRequest.TripleCell.Subject}");
-                            Console.WriteLine($"Triple Predicate Node: {tripleObjectFromGetRequest.TripleCell.Predicate}");
-                            Console.WriteLine($"Triple Object Node   : {tripleObjectFromGetRequest.TripleCell.Object}.");
+                            Log.WriteLine("Reactive Async - Server-Side Get Request on behalf of the Client.");
+                            Log.WriteLine($"Processing Timestamp: {DateTime.Now.ToString(CultureInfo.InvariantCulture)}");
+                            Log.WriteLine($"Triple Object CellID : {tripleObjectFromGetRequest.CellId}.");
+                            Log.WriteLine($"Triple Subject Node  : {tripleObjectFromGetRequest.TripleCell.Subject}");
+                            Log.WriteLine($"Triple Predicate Node: {tripleObjectFromGetRequest.TripleCell.Predicate}");
+                            Log.WriteLine($"Triple Object Node   : {tripleObjectFromGetRequest.TripleCell.Object}.");
 
                         }, cancellationToken: CancellationToken.None,
                            creationOptions: TaskCreationOptions.HideScheduler,
@@ -288,7 +299,7 @@ namespace Trinity.TripleStore.TestServer
                         {
                             await Task.Delay(0);
 
-                            Console.WriteLine("Task TripleByCellIdReceivedAction Complete...");
+                            Log.WriteLine("Task TripleByCellIdReceivedAction Complete...");
                         }, cancellationToken: CancellationToken.None);
 
                         var writeToConsoleTask = getTripleBySubjectTask;
@@ -296,15 +307,15 @@ namespace Trinity.TripleStore.TestServer
                         await writeToConsoleTask;
                     });
 
-                GraphEngineTripleModuleImpl.ClientPostedTripleSavedToMemoryCloudAction
-                    .ObserveOn(GraphEngineTripleModuleImpl.ObserverOnNewThreadScheduler)
+                GraphEngineTripleServerAPI.ClientPostedTripleSavedToMemoryCloudAction
+                    .ObserveOn(GraphEngineTripleServerAPI.ObserverOnNewThreadScheduler)
                     .Do(onNext: subscriberSource =>
                     {
                         var msg = "ClientPostedTripleSavedToMemoryCloudAction-1";
-                        Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg,
+                        Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg,
                             Thread.CurrentThread.ManagedThreadId);
                     })
-                    .SubscribeOn(GraphEngineTripleModuleImpl.SubscribeOnEventLoopScheduler)
+                    .SubscribeOn(GraphEngineTripleServerAPI.SubscribeOnEventLoopScheduler)
                     .Synchronize()
                     .Subscribe(onNext: async tripleStoreMemoryContext =>
                     {
@@ -314,25 +325,25 @@ namespace Trinity.TripleStore.TestServer
 
                             await Task.Delay(0).ConfigureAwait(false);
 
-                            Console.WriteLine("Success! Found the Triple in the TripleStore MemoryCloud");
+                            Log.WriteLine("Success! Found the Triple in the TripleStore MemoryCloud");
 
                             var tripleStore = tripleStoreMemoryContext.NewTripleStore;
                             var subjectNode = tripleStore.TripleCell.Subject;
                             var predicateNode = tripleStore.TripleCell.Predicate;
                             var objectNode = tripleStore.TripleCell.Object;
 
-                            Console.WriteLine(
+                            Log.WriteLine(
                                 $"Triple CellId in MemoryCloud: {tripleStoreMemoryContext.NewTripleStore.CellId}");
-                            Console.WriteLine($"Subject Node: {subjectNode}");
-                            Console.WriteLine($"Predicate Node: {predicateNode}");
-                            Console.WriteLine($"Object Node: {objectNode}");
+                            Log.WriteLine($"Subject Node: {subjectNode}");
+                            Log.WriteLine($"Predicate Node: {predicateNode}");
+                            Log.WriteLine($"Object Node: {objectNode}");
                         }, cancellationToken: CancellationToken.None,
                         creationOptions: TaskCreationOptions.HideScheduler,
                         scheduler: TaskScheduler.Current).Unwrap().ContinueWith(async _ =>
                         {
                             await Task.Delay(0);
 
-                            Console.WriteLine("Task ClientPostedTripleSavedToMemoryCloudAction Complete...");
+                            Log.WriteLine("Task ClientPostedTripleSavedToMemoryCloudAction Complete...");
                         }, cancellationToken: CancellationToken.None);
 
                         var storeFromMemoryCloudTask = reactToTriplePostedSavedToMemoryCloudTask;
@@ -341,7 +352,7 @@ namespace Trinity.TripleStore.TestServer
                     });
             }
 
-            Console.ReadLine();
+            //Console.ReadLine();
 
             Thread.Sleep(Timeout.Infinite);
 
@@ -354,11 +365,11 @@ namespace Trinity.TripleStore.TestServer
 
                 using var processingLoopTask = Task.Factory.StartNew(async () =>
                 {
-                    if (TrinityClientModuleRuntime.Clients != null)
+                    if (GraphEngineTripleClientAPI.Clients != null)
                     {
-                        var tripleStoreClients = TrinityClientModuleRuntime.Clients.ToList();
+                        var tripleStoreClients = GraphEngineTripleClientAPI.Clients.ToList();
 
-                        Console.WriteLine($"The number of real-time Connected TripleStore Client: {tripleStoreClients.Count}.");
+                        Log.WriteLine($"The number of real-time Connected TripleStore Client: {tripleStoreClients.Count}.");
 
                         foreach (var connectedTripleStoreClient in tripleStoreClients.Where(connectedTripleStoreClient => connectedTripleStoreClient != null))
                         {
@@ -417,7 +428,7 @@ namespace Trinity.TripleStore.TestServer
                     {
                         var formatLogLevel = string.Format(logLevelFormat, logEntry.logLevel);
 
-                        Console.WriteLine($"TrinityServer LOG: {logEntry.logTime}, {formatLogLevel}, {logEntry.logMessage}");
+                        Log.WriteLine($"TrinityServer LOG: {logEntry.logTime}, {formatLogLevel}, {logEntry.logMessage}");
                     }
                 }, cancellationToken: CancellationToken.None,
                 creationOptions: TaskCreationOptions.HideScheduler,

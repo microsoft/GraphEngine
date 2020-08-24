@@ -12,7 +12,7 @@ struct Triple
 
 struct TripleGetRequest
 {
-  long TripleCellId;
+	long TripleCellId;
 	string Subject;
 	string Predicate;
 	string Object;

@@ -247,7 +247,7 @@ namespace Trinity.Client.TestProtocols
                         .Do(onNext: subscriberSource =>
                         {
                             var msg = "R-1";
-                            Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                            Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
                         })
                         .SubscribeOn(SubscribeOnEventLoopScheduler),
                     initialValue: new Triple(null),
@@ -260,7 +260,7 @@ namespace Trinity.Client.TestProtocols
                         .Do(onNext: subscriberSource =>
                         {
                             var msg = "R-2";
-                            Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                            Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
                         })
                         .SubscribeOn(SubscribeOnEventLoopScheduler),
                     initialValue: new TripleStore(),
@@ -273,7 +273,7 @@ namespace Trinity.Client.TestProtocols
                         .Do(onNext: subscriberSource =>
                         {
                             var msg = "R-3";
-                            Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                            Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
                         })
                         .SubscribeOn(SubscribeOnEventLoopScheduler),
                     initialValue: new TripleStore(),
@@ -286,7 +286,7 @@ namespace Trinity.Client.TestProtocols
                         .Do(onNext: subscriberSource =>
                         {
                             var msg = "R-4";
-                            Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                            Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
                         })
                         .SubscribeOn(SubscribeOnEventLoopScheduler),
                     initialValue: new Triple(null),
@@ -300,7 +300,7 @@ namespace Trinity.Client.TestProtocols
                         .Do(onNext: subscriberSource =>
                         {
                             var msg = "R-5";
-                            Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                            Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
                         })
                         .SubscribeOn(SubscribeOnEventLoopScheduler),
                     initialValue: (GraphEngineClient: null, NewTripleStore: new TripleStore()),
@@ -314,7 +314,7 @@ namespace Trinity.Client.TestProtocols
                         .Do(onNext: subscriberSource =>
                         {
                             var msg = "R-6";
-                            Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                            Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
                         })
                         .SubscribeOn(SubscribeOnEventLoopScheduler),
                     initialValue: (GraphEngineClient: null, NewTripleStore: new TripleStore()),
@@ -327,7 +327,7 @@ namespace Trinity.Client.TestProtocols
                         .Do(onNext: subscriberSource =>
                         {
                             var msg = "R-7";
-                            Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                            Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
                         })
                         .SubscribeOn(SubscribeOnEventLoopScheduler),
                     initialValue: new TripleStore(),
@@ -340,7 +340,7 @@ namespace Trinity.Client.TestProtocols
                         .Do(onNext: subscriberSource =>
                         {
                             var msg = "R-8";
-                            Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                            Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
                         })
                         .SubscribeOn(SubscribeOnEventLoopScheduler),
                     initialValue: new TripleStore(),
@@ -354,7 +354,7 @@ namespace Trinity.Client.TestProtocols
                 .Do(onNext: subscriberSource =>
                 {
                     var msg = "HR-1";
-                    Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                    Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
                 })
                 .SubscribeOn(HotObservableSchedulerContext)
                 .Publish();
@@ -426,7 +426,7 @@ namespace Trinity.Client.TestProtocols
                 .Do(onNext: tripleStreamReader =>
                 {
                     var msg = "A-1";
-                    Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                    Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
 
                 })
                 .Select(selector: tripleStreamReader => tripleStreamReader)
@@ -438,7 +438,7 @@ namespace Trinity.Client.TestProtocols
                 .Do(onNext: subscriberSource =>
                 {
                     var msg = "A-2";
-                    Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                    Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
                 })
                 .Synchronize()
                 .Select(selector: tripleObject => tripleObject)
@@ -450,7 +450,7 @@ namespace Trinity.Client.TestProtocols
                 .Do(onNext: subscriberSource =>
                 {
                     var msg = "A-3";
-                    Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                    Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
                 })
                 .Synchronize()
                 .Select(selector: tripleObject => tripleObject)
@@ -462,7 +462,7 @@ namespace Trinity.Client.TestProtocols
                 .Do(onNext: subscriberSource =>
                 {
                     var msg = "A-4";
-                    Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                    Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
                 })
                 .Select(selector: tripleObject => tripleObject)
                 .Synchronize()
@@ -474,7 +474,7 @@ namespace Trinity.Client.TestProtocols
                 .Do(onNext: subscriberSource =>
                 {
                     var msg = "A-5";
-                    Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                    Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
                 })
                 .Select(selector: tripleObject => tripleObject)
                 .ObserveOn(ObserverOnNewThreadScheduler)
@@ -486,7 +486,7 @@ namespace Trinity.Client.TestProtocols
                 .Do(onNext: subscriberSource =>
                 {
                     var msg = "A-6";
-                    Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                    Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
                 })
                 .Select(selector: tripleObject => tripleObject)
                 .ObserveOn(ObserverOnNewThreadScheduler)
@@ -498,7 +498,7 @@ namespace Trinity.Client.TestProtocols
                 .Do(onNext: subscriberSource =>
                 {
                     var msg = "A-7";
-                    Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                    Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
                 })
                 .Select(selector: tripleObject => tripleObject)
                 .ObserveOn(ObserverOnNewThreadScheduler)
@@ -509,7 +509,7 @@ namespace Trinity.Client.TestProtocols
                 .Do(onNext: subscriberSource =>
                 {
                     var msg = "A-8";
-                    Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                    Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
                 })
                 .Synchronize()
                 .Select(selector: tripleObject => tripleObject)
@@ -521,7 +521,7 @@ namespace Trinity.Client.TestProtocols
                 .Do(onNext: subscriberSource =>
                 {
                     var msg = "A-9";
-                    Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                    Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
                 })
                 .Synchronize()
                 .Select(selector: tripleObject => tripleObject)
@@ -533,7 +533,7 @@ namespace Trinity.Client.TestProtocols
                 .Do(onNext: subscriberSource =>
                 {
                     var msg = "A-10";
-                    Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                    Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
                 })
                 .Select(selector: tripleObject => tripleObject)
                 .ObserveOn(ObserverOnNewThreadScheduler)
@@ -714,7 +714,7 @@ namespace Trinity.Client.TestProtocols
                                     //if (Global.CloudStorage.IsLocalCell(store.CellId))
                                     //{
                                         var msg = "SaveClientPostedTripleToMemoryCloudActionObserver-1";
-                                        Console.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
+                                        Log.WriteLine("{0} Subscription happened on this Thread: {1}", msg, Thread.CurrentThread.ManagedThreadId);
 
                                         using (var tripleStore = Global.LocalStorage.UseTripleStore(store.CellId, CellAccessOptions.StrongLogAhead))
                                         {

@@ -40,20 +40,22 @@ namespace Trinity.ServiceFabric.GraphEngine.GraphDataService
 
             TrinityConfig.LoggingLevel = LogLevel.Debug;
 
-            GraphEngineService.StartServiceAsync("Trinity.ServiceFabric.GraphEngine.GraphDataServiceType").GetAwaiter().GetResult();
+            GraphEngineService.StartServiceAsync("Trinity.ServiceFabric.GraphEngine.GraphDataServiceType")
+                .GetAwaiter()
+                .GetResult();
 
             // Global.Communications runtime is ready
 
-            //var sampleModuleImplementation = Global.CommunicationInstance;
+            var sampleModuleImplementation = Global.CommunicationInstance;
 
-            //var graphEngineModules = Global.CommunicationInstance.GetRegisteredCommunicationModuleTypes();
+            var graphEngineModules = Global.CommunicationInstance.GetRegisteredCommunicationModuleTypes();
 
-            //foreach (var _ in graphEngineModules.Where(module => module.Assembly.FullName == nameof(SampleModuleImpl)).Select(module => new { }))
-            //{
-            //    var p = Global.CommunicationInstance.CloudStorage.MyPartitionId;
-            //    sampleModule = Global.CommunicationInstance.GetCommunicationModule<SampleModuleImpl>();
-            //    sampleModule.Ping(p);
-            //}
+            foreach (var _ in graphEngineModules.Where(module => module.Assembly.FullName == nameof(SampleModuleImpl)).Select(module => new { }))
+            {
+                var p = Global.CommunicationInstance.CloudStorage.MyPartitionId;
+                sampleModule = Global.CommunicationInstance.GetCommunicationModule<SampleModuleImpl>();
+                sampleModule.Ping(p);
+            }
 
             // Also, pay attention that, only *master replicas of the partitions* reach here.
             // When the cluster is shutting down, it is possible that the secondary replicas
