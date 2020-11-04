@@ -78,6 +78,10 @@ namespace Trinity.ServiceFabric.Infrastructure
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="svc"></param>
         private GraphEngineStatefulServiceRuntime(IGraphEngineStatefulService svc)
         {
             //  Initialize other fields and properties.

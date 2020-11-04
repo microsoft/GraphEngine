@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Azure.Storage.Blob;
+using Azure.Storage.Blobs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Trinity.Diagnostics;
 using Trinity.DynamicCluster.Persistency;
@@ -16,7 +16,7 @@ namespace Trinity.Azure.Storage.Test
     public class UploadTest
     {
         private BlobStoragePersistentStorage m_storage;
-        private CloudBlobClient m_client;
+        private BlobServiceClient m_client;
         private readonly Guid m_version = new Guid("0939a250-e41e-48b2-bce9-f3195b0388ae");
 
         [TestInitialize]

@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Client" Version="2.0.10517" />
-    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="2.0.10517" />
+    <PackageReference Include="GraphEngine.Client" Version="2.0.10572" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="2.0.10572" />
   </ItemGroup>
 
 </Project>

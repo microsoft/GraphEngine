@@ -34,9 +34,9 @@ namespace Trinity.ServiceFabric.Infrastructure.Interfaces
         private async Task InitAsync()
         {
             m_queue      = await ServiceFabricUtils.CreateReliableStateAsync<IReliableQueue<byte[]>>
-                ("Trinity.ServiceFabric.GarphEngine.Infrastructure.TaskQueue");
+                ("Trinity.ServiceFabric.GraphEngine.Infrastructure.TaskQueue");
             m_tagCounter = await ServiceFabricUtils.CreateReliableStateAsync<IReliableDictionary<Guid, int>>
-                ("Trinity.ServiceFabric.GarphEngine.Infrastructure.TaskTagCounter");
+                ("Trinity.ServiceFabric.GraphEngine.Infrastructure.TaskTagCounter");
         }
 
         private async Task EnsureInit()

@@ -22,17 +22,32 @@ namespace Trinity.TripleStore.TestServer
         private static TrinityServer TripleStoreServer { get; set; }
 
         private static ServerInfo TripleStoreServerInfo { get; } =
-            new ServerInfo("GenNexusPrime.inknowworks.dev.net", 9898, String.Empty, LogLevel.Debug);
+            new ServerInfo("GenNexusPrime.inknowworks.dev.net", 6808, @"U:\Trinity TripleStore Server Deployment", LogLevel.Debug);
 
-        private static string TripleStoreStorageRoot { get; } = @"C:\GE-TripleStore-Storage";
+        private static string TripleStoreStorageRoot { get; } = @"O:\GE-TripleStore-Storage";
+        private static AvailabilityGroup graphEngineCluster;
 
         private static async Task Main(string[] args)
         {
-            TrinityConfig.LoggingLevel         = LogLevel.Debug;
-            //TrinityConfig.CurrentRunningMode   = RunningMode.Server;
-            TrinityConfig.AddServer(TripleStoreServerInfo);
-            //TrinityConfig.LogEchoOnConsole   = false;
-            TrinityConfig.StorageRoot          = TripleStoreStorageRoot;
+            TrinityConfig.LoadConfig(@"G:\IKW-GraphEngine\samples\WPF Graph Engine Client\IKW.Trinity.Client.TestServer\IKW.Trinity.TripleStore.TestServer\trinity.xml");
+
+            graphEngineCluster = new AvailabilityGroup()
+            {
+                Id = "rub-truespark-ge-cluster",
+                Instances = new List<ServerInfo>()
+                {
+                    new ServerInfo("GenNexusPrime.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
+                    new ServerInfo("NeoThesisGenWFS.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
+                    new ServerInfo("NeoThesisGenWFS.inknowworks.dev.net", 6808, string.Empty, LogLevel.Verbose)
+                }
+            };
+
+            TrinityConfig.LoggingLevel = LogLevel.Debug;
+            TrinityConfig.Servers.Add(graphEngineCluster);
+            //TrinityConfig.CurrentRunningMode = RunningMode.Server;
+            //TrinityConfig.AddServer(TripleStoreServerInfo);
+            //TrinityConfig.LogEchoOnConsole = true;
+            //TrinityConfig.StorageRoot = TripleStoreStorageRoot;
 
             //Log.LogsWritten += Log_LogsWritten;
 
@@ -327,19 +342,19 @@ namespace Trinity.TripleStore.TestServer
 
                             Log.WriteLine("Success! Found the Triple in the TripleStore MemoryCloud");
 
-                            var tripleStore = tripleStoreMemoryContext.NewTripleStore;
-                            var subjectNode = tripleStore.TripleCell.Subject;
+                            var tripleStore   = tripleStoreMemoryContext.NewTripleStore;
+                            var subjectNode   = tripleStore.TripleCell.Subject;
                             var predicateNode = tripleStore.TripleCell.Predicate;
-                            var objectNode = tripleStore.TripleCell.Object;
+                            var objectNode    = tripleStore.TripleCell.Object;
 
-                            Log.WriteLine(
-                                $"Triple CellId in MemoryCloud: {tripleStoreMemoryContext.NewTripleStore.CellId}");
+                            Log.WriteLine($"Triple CellId in MemoryCloud: {tripleStoreMemoryContext.NewTripleStore.CellId}");
                             Log.WriteLine($"Subject Node: {subjectNode}");
                             Log.WriteLine($"Predicate Node: {predicateNode}");
                             Log.WriteLine($"Object Node: {objectNode}");
+
                         }, cancellationToken: CancellationToken.None,
-                        creationOptions: TaskCreationOptions.HideScheduler,
-                        scheduler: TaskScheduler.Current).Unwrap().ContinueWith(async _ =>
+                           creationOptions: TaskCreationOptions.HideScheduler,
+                           scheduler: TaskScheduler.Current).Unwrap().ContinueWith(async _ =>
                         {
                             await Task.Delay(0);
 
@@ -354,6 +369,8 @@ namespace Trinity.TripleStore.TestServer
 
             //Console.ReadLine();
 
+            Log.WriteLine("Graph Engine Server is up, running and waiting to client connections");
+
             Thread.Sleep(Timeout.Infinite);
 
             //GraphEngineTripleStoreDemoServerImpl =
@@ -365,7 +382,7 @@ namespace Trinity.TripleStore.TestServer
 
                 using var processingLoopTask = Task.Factory.StartNew(async () =>
                 {
-                    if (GraphEngineTripleClientAPI.Clients != null)
+                    if (GraphEngineTripleClientAPI.Clients.Any())
                     {
                         var tripleStoreClients = GraphEngineTripleClientAPI.Clients.ToList();
 
@@ -392,11 +409,11 @@ namespace Trinity.TripleStore.TestServer
                         }
                     }
 
-                    await Task.Delay(2000).ConfigureAwait(false);
+                    await Task.Delay(5000).ConfigureAwait(false);
 
                 }, cancellationToken: CancellationToken.None,
-                    creationOptions: TaskCreationOptions.HideScheduler,
-                    scheduler: TaskScheduler.Current).Unwrap();
+                   creationOptions: TaskCreationOptions.HideScheduler,
+                   scheduler: TaskScheduler.Current).Unwrap();
 
                 var mainLoopTask = processingLoopTask;
 

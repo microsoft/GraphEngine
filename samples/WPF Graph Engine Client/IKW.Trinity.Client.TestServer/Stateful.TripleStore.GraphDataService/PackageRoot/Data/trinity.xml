@@ -6,7 +6,7 @@
         <!-- In this demo application we use Azure blob storage as our persistent storage. -->
         <Trinity.Azure.Storage ConnectionString="DefaultEndpointsProtocol=https;AccountName=rubgraphenginestorage;AccountKey=Xma5n2xlvcilUryXiZ8Q2/Z+Z84t7L8HHR9Kvp72LzEWS1uoyBxnjIhPeuASS10vOYBDJyE7xw1JQDUYfceHuQ==;EndpointSuffix=core.windows.net" ContainerName="rubgraphenginestorage"/>
         <!-- We use a simple replication scheme: 2 replicas each partition, fully mirrored. -->
-        <Trinity.DynamicCluster MinimumReplica="4" ReplicationMode="Mirroring"/>
+        <Trinity.DynamicCluster MinimumReplica="5" ReplicationMode="Mirroring"/>
         <!-- 
     The number of trunks limit the total capacity of an instance: 
     Each trunk has max capacity of 2GB. A larger value increases capacity,

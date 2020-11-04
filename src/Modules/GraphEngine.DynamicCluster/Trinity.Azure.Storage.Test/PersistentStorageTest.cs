@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.Azure.Storage;
-using Microsoft.Azure.Storage.Blob;
+using Azure;
+using Azure.Storage.Blobs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Trinity.DynamicCluster.Persistency;
 
@@ -29,30 +29,33 @@ namespace Trinity.Azure.Storage.Test
         {
             BlobStoragePersistentStorage storage = new BlobStoragePersistentStorage();
             var client = storage._test_getclient();
-            var container = client.GetContainerReference(BlobStorageConfig.Instance.ContainerName);
+            var container = client.GetBlobContainerClient(BlobStorageConfig.Instance.ContainerName);
 retry:
             try
             {
                 await DeleteContainer(container);
-            }catch(StorageException ex) when (ex.Message.Contains("Conflict"))
+            }catch(RequestFailedException ex) when (ex.Message.Contains("Conflict"))
             {
                 await Task.Delay(1000);
                 goto retry;
             }
-            container = client.GetContainerReference(BlobStorageConfig.Instance.ContainerName);
+
+            container = client.GetBlobContainerClient(BlobStorageConfig.Instance.ContainerName);
+
+            //container = client.GetContainerReference(BlobStorageConfig.Instance.ContainerName);
 
 retry2:
             try
             {
                 await storage.GetLatestVersion();
-            }catch(StorageException ex) when (ex.Message.Contains("Conflict"))
+            }catch(RequestFailedException ex) when (ex.Message.Contains("Conflict"))
             {
                 await Task.Delay(1000);
                 goto retry2;
             }
         }
 
-        private static async Task DeleteContainer(CloudBlobContainer container)
+        private static async Task DeleteContainer(BlobContainerClient container)
         {
             await container.DeleteIfExistsAsync();
             do
@@ -66,16 +69,16 @@ retry2:
         {
             BlobStoragePersistentStorage storage = new BlobStoragePersistentStorage();
             var client = storage._test_getclient();
-            var container = client.GetContainerReference(BlobStorageConfig.Instance.ContainerName);
+            var container = client.GetBlobContainerClient(BlobStorageConfig.Instance.ContainerName);
             await container.DeleteIfExistsAsync();
-            container = client.GetContainerReference(BlobStorageConfig.Instance.ContainerName);
+            container = client.GetBlobContainerClient(BlobStorageConfig.Instance.ContainerName);
 
 retry2:
             try
             {
                 await storage.GetLatestVersion();
             }
-            catch (StorageException ex) when (ex.Message.Contains("Conflict"))
+            catch (RequestFailedException ex) when (ex.Message.Contains("Conflict"))
             {
                 await Task.Delay(1000);
                 goto retry2;

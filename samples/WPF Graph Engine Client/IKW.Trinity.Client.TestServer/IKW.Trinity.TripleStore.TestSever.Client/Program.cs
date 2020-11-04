@@ -34,12 +34,12 @@ namespace Trinity.TripleStore.TestSever.Client
 
             //TrinityTripleModuleClient = new TrinityClient("testcluster100.southcentralus.cloudapp.azure.com:8800");
 
-            TrinityTripleModuleClient = new TrinityClient("GenNexusPrime.inknowworks.dev.net:9898");
+            //TrinityTripleModuleClient = new TrinityClient("GenNexusPrime.inknowworks.dev.net:7878");
 
-            //TrinityTripleModuleClient = new TrinityClient("GenNexusPrime.inknowworks.dev.net:8800");
+            TrinityTripleModuleClient = new TrinityClient("GenNexusPrime.inknowworks.dev.net:8808");
 
             TrinityTripleModuleClient.UnhandledException += TrinityTripleModuleClient_UnhandledException;
-            //TrinityTripleModuleClient.Started += TrinityTripleModuleClientStarted;
+            TrinityTripleModuleClient.Started += TrinityTripleModuleClientOnStarted;
 
             TrinityTripleModuleClient.RegisterCommunicationModule<TripleModule>();
             TrinityTripleModuleClient.Start();
@@ -363,7 +363,7 @@ namespace Trinity.TripleStore.TestSever.Client
 
             //Log.ReadLine();
 
-            //// Prevents this host process from terminating so services keep running.
+            // Prevents this host process from terminating so services keep running.
             //Thread.Sleep(Timeout.Infinite);
 
             // Main Processing Loop!
@@ -389,7 +389,7 @@ namespace Trinity.TripleStore.TestSever.Client
                             Log.WriteLine(ex.ToString());
                         }
 
-                        await Task.Delay(100).ConfigureAwait(false);
+                        await Task.Delay(0).ConfigureAwait(false);
 
                     }
 
@@ -402,6 +402,11 @@ namespace Trinity.TripleStore.TestSever.Client
             var mainLoopTask = trinityClientProcessingLoopTask;
 
             await mainLoopTask;
+        }
+
+        private static void TrinityTripleModuleClientOnStarted()
+        {
+            Log.WriteLine($"Trinity Client is connected to target Trinity Graph Engine Server.");
         }
 
 

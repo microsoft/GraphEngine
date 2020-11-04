@@ -1,21 +1,69 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Trinity ConfigVersion="2.0" xmlns="https://www.graphengine.io/schema/config">
-    <Local>
-        <!-- In this demo application we use Trinity.LIKQ as our graph query language. -->
-        <Trinity.LIKQ Timeout="10000"/>
-        <!-- In this demo application we use Azure blob storage as our persistent storage. -->
-        <!--<Trinity.Azure.Storage ConnectionString="your_connection_string" ContainerName="graphengine"/>-->
-        <!-- We use a simple replication scheme: 2 replicas each partition, fully mirrored. -->
-        <!--<Trinity.DynamicCluster MinimumReplica="4" ReplicationMode="Mirroring"/>-->
-        <!-- 
-    The number of trunks limit the total capacity of an instance: 
-    Each trunk has max capacity of 2GB. A larger value increases capacity,
-    and a smaller value reduces storage overhead.
-    -->
-        <Storage TrunkCount="16"/>
-        <!-- We are logging via Azure ETW so we shut down the file logger. -->
-        <Logging LogToFile="false" EchoOnConsole="false" LogLevel="Debug" />
-        <!-- Turn on connection handshake to prevent port scanner from breaking our service. -->
-        <Network Handshake="true" ClientReconnectRetry="10" ClientSendRetry="10"/>
-    </Local>
+	<!--Declare and Define the Head (Primary) Graph Engine Cluster-->
+	<Local Template="primary-rub-truespark-sf-cluster-template"/>
+
+	<!--A Cluster node contains configurations for servers and proxies of a Graph Engine cluster. 
+	There can be multiple Cluster nodes as long as they have different identifiers. 
+	A Cluster node can have an optional attribute Id.-->
+
+	<Cluster Id="rub-truespark-graphengine-cluster">
+		<!--GenNexusPrime.inknowworks.dev.net-->
+		<Server AvailabilityGroup="RTS-AG0" 
+		        Endpoint="121.200.1.14:6808" 
+		        Template="rub-truespark-ontology-taxonomy-cluster-template" 
+		        AssemblyPath="G:\IKW-GraphEngine\samples\WPF Graph Engine Client\IKW.Trinity.Client.TestServer\IKW.Trinity.TripleStore.TestServer\bin\Debug\netcoreapp3.1">
+			<LIKQ Timeout="90000" />
+		</Server>
+		<!--NeoThesisGenWFS.inknowworks.dev.net-->
+		<Server AvailabilityGroup="RTS-AG0" 
+		        Endpoint="121.200.1.163:6808" 
+		        Template="rub-truespark-ontology-taxonomy-cluster-template" 
+		        AssemblyPath="D:\Trinity TripleStore Server Deployment">
+			<LIKQ Timeout="90000" />
+		</Server>
+	</Cluster>
+
+	<!--Graph Engine Server Template for RUB TrueSpark Ontology and Taxonomy Services-->
+	<Template Id="rub-truespark-ontology-taxonomy-cluster-template">
+		<Network HttpPort="-1" 
+		         CleintMaxConn="999" 
+		         ClientSendRetry="5" 
+		         ClientReconnectRetry="5" 
+		         Handshake="TRUE"/>
+		<Logging LogDirectory="D:\GraphEngine-Log" 
+		         LogLevel="Debug" 
+		         LogToFile="TRUE" 
+		         EchoOnConsole="TRUE"/>
+		<Storage TrunkCount="256 " 
+		         ReadOnly="FALSE" 
+		         StorageCapacity="Max16" 
+		         StorageRoot="D:\GraphEngine-Storage" 
+		         DefragInterval="600"/>
+	</Template>
+
+	<!--Default Primary Graph Engine Server Head to Cluster-->
+	<Template Id="primary-rub-truespark-sf-cluster-template">
+		<!-- Trinity Runtime settings for Network-->
+		<!--GenNexusPrime.inknowworks.dev.net-->
+
+		<Server Endpoint="121.200.1.14:6808" 
+		        Template="rub-truespark-ontology-taxonomy-cluster-template" 
+		        AssemblyPath="G:\IKW-GraphEngine\samples\WPF Graph Engine Client\IKW.Trinity.Client.TestServer\IKW.Trinity.TripleStore.TestServer\bin\Debug\netcoreapp3.1"/>
+		<Network HttpPort="-1" 
+		         CleintMaxConn="999" 
+		         ClientSendRetry="5" 
+		         ClientReconnectRetry="5" 
+		         Handshake="TRUE"/>
+		<Logging LogDirectory="D:\GraphEngine-Log" 
+		         LogLevel="Debug" 
+		         LogToFile="TRUE" 
+		         EchoOnConsole="TRUE"/>
+		<Storage TrunkCount="256 "
+		         ReadOnly="FALSE" 
+		         StorageCapacity="Max16" 
+		         StorageRoot="D:\GraphEngine-Storage" 
+		         DefragInterval="600"/>
+	</Template>
 </Trinity>
+

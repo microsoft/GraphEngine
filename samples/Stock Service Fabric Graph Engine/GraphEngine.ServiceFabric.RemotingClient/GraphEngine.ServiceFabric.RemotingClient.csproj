@@ -12,8 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Client" Version="2.0.10517" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.428" />
+    <PackageReference Include="GraphEngine.Client" Version="2.0.10572" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.456" />
   </ItemGroup>
 
   <ItemGroup>

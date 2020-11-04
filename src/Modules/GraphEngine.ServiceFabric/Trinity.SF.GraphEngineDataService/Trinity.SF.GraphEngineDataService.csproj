@@ -20,22 +20,26 @@
 
   <ItemGroup>
     <PackageReference Include="GraphEngine.LIKQ" Version="$(DOTNET_PACKAGE_VERSION)" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.456" />
+    <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.DynamicCluster" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.458" />
     <PackageReference Include="ReactiveProperty" Version="7.2.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Trinity.Client.TestProtocols\Trinity.Client.TestProtocols.csproj" />
     <ProjectReference Include="..\Trinity.ServiceFabric.Infrastructure\Trinity.ServiceFabric.Infrastructure.csproj" />
     <ProjectReference Include="..\Trinity.ServiceFabric.Remoting\Trinity.ServiceFabric.Remoting.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <Reference Include="Trinity.Azure.Storage">
       <HintPath>..\..\..\..\build\Trinity.Azure.Storage\netstandard2.0\Trinity.Azure.Storage.dll</HintPath>
     </Reference>
     <Reference Include="Trinity.DynamicCluster">
       <HintPath>..\..\..\..\build\Trinity.Azure.Storage\netstandard2.0\Trinity.DynamicCluster.dll</HintPath>
     </Reference>
-  </ItemGroup>
+  </ItemGroup>-->
 
 </Project>

@@ -19,15 +19,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.456" />
-    <PackageReference Include="ReactiveProperty" Version="7.2.0" />
+      <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.458" />
+      <PackageReference Include="ReactiveProperty" Version="7.2.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Trinity.Client.TestProtocols\Trinity.Client.TestProtocols.csproj" />
     <ProjectReference Include="..\Trinity.ServiceFabric.Remoting\Trinity.ServiceFabric.Remoting.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.DynamicCluster" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.Client" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.LIKQ" Version="$(DOTNET_PACKAGE_VERSION)" />
+  </ItemGroup>
+        <!--<ItemGroup>
     <Reference Include="GraphEngine.LIKQ">
       <HintPath>..\..\..\..\build\FanoutSearch\netstandard2.0\GraphEngine.LIKQ.dll</HintPath>
     </Reference>
@@ -40,6 +48,6 @@
     <Reference Include="Trinity.DynamicCluster">
       <HintPath>..\..\..\..\build\Trinity.Azure.Storage\netstandard2.0\Trinity.DynamicCluster.dll</HintPath>
     </Reference>
-  </ItemGroup>
+  </ItemGroup>-->
 
 </Project>

@@ -30,8 +30,12 @@
           <!-- This endpoint is used by the communication listener to obtain the port on which to 
            listen. Please note that if your service is partitioned, this port is shared with 
            replicas of different partitions that are placed in your code. -->
-          <Endpoint Name="TrinityProtocolEndpoint" Protocol="tcp" Port="8800"/>
-          <Endpoint Name="TrinityHttpEndpoint" Protocol="tcp" Port="9800"/>
+          <Endpoint Name="TrinityProtocolEndpoint" Protocol="tcp" Port="8808"/>
+          <Endpoint Name="TrinityProtocolEndpointB" Protocol="tcp" Port="8809"/>
+          <Endpoint Name="TrinityProtocolEndpointC" Protocol="tcp" Port="8810"/>
+          <Endpoint Name="TrinityProtocolEndpointD" Protocol="tcp" Port="8811"/>
+
+          <Endpoint Name="TrinityHttpEndpoint" Protocol="tcp" />
 
           <!-- This endpoint is used by the replicator for replicating the state of your service.
            This endpoint is configured through a ReplicatorSettings config section in the Settings.xml

@@ -26,13 +26,13 @@
 	<ItemGroup>
     <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
     <PackageReference Include="GraphEngine.DynamicCluster" Version="$(DOTNET_PACKAGE_VERSION)" />
-    <PackageReference Include="Microsoft.ServiceFabric" version="7.1.456" />
-    <PackageReference Include="Microsoft.ServiceFabric.Data" version="4.1.456" />
-    <PackageReference Include="Microsoft.ServiceFabric.Data.Interfaces" Version="4.1.456" />
-    <PackageReference Include="Microsoft.ServiceFabric.Diagnostics.Internal" version="4.1.456" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" version="4.1.456" />
-    <PackageReference Include="Nito.AsyncEx.Tasks" version="5.0.0" />
-    <PackageReference Include="Nito.Disposables" version="2.1.0" />
+    <PackageReference Include="Microsoft.ServiceFabric" version="7.1.458" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data" version="4.1.458" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data.Interfaces" Version="4.1.458" />
+    <PackageReference Include="Microsoft.ServiceFabric.Diagnostics.Internal" version="4.1.458" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" version="4.1.458" />
+    <PackageReference Include="Nito.AsyncEx.Tasks" version="5.1.0" />
+    <PackageReference Include="Nito.Disposables" version="2.2.0" />
     <PackageReference Include="System.Collections.Immutable" version="1.7.1" />
     <PackageReference Include="System.IO.Compression.ZipFile" version="4.3.0" />
     <PackageReference Include="System.Runtime.Numerics" version="4.3.0" />
