@@ -24,7 +24,7 @@
     <PackageReference Include="GraphEngine.DynamicCluster" Version="$(DOTNET_PACKAGE_VERSION)" />
     <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="$(DOTNET_PACKAGE_VERSION)" />
     <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.458" />
-    <PackageReference Include="ReactiveProperty" Version="7.2.0" />
+    <PackageReference Include="ReactiveProperty" Version="7.5.1" />
   </ItemGroup>
 
   <ItemGroup>

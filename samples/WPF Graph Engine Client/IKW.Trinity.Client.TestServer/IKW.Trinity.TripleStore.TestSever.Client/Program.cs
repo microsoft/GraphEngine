@@ -393,7 +393,9 @@ namespace Trinity.TripleStore.TestSever.Client
 
                     }
 
+/*
                     return;
+*/
 
                 }, cancellationToken: CancellationToken.None,
                 creationOptions: TaskCreationOptions.HideScheduler,
