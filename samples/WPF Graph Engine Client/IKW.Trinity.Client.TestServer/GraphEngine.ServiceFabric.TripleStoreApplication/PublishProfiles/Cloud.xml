@@ -27,11 +27,11 @@
                                FindValue="15155637E5FA1E87A7160579071A168C9CB896C7" 
                                StoreLocation="CurrentUser" 
                                StoreName="My" />-->
-  <ClusterConnectionParameters ConnectionEndpoint="GenNexusPrime.inknowworks.dev.net:19000"
+  <ClusterConnectionParameters ConnectionEndpoint="truesparksf01.inknowworks.dev.net:19000"
                                X509Credential="true"
-                               ServerCertThumbprint="778985B33B4765327348FEADBBEED11D74BD8672"
+                               ServerCertThumbprint="DA043D20EBF590664BF2F30A158EE1A32B32D8C2"
                                FindType="FindByThumbprint"
-                               FindValue="778985B33B4765327348FEADBBEED11D74BD8672"
+                               FindValue="DA043D20EBF590664BF2F30A158EE1A32B32D8C2"
                                StoreLocation="CurrentUser"
                                StoreName="My" />
   <ApplicationParameterFile Path="..\ApplicationParameters\Cloud.xml" />

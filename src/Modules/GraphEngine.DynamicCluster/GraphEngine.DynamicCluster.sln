@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.DynamicCluster", "T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.DynamicCluster.Test", "Trinity.DynamicCluster.Test\Trinity.DynamicCluster.Test.csproj", "{380E9D69-5D35-458C-8403-3E0626C6EB1E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trinity.Azure.StorageX", "Trinity.Azure.StorageX\Trinity.Azure.StorageX.csproj", "{4E451F88-386B-4101-BBF8-3884FC20DF73}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,14 @@ Global
 		{380E9D69-5D35-458C-8403-3E0626C6EB1E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{380E9D69-5D35-458C-8403-3E0626C6EB1E}.Release|x64.ActiveCfg = Release|x64
 		{380E9D69-5D35-458C-8403-3E0626C6EB1E}.Release|x64.Build.0 = Release|x64
+		{4E451F88-386B-4101-BBF8-3884FC20DF73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E451F88-386B-4101-BBF8-3884FC20DF73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E451F88-386B-4101-BBF8-3884FC20DF73}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4E451F88-386B-4101-BBF8-3884FC20DF73}.Debug|x64.Build.0 = Debug|Any CPU
+		{4E451F88-386B-4101-BBF8-3884FC20DF73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E451F88-386B-4101-BBF8-3884FC20DF73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E451F88-386B-4101-BBF8-3884FC20DF73}.Release|x64.ActiveCfg = Release|Any CPU
+		{4E451F88-386B-4101-BBF8-3884FC20DF73}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

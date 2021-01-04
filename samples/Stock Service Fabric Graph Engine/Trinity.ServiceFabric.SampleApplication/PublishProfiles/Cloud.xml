@@ -22,9 +22,9 @@
   -->
   <ClusterConnectionParameters ConnectionEndpoint="GenNexusPrime.inknowworks.dev.net:19000"
                                X509Credential="true"
-                               ServerCertThumbprint="e895189a73dffd47f98f8c6417df0d60edf1a135"
+                               ServerCertThumbprint="97E0C30618C1B266886C5A054AD88CF13AB18BCE"
                                FindType="FindByThumbprint"
-                               FindValue="e895189a73dffd47f98f8c6417df0d60edf1a135"
+                               FindValue="97E0C30618C1B266886C5A054AD88CF13AB18BCE"
                                StoreLocation="CurrentUser"
                                StoreName="My" />
   <ApplicationParameterFile Path="..\ApplicationParameters\Local.5Node.xml" />

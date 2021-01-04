@@ -20,7 +20,13 @@
                                     AzureActiveDirectory="true"
                                     ServerCertThumbprint="0123456789012345678901234567890123456789" />
   -->
-  <ClusterConnectionParameters ConnectionEndpoint="" />
+  <ClusterConnectionParameters ConnectionEndpoint="GenNexusPrime.inknowworks.dev.net:19000"
+                               X509Credential="true"
+                               ServerCertThumbprint="97E0C30618C1B266886C5A054AD88CF13AB18BCE"
+                               FindType="FindByThumbprint"
+                               FindValue="97E0C30618C1B266886C5A054AD88CF13AB18BCE"
+                               StoreLocation="CurrentUser"
+                               StoreName="My" />
   <ApplicationParameterFile Path="..\ApplicationParameters\Cloud.xml" />
   <CopyPackageParameters CompressPackage="true" />
 </PublishProfile>

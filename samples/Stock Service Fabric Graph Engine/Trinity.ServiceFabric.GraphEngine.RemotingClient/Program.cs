@@ -11,7 +11,7 @@ using Trinity.ServiceFabric.SampleProtocols;
 namespace Trinity.ServiceFabric.GraphEngine.RemotingClient
 {
     [UseExtension(typeof(ITrinityOverRemotingService))]
-    [UseExtension(typeof(ITrinityOverNativeTCPCommunicationService))]
+    //[UseExtension(typeof(ITrinityOverNativeTCPCommunicationService))]
     [UseExtension(typeof(SampleModuleImpl))]
     internal static class Program
     {

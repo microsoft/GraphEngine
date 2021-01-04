@@ -28,11 +28,11 @@
                                StoreLocation="CurrentUser" 
                                StoreName="My" />                                    
   -->
-  <ClusterConnectionParameters ConnectionEndpoint="NeoThesisGenWFS.inknowworks.dev.net:19000"
+  <ClusterConnectionParameters ConnectionEndpoint="truesparksf01.inknowworks.dev.net:19000"
                                X509Credential="true"
-                               ServerCertThumbprint="8096d5fc4600640e1e79233f93c81eb8d1836290"
+                               ServerCertThumbprint="DA043D20EBF590664BF2F30A158EE1A32B32D8C2"
                                FindType="FindByThumbprint"
-                               FindValue="8096d5fc4600640e1e79233f93c81eb8d1836290"
+                               FindValue="DA043D20EBF590664BF2F30A158EE1A32B32D8C2"
                                StoreLocation="CurrentUser"
                                StoreName="My" />
 

@@ -15,9 +15,9 @@
 	</PropertyGroup>-->
 
 	<ItemGroup>
-    <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="2.0.10572" />
-    <PackageReference Include="GraphEngine.LIKQ" Version="2.0.10572" />
-    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="2.0.10572" />
+    <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="2.0.10638" />
+    <PackageReference Include="GraphEngine.LIKQ" Version="2.0.10638" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="2.0.10638" />
   </ItemGroup>
 
   <ItemGroup>

@@ -23,8 +23,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Client" Version="2.0.10609" />
-    <PackageReference Include="GraphEngine.Core" Version="2.0.10609" />
+    <PackageReference Include="GraphEngine.Client" Version="2.0.10638" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.10638" />
     <PackageReference Include="ReactiveProperty" Version="7.5.1" />
   </ItemGroup>
 
