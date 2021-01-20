@@ -10,14 +10,14 @@
 	<Cluster Id="rub-truespark-graphengine-cluster">
 		<!--GenNexusPrime.inknowworks.dev.net-->
 		<Server AvailabilityGroup="RTS-AG0" 
-		        Endpoint="121.200.1.14:6808" 
+		        Endpoint="121.200.1.144:7808" 
 		        Template="rub-truespark-ontology-taxonomy-cluster-template" 
 		        AssemblyPath="G:\IKW-GraphEngine\samples\WPF Graph Engine Client\IKW.Trinity.Client.TestServer\IKW.Trinity.TripleStore.TestServer\bin\Debug\netcoreapp3.1">
 			<LIKQ Timeout="90000" />
 		</Server>
-		<!--NeoThesisGenWFS.inknowworks.dev.net-->
+		<!--truesparksf01.inknowworks.dev.net-->
 		<Server AvailabilityGroup="RTS-AG0" 
-		        Endpoint="121.200.1.163:6808" 
+		        Endpoint="172.31.245.86:7808" 
 		        Template="rub-truespark-ontology-taxonomy-cluster-template" 
 		        AssemblyPath="D:\Trinity TripleStore Server Deployment">
 			<LIKQ Timeout="90000" />
@@ -47,7 +47,7 @@
 		<!-- Trinity Runtime settings for Network-->
 		<!--GenNexusPrime.inknowworks.dev.net-->
 
-		<Server Endpoint="121.200.1.14:6808" 
+		<Server Endpoint="121.200.1.14:7878" 
 		        Template="rub-truespark-ontology-taxonomy-cluster-template" 
 		        AssemblyPath="G:\IKW-GraphEngine\samples\WPF Graph Engine Client\IKW.Trinity.Client.TestServer\IKW.Trinity.TripleStore.TestServer\bin\Debug\netcoreapp3.1"/>
 		<Network HttpPort="-1" 

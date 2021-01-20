@@ -67,30 +67,30 @@ namespace Trinity.WPF.TestClient
                 using var retrieveTripleStoreFromMemoryCloudTask = Task.Factory.StartNew(async () =>
                 {
                     await Task.Factory.StartNew(() =>
-                                                {
-                                                    foreach (var tripleNode in
-                                                        Global.LocalStorage.TripleStore_Selector())
-                                                    {
-                                                        //if (tripleStoreMemoryContext.CellId != tripleNode.CellId)
-                                                        //    continue;
+                    {
+                        foreach (var tripleNode in Global.LocalStorage.TripleStore_Selector())
+                        {
+                            //if (tripleStoreMemoryContext.CellId != tripleNode.CellId)
+                            //    continue;
 
-                                                        var node = tripleNode.TripleCell;
-                                                        var subjectNode = node.Subject;
-                                                        var predicateNode = node.Predicate;
-                                                        var objectNode = node.Object;
+                            var node = tripleNode.TripleCell;
+                            var subjectNode = node.Subject;
+                            var predicateNode = node.Predicate;
+                            var objectNode = node.Object;
 
-                                                        ResponseTextBlock
-                                                           .Items
-                                                           .Add($"Triple CellId in MemoryCloud: {tripleNode.CellId}");
-                                                        ResponseTextBlock.Items.Add($"Subject Node: {subjectNode}");
-                                                        ResponseTextBlock.Items.Add($"Predicate Node: {predicateNode}");
-                                                        ResponseTextBlock.Items.Add($"Object Node: {objectNode}");
+                            ResponseTextBlock
+                               .Items
+                               .Add($"Triple CellId in MemoryCloud: {tripleNode.CellId}");
 
-                                                        break;
-                                                    }
-                                                }, token,
-                                                TaskCreationOptions.None,
-                                                uiSyncContext);
+                            ResponseTextBlock.Items.Add($"Subject Node: {subjectNode}");
+                            ResponseTextBlock.Items.Add($"Predicate Node: {predicateNode}");
+                            ResponseTextBlock.Items.Add($"Object Node: {objectNode}");
+
+                            break;
+                        }
+                    }, token,
+                    TaskCreationOptions.None,
+                    uiSyncContext);
                 }).ContinueWith(_ =>
                 {
                     ResponseTextBlock.Items.Add("Task ClientPostedTripleSavedToMemoryCloudAction Complete...");

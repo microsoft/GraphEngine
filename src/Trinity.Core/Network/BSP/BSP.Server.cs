@@ -19,7 +19,7 @@ namespace Trinity.Network
     /// <summary>
     /// Provides methods for global bulk synchronization.
     /// </summary>
-    public unsafe static partial class BSP
+    public static unsafe partial class BSP
     {
         static volatile int default_task_sn = 1073741823; // Int32.MaxValue >> 1
         static Dictionary<int, int> BSPCheckInCount = new Dictionary<int, int>();

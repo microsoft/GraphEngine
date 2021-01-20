@@ -21,8 +21,8 @@ namespace Trinity.TripleStore.TestServer
         private static TrinityClientModule GraphEngineTripleClientAPI { get; set; }
         private static TrinityServer TripleStoreServer { get; set; }
 
-        private static ServerInfo TripleStoreServerInfo { get; } =
-            new ServerInfo("GenNexusPrime.inknowworks.dev.net", 6808, @"U:\Trinity TripleStore Server Deployment", LogLevel.Debug);
+        //private static ServerInfo TripleStoreServerInfo { get; } =
+        //    new ServerInfo("GenNexusPrime.inknowworks.dev.net", 6808, @"U:\Trinity TripleStore Server Deployment", LogLevel.Debug);
 
         private static string TripleStoreStorageRoot { get; } = @"O:\GE-TripleStore-Storage";
         private static AvailabilityGroup graphEngineCluster;
@@ -37,8 +37,11 @@ namespace Trinity.TripleStore.TestServer
                 Instances = new List<ServerInfo>()
                 {
                     new ServerInfo("GenNexusPrime.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
-                    new ServerInfo("NeoThesisGenWFS.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
-                    new ServerInfo("NeoThesisGenWFS.inknowworks.dev.net", 6808, string.Empty, LogLevel.Verbose)
+                    new ServerInfo("truesparksf01.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
+                    new ServerInfo("truesparksf02.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
+                    new ServerInfo("truesparksf03.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
+                    new ServerInfo("truesparksf04.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
+                    new ServerInfo("truesparksf05.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose)
                 }
             };
 
@@ -371,7 +374,7 @@ namespace Trinity.TripleStore.TestServer
 
             Log.WriteLine("Graph Engine Server is up, running and waiting to client connections");
 
-            Thread.Sleep(Timeout.Infinite);
+            //Thread.Sleep(Timeout.Infinite);
 
             //GraphEngineTripleStoreDemoServerImpl =
             //    TripleStoreServer.GetCommunicationModule<TripleStoreDemoServerModule>();

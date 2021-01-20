@@ -19,13 +19,13 @@ namespace Trinity.ServiceFabric.Infrastructure.Interfaces
 
         private HealthState _hstate(HealthStatus hstatus)
         {
-            switch (hstatus)
+            return hstatus switch
             {
-                case HealthStatus.Error: return HealthState.Error;
-                case HealthStatus.Warning: return HealthState.Warning;
-                case HealthStatus.Healthy: return HealthState.Ok;
-                default: return HealthState.Unknown;
-            }
+                HealthStatus.Error => HealthState.Error,
+                HealthStatus.Warning => HealthState.Warning,
+                HealthStatus.Healthy => HealthState.Ok,
+                _ => HealthState.Unknown
+            };
         }
 
         public void Dispose()

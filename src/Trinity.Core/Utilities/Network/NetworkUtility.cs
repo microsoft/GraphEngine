@@ -177,7 +177,7 @@ namespace Trinity.Utilities
         /// <returns>
         /// The IP address of the host. If multiple IP addresses point to the host, a preferred one is selected.
         /// </returns>
-        /// <exception cref="System.Net.Sockets.SocketException">An error occured when resolving the hostname.</exception>
+        /// <exception cref="System.Net.Sockets.SocketException">An error occurred when resolving the hostname.</exception>
         /// <exception cref="ArgumentNullException">host is null. </exception>
         /// <exception cref="ArgumentOutOfRangeException">The length of host is greater than 255 characters.</exception>
         /// <exception cref="ArgumentException">host is an invalid IP address.</exception>
@@ -222,7 +222,7 @@ namespace Trinity.Utilities
         /// <exception cref="ArgumentNullException">ep_value is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The length of host is greater than 255 characters.</exception>
         /// <exception cref="ArgumentException">ep_value, the host or the port extracted from it is invalid</exception>
-        /// <exception cref="System.Net.Sockets.SocketException">An error occured when resolving the hostname.</exception>
+        /// <exception cref="System.Net.Sockets.SocketException">An error occurred when resolving the hostname.</exception>
         /// <exception cref="FormatException">Invalid host IP address override.</exception>
         public static IPEndPoint Hostname2IPEndPoint(string ep_value)
         {

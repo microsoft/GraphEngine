@@ -20,20 +20,20 @@
                                     AzureActiveDirectory="true"
                                     ServerCertThumbprint="0123456789012345678901234567890123456789" />
   -->
-  <!--<ClusterConnectionParameters ConnectionEndpoint="testcluster100.southcentralus.cloudapp.azure.com:19000" 
+  <ClusterConnectionParameters ConnectionEndpoint="GenNexusPrime.inknowworks.dev.net:19000" 
                                X509Credential="true" 
-                               ServerCertThumbprint="15155637E5FA1E87A7160579071A168C9CB896C7" 
+                               ServerCertThumbprint="B99ACC10DEDF5A3CBCE292C1EF509927CD3B283F" 
                                FindType="FindByThumbprint" 
-                               FindValue="15155637E5FA1E87A7160579071A168C9CB896C7" 
+                               FindValue="B99ACC10DEDF5A3CBCE292C1EF509927CD3B283F" 
                                StoreLocation="CurrentUser" 
-                               StoreName="My" />-->
-  <ClusterConnectionParameters ConnectionEndpoint="truesparksf01.inknowworks.dev.net:19000"
+                               StoreName="My" />
+  <!--<ClusterConnectionParameters ConnectionEndpoint="truesparksf01.inknowworks.dev.net:19000"
                                X509Credential="true"
                                ServerCertThumbprint="DA043D20EBF590664BF2F30A158EE1A32B32D8C2"
                                FindType="FindByThumbprint"
                                FindValue="DA043D20EBF590664BF2F30A158EE1A32B32D8C2"
                                StoreLocation="CurrentUser"
-                               StoreName="My" />
+                               StoreName="My" />-->
   <ApplicationParameterFile Path="..\ApplicationParameters\Cloud.xml" />
   <CopyPackageParameters CompressPackage="true" />
   <UpgradeDeployment Mode="Monitored" Enabled="false">

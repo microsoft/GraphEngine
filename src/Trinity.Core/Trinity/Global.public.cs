@@ -93,7 +93,7 @@ namespace Trinity
         }
 
         /// <summary>
-        /// Uninitializes the Graph Engine, including the
+        /// Un-initializes the Graph Engine, including the
         /// communication instance, message passing, and local memory storage.
         /// </summary>
         public static void Uninitialize()

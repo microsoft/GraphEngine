@@ -15,7 +15,7 @@ namespace Trinity.FaultTolerance
 {
     static partial class DefaultFailureHandler
     {
-        internal unsafe static void FailureNotificationMessageHandler(ref SynReqRspArgs args)
+        internal static unsafe void FailureNotificationMessageHandler(ref SynReqRspArgs args)
         {
             int leaderCandidate = -1;
             int failureServerId = -1;
