@@ -22,9 +22,9 @@
   -->
   <ClusterConnectionParameters ConnectionEndpoint="GenNexusPrime.inknowworks.dev.net:19000" 
                                X509Credential="true" 
-                               ServerCertThumbprint="B99ACC10DEDF5A3CBCE292C1EF509927CD3B283F" 
+                               ServerCertThumbprint="78FD2ACE6828649ACCFE567B41283677EA94C6AB" 
                                FindType="FindByThumbprint" 
-                               FindValue="B99ACC10DEDF5A3CBCE292C1EF509927CD3B283F" 
+                               FindValue="78FD2ACE6828649ACCFE567B41283677EA94C6AB" 
                                StoreLocation="CurrentUser" 
                                StoreName="My" />
   <!--<ClusterConnectionParameters ConnectionEndpoint="truesparksf01.inknowworks.dev.net:19000"

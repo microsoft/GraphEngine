@@ -24,12 +24,12 @@ namespace Trinity.TripleStore.TestServer
         //private static ServerInfo TripleStoreServerInfo { get; } =
         //    new ServerInfo("GenNexusPrime.inknowworks.dev.net", 6808, @"U:\Trinity TripleStore Server Deployment", LogLevel.Debug);
 
-        private static string TripleStoreStorageRoot { get; } = @"O:\GE-TripleStore-Storage";
+        private static string TripleStoreStorageRoot { get; } = @"D:\\GraphEngine-Storage";
         private static AvailabilityGroup graphEngineCluster;
 
         private static async Task Main(string[] args)
         {
-            TrinityConfig.LoadConfig(@"G:\IKW-GraphEngine\samples\WPF Graph Engine Client\IKW.Trinity.Client.TestServer\IKW.Trinity.TripleStore.TestServer\trinity.xml");
+            TrinityConfig.LoadConfig(@"G:\\IKW-GraphEngine\samples\\WPF Graph Engine Client\\IKW.Trinity.Client.TestServer\\IKW.Trinity.TripleStore.TestServer\\trinity.xml");
 
             graphEngineCluster = new AvailabilityGroup()
             {
@@ -37,11 +37,11 @@ namespace Trinity.TripleStore.TestServer
                 Instances = new List<ServerInfo>()
                 {
                     new ServerInfo("GenNexusPrime.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
-                    new ServerInfo("truesparksf01.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
-                    new ServerInfo("truesparksf02.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
-                    new ServerInfo("truesparksf03.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
-                    new ServerInfo("truesparksf04.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
-                    new ServerInfo("truesparksf05.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose)
+                    new ServerInfo("metagengraph-a.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
+                    new ServerInfo("metagengraph-b.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose)
+                    //new ServerInfo("truesparksf03.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
+                    //new ServerInfo("truesparksf04.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
+                    //new ServerInfo("truesparksf05.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose)
                 }
             };
 

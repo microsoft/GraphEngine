@@ -13,14 +13,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="2.0.10638" />
-    <PackageReference Include="GraphEngine.Client" Version="2.0.10638" />
-    <PackageReference Include="GraphEngine.Core" Version="2.0.10638" />
-    <PackageReference Include="GraphEngine.LIKQ" Version="2.0.10638" />
-    <PackageReference Include="GraphEngine.ServiceFabric.Infrastructure" Version="2.0.10638" />
-    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="2.0.10638" />
-    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.1.458" />
-    <PackageReference Include="Trinity.ServiceFabric.NativeClient.Remoting" Version="2.0.10638" />
+    <PackageReference Include="GraphEngine.Azure.BlobStorage" Version="2.0.10805" />
+    <PackageReference Include="GraphEngine.Client" Version="2.0.10805" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.10805" />
+    <PackageReference Include="GraphEngine.DynamicCluster" Version="2.0.10805" />
+    <PackageReference Include="GraphEngine.LIKQ" Version="2.0.10805" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Infrastructure" Version="2.0.10805" />
+    <PackageReference Include="GraphEngine.ServiceFabric.Remoting" Version="2.0.10805" />
+    <PackageReference Include="Microsoft.ServiceFabric.Data" Version="4.2.445" />
+    <PackageReference Include="Microsoft.ServiceFabric.Services" Version="4.2.445" />
   </ItemGroup>
 
   <ItemGroup>

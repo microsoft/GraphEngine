@@ -17,9 +17,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Client" Version="2.0.0" />
-    <PackageReference Include="GraphEngine.Core" Version="2.0.0" />
-    <PackageReference Include="GraphEngine.Storage.Composite" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.Client" Version="2.0.10817" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.10817" />
   </ItemGroup>
 
   <ItemGroup>

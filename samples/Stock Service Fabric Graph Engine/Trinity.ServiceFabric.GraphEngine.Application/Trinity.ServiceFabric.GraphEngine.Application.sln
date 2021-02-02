@@ -15,12 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.Graph
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.GraphEngine.RemotingClient", "..\Trinity.ServiceFabric.GraphEngine.RemotingClient\Trinity.ServiceFabric.GraphEngine.RemotingClient.csproj", "{23F6994F-EA38-4CC3-A439-C3F2F77F0CC0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.GraphEngineRemotingClient", "..\Trinity.ServiceFabric.GraphEngineRemotingClient\Trinity.ServiceFabric.GraphEngineRemotingClient.csproj", "{41D369E5-AA62-4346-9178-8225BC7EC8FA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.GraphEngineService", "..\Trinity.ServiceFabric.GraphEngineService\Trinity.ServiceFabric.GraphEngineService.csproj", "{AFBFA2B2-1E3C-47BD-9E3A-BAF7AF0AEB9F}"
-EndProject
-Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "Trinity.ServiceFabric.SampleApplication", "..\Trinity.ServiceFabric.SampleApplication\Trinity.ServiceFabric.SampleApplication.sfproj", "{0F44632E-1A7F-463F-954C-A84A7B1A4F69}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.ServiceFabric.SampleProtocols", "..\Trinity.ServiceFabric.SampleProtocols\Trinity.ServiceFabric.SampleProtocols.csproj", "{3F5382D8-453A-4118-A9FF-4AC11372B24E}"
 EndProject
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "TrinityServiceFabric.NativeClusterRemoting.Application", "..\TrinityServiceFabric.NativeClusterRemoting.Application\TrinityServiceFabric.NativeClusterRemoting.Application.sfproj", "{469D15F6-9EFF-4944-9F48-2C0ED72E4932}"
@@ -82,29 +76,6 @@ Global
 		{23F6994F-EA38-4CC3-A439-C3F2F77F0CC0}.Release|Any CPU.Build.0 = Release|x64
 		{23F6994F-EA38-4CC3-A439-C3F2F77F0CC0}.Release|x64.ActiveCfg = Release|x64
 		{23F6994F-EA38-4CC3-A439-C3F2F77F0CC0}.Release|x64.Build.0 = Release|x64
-		{41D369E5-AA62-4346-9178-8225BC7EC8FA}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{41D369E5-AA62-4346-9178-8225BC7EC8FA}.Debug|x64.ActiveCfg = Debug|x64
-		{41D369E5-AA62-4346-9178-8225BC7EC8FA}.Debug|x64.Build.0 = Debug|x64
-		{41D369E5-AA62-4346-9178-8225BC7EC8FA}.Release|Any CPU.ActiveCfg = Release|x64
-		{41D369E5-AA62-4346-9178-8225BC7EC8FA}.Release|Any CPU.Build.0 = Release|x64
-		{41D369E5-AA62-4346-9178-8225BC7EC8FA}.Release|x64.ActiveCfg = Release|x64
-		{41D369E5-AA62-4346-9178-8225BC7EC8FA}.Release|x64.Build.0 = Release|x64
-		{AFBFA2B2-1E3C-47BD-9E3A-BAF7AF0AEB9F}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{AFBFA2B2-1E3C-47BD-9E3A-BAF7AF0AEB9F}.Debug|x64.ActiveCfg = Debug|x64
-		{AFBFA2B2-1E3C-47BD-9E3A-BAF7AF0AEB9F}.Debug|x64.Build.0 = Debug|x64
-		{AFBFA2B2-1E3C-47BD-9E3A-BAF7AF0AEB9F}.Release|Any CPU.ActiveCfg = Release|x64
-		{AFBFA2B2-1E3C-47BD-9E3A-BAF7AF0AEB9F}.Release|Any CPU.Build.0 = Release|x64
-		{AFBFA2B2-1E3C-47BD-9E3A-BAF7AF0AEB9F}.Release|x64.ActiveCfg = Release|x64
-		{AFBFA2B2-1E3C-47BD-9E3A-BAF7AF0AEB9F}.Release|x64.Build.0 = Release|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|x64.ActiveCfg = Debug|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|x64.Build.0 = Debug|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Debug|x64.Deploy.0 = Debug|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Release|Any CPU.ActiveCfg = Release|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Release|Any CPU.Build.0 = Release|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Release|x64.ActiveCfg = Release|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Release|x64.Build.0 = Release|x64
-		{0F44632E-1A7F-463F-954C-A84A7B1A4F69}.Release|x64.Deploy.0 = Release|x64
 		{3F5382D8-453A-4118-A9FF-4AC11372B24E}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{3F5382D8-453A-4118-A9FF-4AC11372B24E}.Debug|x64.ActiveCfg = Debug|x64
 		{3F5382D8-453A-4118-A9FF-4AC11372B24E}.Debug|x64.Build.0 = Debug|x64
