@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <!--<TargetFrameworks>netstandard2.1</TargetFrameworks>-->
-    <TargetFrameworks>netstandard2.1;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;net5.0</TargetFrameworks>
     <AssemblyName>Trinity.DynamicCluster</AssemblyName>
     <RootNamespace>Trinity.DynamicCluster</RootNamespace>
     <Platforms>AnyCPU;x64</Platforms>

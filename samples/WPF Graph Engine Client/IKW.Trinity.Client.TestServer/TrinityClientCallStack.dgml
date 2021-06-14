@@ -295,7 +295,7 @@
     <Alias n="33" Id="(@32 Namespace=Trinity.Network Type=CommunicationProtocolGroup Member=(Name=RegisterCommunicationModule GenericParameterCount=1))" />
     <Alias n="34" Id="Namespace=Trinity.Utilities" />
     <Alias n="35" Id="Type=AssemblyUtility" />
-    <Alias n="36" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/netcoreapp3.1/System.Runtime.dll" />
+    <Alias n="36" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/net5.0/System.Runtime.dll" />
     <Alias n="37" Id="Namespace=System" />
     <Alias n="38" Id="(@32 @34 @35 Member=(Name=ForAllAssemblies OverloadingParameters=[(@36 @37 Type=(Name=Action GenericParameterCount=1 GenericArguments=[(@36 Namespace=System.Reflection Type=Assembly)]))]))" />
     <Alias n="39" Uri="Assembly=$(d2188620-2c04-44c7-9747-d0cc676f1a01.OutputPathUri)" />
@@ -577,6 +577,6 @@
     </Style>
   </Styles>
   <Paths>
-    <Path Id="d2188620-2c04-44c7-9747-d0cc676f1a01.OutputPathUri" Value="file:///G:/IKW-GraphEngine/samples/WPF Graph Engine Client/IKW.Trinity.Client.TestServer/IKW.Trinity.TripleStore.TestSever.Client/bin/Debug/netcoreapp3.1/Trinity.TripleStore.TestSever.Client.dll" />
+    <Path Id="d2188620-2c04-44c7-9747-d0cc676f1a01.OutputPathUri" Value="file:///G:/IKW-GraphEngine/samples/WPF Graph Engine Client/IKW.Trinity.Client.TestServer/IKW.Trinity.TripleStore.TestSever.Client/bin/Debug/net5.0/Trinity.TripleStore.TestSever.Client.dll" />
   </Paths>
 </DirectedGraph>

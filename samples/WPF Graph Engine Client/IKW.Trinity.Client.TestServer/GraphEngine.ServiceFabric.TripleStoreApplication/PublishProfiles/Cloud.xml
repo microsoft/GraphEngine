@@ -20,11 +20,11 @@
                                     AzureActiveDirectory="true"
                                     ServerCertThumbprint="0123456789012345678901234567890123456789" />
   -->
-  <ClusterConnectionParameters ConnectionEndpoint="GenNexusPrime.inknowworks.dev.net:19000" 
+  <ClusterConnectionParameters ConnectionEndpoint="TrueSparkDev.inknowworks.dev.net:19000" 
                                X509Credential="true" 
-                               ServerCertThumbprint="78FD2ACE6828649ACCFE567B41283677EA94C6AB" 
+                               ServerCertThumbprint="72C8C7D85A64E32860674B5B6688B7AFE40947A9" 
                                FindType="FindByThumbprint" 
-                               FindValue="78FD2ACE6828649ACCFE567B41283677EA94C6AB" 
+                               FindValue="72C8C7D85A64E32860674B5B6688B7AFE40947A9" 
                                StoreLocation="CurrentUser" 
                                StoreName="My" />
   <!--<ClusterConnectionParameters ConnectionEndpoint="truesparksf01.inknowworks.dev.net:19000"

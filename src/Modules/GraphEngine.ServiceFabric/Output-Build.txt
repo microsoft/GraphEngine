@@ -46,7 +46,7 @@
 3>Trinity.ServiceFabric.Remoting -> G:\IKW-GraphEngine\build\netcoreapp2.0\Trinity.ServiceFabric.Remoting.dll
 4>------ Rebuild All started: Project: Trinity.ServiceFabric.GraphEngine.GraphDataService, Configuration: Debug Any CPU ------
 5>------ Rebuild All started: Project: Trinity.ServiceFabric.GraphEngine.RemotingClient, Configuration: Debug Any CPU ------
-5>Trinity.ServiceFabric.GraphEngine.RemotingClient -> G:\IKW-GraphEngine\build\netcoreapp3.1\win-x64\Trinity.ServiceFabric.GraphEngine.RemotingClient.dll
-4>Trinity.ServiceFabric.GraphEngine.GraphDataService -> G:\IKW-GraphEngine\build\netcoreapp3.1\win-x64\Trinity.ServiceFabric.GraphEngine.GraphDataService.dll
+5>Trinity.ServiceFabric.GraphEngine.RemotingClient -> G:\IKW-GraphEngine\build\net5.0\win-x64\Trinity.ServiceFabric.GraphEngine.RemotingClient.dll
+4>Trinity.ServiceFabric.GraphEngine.GraphDataService -> G:\IKW-GraphEngine\build\net5.0\win-x64\Trinity.ServiceFabric.GraphEngine.GraphDataService.dll
 6>------ Rebuild All started: Project: TrinityServiceFabric.NativeClusterRemoting.Application, Configuration: Debug x64 ------
 ========== Rebuild All: 6 succeeded, 0 failed, 0 skipped ==========

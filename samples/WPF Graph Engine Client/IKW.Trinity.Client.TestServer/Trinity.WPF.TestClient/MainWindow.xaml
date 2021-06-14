@@ -1,19 +1,27 @@
-﻿<Window x:Class="Trinity.WPF.TestClient.MainWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Trinity.WPF.TestClient"
+        xmlns:themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Royale" x:Class="Trinity.WPF.TestClient.MainWindow"
         mc:Ignorable="d"
         Title="Reactive Trinity Graph Engine WPF Client" Height="348" Width="548">
-  <Grid>
-    <Button x:Name="TalkToGraphEngineClientBtn" Content="Make GE RPC Call" HorizontalAlignment="Left" Height="47" Margin="10,10,0,0" VerticalAlignment="Top" Width="125" Click="TalkToGraphEngineClientBtn_Click"/>
-    <Label x:Name="label" Content="Triples Pushed by Test Server" HorizontalAlignment="Left" Height="26" Margin="334,55,0,0" VerticalAlignment="Top" Width="165"/>
-    <TextBox x:Name="NameSpaceTB" HorizontalAlignment="Left" Height="25" Margin="315,99,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="211"/>
-    <TextBox x:Name="SubjectTB" HorizontalAlignment="Left" Height="25" Margin="315,135,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="211"/>
-    <TextBox x:Name="PredicateTB" HorizontalAlignment="Left" Height="25" Margin="315,166,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="211"/>
-    <TextBox x:Name="ObjectTB" HorizontalAlignment="Left" Height="25" Margin="315,196,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="211"/>
-    <ListBox x:Name="ResponseTextBlock" HorizontalAlignment="Left" Height="225" Margin="16,74,0,0" VerticalAlignment="Top" Width="250"/>
-
-  </Grid>
+    <Grid>
+        <themes:ScrollChrome/>
+        <Button x:Name="TalkToGraphEngineClientBtn" Content="Make GE RPC Call" HorizontalAlignment="Left" Height="47" Margin="10,10,0,0" VerticalAlignment="Top" Width="125" Click="TalkToGraphEngineClientBtn_Click"/>
+        <ListBox x:Name="ResponseTextBlock" HorizontalAlignment="Left" Height="186" Margin="10,68,0,0" VerticalAlignment="Top" Width="273"/>
+        <Label x:Name="Label" Content="Triples Pushed by Test Server" HorizontalAlignment="Left" Height="26" Margin="334,55,0,0" VerticalAlignment="Top" Width="165"/>
+        <Grid HorizontalAlignment="Left" Height="155" Margin="315,99,0,0" VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="35*"/>
+                <ColumnDefinition Width="176*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="NameSpaceTb" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap" VerticalAlignment="Top" Width="211" Grid.ColumnSpan="2"/>
+            <TextBox x:Name="SubjectTb" HorizontalAlignment="Left" Height="25" Margin="0,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="211" Grid.ColumnSpan="2"/>
+            <TextBox x:Name="PredicateTb" HorizontalAlignment="Left" Height="25" Margin="0,67,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="211" Grid.ColumnSpan="2"/>
+            <TextBox x:Name="ObjectTb" HorizontalAlignment="Left" Height="25" Margin="0,97,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="211" Grid.ColumnSpan="2"/>
+            <TextBox x:Name="CellIdTb" HorizontalAlignment="Left" Height="25" Margin="0,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="211" Grid.ColumnSpan="2"/>
+        </Grid>
+    </Grid>
 </Window>

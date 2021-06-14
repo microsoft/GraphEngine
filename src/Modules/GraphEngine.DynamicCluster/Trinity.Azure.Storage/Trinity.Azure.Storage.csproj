@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;net5.0</TargetFrameworks>
     <RootNamespace>Trinity.Azure.Storage</RootNamespace>
     <AssemblyName>Trinity.Azure.Storage</AssemblyName>
     <OutputTypeEx>library</OutputTypeEx>

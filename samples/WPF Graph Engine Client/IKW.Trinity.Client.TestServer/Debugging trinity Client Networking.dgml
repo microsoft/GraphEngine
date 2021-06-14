@@ -248,14 +248,14 @@
     <Alias n="10" Id="(Name=Trinity.Client.TrinityClient.RegisterClient @9 @5 @2)" />
     <Alias n="11" Id="(Name=Trinity.Client.TrinityClient.StartPolling @9 @5 @2)" />
     <Alias n="12" Uri="Assembly=$(d2188620-2c04-44c7-9747-d0cc676f1a01.OutputPathUri)" />
-    <Alias n="13" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/netcoreapp3.1/System.Runtime.dll" />
+    <Alias n="13" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/net5.0/System.Runtime.dll" />
     <Alias n="14" Id="(@12 Namespace=Trinity.TripleStore.TestSever.Client Type=Program Member=(Name=Main OverloadingParameters=[(@13 Namespace=System Type=(Name=String ArrayRank=1 ParentType=String))]))" />
     <Alias n="15" Uri="Assembly=file:///C:/Users/tavi.INKNOWWORKS/.nuget/packages/graphengine.core/2.0.10517/lib/netstandard2.0/Trinity.Core.dll" />
     <Alias n="16" Id="(@15 Namespace=Trinity.Network Type=CommunicationModule Member=(Name=ClientInitialize OverloadingParameters=[(@15 Namespace=Trinity Type=RunningMode),(@15 Namespace=Trinity.Storage Type=MemoryCloud)]))" />
     <Alias n="17" Uri="Assembly=file:///C:/Users/tavi.INKNOWWORKS/.nuget/packages/graphengine.client/2.0.10517/lib/netstandard2.0/Trinity.Client.dll" />
     <Alias n="18" Id="(@17 Namespace=Trinity.Client.TrinityClientModule Type=MessagePassingExtension Member=(Name=RegisterClient OverloadingParameters=[(@15 Namespace=Trinity.Storage Type=IMessagePassingEndpoint),(@17 Namespace=Trinity.Client Type=RegisterClientRequestWriter)]))" />
     <Alias n="19" Id="(@15 Namespace=Trinity.Network.Messaging Type=MessageRegistry Member=(Name=RegisterMessageHandler OverloadingParameters=[(@13 Namespace=System Type=UInt16),(@15 Namespace=Trinity.Network.Messaging Type=SynReqRspHandler)]))" />
-    <Alias n="20" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/netcoreapp3.1/System.Linq.dll" />
+    <Alias n="20" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/net5.0/System.Linq.dll" />
     <Alias n="21" Id="(@20 Namespace=System.Linq Type=Enumerable Member=(Name=ToList GenericParameterCount=1 OverloadingParameters=[(@13 Namespace=System.Collections.Generic Type=(Name=IEnumerable GenericParameterCount=1 GenericArguments=[(ParameterIdentifier=0)]))]))" />
     <Alias n="22" Id="(@17 Namespace=Trinity.Client.TrinityClientModule Type=TrinityClientModule Member=.ctor)" />
     <Alias n="23" Id="(@15 Namespace=Trinity.Network Type=CommunicationInstance Member=AnonymousMethod__0)" />
@@ -543,6 +543,6 @@
     </Style>
   </Styles>
   <Paths>
-    <Path Id="d2188620-2c04-44c7-9747-d0cc676f1a01.OutputPathUri" Value="file:///G:/IKW-GraphEngine/samples/WPF Graph Engine Client/IKW.Trinity.Client.TestServer/IKW.Trinity.TripleStore.TestSever.Client/bin/Debug/netcoreapp3.1/Trinity.TripleStore.TestSever.Client.dll" />
+    <Path Id="d2188620-2c04-44c7-9747-d0cc676f1a01.OutputPathUri" Value="file:///G:/IKW-GraphEngine/samples/WPF Graph Engine Client/IKW.Trinity.Client.TestServer/IKW.Trinity.TripleStore.TestSever.Client/bin/Debug/net5.0/Trinity.TripleStore.TestSever.Client.dll" />
   </Paths>
 </DirectedGraph>

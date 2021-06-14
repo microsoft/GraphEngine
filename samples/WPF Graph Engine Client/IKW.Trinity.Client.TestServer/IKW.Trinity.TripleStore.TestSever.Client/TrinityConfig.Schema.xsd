@@ -92,7 +92,7 @@
         remote nodes, Server and Proxy, which can be used to create TrinityServer
         or TrinityProxy communication instances.
         The remote nodes within a Cluster node are interpreted as an ordered list.
-        An availability group is assigned an index number upon their first occurence.
+        An availability group is assigned an index number upon their first occurrence.
         For example, if there are three Server nodes:
         <![CDATA[
 

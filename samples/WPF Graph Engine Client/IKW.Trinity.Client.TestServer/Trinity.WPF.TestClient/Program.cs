@@ -1,20 +1,16 @@
-﻿using System.Reactive.Concurrency;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Reactive.Linq;
-using Trinity.Network;
+using System.Threading;
+using System.Threading.Tasks;
+using Trinity.Client;
+using Trinity.Client.TestProtocols;
+using Trinity.Client.TestProtocols.TripleServer;
+using Trinity.Diagnostics;
 
-namespace Trinity.TripleStore.TestSever.Client
+namespace Trinity.WPF.TestClient
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Diagnostics;
-    using Trinity;
-    using Trinity.Client;
-    using Trinity.Client.TestProtocols;
-    using Trinity.Client.TestProtocols.TripleServer;
-
     class Program
     {
         private static TrinityClient TrinityTripleModuleClient { get; set; } = null;
@@ -34,9 +30,9 @@ namespace Trinity.TripleStore.TestSever.Client
 
             //TrinityTripleModuleClient = new TrinityClient("testcluster100.southcentralus.cloudapp.azure.com:8800");
 
-            TrinityTripleModuleClient = new TrinityClient("TrueSparkDev.inknowworks.dev.net:8808");
+            TrinityTripleModuleClient = new TrinityClient("GenNexusPrime.inknowworksdev.net:12333");
 
-            //TrinityTripleModuleClient = new TrinityClient("truesparksf01.inknowworks.dev.net:9278");   // truesparksf03.inknowworks.dev.net:8808
+            //TrinityTripleModuleClient = new TrinityClient("truesparksf01.inknowworksdev.net:8808");   // truesparksf03.inknowworksdev.net:8808
 
             TrinityTripleModuleClient.UnhandledException += TrinityTripleModuleClient_UnhandledException;
             TrinityTripleModuleClient.Started += TrinityTripleModuleClientOnStarted;

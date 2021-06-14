@@ -25,7 +25,7 @@
       <Category Ref="CodeSchema_SourceLocation" />
       <Category Ref="ExternalCallStackEntry" />
     </Node>
-    <Node Id="(@33 Namespace=Trinity.Client.TestProtocols Type=TripleServerBase @31)" Category="CodeSchema_Method" Bounds="632,671.52,167.216666666667,25.96" CodeSchemaProperty_IsProtected="True" CommonLabel="RegisterMessageHandler" Icon="CodeSchema_Method" IsOverloaded="True" Label="RegisterMessageHandler" SourceLocation="(Assembly=&quot;file:///G:/IKW-GraphEngine/samples/WPF Graph Engine Client/IKW.Trinity.Client.TestServer/Trinity.Client.TestProtocols/obj/x64/Debug/netcoreapp3.1/GeneratedCode/Lib/Protocols.cs&quot; StartLineNumber=27 StartCharacterOffset=0 EndLineNumber=27 EndCharacterOffset=0)">
+    <Node Id="(@33 Namespace=Trinity.Client.TestProtocols Type=TripleServerBase @31)" Category="CodeSchema_Method" Bounds="632,671.52,167.216666666667,25.96" CodeSchemaProperty_IsProtected="True" CommonLabel="RegisterMessageHandler" Icon="CodeSchema_Method" IsOverloaded="True" Label="RegisterMessageHandler" SourceLocation="(Assembly=&quot;file:///G:/IKW-GraphEngine/samples/WPF Graph Engine Client/IKW.Trinity.Client.TestServer/Trinity.Client.TestProtocols/obj/x64/Debug/net5.0/GeneratedCode/Lib/Protocols.cs&quot; StartLineNumber=27 StartCharacterOffset=0 EndLineNumber=27 EndCharacterOffset=0)">
       <Category Ref="CallStackEntry" />
       <Category Ref="CodeSchema_SourceLocation" />
     </Node>
@@ -267,15 +267,15 @@
     <Alias n="14" Id="(Name=Trinity.Client.TrinityClient.RegisterClient @13 @6 @2)" />
     <Alias n="15" Id="(Name=Trinity.Client.TrinityClient.StartPolling @13 @6 @2)" />
     <Alias n="16" Uri="Assembly=$(d2188620-2c04-44c7-9747-d0cc676f1a01.OutputPathUri)" />
-    <Alias n="17" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/netcoreapp3.1/System.Runtime.dll" />
+    <Alias n="17" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/net5.0/System.Runtime.dll" />
     <Alias n="18" Id="(@16 Namespace=Trinity.TripleStore.TestSever.Client Type=Program Member=(Name=Main OverloadingParameters=[(@17 Namespace=System Type=(Name=String ArrayRank=1 ParentType=String))]))" />
     <Alias n="19" Uri="Assembly=file:///C:/Users/tavi.INKNOWWORKS/.nuget/packages/graphengine.core/2.0.10519/lib/netstandard2.0/Trinity.Core.dll" />
     <Alias n="20" Uri="Assembly=file:///C:/Users/tavi.INKNOWWORKS/.nuget/packages/graphengine.client/2.0.10519/lib/netstandard2.0/Trinity.Client.dll" />
     <Alias n="21" Id="(@20 Namespace=Trinity.Client.TrinityClientModule Type=MessagePassingExtension Member=(Name=RegisterClient OverloadingParameters=[(@19 Namespace=Trinity.Storage Type=IMessagePassingEndpoint),(@20 Namespace=Trinity.Client Type=RegisterClientRequestWriter)]))" />
-    <Alias n="22" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/netcoreapp3.1/System.Linq.dll" />
+    <Alias n="22" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/net5.0/System.Linq.dll" />
     <Alias n="23" Id="(@22 Namespace=System.Linq Type=Enumerable Member=(Name=ToList GenericParameterCount=1 OverloadingParameters=[(@17 Namespace=System.Collections.Generic Type=(Name=IEnumerable GenericParameterCount=1 GenericArguments=[(ParameterIdentifier=0)]))]))" />
     <Alias n="24" Id="(@19 Namespace=Trinity.Network Type=CommunicationInstance Member=AnonymousMethod__0)" />
-    <Alias n="25" Uri="Assembly=file:///C:/Users/tavi.INKNOWWORKS/.nuget/packages/graphengine.servicefabric.infrastructure/2.0.10519/lib/netcoreapp3.1/Trinity.ServiceFabric.Infrastructure.dll" />
+    <Alias n="25" Uri="Assembly=file:///C:/Users/tavi.INKNOWWORKS/.nuget/packages/graphengine.servicefabric.infrastructure/2.0.10519/lib/net5.0/Trinity.ServiceFabric.Infrastructure.dll" />
     <Alias n="26" Id="(@25 Namespace=Trinity.ServiceFabric.Listener Type=GraphEngineListenerBase Member=AnonymousMethod__0)" />
     <Alias n="27" Id="(@19 Namespace=Trinity.Storage Type=RemoteStorage Member=AnonymousMethod__0)" />
     <Alias n="28" Uri="Assembly=$(68c92d2e-9520-4904-a46b-cd20ae600583.OutputPathUri)" />
@@ -561,10 +561,10 @@
     </Style>
   </Styles>
   <Paths>
-    <Path Id="68c92d2e-9520-4904-a46b-cd20ae600583.OutputPath" Value="G:\IKW-GraphEngine\build\netcoreapp3.1\win-x64\Stateful.TripleStore.GraphDataService.dll" />
-    <Path Id="68c92d2e-9520-4904-a46b-cd20ae600583.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/netcoreapp3.1/win-x64/Stateful.TripleStore.GraphDataService.dll" />
-    <Path Id="d2188620-2c04-44c7-9747-d0cc676f1a01.OutputPath" Value="G:\IKW-GraphEngine\samples\WPF Graph Engine Client\IKW.Trinity.Client.TestServer\IKW.Trinity.TripleStore.TestSever.Client\bin\Debug\netcoreapp3.1\Trinity.TripleStore.TestSever.Client.dll" />
-    <Path Id="d2188620-2c04-44c7-9747-d0cc676f1a01.OutputPathUri" Value="file:///G:/IKW-GraphEngine/samples/WPF Graph Engine Client/IKW.Trinity.Client.TestServer/IKW.Trinity.TripleStore.TestSever.Client/bin/Debug/netcoreapp3.1/Trinity.TripleStore.TestSever.Client.dll" />
-    <Path Id="e067e4bb-c1c7-4631-968b-8daf0ac92f62.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/netcoreapp3.1/Trinity.Client.TestProtocols.dll" />
+    <Path Id="68c92d2e-9520-4904-a46b-cd20ae600583.OutputPath" Value="G:\IKW-GraphEngine\build\net5.0\win-x64\Stateful.TripleStore.GraphDataService.dll" />
+    <Path Id="68c92d2e-9520-4904-a46b-cd20ae600583.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/net5.0/win-x64/Stateful.TripleStore.GraphDataService.dll" />
+    <Path Id="d2188620-2c04-44c7-9747-d0cc676f1a01.OutputPath" Value="G:\IKW-GraphEngine\samples\WPF Graph Engine Client\IKW.Trinity.Client.TestServer\IKW.Trinity.TripleStore.TestSever.Client\bin\Debug\net5.0\Trinity.TripleStore.TestSever.Client.dll" />
+    <Path Id="d2188620-2c04-44c7-9747-d0cc676f1a01.OutputPathUri" Value="file:///G:/IKW-GraphEngine/samples/WPF Graph Engine Client/IKW.Trinity.Client.TestServer/IKW.Trinity.TripleStore.TestSever.Client/bin/Debug/net5.0/Trinity.TripleStore.TestSever.Client.dll" />
+    <Path Id="e067e4bb-c1c7-4631-968b-8daf0ac92f62.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/net5.0/Trinity.Client.TestProtocols.dll" />
   </Paths>
 </DirectedGraph>

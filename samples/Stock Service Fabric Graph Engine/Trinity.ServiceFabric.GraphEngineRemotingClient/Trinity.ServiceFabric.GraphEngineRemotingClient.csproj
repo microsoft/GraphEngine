@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-	  <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+	  <TargetFrameworks>net5.0</TargetFrameworks>
     <Platforms>x64</Platforms>
 	<RuntimeIdentifier>win7-x64</RuntimeIdentifier>
     <IsPackable>false</IsPackable>

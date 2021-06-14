@@ -29,24 +29,24 @@ namespace Trinity.TripleStore.TestServer
 
         private static async Task Main(string[] args)
         {
-            TrinityConfig.LoadConfig(@"G:\\IKW-GraphEngine\samples\\WPF Graph Engine Client\\IKW.Trinity.Client.TestServer\\IKW.Trinity.TripleStore.TestServer\\trinity.xml");
+            TrinityConfig.LoadConfig(@"D:\Trinity TripleStore Server Deployment\trinity.xml");
 
-            graphEngineCluster = new AvailabilityGroup()
-            {
-                Id = "rub-truespark-ge-cluster",
-                Instances = new List<ServerInfo>()
-                {
-                    new ServerInfo("GenNexusPrime.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
-                    new ServerInfo("metagengraph-a.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
-                    new ServerInfo("metagengraph-b.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose)
-                    //new ServerInfo("truesparksf03.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
-                    //new ServerInfo("truesparksf04.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
-                    //new ServerInfo("truesparksf05.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose)
-                }
-            };
+            //graphEngineCluster = new AvailabilityGroup()
+            //{
+            //    Id = "rub-truespark-ge-cluster",
+            //    Instances = new List<ServerInfo>()
+            //    {
+            //        new ServerInfo("GenNexusPrime.inknowworks.dev.net", 9888, string.Empty, LogLevel.Verbose),
+            //        new ServerInfo("metagengraph-a.inknowworks.dev.net", 9888, string.Empty, LogLevel.Verbose),
+            //        new ServerInfo("metagengraph-b.inknowworks.dev.net", 9888, string.Empty, LogLevel.Verbose)
+            //        //new ServerInfo("truesparksf03.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
+            //        //new ServerInfo("truesparksf04.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose),
+            //        //new ServerInfo("truesparksf05.inknowworks.dev.net", 7808, string.Empty, LogLevel.Verbose)
+            //    }
+            //};
 
             TrinityConfig.LoggingLevel = LogLevel.Debug;
-            TrinityConfig.Servers.Add(graphEngineCluster);
+            //TrinityConfig.Servers.Add(graphEngineCluster);
             //TrinityConfig.CurrentRunningMode = RunningMode.Server;
             //TrinityConfig.AddServer(TripleStoreServerInfo);
             //TrinityConfig.LogEchoOnConsole = true;
@@ -156,7 +156,7 @@ namespace Trinity.TripleStore.TestServer
                         creationOptions: TaskCreationOptions.HideScheduler,
                         scheduler: TaskScheduler.Current).Unwrap().ContinueWith(async _ =>
                         {
-                            await Task.Delay(0);
+                            await Task.Delay(0).ConfigureAwait(false);
 
                             Log.WriteLine("Task ServerStreamedTripleSavedToMemoryCloudAction Complete...");
                         }, cancellationToken: CancellationToken.None);
@@ -208,7 +208,7 @@ namespace Trinity.TripleStore.TestServer
                            creationOptions: TaskCreationOptions.HideScheduler,
                            scheduler: TaskScheduler.Current).Unwrap().ContinueWith(async _ =>
                         {
-                            await Task.Delay(0);
+                            await Task.Delay(0).ConfigureAwait(false);
 
                             Log.WriteLine("Task ClientPostedTripleStoreReadyInMemoryCloudAction Complete...");
                         }, cancellationToken: CancellationToken.None);
@@ -273,7 +273,7 @@ namespace Trinity.TripleStore.TestServer
                                creationOptions: TaskCreationOptions.HideScheduler,
                                scheduler: TaskScheduler.Current).Unwrap().ContinueWith(async _ =>
                         {
-                            await Task.Delay(0);
+                            await Task.Delay(0).ConfigureAwait(false);
 
                             Log.WriteLine("Task ClientPostedTripleStoreReadyInMemoryCloudHotAction Complete...");
                         }, cancellationToken: CancellationToken.None);
@@ -303,7 +303,6 @@ namespace Trinity.TripleStore.TestServer
 
                             await Task.Delay(0).ConfigureAwait(false);
 
-
                             Log.WriteLine("Reactive Async - Server-Side Get Request on behalf of the Client.");
                             Log.WriteLine($"Processing Timestamp: {DateTime.Now.ToString(CultureInfo.InvariantCulture)}");
                             Log.WriteLine($"Triple Object CellID : {tripleObjectFromGetRequest.CellId}.");
@@ -315,7 +314,7 @@ namespace Trinity.TripleStore.TestServer
                            creationOptions: TaskCreationOptions.HideScheduler,
                            scheduler: TaskScheduler.Current).Unwrap().ContinueWith(async _ =>
                         {
-                            await Task.Delay(0);
+                            await Task.Delay(0).ConfigureAwait(false);
 
                             Log.WriteLine("Task TripleByCellIdReceivedAction Complete...");
                         }, cancellationToken: CancellationToken.None);
@@ -359,7 +358,7 @@ namespace Trinity.TripleStore.TestServer
                            creationOptions: TaskCreationOptions.HideScheduler,
                            scheduler: TaskScheduler.Current).Unwrap().ContinueWith(async _ =>
                         {
-                            await Task.Delay(0);
+                            await Task.Delay(0).ConfigureAwait(false);
 
                             Log.WriteLine("Task ClientPostedTripleSavedToMemoryCloudAction Complete...");
                         }, cancellationToken: CancellationToken.None);
@@ -412,7 +411,7 @@ namespace Trinity.TripleStore.TestServer
                         }
                     }
 
-                    await Task.Delay(5000).ConfigureAwait(false);
+                    await Task.Delay(1000).ConfigureAwait(false);
 
                 }, cancellationToken: CancellationToken.None,
                    creationOptions: TaskCreationOptions.HideScheduler,

@@ -140,7 +140,7 @@
       <Category Ref="CodeSchema_SourceLocation" />
       <Category Ref="ExternalCallStackEntry" />
     </Node>
-    <Node Id="@54" Category="CodeSchema_Method" Bounds="1365.36666666667,706.0425,137.286666666667,25.96" CodeSchemaProperty_IsExtension="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="PostTriplesToServer" Icon="CodeSchema_Method" Label="PostTriplesToServer" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.ServiceFabric/Trinity.Client.TestProtocols/obj/x64/Debug/netcoreapp3.1/GeneratedCode/Lib/Protocols.cs StartLineNumber=406 StartCharacterOffset=0 EndLineNumber=406 EndCharacterOffset=0)">
+    <Node Id="@54" Category="CodeSchema_Method" Bounds="1365.36666666667,706.0425,137.286666666667,25.96" CodeSchemaProperty_IsExtension="True" CodeSchemaProperty_IsPublic="True" CodeSchemaProperty_IsStatic="True" CommonLabel="PostTriplesToServer" Icon="CodeSchema_Method" Label="PostTriplesToServer" SourceLocation="(Assembly=file:///G:/IKW-GraphEngine/src/Modules/GraphEngine.ServiceFabric/Trinity.Client.TestProtocols/obj/x64/Debug/net5.0/GeneratedCode/Lib/Protocols.cs StartLineNumber=406 StartCharacterOffset=0 EndLineNumber=406 EndCharacterOffset=0)">
       <Category Ref="CallStackEntry" />
       <Category Ref="CodeSchema_SourceLocation" />
     </Node>
@@ -448,7 +448,7 @@
     <Alias n="20" Id="(Name=Trinity.Client.TrinityClient.ScanClientConnectionFactory @19 @9 @3)" />
     <Alias n="21" Uri="Assembly=file:///C:/Users/tavi.INKNOWWORKS/.nuget/packages/microsoft.servicefabric.services/4.1.428/lib/netstandard2.0/Microsoft.ServiceFabric.Services.dll" />
     <Alias n="22" Id="Namespace=Microsoft.ServiceFabric.Services.Runtime" />
-    <Alias n="23" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/netcoreapp3.1/System.Runtime.dll" />
+    <Alias n="23" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/net5.0/System.Runtime.dll" />
     <Alias n="24" Id="(@21 @22 Type=StatelessService Member=(Name=Microsoft.ServiceFabric.Services.Runtime.IStatelessUserServiceInstance.RunAsync OverloadingParameters=[(@23 Namespace=System.Threading Type=CancellationToken)]))" />
     <Alias n="25" Uri="Assembly=$(1c1b605c-403d-44d7-a52c-c994f7acae59.OutputPathUri)" />
     <Alias n="26" Id="(@25 Namespace=Trinity.ServiceFabric.Listener Type=NativeTrinityListener Member=(Name=OpenAsync OverloadingParameters=[(@23 Namespace=System.Threading Type=CancellationToken)]))" />
@@ -474,7 +474,7 @@
     <Alias n="53" Uri="Assembly=$(829ba52b-bdc9-4f74-bb5b-0f9ea74d44df.OutputPathUri)" />
     <Alias n="54" Id="(@53 Namespace=Trinity.Client.TestProtocols.TripleServer Type=MessagePassingExtension Member=(Name=PostTriplesToServer OverloadingParameters=[(@44 Namespace=Trinity.Storage Type=IMessagePassingEndpoint),(@53 Namespace=Trinity.Client.TestProtocols Type=TripleStreamWriter)]))" />
     <Alias n="55" Id="(@21 @22 Type=StatelessServiceInstanceFactory Member=(Name=System.Fabric.IStatelessServiceFactory.CreateInstance OverloadingParameters=[(@23 @43 Type=String),(@23 @43 Type=Uri),(@23 @43 Type=(Name=Byte ArrayRank=1 ParentType=Byte)),(@23 @43 Type=Guid),(@23 @43 Type=Int64)]))" />
-    <Alias n="56" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/netcoreapp3.1/System.Linq.dll" />
+    <Alias n="56" Uri="Assembly=file:///C:/Program Files/dotnet/packs/Microsoft.NETCore.App.Ref/3.1.0/ref/net5.0/System.Linq.dll" />
     <Alias n="57" Id="(@56 Namespace=System.Linq Type=Enumerable Member=(Name=FirstOrDefault @48 OverloadingParameters=[(@23 Namespace=System.Collections.Generic Type=(Name=IEnumerable @48 GenericArguments=[(ParameterIdentifier=0)]))]))" />
     <Alias n="58" Id="(@44 @45 @46 Member=(Name=GetBestClassInstance GenericParameterCount=2 OverloadingParameters=[(@23 @43 Type=(Name=Func GenericParameterCount=2 GenericArguments=[(@23 @43 Type=Type),(ParameterIdentifier=0)])),(@23 @43 Type=(Name=Func GenericParameterCount=2 GenericArguments=[(@23 @43 Type=Type),(@23 @43 Type=Int32)]))]))" />
     <Alias n="59" Id="Member=AnonymousMethod__0" />
@@ -783,11 +783,11 @@
     </Style>
   </Styles>
   <Paths>
-    <Path Id="1c1b605c-403d-44d7-a52c-c994f7acae59.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/netcoreapp3.1/Trinity.ServiceFabric.Infrastructure.dll" />
-    <Path Id="2c2668c2-167f-4c7d-a125-96fcec3ad135.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/netcoreapp3.1/Trinity.ServiceFabric.NativeClient.Remoting.dll" />
-    <Path Id="3fd5f9ef-38f2-40a0-b9e4-912a373fe9a8.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/netcoreapp3.1/win7-x64/Trinity.SF.GraphEngineDataService.dll" />
-    <Path Id="829ba52b-bdc9-4f74-bb5b-0f9ea74d44df.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/netcoreapp3.1/Trinity.Client.TestProtocols.dll" />
-    <Path Id="8b619b1f-1ef0-43f2-b716-b4a6ad3b8c43.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/netcoreapp3.1/win7-x64/Trinity.SF.GraphEngineRemotingClient.dll" />
-    <Path Id="9dfae3cc-d446-4a93-984b-f5e0fb840c84.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/netcoreapp3.1/Trinity.ServiceFabric.Remoting.dll" />
+    <Path Id="1c1b605c-403d-44d7-a52c-c994f7acae59.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/net5.0/Trinity.ServiceFabric.Infrastructure.dll" />
+    <Path Id="2c2668c2-167f-4c7d-a125-96fcec3ad135.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/net5.0/Trinity.ServiceFabric.NativeClient.Remoting.dll" />
+    <Path Id="3fd5f9ef-38f2-40a0-b9e4-912a373fe9a8.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/net5.0/win7-x64/Trinity.SF.GraphEngineDataService.dll" />
+    <Path Id="829ba52b-bdc9-4f74-bb5b-0f9ea74d44df.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/net5.0/Trinity.Client.TestProtocols.dll" />
+    <Path Id="8b619b1f-1ef0-43f2-b716-b4a6ad3b8c43.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/net5.0/win7-x64/Trinity.SF.GraphEngineRemotingClient.dll" />
+    <Path Id="9dfae3cc-d446-4a93-984b-f5e0fb840c84.OutputPathUri" Value="file:///G:/IKW-GraphEngine/build/net5.0/Trinity.ServiceFabric.Remoting.dll" />
   </Paths>
 </DirectedGraph>

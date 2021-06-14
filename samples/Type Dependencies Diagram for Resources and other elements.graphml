@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Created by yFiles WPF 3.2.0.2-->
+<graphml xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:sys="http://www.yworks.com/xml/yfiles-common/markup/primitives/2.0" xmlns:ywpf="http://www.yworks.com/xml/yfiles-wpf/3.0/xaml" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.wpf/3.0/ygraphml.xsd " xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://graphml.graphdrawing.org/xmlns">
+  <key id="d0" attr.type="boolean" attr.name="Expanded" for="node" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
+    <default>true</default>
+  </key>
+  <key id="d1" attr.name="path" for="node">
+    <default>
+      <x:Null />
+    </default>
+  </key>
+  <key id="d2" attr.type="boolean" attr.name="is_static" for="node">
+    <default>false</default>
+  </key>
+  <key id="d3" attr.type="string" attr.name="is_static" for="node" />
+  <key id="d4" attr.type="string" attr.name="type" for="node" />
+  <key id="d5" attr.type="string" attr.name="access" for="node" />
+  <key id="d6" attr.type="string" attr.name="fqn" for="node" />
+  <key id="d7" attr.type="string" attr.name="display_name" for="node" />
+  <key id="d8" attr.name="NodeLabels" for="node" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels" />
+  <key id="d9" attr.name="NodeGeometry" for="node" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry" />
+  <key id="d10" attr.name="UserTags" for="all" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags" />
+  <key id="d11" attr.name="NodeStyle" for="node" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeStyle" />
+  <key id="d12" attr.name="NodeViewState" for="node" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/NodeViewState" />
+  <key id="d13" attr.type="string" attr.name="dependency_type" for="edge" />
+  <key id="d14" attr.name="EdgeLabels" for="edge" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeLabels" />
+  <key id="d15" attr.name="EdgeGeometry" for="edge" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeGeometry" />
+  <key id="d16" attr.name="EdgeStyle" for="edge" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeStyle" />
+  <key id="d17" attr.name="EdgeViewState" for="edge" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/EdgeViewState" />
+  <key id="d18" attr.name="PortLabels" for="port" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLabels" />
+  <key id="d19" attr.name="PortLocationParameter" for="port" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLocationParameter">
+    <default>
+      <x:Static Member="y:FreeNodePortLocationModel.NodeCenterAnchored" />
+    </default>
+  </key>
+  <key id="d20" attr.name="PortStyle" for="port" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortStyle">
+    <default>
+      <x:Static Member="y:VoidPortStyle.Instance" />
+    </default>
+  </key>
+  <key id="d21" attr.name="PortViewState" for="port" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/PortViewState" />
+  <key id="d22" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData" />
+  <data key="d22">
+    <y:SharedData>
+      <ywpf:NodeControlNodeStyle x:Key="1" StyleResourceKey="TypeElementNodeTemplate" />
+      <ywpf:PolylineEdgeStyle x:Key="2">
+        <ywpf:PolylineEdgeStyle.Pen>
+          <Pen Brush="#FF2BE32B" Thickness="4" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+            <Pen.DashStyle>
+              <DashStyle Offset="0" Dashes="0 2" />
+            </Pen.DashStyle>
+          </Pen>
+        </ywpf:PolylineEdgeStyle.Pen>
+        <ywpf:PolylineEdgeStyle.TargetArrow>
+          <ywpf:Arrow Brush="#FF2BE32B" CropLength="2" Type="Triangle" IsFrozen="True">
+            <ywpf:Arrow.Pen>
+              <Pen Brush="#FF2BE32B" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+            </ywpf:Arrow.Pen>
+          </ywpf:Arrow>
+        </ywpf:PolylineEdgeStyle.TargetArrow>
+      </ywpf:PolylineEdgeStyle>
+      <ywpf:Arrow x:Key="3" Brush="#FF2497FF" CropLength="1" Type="Triangle" IsFrozen="True">
+        <ywpf:Arrow.Pen>
+          <Pen Brush="#FF2497FF" Thickness="3" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+        </ywpf:Arrow.Pen>
+      </ywpf:Arrow>
+      <Pen Brush="#FF2497FF" Thickness="5" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" x:Key="4" />
+    </y:SharedData>
+  </data>
+  <graph id="G">
+    <node id="n0">
+      <data key="d1">
+        <x:Array Type="sys:String">
+          <sys:String>G:\ikw-sandbox\source\Prism\src\Wpf\Prism.Unity.Wpf\Properties\Resources.Designer.cs</sys:String>
+        </x:Array>
+      </data>
+      <data key="d3"><![CDATA[False]]></data>
+      <data key="d4"><![CDATA[class]]></data>
+      <data key="d5"><![CDATA[internal]]></data>
+      <data key="d6"><![CDATA[Prism.Unity.Properties.Resources]]></data>
+      <data key="d7"><![CDATA[Resources]]></data>
+      <data key="d9">
+        <y:RectD X="334.8" Y="556" Width="250.4" Height="88" />
+      </data>
+      <data key="d10" />
+      <data key="d11">
+        <y:GraphMLReference ResourceKey="1" />
+      </data>
+    </node>
+    <node id="n1">
+      <data key="d1">
+        <x:Array Type="sys:String">
+          <sys:String>G:\ikw-sandbox\source\Prism\src\Wpf\Prism.Unity.Wpf\Properties\Settings.Designer.cs</sys:String>
+        </x:Array>
+      </data>
+      <data key="d3"><![CDATA[False]]></data>
+      <data key="d4"><![CDATA[class]]></data>
+      <data key="d5"><![CDATA[internal]]></data>
+      <data key="d6"><![CDATA[Prism.Unity.Properties.Settings]]></data>
+      <data key="d7"><![CDATA[Settings]]></data>
+      <data key="d9">
+        <y:RectD X="-12.420000000000002" Y="396" Width="224.84" Height="88" />
+      </data>
+      <data key="d10" />
+      <data key="d11">
+        <y:GraphMLReference ResourceKey="1" />
+      </data>
+      <port name="p0">
+        <data key="d19">
+          <y:FreeNodePortLocationModelParameter Ratio="0.5,1" />
+        </data>
+      </port>
+      <port name="p1">
+        <data key="d19">
+          <y:FreeNodePortLocationModelParameter Ratio="0,0.5" />
+        </data>
+      </port>
+    </node>
+    <node id="n2">
+      <data key="d1">
+        <x:Array Type="sys:String">
+          <sys:String>G:\ikw-sandbox\source\Prism\src\Containers\Prism.Unity.Shared\PrismIocExtensions.cs</sys:String>
+        </x:Array>
+      </data>
+      <data key="d2">true</data>
+      <data key="d3"><![CDATA[True]]></data>
+      <data key="d4"><![CDATA[class]]></data>
+      <data key="d5"><![CDATA[public]]></data>
+      <data key="d6"><![CDATA[Prism.Unity.PrismIocExtensions]]></data>
+      <data key="d7"><![CDATA[PrismIocExtensions]]></data>
+      <data key="d9">
+        <y:RectD X="269.09333333333336" Y="396" Width="381.81333333333333" Height="88" />
+      </data>
+      <data key="d10" />
+      <data key="d11">
+        <y:GraphMLReference ResourceKey="1" />
+      </data>
+    </node>
+    <node id="n3">
+      <data key="d1">
+        <x:Array Type="sys:String">
+          <sys:String>G:\ikw-sandbox\source\Prism\src\Containers\Prism.Unity.Shared\UnityContainerExtension.cs</sys:String>
+        </x:Array>
+      </data>
+      <data key="d3"><![CDATA[False]]></data>
+      <data key="d4"><![CDATA[class]]></data>
+      <data key="d5"><![CDATA[public]]></data>
+      <data key="d6"><![CDATA[Prism.Unity.UnityContainerExtension]]></data>
+      <data key="d7"><![CDATA[UnityContainerExtension]]></data>
+      <data key="d9">
+        <y:RectD X="-10.37166666666667" Y="136" Width="460.74333333333334" Height="88" />
+      </data>
+      <data key="d10" />
+      <data key="d11">
+        <y:GraphMLReference ResourceKey="1" />
+      </data>
+      <port name="p0">
+        <data key="d19">
+          <y:FreeNodePortLocationModelParameter Ratio="0.283357328375162,1" />
+        </data>
+      </port>
+      <port name="p1">
+        <data key="d19">
+          <y:FreeNodePortLocationModelParameter Ratio="0.716642671624838,1" />
+        </data>
+      </port>
+      <port name="p2">
+        <data key="d19">
+          <y:FreeNodePortLocationModelParameter Ratio="0.5,0" />
+        </data>
+      </port>
+      <port name="p3">
+        <data key="d19">
+          <y:FreeNodePortLocationModelParameter Ratio="1,0.5" />
+        </data>
+      </port>
+    </node>
+    <node id="n4">
+      <data key="d1">
+        <x:Array Type="sys:String">
+          <sys:String>G:\ikw-sandbox\source\Prism\src\Containers\Prism.Unity.Shared\UnityContainerExtension.cs</sys:String>
+        </x:Array>
+      </data>
+      <data key="d3"><![CDATA[False]]></data>
+      <data key="d4"><![CDATA[class]]></data>
+      <data key="d5"><![CDATA[private]]></data>
+      <data key="d6"><![CDATA[Prism.Unity.UnityContainerExtension.UnityScopedProvider]]></data>
+      <data key="d7"><![CDATA[UnityScopedProvider]]></data>
+      <data key="d9">
+        <y:RectD X="15.366666666666646" Y="276" Width="409.26666666666671" Height="88" />
+      </data>
+      <data key="d10" />
+      <data key="d11">
+        <y:GraphMLReference ResourceKey="1" />
+      </data>
+      <port name="p0">
+        <data key="d19">
+          <y:FreeNodePortLocationModelParameter Ratio="0.256108486724222,0" />
+        </data>
+      </port>
+      <port name="p1">
+        <data key="d19">
+          <y:FreeNodePortLocationModelParameter Ratio="0.743891513275778,0" />
+        </data>
+      </port>
+    </node>
+    <node id="n5">
+      <data key="d1">
+        <x:Array Type="sys:String">
+          <sys:String>G:\ikw-sandbox\source\Prism\src\Wpf\Prism.Unity.Wpf\obj\Debug\net461\Prism.Unity.Wpf.Version.cs</sys:String>
+        </x:Array>
+      </data>
+      <data key="d2">true</data>
+      <data key="d3"><![CDATA[True]]></data>
+      <data key="d4"><![CDATA[class]]></data>
+      <data key="d5"><![CDATA[internal]]></data>
+      <data key="d6"><![CDATA[ThisAssembly]]></data>
+      <data key="d7"><![CDATA[ThisAssembly]]></data>
+      <data key="d9">
+        <y:RectD X="-10.915000000000021" Y="556" Width="301.83000000000004" Height="88" />
+      </data>
+      <data key="d10" />
+      <data key="d11">
+        <y:GraphMLReference ResourceKey="1" />
+      </data>
+    </node>
+    <node id="n6">
+      <data key="d1">
+        <x:Array Type="sys:String">
+          <sys:String>G:\ikw-sandbox\source\Prism\src\Wpf\Prism.Unity.Wpf\PrismApplication.cs</sys:String>
+        </x:Array>
+      </data>
+      <data key="d3"><![CDATA[False]]></data>
+      <data key="d4"><![CDATA[class]]></data>
+      <data key="d5"><![CDATA[public]]></data>
+      <data key="d6"><![CDATA[Prism.Unity.PrismApplication]]></data>
+      <data key="d7"><![CDATA[PrismApplication]]></data>
+      <data key="d9">
+        <y:RectD X="43.863333333333344" Y="-4" Width="352.27333333333331" Height="88" />
+      </data>
+      <data key="d10" />
+      <data key="d11">
+        <y:GraphMLReference ResourceKey="1" />
+      </data>
+      <port name="p0">
+        <data key="d19">
+          <y:FreeNodePortLocationModelParameter Ratio="0.5,1" />
+        </data>
+      </port>
+    </node>
+    <node id="n7">
+      <data key="d1">
+        <x:Array Type="sys:String">
+          <sys:String>G:\ikw-sandbox\source\Prism\src\Wpf\Prism.Unity.Wpf\PrismBootstrapper.cs</sys:String>
+        </x:Array>
+      </data>
+      <data key="d3"><![CDATA[False]]></data>
+      <data key="d4"><![CDATA[class]]></data>
+      <data key="d5"><![CDATA[public]]></data>
+      <data key="d6"><![CDATA[Prism.Unity.PrismBootstrapper]]></data>
+      <data key="d7"><![CDATA[PrismBootstrapper]]></data>
+      <data key="d9">
+        <y:RectD X="492.19833333333327" Y="136" Width="375.60333333333335" Height="88" />
+      </data>
+      <data key="d10" />
+      <data key="d11">
+        <y:GraphMLReference ResourceKey="1" />
+      </data>
+      <port name="p0">
+        <data key="d19">
+          <y:FreeNodePortLocationModelParameter Ratio="0,0.5" />
+        </data>
+      </port>
+    </node>
+    <edge id="e0" source="n1" target="n1" sourceport="p0" targetport="p1">
+      <data key="d13"><![CDATA[Aggregation]]></data>
+      <data key="d14">
+        <x:List />
+      </data>
+      <data key="d15">
+        <x:List />
+      </data>
+      <data key="d16">
+        <y:GraphMLReference ResourceKey="2" />
+      </data>
+      <data key="d10" />
+    </edge>
+    <edge id="e1" source="n3" target="n4" sourceport="p0" targetport="p0">
+      <data key="d13"><![CDATA[Aggregation]]></data>
+      <data key="d14">
+        <x:List />
+      </data>
+      <data key="d16">
+        <y:GraphMLReference ResourceKey="2" />
+      </data>
+      <data key="d10" />
+    </edge>
+    <edge id="e2" source="n3" target="n4" sourceport="p1" targetport="p1">
+      <data key="d13"><![CDATA[Usages]]></data>
+      <data key="d16">
+        <ywpf:PolylineEdgeStyle TargetArrow="{y:GraphMLReference 3}">
+          <ywpf:PolylineEdgeStyle.Pen>
+            <Pen Brush="#FF2497FF" Thickness="8" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+          </ywpf:PolylineEdgeStyle.Pen>
+        </ywpf:PolylineEdgeStyle>
+      </data>
+      <data key="d10" />
+    </edge>
+    <edge id="e3" source="n6" target="n3" sourceport="p0" targetport="p2">
+      <data key="d13"><![CDATA[Usages]]></data>
+      <data key="d16">
+        <ywpf:PolylineEdgeStyle Pen="{y:GraphMLReference 4}" TargetArrow="{y:GraphMLReference 3}" />
+      </data>
+      <data key="d10" />
+    </edge>
+    <edge id="e4" source="n7" target="n3" sourceport="p0" targetport="p3">
+      <data key="d13"><![CDATA[Usages]]></data>
+      <data key="d16">
+        <ywpf:PolylineEdgeStyle Pen="{y:GraphMLReference 4}" TargetArrow="{y:GraphMLReference 3}" />
+      </data>
+      <data key="d10" />
+    </edge>
+  </graph>
+</graphml>

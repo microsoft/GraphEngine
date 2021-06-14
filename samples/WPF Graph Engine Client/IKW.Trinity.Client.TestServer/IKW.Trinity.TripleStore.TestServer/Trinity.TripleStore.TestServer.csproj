@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
@@ -16,10 +16,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Client" Version="2.0.10817" />
-    <PackageReference Include="GraphEngine.Core" Version="2.0.10817" />
-    <PackageReference Include="GraphEngine.LIKQ" Version="2.0.10817" />
-    <PackageReference Include="GraphEngine.Storage.Composite" Version="2.0.10817" />
+    <None Include="bin\Debug\net5.0\trinity.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.Client" Version="2.0.10825" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.10825" />
+    <PackageReference Include="GraphEngine.LIKQ" Version="2.0.10825" />
+    <PackageReference Include="GraphEngine.Storage.Composite" Version="2.0.10825" />
   </ItemGroup>
 
   <ItemGroup>

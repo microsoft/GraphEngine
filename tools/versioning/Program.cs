@@ -32,6 +32,6 @@ public class Versioning
         uint day = time & 0x1f;
         uint month = (time >> 5) & 0xf;
         uint year = (time >> 9) & 0x7f;
-        return string.Format("20{0}-{1}-{2}", year, month, day);
+        return $"20{year}-{month}-{day}";
     }
 }
