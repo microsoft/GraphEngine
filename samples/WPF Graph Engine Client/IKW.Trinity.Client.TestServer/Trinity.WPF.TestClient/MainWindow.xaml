@@ -10,18 +10,24 @@
     <Grid>
         <themes:ScrollChrome/>
         <Button x:Name="TalkToGraphEngineClientBtn" Content="Make GE RPC Call" HorizontalAlignment="Left" Height="47" Margin="10,10,0,0" VerticalAlignment="Top" Width="125" Click="TalkToGraphEngineClientBtn_Click"/>
-        <ListBox x:Name="ResponseTextBlock" HorizontalAlignment="Left" Height="186" Margin="10,68,0,0" VerticalAlignment="Top" Width="273"/>
+        <Viewbox HorizontalAlignment="Left" Height="254" Margin="10,68,0,0" VerticalAlignment="Top" Width="264" Stretch="Fill" d:LayoutOverrides="HorizontalAlignment">
+            <ListBox x:Name="ResponseTextBlock" Height="186" Width="273"/>
+        </Viewbox>
         <Label x:Name="Label" Content="Triples Pushed by Test Server" HorizontalAlignment="Left" Height="26" Margin="334,55,0,0" VerticalAlignment="Top" Width="165"/>
-        <Grid HorizontalAlignment="Left" Height="155" Margin="315,99,0,0" VerticalAlignment="Top">
+        <Grid HorizontalAlignment="Left" Height="168" Margin="293,99,0,0" VerticalAlignment="Top" Width="245">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="35*"/>
                 <ColumnDefinition Width="176*"/>
             </Grid.ColumnDefinitions>
-            <TextBox x:Name="NameSpaceTb" HorizontalAlignment="Left" Height="25" TextWrapping="Wrap" VerticalAlignment="Top" Width="211" Grid.ColumnSpan="2"/>
-            <TextBox x:Name="SubjectTb" HorizontalAlignment="Left" Height="25" Margin="0,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="211" Grid.ColumnSpan="2"/>
-            <TextBox x:Name="PredicateTb" HorizontalAlignment="Left" Height="25" Margin="0,67,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="211" Grid.ColumnSpan="2"/>
-            <TextBox x:Name="ObjectTb" HorizontalAlignment="Left" Height="25" Margin="0,97,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="211" Grid.ColumnSpan="2"/>
-            <TextBox x:Name="CellIdTb" HorizontalAlignment="Left" Height="25" Margin="0,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="211" Grid.ColumnSpan="2"/>
+            <Viewbox Grid.ColumnSpan="2" Stretch="Fill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid>
+                    <TextBox x:Name="NameSpaceTb" HorizontalAlignment="Center" Height="25" TextWrapping="Wrap" VerticalAlignment="Top" Width="211"/>
+                    <TextBox x:Name="SubjectTb" HorizontalAlignment="Center" Height="25" Margin="0,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="211"/>
+                    <TextBox x:Name="PredicateTb" HorizontalAlignment="Center" Height="25" Margin="0,67,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="211"/>
+                    <TextBox x:Name="ObjectTb" HorizontalAlignment="Center" Height="25" Margin="0,97,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="211"/>
+                    <TextBox x:Name="CellIdTb" HorizontalAlignment="Center" Height="25" Margin="0,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="211"/>
+                </Grid>
+            </Viewbox>
         </Grid>
     </Grid>
 </Window>

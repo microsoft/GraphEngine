@@ -13,13 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RDFTriple.DemoData", "IKW.R
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trinity.TripleStore.TestServer", "IKW.Trinity.TripleStore.TestServer\Trinity.TripleStore.TestServer.csproj", "{CF7A9717-99AE-489C-8DDC-EF20E8DD7D25}"
 EndProject
-Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "GraphEngine.ServiceFabric.TripleStoreApplication", "GraphEngine.ServiceFabric.TripleStoreApplication\GraphEngine.ServiceFabric.TripleStoreApplication.sfproj", "{8B3AB5B8-83D4-46CB-9569-93D0936E4502}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E067E4BB-C1C7-4631-968B-8DAF0AC92F62} = {E067E4BB-C1C7-4631-968B-8DAF0AC92F62}
-	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stateful.TripleStore.GraphDataService", "Stateful.TripleStore.GraphDataService\Stateful.TripleStore.GraphDataService.csproj", "{68C92D2E-9520-4904-A46B-CD20AE600583}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,24 +61,6 @@ Global
 		{CF7A9717-99AE-489C-8DDC-EF20E8DD7D25}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CF7A9717-99AE-489C-8DDC-EF20E8DD7D25}.Release|x64.ActiveCfg = Release|Any CPU
 		{CF7A9717-99AE-489C-8DDC-EF20E8DD7D25}.Release|x64.Build.0 = Release|Any CPU
-		{8B3AB5B8-83D4-46CB-9569-93D0936E4502}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{8B3AB5B8-83D4-46CB-9569-93D0936E4502}.Debug|Any CPU.Build.0 = Debug|x64
-		{8B3AB5B8-83D4-46CB-9569-93D0936E4502}.Debug|Any CPU.Deploy.0 = Debug|x64
-		{8B3AB5B8-83D4-46CB-9569-93D0936E4502}.Debug|x64.ActiveCfg = Debug|x64
-		{8B3AB5B8-83D4-46CB-9569-93D0936E4502}.Debug|x64.Build.0 = Debug|x64
-		{8B3AB5B8-83D4-46CB-9569-93D0936E4502}.Debug|x64.Deploy.0 = Debug|x64
-		{8B3AB5B8-83D4-46CB-9569-93D0936E4502}.Release|Any CPU.ActiveCfg = Release|x64
-		{8B3AB5B8-83D4-46CB-9569-93D0936E4502}.Release|x64.ActiveCfg = Release|x64
-		{8B3AB5B8-83D4-46CB-9569-93D0936E4502}.Release|x64.Build.0 = Release|x64
-		{8B3AB5B8-83D4-46CB-9569-93D0936E4502}.Release|x64.Deploy.0 = Release|x64
-		{68C92D2E-9520-4904-A46B-CD20AE600583}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{68C92D2E-9520-4904-A46B-CD20AE600583}.Debug|Any CPU.Build.0 = Debug|x64
-		{68C92D2E-9520-4904-A46B-CD20AE600583}.Debug|x64.ActiveCfg = Debug|x64
-		{68C92D2E-9520-4904-A46B-CD20AE600583}.Debug|x64.Build.0 = Debug|x64
-		{68C92D2E-9520-4904-A46B-CD20AE600583}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{68C92D2E-9520-4904-A46B-CD20AE600583}.Release|Any CPU.Build.0 = Release|Any CPU
-		{68C92D2E-9520-4904-A46B-CD20AE600583}.Release|x64.ActiveCfg = Release|Any CPU
-		{68C92D2E-9520-4904-A46B-CD20AE600583}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

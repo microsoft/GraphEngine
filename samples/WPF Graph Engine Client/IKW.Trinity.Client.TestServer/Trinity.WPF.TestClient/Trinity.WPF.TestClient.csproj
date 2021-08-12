@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+    <TargetFrameworks>net5.0-windows</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <LangVersion>latest</LangVersion>
     <Platforms>AnyCPU;x64</Platforms>
@@ -17,9 +17,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GraphEngine.Client" Version="2.0.10825" />
-    <PackageReference Include="GraphEngine.Core" Version="2.0.10825" />
-    <PackageReference Include="telerik.ui.for.wpf.netcore.xaml" Version="2020.3.1020" />
+    <PackageReference Include="GraphEngine.Client" Version="2.0.10946" />
+    <PackageReference Include="GraphEngine.Core" Version="2.0.10946" />
+    <PackageReference Include="telerik.ui.for.wpf.netcore.xaml" Version="2021.2.615" />
   </ItemGroup>
 
   <ItemGroup>

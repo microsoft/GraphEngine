@@ -34,7 +34,7 @@ namespace Trinity.TripleStore.TestSever.Client
 
             //TrinityTripleModuleClient = new TrinityClient("testcluster100.southcentralus.cloudapp.azure.com:8800");
 
-            TrinityTripleModuleClient = new TrinityClient("TrueSparkDev.inknowworks.dev.net:8808");
+            TrinityTripleModuleClient = new TrinityClient("GenNexusPrime.inknowworksdev.net:12333");
 
             //TrinityTripleModuleClient = new TrinityClient("truesparksf01.inknowworks.dev.net:9278");   // truesparksf03.inknowworks.dev.net:8808
 

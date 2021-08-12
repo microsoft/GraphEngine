@@ -18,7 +18,7 @@ namespace Trinity.WPF.TestClient
     /// </summary>
     public partial class MainWindow : Window
     {
-        private TrinityClient TrinityTripleModuleClient { get; set; } = new TrinityClient("GenNexusPrime.inknowworks.dev.net:10222");
+        private TrinityClient TrinityTripleModuleClient { get; set; } = new TrinityClient("GenNexusPrime.inknowworksdev.net:12333");
         private TripleModule  TripleClientSideModule { get; set; } = null;
 
         public MainWindow()
