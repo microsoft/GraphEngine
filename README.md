@@ -17,7 +17,7 @@ combines the capability of fast graph exploration with the flexibility
 of lambda expression. Server-side computations can be expressed in
 lambda expressions, embedded in LIKQ, and executed on Graph Engine servers during graph traversal.
 
-## Getting started with Graph Engine
+## Getting started
 
 ### NuGet packages and Visual Studio extension
 
@@ -36,7 +36,7 @@ Install [Visual Studio 2017 or 2019][vs] with the following components selected:
     - Windows 8.1 SDK and UCRT SDK
 - Visual Studio extension development
 - .NET Core SDK 3.1
-- cmake
+- Cmake
 
 [.NET Core SDK][dotnet-download] and [cmake][cmake-download] can alternatively be installed using their standalone installers.
 
@@ -58,9 +58,8 @@ Linux build will work for Windows `.Net Core` as well.
 
 ### How to use the built Graph Engine packages
 
-Nuget packages will be built as
-`build/GraphEngine**._version_.nupkg`. The folder `build/` will be
-registered as a local NuGet repository and the local package cache for
+Nuget packages will be built as `build/GraphEngine**._version_.nupkg`.
+The folder `build/` will be registered as a local NuGet repository and the local package cache for
 `GraphEngine.Core` will be cleared. After the packages are built, run `dotnet restore` to use the newly built package.
 
 ### Run your first Graph Engine app
