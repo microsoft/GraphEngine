@@ -69,19 +69,21 @@ Go to the `samples/Friends/Friends` folder, execute `dotnet restore` and `dotnet
 
 ## How to contribute
 
-If you are interested in contributing to Graph Engine, please fork the
-repository and submit pull requests to the `master` branch.
-
 Pull requests, issue reports, and suggestions are welcome.
 
-Please submit bugs and feature requests as [GitHub Issues](https://github.com/Microsoft/GraphEngine/issues).
+Please read the [code of conduct](CODE_OF_CONDUCT.md) before contributing code.
+
+Follow these [instructions](SECURITY.md) for reporting security issues.
 
 ## License
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-Licensed under the [MIT][license] License.
+Licensed under the [MIT](LICENSE.md) license.
 
+## Disclaimer
+
+Microsoft Graph Engine is a research project. It is not an officially supported Microsoft product.
 
 <!--
 Links
