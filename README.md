@@ -1,8 +1,10 @@
 # Graph Engine - Open Source
 
+<!--
 | - | Windows Multi Targeting | Ubuntu 16.04 .NET Core |
 |:------:|:------:|:------:|
-|Build|[<img src="https://trinitygraphengine.visualstudio.com/_apis/public/build/definitions/4cfbb293-cd2c-4f49-aa03-06894081c93b/3/badge"/>](https://trinitygraphengine.visualstudio.com/trinity-ci/_build/index?definitionId=3)|[<img src="https://trinitygraphengine.visualstudio.com/_apis/public/build/definitions/4cfbb293-cd2c-4f49-aa03-06894081c93b/4/badge"/>](https://trinitygraphengine.visualstudio.com/trinity-ci/_build/index?definitionId=4)|
+|Build|![Build status badge]()|![Build status badge]()|
+-->
 
 This repository contains the source code of Microsoft [Graph Engine][graph-engine] and its graph
 query language -- [Language Integrated Knowledge Query][likq] (LIKQ).
@@ -27,7 +29,7 @@ If you develop Graph Engine applications using [Visual Studio][vs] on Windows, [
 
 ### Building on Windows
 
-Install [Visual Studio 2017 or 2019][vs] with the following components selected:
+Install [Visual Studio 2022 or 2019][vs] with the following components selected:
 
 - .NET desktop development
     - .NET Framework 4 -- 4.6 development tools
@@ -36,7 +38,6 @@ Install [Visual Studio 2017 or 2019][vs] with the following components selected:
     - Windows 8.1 SDK and UCRT SDK
 - Visual Studio extension development
 - .NET Core SDK 3.1
-- Cmake
 
 [.NET Core SDK][dotnet-download] and [cmake][cmake-download] can alternatively be installed using their standalone installers.
 
