@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net452;net461;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net452;net461;net6.0</TargetFrameworks>
     <AssemblyName>TSL.SmokeTest7_coreclr</AssemblyName>
     <RootNamespace>TSL.SmokeTest7</RootNamespace>
   </PropertyGroup>

@@ -1,4 +1,4 @@
-﻿param(
+param(
     [Switch]
     $VS2019
 )

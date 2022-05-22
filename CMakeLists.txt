@@ -38,8 +38,8 @@ ADD_SUBDIRECTORY(src/Modules/GraphEngine.Client)
 ADD_SUBDIRECTORY(src/Modules/GraphEngine.DynamicCluster)
 
 ADD_MSBUILD(
-    src/Modules/GraphEngine.ServiceFabric/GraphEngine.ServiceFabric.sln 
-    PACKAGE 
+    src/Modules/GraphEngine.ServiceFabric/GraphEngine.ServiceFabric.sln
+    PACKAGE
         GraphEngine.ServiceFabric.Infrastructure
         GraphEngine.ServiceFabric.Remoting
     DEPENDS
@@ -53,7 +53,7 @@ ADD_MSBUILD(
     VERSION ${TRINITY_VERSION}
 )
 
-ADD_SUBDIRECTORY(src/Trinity.VSExtension)
+# ADD_SUBDIRECTORY(src/Trinity.VSExtension)
 
 # ADD_DOTNET(
 #     src/GraphEngine.DataImporter/GraphEngine.DataImporter.sln
