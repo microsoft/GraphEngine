@@ -21,41 +21,29 @@ lambda expressions, embedded in LIKQ, and executed on Graph Engine servers durin
 
 ## Getting started
 
-### NuGet packages and Visual Studio extension
-
-NuGet packages [Graph Engine Core][graph-engine-core] and [LIKQ][likq-nuget] are available in the NuGet Gallery.
-
-If you develop Graph Engine applications using [Visual Studio][vs] on Windows, [Graph Engine VSExtension][vs-extension] can be used to facilitate the development work.
-
 ### Building on Windows
 
 Install [Visual Studio 2022 or 2019][vs] with the following components selected:
 
 - .NET desktop development
-    - .NET Framework 4 -- 4.6 development tools
+    - .NET Framework 4.6.1 development tools
 - Desktop development with C++
     - Windows 10 SDK
-    - Windows 8.1 SDK and UCRT SDK
-- Visual Studio extension development
-- .NET Core SDK 3.1
+<!--    - Windows 8.1 SDK and UCRT SDK -->
+- .NET SDK 6.0
 
-[.NET Core SDK][dotnet-download] and [cmake][cmake-download] can alternatively be installed using their standalone installers.
+[.NET SDK x64][dotnet-download] can alternatively be installed using their standalone installers.
 
 The Windows build will generate multi-targeting nuget packages.
-Open a powershell window, run `tools/build.ps1` for Visual Studio 2017 or `tools/build.ps1 -VS2019` for Visual Studio 2019.
-
-The Linux native assemblies will also be packaged (pre-built at `lib`) to allow the Windows build to work for Linux `.Net Core` as well.
+Open a powershell window, run `tools/build.ps1` for Visual Studio 2022 or `tools/build.ps1 -VS2019` for Visual Studio 2019.
 
 ### Building on Linux
 
-Install `libunwind8`, `g++`, `cmake` and `libssl-dev`. For example, run `sudo apt install libunwind8 g++ cmake libssl-dev` for Ubuntu.
+Install `libunwind8`, `g++`, `cmake` and `libssl-dev`. For example, run `sudo apt install libunwind8 g++ cmake libssl-dev` on Ubuntu.
 
-Install [.NET Core 3.1][dotnet-download] and execute `bash tools/build.sh`.
+Install [.NET SDK x64 6.0][dotnet-download] and execute `bash tools/build.sh`.
 
-The Windows native assemblies will also be packaged so that the
-Linux build will work for Windows `.Net Core` as well.
-
-**Note:** Because `.Net Framework` is Windows-only, the packages built on Linux only support `.Net Core`. The build script is tested only on `Ubuntu 16.04`, `Ubuntu 18.04`, and `Ubuntu 20.04`.
+The build script has been on `Ubuntu 20.04`.
 
 ### How to use the built Graph Engine packages
 
@@ -105,8 +93,6 @@ Links
 
 [vs]: https://www.visualstudio.com/
 
-[dotnet-download]: https://dotnet.microsoft.com/download/
-
-[cmake-download]: https://cmake.org/download/
+[dotnet-download]: https://dotnet.microsoft.com/
 
 [license]: LICENSE.md
