@@ -19,7 +19,19 @@ combines the capability of fast graph exploration with the flexibility
 of lambda expression. Server-side computations can be expressed in
 lambda expressions, embedded in LIKQ, and executed on Graph Engine servers during graph traversal.
 
+## Recent Changes
+
+The main version number is bumped to 3.0 to reflect the recent toolchain updates.
+- .NET from 3.1 to 6.0
+- .NET Framework from 4.61 to 4.8
+- Visual Studio from 2017/2019 to 2022
+
+One goal of Graph Engine 3.0 is to bring the system up-to-date and make it slimmer.
+Some obsolete or outdated modules and tools will be removed from the build pipeline.
+
 ## Getting started
+
+Recommended operating system: Windows 10 or Ubuntu 20.04.
 
 ### Building on Windows
 
@@ -32,10 +44,10 @@ The script has been tested on Windows 10 (21H2) with Visual Studio 2022.
 
 ### Building on Linux
 
-Install libunwind8, g++, cmake, and libssl-dev. For example, on Ubuntu, simply run
+Install g++, cmake, and libssl-dev. For example, on Ubuntu, simply run
 
 ```shell
-sudo apt install libunwind8 g++ cmake libssl-dev
+sudo apt install g++ cmake libssl-dev
 ```
 
 Install [.NET SDK x64 6.0][dotnet-download] and run:
@@ -44,7 +56,7 @@ Install [.NET SDK x64 6.0][dotnet-download] and run:
 bash tools/build.sh
 ```
 
-The build script has been tested on `Ubuntu 20.04`.
+The build script has been tested on Ubuntu 20.04.
 
 ### Using the built packages
 
