@@ -1,4 +1,4 @@
-# Graph Engine - Open Source
+# Microsoft Graph Engine
 
 <!--
 | - | Windows Multi Targeting | Ubuntu 16.04 .NET Core |
@@ -23,19 +23,12 @@ lambda expressions, embedded in LIKQ, and executed on Graph Engine servers durin
 
 ### Building on Windows
 
-Install [Visual Studio][vs] with the following components selected:
+Download and install [Visual Studio][vs] with the following "workloads" and "individual components" selected:
+- The ".NET desktop development" and "Desktop development with C++" workloads.
+- The ".NET Portable Library targeting pack" individual component.
 
-- .NET desktop development
-    - .NET Framework 4.6.1 development tools
-- Desktop development with C++
-    - Windows 10 SDK
-<!--    - Windows 8.1 SDK and UCRT SDK -->
-- .NET SDK 6.0
-
-[.NET SDK x64][dotnet-download] can alternatively be installed using their standalone installers.
-
-The Windows build will generate multi-targeting nuget packages.
-Open a powershell window, run `tools/build.ps1` for Visual Studio 2022 or `tools/build.ps1 -VS2019` for Visual Studio 2019.
+Open a powershell window, run `tools/build.ps1` for generating multi-targeting nuget packages.
+The script has been tested on Windows 10 (21H2) with Visual Studio 2022.
 
 ### Building on Linux
 
@@ -43,19 +36,19 @@ Install `libunwind8`, `g++`, `cmake` and `libssl-dev`. For example, run `sudo ap
 
 Install [.NET SDK x64 6.0][dotnet-download] and execute `bash tools/build.sh`.
 
-The build script has been on `Ubuntu 20.04`.
+The build script has been tested on `Ubuntu 20.04`.
 
-### How to use the built Graph Engine packages
+### Using the built packages
 
 Nuget packages will be built as `build/GraphEngine**._version_.nupkg`.
 The folder `build/` will be registered as a local NuGet repository and the local package cache for
 `GraphEngine.Core` will be cleared. After the packages are built, run `dotnet restore` to use the newly built package.
 
-### Run your first Graph Engine app
+### Running your first Graph Engine app
 
 Go to the `samples/Friends/Friends` folder, execute `dotnet restore` and `dotnet run` to run the sample project.
 
-## How to contribute
+## Contributing
 
 Pull requests, issue reports, and suggestions are welcome.
 
