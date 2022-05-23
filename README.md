@@ -6,7 +6,7 @@
 |Build|![Build status badge]()|![Build status badge]()|
 -->
 
-This repository contains the source code of Microsoft [Graph Engine][graph-engine] and its graph
+This repository contains the source code of [Microsoft Graph Engine][graph-engine] and its graph
 query language -- [Language Integrated Knowledge Query][likq] (LIKQ).
 
 Microsoft Graph Engine is a distributed in-memory data processing engine,
@@ -14,12 +14,12 @@ underpinned by a strongly-typed in-memory key-value store and a general-purpose 
 engine.
 
 [LIKQ][likq-gh]
-is a versatile graph query language atop Graph Engine. It
+is a versatile graph query language built atop Graph Engine. It
 combines the capability of fast graph exploration with the flexibility
-of lambda expression. Server-side computations can be expressed in
-lambda expressions, embedded in LIKQ, and executed on Graph Engine servers during graph traversal.
+of lambda expressions. Server-side computations can be expressed in
+lambda expressions, embedded in LIKQ, and executed on the Graph Engine servers during graph traversal.
 
-## Recent Changes
+## Recent changes
 
 The main version number is bumped to 3.0 to reflect the recent toolchain updates.
 - .NET from 3.1 to 6.0
@@ -50,19 +50,19 @@ Install g++, cmake, and libssl-dev. For example, on Ubuntu, simply run
 sudo apt install g++ cmake libssl-dev
 ```
 
-Install [.NET SDK x64 6.0][dotnet-download] and run:
+Install [.NET SDK x64 6.0][dotnet6-on-ubuntu20-04] and run:
 
 ```shell
 bash tools/build.sh
 ```
 
-The build script has been tested on Ubuntu 20.04.
+The build script has been tested on Ubuntu 20.04 with g++ 9.4.0.
 
 ### Using the built packages
 
-Nuget packages will be built as `build/GraphEngine**._version_.nupkg`.
+You can find the built nuget packages `build/GraphEngine**._version_.nupkg` in the `build/` folder.
 The folder `build/` will be registered as a local NuGet repository and the local package cache for
-`GraphEngine.Core` will be cleared. After the packages are built, run `dotnet restore` to use the newly built package.
+`GraphEngine.Core` will be cleared. After the packages are built, run `dotnet restore` to use the newly built packages.
 
 ### Running your first Graph Engine app
 
@@ -107,5 +107,7 @@ Links
 [vs]: https://www.visualstudio.com/
 
 [dotnet-download]: https://dotnet.microsoft.com/
+
+[dotnet6-on-ubuntu20-04]: https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu#2004
 
 [license]: LICENSE.md
