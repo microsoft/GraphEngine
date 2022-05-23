@@ -32,9 +32,17 @@ The script has been tested on Windows 10 (21H2) with Visual Studio 2022.
 
 ### Building on Linux
 
-Install `libunwind8`, `g++`, `cmake` and `libssl-dev`. For example, run `sudo apt install libunwind8 g++ cmake libssl-dev` on Ubuntu.
+Install libunwind8, g++, cmake, and libssl-dev. For example, on Ubuntu, simply run
 
-Install [.NET SDK x64 6.0][dotnet-download] and execute `bash tools/build.sh`.
+```shell
+sudo apt install libunwind8 g++ cmake libssl-dev
+```
+
+Install [.NET SDK x64 6.0][dotnet-download] and run:
+
+```shell
+bash tools/build.sh
+```
 
 The build script has been tested on `Ubuntu 20.04`.
 
