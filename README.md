@@ -23,7 +23,7 @@ lambda expressions, embedded in LIKQ, and executed on Graph Engine servers durin
 
 ### Building on Windows
 
-Install [Visual Studio 2022 or 2019][vs] with the following components selected:
+Install [Visual Studio][vs] with the following components selected:
 
 - .NET desktop development
     - .NET Framework 4.6.1 development tools
