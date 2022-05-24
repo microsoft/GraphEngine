@@ -37,21 +37,21 @@ ADD_SUBDIRECTORY(src/Modules/GraphEngine.Storage.Composite)
 ADD_SUBDIRECTORY(src/Modules/GraphEngine.Client)
 ADD_SUBDIRECTORY(src/Modules/GraphEngine.DynamicCluster)
 
-ADD_MSBUILD(
-    src/Modules/GraphEngine.ServiceFabric/GraphEngine.ServiceFabric.sln
-    PACKAGE
-        GraphEngine.ServiceFabric.Infrastructure
-        GraphEngine.ServiceFabric.Remoting
-    DEPENDS
-        GraphEngine.Core
-        GraphEngine.Client
-        GraphEngine.Storage.Composite
-        GraphEngine.DynamicCluster
-        GraphEngine.Azure.BlobStorage
-    X64
-    CONFIG RelSkipSFApp
-    VERSION ${TRINITY_VERSION}
-)
+# ADD_MSBUILD(
+#     src/Modules/GraphEngine.ServiceFabric/GraphEngine.ServiceFabric.sln
+#     PACKAGE
+#         GraphEngine.ServiceFabric.Infrastructure
+#         GraphEngine.ServiceFabric.Remoting
+#     DEPENDS
+#         GraphEngine.Core
+#         GraphEngine.Client
+#         GraphEngine.Storage.Composite
+#         GraphEngine.DynamicCluster
+#         GraphEngine.Azure.BlobStorage
+#     X64
+#     CONFIG RelSkipSFApp
+#     VERSION ${TRINITY_VERSION}
+# )
 
 # ADD_SUBDIRECTORY(src/Trinity.VSExtension)
 
@@ -59,4 +59,3 @@ ADD_MSBUILD(
 #     src/GraphEngine.DataImporter/GraphEngine.DataImporter.sln
 #     PACKAGE GraphEngine.DataImporter
 #     DEPENDS GraphEngine.Core)
-
