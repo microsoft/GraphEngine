@@ -1,10 +1,8 @@
 # Microsoft Graph Engine
 
-<!--
-| - | Windows Multi Targeting | Ubuntu 16.04 .NET Core |
+| - | Windows | Linux |
 |:------:|:------:|:------:|
-|Build|![Build status badge]()|![Build status badge]()|
--->
+|Build|![Build status badge](https://msai.visualstudio.com/GraphEngine/_apis/build/status/GraphEngine-Windows)|![Build status badge](https://msai.visualstudio.com/GraphEngine/_apis/build/status/GraphEngine-Linux)|
 
 This repository contains the source code of [Microsoft Graph Engine][graph-engine] and its graph
 query language -- [Language Integrated Knowledge Query][likq] (LIKQ).
