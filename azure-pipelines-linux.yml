@@ -1,0 +1,27 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-20.04
+
+steps:
+- script: sudo apt install g++ cmake libssl-dev
+  displayName: 'Install g++ cmake libssl-dev'
+
+- script: |
+    wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+    sudo dpkg -i packages-microsoft-prod.deb
+    rm packages-microsoft-prod.deb
+    sudo apt-get update
+    sudo apt-get install -y apt-transport-https
+    sudo apt-get update
+    sudo apt-get install -y dotnet-sdk-6.0
+  displayName: 'Install .NET SDK x64 6.0'
+
+- bash: tools/build.sh
+  displayName: 'Build Graph Engine'
