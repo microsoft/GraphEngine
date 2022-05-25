@@ -1,4 +1,3 @@
-﻿
 using System;
 using System.Linq;
 using System.Reflection;
@@ -67,27 +66,6 @@ namespace Trinity.Azure.Storage.Test
             BlobStorageConfig.Instance.ContainerName = "TestContainer";
             var azure_store = AssemblyUtility.GetAllClassInstances<IPersistentStorage>().First();
             Assert.AreEqual(typeof(BlobStoragePersistentStorage), azure_store.GetType());
-        }
-
-        [TestMethod]
-        public void LoadsDynamically()
-        {
-            BlobStorageConfig.Instance.ConnectionString =
-                "DefaultEndpointsProtocol=https;AccountName=redtest;AccountKey=cJF7OVo5NluWtotOAE5ZA362UlXKvHPEE7khssSzamQfs8b3KMvL8CTMskD4Fa491AuLbVA0NffuCwiJj6crDA==;EndpointSuffix=core.windows.net";
-            BlobStorageConfig.Instance.ContainerName = "TestContainer";
-            var azure_store = AssemblyUtility.GetAllClassInstances<IPersistentStorage>().First();
-            Assert.AreEqual(typeof(BlobStoragePersistentStorage), azure_store.GetType());
-        }
-
-        [TestMethod]
-        public void LoadsBlobStoragePersistentStorage()
-        {
-            BlobStorageConfig.Instance.ConnectionString =
-                "DefaultEndpointsProtocol=https;AccountName=redtest;AccountKey=cJF7OVo5NluWtotOAE5ZA362UlXKvHPEE7khssSzamQfs8b3KMvL8CTMskD4Fa491AuLbVA0NffuCwiJj6crDA==;EndpointSuffix=core.windows.net";
-            BlobStorageConfig.Instance.ContainerName = "TestContainer";
-            BlobStoragePersistentStorage storage = new BlobStoragePersistentStorage();
-            //var azure_store = AssemblyUtility.GetAllClassInstances<BlobStoragePersistentStorage>().First();
-            //Assert.AreEqual(typeof(BlobStoragePersistentStorage), azure_store.GetType());
         }
     }
 }

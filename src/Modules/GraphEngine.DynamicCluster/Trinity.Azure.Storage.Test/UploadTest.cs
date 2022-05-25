@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,7 +41,7 @@ namespace Trinity.Azure.Storage.Test
             var v = await m_storage.Download(m_version, 0, LowKey, HighKey);
             var src = await v.DownloadAsync();
 
-// The following block works perfectly.  
+// The following block works perfectly.
             var src_seq = src.GetEnumerator();
             var buffer = src_seq.Current.Buffer;
             Assert.IsTrue(buffer.Take(data.Length).SequenceEqual(data.Take(data.Length)));
