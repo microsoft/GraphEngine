@@ -4,7 +4,14 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+  branches:
+    include:
+    - master
+  paths:
+    exclude:
+    - ./*.md
+    - ./*.yml
+    - doc
 
 pool:
   vmImage: 'windows-2022'
