@@ -7,11 +7,11 @@ next: /docs/manual/TSL/RESTProtocol.html
 ---
 
 Identifiers are case-sensitive in TSL. Any legal C# identifier is
-legal in TSL.  Line comments starting with `//` and block comments
+legal in TSL. Line comments starting with `//` and block comments
 surrounded by `/*` and `*/` are supported. The syntax of TSL is
-similar to that of struct construct in C/C++ or C#.
+similar to that of the _struct_ construct in C/C++ or C#.
 
-The reserved keywords in TSL consists of three parts: all C# keywords,
+The reserved keywords in TSL include: C# keywords,
 TSL keywords, and primitive data types.
 
 {% include tsl-keywords.html %}
@@ -20,7 +20,7 @@ TSL keywords, and primitive data types.
 
 ### TSL Script
 
-A TSL script may consist of one or more following top-level
+A TSL script consists of one or more of the following top-level
 constructs:
 
 * TSL script inclusion statement
@@ -37,13 +37,13 @@ constructs:
 
 * Proxy construct
 
-We can include other TSL files in the current TSL project by using
-"include" key word. For example, `include anthertsl.tsl`. Note, if a
+We can include other TSL files in the current TSL project by using the
+"include" key word. For example, `include another.tsl`. Note, if a
 TSL file is already added to the current TSL project, it is not
 necessary to include it explicitly.
 
-Enumerations are declared using _enum_ keyword. They can be referenced
-in the current TSL project or the visual studio projects referencing
+Enumerations are declared using the _enum_ keyword. They can be referenced
+in the current TSL project or the .NET projects referencing
 the TSL project.
 
 #### Struct
@@ -54,9 +54,9 @@ and container types. A container type stores a collection of data
 elements. GE currently supports three container types:
 _Array<T>_, _List<T>_, _String/string_.
 
-TSL supports single-dimensional and multidimensional arrays.  A
-single-dimensional array of type _T_ can be declared in the following
-two ways: `Array<T>(3) myArray;` or `T[3] myArray;`.
+TSL supports single-dimensional and multi-dimensional arrays.  A
+single-dimensional array of type _T_ can be declared in two ways:
+`Array<T>(3) myArray;` or `T[3] myArray;`.
 
 For example:
 
@@ -65,7 +65,7 @@ Array<int32>(3) myArray;
 int32[3] myArray;
 ```
 
-Multidimensional arrays can be declared via: `T[m,n] myMultiArray;`
+Multi-dimensional arrays can be declared via: `T[m,n] myMultiArray;`
 
 For example:
 
@@ -73,13 +73,13 @@ For example:
 int32[3,5] mymultiArray;
 ```
 
-Note TSL array does not support variable-length elements. Thus the following declaration is not allowed:
+Note that TSL array does not support variable-length elements. Thus the following declaration is not allowed:
 
 ```C#
 string [10] strings; // Not allowed!
 ```
 
-A list of T can be declared via:`List<T> mylist;`
+A list of T can be declared via: `List<T> mylist;`
 
 For example:
 
@@ -122,11 +122,12 @@ types.
 
 The storage layer of GE is a key-value store. The schema of
 the _value_ part of a key-value pair can be specified by a TSL cell.
-GE generates key-value store interfaces (_SaveCell_,  _LoadCell_,
-and _UpdateCell_, etc.) and data access methods for each cell type.  A corresponding
-cell 'accessor' will be generated for each TSL cell.  A _cell_ can be
-accessed and manipulated through its cell _accessor_ interfaces. This
-is a simple TSL cell:
+GE generates the key-value store interfaces (_SaveCell_,  _LoadCell_,
+and _UpdateCell_, etc.) as well as the data access methods for each cell type.
+A corresponding cell 'accessor' will be generated for each TSL cell.
+A _cell_ can be accessed and manipulated _in-place_ through its cell _accessor_ interfaces.
+
+This is a simple TSL cell:
 
 ```C#
 cell MyCell
@@ -147,27 +148,25 @@ using(var cell = Global.LocalStorage.UseMyCell(cellId))
 }
 ```
 
-> The manipulation is thread-safe when a cell is accessed via its cell
-accessor.
+> The manipulations are thread-safe when a cell is accessed via its cell accessor.
 
 At the storage level, a cell is just a blob of bytes in the main
 memory. From the point view of a developer, a cell can be considered
 as a flat structured data container. It looks very much like a
 _struct_ in C/C++ or C#. A fundamental difference between a C/C++
 _struct_ and a GE cell is their way of organizing
-memory. All data fields in a cell are flattened in a continuous memory
+memory. All the data fields in a cell are stored in a continuous memory
 region, while a C/C++ _struct_ may contain data field references
-pointing to other data fields located at a different memory region.
+pointing to other data fields stored at a different memory region.
 
 ### Data Modeling in TSL
 
 _Cells_ are the basic building blocks of data modeling.  Here we use a
-simple graph modeling example to demonstrate the basic of data
+simple graph modeling example to demonstrate the basic data
 modeling techniques.
 
 Note: any cell in GE is referenced by a 64-bit _CellId_,
-thus a list of cells can be represented by `List<CellId>` in the cell
-specification.
+thus a list of cells can be represented by `List<CellId>` in TSL.
 
 ```C#
 cell struct SimpleGraphNode
@@ -178,11 +177,11 @@ cell struct SimpleGraphNode
 }
 ```
 
-This cell type can be used to represent nodes of a simple directed
+This cell type can be used to represent the nodes of a simple directed
 graph. Each node in this graph has a _name_ and a list of _inlinks_
 and _outlinks_.
 
-What if the graph edges have additional data associated. Here is an example:
+What if the graph edges have additional data associated? Here is an example:
 
 ```C#
 struct MyEdge
@@ -221,7 +220,7 @@ using (var ca = Global.LocalStorage.UseMyCell(132))
 }
 ```
 
-### Protocol 
+### Protocol
 
 A _protocol_ specifies a contract between a message sender and its
 receiver. It specifies three things: protocol type, request message,
@@ -247,9 +246,9 @@ protocol myProtocol
 }
 ```
 
-Possible protocol _Type_ are: Syn, Asyn, and HTTP. 
+Possible protocol _Type_ are: Syn, Asyn, and HTTP.
 
-If the protocol is a _Syn_ protocol: 
+If the protocol is a _Syn_ protocol:
 
 * Its _Request_ can be: _void_ or a user-defined struct.
 * Its _Response_ can be: _void_ or a user-defined struct.
@@ -259,7 +258,7 @@ If the protocol is an _Asyn_ protocol:
 * Its _Request_ can be: _void_ or a user-defined struct.
 * Its _Response_ MUST be _void_.
 
-If the protocol is a HTTP protocol:
+If the protocol is an HTTP protocol:
 
 * Its _Request_ can be: void, a user-defined struct, or _Stream_.
 * Its _Response_ can be: void, a user-defined struct, or _Stream_.
@@ -269,8 +268,8 @@ A Request or Response with _Stream_ type can be manipulated via data stream inte
 ### Server/Proxy/Module
 
 We can bind a number of protocols to a server by defining a _server_
-struct in TSL.  For example, if we have already defined two protocols
-named protocolA and protocolB, then we can bind them to a server
+struct in TSL.  For example, if we have defined two protocols
+named _protocolA_ and _protocolB_, then we can bind them to a server
 struct called _myServer_:
 
 ```C#
@@ -283,7 +282,7 @@ server my_server
 
 After compilation, an abstract base server named _myServerBase_
 supporting both _protocolA_ and _protocolB_ will be generated. Two
-abstract message handler _protocolAHandler_ and _protocolBHandler_
+abstract message handlers _protocolAHandler_ and _protocolBHandler_
 will be generated. We can implement our server logic by overriding the
 generated handlers.
 
@@ -291,13 +290,11 @@ A _proxy_ can be defined similarly, except that the construct type
 "proxy" is used.
 
 Note that a server/proxy cannot inherit protocols from another
-server/proxy instance.  This is because within a server/proxy
-instance, the protocol Ids are numbered sequentially. When inheriting
-protocols from other servers/proxies, different servers/proxies may
-number the inherited protocols differently.  GE relies on protocol Ids
-to dispatch messages. It causes message dispatching problems to number
-the same protocol with different Ids.  If we want to make a group of
-protocols reusable, we can group them into a _module_ struct:
+server/proxy instance. GE relies on protocol Ids to dispatch messages
+and the protocol Ids are numbered sequentially within a server/proxy
+instance. Inheriting protocols from other servers/proxies causes
+message dispatching problems.  If we want to make a group of protocols
+reusable, we can group them into a _module_ struct:
 
 ```C#
 module my_module
@@ -315,7 +312,7 @@ Then, we can "plug-in" the module into a server/proxy instance:
     server.RegisterCommunicationModule<my_module>();
 ```
 
-In this way, a client that understands the protocols of `my_module`
+In this way, a client that understands the protocols defined in `my_module`
 can talk to the server.
 
 ### Attributes
@@ -343,10 +340,9 @@ cell Student
 }
 ```
 
-The key and its value of an attribute is separated with a colon (`:`).
+The key and its value of an attribute are separated by a colon (`:`).
 Multiple attributes can reside within one pair of square brackets,
-separated with a comma (`,`). The attribute strings can be any literal
+separated by a comma (`,`). The attribute strings can be any literal
 strings with `:` and `,` escaped as `\:` and `\,`. Non-escaped spaces
 at the start and the end of a string are trimmed, so that `[ a b :
 123\ \ ]` will be interpreted as `[a b:123  ]`.
-
