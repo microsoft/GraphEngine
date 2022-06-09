@@ -6,34 +6,30 @@ prev: /docs/manual/TSL/accessor.html
 next: /docs/manual/TSL/RESTProtocol.html
 ---
 
-For the dispersed machines, the only way that one machine talks to
-another is via message passing over network.  We brought in the
-concept of _protocol_ in [TSL
-Basics](/docs/manual/TSL/tsl-basics.html). Three kinds of protocols
-form the foundation of all kinds of distributed computation paradigms
-on GE.
+For the machines connected by a network, the only way that one machine talks to
+another is via message passing.
 
 ## Message Handling Flow
 
-GE adopts _Request_ and _Response_ communication
-paradigm. The program that plays the role of servicing requests is
-called *server*. Correspondingly, the program that sends requests to a
-_server_ is called *client*. We use _server_ or _client_ to refer to
-the role played by a program. A program can act as both _server_ and
-_client_ at the same time.
+GE adopts the _Request_ and _Response_ communication paradigm. The program that
+plays the role of servicing requests is called *server*. Correspondingly, the
+program that sends requests to a _server_ is called *client*. We use _server_ or
+_client_ to refer to the role played by a program. A program can act as both
+_server_ and _client_ at the same time.
 
 <object type="image/svg+xml" style="width:45em; display:block;
 margin-left:auto;margin-right:auto;"
 data="/img/svg/MessageHandling.svg">The browser does not
 support SVG.</object>
 
-The specification of the request/response message format and the
-server-side message handling logic together is called a GE
-_protocol_. The request and response of a _protocol_ resembles the
-parameters and return value of a local function call, except that the
-request handling logic is performed remotely at the server side.  The
-request/response can be either a user-defined data structure specified
-in TSL or _void_ in a GE protocol.
+We brought in the concept of _protocol_ in [TSL
+Basics](/docs/manual/TSL/tsl-basics.html). The specification of the
+request/response message format and the server-side message handling logic is
+called a GE _protocol_. The request and response of a _protocol_ resembles the
+parameters and return value of a local function call, except that the message
+handling logic is performed remotely at the server side. The request/response in
+a GE protocol can be either a user-defined data structure specified in TSL or
+_void_.
 
 ```C#
 // A local function definition
@@ -43,16 +39,16 @@ Response func(Request myReq)
 }
 ```
 
-Three types of protocols are supported in GE: synchronous
-protocols, asynchronous protocols, and HTTP protocols.
+Three types of protocols are supported in GE: synchronous protocols,
+asynchronous protocols, and HTTP protocols. The three types of protocols form
+the foundation of all kinds of distributed computation paradigms on GE.
 
 ## Synchronous Protocols
 
-A synchronous protocol is akin to a normal synchronous function call,
-except that the call is made across machine boundaries. It is usually
-used to perform a synchronous function on the server side and await
-the server side to response in a blocking manner as illustrated by the
-time sequence diagram shown below.
+A synchronous protocol is akin to a normal synchronous function call, except
+that the call is made across machine boundaries. It is usually used to perform a
+synchronous function on the server side and await the server side to response in
+a blocking manner as illustrated by the time sequence diagram shown below.
 
 <object type="image/svg+xml" style="width:25em; display:block;
 margin-left:auto;margin-right:auto;"
@@ -106,10 +102,10 @@ _mySynProtocol2_, _mySynProtocol3_, and _mySynProtocol4_.
 
 ## Asynchronous Protocols
 
-For an asynchronous protocols, the server return an acknowledgement to
-the client immediately after it receives the message. A thread from a
-thread pool is then chosen to handle the received message as shown
-below in the sequence diagram.
+For an asynchronous protocol, the server returns an acknowledgement to the
+client immediately after it receives the message. A thread is then chosen from a
+thread pool to handle the received message as shown below in the sequence
+diagram.
 
 <object type="image/svg+xml" style="width:25em; display:block;
 margin-left:auto;margin-right:auto;"
@@ -139,27 +135,25 @@ protocol myAsynProtocol2
 }
 ```
 
-Asynchronous protocols cannot return any user-defined data to the
-client, because the server does not wait on the handler's completion
-before sending back the acknowledgement.  Hence, the response of an
-asynchronous protocol must be _void_, while the request can be a
-user-defined message or void.  From the perspective of a client, the
-fact that an asynchronous call returns only means the message is
-successfully received by the remote peer.
+Asynchronous protocols cannot return any user-defined data to the client,
+because the server does not wait for the handler's completion before sending back
+the acknowledgement. Hence, the response of an asynchronous protocol must be
+_void_, while the request can be a user-defined message or void.  From the
+perspective of a client, the fact that an asynchronous call returns only means
+the message is successfully received by the remote peer.
 
 ## HTTP Protocols
 
-An HTTP protocol is a synchronous remote procedure call. It is the
-RESTful version of a _Syn_ protocol. It has almost the same time
-sequence diagram with a _Syn_ protocol, except that the request and
-response are Json structures.
+An HTTP protocol is a synchronous remote call. It is the RESTful version of
+_Syn_ protocol. It has almost the same time sequence diagram with _Syn_
+protocol, except that the request and response are in the JSON format.
 
 <object type="image/svg+xml" style="width:25em; display:block;
 margin-left:auto;margin-right:auto;"
 data="/img/svg/HttpMessage.svg">The browser does not
 support SVG.</object>
 
-Here are a few HTTP API examples:
+Here are a few HTTP protocol examples:
 
 ```C#
 struct MyRequest
@@ -201,9 +195,8 @@ protocol myHttpProtocol4
 }
 ```
 
-Just like _Syn_ protocols, request and response can be void or
-user-defined data structures. GE will start a RESTful Http
-API endpoint for each _Http_ protocol.
+Just like _Syn_ protocols, request and response can be void or user-defined data
+structures. GE will start a RESTful Http API endpoint for each _Http_ protocol.
 
 ```lisp
 http://example.com/myHttpProtocol1/
@@ -212,9 +205,7 @@ http://example.com/myHttpProtocol3/
 http://example.com/myHttpProtocol4/
 ```
 
-HTTP protocols are supposed to be used to provide RESTful service
-endpoints. They are not intended for inter-server
-communications. Whenever we need to do message passing between
-GE servers, we should use _Syn_ or _Asyn_ GE
-protocols: they are much more efficient than their RESTful
-counterparts for this purpose.
+HTTP protocols are supposed to be used to provide RESTful service endpoints.
+They are not intended for inter-server communications. Whenever we need to do
+message passing between GE servers, we should use _Syn_ or _Asyn_ GE protocols:
+they are much more efficient than their RESTful counterparts for this purpose.
