@@ -2,7 +2,7 @@
 
 Document: http://www.graphengine.io/docs/manual/DemoApps/SSSP.html
 
-- Build the required Nuget packages by running `REPO_ROOT/tools/build.ps1`.
+- Build the required Nuget packages by running `REPO_ROOT/tools/build.ps1`
 - `cd SSSP`
 - run `dotnet build --configuration Release`
 
