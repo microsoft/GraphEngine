@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 using Trinity;
 using Trinity.Storage;
@@ -71,6 +72,10 @@ namespace SSSP
             {
                 SSSPServerImpl server = new SSSPServerImpl();
                 server.Start();
+                while (true)
+                {
+                    Thread.Sleep(10000);
+                }
             }
 
             //SSSP.exe -c startcell
