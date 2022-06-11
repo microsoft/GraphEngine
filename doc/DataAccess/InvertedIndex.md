@@ -65,7 +65,7 @@ nested class defined within the `Index` class. It is used to specify which cell
 field we are going to query against: _Index.root.leaf.data_ identifies the
 `data` field in the `leaf` struct within the root cell.
 `Index.SubstringQuery(Index.root.leaf.data, "query string")` returns a list of
-cell Ids. Each root.leaf.data field of the corresponding cells contains the
+cell ids. Each root.leaf.data field of the corresponding cells contains the
 "query string".
 
 The method _Index.SubstringQuery_ also accepts a sequence of query strings.
@@ -80,7 +80,7 @@ If the cells are continuously updated, the changes made to the indexed fields
 may not be immediately reflected in the index.  That is, a substring query may
 return outdated results. To rule out false positives (the previously matched
 cells do not match now), we can check the field values again after
-getting the matched cell Ids.  It is not easy to address false negatives though,
+getting the matched cell ids.  It is not easy to address false negatives though,
 i.e., a cell should be matched, but not included in the index yet.
 
 The indexes are updated periodically by the system. To manually update an index,

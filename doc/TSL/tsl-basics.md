@@ -290,8 +290,8 @@ A _proxy_ can be defined similarly, except that the construct type
 "proxy" is used.
 
 Note that a server/proxy cannot inherit protocols from another
-server/proxy instance. GE relies on protocol Ids to dispatch messages
-and the protocol Ids are numbered sequentially within a server/proxy
+server/proxy instance. GE relies on protocol ids to dispatch messages
+and the protocol ids are numbered sequentially within a server/proxy
 instance. Inheriting protocols from other servers/proxies causes
 message dispatching problems.  If we want to make a group of protocols
 reusable, we can group them into a _module_ struct:

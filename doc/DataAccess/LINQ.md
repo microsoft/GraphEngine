@@ -139,11 +139,12 @@ simultaneously whenever possible. Calling _AsParallel()_ on a _selector_ turns
 it into a parallel enumerable container that works with PLINQ.
 
 {% comment %}
-However, due to the limitations (described below), using PLINQ over
-cell accessors natively, so the `AsParallel()` interface of cell
-accessor selectors are overridden and returns a
-`Trinity.Linq.PLINQWrapper` that delays an unsupported PLINQ query to
-the next query operator(until it's supported).
+
+However, due to the limitations (described below), using PLINQ over cell
+accessors natively, so the `AsParallel()` interface of cell accessor selectors
+are overridden and returns a `Trinity.Linq.PLINQWrapper` that delays an
+unsupported PLINQ query to the next query operator(until it's supported).
+
 {% endcomment %}
 
 ### Limitations
