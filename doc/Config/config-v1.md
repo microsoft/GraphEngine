@@ -7,14 +7,13 @@ permalink: /docs/manual/Config/config-v1.html
 A Graph Engine Configuration File is an XML file with the default name
 `trinity.xml`. When a Graph Engine instance is initialized, it will
 automatically load the default configuration file, unless
-`TrinityConfig.LoadConfig(...)` is explicitly called. The file can
-contain configuration settings for a single machine and/or a cluster
-of machines.
+`TrinityConfig.LoadConfig(...)` is explicitly called. The file can contain
+configuration settings for a single machine and/or a cluster of machines.
 
 ### Root Node
 
-The root node is always `Trinity`. There must be exactly one root
-node. The root node has an optional attribute `ConfigVersion`.
+The root node is always `Trinity`. There must be exactly one root node. The root
+node has an optional attribute `ConfigVersion`.
 
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
@@ -35,18 +34,18 @@ is not specified, the configuration file will be parsed as version 1.0.</p></td>
 </tbody>
 </table>
 
-Note, nuget package `GraphEngine.Core` 1.0.8482 and below only
-support configuration specification 1.0.
+Note that Nuget package `GraphEngine.Core` 1.0.8482 and below only support
+configuration specification 1.0.
 
-All valid nodes under Trinity node are `section` nodes.
+The valid nodes under the Trinity node are `section` nodes.
 
 ### Sections
 
-A top-level node under the root node must be a `section` node. A
-section is identified by its _name_ attribute, for example, `<section
-name="Storage">...</section>`.  Each section contains a number of
-_entries_. An entry is identified by its _name_ attribute, for
-example, `<entry name="StorageRoot">...</entry>`.
+A top-level node under the root node must be a `section` node. A section is
+identified by its _name_ attribute, for example, `<section
+name="Storage">...</section>`.  Each section contains a number of _entries_. An
+entry is identified by its _name_ attribute, for example, `<entry
+name="StorageRoot">...</entry>`.
 
 #### Storage Section
 
@@ -63,7 +62,8 @@ The `Storage` section can have one optional entry `StorageRoot`.
 StorageRoot
 </p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">
-Optional. Specifies the path of a directory for saving and loading Graph Engine disk images. The default path is the <i>storage</i> directory in <i>AssemblyPath</i>.
+Optional. Specifies the path of a directory for saving and loading Graph Engine disk images.
+The default path is the <i>storage</i> directory in <i>AssemblyPath</i>.
 </p></td>
 </tr>
 </tbody>
@@ -71,10 +71,10 @@ Optional. Specifies the path of a directory for saving and loading Graph Engine 
 
 #### Servers Section
 
-The `Servers` section specifies the endpoints and configurations of
-the servers in a cluster.  It can have a number of `Server`
-entries. The value of a `Server` entry is an <i>Hostname:Port</i>
-string that describes the server endpoint.
+The `Servers` section specifies the endpoints and the configurations of the
+servers in a cluster.  It can have a number of `Server` entries. The value of a
+`Server` entry is an <i>Hostname:Port</i> string that describes the server
+endpoint.
 
 Each `Server` entry can have the following attributes.
 
@@ -91,21 +91,24 @@ Each `Server` entry can have the following attributes.
 <td class="tableblock halign-left valign-top"><p
 class="tableblock">Optional. Each server is associated with an
 availability group. This attribute specifies the identifier of the
-availability group that the current server belongs to.  If not
+availability group that the server belongs to.  If not
 specified, each server will be in its own default availability group.
 Multiple <i>Server</i> nodes could have the same availability group.
 The servers within the same availability group correspond to the same
 server Id in <i>MemoryCloud.SendMessage(...)</i>. The <i>ServerId</i>
 parameter in the SendMessage method is the index number of the
-availability group. Note, when this attribute is used, all
-<i>Server</i> nodes within a <i>Cluster</i> node must specify the
-attribute or none of them should specify.  </p></td>
+availability group. Note that when this attribute is used, either all the
+<i>Server</i> nodes within a <i>Cluster</i> must specify the
+attribute or none of them should specify. </p></td>
 
 </tr>
 
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">AssemblyPath</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Optional. Specifies the directory of the running Graph Engine instance. Useful for running multiple Graph Engine instances on the same machine (listening on different ports, or bound to different network interfaces).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">
+Optional. Specifies the directory of the running Graph Engine instance.
+Useful for running multiple Graph Engine instances on the same machine (listening on different ports, or bound to different network interfaces).
+</p></td>
 </tr>
 
 <tr>
@@ -129,20 +132,19 @@ The default level is <i>Info</i>.
 
 </tbody>
 </table>
-                
-Multiple `Server` entries can be specified is for easily deploying
-Graph Engine to a cluster of machines using a single configuration
-file. For a Graph Engine cluster consisting of multiple machines, when
-a Graph Engine instance is started, it loads its server configuration
-from one of the `Server` entries according to the following rules:
+
+Multiple `Server` entries can be specified within a single configuration file.
+When a Graph Engine server instance is started, it loads its server
+configuration from one of the `Server` entries according to the following rules:
 
 * The `Endpoint` property matches one of the network interfaces of the machine on which the Graph Engine instance is running.
-* If `AssemblyPath` is specified, it matches the directory where the running Graph Engine instance resides.                   
+* If `AssemblyPath` is specified, it matches the directory where the running Graph Engine instance resides.
 
 #### Proxies Section
 
-The `Proxies` section specifies the endpoints and configurations of the proxies in a cluster. 
-The structure of a `Proxy` section is the same as that of a `Server` section.
+The `Proxies` section specifies the endpoints and the configurations of the
+proxies in a cluster. The structure of a `Proxy` section is the same as that of
+a `Server` section.
 
 #### Network Section
 
@@ -164,14 +166,14 @@ HttpPort
 Optional. If a server/proxy has an Http endpoint, it will listen on the
 specified Http port after it is started. The value is an integer.
 When a negative integer is specified, the HTTP server is disabled and
-no port will be opened. The default port is 80. </p></td>
+no HTTP port will be opened. The default port is 80. </p></td>
 </tr>
 
 <tr> <td class="tableblock halign-left valign-top"><p
 class="tableblock"> ClientMaxConn </p></td> <td class="tableblock
 halign-left valign-top"><p class="tableblock"> Optional. Specifies how
-many network connections will be established between a client and a
-Graph Engine communication instance. The default value is 2.
+many network connections can be established between a client and a
+Graph Engine server or proxy instance. The default value is 2.
 </p></td> </tr>
 
 </tbody>
