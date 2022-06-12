@@ -6,18 +6,16 @@ permalink: /docs/manual/DemoApps/FriendsGraph.html
 
 ##### <a href="https://github.com/Microsoft/GraphEngine/tree/master/samples/Friends" target="_blank">Source Code on GitHub</a>
 
-This example is to illustrate how to model and store data in
-GE.  In this "hello world" application, we model and store
-a small social graph of the six main characters in the famous
-situation comedy *Friends*.
+This example is to illustrate how to model and store data in GE.  In this "hello
+world" application, we model and store a small social graph of the six main
+characters in the famous situation comedy *Friends*.
 
-We model two types of entities in this example. One is the Characters
-in the TV series, the other is their Performers. _Friends_ has six
-main characters as shown in the Characters table. There are many
-relations between these entities. In this example, we focus on three
-representative relationships: the _marriage_ relationship between two
-characters, the _portray_ relationship between a performer and a
-Character, and the _friendship_ relationship between two
+We model two types of entities in this example. One is the Characters in the TV
+series, the other is their Performers. _Friends_ has six main characters as
+shown in the Characters table. There are many relations between these entities.
+In this example, we focus on the following three relationships: the _marriage_
+relationship between two characters, the _portray_ relationship between a
+performer and a Character, and the _friendship_ relationship between two
 characters. The properties of each entity are shown below.
 
 {% include FriendsGraph-tables.html %}
@@ -80,17 +78,17 @@ Character Chandler = new Character(Name: "Chandler Bing", Gender: 1, Married: tr
 Character Ross = new Character(Name: "Ross Geller", Gender: 1, Married: true);
 
 // Cast
-Performer Jennifer = new Performer(Name: "Jennifer Aniston", Age: 43, 
+Performer Jennifer = new Performer(Name: "Jennifer Aniston", Age: 43,
 Characters: new List<long>());
-Performer Courteney = new Performer(Name: "Courteney Cox", Age: 48, 
+Performer Courteney = new Performer(Name: "Courteney Cox", Age: 48,
 Characters: new List<long>());
-Performer Lisa = new Performer(Name: "Lisa Kudrow", Age: 49, 
+Performer Lisa = new Performer(Name: "Lisa Kudrow", Age: 49,
 Characters: new List<long>());
-Performer Matt = new Performer(Name: "Matt Le Blanc", Age: 45, 
+Performer Matt = new Performer(Name: "Matt Le Blanc", Age: 45,
 Characters: new List<long>());
-Performer Matthew = new Performer(Name: "Matthew Perry", Age: 43, 
+Performer Matthew = new Performer(Name: "Matthew Perry", Age: 43,
 Characters: new List<long>());
-Performer David = new Performer(Name: "David Schwimmer", Age: 45, 
+Performer David = new Performer(Name: "David Schwimmer", Age: 45,
 Characters: new List<long>());
 ```
 
@@ -202,31 +200,31 @@ namespace Friends
             TrinityConfig.CurrentRunningMode = RunningMode.Embedded;
 
             // Characters
-            Character Rachel = new Character(Name: "Rachel Green", Gender: 0, 
+            Character Rachel = new Character(Name: "Rachel Green", Gender: 0,
             Married: true);
-            Character Monica = new Character(Name: "Monica Geller", Gender: 0, 
+            Character Monica = new Character(Name: "Monica Geller", Gender: 0,
             Married: true);
-            Character Phoebe = new Character(Name: "Phoebe Buffay", Gender: 0, 
+            Character Phoebe = new Character(Name: "Phoebe Buffay", Gender: 0,
             Married: true);
-            Character Joey = new Character(Name: "Joey Tribbiani", Gender: 1, 
+            Character Joey = new Character(Name: "Joey Tribbiani", Gender: 1,
             Married: false);
             Character Chandler = new Character(Name: "Chandler Bing", Gender: 1,
             Married: true);
-            Character Ross = new Character(Name: "Ross Geller", Gender: 1, 
+            Character Ross = new Character(Name: "Ross Geller", Gender: 1,
             Married: true);
 
             // Performers
             Performer Jennifer = new Performer(Name: "Jennifer Aniston", Age: 43,
             Characters: new List<long>());
-            Performer Courteney = new Performer(Name: "Courteney Cox", Age: 48, 
+            Performer Courteney = new Performer(Name: "Courteney Cox", Age: 48,
             Characters: new List<long>());
-            Performer Lisa = new Performer(Name: "Lisa Kudrow", Age: 49, 
+            Performer Lisa = new Performer(Name: "Lisa Kudrow", Age: 49,
             Characters: new List<long>());
-            Performer Matt = new Performer(Name: "Matt Le Blanc", Age: 45, 
+            Performer Matt = new Performer(Name: "Matt Le Blanc", Age: 45,
             Characters: new List<long>());
-            Performer Matthew = new Performer(Name: "Matthew Perry", Age: 43, 
+            Performer Matthew = new Performer(Name: "Matthew Perry", Age: 43,
             Characters: new List<long>());
-            Performer David = new Performer(Name: "David Schwimmer", Age: 45, 
+            Performer David = new Performer(Name: "David Schwimmer", Age: 45,
             Characters: new List<long>());
 
             // Portrayal Relationship

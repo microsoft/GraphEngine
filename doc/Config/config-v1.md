@@ -34,7 +34,7 @@ is not specified, the configuration file will be parsed as version 1.0.</p></td>
 </tbody>
 </table>
 
-Note that Nuget package `GraphEngine.Core` 1.0.8482 and below only support
+Note that NuGet package `GraphEngine.Core` 1.0.8482 and below only support
 configuration specification 1.0.
 
 The valid nodes under the Trinity node are `section` nodes.

@@ -36,7 +36,7 @@ now obsolete.</p></td> </tr>
 </tbody>
 </table>
 
-Note that Nuget package `GraphEngine.Core` 1.0.8482 and below only
+Note that NuGet package `GraphEngine.Core` 1.0.8482 and below only
 support configuration specification 1.0.
 
 The valid nodes under the Trinity node are called **top-level elements**.
