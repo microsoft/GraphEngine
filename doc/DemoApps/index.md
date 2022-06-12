@@ -17,8 +17,4 @@ applications.
 
 * <a href="/docs/manual/DemoApps/GraphGenerator.html">Graph Generator</a>
 
-* <a href="/docs/apis/mag.html">Academic Graph Search</a>
-
 * <a href="https://github.com/Microsoft/GraphEngine/tree/master/samples/freebase-likq">LIKQ for Freebase</a>
-
-
