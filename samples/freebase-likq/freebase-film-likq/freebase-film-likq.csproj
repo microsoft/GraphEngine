@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net48</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="sqlite" Version="3.13.0" />
-    <PackageReference Include="System.Data.SQLite.Core.MSIL" Version="1.0.108" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.5" />
     <PackageReference Include="GraphEngine.Core" Version="3.*" />
     <PackageReference Include="GraphEngine.LIKQ" Version="3.*" />
-    <ProjectReference Include="../freebase-film-tsl/freebase-film-tsl.csproj" />
+    <ProjectReference Include="./freebase-film-tsl/freebase-film-tsl.csproj" />
   </ItemGroup>
 
 </Project>

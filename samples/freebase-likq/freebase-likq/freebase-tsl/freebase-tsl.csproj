@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net48</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <OutputType>Library</OutputType>
-    <RootNamespace>freebase_film_tsl</RootNamespace>
+    <RootNamespace>freebase_tsl</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

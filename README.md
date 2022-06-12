@@ -64,7 +64,7 @@ The folder `build/` will be registered as a local NuGet repository and the local
 
 ### Running your first Graph Engine app
 
-Go to the `samples/Friends/Friends` folder, execute `dotnet restore` and `dotnet run` to run the sample project.
+Go to the `samples/Friends` folder, execute `dotnet restore` and `dotnet run` to run the sample project.
 
 ## Contributing
 

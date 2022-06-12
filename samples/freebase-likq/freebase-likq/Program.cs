@@ -12,13 +12,13 @@ using System.Net;
 using System.Diagnostics;
 using System.IO.Compression;
 using freebase_tsl;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 
 namespace freebase_likq
 {
     class Program
     {
-        private static SQLiteConnection s_dbconn;
+        private static SqliteConnection s_dbconn;
         private static string s_freebase_data_blobcontainer = "https://graphengine.blob.core.windows.net/public-data";
         //  !Note, different datasets are built with different TSL extensions,
         //  make sure you reference the correct TSL storage extension dll!
@@ -65,7 +65,7 @@ namespace freebase_likq
                 BuildIndex(sqlite_db_path);
             }
 
-            s_dbconn = new SQLiteConnection($"Data Source={sqlite_db_path};Version=3;");
+            s_dbconn = new SqliteConnection($"Data Source={sqlite_db_path};Version=3;");
             s_dbconn.Open();
 
             return;
@@ -73,15 +73,14 @@ namespace freebase_likq
 
         private static void BuildIndex(string sqlite_db_path)
         {
-            SQLiteConnection.CreateFile(sqlite_db_path);
-            s_dbconn = new SQLiteConnection($"Data Source={sqlite_db_path};Version=3;");
+            s_dbconn = new SqliteConnection($"Data Source={sqlite_db_path};Version=3;");
             s_dbconn.Open();
-            Log.WriteLine("Building SQLite db to index type.object.name property...");
+            Log.WriteLine("Building Sqlite db to index type.object.name property...");
             long processed_count = 0;
-            SQLiteCommand cmd;
-            cmd = new SQLiteCommand("CREATE TABLE nameindex (name TEXT, id INTEGER)", s_dbconn);
+            SqliteCommand cmd;
+            cmd = new SqliteCommand("CREATE TABLE nameindex (name TEXT, id INTEGER)", s_dbconn);
             cmd.ExecuteNonQuery();
-            cmd = new SQLiteCommand("CREATE VIRTUAL TABLE fuzzynameindex using FTS3 (name TEXT, id INTEGER);", s_dbconn);
+            cmd = new SqliteCommand("CREATE VIRTUAL TABLE fuzzynameindex using FTS3 (name TEXT, id INTEGER);", s_dbconn);
             cmd.ExecuteNonQuery();
             List<Tuple<string, long>> batch = new List<Tuple<string, long>>();
             foreach (var type_object in Global.LocalStorage.type_object_Accessor_Selector())
@@ -133,11 +132,11 @@ namespace freebase_likq
             {
                 string content = string.Join(",", batch.Select(_ => $"('{_.Item1}', {_.Item2})"));
 
-                SQLiteCommand cmd;
-                cmd = new SQLiteCommand($"INSERT INTO nameindex (name, id) VALUES {content}", s_dbconn);
+                SqliteCommand cmd;
+                cmd = new SqliteCommand($"INSERT INTO nameindex (name, id) VALUES {content}", s_dbconn);
                 cmd.ExecuteNonQuery();
 
-                cmd = new SQLiteCommand($"INSERT INTO fuzzynameindex (name, id) VALUES {content}", s_dbconn);
+                cmd = new SqliteCommand($"INSERT INTO fuzzynameindex (name, id) VALUES {content}", s_dbconn);
                 cmd.ExecuteNonQuery();
                 batch.Clear();
             }
@@ -163,16 +162,16 @@ namespace freebase_likq
         /// The constraints are specified in the match object, which is a json object.
         /// LIKQ itself does not specify the DSL syntax for the match object so here
         /// we establish a simple one, which accepts three types of queries:
-        /// 
+        ///
         ///   1. Query by Freebase MID.
         ///   2. Query by type_object_name.
         ///   3. Query by type_object_name, and perform full-text-search (fuzzy match).
-        ///   
-        /// To query by MID we simply hash the MID string to a cell id. To query by 
-        /// entity name, we route the query into our SQLite database. In this way one
+        ///
+        /// To query by MID we simply hash the MID string to a cell id. To query by
+        /// entity name, we route the query into our Sqlite database. In this way one
         /// can develop his/her own index query logic and dispatch the query to various
         /// query backends (A full RDBMS, ElasticSearch etc.).
-        /// 
+        ///
         /// </summary>
         /// <param name="matchObject">The match object passed from the query client.</param>
         /// <param name="typeString">The type of the entity. For brevity we ignore this parameter now.</param>
@@ -191,11 +190,11 @@ namespace freebase_likq
             }
             else if (name != null)
             {
-                return SQLiteNameIndex(name.ToString());
+                return SqliteNameIndex(name.ToString());
             }
             else if (fuzzy_name != null)
             {
-                return SQLiteNameIndex(fuzzy_name.ToString(), fuzzy: true);
+                return SqliteNameIndex(fuzzy_name.ToString(), fuzzy: true);
             }
             else
             {
@@ -203,14 +202,14 @@ namespace freebase_likq
             }
         }
 
-        private static IEnumerable<long> SQLiteNameIndex(string name, bool fuzzy = false)
+        private static IEnumerable<long> SqliteNameIndex(string name, bool fuzzy = false)
         {
             name = name.Replace("'", "''");
             string op = fuzzy ? "MATCH" : "=";
             string table = fuzzy ? "fuzzynameindex" : "nameindex";
 
-            SQLiteCommand cmd = new SQLiteCommand($"SELECT id FROM {table} WHERE name {op} '{name}'", s_dbconn);
-            SQLiteDataReader results = cmd.ExecuteReader();
+            SqliteCommand cmd = new SqliteCommand($"SELECT id FROM {table} WHERE name {op} '{name}'", s_dbconn);
+            SqliteDataReader results = cmd.ExecuteReader();
             while (results.Read())
             {
                 long id = long.Parse(results["id"].ToString());
