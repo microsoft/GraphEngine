@@ -1,9 +1,10 @@
 # Distributed Hashtable
 
 Document: http://www.graphengine.io/docs/manual/DemoApps/DistributedHashtable.html
-- Build the required Nuget packages by running `REPO_ROOT/tools/build.ps1`
-- `cd DistributedHashtable`
-- run `dotnet build --configuration Release`
+
+- Build the required NuGet packages by running `REPO_ROOT/tools/build.ps1`
+- Run `dotnet restore`
+- Run `dotnet build --configuration Release`
 
 ### Running the application
 
