@@ -12,6 +12,7 @@ trigger:
     - ./*.md
     - ./*.yml
     - doc
+    - samples
 
 pool:
   vmImage: 'windows-2022'
