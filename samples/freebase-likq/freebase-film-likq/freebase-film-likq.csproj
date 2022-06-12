@@ -8,8 +8,8 @@
   <ItemGroup>
     <PackageReference Include="sqlite" Version="3.13.0" />
     <PackageReference Include="System.Data.SQLite.Core.MSIL" Version="1.0.108" />
-    <PackageReference Include="GraphEngine.Core" Version="$(DOTNET_PACKAGE_VERSION)" />
-    <PackageReference Include="GraphEngine.LIKQ" Version="$(DOTNET_PACKAGE_VERSION)" />
+    <PackageReference Include="GraphEngine.Core" Version="3.*" />
+    <PackageReference Include="GraphEngine.LIKQ" Version="3.*" />
     <ProjectReference Include="../freebase-film-tsl/freebase-film-tsl.csproj" />
   </ItemGroup>
 
