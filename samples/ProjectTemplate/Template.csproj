@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <TslCodegen Include="**/*.tsl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphEngine.Core" Version="3.*" />
+  </ItemGroup>
+
+</Project>
