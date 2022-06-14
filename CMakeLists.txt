@@ -28,15 +28,14 @@ ELSE()
     MESSAGE(FATAL_ERROR "Unsupported platform")
 ENDIF()
 
+# Graph Engine Core
 ADD_SUBDIRECTORY(src/Trinity.C)
 ADD_SUBDIRECTORY(src/Trinity.C.UnitTest)
 ADD_SUBDIRECTORY(src/Trinity.TSL)
 ADD_SUBDIRECTORY(src/Trinity.Core)
-ADD_SUBDIRECTORY(src/Modules/LIKQ)
 
-#ADD_SUBDIRECTORY(src/Modules/Storage.Composite)
-#ADD_SUBDIRECTORY(src/Modules/Client)
-#ADD_SUBDIRECTORY(src/Modules/DynamicCluster)
+# LIKQ: Language Integrated Knowledge Query
+ADD_SUBDIRECTORY(src/Modules/LIKQ)
 
 ADD_DOTNET(
     src/Modules/DataImporter/GraphEngine.DataImporter.sln
@@ -45,6 +44,9 @@ ADD_DOTNET(
 
 # The following Modules are Unsupported, provided as-is.
 
+# ADD_SUBDIRECTORY(src/Modules/Unsupported/Storage.Composite)
+# ADD_SUBDIRECTORY(src/Modules/Unsupported/Client)
+# ADD_SUBDIRECTORY(src/Modules/Unsupported/DynamicCluster)
 # ADD_SUBDIRECTORY(src/Modules/Unsupported/VSExtension)
 
 # ADD_MSBUILD(
