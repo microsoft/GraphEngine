@@ -9,8 +9,9 @@ trigger:
     - master
   paths:
     exclude:
-    - ./*.md
-    - ./*.yml
+    - README.md
+    - azure-pipelines-linux.yml
+    - azure-pipelines-windows.yml
     - doc
     - samples
 
