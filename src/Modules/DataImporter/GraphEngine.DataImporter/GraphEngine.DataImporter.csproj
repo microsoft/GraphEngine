@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="1.9.71" />
     <PackageReference Include="GraphEngine.Core" Version="3.0.*" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
   <ItemGroup>
     <TslCodegen Include="TSLGeneratorMetadata.tsl" />
