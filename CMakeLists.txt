@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.5.0)
 
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 FIND_PACKAGE(Dotnet 2.0 REQUIRED)
@@ -55,7 +55,7 @@ ADD_SUBDIRECTORY(src/Modules/GraphEngine.DynamicCluster)
 
 # ADD_SUBDIRECTORY(src/Trinity.VSExtension)
 
-# ADD_DOTNET(
-#     src/GraphEngine.DataImporter/GraphEngine.DataImporter.sln
-#     PACKAGE GraphEngine.DataImporter
-#     DEPENDS GraphEngine.Core)
+ADD_DOTNET(
+    src/GraphEngine.DataImporter/GraphEngine.DataImporter.sln
+    PACKAGE GraphEngine.DataImporter
+    DEPENDS GraphEngine.Core)
