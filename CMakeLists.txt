@@ -33,9 +33,10 @@ ADD_SUBDIRECTORY(src/Trinity.C.UnitTest)
 ADD_SUBDIRECTORY(src/Trinity.TSL)
 ADD_SUBDIRECTORY(src/Trinity.Core)
 ADD_SUBDIRECTORY(src/Modules/LIKQ)
-ADD_SUBDIRECTORY(src/Modules/Storage.Composite)
-ADD_SUBDIRECTORY(src/Modules/Client)
-ADD_SUBDIRECTORY(src/Modules/DynamicCluster)
+
+#ADD_SUBDIRECTORY(src/Modules/Storage.Composite)
+#ADD_SUBDIRECTORY(src/Modules/Client)
+#ADD_SUBDIRECTORY(src/Modules/DynamicCluster)
 
 ADD_DOTNET(
     src/Modules/DataImporter/GraphEngine.DataImporter.sln

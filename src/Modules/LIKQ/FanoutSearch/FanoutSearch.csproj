@@ -43,7 +43,7 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.0.0" />
     <PackageReference Include="System.Runtime" Version="4.3.0" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net48'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net6.0'">
     <Reference Include="System.Runtime.Caching" />
     <PackageReference Include="Microsoft.CSharp" Version="4.0.1" />
   </ItemGroup>
