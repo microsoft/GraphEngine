@@ -6,19 +6,17 @@ permalink: /docs/manual/DemoApps/DistributedHashtable.html
 
 ##### <a href="https://github.com/Microsoft/GraphEngine/tree/master/samples/DistributedHashtable" target="_blank">Source Code on GitHub</a>
 
-Hashtable is among the most useful daily-used data structures. A
-distributed hashtable is a hashtable served by a cluster of
-machines. It can be accessed through network. We demonstrate how to
-implement a distributed hashtable on top of GE and how it
-can be accessed via user-defined interfaces.
+Hashtable is among the most useful data structures. A distributed hashtable is a
+hashtable served by a cluster of machines. It can be accessed through network.
+We demonstrate here how to implement a distributed hashtable on top of GE and
+how it can be accessed via user-defined interfaces.
 
 ## Data Model
 
-A hashtable consists of a set of *buckets*, each of which is
-collection of key-value pairs. We use string to represent both the
-_Key_ and _Value_ in this demo application. In GE, we can
-use a _cell_ as a hashtable bucket. We define _BucketCell_ in TSL for
-this purpose:
+A hashtable consists of a set of *buckets*, each of which is collection of
+key-value pairs. We use string to represent both the _Key_ and _Value_ in this
+demo application. In GE, we can use a _cell_ as a hashtable bucket. We define
+_BucketCell_ in TSL for this purpose:
 
 ```C#
 struct KVPair
@@ -33,18 +31,17 @@ cell struct BucketCell
 }
 ```
 
-Given an arbitrary _Key_, we first hash it to a 64-bit cell id. Then
-we use this id to reference the cell bucket. 
+Given an arbitrary _Key_, we hash it to a 64-bit cell id. Then we use this id to
+reference the cell bucket.
 
 ## Setting A Key-Value Pair
 
-Because we are working on a distributed hashtable, we need to define
-protocols to allow the clients to manipulate the hashtable. Let us
-first look at the protocol for setting a key-value pair.
+Because we are working on a distributed hashtable, we need to define protocols
+to allow the clients to access and manipulate the hashtable. Let us look at the
+protocol for setting a key-value pair.
 
-The _Set_ protocol is very straightforward: we just need to send a
-_Key_ (string) and a _Value_ (string) to the hashtable server. Here is
-the protocol specification:
+The _Set_ protocol is straightforward: we just need to send a _Key_ (string) and
+a _Value_ (string) to the server. Here is the protocol specification in TSL:
 
 ```C#
 struct SetMessage
@@ -61,7 +58,7 @@ protocol Set
 }
 ```
 
-The implementation logic of _Set_ operation is also straightforward:
+The implementation of the server side _Set_ operation is also straightforward:
 
 ```C#
 public override void SetHandler(SetMessageReader request)
@@ -90,14 +87,13 @@ public override void SetHandler(SetMessageReader request)
 }
 ```
 
-In the cell bucket, we search the key against the key-value pair
-list. If we find a match, we update the value; otherwise, we add a new
-value.
+In the cell bucket, we search the key against the key-value pair list. If we
+find a match, we update the value; otherwise, we add a new value.
 
 ## Getting A Key-Value Pair
 
-_Get_ operation is even simpler. It fetches the value by the
-user-specified key. This is the protocol specification:
+_Get_ operation is even simpler. It fetches the value by the user-specified key.
+This is the protocol specification:
 
 ```C#
 struct GetMessage
@@ -119,7 +115,7 @@ protocol Get
 }
 ```
 
-This is the implementation logic:
+This is the implementation:
 
 ```C#
 public override void GetHandler(GetMessageReader request, GetResponseWriter response)
@@ -145,6 +141,5 @@ public override void GetHandler(GetMessageReader request, GetResponseWriter resp
 }
 ```
 
-If we do not find a matched bucket, we return immediately. Otherwise,
-we search the key against the key-value pair list in the matched
-bucket cell.
+If we cannot find a matched bucket, we return immediately. Otherwise, we search
+the key against the key-value pair list in the matched bucket cell.
