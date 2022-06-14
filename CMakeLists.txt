@@ -33,12 +33,21 @@ ADD_SUBDIRECTORY(src/Trinity.C.UnitTest)
 ADD_SUBDIRECTORY(src/Trinity.TSL)
 ADD_SUBDIRECTORY(src/Trinity.Core)
 ADD_SUBDIRECTORY(src/Modules/LIKQ)
-ADD_SUBDIRECTORY(src/Modules/GraphEngine.Storage.Composite)
-ADD_SUBDIRECTORY(src/Modules/GraphEngine.Client)
-ADD_SUBDIRECTORY(src/Modules/GraphEngine.DynamicCluster)
+ADD_SUBDIRECTORY(src/Modules/Storage.Composite)
+ADD_SUBDIRECTORY(src/Modules/Client)
+ADD_SUBDIRECTORY(src/Modules/DynamicCluster)
+
+ADD_DOTNET(
+    src/Modules/DataImporter/GraphEngine.DataImporter.sln
+    PACKAGE GraphEngine.DataImporter
+    DEPENDS GraphEngine.Core)
+
+# The following Modules are Unsupported, provided as-is.
+
+# ADD_SUBDIRECTORY(src/Modules/Unsupported/VSExtension)
 
 # ADD_MSBUILD(
-#     src/Modules/GraphEngine.ServiceFabric/GraphEngine.ServiceFabric.sln
+#     src/Modules/Unsupported/ServiceFabric/GraphEngine.ServiceFabric.sln
 #     PACKAGE
 #         GraphEngine.ServiceFabric.Infrastructure
 #         GraphEngine.ServiceFabric.Remoting
@@ -52,10 +61,3 @@ ADD_SUBDIRECTORY(src/Modules/GraphEngine.DynamicCluster)
 #     CONFIG RelSkipSFApp
 #     VERSION ${TRINITY_VERSION}
 # )
-
-# ADD_SUBDIRECTORY(src/Trinity.VSExtension)
-
-ADD_DOTNET(
-    src/GraphEngine.DataImporter/GraphEngine.DataImporter.sln
-    PACKAGE GraphEngine.DataImporter
-    DEPENDS GraphEngine.Core)
