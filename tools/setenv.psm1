@@ -7,8 +7,9 @@ Function Init-Configuration {
     $Global:TOOLS_DIR                     = "$REPO_ROOT\tools"
     $Global:NUGET_EXE                     = "$REPO_ROOT\tools\NuGet.exe"
     $Global:CMAKE_PKG                     = "$REPO_ROOT\tools\cmake.zip"
-    $Global:CMAKE_EXE                     = "$REPO_ROOT\tools\cmake-3.23.1-windows-x86_64\bin\cmake.exe"
+    $Global:CMAKE_EXE                     = "$REPO_ROOT\tools\cmake-3.23.2-windows-x86_64\bin\cmake.exe"
 
+    $global:ProgressPreference = "SilentlyContinue"
     if (![System.IO.File]::Exists($NUGET_EXE)){
         Write-Output "Downloading NuGet package manager."
             [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -18,7 +19,7 @@ Function Init-Configuration {
     if (![System.IO.File]::Exists($CMAKE_PKG)){
         Write-Output "Downloading CMake."
             [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-              Invoke-WebRequest -Uri https://github.com/Kitware/CMake/releases/download/v3.23.1/cmake-3.23.1-windows-x86_64.zip -OutFile $CMAKE_PKG
+              Invoke-WebRequest -Uri https://github.com/Kitware/CMake/releases/download/v3.23.2/cmake-3.23.2-windows-x86_64.zip -OutFile $CMAKE_PKG
     }
 
     if (![System.IO.File]::Exists($CMAKE_EXE)){
