@@ -6,22 +6,13 @@ permalink: /docs/manual/DemoApps/SSSP.html
 
 ##### <a href="https://github.com/Microsoft/GraphEngine/tree/master/samples/SSSP" target="_blank">Source Code on GitHub</a>
 
-Vertex centric graph computation model provides an intuitive way of
-computing single source shortest paths. Each vertex maintains its
-current distance to the source vertex. Once a vertex's distance is
-updated, it sends out its current shortest distance to its adjacent
-vertices. When a vertex receives the shortest distances from its
-neighbors, it re-calculates its shortest distance to the source
-vertex. The process will continue until nothing can be updated.  In
-the following, we use GE to model and implement this
-algorithm for calculating single source shortest paths.
-
-We first define a cell struct for this problem. First of all, we
-define a _distance_ field to hold the current shortest distance to the
-source vertex. To trace the path, we need a pointer pointing to its
-_parent_ vertex from which it gets its latest shortest distance. Using
-the _parent_ pointer, we can trace back to the source vertex from the
-current vertex.
+The vertex centric graph computation model provides an intuitive way of
+computing single source shortest paths. Each vertex maintains its current
+distance to the source vertex. Once a vertex's distance is updated, it sends out
+its shortest distance to its adjacent vertices. When a vertex receives the
+shortest distances from its neighbors, it re-calculates its shortest distance to
+the source vertex. The process continues until nothing can be updated. Now, we
+use GE to implement this algorithm.
 
 ```C#
 Cell Struct SSSPCell
@@ -30,7 +21,19 @@ Cell Struct SSSPCell
 	long parent;
 	List<long> neighbors;
 }
+```
 
+We first define a cell struct _SSSPCell_ in TSL for this problem. The _SSSPCell_
+has an integer field _distance_ that holds the current shortest distance to the
+source vertex. We will initially set it to the maximum positive value of 32-bit
+integer. The second field _parent_ is the cell id of the vertex from which the
+shortest path is routed. To trace the path, we need a pointer pointing to its
+_parent_ vertex through which the current vertex has the shortest distance to
+the source vertex. Using the _parent_ pointer, we can trace back to the source
+vertex from the current vertex. The field _neighbors_ stores the cell ids of its
+neighbors.
+
+```C#
 struct StartSSSPMessage
 {
 	long root;
@@ -44,25 +47,17 @@ struct DistanceUpdatingMessage
 }
 ```
 
-As shown in the tsl script shown above, the _SSSPCell_ has an integer
-field _distance_ indicating its distance to the source vertex. We will
-initially set it to the maximum positive value of 32-bit integer. The
-second field _parent_ is the cell id of the vertex from which the
-shortest path is routed. The field _neighbors_ stores the cell ids of
-its neighbors.
-
-Now we define two types of messages for the computation:
-_StartSSSPMessage_ and _DistanceUpdatingMessage_. _StartSSSPMessage_
-is used to initialize an SSSP computation.  It is a simple struct
-containing only the cell id of the source vertex. A GE
-client can kick off the computation by sending a _StartSSSPMessage_ to
-all GE servers. Receiving this message, servers will check
-whether the specified source vertex is in its _LocalStorage_. If this
-is the case, it will load the source vertex's adjacent vertices and
-propagates _DistanceUpdatingMessages_ to its neighbors. On receiving a
-_DistanceUpdatingMessage_, a vertex will check whether its distance
-can be updated according to the received shortest distance. The
-corresponding tsl script is shown below.
+Now we define two types of messages for the computation: _StartSSSPMessage_ and
+_DistanceUpdatingMessage_. _StartSSSPMessage_ is used to initialize an SSSP
+computation.  It is a simple struct containing only the cell id of the source
+vertex. A GE client can kick off the computation by sending a _StartSSSPMessage_
+to all GE servers. Receiving this message, the servers will check whether the
+specified source vertex is in its _LocalStorage_. If this is the case, it will
+load the source vertex's adjacent vertices and propagates
+_DistanceUpdatingMessages_ to its neighbors. On receiving a
+_DistanceUpdatingMessage_, a vertex will check whether its distance can be
+updated according to the received shortest distance. The corresponding TSL
+protocols are shown below.
 
 ```C#
 protocol StartSSSP
@@ -86,39 +81,36 @@ server SSSPServer
 }
 ```
 
-The message handling logic can be implemented by override the
-generated _SSSPServerBase_.
+The message handling logic can be implemented by overriding the generated
+_SSSPServerBase_.
 
 ```C#
-class SSSPServer : SSSPServerBase
+class SSSPServerImpl : SSSPServerBase
 {
-    public override void DistanceUpdatingHandler(DistanceUpdatingMessageReader 
-	request)
+    public override void DistanceUpdatingHandler(DistanceUpdatingMessageReader request)
     {
-        List<DistanceUpdatingMessage> DistanceUpdatingMessageList = 
-		new List<DistanceUpdatingMessage>();
+        List<DistanceUpdatingMessage> DistanceUpdatingMessageList = new List<DistanceUpdatingMessage>();
         request.recipients.ForEach((cellId) =>
+        {
+            using (var cell = Global.LocalStorage.UseSSSPCell(cellId))
             {
-                using (var cell = Global.LocalStorage.UseSSSPCell(cellId))
+                if (cell.distance > request.distance + 1)
                 {
-                    if (cell.distance > request.distance + 1)
+                    cell.distance = request.distance + 1;
+                    cell.parent = request.senderId;
+                    Console.Write(cell.distance + " ");
+                    MessageSorter sorter = new MessageSorter(cell.neighbors);
+
+                    for (int i = 0; i < Global.ServerCount; i++)
                     {
-                        cell.distance = request.distance + 1;
-                        cell.parent = request.senderId;
-                        Console.Write(cell.distance + " ");
-                        MessageSorter sorter = new MessageSorter(cell.neighbors);
-
-                        for (int i = 0; i < Global.ServerCount; i++)
-                        {
-                            DistanceUpdatingMessageWriter msg = 
-                                new DistanceUpdatingMessageWriter(cell.CellID.Value, 
-                                cell.distance, sorter.GetCellRecipientList(i));
-                            Global.CloudStorage.DistanceUpdatingToServer(i, msg);
-                        }
-
+                        DistanceUpdatingMessageWriter msg = new DistanceUpdatingMessageWriter(cell.CellId,
+                            cell.distance, sorter.GetCellRecipientList(i));
+                        Global.CloudStorage.DistanceUpdatingToSSSPServer(i, msg);
                     }
+
                 }
-            });
+            }
+        });
     }
 
     public override void StartSSSPHandler(StartSSSPMessageReader request)
@@ -133,10 +125,8 @@ class SSSPServer : SSSPServerBase
 
                 for (int i = 0; i < Global.ServerCount; i++)
                 {
-                    DistanceUpdatingMessageWriter msg = new 
-					DistanceUpdatingMessageWriter(rootCell.CellID.Value, 0,
-					sorter.GetCellRecipientList(i));
-                    Global.CloudStorage.DistanceUpdatingToServer(i, msg);
+                    DistanceUpdatingMessageWriter msg = new DistanceUpdatingMessageWriter(rootCell.CellId, 0, sorter.GetCellRecipientList(i));
+                    Global.CloudStorage.DistanceUpdatingToSSSPServer(i, msg);
                 }
             }
         }
@@ -144,7 +134,7 @@ class SSSPServer : SSSPServerBase
 }
 ```
 
-The key logic in the sample code shown above is very simple:
+The key logic in the sample code shown above is truly simple:
 
 ```C#
 if (cell.distance > request.distance + 1)
@@ -156,15 +146,14 @@ if (cell.distance > request.distance + 1)
 
 We can try out the example by following the steps shown below:
 
-* Generate a testing graph using `SSSP.exe -g NumberOfVertices`. For
-  example, `SSSP.exe -g 10000`.
+* Generate a testing graph using `SSSP.exe -g NumberOfVertices`. For example,
+  `SSSP.exe -g 10000`.
 
-* Start computing each vertex's shortest distance to the specified
-  source vertex by `SSSP.exe -c SourceVertexId`. For example,
-  `SSSP.exe -c 1`.
+* Start computing each vertex's shortest distance to the specified source vertex
+  by `SSSP.exe -c SourceVertexId`. For example, `SSSP.exe -c 1`.
 
-* Get the shortest path between a specified vertex and the source
-  vertex by `SSSP.exe -q VertexId`. For example, `SSSP.exe -q 123`.
+* Get the shortest path between a specified vertex and the source vertex by
+  `SSSP.exe -q VertexId`. For example, `SSSP.exe -q 123`.
 
 A sample output of executing `SSSP.exe -q 123`:
 
