@@ -6,8 +6,8 @@ Document: http://www.graphengine.io/docs/manual/DemoApps/FriendsGraph.html
 - Run `dotnet restore`
 - Run `dotnet run`
 
-If you want to build and run the release version, you can
+If you want to build and run the release version, please run the following commands instead:
 
-- Run `dotnet restore`
-- Run `dotnet build --configuration Release`
-- Run `dotnet run --property:Configuration=Release --no-build`
+- `dotnet restore`
+- `dotnet build --configuration Release`
+- `dotnet run --property:Configuration=Release --no-build`
