@@ -189,20 +189,5 @@ namespace Trinity
                 return my_aggregation_ipe_value;
             }
         }
-
-        internal unsafe static DateTime GetBuildTime()
-        {
-            // TODO test CoreCLR
-            byte[] PEBuffer = new byte[2048];
-            using (FileStream fs = new FileStream(Assembly.GetCallingAssembly().Location, FileMode.Open, FileAccess.Read))
-            {
-                fs.Read(PEBuffer, 0, 2048);
-            }
-            fixed (byte* p = PEBuffer)
-            {
-                DateTime t = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(*(int*)(p + *(int*)(p + 60) + 8));
-                return t.AddHours(TimeZone.CurrentTimeZone.GetUtcOffset(t).Hours);
-            }
-        }
     }
 }
