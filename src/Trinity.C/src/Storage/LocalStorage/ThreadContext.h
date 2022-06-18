@@ -75,7 +75,7 @@ namespace Storage
     //  !Note:
     //  The following paragraph applies when a managed thread is not backed
     //  with a dedicated physical thread (which turns out is not the case
-    //  for the current CLR implementation). 
+    //  for the current CLR implementation).
     //  See https://github.com/dotnet/coreclr/blob/master/Documentation/botr/threading.md
     //  for more details.
     //  ***
@@ -87,9 +87,9 @@ namespace Storage
     //  a thread context is involved, we have to pass it in as a parameter, and
     //  overwrite the unmanaged TLS.
     //  ***
-    typedef struct
+    typedef struct THREAD_CONTEXT
     {
-        //  A cell id that the current operation attempts to lock, 
+        //  A cell id that the current operation attempts to lock,
         //  or the lock is held, and the thread is resizing the cell.
         //  This field is set by all local memory storage ops except
         //  the whole db operations.
@@ -102,9 +102,9 @@ namespace Storage
         //  That being said, LockingMTHash/LockingStorage should never
         //  be propagated back to the user space, because the user code
         //  could decide to acquire a cell lock (toggling LockingCell).
-        cellid_t                     LockingCell;    
+        cellid_t                     LockingCell;
         //  A set of locked cells.
-        CellIdCollection             LockedCells;    
+        CellIdCollection             LockedCells;
         //  When the value >= 0, indicates a lock mthash operation.
         //  Will be overridden by LockingStorage because there are
         //  parallel MTHash operations, thus the value of LockingMTHash
@@ -112,7 +112,7 @@ namespace Storage
         //  Note:
         //  When this value is found by Arbitrator, it means that all
         //  bucket locks are taken, but some cell locks remain unreleased.
-        int32_t                      LockingMTHash;  
+        int32_t                      LockingMTHash;
         //  When true, overrides LockingMTHash. LockingStorage is only
         //  set by LockingStorageContext, which is possessed by only
         //  the whole-db-level interfaces LoadStorage/SaveStorage/ResetStorage.
@@ -120,13 +120,13 @@ namespace Storage
         //  Note:
         //  When this value is found by Arbitrator, it means that one of the
         //  MTHash is bucket-locked, but some cell locks remain unreleased.
-        bool                         LockingStorage; 
+        bool                         LockingStorage;
         //  When true, indicates a trunk reload, caused by CellAlloc.
         //  In this case, the thread must be in the memory allocation arena,
         //  and thus possesses a valid LockingCell value.
         //  Note:
         //  When this value is found by Arbitrator, it means that a Reload
-        //  operation has problems locking a cell not in the memory 
+        //  operation has problems locking a cell not in the memory
         //  allocation arena, while the LockingCell field points to the cell
         //  which an operation leading to Reload is being performed on, and
         //  the value of LockingMTHash is undefined.
@@ -138,7 +138,7 @@ namespace Storage
         //  the time that the thread stays inside the arbitrator.
         uint64_t                     Checksum;
         //  Used to record how many times that the same context checksum is detected
-        //  during arbitration. Used to decide additional wait time that a thread 
+        //  during arbitration. Used to decide additional wait time that a thread
         //  should stay inside the arbitrator.
         int32_t                      SameChecksumTimes;
 
