@@ -5,6 +5,8 @@
 #include "Storage/MTHash/MTHash.h"
 #include "Storage/MemoryTrunk/MemoryTrunk.h"
 
+#pragma warning( disable : 4244 )
+
 using namespace Trinity::IO;
 namespace Storage
 {
@@ -107,7 +109,7 @@ namespace Storage
         bool read_success = true;
 
         read_success = read_success && br.Read((char*)Buckets, 0, bucket_array_length);
-        read_success = read_success && br.Read((char*)CellEntries, 0, cellentry_array_length); 
+        read_success = read_success && br.Read((char*)CellEntries, 0, cellentry_array_length);
         read_success = read_success && br.Read((char*)MTEntries, 0, mtentry_array_length);
 
         return read_success;
