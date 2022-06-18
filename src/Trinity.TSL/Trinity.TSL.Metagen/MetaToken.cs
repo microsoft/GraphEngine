@@ -266,7 +266,7 @@ namespace Trinity.TSL.Metagen
 
                 CheckParamCount(meta.text, param_count, type_str);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine("Current token:");
                 Console.WriteLine(meta);
