@@ -1,4 +1,4 @@
-﻿using Microsoft.ServiceFabric.Services.Communication.Runtime;
+using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Nito.AsyncEx;
 using System;
 using System.Collections.Generic;

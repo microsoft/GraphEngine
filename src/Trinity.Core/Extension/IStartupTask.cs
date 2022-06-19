@@ -1,4 +1,4 @@
-﻿namespace Trinity.Extension
+namespace Trinity.Extension
 {
     /// <summary>
     /// Provides an entry point for executing a startup initialization task.

@@ -1,4 +1,4 @@
-﻿#pragma warning disable 0162 // disable the "unreachable code" warning
+#pragma warning disable 0162 // disable the "unreachable code" warning
 using System;
 using System.Collections.Generic;
 using System.Linq;

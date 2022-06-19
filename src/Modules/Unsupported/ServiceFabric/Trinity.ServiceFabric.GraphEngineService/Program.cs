@@ -1,4 +1,4 @@
-﻿using FanoutSearch;
+using FanoutSearch;
 using System.Threading;
 using Trinity.Azure.Storage;
 using Trinity.Diagnostics;

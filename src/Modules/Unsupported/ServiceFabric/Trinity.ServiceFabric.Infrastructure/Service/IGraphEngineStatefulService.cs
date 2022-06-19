@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Fabric;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Data;

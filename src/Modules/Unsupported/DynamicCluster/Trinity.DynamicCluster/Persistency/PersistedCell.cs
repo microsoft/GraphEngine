@@ -1,4 +1,4 @@
-﻿namespace Trinity.DynamicCluster.Persistency
+namespace Trinity.DynamicCluster.Persistency
 {
     public struct PersistedCell
     {

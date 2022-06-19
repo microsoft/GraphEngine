@@ -1,4 +1,4 @@
-﻿namespace Trinity.Storage.Composite
+namespace Trinity.Storage.Composite
 {
     internal class Package
     {

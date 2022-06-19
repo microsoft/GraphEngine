@@ -1,4 +1,4 @@
-﻿using FanoutSearch.Standard;
+using FanoutSearch.Standard;
 using FanoutSearch.Test.TSL;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

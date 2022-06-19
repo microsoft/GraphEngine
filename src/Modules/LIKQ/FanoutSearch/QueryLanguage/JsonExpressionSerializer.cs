@@ -1,4 +1,4 @@
-﻿using FanoutSearch;
+using FanoutSearch;
 using Serialize.Linq.Factories;
 using Serialize.Linq.Serializers;
 using Serialize.Linq.Extensions;

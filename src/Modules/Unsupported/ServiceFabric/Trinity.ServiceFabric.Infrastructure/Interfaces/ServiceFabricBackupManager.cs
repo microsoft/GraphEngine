@@ -1,4 +1,4 @@
-﻿using Microsoft.ServiceFabric.Data;
+using Microsoft.ServiceFabric.Data;
 using System;
 using System.Fabric;
 using System.IO;

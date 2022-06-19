@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Trinity.DynamicCluster.Storage;
 using Trinity.DynamicCluster.Tasks;
 using Trinity.Storage;

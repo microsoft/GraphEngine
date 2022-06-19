@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;

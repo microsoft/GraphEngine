@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Trinity.Configuration;
 using Trinity.Diagnostics;
 using Trinity.Network;

@@ -1,4 +1,4 @@
-﻿using Trinity;
+using Trinity;
 using Trinity.TSL;
 
 /*MAP_VAR("t_Namespace", "Trinity::Codegen::GetNamespace()")*/

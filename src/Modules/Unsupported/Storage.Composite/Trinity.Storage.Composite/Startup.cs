@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Trinity.Extension;
 using Trinity.Utilities;
 using System.IO;

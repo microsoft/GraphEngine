@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.WindowsAzure.Storage;

@@ -1,4 +1,4 @@
-﻿using FanoutSearch.Standard;
+using FanoutSearch.Standard;
 using FanoutSearch.Test.TSL;
 using System;
 using System.Collections.Generic;

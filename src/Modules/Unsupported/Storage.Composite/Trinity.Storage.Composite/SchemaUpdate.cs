@@ -1,4 +1,4 @@
-﻿namespace Trinity.Storage.Composite
+namespace Trinity.Storage.Composite
 {
     public class SchemaUpdate
     {
