@@ -1,4 +1,4 @@
-﻿cell MyCell
+cell MyCell
 {
 	int A;
 }

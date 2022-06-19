@@ -1,4 +1,4 @@
-﻿#define CATCH_CONFIG_MAIN
+#define CATCH_CONFIG_MAIN
 #include "catch_wrapper.hpp"
 #include <Trinity.h>
 #include <Trinity/IO/Console.h>

@@ -1,4 +1,4 @@
-﻿protocol Ping
+protocol Ping
 {
 	Type: Syn;
 	Request: void;

@@ -1,4 +1,4 @@
-﻿cell C1
+cell C1
 {
 	List<int> lst;
 	string bar;
