@@ -163,7 +163,6 @@ Arachne
 Aragorn
 Araki
 Aralune
-Araña
 Arc
 Arcade
 Arcademan
@@ -1587,7 +1586,6 @@ Mad Dog Rassitano
 Mad Jack
 Mad Jim Jaspers
 Mad Thinker
-Mad Thinker’s Awesome Android
 Madam Slay
 Madame Hydra
 Madame MacEvil
