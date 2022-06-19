@@ -329,7 +329,7 @@ namespace GraphEngine.DataImporter
                  }
                  catch (Exception e)
                  {
-                     //Log.WriteLine(LogLevel.Error, "An error occured during import: \n{0}\n", e.Message);
+                     Log.WriteLine(LogLevel.Error, "An error occured during import: \n{0}\n", e.Message);
                  }
              });
         }
