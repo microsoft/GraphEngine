@@ -178,16 +178,7 @@ namespace t_Namespace
         public unsafe static implicit operator DateTimeAccessor(DateTime value)
         {
             byte* targetPtr = BufferAllocator.AllocBuffer(sizeof(long));
-
-            if (value != null)
-            {
-                *(long*)targetPtr = value.ToBinary();
-            }
-            else
-            {
-                *(long*)targetPtr = 0;
-            }
-
+            *(long*)targetPtr = value.ToBinary();
             DateTimeAccessor ret = new DateTimeAccessor(targetPtr);
             return ret;
         }
