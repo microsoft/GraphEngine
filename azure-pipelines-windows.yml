@@ -9,6 +9,8 @@ trigger:
     - master
   paths:
     exclude:
+    - .gitignore
+    - .editorconfig
     - README.md
     - azure-pipelines-linux.yml
     - azure-pipelines-windows.yml
