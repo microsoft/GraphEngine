@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <assemblies timestamp="04/18/2017 19:49:17">
   <assembly name="tsl1_coreclr.dll" environment="64-bit .NET Standard [collection-per-class, parallel (8 threads)]" test-framework="xUnit.net 2.3.0.3642" run-date="2017-04-18" run-time="19:49:16" total="43" passed="43" failed="0" skipped="0" time="0.610" errors="0">
     <errors />

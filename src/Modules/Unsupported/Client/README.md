@@ -1,4 +1,4 @@
-﻿# GraphEngine.Client
+# GraphEngine.Client
 
 In a GraphEngine application, a client by default does not possess
 message handling capabilities. `GraphEngine.Client` extends both the

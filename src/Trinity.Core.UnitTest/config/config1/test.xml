@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Trinity ConfigVersion="2.0">
   <Local>
     <Logging LoggingLevel="Info" LogDirectory="C:\src\GraphEngine\tests\unittests\config\config1\bin\Release\netstandard2.0\trinity-log" LogEchoOnConsole="TRUE" LogToFile="TRUE" />

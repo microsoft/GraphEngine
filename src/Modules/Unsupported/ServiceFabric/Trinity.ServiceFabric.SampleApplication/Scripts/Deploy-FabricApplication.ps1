@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS 
 Deploys a Service Fabric application type to a cluster.
 

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Trinity ConfigVersion="2.0">
   <Local>
     <Logging LoggingLevel="Info" LogDirectory="C:\Users\yatli\.nuget\packages\nunit\3.6.1\lib\netstandard1.6\trinity-log\" LogEchoOnConsole="TRUE" LogToFile="TRUE" />
