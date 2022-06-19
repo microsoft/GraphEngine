@@ -115,7 +115,7 @@ namespace Trinity.TSL.Metagen
             META_SetListDepth(iteratable);
 
             OutputToMeta(
-                "for (size_t " + META_ForeachIteratorName() + " = 0; " + 
+                "for (size_t " + META_ForeachIteratorName() + " = 0; " +
                 META_ForeachIteratorName() + " < " + META_GetListSize(iteratable) + ";" +
                 "++" + META_ForeachIteratorName() + ")\r\n{");
         }
@@ -265,16 +265,16 @@ namespace Trinity.TSL.Metagen
          *  1. Direct map; When the template name does not contain a prefix
          *     of another list, the MetaForm is directly expanded.
          *  2. Prefix map; When the template name contains a list var as
-         *     a prefix, the list var is first accessed with proper offset, 
-         *     then the meta form of the variable is appended as a 
+         *     a prefix, the list var is first accessed with proper offset,
+         *     then the meta form of the variable is appended as a
          *     pointer dereference. Note that, if it is desired to use the
          *     elements in a list directly, a variable with the same name of
          *     the list should be declared.
-         *  3. MemberOf map; When explicitly specified with 
+         *  3. MemberOf map; When explicitly specified with
          *     MemberOf = "template", list expansion is enforced, even
          *     if not a prefix.
          * MapVar target syntax:
-         *  1. Direct map; When the template target does not contain '$$', 
+         *  1. Direct map; When the template target does not contain '$$',
          *     and is not a member of a list, it will be translated directly.
          *  2. Member map; When the template target does not contain '$$',
          *     and is a member of a list, it will be translated to:
@@ -416,8 +416,7 @@ namespace Trinity.TSL.Metagen
         /**
          * Template substitution rule:
          * If there is a list prefix, regard this template as a list item.
-         * Else, if there is a var prefix, regard this template as a var plus
-         * literal suffix.
+         * Else, if there is a var prefix, regard this template as a var plus literal suffix.
          * Otherwise, regard this template as a var.
          */
 
@@ -429,7 +428,9 @@ namespace Trinity.TSL.Metagen
             try
             {
                 if (var_prefix == null)
+                {
                     OutputMetaStringToTemplate(META_GetString(META_GetVar(template)));
+                }
                 else
                 {
                     OutputMetaStringToTemplate(META_GetString(META_GetVar(var_prefix)));
@@ -438,7 +439,7 @@ namespace Trinity.TSL.Metagen
             }
             catch (Exception)
             {
-                Console.Write("\nWarning: Unrecognized template '{0}', output literal instead.", template);
+                //Console.Write("\nWarning: Unrecognized template '{0}', output literal instead.", template);
                 OutputLiteralToTemplate(template);
             }
         }
@@ -641,7 +642,7 @@ namespace Trinity
                         //func.Invoke(this, null);
                         d_instruction_method_table[current_instruction.type.ToString()]();
                     }
-                    catch 
+                    catch
                     {
                         Console.WriteLine("Current instruction:");
                         Console.WriteLine(current_instruction);
@@ -692,8 +693,8 @@ namespace Trinity
                     string sep = separator_stack.Pop();
                     if (sep != String.Empty)
                     {
-                        OutputToMeta("if (" + 
-                        META_ForeachIteratorName() + " < " + 
+                        OutputToMeta("if (" +
+                        META_ForeachIteratorName() + " < " +
                         META_GetListSize(d_iteratable_target[inst]) + " - 1)");
                         OutputMetaStringToTemplate('"'+sep+'"');
                     }
@@ -745,7 +746,7 @@ namespace Trinity
          *     *AND*
          *   2. If multiple prefixes exist, choose the longest one.
          *   3. If str is a defined variable, drop any var prefix.
-         *   
+         *
          *   (A proper prefix is a strict prefix, that is, the length is smaller)
          */
         private string VAR_prefix(string str)
