@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net6.0;net48</TargetFrameworks>
     <AssemblyName>Trinity.Core</AssemblyName>
     <RootNamespace>Trinity</RootNamespace>
     <OutputTypeEx>library</OutputTypeEx>
@@ -20,7 +20,7 @@
   <PropertyGroup>
     <Authors>Microsoft Graph Engine Team</Authors>
     <Description>GraphEngine runtime and compiler.</Description>
-    <Copyright>Copyright 2018</Copyright>
+    <Copyright>Copyright 2022</Copyright>
     <Company>Microsoft Corporation</Company>
 
     <Version>$(DOTNET_PACKAGE_VERSION)</Version>
