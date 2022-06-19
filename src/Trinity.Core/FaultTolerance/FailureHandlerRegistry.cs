@@ -12,7 +12,7 @@ using Trinity.Diagnostics;
 namespace Trinity.FaultTolerance
 {
     /// <summary>
-    /// This registry is available for each process. 
+    /// This registry is available for each process.
     /// </summary>
     static class FailureHandlerRegistry
     {

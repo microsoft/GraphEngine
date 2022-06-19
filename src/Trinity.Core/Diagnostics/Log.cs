@@ -70,7 +70,7 @@ namespace Trinity.Diagnostics
         /// </summary>
         public string   logMessage;
         /// <summary>
-        /// The Unix timestamp of the log. 
+        /// The Unix timestamp of the log.
         /// Note, this is not compatible with DateTime.FromBinary(long).
         /// </summary>
         public long     logTimestamp;
@@ -86,7 +86,7 @@ namespace Trinity.Diagnostics
     }
 
     /// <summary>
-    /// A utility class for logging. 
+    /// A utility class for logging.
     /// </summary>
     public unsafe class Log
     {
@@ -170,8 +170,8 @@ namespace Trinity.Diagnostics
 
                 LogsWritten(entries);
             }
-            return (TrinityErrorCode.E_SUCCESS == eResult) ? 
-                c_LogEntryCollectorBusyInterval : 
+            return (TrinityErrorCode.E_SUCCESS == eResult) ?
+                c_LogEntryCollectorBusyInterval :
                 c_LogEntryCollectorIdleInterval;
         }
 
