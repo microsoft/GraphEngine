@@ -8,7 +8,7 @@
     <NoWarn>CS1668</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CommandLineParser" Version="1.9.71" />
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="GraphEngine.Core" Version="3.0.*" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>

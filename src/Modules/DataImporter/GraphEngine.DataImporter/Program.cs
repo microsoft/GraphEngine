@@ -12,14 +12,15 @@ using Trinity.Diagnostics;
 using Trinity.Storage;
 using Trinity.TSL.Lib;
 
+using CommandLine;
+
 namespace GraphEngine.DataImporter
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            CmdOptions opts = new CmdOptions();
-            if (CommandLine.Parser.Default.ParseArguments(args, opts))
+            Parser.Default.ParseArguments<CmdOptions>(args).WithParsed<CmdOptions>( opts =>
             {
                 List<string> files = new List<string>(opts.ExplicitFiles.Select(_ => _.Trim()));
                 if (opts.InputDirectory != null)
@@ -40,7 +41,7 @@ namespace GraphEngine.DataImporter
                     }
                     else
                     {
-                        Log.WriteLine("TSL File Compile Error."); 
+                        Log.WriteLine("TSL File Compile Error.");
                     }
                 }
                 else if (opts.TSLAssembly != null)
@@ -54,8 +55,8 @@ namespace GraphEngine.DataImporter
 
                 timer.Stop();
                 Log.WriteLine("Time: {0} seconds.", timer.ElapsedMilliseconds / 1000);
-                
-            }
+
+            });
         }
     }
 }
