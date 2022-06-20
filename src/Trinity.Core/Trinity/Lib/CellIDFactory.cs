@@ -45,7 +45,12 @@ namespace Trinity.Core.Lib
         {
             return (byte)(this.Sample() * 256);
         }
-        public unsafe long NextInt64()
+
+        public unsafe
+        #if TFM_NET60
+        new
+        #endif
+        long NextInt64()
         {
             byte[] bytes = new byte[8];
             GetLock();
@@ -106,7 +111,7 @@ namespace Trinity.Core.Lib
         /// Generates a sequentially incremented 64-bit cell id.
         /// </summary>
         /// <returns>A new 64-bit cell id.</returns>
-        /// <remarks>This is a thread-safe method that you can call to get a new cell id.</remarks> 
+        /// <remarks>This is a thread-safe method that you can call to get a new cell id.</remarks>
         public static long NextSequentialCellId()
         {
             return Interlocked.Increment(ref sn);

@@ -43,7 +43,7 @@
     <DefineConstants>CORECLR</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='net6.0'">
-    <DefineConstants>CORECLR</DefineConstants>
+    <DefineConstants>CORECLR;TFM_NET60</DefineConstants>
   </PropertyGroup>
 
   <!-- NetFx does not pick up runtimes\{rid}\native, use assembly release technique. -->
