@@ -31,13 +31,18 @@
     <PackageId>GraphEngine.Core</PackageId>
     <PackageTags>Graph Engine Trinity Core Runtime TSL Compiler</PackageTags>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <PackageIconUrl>https://www.graphengine.io/img/logo-64x64.png</PackageIconUrl>
     <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageIcon>logo-64x64.png</PackageIcon>
     <RepositoryUrl>https://github.com/Microsoft/GraphEngine</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <NoWarn>CS0660,CS0661,CS0612,CS1668</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE.txt" Pack="true" PackagePath="LICENSE.txt"/>
+    <None Include="..\..\resources\logo-64x64.png" Pack="true" PackagePath="logo-64x64.png"/>
+  </ItemGroup>
 
   <!-- Conditional compilation flags -->
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
