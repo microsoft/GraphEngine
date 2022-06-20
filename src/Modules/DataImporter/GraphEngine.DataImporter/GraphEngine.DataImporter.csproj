@@ -5,6 +5,7 @@
     <RootNamespace>GraphEngine.DataImporter</RootNamespace>
     <AssemblyName>GraphEngine.DataImporter</AssemblyName>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <NoWarn>CS1668</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="1.9.71" />

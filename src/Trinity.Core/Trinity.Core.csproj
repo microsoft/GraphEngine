@@ -36,6 +36,7 @@
     <PackageLicenseUrl>https://github.com/Microsoft/GraphEngine/blob/master/LICENSE.md</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/Microsoft/GraphEngine</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <NoWarn>CS0660,CS0661,CS0612,CS1668</NoWarn>
   </PropertyGroup>
 
   <!-- Conditional compilation flags -->

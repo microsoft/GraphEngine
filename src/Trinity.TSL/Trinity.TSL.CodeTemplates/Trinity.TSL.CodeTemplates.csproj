@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>CS0649</NoWarn>
+    <NoWarn>CS0660,CS0661,CS0612,CS0649</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

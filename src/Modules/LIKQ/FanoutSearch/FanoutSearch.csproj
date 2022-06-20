@@ -18,7 +18,7 @@
     <PackageId>GraphEngine.LIKQ</PackageId>
     <AssemblyName>GraphEngine.LIKQ</AssemblyName>
     <RootNamespace>GraphEngine.LIKQ</RootNamespace>
-    <NoWarn>CS0612,CA2013</NoWarn>
+    <NoWarn>CS1668,CS0612,CA2013</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0' OR '$(TargetFramework)'=='net6.0'">
