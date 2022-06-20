@@ -12,6 +12,10 @@ trigger:
     - .gitignore
     - .editorconfig
     - README.md
+    - CODE_OF_CONDUCT.md
+    - CONTRIBUTING.md
+    - SECURITY.md
+    - LICENSE.txt
     - azure-pipelines-linux.yml
     - azure-pipelines-windows.yml
     - doc
