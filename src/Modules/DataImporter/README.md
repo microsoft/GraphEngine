@@ -3,17 +3,21 @@
 DataImporter is a cross-platform module of Microsoft [Graph Engine](https://www.graphengine.io/) for [data importing](https://www.graphengine.io/docs/manual/DataImport.html). It supports to import data files in types of CSV, TSV, JSON and RDF, saving input data to Graph Engine storages.
 
 ## Usage
-To build DataImporter, you need to [build Graph Engine](https://github.com/Microsoft/GraphEngine) first.
-The input files include [TSL file](https://www.graphengine.io/docs/manual/TSL/tsl-basics.html) and data file,
-and the output is Graph Engine data storage.
+The input files include the data file(s) and a [TSL
+file](https://www.graphengine.io/docs/manual/TSL/tsl-basics.html) which
+describes the schema of the data. The output is Graph Engine data storage.
 
-### TSL File
-The content of the TSL file must follow the syntax of TSL. The fields defined in TSL file need to correspond to the fields in data files. 
+The data files in JSON (.json), CSV (.csv), TSV (.tsv), and N-Triples
+(.ntriples) for are supported. Note that the filename extensions of the data
+files are used to recognize the type of the data.
 
-### Data File
-Only data files with .json, .csv, .tsv and .ntriples suffix are recognized.
-The file name of a data file will be used as the type for deserialization (except for RDF files).
-The type must be defined as a Graph Engine cell in the TSL.
+In the `GraphEngine.DataImporter` folder:
+
+- Build the required NuGet packages by running `tools/build.ps1` in the root directory of this repository
+- cd `src/Modules/DataImporter/GraphEngine.DataImporter`
+- Run `dotnet restore`
+- Run `dotnet build --configuration Release`
+- Run `dotnet run --framework net6.0 --property:Configuration=Release --no-build -- --help`
 
 ### Command Line Option
 
@@ -30,22 +34,6 @@ The type must be defined as a Graph Engine cell in the TSL.
 |-a, --tsl_assembly|Specifies the TSL assembly for data importing.|
 |--help|Display this help screen.|
 
-  
-### On Windows
-Open the `GraphEngine.DataImporter.sln` with Visual Studio 2017/2015, build the project and generate the GraphEngine.DataImporter.exe (the exe can't move to other folders).  
-
+```shell
+dotnet run --framework net6.0 --property:Configuration=Release --no-build -- [-t tsl] [-d directory] [-o output_dir] [--delimiter delimiter] [-f file_format] [--notrim] [-a tsl_assembly|-g] [explicit files]
 ```
-GraphEngine.DataImporter.exe [-t tsl] [-d directory] [-o output_dir] [--delimiter delimiter] [-f file_format] [--notrim] [-a tsl_assembly|-g] [explicit files]
-```
-
-### On Linux
-In the `GraphEngine.DataImporter` folder:   
-
-```
-dotnet restore GraphEngine.DataImporter.Clr.csproj  
-dotnet run -p GraphEngine.DataImporter.Clr.csproj [-t tsl] [-d directory] [-o output_dir] [--delimiter delimiter] [-f file_format] [--notrim] [-a tsl_assembly|-g] [explicit files]
-```
-
-
-
-
