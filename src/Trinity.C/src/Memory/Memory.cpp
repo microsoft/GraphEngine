@@ -511,6 +511,7 @@ namespace Memory
             PAGE_READWRITE);
 #else
         TRINITY_COMPILER_WARNING("LargePageAlloc: Linux support is absent")
+	return nullptr;
 #endif
     }
 

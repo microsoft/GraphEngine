@@ -589,7 +589,7 @@ namespace Trinity
 #if defined(TRINITY_PLATFORM_WINDOWS)
             sprintf_s(buf, buffer_size + 1, "%llX", (uint64_t)ptr);
 #else
-            sprintf(buf, "%llX", (uint64_t)ptr);
+            sprintf(buf, "%lX", (uint64_t)ptr);
 #endif
             String ret(buf);
             ret.PadLeft(buffer_size, '0');
