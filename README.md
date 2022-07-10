@@ -95,7 +95,7 @@ Microsoft Graph Engine is a research project. It is not an officially supported 
 We kindly request that any published paper that makes use of Microsoft Graph
 Engine cites the following paper:
 
-- Bin Shao, Haixun Wang, and Yatao Li. [Trinity: A Distributed Graph Engine on a Memory Cloud](https://www.graphengine.io/downloads/papers/Trinity.pdf). In SIGMOD 2013: Proceedings of SIGMOD 2013, New York, New York, USA, June 22-27, 2013, pages 505-516. ([BibTeX](https://www.graphengine.io/downloads/papers/Trinity.bib))
+- [Bin Shao](https://www.binshao.info/), [Haixun Wang](https://haixun.github.io/), and [Yatao Li](https://www.microsoft.com/en-us/research/people/yatli/). [Trinity: A Distributed Graph Engine on a Memory Cloud](https://www.graphengine.io/downloads/papers/Trinity.pdf). In SIGMOD 2013: Proceedings of SIGMOD 2013, New York, New York, USA, June 22-27, 2013, pages 505-516. ([BibTeX](https://www.graphengine.io/downloads/papers/Trinity.bib))
 
 If you want to learn more about the algorithms and applications built on top of Microsoft Graph Engine, please refer to these [publications](https://www.graphengine.io/docs/publications/index.html).
 
