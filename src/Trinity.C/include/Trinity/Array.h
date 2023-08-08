@@ -3,6 +3,7 @@
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 //
 #pragma once
+#include <cstdlib>
 #include <cstring>
 #include <vector>
 #include <functional>
@@ -20,7 +21,7 @@ namespace Trinity
 
         Array(size_t count)
         {
-            allocate(count); 
+            allocate(count);
             initialize();
         }
 
@@ -49,9 +50,9 @@ namespace Trinity
             _copy_from(il.begin(), il.size());
         }
 
-        Array(_Myt&& arr) 
-        { 
-            _move_from(std::forward<_Myt>(arr)); 
+        Array(_Myt&& arr)
+        {
+            _move_from(std::forward<_Myt>(arr));
         }
 
         ~Array()
@@ -60,36 +61,36 @@ namespace Trinity
             deallocate();
         }
 
-        Array& operator = (const _Myt &  arr) 
+        Array& operator = (const _Myt &  arr)
         {
             destroy();
-            deallocate(); 
-            _copy_from(arr._array, arr._count); 
-            return *this; 
+            deallocate();
+            _copy_from(arr._array, arr._count);
+            return *this;
         }
 
-        template <class _VecAlloc> Array& operator = (const std::vector<T, _VecAlloc> &  vec) 
-        { 
+        template <class _VecAlloc> Array& operator = (const std::vector<T, _VecAlloc> &  vec)
+        {
             destroy();
             deallocate();
             _copy_from(vec.data(), vec.size());
             return *this;
         }
 
-        Array& operator = (std::initializer_list<T>  il) 
-        { 
-            destroy();
-            deallocate();
-            _copy_from(il.begin(), il.size()); 
-            return *this; 
-        }
-
-        Array& operator = (_Myt && arr) 
+        Array& operator = (std::initializer_list<T>  il)
         {
             destroy();
-            deallocate(); 
+            deallocate();
+            _copy_from(il.begin(), il.size());
+            return *this;
+        }
+
+        Array& operator = (_Myt && arr)
+        {
+            destroy();
+            deallocate();
             _move_from(std::forward<_Myt>(arr));
-            return *this; 
+            return *this;
         }
 
         std::vector<T> ToList() const { std::vector<T> ret; ret.insert(ret.begin(), this->begin(), this->end()); return ret; }
@@ -111,9 +112,9 @@ namespace Trinity
         //   As our primary usage is interop, it doesn't make sense
         //   either to return std::unique_ptr.
         //   Therefore the best thing to do is to malloc a new buffer, and move the elements
-        //   into the new buffer. 
-        T* detach_data() 
-        { 
+        //   into the new buffer.
+        T* detach_data()
+        {
             auto len = _count * sizeof(T);
             auto ret = (T*)malloc(len);
 
@@ -121,7 +122,7 @@ namespace Trinity
 
             //! deallocate, not destroy
             deallocate();
-            return ret; 
+            return ret;
         }
 
         //since we're just simply arrays, we don't care much about the logic of iterator..
@@ -139,17 +140,17 @@ namespace Trinity
 
     private:
 
-        inline void allocate(size_t count) 
-        { 
-            _array = _allocator.allocate(count); 
+        inline void allocate(size_t count)
+        {
+            _array = _allocator.allocate(count);
             _count = count;
         }
 
-        inline void deallocate() 
-        { 
-            _allocator.deallocate(_array, _count); 
-            _array = nullptr; 
-            _count = 0; 
+        inline void deallocate()
+        {
+            _allocator.deallocate(_array, _count);
+            _array = nullptr;
+            _count = 0;
         }
 
         inline void initialize()
