@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.16.0)
 
 FILE(GLOB codegen_srcs
     common.cpp
@@ -32,14 +32,14 @@ SET(metagen_out
     ${CMAKE_CURRENT_BINARY_DIR}/Throw.cs.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/Traits.cs.cpp
 
-    ${CMAKE_CURRENT_BINARY_DIR}/Containers/Array.cs.cpp                                                                                                                                                                                                                                       
+    ${CMAKE_CURRENT_BINARY_DIR}/Containers/Array.cs.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/Containers/List.cs.cpp
 
-    ${CMAKE_CURRENT_BINARY_DIR}/InvertedIndex/Bigram/Indexer.cs.cpp                                                                                                                                                                                                                                     
+    ${CMAKE_CURRENT_BINARY_DIR}/InvertedIndex/Bigram/Indexer.cs.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/InvertedIndex/Bigram/IndexItem.cs.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/InvertedIndex/Bigram/Searcher.cs.cpp
 
-    ${CMAKE_CURRENT_BINARY_DIR}/Libraries/BufferAllocator.cs.cpp                                                                                                                                                                                                                             
+    ${CMAKE_CURRENT_BINARY_DIR}/Libraries/BufferAllocator.cs.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/Libraries/byteListAccessor.cs.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/Libraries/DateTimeAccessor.cs.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/Libraries/doubleListAccessor.cs.cpp
@@ -50,12 +50,12 @@ SET(metagen_out
     ${CMAKE_CURRENT_BINARY_DIR}/Libraries/StringAccessor.cs.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/Libraries/U8StringAccessor.cs.cpp
 
-    ${CMAKE_CURRENT_BINARY_DIR}/LINQ/ExpressionTreeRewriter.cs.cpp                                                                                                                                                                                                                     
+    ${CMAKE_CURRENT_BINARY_DIR}/LINQ/ExpressionTreeRewriter.cs.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/LINQ/IndexQueryTreeExecutor.cs.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/LINQ/IndexQueryTreeNode.cs.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/LINQ/PLINQWrapper.cs.cpp
 
-    ${CMAKE_CURRENT_BINARY_DIR}/MODULES/AccessorFieldsDefinition.cs.cpp                                                                                                                                                                                                                    
+    ${CMAKE_CURRENT_BINARY_DIR}/MODULES/AccessorFieldsDefinition.cs.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/MODULES/AccessorReverseImplicitOperator.cs.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/MODULES/CommunicationClass.cs.cpp
     ${CMAKE_CURRENT_BINARY_DIR}/MODULES/CommunicationSchemaModule.cs.cpp

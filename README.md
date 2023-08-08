@@ -21,7 +21,7 @@ traversal.
 ## Recent changes
 
 The main version number is bumped to 3.0 to reflect the recent toolchain updates.
-- .NET 6.0 is now the mainly supported target framework
+- .NET 7.0 is now the mainly supported target framework
 - Visual Studio 2022 is supported
 
 One goal of Graph Engine 3.0 is to bring the system up to date and make it
@@ -51,8 +51,8 @@ Install g++, cmake, and libssl-dev. For example, on Ubuntu, simply run
 sudo apt update && sudo apt install g++ cmake libssl-dev
 ```
 
-Install [.NET SDK x64 6.0][dotnet6-on-linux]. For example, on Ubuntu 22.04, run
-`sudo apt update && sudo apt install -y dotnet-sdk-6.0`.
+Install [.NET SDK x64 7.0][dotnet-on-linux]. For example, on Ubuntu 22.04, run
+`sudo apt update && sudo apt install -y dotnet-sdk-7.0`.
 Then, build GraphEngine with the following command:
 
 ```shell
@@ -123,6 +123,6 @@ Links
 
 [dotnet-download]: https://dotnet.microsoft.com/
 
-[dotnet6-on-linux]: https://dotnet.microsoft.com/en-us/download/dotnet/6.0
+[dotnet-on-linux]: https://dotnet.microsoft.com/en-us/download/dotnet
 
 [license]: LICENSE.md

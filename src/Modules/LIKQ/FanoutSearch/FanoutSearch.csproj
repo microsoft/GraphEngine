@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net7.0</TargetFrameworks>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Version>$(DOTNET_PACKAGE_VERSION)</Version>
     <FileVersion>$(DOTNET_PACKAGE_VERSION)</FileVersion>
@@ -26,7 +26,7 @@
     <None Include="..\..\..\..\resources\logo-64x64.png" Pack="true" PackagePath="logo-64x64.png"/>
   </ItemGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0' OR '$(TargetFramework)'=='net6.0'">
+  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0' OR '$(TargetFramework)'=='net7.0'">
     <DefineConstants>NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
 
@@ -45,11 +45,11 @@
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0' OR '$(TargetFramework)'=='net6.0'">
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0' OR '$(TargetFramework)'=='net7.0'">
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.0.0" />
     <PackageReference Include="System.Runtime" Version="4.3.0" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net6.0'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net7.0'">
     <PackageReference Include="System.Runtime.Caching" Version="6.0.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
