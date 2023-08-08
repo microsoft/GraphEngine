@@ -25,11 +25,12 @@ pool:
   vmImage: ubuntu-22.04
 
 steps:
-- script: sudo apt update && sudo apt install -y g++ cmake libssl-dev
-  displayName: 'Install g++ cmake libssl-dev'
-
-- script: sudo apt install -y dotnet-sdk-7.0
-  displayName: 'Install .NET SDK x64 7.0'
+- script: |
+    sudo apt update
+    sudo apt upgrade -y
+    sudo apt install -y g++ cmake libssl-dev
+    sudo apt install -y dotnet-sdk-7.0
+  displayName: 'Set up development environment'
 
 - bash: tools/build.sh
   displayName: 'Build Graph Engine'
