@@ -1,7 +1,7 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.16.0)
 
 ADD_DOTNET(
-    Trinity.Core.csproj 
+    Trinity.Core.csproj
     PACKAGE GraphEngine.Core
     VERSION ${TRINITY_VERSION})
 
