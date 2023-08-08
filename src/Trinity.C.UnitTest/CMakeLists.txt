@@ -10,7 +10,7 @@ macro(add_cpp_test test_name)
     add_test(${test_name} ${test_name})
 endmacro()
 
-# file(DOWNLOAD https://github.com/catchorg/Catch2/releases/download/v2.4.2/catch.hpp ${CMAKE_CURRENT_SOURCE_DIR}/catch.hpp)
+file(DOWNLOAD https://github.com/catchorg/Catch2/releases/download/v2.13.9/catch.hpp ${CMAKE_CURRENT_SOURCE_DIR}/catch.hpp)
 
 add_cpp_test(InitializeLocalMemoryStorage)
 add_cpp_test(DirectoryTest)
