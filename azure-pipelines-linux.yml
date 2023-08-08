@@ -25,6 +25,9 @@ pool:
   vmImage: ubuntu-22.04
 
 steps:
+- script: sudo apt update && sudo apt upgrade -y
+  displayName: 'Ensure the system is up-to-date'
+
 - script: sudo apt update && sudo apt install -y g++ cmake libssl-dev
   displayName: 'Install g++ cmake libssl-dev'
 
