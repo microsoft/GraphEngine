@@ -1,6 +1,3 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
 trigger:
@@ -27,9 +24,18 @@ pool:
 steps:
 - script: |
     sudo apt update
+    sudo apt upgrade -y
     sudo apt install -y g++ cmake libssl-dev
     sudo apt install -y dotnet-sdk-7.0
   displayName: 'Set up development environment'
+
+- script: |
+    lsb_release -a
+    uname -a
+    make --version
+    g++ --version
+    dotnet --list-sdks
+  displayName: 'Print System Info'
 
 - bash: tools/build.sh
   displayName: 'Build Graph Engine'
