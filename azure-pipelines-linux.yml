@@ -22,22 +22,5 @@ pool:
   vmImage: ubuntu-22.04
 
 steps:
-- script: |
-    sudo apt update
-    sudo apt upgrade -y
-    sudo apt install -y g++ cmake libssl-dev
-    sudo apt purge -y dotnet-sdk-* dotnet-runtime-*
-    sudo apt autoremove -y
-    sudo apt install -y dotnet-sdk-7.0
-  displayName: 'Set up development environment'
-
-- script: |
-    lsb_release -a
-    uname -a
-    make --version
-    g++ --version
-    dotnet --list-sdks
-  displayName: 'Print System Info'
-
-- script: bash tools/build.sh
+- bash: tools/build.sh
   displayName: 'Build Graph Engine'

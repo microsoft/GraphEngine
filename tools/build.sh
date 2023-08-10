@@ -2,6 +2,16 @@
 
 if [ "$REPO_ROOT" == "" ] ; then REPO_ROOT="$(readlink -f $(dirname $(readlink -f $0))/../)" ; fi
 
+sudo apt update
+sudo apt install -y g++ cmake libssl-dev dotnet-sdk-7.0
+
+echo "Print system info:"
+lsb_release -a
+uname -a
+make --version
+g++ --version
+dotnet --list-sdks
+
 if [ "$(command -v cmake)" == "" ] ;
 then
 	echo "error: cmake not found." 1>&2
