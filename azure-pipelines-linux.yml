@@ -26,6 +26,8 @@ steps:
     sudo apt update
     sudo apt upgrade -y
     sudo apt install -y g++ cmake libssl-dev
+    sudo apt purge -y dotnet-sdk-* dotnet-runtime-*
+    sudo apt autoremove -y
     sudo apt install -y dotnet-sdk-7.0
   displayName: 'Set up development environment'
 
@@ -37,5 +39,5 @@ steps:
     dotnet --list-sdks
   displayName: 'Print System Info'
 
-- bash: tools/build.sh
+- script: bash tools/build.sh
   displayName: 'Build Graph Engine'
