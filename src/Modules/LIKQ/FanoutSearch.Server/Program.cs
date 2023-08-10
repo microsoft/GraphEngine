@@ -51,7 +51,7 @@ namespace FanoutSearch.Server
 
         private static void Usage()
         {
-            Console.WriteLine("usage: FanoutSearch.Server.exe tsl_assembly_file [storage_root]");
+            Console.WriteLine("usage: FanoutSearch.Server tsl_assembly_file [storage_root]");
         }
     }
 }
