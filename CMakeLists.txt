@@ -39,10 +39,14 @@ ADD_SUBDIRECTORY(src/Trinity.Core)
 ADD_SUBDIRECTORY(src/Modules/LIKQ)
 
 ADD_DOTNET(
-    src/Modules/DataImporter/GraphEngine.DataImporter.sln
+    src/Modules/DataImporter/GraphEngine.DataImporter/GraphEngine.DataImporter.csproj
+    VERSION ${TRINITY_VERSION}
     PACKAGE GraphEngine.DataImporter
     DEPENDS GraphEngine.Core)
-
+TEST_DOTNET(
+    src/Modules/DataImporter/GraphEngine.DataImporter.UnitTest/GraphEngine.DataImporter.UnitTest.csproj
+    DEPENDS GraphEngine.DataImporter
+    ARGUMENTS -- RunConfiguration.TargetPlatform=x64 RunConfiguration.MaxCpuCount=1)
 # The following Modules are Unsupported, provided as-is.
 
 # ADD_SUBDIRECTORY(src/Modules/Unsupported/Storage.Composite)

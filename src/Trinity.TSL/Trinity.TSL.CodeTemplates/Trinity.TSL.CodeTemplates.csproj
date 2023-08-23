@@ -9,4 +9,12 @@
   <ItemGroup>
     <ProjectReference Include="../../Trinity.Core/Trinity.Core.csproj" />
   </ItemGroup>
+
+  <!-- Package dependencies -->
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="6.0.6" />
+  </ItemGroup>
 </Project>

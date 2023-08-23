@@ -15,4 +15,31 @@
   <ItemGroup>
     <TslCodegen Include="TSLGeneratorMetadata.tsl" />
   </ItemGroup>
+  <!-- NuGet package metadata -->
+  <PropertyGroup>
+    <Authors>Microsoft Graph Engine Team</Authors>
+    <Description>GraphEngine data importer.</Description>
+    <Copyright>Copyright 2022</Copyright>
+    <Company>Microsoft Corporation</Company>
+
+    <Version>$(DOTNET_PACKAGE_VERSION)</Version>
+    <AssemblyVersion>$(DOTNET_PACKAGE_VERSION)</AssemblyVersion>
+    <FileVersion>$(DOTNET_PACKAGE_VERSION)</FileVersion>
+    <PackageVersion>$(DOTNET_PACKAGE_VERSION)</PackageVersion>
+
+    <PackageId>GraphEngine.DataImporter</PackageId>
+    <PackageTags>Graph Engine Trinity Data Importer</PackageTags>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://www.graphengine.io</PackageProjectUrl>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageIcon>logo-64x64.png</PackageIcon>
+    <RepositoryUrl>https://github.com/Microsoft/GraphEngine</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <NoWarn>CS0660,CS0661,CS0612,CS1668</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\LICENSE.txt" Pack="true" PackagePath="LICENSE.txt"/>
+    <None Include="..\..\..\..\resources\logo-64x64.png" Pack="true" PackagePath="logo-64x64.png"/>
+  </ItemGroup>
 </Project>
