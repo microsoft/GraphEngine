@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net7.0;net48</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net8.0;net48</TargetFrameworks>
     <AssemblyName>Trinity.Core</AssemblyName>
     <RootNamespace>Trinity</RootNamespace>
     <OutputTypeEx>library</OutputTypeEx>
@@ -48,7 +48,7 @@
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <DefineConstants>CORECLR</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)'=='net7.0'">
+  <PropertyGroup Condition="'$(TargetFramework)'=='net8.0'">
     <DefineConstants>CORECLR;TFM_NET60</DefineConstants>
   </PropertyGroup>
 

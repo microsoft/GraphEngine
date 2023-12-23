@@ -18,16 +18,6 @@ expressions. Server-side computations can be expressed in lambda expressions,
 embedded in LIKQ, and executed on the Graph Engine servers during graph
 traversal.
 
-## Recent changes
-
-The main version number is bumped to 3.0 to reflect the recent toolchain updates.
-- .NET 7.0 is now the mainly supported target framework
-- Visual Studio 2022 is supported
-
-One goal of Graph Engine 3.0 is to bring the system up to date and make it
-slimmer. Some obsolete or outdated modules and tools have been moved to the
-[Unsupported](src/Modules/Unsupported) directory and removed from the main build pipeline.
-
 ## Getting started
 
 Recommended operating system: Windows 10 or Ubuntu 22.04.
@@ -51,8 +41,8 @@ Install g++, cmake, and libssl-dev. For example, on Ubuntu, simply run
 sudo apt update && sudo apt install g++ cmake libssl-dev
 ```
 
-Install [.NET SDK x64 7.0][dotnet-on-linux]. For example, on Ubuntu 22.04, run
-`sudo apt update && sudo apt install -y dotnet-sdk-7.0`.
+Install [.NET SDK x64 8.0][dotnet-on-linux]. For example, on Ubuntu 22.04, run
+`sudo apt update && sudo apt install -y dotnet-sdk-8.0`.
 Then, build GraphEngine with the following command:
 
 ```shell

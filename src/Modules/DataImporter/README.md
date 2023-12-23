@@ -17,7 +17,7 @@ In the `GraphEngine.DataImporter` folder:
 - cd `src/Modules/DataImporter/GraphEngine.DataImporter`
 - Run `dotnet restore`
 - Run `dotnet build --configuration Release`
-- Run `dotnet run --framework net7.0 --property:Configuration=Release --no-build -- --help`
+- Run `dotnet run --framework net8.0 --property:Configuration=Release --no-build -- --help`
 
 ### Command Line Option
 
@@ -35,5 +35,5 @@ In the `GraphEngine.DataImporter` folder:
 |--help|Display this help screen.|
 
 ```shell
-dotnet run --framework net7.0 --property:Configuration=Release --no-build -- [-t tsl] [-d directory] [-o output_dir] [--delimiter delimiter] [-f file_format] [--notrim] [-a tsl_assembly|-g] [explicit files]
+dotnet run --framework net8.0 --property:Configuration=Release --no-build -- [-t tsl] [-d directory] [-o output_dir] [--delimiter delimiter] [-f file_format] [--notrim] [-a tsl_assembly|-g] [explicit files]
 ```

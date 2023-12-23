@@ -4,4 +4,4 @@
 - cd `src/Modules/LIKQ/FanoutSearch.Server`
 - Run `dotnet restore`
 - Run `dotnet build --configuration Release`
-- Run `dotnet run --framework net7.0 --property:Configuration=Release --no-build -- --help`
+- Run `dotnet run --framework net8.0 --property:Configuration=Release --no-build -- --help`

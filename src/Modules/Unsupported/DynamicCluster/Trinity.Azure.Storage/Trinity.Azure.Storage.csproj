@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
     <RootNamespace>Trinity.Azure.Storage</RootNamespace>
     <AssemblyName>Trinity.Azure.Storage</AssemblyName>
     <OutputTypeEx>library</OutputTypeEx>
