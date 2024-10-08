@@ -1,11 +1,11 @@
 #banner {
-    background-image: url("/img/banner-bg.svg");
+    background-image: url("https://microsoft.github.io/GraphEngine/img/banner-bg.svg");
     min-width:960px;
 }
 
 #banner-bglayer
 {
-    background-image: url("/img/banner-bglayer.svg");
+    background-image: url("https://microsoft.github.io/GraphEngine/img/banner-bglayer.svg");
     color: #ffffff;
     font-weight: 300;
     height: 300px;
