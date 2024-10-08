@@ -1,5 +1,0 @@
-cell Person
-{
-	int Age;
-	string Name;
-}

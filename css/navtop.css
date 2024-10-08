@@ -1,0 +1,53 @@
+.nav-top {
+    background: none repeat scroll 0 0 #f1f1f1;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    color: rgb(102, 102, 102);
+    float: left;
+    height: 30px;
+    padding-top: 5px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    font-weight: bold;
+    clear: both;
+}
+
+.nav-top:after {
+    clear: both;
+    content: "";
+    display: table;
+}
+
+#mslogo
+{
+   display: inline-block;
+   float: left;
+}
+
+.nav-top a {
+    text-decoration: none;
+    color: rgb(102, 102, 102);
+}
+
+.nav-top a:hover {
+    color: rgb(153, 0, 0);
+}
+
+.nav-top ul {
+    display: block;
+    width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: right;
+    padding-right: 15px;
+}
+.nav-top li {
+    display: inline;
+    margin-left: 50px;
+    font-family: Arial;
+}
+.nav-blog li {
+    margin-bottom: 5px;
+}
+

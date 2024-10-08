@@ -1,0 +1,120 @@
+#sidebar-wrapper {
+    position: fixed;
+    z-index: 2;
+}
+
+#sidebar {
+    color: #2d2d2d;
+    float: left;
+    font-size: 14px;
+    left: 20px;
+    min-height: 100%;
+    position: absolute;
+    top: 20px;
+    width: 210px;
+    z-index: 2;
+}
+
+    #sidebar ul {
+        list-style: outside none none;
+        margin: 0;
+    }
+
+        #sidebar ul ul {
+            margin: 6px 0 0 20px;
+        }
+
+    #sidebar li {
+        line-height: 16px;
+        margin: 0 0 6px;
+    }
+
+    #sidebar h3 {
+        font-size: 14px;
+        text-transform: uppercase;
+    }
+
+    #sidebar a {
+        color: #666;
+        display: block;
+    }
+
+        #sidebar a:hover {
+            color: #cc7a6f;
+            text-decoration: none;
+        }
+
+        #sidebar a.active {
+            color: #cc7a6f;
+        }
+
+    #sidebar .sidebar-section {
+        padding: 12px 0;
+        border: 1px solid rgb(233, 233, 233);
+        padding: 17px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+        #sidebar .sidebar-section:first-child {
+            border-top: 0 none;
+            padding-top: 0;
+            margin-bottom: 10px;
+        }
+
+#hide-arrow {
+    cursor: pointer;
+    color: #900;
+    position: fixed;
+    left: 216px;
+    top: 31px;
+    font-size: 15px;
+    z-index: 1000;
+}
+
+#show-arrow {
+    visibility: hidden;
+    cursor: pointer;
+    color: #900;
+    position: fixed;
+    left: 216px;
+    top: 31px;
+    font-size: 15px;
+    z-index: 1000;
+}
+
+#mobile-side-bar-toggle-container {
+    position: absolute;
+    width: 3em;
+    left: 0em;
+    top: 31px;
+    height: 100%;
+    z-index: 5000;
+}
+
+#mobile-side-bar-toggle {
+    visibility: hidden;
+    position: fixed;
+    top: 0.2em;
+    left: 0.2em;
+    width: 1.75em;
+    height: 1.9em;    
+    z-index: 5000;
+}
+
+.mobile-side-bar-toggle-book {
+    display: block;
+    background-color: rgb(89,89,89);
+    border-radius: 2px;
+    width: 75%;
+    height: 2px;
+    margin-top: 2px;
+    margin-left: auto; 
+    margin-bottom: 2px;
+    margin-right: auto;
+    padding: 1px;
+}
+
+.ui-button-text-only .ui-button-text {
+    padding: 0em 0.3em;
+}

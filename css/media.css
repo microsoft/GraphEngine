@@ -1,0 +1,197 @@
+@media screen and (max-width: 960px) { /* smaller than 960 pixels wide */
+    .nav-top {
+        width: 100%;
+    }
+
+        .nav-top ul {
+            width: 100%;
+        }
+
+        .nav-top li {
+            margin-left: 5px;
+            font-size: 80%;
+        }
+
+    .standalone-content {
+        width: 100%;
+    }
+
+    #banner {
+        width: 990px;
+    }
+}
+
+@media screen and (max-height: 1200px) {
+    #sidebar-wrapper {
+        position: relative;
+    }
+}
+
+@media screen and (min-height: 1200px) {
+    #sidebar-wrapper {
+        position: fixed;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #sidebar-wrapper {
+        visibility: hidden;
+    }
+
+    #doc-content {
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-top: 20px;
+        margin-right: 0px;
+    }
+
+    #hide-arrow {
+        left: 2px;
+        visibility: hidden;
+    }
+
+    #show-arrow {
+        visibility: hidden;
+        left: 2px;
+    }
+
+    .nav-top li {
+        margin-left: 5px;
+        font-size: 62%;
+    }
+
+    #img-mslogo {
+        position: absolute;
+        top: 0.4em;
+        left: 4.6em;
+    }
+
+    #mobile-side-bar-toggle {
+        visibility: visible;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    #sidebar-wrapper {
+        visibility: visible;
+    }
+
+    #doc-content {
+        visibility: visible;
+        padding-left: 250px;
+    }
+
+    #hide-arrow {
+        left: 216px;
+        visibility: visible;
+    }
+
+    #show-arrow {
+        visibility: hidden;
+        left: 216px;
+    }
+
+    .nav-top li {
+        margin-left: 20px;
+        font-size: 100%;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .nav-top li {
+        margin-left: 5px;
+        font-size: 50%;
+    }
+
+    #banner {
+        width: 100%;
+        min-width: 320px;
+    }
+
+    #banner-bglayer {
+        min-width: 100%;
+    }
+
+    #banner-content {
+        width: 100%;
+    }
+
+    #logo {
+        width: 5em;
+        margin-left: inherit;
+        margin-right: inherit;
+    }
+
+    #banner-title {
+        font-size: 2em;
+        margin-top:2em;
+    }
+
+    #banner-slogan {
+        font-size: 1em;
+        margin-top:1em;
+    }
+    .homecontent {
+        width: 100%;
+        padding-left:10px;
+        padding-right:10px;
+    }
+    .tile {
+        width:100%;
+        padding: 45px 10px;
+    }
+    img {
+        max-width:300px;
+    }
+    #topimg {
+        float:none;
+        margin-left:auto;
+        margin-right:auto;
+    }
+    .leftfloatpic {
+        float:none;
+        margin-left:auto;
+        margin-right:auto;
+    }
+    .rightfloatpic {
+        float:none;
+        margin-left:auto;
+        margin-right:auto;
+    }
+    #cloudcityimg {
+        float:none;
+        margin-left:auto;
+        margin-right:auto;
+    }
+    h1, h2, h3 {
+        line-height: 1;
+    }
+    h2 {
+        font-size: 23px;
+    }
+    h3 {
+        font-size: 17px;
+    }
+    h4 {
+        font-size:14px;
+    }
+    h5 {
+        font-size:11px;
+    }
+}
+
+@media screen and (max-width: 320px) {
+    .nav-top li {
+        margin-left: 2.5px;
+        font-size: 35%;
+    }
+
+    #mobile-side-bar-toggle {
+        width: 1.75em;
+    }
+
+    #img-mslogo {
+        visibility: hidden;
+        width: 0px;
+    }
+}

@@ -1,0 +1,112 @@
+.homecontent {
+    height: auto !important;
+    margin-left: auto;
+    margin-right: auto;
+    min-height: 100%;
+    padding-bottom: 50px;
+    padding-top: 15px;
+    width: 960px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.tilecontainer
+{
+  clear:both;
+  overflow: hidden;
+  margin: 0px;
+  padding: 0px;
+  float: left;
+}
+.tile
+{
+    margin: 0px;
+    padding: 45px 15px 45px 15px;
+    border: 0;
+    outline: 0;
+    vertical-align: baseline;
+    background: none repeat scroll 0% 0% rgb(240, 240, 240);
+    /*border: 2px solid rgb(255, 255, 255);*/
+    width: 960px;
+    float: left;
+}
+
+#imgbox
+{
+  float: right;
+  width: 22em;
+  height: 30em;
+}
+
+#overviewimg
+{
+  width: 260px;
+  margin-top: 50px;
+}
+
+#storeimgbox
+{
+  float:right;
+  width: 200px;
+}
+
+#storeimg
+{
+  display: block;
+  margin-top: -5px;
+  width: 12em;
+  padding-top: 10px;
+}
+
+#computationimg
+{
+  display: block;
+  margin-top: 0px;
+  width: 24em;
+  padding-top: 12px;
+}
+
+#castleimg
+{
+  display: block;
+  width: 28em;
+}
+
+#topimg
+{
+  float: right;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  margin-top: 5px;
+  margin-right: 0px;
+}
+
+#cloudcityimg
+{
+  float: left;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  margin-top: 20px;
+  margin-right: 20px;
+}
+
+.rightfloatpic
+{
+  float: right;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  margin-top: 20px;
+}
+
+.leftfloatpic
+{
+  float: left;
+  margin-right: 23px;
+  margin-bottom: 10px;
+  margin-top: 20px;
+}
+
+.navresources
+{
+  clear: both;
+}

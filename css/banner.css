@@ -1,0 +1,44 @@
+#banner {
+    background-image: url("/img/banner-bg.svg");
+    min-width:960px;
+}
+
+#banner-bglayer
+{
+    background-image: url("/img/banner-bglayer.svg");
+    color: #ffffff;
+    font-weight: 300;
+    height: 300px;
+    padding-top: 50px;
+    min-width: 960px;
+}
+
+#banner-content {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    position: relative;
+    width: 960px;
+}
+
+#banner-title {
+    margin-top: 31px;
+    font-size: 64px;
+    font-weight: 400;
+    text-align: center;
+    text-shadow: 0px 2px 1px rgb(0, 0, 0);
+}
+
+#banner-slogan {
+    font-size: 30px;
+    text-align: center;
+    text-transform: uppercase;
+    text-shadow: 0px 1px 1px rgb(0, 0, 0);
+}
+
+#logo {
+    float:left; 
+    margin-left:80px; 
+    margin-right:-300px;
+}

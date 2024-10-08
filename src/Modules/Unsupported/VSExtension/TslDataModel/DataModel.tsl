@@ -1,4 +1,0 @@
-cell MyCell
-{
-	int A;
-}

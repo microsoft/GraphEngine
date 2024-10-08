@@ -1,0 +1,83 @@
+
+section.black content {
+    padding-bottom: 18px;
+}
+
+#doc-content {
+    visibility: visible;
+    position: relative;
+    padding-top: 20px;
+    min-width: 320px;
+}
+
+    #doc-content:after {
+        clear: both;
+        content: "";
+        display: table;
+    }
+
+    #doc-content .subHeader {
+        font-size: 24px;
+    }
+
+    #doc-content h2 {
+        margin-top: 30px;
+    }
+
+    #doc-content blockquote {
+        background-color: rgba(204, 122, 111, 0.1);
+        border-left: 5px solid rgba(191, 87, 73, 0.2);
+        margin: 20px 0;
+        padding: 15px 30px 15px 15px;
+    }
+
+        #doc-content blockquote h4 {
+            margin-top: 0;
+        }
+
+        #doc-content blockquote p {
+            margin-bottom: 0;
+        }
+
+            #doc-content blockquote p:first-child {
+                font-size: 17.5px;
+                font-weight: bold;
+                line-height: 20px;
+                margin-top: 0;
+                text-rendering: optimizelegibility;
+            }
+
+#doc-content-body {
+    min-height: 35em;
+    overflow-x: auto !important;
+    word-wrap: break-word;
+    max-width: 960px;
+    min-width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+    #doc-content-body h2 {
+        margin-top: 20px;
+    }
+
+    #doc-content-body h3 {
+        margin-top: 20px;
+    }
+
+    #doc-content-body h4 {
+        margin-top: 20px;
+    }
+
+    #doc-content-body h5 {
+        margin-top: 20px;
+    }
+
+    #doc-content-body h6 {
+        margin-top: 20px;
+    }
+
+.nosidebar #doc-content-body {
+    float: none;
+    margin: 0 auto;
+}

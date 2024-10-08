@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Data Access</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Graph Engine is a distributed, in-memory, large graph processing engine.">
+<meta name="keywords" content="Graph Engine, Trinity, Microsoft, GraphEngine">
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="stylesheet" href="/css/default.css">
+<link rel="stylesheet" href="/css/navtop.css">
+<link rel="stylesheet" href="/css/footer.css">
+<!--
+     NOTICE:  Third party scripts and code linked to or referenced here are not licensed to you by
+     the third parties that own such code, not by Microsoft, see ASP.NET Ajax CDN Terms of Use –
+     https://www.asp.net/ajaxlibrary/CDN.ashx
+-->
+<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.7.1.min.js"></script>
+<script type="text/javascript" src="/js/layout.js"></script>
+
+
+    <link rel="stylesheet" href="/css/docs.css">
+    <link rel="stylesheet" href="/css/highlight.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/table.css">
+    <link rel="stylesheet" href="/css/media.css">
+</head>
+<body onresize="BodyResize();" onload="AdjustLayout();">
+    <div class="nav-top">
+    <button id="mobile-side-bar-toggle">
+        <span class="mobile-side-bar-toggle-book"></span>
+        <span class="mobile-side-bar-toggle-book"></span>
+        <span class="mobile-side-bar-toggle-book"></span>
+    </button>
+    <ul>
+        <li id="mslogo"><img id="img-mslogo" style="margin-top: 2px;" alt="Microsoft" src="/img/ms-logo.png" border="0"></li>
+        <li><a href="/" title="Home">HOME</a></li>
+        <li><a href="/docs/manual/index.html" title="Manual and API References">DOCS</a></li>
+        <li><a href="/docs/publications/index.html" title="Publications and Talks">PUBLICATIONS</a></li>
+        <li><a href="/download.html" title="Downloads">DOWNLOADS</a></li>
+        <li><a href="/support.html" title="Technical Support Channels">SUPPORT</a></li>
+    </ul>
+</div>
+
+    <div id="sidebar-wrapper">
+<div id="sidebar">
+  <!-- Docs Nav -->
+  
+    <div class="sidebar-section">
+      <h3>Manual</h3>
+      <ul>
+        
+          <li>
+            <a href="/docs/manual/index.html">Getting Started</a>
+            
+          </li>
+        
+          <li>
+            <a href="/docs/manual/basics.html">Graph Engine Basics</a>
+            
+          </li>
+        
+          <li>
+            <a href="/docs/manual/TSL/index.html">Trinity Specification Language</a>
+            
+              <ul>
+                
+                  <li>
+                    <a href="/docs/manual/TSL/tsl-basics.html">TSL Basics</a>
+                  </li>
+                
+                  <li>
+                    <a href="/docs/manual/TSL/accessor.html">Accessors</a>
+                  </li>
+                
+                  <li>
+                    <a href="/docs/manual/TSL/MPProtocol.html">Message Passing Protocols</a>
+                  </li>
+                
+              </ul>
+            
+          </li>
+        
+          <li>
+            <a href="/docs/manual/DataAccess/index.html" class="active">Data Access</a>
+            
+              <ul>
+                
+                  <li>
+                    <a href="/docs/manual/DataAccess/InvertedIndex.html">Inverted Index</a>
+                  </li>
+                
+                  <li>
+                    <a href="/docs/manual/DataAccess/LINQ.html">Language-Integrated Query</a>
+                  </li>
+                
+                  <li>
+                    <a href="/docs/manual/DataAccess/GenericCell.html">Generic Cell</a>
+                  </li>
+                
+              </ul>
+            
+          </li>
+        
+          <li>
+            <a href="/docs/manual/Config/index.html">Configuration</a>
+            
+          </li>
+        
+          <li>
+            <a href="/docs/manual/DataImport.html">Data Import</a>
+            
+          </li>
+        
+          <li>
+            <a href="/docs/manual/DemoApps/index.html">Demo Applications</a>
+            
+              <ul>
+                
+                  <li>
+                    <a href="/docs/manual/DemoApps/FriendsGraph.html">Friends Graph</a>
+                  </li>
+                
+                  <li>
+                    <a href="/docs/manual/DemoApps/Ping.html">Ping!</a>
+                  </li>
+                
+                  <li>
+                    <a href="/docs/manual/DemoApps/DistributedHashtable.html">Distributed Hashtable</a>
+                  </li>
+                
+                  <li>
+                    <a href="/docs/manual/DemoApps/SSSP.html">Single Source Shortest Paths</a>
+                  </li>
+                
+                  <li>
+                    <a href="/docs/manual/DemoApps/GraphGenerator.html">Graph Generator</a>
+                  </li>
+                
+              </ul>
+            
+          </li>
+        
+          <li>
+            <a href="/docs/manual/faq.html">FAQ</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  
+</div>
+</div>
+    <div id="hide-arrow">&#9664; </div>
+    <div id="show-arrow">&#9654; </div>
+    <div class="container">
+          <script>
+  document.getElementById( "hide-arrow" ).onclick = function() {
+      document.getElementById("hide-arrow").style.visibility = "hidden";
+      document.getElementById("show-arrow").style.visibility = "visible";
+      
+      document.getElementById("doc-content").style.visibility = "visible";
+      document.getElementById("sidebar-wrapper").style.visibility = "hidden";
+      document.getElementById("doc-content").style.paddingLeft  = "20px";
+      
+      document.getElementById("hide-arrow").style.left = "2px";
+      document.getElementById("show-arrow").style.left = "2px";
+      //document.getElementById("hide-arrow").innerHTML = "&raquo;";
+      document.getElementById("sidebar-wrapper").style.position = "fixed";
+  };
+  
+  document.getElementById( "show-arrow" ).onclick = function() {
+      document.getElementById("show-arrow").style.visibility = "hidden";
+      document.getElementById("hide-arrow").style.visibility = "visible";
+      
+      document.getElementById("sidebar-wrapper").style.visibility = "visible";
+      document.getElementById("doc-content").style.paddingLeft = "250px";
+      
+      document.getElementById("hide-arrow").style.left= "216px";
+      document.getElementById("show-arrow").style.left= "216px";
+      //document.getElementById("hide-arrow").innerHTML = "&laquo; ";
+      
+      if(document.body && document.body.clientWidth <= 768)
+      {
+         document.getElementById("doc-content").style.visibility = "hidden";
+      }
+  };
+  document.getElementById("mobile-side-bar-toggle").onclick = function () {
+      if (document.getElementById("sidebar-wrapper").style.visibility != "visible") {
+          document.getElementById("sidebar-wrapper").style.visibility = "visible";
+          document.getElementById("sidebar-wrapper").style.position = "relative";
+          document.getElementById("doc-content").style.paddingLeft = "250px";
+
+          document.getElementById("hide-arrow").style.left = "216px";
+          document.getElementById("show-arrow").style.left = "216px";
+          document.getElementById("doc-content").style.visibility = "hidden";
+      } else {
+          document.getElementById("doc-content").style.visibility = "visible";
+          document.getElementById("sidebar-wrapper").style.visibility = "hidden";
+          document.getElementById("doc-content").style.paddingLeft = "20px";
+
+          document.getElementById("hide-arrow").style.left = "2px";
+          document.getElementById("show-arrow").style.left = "2px";
+      }
+  }
+
+  </script>
+        <div id="doc-content">
+            <div id="doc-content-body">
+                <h1>
+                    Data Access
+                </h1>
+                <h3><a class="anchor" name="basics"></a>Basics <a class="hash-link" href="#basics">#</a></h3>
+<p>At the core of GE is a key-value store that handles memory blobs. We can save a
+blob to the GE key-value store identified by a <em>key</em> we specified and load it
+back into our program later. A <em>key</em> is a 64-bit integer. Referencing a GE data
+object (or a <em>cell</em> in the jargon of GE) is through such a <em>key</em>. Other type of
+keys such as string keys can be realized by hashing the key to a 64-bit integer.
+Note that each key can at most be associated with one blob <em>value</em>; saving two
+blob values with the same key will cause one to be overwritten by the other. A
+<em>key</em> in GE is also called an <em>Id</em>.</p>
+
+<p>GE supports concurrent key-value operations on cells with atomicity guaranteed.
+The built-in atomic cell operators include: <em>AddCell</em>, <em>SaveCell</em>, <em>LoadCell</em>,
+and <em>RemoveCell</em>. The operations on the cell with a particular key are
+serialized; changes made by a writer are observed by everyone in a determined
+order.</p>
+
+<p>Durability is optional in GE. We can choose whether to commit a <a href="#cell-access-options">write-ahead
+log</a> (WAL) to the persistent storage or not before
+writing a cell. WAL guarantees durability, but it comes with some performance
+penalty. Use it wisely.</p>
+<h3><a class="anchor" name="data-access-patterns"></a>Data Access Patterns <a class="hash-link" href="#data-access-patterns">#</a></h3>
+<p>GE provides multiple data access patterns. We should weigh
+the tradeoff between convenience and performance before we decide to
+use one of the data access methods introduced here.</p>
+<h4><a class="anchor" name="built-in-key-value-store-interfaces"></a>Built-in Key-Value Store Interfaces <a class="hash-link" href="#built-in-key-value-store-interfaces">#</a></h4>
+<p>The most convenient one is to use the built-in key-value store interfaces, such
+as <em>SaveCell</em> and <em>LoadCell</em>. These interfaces are provided by
+<code>Trinity.Global.LocalStorage</code> and <code>Trinity.Global.CloudStorage</code> for accessing
+data locally or over a cluster respectively.</p>
+
+<p>The built-in interfaces treat <em>cells</em> as blobs. After we define our own cell
+types in TSL, additional typed key-value store interfaces will be bound to
+<code>Trinity.Global.LocalStorage</code> and <code>Trinity.Global.CloudStorage</code>. The
+TSL-generated interfaces take the form of <code>LoadMyType</code> and <code>SaveMyType</code>. For
+example, if we define a type of cell in TSL as follows:</p>
+<div class="highlight"><pre><code class="language-C#" data-lang="C#"><span></span><span class="n">cell</span><span class="w"> </span><span class="n">GraphNode</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="na">[Index]</span>
+<span class="w">   </span><span class="kt">string</span><span class="w">       </span><span class="n">Name</span><span class="p">;</span>
+<span class="w">   </span><span class="kt">float</span><span class="w">        </span><span class="n">Value</span><span class="p">;</span>
+<span class="w">   </span><span class="n">List</span><span class="o">&lt;</span><span class="n">CellId</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Neighbors</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Two new interfaces <code>LoadGraphNode</code> and <code>SaveGraphNode</code> will be bound
+to <code>LocalStorage</code> and <code>CloudStorage</code>.  Multiple method overloads are
+provided for these interfaces. We can then write:</p>
+<div class="highlight"><pre><code class="language-C#" data-lang="C#"><span></span><span class="w"> </span><span class="kt">var</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Global</span><span class="p">.</span><span class="n">CloudStorage</span><span class="p">.</span><span class="n">LoadGraphNode</span><span class="p">(</span><span class="m">123</span><span class="p">);</span><span class="w"> </span><span class="c1">//123 as the cell id</span>
+<span class="w"> </span><span class="kt">var</span><span class="w"> </span><span class="n">sum</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="m">0.0f</span><span class="p">;</span>
+
+<span class="w"> </span><span class="k">foreach</span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">neighbor</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">root</span><span class="p">.</span><span class="n">Neighbors</span><span class="p">)</span>
+<span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">Global</span><span class="p">.</span><span class="n">CloudStorage</span><span class="p">.</span><span class="n">LoadGraphNode</span><span class="p">(</span><span class="n">neighbor</span><span class="p">).</span><span class="n">Value</span><span class="p">;</span>
+<span class="w"> </span><span class="p">}</span>
+</code></pre></div><h4><a class="anchor" name="remote-data-manipulation"></a>Remote Data Manipulation <a class="hash-link" href="#remote-data-manipulation">#</a></h4>
+<p>GE supports server-side computation. It means that we do not need to pull all
+the concerned cells over the network, apply operations on them locally, then
+save them back. We can pass the operations over the network and retrieve the
+results. To do so, we define a custom protocol for client-server communication.
+Instead of issuing cell loading/saving operations, we now send a user-defined
+request to the server for the desired result. For example, to obtain the sum of
+<em>Value</em> for a set of <code>GraphNode</code>, instead of loading them to the client, we can
+define a protocol as follows:</p>
+<div class="highlight"><pre><code class="language-C#" data-lang="C#"><span></span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">RequestMessage</span>
+<span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">CellId</span><span class="o">&gt;</span><span class="w"> </span><span class="n">NodeSet</span><span class="p">;</span>
+<span class="w"> </span><span class="p">}</span>
+
+<span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">ResponseMessage</span>
+<span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">Result</span><span class="p">;</span>
+<span class="w"> </span><span class="p">}</span>
+
+<span class="w"> </span><span class="n">protocol</span><span class="w"> </span><span class="n">CalculateSum</span>
+<span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Type</span><span class="w">     </span><span class="p">:</span><span class="w"> </span><span class="n">Syn</span><span class="p">;</span>
+<span class="w">    </span><span class="n">Request</span><span class="w">  </span><span class="p">:</span><span class="w"> </span><span class="n">RequestMessage</span><span class="p">;</span>
+<span class="w">    </span><span class="n">Response</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">ResponseMessage</span><span class="p">;</span>
+<span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<p>On the client side we can get the sum by:</p>
+<div class="highlight"><pre><code class="language-C#" data-lang="C#"><span></span><span class="kt">var</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.0f</span><span class="p">;</span>
+
+<span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">serverId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"> </span><span class="n">serverId</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">Global</span><span class="p">.</span><span class="n">ServerCount</span><span class="p">;</span><span class="w"> </span><span class="n">serverId</span><span class="o">++</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="n">using</span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">request</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RequestMessageWriter</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="kt">long</span><span class="o">&gt;</span><span class="p">(){</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">}))</span>
+<span class="w">   </span><span class="p">{</span>
+<span class="w">      </span><span class="n">using</span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Global</span><span class="p">.</span><span class="n">CloudStorage</span><span class="p">.</span><span class="n">CalculateSumToMyServer</span><span class="p">(</span><span class="n">serverId</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">))</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">         </span><span class="kt">var</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">response</span><span class="p">.</span><span class="n">Result</span><span class="p">;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The server side computation can be implemented as follows:</p>
+<div class="highlight"><pre><code class="language-C#" data-lang="C#"><span></span><span class="k">public</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">CalculateSumHandler</span><span class="p">(</span>
+<span class="w">    </span><span class="n">RequestMessageReader</span><span class="w">  </span><span class="n">request</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ResponseMessageWriter</span><span class="w"> </span><span class="n">response</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">response</span><span class="p">.</span><span class="n">Result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="m">0f</span><span class="p">;</span>
+<span class="w">    </span><span class="k">foreach</span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">nodeId</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">NodeSet</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">response</span><span class="p">.</span><span class="n">Result</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">Global</span><span class="p">.</span><span class="n">LocalStorage</span><span class="p">.</span><span class="n">LoadGraphNode</span><span class="p">(</span><span class="n">nodeId</span><span class="p">).</span><span class="n">Value</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h4><a class="anchor" name="cell-accessors"></a>Cell Accessors <a class="hash-link" href="#cell-accessors">#</a></h4>
+<p>We can perform any data access tasks via the key-value store interfaces. But
+soon we will realize that the whole cell needs to be loaded even we need to
+access only a single data field. In the code snippet shown above, a certain data
+field of the cells is accessed. For each cell, GE first pinpoints its location
+in the memory storage. Then, it allocates a cell object and copies the cell
+content from the storage to the object. The field is then read out from the
+object and fed into the outer computation loop.</p>
+
+<p>Cell modification is trickier. It takes three cell operations to modify a small
+portion of a cell: load the cell, modify the cell, and save the cell. The memory
+copies incurred in this process waste a lot of memory and network bandwidth.
+Moreover, even though each cell operation is atomic, the cell modification as a
+whole is not atomic because the three individual cell operations cannot be
+guaranteed to be executed as a whole.</p>
+
+<p>Having seen what the problems caused by using key-value store interfaces are, we
+give the cure now. We solve the problems discussed above with a mechanism called
+<em>data accessor</em>. For any cell construct defined in TSL, the TSL
+compiler automatically generates a cell accessor. An accessor does not possess
+any data. Rather, all the fields are provided as properties; operations on
+these properties will be translated into in-place memory operations on the
+underlying memory blob. With cell accessor, the server logic can be rewritten as:</p>
+<div class="highlight"><pre><code class="language-C#" data-lang="C#"><span></span><span class="k">public</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">ComputeAverageHandler</span><span class="p">(</span>
+<span class="w">    </span><span class="n">RequestMessageReader</span><span class="w">  </span><span class="n">request</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ResponseMessageWriter</span><span class="w"> </span><span class="n">response</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">response</span><span class="p">.</span><span class="n">Result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.</span><span class="m">0f</span><span class="p">;</span>
+<span class="w">    </span><span class="k">foreach</span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">nodeId</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">NodeSet</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">using</span><span class="p">(</span><span class="w"> </span><span class="kt">var</span><span class="w"> </span><span class="n">neighbor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Global</span><span class="p">.</span><span class="n">LocalStorage</span><span class="p">.</span><span class="n">UseGraphNode</span><span class="p">(</span><span class="n">nodeId</span><span class="p">)</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">response</span><span class="p">.</span><span class="n">Result</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">neighbor</span><span class="p">.</span><span class="n">Value</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>In this new version, accessing <code>neighbor.Value</code> will only result in a 4-byte
+memory access. For more information on cell accessors, please refer to
+<a href="/docs/manual/TSL/accessor.html">Accessors</a>.</p>
+
+<blockquote>
+<p>Whenever possible, use cell accessors instead of key-value store
+  interfaces to access the data.</p>
+</blockquote>
+<h4><a class="anchor" name="cell-access-options"></a>Cell Access Options <a class="hash-link" href="#cell-access-options">#</a></h4>
+<p>GE provides a cell access option to most of the cell access
+interfaces. According to the cell interface, one or more options
+listed below can be applied.</p>
+<div class="highlight"><pre><code class="language-C#" data-lang="C#"><span></span><span class="k">public</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="n">CellAccessOptions</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="c1">// Throws an exception when a cell is not found.</span>
+<span class="w">   </span><span class="n">ThrowExceptionOnCellNotFound</span><span class="p">,</span>
+
+<span class="w">   </span><span class="c1">// Returns null when a cell is not found.</span>
+<span class="w">   </span><span class="n">ReturnNullOnCellNotFound</span><span class="p">,</span>
+
+<span class="w">   </span><span class="c1">// Creates a new cell when a cell is not found.</span>
+<span class="w">   </span><span class="n">CreateNewOnCellNotFound</span><span class="p">,</span>
+
+<span class="w">   </span><span class="c1">// Specifies that write-ahead-log should be performed with strong durability.</span>
+<span class="w">   </span><span class="n">StrongLogAhead</span><span class="p">,</span>
+
+<span class="w">   </span><span class="c1">// Specifies that write-ahead-log should be performed with weak durability.</span>
+<span class="w">   </span><span class="c1">// This option brings better performance, but under certain circumstances</span>
+<span class="w">   </span><span class="c1">// the log may fail to be persistent, for example, during a power outage</span>
+<span class="w">   </span><span class="c1">// or equipment failure.</span>
+<span class="w">   </span><span class="n">WeakLogAhead</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Cell access options are used to control the behavior of a cell
+operation.</p>
+<div class="highlight"><pre><code class="language-C#" data-lang="C#"><span></span><span class="kt">long</span><span class="w"> </span><span class="n">cellId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">;</span>
+
+<span class="c1">// MyCell is a cell type defined in a TSL project</span>
+<span class="n">Global</span><span class="p">.</span><span class="n">LocalStorage</span><span class="p">.</span><span class="n">SaveMyCell</span><span class="p">(</span><span class="n">CellAccessOptions</span><span class="p">.</span><span class="n">StrongLogAhead</span><span class="p">,</span><span class="w"> </span><span class="n">cellId</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+
+<span class="n">Global</span><span class="p">.</span><span class="n">LocalStorage</span><span class="p">.</span><span class="n">RemoveCell</span><span class="p">(</span><span class="n">CellAccessOptions</span><span class="p">.</span><span class="n">WeakLogAhead</span><span class="p">,</span><span class="w"> </span><span class="n">cellId</span><span class="p">);</span>
+
+<span class="k">using</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">cell</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Global</span><span class="p">.</span><span class="n">LocalStorage</span><span class="p">.</span><span class="n">UseMyCell</span><span class="p">(</span><span class="n">cellId</span><span class="p">,</span><span class="w"> </span><span class="n">CellAccessOptions</span><span class="p">.</span><span class="n">ReturnNullOnCellNotFound</span><span class="p">))</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Do something here</span>
+<span class="p">}</span>
+
+<span class="k">using</span><span class="w"> </span><span class="p">(</span><span class="kt">var</span><span class="w"> </span><span class="n">cell</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Global</span><span class="p">.</span><span class="n">LocalStorage</span><span class="p">.</span><span class="n">UseMyCell</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="n">CellAccessOptions</span><span class="p">.</span><span class="n">CreateNewOnCellNotFound</span><span class="p">))</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Do something here</span>
+<span class="p">}</span>
+</code></pre></div><h3><a class="anchor" name="cell-selector"></a>Cell Selector <a class="hash-link" href="#cell-selector">#</a></h3>
+<p>GE provides enumerators for iterating the cells stored in the local memory
+storage. Note that enumeration on cloud memory storage is currently not
+supported.</p>
+
+<p>For each cell type defined in TSL, the TSL compiler generates a <em>selector</em>
+interface on the local memory storage:
+<code>Global.LocalStorage.MyCellType_Selector</code>.  As the name implies, the selector
+interface selects all the cells of the given type and returns an
+<code>IEnumerable&lt;MyCellType&gt;</code> collection. We can then use <em>foreach</em> to iterate
+though the collection:</p>
+<div class="highlight"><pre><code class="language-C#" data-lang="C#"><span></span><span class="w"> </span><span class="k">foreach</span><span class="p">(</span><span class="w"> </span><span class="kt">var</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">Global</span><span class="p">.</span><span class="n">LocalStorage</span><span class="p">.</span><span class="n">GraphNode_Selector</span><span class="p">()</span><span class="w"> </span><span class="p">)</span>
+<span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">//Do something...</span>
+<span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<p>Both cell objects and cell accessors are supported. Here is the
+<em>accessor</em> counterpart:</p>
+<div class="highlight"><pre><code class="language-C#" data-lang="C#"><span></span><span class="w"> </span><span class="k">foreach</span><span class="p">(</span><span class="w"> </span><span class="kt">var</span><span class="w"> </span><span class="n">accessor</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">Global</span><span class="p">.</span><span class="n">LocalStorage</span><span class="p">.</span><span class="n">GraphNode_Accessor_Selector</span><span class="p">()</span><span class="w"> </span><span class="p">)</span>
+<span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">//Do something...</span>
+<span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<p>Enumerating cells through a selector is thread-safe; Multiple enumerations can
+be carried out simultaneously.  However, it is not allowed to cache <em>accessors</em>,
+because the accessor object will be reused to point to other cells during
+enumeration. Thus, the following piece of code would cause data corruption or
+system crash:</p>
+<div class="highlight"><pre><code class="language-C#" data-lang="C#"><span></span><span class="w"> </span><span class="c1">// Attempting to cache cell accessors</span>
+<span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">GraphNode_Accessor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">accessor_cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">GraphNode_Accessor</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w"> </span><span class="k">foreach</span><span class="p">(</span><span class="w"> </span><span class="kt">var</span><span class="w"> </span><span class="n">accessor</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">Global</span><span class="p">.</span><span class="n">LocalStorage</span><span class="p">.</span><span class="n">GraphNode_Accessor_Selector</span><span class="p">()</span><span class="w"> </span><span class="p">)</span>
+<span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">accessor_cache</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">accessor</span><span class="p">);</span>
+<span class="w"> </span><span class="p">}</span>
+<span class="w"> </span><span class="c1">// It will crash on visiting the cached accessors!</span>
+<span class="w"> </span><span class="kt">var</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">accessor_cache</span><span class="p">.</span><span class="n">Sum</span><span class="p">(</span><span class="n">accessor</span><span class="p">.</span><span class="n">AdditionalData</span><span class="p">);</span>
+</code></pre></div><h4><a class="anchor" name="language-integrated-query-linq"></a>Language-Integrated Query (LINQ) <a class="hash-link" href="#language-integrated-query-linq">#</a></h4>
+<p>The <em>selectors</em> implement the <em>IEnumerable<T></em> interface, hence they support
+LINQ/PLINQ queries. If substring index attribute is specified for certain cell
+fields, some queries can leverage the inverted index to speed up the query
+processing.  It is convenient to implement common data query logic using LINQ,
+for example:</p>
+<div class="highlight"><pre><code class="language-C#" data-lang="C#"><span></span><span class="w"> </span><span class="kt">var</span><span class="w"> </span><span class="n">results</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">Global</span><span class="p">.</span><span class="n">LocalStorage</span><span class="p">.</span><span class="n">GraphNode_Accessor_Selector</span><span class="p">()</span>
+<span class="w">               </span><span class="k">where</span><span class="w"> </span><span class="n">node</span><span class="p">.</span><span class="n">name</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="s">&quot;Alice&quot;</span><span class="p">)</span>
+<span class="w">               </span><span class="k">select</span><span class="w"> </span><span class="n">node</span><span class="p">.</span><span class="n">Value</span><span class="p">;</span>
+<span class="w"> </span><span class="kt">var</span><span class="w"> </span><span class="n">min</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="n">results</span><span class="p">.</span><span class="n">Min</span><span class="p">();</span>
+</code></pre></div>
+<p>In this example, the <em>node.name.Contains</em> clause is translated into a substring
+query. The results are projected into a list of float numbers, and then
+aggregated using the built-in LINQ interface <em>Min()</em>.</p>
+
+<p>GE LINQ/PLINQ is elaborated in the <a href="/docs/manual/DataAccess/LINQ.html">Language-Integrated
+Query</a> section.</p>
+<h3><a class="anchor" name="substring-query"></a>Substring Query <a class="hash-link" href="#substring-query">#</a></h3>
+<p>If the substring index attribute is specified on a cell field in TSL, a set of
+substring query interfaces will be generated for the specified cell field. A
+substring query interface accepts one or more query strings and returns a list
+of matched cell ids.  Refer to the <a href="/docs/manual/DataAccess/InvertedIndex.html">substring
+query</a> section for more information.</p>
+
+            </div>
+        </div>
+    </div>
+      <div class="footer">    
+    <a href="/support.html" class="footer-element">Contact us</a>
+    <a href="https://go.microsoft.com/fwlink/?LinkId=521839" class="footer-element" target="_blank">Privacy &amp; Cookies</a>
+    <a href="https://go.microsoft.com/fwlink/?linkid=2259814" class="footer-element" target="_blank">Consumer Health Privacy</a>
+    <a href="https://go.microsoft.com/fwlink/?LinkID=386394" class="footer-element" target="_blank">Terms of use</a>
+    <a href="https://go.microsoft.com/fwlink/?LinkID=402117" class="footer-element" target="_blank">Code of Conduct</a>
+    <a href="https://go.microsoft.com/fwlink/?LinkId=506942" class="footer-element" target="_blank">Trademarks</a>
+    <span class="footer-element">&copy;2023 Microsoft</span>
+    <a href="https://research.microsoft.com/c/1456" target="_blank"><img id="footer-logo" alt="Microsoft" src="/img/ms-logo.png"></a>
+  </div>
+
+</body>
+</html>
