@@ -40,7 +40,7 @@ namespace Storage
                         addressTable[fwd_index].offset = addressTable[fwd_index].offset % TrunkLength;
                     }
                     else if (
-                        (hole_right_offset >= (uint32_t)_bwd_cell_offset && (hole_right_offset - _bwd_cell_offset - _bwd_cell_size > 0)) ||
+                        (hole_right_offset >= (uint32_t)_bwd_cell_offset && ((int64_t)hole_right_offset - _bwd_cell_offset - _bwd_cell_size > 0)) ||
                         (hole_right_offset < (uint32_t)_bwd_cell_offset && hole_right_offset >= _bwd_cell_size)
                         )
                     {
